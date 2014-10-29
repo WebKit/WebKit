@@ -1,5 +1,140 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174231. <rdar://problem/18640833>
+
+    2014-10-02  Tim Horton  <timothy_horton@apple.com>
+    
+            Move PageOverlay[Controller] to WebCore
+            https://bugs.webkit.org/show_bug.cgi?id=137164
+            <rdar://problem/18508258>
+    
+            Reviewed by Anders Carlsson.
+    
+            * CMakeLists.txt:
+            * WebKit2.xcodeproj/project.pbxproj:
+            Make the appropriate build system changes.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+            Make WKBundlePageOverlayRef map to WebPageOverlay instead of PageOverlay.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+            (WKBundlePageInstallPageOverlay):
+            (WKBundlePageUninstallPageOverlay):
+            (WKBundlePageInstallPageOverlayWithAnimation):
+            (WKBundlePageUninstallPageOverlayWithAnimation):
+            Forward PageOverlay installation/uninstallation to WebCore.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+            (WKBundlePageOverlayGetTypeID):
+            (WKBundlePageOverlayCreate):
+            (WKBundlePageOverlaySetAccessibilityClient):
+            Use WebPageOverlay instead of PageOverlay, and references instead of pointers.
+            We forward client callbacks through from PageOverlay::Client to WebPageOverlay::Client.
+    
+            (PageOverlayClientImpl::copyAccessibilityAttributeValue):
+            (PageOverlayClientImpl::copyAccessibilityAttributeNames):
+            Convert from wtf types to WebKit2 types.
+    
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::graphicsLayerFactory):
+            If we don't have a drawing area, don't dereference it!
+    
+            (WebKit::WebChromeClient::attachViewOverlayGraphicsLayer):
+            Forward attachViewOverlayGraphicsLayer to the DrawingArea.
+    
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+    
+            * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+            * WebProcess/WebCoreSupport/WebInspectorClient.h:
+            * WebProcess/WebPage/FindController.cpp:
+            * WebProcess/WebPage/FindController.h:
+            * WebProcess/WebPage/ios/FindControllerIOS.mm:
+            * WebProcess/WebPage/ios/FindIndicatorOverlayClientIOS.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            Mechanical changes to adopt to the fact that PageOverlay is in WebCore now.
+    
+            * WebProcess/WebPage/LayerTreeHost.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            * WebProcess/WebPage/WebPage.h:
+            Remove support for WebKit2-based page overlays.
+            Return MainFrame instead of Frame from mainFrame().
+    
+            * WebProcess/WebPage/WebPageOverlay.cpp: Added.
+            * WebProcess/WebPage/WebPageOverlay.h: Added.
+            (WebKit::WebPageOverlay::create):
+            (WebKit::WebPageOverlay::WebPageOverlay):
+            (WebKit::WebPageOverlay::~WebPageOverlay):
+            (WebKit::WebPageOverlay::setNeedsDisplay):
+            (WebKit::WebPageOverlay::clear):
+            (WebKit::WebPageOverlay::pageOverlayDestroyed):
+            (WebKit::WebPageOverlay::willMoveToPage):
+            (WebKit::WebPageOverlay::didMoveToPage):
+            (WebKit::WebPageOverlay::drawRect):
+            (WebKit::WebPageOverlay::mouseEvent):
+            (WebKit::WebPageOverlay::didScrollFrame):
+            (WebKit::WebPageOverlay::copyAccessibilityAttributeStringValueForPoint):
+            (WebKit::WebPageOverlay::copyAccessibilityAttributeBoolValueForPoint):
+            (WebKit::WebPageOverlay::copyAccessibilityAttributeNames):
+            WebPageOverlay exists to be our API object, but forwards everything
+            to its WebCore::PageOverlay, and implements WebCore::PageOverlay::Client, and
+            forwards client callbacks to its WebPageOverlay::Client (which
+            WKBundlePageOverlay implements).
+    
+            * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+            (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]):
+            (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+            Forward the three AX properties that PageOverlays are ever queried for
+            to the appropriate PageOverlayController function.
+            
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+            (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+            (WebKit::RemoteLayerTreeDrawingArea::updateRootLayers):
+            Factor updateRootLayers out of setRootCompositingLayer.
+    
+            (WebKit::RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer):
+            If we attach/detach the view-relative page overlay root layer,
+            reattach the root compositing layer's children.
+    
+            (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+            Ditto for the root compositing layer.
+    
+            (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect):
+            (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+            (WebKit::RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged):
+            Informing PageOverlayController of exposed rect/document size changes is now
+            WebCore's job.
+    
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+            (WebKit::TiledCoreAnimationDrawingArea::updateRootLayers):
+            Factor updateRootLayers out of setRootCompositingLayer.
+    
+            (WebKit::TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer):
+            (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+            Make use of updateRootLayers when we attach/detach root compositing layer/view overlay layer.
+    
+            (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+            (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+            (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect):
+            Informing PageOverlayController of exposed rect/document size changes is now
+            WebCore's job.
+    
+            * WebProcess/WebPage/DrawingArea.h:
+            (WebKit::DrawingArea::attachViewOverlayGraphicsLayer):
+    
+            * Shared/WebRenderLayer.cpp:
+            * Shared/WebRenderObject.cpp:
+            * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+            * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+            * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+            * WebProcess/WebProcess.cpp:
+            Include MainFrame.h because WebPage::mainFrame returns a MainFrame now.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174369. <rdar://problem/18640842>
 
     2014-10-06  Chris Dumez  <cdumez@apple.com>

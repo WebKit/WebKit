@@ -31,6 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
+class PageOverlayController;
+
 class MainFrame final : public Frame {
 public:
     static RefPtr<MainFrame> create(Page&, FrameLoaderClient&);
@@ -38,12 +40,15 @@ public:
     void selfOnlyRef();
     void selfOnlyDeref();
 
+    PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
+
 private:
     MainFrame(Page&, FrameLoaderClient&);
 
     void dropChildren();
 
     unsigned m_selfOnlyRefCount;
+    std::unique_ptr<PageOverlayController> m_pageOverlayController;
 };
 
 inline bool Frame::isMainFrame() const

@@ -49,11 +49,11 @@ class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class PageBanner;
-class PageOverlay;
 class WebFrame;
 class WebInspector;
 class WebPage;
 class WebPageGroupProxy;
+class WebPageOverlay;
 
 WK_ADD_API_MAPPING(WKBundleBackForwardListItemRef, InjectedBundleBackForwardListItem)
 WK_ADD_API_MAPPING(WKBundleBackForwardListRef, InjectedBundleBackForwardList)
@@ -66,7 +66,7 @@ WK_ADD_API_MAPPING(WKBundleNavigationActionRef, InjectedBundleNavigationAction)
 WK_ADD_API_MAPPING(WKBundleNodeHandleRef, InjectedBundleNodeHandle)
 WK_ADD_API_MAPPING(WKBundlePageBannerRef, PageBanner)
 WK_ADD_API_MAPPING(WKBundlePageGroupRef, WebPageGroupProxy)
-WK_ADD_API_MAPPING(WKBundlePageOverlayRef, PageOverlay)
+WK_ADD_API_MAPPING(WKBundlePageOverlayRef, WebPageOverlay)
 WK_ADD_API_MAPPING(WKBundlePageRef, WebPage)
 WK_ADD_API_MAPPING(WKBundleRangeHandleRef, InjectedBundleRangeHandle)
 WK_ADD_API_MAPPING(WKBundleRef, InjectedBundle)

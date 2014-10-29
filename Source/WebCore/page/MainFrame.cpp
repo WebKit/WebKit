@@ -27,11 +27,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include "MainFrame.h"
 
+#include "PageOverlayController.h"
+
 namespace WebCore {
 
 inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
     : Frame(page, nullptr, client)
     , m_selfOnlyRefCount(0)
+    , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
 {
 }
 

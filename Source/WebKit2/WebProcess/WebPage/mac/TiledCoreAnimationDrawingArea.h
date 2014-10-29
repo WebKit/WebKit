@@ -84,6 +84,8 @@ private:
     virtual void viewStateDidChange(WebCore::ViewState::Flags changed, bool wantsDidUpdateViewState) override;
     void didUpdateViewStateTimerFired();
 
+    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+
     // WebCore::LayerFlushSchedulerClient
     virtual bool flushLayers() override;
 
@@ -106,6 +108,7 @@ private:
     void updateLayerHostingContext();
 
     void setRootCompositingLayer(CALayer *);
+    void updateRootLayers();
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
     void updateDebugInfoLayer(bool showLayer);
@@ -138,6 +141,8 @@ private:
     WebCore::TransformationMatrix m_transform;
 
     RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateViewStateTimer;
+
+    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 };
 
 DRAWING_AREA_TYPE_CASTS(TiledCoreAnimationDrawingArea, type() == DrawingAreaTypeTiledCoreAnimation);

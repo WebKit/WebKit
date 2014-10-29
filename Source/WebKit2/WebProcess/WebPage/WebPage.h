@@ -41,7 +41,6 @@
 #include "LayerTreeHost.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "PageOverlayController.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -143,7 +142,6 @@ class DrawingArea;
 class InjectedBundleBackForwardList;
 class NotificationPermissionRequestManager;
 class PageBanner;
-class PageOverlay;
 class PluginView;
 class ServicesOverlayController;
 class VisibleContentRectUpdateInfo;
@@ -208,8 +206,6 @@ public:
     
     InjectedBundleBackForwardList* backForwardList();
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
-    const PageOverlayController& pageOverlayController() const { return m_pageOverlayController; }
-    PageOverlayController& pageOverlayController() { return m_pageOverlayController; }
 #if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
 #endif
@@ -312,7 +308,7 @@ public:
 
     WebFrame* mainWebFrame() const { return m_mainFrame.get(); }
 
-    WebCore::Frame* mainFrame() const; // May return 0.
+    WebCore::MainFrame* mainFrame() const; // May return 0.
     WebCore::FrameView* mainFrameView() const; // May return 0.
 
     PassRefPtr<WebCore::Range> currentSelectionAsRange();
@@ -416,8 +412,6 @@ public:
 
     bool windowIsFocused() const;
     bool windowAndWebPageAreFocused() const;
-    void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode = PageOverlay::FadeMode::DoNotFade);
-    void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode = PageOverlay::FadeMode::DoNotFade);
 
 #if !PLATFORM(IOS)
     void setHeaderPageBanner(PassRefPtr<PageBanner>);
@@ -821,9 +815,6 @@ public:
 
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
     void setScrollPinningBehavior(uint32_t /* WebCore::ScrollPinningBehavior */ pinning);
-
-    WKTypeRef pageOverlayCopyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter);
-    WKArrayRef pageOverlayCopyAccessibilityAttributesNames(bool parameterizedNames);
 
     PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
@@ -1280,8 +1271,6 @@ private:
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
-
-    PageOverlayController m_pageOverlayController;
 };
 
 } // namespace WebKit

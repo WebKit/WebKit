@@ -28,21 +28,21 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "PageOverlay.h"
-
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorForwarding.h>
+#include <WebCore/PageOverlay.h>
 
 namespace WebCore {
 class GraphicsContext;
 class IntRect;
+class PageOverlay;
 }
 
 namespace WebKit {
 
 class WebPage;
 
-class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel, private PageOverlay::Client {
+class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel, private WebCore::PageOverlay::Client {
 public:
     WebInspectorClient(WebPage* page)
         : m_page(page)
@@ -73,14 +73,14 @@ private:
     virtual bool supportsFrameInstrumentation();
 
     // PageOverlay::Client
-    virtual void pageOverlayDestroyed(PageOverlay*) override;
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&) override;
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
+    virtual void pageOverlayDestroyed(WebCore::PageOverlay&) override;
+    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect&) override;
+    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
 
     WebPage* m_page;
-    PageOverlay* m_highlightOverlay;
+    WebCore::PageOverlay* m_highlightOverlay;
 };
 
 } // namespace WebKit

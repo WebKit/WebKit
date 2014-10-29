@@ -300,6 +300,7 @@ public:
 
     // Pass 0 as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) = 0;
+    virtual void attachViewOverlayGraphicsLayer(Frame*, GraphicsLayer*) = 0;
     // Sets a flag to specify that the next time content is drawn to the window,
     // the changes appear on the screen in synchrony with updates to GraphicsLayers.
     virtual void setNeedsOneShotDrawingSynchronization() = 0;
@@ -309,8 +310,6 @@ public:
     // Returns whether or not the client can render the composited layer,
     // regardless of the settings.
     virtual bool allowsAcceleratedCompositing() const { return true; }
-    // Supply a layer that will added as an overlay over other document layers (scrolling with the document).
-    virtual GraphicsLayer* documentOverlayLayerForFrame(Frame&) { return nullptr; }
 
     enum CompositingTrigger {
         ThreeDTransformTrigger = 1 << 0,

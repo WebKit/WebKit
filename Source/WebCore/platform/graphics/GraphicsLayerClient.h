@@ -26,6 +26,8 @@
 #ifndef GraphicsLayerClient_h
 #define GraphicsLayerClient_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class FloatPoint;
@@ -62,7 +64,7 @@ public:
     virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) { }
     
     // Callback for when hardware-accelerated animation started.
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) = 0;
+    virtual void notifyAnimationStarted(const GraphicsLayer*, double /*time*/) { }
 
     // Notification that a layer property changed that requires a subsequent call to flushCompositingState()
     // to appear on the screen.

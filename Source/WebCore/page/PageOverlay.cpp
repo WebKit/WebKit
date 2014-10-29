@@ -26,31 +26,29 @@
 #include "config.h"
 #include "PageOverlay.h"
 
-#include "WebPage.h"
-#include "WebProcess.h"
-#include <WebCore/FrameView.h>
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/MainFrame.h>
-#include <WebCore/Page.h>
-#include <WebCore/ScrollbarTheme.h>
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "MainFrame.h"
+#include "Page.h"
+#include "PageOverlayController.h"
+#include "PlatformMouseEvent.h"
+#include "ScrollbarTheme.h"
 #include <wtf/CurrentTime.h>
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 static const double fadeAnimationDuration = 0.2;
 static const double fadeAnimationFrameRate = 30;
 
-PassRefPtr<PageOverlay> PageOverlay::create(Client* client, OverlayType overlayType)
+PassRefPtr<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayType)
 {
     return adoptRef(new PageOverlay(client, overlayType));
 }
 
-PageOverlay::PageOverlay(Client* client, OverlayType overlayType)
+PageOverlay::PageOverlay(Client& client, OverlayType overlayType)
     : m_client(client)
-    , m_webPage(nullptr)
-    , m_fadeAnimationTimer(RunLoop::main(), this, &PageOverlay::fadeAnimationTimerFired)
+    , m_page(nullptr)
+    , m_fadeAnimationTimer(this, &PageOverlay::fadeAnimationTimerFired)
     , m_fadeAnimationStartTime(0)
     , m_fadeAnimationDuration(fadeAnimationDuration)
     , m_fadeAnimationType(NoAnimation)
@@ -64,12 +62,22 @@ PageOverlay::~PageOverlay()
 {
 }
 
+PageOverlayController* PageOverlay::controller() const
+{
+    if (!m_page)
+        return nullptr;
+    return &m_page->mainFrame().pageOverlayController();
+}
+
 IntRect PageOverlay::bounds() const
 {
     if (!m_overrideFrame.isEmpty())
         return IntRect(IntPoint(), m_overrideFrame.size());
 
-    FrameView* frameView = m_webPage->mainFrameView();
+    FrameView* frameView = m_page->mainFrame().view();
+
+    if (!frameView)
+        return IntRect();
 
     switch (m_overlayType) {
     case OverlayType::View: {
@@ -107,8 +115,8 @@ void PageOverlay::setFrame(IntRect frame)
 
     m_overrideFrame = frame;
 
-    if (m_webPage)
-        m_webPage->pageOverlayController().didChangeOverlayFrame(*this);
+    if (auto pageOverlayController = controller())
+        pageOverlayController->didChangeOverlayFrame(*this);
 }
 
 void PageOverlay::setBackgroundColor(RGBA32 backgroundColor)
@@ -118,26 +126,25 @@ void PageOverlay::setBackgroundColor(RGBA32 backgroundColor)
 
     m_backgroundColor = backgroundColor;
 
-    if (m_webPage)
-        m_webPage->pageOverlayController().didChangeOverlayBackgroundColor(*this);
+    if (auto pageOverlayController = controller())
+        pageOverlayController->didChangeOverlayBackgroundColor(*this);
 }
 
-void PageOverlay::setPage(WebPage* webPage)
+void PageOverlay::setPage(Page* page)
 {
-    m_client->willMoveToWebPage(this, webPage);
-    m_webPage = webPage;
-    m_client->didMoveToWebPage(this, webPage);
+    m_client.willMoveToPage(*this, page);
+    m_page = page;
+    m_client.didMoveToPage(*this, page);
 
     m_fadeAnimationTimer.stop();
 }
 
 void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
-    if (!m_webPage)
-        return;
-
-    m_webPage->pageOverlayController().setPageOverlayOpacity(*this, m_fractionFadedIn);
-    m_webPage->pageOverlayController().setPageOverlayNeedsDisplay(*this, dirtyRect);
+    if (auto pageOverlayController = controller()) {
+        pageOverlayController->setPageOverlayOpacity(*this, m_fractionFadedIn);
+        pageOverlayController->setPageOverlayNeedsDisplay(*this, dirtyRect);
+    }
 }
 
 void PageOverlay::setNeedsDisplay()
@@ -153,36 +160,41 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
         return;
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
-    m_client->drawRect(this, graphicsContext, paintRect);
+    m_client.drawRect(*this, graphicsContext, paintRect);
 }
     
-bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
+bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint mousePositionInOverlayCoordinates(mouseEvent.position());
 
     if (m_overlayType == PageOverlay::OverlayType::Document)
-        mousePositionInOverlayCoordinates = m_webPage->corePage()->mainFrame().view()->rootViewToContents(mousePositionInOverlayCoordinates);
+        mousePositionInOverlayCoordinates = m_page->mainFrame().view()->rootViewToContents(mousePositionInOverlayCoordinates);
 
     // Ignore events outside the bounds.
     if (!bounds().contains(mousePositionInOverlayCoordinates))
         return false;
 
-    return m_client->mouseEvent(this, mouseEvent);
+    return m_client.mouseEvent(*this, mouseEvent);
 }
 
-void PageOverlay::didScrollFrame(Frame* frame)
+void PageOverlay::didScrollFrame(Frame& frame)
 {
-    m_client->didScrollFrame(this, frame);
+    m_client.didScrollFrame(*this, frame);
 }
 
-WKTypeRef PageOverlay::copyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter)
+bool PageOverlay::copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint parameter, String& value)
 {
-    return m_client->copyAccessibilityAttributeValue(this, attribute, parameter);
+    return m_client.copyAccessibilityAttributeStringValueForPoint(*this, attribute, parameter, value);
 }
 
-WKArrayRef PageOverlay::copyAccessibilityAttributeNames(bool parameterizedNames)
+bool PageOverlay::copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint parameter, bool& value)
 {
-    return m_client->copyAccessibilityAttributeNames(this, parameterizedNames);
+    return m_client.copyAccessibilityAttributeBoolValueForPoint(*this, attribute, parameter, value);
+}
+
+Vector<String> PageOverlay::copyAccessibilityAttributeNames(bool parameterizedNames)
+{
+    return m_client.copyAccessibilityAttributeNames(*this, parameterizedNames);
 }
 
 void PageOverlay::startFadeInAnimation()
@@ -213,7 +225,7 @@ void PageOverlay::startFadeAnimation()
     m_fadeAnimationTimer.startRepeating(1 / fadeAnimationFrameRate);
 }
 
-void PageOverlay::fadeAnimationTimerFired()
+void PageOverlay::fadeAnimationTimerFired(Timer<PageOverlay>&)
 {
     float animationProgress = (currentTime() - m_fadeAnimationStartTime) / m_fadeAnimationDuration;
 
@@ -224,7 +236,7 @@ void PageOverlay::fadeAnimationTimerFired()
     float fadeAnimationValue = sine * sine;
 
     m_fractionFadedIn = (m_fadeAnimationType == FadeInAnimation) ? fadeAnimationValue : 1 - fadeAnimationValue;
-    m_webPage->pageOverlayController().setPageOverlayOpacity(*this, m_fractionFadedIn);
+    controller()->setPageOverlayOpacity(*this, m_fractionFadedIn);
 
     if (animationProgress == 1.0) {
         m_fadeAnimationTimer.stop();
@@ -234,18 +246,19 @@ void PageOverlay::fadeAnimationTimerFired()
 
         // If this was a fade out, go ahead and uninstall the page overlay.
         if (wasFadingOut)
-            m_webPage->uninstallPageOverlay(this, PageOverlay::FadeMode::DoNotFade);
+            controller()->uninstallPageOverlay(this, PageOverlay::FadeMode::DoNotFade);
     }
 }
 
 void PageOverlay::clear()
 {
-    m_webPage->pageOverlayController().clearPageOverlay(*this);
+    if (auto pageOverlayController = controller())
+        pageOverlayController->clearPageOverlay(*this);
 }
 
-WebCore::GraphicsLayer* PageOverlay::layer()
+GraphicsLayer& PageOverlay::layer()
 {
-    return m_webPage->pageOverlayController().layerForOverlay(*this);
+    return controller()->layerForOverlay(*this);
 }
 
 } // namespace WebKit

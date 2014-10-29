@@ -2315,7 +2315,7 @@ void RenderLayer::scrollTo(int x, int y)
 
     InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())
-        frame.loader().client().didChangeScrollOffset();
+        view.frameView().didChangeScrollOffset();
 
     view.frameView().resumeVisibleImageAnimationsIncludingSubframes();
 }

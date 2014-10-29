@@ -45,6 +45,7 @@
 #include "MainFrame.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PageOverlayController.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
@@ -643,7 +644,8 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerC
 
 bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const
 {
-    return m_compositedLayerCount > (rootLayer.isComposited() ? 1 : 0);
+    int layerCount = m_compositedLayerCount + m_renderView.frame().mainFrame().pageOverlayController().overlayCount();
+    return layerCount > (rootLayer.isComposited() ? 1 : 0);
 }
 
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
@@ -660,7 +662,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (m_renderView.needsLayout())
         return;
 
-    if (m_forceCompositingMode && !m_compositing)
+    if ((m_forceCompositingMode || m_renderView.frame().mainFrame().pageOverlayController().overlayCount()) && !m_compositing)
         enableCompositingMode(true);
 
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
@@ -743,7 +745,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         // Host the document layer in the RenderView's root layer.
         if (isFullUpdate) {
-            appendOverlayLayers(childList);
+            appendDocumentOverlayLayers(childList);
             // Even when childList is empty, don't drop out of compositing mode if there are
             // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
             if (childList.isEmpty() && !hasAnyAdditionalCompositedLayers(*updateRoot))
@@ -779,15 +781,19 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     InspectorInstrumentation::layerTreeDidChange(page());
 }
 
-void RenderLayerCompositor::appendOverlayLayers(Vector<GraphicsLayer*>& childList)
+void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& childList)
 {
     Frame& frame = m_renderView.frameView().frame();
+    if (!frame.isMainFrame())
+        return;
+
     Page* page = frame.page();
     if (!page)
         return;
 
-    if (GraphicsLayer* overlayLayer = page->chrome().client().documentOverlayLayerForFrame(frame))
-        childList.append(overlayLayer);
+    PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
+    pageOverlayController.willAttachRootLayer();
+    childList.append(&pageOverlayController.documentOverlayRootLayer());
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
@@ -3369,6 +3375,11 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
                 return;
 
             page->chrome().client().attachRootGraphicsLayer(&frame, rootGraphicsLayer());
+            if (frame.isMainFrame()) {
+                PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
+                pageOverlayController.willAttachRootLayer();
+                page->chrome().client().attachViewOverlayGraphicsLayer(&frame, &pageOverlayController.viewOverlayRootLayer());
+            }
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -3413,6 +3424,8 @@ void RenderLayerCompositor::detachRootLayer()
             return;
 
         page->chrome().client().attachRootGraphicsLayer(&frame, 0);
+        if (frame.isMainFrame())
+            page->chrome().client().attachViewOverlayGraphicsLayer(&frame, 0);
     }
     break;
     case RootLayerUnattached:
@@ -3447,8 +3460,12 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (!page)
         return;
 
-    if (GraphicsLayer* overlayLayer = page->chrome().client().documentOverlayLayerForFrame(frame))
-        m_rootContentLayer->addChild(overlayLayer);
+    if (!frame.isMainFrame())
+        return;
+
+    PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
+    pageOverlayController.willAttachRootLayer();
+    m_rootContentLayer->addChild(&pageOverlayController.documentOverlayRootLayer());
 }
 
 // IFrames are special, because we hook compositing layers together across iframe boundaries

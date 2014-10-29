@@ -924,6 +924,11 @@ void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graph
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void WebChromeClient::attachViewOverlayGraphicsLayer(Frame*, GraphicsLayer*)
+{
+    // FIXME: If we want view-relative page overlays in Legacy WebKit, this would be the place to hook them up.
+}
+
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

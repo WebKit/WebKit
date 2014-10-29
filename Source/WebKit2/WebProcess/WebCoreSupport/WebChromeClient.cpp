@@ -806,7 +806,9 @@ PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebC
 
 GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 {
-    return m_page->drawingArea()->graphicsLayerFactory();
+    if (auto drawingArea = m_page->drawingArea())
+        return drawingArea->graphicsLayerFactory();
+    return nullptr;
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
@@ -824,12 +826,10 @@ void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* layer)
         m_page->exitAcceleratedCompositingMode();
 }
 
-GraphicsLayer* WebChromeClient::documentOverlayLayerForFrame(Frame& frame)
+void WebChromeClient::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
-    if (&frame == &m_page->corePage()->mainFrame())
-        return m_page->pageOverlayController().documentOverlayRootLayer();
-
-    return nullptr;
+    if (auto drawingArea = m_page->drawingArea())
+        drawingArea->attachViewOverlayGraphicsLayer(frame, graphicsLayer);
 }
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()

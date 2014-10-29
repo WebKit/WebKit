@@ -36,6 +36,7 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
+#import <WebCore/PageOverlayController.h>
 
 using namespace WebCore;
 
@@ -52,12 +53,12 @@ static Color highlightColor()
 
 namespace WebKit {
 
-void FindIndicatorOverlayClientIOS::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& context, const WebCore::IntRect& dirtyRect)
+void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {
     // FIXME: Support multiple text rects.
 
-    IntRect overlayFrame = overlay->frame();
-    IntRect overlayBounds = overlay->bounds();
+    IntRect overlayFrame = overlay.frame();
+    IntRect overlayBounds = overlay.bounds();
 
     {
         GraphicsContextStateSaver stateSaver(context);
@@ -85,11 +86,11 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
     matchRect.inflateY(totalVerticalMargin);
 
     if (m_findIndicatorOverlay)
-        m_webPage->uninstallPageOverlay(m_findIndicatorOverlay.get());
+        m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findIndicatorOverlay.get(), PageOverlay::FadeMode::DoNotFade);
 
     m_findIndicatorOverlayClient = std::make_unique<FindIndicatorOverlayClientIOS>(selectedFrame);
-    m_findIndicatorOverlay = PageOverlay::create(m_findIndicatorOverlayClient.get(), PageOverlay::OverlayType::Document);
-    m_webPage->installPageOverlay(m_findIndicatorOverlay);
+    m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
+    m_webPage->mainFrame()->pageOverlayController().installPageOverlay(m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
 
     m_findIndicatorOverlay->setFrame(matchRect);
     m_findIndicatorOverlay->setNeedsDisplay();
@@ -106,7 +107,7 @@ void FindController::hideFindIndicator()
     if (!m_isShowingFindIndicator)
         return;
 
-    m_webPage->uninstallPageOverlay(m_findIndicatorOverlay.get());
+    m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findIndicatorOverlay.get(), PageOverlay::FadeMode::DoNotFade);
     m_findIndicatorOverlay = nullptr;
     m_isShowingFindIndicator = false;
     m_foundStringMatchIndex = -1;

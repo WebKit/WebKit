@@ -28,9 +28,9 @@
 
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 
-#include "PageOverlay.h"
 #include "WebFrame.h"
 #include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/PageOverlay.h>
 #include <WebCore/Range.h>
 #include <WebCore/Timer.h>
 #include <wtf/RefCounted.h>
@@ -39,7 +39,6 @@ typedef void* DDHighlightRef;
 
 namespace WebCore {
 class LayoutRect;
-
 struct GapRects;
 }
 
@@ -47,7 +46,7 @@ namespace WebKit {
 
 class WebPage;
 
-class ServicesOverlayController : private PageOverlay::Client {
+class ServicesOverlayController : private WebCore::PageOverlay::Client {
 public:
     ServicesOverlayController(WebPage&);
     ~ServicesOverlayController();
@@ -99,12 +98,12 @@ private:
     };
 
     // PageOverlay::Client
-    virtual void pageOverlayDestroyed(PageOverlay*) override;
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
-    virtual void didScrollFrame(PageOverlay*, WebCore::Frame*) override;
+    virtual void pageOverlayDestroyed(WebCore::PageOverlay&) override;
+    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
+    virtual void didScrollFrame(WebCore::PageOverlay&, WebCore::Frame&) override;
 
     void createOverlayIfNeeded();
     void handleClick(const WebCore::IntPoint&, Highlight&);
@@ -140,7 +139,7 @@ private:
     WebPage& webPage() const { return m_webPage; }
 
     WebPage& m_webPage;
-    PageOverlay* m_servicesOverlay;
+    WebCore::PageOverlay* m_servicesOverlay;
 
     RefPtr<Highlight> m_activeHighlight;
     RefPtr<Highlight> m_nextActiveHighlight;

@@ -40,6 +40,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
@@ -66,6 +67,8 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_hadFlushDeferredWhileWaitingForBackingStoreSwap(false)
     , m_displayRefreshMonitorsToNotify(nullptr)
     , m_currentTransactionID(0)
+    , m_contentLayer(nullptr)
+    , m_viewOverlayRootLayer(nullptr)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)
@@ -113,15 +116,31 @@ void RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor(DisplayRefresh
         m_displayRefreshMonitorsToNotify->remove(remoteMonitor);
 }
 
-void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
+void RemoteLayerTreeDrawingArea::updateRootLayers()
 {
     Vector<GraphicsLayer*> children;
-    if (rootLayer) {
-        children.append(rootLayer);
-        children.append(m_webPage.pageOverlayController().viewOverlayRootLayer());
+    if (m_contentLayer) {
+        children.append(m_contentLayer);
+        if (m_viewOverlayRootLayer)
+            children.append(m_viewOverlayRootLayer);
     }
-    m_rootLayer->setChildren(children);
 
+    m_rootLayer->setChildren(children);
+}
+
+void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)
+{
+    if (!frame->isMainFrame())
+        return;
+
+    m_viewOverlayRootLayer = viewOverlayRootLayer;
+    updateRootLayers();
+}
+
+void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
+{
+    m_contentLayer = rootLayer;
+    updateRootLayers();
     scheduleCompositingLayerFlush();
 }
 
@@ -229,8 +248,6 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 #endif
 
     frameView->setExposedRect(m_scrolledExposedRect);
-
-    m_webPage.pageOverlayController().didChangeExposedRect();
 }
 
 TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
@@ -316,8 +333,13 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
     visibleRect.intersect(m_scrolledExposedRect);
-    m_webPage.pageOverlayController().flushPageOverlayLayers(visibleRect);
+
     m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
+
+    // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
+    if (m_viewOverlayRootLayer)
+        m_viewOverlayRootLayer->flushCompositingState(visibleRect);
+
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 
     // FIXME: Minimize these transactions if nothing changed.
@@ -405,7 +427,6 @@ void RemoteLayerTreeDrawingArea::didUpdate()
 void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& contentsSize)
 {
     m_rootLayer->setSize(contentsSize);
-    m_webPage.pageOverlayController().didChangeDocumentSize();
 }
 
 bool RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible()

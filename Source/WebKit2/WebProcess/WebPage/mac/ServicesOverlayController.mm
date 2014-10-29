@@ -42,6 +42,7 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformCAAnimationMac.h>
 #import <WebCore/SoftLinking.h>
 
@@ -225,23 +226,23 @@ ServicesOverlayController::~ServicesOverlayController()
         highlight->invalidate();
 }
 
-void ServicesOverlayController::pageOverlayDestroyed(PageOverlay*)
+void ServicesOverlayController::pageOverlayDestroyed(PageOverlay&)
 {
     // Before the overlay is destroyed, it should have moved out of the WebPage,
     // at which point we already cleared our back pointer.
     ASSERT(!m_servicesOverlay);
 }
 
-void ServicesOverlayController::willMoveToWebPage(PageOverlay*, WebPage* webPage)
+void ServicesOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {
-    if (webPage)
+    if (page)
         return;
 
     ASSERT(m_servicesOverlay);
     m_servicesOverlay = nullptr;
 }
 
-void ServicesOverlayController::didMoveToWebPage(PageOverlay*, WebPage*)
+void ServicesOverlayController::didMoveToPage(PageOverlay&, Page*)
 {
 }
 
@@ -447,7 +448,7 @@ void ServicesOverlayController::determineActiveHighlightTimerFired(Timer<Service
     determineActiveHighlight(mouseIsOverButton);
 }
 
-void ServicesOverlayController::drawRect(PageOverlay* overlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+void ServicesOverlayController::drawRect(PageOverlay& overlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
 }
 
@@ -583,7 +584,7 @@ void ServicesOverlayController::didRebuildPotentialHighlights()
 {
     if (m_potentialHighlights.isEmpty()) {
         if (m_servicesOverlay)
-            m_webPage.uninstallPageOverlay(m_servicesOverlay);
+            m_webPage.mainFrame()->pageOverlayController().uninstallPageOverlay(m_servicesOverlay, PageOverlay::FadeMode::DoNotFade);
         return;
     }
 
@@ -601,9 +602,9 @@ void ServicesOverlayController::createOverlayIfNeeded()
     if (m_servicesOverlay)
         return;
 
-    RefPtr<PageOverlay> overlay = PageOverlay::create(this, PageOverlay::OverlayType::Document);
+    RefPtr<PageOverlay> overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
     m_servicesOverlay = overlay.get();
-    m_webPage.installPageOverlay(overlay.release(), PageOverlay::FadeMode::DoNotFade);
+    m_webPage.mainFrame()->pageOverlayController().installPageOverlay(overlay.release(), PageOverlay::FadeMode::DoNotFade);
 }
 
 Vector<RefPtr<Range>> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
@@ -717,13 +718,13 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
         m_activeHighlight = m_nextActiveHighlight.release();
 
         if (m_activeHighlight) {
-            m_servicesOverlay->layer()->addChild(m_activeHighlight->layer());
+            m_servicesOverlay->layer().addChild(m_activeHighlight->layer());
             m_activeHighlight->fadeIn();
         }
     }
 }
 
-bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& event)
+bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 {
     m_mousePosition = m_webPage.corePage()->mainFrame().view()->rootViewToContents(event.position());
 
@@ -731,13 +732,13 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
     determineActiveHighlight(mouseIsOverActiveHighlightButton);
 
     // Cancel the potential click if any button other than the left button changes state, and ignore the event.
-    if (event.button() != WebMouseEvent::LeftButton) {
+    if (event.button() != MouseButton::LeftButton) {
         m_currentMouseDownOnButtonHighlight = nullptr;
         return false;
     }
 
     // If the mouse lifted while still over the highlight button that it went down on, then that is a click.
-    if (event.type() == WebEvent::MouseUp) {
+    if (event.type() == PlatformEvent::MouseReleased) {
         RefPtr<Highlight> mouseDownHighlight = m_currentMouseDownOnButtonHighlight;
         m_currentMouseDownOnButtonHighlight = nullptr;
 
@@ -752,7 +753,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
     }
 
     // If the mouse moved outside of the button tracking a potential click, stop tracking the click.
-    if (event.type() == WebEvent::MouseMove) {
+    if (event.type() == PlatformEvent::MouseMoved) {
         if (m_currentMouseDownOnButtonHighlight && mouseIsOverActiveHighlightButton)
             return true;
 
@@ -761,7 +762,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
     }
 
     // If the mouse went down over the active highlight's button, track this as a potential click.
-    if (event.type() == WebEvent::MouseDown) {
+    if (event.type() == PlatformEvent::MousePressed) {
         if (m_activeHighlight && mouseIsOverActiveHighlightButton) {
             m_currentMouseDownOnButtonHighlight = m_activeHighlight;
             return true;
@@ -773,9 +774,9 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
     return false;
 }
 
-void ServicesOverlayController::didScrollFrame(PageOverlay*, Frame* frame)
+void ServicesOverlayController::didScrollFrame(PageOverlay&, Frame& frame)
 {
-    if (frame->isMainFrame())
+    if (frame.isMainFrame())
         return;
 
     buildPhoneNumberHighlights();

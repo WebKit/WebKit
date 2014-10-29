@@ -44,6 +44,7 @@ class MessageDecoder;
 
 namespace WebCore {
 class DisplayRefreshMonitor;
+class Frame;
 class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
@@ -119,6 +120,8 @@ public:
     virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
 
     virtual bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) { return false; }
+
+    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) { }
 
 protected:
     DrawingArea(DrawingAreaType, WebPage&);

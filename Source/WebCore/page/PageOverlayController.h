@@ -26,74 +26,76 @@
 #ifndef PageOverlayController_h
 #define PageOverlayController_h
 
+#include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
-#include "WKBase.h"
-#include <WebCore/GraphicsLayerClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
 class Frame;
-}
+class MainFrame;
+class Page;
+class PlatformMouseEvent;
 
-namespace WebKit {
-
-class WebMouseEvent;
-class WebPage;
-
-class PageOverlayController : public WebCore::GraphicsLayerClient {
+class PageOverlayController final : public GraphicsLayerClient {
+    WTF_MAKE_NONCOPYABLE(PageOverlayController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageOverlayController(WebPage&);
+    PageOverlayController(MainFrame&);
+    virtual ~PageOverlayController();
 
-    void initialize();
-
-    WebCore::GraphicsLayer* documentOverlayRootLayer() const { return m_documentOverlayRootLayer.get(); }
-    WebCore::GraphicsLayer* viewOverlayRootLayer() const { return m_viewOverlayRootLayer.get(); }
+    GraphicsLayer& documentOverlayRootLayer();
+    GraphicsLayer& viewOverlayRootLayer();
 
     void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
     void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
 
-    void setPageOverlayNeedsDisplay(PageOverlay&, const WebCore::IntRect&);
+    void setPageOverlayNeedsDisplay(PageOverlay&, const IntRect&);
     void setPageOverlayOpacity(PageOverlay&, float);
     void clearPageOverlay(PageOverlay&);
-    WebCore::GraphicsLayer* layerForOverlay(PageOverlay&) const;
+    GraphicsLayer& layerForOverlay(PageOverlay&) const;
+
+    void willAttachRootLayer();
 
     void didChangeViewSize();
     void didChangeDocumentSize();
-    void didChangePreferences();
+    void didChangeSettings();
     void didChangeDeviceScaleFactor();
     void didChangeExposedRect();
-    void didScrollFrame(WebCore::Frame*);
+    void didScrollFrame(Frame&);
 
     void didChangeOverlayFrame(PageOverlay&);
     void didChangeOverlayBackgroundColor(PageOverlay&);
 
-    void flushPageOverlayLayers(WebCore::FloatRect);
+    int overlayCount() const { return m_overlayGraphicsLayers.size(); }
 
-    bool handleMouseEvent(const WebMouseEvent&);
+    bool handleMouseEvent(const PlatformMouseEvent&);
 
-    // FIXME: We shouldn't use API types here.
-    WKTypeRef copyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter);
-    WKArrayRef copyAccessibilityAttributesNames(bool parameterizedNames);
+    bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint, String& value);
+    bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint, bool& value);
+    Vector<String> copyAccessibilityAttributesNames(bool parameterizedNames);
 
 private:
-    void updateSettingsForLayer(WebCore::GraphicsLayer&);
+    void createRootLayersIfNeeded();
+
+    void updateSettingsForLayer(GraphicsLayer&);
     void updateForceSynchronousScrollLayerPositionUpdates();
 
-    // WebCore::GraphicsLayerClient
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double) override { }
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
+    // GraphicsLayerClient
+    virtual void notifyFlushRequired(const GraphicsLayer*) override;
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
     virtual float deviceScaleFactor() const override;
-    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const override { }
-    virtual bool shouldSkipLayerInDump(const WebCore::GraphicsLayer*) const override { return true; }
+    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const override { return true; }
 
-    std::unique_ptr<WebCore::GraphicsLayer> m_documentOverlayRootLayer;
-    std::unique_ptr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
-    HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> m_overlayGraphicsLayers;
+    std::unique_ptr<GraphicsLayer> m_documentOverlayRootLayer;
+    std::unique_ptr<GraphicsLayer> m_viewOverlayRootLayer;
+    bool m_initialized;
+
+    HashMap<PageOverlay*, std::unique_ptr<GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<RefPtr<PageOverlay>> m_pageOverlays;
-    WebPage& m_webPage;
+    MainFrame& m_mainFrame;
 };
 
 } // namespace WebKit
