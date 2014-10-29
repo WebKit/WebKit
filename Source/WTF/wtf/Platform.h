@@ -1043,6 +1043,12 @@
 #define WTF_USE_ASYNC_NSTEXTINPUTCLIENT 1
 #endif
 
+#if PLATFORM(COCOA)
+#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
+#define WTF_USE_APPLE_INTERNAL_SDK 1
+#endif
+#endif
+
 #if (OS(DARWIN) && USE(CG)) || USE(FREETYPE) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
 #undef ENABLE_OPENTYPE_MATH
 #define ENABLE_OPENTYPE_MATH 1
