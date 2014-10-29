@@ -1,5 +1,18 @@
 2014-10-29  Jer Noble  <jer.noble@apple.com>
 
+        [EME] NULL-dereference crash in MediaKeys::setMediaElement().
+        https://bugs.webkit.org/show_bug.cgi?id=138177
+
+        Reviewed by Eric Carlson.
+
+        NULL-check m_mediaElement->player() before using. It may have been cleared if the HTMLMediaElement
+        has previously had stop() called.
+
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::setMediaElement):
+
+2014-10-29  Jer Noble  <jer.noble@apple.com>
+
         [EME] MediaKeySession resources persist across page reloads
         https://bugs.webkit.org/show_bug.cgi?id=138176
 
