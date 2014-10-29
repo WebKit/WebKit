@@ -276,10 +276,10 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
     return font;
 }
 
-+ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
++ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size shouldAutoActivateIfNeeded:(BOOL)shouldAutoActivateIfNeeded
 {
     NSFont *font = [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
-    if (font)
+    if (font || !shouldAutoActivateIfNeeded)
         return font;
 
     // Auto activate the font before looking for it a second time.
@@ -289,10 +289,15 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
     return [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
 }
 
++ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size
+{
+    return [self fontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size shouldAutoActivateIfNeeded:YES];
+}
+
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     int desiredWeight = (desiredTraits & NSBoldFontMask) ? 9 : 5;
-    return [self fontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
+    return [self fontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size shouldAutoActivateIfNeeded:YES];
 }
 
 @end

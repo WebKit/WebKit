@@ -29,6 +29,7 @@
 
 // This interface exists so that third party products (like Silk) can patch in to an Obj-C method to manipulate WebKit's font caching/substitution.
 @interface WebFontCache : NSObject
++ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size shouldAutoActivateIfNeeded:(BOOL)shouldAutoActivateIfNeeded;
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits weight:(int)desiredWeight size:(float)size;
 + (void)getTraits:(Vector<unsigned>&)traitsMasks inFamily:(NSString *)desiredFamily;
 
