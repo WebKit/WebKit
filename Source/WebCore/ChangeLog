@@ -1,5 +1,43 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174456. <rdar://problem/18640864>
+
+    2014-10-08  Christophe Dumez  <cdumez@apple.com>
+    
+            [Mac] We are spending a lot of time loading fonts when loading weather.com
+            https://bugs.webkit.org/show_bug.cgi?id=137454
+    
+            Reviewed by Darin Adler.
+    
+            We are spending a lot of time loading fonts when loading weather.com:
+            ~4.2% of WebProcess's cpu time in FontCache::getCachedFrontData().
+            In particular, we are spending a lot of time doing font auto-activation
+            because we don't have the Open Sans fonts installed and weather.com is
+            trying to load those.
+    
+            Before this patch, we were doing font auto-activation ~250 times when
+            loading weather.com, even though the site is loading ~10 distinct font
+            families.
+    
+            This patch adds a cache of font families we already tried to
+            auto-activate so that we don't try again. This results in ~10 font
+            auto-activations when loading weather.com instead of 250. It reduces
+            the amount of time spent in getCachedFrontData() to 62.6ms from 276ms
+            (4.4x less) when loading weather.com.
+    
+            No new tests, no behavior change.
+    
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::shouldAutoActivateFontIfNeeded):
+            (WebCore::FontCache::createFontPlatformData):
+            * platform/mac/WebFontCache.h:
+            * platform/mac/WebFontCache.mm:
+            (+[WebFontCache fontWithFamily:traits:weight:size:shouldAutoActivateIfNeeded:]):
+            (+[WebFontCache fontWithFamily:traits:weight:size:]):
+            (+[WebFontCache fontWithFamily:traits:size:]):
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174190. <rdar://problem/18640846>
 
     2014-10-01  Chris Dumez  <cdumez@apple.com>
