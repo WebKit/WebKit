@@ -1,3 +1,21 @@
+2014-10-28  Daniel Bates  <dabates@apple.com>
+
+        Unify logic in RunTests.run() to run the Python unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=138160
+
+        Reviewed by Martin Robinson.
+
+        Unify the interactive and non-interactive code path for running the Python unit tests
+        in step RunTests so as to remove duplicate code to compute the the path to the script
+        test-webkitpy and log an informative message ("Running Python unit tests") to the console.
+
+        No new tests since no functionality was changed.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.python_unittest_results_directory):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
 2014-10-28  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Make runtest.py call test-webkitpy with the --json flag when in
