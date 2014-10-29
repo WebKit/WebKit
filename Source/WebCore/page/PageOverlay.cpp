@@ -168,7 +168,7 @@ bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
     IntPoint mousePositionInOverlayCoordinates(mouseEvent.position());
 
     if (m_overlayType == PageOverlay::OverlayType::Document)
-        mousePositionInOverlayCoordinates = m_page->mainFrame().view()->rootViewToContents(mousePositionInOverlayCoordinates);
+        mousePositionInOverlayCoordinates = m_page->mainFrame().view()->windowToContents(mousePositionInOverlayCoordinates);
 
     // Ignore events outside the bounds.
     if (!bounds().contains(mousePositionInOverlayCoordinates))

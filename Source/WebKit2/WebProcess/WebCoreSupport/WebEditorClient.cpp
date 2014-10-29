@@ -27,7 +27,6 @@
 #include "WebEditorClient.h"
 
 #include "EditorState.h"
-#include "ServicesOverlayController.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -530,21 +529,5 @@ bool WebEditorClient::supportsGlobalSelection()
     return false;
 #endif
 }
-
-#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
-void WebEditorClient::selectedTelephoneNumberRangesChanged()
-{
-#if PLATFORM(MAC)
-    m_page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
-#endif
-}
-void WebEditorClient::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects, bool isTextOnly)
-{
-#if PLATFORM(MAC)
-    if (m_page->serviceControlsEnabled())
-        m_page->servicesOverlayController().selectionRectsDidChange(rects, gapRects, isTextOnly);
-#endif
-}
-#endif // ENABLE(SERVICE_CONTROLS) && ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 } // namespace WebKit

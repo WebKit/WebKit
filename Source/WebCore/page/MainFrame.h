@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace WebCore {
 
 class PageOverlayController;
+class ServicesOverlayController;
 
 class MainFrame final : public Frame {
 public:
@@ -42,12 +43,20 @@ public:
 
     PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
 
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
+#endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+
 private:
     MainFrame(Page&, FrameLoaderClient&);
 
     void dropChildren();
 
     unsigned m_selfOnlyRefCount;
+    
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
+#endif
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
 };
 

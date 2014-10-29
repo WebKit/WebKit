@@ -433,6 +433,14 @@ public:
     virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
 #endif
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
+    virtual void handleTelephoneNumberClick(const String&, const WebCore::IntPoint&) { }
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    virtual void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>&, const WebCore::IntPoint&) { }
+    virtual bool hasRelevantSelectionServices(bool /* isTextOnly */) const { return false; }
+#endif
+
 protected:
     virtual ~ChromeClient() { }
 };
