@@ -197,6 +197,11 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     _context->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).get(), host);
 }
 
+- (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
+{
+    _context->setCanHandleHTTPSServerTrustEvaluation(value);
+}
+
 static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAcceptPolicy policy)
 {
     switch (static_cast<NSUInteger>(policy)) {
