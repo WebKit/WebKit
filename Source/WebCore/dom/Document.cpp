@@ -3304,6 +3304,12 @@ void Document::updateIsPlayingAudio()
         page()->updateIsPlayingAudio();
 }
 
+void Document::setMuted(bool muted)
+{
+    for (auto audioProducer : m_audioProducers)
+        audioProducer->setMuted(muted);
+}
+
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 {
     if (m_optimizedStyleSheetUpdateTimer.isActive())

@@ -1211,6 +1211,12 @@ void Page::updateIsPlayingAudio()
     chrome().client().isPlayingAudioDidChange(m_isPlayingAudio);
 }
 
+void Page::setMuted(bool muted)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+        frame->document()->setMuted(muted);
+}
+
 #if !ASSERT_DISABLED
 void Page::checkSubframeCountConsistency() const
 {

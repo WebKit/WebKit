@@ -1292,6 +1292,7 @@ public:
     void removeAudioProducer(AudioProducer*);
     bool isPlayingAudio() const { return m_isPlayingAudio; }
     void updateIsPlayingAudio();
+    void setMuted(bool);
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };

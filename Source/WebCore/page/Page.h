@@ -438,6 +438,7 @@ public:
 
     bool isPlayingAudio() const { return m_isPlayingAudio; }
     void updateIsPlayingAudio();
+    void setMuted(bool);
 
 private:
     WEBCORE_EXPORT void initGroup();
