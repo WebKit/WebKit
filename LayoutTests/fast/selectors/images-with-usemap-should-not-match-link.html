@@ -26,6 +26,7 @@ description('WebKit had a bug where &lt;img&gt; tag would get a link status when
 var testCaseCount = document.querySelectorAll('testcases img').length;
 for (var i = 0; i < testCaseCount; ++i) {
     shouldBeFalse('document.querySelectorAll("testcases img")[' + i + '].matches(":link")');
+    shouldBeFalse('document.querySelectorAll("testcases img")[' + i + '].matches(":any-link")');
     shouldBeFalse('document.querySelectorAll("testcases img")[' + i + '].matches(":-webkit-any-link")');
 }
 </script>

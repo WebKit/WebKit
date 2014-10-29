@@ -61,6 +61,7 @@ testSelectorRoundTrip('a > b');
 debug('');
 
 testSelectorRoundTrip(":active");
+testSelectorRoundTrip(":any-link");
 testSelectorRoundTrip(":checked");
 testSelectorRoundTrip(":disabled");
 testSelectorRoundTrip(":empty");
@@ -235,6 +236,13 @@ testSelectorRoundTrip(':-webkit-any(input[type="file"],a:hover,button:focus)');
 testSelectorRoundTrip(':-webkit-any(.class1.class2.class3)');
 testSelectorRoundTrip(':-webkit-any(.class1:hover)');
 testSelectorRoundTrip(':-webkit-any(a.class1.class2.class3:hover)');
+testSelectorRoundTrip('a:any-link');
+testSelectorRoundTrip('a :any-link');
+testSelectorRoundTrip('div:any-link');
+testSelectorRoundTrip('div :any-link');
+testSelectorRoundTrip(':any-link > div');
+testSelectorRoundTrip(':any-link + div');
+testSelectorRoundTrip(':not(:any-link)');
 
 debug('');
 

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<style>
+a, area {
+    display: block;
+    height: 10px;
+    width: 10px;
+
+    background-color: white;
+}
+:any-link {
+    display: block;
+    height:20px;
+    width:20px;
+    background-color: green;
+    fill: green;
+}
+</style>
+</head>
+<body>
+    <a></a>
+
+    <a href></a>
+    <a href=""></a>
+    <a href="a"></a>
+    <a href="http://www.webkit.org"></a>
+
+    <!-- Case sensitivity of the attribute name -->
+    <a Href></a>
+    <a HREF=""></a>
+    <a hreF="a"></a>
+    <a hReF="http://www.webkit.org"></a>
+
+    <area><!-- No href -> not a link. -->
+
+    <area href>
+    <area href="">
+    <area href="http://www.webkit.org">
+    <area HREF="http://www.webkit.org">
+    <map name="image-map-2">
+        <area>
+        <area href>
+        <area href="">
+        <area href="http://www.webkit.org">
+        <area HREF="http://www.webkit.org">
+    </map>
+
+    <svg viewBox="0 0 100 100" style="width: 100px; height: 100px; stroke: black; position: absolute; left: 100px; top: 15px">
+        <a xlink:href="http://www.webkit.org"><text x="5" y="15" stroke-width=0>good</text></a>
+        <a href="http://www.webkit.org"><text x="5" y="30" stroke-width=0>bad</text></a>
+        <a xlink:href><text x="5" y="45" stroke-width=0>good</text></a>
+    </svg>
+
+</body>
+</html>

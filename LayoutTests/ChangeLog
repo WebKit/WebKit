@@ -1,3 +1,53 @@
+2014-10-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS4 Selectors: Add the pseudo class :any-link
+        https://bugs.webkit.org/show_bug.cgi?id=138128
+
+        Reviewed by Andreas Kling.
+
+        Story time: I implement only half of the patch and run
+        fast/selectors/webkit-any-link.html to make sure it fails...
+        and the test happily PASS.
+
+        I look into it and sure enough, a last minute change in
+        html-link-type-tests.js made it test nothing but :link.
+
+        I update html-link-type-tests.js to actually test the desired selector,
+        run the test again: PASS.
+
+        I debug a bit and I find why my code is not tested: html-link-type-tests.js
+        uses Element.matches() and that does not use the CSS JIT.
+
+        Fair enough, I add a querySelectorAll("#target' + selector + '") to run
+        through the JIT: PASS.
+
+        Since that selector is simple-#id + simple selector, we go through a fast
+        path for ids and skip the JIT. Arrrrg!
+
+        Finally, I added querySelectorAll(".target' + selector + '"), which covers
+        the CSS JIT.
+
+        The nice thing is: all those cases are tested now :)
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        * fast/selectors/any-link-basics-2-expected.txt: Added.
+        * fast/selectors/any-link-basics-2.html: Added.
+        * fast/selectors/any-link-basics-expected.txt: Added.
+        * fast/selectors/any-link-basics.html: Added.
+        * fast/selectors/any-link-styling-expected.html: Added.
+        * fast/selectors/any-link-styling.html: Added.
+        * fast/selectors/images-with-usemap-should-not-match-link-expected.txt:
+        * fast/selectors/images-with-usemap-should-not-match-link.html:
+        * fast/selectors/link-basics-expected.txt:
+        * fast/selectors/link-basics-xhtml-expected.txt:
+        * fast/selectors/resources/html-link-type-tests.js:
+        (testHTMLElement):
+        (testHTMLTagsForLink):
+        * fast/selectors/webkit-any-link-basics-expected.txt:
+
 2014-10-28  Alexey Proskuryakov  <ap@apple.com>
 
         fast/multicol/multicol-crazy-nesting.html sometimes crashes

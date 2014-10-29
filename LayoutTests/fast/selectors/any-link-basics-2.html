@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color:white;
+}
+:any-link {
+    background-color:rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <div data-description="Anchors basics.">
+            <a id="target-tag-1">Anchors without href are no links.</a>
+
+            <a id="target-tag-2" href>Anchors with an empty href are links.</a>
+            <a id="target-tag-3" href="">Anchors with an empty href are links.</a>
+            <a id="target-tag-4" href="a">An anchor with any href is a link.</a>
+            <a id="target-tag-5" href="http://www.webkit.org">An anchor with a valid href is a link.</a>
+
+            <!-- Case sensitivity of the attribute name -->
+            <a id="target-tag-6" Href>Anchors with an empty href are links.</a>
+            <a id="target-tag-7" HREF="">Anchors with an empty href are links.</a>
+            <a id="target-tag-8" hreF="a">An anchor with any href is a link.</a>
+            <a id="target-tag-9" hReF="http://www.webkit.org">An anchor with a valid href is a link.</a>
+        </div>
+
+        <div data-description="Standalone images are not link.">
+            <!-- The WebKit version of "any-link" was incorrectly classifying images with "usemap" as links. -->
+            <img id="target-tag-10" href="http://www.webkit.org"></img>
+            <img id="target-tag-11" usemap></img>
+            <img id="target-tag-12" usemap=""></img>
+
+            <map id="target-tag-13" name="image-map-1">
+                <area id="target-tag-14" href="http://www.webkit.org" shape="rect" coords="10,10,10,10">
+            </map>
+            <img id="target-tag-15" src="invalid.png" usemap="#image-map-1">
+        </div>
+
+        <div data-description="Area basics..">
+            <!-- No href -> not a link. -->
+            <area id="target-tag-16">
+
+            <area id="target-tag-17" href>
+            <area id="target-tag-18" href="">
+            <area id="target-tag-19" href="http://www.webkit.org">
+            <area id="target-tag-20" HREF="http://www.webkit.org">
+            <map id="target-tag-21" name="image-map-2">
+                <area id="target-tag-22" href>
+                <area id="target-tag-23" href="">
+                <area id="target-tag-24" href="http://www.webkit.org">
+                <area id="target-tag-25" HREF="http://www.webkit.org">
+            </map>
+        </div>
+
+        <div data-description="SVG basics.">
+            <svg>
+                <a id="target-tag-26"><text>No href.</text></a>
+
+                <a id="target-tag-27" href><text>Link.</text></a>
+                <a id="target-tag-28" href=""><text>Link.</text></a>
+                <a id="target-tag-29" href="http://www.webkit.org"><text>Link.</text></a>
+                <a id="target-tag-30" HREF="http://www.webkit.org"><text>Link.</text></a>
+
+                <a id="target-tag-31" xlink:href><text>Link.</text></a>
+                <a id="target-tag-32" xlink:href=""><text>Link.</text></a>
+                <a id="target-tag-33" xlink:href="http://www.webkit.org"><text>Link.</text></a>
+                <a id="target-tag-34" xlink:HREF="http://www.webkit.org"><text>Link.</text></a>
+            </svg>
+        </div>
+    </div>
+</body>
+<script>
+description('Test the basic matching of the :any-link selector.');
+
+shouldBe('document.querySelectorAll(":any-link").length', '21');
+
+// Query Selector.
+var expectedIds = ['target-tag-2',
+                   'target-tag-3',
+                   'target-tag-4',
+                   'target-tag-5',
+                   'target-tag-6',
+                   'target-tag-7',
+                   'target-tag-8',
+                   'target-tag-9',
+                   'target-tag-14',
+                   'target-tag-17',
+                   'target-tag-18',
+                   'target-tag-19',
+                   'target-tag-20',
+                   'target-tag-22',
+                   'target-tag-23',
+                   'target-tag-24',
+                   'target-tag-25',
+                   'target-tag-31',
+                   'target-tag-32',
+                   'target-tag-33',
+                   'target-tag-34'];
+
+for (var i = 0; i < expectedIds.length; ++i)
+    shouldBe('document.querySelectorAll(":any-link")[' + i + ']', 'document.getElementById("' + expectedIds[i] + '")');
+
+// Styling.
+var expectedStyles = [['target-tag-1', 'rgb(255, 255, 255)'],
+                      ['target-tag-2', 'rgb(1, 2, 3)'],
+                      ['target-tag-3', 'rgb(1, 2, 3)'],
+                      ['target-tag-4', 'rgb(1, 2, 3)'],
+                      ['target-tag-5', 'rgb(1, 2, 3)'],
+                      ['target-tag-6', 'rgb(1, 2, 3)'],
+                      ['target-tag-7', 'rgb(1, 2, 3)'],
+                      ['target-tag-8', 'rgb(1, 2, 3)'],
+                      ['target-tag-9', 'rgb(1, 2, 3)'],
+                      ['target-tag-10', 'rgb(255, 255, 255)'],
+                      ['target-tag-11', 'rgb(255, 255, 255)'],
+                      ['target-tag-12', 'rgb(255, 255, 255)'],
+                      ['target-tag-13', 'rgb(255, 255, 255)'],
+                      ['target-tag-14', 'rgb(1, 2, 3)'],
+                      ['target-tag-15', 'rgb(255, 255, 255)'],
+                      ['target-tag-16', 'rgb(255, 255, 255)'],
+                      ['target-tag-17', 'rgb(1, 2, 3)'],
+                      ['target-tag-18', 'rgb(1, 2, 3)'],
+                      ['target-tag-19', 'rgb(1, 2, 3)'],
+                      ['target-tag-20', 'rgb(1, 2, 3)'],
+                      ['target-tag-21', 'rgb(255, 255, 255)'],
+                      ['target-tag-22', 'rgb(1, 2, 3)'],
+                      ['target-tag-23', 'rgb(1, 2, 3)'],
+                      ['target-tag-24', 'rgb(1, 2, 3)'],
+                      ['target-tag-25', 'rgb(1, 2, 3)'],
+                      ['target-tag-26', 'rgb(255, 255, 255)'],
+                      ['target-tag-27', 'rgb(255, 255, 255)'],
+                      ['target-tag-28', 'rgb(255, 255, 255)'],
+                      ['target-tag-29', 'rgb(255, 255, 255)'],
+                      ['target-tag-30', 'rgb(255, 255, 255)'],
+                      ['target-tag-31', 'rgb(1, 2, 3)'],
+                      ['target-tag-32', 'rgb(1, 2, 3)'],
+                      ['target-tag-33', 'rgb(1, 2, 3)'],
+                      ['target-tag-34', 'rgb(1, 2, 3)']];
+
+for (var i = 0; i < expectedStyles.length; ++i)
+    shouldBeEqualToString('getComputedStyle(document.getElementById("' + expectedStyles[i][0] + '")).backgroundColor', "" + expectedStyles[i][1]);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

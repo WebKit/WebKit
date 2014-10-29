@@ -99,7 +99,10 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
         return false;
     CSSSelector::PseudoClassType pseudoType = selector->pseudoClassType();
     return pseudoType == CSSSelector::PseudoClassLink
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         || pseudoType == CSSSelector::PseudoClassAnyLink
+#endif
+        || pseudoType == CSSSelector::PseudoClassAnyLinkDeprecated
         || pseudoType == CSSSelector::PseudoClassVisited
         || pseudoType == CSSSelector::PseudoClassFocus;
 }

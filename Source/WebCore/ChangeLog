@@ -1,3 +1,40 @@
+2014-10-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS4 Selectors: Add the pseudo class :any-link
+        https://bugs.webkit.org/show_bug.cgi?id=138128
+
+        Reviewed by Andreas Kling.
+
+        Defined here: http://dev.w3.org/csswg/selectors4/#the-any-link-pseudo
+
+        After :link and :-webkit-any-link were fixed, :any-link behaves
+        exactly like :-webkit-any-link. All I had left to do here was
+        make them synonyms when evaluating selectors.
+
+        Defined here: http://dev.w3.org/csswg/selectors4/#the-any-link-pseudo
+
+        After :link and :-webkit-any-link were fixed, :any-link behaves
+        exactly like :-webkit-any-link. All I had left to do here was
+        make them synonyms when evaluating selectors.
+
+        Tests: fast/selectors/any-link-basics-2.html
+               fast/selectors/any-link-basics.html
+               fast/selectors/any-link-styling.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::isCommonPseudoClassSelector):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementLinkMatching):
+
 2014-10-28  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Adopt new AVStreamSession API: pass storageDirectoryAtURL at creation-time

@@ -2,23 +2,35 @@ function testHTMLElement(tagName, selector, shouldMatch) {
     debug('Testing ' + tagName)
     var element = document.createElement(tagName);
     element.id = "target";
+    element.className = "target";
     document.documentElement.appendChild(element);
 
     // An element without href never matches.
     shouldBeFalse('document.getElementById("target").matches("' + selector + '")');
+    shouldBe('document.querySelectorAll("#target' + selector + '").length', '0');
+    shouldBe('document.querySelectorAll(".target' + selector + '").length', '0');
 
     var testFunction = shouldMatch ? shouldBeTrue : shouldBeFalse;
     // Any value of href attribute should match.
     element.setAttribute('href', '');
     testFunction('document.getElementById("target").matches("' + selector + '")');
+    shouldBe('document.querySelectorAll("#target' + selector + '").length', shouldMatch ? '1' : '0');
+    shouldBe('document.querySelectorAll(".target' + selector + '").length', shouldMatch ? '1' : '0');
+
     element.setAttribute('href', 'http://www.webkit.org');
     testFunction('document.getElementById("target").matches("' + selector + '")');
+    shouldBe('document.querySelectorAll("#target' + selector + '").length', shouldMatch ? '1' : '0');
+    shouldBe('document.querySelectorAll(".target' + selector + '").length', shouldMatch ? '1' : '0');
 
     element.removeAttribute('href');
     shouldBeFalse('document.getElementById("target").matches("' + selector + '")');
+    shouldBe('document.querySelectorAll("#target' + selector + '").length', '0');
+    shouldBe('document.querySelectorAll(".target' + selector + '").length', '0');
 
     element.setAttributeNS('http://www.webkit.org', 'href', 'http://www.webkit.org');
     shouldBeFalse('document.getElementById("target").matches("' + selector + '")');
+    shouldBe('document.querySelectorAll("#target' + selector + '").length', '0');
+    shouldBe('document.querySelectorAll(".target' + selector + '").length', '0');
 
     document.documentElement.removeChild(element);
 }
@@ -29,6 +41,6 @@ function testHTMLTagsForLink(selector) {
     for (var i = 0; i < htmlTags.length; ++i) {
         var tag = htmlTags[i];
         var shouldMatch = tag === 'a' || tag === 'area' || tag === 'link';
-        testHTMLElement(tag, ':link', shouldMatch);
+        testHTMLElement(tag, selector, shouldMatch);
     }
 }

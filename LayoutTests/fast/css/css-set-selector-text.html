@@ -78,6 +78,7 @@ testSelectorRoundTrip('a > b');
 debug('');
 
 testSelectorRoundTrip(":active");
+testSelectorRoundTrip(":any-link");
 testSelectorRoundTrip(":checked");
 testSelectorRoundTrip(":disabled");
 testSelectorRoundTrip(":empty");
@@ -113,6 +114,14 @@ debug('');
 testSelectorRoundTrip(":-webkit-any-link");
 testSelectorRoundTrip(":-webkit-autofill");
 testSelectorRoundTrip(":-webkit-drag");
+
+testSelectorRoundTrip('a:any-link');
+testSelectorRoundTrip('a :any-link');
+testSelectorRoundTrip('div:any-link');
+testSelectorRoundTrip('div :any-link');
+testSelectorRoundTrip(':any-link > div');
+testSelectorRoundTrip(':any-link + div');
+testSelectorRoundTrip(':not(:any-link)');
 
 debug('');
 
