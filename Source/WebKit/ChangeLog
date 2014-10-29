@@ -1,5 +1,16 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174368. <rdar://problem/18753175>
+
+    2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] Unreviewed 64-bit build fix after r174315.
+    
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Update exports for
+            64-bit symbol names.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174321. <rdar://problem/18753175>
 
     2014-10-04  Timothy Horton  <timothy_horton@apple.com>
