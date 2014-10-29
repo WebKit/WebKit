@@ -44,7 +44,7 @@ enum class ActionMenuState {
 
 @class WKView;
 
-@interface WKActionMenuController : NSObject {
+@interface WKActionMenuController : NSObject <NSMenuDelegate> {
 @private
     WebKit::WebPageProxy *_page;
     WKView *_wkView;
@@ -59,7 +59,6 @@ enum class ActionMenuState {
 - (void)willDestroyView:(WKView *)view;
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
-- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult;

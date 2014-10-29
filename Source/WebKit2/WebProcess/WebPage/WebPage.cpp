@@ -200,10 +200,6 @@
 #include <WebCore/Icon.h>
 #endif
 
-#if PLATFORM(MAC)
-#include "ActionMenuHitTestResult.h"
-#endif
-
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -4798,35 +4794,5 @@ void WebPage::willChangeCurrentHistoryItemForMainFrame()
 {
     send(Messages::WebPageProxy::WillChangeCurrentHistoryItemForMainFrame());
 }
-
-#if PLATFORM(MAC)
-void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
-{
-    layoutIfNeeded();
-
-    MainFrame& mainFrame = corePage()->mainFrame();
-    if (!mainFrame.view() || !mainFrame.view()->renderView()) {
-        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(ActionMenuHitTestResult()));
-        return;
-    }
-
-    RenderView& mainRenderView = *mainFrame.view()->renderView();
-
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
-
-    HitTestResult hitTestResult(mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates)));
-    mainRenderView.hitTest(request, hitTestResult);
-
-    ActionMenuHitTestResult actionMenuResult;
-
-    if (Image* image = hitTestResult.image()) {
-        actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
-        if (actionMenuResult.image)
-            actionMenuResult.image->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
-    }
-
-    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult));
-}
-#endif
 
 } // namespace WebKit

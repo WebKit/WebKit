@@ -53,6 +53,7 @@ public:
         WebCore::IntRect elementBoundingBox;
         bool isScrollbar;
         bool isSelected;
+        bool isTextNode;
 
         Data();
         explicit Data(const WebCore::HitTestResult&);
@@ -81,6 +82,8 @@ public:
     bool isScrollbar() const { return m_data.isScrollbar; }
 
     bool isSelected() const { return m_data.isSelected; }
+
+    bool isTextNode() const { return m_data.isTextNode; }
 
 private:
     explicit WebHitTestResult(const WebHitTestResult::Data& hitTestResultData)
