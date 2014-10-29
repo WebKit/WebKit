@@ -39,11 +39,16 @@
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Page.h>
 
+#endif
+
 @interface NSSharingServicePicker (Private)
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
 @end
-#endif
+
+@interface NSSharingService (Private)
+@property (readonly) NSSharingServiceType type;
+@end
 
 #if __has_include(<AppKit/NSItemProvider.h>)
 #import <AppKit/NSItemProvider.h>
