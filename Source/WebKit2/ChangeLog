@@ -1,5 +1,27 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175187
+
+    2014-10-24  Beth Dakin  <bdakin@apple.com>
+
+            Very large images crash in action menu code
+            https://bugs.webkit.org/show_bug.cgi?id=138059
+            -and corresponding-
+            rdar://problem/18767859
+
+            Reviewed by Tim Horton.
+
+            If the HitTestResult failed to create and image, then don’t go for the image 
+            action menu.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItems]):
+
+            ShareableBitmap::createShareable() can fail. The result needs to be null-checked.
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175185
 
     2014-10-24  Beth Dakin  <bdakin@apple.com>
