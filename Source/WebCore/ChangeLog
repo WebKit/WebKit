@@ -1,3 +1,30 @@
+2014-10-29  Andreas Kling  <akling@apple.com>
+
+        Generalize dirtying of parent's line boxes when taking a renderer out of tree.
+        <https://webkit.org/b/138152>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of calling dirtyLinesFromChangedChild() when certain types of renderers
+        are about to be destroyed, always do this in RenderElement::willBeRemovedFromTree().
+
+        This is part of an effort to make render tree teardown less incomprehensible.
+
+        We still don't bother at all if we're in the process of tearing down the entire
+        render tree, since that would be a waste of time.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::willBeDestroyed): Deleted.
+        * rendering/RenderReplaced.h:
+
 2014-10-28  Ada Chan  <adachan@apple.com>
 
         Implement WKPageSetMuted(bool).

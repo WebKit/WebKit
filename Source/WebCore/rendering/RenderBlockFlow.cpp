@@ -166,8 +166,7 @@ void RenderBlockFlow::willBeDestroyed()
                         childBox->removeFromParent();
                 }
             }
-        } else if (parent())
-            parent()->dirtyLinesFromChangedChild(*this);
+        }
     }
 
     m_lineBoxes.deleteLineBoxes();

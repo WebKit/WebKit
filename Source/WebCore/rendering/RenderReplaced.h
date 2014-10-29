@@ -43,8 +43,6 @@ protected:
     RenderReplaced(Element&, PassRef<RenderStyle>, const LayoutSize& intrinsicSize);
     RenderReplaced(Document&, PassRef<RenderStyle>, const LayoutSize& intrinsicSize);
 
-    virtual void willBeDestroyed() override;
-
     virtual void layout() override;
 
     virtual LayoutSize intrinsicSize() const override final { return m_intrinsicSize; }

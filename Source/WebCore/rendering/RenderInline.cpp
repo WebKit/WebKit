@@ -98,8 +98,7 @@ void RenderInline::willBeDestroyed()
                 for (auto box = firstLineBox(); box; box = box->nextLineBox())
                     box->removeFromParent();
             }
-        } else if (parent()) 
-            parent()->dirtyLinesFromChangedChild(*this);
+        }
     }
 
     m_lineBoxes.deleteLineBoxes();

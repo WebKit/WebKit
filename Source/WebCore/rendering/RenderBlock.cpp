@@ -242,11 +242,6 @@ void RenderBlock::willBeDestroyed()
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();
 
-    if (!documentBeingDestroyed()) {
-        if (parent())
-            parent()->dirtyLinesFromChangedChild(*this);
-    }
-
     removeFromUpdateScrollInfoAfterLayoutTransaction();
 
     RenderBox::willBeDestroyed();

@@ -71,14 +71,6 @@ RenderReplaced::~RenderReplaced()
 {
 }
 
-void RenderReplaced::willBeDestroyed()
-{
-    if (!documentBeingDestroyed() && parent())
-        parent()->dirtyLinesFromChangedChild(*this);
-
-    RenderBox::willBeDestroyed();
-}
-
 void RenderReplaced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
