@@ -63,6 +63,10 @@ using namespace WebKit;
 - (void)_updateActionMenuItems;
 @end
 
+@interface WKView (WKDeprecatedSPI)
+- (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult defaultActionMenuItems:(NSArray *)defaultMenuItems;
+@end
+
 @implementation WKActionMenuController
 
 - (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView
@@ -74,6 +78,7 @@ using namespace WebKit;
 
     _page = &page;
     _wkView = wkView;
+    _type = kWKActionMenuNone;
 
     return self;
 }
@@ -121,6 +126,7 @@ using namespace WebKit;
     
     _state = ActionMenuState::None;
     _hitTestResult = ActionMenuHitTestResult();
+    _type = kWKActionMenuNone;
     _sharingServicePicker = nil;
 }
 
@@ -377,10 +383,13 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 - (NSArray *)_defaultMenuItems
 {
     if (WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult()) {
-        if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image)
+        if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
+            _type = kWKActionMenuImage;
             return [self _defaultMenuItemsForImage];
-        if (!hitTestResult->absoluteLinkURL().isEmpty())
+        } if (!hitTestResult->absoluteLinkURL().isEmpty()) {
+            _type = kWKActionMenuLink;
             return [self _defaultMenuItemsForLink];
+        }
     }
 
     return @[ ];
@@ -390,8 +399,12 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 {
     [_wkView.actionMenu removeAllItems];
 
-    NSArray *menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) defaultActionMenuItems:[self _defaultMenuItems]];
-    
+    NSArray *menuItems = [self _defaultMenuItems];
+    if ([_wkView respondsToSelector:@selector(_actionMenuItemsForHitTestResult:defaultActionMenuItems:)])
+        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) defaultActionMenuItems:menuItems];
+    else
+        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) withType:_type defaultActionMenuItems:menuItems];
+
     for (NSMenuItem *item in menuItems)
         [_wkView.actionMenu addItem:item];
 }

@@ -1,5 +1,38 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175193
+
+    2014-10-24  Beth Dakin  <bdakin@apple.com>
+
+            _actionMenuItemsForHitTestResult should also take a type indicating what the menu 
+            was built for
+            https://bugs.webkit.org/show_bug.cgi?id=138063
+
+            Reviewed by Dan Bernstein.
+
+            New type enum that can be used by clients.
+            * Shared/API/c/WKActionMenuTypes.h: Added.
+
+            Remove the old SPI and add the new.
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:]):
+            (-[WKView _actionMenuItemsForHitTestResult:defaultActionMenuItems:]): Deleted.
+
+            Now keep an ivar for the type.
+            * UIProcess/mac/WKActionMenuController.h:
+
+            Create a category for the old SPI so that we can still call it if clients have 
+            implemented it.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController initWithPage:view:]):
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            (imageForResource:name::if):
+            (-[WKActionMenuController _updateActionMenuItems]):
+            * WebKit2.xcodeproj/project.pbxproj:
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175190
 
     2014-10-24  Tim Horton  <timothy_horton@apple.com>

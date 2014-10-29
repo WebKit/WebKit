@@ -23,47 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKActionMenuController_h
-#define WKActionMenuController_h
+#ifndef WKActionMenuTypes_h
+#define WKActionMenuTypes_h
 
-#import "ActionMenuHitTestResult.h"
-#import "WKActionMenuItemTypes.h"
-#import "WKActionMenuTypes.h"
-#import <AppKit/NSSharingService.h>
-#import <wtf/RetainPtr.h>
+#include <stdint.h>
 
-namespace WebKit {
-class WebPageProxy;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-enum class ActionMenuState {
-    None = 0,
-    Pending,
-    Ready
+enum {
+    kWKActionMenuNone = 0,
+    kWKActionMenuLink,
+    kWKActionMenuImage
 };
+typedef uint32_t _WKActionMenuType;
+
+#ifdef __cplusplus
 }
+#endif
 
-@class WKView;
-
-@interface WKActionMenuController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
-@private
-    WebKit::WebPageProxy *_page;
-    WKView *_wkView;
-
-    WebKit::ActionMenuState _state;
-    WebKit::ActionMenuHitTestResult _hitTestResult;
-    _WKActionMenuType _type;
-    RetainPtr<NSSharingServicePicker> _sharingServicePicker;
-}
-
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView;
-- (void)willDestroyView:(WKView *)view;
-
-- (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
-- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
-- (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
-
-- (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult;
-
-@end
-
-#endif // WKActionMenuController_h
+#endif /* WKActionMenuTypes_h */
