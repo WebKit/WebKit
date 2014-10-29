@@ -1,5 +1,20 @@
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175256
+
+    2014-10-28  Tim Horton  <timothy_horton@apple.com>
+
+            Remove an inaccurate comment in WKActionMenuController
+            https://bugs.webkit.org/show_bug.cgi?id=138135
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForLink]):
+            The comment is wrong; the separator is there for spacing, not just as a workaround.
+
+2014-10-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175238
 
     2014-10-27  Conrad Shultz  <conrad_shultz@apple.com>
