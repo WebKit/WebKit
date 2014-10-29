@@ -1,5 +1,27 @@
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
+        Merge r174525. <rdar://problem/18640876>
+
+    2014-10-09  Tim Horton  <timothy_horton@apple.com>
+    
+            Add a WebKit1 preference for selection services
+            https://bugs.webkit.org/show_bug.cgi?id=137498
+            <rdar://problem/18572699>
+    
+            Reviewed by Simon Fraser.
+    
+            * WebView/WebPreferenceKeysPrivate.h:
+            * WebView/WebPreferences.mm:
+            (+[WebPreferences initialize]):
+            (-[WebPreferences serviceControlsEnabled]):
+            (-[WebPreferences setServiceControlsEnabled:]):
+            * WebView/WebPreferencesPrivate.h:
+            * WebView/WebView.mm:
+            (-[WebView _preferencesChanged:]):
+            Add and plumb the preference.
+    
+2014-10-28  Dana Burkart  <dburkart@apple.com>
+
         Merge r174231. <rdar://problem/18640833>
 
     2014-10-02  Tim Horton  <timothy_horton@apple.com>
