@@ -125,7 +125,7 @@ using namespace WebKit;
 
 - (NSArray *)_defaultMenuItemsForLink
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     if (!WebCore::protocolIsInHTTPFamily(hitTestResult->absoluteLinkURL()))
         return @[ ];
 
@@ -138,20 +138,20 @@ using namespace WebKit;
 
 - (void)_openURLFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     [[NSWorkspace sharedWorkspace] openURL:[NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()]];
 }
 
 - (void)_addToReadingListFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     NSSharingService *service = [NSSharingService sharingServiceNamed:NSSharingServiceNameAddToSafariReadingList];
     [service performWithItems:@[ [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] ]];
 }
 
 - (void)_quickLookURLFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     NSRect itemFrame = [_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil];
     NSSize maximumPreviewSize = NSMakeSize(_wkView.bounds.size.width * 0.75, _wkView.bounds.size.height * 0.75);
 
@@ -202,7 +202,7 @@ using namespace WebKit;
 
 - (void)_saveImageToDownloads:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     _page->process().context().download(_page, hitTestResult->absoluteImageURL());
 }
 
@@ -384,7 +384,7 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 
 - (NSArray *)_defaultMenuItems
 {
-    if (WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult()) {
+    if (WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult()) {
         if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
             _type = kWKActionMenuImage;
             return [self _defaultMenuItemsForImage];
@@ -418,9 +418,9 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 
     NSArray *menuItems = [self _defaultMenuItems];
     if ([_wkView respondsToSelector:@selector(_actionMenuItemsForHitTestResult:defaultActionMenuItems:)])
-        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) defaultActionMenuItems:menuItems];
+        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->lastMouseMoveHitTestResult()) defaultActionMenuItems:menuItems];
     else
-        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) withType:_type defaultActionMenuItems:menuItems];
+        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->lastMouseMoveHitTestResult()) withType:_type defaultActionMenuItems:menuItems];
 
     for (NSMenuItem *item in menuItems)
         [_wkView.actionMenu addItem:item];
