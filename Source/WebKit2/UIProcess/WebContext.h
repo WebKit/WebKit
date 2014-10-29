@@ -199,7 +199,6 @@ public:
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
     void setDomainRelaxationForbiddenForURLScheme(const String&);
-    void setCanHandleHTTPSServerTrustEvaluation(bool);
     void registerURLSchemeAsLocal(const String&);
     void registerURLSchemeAsNoAccess(const String&);
     void registerURLSchemeAsDisplayIsolated(const String&);
@@ -534,7 +533,6 @@ private:
     bool m_processTerminationEnabled;
 
 #if ENABLE(NETWORK_PROCESS)
-    bool m_canHandleHTTPSServerTrustEvaluation;
     bool m_usesNetworkProcess;
     RefPtr<NetworkProcessProxy> m_networkProcess;
 #endif

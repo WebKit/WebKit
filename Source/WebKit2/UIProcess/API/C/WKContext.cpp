@@ -385,11 +385,6 @@ void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef contextRef, 
     toImpl(contextRef)->setDomainRelaxationForbiddenForURLScheme(toImpl(urlScheme)->string());
 }
 
-void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef contextRef, bool value)
-{
-    toImpl(contextRef)->setCanHandleHTTPSServerTrustEvaluation(value);
-}
-
 WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebCookieManagerProxy>());
