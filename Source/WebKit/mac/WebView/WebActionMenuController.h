@@ -23,11 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebUIDelegatePrivate.h"
+
 @class WebView;
 
 @interface WebActionMenuController : NSObject {
 @private
     WebView *_webView;
+    WebActionMenuType _type;
 }
 
 - (id)initWithWebView:(WebView *)webView;

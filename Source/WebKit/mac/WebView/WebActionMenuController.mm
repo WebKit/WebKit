@@ -58,7 +58,9 @@ using namespace WebCore;
 {
     if (!(self = [super init]))
         return nil;
+
     _webView = webView;
+    _type = WebActionMenuNone;
 
     return self;
 }
@@ -81,8 +83,11 @@ using namespace WebCore;
 
     NSDictionary *hitTestResult = [_webView elementAtPoint:[_webView convertPoint:event.locationInWindow fromView:nil]];
 
-    // FIXME: We should support API for clients to customize the menu items.
     NSArray *menuItems = [self _defaultMenuItemsForHitTestResult:hitTestResult];
+
+    // Allow clients to customize the menu items.
+    if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:)])
+        menuItems = [[_webView UIDelegate] _webView:_webView actionMenuItemsForHitTestResult:hitTestResult withType:_type defaultActionMenuItems:menuItems];
 
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
@@ -236,9 +241,13 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 - (NSArray *)_defaultMenuItemsForHitTestResult:(NSDictionary *)hitTestResult
 {
     NSURL *url = [hitTestResult objectForKey:WebElementLinkURLKey];
-    if (url)
-        return [self _defaultMenuItemsForLink:hitTestResult];
 
+    if (url) {
+        _type = WebActionMenuLink;
+        return [self _defaultMenuItemsForLink:hitTestResult];
+    }
+
+    _type = WebActionMenuNone;
     return @[ ];
 }
 
