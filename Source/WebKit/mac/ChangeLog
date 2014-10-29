@@ -1,5 +1,18 @@
 2014-10-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r175183
+
+    2014-10-24  Beth Dakin  <bdakin@apple.com>
+
+            Build fix.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _openURLFromActionMenu:]):
+            (-[WebActionMenuController _addToReadingListFromActionMenu:]):
+            (-[WebActionMenuController _quickLookURLFromActionMenu:]):
+
+2014-10-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r175182
 
     2014-10-24  Beth Dakin  <bdakin@apple.com>
