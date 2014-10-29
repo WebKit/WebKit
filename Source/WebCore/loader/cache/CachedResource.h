@@ -24,7 +24,6 @@
 #define CachedResource_h
 
 #include "CachePolicy.h"
-#include "CacheValidation.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceError.h"
 #include "ResourceLoadPriority.h"
@@ -87,6 +86,12 @@ public:
         Cached,       // regular case
         LoadError,
         DecodeError
+    };
+
+    enum RedirectChainCacheStatus {
+        NoRedirection,
+        NotCachedRedirection,
+        CachedRedirection
     };
 
     CachedResource(const ResourceRequest&, Type, SessionID);
@@ -353,6 +358,7 @@ private:
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;
+    double m_redirectChainEndOfValidity;
 };
 
 } // namespace WebCore

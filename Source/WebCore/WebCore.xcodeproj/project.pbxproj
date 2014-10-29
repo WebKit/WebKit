@@ -6164,8 +6164,6 @@
 		E453904D0EAFD637003695C8 /* WidgetIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E453903C0EAFD637003695C8 /* WidgetIOS.mm */; };
 		E45390AE0EAFF4B5003695C8 /* SystemMemoryIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E467680E1A0177EE00B9E26B /* CacheValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E467680D1A0177EE00B9E26B /* CacheValidation.cpp */; };
-		E46768101A0177F900B9E26B /* CacheValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E467680F1A0177F900B9E26B /* CacheValidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E46A2B1B17CA65B9000DBCD8 /* TypedElementDescendantIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47127CA163438A100ED6F5A /* StyleInvalidationAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */; };
@@ -13695,8 +13693,6 @@
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WidgetIOS.mm; path = ios/WidgetIOS.mm; sourceTree = "<group>"; };
 		E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SystemMemoryIOS.cpp; path = ios/SystemMemoryIOS.cpp; sourceTree = "<group>"; };
 		E462A4A0113E71BE004A4220 /* IntPointHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntPointHash.h; sourceTree = "<group>"; };
-		E467680D1A0177EE00B9E26B /* CacheValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheValidation.cpp; path = loader/CacheValidation.cpp; sourceTree = SOURCE_ROOT; };
-		E467680F1A0177F900B9E26B /* CacheValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheValidation.h; path = loader/CacheValidation.h; sourceTree = SOURCE_ROOT; };
 		E46A2B1B17CA65B9000DBCD8 /* TypedElementDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedElementDescendantIterator.h; sourceTree = "<group>"; };
 		E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementChildIterator.h; sourceTree = "<group>"; };
 		E4778B7D115A581A00B5D372 /* JSCustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomEvent.cpp; sourceTree = "<group>"; };
@@ -19629,8 +19625,6 @@
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
 				F587864902DE3A9A01EA4122 /* CachePolicy.h */,
-				E467680D1A0177EE00B9E26B /* CacheValidation.cpp */,
-				E467680F1A0177F900B9E26B /* CacheValidation.h */,
 				BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */,
 				BCB16BFF0979C3BD00467741 /* MemoryCache.h */,
 			);
@@ -23675,7 +23669,6 @@
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */,
 				E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */,
-				E46768101A0177F900B9E26B /* CacheValidation.h in Headers */,
 				E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */,
 				E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h in Headers */,
 				E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */,
@@ -27196,7 +27189,6 @@
 				FD3160BB12B0272A00C1A359 /* AudioBusMac.mm in Sources */,
 				FD31607D12B026F700C1A359 /* AudioChannel.cpp in Sources */,
 				FD31600412B0267600C1A359 /* AudioContext.cpp in Sources */,
-				E467680E1A0177EE00B9E26B /* CacheValidation.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				FD3160BC12B0272A00C1A359 /* AudioDestinationMac.cpp in Sources */,
 				FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */,

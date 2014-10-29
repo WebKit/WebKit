@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004-2011, 2014 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -104,22 +104,6 @@ static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
     return true;
 }
 
-void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const ResourceResponse& validatingResponse)
-{
-    // RFC2616 10.3.5
-    // Update cached headers from the 304 response
-    for (const auto& header : validatingResponse.httpHeaderFields()) {
-        // Entity headers should not be sent by servers when generating a 304
-        // response; misconfigured servers send them anyway. We shouldn't allow
-        // such headers to update the original request. We'll base this on the
-        // list defined by RFC2616 7.1, with a few additions for extension headers
-        // we care about.
-        if (!shouldUpdateHeaderAfterRevalidation(header.key))
-            continue;
-        response.setHTTPHeaderField(header.key, header.value);
-    }
-}
-
 static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type type)
 {
     switch (type) {
@@ -162,6 +146,18 @@ static std::chrono::milliseconds deadDecodedDataDeletionIntervalForResourceType(
     return memoryCache()->deadDecodedDataDeletionInterval();
 }
 
+static double currentAge(const ResourceResponse& response, double responseTimestamp)
+{
+    // RFC2616 13.2.3
+    // No compensation for latency as that is not terribly important in practice
+    double dateValue = response.date();
+    double apparentAge = std::isfinite(dateValue) ? std::max(0., responseTimestamp - dateValue) : 0;
+    double ageValue = response.age();
+    double correctedReceivedAge = std::isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
+    double residentTime = currentTime() - responseTimestamp;
+    return correctedReceivedAge + residentTime;
+}
+
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(const ResourceRequest& request, Type type, SessionID sessionID)
@@ -196,6 +192,8 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_owningCachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
+    , m_redirectChainCacheStatus(NoRedirection)
+    , m_redirectChainEndOfValidity(std::numeric_limits<double>::max())
 {
     ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
     ASSERT(sessionID.isValid());
@@ -402,7 +400,7 @@ bool CachedResource::isExpired() const
     if (m_response.isNull())
         return false;
 
-    return computeCurrentAge(m_response, m_responseTimestamp) > freshnessLifetime(m_response);
+    return currentAge(m_response, m_responseTimestamp) > freshnessLifetime(m_response);
 }
 
 double CachedResource::freshnessLifetime(const ResourceResponse& response) const
@@ -417,7 +415,20 @@ double CachedResource::freshnessLifetime(const ResourceResponse& response) const
         return std::numeric_limits<double>::max();
     }
 
-    return computeFreshnessLifetimeForHTTPFamily(response, m_responseTimestamp);
+    // RFC2616 13.2.4
+    double maxAgeValue = response.cacheControlMaxAge();
+    if (std::isfinite(maxAgeValue))
+        return maxAgeValue;
+    double expiresValue = response.expires();
+    double dateValue = response.date();
+    double creationTime = std::isfinite(dateValue) ? dateValue : m_responseTimestamp;
+    if (std::isfinite(expiresValue))
+        return expiresValue - creationTime;
+    double lastModifiedValue = response.lastModified();
+    if (std::isfinite(lastModifiedValue))
+        return (creationTime - lastModifiedValue) * 0.1;
+    // If no cache headers are present, the specification leaves the decision to the UA. Other browsers seem to opt for 0.
+    return 0;
 }
 
 void CachedResource::willSendRequest(ResourceRequest&, const ResourceResponse& response)
@@ -425,7 +436,19 @@ void CachedResource::willSendRequest(ResourceRequest&, const ResourceResponse& r
     m_requestedFromNetworkingLayer = true;
     if (response.isNull())
         return;
-    updateRedirectChainStatus(m_redirectChainCacheStatus, response);
+    if (m_redirectChainCacheStatus == NotCachedRedirection)
+        return;
+    if (response.cacheControlContainsNoStore()
+        || response.cacheControlContainsNoCache()
+        || response.cacheControlContainsMustRevalidate())
+        m_redirectChainCacheStatus = NotCachedRedirection;
+    else {
+        m_redirectChainCacheStatus = CachedRedirection;
+        double responseTimestamp = currentTime();
+        // Store the nearest end of cache validity date
+        m_redirectChainEndOfValidity = std::min(m_redirectChainEndOfValidity, 
+            responseTimestamp + freshnessLifetime(response) - currentAge(response, responseTimestamp));
+    }
 }
 
 void CachedResource::responseReceived(const ResourceResponse& response)
@@ -710,7 +733,18 @@ void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& val
 {
     m_responseTimestamp = currentTime();
 
-    updateResponseHeadersAfterRevalidation(m_response, validatingResponse);
+    // RFC2616 10.3.5
+    // Update cached headers from the 304 response
+    for (const auto& header : validatingResponse.httpHeaderFields()) {
+        // Entity headers should not be sent by servers when generating a 304
+        // response; misconfigured servers send them anyway. We shouldn't allow
+        // such headers to update the original request. We'll base this on the
+        // list defined by RFC2616 7.1, with a few additions for extension headers
+        // we care about.
+        if (!shouldUpdateHeaderAfterRevalidation(header.key))
+            continue;
+        m_response.setHTTPHeaderField(header.key, header.value);
+    }
 }
 
 void CachedResource::registerHandle(CachedResourceHandleBase* h)
@@ -773,7 +807,15 @@ bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) co
 
 bool CachedResource::redirectChainAllowsReuse() const
 {
-    return WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus);
+    switch (m_redirectChainCacheStatus) {
+    case NoRedirection:
+        return true;
+    case NotCachedRedirection:
+        return false;
+    case CachedRedirection:
+        return currentTime() <= m_redirectChainEndOfValidity;
+    }
+    return true;
 }
 
 unsigned CachedResource::overheadSize() const

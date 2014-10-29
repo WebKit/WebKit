@@ -1,5 +1,18 @@
 2014-10-29  Antti Koivisto  <antti@apple.com>
 
+        Unreviewed, rolling out r175342.
+
+        a file ended up in a wrong directory
+
+        Reverted changeset:
+
+        "Factor cache validity computation functions out of
+        CachedResource"
+        https://bugs.webkit.org/show_bug.cgi?id=138156
+        http://trac.webkit.org/changeset/175342
+
+2014-10-29  Antti Koivisto  <antti@apple.com>
+
         Factor cache validity computation functions out of CachedResource
         https://bugs.webkit.org/show_bug.cgi?id=138156
 
