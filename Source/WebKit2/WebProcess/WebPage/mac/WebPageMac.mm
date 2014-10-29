@@ -1067,6 +1067,9 @@ static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& 
         position = firstPositionInOrBeforeNode(node);
 
     RefPtr<Range> contextRange = rangeExpandedAroundPosition(position, 4);
+    if (!contextRange)
+        return nullptr;
+
     String fullPlainTextString = plainText(contextRange.get());
     int hitLocation = TextIterator::rangeLength(makeRange(contextRange->startPosition(), position).get());
 
