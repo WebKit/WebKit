@@ -1,3 +1,17 @@
+2014-10-30  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Update safariVersion to safariVersionString
+        https://bugs.webkit.org/show_bug.cgi?id=138193
+
+        The preceding change updated safariVersion to safariVersionString for the "4 Public Beta" check in OS X 10.5.x,
+        but it should have also been done for the "4 Public Beta" check in OS X 10.4.x.
+
+        Rubber-stamped by David Kilzer.
+
+        * Scripts/bisect-builds:
+        (makeNightlyList):
+        Compare safariVersionString to a string literal, instead of safariVersion.
+
 2014-10-30  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [GTK] Minibrowser : Add window fullscreen support for Minibrowser
