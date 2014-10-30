@@ -158,6 +158,9 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(COCOA)
     # Dictionary support.
     PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+#endif
+
+#if PLATFORM(MAC)
     PerformDictionaryLookupOfCurrentSelection()
 #endif
 
