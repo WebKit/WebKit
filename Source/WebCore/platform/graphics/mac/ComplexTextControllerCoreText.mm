@@ -26,6 +26,7 @@
 
 #include "ComplexTextController.h"
 
+#include "CoreTextSPI.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "TextRun.h"
@@ -98,7 +99,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Simp
     , m_stringLength(stringLength)
     , m_indexBegin(runRange.location)
     , m_indexEnd(runRange.location + runRange.length)
-    , m_initialAdvance(wkCTRunGetInitialAdvance(ctRun))    
+    , m_initialAdvance(CTRunGetInitialAdvance(ctRun))
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
     , m_isMonotonic(true)
 {
@@ -224,13 +225,13 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
         ProviderInfo info = { cp, length, stringAttributes.get() };
-        RetainPtr<CTTypesetterRef> typesetter = adoptCF(wkCreateCTTypesetterWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
+        RetainPtr<CTTypesetterRef> typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
 
         line = adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
         ProviderInfo info = { cp, length, stringAttributes.get() };
 
-        line = adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
+        line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, nullptr, &info));
     }
 
     m_coreTextLines.append(line.get());

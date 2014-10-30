@@ -1,3 +1,18 @@
+2014-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate ComplexTextControllerCoreText to use SPI instead of WKSI
+        https://bugs.webkit.org/show_bug.cgi?id=138228
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/spi/cocoa/CoreTextSPI.h: Added.
+
 2014-10-30  Eric Carlson  <eric.carlson@apple.com>
 
         Add diagnostic logging to track page loads.
