@@ -1,3 +1,16 @@
+2014-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use references in calculateMinimumPageHeight() for non-optional arguments
+        https://bugs.webkit.org/show_bug.cgi?id=138231
+
+        Reviewed by Dean Jackson.
+
+        No new tests because there is no behavior change.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::calculateMinimumPageHeight):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+
 2014-10-30  Chris Dumez  <cdumez@apple.com>
 
         Move -webkit-border-image / -webkit-mask-box-image to the new StyleBuilder
