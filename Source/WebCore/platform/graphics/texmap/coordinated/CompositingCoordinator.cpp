@@ -356,8 +356,8 @@ void CompositingCoordinator::commitScrollOffset(uint32_t layerID, const WebCore:
 
 void CompositingCoordinator::renderNextFrame()
 {
-    for (unsigned i = 0; i < m_updateAtlases.size(); ++i)
-        m_updateAtlases[i]->didSwapBuffers();
+    for (auto& atlas : m_updateAtlases)
+        atlas->didSwapBuffers();
 }
 
 void CompositingCoordinator::purgeBackingStores()
@@ -373,8 +373,8 @@ void CompositingCoordinator::purgeBackingStores()
 
 bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client* client)
 {
-    for (unsigned i = 0; i < m_updateAtlases.size(); ++i) {
-        UpdateAtlas* atlas = m_updateAtlases[i].get();
+    for (auto& updateAtlas : m_updateAtlases) {
+        UpdateAtlas* atlas = updateAtlas.get();
         if (atlas->supportsAlpha() == (flags & CoordinatedSurface::SupportsAlpha)) {
             // This will be false if there is no available buffer space.
             if (atlas->paintOnAvailableBuffer(size, atlasID, offset, client))

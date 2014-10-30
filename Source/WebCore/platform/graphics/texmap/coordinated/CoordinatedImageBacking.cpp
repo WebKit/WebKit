@@ -151,8 +151,8 @@ void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
     bool previousIsVisible = m_isVisible;
 
     m_isVisible = false;
-    for (size_t i = 0; i < m_hosts.size(); ++i) {
-        if (m_hosts[i]->imageBackingVisible()) {
+    for (auto& host : m_hosts) {
+        if (host->imageBackingVisible()) {
             m_isVisible = true;
             break;
         }

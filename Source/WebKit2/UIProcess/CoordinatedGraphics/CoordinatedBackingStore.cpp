@@ -91,9 +91,8 @@ void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect,
 
 PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
 {
-    CoordinatedBackingStoreTileMap::const_iterator end = m_tiles.end();
-    for (CoordinatedBackingStoreTileMap::const_iterator it = m_tiles.begin(); it != end; ++it) {
-        RefPtr<BitmapTexture> texture = it->value.texture();
+    for (auto& tile : m_tiles.values()) {
+        RefPtr<BitmapTexture> texture = tile.texture();
         if (texture)
             return texture;
     }
@@ -108,8 +107,8 @@ void CoordinatedBackingStore::setSize(const FloatSize& size)
 
 void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
 {
-    for (size_t i = 0; i < tiles.size(); ++i)
-        tiles[i]->paint(textureMapper, transform, opacity, calculateExposedTileEdges(rect, tiles[i]->rect()));
+    for (auto& tile : tiles)
+        tile->paint(textureMapper, transform, opacity, calculateExposedTileEdges(rect, tile->rect()));
 }
 
 TransformationMatrix CoordinatedBackingStore::adjustedTransformForRect(const FloatRect& targetRect)

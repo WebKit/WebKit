@@ -532,8 +532,8 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& 
     // is too large, then we will do individual rect painting instead.
     unsigned boundsArea = bounds.width() * bounds.height();
     unsigned rectsArea = 0;
-    for (size_t i = 0; i < rects.size(); ++i)
-        rectsArea += rects[i].width() * rects[i].height();
+    for (auto& rect : rects)
+        rectsArea += rect.width() * rect.height();
 
     double wastedSpace = 1 - (static_cast<double>(rectsArea) / boundsArea);
 
@@ -590,9 +590,9 @@ void CoordinatedDrawingArea::display(UpdateInfo& updateInfo)
 
     graphicsContext->translate(-bounds.x(), -bounds.y());
 
-    for (size_t i = 0; i < rects.size(); ++i) {
-        m_webPage.drawRect(*graphicsContext, rects[i]);
-        updateInfo.updateRects.append(rects[i]);
+    for (auto& rect : rects) {
+        m_webPage.drawRect(*graphicsContext, rect);
+        updateInfo.updateRects.append(rect);
     }
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them

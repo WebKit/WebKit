@@ -253,8 +253,8 @@ void CoordinatedDrawingAreaProxy::incorporateUpdate(const UpdateInfo& updateInfo
     if (shouldScroll && !m_webPageProxy.canScrollView())
         m_webPageProxy.setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy.viewSize()));
     else {
-        for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
-            m_webPageProxy.setViewNeedsDisplay(updateInfo.updateRects[i]);
+        for (auto& updateRect : updateInfo.updateRects)
+            m_webPageProxy.setViewNeedsDisplay(updateRect);
     }
 
     if (shouldScroll)

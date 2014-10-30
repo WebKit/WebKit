@@ -215,10 +215,9 @@ void CoordinatedGraphicsScene::setLayerChildrenIfNeeded(TextureMapperLayer* laye
 
     Vector<TextureMapperLayer*> children;
 
-    for (size_t i = 0; i < state.children.size(); ++i) {
-        CoordinatedLayerID childID = state.children[i];
-        TextureMapperLayer* child = layerByID(childID);
-        children.append(child);
+    for (auto& child : state.children) {
+        TextureMapperLayer* childLayer = layerByID(child);
+        children.append(childLayer);
     }
     layer->setChildren(children);
 }
@@ -322,10 +321,10 @@ TextureMapperLayer* CoordinatedGraphicsScene::getLayerByIDIfExists(CoordinatedLa
     return (id != InvalidCoordinatedLayerID) ? layerByID(id) : 0;
 }
 
-void CoordinatedGraphicsScene::createLayers(const Vector<CoordinatedLayerID>& ids)
+void CoordinatedGraphicsScene::createLayers(const Vector<CoordinatedLayerID>& layerIDs)
 {
-    for (size_t index = 0; index < ids.size(); ++index)
-        createLayer(ids[index]);
+    for (auto& layerID : layerIDs)
+        createLayer(layerID);
 }
 
 void CoordinatedGraphicsScene::createLayer(CoordinatedLayerID id)
@@ -338,8 +337,8 @@ void CoordinatedGraphicsScene::createLayer(CoordinatedLayerID id)
 
 void CoordinatedGraphicsScene::deleteLayers(const Vector<CoordinatedLayerID>& layerIDs)
 {
-    for (size_t index = 0; index < layerIDs.size(); ++index)
-        deleteLayer(layerIDs[index]);
+    for (auto& layerID : layerIDs)
+        deleteLayer(layerID);
 }
 
 void CoordinatedGraphicsScene::deleteLayer(CoordinatedLayerID layerID)
@@ -412,8 +411,8 @@ void CoordinatedGraphicsScene::createTilesIfNeeded(TextureMapperLayer* layer, co
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     ASSERT(backingStore);
 
-    for (size_t i = 0; i < state.tilesToCreate.size(); ++i)
-        backingStore->createTile(state.tilesToCreate[i].tileID, state.tilesToCreate[i].scale);
+    for (auto& tile : state.tilesToCreate)
+        backingStore->createTile(tile.tileID, tile.scale);
 }
 
 void CoordinatedGraphicsScene::removeTilesIfNeeded(TextureMapperLayer* layer, const CoordinatedGraphicsLayerState& state)
@@ -425,8 +424,8 @@ void CoordinatedGraphicsScene::removeTilesIfNeeded(TextureMapperLayer* layer, co
     if (!backingStore)
         return;
 
-    for (size_t i = 0; i < state.tilesToRemove.size(); ++i)
-        backingStore->removeTile(state.tilesToRemove[i]);
+    for (auto& tile : state.tilesToRemove)
+        backingStore->removeTile(tile);
 
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
@@ -439,25 +438,24 @@ void CoordinatedGraphicsScene::updateTilesIfNeeded(TextureMapperLayer* layer, co
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     ASSERT(backingStore);
 
-    for (size_t i = 0; i < state.tilesToUpdate.size(); ++i) {
-        const TileUpdateInfo& tileInfo = state.tilesToUpdate[i];
-        const SurfaceUpdateInfo& surfaceUpdateInfo = tileInfo.updateInfo;
+    for (auto& tile : state.tilesToUpdate) {
+        const SurfaceUpdateInfo& surfaceUpdateInfo = tile.updateInfo;
 
         SurfaceMap::iterator surfaceIt = m_surfaces.find(surfaceUpdateInfo.atlasID);
         ASSERT(surfaceIt != m_surfaces.end());
 
-        backingStore->updateTile(tileInfo.tileID, surfaceUpdateInfo.updateRect, tileInfo.tileRect, surfaceIt->value, surfaceUpdateInfo.surfaceOffset);
+        backingStore->updateTile(tile.tileID, surfaceUpdateInfo.updateRect, tile.tileRect, surfaceIt->value, surfaceUpdateInfo.surfaceOffset);
         m_backingStoresWithPendingBuffers.add(backingStore);
     }
 }
 
 void CoordinatedGraphicsScene::syncUpdateAtlases(const CoordinatedGraphicsState& state)
 {
-    for (size_t i = 0; i < state.updateAtlasesToCreate.size(); ++i)
-        createUpdateAtlas(state.updateAtlasesToCreate[i].first, state.updateAtlasesToCreate[i].second);
+    for (auto& atlas : state.updateAtlasesToCreate)
+        createUpdateAtlas(atlas.first, atlas.second);
 
-    for (size_t i = 0; i < state.updateAtlasesToRemove.size(); ++i)
-        removeUpdateAtlas(state.updateAtlasesToRemove[i]);
+    for (auto& atlas : state.updateAtlasesToRemove)
+        removeUpdateAtlas(atlas);
 }
 
 void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface> surface)
@@ -474,17 +472,17 @@ void CoordinatedGraphicsScene::removeUpdateAtlas(uint32_t atlasID)
 
 void CoordinatedGraphicsScene::syncImageBackings(const CoordinatedGraphicsState& state)
 {
-    for (size_t i = 0; i < state.imagesToRemove.size(); ++i)
-        removeImageBacking(state.imagesToRemove[i]);
+    for (auto& image : state.imagesToRemove)
+        removeImageBacking(image);
 
-    for (size_t i = 0; i < state.imagesToCreate.size(); ++i)
-        createImageBacking(state.imagesToCreate[i]);
+    for (auto& image : state.imagesToCreate)
+        createImageBacking(image);
 
-    for (size_t i = 0; i < state.imagesToUpdate.size(); ++i)
-        updateImageBacking(state.imagesToUpdate[i].first, state.imagesToUpdate[i].second);
+    for (auto& image : state.imagesToUpdate)
+        updateImageBacking(image.first, image.second);
 
-    for (size_t i = 0; i < state.imagesToClear.size(); ++i)
-        clearImageBackingContents(state.imagesToClear[i]);
+    for (auto& image : state.imagesToClear)
+        clearImageBackingContents(image);
 }
 
 void CoordinatedGraphicsScene::createImageBacking(CoordinatedImageBackingID imageID)
@@ -571,8 +569,8 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
     syncImageBackings(state);
     syncUpdateAtlases(state);
 
-    for (size_t i = 0; i < state.layersToUpdate.size(); ++i)
-        setLayerState(state.layersToUpdate[i].first, state.layersToUpdate[i].second);
+    for (auto& layer : state.layersToUpdate)
+        setLayerState(layer.first, layer.second);
 
     commitPendingBackingStoreOperations();
     removeReleasedImageBackingsIfNeeded();

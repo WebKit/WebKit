@@ -1,3 +1,25 @@
+2014-10-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [CoordinatedGraphics] Use modern for-loops
+        https://bugs.webkit.org/show_bug.cgi?id=138168
+
+        Reviewed by Andreas Kling.
+
+        No new tests as there is no change in functionality.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp: Use a modern for loop.
+        (WebCore::CompositingCoordinator::renderNextFrame):
+        (WebCore::CompositingCoordinator::paintToSurface):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp: Use a modern for loop.
+        (WebCore::CoordinatedGraphicsLayer::setShouldUpdateVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingState):
+        (WebCore::CoordinatedGraphicsLayer::syncChildren):
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers):
+        (WebCore::CoordinatedGraphicsLayer::findFirstDescendantWithContentsRecursively):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp: Use a modern for loop.
+        (WebCore::CoordinatedImageBacking::updateVisibilityIfNeeded):
+
 2014-10-29  Chris Dumez  <cdumez@apple.com>
 
         Final-ize more of TextFieldInputType's virtual functions

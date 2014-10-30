@@ -1,3 +1,31 @@
+2014-10-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [CoordinatedGraphics] Use modern for-loops
+        https://bugs.webkit.org/show_bug.cgi?id=138168
+
+        Reviewed by Andreas Kling.
+
+        No new tests as there is no change in functionality.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp: Use a modern for loop.
+        (WebCore::CoordinatedBackingStore::texture):
+        (WebCore::CoordinatedBackingStore::paintTilesToTextureMapper):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp: Use a modern for loop.
+        (WebKit::CoordinatedDrawingAreaProxy::incorporateUpdate):
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.cpp: Use a modern for loop.
+        (WebCore::CoordinatedGraphicsScene::setLayerChildrenIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::createLayers): changed the name of argument to be equal with deleteLayer(). 
+        (WebCore::CoordinatedGraphicsScene::deleteLayers):
+        (WebCore::CoordinatedGraphicsScene::createTilesIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::removeTilesIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::updateTilesIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::syncUpdateAtlases):
+        (WebCore::CoordinatedGraphicsScene::syncImageBackings):
+        (WebCore::CoordinatedGraphicsScene::commitSceneState):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp: Use a modern for loop.
+        (WebKit::shouldPaintBoundsRect):
+        (WebKit::CoordinatedDrawingArea::display):
+
 2014-10-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix since r175349.
