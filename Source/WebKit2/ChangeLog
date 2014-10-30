@@ -1,5 +1,13 @@
 2014-10-30  Dana Burkart  <dburkart@apple.com>
 
+        Workaround for <rdar://problem/18830639>
+
+        Unreviewed.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
+2014-10-30  Dana Burkart  <dburkart@apple.com>
+
         <rdar://problem/18821260> Prepare for the mysterious future
 
         Reviewed by Lucas Forschler.

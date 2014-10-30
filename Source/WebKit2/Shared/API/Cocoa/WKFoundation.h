@@ -34,6 +34,10 @@
 #endif
 #endif
 
+#ifndef __NSi_10_11
+#define __NSi_10_11 introduced=10.11
+#endif
+
 #ifdef __cplusplus
 #define WK_EXTERN extern "C" __attribute__((visibility ("default")))
 #else
