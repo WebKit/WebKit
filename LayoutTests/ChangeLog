@@ -1,3 +1,23 @@
+2014-10-30  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Text rebaselining after r175384.
+
+        * platform/win/css1/box_properties/margin_right-expected.txt:
+        * platform/win/css1/box_properties/padding-expected.txt:
+        * platform/win/css1/box_properties/padding_left-expected.txt:
+        * platform/win/css1/box_properties/padding_right-expected.txt:
+        * platform/win/css1/box_properties/padding_top-expected.txt:
+        * platform/win/css1/font_properties/font-expected.txt:
+        * platform/win/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/win/css1/text_properties/text_transform-expected.txt:
+        * platform/win/fast/css/empty-pseudo-class-expected.txt:
+        * platform/win/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/win/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/win/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/win/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/win/fast/table/append-cells2-expected.txt:
+        * platform/win/tables/mozilla/bugs/45621-expected.txt:
+
 2014-10-30  Ada Chan  <adachan@apple.com>
 
         The Page's muted setting should not affect the HTMLMediaElement's 'muted' IDL attribute.

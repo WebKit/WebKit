@@ -98,16 +98,11 @@ layer at (0,0) size 785x1613
             RenderListMarker at (-37,6) size 17x18: "4"
             RenderText {#text} at (6,8) size 225x107
               text run at (6,8) width 137: "div :only-child {"
-              text run at (142,8) width 1: " "
               text run at (6,25) width 9: "}"
-              text run at (14,25) width 1: " "
               text run at (6,40) width 1: " "
               text run at (6,55) width 49: "<div> "
-              text run at (54,55) width 1: " "
               text run at (6,70) width 113: "   <div></div>"
-              text run at (118,70) width 1: " "
               text run at (6,85) width 225: "   <blockquote></blockquote>"
-              text run at (230,85) width 1: " "
               text run at (6,100) width 49: "</div>"
           RenderBlock {P} at (16,193) size 584x36
             RenderText {#text} at (0,0) size 570x35
