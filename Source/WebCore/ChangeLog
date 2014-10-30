@@ -1,3 +1,14 @@
+2014-10-30  Tim Horton  <timothy_horton@apple.com>
+
+        Long spins under rangeExpandedAroundPosition on Yahoo Mail
+        https://bugs.webkit.org/show_bug.cgi?id=138223
+        <rdar://problem/18819547>
+
+        Reviewed by Enrica Casucci.
+
+        * WebCore.exp.in:
+        Export some things.
+
 2014-10-30  Ada Chan  <adachan@apple.com>
 
         The Page's muted setting should not affect the HTMLMediaElement's 'muted' IDL attribute.
