@@ -102,7 +102,7 @@ class FrontendDispatcherHeaderGenerator(Generator):
             'eventDeclarations': "\n".join(event_declarations)
         }
 
-        return Generator.wrap_with_guard_for_domain(domain, Template(Templates.FrontendDispatcherDomainDispatcherDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(Templates.FrontendDispatcherDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_event(self, event, domain, used_enum_names):
         formal_parameters = []

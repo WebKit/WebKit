@@ -30,7 +30,7 @@ import re
 from string import Template
 
 from generator_templates import GeneratorTemplates as Templates
-from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType
+from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 
 log = logging.getLogger('global')
 
@@ -200,18 +200,21 @@ class Generator:
         self._assigned_enum_values.append(enum_value)
 
     # Miscellaneous text manipulation routines.
-    @staticmethod
-    def wrap_with_guard_for_domain(domain, text):
-        guard = domain.feature_guard
-        if guard is not None:
-            lines = [
-                '#if %s' % guard,
-                text,
-                '#endif // %s' % guard
-                ]
-            return '\n'.join(lines)
-        else:
+    def wrap_with_guard_for_domain(self, domain, text):
+        if self.model().framework is Frameworks.WebInspector:
             return text
+        guard = domain.feature_guard
+        if guard:
+            return Generator.wrap_with_guard(guard, text)
+        return text
+
+    @staticmethod
+    def wrap_with_guard(guard, text):
+        return '\n'.join([
+            '#if %s' % guard,
+            text,
+            '#endif // %s' % guard,
+        ])
 
     @staticmethod
     def stylized_name_for_enum_value(enum_value):

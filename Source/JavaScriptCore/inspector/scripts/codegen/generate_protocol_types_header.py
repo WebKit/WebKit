@@ -111,7 +111,7 @@ class ProtocolTypesHeaderGenerator(Generator):
             domain_lines.extend('class %s;' % name for name in sorted(object_type_names))
             domain_lines.extend('enum class %s;' % name for name in sorted(enum_type_names))
             domain_lines.append('} // %s' % domain.domain_name)
-            sections.append(Generator.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
+            sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
 
         if len(sections) == 0:
             return ''
@@ -150,7 +150,7 @@ class ProtocolTypesHeaderGenerator(Generator):
         lines.append('namespace %s {' % domain.domain_name)
         lines.append('\n\n'.join(sections))
         lines.append('} // %s' % domain.domain_name)
-        return Generator.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+        return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
 
     def _generate_builders_for_domain(self, domain):
         sections = []
@@ -169,7 +169,7 @@ class ProtocolTypesHeaderGenerator(Generator):
         lines.append('namespace %s {' % domain.domain_name)
         lines.append('\n'.join(sections))
         lines.append('} // %s' % domain.domain_name)
-        return Generator.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+        return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
 
     def _generate_class_for_object_declaration(self, type_declaration, domain):
         if len(type_declaration.type_members) == 0:

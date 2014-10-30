@@ -27,65 +27,49 @@
 
 import logging
 import string
-import re
 from string import Template
 
-from generator import Generator
+from generate_objective_c import ObjCGenerator
+from generator import Generator, ucfirst
 from generator_templates import GeneratorTemplates as Templates
 
 log = logging.getLogger('global')
 
 
-class AlternateBackendDispatcherHeaderGenerator(Generator):
+class ObjectiveCTypesInternalHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return 'InspectorAlternateBackendDispatchers.h'
+        return '%sInternal.h' % ObjCGenerator.OBJC_PREFIX
 
     def generate_output(self):
-        headers = [
-            '"InspectorProtocolTypes.h"',
-            '<JavaScriptCore/InspectorBackendDispatcher.h>',
-        ]
+        headers = set([
+            '"%s.h"' % ObjCGenerator.OBJC_PREFIX,
+            '"RWIProtocolJSONObjectInternal.h"',
+            '<JavaScriptCore/InspectorValues.h>',
+            '<JavaScriptCore/AugmentableInspectorController.h>',
+        ])
 
         header_args = {
-            'headerGuardString': re.sub('\W+', '_', self.output_filename()),
-            'includes': '\n'.join(['#include ' + header for header in headers]),
+            'includes': '\n'.join(['#import ' + header for header in sorted(headers)]),
         }
 
         domains = self.domains_to_generate()
+        event_domains = filter(ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model()), domains)
+
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.AlternateDispatchersHeaderPrelude).substitute(None, **header_args))
-        sections.append('\n'.join(filter(None, map(self._generate_handler_declarations_for_domain, domains))))
-        sections.append(Template(Templates.AlternateDispatchersHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(Templates.ObjCGenericHeaderPrelude).substitute(None, **header_args))
+        sections.append('\n\n'.join(filter(None, map(self._generate_event_dispatcher_private_interfaces, event_domains))))
+        sections.append(Template(Templates.ObjCGenericHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
-    def _generate_handler_declarations_for_domain(self, domain):
-        if not domain.commands:
-            return ''
-
-        command_declarations = []
-        for command in domain.commands:
-            command_declarations.append(self._generate_handler_declaration_for_command(command))
-
-        handler_args = {
-            'domainName': domain.domain_name,
-            'commandDeclarations': '\n'.join(command_declarations),
-        }
-
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration).substitute(None, **handler_args))
-
-    def _generate_handler_declaration_for_command(self, command):
+    def _generate_event_dispatcher_private_interfaces(self, domain):
         lines = []
-        parameters = ['long callId']
-        for _parameter in command.call_parameters:
-            parameters.append('%s in_%s' % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
-
-        command_args = {
-            'commandName': command.command_name,
-            'parameters': ', '.join(parameters),
-        }
-        lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
+        if domain.events:
+            objc_name = '%s%sDomainEventDispatcher' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+            lines.append('@interface %s (Private)' % objc_name)
+            lines.append('- (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;')
+            lines.append('@end')
         return '\n'.join(lines)

@@ -30,54 +30,71 @@ import string
 import re
 from string import Template
 
+from generate_objective_c import ObjCGenerator
 from generator import Generator
 from generator_templates import GeneratorTemplates as Templates
+from models import Frameworks
 
 log = logging.getLogger('global')
 
 
-class AlternateBackendDispatcherHeaderGenerator(Generator):
+class ObjectiveCBackendDispatcherHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return 'InspectorAlternateBackendDispatchers.h'
+        return '%sBackendDispatchers.h' % ObjCGenerator.OBJC_PREFIX
+
+    def domains_to_generate(self):
+        return filter(ObjCGenerator.should_generate_domain_command_handler_filter(self.model()), Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
-            '"InspectorProtocolTypes.h"',
-            '<JavaScriptCore/InspectorBackendDispatcher.h>',
+            '<JavaScriptCore/InspectorAlternateBackendDispatchers.h>',
+            '<wtf/RetainPtr.h>',
         ]
 
         header_args = {
             'headerGuardString': re.sub('\W+', '_', self.output_filename()),
             'includes': '\n'.join(['#include ' + header for header in headers]),
+            'forwardDeclarations': self._generate_objc_forward_declarations(),
         }
 
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.AlternateDispatchersHeaderPrelude).substitute(None, **header_args))
-        sections.append('\n'.join(filter(None, map(self._generate_handler_declarations_for_domain, domains))))
-        sections.append(Template(Templates.AlternateDispatchersHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(Templates.ObjCBackendDispatcherHeaderPrelude).substitute(None, **header_args))
+        sections.extend(map(self._generate_objc_handler_declarations_for_domain, domains))
+        sections.append(Template(Templates.ObjCBackendDispatcherHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
-    def _generate_handler_declarations_for_domain(self, domain):
+    def _generate_objc_forward_declarations(self):
+        lines = ['@protocol %s%sDomainHandler;' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name) for domain in self.domains_to_generate()]
+        return '\n'.join(lines)
+
+    def _generate_objc_forward_declarations_for_domains(self, domains):
+        lines = []
+        for domain in domains:
+            lines.append('@class %s%sDomainHandler;' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name))
+        return '\n'.join(lines)
+
+    def _generate_objc_handler_declarations_for_domain(self, domain):
         if not domain.commands:
             return ''
 
         command_declarations = []
         for command in domain.commands:
-            command_declarations.append(self._generate_handler_declaration_for_command(command))
+            command_declarations.append(self._generate_objc_handler_declaration_for_command(command))
 
         handler_args = {
             'domainName': domain.domain_name,
             'commandDeclarations': '\n'.join(command_declarations),
+            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(Templates.ObjCBackendDispatcherHeaderDomainHandlerObjCDeclaration).substitute(None, **handler_args))
 
-    def _generate_handler_declaration_for_command(self, command):
+    def _generate_objc_handler_declaration_for_command(self, command):
         lines = []
         parameters = ['long callId']
         for _parameter in command.call_parameters:
@@ -87,5 +104,5 @@ class AlternateBackendDispatcherHeaderGenerator(Generator):
             'commandName': command.command_name,
             'parameters': ', '.join(parameters),
         }
-        lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
+        lines.append('    virtual void %(commandName)s(%(parameters)s) override;' % command_args)
         return '\n'.join(lines)

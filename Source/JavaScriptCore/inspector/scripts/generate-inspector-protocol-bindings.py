@@ -56,6 +56,15 @@ except ImportError:
     from generate_backend_dispatcher_implementation import *
     from generate_frontend_dispatcher_header import *
     from generate_frontend_dispatcher_implementation import *
+    from generate_objective_c_backend_dispatcher_header import *
+    from generate_objective_c_backend_dispatcher_implementation import *
+    from generate_objective_c_configuration_header import *
+    from generate_objective_c_configuration_implementation import *
+    from generate_objective_c_conversion_helpers import *
+    from generate_objective_c_frontend_dispatcher_implementation import *
+    from generate_objective_c_header import *
+    from generate_objective_c_internal_header import *
+    from generate_objective_c_types_implementation import *
     from generate_protocol_types_header import *
     from generate_protocol_types_implementation import *
 
@@ -119,14 +128,26 @@ def generate_from_specification(primary_specification_filepath=None,
     protocol.resolve_types()
 
     generators = []
-    generators.append(AlternateBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-    generators.append(BackendCommandsGenerator(protocol, primary_specification_filepath))
-    generators.append(BackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-    generators.append(BackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-    generators.append(FrontendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-    generators.append(FrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-    generators.append(ProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
-    generators.append(ProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+    is_test = protocol.framework is Frameworks.Test
+    if is_test or protocol.framework is not Frameworks.WebInspector:
+        generators.append(AlternateBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(BackendCommandsGenerator(protocol, primary_specification_filepath))
+        generators.append(BackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(BackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(FrontendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(FrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+    if is_test or protocol.framework is Frameworks.WebInspector:
+        generators.append(ObjectiveCBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCConfigurationHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCConfigurationImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCConversionHelpersGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCHeaderGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCTypesImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjectiveCTypesInternalHeaderGenerator(protocol, primary_specification_filepath))
 
     single_output_file_contents = []
 
@@ -150,7 +171,7 @@ def generate_from_specification(primary_specification_filepath=None,
 
 
 if __name__ == '__main__':
-    allowed_framework_names = ['JavaScriptCore', 'Test']
+    allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'Test']
     cli_parser = optparse.OptionParser(usage="usage: %prog [options] PrimaryProtocol.json [SupplementalProtocol.json ...]")
     cli_parser.add_option("-o", "--outputDir", help="Directory where generated files should be written.")
     cli_parser.add_option("--framework", type="choice", choices=allowed_framework_names, help="The framework that the primary specification belongs to.")

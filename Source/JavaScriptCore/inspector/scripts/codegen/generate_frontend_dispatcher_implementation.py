@@ -68,7 +68,7 @@ class FrontendDispatcherImplementationGenerator(Generator):
         for event in domain.events:
             implementations.append(self._generate_dispatcher_implementation_for_event(event, domain))
 
-        return Generator.wrap_with_guard_for_domain(domain, "\n\n".join(implementations))
+        return self.wrap_with_guard_for_domain(domain, '\n\n'.join(implementations))
 
     def _generate_dispatcher_implementation_for_event(self, event, domain):
         lines = []

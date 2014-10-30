@@ -304,5 +304,129 @@ ${constructorExample}
     COMPILE_ASSERT(sizeof(${objectType}) == sizeof(Inspector::InspectorObjectBase), type_cast_problem);
     return static_cast<${objectType}*>(static_cast<Inspector::InspectorObjectBase*>(result.get()));
 }
-"""
-)
+""")
+
+    ObjCHeaderPrelude = (
+    """#import <Foundation/Foundation.h>
+
+${includes}
+""")
+
+    ObjCHeaderPostlude = (
+    """""")
+
+    ObjCConversionHelpersPrelude = (
+    """${includes}
+
+namespace Inspector {""")
+
+    ObjCConversionHelpersPostlude = (
+    """} // namespace Inspector
+""")
+
+    ObjCGenericHeaderPrelude = (
+    """${includes}""")
+
+    ObjCGenericHeaderPostlude = (
+    """""")
+
+    ObjCConversionHelpersStandard = (
+    """template<typename ObjCEnumType>
+ObjCEnumType fromProtocolString(String value);""")
+
+    ObjCBackendDispatcherHeaderPrelude = (
+    """${includes}
+
+${forwardDeclarations}
+
+namespace Inspector {
+""")
+
+    ObjCBackendDispatcherHeaderPostlude = (
+    """} // namespace Inspector
+""")
+
+    ObjCBackendDispatcherImplementationPrelude = (
+    """#import "config.h"
+#import ${primaryInclude}
+
+${secondaryIncludes}
+
+namespace Inspector {""")
+
+    ObjCBackendDispatcherImplementationPostlude = (
+    """} // namespace Inspector
+""")
+
+    ObjCImplementationPrelude = (
+    """#import "config.h"
+#import ${primaryInclude}
+
+${secondaryIncludes}
+
+using namespace Inspector;""")
+
+    ObjCImplementationPostlude = (
+    """""")
+
+    ObjCBackendDispatcherHeaderDomainHandlerInterfaceDeclaration = (
+    """class AlternateInspector${domainName}BackendDispatcher : public AlternateInspectorBackendDispatcher {
+public:
+    virtual ~AlternateInspector${domainName}BackendDispatcher() { }
+${commandDeclarations}
+};""")
+
+    ObjCBackendDispatcherHeaderDomainHandlerObjCDeclaration = (
+    """class ObjCInspector${domainName}BackendDispatcher final : public AlternateInspector${domainName}BackendDispatcher {
+public:
+    ObjCInspector${domainName}BackendDispatcher(id<${objcPrefix}${domainName}DomainHandler> handler) { m_delegate = handler; }
+${commandDeclarations}
+private:
+    RetainPtr<id<${objcPrefix}${domainName}DomainHandler>> m_delegate;
+};""")
+
+    ObjCBackendDispatcherHeaderDomainHandlerImplementation = (
+    """void ObjCInspector${domainName}BackendDispatcher::${commandName}(${parameters})
+{
+    id errorCallback = ^(NSString *error) {
+        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+    };
+
+${successCallback}
+${conversions}
+${invocation}
+}
+""")
+
+    ObjCConfigurationCommandProperty = (
+    """@property (nonatomic, retain, setter=set${domainName}Handler:) id<${objcPrefix}${domainName}DomainHandler> ${variableNamePrefix}Handler;""")
+
+    ObjCConfigurationEventProperty = (
+    """@property (nonatomic, readonly) ${objcPrefix}${domainName}DomainEventDispatcher *${variableNamePrefix}EventDispatcher;""")
+
+    ObjCConfigurationCommandPropertyImplementation = (
+    """- (void)set${domainName}Handler:(id<${objcPrefix}${domainName}DomainHandler>)handler
+{
+    if (handler == _${variableNamePrefix}Handler)
+        return;
+
+    [_${variableNamePrefix}Handler release];
+    _${variableNamePrefix}Handler = [handler retain];
+
+    auto alternateDispatcher = std::make_unique<ObjCInspector${domainName}BackendDispatcher>(handler);
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Inspector${domainName}BackendDispatcher, AlternateInspector${domainName}BackendDispatcher>>(ASCIILiteral("${domainName}"), WTF::move(alternateDispatcher));
+    _controller->agentRegistry().append(WTF::move(alternateAgent));
+}
+
+- (id<${objcPrefix}${domainName}DomainHandler>)${variableNamePrefix}Handler
+{
+    return _${variableNamePrefix}Handler;
+}""")
+
+    ObjCConfigurationGetterImplementation = (
+    """- (${objcPrefix}${domainName}DomainEventDispatcher *)${variableNamePrefix}EventDispatcher
+{
+    if (!_${variableNamePrefix}EventDispatcher)
+        _${variableNamePrefix}EventDispatcher = [[${objcPrefix}${domainName}DomainEventDispatcher alloc] initWithController:_controller];
+    return _${variableNamePrefix}EventDispatcher;
+}""")

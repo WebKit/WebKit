@@ -78,7 +78,7 @@ class BackendDispatcherImplementationGenerator(Generator):
             'domainName': domain.domain_name
         }
         destructor = 'Inspector%(domainName)sBackendDispatcherHandler::~Inspector%(domainName)sBackendDispatcherHandler() { }' % destructor_args
-        return Generator.wrap_with_guard_for_domain(domain, destructor)
+        return self.wrap_with_guard_for_domain(domain, destructor)
 
     def _generate_dispatcher_implementations_for_domain(self, domain):
         implementations = []
@@ -98,7 +98,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                 implementations.append(self._generate_async_dispatcher_class_for_domain(command, domain))
             implementations.append(self._generate_dispatcher_implementation_for_command(command, domain))
 
-        return Generator.wrap_with_guard_for_domain(domain, "\n\n".join(implementations))
+        return self.wrap_with_guard_for_domain(domain, '\n\n'.join(implementations))
 
     def _generate_small_dispatcher_switch_implementation_for_domain(self, domain):
         cases = []

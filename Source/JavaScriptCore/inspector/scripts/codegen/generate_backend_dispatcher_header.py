@@ -82,7 +82,7 @@ class BackendDispatcherHeaderGenerator(Generator):
         lines = []
         lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         for domain in domains:
-            lines.append(Generator.wrap_with_guard_for_domain(domain, 'class AlternateInspector%sBackendDispatcher;' % domain.domain_name))
+            lines.append(self.wrap_with_guard_for_domain(domain, 'class AlternateInspector%sBackendDispatcher;' % domain.domain_name))
         lines.append('#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         return '\n'.join(lines)
 
@@ -104,7 +104,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             'commandDeclarations': "\n".join(command_declarations)
         }
 
-        return Generator.wrap_with_guard_for_domain(domain, Template(Templates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(Templates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
 
     def _generate_anonymous_enum_for_parameter(self, parameter, command):
         enum_args = {
@@ -194,7 +194,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             'commandDeclarations': "\n".join(declarations)
         }
 
-        return Generator.wrap_with_guard_for_domain(domain, Template(Templates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(Templates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_command(self, command):
         return "    void %s(long callId, const Inspector::InspectorObject& message);" % command.command_name
