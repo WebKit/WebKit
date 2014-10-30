@@ -79,9 +79,9 @@ static void mediaPlayerPrivateMuteChangedCallback(GObject*, GParamSpec*, MediaPl
     player->muteChanged();
 }
 
-static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivateGStreamerBase* playerPrivate)
+static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstSample* sample, MediaPlayerPrivateGStreamerBase* playerPrivate)
 {
-    playerPrivate->triggerRepaint(buffer);
+    playerPrivate->triggerRepaint(sample);
 }
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
@@ -89,12 +89,12 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_fpsSink(0)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
-    , m_buffer(0)
+    , m_sample(0)
     , m_repaintHandler(0)
     , m_volumeSignalHandler(0)
     , m_muteSignalHandler(0)
 {
-    g_mutex_init(&m_bufferMutex);
+    g_mutex_init(&m_sampleMutex);
 }
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
@@ -104,11 +104,11 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
         m_repaintHandler = 0;
     }
 
-    g_mutex_clear(&m_bufferMutex);
+    g_mutex_clear(&m_sampleMutex);
 
-    if (m_buffer)
-        gst_buffer_unref(m_buffer);
-    m_buffer = 0;
+    if (m_sample)
+        gst_sample_unref(m_sample);
+    m_sample = 0;
 
     m_player = 0;
 
@@ -137,7 +137,11 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
-    GRefPtr<GstCaps> caps = currentVideoSinkCaps();
+    GMutexLocker<GMutex> lock(m_sampleMutex);
+    if (!m_sample)
+        return IntSize();
+
+    GstCaps* caps = gst_sample_get_caps(m_sample);
     if (!caps)
         return IntSize();
 
@@ -152,7 +156,7 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
     IntSize originalSize;
     GstVideoFormat format;
-    if (!getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
+    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
         return IntSize();
 
     LOG_MEDIA_MESSAGE("Original video size: %dx%d", originalSize.width(), originalSize.height());
@@ -275,25 +279,26 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(TextureMapper* textureMapper)
 {
-    GMutexLocker<GMutex> lock(m_bufferMutex);
-    if (!m_buffer)
+    GMutexLocker<GMutex> lock(m_sampleMutex);
+    if (!m_sample)
         return nullptr;
 
-    GRefPtr<GstCaps> caps = currentVideoSinkCaps();
+    GstCaps* caps = gst_sample_get_caps(m_sample);
     if (!caps)
         return nullptr;
 
     GstVideoInfo videoInfo;
     gst_video_info_init(&videoInfo);
-    if (!gst_video_info_from_caps(&videoInfo, caps.get()))
+    if (!gst_video_info_from_caps(&videoInfo, caps))
         return nullptr;
 
     IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
     RefPtr<BitmapTexture> texture = textureMapper->acquireTextureFromPool(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+    GstBuffer* buffer = gst_sample_get_buffer(m_sample);
 
 #if GST_CHECK_VERSION(1, 1, 0)
     GstVideoGLTextureUploadMeta* meta;
-    if ((meta = gst_buffer_get_video_gl_texture_upload_meta(m_buffer))) {
+    if ((meta = gst_buffer_get_video_gl_texture_upload_meta(buffer))) {
         if (meta->n_textures == 1) { // BRGx & BGRA formats use only one texture.
             const BitmapTextureGL* textureGL = static_cast<const BitmapTextureGL*>(texture.get());
             guint ids[4] = { textureGL->id(), 0, 0, 0 };
@@ -308,7 +313,7 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
     ASSERT(GST_VIDEO_INFO_N_PLANES(&videoInfo) == 1);
 
     GstVideoFrame videoFrame;
-    if (!gst_video_frame_map(&videoFrame, &videoInfo, m_buffer, GST_MAP_READ))
+    if (!gst_video_frame_map(&videoFrame, &videoInfo, buffer, GST_MAP_READ))
         return nullptr;
 
     int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&videoFrame, 0);
@@ -320,13 +325,15 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
 }
 #endif
 
-void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstBuffer* buffer)
+void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 {
-    g_return_if_fail(GST_IS_BUFFER(buffer));
+    g_return_if_fail(GST_IS_SAMPLE(sample));
 
     {
-        GMutexLocker<GMutex> lock(m_bufferMutex);
-        gst_buffer_replace(&m_buffer, buffer);
+        GMutexLocker<GMutex> lock(m_sampleMutex);
+        if (m_sample)
+            gst_sample_unref(m_sample);
+        m_sample = gst_sample_ref(sample);
     }
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
@@ -357,15 +364,11 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     if (!m_player->visible())
         return;
 
-    GMutexLocker<GMutex> lock(m_bufferMutex);
-    if (!m_buffer)
+    GMutexLocker<GMutex> lock(m_sampleMutex);
+    if (!m_sample)
         return;
 
-    GRefPtr<GstCaps> caps = currentVideoSinkCaps();
-    if (!caps)
-        return;
-
-    RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_buffer, caps.get());
+    RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_sample);
     if (!gstImage)
         return;
 
@@ -407,16 +410,6 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() cons
         return MediaPlayer::LiveStream;
 
     return MediaPlayer::Download;
-}
-
-GRefPtr<GstCaps> MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps() const
-{
-    if (!m_webkitVideoSink)
-        return nullptr;
-
-    GRefPtr<GstCaps> currentCaps;
-    g_object_get(G_OBJECT(m_webkitVideoSink.get()), "current-caps", &currentCaps.outPtr(), NULL);
-    return currentCaps;
 }
 
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
