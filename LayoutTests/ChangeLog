@@ -1,6 +1,13 @@
 2014-10-30  Roger Fong  <roger_fong@apple.com>
 
-        [Windows] Text rebaselining after r175384.
+        [Windows] More text rebaselining.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/text/tatechuyoko-expected.txt: Added.
+
+2014-10-30  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Text rebaselining after r175259.
 
         * platform/win/css1/box_properties/margin_right-expected.txt:
         * platform/win/css1/box_properties/padding-expected.txt:

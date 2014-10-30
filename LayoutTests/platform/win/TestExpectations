@@ -2864,6 +2864,7 @@ media/track/w3c/interfaces/TextTrackCue/id.html [ Skip ]
 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Skip ]
 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Skip ]
 media/track/w3c/interfaces/TextTrackCue/track.html [ Skip ]
+media/video-volume-slider-drag.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
