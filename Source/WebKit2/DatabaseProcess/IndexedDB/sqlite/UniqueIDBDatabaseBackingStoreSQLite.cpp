@@ -41,7 +41,9 @@
 #include <WebCore/IDBKeyRange.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
+#include <WebCore/SQLiteTransaction.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 using namespace JSC;
@@ -51,6 +53,29 @@ namespace WebKit {
 
 // Current version of the metadata schema being used in the metadata database.
 static const int currentMetadataVersion = 1;
+
+static const String& v1RecordsTableSchema()
+{
+    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(ASCIILiteral(
+        "CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL)"));
+    return v1RecordsTableSchemaString;
+}
+
+static const String v2RecordsTableSchema(const String& tableName)
+{
+    StringBuilder builder;
+    builder.append("CREATE TABLE ");
+    builder.append(tableName);
+    builder.append(" (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
+
+    return builder.toString();
+}
+
+static const String& v2RecordsTableSchema()
+{
+    static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
+    return v2RecordsTableSchemaString;
+}
 
 static int64_t generateDatabaseId()
 {
@@ -82,6 +107,97 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
     }
 }
 
+static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
+{
+    String currentSchema;
+    {
+        // Fetch the schema for an existing records table.
+        SQLiteStatement statement(database, "SELECT type, sql FROM sqlite_master WHERE tbl_name='Records'");
+        if (statement.prepare() != SQLResultOk) {
+            LOG_ERROR("Unable to prepare statement to fetch schema for the Records table.");
+            return false;
+        }
+
+        int sqliteResult = statement.step();
+
+        // If there is no Records table at all, create it and then bail.
+        if (sqliteResult == SQLResultDone) {
+            if (!database.executeCommand(v2RecordsTableSchema())) {
+                LOG_ERROR("Could not create Records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
+                return false;
+            }
+
+            return true;
+        }
+
+        if (sqliteResult != SQLResultRow) {
+            LOG_ERROR("Error executing statement to fetch schema for the Records table.");
+            return false;
+        }
+
+        currentSchema = statement.getColumnText(1);
+    }
+
+    ASSERT(!currentSchema.isEmpty());
+
+    // If the schema in the backing store is the current schema, we're done.
+    if (currentSchema == v2RecordsTableSchema())
+        return true;
+
+    // Currently the Records table should only be one of either the v1 or v2 schemas.
+    if (currentSchema != v1RecordsTableSchema()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    SQLiteTransaction transaction(database);
+    transaction.begin();
+
+    // Create a temporary table with the correct schema and migrate all existing content over.
+    if (!database.executeCommand(v2RecordsTableSchema("_Temp_Records"))) {
+        LOG_ERROR("Could not create temporary records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
+        return false;
+    }
+
+    if (!database.executeCommand("INSERT INTO _Temp_Records SELECT * FROM Records")) {
+        LOG_ERROR("Could not migrate existing Records content (%i) - %s", database.lastError(), database.lastErrorMsg());
+        return false;
+    }
+
+    if (!database.executeCommand("DROP TABLE Records")) {
+        LOG_ERROR("Could not drop existing Records table (%i) - %s", database.lastError(), database.lastErrorMsg());
+        return false;
+    }
+
+    if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records")) {
+        LOG_ERROR("Could not rename temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg());
+        return false;
+    }
+
+    transaction.commit();
+
+    return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::ensureValidRecordsTable()
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    if (!createOrMigrateRecordsTableIfNecessary(*m_sqliteDB))
+        return false;
+
+    // Whether the updated records table already existed or if it was just created and the data migrated over,
+    // make sure the uniqueness index exists.
+    if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);")) {
+        LOG_ERROR("Could not create RecordsIndex on Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    return true;
+}
+
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()
 {
     ASSERT(!RunLoop::isMain());
@@ -102,12 +218,6 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::create
 
     if (!m_sqliteDB->executeCommand("CREATE TABLE IndexInfo (id INTEGER NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, isUnique INTEGER NOT NULL ON CONFLICT FAIL, multiEntry INTEGER NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create IndexInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        m_sqliteDB = nullptr;
-        return nullptr;
-    }
-
-    if (!m_sqliteDB->executeCommand("CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL);")) {
-        LOG_ERROR("Could not create Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         m_sqliteDB = nullptr;
         return nullptr;
     }
@@ -316,6 +426,12 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     m_sqliteDB->setCollationFunction("IDBKEY", [this](int aLength, const void* a, int bLength, const void* b) {
         return idbKeyCollate(aLength, a, bLength, b);
     });
+
+    if (!ensureValidRecordsTable()) {
+        LOG_ERROR("Error creating or migrating Records table in database");
+        m_sqliteDB = nullptr;
+        return nullptr;
+    }
 
     std::unique_ptr<IDBDatabaseMetadata> metadata = extractExistingMetadata();
     if (!metadata)

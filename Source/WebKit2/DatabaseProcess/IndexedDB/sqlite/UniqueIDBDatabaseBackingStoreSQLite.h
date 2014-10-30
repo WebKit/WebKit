@@ -101,6 +101,8 @@ private:
     std::unique_ptr<WebCore::IDBDatabaseMetadata> extractExistingMetadata();
     std::unique_ptr<WebCore::IDBDatabaseMetadata> createAndPopulateInitialMetadata();
 
+    bool ensureValidRecordsTable();
+
     bool deleteRecord(SQLiteIDBTransaction&, int64_t objectStoreID, const WebCore::IDBKeyData&);
     bool uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyData& keyValue, const WebCore::IDBKeyData& indexKey);
 

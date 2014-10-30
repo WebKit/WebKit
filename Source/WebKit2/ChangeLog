@@ -1,3 +1,23 @@
+2014-10-30  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB is deleting data when a PK is shared amongst two objectStores
+        rdar://problem/18479306 and https://bugs.webkit.org/show_bug.cgi?id=137154
+
+        Reviewed by Jer Noble.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::v1RecordsTableSchema): Store away the v1 schema for introspection into the database.
+        (WebKit::v2RecordsTableSchema): Add utility methods to get the v2 schema with different Table names.
+        (WebKit::createOrMigrateRecordsTableIfNecessary): Check to see if the Records table exists with
+          the correct schema. If it is the v1 schema, then migrate the data to a new v2 table, drop the v1
+          table, then slide the new table into place.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::ensureValidRecordsTable): Make sure the Records table
+          exists and is v2, and then make sure the uniqueness index exists.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata): Don’t bother creating
+          the Records table here as it will have already been established earlier.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
 2014-10-30  Beth Dakin  <bdakin@apple.com>
 
         Implement action menus for text

@@ -1,3 +1,13 @@
+2014-10-30  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB is deleting data when a PK is shared amongst two objectStores
+        rdar://problem/18479306 and https://bugs.webkit.org/show_bug.cgi?id=137154
+
+        Reviewed by Jer Noble.
+
+        * storage/indexeddb/primary-key-unique-to-objectstore-expected.txt: Added.
+        * storage/indexeddb/primary-key-unique-to-objectstore.html: Added.
+
 2014-10-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; rebaseline two media/ tests.
