@@ -1,3 +1,14 @@
+2014-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Enable bmalloc in 32bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=138232
+
+        Reviewed by Andreas Kling.
+
+        Seems to work fine.
+
+        * wtf/FastMalloc.cpp:
+
 2014-10-30  Jeffrey Pfau  <jpfau@apple.com>
 
         ASSERT(!m_deletionHasBegun) in RefCounted.h should be ASSERT_WITH_SECURITY_IMPLICATION
