@@ -1,3 +1,14 @@
+2014-10-30  Andreas Kling  <akling@apple.com>
+
+        Unreviewed assertion fix.
+
+        RegExpCachedResult::m_reified is now the dedicated member that knows whether
+        the result was reified into an array or not. Check that instead of m_result
+        which is now single-purpose.
+
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::setInput):
+
 2014-10-29  Andreas Kling  <akling@apple.com>
 
         Use plain JSArray for RegExp matches instead of a lazily populated custom object.
