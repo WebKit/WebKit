@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    h1 {
+        -webkit-animation-name: spacing;
+        -webkit-animation-duration: 1s;
+    }
+    @-webkit-keyframes spacing {
+      0%  {
+        word-spacing: normal
+      }
+      20%  {
+        word-spacing: 100px
+      }
+      40%  {
+        word-spacing: 200%
+      }
+      60%  {
+        word-spacing: 20em
+      }
+      80%  {
+        word-spacing: 300%
+      }
+      100% { }
+    }
+  </style>
+</head>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+<body>
+<h1>PASS if no assert or crash in debug.</h1>
+</body>
+</html>
