@@ -435,7 +435,9 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
     // FIXME: This should really also delete the item from the map.
     m_page->backForwardRemovedItem(backForwardListItem.itemID());
 
+#if PLATFORM(COCOA)
     backForwardListItem.setSnapshot(nullptr);
+#endif
 }
 
 } // namespace WebKit

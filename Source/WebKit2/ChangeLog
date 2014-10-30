@@ -1,3 +1,10 @@
+2014-10-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r175349.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::didRemoveItem): Use PLATFORM(COCOA) for setSnapshot().
+
 2014-10-29  Tim Horton  <timothy_horton@apple.com>
 
         Null deref under performActionMenuHitTestAtLocation
