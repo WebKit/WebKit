@@ -973,6 +973,8 @@ private:
 #if PLATFORM(COCOA)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options);
+    PassRefPtr<WebCore::Range> rangeForDictionaryLookupAtHitTestResult(const WebCore::HitTestResult&, NSDictionary **);
+    void performDictionaryLookupOfCurrentSelection();
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
 
@@ -1047,6 +1049,7 @@ private:
 
 #if PLATFORM(MAC)
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+    void selectLookupTextAtLocation(WebCore::FloatPoint);
 #endif
 
     uint64_t m_pageID;

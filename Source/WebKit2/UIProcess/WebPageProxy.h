@@ -690,6 +690,7 @@ public:
 #if PLATFORM(COCOA)
     // Dictionary.
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+    void performDictionaryLookupOfCurrentSelection();
 #endif
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID, uint64_t navigationID);
@@ -925,6 +926,7 @@ public:
 
     WebHitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+    void selectLookupTextAtLocation(WebCore::FloatPoint);
 #endif
 
 #if PLATFORM(EFL) && HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)

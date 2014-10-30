@@ -158,6 +158,7 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(COCOA)
     # Dictionary support.
     PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+    PerformDictionaryLookupOfCurrentSelection()
 #endif
 
     PreferencesDidChange(WebKit::WebPreferencesStore store)
@@ -390,5 +391,6 @@ messages -> WebPage LegacyReceiver {
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
 #if PLATFORM(MAC)
     PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location)
+    SelectLookupTextAtLocation(WebCore::FloatPoint location)
 #endif
 }
