@@ -225,11 +225,28 @@ class PatchAnalysisTask(object):
             return self._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(second_results, second_results_archive, second_script_error)
 
         if self._results_failed_different_tests(first_results, second_results):
-            # We could report flaky tests here, but we would need to be careful
-            # to use similar checks to ExpectedFailures._can_trust_results
-            # to make sure we don't report constant failures as flakes when
-            # we happen to hit the --exit-after-N-failures limit.
-            # See https://bugs.webkit.org/show_bug.cgi?id=51272
+            first_failing_results_set = frozenset(first_results.failing_test_results())
+            second_failing_results_set = frozenset(second_results.failing_test_results())
+
+            tests_that_only_failed_first = first_failing_results_set.difference(second_failing_results_set)
+            self._report_flaky_tests(tests_that_only_failed_first, first_results_archive)
+
+            tests_that_only_failed_second = second_failing_results_set.difference(first_failing_results_set)
+            self._report_flaky_tests(tests_that_only_failed_second, second_results_archive)
+
+            tests_that_consistently_failed = first_failing_results_set.intersection(second_failing_results_set)
+            if tests_that_consistently_failed:
+                self._build_and_test_without_patch()
+                self._clean_tree_results = self._delegate.test_results()
+                tests_that_failed_on_tree = self._clean_tree_results.failing_test_results()
+
+                new_failures_introduced_by_patch = tests_that_consistently_failed.difference(set(tests_that_failed_on_tree))
+                if new_failures_introduced_by_patch:
+                    self.failure_status_id = first_failure_status_id
+                    return self.report_failure(first_results_archive, new_failures_introduced_by_patch, first_script_error)
+
+            # At this point we know that there is flakyness with the patch applied, but no consistent failures
+            # were introduced. This is a bit of a grey-zone.
             return False
 
         if self._build_and_test_without_patch():

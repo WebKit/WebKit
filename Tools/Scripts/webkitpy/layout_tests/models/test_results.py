@@ -64,6 +64,9 @@ class TestResult(object):
     def __ne__(self, other):
         return not (self == other)
 
+    def __hash__(self):
+        return self.test_name.__hash__()
+
     def has_failure_matching_types(self, *failure_classes):
         for failure in self.failures:
             if type(failure) in failure_classes:

@@ -73,8 +73,9 @@ class MockCommitQueue(CommitQueueTaskDelegate):
         return LayoutTestResults(test_results=[], did_exceed_test_failure_limit=False)
 
     def report_flaky_tests(self, patch, flaky_results, results_archive):
-        self._flaky_tests = [result.test_name for result in flaky_results]
-        _log.info("report_flaky_tests: patch='%s' flaky_tests='%s' archive='%s'" % (patch.id(), self._flaky_tests, results_archive.filename))
+        current_flaky_tests = [result.test_name for result in flaky_results]
+        self._flaky_tests += current_flaky_tests
+        _log.info("report_flaky_tests: patch='%s' flaky_tests='%s' archive='%s'" % (patch.id(), current_flaky_tests, results_archive.filename))
 
     def get_reported_flaky_tests(self):
         return self._flaky_tests
@@ -174,7 +175,7 @@ class CommitQueueTaskTest(unittest.TestCase):
             analysis_result = PatchAnalysisResult.FAIL
 
         self.assertEqual(analysis_result, expected_analysis_result)
-        self.assertEqual(commit_queue.get_reported_flaky_tests(), expected_reported_flaky_tests)
+        self.assertEqual(frozenset(commit_queue.get_reported_flaky_tests()), frozenset(expected_reported_flaky_tests))
         self.assertEqual(commit_queue.did_run_clean_tests(), expect_clean_tests_to_run)
 
         # The failure status only means anything if we actually failed.
@@ -378,7 +379,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
         # The (subtle) point of this test is that report_flaky_tests does not get
         # called for this run.
         # Note also that there is no attempt to run the tests w/o the patch.
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expected_reported_flaky_tests=["Fail1", "Fail2"])
 
     def test_test_failure(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
@@ -421,7 +422,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
             clean_test_failures=["Fail1", "Fail2"])
 
         # FIXME: This should pass, but as of right now, it defers.
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expected_reported_flaky_tests=["Fail1", "Fail2"])
 
     def test_one_flaky_test(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
@@ -438,16 +439,16 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
             clean_test_failures=[])
 
         # FIXME: This should actually fail, but right now it defers
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expected_reported_flaky_tests=["Fail1", "Fail2", "Fail3", "Fail4", "Fail5", "Fail6", "Fail7", "Fail8", "Fail9", "Fail10"])
 
     def test_very_flaky_patch_with_some_tree_redness(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
-            first_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail6", "Fail7", "Fail8", "Fail9", "Fail10"],
-            second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            first_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail6", "Fail7", "Fail8", "Fail9", "Fail10"],
             clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
 
         # FIXME: This should actually fail, but right now it defers
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail1", "Fail2", "Fail3", "Fail4", "Fail5", "Fail6", "Fail7", "Fail8", "Fail9", "Fail10"])
 
     def test_different_test_failures(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
@@ -455,8 +456,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
             second_test_failures=["Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
             clean_test_failures=[])
 
-        # FIXME: This should actually fail, but right now it defers
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.FAIL, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail6"], expected_failure_status_id=1)
 
     def test_different_test_failures_with_some_tree_redness(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
@@ -464,8 +464,15 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
             second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
             clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
 
-        # FIXME: This should actually fail, but right now it defers
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.FAIL, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail6"], expected_failure_status_id=1)
+
+    def test_different_test_failures_with_some_tree_redness_and_some_fixes(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["PreExistingFail1", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5", "Fail6"],
+            second_test_failures=["PreExistingFail1", "Fail1", "Fail2", "Fail3", "Fail4", "Fail5"],
+            clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.FAIL, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail6"], expected_failure_status_id=1)
 
     def test_mildly_flaky_patch(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
@@ -473,7 +480,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
             second_test_failures=["Fail2"],
             clean_test_failures=[])
 
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=False, expected_reported_flaky_tests=["Fail1", "Fail2"])
 
     def test_mildly_flaky_patch_with_some_tree_redness(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
@@ -481,7 +488,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
             second_test_failures=["PreExistingFail1", "PreExistingFail2", "Fail2"],
             clean_test_failures=["PreExistingFail1", "PreExistingFail2"])
 
-        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER)
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_reported_flaky_tests=["Fail1", "Fail2"])
 
     def test_tree_more_red_than_patch(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
