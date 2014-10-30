@@ -73,7 +73,7 @@ my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 
 print "Checking Last-Modified date of $zipFile...\n";
 
-my $result = system "curl -s -I -k --sslv3 $libsURL | grep Last-Modified > \"$tmpAbsDir/$file.headers\"";
+my $result = system "curl -s -I -k $libsURL | grep Last-Modified > \"$tmpAbsDir/$file.headers\"";
 
 if (WEXITSTATUS($result)) {
 
@@ -82,7 +82,7 @@ if (WEXITSTATUS($result)) {
     my $headerURL = $libsURL;
     $headerURL =~ s/\.zip$/\.headers/;
 
-    $result = system "curl -k --sslv3 -o \"$tmpAbsDir/$file.headers\" $headerURL";
+    $result = system "curl -k -o \"$tmpAbsDir/$file.headers\" $headerURL";
 
     if (WEXITSTATUS($result)) {
         print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
@@ -113,7 +113,7 @@ if (open NEW, "$tmpAbsDir/$file.headers") {
 }
 
 print "Downloading $zipFile...\n\n";
-$result = system "curl -k --sslv3 -o \"$tmpAbsDir/$zipFile\" $libsURL";
+$result = system "curl -k -o \"$tmpAbsDir/$zipFile\" $libsURL";
 die "Couldn't download $zipFile!" if $result;
 
 $result = system "unzip", "-q", "-d", $tmpAbsDir, "$tmpAbsDir/$zipFile";
