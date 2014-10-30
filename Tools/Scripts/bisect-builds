@@ -312,7 +312,7 @@ sub loadSettings()
 
 sub makeNightlyList($$$$)
 {
-    my ($useLocalFiles, $localDirectory, $macOSXVersion, $safariVersion) = @_;
+    my ($useLocalFiles, $localDirectory, $osxVersionString, $safariVersionString) = @_;
     my @files;
 
     if ($useLocalFiles) {
@@ -335,36 +335,49 @@ sub makeNightlyList($$$$)
         close(NIGHTLIES);
     }
 
-    if (eval "v$macOSXVersion" ge v10.5) {
-        if ($safariVersion eq "4 Public Beta") {
+    my $osxVersion = eval("v$osxVersionString");
+    my $safariVersion = eval("v$safariVersionString");
+
+    if ($osxVersion ge v10.10 && $osxVersion lt v10.11) {
+        @files = grep { $_->{rev} >= 174650 } @files;
+    } elsif ($osxVersion ge v10.9 && $osxVersion lt v10.10) {
+        @files = grep { $_->{rev} >= 157846 } @files;
+    } elsif ($osxVersion ge v10.8 && $osxVersion lt v10.9) {
+        @files = grep { $_->{rev} >= 122421 } @files;
+    } elsif ($osxVersion ge v10.7 && $osxVersion lt v10.8) {
+        # FIXME: Add filter for 10.7.x
+    } elsif ($osxVersion ge v10.6 && $osxVersion lt v10.7) {
+        # FIXME: Add filter for 10.6.x
+    } elsif ($osxVersion ge v10.5 && $osxVersion lt v10.6) {
+        if ($safariVersionString eq "4 Public Beta") {
             @files = grep { $_->{rev} >= 39682 } @files;
-        } elsif (eval "v$safariVersion" ge v3.2) {
+        } elsif ($safariVersion ge v3.2) {
             @files = grep { $_->{rev} >= 37348 } @files;
-        } elsif (eval "v$safariVersion" ge v3.1) {
+        } elsif ($safariVersion ge v3.1) {
             @files = grep { $_->{rev} >= 29711 } @files;
-        } elsif (eval "v$safariVersion" ge v3.0) {
+        } elsif ($safariVersion ge v3.0) {
             @files = grep { $_->{rev} >= 25124 } @files;
-        } elsif (eval "v$safariVersion" ge v2.0) {
+        } elsif ($safariVersion ge v2.0) {
             @files = grep { $_->{rev} >= 19594 } @files;
         } else {
             die "Requires Safari 2.0 or newer";
         }
-    } elsif (eval "v$macOSXVersion" ge v10.4) {
+    } elsif ($osxVersion ge v10.4 && $osxVersion lt v10.5) {
         if ($safariVersion eq "4 Public Beta") {
             @files = grep { $_->{rev} >= 39682 } @files;
-        } elsif (eval "v$safariVersion" ge v3.2) {
+        } elsif ($safariVersion ge v3.2) {
             @files = grep { $_->{rev} >= 37348 } @files;
-        } elsif (eval "v$safariVersion" ge v3.1) {
+        } elsif ($safariVersion ge v3.1) {
             @files = grep { $_->{rev} >= 29711 } @files;
-        } elsif (eval "v$safariVersion" ge v3.0) {
+        } elsif ($safariVersion ge v3.0) {
             @files = grep { $_->{rev} >= 19992 } @files;
-        } elsif (eval "v$safariVersion" ge v2.0) {
+        } elsif ($safariVersion ge v2.0) {
             @files = grep { $_->{rev} >= 11976 } @files;
         } else {
             die "Requires Safari 2.0 or newer";
         }
     } else {
-        die "Requires Mac OS X 10.4 (Tiger) or 10.5 (Leopard)";
+        die "Requires Mac OS X 10.4 (Tiger) or later";
     }
 
     my $nightlycmp = sub { return $a->{rev} <=> $b->{rev}; };
