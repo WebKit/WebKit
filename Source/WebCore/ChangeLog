@@ -1,5 +1,19 @@
 2014-10-29  Chris Dumez  <cdumez@apple.com>
 
+        Final-ize more of TextFieldInputType's virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=138194
+
+        Reviewed by Andreas Kling.
+
+        Final-ize more of TextFieldInputType's virtual functions for
+        performance.
+
+        No new tests, no behavior change.
+
+        * html/TextFieldInputType.h:
+
+2014-10-29  Chris Dumez  <cdumez@apple.com>
+
         Clean up virtual functions in inspector/
         https://bugs.webkit.org/show_bug.cgi?id=138190
 

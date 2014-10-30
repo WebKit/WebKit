@@ -48,23 +48,23 @@ protected:
     virtual void handleKeydownEvent(KeyboardEvent*) override;
     void handleKeydownEventForSpinButton(KeyboardEvent*);
 
-    virtual HTMLElement* containerElement() const override;
-    virtual HTMLElement* innerBlockElement() const override;
-    virtual TextControlInnerTextElement* innerTextElement() const override;
-    virtual HTMLElement* innerSpinButtonElement() const override;
+    virtual HTMLElement* containerElement() const override final;
+    virtual HTMLElement* innerBlockElement() const override final;
+    virtual TextControlInnerTextElement* innerTextElement() const override final;
+    virtual HTMLElement* innerSpinButtonElement() const override final;
 
 protected:
     virtual bool needsContainer() const;
-    virtual bool shouldHaveSpinButton() const;
+    virtual bool shouldHaveSpinButton() const final;
     virtual void createShadowSubtree() override;
     virtual void destroyShadowSubtree() override;
-    virtual void attributeChanged() override;
-    virtual void disabledAttributeChanged() override;
-    virtual void readonlyAttributeChanged() override;
-    virtual bool supportsReadOnly() const override;
-    virtual void handleBlurEvent() override;
+    virtual void attributeChanged() override final;
+    virtual void disabledAttributeChanged() override final;
+    virtual void readonlyAttributeChanged() override final;
+    virtual bool supportsReadOnly() const override final;
+    virtual void handleBlurEvent() override final;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
-    virtual void updateInnerTextValue() override;
+    virtual void updateInnerTextValue() override final;
 #if PLATFORM(IOS)
     virtual String sanitizeValue(const String&) const override;
 #endif
@@ -77,30 +77,30 @@ protected:
     virtual void didSetValueByUserEdit(ValueChangeState);
 
 private:
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
-    virtual bool isMouseFocusable() const override;
-    virtual bool isTextField() const override;
-    virtual bool valueMissing(const String&) const override;
-    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) override;
-    virtual void forwardEvent(Event*) override;
-    virtual bool shouldSubmitImplicitly(Event*) override;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const override final;
+    virtual bool isMouseFocusable() const override final;
+    virtual bool isTextField() const override final;
+    virtual bool valueMissing(const String&) const override final;
+    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) override final;
+    virtual void forwardEvent(Event*) override final;
+    virtual bool shouldSubmitImplicitly(Event*) override final;
     virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
     virtual bool shouldUseInputMethod() const override;
 #if !PLATFORM(IOS)
     virtual String sanitizeValue(const String&) const override;
 #endif
     virtual bool shouldRespectListAttribute() override;
-    virtual HTMLElement* placeholderElement() const override;
-    virtual void updatePlaceholderText() override;
-    virtual bool appendFormData(FormDataList&, bool multipart) const override;
-    virtual void subtreeHasChanged() override;
+    virtual HTMLElement* placeholderElement() const override final;
+    virtual void updatePlaceholderText() override final;
+    virtual bool appendFormData(FormDataList&, bool multipart) const override final;
+    virtual void subtreeHasChanged() override final;
 
     // SpinButtonElement::SpinButtonOwner functions.
-    virtual void focusAndSelectSpinButtonOwner() override;
-    virtual bool shouldSpinButtonRespondToMouseEvents() override;
-    virtual bool shouldSpinButtonRespondToWheelEvents() override;
-    virtual void spinButtonStepDown() override;
-    virtual void spinButtonStepUp() override;
+    virtual void focusAndSelectSpinButtonOwner() override final;
+    virtual bool shouldSpinButtonRespondToMouseEvents() override final;
+    virtual bool shouldSpinButtonRespondToWheelEvents() override final;
+    virtual void spinButtonStepDown() override final;
+    virtual void spinButtonStepUp() override final;
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;
