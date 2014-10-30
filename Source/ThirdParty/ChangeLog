@@ -1,3 +1,11 @@
+2014-10-30  Dana Burkart  <dburkart@apple.com>
+
+        <rdar://problem/18821260> Prepare for the mysterious future
+
+        Reviewed by Lucas Forschler.
+
+        * gtest/xcode/Config/General.xcconfig:
+
 2014-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

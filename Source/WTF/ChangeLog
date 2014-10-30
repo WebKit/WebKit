@@ -1,3 +1,12 @@
+2014-10-30  Dana Burkart  <dburkart@apple.com>
+
+        <rdar://problem/18821260> Prepare for the mysterious future
+
+        Reviewed by Lucas Forschler.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2014-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Enable bmalloc in 32bit builds

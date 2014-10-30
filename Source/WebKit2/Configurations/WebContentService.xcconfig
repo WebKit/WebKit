@@ -38,6 +38,7 @@ BUNDLE_LOCALIZATION_KEY_macosx = $(BUNDLE_LOCALIZATION_KEY_macosx_$(TARGET_MAC_O
 BUNDLE_LOCALIZATION_KEY_macosx_1080 = CFBundleAllowMixedLocalizations;
 BUNDLE_LOCALIZATION_KEY_macosx_1090 = CFBundleAllowMixedLocalizations;
 BUNDLE_LOCALIZATION_KEY_macosx_101000 = CFBundleFollowParentLocalization;
+BUNDLE_LOCALIZATION_KEY_macosx_101100 = CFBundleFollowParentLocalization;
 
 CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/WebContent-iOS.entitlements
 

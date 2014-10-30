@@ -1,3 +1,12 @@
+2014-10-30  Dana Burkart  <dburkart@apple.com>
+
+        <rdar://problem/18821260> Prepare for the mysterious future
+
+        Reviewed by Lucas Forschler.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2014-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use proper v120 target for 64-bit builds.

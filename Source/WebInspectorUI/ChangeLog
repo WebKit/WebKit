@@ -1,3 +1,13 @@
+2014-10-30  Dana Burkart  <dburkart@apple.com>
+
+        <rdar://problem/18821260> Prepare for the mysterious future
+
+        Reviewed by Lucas Forschler.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+
 2014-10-10 Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: timelines should not count time elapsed while paused in the debugger
