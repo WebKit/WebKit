@@ -194,6 +194,7 @@ sub defaultTagPropertyHash
         'wrapperOnlyIfMediaIsAvailable' => 0,
         'conditional' => 0,
         'runtimeConditional' => 0,
+        'customTypeHelper' => 0,
     );
 }
 
@@ -634,10 +635,12 @@ sub printTypeHelpers
     }
 
     for my $class (sort keys %classToTags) {
+        my $name = $classToTags{$class}[0];
+        next if $parsedTags{$name}{customTypeHelper};
         # Skip classes that map to more than 1 tag.
         my $tagCount = scalar @{$classToTags{$class}};
         next if $tagCount > 1;
-        my $name = $classToTags{$class}[0];
+
         print F <<END
 namespace WebCore {
 class $class;

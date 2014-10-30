@@ -177,7 +177,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
 #endif
 
 #if ENABLE(VIDEO)
-    if (!mediaControlsStyleSheet && (is<HTMLVideoElement>(element) || is<HTMLAudioElement>(element))) {
+    if (!mediaControlsStyleSheet && is<HTMLMediaElement>(element)) {
         String mediaRules = RenderTheme::themeForPage(element.document().page())->mediaControlsStyleSheet();
         if (mediaRules.isEmpty())
             mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element.document().page())->extraMediaControlsStyleSheet();

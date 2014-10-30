@@ -1,3 +1,48 @@
+2014-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Optimize HTMLVideoElement / HTMLAudioElement type checks a bit
+        https://bugs.webkit.org/show_bug.cgi?id=138202
+
+        Reviewed by Benjamin Poulain.
+
+        Optimize HTMLVideoElement / HTMLAudioElement type checks a bit by:
+        1. Using is<HTMLMediaElement>() instead of
+           (is<HTMLVideoElement>() || is<HTMLAudioElement>()) if the caller is
+           interested in both video and audio elements. This is faster because
+           it ends up doing:
+               - virtual call to Element::isMediaElement()
+           instead of
+               - Node::isHTMLElement() +
+                 virtual call to HTMLElement::isHTMLUnknownElement() +
+                 2 * HTMLElement::hasTagName()
+        2. Updating HTMLVideoElement / HTMLAudioElement type traits
+           specializations to:
+           - Avoid doing any virtual function call if the input type is an
+             HTMLMediaElement (which is common in the code base).
+           - Speed up check if the input is an Element by doing:
+               - virtual call to Element::isMediaElement() +
+                 HTMLElement::hasTagName()
+             instead of
+               - Node::isHTMLElement() +
+                 virtual call to !HTMLElement::isHTMLUnknownElement() +
+                 HTMLElement::hasTagName()
+             The speed stays the same if the input is a Node or an HTMLElement.
+
+        No new tests, no behavior change.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        * dom/make_names.pl:
+        (defaultTagPropertyHash):
+        (printTypeHelpers):
+        * html/HTMLAudioElement.h:
+        (isType):
+        * html/HTMLImageLoader.cpp:
+        * html/HTMLTagNames.in:
+        * html/HTMLVideoElement.h:
+        (isType):
+        * page/ChromeClient.h:
+
 2014-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate ComplexTextControllerCoreText to use SPI instead of WKSI

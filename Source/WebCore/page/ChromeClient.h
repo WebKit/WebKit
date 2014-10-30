@@ -75,6 +75,7 @@ class GraphicsContext3D;
 class GraphicsLayer;
 class GraphicsLayerFactory;
 class HTMLInputElement;
+class HTMLVideoElement;
 class HitTestResult;
 class IntRect;
 class NavigationAction;
