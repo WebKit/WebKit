@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,93 +31,37 @@
 
 namespace JSC {
 
-const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, CREATE_METHOD_TABLE(RegExpMatchesArray)};
-
-RegExpMatchesArray::RegExpMatchesArray(VM& vm, Butterfly* butterfly, JSGlobalObject* globalObject, JSString* input, RegExp* regExp, MatchResult result)
-    : JSArray(vm, globalObject->regExpMatchesArrayStructure(), butterfly)
-    , m_result(result)
-    , m_state(ReifiedNone)
-{
-    m_input.set(vm, this, input);
-    m_regExp.set(vm, this, regExp);
-}
-
-RegExpMatchesArray* RegExpMatchesArray::create(ExecState* exec, JSString* input, RegExp* regExp, MatchResult result)
+JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regExp, MatchResult result)
 {
     ASSERT(result);
     VM& vm = exec->vm();
-    Butterfly* butterfly = createArrayButterflyWithExactLength(vm, 0, regExp->numSubpatterns() + 1);
-    RegExpMatchesArray* array = new (NotNull, allocateCell<RegExpMatchesArray>(vm.heap)) RegExpMatchesArray(vm, butterfly, exec->lexicalGlobalObject(), input, regExp, result);
-    array->finishCreation(vm);
-    return array;
-}
+    JSArray* array = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+    RELEASE_ASSERT(array);
 
-void RegExpMatchesArray::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-}
-
-void RegExpMatchesArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_input);
-    visitor.append(&thisObject->m_regExp);
-}
-
-void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
-{
-    ASSERT(m_state != ReifiedAll);
-    ASSERT(m_result);
- 
     SamplingRegion samplingRegion("Reifying substring properties");
-    
-    reifyMatchPropertyIfNecessary(exec);
 
-    if (unsigned numSubpatterns = m_regExp->numSubpatterns()) {
+    array->putDirectIndex(exec, 0, jsSubstring(exec, input, result.start, result.end - result.start));
+
+    if (unsigned numSubpatterns = regExp->numSubpatterns()) {
         Vector<int, 32> subpatternResults;
-        int position = m_regExp->match(exec->vm(), m_input->value(exec), m_result.start, subpatternResults);
-        ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == m_result.start);
-        ASSERT(m_result.start == static_cast<size_t>(subpatternResults[0]));
-        ASSERT(m_result.end == static_cast<size_t>(subpatternResults[1]));
+        int position = regExp->match(exec->vm(), input->value(exec), result.start, subpatternResults);
+        ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
+        ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
+        ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
 
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
             int start = subpatternResults[2 * i];
             if (start >= 0)
-                putDirectIndex(exec, i, jsSubstring(exec, m_input.get(), start, subpatternResults[2 * i + 1] - start));
+                array->putDirectIndex(exec, i, jsSubstring(exec, input, start, subpatternResults[2 * i + 1] - start));
             else
-                putDirectIndex(exec, i, jsUndefined());
+                array->putDirectIndex(exec, i, jsUndefined());
         }
     }
 
-    putDirect(exec->vm(), exec->propertyNames().index, jsNumber(m_result.start));
-    putDirect(exec->vm(), exec->propertyNames().input, m_input.get());
+    array->putDirect(exec->vm(), exec->propertyNames().index, jsNumber(result.start));
+    array->putDirect(exec->vm(), exec->propertyNames().input, input);
 
-    m_state = ReifiedAll;
-}
-
-void RegExpMatchesArray::reifyMatchProperty(ExecState* exec)
-{
-    ASSERT(m_state == ReifiedNone);
-    ASSERT(m_result);
-    putDirectIndex(exec, 0, jsSubstring(exec, m_input.get(), m_result.start, m_result.end - m_result.start));
-    m_state = ReifiedMatch;
-}
-
-JSString* RegExpMatchesArray::leftContext(ExecState* exec)
-{
-    if (!m_result.start)
-        return jsEmptyString(exec);
-    return jsSubstring(exec, m_input.get(), 0, m_result.start);
-}
-
-JSString* RegExpMatchesArray::rightContext(ExecState* exec)
-{
-    unsigned length = m_input->length();
-    if (m_result.end == length)
-        return jsEmptyString(exec);
-    return jsSubstring(exec, m_input.get(), m_result.end, length - m_result.end);
+    return array;
 }
 
 } // namespace JSC

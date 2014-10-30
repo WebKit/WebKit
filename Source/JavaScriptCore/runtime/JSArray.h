@@ -190,18 +190,6 @@ inline Butterfly* createContiguousArrayButterfly(VM& vm, JSCell* intendedOwner, 
     return result;
 }
 
-inline Butterfly* createArrayButterflyWithExactLength(VM& vm, JSCell* intendedOwner, unsigned initialLength)
-{
-    Butterfly* butterfly = Butterfly::create(
-        vm, intendedOwner, 0, 0, true, indexingHeaderForArray(initialLength, initialLength),
-        ArrayStorage::sizeFor(initialLength));
-    ArrayStorage* storage = butterfly->arrayStorage();
-    storage->m_indexBias = 0;
-    storage->m_sparseMap.clear();
-    storage->m_numValuesInVector = 0;
-    return butterfly;
-}
-
 inline Butterfly* createArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned initialLength)
 {
     Butterfly* butterfly = Butterfly::create(

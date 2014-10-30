@@ -116,7 +116,7 @@ void RegExpConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 JSValue RegExpConstructor::getBackref(ExecState* exec, unsigned i)
 {
-    RegExpMatchesArray* array = m_cachedResult.lastResult(exec, this);
+    JSArray* array = m_cachedResult.lastResult(exec, this);
 
     if (i < array->length()) {
         JSValue result = JSValue(array).get(exec, i);
@@ -129,7 +129,7 @@ JSValue RegExpConstructor::getBackref(ExecState* exec, unsigned i)
 
 JSValue RegExpConstructor::getLastParen(ExecState* exec)
 {
-    RegExpMatchesArray* array = m_cachedResult.lastResult(exec, this);
+    JSArray* array = m_cachedResult.lastResult(exec, this);
     unsigned length = array->length();
     if (length > 1) {
         JSValue result = JSValue(array).get(exec, length - 1);
@@ -142,12 +142,12 @@ JSValue RegExpConstructor::getLastParen(ExecState* exec)
 
 JSValue RegExpConstructor::getLeftContext(ExecState* exec)
 {
-    return m_cachedResult.lastResult(exec, this)->leftContext(exec);
+    return m_cachedResult.leftContext(exec, this);
 }
 
 JSValue RegExpConstructor::getRightContext(ExecState* exec)
 {
-    return m_cachedResult.lastResult(exec, this)->rightContext(exec);
+    return m_cachedResult.rightContext(exec, this);
 }
     
 bool RegExpConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -638,7 +638,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
 
-    if ((isJSArray(baseValue) || isRegExpMatchesArray(baseValue) || isJSString(baseValue)) && propertyName == exec->propertyNames().length) {
+    if ((isJSArray(baseValue) || isJSString(baseValue)) && propertyName == exec->propertyNames().length) {
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
 #if USE(JSVALUE32_64)
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
@@ -647,7 +647,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
         MacroAssembler stubJit;
 
-        if (isJSArray(baseValue) || isRegExpMatchesArray(baseValue)) {
+        if (isJSArray(baseValue)) {
             GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
             bool needToRestoreScratch = false;
 
