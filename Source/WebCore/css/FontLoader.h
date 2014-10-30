@@ -48,7 +48,7 @@ class Font;
 class LoadFontCallback;
 class ScriptExecutionContext;
 
-class FontLoader : public RefCounted<FontLoader>, public ActiveDOMObject, public EventTarget {
+class FontLoader final : public RefCounted<FontLoader>, public ActiveDOMObject, public EventTarget {
 public:
     static PassRefPtr<FontLoader> create(Document* document)
     {
@@ -70,8 +70,8 @@ public:
 
     bool loading() const { return m_numLoadingFromCSS > 0 || m_numLoadingFromJS > 0; }
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
-    virtual EventTargetInterface eventTargetInterface() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const override;
+    virtual EventTargetInterface eventTargetInterface() const override;
 
     using RefCounted<FontLoader>::ref;
     using RefCounted<FontLoader>::deref;

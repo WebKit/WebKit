@@ -48,7 +48,7 @@ struct CSSFontFaceLoadEventInit : public EventInit {
     RefPtr<DOMError> error;
 };
 
-class CSSFontFaceLoadEvent : public Event {
+class CSSFontFaceLoadEvent final : public Event {
 public:
     static PassRefPtr<CSSFontFaceLoadEvent> create()
     {
@@ -75,7 +75,7 @@ public:
     CSSFontFaceRule* fontface() const { return m_fontface.get(); }
     DOMError* error() const { return m_error.get(); }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
 private:
     CSSFontFaceLoadEvent();

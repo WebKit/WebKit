@@ -80,7 +80,7 @@ private:
     {
     }
 
-    class CrossfadeSubimageObserverProxy : public CachedImageClient {
+    class CrossfadeSubimageObserverProxy final : public CachedImageClient {
     public:
         CrossfadeSubimageObserverProxy(CSSCrossfadeValue* ownerValue)
             : m_ownerValue(ownerValue)
@@ -89,7 +89,7 @@ private:
         }
 
         virtual ~CrossfadeSubimageObserverProxy() { }
-        virtual void imageChanged(CachedImage*, const IntRect* = 0) override;
+        virtual void imageChanged(CachedImage*, const IntRect* = nullptr) override;
         void setReady(bool ready) { m_ready = ready; }
     private:
         CSSCrossfadeValue* m_ownerValue;

@@ -1,3 +1,52 @@
+2014-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Clean up virtual functions in css/
+        https://bugs.webkit.org/show_bug.cgi?id=138230
+
+        Reviewed by Benjamin Poulain.
+
+        Clean up virtual functions in css/ by:
+        - Making virtual functions final when possible
+        - Making classes final when possible
+        - Using 'override' when appropriate
+        - Explicitly marking functions / destructors as virtual when they are
+          inherently virtual
+        - Making isXXX() virtual functions private on XXX classes to avoid
+          unnecessary type checks
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * css/CSSBasicShapes.h:
+        * css/CSSCharsetRule.h:
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSCrossfadeValue.h:
+        * css/CSSFilterImageValue.h:
+        * css/CSSFontFaceLoadEvent.h:
+        * css/CSSFontFaceRule.h:
+        * css/CSSFontFaceSource.h:
+        * css/CSSImportRule.h:
+        * css/CSSMediaRule.h:
+        * css/CSSPageRule.h:
+        * css/CSSRuleList.h:
+        (WebCore::StaticCSSRuleList::ref): Deleted.
+        (WebCore::StaticCSSRuleList::styleSheet): Deleted.
+        (WebCore::StaticCSSRuleList::length): Deleted.
+        (WebCore::StaticCSSRuleList::item): Deleted.
+        (WebCore::LiveCSSRuleList::ref): Deleted.
+        (WebCore::LiveCSSRuleList::deref): Deleted.
+        (WebCore::LiveCSSRuleList::length): Deleted.
+        (WebCore::LiveCSSRuleList::item): Deleted.
+        (WebCore::LiveCSSRuleList::styleSheet): Deleted.
+        * css/CSSStyleRule.h:
+        * css/CSSSupportsRule.h:
+        * css/CSSUnknownRule.h:
+        * css/FontLoader.h:
+        * css/PropertySetCSSStyleDeclaration.h:
+        (WebCore::PropertySetCSSStyleDeclaration::parentElement):
+        * css/WebKitCSSKeyframeRule.h:
+        * css/WebKitCSSViewportRule.h:
+
 2014-10-30  Tim Horton  <timothy_horton@apple.com>
 
         Long spins under rangeExpandedAroundPosition on Yahoo Mail

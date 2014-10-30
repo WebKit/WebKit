@@ -47,9 +47,8 @@ public:
     {
         return adoptRef(new WebKitCSSViewportRule(viewportRule, sheet));
     }
-    ~WebKitCSSViewportRule();
+    virtual ~WebKitCSSViewportRule();
 
-    virtual CSSRule::Type type() const override { return WEBKIT_VIEWPORT_RULE; }
     virtual String cssText() const override;
     virtual void reattach(StyleRuleBase&) override;
 
@@ -57,6 +56,8 @@ public:
 
 private:
     WebKitCSSViewportRule(StyleRuleViewport&, CSSStyleSheet*);
+
+    virtual CSSRule::Type type() const override { return WEBKIT_VIEWPORT_RULE; }
 
     Ref<StyleRuleViewport> m_viewportRule;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;

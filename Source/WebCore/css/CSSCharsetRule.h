@@ -35,7 +35,6 @@ public:
 
     virtual ~CSSCharsetRule() { }
 
-    virtual CSSRule::Type type() const override { return CHARSET_RULE; }
     virtual String cssText() const override;
     virtual void reattach(StyleRuleBase&) override { }
 
@@ -43,6 +42,8 @@ public:
     void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }
 
 private:
+    virtual CSSRule::Type type() const override { return CHARSET_RULE; }
+
     CSSCharsetRule(CSSStyleSheet* parent, const String& encoding);
 
     String m_encoding;

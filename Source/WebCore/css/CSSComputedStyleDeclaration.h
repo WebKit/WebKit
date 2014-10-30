@@ -83,7 +83,7 @@ private:
     bool m_allowVisitedStyle;
 };
 
-class CSSComputedStyleDeclaration : public CSSStyleDeclaration {
+class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
 public:
     static PassRefPtr<CSSComputedStyleDeclaration> create(PassRefPtr<Node> node, bool allowVisitedStyle = false, const String& pseudoElementName = String())
     {

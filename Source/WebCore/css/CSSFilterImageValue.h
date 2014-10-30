@@ -88,7 +88,7 @@ private:
     {
     }
 
-    class FilterSubimageObserverProxy : public CachedImageClient {
+    class FilterSubimageObserverProxy final : public CachedImageClient {
     public:
         FilterSubimageObserverProxy(CSSFilterImageValue* ownerValue)
             : m_ownerValue(ownerValue)
@@ -97,7 +97,7 @@ private:
         }
 
         virtual ~FilterSubimageObserverProxy() { }
-        virtual void imageChanged(CachedImage*, const IntRect* = 0) override;
+        virtual void imageChanged(CachedImage*, const IntRect* = nullptr) override;
         void setReady(bool ready) { m_ready = ready; }
     private:
         CSSFilterImageValue* m_ownerValue;

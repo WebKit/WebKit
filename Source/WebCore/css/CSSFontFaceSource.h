@@ -44,9 +44,9 @@ class SVGFontElement;
 class SVGFontFaceElement;
 #endif
 
-class CSSFontFaceSource : public CachedFontClient {
+class CSSFontFaceSource final : public CachedFontClient {
 public:
-    CSSFontFaceSource(const String&, CachedFont* = 0);
+    CSSFontFaceSource(const String&, CachedFont* = nullptr);
     virtual ~CSSFontFaceSource();
 
     bool isLoaded() const;
@@ -56,7 +56,7 @@ public:
 
     void setFontFace(CSSFontFace* face) { m_face = face; }
 
-    virtual void fontLoaded(CachedFont*);
+    virtual void fontLoaded(CachedFont*) override;
 
     PassRefPtr<SimpleFontData> getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*);
 
