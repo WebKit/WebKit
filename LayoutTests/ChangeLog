@@ -1,3 +1,13 @@
+2014-10-30  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; rebaseline two media/ tests.
+
+        * platform/mac-mavericks/media/controls-after-reload-expected.txt: Added.
+        * platform/mac-mavericks/media/controls-styling-expected.txt:
+        * platform/mac-mountainlion/media/controls-after-reload-expected.txt: Added.
+        * platform/mac-mountainlion/media/controls-styling-expected.txt: Copied from LayoutTests/platform/mac-mavericks/media/controls-styling-expected.txt.
+        * platform/mac-wk1/media/controls-styling-expected.txt: Copied from LayoutTests/platform/mac-mavericks/media/controls-styling-expected.txt.
+
 2014-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         ASSERTION NOT REACHED because RenderStyle::setWordSpacing() does not handle a Length value of type 'Calculated'.
