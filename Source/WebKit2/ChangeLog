@@ -1,3 +1,19 @@
+2014-10-30  Dan Bernstein  <mitz@apple.com>
+
+        When a client certificate is rejected, Safari says the website didn’t accept the certificate “unknown” instead of naming the certificate
+        https://bugs.webkit.org/show_bug.cgi?id=138216
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef): Remove no-longer-necessary platform guards around SecIdentityRef.
+        (IPC::encode): Ditto.
+        (IPC::decode): Ditto.
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData): If NSErrorClientCertificateChainKey
+        is present in the error’s userInfo dictionary, assert that it’s an array of identities and
+        certificates, and include it in the filtered dictionary.
+
 2014-10-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [CoordinatedGraphics] Use modern for-loops

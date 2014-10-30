@@ -80,9 +80,7 @@ enum CFType {
     CFString,
     CFURL,
     SecCertificate,
-#if PLATFORM(IOS)
     SecIdentity,
-#endif
 #if HAVE(SEC_KEYCHAIN)
     SecKeychainItem,
 #endif
@@ -121,10 +119,8 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFURL;
     if (typeID == SecCertificateGetTypeID())
         return SecCertificate;
-#if PLATFORM(IOS)
     if (typeID == SecIdentityGetTypeID())
         return SecIdentity;
-#endif
 #if HAVE(SEC_KEYCHAIN)
     if (typeID == SecKeychainItemGetTypeID())
         return SecKeychainItem;
@@ -173,11 +169,9 @@ void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
     case SecCertificate:
         encode(encoder, (SecCertificateRef)typeRef);
         return;
-#if PLATFORM(IOS)
     case SecIdentity:
         encode(encoder, (SecIdentityRef)(typeRef));
         return;
-#endif
 #if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem:
         encode(encoder, (SecKeychainItemRef)typeRef);
@@ -270,7 +264,6 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         result = adoptCF(certificate.leakRef());
         return true;
     }
-#if PLATFORM(IOS)
     case SecIdentity: {
         RetainPtr<SecIdentityRef> identity;
         if (!decode(decoder, identity))
@@ -278,7 +271,6 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         result = adoptCF(identity.leakRef());
         return true;
     }
-#endif
 #if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem: {
         RetainPtr<SecKeychainItemRef> keychainItem;

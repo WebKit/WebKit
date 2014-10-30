@@ -198,6 +198,19 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
             CFDictionarySetValue(filteredUserInfo.get(), key, value);
     }];
 
+    if (NSArray *clientIdentityAndCertificates = [userInfo objectForKey:@"NSErrorClientCertificateChainKey"]) {
+        ASSERT([clientIdentityAndCertificates isKindOfClass:[NSArray class]]);
+        ASSERT(^{
+            for (id object in clientIdentityAndCertificates) {
+                if (CFGetTypeID(object) != SecIdentityGetTypeID() && CFGetTypeID(object) != SecCertificateGetTypeID())
+                    return false;
+            }
+            return true;
+        }());
+
+        CFDictionarySetValue(filteredUserInfo.get(), @"NSErrorClientCertificateChainKey", clientIdentityAndCertificates);
+    };
+
     IPC::encode(encoder, filteredUserInfo.get());
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
