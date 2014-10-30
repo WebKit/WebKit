@@ -1,3 +1,50 @@
+2014-10-30  Ada Chan  <adachan@apple.com>
+
+        The Page's muted setting should not affect the HTMLMediaElement's 'muted' IDL attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=138215
+
+        Reviewed by Eric Carlson.
+
+        Add m_muted in Page to keep track of the Page's muted state. Change AudioProducer::setMuted()
+        to pageMutedStateDidChange(). When that method is called, the AudioProducer is supposed to
+        update its muted state again taking the Page's muted state into account.
+
+        Add HTMLMediaElement::effectiveMuted(), which returns the effective muted state of the
+        HTMLMediaElement, taking the Page's muted state into account.
+
+        Test: media/video-muted-after-setting-page-muted-state.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::pageMutedStateDidChange):
+        (WebCore::Document::setMuted): Deleted.
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted):
+        Set the MediaPlayer's muted state to the result of effectiveMuted() rather than m_muted.
+        (WebCore::HTMLMediaElement::updateVolume):
+        Ditto, and also make sure the MediaController's muted state does not override the Page's
+        muted state.
+        (WebCore::HTMLMediaElement::updatePlayState):
+        Set the MediaPlayer's muted state to the result of effectiveMuted() rather than muted().
+        (WebCore::HTMLMediaElement::pageMutedStateDidChange):
+        Call updateVolume(), which will update the MediaPlayer's muted state.
+        (WebCore::HTMLMediaElement::effectiveMuted):
+        Figure out the muted value taking Page's muted state into account.
+        * html/HTMLMediaElement.h:
+        * page/AudioProducer.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setMuted):
+        Update m_muted, and only iterate through the frames' documents to call pageMutedStateDidChange()
+        if m_muted changes.
+        * page/Page.h:
+        (WebCore::Page::isMuted):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageMuted):
+        Expose a way to set the Page's muted state in Internals for testing.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use references in calculateMinimumPageHeight() for non-optional arguments

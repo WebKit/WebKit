@@ -31,7 +31,7 @@ namespace WebCore {
 class AudioProducer {
 public:
     virtual bool isPlayingAudio() = 0;
-    virtual void setMuted(bool) = 0;
+    virtual void pageMutedStateDidChange() = 0;
 
 protected:
     virtual ~AudioProducer() { }

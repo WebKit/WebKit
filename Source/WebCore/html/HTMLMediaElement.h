@@ -712,6 +712,9 @@ private:
 
     // AudioProducer overrides
     virtual bool isPlayingAudio() override;
+    virtual void pageMutedStateDidChange() override;
+
+    bool effectiveMuted() const;
 
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);

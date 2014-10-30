@@ -3001,7 +3001,7 @@ void HTMLMediaElement::setMuted(bool muted)
         // Avoid recursion when the player reports volume changes.
         if (!processingMediaPlayerCallback()) {
             if (m_player) {
-                m_player->setMuted(m_muted);
+                m_player->setMuted(effectiveMuted());
                 if (hasMediaControls())
                     mediaControls()->changedMute();
             }
@@ -4470,11 +4470,11 @@ void HTMLMediaElement::updateVolume()
     if (!processingMediaPlayerCallback()) {
         Page* page = document().page();
         double volumeMultiplier = page ? page->mediaVolume() : 1;
-        bool shouldMute = muted();
+        bool shouldMute = effectiveMuted();
 
         if (m_mediaController) {
             volumeMultiplier *= m_mediaController->volume();
-            shouldMute = m_mediaController->muted();
+            shouldMute = m_mediaController->muted() || (page && page->isMuted());
         }
 
         m_player->setMuted(shouldMute);
@@ -4520,7 +4520,7 @@ void HTMLMediaElement::updatePlayState()
             // Set rate, muted before calling play in case they were set before the media engine was setup.
             // The media engine should just stash the rate and muted values since it isn't already playing.
             m_player->setRate(effectivePlaybackRate());
-            m_player->setMuted(muted());
+            m_player->setMuted(effectiveMuted());
 
             m_player->play();
         }
@@ -6030,6 +6030,16 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
 bool HTMLMediaElement::isPlayingAudio()
 {
     return isPlaying() && hasAudio();
+}
+
+void HTMLMediaElement::pageMutedStateDidChange()
+{
+    updateVolume();
+}
+
+bool HTMLMediaElement::effectiveMuted() const
+{
+    return muted() || (document().page() && document().page()->isMuted());
 }
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const

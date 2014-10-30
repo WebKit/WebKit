@@ -346,6 +346,8 @@ public:
     void installMockPageOverlay(const String& overlayType, ExceptionCode&);
     String pageOverlayLayerTreeAsText(ExceptionCode&) const;
 
+    void setPageMuted(bool);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

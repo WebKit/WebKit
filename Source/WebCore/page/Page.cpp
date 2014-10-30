@@ -160,6 +160,7 @@ Page::Page(PageClients& pageClients)
     , m_inLowQualityInterpolationMode(false)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
+    , m_muted(false)
     , m_pageScaleFactor(1)
     , m_zoomedOutPageScaleFactor(0)
     , m_deviceScaleFactor(1)
@@ -1215,8 +1216,13 @@ void Page::updateIsPlayingAudio()
 
 void Page::setMuted(bool muted)
 {
+    if (m_muted == muted)
+        return;
+
+    m_muted = muted;
+
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
-        frame->document()->setMuted(muted);
+        frame->document()->pageMutedStateDidChange();
 }
 
 #if !ASSERT_DISABLED

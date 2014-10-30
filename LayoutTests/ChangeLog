@@ -1,3 +1,13 @@
+2014-10-30  Ada Chan  <adachan@apple.com>
+
+        The Page's muted setting should not affect the HTMLMediaElement's 'muted' IDL attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=138215
+
+        Reviewed by Eric Carlson.
+
+        * media/video-muted-after-setting-page-muted-state-expected.txt: Added.
+        * media/video-muted-after-setting-page-muted-state.html: Added.
+
 2014-10-30  Brady Eidson  <beidson@apple.com>
 
         IndexedDB is deleting data when a PK is shared amongst two objectStores

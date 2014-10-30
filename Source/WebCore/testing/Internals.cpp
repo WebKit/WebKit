@@ -2402,4 +2402,14 @@ String Internals::pageOverlayLayerTreeAsText(ExceptionCode& ec) const
     return MockPageOverlayClient::shared().layerTreeAsText(document->frame()->mainFrame());
 }
 
+void Internals::setPageMuted(bool muted)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+
+    if (Page* page = document->page())
+        page->setMuted(muted);
+}
+
 }

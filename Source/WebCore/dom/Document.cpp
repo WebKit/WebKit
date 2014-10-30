@@ -3304,10 +3304,10 @@ void Document::updateIsPlayingAudio()
         page()->updateIsPlayingAudio();
 }
 
-void Document::setMuted(bool muted)
+void Document::pageMutedStateDidChange()
 {
     for (auto audioProducer : m_audioProducers)
-        audioProducer->setMuted(muted);
+        audioProducer->pageMutedStateDidChange();
 }
 
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
