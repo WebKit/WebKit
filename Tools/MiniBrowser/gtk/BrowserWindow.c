@@ -60,6 +60,7 @@ struct _BrowserWindow {
     BrowserSearchBar *searchBar;
     gboolean searchBarVisible;
     gboolean inspectorWindowIsVisible;
+    gboolean fullScreenIsEnabled;
     GdkPixbuf *favicon;
     GtkWidget *reloadOrStopButton;
     GtkWidget *fullScreenMessageLabel;
@@ -563,6 +564,20 @@ static void loadHomePage(BrowserWindow *window, gpointer user_data)
     webkit_web_view_load_uri(window->webView, BROWSER_DEFAULT_URL);
 }
 
+static gboolean toggleFullScreen(BrowserWindow *window, gpointer user_data)
+{
+    if (!window->fullScreenIsEnabled) {
+        gtk_window_fullscreen(GTK_WINDOW(window));
+        gtk_widget_hide(window->toolbar);
+        window->fullScreenIsEnabled = TRUE;
+    } else {
+        gtk_window_unfullscreen(GTK_WINDOW(window));
+        gtk_widget_show(window->toolbar);
+        window->fullScreenIsEnabled = FALSE;
+    }
+    return TRUE;
+}
+
 static void browserWindowFinalize(GObject *gObject)
 {
     BrowserWindow *window = BROWSER_WINDOW(gObject);
@@ -671,6 +686,10 @@ static void browser_window_init(BrowserWindow *window)
         g_cclosure_new_swap(G_CALLBACK(defaultZoomCallback), window, NULL));
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_KP_0, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(defaultZoomCallback), window, NULL));
+
+    /* Toggle fullscreen */ 
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_F11, 0, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(toggleFullScreen), window, NULL));
 
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;

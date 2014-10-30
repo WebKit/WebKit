@@ -1,3 +1,14 @@
+2014-10-30  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [GTK] Minibrowser : Add window fullscreen support for Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=137775
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (toggleFullScreen): Callback to toggle window fullscreen on pressing F11 key.
+        (browser_window_init):
+
 2014-10-29  Jake Nielsen  <jacob_nielsen@apple.com>
 
         CommitQueue and EWS should reject any patches that result in consistent test
