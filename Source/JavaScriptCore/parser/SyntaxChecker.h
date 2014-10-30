@@ -297,6 +297,8 @@ public:
         return pattern == BindingDeconstruction;
     }
 
+    void setEndOffset(int, int) { }
+
 private:
     int m_topBinaryExpr;
     int m_topUnaryToken;

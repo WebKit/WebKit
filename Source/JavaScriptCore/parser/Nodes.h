@@ -132,11 +132,14 @@ namespace JSC {
 
         int lineNo() const { return m_position.line; }
         int startOffset() const { return m_position.offset; }
+        int endOffset() const { return m_endOffset; }
         int lineStartOffset() const { return m_position.lineStartOffset; }
         const JSTextPosition& position() const { return m_position; }
+        void setEndOffset(int offset) { m_endOffset = offset; }
 
     protected:
         JSTextPosition m_position;
+        int m_endOffset;
     };
 
     class ExpressionNode : public Node {

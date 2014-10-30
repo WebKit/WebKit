@@ -1125,45 +1125,63 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     directive = 0;
     int nonTrivialExpressionCount = 0;
     failIfStackOverflow();
+    TreeStatement result = 0;
     switch (m_token.m_type) {
     case OPENBRACE:
-        return parseBlockStatement(context);
+        result = parseBlockStatement(context);
+        break;
     case VAR:
-        return parseVarDeclaration(context);
+        result = parseVarDeclaration(context);
+        break;
     case CONSTTOKEN:
-        return parseConstDeclaration(context);
+        result = parseConstDeclaration(context);
+        break;
     case FUNCTION:
         failIfFalseIfStrict(m_statementDepth == 1, "Strict mode does not allow function declarations in a lexically nested statement");
-        return parseFunctionDeclaration(context);
+        result = parseFunctionDeclaration(context);
+        break;
     case SEMICOLON: {
         JSTokenLocation location(tokenLocation());
         next();
-        return context.createEmptyStatement(location);
+        result = context.createEmptyStatement(location);
+        break;
     }
     case IF:
-        return parseIfStatement(context);
+        result = parseIfStatement(context);
+        break;
     case DO:
-        return parseDoWhileStatement(context);
+        result = parseDoWhileStatement(context);
+        break;
     case WHILE:
-        return parseWhileStatement(context);
+        result = parseWhileStatement(context);
+        break;
     case FOR:
-        return parseForStatement(context);
+        result = parseForStatement(context);
+        break;
     case CONTINUE:
-        return parseContinueStatement(context);
+        result = parseContinueStatement(context);
+        break;
     case BREAK:
-        return parseBreakStatement(context);
+        result = parseBreakStatement(context);
+        break;
     case RETURN:
-        return parseReturnStatement(context);
+        result = parseReturnStatement(context);
+        break;
     case WITH:
-        return parseWithStatement(context);
+        result = parseWithStatement(context);
+        break;
     case SWITCH:
-        return parseSwitchStatement(context);
+        result = parseSwitchStatement(context);
+        break;
     case THROW:
-        return parseThrowStatement(context);
+        result = parseThrowStatement(context);
+        break;
     case TRY:
-        return parseTryStatement(context);
+        result = parseTryStatement(context);
+        break;
     case DEBUGGER:
-        return parseDebuggerStatement(context);
+        result = parseDebuggerStatement(context);
+        break;
     case EOFTOK:
     case CASE:
     case CLOSEBRACE:
@@ -1171,7 +1189,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         // These tokens imply the end of a set of source elements
         return 0;
     case IDENT:
-        return parseExpressionOrLabelStatement(context);
+        result = parseExpressionOrLabelStatement(context);
+        break;
     case STRING:
         directive = m_token.m_data.ident;
         if (directiveLiteralLength)
@@ -1182,8 +1201,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         TreeStatement exprStatement = parseExpressionStatement(context);
         if (directive && nonTrivialExpressionCount != m_nonTrivialExpressionCount)
             directive = 0;
-        return exprStatement;
+        result = exprStatement;
+        break;
     }
+
+    if (result)
+        context.setEndOffset(result, m_lexer->currentOffset());
+    return result;
 }
 
 template <typename LexerType>
@@ -1299,6 +1323,8 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 
         m_lexer->setOffset(m_token.m_location.endOffset, m_token.m_location.lineStartOffset);
         m_lexer->setLineNumber(m_token.m_location.line);
+
+        context.setEndOffset(body, m_lexer->currentOffset());
         
         next();
         return true;
@@ -1308,6 +1334,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     body = parseFunctionBody(context);
     restoreState(oldState);
     failIfFalse(body, "Cannot parse the body of this ", stringForFunctionMode(mode));
+    context.setEndOffset(body, m_lexer->currentOffset());
     if (functionScope->strictMode() && name) {
         RELEASE_ASSERT(mode == FunctionMode);
         semanticFailIfTrue(m_vm->propertyNames->arguments == *name, "'", name->impl(), "' is not a valid function name in strict mode");
@@ -1542,6 +1569,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     JSTokenLocation location(tokenLocation());
     TreeExpression node = parseAssignmentExpression(context);
     failIfFalse(node, "Cannot parse expression");
+    context.setEndOffset(node, m_lexer->currentOffset());
     if (!match(COMMA))
         return node;
     next();
@@ -1549,13 +1577,16 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     m_nonLHSCount++;
     TreeExpression right = parseAssignmentExpression(context);
     failIfFalse(right, "Cannot parse expression in a comma expression");
+    context.setEndOffset(right, m_lexer->currentOffset());
     typename TreeBuilder::Comma commaNode = context.createCommaExpr(location, node, right);
     while (match(COMMA)) {
         next(TreeBuilder::DontBuildStrings);
         right = parseAssignmentExpression(context);
         failIfFalse(right, "Cannot parse expression in a comma expression");
+        context.setEndOffset(right, m_lexer->currentOffset());
         context.appendToComma(commaNode, right);
     }
+    context.setEndOffset(commaNode, m_lexer->currentOffset());
     return commaNode;
 }
 
@@ -1738,6 +1769,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             next();
             TreeExpression node = parseAssignmentExpression(context);
             failIfFalse(node, "Cannot parse expression for property declaration");
+            context.setEndOffset(node, m_lexer->currentOffset());
             return context.createProperty(ident, node, PropertyNode::Constant, complete);
         }
         failIfFalse(wasIdent, "Expected an identifier as property name");
@@ -1782,6 +1814,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         consumeOrFail(COLON, "Expected ':' after property name");
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
+        context.setEndOffset(node, m_lexer->currentOffset());
         return context.createProperty(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant, complete);
     }
     case OPENBRACKET: {
@@ -1793,6 +1826,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         consumeOrFail(COLON, "Expected ':' after property name");
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
+        context.setEndOffset(node, m_lexer->currentOffset());
         return context.createProperty(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant, complete);
     }
     default:

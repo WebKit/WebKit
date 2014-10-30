@@ -912,6 +912,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool needRep
                                     m_features,
                                     m_numConstants);
         result->setLoc(m_source->firstLine(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
+        result->setEndOffset(m_lexer->currentOffset());
     } else {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're

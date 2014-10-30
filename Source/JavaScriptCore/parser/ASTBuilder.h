@@ -686,6 +686,11 @@ public:
     {
         return BindingNode::create(m_vm, boundProperty, start, end);
     }
+
+    void setEndOffset(Node* node, int offset)
+    {
+        node->setEndOffset(offset);
+    }
     
 private:
     struct Scope {
