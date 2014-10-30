@@ -26,7 +26,6 @@
 #include "FormDataBuilder.h"
 
 #include "Blob.h"
-#include "Document.h"
 #include "TextEncoding.h"
 #include <limits>
 #include <wtf/Assertions.h>
@@ -75,23 +74,6 @@ static void appendQuotedString(Vector<char>& buffer, const CString& string)
             append(buffer, c);
         }
     }
-}
-
-TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptCharset, Document& document)
-{
-    String normalizedAcceptCharset = acceptCharset;
-    normalizedAcceptCharset.replace(',', ' ');
-
-    Vector<String> charsets;
-    normalizedAcceptCharset.split(' ', charsets);
-
-    for (auto& charset : charsets) {
-        TextEncoding encoding(charset);
-        if (encoding.isValid())
-            return encoding;
-    }
-
-    return document.inputEncoding();
 }
 
 Vector<char> FormDataBuilder::generateUniqueBoundaryString()

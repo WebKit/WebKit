@@ -137,6 +137,23 @@ inline FormSubmission::FormSubmission(Method method, const URL& action, const St
 {
 }
 
+static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document& document)
+{
+    String normalizedAcceptCharset = acceptCharset;
+    normalizedAcceptCharset.replace(',', ' ');
+
+    Vector<String> charsets;
+    normalizedAcceptCharset.split(' ', charsets);
+
+    for (auto& charset : charsets) {
+        TextEncoding encoding(charset);
+        if (encoding.isValid())
+            return encoding;
+    }
+
+    return document.inputEncoding();
+}
+
 PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attributes& attributes, PassRefPtr<Event> event, LockHistory lockHistory, FormSubmissionTrigger trigger)
 {
     ASSERT(form);
@@ -179,7 +196,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         }
     }
 
-    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : FormDataBuilder::encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
+    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
     Vector<std::pair<String, String>> formValues;
 

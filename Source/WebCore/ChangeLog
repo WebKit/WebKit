@@ -1,3 +1,22 @@
+2014-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        FormDataBuilder should not use Document
+        https://bugs.webkit.org/show_bug.cgi?id=138172
+
+        Reviewed by Alexey Proskuryakov.
+
+        It's only used by encodingFromAcceptCharset() to fallback to
+        document input encoding. That method is only used by
+        FormSubmission::create(), so it could be moved as a static
+        function to FormSubmission.cpp.
+
+        * loader/FormSubmission.cpp:
+        (WebCore::encodingFromAcceptCharset):
+        (WebCore::FormSubmission::create):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::encodingFromAcceptCharset): Deleted.
+        * platform/network/FormDataBuilder.h:
+
 2014-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         ASSERTION NOT REACHED because RenderStyle::setWordSpacing() does not handle a Length value of type 'Calculated'.
