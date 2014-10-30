@@ -47,6 +47,8 @@ public:
     static LengthSize convertRadius(StyleResolver&, CSSValue&);
     static TextDecoration convertTextDecoration(StyleResolver&, CSSValue&);
     template <typename T> static T convertNumber(StyleResolver&, CSSValue&);
+    template <CSSPropertyID property> static NinePieceImage convertBorderImage(StyleResolver&, CSSValue&);
+    template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -204,6 +206,22 @@ inline T StyleBuilderConverter::convertNumber(StyleResolver&, CSSValue& value)
     if (primitiveValue.getValueID() == CSSValueAuto)
         return -1;
     return primitiveValue.getValue<T>(CSSPrimitiveValue::CSS_NUMBER);
+}
+
+template <CSSPropertyID property>
+inline NinePieceImage StyleBuilderConverter::convertBorderImage(StyleResolver& styleResolver, CSSValue& value)
+{
+    NinePieceImage image;
+    styleResolver.styleMap()->mapNinePieceImage(property, &value, image);
+    return image;
+}
+
+template <CSSPropertyID property>
+inline NinePieceImage StyleBuilderConverter::convertBorderMask(StyleResolver& styleResolver, CSSValue& value)
+{
+    NinePieceImage image = convertBorderImage<property>(styleResolver, value);
+    image.setMaskDefaults();
+    return image;
 }
 
 } // namespace WebCore

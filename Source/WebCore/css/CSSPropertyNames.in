@@ -288,7 +288,7 @@ z-index
 -webkit-border-end-width
 -webkit-border-fit [NewStyleBuilder]
 -webkit-border-horizontal-spacing [Inherited, NewStyleBuilder, NameForMethods=HorizontalBorderSpacing, Converter=ComputedLength<short>]
--webkit-border-image
+-webkit-border-image [NewStyleBuilder, Initial=initialNinePieceImage, Converter=BorderImage<CSSPropertyWebkitBorderImage>]
 // -webkit-border-radius differs from border-radius only in the interpretation of
 // a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
 // to "border-radius: l1 / l2;"
@@ -407,7 +407,7 @@ justify-content [NewStyleBuilder]
 -webkit-marquee-speed
 -webkit-marquee-style [NewStyleBuilder, TypeName=EMarqueeBehavior, NameForMethods=MarqueeBehavior]
 -webkit-mask
--webkit-mask-box-image
+-webkit-mask-box-image [NewStyleBuilder, Initial=initialNinePieceImage, Converter=BorderMask<CSSPropertyWebkitMaskBoxImage>]
 -webkit-mask-box-image-outset
 -webkit-mask-box-image-repeat
 -webkit-mask-box-image-slice
