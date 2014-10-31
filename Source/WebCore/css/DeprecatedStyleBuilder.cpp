@@ -320,73 +320,6 @@ public:
     }
 };
 
-enum LengthAuto { AutoDisabled = 0, AutoEnabled };
-enum LengthLegacyIntrinsic { LegacyIntrinsicDisabled = 0, LegacyIntrinsicEnabled };
-enum LengthIntrinsic { IntrinsicDisabled = 0, IntrinsicEnabled };
-enum LengthNone { NoneDisabled = 0, NoneEnabled };
-enum LengthUndefined { UndefinedDisabled = 0, UndefinedEnabled };
-template <const Length& (RenderStyle::*getterFunction)() const,
-          void (RenderStyle::*setterFunction)(Length),
-          Length (*initialFunction)(),
-          LengthAuto autoEnabled = AutoDisabled,
-          LengthLegacyIntrinsic legacyIntrinsicEnabled = LegacyIntrinsicDisabled,
-          LengthIntrinsic intrinsicEnabled = IntrinsicDisabled,
-          LengthNone noneEnabled = NoneDisabled,
-          LengthUndefined noneUndefined = UndefinedDisabled>
-class ApplyPropertyLength {
-public:
-    static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(WTF::move(value)); }
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-        if (noneEnabled && primitiveValue.getValueID() == CSSValueNone) {
-            if (noneUndefined)
-                setValue(styleResolver->style(), Length(Undefined));
-            else
-                setValue(styleResolver->style(), Length());
-        }
-        if (legacyIntrinsicEnabled) {
-            if (primitiveValue.getValueID() == CSSValueIntrinsic)
-                setValue(styleResolver->style(), Length(Intrinsic));
-            else if (primitiveValue.getValueID() == CSSValueMinIntrinsic)
-                setValue(styleResolver->style(), Length(MinIntrinsic));
-        }
-        if (intrinsicEnabled) {
-            if (primitiveValue.getValueID() == CSSValueWebkitMinContent)
-                setValue(styleResolver->style(), Length(MinContent));
-            else if (primitiveValue.getValueID() == CSSValueWebkitMaxContent)
-                setValue(styleResolver->style(), Length(MaxContent));
-            else if (primitiveValue.getValueID() == CSSValueWebkitFillAvailable)
-                setValue(styleResolver->style(), Length(FillAvailable));
-            else if (primitiveValue.getValueID() == CSSValueWebkitFitContent)
-                setValue(styleResolver->style(), Length(FitContent));
-        }
-
-        CSSToLengthConversionData conversionData = styleResolver->useSVGZoomRulesForLength() ?
-            styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-            : styleResolver->state().cssToLengthConversionData();
-        if (autoEnabled && primitiveValue.getValueID() == CSSValueAuto)
-            setValue(styleResolver->style(), Length());
-        else if (primitiveValue.isLength()) {
-            Length length = primitiveValue.computeLength<Length>(conversionData);
-            length.setHasQuirk(primitiveValue.isQuirkValue());
-            setValue(styleResolver->style(), length);
-        } else if (primitiveValue.isPercentage())
-            setValue(styleResolver->style(), Length(primitiveValue.getDoubleValue(), Percent));
-        else if (primitiveValue.isCalculatedPercentageWithLength())
-            setValue(styleResolver->style(), Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData)));
-    }
-
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyDefaultBase<const Length&, getterFunction, Length, setterFunction, Length, initialFunction>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
 enum StringIdentBehavior { NothingMapsToNull = 0, MapNoneToNull, MapAutoToNull };
 template <StringIdentBehavior identBehavior, const AtomicString& (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(const AtomicString&), const AtomicString& (*initialFunction)()>
 class ApplyPropertyString {
@@ -1158,41 +1091,6 @@ public:
     static PropertyHandler createHandler()
     {
         PropertyHandler handler = ApplyPropertyDefaultBase<TextDecorationSkip, &RenderStyle::textDecorationSkip, TextDecorationSkip, &RenderStyle::setTextDecorationSkip, TextDecorationSkip, &RenderStyle::initialTextDecorationSkip>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
-class ApplyPropertyMarqueeIncrement {
-public:
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-        Length marqueeLength(Undefined);
-        switch (primitiveValue.getValueID()) {
-        case CSSValueSmall:
-            marqueeLength = Length(1, Fixed); // 1px.
-            break;
-        case CSSValueNormal:
-            marqueeLength = Length(6, Fixed); // 6px. The WinIE default.
-            break;
-        case CSSValueLarge:
-            marqueeLength = Length(36, Fixed); // 36px.
-            break;
-        case CSSValueInvalid:
-            marqueeLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            break;
-        default:
-            break;
-        }
-        if (!marqueeLength.isUndefined())
-            styleResolver->style()->setMarqueeIncrement(marqueeLength);
-    }
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyLength<&RenderStyle::marqueeIncrement, &RenderStyle::setMarqueeIncrement, &RenderStyle::initialMarqueeIncrement>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };
@@ -2245,7 +2143,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitFontVariantLigatures, ApplyPropertyFontVariantLigatures::createHandler());
     setPropertyHandler(CSSPropertyWebkitHyphenateCharacter, ApplyPropertyString<MapAutoToNull, &RenderStyle::hyphenationString, &RenderStyle::setHyphenationString, &RenderStyle::initialHyphenationString>::createHandler());
     setPropertyHandler(CSSPropertyWebkitLineGrid, ApplyPropertyString<MapNoneToNull, &RenderStyle::lineGrid, &RenderStyle::setLineGrid, &RenderStyle::initialLineGrid>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMarqueeIncrement, ApplyPropertyMarqueeIncrement::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeRepetition, ApplyPropertyMarqueeRepetition::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeSpeed, ApplyPropertyMarqueeSpeed::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageOutset, ApplyPropertyBorderImageModifier<BorderMask, Outset>::createHandler());

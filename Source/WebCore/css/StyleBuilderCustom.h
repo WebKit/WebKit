@@ -42,6 +42,30 @@ inline void applyValueWebkitHyphenateLimitLines(StyleResolver& styleResolver, CS
     styleResolver.style()->setHyphenationLimitLines(number);
 }
 
+inline void applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    Length marqueeLength(Undefined);
+    switch (primitiveValue.getValueID()) {
+    case CSSValueSmall:
+        marqueeLength = Length(1, Fixed); // 1px.
+        break;
+    case CSSValueNormal:
+        marqueeLength = Length(6, Fixed); // 6px. The WinIE default.
+        break;
+    case CSSValueLarge:
+        marqueeLength = Length(36, Fixed); // 36px.
+        break;
+    case CSSValueInvalid:
+        marqueeLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        break;
+    default:
+        break;
+    }
+    if (!marqueeLength.isUndefined())
+        styleResolver.style()->setMarqueeIncrement(marqueeLength);
+}
+
 } // namespace StyleBuilderFunctions
 
 } // namespace WebCore

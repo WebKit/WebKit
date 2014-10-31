@@ -1,3 +1,28 @@
+2014-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Move -webkit-marquee-increment property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138208
+
+        Reviewed by Andreas Kling.
+
+        Move -webkit-marquee-increment property from DeprecatedStyleBuilder to
+        the new StyleBuilder so that it is generated from CSSPropertyNames.in.
+        Custom code is used to set the value due to the !length.isUndefined()
+        check before calling setMarqueeIncrement().
+
+        Test: fast/css/webkit-marquee-increment-bad-value.html
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyLength::setValue): Deleted.
+        (WebCore::ApplyPropertyLength::applyValue): Deleted.
+        (WebCore::ApplyPropertyLength::createHandler): Deleted.
+        (WebCore::ApplyPropertyMarqueeIncrement::applyValue): Deleted.
+        (WebCore::ApplyPropertyMarqueeIncrement::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::applyValueWebkitMarqueeIncrement):
+
 2014-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Brace cleanup in StyleResolver::adjustRenderStyle()

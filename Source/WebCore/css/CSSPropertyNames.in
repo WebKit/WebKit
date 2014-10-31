@@ -413,7 +413,7 @@ justify-content [NewStyleBuilder]
 -webkit-margin-start
 -webkit-marquee
 -webkit-marquee-direction [NewStyleBuilder]
--webkit-marquee-increment
+-webkit-marquee-increment [NewStyleBuilder, Custom=Value]
 -webkit-marquee-repetition
 -webkit-marquee-speed
 -webkit-marquee-style [NewStyleBuilder, TypeName=EMarqueeBehavior, NameForMethods=MarqueeBehavior]
