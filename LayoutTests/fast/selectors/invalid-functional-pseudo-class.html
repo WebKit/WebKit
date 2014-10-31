@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-target"></style>
+</head>
+<body>
+<script>
+description('Verify the never generates a valid selector for an invalid functional pseudo class.');
+
+function invalidRules(functonalPseudoClassName) {
+    return [':' + functonalPseudoClassName + '\\',
+            ':' + functonalPseudoClassName + '\\\\',
+            ':' + functonalPseudoClassName + '\\\\\\',
+            ':' + functonalPseudoClassName + '\\\\\\\\',
+            ':' + functonalPseudoClassName + '\\(',
+            ':' + functonalPseudoClassName + '\\\\(',
+            ':' + functonalPseudoClassName + '\\\\\\(',
+            ':' + functonalPseudoClassName + '\\\\\\\\(',
+            ':' + functonalPseudoClassName + '\\ .foo',
+            ':' + functonalPseudoClassName + '\\\\ .foo',
+            ':' + functonalPseudoClassName + '\\\\\\ .foo',
+            ':' + functonalPseudoClassName + '\\\\\\\\ .foo',
+            ':' + functonalPseudoClassName + '\\( .foo',
+            ':' + functonalPseudoClassName + '\\\\( .foo',
+            ':' + functonalPseudoClassName + '\\\\\\( .foo',
+            ':' + functonalPseudoClassName + '\\\\\\\\( .foo',
+            ':' + functonalPseudoClassName + '\\()',
+            ':' + functonalPseudoClassName + '\\\\()',
+            ':' + functonalPseudoClassName + '\\\\\\()',
+            ':' + functonalPseudoClassName + '\\\\\\\\()',
+            ':' + functonalPseudoClassName + '\\ .foo)',
+            ':' + functonalPseudoClassName + '\\\\ .foo)',
+            ':' + functonalPseudoClassName + '\\\\\\ .foo)',
+            ':' + functonalPseudoClassName + '\\\\\\\\ .foo)',
+            ':' + functonalPseudoClassName + '\\\\( .foo)',
+            ':' + functonalPseudoClassName + '\\\\\\( .foo)',
+            ':' + functonalPseudoClassName + '\\\\\\\\( .foo)'];
+}
+
+function testQuerySelector(functonalPseudoClassName) {
+    for (var testCase of invalidRules(functonalPseudoClassName))
+        shouldThrow('document.querySelectorAll("' + testCase + '").length');
+}
+
+function testStyling(functonalPseudoClassName) {
+    var styleElement = document.getElementById("style-target");
+
+    for (var testCase of invalidRules(functonalPseudoClassName)) {
+        styleElement.textContent = testCase + " { background-color: red; }";
+        shouldBe("document.styleSheets[1].cssRules.length", "0");
+    }
+    styleElement.textContent = "";
+}
+
+function test(functonalPseudoClassName) {
+    testQuerySelector(functonalPseudoClassName);
+    testStyling(functonalPseudoClassName);
+}
+
+var functionalPseudoClasses = [
+    "-webkit-any",
+    "lang",
+    "not",
+    "nth-child",
+    "nth-last-child",
+    "nth-last-of-type",
+    "nth-of-type",
+    "matches",
+];
+
+for (var functionalPseudoClass of functionalPseudoClasses)
+    test(functionalPseudoClass);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
