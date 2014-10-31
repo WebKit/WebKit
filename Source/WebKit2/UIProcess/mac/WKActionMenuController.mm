@@ -103,6 +103,21 @@ using namespace WebKit;
     [self _updateActionMenuItems];
 }
 
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != _wkView.actionMenu)
+        return;
+
+    if (_type != kWKActionMenuReadOnlyText)
+        return;
+
+    // Action menus for text should highlight the text so that it is clear what the action menu actions
+    // will apply to. If the text is already selected, the menu will use the existing selection.
+    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    if (!hitTestResult->isSelected())
+        _page->selectLookupTextAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
+}
+
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != _wkView.actionMenu)
@@ -281,6 +296,26 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     });
 }
 
+#pragma mark Text actions
+
+- (NSArray *)_defaultMenuItemsForText
+{
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
+    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
+
+    return @[ copyTextItem.get(), lookupTextItem.get() ];
+}
+
+-(void)_copyText:(id)sender
+{
+    _page->executeEditCommand("copy");
+}
+
+-(void)_lookupText:(id)sender
+{
+    _page->performDictionaryLookupOfCurrentSelection();
+}
+
 #pragma mark NSMenuDelegate implementation
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
@@ -365,6 +400,18 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = webKitBundleImageNamed(@"ShareImageTemplate");
         break;
 
+    case kWKContextActionItemTagCopyText:
+        selector = @selector(_copyText:);
+        title = @"Copy";
+        image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        break;
+
+    case kWKContextActionItemTagLookupText:
+        selector = @selector(_lookupText:);
+        title = @"Lookup";
+        image = [NSImage imageNamed:@"NSActionMenuLookup"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -405,6 +452,8 @@ static NSImage *webKitBundleImageNamed(NSString *name)
                     return dataDetectorMenuItems;
                 }
             }
+            _type = kWKActionMenuReadOnlyText;
+            return [self _defaultMenuItemsForText];
         }
     }
 

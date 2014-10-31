@@ -1,5 +1,69 @@
 2014-10-29  Tim Horton  <timothy_horton@apple.com>
 
+        Merge r175376 and r175390. <rdar://problem/18742297>
+
+    2014-10-30  Beth Dakin  <bdakin@apple.com>
+
+            Implement action menus for text
+            https://bugs.webkit.org/show_bug.cgi?id=138220
+            -and corresponding-
+            rdar://problem/18742297
+
+            Reviewed by Tim Horton.
+
+            Two new types of actions for the two text actions.
+            * Shared/API/c/WKActionMenuItemTypes.h:
+
+            One new type of menu.
+            * Shared/API/c/WKActionMenuTypes.h:
+
+            Pass willOpenMenu on to the WKActionMenuController.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView willOpenMenu:withEvent:]):
+
+            Two new WebPageProxy functions that will pass messages along to the web process.
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::selectLookupTextAtLocation):
+            * UIProcess/WebPageProxy.h:
+
+            At willOpenMenu time, text menus should select text so that it is clear what the 
+            menu actions will apply to.
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+
+            Menu items for text menus.
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            (-[WKActionMenuController _defaultMenuItemsForText]):
+            (-[WKActionMenuController _copyText:]):
+            (-[WKActionMenuController _lookupText:]):
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+            (imageForResource:name::if):
+
+            New messages to the web process.
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::performDictionaryLookupOfCurrentSelection):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+
+            Re-factor performDictionaryLookupAtLocation() to re-use the code that finds the 
+            Range for the dictionary lookup. That code now lives in 
+            rangeForDictionaryLookupAtHitTestResult() and can be used by 
+            performDictionaryLookupAtLocation() and our new function 
+            selectLookupTextAtLocation().
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::rangeForDictionaryLookupAtHitTestResult):
+            (WebKit::WebPage::performDictionaryLookupAtLocation):
+
+            Since the action menu text is always selected, when the lookup action is chosen, 
+            we can just lookup the current selection.
+            (WebKit::WebPage::performDictionaryLookupOfCurrentSelection):
+
+            Uses the new function rangeForDictionaryLookupAtHitTestResult() to get a lookup 
+            range and then select it.
+            (WebKit::WebPage::selectLookupTextAtLocation):
+
+2014-10-29  Tim Horton  <timothy_horton@apple.com>
+
         Merge r175160. <rdar://problem/18742297>
 
     2014-10-24  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>

@@ -5200,6 +5200,11 @@ void WebPageProxy::performActionMenuHitTestAtLocation(FloatPoint point)
     m_process->send(Messages::WebPage::PerformActionMenuHitTestAtLocation(point), m_pageID);
 }
 
+void WebPageProxy::selectLookupTextAtLocation(FloatPoint point)
+{
+    m_process->send(Messages::WebPage::SelectLookupTextAtLocation(point), m_pageID);
+}
+
 void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& result)
 {
     m_pageClient.didPerformActionMenuHitTest(result);

@@ -36,7 +36,8 @@ enum {
     kWKActionMenuNone = 0,
     kWKActionMenuLink,
     kWKActionMenuImage,
-    kWKActionMenuDataDetectedItem
+    kWKActionMenuDataDetectedItem,
+    kWKActionMenuReadOnlyText
 };
 typedef uint32_t _WKActionMenuType;
 
