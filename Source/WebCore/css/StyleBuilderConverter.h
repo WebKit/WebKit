@@ -49,6 +49,7 @@ public:
     template <typename T> static T convertNumber(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderImage(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
+    template <CSSPropertyID property> static PassRefPtr<StyleImage> convertBorderImageSource(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -222,6 +223,12 @@ inline NinePieceImage StyleBuilderConverter::convertBorderMask(StyleResolver& st
     NinePieceImage image = convertBorderImage<property>(styleResolver, value);
     image.setMaskDefaults();
     return image;
+}
+
+template <CSSPropertyID property>
+inline PassRefPtr<StyleImage> StyleBuilderConverter::convertBorderImageSource(StyleResolver& styleResolver, CSSValue& value)
+{
+    return styleResolver.styleImage(property, &value);
 }
 
 } // namespace WebCore

@@ -113,7 +113,7 @@ border-image
 border-image-outset
 border-image-repeat
 border-image-slice
-border-image-source
+border-image-source [NewStyleBuilder, Converter=BorderImageSource<CSSPropertyBorderImageSource>]
 border-image-width
 border-left
 border-left-color
@@ -411,7 +411,7 @@ justify-content [NewStyleBuilder]
 -webkit-mask-box-image-outset
 -webkit-mask-box-image-repeat
 -webkit-mask-box-image-slice
--webkit-mask-box-image-source
+-webkit-mask-box-image-source [NewStyleBuilder, Converter=BorderImageSource<CSSPropertyWebkitMaskBoxImageSource>]
 -webkit-mask-box-image-width
 -webkit-mask-clip
 -webkit-mask-composite

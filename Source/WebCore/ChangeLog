@@ -1,3 +1,24 @@
+2014-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Move border-image-source / -webkit-mask-box-image-source to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138209
+
+        Reviewed by Andreas Kling.
+
+        Move border-image-source / -webkit-mask-box-image-source CSS properties
+        from DeprecatedStyleBuilder to the new StyleBuilder so that they are
+        now generated from CSSPropertyNames.in.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyBorderImageSource::applyValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageSource::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertBorderImageSource):
+
 2014-10-30  Jer Noble  <jer.noble@apple.com>
 
         [EME] Add Setting for accessing storage location for MediaKeys data
