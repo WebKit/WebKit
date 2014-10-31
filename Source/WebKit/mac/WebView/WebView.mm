@@ -2403,6 +2403,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     [[self window] setAcceleratedDrawingEnabled:[preferences acceleratedDrawingEnabled]];
     [WAKView _setInterpolationQuality:[preferences _interpolationQuality]];
 #endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    settings.setMediaKeysStorageDirectory([preferences mediaKeysStorageDirectory]);
+#endif
 }
 
 static inline IMP getMethod(id o, SEL s)

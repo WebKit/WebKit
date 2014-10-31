@@ -215,6 +215,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { return false; }
+    virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
     
 #if ENABLE(IOS_AIRPLAY)
@@ -516,6 +517,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     bool keyNeeded(Uint8Array* initData);
+    String mediaKeysStorageDirectory() const;
 #endif
 
     String referrer() const;

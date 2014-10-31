@@ -1,3 +1,19 @@
+2014-10-30  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Add Setting for accessing storage location for MediaKeys data
+        https://bugs.webkit.org/show_bug.cgi?id=138147
+
+        Reviewed by Brady Eidson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Set default location.
+        (-[WebPreferences mediaKeysStorageDirectory]): Simple accessor.
+        (-[WebPreferences setMediaKeysStorageDirectory:]): Simple setter.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Pass location from WebPreferences into Settings.
+
 2014-10-30  Dana Burkart  <dburkart@apple.com>
 
         <rdar://problem/18821260> Prepare for the mysterious future

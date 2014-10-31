@@ -1121,6 +1121,11 @@ bool MediaPlayer::keyNeeded(Uint8Array* initData)
 {
     return m_client.mediaPlayerKeyNeeded(this, initData);
 }
+
+String MediaPlayer::mediaKeysStorageDirectory() const
+{
+    return m_client.mediaPlayerMediaKeysStorageDirectory();
+}
 #endif
 
 String MediaPlayer::referrer() const
