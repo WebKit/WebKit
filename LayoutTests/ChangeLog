@@ -1,3 +1,11 @@
+2014-10-31  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Additional rebaselining after r175259.
+
+        * platform/win/css1/box_properties/padding_right-expected.txt:
+        * platform/win/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/win/fast/css/only-child-pseudo-class-expected.txt:
+
 2014-10-30  Shivakumar JM  <shiva.jm@samsung.com>
 
         Layout Test http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html is failing.
