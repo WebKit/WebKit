@@ -1,3 +1,19 @@
+2014-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Fix a couple of warnings in JSC reported by clang static analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=138240
+
+        Reviewed by Geoffrey Garen.
+
+        Fix a couple of warnings in JSC reported by clang static analyzer about
+        value stored in variables never being read. This is addressed by
+        reducing the scope of the variable or removing the variable entirely.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+
 2014-10-30  Dana Burkart  <dburkart@apple.com>
 
         <rdar://problem/18821260> Prepare for the mysterious future

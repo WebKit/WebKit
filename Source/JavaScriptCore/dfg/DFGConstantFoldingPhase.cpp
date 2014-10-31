@@ -492,7 +492,6 @@ private:
     {
         NodeOrigin origin = node->origin;
         Edge childEdge = node->child1();
-        Node* child = childEdge.node();
 
         addBaseCheck(indexInBlock, node, baseValue, variant.structureSet());
         
@@ -507,7 +506,7 @@ private:
         }
         
         if (variant.alternateBase()) {
-            child = m_insertionSet.insertConstant(indexInBlock, origin, variant.alternateBase());
+            Node* child = m_insertionSet.insertConstant(indexInBlock, origin, variant.alternateBase());
             childEdge = Edge(child, KnownCellUse);
         } else
             childEdge.setUseKind(KnownCellUse);

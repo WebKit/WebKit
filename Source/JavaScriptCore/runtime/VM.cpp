@@ -660,7 +660,6 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
         if (stackFrame.bytecodeOffset)
             break;
     }
-    unsigned bytecodeOffset = stackFrame.bytecodeOffset;
     if (!hasErrorInfo(exec, exception)) {
         // FIXME: We should only really be adding these properties to VM generated exceptions,
         // but the inspector currently requires these for all thrown objects.
@@ -680,8 +679,7 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
 
         if (callFrame && callFrame->codeBlock()) {
             stackFrame = stackTrace.at(stackIndex);
-            bytecodeOffset = stackFrame.bytecodeOffset;
-            appendSourceToError(callFrame, static_cast<ErrorInstance*>(exception), bytecodeOffset);
+            appendSourceToError(callFrame, static_cast<ErrorInstance*>(exception), stackFrame.bytecodeOffset);
         }
     }
 
