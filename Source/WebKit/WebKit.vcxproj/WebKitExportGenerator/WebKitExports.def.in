@@ -276,7 +276,7 @@ EXPORTS
         symbolWithPointer(?setCanStartMedia@Page@WebCore@@QAEX_N@Z, ?setCanStartMedia@Page@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setCursiveFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z, ?setDeviceScaleFactor@Page@WebCore@@QEAAXM@Z)
-        symbolWithPointer(?setMuted@Page@WebCore@@QAEX_N@Z, ?setMuted@Page@WebCore@@QAEX_N@Z)
+        symbolWithPointer(?setMuted@Page@WebCore@@QAEX_N@Z, ?setMuted@Page@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setTopContentInset@Page@WebCore@@QAEXM@Z, ?setTopContentInset@Page@WebCore@@QEAAXM@Z)
         symbolWithPointer(?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z, ?setDOMException@WebCore@@YAXPEAVExecState@JSC@@H@Z)
         symbolWithPointer(?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setFantasyFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
@@ -478,8 +478,8 @@ EXPORTS
         symbolWithPointer(?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z, ?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z)
         symbolWithPointer(?sessionID@Page@WebCore@@QBE?AVSessionID@2@XZ, ?sessionID@Page@WebCore@@QEBA?AVSessionID@2@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@VSessionID@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@VSessionID@2@@Z)
-        symbolWithPointer(?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ, ?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ)
-        symbolWithPointer(?deref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ, ?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ)
+        symbolWithPointer(?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ, ?ref@CSSComputedStyleDeclaration@WebCore@@UEAAXXZ)
+        symbolWithPointer(?deref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ, ?deref@CSSComputedStyleDeclaration@WebCore@@UEAAXXZ)
 #if !CPU(X86_64)
         ?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ
 #endif
