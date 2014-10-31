@@ -48,6 +48,7 @@ typedef struct _WebKitHitTestResultPrivate WebKitHitTestResultPrivate;
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA: a video or audio element.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE: an editable element
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR: a scrollbar element.
+ * @WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION: a selected element. Since 2.8
  *
  * Enum values with flags representing the context of a #WebKitHitTestResult.
  */
@@ -58,7 +59,8 @@ typedef enum
     WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE     = 1 << 3,
     WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA     = 1 << 4,
     WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE  = 1 << 5,
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR = 1 << 6
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR = 1 << 6,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION = 1 << 7
 } WebKitHitTestResultContext;
 
 struct _WebKitHitTestResult {
@@ -93,6 +95,9 @@ webkit_hit_test_result_context_is_media     (WebKitHitTestResult *hit_test_resul
 
 WEBKIT_API gboolean
 webkit_hit_test_result_context_is_editable  (WebKitHitTestResult *hit_test_result);
+
+WEBKIT_API gboolean
+webkit_hit_test_result_context_is_selection (WebKitHitTestResult *hit_test_result);
 
 WEBKIT_API const gchar *
 webkit_hit_test_result_get_link_uri         (WebKitHitTestResult *hit_test_result);

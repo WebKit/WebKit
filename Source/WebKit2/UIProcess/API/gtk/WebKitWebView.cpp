@@ -1871,6 +1871,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* propos
     data.isContentEditable = webHitTestResult->isContentEditable();
     data.elementBoundingBox = webHitTestResult->elementBoundingBox();
     data.isScrollbar = webHitTestResult->isScrollbar();
+    data.isSelected = webHitTestResult->isSelected();
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(data));
     GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));

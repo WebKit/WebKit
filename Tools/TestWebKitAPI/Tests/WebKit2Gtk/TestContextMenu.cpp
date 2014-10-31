@@ -239,7 +239,8 @@ public:
         LinkImage,
         Video,
         Audio,
-        Editable
+        Editable,
+        Selection
     };
 
     ContextMenuDefaultTest()
@@ -257,6 +258,7 @@ public:
             g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_GO_BACK, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_GO_FORWARD, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_STOP, Visible);
@@ -267,6 +269,7 @@ public:
             g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_LINK_TO_DISK, Visible | Enabled);
@@ -277,6 +280,7 @@ public:
             g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_IMAGE_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_IMAGE_TO_DISK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD, Visible | Enabled);
@@ -287,6 +291,7 @@ public:
             g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_LINK_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_LINK_TO_DISK, Visible | Enabled);
@@ -302,6 +307,7 @@ public:
             g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS, Visible | Enabled | Checked);
@@ -317,6 +323,7 @@ public:
             g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS, Visible | Enabled | Checked);
@@ -332,6 +339,7 @@ public:
             g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
             g_assert(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_CUT, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY, Visible);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_PASTE, Visible | Enabled);
@@ -342,6 +350,14 @@ public:
             if (shouldShowInputMethodsMenu())
                 iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
+            break;
+        case Selection:
+            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert(webkit_hit_test_result_context_is_selection(hitTestResult));
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY, Visible | Enabled);
             break;
         default:
             g_assert_not_reached();
@@ -366,16 +382,31 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
     test->showInWindowAndWaitUntilMapped();
 
     const char* linksHTML =
-        "<html><body>"
+        "<html><head>"
+        " <script>"
+        "    window.onload = function () {"
+        "      window.getSelection().removeAllRanges();"
+        "      var select_range = document.createRange();"
+        "      select_range.selectNodeContents(document.getElementById('text_to_select'));"
+        "      window.getSelection().addRange(select_range);"
+        "    }"
+        " </script>"
+        "</head><body>"
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
         " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
         " <audio style='position:absolute; left:1; top:60' width='50' height='20' controls='controls' preload='none'><source src='track.mp3' type='audio/mp3' /></audio>"
+        " <p style='position:absolute; left:1; top:90' id='text_to_select'>Lorem ipsum.</p>"
         "</body></html>";
     test->loadHtml(linksHTML, "file:///");
     test->waitUntilLoadFinished();
+
+    // Context menu for selection.
+    // This test should always be the first because any other click removes the selection.
+    test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
+    test->showContextMenuAtPositionAndWaitUntilFinished(2, 115);
 
     // Context menu for document.
     test->m_expectedMenuType = ContextMenuDefaultTest::Navigation;
