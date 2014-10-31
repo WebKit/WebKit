@@ -1,3 +1,22 @@
+2014-10-30  Matthew Hanson  <matthew_hanson@apple.com>
+
+        bisect-builds should support WebKit clients other than Safari
+        https://bugs.webkit.org/show_bug.cgi?id=138225
+
+        This patch adds support for bisecting WebKit nightly builds with clients other than Safari.
+
+        The -a / --application optional argument allows the user to specify which application (or application bundle)
+        should be run against the WebKit nightly builds.
+
+        Reviewed by David Kilzer.
+
+        * Scripts/bisect-builds:
+        Swap out $safariPath for the more general $applicationPath
+        Leave --safari-path as a commandline option for backwards compatibility
+        (mountAndRunNightly):
+        Use File::Spec->cat correctly (one directory per argument)
+        Use open --wait-apps instead of running the target application directly
+
 2014-10-30  Dana Burkart  <dburkart@apple.com>
 
         <rdar://problem/18821260> Perpare for the mysterious future

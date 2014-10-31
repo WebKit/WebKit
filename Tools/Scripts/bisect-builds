@@ -70,6 +70,7 @@ my %validBranches = map { $_ => 1 } qw(feature-branch trunk);
 my $branch = $Settings::branch;
 my $nightlyDownloadDirectory = $Settings::nightlyDownloadDirectory;
 my $safariPath = $Settings::safariPath;
+my $applicationPath;
 
 my @nightlies;
 
@@ -86,6 +87,7 @@ my $testURL;
 my $result = GetOptions(
     sharedCommandLineOptions(),
     "b|branch=s"             => \$branch,
+    "a|application=s"        => \$applicationPath,
     "d|download-directory=s" => \$nightlyDownloadDirectory,
     "h|help"                 => \$showHelp,
     "l|local!"               => \$localOnly,
@@ -107,26 +109,30 @@ if (!$result || $showHelp || scalar(@ARGV) > 0) {
     print STDERR "Usage: " . basename($0) . " [options] [url]\n";
     print STDERR <<END;
   [-b|--branch name]             name of the nightly build branch (default: trunk)
+  [-a|--application path]        path to executable of application to test (default: /Applications/Safari.app)
+                                 * Not supported on Windows or iOS
   [-d|--download-directory dir]  nightly build download directory (default: ~/Library/Caches/WebKit-Nightlies)
   [-h|--help]                    show this help message
   [-l|--local]                   only use local (already downloaded) nightlies
   [-p|--progression]             searching for a progression, not a regression
   [-r|--revision M[:N]]          specify starting (and optional ending) revisions to search
   [--safari-path path]           path to Safari application bundle (default: /Applications/Safari.app)
+                                 * [DEPRECATED]: The -a/--application argument will override this argument, if both are set.
   [-s|--sanity-check]            verify both starting and ending revisions before bisecting
 END
     print STDERR sharedCommandLineOptionsUsage(brackets => 1, indent => 2, switchWidth => 30);
     exit 1;
 }
 
+$safariPath = glob($safariPath) if $safariPath =~ /^~/;
+$safariPath = safariPathFromSafariBundle($safariPath) if $safariPath =~ m#\.app/*#;
+$applicationPath = $applicationPath ? File::Spec->rel2abs($applicationPath) : $safariPath;
+
 my $nightlyWebSite = "http://nightly.webkit.org";
 my $nightlyBuildsURLBase = $nightlyWebSite . File::Spec->catdir("/builds", $branch, "mac");
 my $nightlyFilesURLBase = $nightlyWebSite . File::Spec->catdir("/files", $branch, "mac");
 
 $nightlyDownloadDirectory = glob($nightlyDownloadDirectory) if $nightlyDownloadDirectory =~ /^~/;
-$safariPath = glob($safariPath) if $safariPath =~ /^~/;
-$safariPath = safariPathFromSafariBundle($safariPath) if $safariPath =~ m#\.app/*#;
-
 $nightlyDownloadDirectory = File::Spec->catdir($nightlyDownloadDirectory, $branch);
 if (! -d $nightlyDownloadDirectory) {
     mkpath($nightlyDownloadDirectory, 0, 0755) || die "Could not create $nightlyDownloadDirectory: $!";
@@ -411,21 +417,30 @@ sub mountAndRunNightly($$$$)
         die "Could not mount $diskImage at $mountPath" if $i > 100;
     }
 
-    my $frameworkPath;
+    my $frameworkPath = File::Spec->catdir($mountPath, "WebKit.app", "Contents");
     if (-d "/Volumes/WebKit/WebKit.app/Contents/Frameworks") {
-        my $osXVersion = join('.', (split(/\./, findMacOSXVersion()))[0..1]);
-        $frameworkPath = "/Volumes/WebKit/WebKit.app/Contents/Frameworks/$osXVersion";
+        my $osxShortVersion = join('.', (split(/\./, findMacOSXVersion()))[0..1]);
+        $frameworkPath = File::Spec->catdir($frameworkPath, "Frameworks", $osxShortVersion);
     } else {
-        $frameworkPath = "/Volumes/WebKit/WebKit.app/Contents/Resources";
+        $frameworkPath = File::Spec->catdir($frameworkPath, "Resources");
     }
 
     $tempFile ||= "";
 
+    # Check for both applications and application bundles.
+    my $isBundle = -d $applicationPath || (-f $applicationPath && -x $applicationPath && $applicationPath =~ m#/Contents/MacOS/#);
+
+    my @args = ($applicationPath);
+    unshift @args, "open", "--wait-apps", "-a" if $isBundle;
+    push @args, $tempFile if $tempFile;
+    push @args, "--args", "-ApplePersistenceIgnoreState", "YES" if $isBundle;
+
+    # FIXME: Add support for passing through additional arguments to the target application
+
     {
         local %ENV = %ENV;
         setupMacWebKitEnvironment($frameworkPath);
-
-        `$safari $tempFile`;
+        system { $args[0] } @args;
     }
 
     `hdiutil detach '$mountPath' 2> $devNull`;
