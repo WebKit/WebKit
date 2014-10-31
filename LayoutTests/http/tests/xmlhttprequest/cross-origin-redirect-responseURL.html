@@ -48,10 +48,10 @@ runTest('resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resourc
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:22/');
 
-    return runTest('resources/redirect-cors.php', 'text');
+    return runTest('resources/redirect-cors.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/get.txt', 'text');
 }).then(function(req) {
     window.responseURL = req.responseURL;
-    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/redirect-cors.php');
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/get.txt');
 
     req.open('GET', 'http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt');
 }).catch(function(reason) {

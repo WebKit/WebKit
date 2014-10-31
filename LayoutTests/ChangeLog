@@ -1,3 +1,13 @@
+2014-10-30  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Layout Test http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=138072
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/xmlhttprequest/cross-origin-redirect-responseURL-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html:
+
 2014-10-30  Roger Fong  <roger_fong@apple.com>
 
         [Windows] More text rebaselining.
