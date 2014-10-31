@@ -3944,8 +3944,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
     bool allowImagesToBreak = !document().inQuirksMode() || !isTableCell() || !styleToUse.logicalWidth().isIntrinsicOrAuto();
 
-    bool autoWrap, oldAutoWrap;
-    autoWrap = oldAutoWrap = styleToUse.autoWrap();
+    bool oldAutoWrap = styleToUse.autoWrap();
 
     InlineMinMaxIterator childIterator(*this);
 
@@ -3959,7 +3958,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     bool isPrevChildInlineFlow = false;
     bool shouldBreakLineAfterText = false;
     while (RenderObject* child = childIterator.next()) {
-        autoWrap = child->isReplaced() ? child->parent()->style().autoWrap() : 
+        bool autoWrap = child->isReplaced() ? child->parent()->style().autoWrap() :
             child->style().autoWrap();
 
         if (!child->isBR()) {

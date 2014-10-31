@@ -1,3 +1,30 @@
+2014-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Fix several warnings reported by clang static analyzer in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=138258
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix several warnings reported by clang static analyzer in WebCore
+        related to variable unnecessary assignments and scope.
+
+        No new tests, no behavior change.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * inspector/InspectorStyleTextEditor.cpp:
+        (WebCore::InspectorStyleTextEditor::replaceProperty):
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        * page/DragController.cpp:
+        (WebCore::createMouseEvent):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+
 2014-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Whitespace cleanup in Screen.h

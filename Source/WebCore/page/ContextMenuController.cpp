@@ -199,9 +199,8 @@ static void openNewWindow(const URL& urlToLoad, Frame* frame)
         return;
     
     FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader().outgoingReferrer()));
-    Page* newPage = oldPage;
 
-    newPage = oldPage->chrome().createWindow(frame, request, WindowFeatures(), NavigationAction(request.resourceRequest()));
+    Page* newPage = oldPage->chrome().createWindow(frame, request, WindowFeatures(), NavigationAction(request.resourceRequest()));
     if (!newPage)
         return;
     newPage->chrome().show();

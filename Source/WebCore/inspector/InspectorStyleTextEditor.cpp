@@ -124,17 +124,11 @@ void InspectorStyleTextEditor::replaceProperty(unsigned index, const String& new
     ASSERT_WITH_SECURITY_IMPLICATION(index < m_allProperties->size());
 
     const InspectorStyleProperty& property = m_allProperties->at(index);
-    long propertyStart = property.sourceData.range.start;
-    long propertyEnd = property.sourceData.range.end;
-    long oldLength = propertyEnd - propertyStart;
-    long newLength = newText.length();
-    long propertyLengthDelta = newLength - oldLength;
-
     if (!property.disabled) {
         SourceRange overwrittenRange;
         unsigned insertedLength;
         internalReplaceProperty(property, newText, &overwrittenRange, &insertedLength);
-        propertyLengthDelta = static_cast<long>(insertedLength) - static_cast<long>(overwrittenRange.length());
+        long propertyLengthDelta = static_cast<long>(insertedLength) - static_cast<long>(overwrittenRange.length());
 
         // Recompute subsequent disabled property ranges if acting on a non-disabled property.
         shiftDisabledProperties(disabledIndexByOrdinal(index, true), propertyLengthDelta);

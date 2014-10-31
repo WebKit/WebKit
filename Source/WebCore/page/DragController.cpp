@@ -84,13 +84,11 @@ namespace WebCore {
 
 static PlatformMouseEvent createMouseEvent(DragData& dragData)
 {
-    bool shiftKey, ctrlKey, altKey, metaKey;
-    shiftKey = ctrlKey = altKey = metaKey = false;
     int keyState = dragData.modifierKeyState();
-    shiftKey = static_cast<bool>(keyState & PlatformEvent::ShiftKey);
-    ctrlKey = static_cast<bool>(keyState & PlatformEvent::CtrlKey);
-    altKey = static_cast<bool>(keyState & PlatformEvent::AltKey);
-    metaKey = static_cast<bool>(keyState & PlatformEvent::MetaKey);
+    bool shiftKey = static_cast<bool>(keyState & PlatformEvent::ShiftKey);
+    bool ctrlKey = static_cast<bool>(keyState & PlatformEvent::CtrlKey);
+    bool altKey = static_cast<bool>(keyState & PlatformEvent::AltKey);
+    bool metaKey = static_cast<bool>(keyState & PlatformEvent::MetaKey);
 
     return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(),
                               LeftButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey,

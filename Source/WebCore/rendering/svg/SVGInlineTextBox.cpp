@@ -207,13 +207,6 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     RenderStyle& style = parentRenderer.style();
 
-    RenderStyle* selectionStyle = &style;
-    if (hasSelection) {
-        selectionStyle = parentRenderer.getCachedPseudoStyle(SELECTION);
-        if (!selectionStyle)
-            selectionStyle = &style;
-    }
-
     int startPosition, endPosition;
     selectionStartEnd(startPosition, endPosition);
 
