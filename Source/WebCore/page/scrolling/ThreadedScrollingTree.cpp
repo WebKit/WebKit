@@ -35,7 +35,7 @@
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include "ScrollingTreeStickyNode.h"
-#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {
@@ -86,7 +86,7 @@ void ThreadedScrollingTree::invalidate()
     // Since this can potentially be the last reference to the scrolling coordinator,
     // we need to release it on the main thread since it has member variables (such as timers)
     // that expect to be destroyed from the main thread.
-    callOnMainThread(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
+    RunLoop::main().dispatch(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
 }
 
 void ThreadedScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
@@ -103,7 +103,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, c
     if (nodeID == rootNode()->scrollingNodeID())
         setMainFrameScrollPosition(scrollPosition);
 
-    callOnMainThread(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
+    RunLoop::main().dispatch(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
 }
 
 #if PLATFORM(MAC)
@@ -112,7 +112,7 @@ void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
     if (!m_scrollingCoordinator)
         return;
 
-    callOnMainThread(bind(&ScrollingCoordinator::handleWheelEventPhase, m_scrollingCoordinator.get(), phase));
+    RunLoop::main().dispatch(bind(&ScrollingCoordinator::handleWheelEventPhase, m_scrollingCoordinator.get(), phase));
 }
 #endif
 
