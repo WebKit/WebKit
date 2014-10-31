@@ -1,3 +1,28 @@
+2014-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Make CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement() faster
+        https://bugs.webkit.org/show_bug.cgi?id=138227
+
+        Reviewed by Benjamin Poulain.
+
+        Restructure CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement()
+        a bit to do less if checks. The previous implementation was doing 7 if
+        checks no matter the input value. The new implementation does less
+        if checks depending on the input type.
+
+        Also, the isImageControlsRootElement() was showing in the profiles so
+        I updated the condition to only do this virtual function call if the
+        input is an HTMLDivElement (which we can check more efficiently).
+
+        With the change, I see that we're spending about ~26% less time in
+        this method when running speedometer. However, the impact on the
+        overall score is within noise.
+
+        No new tests, no behavior change.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+
 2014-10-31  Antti Koivisto  <antti@apple.com>
 
         Fix assertion in CachedResource::addDataBuffer

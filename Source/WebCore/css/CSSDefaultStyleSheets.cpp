@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "RenderTheme.h"
 #include "RuleSet.h"
+#include "SVGElement.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/NeverDestroyed.h>
@@ -158,35 +159,61 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
         changedDefaultStyle = true;
     }
 
-    if (element.isSVGElement() && !svgStyleSheet) {
-        // SVG rules.
-        svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(svgStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(svgStyleSheet, printEval());
-        changedDefaultStyle = true;
-    }
-
-#if ENABLE(MATHML)
-    if (is<MathMLElement>(element) && !mathMLStyleSheet) {
-        // MathML rules.
-        mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
-        defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mathMLStyleSheet, printEval());
-        changedDefaultStyle = true;
-    }
-#endif
-
+    if (is<HTMLElement>(element)) {
+        if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
+            if (!plugInsStyleSheet) {
+                String plugInsRules = RenderTheme::themeForPage(element.document().page())->extraPlugInsStyleSheet() + element.document().page()->chrome().client().plugInExtraStyleSheet();
+                if (plugInsRules.isEmpty())
+                    plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
+                plugInsStyleSheet = parseUASheet(plugInsRules);
+                defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
+                changedDefaultStyle = true;
+            }
+        }
 #if ENABLE(VIDEO)
-    if (!mediaControlsStyleSheet && is<HTMLMediaElement>(element)) {
-        String mediaRules = RenderTheme::themeForPage(element.document().page())->mediaControlsStyleSheet();
-        if (mediaRules.isEmpty())
-            mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element.document().page())->extraMediaControlsStyleSheet();
-        mediaControlsStyleSheet = parseUASheet(mediaRules);
-        defaultStyle->addRulesFromSheet(mediaControlsStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(mediaControlsStyleSheet, printEval());
-        changedDefaultStyle = true;
+        else if (is<HTMLMediaElement>(element)) {
+            if (!mediaControlsStyleSheet) {
+                String mediaRules = RenderTheme::themeForPage(element.document().page())->mediaControlsStyleSheet();
+                if (mediaRules.isEmpty())
+                    mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element.document().page())->extraMediaControlsStyleSheet();
+                mediaControlsStyleSheet = parseUASheet(mediaRules);
+                defaultStyle->addRulesFromSheet(mediaControlsStyleSheet, screenEval());
+                defaultPrintStyle->addRulesFromSheet(mediaControlsStyleSheet, printEval());
+                changedDefaultStyle = true;
+            }
+        }
+#endif // ENABLE(VIDEO)
+#if ENABLE(SERVICE_CONTROLS)
+        else if (is<HTMLDivElement>(element) && element.isImageControlsRootElement()) {
+            if (!imageControlsStyleSheet) {
+                String imageControlsRules = RenderTheme::themeForPage(element.document().page())->imageControlsStyleSheet();
+                imageControlsStyleSheet = parseUASheet(imageControlsRules);
+                defaultStyle->addRulesFromSheet(imageControlsStyleSheet, screenEval());
+                defaultPrintStyle->addRulesFromSheet(imageControlsStyleSheet, printEval());
+                changedDefaultStyle = true;
+            }
+        }
+#endif // ENABLE(SERVICE_CONTROLS)
+    } else if (is<SVGElement>(element)) {
+        if (!svgStyleSheet) {
+            // SVG rules.
+            svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
+            defaultStyle->addRulesFromSheet(svgStyleSheet, screenEval());
+            defaultPrintStyle->addRulesFromSheet(svgStyleSheet, printEval());
+            changedDefaultStyle = true;
+        }
     }
-#endif
+#if ENABLE(MATHML)
+    else if (is<MathMLElement>(element)) {
+        if (!mathMLStyleSheet) {
+            // MathML rules.
+            mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
+            defaultStyle->addRulesFromSheet(mathMLStyleSheet, screenEval());
+            defaultPrintStyle->addRulesFromSheet(mathMLStyleSheet, printEval());
+            changedDefaultStyle = true;
+        }
+    }
+#endif // ENABLE(MATHML)
 
 #if ENABLE(FULLSCREEN_API)
     if (!fullscreenStyleSheet && element.document().webkitIsFullScreen()) {
@@ -196,26 +223,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element& element,
         defaultQuirksStyle->addRulesFromSheet(fullscreenStyleSheet, screenEval());
         changedDefaultStyle = true;
     }
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
-    if (!imageControlsStyleSheet && element.isImageControlsRootElement()) {
-        String imageControlsRules = RenderTheme::themeForPage(element.document().page())->imageControlsStyleSheet();
-        imageControlsStyleSheet = parseUASheet(imageControlsRules);
-        defaultStyle->addRulesFromSheet(imageControlsStyleSheet, screenEval());
-        defaultPrintStyle->addRulesFromSheet(imageControlsStyleSheet, printEval());
-        changedDefaultStyle = true;
-    }
-#endif
-
-    if (!plugInsStyleSheet && (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element))) {
-        String plugInsRules = RenderTheme::themeForPage(element.document().page())->extraPlugInsStyleSheet() + element.document().page()->chrome().client().plugInExtraStyleSheet();
-        if (plugInsRules.isEmpty())
-            plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
-        plugInsStyleSheet = parseUASheet(plugInsRules);
-        defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
-        changedDefaultStyle = true;
-    }
+#endif // ENABLE(FULLSCREEN_API)
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
     ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());
