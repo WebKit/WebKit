@@ -46,6 +46,7 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
+    SetCanHandleHTTPSServerTrustEvaluation(bool value)
     
     GetNetworkProcessStatistics(uint64_t callbackID)
     

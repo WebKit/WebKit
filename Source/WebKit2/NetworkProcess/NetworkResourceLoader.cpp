@@ -398,6 +398,13 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceH
     ASSERT(RunLoop::isMain());
     ASSERT_UNUSED(handle, handle == m_handle);
 
+    // Handle server trust evaluation at platform-level if requested, for performance reasons.
+    if (protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
+        && !NetworkProcess::shared().canHandleHTTPSServerTrustEvaluation()) {
+        continueCanAuthenticateAgainstProtectionSpace(false);
+        return;
+    }
+
     m_networkLoaderClient->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
 }
 
