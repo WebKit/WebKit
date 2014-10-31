@@ -1,3 +1,15 @@
+2014-10-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Clean-up use of boolean attributes in media tests
+        https://bugs.webkit.org/show_bug.cgi?id=138249
+
+        Reviewed by Brent Fulgham.
+
+        * media/resources/foreignobject-media.svg: autoplay="true" => autoplay
+        * media/resources/video-with-poster-as-object-fallback.html:  controls="true" => controls
+        * media/video-canvas-source.html: Ditto.
+        * media/video-canvas.html-disabled: Ditto.
+
 2014-10-31  Andrzej Badowski  <a.badowski@samsung.com>
 
         [ATK] Improve AccessibilityTableCell's determineAccessibilityRole function.
