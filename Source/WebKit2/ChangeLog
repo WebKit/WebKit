@@ -1,5 +1,11 @@
 2014-10-31  Timothy Horton  <timothy_horton@apple.com>
 
+        Fix the build for Yosemite systems after r175417
+
+        * UIProcess/mac/WKActionMenuController.mm:
+
+2014-10-31  Timothy Horton  <timothy_horton@apple.com>
+
         Fix the build for pre-Yosemite systems after r175417
 
         * UIProcess/API/mac/WKView.mm:
