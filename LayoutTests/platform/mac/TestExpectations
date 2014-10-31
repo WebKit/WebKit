@@ -1073,6 +1073,8 @@ webkit.org/b/136717 js/dom/string-replace-exception-crash.html [ Skip ]
 
 webkit.org/b/136718 fast/dynamic/layer-no-longer-paginated.html [ Skip ]
 
+webkit.org/b/137737 accessibility/table-cells-roles.html [ Skip ]
+
 # --- Start media tests ---
 ## --- Start media wontfix tests ---
 # This test requires ogg codecs

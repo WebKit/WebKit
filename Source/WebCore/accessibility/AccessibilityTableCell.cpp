@@ -112,9 +112,26 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
 #if !PLATFORM(EFL) && !PLATFORM(GTK)
     if (!isTableCell())
         return defaultRole;
-    
     return CellRole;
 #endif
+
+    // If AccessibilityRenderObject::determineAccessibilityRole returns the type of CellRole,
+    // which is derived from the role attribute, it does not change anything.
+    if (defaultRole != UnknownRole) {
+        AccessibilityRole ariaRole = ariaRoleAttribute();
+        if (ariaRole == CellRole || ariaRole == RowHeaderRole || ariaRole == ColumnHeaderRole)
+            return ariaRole;
+    }
+
+    // Here there is a more precide definition of the type of CellRole than was possible
+    // at the level of AccessibilityRenderObject.
+    if (defaultRole == ColumnHeaderRole || defaultRole == CellRole || defaultRole == RowHeaderRole) {
+        if (isColumnHeaderCell())
+            return ColumnHeaderRole;
+        if (isRowHeaderCell())
+            return RowHeaderRole;
+        return CellRole;
+    }
     return defaultRole;
 }
     
@@ -135,12 +152,19 @@ bool AccessibilityTableCell::isColumnHeaderCell() const
 
     // We are in a situation after checking the scope attribute.
     // It is an attempt to resolve the type of th element without support in the specification.
-    // Checking tableTag lets stop the loop at the table level.
+    // Checking tableTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
     for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
         if (parentNode->hasTagName(theadTag))
             return true;
-        if (parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tableTag))
+        if (parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag))
             return false;
+        if (parentNode->hasTagName(tableTag)) {
+            std::pair<unsigned, unsigned> rowRange;
+            rowIndexRange(rowRange);
+            if (!rowRange.first)
+                return true;
+            return false;
+        }
     }
     return false;
 }
@@ -157,16 +181,16 @@ bool AccessibilityTableCell::isRowHeaderCell() const
 
     // We are in a situation after checking the scope attribute.
     // It is an attempt to resolve the type of th element without support in the specification.
-    // Checking tableTag lets stop the loop at the table level.
+    // Checking tableTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
     for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
-        if (parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tbodyTag)) {
+        if (parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tableTag)) {
             std::pair<unsigned, unsigned> colRange;
             columnIndexRange(colRange);
             if (!colRange.first)
                 return true;
             return false;
         }
-        if (parentNode->hasTagName(theadTag) || parentNode->hasTagName(tableTag))
+        if (parentNode->hasTagName(theadTag))
             return false;
     }
     return false;
@@ -272,7 +296,7 @@ void AccessibilityTableCell::rowHeaders(AccessibilityChildrenVector& headers)
     }
 }
     
-void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange)
+void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const
 {
     if (!is<RenderTableCell>(m_renderer))
         return;

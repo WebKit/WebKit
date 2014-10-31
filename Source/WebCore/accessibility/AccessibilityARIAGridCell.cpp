@@ -68,7 +68,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     return downcast<AccessibilityTable>(parent);
 }
     
-void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange)
+void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent)

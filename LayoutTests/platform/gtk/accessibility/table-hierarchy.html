@@ -56,7 +56,7 @@
         children = table2.childrenCount;
         shouldBe("children", "6");
         shouldBe("table2.childAtIndex(0).role", "'AXRole: AXRowHeader'");
-        shouldBe("table2.childAtIndex(1).role", "'AXRole: AXRowHeader'");
+        shouldBe("table2.childAtIndex(1).role", "'AXRole: AXCell'");
         for (i = 2; i < children; ++i) {
             shouldBe("table2.childAtIndex(i).role", "'AXRole: AXCell'");
         }
@@ -68,7 +68,7 @@
         children = table4.childrenCount;
         shouldBe("children", "6");
         shouldBe("table4.childAtIndex(0).role", "'AXRole: AXRowHeader'");
-        shouldBe("table4.childAtIndex(1).role", "'AXRole: AXRowHeader'");
+        shouldBe("table4.childAtIndex(1).role", "'AXRole: AXCell'");
         for (i = 2; i < children; ++i) {
             shouldBe("table4.childAtIndex(i).role", "'AXRole: AXCell'");
         }

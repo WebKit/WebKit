@@ -39,7 +39,7 @@ public:
     virtual ~AccessibilityARIAGridCell();
     
     // fills in the start location and row span of cell
-    virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange) override;
+    virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const override;
     // fills in the start location and column span of cell
     virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const override;
     

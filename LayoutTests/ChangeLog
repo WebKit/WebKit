@@ -1,3 +1,24 @@
+2014-10-31  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [ATK] Improve AccessibilityTableCell's determineAccessibilityRole function.
+        https://bugs.webkit.org/show_bug.cgi?id=137737
+
+        Reviewed by Chris Fleizach.
+
+        The new test illustrates the different cases deciding whether a table cell
+        is a row header or column header or just a table cell.
+        Files of expected type and one html type are adapted to changes in the code of several member functions
+        of  AccessibilityTableCell, i.e  determineAccessibilityRole, isColumnHeaderCell, isRowHeaderCell.
+
+        * accessibility/table-cells-roles-expected.txt: Added.
+        * accessibility/table-cells-roles.html: Added.
+        * platform/efl/accessibility/table-attributes-expected.txt:
+        * platform/efl/accessibility/table-cells-expected.txt:
+        * platform/gtk/accessibility/table-attributes-expected.txt:
+        * platform/gtk/accessibility/table-cells-expected.txt:
+        * platform/gtk/accessibility/table-hierarchy-expected.txt:
+        * platform/gtk/accessibility/table-hierarchy.html:
+
 2014-10-31  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Additional rebaselining after r175259.

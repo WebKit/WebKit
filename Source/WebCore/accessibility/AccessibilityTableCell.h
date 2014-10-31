@@ -46,7 +46,7 @@ public:
     bool isRowHeaderCell() const;
     
     // fills in the start location and row span of cell
-    virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange);
+    virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const;
     // fills in the start location and column span of cell
     virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const;
     

@@ -1,3 +1,32 @@
+2014-10-31  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [ATK] Improve AccessibilityTableCell's determineAccessibilityRole function.
+        https://bugs.webkit.org/show_bug.cgi?id=137737
+
+        Reviewed by Chris Fleizach.
+
+        Use of new functions isRowHeaderCell and isColumnHeaderCell (bug 136818)
+        to more accurately determine accessibility role of the table cell.
+
+        Test: accessibility/table-cells-roles.html
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        Change to const.
+        * accessibility/AccessibilityARIAGridCell.h:
+        Change rowIndexRange function to const.
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::determineAccessibilityRole):
+        Use of isRowHeaderCell and isColumnHeaderCell to more accurately determine accessibility role (ATK).
+        (WebCore::AccessibilityTableCell::isColumnHeaderCell):
+        Add a case of direct placement a row in the table.
+        (WebCore::AccessibilityTableCell::isRowHeaderCell):
+        Add a case of direct placement a row in the table.
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        Change to const.
+        * accessibility/AccessibilityTableCell.h:
+        Change rowIndexRange function to const.
+
 2014-10-30  Darin Adler  <darin@apple.com>
 
         Eliminate ResourceBuffer and use SharedBuffer directly instead
