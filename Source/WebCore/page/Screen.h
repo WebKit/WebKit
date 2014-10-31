@@ -37,24 +37,24 @@
 
 namespace WebCore {
 
-    class Frame;
+class Frame;
 
-    class Screen : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
-    public:
-        static PassRefPtr<Screen> create(Frame *frame) { return adoptRef(new Screen(frame)); }
+class Screen final : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
+public:
+    static PassRefPtr<Screen> create(Frame* frame) { return adoptRef(new Screen(frame)); }
 
-        unsigned height() const;
-        unsigned width() const;
-        unsigned colorDepth() const;
-        unsigned pixelDepth() const;
-        int availLeft() const;
-        int availTop() const;
-        unsigned availHeight() const;
-        unsigned availWidth() const;
+    unsigned height() const;
+    unsigned width() const;
+    unsigned colorDepth() const;
+    unsigned pixelDepth() const;
+    int availLeft() const;
+    int availTop() const;
+    unsigned availHeight() const;
+    unsigned availWidth() const;
 
-    private:
-        explicit Screen(Frame*);
-    };
+private:
+    explicit Screen(Frame*);
+};
 
 } // namespace WebCore
 

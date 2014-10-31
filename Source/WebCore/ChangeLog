@@ -1,5 +1,17 @@
 2014-10-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Whitespace cleanup in Screen.h
+        https://bugs.webkit.org/show_bug.cgi?id=138265
+
+        Reviewed by Chris Dumez.
+
+        No indent for namespaces. Mark 'final'. Fix * placement.
+
+        * page/Screen.h:
+        (WebCore::Screen::create):
+
+2014-10-31  Simon Fraser  <simon.fraser@apple.com>
+
         Change the ScrollingThread code to use RunLoop::main().dispatch() rather than callOnMainThread(), which has Obj-C overhead
         https://bugs.webkit.org/show_bug.cgi?id=138263
 
