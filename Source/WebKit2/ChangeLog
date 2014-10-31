@@ -1,3 +1,10 @@
+2014-10-31  Martin Hock  <mhock@apple.com>
+
+        Unreviewed, iOS build fix since 175406.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement):
+
 2014-10-30  Darin Adler  <darin@apple.com>
 
         Eliminate ResourceBuffer and use SharedBuffer directly instead

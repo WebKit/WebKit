@@ -51,6 +51,7 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/DNS.h>
 #import <WebCore/Element.h>
+#import <WebCore/ElementAncestorIterator.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
@@ -1969,7 +1970,7 @@ void WebPage::performActionOnElement(uint32_t action)
         CachedImage* cachedImage = downcast<RenderImage>(*element.renderer()).cachedImage();
         if (!cachedImage)
             return;
-        buffer = cachedImage->resourceBuffer();
+        SharedBuffer* buffer = cachedImage->resourceBuffer();
         if (!buffer)
             return;
         uint64_t bufferSize = buffer->size();
