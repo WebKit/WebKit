@@ -193,7 +193,7 @@ using namespace WebCore;
     case WebActionMenuItemTagPreviewLink:
         selector = @selector(_quickLookURLFromActionMenu:);
         title = @"Preview";
-        image = [NSImage imageNamed:NSImageNameQuickLookTemplate];
+        image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         representedObject = hitTestResult;
         break;
 
