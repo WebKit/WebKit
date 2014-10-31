@@ -38,7 +38,6 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageActivityAssertionToken.h"
-#include "ResourceBuffer.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -233,11 +232,10 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         }
     }
 
-    RefPtr<ResourceBuffer> buffer = resourceData();
+    auto* buffer = resourceData();
     if (m_loadingMultipartContent && buffer && buffer->size()) {
         // The resource data will change as the next part is loaded, so we need to make a copy.
-        RefPtr<ResourceBuffer> copiedData = ResourceBuffer::create(buffer->data(), buffer->size());
-        m_resource->finishLoading(copiedData.get());
+        m_resource->finishLoading(&buffer->copy().get());
         clearResourceData();
         // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.        
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -273,8 +271,8 @@ void SubresourceLoader::didReceiveDataOrBuffer(const char* data, int length, Pas
     ResourceLoader::didReceiveDataOrBuffer(data, length, buffer, encodedDataLength, dataPayloadType);
 
     if (!m_loadingMultipartContent) {
-        if (ResourceBuffer* resourceData = this->resourceData())
-            m_resource->addDataBuffer(resourceData);
+        if (auto* resourceData = this->resourceData())
+            m_resource->addDataBuffer(*resourceData);
         else
             m_resource->addData(buffer ? buffer->data() : data, buffer ? buffer->size() : length);
     }

@@ -1,3 +1,15 @@
+2014-10-30  Darin Adler  <darin@apple.com>
+
+        Eliminate ResourceBuffer and use SharedBuffer directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=138174
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource data]): Use SharedBuffer directly.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+
 2014-10-30  Jer Noble  <jer.noble@apple.com>
 
         [EME] Add Setting for accessing storage location for MediaKeys data

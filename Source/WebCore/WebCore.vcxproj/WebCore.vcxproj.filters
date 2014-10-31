@@ -927,9 +927,6 @@
     <ClCompile Include="..\loader\ProgressTracker.cpp">
       <Filter>loader</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\ResourceBuffer.cpp">
-      <Filter>loader</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\ResourceLoader.cpp">
       <Filter>loader</Filter>
     </ClCompile>
@@ -7948,9 +7945,6 @@
       <Filter>loader</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\ProgressTrackerClient.h">
-      <Filter>loader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\loader\ResourceBuffer.h">
       <Filter>loader</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\ResourceLoader.h">

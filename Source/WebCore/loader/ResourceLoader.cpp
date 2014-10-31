@@ -42,7 +42,6 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
-#include "ResourceBuffer.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
@@ -222,12 +221,12 @@ void ResourceLoader::addDataOrBuffer(const char* data, unsigned length, SharedBu
         return;
 
     if (dataPayloadType == DataPayloadWholeResource) {
-        m_resourceData = buffer ? ResourceBuffer::adoptSharedBuffer(buffer) : ResourceBuffer::create(data, length);
+        m_resourceData = buffer ? buffer : SharedBuffer::create(data, length);
         return;
     }
         
     if (!m_resourceData)
-        m_resourceData = buffer ? ResourceBuffer::adoptSharedBuffer(buffer) : ResourceBuffer::create(data, length);
+        m_resourceData = buffer ? buffer : SharedBuffer::create(data, length);
     else {
         if (buffer)
             m_resourceData->append(buffer);

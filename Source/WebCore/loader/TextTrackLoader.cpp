@@ -36,8 +36,8 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Logging.h"
-#include "ResourceBuffer.h"
 #include "SecurityOrigin.h"
+#include "SharedBuffer.h"
 #include "VTTCue.h"
 #include "WebVTTParser.h"
 
@@ -87,7 +87,7 @@ void TextTrackLoader::processNewCueData(CachedResource* resource)
     if (m_state == Failed || !resource->resourceBuffer())
         return;
     
-    ResourceBuffer* buffer = resource->resourceBuffer();
+    auto* buffer = resource->resourceBuffer();
     if (m_parseOffset == buffer->size())
         return;
 

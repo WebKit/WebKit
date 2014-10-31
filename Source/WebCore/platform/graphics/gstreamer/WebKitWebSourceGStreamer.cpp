@@ -74,7 +74,7 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceLoaderCl
         virtual void dataReceived(const char*, int) override;
         virtual void accessControlCheckFailed(const ResourceError&) override;
         virtual void loadFailed(const ResourceError&) override;
-        virtual void loadFinished(SharedBuffer*) override;
+        virtual void loadFinished() override;
 };
 
 class ResourceHandleStreamingClient : public ResourceHandleClient, public StreamingClient {
@@ -1031,7 +1031,7 @@ void CachedResourceStreamingClient::loadFailed(const ResourceError& error)
     gst_app_src_end_of_stream(src->priv->appsrc);
 }
 
-void CachedResourceStreamingClient::loadFinished(SharedBuffer*)
+void CachedResourceStreamingClient::loadFinished()
 {
     handleNotifyFinished();
 }

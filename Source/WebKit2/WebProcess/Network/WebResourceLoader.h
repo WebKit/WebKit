@@ -46,7 +46,6 @@ class DataReference;
 namespace WebCore {
 class CertificateInfo;
 class ProtectionSpace;
-class ResourceBuffer;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;

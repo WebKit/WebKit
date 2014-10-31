@@ -46,7 +46,6 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "Range.h"
-#include "ResourceBuffer.h"
 #include "Settings.h"
 #include "markup.h"
 #include <wtf/ListHashSet.h>
@@ -550,9 +549,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 #endif
                 CachedResource* cachedResource = memoryCache()->resourceForRequest(request, frame->page()->sessionID());
                 if (cachedResource) {
-                    ResourceBuffer* data = cachedResource->resourceBuffer();
-
-                    if (RefPtr<ArchiveResource> resource = ArchiveResource::create(data ? data->sharedBuffer() : 0, subresourceURL, cachedResource->response())) {
+                    if (RefPtr<ArchiveResource> resource = ArchiveResource::create(cachedResource->resourceBuffer(), subresourceURL, cachedResource->response())) {
                         subresources.append(WTF::move(resource));
                         continue;
                     }

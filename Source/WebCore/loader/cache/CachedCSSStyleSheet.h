@@ -54,7 +54,7 @@ namespace WebCore {
 
         virtual void setEncoding(const String&) override;
         virtual String encoding() const override;
-        virtual void finishLoading(ResourceBuffer*) override;
+        virtual void finishLoading(SharedBuffer*) override;
         virtual void destroyDecodedData() override;
 
     protected:

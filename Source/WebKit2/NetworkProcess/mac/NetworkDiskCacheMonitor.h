@@ -48,7 +48,7 @@ private:
     NetworkDiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
 
     // WebCore::DiskCacheMonitor
-    virtual void resourceBecameFileBacked(PassRefPtr<WebCore::SharedBuffer>) override;
+    virtual void resourceBecameFileBacked(WebCore::SharedBuffer&) override;
 
     // IPC::MessageSender
     virtual IPC::Connection* messageSenderConnection() override;

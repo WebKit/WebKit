@@ -38,7 +38,6 @@
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentLoader.h>
-#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 

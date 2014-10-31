@@ -68,7 +68,6 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class Page;
-    class ResourceBuffer;
     class ResourceLoader;
     class SharedBuffer;
     class SubstituteResource;
@@ -93,7 +92,7 @@ namespace WebCore {
 
         WEBCORE_EXPORT FrameLoader* frameLoader() const;
         WEBCORE_EXPORT ResourceLoader* mainResourceLoader() const;
-        WEBCORE_EXPORT PassRefPtr<ResourceBuffer> mainResourceData() const;
+        WEBCORE_EXPORT PassRefPtr<SharedBuffer> mainResourceData() const;
         
         DocumentWriter& writer() const { return m_writer; }
 

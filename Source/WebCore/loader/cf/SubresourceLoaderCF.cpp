@@ -51,8 +51,8 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
             // being cancelled. Bail out if we no longer have a cached resource.
             if (!m_resource)
                 return;
-            if (ResourceBuffer* resourceData = this->resourceData())
-                m_resource->addDataBuffer(resourceData);
+            if (auto* resourceData = this->resourceData())
+                m_resource->addDataBuffer(*resourceData);
             else {
                 CFDataRef cfData = reinterpret_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
                 const char* data = reinterpret_cast<const char *>(CFDataGetBytePtr(cfData));

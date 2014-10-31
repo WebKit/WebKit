@@ -7251,7 +7251,6 @@
     <ClCompile Include="..\loader\PolicyCallback.cpp" />
     <ClCompile Include="..\loader\PolicyChecker.cpp" />
     <ClCompile Include="..\loader\ProgressTracker.cpp" />
-    <ClCompile Include="..\loader\ResourceBuffer.cpp" />
     <ClCompile Include="..\loader\ResourceLoader.cpp" />
     <ClCompile Include="..\loader\cf\ResourceLoaderCFNet.cpp" />
     <ClCompile Include="..\loader\ResourceLoadNotifier.cpp" />
@@ -19254,7 +19253,6 @@
     <ClInclude Include="..\loader\PolicyChecker.h" />
     <ClInclude Include="..\loader\ProgressTracker.h" />
     <ClInclude Include="..\loader\ProgressTrackerClient.h" />
-    <ClInclude Include="..\loader\ResourceBuffer.h" />
     <ClInclude Include="..\loader\ResourceLoader.h" />
     <ClInclude Include="..\loader\ResourceLoaderOptions.h" />
     <ClInclude Include="..\loader\ResourceLoadNotifier.h" />

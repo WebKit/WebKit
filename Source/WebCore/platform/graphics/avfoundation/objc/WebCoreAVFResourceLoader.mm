@@ -32,7 +32,6 @@
 #import "CachedResourceLoader.h"
 #import "CachedResourceRequest.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
-#import "ResourceBuffer.h"
 #import "ResourceLoaderOptions.h"
 #import "SharedBuffer.h"
 #import "SoftLinking.h"
@@ -152,7 +151,7 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource* resour
     if (!dataRequest)
         return;
 
-    SharedBuffer* data = resource->resourceBuffer() ? resource->resourceBuffer()->sharedBuffer() : 0;
+    SharedBuffer* data = resource->resourceBuffer();
     if (!data)
         return;
 

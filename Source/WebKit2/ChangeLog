@@ -1,3 +1,63 @@
+2014-10-30  Darin Adler  <darin@apple.com>
+
+        Eliminate ResourceBuffer and use SharedBuffer directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=138174
+
+        Reviewed by Antti Koivisto.
+
+        * CMakeLists.txt: Removed WebResourceBuffer.cpp.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendBuffer): Use a reference instead of pointer.
+        * NetworkProcess/NetworkResourceLoader.h: Ditto.
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.h: Ditto.
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.mm:
+        (WebKit::NetworkDiskCacheMonitor::resourceBecameFileBacked): Ditto.
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer): Ditto.
+
+        * Shared/WebResourceBuffer.cpp: Removed.
+        * Shared/WebResourceBuffer.h: Removed.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed WebResourceBuffer.cpp/h.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp: Removed unneeded includes.
+        (WebKit::NetworkProcessConnection::didCacheResource): Use a reference instead
+        of a pointer.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp: Removed unneeded include.
+        * WebProcess/Network/WebResourceLoader.cpp: Ditto.
+        * WebProcess/Network/WebResourceLoader.h: Ditto.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: Ditto.
+        (WebKit::WebFrameLoaderClient::finishedLoading): Use SharedBuffer directly.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::source): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame): Refactored to make the relationship
+        between the buffer and the DataReference clearer and to avoid having a long-lived
+        DataReference pointing to an underlying buffer with unclear lifetime.
+        (WebKit::WebPage::getContentsAsString): Ditto.
+        (WebKit::WebPage::getSelectionAsWebArchiveData): Ditto.
+        (WebKit::WebPage::getMainResourceDataOfFrame): Ditto. Also use SharedBuffer directly.
+        (WebKit::WebPage::getResourceDataFromFrame): Ditto.
+        (WebKit::WebPage::getWebArchiveOfFrame): Ditto.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::containingLinkElement): Use elementLineage.
+        (WebKit::WebPage::performActionOnElement): Use references and SharedBuffer.
+        ALso did a bit of other cleanup in here.
+        (WebKit::isAssistableElement): Take Element& instead of Node*, since that's what
+        the caller has.
+        (WebKit::nextAssistableElement): Changed name to match what the function does.
+        Added an obviously-missing check on the startNode argument. Updated for change
+        to isAssistableElement above. Take a Page& instead of a Page*.
+        (WebKit::hasAssistableElement): Changed name to match what the function does.
+        Updated for change to nextAssistableElement above. Took out incorrect comparison
+        of a C++ pointer to the Objective-C object pointer nil. Take a Page& instead of a Page*.
+        (WebKit::WebPage::focusNextAssistedNode): Updated for above changes.
+        (WebKit::WebPage::getAssistedNodeInformation): Updated for above changes.
+
 2014-10-30  Jer Noble  <jer.noble@apple.com>
 
         [EME] Add Setting for accessing storage location for MediaKeys data
