@@ -1,3 +1,15 @@
+2014-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Brace cleanup in StyleResolver::adjustRenderStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=138267
+
+        Reviewed by Chris Dumez.
+
+        No braces for single-line clauses.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+
 2014-10-31  Chris Dumez  <cdumez@apple.com>
 
         Fix several warnings reported by clang static analyzer in WebCore
