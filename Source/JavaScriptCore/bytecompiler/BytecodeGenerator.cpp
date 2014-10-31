@@ -164,6 +164,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_scopeNode(programNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_scopeRegister(JSStack::ScopeChain)
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
@@ -209,6 +210,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(functionBody)
     , m_codeBlock(vm, codeBlock)
+    , m_scopeRegister(JSStack::ScopeChain)
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
@@ -444,6 +446,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_scopeRegister(JSStack::ScopeChain)
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
@@ -2049,22 +2052,23 @@ void BytecodeGenerator::emitToPrimitive(RegisterID* dst, RegisterID* src)
     instructions().append(src->index());
 }
 
-RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* scope)
+RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* dst, RegisterID* scope)
 {
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);
     m_localScopeDepth++;
 
-    return emitUnaryNoDstOp(op_push_with_scope, scope);
+    return emitUnaryOp(op_push_with_scope, dst, scope);
 }
 
-void BytecodeGenerator::emitPopScope()
+void BytecodeGenerator::emitPopScope(RegisterID* srcDst)
 {
     ASSERT(m_scopeContextStack.size());
     ASSERT(!m_scopeContextStack.last().isFinallyBlock);
 
     emitOpcode(op_pop_scope);
+    instructions().append(srcDst->index());
 
     m_scopeContextStack.removeLast();
     m_localScopeDepth--;
@@ -2195,7 +2199,7 @@ LabelScopePtr BytecodeGenerator::continueTarget(const Identifier& name)
     return LabelScopePtr::null();
 }
 
-void BytecodeGenerator::emitComplexPopScopes(ControlFlowContext* topScope, ControlFlowContext* bottomScope)
+void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowContext* topScope, ControlFlowContext* bottomScope)
 {
     while (topScope > bottomScope) {
         // First we count the number of dynamic scopes we need to remove to get
@@ -2211,8 +2215,10 @@ void BytecodeGenerator::emitComplexPopScopes(ControlFlowContext* topScope, Contr
         if (nNormalScopes) {
             // We need to remove a number of dynamic scopes to get to the next
             // finally block
-            while (nNormalScopes--)
+            while (nNormalScopes--) {
                 emitOpcode(op_pop_scope);
+                instructions().append(scope->index());
+            }
 
             // If topScope == bottomScope then there isn't a finally block left to emit.
             if (topScope == bottomScope)
@@ -2308,7 +2314,7 @@ void BytecodeGenerator::emitComplexPopScopes(ControlFlowContext* topScope, Contr
     }
 }
 
-void BytecodeGenerator::emitPopScopes(int targetScopeDepth)
+void BytecodeGenerator::emitPopScopes(RegisterID* scope, int targetScopeDepth)
 {
     ASSERT(scopeDepth() - targetScopeDepth >= 0);
 
@@ -2318,12 +2324,14 @@ void BytecodeGenerator::emitPopScopes(int targetScopeDepth)
         return;
 
     if (!m_finallyDepth) {
-        while (scopeDelta--)
+        while (scopeDelta--) {
             emitOpcode(op_pop_scope);
+            instructions().append(scope->index());
+        }
         return;
     }
 
-    emitComplexPopScopes(&m_scopeContextStack.last(), &m_scopeContextStack.last() - scopeDelta);
+    emitComplexPopScopes(scope, &m_scopeContextStack.last(), &m_scopeContextStack.last() - scopeDelta);
 }
 
 TryData* BytecodeGenerator::pushTry(Label* start)
@@ -2371,16 +2379,17 @@ void BytecodeGenerator::emitThrowReferenceError(const String& message)
     instructions().append(true);
 }
 
-void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* value, unsigned attributes)
+void BytecodeGenerator::emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
 {
     emitOpcode(op_push_name_scope);
+    instructions().append(dst->index());
     instructions().append(addConstant(property));
     instructions().append(value->index());
     instructions().append(attributes);
     instructions().append(JSNameScope::FunctionNameScope);
 }
 
-void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* value, unsigned attributes)
+void BytecodeGenerator::emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
 {
     ControlFlowContext context;
     context.isFinallyBlock = false;
@@ -2388,6 +2397,7 @@ void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterI
     m_localScopeDepth++;
 
     emitOpcode(op_push_name_scope);
+    instructions().append(dst->index());
     instructions().append(addConstant(property));
     instructions().append(value->index());
     instructions().append(attributes);

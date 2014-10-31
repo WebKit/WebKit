@@ -444,7 +444,7 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
     callOperation(operationPushWithScope, regT0);
 }
 
@@ -506,8 +506,8 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
 
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[1].u.operand), regT0, currentInstruction[3].u.operand, currentInstruction[4].u.operand);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT0, currentInstruction[4].u.operand, currentInstruction[5].u.operand);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

@@ -2250,7 +2250,7 @@ void ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     LabelScopePtr scope = generator.continueTarget(m_ident);
     ASSERT(scope);
 
-    generator.emitPopScopes(scope->scopeDepth());
+    generator.emitPopScopes(generator.scopeRegister(), scope->scopeDepth());
     generator.emitJump(scope->continueTarget());
 }
 
@@ -2277,7 +2277,7 @@ void BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     LabelScopePtr scope = generator.breakTarget(m_ident);
     ASSERT(scope);
 
-    generator.emitPopScopes(scope->scopeDepth());
+    generator.emitPopScopes(generator.scopeRegister(), scope->scopeDepth());
     generator.emitJump(scope->breakTarget());
 }
 
@@ -2298,7 +2298,7 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     }
     if (generator.scopeDepth()) {
         returnRegister = generator.emitMove(generator.newTemporary(), returnRegister.get());
-        generator.emitPopScopes(0);
+        generator.emitPopScopes(generator.scopeRegister(), 0);
     }
 
     generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
@@ -2313,9 +2313,9 @@ void WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     RefPtr<RegisterID> scope = generator.emitNode(m_expr);
     generator.emitExpressionInfo(m_divot, m_divot - m_expressionLength, m_divot);
-    generator.emitPushWithScope(scope.get());
+    generator.emitPushWithScope(generator.scopeRegister(), scope.get());
     generator.emitNode(dst, m_statement);
-    generator.emitPopScope();
+    generator.emitPopScope(generator.scopeRegister());
 }
 
 // ------------------------------ CaseClauseNode --------------------------------
@@ -2555,10 +2555,10 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             // block should "catch" that exception.
             tryData = generator.pushTry(here.get());
         }
-        
-        generator.emitPushCatchScope(m_exceptionIdent, exceptionRegister.get(), DontDelete);
+
+        generator.emitPushCatchScope(generator.scopeRegister(), m_exceptionIdent, exceptionRegister.get(), DontDelete);
         generator.emitNode(dst, m_catchBlock);
-        generator.emitPopScope();
+        generator.emitPopScope(generator.scopeRegister());
         generator.emitLabel(catchEndLabel.get());
     }
 

@@ -1,3 +1,51 @@
+2014-10-31  Michael Saboff  <msaboff@apple.com>
+
+        Add scope operand to op_push_with_scope, op_push_name_scope and op_pop_scope
+        https://bugs.webkit.org/show_bug.cgi?id=138252
+
+        Reviewed by Geoffrey Garen.
+
+        Added scope operand to op_push_with_scope, op_push_name_scope and op_pop_scope.
+        Although the scope register is filled in with the ScopeChain register for all 
+        three bytecodes, this operand is not used in the processing of the bytecodes.
+        That will be addressed in a future patch.
+
+        * bytecode/BytecodeList.json: Lengthened the three bytecodes.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Added code to dump the scope operand.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitPopScope):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::emitPopScopes):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::scopeRegister):
+        Added scope register to these emit functions and the bytecodes they emit.
+        New m_scopeRegister and accessor.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        Created a RegisterID for the ScopeChain register and used it to emit the updated
+        bytecodes.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::emit_op_push_name_scope):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        Updated the operand indecies for the processing of the updated bytecodes.
+
 2014-10-31  Andreas Kling  <akling@apple.com>
 
         Make writes to RegExpObject.lastIndex cacheable.

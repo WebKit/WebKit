@@ -289,6 +289,8 @@ namespace JSC {
 
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
+        
+        RegisterID* scopeRegister() { return &m_scopeRegister; }
 
         // Returns the next available temporary register. Registers returned by
         // newTemporary require a modified form of reference counting: any
@@ -510,7 +512,7 @@ namespace JSC {
         PassRefPtr<Label> emitJumpIfFalse(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionCall(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionApply(RegisterID* cond, Label* target);
-        void emitPopScopes(int targetScopeDepth);
+        void emitPopScopes(RegisterID* srcDst, int targetScopeDepth);
 
         RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
@@ -536,11 +538,11 @@ namespace JSC {
 
         void emitThrowReferenceError(const String& message);
 
-        void emitPushFunctionNameScope(const Identifier& property, RegisterID* value, unsigned attributes);
-        void emitPushCatchScope(const Identifier& property, RegisterID* value, unsigned attributes);
+        void emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
+        void emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
 
-        RegisterID* emitPushWithScope(RegisterID* scope);
-        void emitPopScope();
+        RegisterID* emitPushWithScope(RegisterID* dst, RegisterID* scope);
+        void emitPopScope(RegisterID* srcDst);
 
         void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
 
@@ -591,7 +593,7 @@ namespace JSC {
         ALWAYS_INLINE void rewindBinaryOp();
         ALWAYS_INLINE void rewindUnaryOp();
 
-        void emitComplexPopScopes(ControlFlowContext* topScope, ControlFlowContext* bottomScope);
+        void emitComplexPopScopes(RegisterID*, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<StringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
@@ -751,6 +753,7 @@ namespace JSC {
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;
+        RegisterID m_scopeRegister;
         RegisterID* m_lexicalEnvironmentRegister;
         RegisterID* m_emptyValueRegister;
         RegisterID* m_globalObjectRegister;

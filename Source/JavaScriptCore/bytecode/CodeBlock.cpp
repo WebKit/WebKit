@@ -1425,21 +1425,25 @@ void CodeBlock::dumpBytecode(
             break;
         }
         case op_push_with_scope: {
-            int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "push_with_scope", r0);
+            int dst = (++it)->u.operand;
+            int newScope = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "push_with_scope");
+            out.printf("%s, %s", registerName(dst).data(), registerName(newScope).data());
             break;
         }
         case op_pop_scope: {
-            printLocationAndOp(out, exec, location, it, "pop_scope");
+            int r0 = (++it)->u.operand;
+            printLocationOpAndRegisterOperand(out, exec, location, it, "pop_scope", r0);
             break;
         }
         case op_push_name_scope: {
+            int dst = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             unsigned attributes = (++it)->u.operand;
             JSNameScope::Type scopeType = (JSNameScope::Type)(++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "push_name_scope");
-            out.printf("%s, %s, %u %s", idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes, (scopeType == JSNameScope::FunctionNameScope) ? "functionScope" : ((scopeType == JSNameScope::CatchScope) ? "catchScope" : "unknownScopeType"));
+            out.printf("%s, %s, %s, %u %s", registerName(dst).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes, (scopeType == JSNameScope::FunctionNameScope) ? "functionScope" : ((scopeType == JSNameScope::CatchScope) ? "catchScope" : "unknownScopeType"));
             break;
         }
         case op_catch: {

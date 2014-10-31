@@ -752,7 +752,7 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    emitLoad(currentInstruction[1].u.operand, regT1, regT0);
+    emitLoad(currentInstruction[2].u.operand, regT1, regT0);
     callOperation(operationPushWithScope, regT1, regT0);
 }
 
@@ -786,8 +786,8 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
-    emitLoad(currentInstruction[2].u.operand, regT1, regT0);
-    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[1].u.operand), regT1, regT0, currentInstruction[3].u.operand, currentInstruction[4].u.operand);
+    emitLoad(currentInstruction[3].u.operand, regT1, regT0);
+    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT0, currentInstruction[4].u.operand, currentInstruction[5].u.operand);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
