@@ -101,7 +101,7 @@
 #endif
 #endif
 
-#if PLATFORM(COCOA)
+#if (PLATFORM(COCOA) && (CPU(X86_64) || CPU(ARM64)))
 #define USE_BMALLOC 1
 #endif
 
