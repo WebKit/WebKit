@@ -725,7 +725,14 @@ supports:
     }
     ;
 
-supports_error: error ';' | error invalid_block ;
+supports_error: 
+    error ';' {
+        $$ = false;
+    }
+    | error invalid_block {
+        $$ = false;
+    }
+    ;
 
 before_supports_rule:
     /* empty */ {

@@ -1,3 +1,17 @@
+2014-10-31  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Fix type clash warning in supports_error rule of CSSGrammar.
+        https://bugs.webkit.org/show_bug.cgi?id=138248
+
+        Reviewed by Antti Koivisto.
+
+        Added explicit actions to supports_error rule in CSSGrammar.y.in since
+        the default actions caused bison to emit type clash warnings.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSGrammar.y.in:
+
 2014-10-31  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Support script message handlers WebKitUserContentManager
