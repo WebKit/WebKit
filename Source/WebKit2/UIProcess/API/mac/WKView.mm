@@ -3643,6 +3643,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [_data->_actionMenuController prepareForMenu:menu withEvent:event];
 }
 
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    [_data->_actionMenuController willOpenMenu:menu withEvent:event];
+}
+
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     [_data->_actionMenuController didCloseMenu:menu withEvent:event];

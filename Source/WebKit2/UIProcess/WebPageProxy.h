@@ -685,6 +685,7 @@ public:
 #if PLATFORM(COCOA)
     // Dictionary.
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+    void performDictionaryLookupOfCurrentSelection();
 #endif
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID, uint64_t navigationID);
@@ -912,8 +913,11 @@ public:
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
     void removeNavigationGestureSnapshot();
 
+#if PLATFORM(MAC)
     WebHitTestResult* activeActionMenuHitTestResult() const { return m_activeActionMenuHitTestResult.get(); }
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+    void selectLookupTextAtLocation(WebCore::FloatPoint);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);

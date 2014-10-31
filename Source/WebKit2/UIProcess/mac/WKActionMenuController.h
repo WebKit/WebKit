@@ -59,6 +59,7 @@ enum class ActionMenuState {
 - (void)willDestroyView:(WKView *)view;
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult;

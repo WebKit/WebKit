@@ -524,6 +524,49 @@ static PassRefPtr<Range> rangeExpandedAroundPosition(const VisiblePosition& posi
     return makeRange(contextStart, contextEnd);
 }
 
+PassRefPtr<Range> WebPage::rangeForDictionaryLookupAtHitTestResult(const WebCore::HitTestResult& hitTestResult, NSDictionary **options)
+{
+    Node* node = hitTestResult.innerNonSharedNode();
+    if (!node)
+        return nullptr;
+
+    auto renderer = node->renderer();
+    if (!renderer)
+        return nullptr;
+
+    Frame* frame = node->document().frame();
+    if (!frame)
+        return nullptr;
+
+    // Don't do anything if there is no character at the point.
+    if (!frame->rangeForPoint(hitTestResult.roundedPointInInnerNodeFrame()))
+        return nullptr;
+
+    VisiblePosition position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
+    if (position.isNull())
+        position = firstPositionInOrBeforeNode(node);
+
+    VisibleSelection selection = m_page->focusController().focusedOrMainFrame().selection().selection();
+    if (shouldUseSelection(position, selection)) {
+        performDictionaryLookupForSelection(frame, selection);
+        return nullptr;
+    }
+
+    // As context, we are going to use four lines of text before and after the point. (Dictionary can sometimes look up things that are four lines long)
+    RefPtr<Range> fullCharacterRange = rangeExpandedAroundPosition(position, 4);
+    NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get()), 0);
+
+    String fullPlainTextString = plainText(fullCharacterRange.get());
+
+    NSRange extractedRange = WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, options);
+
+    // This function sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
+    if (extractedRange.location == NSNotFound)
+        return nullptr;
+
+    return TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
+}
+
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
     if (PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame())) {
@@ -535,39 +578,9 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     IntPoint point = roundedIntPoint(floatPoint);
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
     Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
-
-    IntPoint translatedPoint = frame->view()->windowToContents(point);
-
-    // Don't do anything if there is no character at the point.
-    if (!frame->rangeForPoint(translatedPoint))
-        return;
-
-    VisiblePosition position = frame->visiblePositionForPoint(translatedPoint);
-    VisibleSelection selection = m_page->focusController().focusedOrMainFrame().selection().selection();
-    if (shouldUseSelection(position, selection)) {
-        performDictionaryLookupForSelection(frame, selection);
-        return;
-    }
-
     NSDictionary *options = nil;
-
-    // As context, we are going to use four lines of text before and after the point. (Dictionary can sometimes look up things that are four lines long)
-    RefPtr<Range> fullCharacterRange = rangeExpandedAroundPosition(position, 4);
-    NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get()), 0);
-
-    String fullPlainTextString = plainText(fullCharacterRange.get());
-
-    NSRange extractedRange = WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
-
-    // This function sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
-    if (extractedRange.location == NSNotFound)
-        return;
-
-    RefPtr<Range> finalRange = TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
-    if (!finalRange)
-        return;
-
-    performDictionaryLookupForRange(frame, *finalRange, options);
+    RefPtr<Range> range = rangeForDictionaryLookupAtHitTestResult(result, &options);
+    performDictionaryLookupForRange(frame, *range, options);
 }
 
 void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
@@ -595,6 +608,12 @@ void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSel
     WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
 
     performDictionaryLookupForRange(frame, *selectedRange, options);
+}
+
+void WebPage::performDictionaryLookupOfCurrentSelection()
+{
+    Frame* frame = &m_page->focusController().focusedOrMainFrame();
+    performDictionaryLookupForSelection(frame, frame->selection().selection());
 }
 
 void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options)
@@ -1144,6 +1163,21 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     }
     
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult));
+}
+
+void WebPage::selectLookupTextAtLocation(FloatPoint locationInWindowCooordinates)
+{
+    MainFrame& mainFrame = corePage()->mainFrame();
+    if (!mainFrame.view() || !mainFrame.view()->renderView())
+        return;
+
+    IntPoint point = roundedIntPoint(locationInWindowCooordinates);
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
+    Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
+    NSDictionary *options = nil;
+    RefPtr<Range> lookupRange = rangeForDictionaryLookupAtHitTestResult(result, &options);
+    if (lookupRange)
+        frame->selection().setSelectedRange(lookupRange.get(), DOWNSTREAM, true);
 }
 
 } // namespace WebKit
