@@ -509,13 +509,23 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
 
     const char* linksHoveredHTML =
-        "<html><body>"
+        "<html><head>"
+        " <script>"
+        "    window.onload = function () {"
+        "      window.getSelection().removeAllRanges();"
+        "      var select_range = document.createRange();"
+        "      select_range.selectNodeContents(document.getElementById('text_to_select'));"
+        "      window.getSelection().addRange(select_range);"
+        "    }"
+        " </script>"
+        "</head><body>"
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
         " <div style='position:absolute; left:1; top:50; width:30; height:30; overflow:scroll'>&nbsp;</div>"
         " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <p style='position:absolute; left:1; top:120' id='text_to_select'>Lorem ipsum.</p>"
         "</body></html>";
 
     test->loadHtml(linksHoveredHTML, "file:///");
@@ -527,6 +537,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/");
     g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Title");
     g_assert_cmpstr(webkit_hit_test_result_get_link_label(hitTestResult), ==, "WebKitGTK+ Website");
@@ -538,6 +549,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert(!test->m_mouseTargetModifiers);
 
     // Move over image with GDK_CONTROL_MASK.
@@ -546,6 +558,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_scrollbar(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
     g_assert(test->m_mouseTargetModifiers & GDK_CONTROL_MASK);
@@ -557,6 +570,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_scrollbar(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/logo");
     g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
     g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Logo");
@@ -570,6 +584,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_scrollbar(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_media_uri(hitTestResult), ==, "file:///movie.ogg");
     g_assert(!test->m_mouseTargetModifiers);
 
@@ -580,6 +595,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_scrollbar(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_editable(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert(!test->m_mouseTargetModifiers);
 
     // Move over scrollbar.
@@ -589,7 +605,19 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_scrollbar(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert(!test->m_mouseTargetModifiers);
+
+    // Move over selection.
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(2, 145);
+    g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_scrollbar(hitTestResult));
+    g_assert(webkit_hit_test_result_context_is_selection(hitTestResult));
+    g_assert(!test->m_mouseTargetModifiers);
+
 }
 
 static void testWebViewPermissionRequests(UIClientTest* test, gconstpointer)

@@ -1,3 +1,31 @@
+2014-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Merge r175160. <rdar://problem/18742297>
+
+    2014-10-24  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+            [GTK] Implement is_selected method on WebKitHitTestResult
+            https://bugs.webkit.org/show_bug.cgi?id=137110
+
+            Reviewed by Tim Horton.
+
+            Expose CONTEXT_SELECTION for WebKitHitTestResult.
+
+            * Shared/WebHitTestResult.cpp: Add is_selected field and getter for this field.
+            (WebKit::WebHitTestResult::Data::Data):
+            (WebKit::WebHitTestResult::Data::encode):
+            (WebKit::WebHitTestResult::Data::decode):
+            * Shared/WebHitTestResult.h:
+            (WebKit::WebHitTestResult::isSelected):
+            * UIProcess/API/gtk/WebKitHitTestResult.cpp: Add WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION context and method to check it.
+            (webkitHitTestResultCreate):
+            (webkitHitTestResultCompare):
+            (webkit_hit_test_result_context_is_selection):
+            * UIProcess/API/gtk/WebKitHitTestResult.h:
+            * UIProcess/API/gtk/WebKitWebView.cpp: Modify context-menu callback to set the new context option.
+            (webkitWebViewPopulateContextMenu):
+            * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add documentation about new function.
+
 2014-10-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175353. rdar://problem/18817803

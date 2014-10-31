@@ -1,3 +1,21 @@
+2014-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Merge r175160. <rdar://problem/18742297>
+
+    2014-10-24  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+            [GTK] Implement is_selected method on WebKitHitTestResult
+            https://bugs.webkit.org/show_bug.cgi?id=137110
+
+            Reviewed by Tim Horton.
+
+            Add tests for new context SELECTION on WebKitHitTestResult.
+
+            * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+            (testContextMenuDefaultMenu):
+            * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+            (testWebViewMouseTarget):
+
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172542
