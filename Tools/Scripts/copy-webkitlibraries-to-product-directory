@@ -160,7 +160,8 @@ if ($llvm) {
     (system("mkdir", "-p", "$productDir$llvmPrefix/include") == 0) or die;
 
     my $libraryDir = $useFullLibPaths ? "$productDir$llvmPrefix/lib" : $productDir;
-    (system("mkdir", "-p", $libraryDir) == 0) or die;
+    # Always create a directory at the full library path, because the JavaScriptCore build emits a warning if it's not there.
+    (system("mkdir", "-p", "$productDir$llvmPrefix/lib") == 0) or die;
 
     # Determine where to get LLVM binaries and headers.
     my $useOwnLLVM = 0;

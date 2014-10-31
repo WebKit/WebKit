@@ -1,3 +1,13 @@
+2014-10-31  Dan Bernstein  <mitz@apple.com>
+
+        llvmForJSC build emits a linker warning that it can't find usr/local/LLVMForJavaScriptCore/lib under the build directory
+        https://bugs.webkit.org/show_bug.cgi?id=138259
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Create this directory even if it’s
+        going to be empty to silence the warning.
+
 2014-10-31  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Support script message handlers WebKitUserContentManager
