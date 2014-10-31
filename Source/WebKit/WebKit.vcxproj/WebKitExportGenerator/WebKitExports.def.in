@@ -478,6 +478,8 @@ EXPORTS
         symbolWithPointer(?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z, ?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z)
         symbolWithPointer(?sessionID@Page@WebCore@@QBE?AVSessionID@2@XZ, ?sessionID@Page@WebCore@@QEBA?AVSessionID@2@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@VSessionID@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@VSessionID@2@@Z)
+        symbolWithPointer(?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ, ?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ)
+        symbolWithPointer(?deref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ, ?ref@CSSComputedStyleDeclaration@WebCore@@UAEXXZ)
 #if !CPU(X86_64)
         ?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ
 #endif
