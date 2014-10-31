@@ -84,27 +84,112 @@ void WebOriginDataManagerProxy::derefWebContextSupplement()
     API::Object::deref();
 }
 
+class CallbackSynchronizer : public RefCounted<CallbackSynchronizer> {
+public:
+    static PassRefPtr<CallbackSynchronizer> create(const std::function<void(const CallbackBase::Error&)>& callback)
+    {
+        return adoptRef(new CallbackSynchronizer(callback));
+    }
+
+    ~CallbackSynchronizer()
+    {
+        ASSERT(!m_count);
+        ASSERT(!m_callback);
+    }
+
+    void taskStarted()
+    {
+        ++m_count;
+    }
+
+    void taskCompleted(const CallbackBase::Error& error)
+    {
+        if (error != CallbackBase::Error::None)
+            m_error = error;
+
+        ASSERT(m_count);
+        if (!--m_count) {
+            ASSERT(m_callback);
+            m_callback(m_error);
+            m_callback = nullptr;
+        }
+    }
+
+protected:
+    CallbackSynchronizer(const std::function<void(const CallbackBase::Error&)>& callback)
+        : m_count(0)
+        , m_callback(callback)
+        , m_error(CallbackBase::Error::None)
+    {
+        ASSERT(m_callback);
+    }
+
+    unsigned m_count;
+    std::function<void(const CallbackBase::Error&)> m_callback;
+    CallbackBase::Error m_error;
+};
+
+static std::pair<RefPtr<CallbackSynchronizer>, VoidCallback::CallbackFunction> createSynchronizedCallback(typename VoidCallback::CallbackFunction callback)
+{
+    RefPtr<CallbackSynchronizer> synchronizer = CallbackSynchronizer::create(callback);
+    VoidCallback::CallbackFunction synchronizedCallback = [synchronizer](CallbackBase::Error error) {
+        synchronizer->taskCompleted(error);
+    };
+
+    return std::make_pair(synchronizer, synchronizedCallback);
+}
+
+static std::pair<RefPtr<CallbackSynchronizer>, ArrayCallback::CallbackFunction> createSynchronizedCallback(typename ArrayCallback::CallbackFunction callback)
+{
+    RefPtr<API::Array> aggregateArray = API::Array::create();
+    RefPtr<CallbackSynchronizer> synchronizer = CallbackSynchronizer::create([aggregateArray, callback](const CallbackBase::Error& error) {
+        callback(aggregateArray.get(), error);
+    });
+
+    ArrayCallback::CallbackFunction synchronizedCallback = [aggregateArray, synchronizer](API::Array* array, CallbackBase::Error error) {
+        if (array)
+            aggregateArray->elements().appendVector(array->elements());
+        synchronizer->taskCompleted(error);
+    };
+
+    return std::make_pair(synchronizer, synchronizedCallback);
+}
+
+template <typename CallbackType, typename MessageType, typename... Parameters>
+static void sendMessageToAllProcessesInContext(WebContext* context, typename CallbackType::CallbackFunction callback, HashMap<uint64_t, RefPtr<CallbackType>>& callbackStorage, Parameters... parameters)
+{
+    if (!context) {
+        CallbackType::create(callback)->invalidate();
+        return;
+    }
+
+    auto synchronizerAndCallback = createSynchronizedCallback(callback);
+    RefPtr<CallbackSynchronizer> synchronizer = synchronizerAndCallback.first;
+    auto perProcessCallback = synchronizerAndCallback.second;
+
+    for (auto& process : context->processes()) {
+        if (!process || !process->canSendMessage())
+            continue;
+
+        synchronizer->taskStarted();
+        RefPtr<CallbackType> callback = CallbackType::create(perProcessCallback);
+        uint64_t callbackID = callback->callbackID();
+        callbackStorage.set(callbackID, callback.release());
+        process->send(MessageType(parameters..., callbackID), 0);
+    }
+
+    {
+        synchronizer->taskStarted();
+        RefPtr<CallbackType> callback = CallbackType::create(perProcessCallback);
+        uint64_t callbackID = callback->callbackID();
+        callbackStorage.set(callbackID, callback.release());
+        context->sendToDatabaseProcessRelaunchingIfNecessary(MessageType(parameters..., callbackID));
+    }
+}
+
 void WebOriginDataManagerProxy::getOrigins(WKOriginDataTypes types, std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
-    // That's why having one single callback works.
-    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
-    if (!(types & kWKIndexedDatabaseData)) {
-        callbackFunction(nullptr, CallbackBase::Error::None);
-        return;
-    }
-
-    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
-
-    if (!context()) {
-        callback->invalidate();
-        return;
-    }
-
-    uint64_t callbackID = callback->callbackID();
-    m_arrayCallbacks.set(callbackID, callback.release());
-
-    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::GetOrigins(types, callbackID));
+    sendMessageToAllProcessesInContext<ArrayCallback, Messages::WebOriginDataManager::GetOrigins>(context(), callbackFunction, m_arrayCallbacks, types);
 }
 
 void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection* connection, const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID)
@@ -123,53 +208,17 @@ void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection* connection, const
 
 void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, WebSecurityOrigin* origin, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
-    // That's why having one single callback works.
-    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
-    if (!(types & kWKIndexedDatabaseData)) {
-        callbackFunction(CallbackBase::Error::None);
-        return;
-    }
-
-    RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
-
-    if (!context()) {
-        callback->invalidate();
-        return;
-    }
-
-    uint64_t callbackID = callback->callbackID();
-    m_voidCallbacks.set(callbackID, callback.release());
-
     SecurityOriginData securityOriginData;
     securityOriginData.protocol = origin->securityOrigin().protocol();
     securityOriginData.host = origin->securityOrigin().host();
     securityOriginData.port = origin->securityOrigin().port();
 
-    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteEntriesForOrigin(types, securityOriginData, callbackID));
+    sendMessageToAllProcessesInContext<VoidCallback, Messages::WebOriginDataManager::DeleteEntriesForOrigin>(context(), callbackFunction, m_voidCallbacks, types, securityOriginData);
 }
 
 void WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
-    // That's why having one single callback works.
-    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
-    if (!(types & kWKIndexedDatabaseData)) {
-        callbackFunction(CallbackBase::Error::None);
-        return;
-    }
-
-    RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
-
-    if (!context()) {
-        callback->invalidate();
-        return;
-    }
-
-    uint64_t callbackID = callback->callbackID();
-    m_voidCallbacks.set(callbackID, callback.release());
-
-    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteEntriesModifiedBetweenDates(types, startDate, endDate, callbackID));
+    sendMessageToAllProcessesInContext<VoidCallback, Messages::WebOriginDataManager::DeleteEntriesModifiedBetweenDates>(context(), callbackFunction, m_voidCallbacks, types, startDate, endDate);
 }
 
 void WebOriginDataManagerProxy::didDeleteEntries(IPC::Connection* connection, uint64_t callbackID)
@@ -181,25 +230,7 @@ void WebOriginDataManagerProxy::didDeleteEntries(IPC::Connection* connection, ui
 
 void WebOriginDataManagerProxy::deleteAllEntries(WKOriginDataTypes types, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
-    // That's why having one single callback works.
-    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
-    if (!(types & kWKIndexedDatabaseData)) {
-        callbackFunction(CallbackBase::Error::None);
-        return;
-    }
-
-    RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
-
-    if (!context()) {
-        callback->invalidate();
-        return;
-    }
-
-    uint64_t callbackID = callback->callbackID();
-    m_voidCallbacks.set(callbackID, callback.release());
-
-    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteAllEntries(types, callbackID));
+    sendMessageToAllProcessesInContext<VoidCallback, Messages::WebOriginDataManager::DeleteAllEntries>(context(), callbackFunction, m_voidCallbacks, types);
 }
 
 void WebOriginDataManagerProxy::didDeleteAllEntries(IPC::Connection* connection, uint64_t callbackID)

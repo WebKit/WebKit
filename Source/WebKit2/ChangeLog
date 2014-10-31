@@ -1,3 +1,39 @@
+2014-10-30  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Send origin & deletion requests to WebProcessess in additon to the DatabaseProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=138212
+
+        Reviewed by Brady Eidson.
+
+        Now that the WebProcess has its own WebOriginDataManager, WebOriginDataManagerProxy needs to
+        send its origin and deletion messages to all the WebProcesses. This necessetates synchronizing
+        all the various process's callbacks so that the final callback is only triggered once all the
+        messaged processes reply.
+
+        Add a simple class, CallbackSynchronizer, which will keep track of outstanding process callbacks
+        and which will trigger the final callback once all of them finish.
+
+        * UIProcess/WebOriginDataManagerProxy.cpp:
+        (WebKit::CallbackSynchronizer::create):
+        (WebKit::CallbackSynchronizer::~CallbackSynchronizer):
+        (WebKit::CallbackSynchronizer::taskStarted):
+        (WebKit::CallbackSynchronizer::taskCompleted):
+        (WebKit::CallbackSynchronizer::CallbackSynchronizer):
+        (WebKit::createSynchronizedCallback):
+        (WebKit::sendMessageToAllProcessesInContext):
+        (WebKit::WebOriginDataManagerProxy::getOrigins):
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates):
+        (WebKit::WebOriginDataManagerProxy::deleteAllEntries):
+
+        Drive-by fix: check the correct enum value for WebMedia origin requests.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getOrigins):
+        (WebKit::WebProcess::deleteEntriesForOrigin):
+        (WebKit::WebProcess::deleteEntriesModifiedBetweenDates):
+        (WebKit::WebProcess::deleteAllEntries):
+
 2014-10-31  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r175376): Occasional null deref when doing a dictionary lookup

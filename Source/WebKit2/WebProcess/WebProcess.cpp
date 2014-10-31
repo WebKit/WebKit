@@ -1254,7 +1254,7 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
 
 void WebProcess::getOrigins(WKOriginDataTypes types, std::function<void(const Vector<SecurityOriginData>&)> completion)
 {
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
+    if (!(types & kWKMediaKeyStorageOriginData)) {
         completion(Vector<SecurityOriginData>());
         return;
     }
@@ -1270,7 +1270,7 @@ void WebProcess::getOrigins(WKOriginDataTypes types, std::function<void(const Ve
 
 void WebProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void()> completion)
 {
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
+    if (!(types & kWKMediaKeyStorageOriginData)) {
         completion();
         return;
     }
@@ -1287,7 +1287,7 @@ void WebProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityO
 
 void WebProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void()> completion)
 {
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
+    if (!(types & kWKMediaKeyStorageOriginData)) {
         completion();
         return;
     }
@@ -1304,7 +1304,7 @@ void WebProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, doub
 
 void WebProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void()> completion)
 {
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
+    if (!(types & kWKMediaKeyStorageOriginData)) {
         completion();
         return;
     }
