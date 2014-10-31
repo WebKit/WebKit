@@ -72,6 +72,7 @@ void CachedRawResource::addDataBuffer(SharedBuffer& data)
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
+        return;
     }
 
     CachedResource::addDataBuffer(data);

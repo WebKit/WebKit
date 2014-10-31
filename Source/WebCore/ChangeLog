@@ -1,3 +1,12 @@
+2014-10-31  Antti Koivisto  <antti@apple.com>
+
+        Fix assertion in CachedResource::addDataBuffer
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::addDataBuffer):
+
+            Don't call to base class if buffering mode changed (happens with some special top level document types).
+
 2014-10-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove webkit prefix from CSS columns.
