@@ -1,3 +1,23 @@
+2014-10-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled in r175389.
+
+        WebKit was failing to build 32bit on some Apple internal systems because
+        those systems were configured to build bmalloc 64-bit-only. Those systems
+        have been updated to build bmalloc as a universal binary, so everything
+        should work fine now.
+
+        The relevant setting is controlled by an environment variable on the
+        build system, and not by the project file in the source tree, so there's
+        no new code change here.
+
+                Enable bmalloc in 32bit builds
+                https://bugs.webkit.org/show_bug.cgi?id=138232
+
+                Reviewed by Andreas Kling.
+
+        * wtf/FastMalloc.cpp:
+
 2014-10-31  Lucas Forschler  <lforschler@apple.com>
 
         Unreviewed rollout r175389.
