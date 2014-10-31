@@ -27,11 +27,11 @@
 using namespace WebKit;
 
 struct _WebKitJavascriptResult {
-    _WebKitJavascriptResult(WebKitWebView* view, WebSerializedScriptValue* serializedScriptValue)
+    _WebKitJavascriptResult(WebKitWebView* view, WebCore::SerializedScriptValue& serializedScriptValue)
         : webView(view)
         , referenceCount(1)
     {
-        value = serializedScriptValue->deserialize(webkit_web_view_get_javascript_global_context(view), 0);
+        value = serializedScriptValue.deserialize(webkit_web_view_get_javascript_global_context(view), nullptr);
     }
 
     GRefPtr<WebKitWebView> webView;
@@ -42,7 +42,7 @@ struct _WebKitJavascriptResult {
 
 G_DEFINE_BOXED_TYPE(WebKitJavascriptResult, webkit_javascript_result, webkit_javascript_result_ref, webkit_javascript_result_unref)
 
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView* webView, WebSerializedScriptValue* serializedScriptValue)
+WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView* webView, WebCore::SerializedScriptValue& serializedScriptValue)
 {
     WebKitJavascriptResult* result = g_slice_new(WebKitJavascriptResult);
     new (result) WebKitJavascriptResult(webView, serializedScriptValue);

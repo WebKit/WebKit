@@ -1,3 +1,39 @@
+2014-10-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Support script message handlers WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=133730
+
+        Reviewed by Carlos Garcia Campos.
+
+        Support user script message handlers in WebKitUserContentManager.
+        This needs building with ENABLE_USER_MESSAGE_HANDLERS, for which
+        an option is added to the CMake build files. The option is disabled
+        globally by default, and the WebKitGTK port enables it. On the API
+        level, two new methods to register and unregister names are provided
+        in the "window.webkit" namespace, and on message reception the
+        "WebKitUserContentManager::script-message-received" signal is
+        emitted, using the registered names as signal detail.
+
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp: Add a new private
+        function to construct a WebKitJavascriptResult directly from a
+        WebCore::SerializedScriptValue.
+        (_WebKitJavascriptResult::_WebKitJavascriptResult): Ditto.
+        (webkitJavascriptResultCreate): Ditto.
+        * UIProcess/API/gtk/WebKitJavascriptResultPrivate.h: Ditto.
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+        (webkit_user_content_manager_class_init): Install the
+        "script-message-received" signal.
+        (webkit_user_content_manager_register_script_message_handler):
+        Added.
+        (webkit_user_content_manager_unregister_script_message_handler):
+        Added.
+        * UIProcess/API/gtk/WebKitUserContentManager.h: Added the new
+        public API methods.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_user_content_manager_get_type() to the list in order to make
+        gtk-doc to generate documentation for signals.
+
 2014-10-31  Martin Hock  <mhock@apple.com>
 
         Unreviewed, iOS build fix since 175406.

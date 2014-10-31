@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2013-2014 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 
 class UserContentManagerTest : public WebViewTest {
 public:
@@ -212,6 +213,134 @@ static void testUserContentManagerInjectedScript(UserContentManagerTest* test, g
     removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
 }
 
+class UserScriptMessageTest : public UserContentManagerTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(UserScriptMessageTest);
+
+    UserScriptMessageTest()
+        : UserContentManagerTest()
+        , m_userScriptMessage(nullptr)
+    {
+    }
+
+    ~UserScriptMessageTest()
+    {
+        if (m_userScriptMessage)
+            webkit_javascript_result_unref(m_userScriptMessage);
+    }
+
+    bool registerHandler(const char* handlerName)
+    {
+        return webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), handlerName);
+    }
+
+    void unregisterHandler(const char* handlerName)
+    {
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), handlerName);
+    }
+
+    static void scriptMessageReceived(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* jsResult, UserScriptMessageTest* test)
+    {
+        g_signal_handlers_disconnect_by_func(userContentManager, reinterpret_cast<gpointer>(scriptMessageReceived), test);
+        g_main_loop_quit(test->m_mainLoop);
+
+        g_assert(!test->m_userScriptMessage);
+        test->m_userScriptMessage = webkit_javascript_result_ref(jsResult);
+    }
+
+    WebKitJavascriptResult* postMessageAndWaitUntilReceived(const char* handlerName, const char* javascriptValueAsText)
+    {
+        if (m_userScriptMessage) {
+            webkit_javascript_result_unref(m_userScriptMessage);
+            m_userScriptMessage = nullptr;
+        }
+
+        GUniquePtr<char> signalName(g_strdup_printf("script-message-received::%s", handlerName));
+        g_signal_connect(m_userContentManager.get(), signalName.get(), G_CALLBACK(scriptMessageReceived), this);
+
+        GUniquePtr<char> javascriptSnippet(g_strdup_printf("window.webkit.messageHandlers.%s.postMessage(%s);", handlerName, javascriptValueAsText));
+        webkit_web_view_run_javascript(m_webView, javascriptSnippet.get(), nullptr, nullptr, nullptr);
+        g_main_loop_run(m_mainLoop);
+
+        g_assert(m_userScriptMessage);
+        return m_userScriptMessage;
+    }
+
+private:
+    WebKitJavascriptResult* m_userScriptMessage;
+};
+
+static void testUserContentManagerScriptMessageReceived(UserScriptMessageTest* test, gconstpointer)
+{
+    g_assert(test->registerHandler("msg"));
+
+    // Trying to register the same handler a second time must fail.
+    g_assert(!test->registerHandler("msg"));
+
+    test->loadHtml("<html></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    // Check that the "window.webkit.messageHandlers" namespace exists.
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "y");
+
+    // Check that the "document.webkit.messageHandlers.msg" namespace exists.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.webkit.messageHandlers.msg ? 'y' : 'n';", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "y");
+
+    valueString.reset(WebViewTest::javascriptResultToCString(test->postMessageAndWaitUntilReceived("msg", "'user message'")));
+    g_assert_cmpstr(valueString.get(), ==, "user message");
+
+    // Messages should arrive despite of other handlers being registered.
+    g_assert(test->registerHandler("anotherHandler"));
+
+    // Check that the "document.webkit.messageHandlers.msg" namespace still exists.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.webkit.messageHandlers.msg ? 'y' : 'n';", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "y");
+
+    // Check that the "document.webkit.messageHandlers.anotherHandler" namespace exists.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.webkit.messageHandlers.anotherHandler ? 'y' : 'n';", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "y");
+
+    valueString.reset(WebViewTest::javascriptResultToCString(test->postMessageAndWaitUntilReceived("msg", "'handler: msg'")));
+    g_assert_cmpstr(valueString.get(), ==, "handler: msg");
+
+    valueString.reset(WebViewTest::javascriptResultToCString(test->postMessageAndWaitUntilReceived("anotherHandler", "'handler: anotherHandler'")));
+    g_assert_cmpstr(valueString.get(), ==, "handler: anotherHandler");
+
+    // Unregistering a handler and re-registering again under the same name should work.
+    test->unregisterHandler("msg");
+
+    // FIXME: Enable after https://bugs.webkit.org/show_bug.cgi?id=138142 gets fixed.
+#if 0
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.webkit.messageHandlers.msg.postMessage('42');", &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert(error.get());
+
+    // Re-registering a handler that has been unregistered must work
+    g_assert(test->registerHandler("msg"));
+    message = test->postMessageAndWaitUntilReceived("msg", "'handler: msg'");
+    valueString.reset(WebViewTest::javascriptResultToCString(message));
+    webkit_javascript_result_unref(message);
+    g_assert_cmpstr(valueString.get(), ==, "handler: msg");
+#endif
+
+    test->unregisterHandler("anotherHandler");
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     soup_message_set_status(message, SOUP_STATUS_OK);
@@ -227,6 +356,7 @@ void beforeAll()
     Test::add("WebKitWebView", "new-with-user-content-manager", testWebViewNewWithUserContentManager);
     UserContentManagerTest::add("WebKitUserContentManager", "injected-style-sheet", testUserContentManagerInjectedStyleSheet);
     UserContentManagerTest::add("WebKitUserContentManager", "injected-script", testUserContentManagerInjectedScript);
+    UserScriptMessageTest::add("WebKitUserContentManager", "script-message-received", testUserContentManagerScriptMessageReceived);
 }
 
 void afterAll()

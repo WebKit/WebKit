@@ -1,3 +1,24 @@
+2014-10-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Support script message handlers WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=133730
+
+        Reviewed by Carlos Garcia Campos.
+
+        Support user script message handlers in WebKitUserContentManager.
+        This needs building with ENABLE_USER_MESSAGE_HANDLERS, for which
+        an option is added to the CMake build files. The option is disabled
+        globally by default, and the WebKitGTK port enables it. On the API
+        level, two new methods to register and unregister names are provided
+        in the "window.webkit" namespace, and on message reception the
+        "WebKitUserContentManager::script-message-received" signal is
+        emitted, using the registered names as signal detail.
+
+        * Source/cmake/OptionsGTK.cmake: For the GTK port, enable the
+        ENABLE_USER_MESSAGE_HANDLERS feature by default.
+        * Source/cmake/WebKitFeatures.cmake: Add feature description for
+        ENABLE_USER_MESSAGE_HANDLERS, disabled by default.
+
 2014-10-29  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [GTK] Bump libsoup's minimum version to 2.42.0.

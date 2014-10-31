@@ -20,10 +20,11 @@
 #ifndef WebKitJavascriptResultPrivate_h
 #define WebKitJavascriptResultPrivate_h
 
+#include <WebCore/SerializedScriptValue.h>
 #include "WebKitJavascriptResult.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebView.h"
 
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView*, WebKit::WebSerializedScriptValue*);
+WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView*, WebCore::SerializedScriptValue&);
 
 #endif // WebKitJavascriptResultPrivate_h

@@ -3107,6 +3107,21 @@ if (ENABLE_WEB_REPLAY)
     )
 endif ()
 
+if (ENABLE_USER_MESSAGE_HANDLERS)
+    list(APPEND WebCore_IDL_FILES
+        page/UserMessageHandler.idl
+        page/UserMessageHandlersNamespace.idl
+        page/WebKitNamespace.idl
+    )
+    list(APPEND WebCore_SOURCES
+        bindings/js/JSUserMessageHandlersNamespaceCustom.cpp
+        page/UserMessageHandler.cpp
+        page/UserMessageHandlerDescriptor.cpp
+        page/UserMessageHandlersNamespace.cpp
+        page/WebKitNamespace.cpp
+    )
+endif ()
+
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"

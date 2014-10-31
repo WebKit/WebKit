@@ -1,3 +1,25 @@
+2014-10-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Support script message handlers WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=133730
+
+        Reviewed by Carlos Garcia Campos.
+
+        Support user script message handlers in WebKitUserContentManager.
+        This needs building with ENABLE_USER_MESSAGE_HANDLERS, for which
+        an option is added to the CMake build files. The option is disabled
+        globally by default, and the WebKitGTK port enables it. On the API
+        level, two new methods to register and unregister names are provided
+        in the "window.webkit" namespace, and on message reception the
+        "WebKitUserContentManager::script-message-received" signal is
+        emitted, using the registered names as signal detail.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        Add test case for user script message handlers.
+        (scriptMessageReceived):
+        (testUserContentManagerScriptMessageReceived):
+        (beforeAll):
+
 2014-10-30  Matthew Hanson  <matthew_hanson@apple.com>
 
         bisect-builds should support WebKit clients other than Safari

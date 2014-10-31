@@ -60,16 +60,23 @@ struct _WebKitUserContentManagerClass {
 
 
 WEBKIT_API GType
-webkit_user_content_manager_get_type                (void);
+webkit_user_content_manager_get_type                          (void);
 
 WEBKIT_API WebKitUserContentManager *
-webkit_user_content_manager_new                     (void);
+webkit_user_content_manager_new                               (void);
 
 WEBKIT_API void
-webkit_user_content_manager_add_style_sheet         (WebKitUserContentManager *manager,
-                                                     WebKitUserStyleSheet     *stylesheet);
+webkit_user_content_manager_add_style_sheet                   (WebKitUserContentManager *manager,
+                                                               WebKitUserStyleSheet     *stylesheet);
 WEBKIT_API void
-webkit_user_content_manager_remove_all_style_sheets (WebKitUserContentManager *manager);
+webkit_user_content_manager_remove_all_style_sheets           (WebKitUserContentManager *manager);
+
+WEBKIT_API gboolean
+webkit_user_content_manager_register_script_message_handler   (WebKitUserContentManager *manager,
+                                                               const gchar              *name);
+WEBKIT_API void
+webkit_user_content_manager_unregister_script_message_handler (WebKitUserContentManager *manager,
+                                                               const gchar              *name);
 
 WEBKIT_API void
 webkit_user_content_manager_add_script              (WebKitUserContentManager *manager,

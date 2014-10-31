@@ -57,6 +57,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
+#include "WebSerializedScriptValue.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DragIcon.h>
@@ -2778,7 +2779,8 @@ static void webkitWebViewRunJavaScriptCallback(WebSerializedScriptValue* wkSeria
     }
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task));
-    g_task_return_pointer(task, webkitJavascriptResultCreate(webView, wkSerializedScriptValue),
+    g_task_return_pointer(task, webkitJavascriptResultCreate(webView,
+        *static_cast<WebCore::SerializedScriptValue*>(wkSerializedScriptValue->internalRepresentation())),
         reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }
 

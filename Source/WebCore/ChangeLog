@@ -1,3 +1,22 @@
+2014-10-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Support script message handlers WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=133730
+
+        Reviewed by Carlos Garcia Campos.
+
+        Support user script message handlers in WebKitUserContentManager.
+        This needs building with ENABLE_USER_MESSAGE_HANDLERS, for which
+        an option is added to the CMake build files. The option is disabled
+        globally by default, and the WebKitGTK port enables it. On the API
+        level, two new methods to register and unregister names are provided
+        in the "window.webkit" namespace, and on message reception the
+        "WebKitUserContentManager::script-message-received" signal is
+        emitted, using the registered names as signal detail.
+
+        * CMakeLists.txt: Conditionally add the needed files to the build
+        when the ENABLE_USER_MESSAGE_HANDLERS feature is enabled.
+
 2014-10-31  Andrzej Badowski  <a.badowski@samsung.com>
 
         [ATK] Improve AccessibilityTableCell's determineAccessibilityRole function.
