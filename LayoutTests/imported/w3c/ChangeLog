@@ -1,3 +1,24 @@
+2014-10-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove webkit prefix from CSS columns.
+        https://bugs.webkit.org/show_bug.cgi?id=137132.
+
+        Reviewed by Dean Jackson.
+
+        Import tests for basic multi-column properties settings. They are approved by W3C and
+        pass the WebKit testing. More tests need to be imported when they are approved.
+
+        * css: Added.
+        * css/multicol: Added.
+        * css/multicol/multicol-basic-001-expected.html: Added.
+        * css/multicol/multicol-basic-001.html: Added.
+        * css/multicol/multicol-basic-002-expected.html: Added.
+        * css/multicol/multicol-basic-002.html: Added.
+        * css/multicol/multicol-basic-003-expected.html: Added.
+        * css/multicol/multicol-basic-003.html: Added.
+        * css/multicol/multicol-basic-004-expected.html: Added.
+        * css/multicol/multicol-basic-004.html: Added.
+
 2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import the XHTML parsing and serialization tests for template elements

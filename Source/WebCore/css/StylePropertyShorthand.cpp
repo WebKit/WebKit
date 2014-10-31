@@ -319,18 +319,18 @@ StylePropertyShorthand webkitBorderStartShorthand()
 
 StylePropertyShorthand webkitColumnsShorthand()
 {
-    static const CSSPropertyID columnsProperties[] = { CSSPropertyWebkitColumnWidth, CSSPropertyWebkitColumnCount };
-    return StylePropertyShorthand(CSSPropertyWebkitColumns, columnsProperties, WTF_ARRAY_LENGTH(columnsProperties));
+    static const CSSPropertyID columnsProperties[] = { CSSPropertyColumnWidth, CSSPropertyColumnCount };
+    return StylePropertyShorthand(CSSPropertyColumns, columnsProperties, WTF_ARRAY_LENGTH(columnsProperties));
 }
 
 StylePropertyShorthand webkitColumnRuleShorthand()
 {
     static const CSSPropertyID columnRuleProperties[] = {
-        CSSPropertyWebkitColumnRuleWidth,
-        CSSPropertyWebkitColumnRuleStyle,
-        CSSPropertyWebkitColumnRuleColor,
+        CSSPropertyColumnRuleWidth,
+        CSSPropertyColumnRuleStyle,
+        CSSPropertyColumnRuleColor,
     };
-    return StylePropertyShorthand(CSSPropertyWebkitColumnRule, columnRuleProperties, WTF_ARRAY_LENGTH(columnRuleProperties));
+    return StylePropertyShorthand(CSSPropertyColumnRule, columnRuleProperties, WTF_ARRAY_LENGTH(columnRuleProperties));
 }
 
 StylePropertyShorthand flexFlowShorthand()
@@ -569,9 +569,9 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitBorderStartShorthand();
     case CSSPropertyWebkitBorderRadius:
         return borderRadiusShorthand();
-    case CSSPropertyWebkitColumns:
+    case CSSPropertyColumns:
         return webkitColumnsShorthand();
-    case CSSPropertyWebkitColumnRule:
+    case CSSPropertyColumnRule:
         return webkitColumnRuleShorthand();
     case CSSPropertyFlex:
         return flexShorthand();
@@ -763,12 +763,12 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBorderStartColor:
         return makeVector(webkitBorderStartShorthand());
-    case CSSPropertyWebkitColumnWidth:
-    case CSSPropertyWebkitColumnCount:
+    case CSSPropertyColumnWidth:
+    case CSSPropertyColumnCount:
         return makeVector(webkitColumnsShorthand());
-    case CSSPropertyWebkitColumnRuleWidth:
-    case CSSPropertyWebkitColumnRuleStyle:
-    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyColumnRuleWidth:
+    case CSSPropertyColumnRuleStyle:
+    case CSSPropertyColumnRuleColor:
         return makeVector(webkitColumnRuleShorthand());
     case CSSPropertyFlexGrow:
     case CSSPropertyFlexShrink:

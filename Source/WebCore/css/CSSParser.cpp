@@ -490,7 +490,7 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBorderBeforeColor:
     case CSSPropertyWebkitBorderEndColor:
     case CSSPropertyWebkitBorderStartColor:
-    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyColumnRuleColor:
     case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
@@ -652,7 +652,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
     case CSSPropertyWebkitBorderBeforeStyle:
     case CSSPropertyWebkitBorderEndStyle:
     case CSSPropertyWebkitBorderStartStyle:
-    case CSSPropertyWebkitColumnRuleStyle:
+    case CSSPropertyColumnRuleStyle:
         if (valueID >= CSSValueNone && valueID <= CSSValueDouble)
             return true;
         break;
@@ -856,7 +856,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueSrgb || valueID == CSSValueDefault)
             return true;
         break;
-    case CSSPropertyWebkitColumnFill:
+    case CSSPropertyColumnFill:
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
             return true;
         break;
@@ -1103,8 +1103,8 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
-    case CSSPropertyWebkitColumnFill:
-    case CSSPropertyWebkitColumnRuleStyle:
+    case CSSPropertyColumnFill:
+    case CSSPropertyColumnRuleStyle:
     case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:
@@ -1954,7 +1954,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyTextLineThroughColor: // CSS3 text decoration colors
     case CSSPropertyTextUnderlineColor:
     case CSSPropertyTextOverlineColor:
-    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyColumnRuleColor:
     case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
@@ -2141,7 +2141,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitBorderEndWidth:
     case CSSPropertyWebkitBorderBeforeWidth:
     case CSSPropertyWebkitBorderAfterWidth:
-    case CSSPropertyWebkitColumnRuleWidth:
+    case CSSPropertyColumnRuleWidth:
         if (id == CSSValueThin || id == CSSValueMedium || id == CSSValueThick)
             validPrimitive = true;
         else
@@ -2683,13 +2683,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             validPrimitive = !id && validUnit(value, FNumber | FLength | FPercent);
         break;
-    case CSSPropertyWebkitColumnCount:
+    case CSSPropertyColumnCount:
         if (id == CSSValueAuto)
             validPrimitive = true;
         else
             validPrimitive = !id && validUnit(value, FPositiveInteger, CSSQuirksMode);
         break;
-    case CSSPropertyWebkitColumnGap:         // normal | <length>
+    case CSSPropertyColumnGap: // normal | <length>
         if (id == CSSValueNormal)
             validPrimitive = true;
         else
@@ -2699,17 +2699,17 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueHorizontal || id == CSSValueVertical || id == CSSValueAuto)
             validPrimitive = true;
         break;
-    case CSSPropertyWebkitColumnProgression:
+    case CSSPropertyColumnProgression:
         if (id == CSSValueNormal || id == CSSValueReverse)
             validPrimitive = true;
         break;
-    case CSSPropertyWebkitColumnSpan: // none | all | 1 (will be dropped in the unprefixed property)
+    case CSSPropertyColumnSpan: // none | all | 1 (will be dropped in the unprefixed property)
         if (id == CSSValueAll || id == CSSValueNone)
             validPrimitive = true;
         else
             validPrimitive = validUnit(value, FNumber | FNonNeg) && value->fValue == 1;
         break;
-    case CSSPropertyWebkitColumnWidth:         // auto | <length>
+    case CSSPropertyColumnWidth: // auto | <length>
         if (id == CSSValueAuto)
             validPrimitive = true;
         else // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
@@ -2873,9 +2873,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
     case CSSPropertyListStyle:
         return parseShorthand(propId, listStyleShorthand(), important);
-    case CSSPropertyWebkitColumns:
+    case CSSPropertyColumns:
         return parseShorthand(propId, webkitColumnsShorthand(), important);
-    case CSSPropertyWebkitColumnRule:
+    case CSSPropertyColumnRule:
         return parseShorthand(propId, webkitColumnRuleShorthand(), important);
     case CSSPropertyWebkitTextStroke:
         return parseShorthand(propId, webkitTextStrokeShorthand(), important);
@@ -3010,8 +3010,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
-    case CSSPropertyWebkitColumnFill:
-    case CSSPropertyWebkitColumnRuleStyle:
+    case CSSPropertyColumnFill:
+    case CSSPropertyColumnRuleStyle:
     case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:

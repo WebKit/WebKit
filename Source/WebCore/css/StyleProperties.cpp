@@ -151,9 +151,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return get4Values(borderWidthShorthand());
     case CSSPropertyBorderStyle:
         return get4Values(borderStyleShorthand());
-    case CSSPropertyWebkitColumnRule:
+    case CSSPropertyColumnRule:
         return getShorthandValue(webkitColumnRuleShorthand());
-    case CSSPropertyWebkitColumns:
+    case CSSPropertyColumns:
         return getShorthandValue(webkitColumnsShorthand());
     case CSSPropertyFlex:
         return getShorthandValue(flexShorthand());
@@ -1063,15 +1063,15 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyOrphans,
     CSSPropertyOverflow, // This can be also be applied to replaced elements
     CSSPropertyWebkitAspectRatio,
-    CSSPropertyWebkitColumnCount,
-    CSSPropertyWebkitColumnGap,
-    CSSPropertyWebkitColumnRuleColor,
-    CSSPropertyWebkitColumnRuleStyle,
-    CSSPropertyWebkitColumnRuleWidth,
+    CSSPropertyColumnCount,
+    CSSPropertyColumnGap,
+    CSSPropertyColumnRuleColor,
+    CSSPropertyColumnRuleStyle,
+    CSSPropertyColumnRuleWidth,
     CSSPropertyWebkitColumnBreakBefore,
     CSSPropertyWebkitColumnBreakAfter,
     CSSPropertyWebkitColumnBreakInside,
-    CSSPropertyWebkitColumnWidth,
+    CSSPropertyColumnWidth,
     CSSPropertyPageBreakAfter,
     CSSPropertyPageBreakBefore,
     CSSPropertyPageBreakInside,

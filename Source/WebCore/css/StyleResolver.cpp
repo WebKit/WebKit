@@ -1792,7 +1792,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyBorderBottomColor:
     case CSSPropertyColor:
     case CSSPropertyOutlineColor:
-    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyColumnRuleColor:
     case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
@@ -2368,8 +2368,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitBorderEnd:
     case CSSPropertyWebkitBorderStart:
     case CSSPropertyWebkitBorderRadius:
-    case CSSPropertyWebkitColumns:
-    case CSSPropertyWebkitColumnRule:
+    case CSSPropertyColumns:
+    case CSSPropertyColumnRule:
     case CSSPropertyFlex:
     case CSSPropertyFlexFlow:
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -3093,14 +3093,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
-    case CSSPropertyWebkitColumnCount:
-    case CSSPropertyWebkitColumnGap:
-    case CSSPropertyWebkitColumnProgression:
-    case CSSPropertyWebkitColumnRuleColor:
-    case CSSPropertyWebkitColumnRuleStyle:
-    case CSSPropertyWebkitColumnRuleWidth:
-    case CSSPropertyWebkitColumnSpan:
-    case CSSPropertyWebkitColumnWidth:
+    case CSSPropertyColumnCount:
+    case CSSPropertyColumnGap:
+    case CSSPropertyColumnProgression:
+    case CSSPropertyColumnRuleColor:
+    case CSSPropertyColumnRuleStyle:
+    case CSSPropertyColumnRuleWidth:
+    case CSSPropertyColumnSpan:
+    case CSSPropertyColumnWidth:
 #if ENABLE(CURSOR_VISIBILITY)
     case CSSPropertyWebkitCursorVisibility:
 #endif

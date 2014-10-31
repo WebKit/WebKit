@@ -1,3 +1,38 @@
+2014-10-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove webkit prefix from CSS columns.
+        https://bugs.webkit.org/show_bug.cgi?id=137132.
+
+        Reviewed by Dean Jackson.
+
+        Ensure the CSS un-prefixed column properties are behaving the same way as the
+        prefixed ones. The CSS prefixed column properties are still supported by making
+        them aliases of the un-prefixed ones.  Also port some of the W3C and Mozilla
+        tests for css column properties tests.
+
+        Change to the un-prefixed column names to be compared with the return of CSSStyleDeclaration.item().
+        And change the expected names to be the un-prefixed ones also.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+
+        Change to the un-prefixed column names and compare them with the return of object.style.cssText().
+        * fast/css/remove-shorthand-expected.txt:
+
+        Test for the effect of the rtl settings on column flow; it is ported from Mozilla.
+        * fast/multicol/column-box-alignment-rtl-expected.html: Added.
+        * fast/multicol/column-box-alignment-rtl.html: Added.
+
+        Ensure the prefixed and the un-prefixed column properties are behaving exactly the same.
+        * fast/multicol/multicol-aliases-expected.html: Added.
+        * fast/multicol/multicol-aliases.html: Added.
+
+        Change to the un-prefixed column names to be compared with the return of CSSStyleDeclaration.item().
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+        Remove the use of the un-prefixed columns property since it seems unrelated to the test.
+        * svg/custom/svg-fonts-in-html.html:
+
 2014-10-31  Eric Carlson  <eric.carlson@apple.com>
 
         Clean-up use of boolean attributes in media tests

@@ -135,13 +135,13 @@ zoom: 1
 -webkit-column-break-before: auto
 -webkit-column-break-inside: auto
 -webkit-column-axis: auto
--webkit-column-count: auto
--webkit-column-gap: normal
--webkit-column-rule-color: rgb(0, 0, 0)
--webkit-column-rule-style: none
--webkit-column-rule-width: 0px
--webkit-column-span: none
--webkit-column-width: auto
+column-count: auto
+column-gap: normal
+column-rule-color: rgb(0, 0, 0)
+column-rule-style: none
+column-rule-width: 0px
+column-span: none
+column-width: auto
 align-content: stretch
 align-items: stretch
 align-self: stretch

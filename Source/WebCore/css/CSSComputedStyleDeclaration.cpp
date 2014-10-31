@@ -266,14 +266,14 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitColumnBreakBefore,
     CSSPropertyWebkitColumnBreakInside,
     CSSPropertyWebkitColumnAxis,
-    CSSPropertyWebkitColumnCount,
-    CSSPropertyWebkitColumnGap,
-    CSSPropertyWebkitColumnProgression,
-    CSSPropertyWebkitColumnRuleColor,
-    CSSPropertyWebkitColumnRuleStyle,
-    CSSPropertyWebkitColumnRuleWidth,
-    CSSPropertyWebkitColumnSpan,
-    CSSPropertyWebkitColumnWidth,
+    CSSPropertyColumnCount,
+    CSSPropertyColumnGap,
+    CSSPropertyColumnProgression,
+    CSSPropertyColumnRuleColor,
+    CSSPropertyColumnRuleStyle,
+    CSSPropertyColumnRuleWidth,
+    CSSPropertyColumnSpan,
+    CSSPropertyColumnWidth,
 #if ENABLE(CURSOR_VISIBILITY)
     CSSPropertyWebkitCursorVisibility,
 #endif
@@ -1974,25 +1974,25 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->printColorAdjust());
         case CSSPropertyWebkitColumnAxis:
             return cssValuePool().createValue(style->columnAxis());
-        case CSSPropertyWebkitColumnCount:
+        case CSSPropertyColumnCount:
             if (style->hasAutoColumnCount())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             return cssValuePool().createValue(style->columnCount(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyWebkitColumnFill:
+        case CSSPropertyColumnFill:
             return cssValuePool().createValue(style->columnFill());
-        case CSSPropertyWebkitColumnGap:
+        case CSSPropertyColumnGap:
             if (style->hasNormalColumnGap())
                 return cssValuePool().createIdentifierValue(CSSValueNormal);
             return zoomAdjustedPixelValue(style->columnGap(), style.get());
-        case CSSPropertyWebkitColumnProgression:
+        case CSSPropertyColumnProgression:
             return cssValuePool().createValue(style->columnProgression());
-        case CSSPropertyWebkitColumnRuleColor:
+        case CSSPropertyColumnRuleColor:
             return m_allowVisitedStyle ? cssValuePool().createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->columnRuleColor());
-        case CSSPropertyWebkitColumnRuleStyle:
+        case CSSPropertyColumnRuleStyle:
             return cssValuePool().createValue(style->columnRuleStyle());
-        case CSSPropertyWebkitColumnRuleWidth:
+        case CSSPropertyColumnRuleWidth:
             return zoomAdjustedPixelValue(style->columnRuleWidth(), style.get());
-        case CSSPropertyWebkitColumnSpan:
+        case CSSPropertyColumnSpan:
             return cssValuePool().createIdentifierValue(style->columnSpan() ? CSSValueAll : CSSValueNone);
         case CSSPropertyWebkitColumnBreakAfter:
             return cssValuePool().createValue(style->columnBreakAfter());
@@ -2000,7 +2000,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->columnBreakBefore());
         case CSSPropertyWebkitColumnBreakInside:
             return cssValuePool().createValue(style->columnBreakInside());
-        case CSSPropertyWebkitColumnWidth:
+        case CSSPropertyColumnWidth:
             if (style->hasAutoColumnWidth())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             return zoomAdjustedPixelValue(style->columnWidth(), style.get());
@@ -2937,9 +2937,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return getCSSPropertyValuesForShorthandProperties(borderTopShorthand());
         case CSSPropertyBorderWidth:
             return getCSSPropertyValuesForSidesShorthand(borderWidthShorthand());
-        case CSSPropertyWebkitColumnRule:
+        case CSSPropertyColumnRule:
             return getCSSPropertyValuesForShorthandProperties(webkitColumnRuleShorthand());
-        case CSSPropertyWebkitColumns:
+        case CSSPropertyColumns:
             return getCSSPropertyValuesForShorthandProperties(webkitColumnsShorthand());
         case CSSPropertyListStyle:
             return getCSSPropertyValuesForShorthandProperties(listStyleShorthand());

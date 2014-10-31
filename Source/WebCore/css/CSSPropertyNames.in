@@ -316,17 +316,28 @@ z-index
 -webkit-column-break-after [NewStyleBuilder, TypeName=EPageBreak, Initial=initialPageBreak]
 -webkit-column-break-before [NewStyleBuilder, TypeName=EPageBreak, Initial=initialPageBreak]
 -webkit-column-break-inside [NewStyleBuilder, TypeName=EPageBreak, Initial=initialPageBreak]
--webkit-column-count
--webkit-column-fill [NewStyleBuilder, TypeName=ColumnFill]
--webkit-column-gap
--webkit-column-progression [NewStyleBuilder, TypeName=ColumnProgression]
--webkit-column-rule
--webkit-column-rule-color
--webkit-column-rule-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
--webkit-column-rule-width [NewStyleBuilder, Converter=LineWidth<unsigned short>]
--webkit-column-span [NewStyleBuilder, TypeName=ColumnSpan]
--webkit-column-width
--webkit-columns
+column-count
+-webkit-column-count = column-count
+column-fill [NewStyleBuilder, TypeName=ColumnFill]
+-webkit-column-fill = column-fill
+column-gap
+-webkit-column-gap = column-gap
+column-progression [NewStyleBuilder, TypeName=ColumnProgression]
+-webkit-column-progression = column-progression
+column-rule
+-webkit-column-rule = column-rule
+column-rule-color
+-webkit-column-rule-color = column-rule-color
+column-rule-style [NewStyleBuilder, TypeName=EBorderStyle, Initial=initialBorderStyle]
+-webkit-column-rule-style = column-rule-style
+column-rule-width [NewStyleBuilder, Converter=LineWidth<unsigned short>]
+-webkit-column-rule-width = column-rule-width
+column-span [NewStyleBuilder, TypeName=ColumnSpan]
+-webkit-column-span = column-span
+column-width
+-webkit-column-width = column-width
+columns
+-webkit-columns = columns
 #if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
 -webkit-box-decoration-break [NewStyleBuilder]
 #endif

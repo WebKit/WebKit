@@ -42,10 +42,10 @@ Removing border-spacing
 removes "border-spacing"
 and adds "".
 Removing -webkit-columns
-removes "-webkit-column-width, -webkit-column-count"
+removes "column-width, column-count"
 and adds "".
 Removing -webkit-column-rule
-removes "-webkit-column-rule-width, -webkit-column-rule-style, -webkit-column-rule-color"
+removes "column-rule-width, column-rule-style, column-rule-color"
 and adds "".
 Removing list-style
 removes "list-style-type, list-style-position, list-style-image"

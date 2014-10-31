@@ -1,3 +1,64 @@
+2014-10-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove webkit prefix from CSS columns.
+        https://bugs.webkit.org/show_bug.cgi?id=137132.
+
+        Reviewed by Dean Jackson.
+
+        CSS columns properties are ready for un-prefixing. There are still a couple
+        that we haven't implemented, such as the ones starting with "break-", so we're
+        just going to do the ones starting with "column-".  The list of column un-
+        prefixed properties in this change set is:
+            - column-count
+            - column-fill
+            - column-gap
+            - column-progression
+            - column-rule
+            - column-rule-color
+            - column-rule-style
+            - column-rule-width
+            - column-span
+            - column-width
+            - columns
+
+        Tests: fast/multicol/column-box-alignment-rtl.html
+               fast/multicol/multicol-aliases.html
+               imported/w3c/css/multicol/multicol-basic-001.html
+               imported/w3c/css/multicol/multicol-basic-002.html
+               imported/w3c/css/multicol/multicol-basic-003.html
+               imported/w3c/css/multicol/multicol-basic-004.html
+
+        Add new un-prefixed column properties and make the -webkit* ones be aliases
+        to the new ones.
+        * css/CSSPropertyNames.in:
+
+        Use the new enums CSSPropertyColumn* instead of the prefixed ones.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isColorPropertyID):
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitColumnsShorthand):
+        (WebCore::webkitColumnRuleShorthand):
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        * css/StyleResolver.cpp:
+        (WebCore::isValidVisitedLinkProperty):
+        (WebCore::StyleResolver::applyProperty):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorIncludingFallback):
+
 2014-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Remove "Add to iPhoto" from the action menu's sharing menu
