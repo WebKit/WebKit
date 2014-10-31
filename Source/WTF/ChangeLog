@@ -1,3 +1,9 @@
+2014-10-31  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unreviewed, fix ASan build after r175382
+
+        * wtf/SizeLimits.cpp:
+
 2014-10-31  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled in r175389.
