@@ -55,7 +55,7 @@ CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy(WebPageProxy& webPagePr
 {
     // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
     if (webPageProxy.pageGroup().preferences().forceCompositingMode())
-        m_coordinatedLayerTreeHostProxy = adoptPtr(new CoordinatedLayerTreeHostProxy(this));
+        m_coordinatedLayerTreeHostProxy = std::make_unique<CoordinatedLayerTreeHostProxy>(this);
 }
 
 CoordinatedDrawingAreaProxy::~CoordinatedDrawingAreaProxy()
@@ -324,7 +324,7 @@ void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(const LayerTre
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
     if (!m_coordinatedLayerTreeHostProxy)
-        m_coordinatedLayerTreeHostProxy = adoptPtr(new CoordinatedLayerTreeHostProxy(this));
+        m_coordinatedLayerTreeHostProxy = std::make_unique<CoordinatedLayerTreeHostProxy>(this);
 }
 
 void CoordinatedDrawingAreaProxy::setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)

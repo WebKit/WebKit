@@ -1,3 +1,15 @@
+2014-10-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr instead of OwnPtr in CoordinatorDrawingProxy
+        https://bugs.webkit.org/show_bug.cgi?id=138238
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy): Use std::make_unique.
+        (WebKit::CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h: Use std::unique_ptr instead of OwnPtr.
+
 2014-10-31  Sam Weinig  <sam@webkit.org>
 
         Add bundle SPI to customize the action menu
