@@ -1,3 +1,9 @@
+2014-10-31  Dan Bernstein  <mitz@apple.com>
+
+        Removed a reference to a file that’s been deleted.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed reference to XPCPtr.h.
+
 2014-10-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr instead of OwnPtr in CoordinatorDrawingProxy

@@ -418,7 +418,6 @@
 		1AC86FF4130B46D3002C1257 /* WKPluginSiteDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC8702B130B49A2002C1257 /* WebPluginSiteDataManager.h */; };
 		1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */; };
-		1ACB7987191ECADD006A6A61 /* XPCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACB7986191ECADD006A6A61 /* XPCPtr.h */; };
 		1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */; };
 		1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */; };
@@ -2402,7 +2401,6 @@
 		1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginSiteDataManager.h; sourceTree = "<group>"; };
 		1AC8702B130B49A2002C1257 /* WebPluginSiteDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginSiteDataManager.h; sourceTree = "<group>"; };
 		1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPluginSiteDataManager.cpp; sourceTree = "<group>"; };
-		1ACB7986191ECADD006A6A61 /* XPCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCPtr.h; sourceTree = "<group>"; };
 		1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationPrivate.h; sourceTree = "<group>"; };
 		1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMap.cpp; sourceTree = "<group>"; };
 		1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMap.h; sourceTree = "<group>"; };
@@ -6577,7 +6575,6 @@
 				1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
 				BCC56F771159957D001CCAF9 /* MachPort.h */,
-				1ACB7986191ECADD006A6A61 /* XPCPtr.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -7363,7 +7360,6 @@
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
 				1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */,
-				1ACB7987191ECADD006A6A61 /* XPCPtr.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				939F401C19FB0BBC002B2B42 /* WKActionMenuTypes.h in Headers */,
