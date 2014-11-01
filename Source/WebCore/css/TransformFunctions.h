@@ -39,7 +39,7 @@ class CSSValue;
 class RenderStyle;
 class WebKitCSSTransformValue;
 
-bool transformsForValue(CSSValue*, const CSSToLengthConversionData&, TransformOperations&);
+bool transformsForValue(CSSValue&, const CSSToLengthConversionData&, TransformOperations&);
 
 }
 #endif

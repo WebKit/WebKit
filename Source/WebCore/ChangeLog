@@ -1,3 +1,24 @@
+2014-11-01  Sam Weinig  <sam@webkit.org>
+
+        Move the -webkit-transform property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138283
+
+        Reviewed by Chris Dumez.
+
+        Move the -webkit-transform property from StyleResolver to the new
+        generated StyleBuilder. Adds a converter for TransformOperations.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTransform):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue):
+        * css/TransformFunctions.h:
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+
 2014-11-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the specificity of the extended :not() selector

@@ -32,6 +32,7 @@
 #include "Length.h"
 #include "Pair.h"
 #include "StyleResolver.h"
+#include "TransformFunctions.h"
 
 namespace WebCore {
 
@@ -51,6 +52,7 @@ public:
     template <CSSPropertyID property> static NinePieceImage convertBorderImage(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static PassRefPtr<StyleImage> convertBorderImageSource(StyleResolver&, CSSValue&);
+    static TransformOperations convertTransform(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -238,6 +240,13 @@ template <CSSPropertyID property>
 inline PassRefPtr<StyleImage> StyleBuilderConverter::convertBorderImageSource(StyleResolver& styleResolver, CSSValue& value)
 {
     return styleResolver.styleImage(property, &value);
+}
+
+inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver& styleResolver, CSSValue& value)
+{
+    TransformOperations operations;
+    transformsForValue(value, styleResolver.state().cssToLengthConversionData(), operations);
+    return operations;
 }
 
 } // namespace WebCore

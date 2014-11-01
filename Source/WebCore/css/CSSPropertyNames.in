@@ -489,7 +489,7 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-text-stroke [Inherited]
 -webkit-text-stroke-color [Inherited]
 -webkit-text-stroke-width [Inherited]
--webkit-transform
+-webkit-transform [NewStyleBuilder, Converter=Transform]
 -webkit-transform-origin
 -webkit-transform-origin-x [NewStyleBuilder, Converter=Length]
 -webkit-transform-origin-y [NewStyleBuilder, Converter=Length]

@@ -2553,13 +2553,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setTextStrokeWidth(width);
         return;
     }
-    case CSSPropertyWebkitTransform: {
-        HANDLE_INHERIT_AND_INITIAL(transform, Transform);
-        TransformOperations operations;
-        transformsForValue(value, state.cssToLengthConversionData(), operations);
-        state.style()->setTransform(operations);
-        return;
-    }
     case CSSPropertyWebkitPerspective: {
         HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
 
