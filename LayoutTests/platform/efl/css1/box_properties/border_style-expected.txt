@@ -9,29 +9,17 @@ layer at (0,0) size 785x1301
       RenderBlock {PRE} at (0,34) size 769x180
         RenderText {#text} at (0,0) size 632x180
           text run at (0,0) width 560: ".one {border-style: dotted; border-color: black; border-width: thick;}"
-          text run at (560,0) width 0: " "
           text run at (0,15) width 560: ".two {border-style: dashed; border-color: black; border-width: thick;}"
-          text run at (560,15) width 0: " "
           text run at (0,30) width 568: ".three {border-style: solid; border-color: black; border-width: thick;}"
-          text run at (568,30) width 0: " "
           text run at (0,45) width 568: ".four {border-style: double; border-color: black; border-width: thick;}"
-          text run at (568,45) width 0: " "
           text run at (0,60) width 568: ".five {border-style: groove; border-color: olive; border-width: thick;}"
-          text run at (568,60) width 0: " "
           text run at (0,75) width 552: ".six {border-style: ridge; border-color: olive; border-width: thick;}"
-          text run at (552,75) width 0: " "
           text run at (0,90) width 568: ".seven {border-style: inset; border-color: olive; border-width: thick;}"
-          text run at (568,90) width 0: " "
           text run at (0,105) width 576: ".eight {border-style: outset; border-color: olive; border-width: thick;}"
-          text run at (576,105) width 0: " "
           text run at (0,120) width 632: ".nine {border-style: double groove; border-color: purple; border-width: thick;}"
-          text run at (632,120) width 0: " "
           text run at (0,135) width 368: ".ten {border-style: double groove ridge inset;"
-          text run at (368,135) width 0: " "
           text run at (0,150) width 368: "   border-color: purple; border-width: thick;}"
-          text run at (368,150) width 0: " "
           text run at (0,165) width 552: ".eleven {border-style: none; border-color: red; border-width: thick;}"
-          text run at (552,165) width 0: " "
       RenderBlock {HR} at (0,227) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,245) size 769x28 [border: (5px dotted #000000)]
         RenderText {#text} at (5,5) size 472x17

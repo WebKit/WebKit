@@ -11,7 +11,6 @@ layer at (0,0) size 800x289
       RenderBlock {div} at (18,61) size 732x15
         RenderText {#text} at (0,0) size 504x14
           text run at (0,0) width 504: "error on line 1 at column 76: Namespace prefix foo on bar is not defined"
-          text run at (504,0) width 0: " "
       RenderBlock {h3} at (18,94) size 732x23
         RenderText {#text} at (0,0) size 429x21
           text run at (0,0) width 429: "Below is a rendering of the page up to the first error."

@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x60
         RenderText {#text} at (0,0) size 472x60
           text run at (0,0) width 288: "P {color: navy; font-family: serif;}"
-          text run at (288,0) width 0: " "
           text run at (0,15) width 472: "HTML BODY TABLE P {color: purple; font-family: sans-serif;}"
-          text run at (472,15) width 0: " "
           text run at (0,30) width 224: "EM, UL LI LI {color: green;}"
-          text run at (224,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x18 [color=#000080]
