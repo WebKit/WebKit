@@ -859,7 +859,12 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
             break;
         case CSSSelector::PseudoClassLang:
             {
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                ASSERT(selector->argumentList() && !selector->argumentList()->isEmpty());
+                const AtomicString& argument = selector->argumentList()->first();
+#else
                 const AtomicString& argument = selector->argument();
+#endif                
                 if (argument.isNull())
                     return false;
                 return matchesLangPseudoClass(element, argument.impl());

@@ -10670,6 +10670,12 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             m_token = CALCFUNCTION;
             return true;
         }
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        if (isEqualToCSSIdentifier(name, "lang")) {
+            m_token = LANGFUNCTION;
+            return true;
+        }
+#endif
         return false;
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)

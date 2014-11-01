@@ -727,7 +727,12 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClassLang:
         {
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
+            const AtomicString& argument = selector.argumentList()->first();
+#else
             const AtomicString& argument = selector.argument();
+#endif
             if (argument.isEmpty())
                 return FunctionType::CannotMatchAnything;
 

@@ -1,3 +1,40 @@
+2014-10-31  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Add initial parsing functionality of :lang pseudo class in Selectors Level 4.
+        https://bugs.webkit.org/show_bug.cgi?id=138170
+
+        Reviewed by Benjamin Poulain.
+
+        Add initial parsing functionality of :lang pseudo class in Selectors Level 4,
+        as specified in [1].
+
+        It parses comma-separated list of string arguments. Currently, it throws error
+        on arguments with "*" (e.g. :lang(zh, *-hant)).
+
+        Add additional test file fast/selectors/lang-invalid.html along side the 
+        fast/css/css-selector-text.html.
+
+        [1] http://dev.w3.org/csswg/selectors4/#the-lang-pseudo
+
+        Test: fast/selectors/lang-invalid.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setArgumentList):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::appendArgumentList):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::setArgumentList):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::argumentList):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2014-10-31  Chris Dumez  <cdumez@apple.com>
 
         StyleBuilder: Stop using custom code for -webkit-hyphenate-limit-lines

@@ -261,6 +261,16 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
     m_selector->setSelectorList(WTF::move(selectorList));
 }
 
+void CSSParserSelector::setArgumentList(Vector<CSSParserString>& stringVector)
+{
+    ASSERT_WITH_MESSAGE(!stringVector.isEmpty(), "No CSS Selector takes an empty argument list.");
+    auto argumentList = std::make_unique<Vector<AtomicString>>();
+    argumentList->reserveInitialCapacity(stringVector.size());
+    for (const AtomicString& argument : stringVector)
+        argumentList->append(argument);
+    m_selector->setArgumentList(WTF::move(argumentList));
+}
+
 void CSSParserSelector::setPseudoClassValue(const CSSParserString& pseudoClassString)
 {
     ASSERT(m_selector->match() == CSSSelector::PseudoClass);

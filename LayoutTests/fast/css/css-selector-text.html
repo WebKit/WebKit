@@ -81,6 +81,15 @@ testSelectorRoundTrip(":visited");
 debug('');
 
 testSelectorRoundTrip(":lang(a)");
+testSelectorRoundTrip(":lang(a, b, c)");
+testSelectorRoundTrip(":lang(fr, de, en, id)");
+testSelectorRoundTrip(":lang(fr, fr-ca, fr-be)");
+testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996)");
+testSelectorRoundTrip(":lang(de-CH, it-CH, fr-CH, rm-CH)");
+testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH)");
+
+debug('');
+
 testSelectorRoundTrip(":not(a)");
 testSelectorRoundTrip(":-webkit-any(a,b,p)");
 
@@ -315,6 +324,43 @@ shouldBe("parseThenSerializeRule(':not(a.class1.class2.class3:hover   ) { }')", 
 shouldBe("parseThenSerializeRule(':not(:matches(single    ),:matches(a,b    ,p),:matches(#alice,                   #bob,#chris)) { }')", "':not(:matches(single), :matches(a, b, p), :matches(#alice, #bob, #chris)) { }'");
 
 debug('');
+
+shouldBe("parseThenSerializeRule(':lang(a    ) { }')", "':lang(a) { }'");
+shouldBe("parseThenSerializeRule(':lang(    a) { }')", "':lang(a) { }'");
+shouldBe("parseThenSerializeRule(':lang(a,    b,    c) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(    a, b ,c) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(  a  ,  b  ,  c  ) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(    a  ,b,c) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(    a  ,b  ,c) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(    a  ,b  ,c  ) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(a,b    ,c) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(a,b,    c) { }')", "':lang(a, b, c) { }'");
+shouldBe("parseThenSerializeRule(':lang(a,b,    c    ) { }')", "':lang(a, b, c) { }'");
+
+debug('');
+
+shouldThrow("parseThenSerializeRule(':lang() { }')");
+shouldThrow("parseThenSerializeRule(':lang(12, b, c) { }')");
+shouldThrow("parseThenSerializeRule(':lang(a, 12, c) { }')");
+shouldThrow("parseThenSerializeRule(':lang(a, b, 12) { }')");
+shouldThrow("parseThenSerializeRule(':lang(a, 12, 12) { }')");
+shouldThrow("parseThenSerializeRule(':lang(12, b, 12) { }')");
+shouldThrow("parseThenSerializeRule(':lang(12, 12, 12) { }')");
+shouldThrow("parseThenSerializeRule(':lang(lang()) { }')");
+shouldThrow("parseThenSerializeRule(':lang(:lang()) { }')");
+shouldThrow("parseThenSerializeRule(':lang(:lang(id)) { }')");
+shouldThrow("parseThenSerializeRule(':lang(:lang(en, br)) { }')");
+shouldThrow("parseThenSerializeRule(':lang(<0_0>) { }')");
+shouldThrow("parseThenSerializeRule(':lang(99) { }')");
+shouldThrow("parseThenSerializeRule(':lang(88) { }')");
+shouldThrow("parseThenSerializeRule(':lang(00) { }')");
+shouldThrow("parseThenSerializeRule(':lang(}) { }')");
+shouldThrow("parseThenSerializeRule(':lang({) { }')");
+shouldThrow("parseThenSerializeRule(':lang({}) { }')");
+shouldThrow("parseThenSerializeRule(':lang(]) { }')");
+shouldThrow("parseThenSerializeRule(':lang([) { }')");
+shouldThrow("parseThenSerializeRule(':lang([]) { }')");
+shouldThrow("parseThenSerializeRule(':lang(@media screen {}) { }')");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>
