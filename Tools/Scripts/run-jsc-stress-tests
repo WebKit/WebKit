@@ -114,6 +114,9 @@ $remoteUser = nil
 $remoteHost = nil
 $remotePort = nil
 $remoteDirectory = nil
+$architecture = nil
+$hostOS = nil
+
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -128,6 +131,10 @@ def usage
     puts "--verbose            (-v)   Print more things while running."
     puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
     puts "--tarball [fileName]        Creates a tarball of the final bundle.  Use name if supplied for tar file."
+    puts "--arch                      Specify architecture instead of determining from JavaScriptCore build."
+    puts "                            e.g. x86, x86_64, arm."
+    puts "--os                        Specify os instead of determining from JavaScriptCore build."
+    puts "                            e.g. darwin, linux & windows."
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
     puts "--remote                    Specify a remote host on which to run tests."
@@ -147,6 +154,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
                ['--tarball', GetoptLong::OPTIONAL_ARGUMENT],
                ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
+               ['--arch', GetoptLong::REQUIRED_ARGUMENT],
+               ['--os', GetoptLong::REQUIRED_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
@@ -186,6 +195,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
     when '--child-processes'
         $numProcessors = arg.to_i
+    when '--arch'
+        $architecture = arg
+    when '--os'
+        $hostOS = arg
     end
 }
 
@@ -257,8 +270,8 @@ def determineOS
     end
 end
 
-$architecture = determineArchitecture
-$hostOS = determineOS
+$architecture = determineArchitecture unless $architecture
+$hostOS = determineOS unless $hostOS
 
 $numFailures = 0
 

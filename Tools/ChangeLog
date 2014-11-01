@@ -1,3 +1,15 @@
+2014-10-31  Michael Saboff  <msaboff@apple.com>
+
+        No way to specify target os or architecture when using the --no-copy option with run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=138268
+
+        Reviewed by Andreas Kling.
+
+        Added a --arch and --os option to set or override the values that are
+        normally computed based on examining the JavaScriptCore we want to test.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-10-31  Dan Bernstein  <mitz@apple.com>
 
         llvmForJSC build emits a linker warning that it can't find usr/local/LLVMForJavaScriptCore/lib under the build directory
