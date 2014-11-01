@@ -27,6 +27,7 @@
 #define ActionMenuHitTestResult_h
 
 #include "ShareableBitmap.h"
+#include "WebHitTestResult.h"
 #include <WebCore/FloatRect.h>
 
 OBJC_CLASS DDActionContext;
@@ -41,6 +42,9 @@ namespace WebKit {
 struct ActionMenuHitTestResult {
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, ActionMenuHitTestResult&);
+
+    WebCore::FloatPoint hitTestLocationInViewCooordinates;
+    WebHitTestResult::Data hitTestResult;
 
     RefPtr<ShareableBitmap> image;
 

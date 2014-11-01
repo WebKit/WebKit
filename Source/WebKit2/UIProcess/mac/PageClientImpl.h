@@ -186,7 +186,7 @@ private:
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     virtual void removeNavigationGestureSnapshot() override;
 
-    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&) override;
+    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, API::Object*) override;
 
     WKView *m_wkView;
     WKWebView *m_webView;

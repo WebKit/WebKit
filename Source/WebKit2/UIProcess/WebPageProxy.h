@@ -1313,7 +1313,7 @@ private:
     void viewDidEnterWindow();
 
 #if PLATFORM(MAC)
-    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&);
+    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, IPC::MessageDecoder&);
 #endif
 
     PageClient& m_pageClient;

@@ -5279,9 +5279,14 @@ void WebPageProxy::selectLookupTextAtLocation(FloatPoint point)
     m_process->send(Messages::WebPage::SelectLookupTextAtLocation(point), m_pageID);
 }
 
-void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& result)
+void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& result, IPC::MessageDecoder& decoder)
 {
-    m_pageClient.didPerformActionMenuHitTest(result);
+    RefPtr<API::Object> userData;
+    WebContextUserMessageDecoder messageDecoder(userData, process());
+    if (!decoder.decode(messageDecoder))
+        return;
+
+    m_pageClient.didPerformActionMenuHitTest(result, userData.get());
 }
 #endif
 
