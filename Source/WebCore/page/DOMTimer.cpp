@@ -84,6 +84,42 @@ private:
 
 DOMTimerFireState* DOMTimerFireState::current = nullptr;
 
+struct NestedTimersVector {
+    typedef Vector<DOMTimer*, 1>::const_iterator const_iterator;
+
+    NestedTimersVector(ScriptExecutionContext* context)
+        : shouldSetCurrent(context->isDocument())
+    {
+        if (shouldSetCurrent) {
+            previous = current;
+            current = this;
+        }
+    }
+
+    ~NestedTimersVector()
+    {
+        if (shouldSetCurrent)
+            current = previous;
+    }
+
+    static NestedTimersVector* current;
+
+    void registerTimer(DOMTimer* timer)
+    {
+        nestedTimers.append(timer);
+    }
+
+    const_iterator begin() const { return nestedTimers.begin(); }
+    const_iterator end() const { return nestedTimers.end(); }
+
+private:
+    bool shouldSetCurrent;
+    NestedTimersVector* previous;
+    Vector<DOMTimer*, 1> nestedTimers;
+};
+
+NestedTimersVector* NestedTimersVector::current = nullptr;
+
 static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 {
     return UserGestureIndicator::processingUserGesture()
@@ -133,6 +169,10 @@ int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<Scheduled
     timer->suspendIfNeeded();
     InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, singleShot);
 
+    // Keep track of nested timer installs.
+    if (NestedTimersVector::current)
+        NestedTimersVector::current->registerTimer(timer);
+
     return timer->m_timeoutId;
 }
 
@@ -146,6 +186,17 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
 
     InspectorInstrumentation::didRemoveTimer(context, timeoutId);
     context->removeTimeout(timeoutId);
+}
+
+void DOMTimer::updateThrottlingStateIfNecessary(const DOMTimerFireState& fireState)
+{
+    if (fireState.scriptDidInteractWithUserObservablePlugin && m_throttleState != ShouldNotThrottle) {
+        m_throttleState = ShouldNotThrottle;
+        updateTimerIntervalIfNecessary();
+    } else if (fireState.scriptDidInteractWithNonUserObservablePlugin && m_throttleState == Undetermined) {
+        m_throttleState = ShouldThrottle;
+        updateTimerIntervalIfNecessary();
+    }
 }
 
 void DOMTimer::scriptDidInteractWithPlugin(HTMLPlugInElement& pluginElement)
@@ -198,14 +249,7 @@ void DOMTimer::fired()
         m_action->execute(context);
 
         InspectorInstrumentation::didFireTimer(cookie);
-
-        if (fireState.scriptDidInteractWithUserObservablePlugin && m_throttleState != ShouldNotThrottle) {
-            m_throttleState = ShouldNotThrottle;
-            updateTimerIntervalIfNecessary();
-        } else if (fireState.scriptDidInteractWithNonUserObservablePlugin && m_throttleState == Undetermined) {
-            m_throttleState = ShouldThrottle;
-            updateTimerIntervalIfNecessary();
-        }
+        updateThrottlingStateIfNecessary(fireState);
 
         return;
     }
@@ -229,6 +273,8 @@ void DOMTimer::fired()
     }
 #endif
 
+    // Keep track nested timer installs.
+    NestedTimersVector nestedTimers(context);
     m_action->execute(context);
 
 #if PLATFORM(IOS)
@@ -242,6 +288,12 @@ void DOMTimer::fired()
 #endif
 
     InspectorInstrumentation::didFireTimer(cookie);
+
+    // Check if we should throttle nested single-shot timers.
+    for (auto* timer : nestedTimers) {
+        if (!timer->repeatInterval())
+            timer->updateThrottlingStateIfNecessary(fireState);
+    }
 
     context->setTimerNestingLevel(0);
 }

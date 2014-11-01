@@ -1,5 +1,33 @@
 2014-10-31  Chris Dumez  <cdumez@apple.com>
 
+        Support throttling of DOMTimers using nested setTimeout() calls
+        https://bugs.webkit.org/show_bug.cgi?id=138262
+
+        Reviewed by Gavin Barraclough.
+
+        Extend DOMTimers throttling support to timers that are using nested
+        setTimeout() calls instead of a setInterval(). To achieve this, this
+        patch introduces a NestedTimersVector singleton class where nested
+        timers are appended, and for which we potentially update the next
+        firing time, after the parent timer is done executing.
+
+        I have verified this helps on cnn.com for example, which has timers
+        interacting with non-visible plugins that are scheduled using nested
+        setTimeout() calls with a frequency of 150 / 200 ms.
+
+        * page/DOMTimer.cpp:
+        (WebCore::NestedTimersVector::NestedTimersVector):
+        (WebCore::NestedTimersVector::~NestedTimersVector):
+        (WebCore::NestedTimersVector::registerTimer):
+        (WebCore::NestedTimersVector::begin):
+        (WebCore::NestedTimersVector::end):
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::updateThrottlingStateIfNecessary):
+        (WebCore::DOMTimer::fired):
+        * page/DOMTimer.h:
+
+2014-10-31  Chris Dumez  <cdumez@apple.com>
+
         Move -webkit-marquee-increment property to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=138208
 

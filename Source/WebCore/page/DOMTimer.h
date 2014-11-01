@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+    struct DOMTimerFireState;
     class HTMLPlugInElement;
     class ScheduledAction;
 
@@ -54,6 +55,7 @@ namespace WebCore {
     private:
         DOMTimer(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
         double intervalClampedToMinimum() const;
+        void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
         // SuspendableTimer
         virtual void fired() override;
