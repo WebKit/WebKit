@@ -390,7 +390,7 @@ justify-content [NewStyleBuilder]
 -webkit-hyphenate-character [Inherited]
 -webkit-hyphenate-limit-after [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitAfter, Converter=Number<short>]
 -webkit-hyphenate-limit-before [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitBefore, Converter=Number<short>]
--webkit-hyphenate-limit-lines [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitLines, Custom=Value]
+-webkit-hyphenate-limit-lines [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitLines, Converter=WebkitHyphenateLimitLines]
 -webkit-hyphens [Inherited, NewStyleBuilder, TypeName=Hyphens]
 -epub-hyphens = -webkit-hyphens
 -webkit-initial-letter

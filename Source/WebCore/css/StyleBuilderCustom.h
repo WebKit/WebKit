@@ -33,15 +33,6 @@ namespace WebCore {
 
 namespace StyleBuilderFunctions {
 
-inline void applyValueWebkitHyphenateLimitLines(StyleResolver& styleResolver, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    short number = -1;
-    if (primitiveValue.getValueID() != CSSValueNoLimit)
-        number = primitiveValue.getValue<short>(CSSPrimitiveValue::CSS_NUMBER);
-    styleResolver.style()->setHyphenationLimitLines(number);
-}
-
 inline void applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);

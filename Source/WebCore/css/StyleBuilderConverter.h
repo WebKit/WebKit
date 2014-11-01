@@ -47,6 +47,7 @@ public:
     static LengthSize convertRadius(StyleResolver&, CSSValue&);
     static TextDecoration convertTextDecoration(StyleResolver&, CSSValue&);
     template <typename T> static T convertNumber(StyleResolver&, CSSValue&);
+    static short convertWebkitHyphenateLimitLines(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderImage(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static PassRefPtr<StyleImage> convertBorderImageSource(StyleResolver&, CSSValue&);
@@ -207,6 +208,14 @@ inline T StyleBuilderConverter::convertNumber(StyleResolver&, CSSValue& value)
     if (primitiveValue.getValueID() == CSSValueAuto)
         return -1;
     return primitiveValue.getValue<T>(CSSPrimitiveValue::CSS_NUMBER);
+}
+
+inline short StyleBuilderConverter::convertWebkitHyphenateLimitLines(StyleResolver&, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNoLimit)
+        return -1;
+    return primitiveValue.getValue<short>(CSSPrimitiveValue::CSS_NUMBER);
 }
 
 template <CSSPropertyID property>

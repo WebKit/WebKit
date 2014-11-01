@@ -1,5 +1,24 @@
 2014-10-31  Chris Dumez  <cdumez@apple.com>
 
+        StyleBuilder: Stop using custom code for -webkit-hyphenate-limit-lines
+        https://bugs.webkit.org/show_bug.cgi?id=138270
+
+        Reviewed by Antti Koivisto.
+
+        Stop using custom code for -webkit-hyphenate-limit-lines in the new
+        StyleBuilder. We don't really need to, we can just have a Converter
+        specific to this property.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertWebkitHyphenateLimitLines):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::applyValueWebkitHyphenateLimitLines): Deleted.
+
+2014-10-31  Chris Dumez  <cdumez@apple.com>
+
         Support throttling of DOMTimers using nested setTimeout() calls
         https://bugs.webkit.org/show_bug.cgi?id=138262
 
