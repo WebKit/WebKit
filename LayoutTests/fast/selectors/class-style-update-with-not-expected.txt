@@ -27,14 +27,14 @@ PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 0
 PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(0, 1, 2)"
 PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(0, 1, 2)"
-FAIL getComputedStyle(document.querySelectorAll("target")[0]).color should be rgb(3, 4, 5). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[1]).color should be rgb(3, 4, 5). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[0]).color should be rgb(6, 7, 8). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[1]).color should be rgb(6, 7, 8). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[0]).color should be rgb(9, 10, 11). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[1]).color should be rgb(9, 10, 11). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[0]).color should be rgb(12, 13, 14). Was rgb(0, 1, 2).
-FAIL getComputedStyle(document.querySelectorAll("target")[1]).color should be rgb(12, 13, 14). Was rgb(0, 1, 2).
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(3, 4, 5)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(3, 4, 5)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(6, 7, 8)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(6, 7, 8)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(9, 10, 11)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(9, 10, 11)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).color is "rgb(12, 13, 14)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).color is "rgb(12, 13, 14)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

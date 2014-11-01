@@ -101,9 +101,22 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case PseudoClass:
         // FIXME: PseudoAny should base the specificity on the sub-selectors.
         // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
+
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        if (pseudoClassType() == PseudoClassNot) {
+            ASSERT_WITH_MESSAGE(selectorList() && selectorList()->first(), "The parser should never generate a valid selector for an empty :not().");
+
+            unsigned maxSpecificity = 0;
+            for (const CSSSelector* subSelector = selectorList()->first(); subSelector; subSelector = CSSSelectorList::next(subSelector))
+                maxSpecificity = std::max(maxSpecificity, subSelector->specificity());
+            return maxSpecificity;
+        }
+        FALLTHROUGH;
+#else
         if (pseudoClassType() == PseudoClassNot && selectorList())
             return selectorList()->first()->specificityForOneSelector();
         FALLTHROUGH;
+#endif
     case Exact:
     case Class:
     case Set:

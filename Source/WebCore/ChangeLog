@@ -1,3 +1,27 @@
+2014-11-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the specificity of the extended :not() selector
+        https://bugs.webkit.org/show_bug.cgi?id=138275
+
+        Reviewed by Andreas Kling.
+
+        The current draft says "The specificity of a :not() pseudo-class
+        is the specificity of the most specifc complex selector in its selector list."
+
+        It is still unclear how :not() plays with other new selectors. Until that is clarified,
+        this only handle the simple cases.
+
+        Tests: fast/css/not-self-specificity.html
+               fast/css/not-specificity-1.html
+               fast/css/not-specificity-2.html
+               fast/css/not-specificity-3.html
+               fast/css/not-specificity-4.html
+               fast/css/not-specificity-5.html
+               fast/css/not-specificity-6.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+
 2014-10-31  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the Debug builds after r175446

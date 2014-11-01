@@ -1,3 +1,36 @@
+2014-11-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the specificity of the extended :not() selector
+        https://bugs.webkit.org/show_bug.cgi?id=138275
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/not-self-specificity-expected.html: Added.
+        * fast/css/not-self-specificity.html: Added.
+        Test that :not() itself does not influence the specificity,
+        only the nested selectors contribute to the global specificity.
+
+        * fast/css/not-specificity-1-expected.html: Added.
+        * fast/css/not-specificity-1.html: Added.
+        * fast/css/not-specificity-2-expected.html: Added.
+        * fast/css/not-specificity-2.html: Added.
+        * fast/css/not-specificity-3-expected.html: Added.
+        * fast/css/not-specificity-3.html: Added.
+        Tests for compound selectors.
+        All tests are variations of the same base testing specificity
+        and position.
+
+        * fast/css/not-specificity-4-expected.html: Added.
+        * fast/css/not-specificity-4.html: Added.
+        * fast/css/not-specificity-5-expected.html: Added.
+        * fast/css/not-specificity-5.html: Added.
+        * fast/css/not-specificity-6-expected.html: Added.
+        * fast/css/not-specificity-6.html: Added.
+        Same thing for complex selectors.
+
+        * fast/selectors/class-style-update-with-not-expected.txt:
+        Yeah, one more test fixed :)
+
 2014-11-01  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Unreviewed EFL gardening.
