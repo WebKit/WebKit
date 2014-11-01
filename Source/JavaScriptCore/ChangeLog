@@ -1,3 +1,16 @@
+2014-10-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr for TypeCountSet
+        https://bugs.webkit.org/show_bug.cgi?id=138242
+
+        Reviewed by Andreas Kling.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::protectedObjectTypeCounts):
+        Use std::unique_ptr<> instead of PassOwnPtr|OwnPtr.
+        (JSC::Heap::objectTypeCounts): ditto.
+        * heap/Heap.h:
+
 2014-10-31  Michael Saboff  <msaboff@apple.com>
 
         Add scope operand to op_push_with_scope, op_push_name_scope and op_pop_scope

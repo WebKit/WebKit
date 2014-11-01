@@ -171,8 +171,8 @@ public:
     JS_EXPORT_PRIVATE size_t globalObjectCount();
     JS_EXPORT_PRIVATE size_t protectedObjectCount();
     JS_EXPORT_PRIVATE size_t protectedGlobalObjectCount();
-    JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> protectedObjectTypeCounts();
-    JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> objectTypeCounts();
+    JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> protectedObjectTypeCounts();
+    JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> objectTypeCounts();
     void showStatistics();
 
     void pushTempSortVector(Vector<ValueStringPair, 0, UnsafeVectorOverflow>*);

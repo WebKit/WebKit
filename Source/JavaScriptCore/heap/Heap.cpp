@@ -254,7 +254,7 @@ struct CountIfGlobalObject : MarkedBlock::CountFunctor {
 
 class RecordType {
 public:
-    typedef PassOwnPtr<TypeCountSet> ReturnType;
+    typedef std::unique_ptr<TypeCountSet> ReturnType;
 
     RecordType();
     void operator()(JSCell*);
@@ -262,11 +262,11 @@ public:
 
 private:
     const char* typeName(JSCell*);
-    OwnPtr<TypeCountSet> m_typeCountSet;
+    std::unique_ptr<TypeCountSet> m_typeCountSet;
 };
 
 inline RecordType::RecordType()
-    : m_typeCountSet(adoptPtr(new TypeCountSet))
+    : m_typeCountSet(std::make_unique<TypeCountSet>())
 {
 }
 
@@ -283,9 +283,9 @@ inline void RecordType::operator()(JSCell* cell)
     m_typeCountSet->add(typeName(cell));
 }
 
-inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
+inline std::unique_ptr<TypeCountSet> RecordType::returnValue()
 {
-    return m_typeCountSet.release();
+    return WTF::move(m_typeCountSet);
 }
 
 } // anonymous namespace
@@ -861,12 +861,12 @@ size_t Heap::protectedObjectCount()
     return forEachProtectedCell<Count>();
 }
 
-PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
+std::unique_ptr<TypeCountSet> Heap::protectedObjectTypeCounts()
 {
     return forEachProtectedCell<RecordType>();
 }
 
-PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
+std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
 {
     HeapIterationScope iterationScope(*this);
     return m_objectSpace.forEachLiveCell<RecordType>(iterationScope);
