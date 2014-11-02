@@ -53,6 +53,9 @@ public:
     template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static PassRefPtr<StyleImage> convertBorderImageSource(StyleResolver&, CSSValue&);
     static TransformOperations convertTransform(StyleResolver&, CSSValue&);
+    static String convertString(StyleResolver&, CSSValue&);
+    static String convertStringOrAuto(StyleResolver&, CSSValue&);
+    static String convertStringOrNone(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -247,6 +250,25 @@ inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver
     TransformOperations operations;
     transformsForValue(value, styleResolver.state().cssToLengthConversionData(), operations);
     return operations;
+}
+
+inline String StyleBuilderConverter::convertString(StyleResolver&, CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).getStringValue();
+}
+
+inline String StyleBuilderConverter::convertStringOrAuto(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+        return nullAtom;
+    return convertString(styleResolver, value);
+}
+
+inline String StyleBuilderConverter::convertStringOrNone(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
+        return nullAtom;
+    return convertString(styleResolver, value);
 }
 
 } // namespace WebCore

@@ -1,5 +1,20 @@
 2014-11-02  Chris Dumez  <cdumez@apple.com>
 
+        Move string-typed properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138295
+
+        Reviewed by Antti Koivisto.
+
+        Move string-typed properties to the new StyleBuilder:
+        -webkit-hyphenate-character
+        -webkit-line-grid
+        -webkit-flow-into
+        -webkit-flow-from
+
+        No new tests, no behavior change.
+
+2014-11-02  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline bindings tests after r175462.
 
         * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:

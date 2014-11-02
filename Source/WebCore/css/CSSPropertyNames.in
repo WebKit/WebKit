@@ -387,7 +387,7 @@ justify-content [NewStyleBuilder]
 -webkit-grid-template-areas
 -webkit-grid-auto-flow
 #endif
--webkit-hyphenate-character [Inherited]
+-webkit-hyphenate-character [Inherited, NewStyleBuilder, NameForMethods=HyphenationString, Converter=StringOrAuto]
 -webkit-hyphenate-limit-after [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitAfter, Converter=Number<short>]
 -webkit-hyphenate-limit-before [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitBefore, Converter=Number<short>]
 -webkit-hyphenate-limit-lines [Inherited, NewStyleBuilder, NameForMethods=HyphenationLimitLines, Converter=WebkitHyphenateLimitLines]
@@ -398,7 +398,7 @@ justify-content [NewStyleBuilder]
 -webkit-line-align [Inherited, NewStyleBuilder, TypeName=LineAlign]
 -webkit-line-break [Inherited, NewStyleBuilder, TypeName=LineBreak]
 -webkit-line-clamp [NewStyleBuilder, TypeName=LineClampValue]
--webkit-line-grid [Inherited]
+-webkit-line-grid [Inherited, NewStyleBuilder, Converter=StringOrNone]
 -webkit-line-snap [Inherited, NewStyleBuilder, TypeName=LineSnap]
 -webkit-logical-width
 -webkit-logical-height
@@ -504,8 +504,8 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-user-modify [Inherited, NewStyleBuilder]
 -webkit-user-select [Inherited, NewStyleBuilder]
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
--webkit-flow-into
--webkit-flow-from
+-webkit-flow-into [NewStyleBuilder, NameForMethods=FlowThread, Converter=StringOrNone]
+-webkit-flow-from [NewStyleBuilder, NameForMethods=RegionThread, Converter=StringOrNone]
 -webkit-region-fragment [NewStyleBuilder, TypeName=RegionFragment]
 -webkit-region-break-after [NewStyleBuilder, TypeName=EPageBreak, Initial=initialPageBreak]
 -webkit-region-break-before [NewStyleBuilder, TypeName=EPageBreak, Initial=initialPageBreak]
