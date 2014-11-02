@@ -240,7 +240,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
         return throwThisTypeError(*exec, "TestEventTarget", "item");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int index(toUInt32(exec, exec->argument(0), NormalConversion));
     if (index < 0) {
@@ -291,7 +291,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
         return throwThisTypeError(*exec, "TestEventTarget", "dispatchEvent");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     Event* evt(JSEvent::toWrapped(exec->argument(0)));

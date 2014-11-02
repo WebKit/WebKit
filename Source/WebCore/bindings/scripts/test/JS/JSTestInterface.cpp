@@ -272,7 +272,7 @@ COMPILE_ASSERT(2 == TestSupplemental::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsW
 EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* exec)
 {
     JSTestInterfaceConstructor* castedThis = jsCast<JSTestInterfaceConstructor*>(exec->callee());
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     const String& str1(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
@@ -832,7 +832,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
         return throwThisTypeError(*exec, "TestInterface", "implementsMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -898,7 +898,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
         return throwThisTypeError(*exec, "TestInterface", "supplementalMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();

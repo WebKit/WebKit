@@ -1,5 +1,89 @@
 2014-11-02  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline bindings tests after r175462.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionPostMessage):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::jsTestCustomNamedGetterPrototypeFunctionAnotherFunction):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionItem):
+        (WebCore::jsTestEventTargetPrototypeFunctionDispatchEvent):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::constructJSTestInterface):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::constructJSTestObj):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodReturningSequence):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithEnumArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod9):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod10):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod11):
+        (WebCore::jsTestObjConstructorFunctionClassMethod2):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod11):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod12):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence):
+        (WebCore::jsTestObjPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence2):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionConvert2):
+        (WebCore::jsTestObjPrototypeFunctionConvert4):
+        (WebCore::jsTestObjPrototypeFunctionConvert5):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunction):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithArray):
+        (WebCore::jsTestObjPrototypeFunctionVariadicStringMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicDoubleMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::jsTestObjPrototypeFunctionAny):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors2):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors3):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors4):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::constructJSTestTypedefs):
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow):
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableArrayArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClamp):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringArrayFunction2):
+        (WebCore::jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude):
+
+2014-11-02  Chris Dumez  <cdumez@apple.com>
+
         Reduce the cost of argumentCount checks in the JS bindings
         https://bugs.webkit.org/show_bug.cgi?id=138289
 

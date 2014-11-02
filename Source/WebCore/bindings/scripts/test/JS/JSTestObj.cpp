@@ -443,7 +443,7 @@ COMPILE_ASSERT(0 == TestObj::readonly, TestObjEnumreadonlyIsWrongUseDoNotCheckCo
 EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
 {
     JSTestObjConstructor* castedThis = jsCast<JSTestObjConstructor*>(exec->callee());
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*exec, 0, "testCallback", "TestObj", nullptr);
@@ -2931,7 +2931,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
         return throwThisTypeError(*exec, "TestObj", "voidMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -2966,7 +2966,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
         return throwThisTypeError(*exec, "TestObj", "byteMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int8_t byteArg(toInt8(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3001,7 +3001,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
         return throwThisTypeError(*exec, "TestObj", "octetMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     uint8_t octetArg(toUInt8(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3036,7 +3036,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
         return throwThisTypeError(*exec, "TestObj", "longMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3071,7 +3071,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
         return throwThisTypeError(*exec, "TestObj", "objMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3094,7 +3094,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(Exe
         return throwThisTypeError(*exec, "TestObj", "methodWithSequenceArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<RefPtr<ScriptProfile>> sequenceArg((toRefPtrNativeArray<ScriptProfile, JSScriptProfile>(exec, exec->argument(0), &JSScriptProfile::toWrapped)));
     if (UNLIKELY(exec->hadException()))
@@ -3111,7 +3111,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
         return throwThisTypeError(*exec, "TestObj", "methodReturningSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3128,7 +3128,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
         return throwThisTypeError(*exec, "TestObj", "methodWithEnumArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String enumArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
@@ -3147,7 +3147,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
         return throwThisTypeError(*exec, "TestObj", "methodThatRequiresAllArgsAndThrows");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
@@ -3170,7 +3170,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
         return throwThisTypeError(*exec, "TestObj", "serializedValue");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     RefPtr<SerializedScriptValue> serializedArg(SerializedScriptValue::create(exec, exec->argument(0), 0, 0));
     if (UNLIKELY(exec->hadException()))
@@ -3187,7 +3187,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
         return throwThisTypeError(*exec, "TestObj", "optionsObject");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Dictionary oo(exec, exec->argument(0));
     if (UNLIKELY(exec->hadException()))
@@ -3430,7 +3430,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
         return throwThisTypeError(*exec, "TestObj", "methodWithNonOptionalArgAndOptionalArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int nonOpt(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3457,7 +3457,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
         return throwThisTypeError(*exec, "TestObj", "methodWithNonOptionalArgAndTwoOptionalArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int nonOpt(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3544,7 +3544,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
         return throwThisTypeError(*exec, "TestObj", "methodWithCallbackArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "methodWithCallbackArg");
@@ -3561,7 +3561,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
         return throwThisTypeError(*exec, "TestObj", "methodWithNonCallbackArgAndCallbackArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int nonCallback(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3605,7 +3605,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackArg(ExecState* exec)
 {
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "staticMethodWithCallbackArg");
@@ -3667,7 +3667,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestObj* objArg(JSTestObj::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3687,7 +3687,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestObj* objArg(JSTestObj::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3714,7 +3714,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
@@ -3731,7 +3731,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3748,7 +3748,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*exec, 0, "callback", "TestObj", "overloadedMethod");
@@ -3765,7 +3765,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     RefPtr<DOMStringList> listArg(toDOMStringList(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3782,7 +3782,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<String> arrayArg(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3799,7 +3799,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod8(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestObj* objArg(JSTestObj::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3816,7 +3816,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod9(
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<String> arrayArg(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3833,7 +3833,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod10
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<unsigned> arrayArg(toNativeArray<unsigned>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -3850,7 +3850,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod11
         return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& strArg(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
@@ -3915,7 +3915,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(ExecState* exec)
 {
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     return JSValue::encode(JSTestObj::classMethod2(exec));
 }
@@ -3923,7 +3923,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(ExecState*
 #if ENABLE(Condition1)
 static EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod11(ExecState* exec)
 {
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int arg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
@@ -3937,7 +3937,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod
 #if ENABLE(Condition1)
 static EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod12(ExecState* exec)
 {
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& type(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
@@ -3975,7 +3975,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
         return throwThisTypeError(*exec, "TestObj", "classMethodWithClamp");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     unsigned short objArgsShort = 0;
     double objArgsShortNativeValue = exec->argument(0).toNumber(exec);
@@ -4005,7 +4005,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSeq
         return throwThisTypeError(*exec, "TestObj", "methodWithUnsignedLongSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<unsigned> unsignedLongSequence(toNativeArray<unsigned>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4022,7 +4022,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
         return throwThisTypeError(*exec, "TestObj", "stringArrayFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
@@ -4042,7 +4042,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
         return throwThisTypeError(*exec, "TestObj", "domStringListFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     RefPtr<DOMStringList> values(toDOMStringList(exec, exec->argument(0)));
@@ -4062,7 +4062,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
         return throwThisTypeError(*exec, "TestObj", "methodWithAndWithoutNullableSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<unsigned> arrayArg(toNativeArray<unsigned>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4082,7 +4082,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
         return throwThisTypeError(*exec, "TestObj", "methodWithAndWithoutNullableSequence2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<unsigned> arrayArg(toNativeArray<unsigned>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4119,7 +4119,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* exec)
         return throwThisTypeError(*exec, "TestObj", "convert1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestNode* value(JSTestNode::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4136,7 +4136,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* exec)
         return throwThisTypeError(*exec, "TestObj", "convert2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestNode* value(JSTestNode::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4153,7 +4153,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* exec)
         return throwThisTypeError(*exec, "TestObj", "convert4");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestNode* value(JSTestNode::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4170,7 +4170,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* exec)
         return throwThisTypeError(*exec, "TestObj", "convert5");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     TestNode* value(JSTestNode::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4223,7 +4223,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
         return throwThisTypeError(*exec, "TestObj", "strictFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     const String& str(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
@@ -4249,7 +4249,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
         return throwThisTypeError(*exec, "TestObj", "strictFunctionWithSequence");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     if (!exec->argument(0).isUndefinedOrNull() && !exec->argument(0).inherits(JSTestObj::info()))
@@ -4274,7 +4274,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
         return throwThisTypeError(*exec, "TestObj", "strictFunctionWithArray");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     if (!exec->argument(0).isUndefinedOrNull() && !exec->argument(0).inherits(JSTestObj::info()))
@@ -4299,7 +4299,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
         return throwThisTypeError(*exec, "TestObj", "variadicStringMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& head(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
@@ -4319,7 +4319,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
         return throwThisTypeError(*exec, "TestObj", "variadicDoubleMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     double head(exec->argument(0).toNumber(exec));
     if (UNLIKELY(exec->hadException()))
@@ -4339,7 +4339,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
         return throwThisTypeError(*exec, "TestObj", "variadicNodeMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Node* head(JSNode::toWrapped(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -4362,7 +4362,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* exec)
         return throwThisTypeError(*exec, "TestObj", "any");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     float a(exec->argument(0).toFloat(exec));
     if (UNLIKELY(exec->hadException()))

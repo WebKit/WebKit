@@ -147,7 +147,7 @@ static const HashTableValue JSTestTypedefsConstructorTableValues[] =
 EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::constructJSTestTypedefs(ExecState* exec)
 {
     JSTestTypedefsConstructor* castedThis = jsCast<JSTestTypedefsConstructor*>(exec->callee());
-    if (exec->argumentCount() < 2)
+    if (UNLIKELY(exec->argumentCount() < 2))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& hello(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (UNLIKELY(exec->hadException()))
@@ -531,7 +531,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
         return throwThisTypeError(*exec, "TestTypedefs", "setShadow");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 3)
+    if (UNLIKELY(exec->argumentCount() < 3))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     float width(exec->argument(0).toFloat(exec));
     if (UNLIKELY(exec->hadException()))
@@ -572,7 +572,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
         return throwThisTypeError(*exec, "TestTypedefs", "methodWithSequenceArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<RefPtr<SerializedScriptValue>> sequenceArg((toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(exec, exec->argument(0), &JSSerializedScriptValue::toWrapped)));
     if (UNLIKELY(exec->hadException()))
@@ -589,7 +589,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(Exe
         return throwThisTypeError(*exec, "TestTypedefs", "nullableArrayArg");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<String> arrayArg(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
@@ -606,7 +606,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
         return throwThisTypeError(*exec, "TestTypedefs", "funcWithClamp");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     unsigned long long arg1 = 0;
     double arg1NativeValue = exec->argument(0).toNumber(exec);
@@ -655,7 +655,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
         return throwThisTypeError(*exec, "TestTypedefs", "stringArrayFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
@@ -675,7 +675,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
         return throwThisTypeError(*exec, "TestTypedefs", "stringArrayFunction2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
@@ -695,7 +695,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
         return throwThisTypeError(*exec, "TestTypedefs", "callWithSequenceThatRequiresInclude");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<RefPtr<TestEventTarget>> sequenceArg((toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(exec, exec->argument(0), &JSTestEventTarget::toWrapped)));
     if (UNLIKELY(exec->hadException()))

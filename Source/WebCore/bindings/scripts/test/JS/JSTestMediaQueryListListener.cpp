@@ -167,7 +167,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
         return throwThisTypeError(*exec, "TestMediaQueryListListener", "method");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestMediaQueryListListener::info());
     TestMediaQueryListListener& impl = castedThis->impl();
-    if (exec->argumentCount() < 1)
+    if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwArgumentMustBeFunctionError(*exec, 0, "listener", "TestMediaQueryListListener", "method");
