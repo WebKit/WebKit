@@ -54,7 +54,7 @@
 // high-priority property names have to be listed first, to simplify the check
 // for applying them first.
 color [Inherited]
-direction [Inherited]
+direction [Inherited, NewStyleBuilder, Custom=Value]
 display
 font [Inherited]
 font-family [Inherited]

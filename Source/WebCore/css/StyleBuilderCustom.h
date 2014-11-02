@@ -57,6 +57,15 @@ inline void applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSVa
         styleResolver.style()->setMarqueeIncrement(marqueeLength);
 }
 
+inline void applyValueDirection(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.style()->setDirection(downcast<CSSPrimitiveValue>(value));
+
+    Element* element = styleResolver.element();
+    if (element && styleResolver.element() == element->document().documentElement())
+        element->document().setDirectionSetOnDocumentElement(true);
+}
+
 } // namespace StyleBuilderFunctions
 
 } // namespace WebCore
