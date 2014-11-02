@@ -3166,7 +3166,7 @@ sub GenerateArgumentsCountCheck
     }
     if ($numMandatoryParams >= 1)
     {
-        push(@$outputArray, "    if (exec->argumentCount() < $numMandatoryParams)\n");
+        push(@$outputArray, "    if (UNLIKELY(exec->argumentCount() < $numMandatoryParams))\n");
         push(@$outputArray, "        return throwVMError(exec, createNotEnoughArgumentsError(exec));\n");
     }
 }
