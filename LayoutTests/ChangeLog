@@ -1,5 +1,14 @@
 2014-11-01  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed gardening.
+
+        Mark jquery/manipulation.html as flakey on Debug bots as marking it
+        as slow did not help.
+
+        * TestExpectations:
+
+2014-11-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix double-slash in previous gardening commit.
 
         * TestExpectations:
