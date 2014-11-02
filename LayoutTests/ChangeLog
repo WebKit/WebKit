@@ -1,3 +1,12 @@
+2014-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed gardening.
+
+        Mark jquery/manipulation.html as slow on Debug builds until I can
+        investigate how to avoid this with timer throttling.
+
+        * TestExpectations:
+
 2014-11-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the specificity of the extended :not() selector
