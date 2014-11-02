@@ -1,3 +1,20 @@
+2014-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Using a media element changes window.name
+        https://bugs.webkit.org/show_bug.cgi?id=138278
+        rdar://problem/18704134
+
+        Reviewed by Jer Noble.
+
+        Test: fast/media/window-name.html
+
+        Use an actual variable for name (and while at it, for "item" as well).
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.addVideoListeners):
+        (Controller.prototype.removeVideoListeners):
+        (Controller.prototype.disconnectControls):
+
 2014-11-01  Chris Dumez  <cdumez@apple.com>
 
         Move "direction" CSS property to the new StyleBuilder

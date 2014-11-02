@@ -152,7 +152,7 @@ Controller.prototype = {
 
     addVideoListeners: function()
     {
-        for (name in this.HandledVideoEvents) {
+        for (var name in this.HandledVideoEvents) {
             this.listenFor(this.video, name, this.HandledVideoEvents[name]);
         };
 
@@ -178,7 +178,7 @@ Controller.prototype = {
 
     removeVideoListeners: function()
     {
-        for (name in this.HandledVideoEvents) {
+        for (var name in this.HandledVideoEvents) {
             this.stopListeningFor(this.video, name, this.HandledVideoEvents[name]);
         };
 
@@ -432,7 +432,7 @@ Controller.prototype = {
 
     disconnectControls: function(event)
     {
-        for (item in this.controls) {
+        for (var item in this.controls) {
             var control = this.controls[item];
             if (control && control.parentNode)
                 control.parentNode.removeChild(control);
