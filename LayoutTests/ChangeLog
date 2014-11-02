@@ -1,5 +1,11 @@
 2014-11-01  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix double-slash in previous gardening commit.
+
+        * TestExpectations:
+
+2014-11-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed gardening.
 
         Mark jquery/manipulation.html as slow on Debug builds until I can
