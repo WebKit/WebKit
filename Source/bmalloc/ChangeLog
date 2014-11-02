@@ -1,3 +1,16 @@
+2014-11-01  David Kilzer  <ddkilzer@apple.com>
+
+        JavaScriptCore is missing debug info for bmalloc because libbmalloc.a is stripped
+        <https://webkit.org/b/138286>
+        <rdar://problem/18847087>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/bmalloc.xcconfig: Set STRIP_INSTALLED_PRODUCT
+        to NO for the target that produces libbmalloc.a so that the
+        debug symbols will be linked into JavaScriptCore and end up in
+        its dSYM file.
+
 2014-10-30  Dana Burkart  <dburkart@apple.com>
 
         <rdar://problem/18821260> Prepare for the mysterious future
