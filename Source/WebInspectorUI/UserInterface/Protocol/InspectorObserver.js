@@ -65,6 +65,11 @@ WebInspector.InspectorObserver.prototype = {
     detached: function(reason)
     {
         // FIXME: Not implemented.
+    },
+
+    activateExtraDomains: function(domains)
+    {
+        WebInspector.activateExtraDomains(domains);
     }
 };
 

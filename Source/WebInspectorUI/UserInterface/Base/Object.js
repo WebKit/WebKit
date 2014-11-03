@@ -189,3 +189,10 @@ WebInspector.Event.prototype = {
 };
 
 WebInspector.notifications = new WebInspector.Object;
+
+WebInspector.Notification = {
+    GlobalModifierKeysDidChange: "global-modifiers-did-change",
+    PageArchiveStarted: "page-archive-started",
+    PageArchiveEnded: "page-archive-ended",
+    ExtraDomainsActivated: "extra-domains-activated",
+};

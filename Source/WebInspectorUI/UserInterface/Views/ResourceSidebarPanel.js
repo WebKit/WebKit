@@ -83,6 +83,8 @@ WebInspector.ResourceSidebarPanel = function() {
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptWasAdded, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptsCleared, this._scriptsCleared, this);
 
+    WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
+
     this._resourcesContentTreeOutline = this.contentTreeOutline;
     this._searchContentTreeOutline = this.createContentTreeOutline();
 
@@ -623,7 +625,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
                 this._extensionScriptsFolderTreeElement = new WebInspector.FolderTreeElement(WebInspector.UIString("Extension Scripts"));
             var parentFolderTreeElement = this._extensionScriptsFolderTreeElement;
         } else {
-            if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+            if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript && !WebInspector.hasExtraDomains)
                 insertIntoTopLevel = true;
             else {
                 if (!this._extraScriptsFolderTreeElement)
@@ -864,6 +866,12 @@ WebInspector.ResourceSidebarPanel.prototype = {
         this._cookieStorageRootTreeElement = null;
         this._applicationCacheRootTreeElement = null;
         this._applicationCacheURLTreeElementMap = {};
+    },
+
+    _extraDomainsActivated: function()
+    {
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+            this._resourcesContentTreeOutline.element.classList.remove(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     }
 };
 

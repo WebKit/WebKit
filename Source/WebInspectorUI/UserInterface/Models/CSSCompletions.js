@@ -76,6 +76,9 @@ WebInspector.CSSCompletions.cssNameCompletions = null;
 
 WebInspector.CSSCompletions.requestCSSNameCompletions = function()
 {
+    if (WebInspector.CSSCompletions.cssNameCompletions)
+        return;
+
     function propertyNamesCallback(error, names)
     {
         if (error)

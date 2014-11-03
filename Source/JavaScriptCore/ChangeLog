@@ -1,3 +1,40 @@
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ALTERNATE_DISPATCHERS Let the frontend know about extra agents
+        https://bugs.webkit.org/show_bug.cgi?id=138236
+
+        Reviewed by Brian Burg.
+
+        Inform the frontend about any extra domains the backend may have
+        above and beyond the default list of domains for the debuggable type.
+        This approach means there is almost no cost to normal debugging.
+        When a JSContext is debugged with extra agents, a message is sent
+        to the frontend letting it know which domains to then activate,
+        and perform any initialization work that may be required.
+
+        * inspector/InspectorAgentBase.h:
+        (Inspector::InspectorAgentBase::domainName):
+        * inspector/InspectorAgentRegistry.cpp:
+        (Inspector::InspectorAgentRegistry::appendExtraAgent):
+        * inspector/InspectorAgentRegistry.h:
+        * inspector/scripts/codegen/generator_templates.py:
+        Provide a way to get a list of just the extra domains.
+        To aggregate this list provide a different "append"
+        specifically for extra agents.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        When a frontend connects, inform it of the extra domains.
+
+        * inspector/protocol/Inspector.json:
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::enable):
+        (Inspector::InspectorAgent::activateExtraDomains):
+        Send an event with the extra domains to activate.
+
 2014-11-01  Michael Saboff  <msaboff@apple.com>
 
         Add scope operand to op_resolve_scope

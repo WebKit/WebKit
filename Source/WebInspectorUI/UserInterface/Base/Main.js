@@ -23,12 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Notification = {
-    GlobalModifierKeysDidChange: "global-modifiers-did-change",
-    PageArchiveStarted: "page-archive-started",
-    PageArchiveEnded: "page-archive-ended"
-};
-
 WebInspector.ContentViewCookieType = {
     ApplicationCache: "application-cache",
     CookieStorage: "cookie-storage",
@@ -53,6 +47,7 @@ WebInspector.loaded = function()
     this._initializeWebSocketIfNeeded();
 
     this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
+    this.hasExtraDomains = false;
 
     // Register observers for events from the InspectorBackend.
     if (InspectorBackend.registerInspectorDispatcher)
@@ -357,6 +352,22 @@ WebInspector.contentLoaded = function()
         this.showSplitConsole();
 
     this._contentLoaded = true;
+}
+
+WebInspector.activateExtraDomains = function(domains)
+{
+    console.assert(!this.hasExtraDomains);
+    this.hasExtraDomains = true;
+
+    for (var domain of domains) {
+        var agent = InspectorBackend.activateDomain(domain);
+        if (agent.enable)
+            agent.enable();
+    }
+
+    this.notifications.dispatchEventToListeners(WebInspector.Notification.ExtraDomainsActivated);
+
+    WebInspector.CSSCompletions.requestCSSNameCompletions();
 }
 
 WebInspector.sidebarPanelForCurrentContentView = function()

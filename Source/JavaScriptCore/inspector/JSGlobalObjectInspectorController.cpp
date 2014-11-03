@@ -68,17 +68,19 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     , m_augmentingClient(nullptr)
 #endif
 {
+    auto inspectorAgent = std::make_unique<InspectorAgent>(*this);
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(m_injectedScriptManager.get(), m_globalObject);
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(m_injectedScriptManager.get());
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject, consoleAgent.get());
 
+    m_inspectorAgent = inspectorAgent.get();
     m_debuggerAgent = debuggerAgent.get();
     m_consoleAgent = consoleAgent.get();
     m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
 
     runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
 
-    m_agents.append(std::make_unique<InspectorAgent>(*this));
+    m_agents.append(WTF::move(inspectorAgent));
     m_agents.append(WTF::move(runtimeAgent));
     m_agents.append(WTF::move(consoleAgent));
     m_agents.append(WTF::move(debuggerAgent));
@@ -111,6 +113,8 @@ void JSGlobalObjectInspectorController::connectFrontend(InspectorFrontendChannel
     m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    m_inspectorAgent->activateExtraDomains(m_agents.extraDomains());
+
     if (m_augmentingClient)
         m_augmentingClient->inspectorConnected();
 #endif

@@ -119,7 +119,8 @@ WebInspector.ApplicationCacheManager.prototype = {
             return;
         }
 
-        ApplicationCacheAgent.getManifestForFrame(event.target.id, this._manifestForFrameLoaded.bind(this, event.target.id));
+        if (window.ApplicationCacheAgent)
+            ApplicationCacheAgent.getManifestForFrame(event.target.id, this._manifestForFrameLoaded.bind(this, event.target.id));
     },
 
     _childFrameWasRemoved: function(event)

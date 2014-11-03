@@ -32,6 +32,8 @@ WebInspector.FrameResourceManager = function()
     if (window.NetworkAgent)
         NetworkAgent.enable();
 
+    WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
+
     this.initialize();
 };
 
@@ -583,6 +585,12 @@ WebInspector.FrameResourceManager.prototype = {
         if (this._mainFrame)
             this._mainFrame.markAsMainFrame();
         this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.MainFrameDidChange, {oldMainFrame: oldMainFrame});
+    },
+
+    _extraDomainsActivated: function()
+    {
+        if (window.PageAgent)
+            PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
     }
 };
 

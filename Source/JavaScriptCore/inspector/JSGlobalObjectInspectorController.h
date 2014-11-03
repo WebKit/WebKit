@@ -53,7 +53,7 @@ class JSValue;
 namespace Inspector {
 
 class InjectedScriptManager;
-class InspectorConsoleAgent;
+class InspectorAgent;
 class InspectorBackendDispatcher;
 class InspectorConsoleAgent;
 class InspectorDebuggerAgent;
@@ -110,6 +110,7 @@ private:
     JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
+    InspectorAgent* m_inspectorAgent;
     InspectorConsoleAgent* m_consoleAgent;
     InspectorDebuggerAgent* m_debuggerAgent;
     InspectorAgentRegistry m_agents;

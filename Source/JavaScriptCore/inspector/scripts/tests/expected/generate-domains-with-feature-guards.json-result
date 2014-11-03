@@ -750,7 +750,7 @@ using namespace Inspector;
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
     auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorNetwork1BackendDispatcher, AlternateInspectorNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), WTF::move(alternateDispatcher));
-    _controller->agentRegistry().append(WTF::move(alternateAgent));
+    _controller->agentRegistry().appendExtraAgent(WTF::move(alternateAgent));
 }
 
 - (id<RWIProtocolNetwork1DomainHandler>)network1Handler

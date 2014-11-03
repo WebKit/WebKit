@@ -471,7 +471,7 @@ WebInspector.DOMTreeManager.prototype = {
             this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, {documentNodeIdentifier: documentNodeIdentifier, flows: contentFlows});
         }
 
-        if (CSSAgent.getNamedFlowCollection)
+        if (window.CSSAgent && CSSAgent.getNamedFlowCollection)
             CSSAgent.getNamedFlowCollection(documentNodeIdentifier, onNamedFlowCollectionAvailable.bind(this));
     },
 

@@ -64,12 +64,19 @@ public:
     void inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
     void evaluateForTestInFrontend(const String& script);
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    void activateExtraDomains(const Vector<String>&);
+#endif
+
 private:
     InspectorEnvironment& m_environment;
     std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
     Vector<String> m_pendingEvaluateTestCommands;
     std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    RefPtr<Inspector::Protocol::Array<String>> m_pendingExtraDomainsData;
+#endif
     bool m_enabled;
 };
 

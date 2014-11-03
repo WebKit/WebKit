@@ -43,6 +43,8 @@ class InspectorAgentBase {
 public:
     virtual ~InspectorAgentBase() { }
 
+    String domainName() const { return m_name; }
+
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) = 0;
     virtual void willDestroyFrontendAndBackend(InspectorDisconnectReason reason) = 0;
     virtual void discardAgent() { }

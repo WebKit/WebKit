@@ -23,8 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WebInspector.DebuggableType = {
+    Web: "web",
+    JavaScript: "javascript"
+};
+
 WebInspector.loaded = function()
 {
+    this.debuggableType = WebInspector.DebuggableType.Web;
+    this.hasExtraDomains = false;
+
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
     InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);

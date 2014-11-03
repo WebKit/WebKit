@@ -852,7 +852,7 @@ using namespace Inspector;
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorDatabaseBackendDispatcher>(handler);
     auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorDatabaseBackendDispatcher, AlternateInspectorDatabaseBackendDispatcher>>(ASCIILiteral("Database"), WTF::move(alternateDispatcher));
-    _controller->agentRegistry().append(WTF::move(alternateAgent));
+    _controller->agentRegistry().appendExtraAgent(WTF::move(alternateAgent));
 }
 
 - (id<RWIProtocolDatabaseDomainHandler>)databaseHandler

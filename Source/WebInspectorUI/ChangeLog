@@ -1,3 +1,50 @@
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ALTERNATE_DISPATCHERS Let the frontend know about extra agents
+        https://bugs.webkit.org/show_bug.cgi?id=138236
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomain):
+        * UserInterface/Protocol/InspectorObserver.js:
+        (WebInspector.InspectorObserver.prototype.activateExtraDomains):
+        * UserInterface/Base/Object.js:
+        * UserInterface/Base/Test.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.activateExtraDomains):
+        Default state is that there are no extra domains. When extra domains
+        are activated, some agents need to be re-initialized. Dispatch a
+        model event so views also know to re-initialize.
+
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        (WebInspector.ApplicationCacheManager.prototype._mainResourceDidChange):
+        * UserInterface/Controllers/DOMTreeManager.js:
+        Be more careful about direct agent use during main resource changes.
+        That can happen with a JSContext extended with a Page agent.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager):
+        (WebInspector.FrameResourceManager.prototype._mainFrameDidChange):
+        (WebInspector.FrameResourceManager.prototype._extraDomainsActivated):
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager):
+        (WebInspector.StorageManager.prototype._databaseForIdentifier):
+        (WebInspector.StorageManager.prototype._extraDomainsActivated):
+        It is possible new window.FooAgent's are available. Perform expected
+        initialization re-checking if the agents are now available.
+
+        * UserInterface/Models/CSSCompletions.js:
+        Avoid re-initialization if we already did it. This should never
+        happen but this is just to be safe.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._extraDomainsActivated):
+        Don't disallow expandable tree elements if this is a JSContext with
+        extra domains. If that JSContext has resources, we would have been
+        unable to see child resources.
+
 2014-10-30  Dana Burkart  <dburkart@apple.com>
 
         <rdar://problem/18821260> Prepare for the mysterious future

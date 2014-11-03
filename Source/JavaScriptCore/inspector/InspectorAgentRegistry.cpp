@@ -42,6 +42,15 @@ void InspectorAgentRegistry::append(std::unique_ptr<InspectorAgentBase> agent)
     m_agents.append(WTF::move(agent));
 }
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+void InspectorAgentRegistry::appendExtraAgent(std::unique_ptr<InspectorAgentBase> agent)
+{
+    m_extraDomains.append(agent->domainName());
+
+    append(WTF::move(agent));
+}
+#endif
+
 void InspectorAgentRegistry::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     for (size_t i = 0; i < m_agents.size(); i++)

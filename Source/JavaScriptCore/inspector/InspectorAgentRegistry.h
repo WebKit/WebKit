@@ -28,6 +28,7 @@
 #define InspectorAgentRegistry_h
 
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
@@ -46,6 +47,11 @@ public:
     void willDestroyFrontendAndBackend(InspectorDisconnectReason reason);
     void discardAgents();
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    void appendExtraAgent(std::unique_ptr<InspectorAgentBase>);
+    Vector<String> extraDomains() const { return m_extraDomains; }
+#endif
+
 private:
     // These are declared here to avoid MSVC from trying to create default iplementations which would
     // involve generating a copy constructor and copy assignment operator for the Vector of std::unique_ptrs.
@@ -53,6 +59,9 @@ private:
     InspectorAgentRegistry& operator=(const InspectorAgentRegistry&) = delete;
 
     Vector<std::unique_ptr<InspectorAgentBase>> m_agents;
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    Vector<String> m_extraDomains;
+#endif
 };
 
 } // namespace Inspector

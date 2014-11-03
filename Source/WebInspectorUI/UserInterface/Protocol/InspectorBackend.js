@@ -101,8 +101,13 @@ InspectorBackendClass.prototype = {
 
     activateDomain: function(domainName, activationDebuggableType)
     {
-        if (!activationDebuggableType || InspectorFrontendHost.debuggableType() === activationDebuggableType)
-            this._agents[domainName].activate();
+        if (!activationDebuggableType || InspectorFrontendHost.debuggableType() === activationDebuggableType) {
+            var agent = this._agents[domainName];
+            agent.activate();
+            return agent;
+        }
+
+        return null;
     },
 
     // Private
