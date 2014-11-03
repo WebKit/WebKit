@@ -62,6 +62,7 @@
 #import "RenderObject.h"
 #import "RenderStyleConstants.h"
 #import "RenderText.h"
+#import "ResourceBuffer.h"
 #import "SharedBuffer.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
@@ -463,15 +464,23 @@ using WebCore::VisiblePosition;
 
 - (NSData *)dataRepresentation:(BOOL)rawImageData
 {
-    WebCore::CachedImage* cachedImage = core(self)->cachedImage();
+    WebCore::CachedImage *cachedImage = core(self)->cachedImage();
     if (!cachedImage)
         return nil;
-    WebCore::Image* image = cachedImage->image();
+    WebCore::Image *image = cachedImage->image();
     if (!image)
         return nil;
-    WebCore::SharedBuffer* data = rawImageData ? cachedImage->resourceBuffer() : image->data();
+    WebCore::SharedBuffer *data = nil;
+    if (rawImageData) {
+        ResourceBuffer *resourceBuffer = cachedImage->resourceBuffer();
+        if (resourceBuffer)
+            data = resourceBuffer->sharedBuffer();
+    } else {
+        data = image->data();
+    }
     if (!data)
         return nil;
+
     return data->createNSData().autorelease();
 }
 

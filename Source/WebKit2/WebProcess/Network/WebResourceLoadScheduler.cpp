@@ -46,6 +46,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>

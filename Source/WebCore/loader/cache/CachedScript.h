@@ -30,35 +30,36 @@
 
 namespace WebCore {
 
-class TextResourceDecoder;
+    class CachedResourceLoader;
+    class TextResourceDecoder;
 
-class CachedScript final : public CachedResource {
-public:
-    CachedScript(const ResourceRequest&, const String& charset, SessionID);
-    virtual ~CachedScript();
+    class CachedScript final : public CachedResource {
+    public:
+        CachedScript(const ResourceRequest&, const String& charset, SessionID);
+        virtual ~CachedScript();
 
-    const String& script();
+        const String& script();
 
-    String mimeType() const;
+        String mimeType() const;
 
 #if ENABLE(NOSNIFF)
-    bool mimeTypeAllowedByNosniff() const;
+        bool mimeTypeAllowedByNosniff() const;
 #endif
 
-private:
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
+    private:
+        virtual bool mayTryReplaceEncodedData() const override { return true; }
 
-    virtual bool shouldIgnoreHTTPStatusCodeErrors() const override;
+        virtual bool shouldIgnoreHTTPStatusCodeErrors() const override;
 
-    virtual void setEncoding(const String&) override;
-    virtual String encoding() const override;
-    virtual void finishLoading(SharedBuffer*) override;
+        virtual void setEncoding(const String&) override;
+        virtual String encoding() const override;
+        virtual void finishLoading(ResourceBuffer*) override;
 
-    virtual void destroyDecodedData() override;
+        virtual void destroyDecodedData() override;
 
-    String m_script;
-    RefPtr<TextResourceDecoder> m_decoder;
-};
+        String m_script;
+        RefPtr<TextResourceDecoder> m_decoder;
+    };
 
 } // namespace WebCore
 

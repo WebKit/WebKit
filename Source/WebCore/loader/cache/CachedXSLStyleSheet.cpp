@@ -29,7 +29,7 @@
 
 #include "CachedResourceClientWalker.h"
 #include "CachedStyleSheetClient.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
 
@@ -44,10 +44,6 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(const ResourceRequest& resourceRequest,
     // It's XML we want.
     // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
     setAccept("text/xml, application/xml, application/xhtml+xml, text/xsl, application/rss+xml, application/atom+xml");
-}
-
-CachedXSLStyleSheet::~CachedXSLStyleSheet()
-{
 }
 
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient* c)
@@ -67,12 +63,12 @@ String CachedXSLStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedXSLStyleSheet::finishLoading(SharedBuffer* data)
+void CachedXSLStyleSheet::finishLoading(ResourceBuffer* data)
 {
     m_data = data;
-    setEncodedSize(data ? data->size() : 0);
-    if (data)
-        m_sheet = m_decoder->decodeAndFlush(data->data(), encodedSize());
+    setEncodedSize(m_data.get() ? m_data->size() : 0);
+    if (m_data.get())
+        m_sheet = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
     setLoading(false);
     checkNotify();
 }

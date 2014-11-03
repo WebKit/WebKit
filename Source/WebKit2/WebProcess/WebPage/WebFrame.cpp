@@ -65,6 +65,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
@@ -304,7 +305,7 @@ String WebFrame::source() const
     DocumentLoader* documentLoader = m_coreFrame->loader().activeDocumentLoader();
     if (!documentLoader)
         return String();
-    RefPtr<SharedBuffer> mainResourceData = documentLoader->mainResourceData();
+    RefPtr<ResourceBuffer> mainResourceData = documentLoader->mainResourceData();
     if (!mainResourceData)
         return String();
     return decoder->encoding().decode(mainResourceData->data(), mainResourceData->size());

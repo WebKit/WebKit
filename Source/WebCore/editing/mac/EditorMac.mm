@@ -52,6 +52,7 @@
 #import "Range.h"
 #import "RenderBlock.h"
 #import "RenderImage.h"
+#import "ResourceBuffer.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
 #import "StyleProperties.h"
@@ -446,7 +447,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;
     pasteboardImage.url.userVisibleForm = client()->userVisibleString(pasteboardImage.url.url);
-    pasteboardImage.resourceData = cachedImage->resourceBuffer();
+    pasteboardImage.resourceData = cachedImage->resourceBuffer()->sharedBuffer();
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 
     pasteboard.write(pasteboardImage);

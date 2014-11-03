@@ -29,29 +29,34 @@
 #if ENABLE(XSLT)
 
 #include "CachedResource.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class TextResourceDecoder;
+    class CachedResourceLoader;
+    class TextResourceDecoder;
 
-class CachedXSLStyleSheet final : public CachedResource {
-public:
-    CachedXSLStyleSheet(const ResourceRequest&, SessionID);
-    virtual ~CachedXSLStyleSheet();
+    class CachedXSLStyleSheet final : public CachedResource {
+    public:
+        CachedXSLStyleSheet(const ResourceRequest&, SessionID);
 
-    const String& sheet() const { return m_sheet; }
+        const String& sheet() const { return m_sheet; }
 
-private:
-    virtual void checkNotify() override;
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
-    virtual void didAddClient(CachedResourceClient*) override;
-    virtual void setEncoding(const String&) override;
-    virtual String encoding() const override;
-    virtual void finishLoading(SharedBuffer*) override;
+    protected:
+        virtual void checkNotify() override;
 
-    String m_sheet;
-    RefPtr<TextResourceDecoder> m_decoder;
-};
+        String m_sheet;
+        RefPtr<TextResourceDecoder> m_decoder;
+
+    private:
+        virtual bool mayTryReplaceEncodedData() const override { return true; }
+
+        virtual void didAddClient(CachedResourceClient*) override;
+
+        virtual void setEncoding(const String&) override;
+        virtual String encoding() const override;
+        virtual void finishLoading(ResourceBuffer*) override;
+    };
 
 } // namespace WebCore
 

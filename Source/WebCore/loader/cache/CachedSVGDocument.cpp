@@ -23,7 +23,10 @@
 #include "config.h"
 #include "CachedSVGDocument.h"
 
-#include "SharedBuffer.h"
+#include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
+#include "ResourceBuffer.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -48,7 +51,7 @@ String CachedSVGDocument::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedSVGDocument::finishLoading(SharedBuffer* data)
+void CachedSVGDocument::finishLoading(ResourceBuffer* data)
 {
     if (data) {
         // We don't need to create a new frame because the new document belongs to the parent UseElement.

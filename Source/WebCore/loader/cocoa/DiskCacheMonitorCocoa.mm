@@ -103,7 +103,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
         if (!fileBackedBuffer)
             return;
 
-        monitor->resourceBecameFileBacked(*fileBackedBuffer);
+        monitor->resourceBecameFileBacked(fileBackedBuffer);
     };
 
 #if USE(WEB_THREAD)
@@ -121,7 +121,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
     _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, blockToRun, dispatch_get_main_queue());
 }
 
-void DiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)
+void DiskCacheMonitor::resourceBecameFileBacked(PassRefPtr<SharedBuffer> fileBackedBuffer)
 {
     CachedResource* resource = memoryCache()->resourceForRequest(m_resourceRequest, m_sessionID);
     if (!resource)

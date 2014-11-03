@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "PlatformStrategies.h"
+#include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 #include "SchemeRegistry.h"
@@ -107,10 +108,10 @@ DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("Cac
 
 CachedResource::CachedResource(const ResourceRequest& request, Type type, SessionID sessionID)
     : m_resourceRequest(request)
-    , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
+    , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_lastDecodedAccessTime(0)
     , m_loadFinishTime(0)
     , m_encodedSize(0)
@@ -285,22 +286,22 @@ void CachedResource::checkNotify()
     if (isLoading() || stillNeedsLoad())
         return;
 
-    CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
-    while (CachedResourceClient* client = walker.next())
-        client->notifyFinished(this);
+    CachedResourceClientWalker<CachedResourceClient> w(m_clients);
+    while (CachedResourceClient* c = w.next())
+        c->notifyFinished(this);
 }
 
-void CachedResource::addDataBuffer(SharedBuffer&)
+void CachedResource::addDataBuffer(ResourceBuffer*)
 {
-    ASSERT(dataBufferingPolicy() == BufferData);
+    ASSERT(m_options.dataBufferingPolicy() == BufferData);
 }
 
 void CachedResource::addData(const char*, unsigned)
 {
-    ASSERT(dataBufferingPolicy() == DoNotBufferData);
+    ASSERT(m_options.dataBufferingPolicy() == DoNotBufferData);
 }
 
-void CachedResource::finishLoading(SharedBuffer*)
+void CachedResource::finishLoading(ResourceBuffer*)
 {
     setLoading(false);
     checkNotify();
@@ -390,15 +391,17 @@ void CachedResource::addClient(CachedResourceClient* client)
         didAddClient(client);
 }
 
-void CachedResource::didAddClient(CachedResourceClient* client)
+void CachedResource::didAddClient(CachedResourceClient* c)
 {
     if (m_decodedDataDeletionTimer.isActive())
         m_decodedDataDeletionTimer.stop();
 
-    if (m_clientsAwaitingCallback.remove(client))
-        m_clients.add(client);
+    if (m_clientsAwaitingCallback.contains(c)) {
+        m_clients.add(c);
+        m_clientsAwaitingCallback.remove(c);
+    }
     if (!isLoading() && !stillNeedsLoad())
-        client->notifyFinished(this);
+        c->notifyFinished(this);
 }
 
 bool CachedResource::addClientToSet(CachedResourceClient* client)
@@ -420,7 +423,7 @@ bool CachedResource::addClientToSet(CachedResourceClient* client)
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
         // we schedule the callbacks and ensure we never finish synchronously.
         ASSERT(!m_clientsAwaitingCallback.contains(client));
-        m_clientsAwaitingCallback.add(client, std::make_unique<Callback>(*this, *client));
+        m_clientsAwaitingCallback.add(client, CachedResourceCallback::schedule(this, client));
         return false;
     }
 
@@ -728,28 +731,27 @@ void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority)
     m_loadPriority = loadPriority;
 }
 
-inline CachedResource::Callback::Callback(CachedResource& resource, CachedResourceClient& client)
+CachedResource::CachedResourceCallback::CachedResourceCallback(CachedResource* resource, CachedResourceClient* client)
     : m_resource(resource)
     , m_client(client)
-    , m_timer(this, &Callback::timerFired)
+    , m_callbackTimer(this, &CachedResourceCallback::timerFired)
 {
-    m_timer.startOneShot(0);
+    m_callbackTimer.startOneShot(0);
 }
 
-inline void CachedResource::Callback::cancel()
+void CachedResource::CachedResourceCallback::cancel()
 {
-    if (m_timer.isActive())
-        m_timer.stop();
+    if (m_callbackTimer.isActive())
+        m_callbackTimer.stop();
 }
 
-void CachedResource::Callback::timerFired(Timer<Callback>&)
+void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>&)
 {
-    m_resource.didAddClient(&m_client);
+    m_resource->didAddClient(m_client);
 }
 
 #if USE(FOUNDATION)
-
-void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
+void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)
 {
     if (!m_data)
         return;
@@ -760,12 +762,11 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
     // We have to do the memcmp because we can't tell if the replacement file backed data is for the
     // same resource or if we made a second request with the same URL which gave us a different
     // resource. We have seen this happen for cached POST resources.
-    if (m_data->size() != newBuffer.size() || memcmp(m_data->data(), newBuffer.data(), m_data->size()))
+    if (m_data->size() != newBuffer->size() || memcmp(m_data->data(), newBuffer->data(), m_data->size()))
         return;
 
-    m_data->tryReplaceContentsWithPlatformBuffer(newBuffer);
+    m_data->tryReplaceSharedBufferContents(newBuffer.get());
 }
-
 #endif
 
 }

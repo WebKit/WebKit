@@ -45,6 +45,7 @@
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SynchronousLoaderClient.h>
@@ -408,20 +409,18 @@ void NetworkResourceLoader::bufferingTimerFired(Timer<NetworkResourceLoader>&)
 
 void NetworkResourceLoader::sendBuffer(WebCore::SharedBuffer* buffer, int encodedDataLength)
 {
-    ASSERT(buffer);
     ASSERT(!isSynchronous());
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     ShareableResource::Handle shareableResourceHandle;
-    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, *buffer);
+    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
     if (!shareableResourceHandle.isNull()) {
-        // Since we're delivering this resource by ourselves all at once and don't need any more data or callbacks from the network layer, abort the loader.
+        // Since we're delivering this resource by ourselves all at once and don't need anymore data or callbacks from the network layer, abort the loader.
         abort();
         send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
         return;
     }
 #endif
-
     IPC::SharedBufferDataReference dataReference(buffer);
     sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }

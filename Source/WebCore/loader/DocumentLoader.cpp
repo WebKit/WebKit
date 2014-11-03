@@ -56,6 +56,7 @@
 #include "Page.h"
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
+#include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
@@ -170,20 +171,20 @@ DocumentLoader::~DocumentLoader()
     clearMainResource();
 }
 
-PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
+PassRefPtr<ResourceBuffer> DocumentLoader::mainResourceData() const
 {
     if (m_substituteData.isValid())
-        return m_substituteData.content()->copy();
+        return ResourceBuffer::create(m_substituteData.content()->data(), m_substituteData.content()->size());
     if (m_mainResource)
         return m_mainResource->resourceBuffer();
-    return nullptr;
+    return 0;
 }
 
 Document* DocumentLoader::document() const
 {
     if (m_frame && m_frame->loader().documentLoader() == this)
         return m_frame->document();
-    return nullptr;
+    return 0;
 }
 
 const ResourceRequest& DocumentLoader::originalRequest() const
@@ -993,7 +994,8 @@ bool DocumentLoader::maybeCreateArchive()
 #else
     
     // Give the archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
-    m_archive = ArchiveFactory::create(m_response.url(), mainResourceData().get(), m_response.mimeType());
+    RefPtr<ResourceBuffer> mainResourceBuffer = mainResourceData();
+    m_archive = ArchiveFactory::create(m_response.url(), mainResourceBuffer ? mainResourceBuffer->sharedBuffer() : 0, m_response.mimeType());
     if (!m_archive)
         return false;
     
@@ -1009,7 +1011,6 @@ bool DocumentLoader::maybeCreateArchive()
 }
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-
 void DocumentLoader::setArchive(PassRefPtr<Archive> archive)
 {
     m_archive = archive;
@@ -1057,46 +1058,47 @@ SharedBuffer* DocumentLoader::parsedArchiveData() const
 {
     return m_parsedArchiveData.get();
 }
-
 #endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 
 ArchiveResource* DocumentLoader::archiveResourceForURL(const URL& url) const
 {
     if (!m_archiveResourceCollection)
-        return nullptr;
+        return 0;
+        
     ArchiveResource* resource = m_archiveResourceCollection->archiveResourceForURL(url);
-    if (!resource || resource->shouldIgnoreWhenUnarchiving())
-        return nullptr;
-    return resource;
+
+    return resource && !resource->shouldIgnoreWhenUnarchiving() ? resource : 0;
 }
 
 PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
 {
-    RefPtr<SharedBuffer> data = mainResourceData();
+    const ResourceResponse& r = response();
+    
+    RefPtr<ResourceBuffer> mainResourceBuffer = mainResourceData();
+    RefPtr<SharedBuffer> data = mainResourceBuffer ? mainResourceBuffer->sharedBuffer() : 0;
     if (!data)
         data = SharedBuffer::create();
         
-    auto& response = this->response();
-    return ArchiveResource::create(data, response.url(), response.mimeType(), response.textEncodingName(), frame()->tree().uniqueName());
+    return ArchiveResource::create(data, r.url(), r.mimeType(), r.textEncodingName(), frame()->tree().uniqueName());
 }
 
 PassRefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
 {
     if (!isCommitted())
-        return nullptr;
+        return 0;
     
     CachedResource* resource = m_cachedResourceLoader->cachedResource(url);
     if (!resource || !resource->isLoaded())
         return archiveResourceForURL(url);
 
     if (resource->type() == CachedResource::MainResource)
-        return nullptr;
+        return 0;
 
-    auto* data = resource->resourceBuffer();
+    ResourceBuffer* data = resource->resourceBuffer();
     if (!data)
-        return nullptr;
+        return 0;
 
-    return ArchiveResource::create(data, url, resource->response());
+    return ArchiveResource::create(data->sharedBuffer(), url, resource->response());
 }
 
 Vector<RefPtr<ArchiveResource>> DocumentLoader::subresources() const
@@ -1509,7 +1511,7 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
 
     frameLoader()->setupForReplace();
     m_committed = false;
-    RefPtr<SharedBuffer> resourceData = mainResourceData();
+    RefPtr<ResourceBuffer> resourceData = mainResourceData();
     commitLoad(resourceData->data(), resourceData->size());
 }
 

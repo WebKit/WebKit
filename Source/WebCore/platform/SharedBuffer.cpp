@@ -33,7 +33,6 @@
 namespace WebCore {
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-
 static const unsigned segmentSize = 0x1000;
 static const unsigned segmentPositionMask = 0x0FFF;
 
@@ -57,7 +56,6 @@ static inline void freeSegment(char* p)
 {
     fastFree(p);
 }
-
 #endif
 
 SharedBuffer::SharedBuffer()
@@ -216,8 +214,9 @@ void SharedBuffer::clear()
     clearPlatformData();
     
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    for (char* segment : m_segments)
-        freeSegment(segment);
+    for (unsigned i = 0; i < m_segments.size(); ++i)
+        freeSegment(m_segments[i]);
+
     m_segments.clear();
 #else
     m_dataArray.clear();
@@ -227,26 +226,24 @@ void SharedBuffer::clear()
     clearDataBuffer();
 }
 
-PassRef<SharedBuffer> SharedBuffer::copy() const
+PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 {
-    PassRef<SharedBuffer> clone { adoptRef(*new SharedBuffer) };
+    RefPtr<SharedBuffer> clone(adoptRef(new SharedBuffer));
     if (hasPlatformData()) {
-        clone.get().append(data(), size());
+        clone->append(data(), size());
         return clone;
     }
 
-    clone.get().m_size = m_size;
-    clone.get().m_buffer->data.reserveCapacity(m_size);
-    clone.get().m_buffer->data.append(m_buffer->data.data(), m_buffer->data.size());
-
+    clone->m_size = m_size;
+    clone->m_buffer->data.reserveCapacity(m_size);
+    clone->m_buffer->data.append(m_buffer->data.data(), m_buffer->data.size());
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    for (char* segment : m_segments)
-        clone.get().m_buffer->data.append(segment, segmentSize);
+    for (unsigned i = 0; i < m_segments.size(); ++i)
+        clone->m_buffer->data.append(m_segments[i], segmentSize);
 #else
-    for (auto& data : m_dataArray)
-        clone.get().append(data.get());
+    for (unsigned i = 0; i < m_dataArray.size(); ++i)
+        clone->append(m_dataArray[i].get());
 #endif
-
     return clone;
 }
 
@@ -278,19 +275,17 @@ void SharedBuffer::clearDataBuffer()
 }
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-
 void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const
 {
-    for (char* segment : m_segments) {
+    for (unsigned i = 0; i < m_segments.size(); ++i) {
         unsigned effectiveBytesToCopy = std::min(bytesToCopy, segmentSize);
-        memcpy(destination, segment, effectiveBytesToCopy);
+        memcpy(destination, m_segments[i], effectiveBytesToCopy);
         destination += effectiveBytesToCopy;
         bytesToCopy -= effectiveBytesToCopy;
-        freeSegment(segment);
+        freeSegment(m_segments[i]);
     }
     m_segments.clear();
 }
-
 #endif
 
 const Vector<char>& SharedBuffer::buffer() const

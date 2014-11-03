@@ -46,6 +46,7 @@ typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 
 namespace WebCore {
 class BlobDataFileReference;
+class ResourceBuffer;
 class ResourceHandle;
 class ResourceRequest;
 }
@@ -91,7 +92,7 @@ public:
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     static void tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle&, CFCachedURLResponseRef);
-    static void tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle&, WebCore::SharedBuffer&);
+    static void tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle&, WebCore::SharedBuffer*);
 #endif
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

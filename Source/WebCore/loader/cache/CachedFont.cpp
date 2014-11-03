@@ -33,6 +33,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
+#include "ResourceBuffer.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "TypedElementDescendantIterator.h"
@@ -75,7 +76,7 @@ void CachedFont::didAddClient(CachedResourceClient* c)
         static_cast<CachedFontClient*>(c)->fontLoaded(this);
 }
 
-void CachedFont::finishLoading(SharedBuffer* data)
+void CachedFont::finishLoading(ResourceBuffer* data)
 {
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
@@ -94,27 +95,30 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 bool CachedFont::ensureCustomFontData()
 {
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
-        RefPtr<SharedBuffer> buffer = m_data;
-        bool fontIsWOFF = false;
+        SharedBuffer* buffer = m_data.get()->sharedBuffer();
+        ASSERT(buffer);
 
+        bool fontIsWOFF = false;
 #if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090) && (!PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED < 80000)
-        if (isWOFF(buffer.get())) {
-            Vector<char> convertedFont;
-            if (!convertWOFFToSfnt(buffer.get(), convertedFont))
+        RefPtr<SharedBuffer> sfntBuffer;
+
+        fontIsWOFF = isWOFF(buffer);
+        if (fontIsWOFF) {
+            Vector<char> sfnt;
+            if (convertWOFFToSfnt(buffer, sfnt)) {
+                sfntBuffer = SharedBuffer::adoptVector(sfnt);
+                buffer = sfntBuffer.get();
+            } else
                 buffer = nullptr;
-            else {
-                buffer = SharedBuffer::adoptVector(convertedFont);
-                fontIsWOFF = true;
-            }
         }
 #endif
 
         m_fontData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
-        m_hasCreatedFontDataWrappingResource = m_fontData && !fontIsWOFF;
-        if (!m_fontData)
+        if (m_fontData)
+            m_hasCreatedFontDataWrappingResource = !fontIsWOFF;
+        else
             setStatus(DecodeError);
     }
-
     return m_fontData.get();
 }
 

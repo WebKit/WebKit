@@ -84,7 +84,7 @@ void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(Shareab
     tryGetShareableHandleFromCFData(handle, data);
 }
 
-void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle& handle, SharedBuffer& buffer)
+void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle& handle, SharedBuffer* buffer)
 {
     static CFURLCacheRef cache = CFURLCacheCopySharedURLCache();
     ASSERT(isMainThread());
@@ -93,7 +93,7 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
     if (!cache)
         return;
 
-    CFDataRef data = buffer.existingCFData();
+    CFDataRef data = buffer->existingCFData();
     if (!data)
         return;
 
@@ -102,8 +102,7 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
 
     tryGetShareableHandleFromCFData(handle, data);
 }
-
-#endif // IOS || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
 {
@@ -111,7 +110,6 @@ size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
 }
 
 #if USE(CFNETWORK)
-
 void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef cfResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
@@ -135,7 +133,6 @@ void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCac
 
     m_handle->continueWillCacheResponse(nsResponse);
 }
-
 #endif // !USE(CFNETWORK)
 
 } // namespace WebKit

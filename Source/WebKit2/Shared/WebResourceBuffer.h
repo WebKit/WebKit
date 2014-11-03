@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CachedTextTrack_h
-#define CachedTextTrack_h
+#ifndef WebResourceBuffer_h
+#define WebResourceBuffer_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(SHAREABLE_RESOURCE)
 
-#include "CachedResource.h"
-#include "FontOrientation.h"
+#include <WebCore/ResourceBuffer.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class CachedTextTrack final : public CachedResource {
+class ShareableResource;
+
+class WebResourceBuffer : public WebCore::ResourceBuffer {
 public:
-    CachedTextTrack(const ResourceRequest&, SessionID);
-    virtual ~CachedTextTrack();
+    static PassRefPtr<WebResourceBuffer> create(PassRefPtr<ShareableResource> resource) { return adoptRef(new WebResourceBuffer(resource)); }
+
+    virtual ~WebResourceBuffer() override;
+
+    virtual const char* data() const override;
+    virtual unsigned size() const override;
+    virtual bool isEmpty() const override;
 
 private:
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
-    virtual void addDataBuffer(ResourceBuffer*) override;
-    virtual void finishLoading(ResourceBuffer*) override;
+    WebResourceBuffer(PassRefPtr<ShareableResource>);
+
+    RefPtr<ShareableResource> m_resource;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedTextTrack, CachedResource::TextTrackResource)
+#endif // ENABLE(SHAREABLE_RESOURCE)
 
-#endif // ENABLE(VIDEO_TRACK)
-
-#endif // CachedTextTrack_h
+#endif // WebResourceBuffer_h

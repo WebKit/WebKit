@@ -45,7 +45,7 @@ public:
 protected:
     WEBCORE_EXPORT DiskCacheMonitor(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
 
-    virtual void resourceBecameFileBacked(SharedBuffer&);
+    virtual void resourceBecameFileBacked(PassRefPtr<SharedBuffer>);
 
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     SessionID sessionID() const { return m_sessionID; }

@@ -235,6 +235,7 @@ set(WebKit2_SOURCES
     Shared/WebProcessCreationParameters.cpp
     Shared/WebRenderLayer.cpp
     Shared/WebRenderObject.cpp
+    Shared/WebResourceBuffer.cpp
     Shared/WebTouchEvent.cpp
     Shared/WebWheelEvent.cpp
 

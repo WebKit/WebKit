@@ -51,7 +51,6 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/DNS.h>
 #import <WebCore/Element.h>
-#import <WebCore/ElementAncestorIterator.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
@@ -82,6 +81,7 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/ResourceBuffer.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
@@ -1842,11 +1842,10 @@ void WebPage::getAutocorrectionContext(String& contextBefore, String& markedText
 
 static Element* containingLinkElement(Element* element)
 {
-    for (auto& currentElement : elementLineage(element)) {
-        if (currentElement.isLink())
-            return &currentElement;
-    }
-    return nullptr;
+    for (Element* currentElement = element; currentElement; currentElement = currentElement->parentElement())
+        if (currentElement->isLink())
+            return currentElement;
+    return 0;
 }
 
 void WebPage::getPositionInformation(const IntPoint& point, InteractionInformationAtPosition& info)
@@ -1950,77 +1949,73 @@ void WebPage::performActionOnElement(uint32_t action)
     if (!is<HTMLElement>(m_interactionNode.get()))
         return;
 
-    HTMLElement& element = downcast<HTMLElement>(*m_interactionNode);
-    if (!element.renderer())
+    HTMLElement* element = downcast<HTMLElement>(m_interactionNode.get());
+    if (!element->renderer())
         return;
 
     if (static_cast<SheetAction>(action) == SheetAction::Copy) {
-        if (is<RenderImage>(*element.renderer())) {
-            Element* linkElement = containingLinkElement(&element);
+        if (is<RenderImage>(*element->renderer())) {
+            Element* linkElement = containingLinkElement(element);
+        
             if (!linkElement)
-                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), element, downcast<RenderImage>(*element.renderer()).cachedImage()->url(), String());
+                m_interactionNode->document().frame()->editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, downcast<RenderImage>(*element->renderer()).cachedImage()->url(), String());
             else
-                m_interactionNode->document().frame()->editor().copyURL(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->fastGetAttribute(HTMLNames::hrefAttr))), linkElement->textContent());
-        } else if (element.isLink()) {
-            m_interactionNode->document().frame()->editor().copyURL(element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.fastGetAttribute(HTMLNames::hrefAttr))), element.textContent());
+                m_interactionNode->document().frame()->editor().copyURL(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))), linkElement->textContent());
+        } else if (element->isLink()) {
+            m_interactionNode->document().frame()->editor().copyURL(element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(HTMLNames::hrefAttr))), element->textContent());
         }
     } else if (static_cast<SheetAction>(action) == SheetAction::SaveImage) {
-        if (!is<RenderImage>(*element.renderer()))
+        if (!is<RenderImage>(*element->renderer()))
             return;
-        CachedImage* cachedImage = downcast<RenderImage>(*element.renderer()).cachedImage();
-        if (!cachedImage)
-            return;
-        SharedBuffer* buffer = cachedImage->resourceBuffer();
-        if (!buffer)
-            return;
-        uint64_t bufferSize = buffer->size();
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(bufferSize);
-        memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
-        SharedMemory::Handle handle;
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
-        send(Messages::WebPageProxy::SaveImageToLibrary(handle, bufferSize));
+        if (CachedImage* cachedImage = downcast<RenderImage>(*element->renderer()).cachedImage()) {
+            SharedMemory::Handle handle;
+            RefPtr<SharedBuffer> buffer = cachedImage->resourceBuffer()->sharedBuffer();
+            if (buffer) {
+                uint64_t bufferSize = buffer->size();
+                RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(bufferSize);
+                memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
+                sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+                send(Messages::WebPageProxy::SaveImageToLibrary(handle, bufferSize));
+            }
+        }
     }
 }
 
-static inline bool isAssistableElement(Element& node)
+static inline bool isAssistableNode(Node* node)
 {
-    if (is<HTMLSelectElement>(node))
+    if (is<HTMLSelectElement>(*node))
         return true;
-    if (is<HTMLTextAreaElement>(node))
-        return !downcast<HTMLTextAreaElement>(node).isReadOnlyNode();
-    if (is<HTMLInputElement>(node)) {
-        HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
-        // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
-        return !inputElement.isReadOnlyNode() && (inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField());
+    if (is<HTMLTextAreaElement>(*node))
+        return !downcast<HTMLTextAreaElement>(*node).isReadOnlyNode();
+    if (is<HTMLInputElement>(*node)) {
+        HTMLInputElement& element = downcast<HTMLInputElement>(*node);
+        return !element.isReadOnlyNode() && (element.isTextField() || element.isDateField() || element.isDateTimeLocalField() || element.isMonthField() || element.isTimeField());
     }
-    return node.isContentEditable();
+
+    return node->isContentEditable();
 }
 
-static inline Element* nextAssistableElement(Node* startNode, Page& page, bool isForward)
+static inline Element* nextFocusableElement(Node* startNode, Page* page, bool isForward)
 {
-    if (!is<Element>(startNode))
-        return nullptr;
-
     RefPtr<KeyboardEvent> key = KeyboardEvent::create();
 
     Element* nextElement = downcast<Element>(startNode);
     do {
-        nextElement = isForward
-            ? page.focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get())
-            : page.focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get());
-    } while (nextElement && !isAssistableElement(*nextElement));
+        nextElement = isForward ? page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get())
+            : page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&nextElement->document()), nextElement, key.get());
+    } while (nextElement && !isAssistableNode(nextElement));
 
     return nextElement;
 }
 
-static inline bool hasAssistableElement(Node* startNode, Page& page, bool isForward)
+static inline bool hasFocusableElement(Node* startNode, Page* page, bool isForward)
 {
-    return nextAssistableElement(startNode, page, isForward);
+    return nextFocusableElement(startNode, page, isForward) != nil;
 }
 
 void WebPage::focusNextAssistedNode(bool isForward)
 {
-    Element* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, isForward);
+    Element* nextElement = nextFocusableElement(m_assistedNode.get(), m_page.get(), isForward);
     m_userIsInteracting = true;
     if (nextElement)
         nextElement->focus();
@@ -2061,8 +2056,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.minimumScaleFactor = minimumPageScaleFactor();
     information.maximumScaleFactor = maximumPageScaleFactor();
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
-    information.hasNextNode = hasAssistableElement(m_assistedNode.get(), *m_page, true);
-    information.hasPreviousNode = hasAssistableElement(m_assistedNode.get(), *m_page, false);
+    information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
+    information.hasPreviousNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), false);
 
     if (is<HTMLSelectElement>(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);

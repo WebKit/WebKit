@@ -41,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "ManifestParser.h"
 #include "Page.h"
+#include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -253,8 +254,11 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
                 resource->addType(ApplicationCacheResource::Master);
                 ASSERT(!resource->storageID());
             }
-        } else
-            m_newestCache->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Master, loader->mainResourceData()));
+        } else {
+            RefPtr<ResourceBuffer> buffer = loader->mainResourceData();
+            m_newestCache->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Master, buffer ? buffer->sharedBuffer() : 0));
+        }
+
         break;
     case Failure:
         // Cache update has been a failure, so there is no reason to keep the document associated with the incomplete cache
@@ -272,8 +276,10 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
                 resource->addType(ApplicationCacheResource::Master);
                 ASSERT(!resource->storageID());
             }
-        } else
-            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Master, loader->mainResourceData()));
+        } else {
+            RefPtr<ResourceBuffer> buffer = loader->mainResourceData();
+            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Master, buffer ? buffer->sharedBuffer() : 0));
+        }
         // The "cached" event will be posted to all associated documents once update is complete.
         break;
     }

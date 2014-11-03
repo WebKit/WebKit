@@ -30,10 +30,12 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include "WebResourceBuffer.h"
 #include "WebResourceLoadScheduler.h"
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/SharedBuffer.h>
 
@@ -93,7 +95,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
         return;
     }
 
-    resource->tryReplaceEncodedData(*buffer);
+    resource->tryReplaceEncodedData(buffer.release());
 }
 #endif
 

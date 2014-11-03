@@ -62,6 +62,7 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "ResourceBuffer.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -142,9 +143,11 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
 
     *base64Encoded = !hasTextContent(cachedResource);
     if (*base64Encoded) {
-        RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->resourceBuffer();
+        RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->resourceBuffer()->sharedBuffer();
+
         if (!buffer)
             return false;
+
         *result = base64Encode(buffer->data(), buffer->size());
         return true;
     }
@@ -163,7 +166,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             *result = downcast<CachedScript>(*cachedResource).script();
             return true;
         case CachedResource::RawResource: {
-            auto* buffer = cachedResource->resourceBuffer();
+            ResourceBuffer* buffer = cachedResource->resourceBuffer();
             if (!buffer)
                 return false;
             RefPtr<TextResourceDecoder> decoder = createXHRTextDecoder(cachedResource->response().mimeType(), cachedResource->response().textEncodingName());
@@ -174,7 +177,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             return true;
         }
         default:
-            auto* buffer = cachedResource->resourceBuffer();
+            ResourceBuffer* buffer = cachedResource->resourceBuffer();
             return decodeBuffer(buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0, cachedResource->encoding(), result);
         }
     }
@@ -183,10 +186,12 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
 
 bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
 {
-    RefPtr<SharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
+    RefPtr<ResourceBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
         return false;
-    return InspectorPageAgent::dataContent(buffer->data(), buffer->size(), frame->document()->inputEncoding(), withBase64Encode, result);
+    String textEncodingName = frame->document()->inputEncoding();
+
+    return InspectorPageAgent::dataContent(buffer->data(), buffer->size(), textEncodingName, withBase64Encode, result);
 }
 
 // static

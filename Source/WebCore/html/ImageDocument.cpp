@@ -45,6 +45,7 @@
 #include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "RenderElement.h"
+#include "ResourceBuffer.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -133,8 +134,7 @@ void ImageDocument::updateDuringParsing()
     if (!m_imageElement)
         createDocumentStructure();
 
-    if (RefPtr<SharedBuffer> buffer = loader()->mainResourceData())
-        m_imageElement->cachedImage()->addDataBuffer(*buffer);
+    m_imageElement->cachedImage()->addDataBuffer(loader()->mainResourceData().get());
 
     imageUpdated();
 }
@@ -143,11 +143,11 @@ void ImageDocument::finishedParsing()
 {
     if (!parser()->isStopped() && m_imageElement) {
         CachedImage& cachedImage = *m_imageElement->cachedImage();
-        RefPtr<SharedBuffer> data = loader()->mainResourceData();
+        RefPtr<ResourceBuffer> data = loader()->mainResourceData();
 
         // If this is a multipart image, make a copy of the current part, since the resource data
         // will be overwritten by the next part.
-        if (data && loader()->isLoadingMultipartContent())
+        if (loader()->isLoadingMultipartContent())
             data = data->copy();
 
         cachedImage.finishLoading(data.get());

@@ -83,27 +83,21 @@ private:
     size_t m_size;
 };
 
-class SharedBufferDataReference : public DataReference {
+class SharedBufferDataReference: public DataReference {
 public:
-    // FIXME: This class doesn't handle null, so the argument should be a reference or PassRef.
     SharedBufferDataReference(WebCore::SharedBuffer* buffer)
-        : m_buffer(buffer)
     {
+        m_buffer = buffer;
     }
 
-private:
-    // FIXME: It is a bad idea to violate the Liskov Substitution Principle as we do here.
-    // Since we are using DataReference as a polymoprhic base class in this fashion,
-    // then we need it to be a base class that does not have functions such as isEmpty,
-    // size, data, and vector, all of which will do the wrong thing if they are called.
-    // Deleting these functions here does not prevent them from being called.
-    bool isEmpty() const = delete;
-    size_t size() const = delete;
+    size_t size() const { return m_buffer->size(); }
     const uint8_t* data() const = delete;
     Vector<uint8_t> vector() const = delete;
 
-    virtual void encode(ArgumentEncoder&) const override;
+    void encode(ArgumentEncoder&) const override;
+    virtual ~SharedBufferDataReference() { m_buffer = 0; }
 
+private:
     RefPtr<WebCore::SharedBuffer> m_buffer;
 };
 

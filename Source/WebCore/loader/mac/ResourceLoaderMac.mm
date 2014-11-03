@@ -31,10 +31,10 @@
 
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "SharedBuffer.h"
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 #include "InspectorInstrumentation.h"
+#include "ResourceBuffer.h"
 #endif
 
 #if USE(CFNETWORK)
@@ -83,7 +83,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 
         if (m_options.dataBufferingPolicy() == BufferData) {
             if (!m_resourceData)
-                m_resourceData = SharedBuffer::create();
+                m_resourceData = ResourceBuffer::create();
             m_resourceData->append(data);
         }
 

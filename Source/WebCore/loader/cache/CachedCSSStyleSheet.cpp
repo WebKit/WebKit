@@ -33,7 +33,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MemoryCache.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "StyleSheetContents.h"
 #include "TextResourceDecoder.h"
 #include <wtf/CurrentTime.h>
@@ -90,13 +90,13 @@ const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValid
     return m_decoder->decodeAndFlush(m_data->data(), m_data->size());
 }
 
-void CachedCSSStyleSheet::finishLoading(SharedBuffer* data)
+void CachedCSSStyleSheet::finishLoading(ResourceBuffer* data)
 {
     m_data = data;
-    setEncodedSize(data ? data->size() : 0);
+    setEncodedSize(m_data.get() ? m_data->size() : 0);
     // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
-    if (data)
-        m_decodedSheetText = m_decoder->decodeAndFlush(data->data(), data->size());
+    if (m_data)
+        m_decodedSheetText = m_decoder->decodeAndFlush(m_data->data(), m_data->size());
     setLoading(false);
     checkNotify();
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.

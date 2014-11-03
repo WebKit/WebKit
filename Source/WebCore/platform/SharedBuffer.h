@@ -102,7 +102,7 @@ public:
     void append(CFDataRef);
 #endif
 
-    PassRef<SharedBuffer> copy() const;
+    PassRefPtr<SharedBuffer> copy() const;
     
     // Return the number of consecutive bytes after "position". "data"
     // points to the first byte.
@@ -118,7 +118,7 @@ public:
     //      }
     WEBCORE_EXPORT unsigned getSomeData(const char*& data, unsigned position = 0) const;
 
-    void tryReplaceContentsWithPlatformBuffer(SharedBuffer&);
+    void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
     WEBCORE_EXPORT bool hasPlatformData() const;
 
     struct DataBuffer : public ThreadSafeRefCounted<DataBuffer> {
@@ -158,7 +158,6 @@ private:
 #else
     mutable Vector<char*> m_segments;
 #endif
-
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;

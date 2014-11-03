@@ -33,6 +33,7 @@
 #include "CachedResourceRequest.h"
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #include "NotImplemented.h"
+#include "ResourceBuffer.h"
 #include "ResourceLoaderOptions.h"
 #include "SharedBuffer.h"
 #include "SoftLinking.h"

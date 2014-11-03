@@ -47,6 +47,7 @@ class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
 class InspectorResource;
+class ResourceBuffer;
 class SecurityOrigin;
 class SharedBuffer;
 class SubresourceLoader;
@@ -95,9 +96,9 @@ public:
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
-    virtual void addDataBuffer(SharedBuffer&);
+    virtual void addDataBuffer(ResourceBuffer*);
     virtual void addData(const char* data, unsigned length);
-    virtual void finishLoading(SharedBuffer*);
+    virtual void finishLoading(ResourceBuffer*);
     virtual void error(CachedResource::Status);
 
     void setResourceError(const ResourceError& error) { m_error = error; }
@@ -186,7 +187,7 @@ public:
     
     void clearLoader();
 
-    SharedBuffer* resourceBuffer() const { return m_data.get(); }
+    ResourceBuffer* resourceBuffer() const { return m_data.get(); }
 
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
     virtual void responseReceived(const ResourceResponse&);
@@ -244,47 +245,61 @@ public:
     virtual bool canReuse(const ResourceRequest&) const { return true; }
 
 #if USE(FOUNDATION)
-    WEBCORE_EXPORT void tryReplaceEncodedData(SharedBuffer&);
+    WEBCORE_EXPORT void tryReplaceEncodedData(PassRefPtr<SharedBuffer>);
 #endif
 
 #if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t /* requestedSize */, size_t& /* actualSize */) { return nullptr; }
+    virtual char* getOrCreateReadBuffer(size_t /* requestedSize */, size_t& /* actualSize */) { return 0; }
 #endif
 
 protected:
+    virtual void checkNotify();
+
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
 
-    // FIXME: Make the rest of these data members private and use functions in derived classes instead.
     HashCountedSet<CachedResourceClient*> m_clients;
+
+    class CachedResourceCallback {
+    public:
+        CachedResourceCallback(CachedResource*, CachedResourceClient*);
+
+        static std::unique_ptr<CachedResourceCallback> schedule(CachedResource* resource, CachedResourceClient* client) { return std::make_unique<CachedResourceCallback>(resource, client); }
+        void cancel();
+    private:
+        void timerFired(Timer<CachedResourceCallback>&);
+
+        CachedResource* m_resource;
+        CachedResourceClient* m_client;
+        Timer<CachedResourceCallback> m_callbackTimer;
+    };
+    HashMap<CachedResourceClient*, std::unique_ptr<CachedResourceCallback>> m_clientsAwaitingCallback;
+
     ResourceRequest m_resourceRequest;
+    SessionID m_sessionID;
+    String m_accept;
     RefPtr<SubresourceLoader> m_loader;
     ResourceLoaderOptions m_options;
+    ResourceLoadPriority m_loadPriority;
+
     ResourceResponse m_response;
-    RefPtr<SharedBuffer> m_data;
+    double m_responseTimestamp;
+
+    RefPtr<ResourceBuffer> m_data;
     DeferrableOneShotTimer m_decodedDataDeletionTimer;
 
 private:
-    class Callback;
-
     bool addClientToSet(CachedResourceClient*);
 
     void decodedDataDeletionTimerFired();
 
-    virtual void checkNotify();
     virtual bool mayTryReplaceEncodedData() const { return false; }
 
     double freshnessLifetime(const ResourceResponse&) const;
 
     void addAdditionalRequestHeaders(CachedResourceLoader*);
     void failBeforeStarting();
-
-    HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
-    SessionID m_sessionID;
-    String m_accept;
-    ResourceLoadPriority m_loadPriority;
-    double m_responseTimestamp;
 
     String m_fragmentIdentifierForRequest;
 
@@ -323,7 +338,7 @@ private:
     CachedResource* m_nextInLiveResourcesList;
     CachedResource* m_prevInLiveResourcesList;
 
-    CachedResourceLoader* m_owningCachedResourceLoader; // only non-null for resources that are not in the cache
+    CachedResourceLoader* m_owningCachedResourceLoader; // only non-0 for resources that are not in the cache
     
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
@@ -338,20 +353,6 @@ private:
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;
-};
-
-class CachedResource::Callback {
-public:
-    Callback(CachedResource&, CachedResourceClient&);
-
-    void cancel();
-
-private:
-    void timerFired(Timer<Callback>&);
-
-    CachedResource& m_resource;
-    CachedResourceClient& m_client;
-    Timer<Callback> m_timer;
 };
 
 } // namespace WebCore

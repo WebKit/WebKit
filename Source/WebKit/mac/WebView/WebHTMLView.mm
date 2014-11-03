@@ -108,6 +108,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
+#import <WebCore/ResourceBuffer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleFontData.h>
@@ -3954,7 +3955,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     NSURL *draggingImageURL = nil;
     
     if (WebCore::CachedImage* tiffResource = [self promisedDragTIFFDataSource]) {
-        if (auto* buffer = tiffResource->resourceBuffer()) {
+        if (ResourceBuffer *buffer = static_cast<CachedResource*>(tiffResource)->resourceBuffer()) {
             NSURLResponse *response = tiffResource->response().nsURLResponse();
             draggingImageURL = [response URL];
             wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().get()] autorelease];
