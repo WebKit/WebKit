@@ -439,6 +439,13 @@ accessibility/aria-help.html [ Skip ]
 # ENABLE_GAMEPAD not enabled.
 webkit.org/b/134718 gamepad [ Skip ]
 
+# These tests are for an obsolete version of the EME spec.
+webkit.org/b/95297 fast/events/constructors/media-key-event-constructor.html [ WontFix ]
+media/encrypted-media/encrypted-media-can-play-type-webm.html [ WontFix ]
+media/encrypted-media/encrypted-media-events.html [ WontFix ]
+media/encrypted-media/encrypted-media-not-loaded.html [ WontFix ]
+media/encrypted-media/encrypted-media-syntax.html [ WontFix ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1114,8 +1121,10 @@ webkit.org/b/95296 http/tests/media/media-source [ Skip ]
 webkit.org/b/95296 media/media-source [ Skip ]
 
 # Requires ENCRYPTED_MEDIA support.
-webkit.org/b/95297 media/encrypted-media [ Skip ]
-webkit.org/b/95297 fast/events/constructors/media-key-event-constructor.html [ Skip ]
+webkit.org/b/95297 media/encrypted-media [ Pass ]
+
+# Failing, need to fix. https://bugs.webkit.org/show_bug.cgi?id=138307
+webkit.org/b/138307 media/encrypted-media/encrypted-media-can-play-type.html [ Skip ]
 
 # Requires POINTER_LOCK support.
 webkit.org/b/88080 pointer-lock [ Skip ]
