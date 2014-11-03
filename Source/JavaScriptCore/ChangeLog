@@ -1,5 +1,28 @@
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Fix RWIProtocol 64-to-32 bit conversion warnings
+        https://bugs.webkit.org/show_bug.cgi?id=138325
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorValues.h:
+        Vector's length really is an unsigned, so a static_cast here is fine.
+
+        * inspector/scripts/codegen/generate_objective_c.py:
+        (ObjCGenerator.objc_type_for_raw_name):
+        Use int instead of NSInteger for APIs that eventually map to
+        InspectorObject's setInteger, which takes an int.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        Rebaselined results with the type change.
+
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Show Selector's Specificity
         https://bugs.webkit.org/show_bug.cgi?id=138189
 

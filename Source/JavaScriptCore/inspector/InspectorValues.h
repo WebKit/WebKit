@@ -262,7 +262,7 @@ public:
     typedef Vector<RefPtr<InspectorValue>>::iterator iterator;
     typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
 
-    unsigned length() const { return m_data.size(); }
+    unsigned length() const { return static_cast<unsigned>(m_data.size()); }
 
 protected:
     virtual ~InspectorArrayBase();

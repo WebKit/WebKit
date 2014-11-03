@@ -1234,9 +1234,9 @@ using namespace Inspector;
 
 
 @interface RWIProtocolDatabaseError : RWIProtocolJSONObject
-- (instancetype)initWithMessage:(NSString *)message code:(NSInteger)code;
+- (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
-/* required */ @property (nonatomic, assign) NSInteger code;
+/* required */ @property (nonatomic, assign) int code;
 @end
 
 @interface RWIProtocolDatabaseOptionalParameterBundle : RWIProtocolJSONObject
@@ -1331,7 +1331,7 @@ using namespace Inspector;
 
 @implementation RWIProtocolDatabaseError
 
-- (instancetype)initWithMessage:(NSString *)message code:(NSInteger)code;
+- (instancetype)initWithMessage:(NSString *)message code:(int)code;
 {
     self = [super init];
     if (!self)
@@ -1355,12 +1355,12 @@ using namespace Inspector;
     return [super stringForKey:@"message"];
 }
 
-- (void)setCode:(NSInteger)code
+- (void)setCode:(int)code
 {
     [super setInteger:code forKey:@"code"];
 }
 
-- (NSInteger)code
+- (int)code
 {
     return [super integerForKey:@"code"];
 }

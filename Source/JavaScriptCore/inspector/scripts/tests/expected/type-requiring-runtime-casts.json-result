@@ -1192,11 +1192,11 @@ typedef NS_ENUM(NSInteger, RWIProtocolTestCastedAnimals) {
 
 
 @interface RWIProtocolTestTypeNeedingCast : RWIProtocolJSONObject
-- (instancetype)initWithString:(NSString *)string number:(NSInteger)number animals:(RWIProtocolTestCastedAnimals)animals identifier:(NSInteger)identifier tree:(RWIProtocolTestRecursiveObject1 *)tree;
+- (instancetype)initWithString:(NSString *)string number:(int)number animals:(RWIProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(RWIProtocolTestRecursiveObject1 *)tree;
 /* required */ @property (nonatomic, copy) NSString *string;
-/* required */ @property (nonatomic, assign) NSInteger number;
+/* required */ @property (nonatomic, assign) int number;
 /* required */ @property (nonatomic, assign) RWIProtocolTestCastedAnimals animals;
-/* required */ @property (nonatomic, assign) NSInteger identifier;
+/* required */ @property (nonatomic, assign) int identifier;
 /* required */ @property (nonatomic, retain) RWIProtocolTestRecursiveObject1 *tree;
 @end
 
@@ -1259,7 +1259,7 @@ using namespace Inspector;
 
 @implementation RWIProtocolTestTypeNeedingCast
 
-- (instancetype)initWithString:(NSString *)string number:(NSInteger)number animals:(RWIProtocolTestCastedAnimals)animals identifier:(NSInteger)identifier tree:(RWIProtocolTestRecursiveObject1 *)tree;
+- (instancetype)initWithString:(NSString *)string number:(int)number animals:(RWIProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(RWIProtocolTestRecursiveObject1 *)tree;
 {
     self = [super init];
     if (!self)
@@ -1287,12 +1287,12 @@ using namespace Inspector;
     return [super stringForKey:@"string"];
 }
 
-- (void)setNumber:(NSInteger)number
+- (void)setNumber:(int)number
 {
     [super setInteger:number forKey:@"number"];
 }
 
-- (NSInteger)number
+- (int)number
 {
     return [super integerForKey:@"number"];
 }
@@ -1307,12 +1307,12 @@ using namespace Inspector;
     return fromProtocolString<RWIProtocolTestCastedAnimals>([super stringForKey:@"animals"]);
 }
 
-- (void)setIdentifier:(NSInteger)identifier
+- (void)setIdentifier:(int)identifier
 {
     [super setInteger:identifier forKey:@"id"];
 }
 
-- (NSInteger)identifier
+- (int)identifier
 {
     return [super integerForKey:@"id"];
 }

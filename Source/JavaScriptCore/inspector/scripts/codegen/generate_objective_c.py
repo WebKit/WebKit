@@ -193,7 +193,7 @@ class ObjCGenerator:
         if raw_name is 'array':
             return 'NSArray *'
         if raw_name is 'integer':
-            return 'NSInteger'
+            return 'int'
         if raw_name is 'number':
             return 'double'
         if raw_name is 'boolean':

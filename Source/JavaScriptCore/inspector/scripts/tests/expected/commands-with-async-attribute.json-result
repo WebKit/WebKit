@@ -1063,7 +1063,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
         backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, NSInteger *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor) {
+    id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
@@ -1091,7 +1091,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
         backendDispatcher()->sendResponse(callId, resultObject.release(), String());
     };
 
-    NSInteger o_in_databaseId = in_databaseId;
+    int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
 
     [m_delegate executeSQLSyncOptionalReturnValuesWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
@@ -1103,7 +1103,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
         backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, NSInteger *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor) {
+    id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
@@ -1131,7 +1131,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
         backendDispatcher()->sendResponse(callId, resultObject.release(), String());
     };
 
-    NSInteger o_in_databaseId = in_databaseId;
+    int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
 
     [m_delegate executeSQLAsyncOptionalReturnValuesWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
@@ -1143,7 +1143,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long callId, int in_
         backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, NSInteger databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLSyncPrintColor printColor) {
+    id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLSyncPrintColor printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
@@ -1162,7 +1162,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long callId, int in_
         backendDispatcher()->sendResponse(callId, resultObject.release(), String());
     };
 
-    NSInteger o_in_databaseId = in_databaseId;
+    int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
 
     [m_delegate executeSQLSyncWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
@@ -1174,7 +1174,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, int in
         backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
     };
 
-    id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, NSInteger databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLAsyncPrintColor printColor) {
+    id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLAsyncPrintColor printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
@@ -1193,7 +1193,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, int in
         backendDispatcher()->sendResponse(callId, resultObject.release(), String());
     };
 
-    NSInteger o_in_databaseId = in_databaseId;
+    int o_in_databaseId = in_databaseId;
     NSString *o_in_query = in_query;
 
     [m_delegate executeSQLAsyncWithErrorCallback:errorCallback successCallback:successCallback databaseId:o_in_databaseId query:o_in_query];
@@ -1508,17 +1508,17 @@ typedef NS_ENUM(NSInteger, RWIProtocolDatabaseExecuteSQLAsyncPrintColor) {
 
 
 @interface RWIProtocolDatabaseError : RWIProtocolJSONObject
-- (instancetype)initWithMessage:(NSString *)message code:(NSInteger)code;
+- (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
-/* required */ @property (nonatomic, assign) NSInteger code;
+/* required */ @property (nonatomic, assign) int code;
 @end
 
 @protocol RWIProtocolDatabaseDomainHandler <NSObject>
 @required
-- (void)executeSQLSyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, NSInteger *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(NSInteger)databaseId query:(NSString *)query;
-- (void)executeSQLAsyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, NSInteger *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(NSInteger)databaseId query:(NSString *)query;
-- (void)executeSQLSyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, NSInteger databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLSyncPrintColor printColor))successCallback databaseId:(NSInteger)databaseId query:(NSString *)query;
-- (void)executeSQLAsyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, NSInteger databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLAsyncPrintColor printColor))successCallback databaseId:(NSInteger)databaseId query:(NSString *)query;
+- (void)executeSQLSyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLAsyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLSyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLSyncPrintColor printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
+- (void)executeSQLAsyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLAsyncPrintColor printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
 @end
 
 
@@ -1570,7 +1570,7 @@ using namespace Inspector;
 
 @implementation RWIProtocolDatabaseError
 
-- (instancetype)initWithMessage:(NSString *)message code:(NSInteger)code;
+- (instancetype)initWithMessage:(NSString *)message code:(int)code;
 {
     self = [super init];
     if (!self)
@@ -1594,12 +1594,12 @@ using namespace Inspector;
     return [super stringForKey:@"message"];
 }
 
-- (void)setCode:(NSInteger)code
+- (void)setCode:(int)code
 {
     [super setInteger:code forKey:@"code"];
 }
 
-- (NSInteger)code
+- (int)code
 {
     return [super integerForKey:@"code"];
 }
