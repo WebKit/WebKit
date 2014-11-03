@@ -102,11 +102,19 @@ std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imag
 
 std::unique_ptr<ImageBuffer> snapshotSelection(Frame& frame, SnapshotOptions options)
 {
-    if (!frame.selection().isRange())
+    auto& selection = frame.selection();
+
+    if (!selection.isRange())
+        return nullptr;
+
+    FloatRect selectionBounds = selection.selectionBounds();
+
+    // It is possible for the selection bounds to be empty; see https://bugs.webkit.org/show_bug.cgi?id=56645.
+    if (selectionBounds.isEmpty())
         return nullptr;
 
     options |= SnapshotOptionsPaintSelectionOnly;
-    return snapshotFrameRect(frame, enclosingIntRect(frame.selection().selectionBounds()), options);
+    return snapshotFrameRect(frame, enclosingIntRect(selectionBounds), options);
 }
 
 std::unique_ptr<ImageBuffer> snapshotNode(Frame& frame, Node& node)
