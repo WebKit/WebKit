@@ -305,7 +305,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_webAccessibility(std::make_unique<WebAccessibility>(this))
 #endif
     , m_pageViewportControllerClient(this)
-    , m_pageViewportController(page(), &m_pageViewportControllerClient)
+    , m_pageViewportController(page(), m_pageViewportControllerClient)
     , m_isAccelerated(true)
     , m_isWaitingForNewPage(false)
 {
@@ -578,6 +578,12 @@ void EwkView::scheduleUpdateDisplay()
 
     if (!m_displayTimer.isActive())
         m_displayTimer.startOneShot(0);
+}
+
+void EwkView::setViewportPosition(const FloatPoint& contentsPosition)
+{
+    WKViewSetContentPosition(wkView(), WKPointMake(contentsPosition.x(), contentsPosition.y()));
+    m_pageViewportController.didChangeContentsVisibility(contentsPosition, m_pageViewportController.currentScale());
 }
 
 #if ENABLE(FULLSCREEN_API)

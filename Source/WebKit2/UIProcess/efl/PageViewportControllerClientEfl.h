@@ -45,11 +45,8 @@ public:
     virtual void didChangeVisibleContents() override;
     virtual void didChangeViewportAttributes() override;
 
-    virtual void setController(PageViewportController*) override;
-
 private:
     EwkView* m_view;
-    PageViewportController* m_controller;
 };
 
 } // namespace WebKit

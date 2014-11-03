@@ -70,6 +70,7 @@ class AffineTransform;
 class Color;
 class CoordinatedGraphicsScene;
 class Cursor;
+class FloatPoint;
 class EvasGLContext;
 class EvasGLSurface;
 class Image;
@@ -143,6 +144,7 @@ public:
     void setCursor(const WebCore::Cursor& cursor);
 
     void scheduleUpdateDisplay();
+    void setViewportPosition(const WebCore::FloatPoint& contentsPosition);
 
 #if ENABLE(FULLSCREEN_API)
     void enterFullScreen();

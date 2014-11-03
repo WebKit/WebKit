@@ -38,7 +38,7 @@ bool fuzzyCompare(float a, float b, float epsilon)
     return std::abs(a - b) < epsilon;
 }
 
-PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, PageViewportControllerClient* client)
+PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, PageViewportControllerClient& client)
     : m_webPageProxy(proxy)
     , m_client(client)
     , m_allowsUserScaling(false)
@@ -59,9 +59,6 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     // using the viewport size and the final layout size.
     // To be able to assert for valid scale we initialize it to -1.
     m_rawAttributes.initialScale = -1;
-
-    ASSERT(m_client);
-    m_client->setController(this);
 }
 
 float PageViewportController::innerBoundedViewportScale(float viewportScale) const
@@ -160,7 +157,7 @@ void PageViewportController::didChangeContentsSize(const IntSize& newSize)
     }
 
     if (minimumScaleUpdated)
-        m_client->didChangeViewportAttributes();
+        m_client.didChangeViewportAttributes();
 
     // We might have pending position change which is now possible.
     syncVisibleContents();
@@ -173,7 +170,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
         // Only update the viewport's contents dimensions along with its render if the
         // size actually changed since animations on the page trigger DidRenderFrame
         // messages without causing dimension changes.
-        m_client->didChangeContentsSize(contentsSize);
+        m_client.didChangeContentsSize(contentsSize);
     }
 
     m_lastFrameCoveredRect = coveredRect;
@@ -187,7 +184,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
 
     if (m_pendingScaleChange) {
         m_pendingScaleChange = false;
-        m_client->setPageScaleFactor(m_pageScaleFactor);
+        m_client.setPageScaleFactor(m_pageScaleFactor);
 
         // The scale changed, we have to re-pixel align.
         m_pendingPositionChange = true;
@@ -201,7 +198,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
     // There might be rendered frames not covering our requested position yet, wait for it.
     FloatRect endVisibleContentRect(m_contentsPosition, visibleContentsSize());
     if (m_pendingPositionChange && endVisibleContentRect.intersects(coveredRect)) {
-        m_client->setViewportPosition(m_contentsPosition);
+        m_client.setViewportPosition(m_contentsPosition);
         m_pendingPositionChange = false;
     }
 }
@@ -232,7 +229,7 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
     FloatRect endVisibleContentRect(alignedPosition, visibleContentsSize());
 
     if (m_lastFrameCoveredRect.intersects(endVisibleContentRect))
-        m_client->setViewportPosition(alignedPosition);
+        m_client.setViewportPosition(alignedPosition);
     else {
         // Keep the unbound position in case the contents size is changed later on.
         FloatPoint position = pixelAlignedFloatPoint(FloatPoint(cssPosition));
@@ -268,7 +265,7 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
     drawingArea->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 
-    m_client->didChangeVisibleContents();
+    m_client.didChangeVisibleContents();
 }
 
 void PageViewportController::didChangeViewportAttributes(const WebCore::ViewportAttributes& newAttributes)
@@ -291,7 +288,7 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
     m_pendingPositionChange = true;
     m_pendingScaleChange = true;
 
-    m_client->didChangeViewportAttributes();
+    m_client.didChangeViewportAttributes();
 }
 
 FloatSize PageViewportController::visibleContentsSize() const

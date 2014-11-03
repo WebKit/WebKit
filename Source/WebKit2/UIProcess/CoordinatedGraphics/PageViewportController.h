@@ -43,7 +43,7 @@ class PageViewportController {
     WTF_MAKE_NONCOPYABLE(PageViewportController);
 
 public:
-    PageViewportController(WebKit::WebPageProxy*, PageViewportControllerClient*);
+    PageViewportController(WebKit::WebPageProxy*, PageViewportControllerClient&);
     virtual ~PageViewportController() { }
 
     float innerBoundedViewportScale(float) const;
@@ -86,7 +86,7 @@ private:
     bool updateMinimumScaleToFit(bool userInitiatedUpdate);
 
     WebPageProxy* const m_webPageProxy;
-    PageViewportControllerClient* m_client;
+    PageViewportControllerClient& m_client;
 
     WebCore::ViewportAttributes m_rawAttributes;
 
