@@ -27,6 +27,10 @@
 #ifndef StyleBuilderCustom_h
 #define StyleBuilderCustom_h
 
+#include "BasicShapeFunctions.h"
+#include "CSSImageGeneratorValue.h"
+#include "CSSImageSetValue.h"
+#include "CSSImageValue.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -108,6 +112,42 @@ inline void applyValueZoom(StyleResolver& styleResolver, CSSValue& value)
             styleResolver.setZoom(number);
     }
 }
+
+#if ENABLE(CSS_SHAPES)
+inline void applyValueWebkitShapeOutside(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        // FIXME: Shouldn't this be CSSValueNone?
+        // http://www.w3.org/TR/css-shapes/#shape-outside-property
+        if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+            styleResolver.style()->setShapeOutside(nullptr);
+    } if (is<CSSImageValue>(value) || is<CSSImageGeneratorValue>(value) || is<CSSImageSetValue>(value)) {
+        RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver.styleImage(CSSPropertyWebkitShapeOutside, &value));
+        styleResolver.style()->setShapeOutside(shape.release());
+    } else if (is<CSSValueList>(value)) {
+        RefPtr<BasicShape> shape;
+        CSSBoxType referenceBox = BoxMissing;
+        auto& valueList = downcast<CSSValueList>(value);
+        for (unsigned i = 0; i < valueList.length(); ++i) {
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*valueList.itemWithoutBoundsCheck(i));
+            if (primitiveValue.isShape())
+                shape = basicShapeForValue(styleResolver.state().cssToLengthConversionData(), primitiveValue.getShapeValue());
+            else if (primitiveValue.getValueID() == CSSValueContentBox
+                || primitiveValue.getValueID() == CSSValueBorderBox
+                || primitiveValue.getValueID() == CSSValuePaddingBox
+                || primitiveValue.getValueID() == CSSValueMarginBox)
+                referenceBox = CSSBoxType(primitiveValue);
+            else
+                return;
+        }
+
+        if (shape)
+            styleResolver.style()->setShapeOutside(ShapeValue::createShapeValue(shape.release(), referenceBox));
+        else if (referenceBox != BoxMissing)
+            styleResolver.style()->setShapeOutside(ShapeValue::createBoxShapeValue(referenceBox));
+    }
+}
+#endif // ENABLE(CSS_SHAPES)
 
 } // namespace StyleBuilderFunctions
 

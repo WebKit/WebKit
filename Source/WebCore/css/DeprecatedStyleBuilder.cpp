@@ -1803,53 +1803,6 @@ public:
     }
 };
 
-#if ENABLE(CSS_SHAPES)
-template <ShapeValue* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<ShapeValue>), ShapeValue* (*initialFunction)()>
-class ApplyPropertyShape {
-public:
-    static void setValue(RenderStyle* style, PassRefPtr<ShapeValue> value) { (style->*setterFunction)(value); }
-    static void applyValue(CSSPropertyID property, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (is<CSSPrimitiveValue>(*value)) {
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-            if (primitiveValue.getValueID() == CSSValueAuto)
-                setValue(styleResolver->style(), 0);
-        } else if (value->isImageValue() || value->isImageGeneratorValue() || value->isImageSetValue()) {
-            RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver->styleImage(property, value));
-            setValue(styleResolver->style(), shape.release());
-        } else if (is<CSSValueList>(*value)) {
-            RefPtr<BasicShape> shape;
-            CSSBoxType referenceBox = BoxMissing;
-            CSSValueList& valueList = downcast<CSSValueList>(*value);
-            for (unsigned i = 0; i < valueList.length(); ++i) {
-                CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*valueList.itemWithoutBoundsCheck(i));
-                if (primitiveValue.isShape())
-                    shape = basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue.getShapeValue());
-                else if (primitiveValue.getValueID() == CSSValueContentBox
-                    || primitiveValue.getValueID() == CSSValueBorderBox
-                    || primitiveValue.getValueID() == CSSValuePaddingBox
-                    || primitiveValue.getValueID() == CSSValueMarginBox)
-                    referenceBox = CSSBoxType(primitiveValue);
-                else
-                    return;
-            }
-
-            if (shape)
-                setValue(styleResolver->style(), ShapeValue::createShapeValue(shape.release(), referenceBox));
-            else if (referenceBox != BoxMissing)
-                setValue(styleResolver->style(), ShapeValue::createBoxShapeValue(referenceBox));
-
-        }
-    }
-
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyDefaultBase<ShapeValue*, getterFunction, PassRefPtr<ShapeValue>, setterFunction, ShapeValue*, initialFunction>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-#endif
-
 #if ENABLE(CSS_IMAGE_RESOLUTION)
 class ApplyPropertyImageResolution {
 public:
@@ -2070,9 +2023,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitTransitionProperty, ApplyPropertyAnimation<CSSPropertyID, &Animation::property, &Animation::setProperty, &Animation::isPropertySet, &Animation::clearProperty, &Animation::initialAnimationProperty, &CSSToStyleMap::mapAnimationProperty, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionTimingFunction, ApplyPropertyAnimation<const PassRefPtr<TimingFunction>, &Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSToStyleMap::mapAnimationTimingFunction, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitClipPath, ApplyPropertyClipPath<&RenderStyle::clipPath, &RenderStyle::setClipPath, &RenderStyle::initialClipPath>::createHandler());
-#if ENABLE(CSS_SHAPES)
-    setPropertyHandler(CSSPropertyWebkitShapeOutside, ApplyPropertyShape<&RenderStyle::shapeOutside, &RenderStyle::setShapeOutside, &RenderStyle::initialShapeOutside>::createHandler());
-#endif
     setPropertyHandler(CSSPropertyWidows, ApplyPropertyAuto<short, &RenderStyle::widows, &RenderStyle::setWidows, &RenderStyle::hasAutoWidows, &RenderStyle::setHasAutoWidows>::createHandler());
     setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyWordSpacing::createHandler());
 
