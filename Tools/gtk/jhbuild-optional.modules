@@ -9,8 +9,8 @@
 
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
-  <repository type="svn" name="llvm.org"
-      href="http://llvm.org/svn/llvm-project/llvm/"/>
+  <repository type="tarball" name="llvm.org"
+      href="http://llvm.org"/>
 
   <autotools id="libsecret" autogen-sh="configure">
     <branch repo="ftp.gnome.org"
@@ -44,9 +44,14 @@
     </dependencies>
   </autotools>
 
-  <autotools id="llvm" autogenargs="--enable-optimized --disable-terminfo --disable-zlib">
-    <branch repo="llvm.org" module="trunk" checkoutdir="llvm" version="r206311"
-            revision="206311"/>
+  <autotools id="llvm"
+             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions">
+    <branch repo="llvm.org"
+            module="/releases/3.5.0/llvm-3.5.0.src.tar.xz" version="3.5.0" checkoutdir="llvm-3.5.0"
+            hash="sha256:28e199f368ef0a4666708f31c7991ad3bcc3a578342b0306526dd35f07595c03">
+      <patch file="llvm-elf-fix-x86_64-fdecfiencoding.patch" strip="1"/>
+      <patch file="llvm-elf-add-stackmaps.patch" strip="1"/>
+    </branch>
   </autotools>
 
 </moduleset>

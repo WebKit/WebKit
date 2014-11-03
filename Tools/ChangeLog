@@ -1,3 +1,19 @@
+2014-11-02  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        [GTK] Fix the build of FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=138298
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild-optional.modules:
+        Bump up LLVM version to 3.5.0 release and apply patches.
+        * gtk/patches/llvm-elf-add-stackmaps.patch:
+        Added. Adds .llvm_stackmaps section to ELF files. Backported from LLVM
+        trunk.
+        * gtk/patches/llvm-elf-fix-x86_64-fdecfiencoding.patch:
+        Added. Ensures that PC-relative relocations in EH frames are not
+        truncated to 32 bits on x86_64.
+
 2014-10-31  Michael Saboff  <msaboff@apple.com>
 
         No way to specify target os or architecture when using the --no-copy option with run-jsc-stress-tests
