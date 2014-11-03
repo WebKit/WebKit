@@ -46,8 +46,8 @@ struct KeypressCommand;
 
 namespace WebKit {
 class DrawingAreaProxy;
-class FindIndicator;
 class LayerTreeContext;
+class TextIndicator;
 class ViewSnapshot;
 class WebContext;
 struct ActionMenuHitTestResult;
@@ -80,7 +80,7 @@ struct WebPageConfiguration;
 - (void)_setIntrinsicContentSize:(NSSize)intrinsicContentSize;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
-- (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
+- (void)_setTextIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 - (CALayer *)_acceleratedCompositingModeRootLayer;

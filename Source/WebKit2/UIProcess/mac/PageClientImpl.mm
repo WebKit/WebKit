@@ -33,11 +33,11 @@
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
 #import "DownloadProxy.h"
-#import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
 #import "StringUtilities.h"
+#import "TextIndicator.h"
 #import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
@@ -467,9 +467,9 @@ PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page,
 }
 #endif
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut, bool animate)
+void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut, bool animate)
 {
-    [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
+    [m_wkView _setTextIndicator:textIndicator fadeOut:fadeOut animate:animate];
 }
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
@@ -685,7 +685,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 void PageClientImpl::navigationGestureDidBegin()
 {
     // Hide the finde indicator if it's visible.
-    setFindIndicator(nullptr, false, false);
+    setTextIndicator(nullptr, false, false);
 
 #if WK_API_ENABLED
     if (m_webView)
