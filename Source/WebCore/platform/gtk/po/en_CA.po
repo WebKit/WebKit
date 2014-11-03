@@ -1457,7 +1457,7 @@ msgstr "Enable Caret Browsing"
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:842
 #, fuzzy
 msgid "Whether to enable accessibility enhanced keyboard navigation"
-msgstr "Whether to enable accesibility enhanced keyboard navigation"
+msgstr "Whether to enable accessibility enhanced keyboard navigation"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:458
 msgid "Enable HTML5 Database"

@@ -114,7 +114,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*) { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*) { return E_NOTIMPL; }
 
-    // WebCore::AccessiblityObjectWrapper
+    // WebCore::AccessibilityObjectWrapper
     virtual void detach() {
         ASSERT(m_object);
         m_object = 0;

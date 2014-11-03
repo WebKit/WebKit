@@ -1580,7 +1580,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
 
 // When building the textUnderElement for an object, determine whether or not
 // we should include the inner text of this given descendant object or skip it.
-static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, AccessibilityTextUnderElementMode mode)
+static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, AccessibilityTextUnderElementMode mode)
 {
     // Do not use any heuristic if we are explicitly asking to include all the children.
     if (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren)
@@ -1670,7 +1670,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             continue;
         }
         
-        if (!shouldUseAccessiblityObjectInnerText(child, mode))
+        if (!shouldUseAccessibilityObjectInnerText(child, mode))
             continue;
 
         if (is<AccessibilityNodeObject>(*child)) {

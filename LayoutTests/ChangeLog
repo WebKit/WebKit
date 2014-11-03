@@ -1,3 +1,12 @@
+2014-11-03  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        AX: Fix some minor typos related to the word "accessibility".
+        https://bugs.webkit.org/show_bug.cgi?id=138299
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-link-supports-press.html:
+
 2014-11-01  KyungTae Kim  <ktf.kim@samsung.com>
 
         [CSS] Add tests for :read-only and :read-write

@@ -714,7 +714,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
     int trackScore = 0;
 
     if (userPrefersCaptions()) {
-        // When the user prefers accessiblity tracks, rank is SDH, then CC, then subtitles.
+        // When the user prefers accessibility tracks, rank is SDH, then CC, then subtitles.
         if (track->kind() == track->subtitlesKeyword())
             trackScore = 1;
         else if (track->isClosedCaptions())

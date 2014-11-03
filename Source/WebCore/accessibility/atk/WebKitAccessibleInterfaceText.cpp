@@ -318,7 +318,7 @@ static const AccessibilityObject* getAccessibilityObjectForOffset(const Accessib
     return result;
 }
 
-static AtkAttributeSet* getRunAttributesFromAccesibilityObject(const AccessibilityObject* element, gint offset, gint* startOffset, gint* endOffset)
+static AtkAttributeSet* getRunAttributesFromAccessibilityObject(const AccessibilityObject* element, gint offset, gint* startOffset, gint* endOffset)
 {
     const AccessibilityObject* child = getAccessibilityObjectForOffset(element, offset, startOffset, endOffset);
     if (!child) {
@@ -1055,7 +1055,7 @@ static AtkAttributeSet* webkitAccessibleTextGetRunAttributes(AtkText* text, gint
     if (offset == -1)
         offset = atk_text_get_caret_offset(text);
 
-    result = getRunAttributesFromAccesibilityObject(coreObject, offset, startOffset, endOffset);
+    result = getRunAttributesFromAccessibilityObject(coreObject, offset, startOffset, endOffset);
 
     if (*startOffset < 0) {
         *startOffset = offset;
