@@ -1,3 +1,17 @@
+2014-11-03  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Using a media element changes window.name
+        https://bugs.webkit.org/show_bug.cgi?id=138278
+        rdar://problem/18704134
+
+        Apply the same fix to mediaControlsBase.js. I do not know who uses this file, but
+        there is no reason to have the bug there.
+
+        * Modules/mediacontrols/mediaControlsBase.js:
+        (Controller.prototype.addVideoListeners):
+        (Controller.prototype.removeVideoListeners):
+        (Controller.prototype.disconnectControls):
+
 2014-11-03  Andreas Kling  <akling@apple.com>
 
         RenderLayerModelObject shouldn't need a pre-destructor hook.
