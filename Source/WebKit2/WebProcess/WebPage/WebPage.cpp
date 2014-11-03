@@ -446,6 +446,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     
     setMediaVolume(parameters.mediaVolume);
 
+    setMuted(parameters.muted);
+
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
     m_page->addLayoutMilestones(DidFirstLayout | DidFirstVisuallyNonEmptyLayout);
 

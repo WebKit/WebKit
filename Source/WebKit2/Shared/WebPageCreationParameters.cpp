@@ -58,6 +58,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << deviceScaleFactor;
     encoder << topContentInset;
     encoder << mediaVolume;
+    encoder << muted;
     encoder << mayStartMediaWhenInWindow;
     encoder << minimumLayoutSize;
     encoder << autoSizingShouldExpandToViewHeight;
@@ -130,6 +131,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.topContentInset))
         return false;
     if (!decoder.decode(parameters.mediaVolume))
+        return false;
+    if (!decoder.decode(parameters.muted))
         return false;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return false;

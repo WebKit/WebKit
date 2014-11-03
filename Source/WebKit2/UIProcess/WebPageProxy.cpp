@@ -363,6 +363,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_suppressVisibilityUpdates(false)
     , m_autoSizingShouldExpandToViewHeight(false)
     , m_mediaVolume(1)
+    , m_muted(false)
     , m_mayStartMediaWhenInWindow(true)
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
@@ -3385,6 +3386,11 @@ void WebPageProxy::setMediaVolume(float volume)
 
 void WebPageProxy::setMuted(bool muted)
 {
+    if (m_muted == muted)
+        return;
+
+    m_muted = muted;
+
     if (!isValid())
         return;
 
@@ -4572,6 +4578,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.deviceScaleFactor = deviceScaleFactor();
     parameters.topContentInset = m_topContentInset;
     parameters.mediaVolume = m_mediaVolume;
+    parameters.muted = m_muted;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.minimumLayoutSize = m_minimumLayoutSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;

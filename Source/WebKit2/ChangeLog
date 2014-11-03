@@ -1,3 +1,29 @@
+2014-11-03  Ada Chan  <adachan@apple.com>
+
+        Persist the page's muted state across web process crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=138195
+
+        Reviewed by Anders Carlsson.
+
+        Store the Page's muted state in WebPageCreationParameters so that state can be properly
+        restored after recovering from a crash in the web process.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_muted.
+        (WebKit::WebPageProxy::setMuted):
+        Update m_muted.
+        (WebKit::WebPageProxy::creationParameters):
+        Set the muted data member in WebPageCreationParameters.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Initialize the page's muted state with the muted value from WebPageCreationParameters.
+
 2014-11-03  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Remove dependency of PageViewportController from PageViewportControllerClient

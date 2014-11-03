@@ -95,6 +95,7 @@ struct WebPageCreationParameters {
     float topContentInset;
     
     float mediaVolume;
+    bool muted;
     bool mayStartMediaWhenInWindow;
 
     WebCore::IntSize minimumLayoutSize;

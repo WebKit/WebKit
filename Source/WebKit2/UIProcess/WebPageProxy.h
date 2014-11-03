@@ -1554,6 +1554,7 @@ private:
     WebCore::IntSize m_minimumLayoutSize;
 
     float m_mediaVolume;
+    bool m_muted;
     bool m_mayStartMediaWhenInWindow;
 
     bool m_waitingForDidUpdateViewState;
