@@ -1355,7 +1355,7 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
 {
     LLINT_BEGIN();
-    const Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
+    const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     LLINT_RETURN(JSScope::resolve(exec, exec->scope(), ident));
 }
 

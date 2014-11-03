@@ -1487,11 +1487,12 @@ void CodeBlock::dumpBytecode(
         }
         case op_resolve_scope: {
             int r0 = (++it)->u.operand;
+            int scope = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             ResolveModeAndType modeAndType = ResolveModeAndType((++it)->u.operand);
             int depth = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "resolve_scope");
-            out.printf("%s, %s, %u<%s|%s>, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(),
+            out.printf("%s, %s, %s, %u<%s|%s>, %d", registerName(r0).data(), registerName(scope).data(), idName(id0, identifier(id0)).data(),
                 modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
                 depth);
             ++it;
@@ -1928,18 +1929,18 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_resolve_scope: {
-            const Identifier& ident = identifier(pc[2].u.operand);
-            ResolveType type = static_cast<ResolveType>(pc[3].u.operand);
+            const Identifier& ident = identifier(pc[3].u.operand);
+            ResolveType type = static_cast<ResolveType>(pc[4].u.operand);
             if (type == LocalClosureVar) {
-                instructions[i + 3].u.operand = ClosureVar;
+                instructions[i + 4].u.operand = ClosureVar;
                 break;
             }
 
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, type);
-            instructions[i + 3].u.operand = op.type;
-            instructions[i + 4].u.operand = op.depth;
+            instructions[i + 4].u.operand = op.type;
+            instructions[i + 5].u.operand = op.depth;
             if (op.lexicalEnvironment)
-                instructions[i + 5].u.lexicalEnvironment.set(*vm(), ownerExecutable, op.lexicalEnvironment);
+                instructions[i + 6].u.lexicalEnvironment.set(*vm(), ownerExecutable, op.lexicalEnvironment);
             break;
         }
 
@@ -2545,7 +2546,7 @@ void CodeBlock::finalizeUnconditionally()
                 curInstruction[2].u.jsCell.clear();
                 break;
             case op_resolve_scope: {
-                WriteBarrierBase<JSLexicalEnvironment>& lexicalEnvironment = curInstruction[5].u.lexicalEnvironment;
+                WriteBarrierBase<JSLexicalEnvironment>& lexicalEnvironment = curInstruction[6].u.lexicalEnvironment;
                 if (!lexicalEnvironment || Heap::isMarked(lexicalEnvironment.get()))
                     break;
                 if (Options::verboseOSR())

@@ -3174,8 +3174,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_resolve_scope: {
             int dst = currentInstruction[1].u.operand;
-            ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
-            unsigned depth = currentInstruction[4].u.operand;
+            ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
+            unsigned depth = currentInstruction[5].u.operand;
 
             // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
             if (needsVarInjectionChecks(resolveType))
@@ -3191,7 +3191,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case LocalClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                JSLexicalEnvironment* lexicalEnvironment = currentInstruction[5].u.lexicalEnvironment.get();
+                JSLexicalEnvironment* lexicalEnvironment = currentInstruction[6].u.lexicalEnvironment.get();
                 if (lexicalEnvironment
                     && lexicalEnvironment->symbolTable()->m_functionEnteredOnce.isStillValid()) {
                     addToGraph(FunctionReentryWatchpoint, OpInfo(lexicalEnvironment->symbolTable()));

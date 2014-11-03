@@ -104,7 +104,7 @@
             { "name" : "op_construct_varargs", "length" : 9 },
             { "name" : "op_strcat", "length" : 4 },
             { "name" : "op_to_primitive", "length" : 3 },
-            { "name" : "op_resolve_scope", "length" : 6 },
+            { "name" : "op_resolve_scope", "length" : 7 },
             { "name" : "op_get_from_scope", "length" : 8 },
             { "name" : "op_put_to_scope", "length" : 7 },
             { "name" : "op_push_with_scope", "length" : 3 },

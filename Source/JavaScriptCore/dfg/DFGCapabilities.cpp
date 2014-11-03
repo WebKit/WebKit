@@ -215,7 +215,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
 
     case op_resolve_scope: {
         // We don't compile 'catch' or 'with', so there's no point in compiling variable resolution within them.
-        ResolveType resolveType = ResolveModeAndType(pc[3].u.operand).type();
+        ResolveType resolveType = ResolveModeAndType(pc[4].u.operand).type();
         if (resolveType == Dynamic)
             return CannotCompile;
         return CanCompileAndInline;

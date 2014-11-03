@@ -625,8 +625,8 @@ void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned dep
 void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
-    unsigned depth = currentInstruction[4].u.operand;
+    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
+    unsigned depth = currentInstruction[5].u.operand;
 
     switch (resolveType) {
     case GlobalProperty:
@@ -653,13 +653,13 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
-    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
+    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
 
     if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar)
         return;
 
     linkSlowCase(iter);
-    int32_t indentifierIndex = currentInstruction[2].u.operand;
+    int32_t indentifierIndex = currentInstruction[3].u.operand;
     callOperation(operationResolveScope, dst, indentifierIndex);
 }
 

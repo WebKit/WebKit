@@ -1992,7 +1992,7 @@ end
 
 macro resolveScope()
     loadp CodeBlock[cfr], t0
-    loadisFromInstruction(4, t2)
+    loadisFromInstruction(5, t2)
     loadp ScopeChain[cfr], t0
     btiz t2, .resolveScopeLoopEnd
 
@@ -2009,44 +2009,44 @@ end
 
 _llint_op_resolve_scope:
     traceExecution()
-    loadisFromInstruction(3, t0)
+    loadisFromInstruction(4, t0)
 
 #rGlobalProperty:
     bineq t0, GlobalProperty, .rGlobalVar
     getGlobalObject(1)
-    dispatch(6)
+    dispatch(7)
 
 .rGlobalVar:
     bineq t0, GlobalVar, .rClosureVar
     getGlobalObject(1)
-    dispatch(6)
+    dispatch(7)
 
 .rClosureVar:
     bineq t0, ClosureVar, .rGlobalPropertyWithVarInjectionChecks
     resolveScope()
-    dispatch(6)
+    dispatch(7)
 
 .rGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
     getGlobalObject(1)
-    dispatch(6)
+    dispatch(7)
 
 .rGlobalVarWithVarInjectionChecks:
     bineq t0, GlobalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic)
     getGlobalObject(1)
-    dispatch(6)
+    dispatch(7)
 
 .rClosureVarWithVarInjectionChecks:
     bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
     varInjectionCheck(.rDynamic)
     resolveScope()
-    dispatch(6)
+    dispatch(7)
 
 .rDynamic:
     callSlowPath(_llint_slow_path_resolve_scope)
-    dispatch(6)
+    dispatch(7)
 
 
 macro loadWithStructureCheck(operand, slowPath)

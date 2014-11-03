@@ -1296,6 +1296,7 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifie
         if (!entry.isNull()) {
             emitOpcode(op_resolve_scope);
             instructions().append(kill(dst));
+            instructions().append(scopeRegister()->index());
             instructions().append(addConstant(identifier));
             instructions().append(LocalClosureVar);
             instructions().append(0);
@@ -1310,6 +1311,7 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifie
     // resolve_scope dst, id, ResolveType, depth
     emitOpcode(op_resolve_scope);
     instructions().append(kill(dst));
+    instructions().append(scopeRegister()->index());
     instructions().append(addConstant(identifier));
     instructions().append(resolveType());
     instructions().append(0);
@@ -1322,6 +1324,7 @@ RegisterID* BytecodeGenerator::emitGetOwnScope(RegisterID* dst, const Identifier
 {
     emitOpcode(op_resolve_scope);
     instructions().append(kill(dst));
+    instructions().append(scopeRegister()->index());
     instructions().append(addConstant(identifier));
     instructions().append(LocalClosureVar);
     // This should be m_localScopeDepth if we aren't doing

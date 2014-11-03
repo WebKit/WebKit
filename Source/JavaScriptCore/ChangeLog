@@ -1,3 +1,44 @@
+2014-11-01  Michael Saboff  <msaboff@apple.com>
+
+        Add scope operand to op_resolve_scope
+        https://bugs.webkit.org/show_bug.cgi?id=138253
+
+        Reviewed by Mark Lam.
+
+        Added scope operand to op_resolve_scope.  Although the scope register is filled in with
+        the ScopeChain register, this operand is not used in the processing of the bytecode.
+        That will be addressed in a future patch.
+
+        * bytecode/BytecodeList.json: Lengthened the three bytecodes.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Added code to dump the scope operand.
+
+        (JSC::CodeBlock::CodeBlock): 
+        (JSC::CodeBlock::finalizeUnconditionally):
+        Updated the operand indecies for the processing of op_resolve_scope.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetOwnScope):
+        (JSC::BytecodeGenerator::emitReturn):
+        Added scope register to these emit functions and the bytecodes they emit.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Updated the operand indecies for the processing of op_resolve_scope.
+
 2014-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(CMake): Make it possible to build without introspection
