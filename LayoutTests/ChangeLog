@@ -1,3 +1,18 @@
+2014-11-03  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Unreviewed gardening. Rebaseline after r175259.
+        https://bugs.webkit.org/show_bug.cgi?id=138317
+
+        Rebaseline pending test expectations affected by r175259.
+
+        * platform/gtk/css1/box_properties/border_bottom-expected.txt:
+        * platform/gtk/css1/box_properties/border_top-expected.txt:
+        * platform/gtk/css1/formatting_model/inline_elements-expected.txt:
+        * platform/gtk/css1/pseudo/pseudo_elements_in_selectors-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/gtk/svg/custom/bug45331-expected.txt:
+        * platform/gtk/svg/custom/path-bad-data-expected.txt:
+
 2014-11-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Unskip passing ENCRYPTED_MEDIA_V2 tests
