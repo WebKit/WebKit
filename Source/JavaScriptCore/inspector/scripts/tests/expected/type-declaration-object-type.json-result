@@ -1337,6 +1337,8 @@ using namespace Inspector;
     if (!self)
         return nil;
 
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(message, @"message");
+
     self.message = message;
     self.code = code;
 
@@ -1437,6 +1439,12 @@ using namespace Inspector;
     if (!self)
         return nil;
 
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(columnNames, @"columnNames");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(notes, @"notes");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(values, @"values");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload, @"payload");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(error, @"error");
+
     self.columnNames = columnNames;
     self.notes = notes;
     self.timestamp = timestamp;
@@ -1517,6 +1525,12 @@ using namespace Inspector;
     if (!self)
         return nil;
 
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(integer, @"integer");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(array, @"array");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(string, @"string");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(value, @"value");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(object, @"object");
+
     self.integer = integer;
     self.array = array;
     self.string = string;
@@ -1590,6 +1604,12 @@ using namespace Inspector;
     self = [super init];
     if (!self)
         return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(columnNames, @"columnNames");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(notes, @"notes");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(values, @"values");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload, @"payload");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(error, @"error");
 
     self.columnNames = columnNames;
     self.notes = notes;

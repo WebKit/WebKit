@@ -101,6 +101,20 @@ class ObjectiveCFrontendDispatcherImplementationGenerator(Generator):
         lines.append('    if (!frontendChannel)')
         lines.append('        return;')
         lines.append('')
+
+        required_pointer_parameters = filter(lambda parameter: not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), event.event_parameters)
+        for parameter in required_pointer_parameters:
+            var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
+            lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (var_name, var_name))
+
+        optional_pointer_parameters = filter(lambda parameter: parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), event.event_parameters)
+        for parameter in optional_pointer_parameters:
+            var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
+            lines.append('    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))
+
+        if required_pointer_parameters or optional_pointer_parameters:
+            lines.append('')
+
         lines.append('    RefPtr<InspectorObject> jsonMessage = InspectorObject::create();')
         lines.append('    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("%s.%s"));' % (domain.domain_name, event.event_name))
         if event.event_parameters:

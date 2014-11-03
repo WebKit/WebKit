@@ -879,6 +879,14 @@ using namespace Inspector;
     if (!frontendChannel)
         return;
 
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(payload, @"payload");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(screenColor, @"screenColor");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(printColor, @"printColor");
+
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
     RefPtr<InspectorObject> paramsObject = InspectorObject::create();
@@ -907,6 +915,14 @@ using namespace Inspector;
     InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
         return;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(screenColor, @"screenColor");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(printColor, @"printColor");
 
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
@@ -1034,6 +1050,8 @@ using namespace Inspector;
     self = [super init];
     if (!self)
         return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(message, @"message");
 
     self.message = message;
     self.code = code;

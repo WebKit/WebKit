@@ -246,6 +246,20 @@ class ObjCGenerator:
         return None
 
     @staticmethod
+    def is_type_objc_pointer_type(_type):
+        if (isinstance(_type, AliasedType)):
+            _type = _type.aliased_type
+        if (isinstance(_type, PrimitiveType)):
+            return _type.raw_name() in ['string', 'array', 'any', 'object']
+        if (isinstance(_type, EnumType)):
+            return False
+        if (isinstance(_type, ObjectType)):
+            return True
+        if (isinstance(_type, ArrayType)):
+            return True
+        return None
+
+    @staticmethod
     def objc_class_for_type(_type):
         if (isinstance(_type, AliasedType)):
             _type = _type.aliased_type

@@ -105,7 +105,6 @@ class ObjectiveCTypesImplementationGenerator(Generator):
             var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
             pairs.append('%s:(%s)%s' % (var_name, objc_type, var_name))
         pairs[0] = ucfirst(pairs[0])
-        # FIXME: <https://webkit.org/b/138221> Web Inspector: ObjC Protocol Interfaces should throw exceptions for nil arguments
         lines = []
         lines.append('- (instancetype)initWith%s;' % ' '.join(pairs))
         lines.append('{')
@@ -113,9 +112,18 @@ class ObjectiveCTypesImplementationGenerator(Generator):
         lines.append('    if (!self)')
         lines.append('        return nil;')
         lines.append('')
+
+        required_pointer_members = filter(lambda member: ObjCGenerator.is_type_objc_pointer_type(member.type), required_members)
+        if required_pointer_members:
+            for member in required_pointer_members:
+                var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
+                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(%s, @"%s");' % (var_name, var_name))
+            lines.append('')
+
         for member in required_members:
             var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
             lines.append('    self.%s = %s;' % (var_name, var_name))
+
         lines.append('')
         lines.append('    return self;')
         lines.append('}')
@@ -126,7 +134,6 @@ class ObjectiveCTypesImplementationGenerator(Generator):
         var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
         setter_method = ObjCGenerator.objc_setter_method_for_member(declaration, member)
         conversion_expression = ObjCGenerator.objc_to_protocol_expression_for_member(declaration, member, var_name)
-        # FIXME: <https://webkit.org/b/138221> Web Inspector: ObjC Protocol Interfaces should throw exceptions for nil arguments
         lines = []
         lines.append('- (void)set%s:(%s)%s' % (ucfirst(var_name), objc_type, var_name))
         lines.append('{')

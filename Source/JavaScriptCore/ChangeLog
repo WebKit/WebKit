@@ -1,5 +1,44 @@
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: ObjC Protocol Interfaces should throw exceptions for nil arguments
+        https://bugs.webkit.org/show_bug.cgi?id=138221
+
+        Reviewed by Timothy Hatcher.
+
+        The RWIProtocol APIs will now raise exceptions when:
+
+          - any properties are set on a type with a nil value or key (handled by RWIProtocolJSONObject)
+          - required parameters in type constructors have nil value
+          - required or optional command return parameters have nil values
+          - required or optional event parameters have nil values
+
+        The exceptions include the name of the field when possible.
+
+        * inspector/scripts/codegen/generate_objective_c.py:
+        (ObjCGenerator.is_type_objc_pointer_type):
+        Provide a quick check to see if type would be a pointer or not
+        in the ObjC API. Enums for example are not pointers in the API
+        because we manage converting them to/from strings.
+
+        * inspector/scripts/codegen/generate_objective_c_backend_dispatcher_implementation.py:
+        (ObjectiveCConfigurationImplementationGenerator._generate_success_block_for_command):
+        * inspector/scripts/codegen/generate_objective_c_frontend_dispatcher_implementation.py:
+        (ObjectiveCFrontendDispatcherImplementationGenerator._generate_event):
+        * inspector/scripts/codegen/generate_objective_c_types_implementation.py:
+        (ObjectiveCTypesImplementationGenerator._generate_init_method_for_required_members):
+        (ObjectiveCTypesImplementationGenerator._generate_setter_for_member):
+        Throw exceptions when nil values are disallowed.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        Rebaseline tests which include the exception raise calls.
+
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ALTERNATE_DISPATCHERS Let the frontend know about extra agents
         https://bugs.webkit.org/show_bug.cgi?id=138236
 

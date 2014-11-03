@@ -99,8 +99,6 @@ class ObjectiveCConfigurationImplementationGenerator(Generator):
     def _generate_success_block_for_command(self, domain, command):
         lines = []
 
-        # FIXME: <https://webkit.org/b/138221> Web Inspector: ObjC Protocol Interfaces should throw exceptions for nil arguments
-
         if command.return_parameters:
             success_block_parameters = []
             for parameter in command.return_parameters:
@@ -113,6 +111,17 @@ class ObjectiveCConfigurationImplementationGenerator(Generator):
 
         if command.return_parameters:
             lines.append('        RefPtr<InspectorObject> resultObject = InspectorObject::create();')
+
+            required_pointer_parameters = filter(lambda parameter: not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), command.return_parameters)
+            for parameter in required_pointer_parameters:
+                var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
+                lines.append('        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (var_name, var_name))
+
+            optional_pointer_parameters = filter(lambda parameter: parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), command.return_parameters)
+            for parameter in optional_pointer_parameters:
+                var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
+                lines.append('        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))
+
             for parameter in command.return_parameters:
                 keyed_set_method = Generator.keyed_set_method_for_type(parameter.type)
                 var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)

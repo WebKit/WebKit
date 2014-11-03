@@ -1110,6 +1110,8 @@ using namespace Inspector;
     if (!self)
         return nil;
 
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(message, @"message");
+
     self.message = message;
     self.code = code;
 

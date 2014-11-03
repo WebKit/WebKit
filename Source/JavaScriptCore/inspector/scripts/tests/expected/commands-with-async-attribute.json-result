@@ -1065,6 +1065,11 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
 
     id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, NSInteger *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(payload, @"payload");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
         if (columnNames)
             resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(*columnNames));
         if (notes)
@@ -1100,6 +1105,11 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
 
     id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, NSInteger *databaseId, RWIProtocolDatabaseError **sqlError, RWIProtocolDatabasePrimaryColors *screenColor, RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(payload, @"payload");
+        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
         if (columnNames)
             resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(*columnNames));
         if (notes)
@@ -1135,6 +1145,11 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long callId, int in_
 
     id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, NSInteger databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLSyncPrintColor printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
         resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
         resultObject->setString(ASCIILiteral("notes"), notes);
         resultObject->setDouble(ASCIILiteral("timestamp"), timestamp);
@@ -1161,6 +1176,11 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, int in
 
     id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, NSInteger databaseId, RWIProtocolDatabaseError *sqlError, RWIProtocolDatabasePrimaryColors screenColor, RWIProtocolDatabaseExecuteSQLAsyncPrintColor printColor) {
         RefPtr<InspectorObject> resultObject = InspectorObject::create();
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
+        THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
         resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
         resultObject->setString(ASCIILiteral("notes"), notes);
         resultObject->setDouble(ASCIILiteral("timestamp"), timestamp);
@@ -1555,6 +1575,8 @@ using namespace Inspector;
     self = [super init];
     if (!self)
         return nil;
+
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(message, @"message");
 
     self.message = message;
     self.code = code;

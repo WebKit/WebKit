@@ -1265,6 +1265,9 @@ using namespace Inspector;
     if (!self)
         return nil;
 
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(string, @"string");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(tree, @"tree");
+
     self.string = string;
     self.number = number;
     self.animals = animals;
