@@ -350,16 +350,12 @@ RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
 
 RenderCounter::~RenderCounter()
 {
+    view().removeRenderCounter();
+
     if (m_counterNode) {
         m_counterNode->removeRenderer(this);
         ASSERT(!m_counterNode);
     }
-}
-
-void RenderCounter::willBeDestroyed()
-{
-    view().removeRenderCounter();
-    RenderText::willBeDestroyed();
 }
 
 const char* RenderCounter::renderName() const
