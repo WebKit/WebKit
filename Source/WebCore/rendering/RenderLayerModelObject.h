@@ -57,8 +57,6 @@ protected:
 
     void createLayer();
 
-    virtual void willBeDestroyed() override;
-
 private:
     std::unique_ptr<RenderLayer> m_layer;
 
