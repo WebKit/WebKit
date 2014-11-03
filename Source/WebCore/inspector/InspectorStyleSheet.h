@@ -43,6 +43,7 @@ class ParsedStyleSheet;
 namespace WebCore {
 
 class CSSRuleList;
+class CSSSelector;
 class CSSStyleDeclaration;
 class CSSStyleRule;
 class CSSStyleSheet;
@@ -243,6 +244,7 @@ private:
     bool resourceStyleSheetText(String* result) const;
     bool inlineStyleSheetText(String* result) const;
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> buildArrayForRuleList(CSSRuleList*);
+    PassRefPtr<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelector(const CSSSelector*);
     PassRefPtr<Inspector::Protocol::CSS::SelectorList> buildObjectForSelectorList(CSSStyleRule*);
 
     InspectorPageAgent* m_pageAgent;

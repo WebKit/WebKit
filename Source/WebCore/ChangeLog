@@ -1,3 +1,29 @@
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Selector's Specificity
+        https://bugs.webkit.org/show_bug.cgi?id=138189
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/css/selector-specificity.html
+
+        * css/CSSSelector.h:
+        Remove very stale comment. '*' is a starAtom now instead of a special -1 tag.
+        Made the specificity masks public class constants.
+
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        (WebCore::InspectorStyle::styleWithProperties):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        Drive by use release() in some cases to reduce ref count churn.
+
+        (WebCore::buildObjectForSelectorHelper):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelector):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        Build CSSSelector objects for SelectorLists.
+
 2014-11-03  Chris Dumez  <cdumez@apple.com>
 
         Move -webkit-shape-outside to the new StyleBuilder

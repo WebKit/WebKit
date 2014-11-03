@@ -1,5 +1,45 @@
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Show Selector's Specificity
+        https://bugs.webkit.org/show_bug.cgi?id=138189
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        Add new files and strings.
+
+        * UserInterface/Models/CSSMedia.js:
+        Constructor functions are not needed, remove unnecessary code.
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.set selectors): Deleted.
+        This was unused and is no longer correct.
+
+        (WebInspector.CSSRule.prototype.get matchedSelectorText):
+        Update now that selectors are a list of objects, not just strings.
+
+        * UserInterface/Models/CSSSelector.js:
+        (WebInspector.CSSSelector):
+        (WebInspector.CSSSelector.prototype.get specificity):
+        New model object for protocol type CSS.CSSSelector.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseSelectorListPayload.return):
+        (WebInspector.DOMNodeStyles.prototype._parseSelectorListPayload):
+        (WebInspector.DOMNodeStyles.prototype._parseRulePayload):
+        Handle parsing old and new SelectorLists.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh.appendSelector):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh.appendSelectorText):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        Update the code now that the list of selectors are model objects instead
+        of just selector text strings.
+
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ALTERNATE_DISPATCHERS Let the frontend know about extra agents
         https://bugs.webkit.org/show_bug.cgi?id=138236
 

@@ -2,14 +2,18 @@
 <html>
 <head>
 <style>
-div#node1 {
-    BACKGROUND-COLOR:blue;
-    COLOR:white;
-    border-STYLE:solid;
-    BORDER-width:0;
-    position:absolute;
-    ToP:0;
-    lEfT:0;
+*,
+h1,
+.class,
+#id,
+body h1.class-one.class-two,
+body #foo,
+body > #foo,
+body > #foo.a.b,
+h1::before,
+body h1::before,
+body.a h1.b::before {
+    color: green;
 }
 </style>
 <script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
@@ -17,36 +21,15 @@ div#node1 {
 function test() {
     var nodeStyles;
 
-    function validatePropertyName(name)
-    {
-        if (typeof name != "string") {
-            InspectorTest.log("Unexpected property name type: " + typeof name);
-            return false;
-        }
-
-        if (name.toLowerCase() != name) {
-            InspectorTest.log("Property name contains uppercase characters: " + name);
-            return false;
-        }
-        return true;
-    }
-
-    function validateStyles()
+    function validateSelectors()
     {
         for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
             var rule = nodeStyles.matchedRules[i];
             if (rule.type !== WebInspector.CSSRule.Type.Author)
                 continue;
 
-            for (var j = 0; j < rule.style.properties.length; ++j) {
-                var property = rule.style.properties[j];
-
-                if (property.anonymous)
-                    continue;
-
-                if (validatePropertyName(property.name))
-                    InspectorTest.log("Property valid: " + property.name);
-            }
+            for (var selector of rule.selectors)
+                InspectorTest.log(selector.text + " (" + selector.specificity.join(", ") + ")");
         }
 
         InspectorTest.completeTest();
@@ -55,7 +38,7 @@ function test() {
     function onStylesRefreshed()
     {
         nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
-        validateStyles();
+        validateSelectors();
     }
 
     WebInspector.domTreeManager.requestDocument(function(documentNode) {
@@ -67,7 +50,7 @@ function test() {
                 if (nodeStyles.needsRefresh)
                     nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
                 else
-                    validateStyles();
+                    validateSelectors();
             } else {
                 InspectorTest.log("DOM node not found.");
                 InspectorTest.completeTest();
@@ -78,7 +61,7 @@ function test() {
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing that the author rules returned by CSSStyleManager.stylesForNode have lowercase property names regardless of CSS source formatting.</p>
+    <p>Testing that selectors have expected specificity values.</p>
 
     <div id="node1"></div>
 </body>

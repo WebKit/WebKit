@@ -168,12 +168,30 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
         this._originElement.appendChild(document.createTextNode(" \u2014 "));
 
-        function appendSelector(selectorText, matched)
+        function appendSelector(selector, matched)
         {
+            console.assert(selector instanceof WebInspector.CSSSelector);
+
             var selectorElement = document.createElement("span");
+            selectorElement.textContent = selector.text;
+
             if (matched)
                 selectorElement.className = WebInspector.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName;
+
+            var specificity = selector.specificity;
+            if (specificity) {
+                var approximatedSpecificity = (specificity[0] * 100) + (specificity[1] * 10) + specificity[2];
+                selectorElement.title = WebInspector.UIString("Specificity: (%d, %d, %d) ≈ %d").format(specificity[0], specificity[1], specificity[2], approximatedSpecificity);
+            }
+
+            this._selectorElement.appendChild(selectorElement);
+        }
+
+        function appendSelectorTextKnownToMatch(selectorText)
+        {
+            var selectorElement = document.createElement("span");
             selectorElement.textContent = selectorText;
+            selectorElement.className = WebInspector.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName;
             this._selectorElement.appendChild(selectorElement);
         }
 
@@ -190,7 +208,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
                         this._selectorElement.appendChild(document.createTextNode(", "));
                 }
             } else
-                appendSelector.call(this, this._style.ownerRule.selectorText, true);
+                appendSelectorTextKnownToMatch.call(this, this._style.ownerRule.selectorText);
 
             if (this._style.ownerRule.sourceCodeLocation) {
                 var sourceCodeLink = WebInspector.createSourceCodeLocationLink(this._style.ownerRule.sourceCodeLocation, true);
@@ -223,12 +241,12 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             break;
 
         case WebInspector.CSSStyleDeclaration.Type.Inline:
-            appendSelector.call(this, WebInspector.displayNameForNode(this._style.node), true);
+            appendSelectorTextKnownToMatch.call(this, WebInspector.displayNameForNode(this._style.node));
             this._originElement.appendChild(document.createTextNode(WebInspector.UIString("Style Attribute")));
             break;
 
         case WebInspector.CSSStyleDeclaration.Type.Attribute:
-            appendSelector.call(this, WebInspector.displayNameForNode(this._style.node), true);
+            appendSelectorTextKnownToMatch.call(this, WebInspector.displayNameForNode(this._style.node));
             this._originElement.appendChild(document.createTextNode(WebInspector.UIString("HTML Attributes")));
             break;
         }

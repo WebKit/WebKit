@@ -59,10 +59,19 @@
             "description": "Match data for a CSS rule."
         },
         {
+            "id": "CSSSelector",
+            "type": "object",
+            "properties": [
+                { "name": "text", "type": "string", "description": "Canonicalized selector text." },
+                { "name": "specificity", "optional": true, "type": "array", "items": { "type": "integer" }, "description": "Specificity (a, b, c) tuple. If missing the specificity is not known statically and may be dynamic." }
+            ],
+            "description": "CSS selector."
+        },
+        {
             "id": "SelectorList",
             "type": "object",
             "properties": [
-                { "name": "selectors", "type": "array", "items": { "type": "string" }, "description": "Selectors in the list." },
+                { "name": "selectors", "type": "array", "items": { "$ref": "CSSSelector" }, "description": "Selectors in the list." },
                 { "name": "text", "type": "string", "description": "Rule selector text." },
                 { "name": "range", "$ref": "SourceRange", "optional": true, "description": "Rule selector range in the underlying resource (if available)." }
             ],

@@ -745,6 +745,29 @@ WebInspector.DOMNodeStyles.prototype = {
         return styleDeclaration;
     },
 
+    _parseSelectorListPayload: function(selectorList)
+    {
+        // COMPATIBILITY (iOS 6): The payload did not have 'selectorList'.
+        if (!selectorList)
+            return [];
+
+        var selectors = selectorList.selectors;
+        if (!selectors.length)
+            return [];
+
+        // COMPATIBILITY (iOS 8): The selectorList payload was an array of selector text strings.
+        // Now they are CSSSelector objects with multiple properties.
+        if (typeof selectors[0] === "string") {
+            return selectors.map(function(selectorText) {
+                return new WebInspector.CSSSelector(selectorText);
+            });
+        }
+
+        return selectors.map(function(selectorPayload) {
+            return new WebInspector.CSSSelector(selectorPayload.text, selectorPayload.specificity);
+        });
+    },
+
     _parseRulePayload: function(payload, matchedSelectorIndices, node, inherited, ruleOccurrences)
     {
         if (!payload)
@@ -791,7 +814,7 @@ WebInspector.DOMNodeStyles.prototype = {
         // COMPATIBILITY (iOS 6): The payload had 'selectorText' as a property,
         // now it has 'selectorList' with a 'text' property. Support both here.
         var selectorText = payload.selectorList ? payload.selectorList.text : payload.selectorText;
-        var selectors = payload.selectorList ? payload.selectorList.selectors : [];
+        var selectors = this._parseSelectorListPayload(payload.selectorList);
 
         // COMPATIBILITY (iOS 6): The payload did not have 'selectorList'.
         // Fallback to using 'sourceLine' without column information.

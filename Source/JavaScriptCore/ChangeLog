@@ -1,5 +1,16 @@
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Show Selector's Specificity
+        https://bugs.webkit.org/show_bug.cgi?id=138189
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/CSS.json:
+        Create a new named type CSSSelector to include a selector's text and specificity.
+        The specificity tuple is optional as it may soon be made dynamic in some cases.
+
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: ObjC Protocol Interfaces should throw exceptions for nil arguments
         https://bugs.webkit.org/show_bug.cgi?id=138221
 

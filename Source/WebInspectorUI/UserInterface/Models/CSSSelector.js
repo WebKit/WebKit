@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSMedia = function(type, text, sourceCodeLocation)
+WebInspector.CSSSelector = function(text, specificity)
 {
     WebInspector.Object.call(this);
 
-    this._type = type || null;
-    this._text = text || "";
-    this._sourceCodeLocation = sourceCodeLocation || null;
+    console.assert(text);
+
+    this._text = text;
+    this._specificity = specificity || null;
 };
 
-WebInspector.CSSMedia.Type = {
-    MediaRule: "css-media-type-media-rule",
-    ImportRule: "css-media-type-import-rule",
-    LinkedStyleSheet: "css-media-type-linked-stylesheet",
-    InlineStyleSheet: "css-media-type-inline-stylesheet"
-};
-
-WebInspector.CSSMedia.prototype = {
-    constructor: WebInspector.CSSMedia,
+WebInspector.CSSSelector.prototype = {
+    constructor: WebInspector.CSSSelector,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
-
-    get type()
-    {
-        return this._type;
-    },
 
     get text()
     {
         return this._text;
     },
 
-    get sourceCodeLocation()
+    get specificity()
     {
-        return this._sourceCodeLocation;
+        return this._specificity;
     }
 };
-
-WebInspector.CSSMedia.prototype.__proto__ = WebInspector.Object.prototype;
