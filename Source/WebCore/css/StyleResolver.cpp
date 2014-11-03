@@ -1929,10 +1929,10 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const Styl
     return true;
 }
 
-static bool createGridTrackSize(CSSValue* value, GridTrackSize& trackSize, const StyleResolver::State& state)
+static bool createGridTrackSize(CSSValue& value, GridTrackSize& trackSize, const StyleResolver::State& state)
 {
-    if (is<CSSPrimitiveValue>(*value)) {
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (is<CSSPrimitiveValue>(value)) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(value);
         GridLength workingLength;
         if (!createGridTrackBreadth(&primitiveValue, state, workingLength))
             return false;
@@ -1941,7 +1941,7 @@ static bool createGridTrackSize(CSSValue* value, GridTrackSize& trackSize, const
         return true;
     }
 
-    CSSFunctionValue& minmaxFunction = downcast<CSSFunctionValue>(*value);
+    CSSFunctionValue& minmaxFunction = downcast<CSSFunctionValue>(value);
     CSSValueList* arguments = minmaxFunction.arguments();
     ASSERT_WITH_SECURITY_IMPLICATION(arguments->length() == 2);
     GridLength minTrackBreadth;
@@ -1961,16 +1961,14 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
         return primitiveValue.getValueID() == CSSValueNone;
     }
 
-    if (!value->isValueList())
+    if (!is<CSSValueList>(*value))
         return false;
 
     size_t currentNamedGridLine = 0;
-    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-        CSSValue* currValue = i.value();
-        if (is<CSSGridLineNamesValue>(*currValue)) {
-            CSSGridLineNamesValue& lineNamesValue = downcast<CSSGridLineNamesValue>(*currValue);
-            for (CSSValueListIterator j = &lineNamesValue; j.hasMore(); j.advance()) {
-                String namedGridLine = downcast<CSSPrimitiveValue>(j.value())->getStringValue();
+    for (auto& currentValue : downcast<CSSValueList>(*value)) {
+        if (is<CSSGridLineNamesValue>(currentValue.get())) {
+            for (auto& currentGridLineName : downcast<CSSGridLineNamesValue>(currentValue.get())) {
+                String namedGridLine = downcast<CSSPrimitiveValue>(currentGridLineName.get()).getStringValue();
                 NamedGridLinesMap::AddResult result = namedGridLines.add(namedGridLine, Vector<size_t>());
                 result.iterator->value.append(currentNamedGridLine);
                 OrderedNamedGridLinesMap::AddResult orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
@@ -1981,7 +1979,7 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
 
         ++currentNamedGridLine;
         GridTrackSize trackSize;
-        if (!createGridTrackSize(currValue, trackSize, state))
+        if (!createGridTrackSize(currentValue.get(), trackSize, state))
             return false;
 
         trackSizes.append(trackSize);
@@ -2010,33 +2008,33 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
         return true;
     }
 
-    CSSValueList& values = downcast<CSSValueList>(*value);
+    auto& values = downcast<CSSValueList>(*value);
     ASSERT(values.length());
 
     bool isSpanPosition = false;
     int gridLineNumber = 0;
     String gridLineName;
 
-    CSSValueListIterator it = &values;
-    CSSPrimitiveValue* currentValue = downcast<CSSPrimitiveValue>(it.value());
+    auto it = values.begin();
+    CSSPrimitiveValue* currentValue = &downcast<CSSPrimitiveValue>(it->get());
     if (currentValue->getValueID() == CSSValueSpan) {
         isSpanPosition = true;
-        it.advance();
-        currentValue = it.hasMore() ? downcast<CSSPrimitiveValue>(it.value()) : nullptr;
+        ++it;
+        currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
     }
 
     if (currentValue && currentValue->isNumber()) {
         gridLineNumber = currentValue->getIntValue();
-        it.advance();
-        currentValue = it.hasMore() ? downcast<CSSPrimitiveValue>(it.value()) : nullptr;
+        ++it;
+        currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
     }
 
     if (currentValue && currentValue->isString()) {
         gridLineName = currentValue->getStringValue();
-        it.advance();
+        ++it;
     }
 
-    ASSERT(!it.hasMore());
+    ASSERT(it != values.end());
     if (isSpanPosition)
         position.setSpanPosition(gridLineNumber ? gridLineNumber : 1, gridLineName);
     else
@@ -2073,16 +2071,18 @@ ScrollSnapPoints StyleResolver::parseSnapPoints(CSSValue& value)
     }
 
     points.hasRepeat = false;
-    for (CSSValueListIterator it(&value); it.hasMore(); it.advance()) {
-        auto& itemValue = downcast<CSSPrimitiveValue>(*it.value());
-        if (auto* lengthRepeat = itemValue.getLengthRepeatValue()) {
-            if (auto* interval = lengthRepeat->interval()) {
-                points.repeatOffset = parseSnapCoordinate(*interval);
-                points.hasRepeat = true;
-                break;
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value)) {
+            auto& itemValue = downcast<CSSPrimitiveValue>(currentValue.get());
+            if (auto* lengthRepeat = itemValue.getLengthRepeatValue()) {
+                if (auto* interval = lengthRepeat->interval()) {
+                    points.repeatOffset = parseSnapCoordinate(*interval);
+                    points.hasRepeat = true;
+                    break;
+                }
             }
+            points.offsets.append(parseSnapCoordinate(itemValue));
         }
-        points.offsets.append(parseSnapCoordinate(itemValue));
     }
 
     return points;
@@ -2148,35 +2148,34 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 return;
             }
 
-            if (!value->isValueList())
+            if (!is<CSSValueList>(*value))
                 return;
 
             bool didSet = false;
-            for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-                CSSValue* item = i.value();
-                if (is<CSSImageGeneratorValue>(*item)) {
-                    if (is<CSSGradientValue>(*item))
-                        state.style()->setContent(StyleGeneratedImage::create(*downcast<CSSGradientValue>(*item).gradientWithStylesResolved(this)), didSet);
+            for (auto& item : downcast<CSSValueList>(*value)) {
+                if (is<CSSImageGeneratorValue>(item.get())) {
+                    if (is<CSSGradientValue>(item.get()))
+                        state.style()->setContent(StyleGeneratedImage::create(*downcast<CSSGradientValue>(item.get()).gradientWithStylesResolved(this)), didSet);
                     else
-                        state.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(*item)), didSet);
+                        state.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
                     didSet = true;
 #if ENABLE(CSS_IMAGE_SET)
-                } else if (is<CSSImageSetValue>(*item)) {
-                    state.style()->setContent(setOrPendingFromValue(CSSPropertyContent, downcast<CSSImageSetValue>(item)), didSet);
+                } else if (is<CSSImageSetValue>(item.get())) {
+                    state.style()->setContent(setOrPendingFromValue(CSSPropertyContent, downcast<CSSImageSetValue>(item.get())), didSet);
                     didSet = true;
 #endif
                 }
 
-                if (is<CSSImageValue>(*item)) {
-                    state.style()->setContent(cachedOrPendingFromValue(CSSPropertyContent, downcast<CSSImageValue>(item)), didSet);
+                if (is<CSSImageValue>(item.get())) {
+                    state.style()->setContent(cachedOrPendingFromValue(CSSPropertyContent, downcast<CSSImageValue>(item.get())), didSet);
                     didSet = true;
                     continue;
                 }
 
-                if (!is<CSSPrimitiveValue>(*item))
+                if (!is<CSSPrimitiveValue>(item.get()))
                     continue;
 
-                CSSPrimitiveValue& contentValue = downcast<CSSPrimitiveValue>(*item);
+                auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
 
                 if (contentValue.isString()) {
                     state.style()->setContent(contentValue.getStringValue().impl(), didSet);
@@ -2402,14 +2401,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         if (isInitial || primitiveValue) // initial | none
             return id == CSSPropertyTextShadow ? state.style()->setTextShadow(nullptr) : state.style()->setBoxShadow(nullptr);
 
-        if (!value->isValueList())
+        if (!is<CSSValueList>(*value))
             return;
 
-        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-            CSSValue* currValue = i.value();
-            if (!is<CSSShadowValue>(*currValue))
+        bool isFirstEntry = true;
+        for (auto& currentValue : downcast<CSSValueList>(*value)) {
+            if (!is<CSSShadowValue>(currentValue.get()))
                 continue;
-            CSSShadowValue& item = downcast<CSSShadowValue>(*currValue);
+            auto& item = downcast<CSSShadowValue>(currentValue.get());
             int x = item.x->computeLength<int>(state.cssToLengthConversionData());
             int y = item.y->computeLength<int>(state.cssToLengthConversionData());
             int blur = item.blur ? item.blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
@@ -2423,9 +2422,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
             auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
             if (id == CSSPropertyTextShadow)
-                state.style()->setTextShadow(WTF::move(shadowData), i.index()); // add to the list if this is not the first entry
+                state.style()->setTextShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
             else
-                state.style()->setBoxShadow(WTF::move(shadowData), i.index()); // add to the list if this is not the first entry
+                state.style()->setBoxShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
+
+            isFirstEntry = false;
         }
         return;
     }
@@ -2705,7 +2706,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitGridAutoColumns: {
         HANDLE_INHERIT_AND_INITIAL(gridAutoColumns, GridAutoColumns);
         GridTrackSize trackSize;
-        if (!createGridTrackSize(value, trackSize, state))
+        if (!createGridTrackSize(*value, trackSize, state))
             return;
         state.style()->setGridAutoColumns(trackSize);
         return;
@@ -2713,7 +2714,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitGridAutoRows: {
         HANDLE_INHERIT_AND_INITIAL(gridAutoRows, GridAutoRows);
         GridTrackSize trackSize;
-        if (!createGridTrackSize(value, trackSize, state))
+        if (!createGridTrackSize(*value, trackSize, state))
             return;
         state.style()->setGridAutoRows(trackSize);
         return;
@@ -3213,33 +3214,33 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 }
 
-PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue* value)
+PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& value)
 {
-    if (is<CSSImageValue>(*value))
+    if (is<CSSImageValue>(value))
         return cachedOrPendingFromValue(property, downcast<CSSImageValue>(value));
 
-    if (is<CSSImageGeneratorValue>(*value)) {
-        if (is<CSSGradientValue>(*value))
-            return generatedOrPendingFromValue(property, *downcast<CSSGradientValue>(*value).gradientWithStylesResolved(this));
-        return generatedOrPendingFromValue(property, downcast<CSSImageGeneratorValue>(*value));
+    if (is<CSSImageGeneratorValue>(value)) {
+        if (is<CSSGradientValue>(value))
+            return generatedOrPendingFromValue(property, *downcast<CSSGradientValue>(value).gradientWithStylesResolved(this));
+        return generatedOrPendingFromValue(property, downcast<CSSImageGeneratorValue>(value));
     }
 
 #if ENABLE(CSS_IMAGE_SET)
-    if (is<CSSImageSetValue>(*value))
+    if (is<CSSImageSetValue>(value))
         return setOrPendingFromValue(property, downcast<CSSImageSetValue>(value));
 #endif
 
-    if (is<CSSCursorImageValue>(*value))
+    if (is<CSSCursorImageValue>(value))
         return cursorOrPendingFromValue(property, downcast<CSSCursorImageValue>(value));
 
     return nullptr;
 }
 
-PassRefPtr<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue* value)
+PassRefPtr<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID property, CSSImageValue& value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImage();
+    RefPtr<StyleImage> image = value.cachedOrPendingImage();
     if (image && image->isPendingImage())
-        m_state.pendingImageProperties().set(property, value);
+        m_state.pendingImageProperties().set(property, &value);
     return image.release();
 }
 
@@ -3258,20 +3259,20 @@ PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID 
 }
 
 #if ENABLE(CSS_IMAGE_SET)
-PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue* value)
+PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue& value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImageSet(document());
+    RefPtr<StyleImage> image = value.cachedOrPendingImageSet(document());
     if (image && image->isPendingImage())
-        m_state.pendingImageProperties().set(property, value);
+        m_state.pendingImageProperties().set(property, &value);
     return image.release();
 }
 #endif
 
-PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue* value)
+PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue& value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImage(document());
+    RefPtr<StyleImage> image = value.cachedOrPendingImage(document());
     if (image && image->isPendingImage())
-        m_state.pendingImageProperties().set(property, value);
+        m_state.pendingImageProperties().set(property, &value);
     return image.release();
 }
 
@@ -3518,16 +3519,15 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             return true;
     }
     
-    if (!inValue->isValueList())
+    if (!is<CSSValueList>(*inValue))
         return false;
 
     FilterOperations operations;
-    for (CSSValueListIterator i = inValue; i.hasMore(); i.advance()) {
-        CSSValue* currValue = i.value();
-        if (!is<WebKitCSSFilterValue>(*currValue))
+    for (auto& currentValue : downcast<CSSValueList>(*inValue)) {
+        if (!is<WebKitCSSFilterValue>(currentValue.get()))
             continue;
 
-        WebKitCSSFilterValue& filterValue = downcast<WebKitCSSFilterValue>(*i.value());
+        auto& filterValue = downcast<WebKitCSSFilterValue>(currentValue.get());
         FilterOperation::OperationType operationType = filterOperationForType(filterValue.operationType());
 
         if (operationType == FilterOperation::REFERENCE) {

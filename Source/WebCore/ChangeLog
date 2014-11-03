@@ -1,3 +1,17 @@
+2014-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Support modern range loops over CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=138285
+
+        Reviewed by Andreas Kling.
+
+        Add support for modern range loops over CSSValueList objects.
+        Port the code base to using range loops for CSSValueList objects and
+        drop the CSSValueListInspector / CSSValueListIterator classes as they
+        are no longer needed.
+
+        No new tests, no behavior change.
+
 2014-11-03  Andreas Kling  <akling@apple.com>
 
         RenderCounter shouldn't need a pre-destructor hook.

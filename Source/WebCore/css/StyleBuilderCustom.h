@@ -122,14 +122,13 @@ inline void applyValueWebkitShapeOutside(StyleResolver& styleResolver, CSSValue&
         if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
             styleResolver.style()->setShapeOutside(nullptr);
     } if (is<CSSImageValue>(value) || is<CSSImageGeneratorValue>(value) || is<CSSImageSetValue>(value)) {
-        RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver.styleImage(CSSPropertyWebkitShapeOutside, &value));
+        RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver.styleImage(CSSPropertyWebkitShapeOutside, value));
         styleResolver.style()->setShapeOutside(shape.release());
     } else if (is<CSSValueList>(value)) {
         RefPtr<BasicShape> shape;
         CSSBoxType referenceBox = BoxMissing;
-        auto& valueList = downcast<CSSValueList>(value);
-        for (unsigned i = 0; i < valueList.length(); ++i) {
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*valueList.itemWithoutBoundsCheck(i));
+        for (auto& currentValue : downcast<CSSValueList>(value)) {
+            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
             if (primitiveValue.isShape())
                 shape = basicShapeForValue(styleResolver.state().cssToLengthConversionData(), primitiveValue.getShapeValue());
             else if (primitiveValue.getValueID() == CSSValueContentBox

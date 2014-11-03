@@ -30,6 +30,9 @@
 
 #include "Animation.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSImageGeneratorValue.h"
+#include "CSSImageSetValue.h"
+#include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSTimingFunctionValue.h"
@@ -62,7 +65,7 @@ bool CSSToStyleMap::useSVGZoomRules() const
     return m_resolver->useSVGZoomRules();
 }
 
-PassRefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSValue* value)
+PassRefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSValue& value)
 {
     return m_resolver->styleImage(propertyId, value);
 }
@@ -156,7 +159,7 @@ void CSSToStyleMap::mapFillImage(CSSPropertyID property, FillLayer* layer, CSSVa
         return;
     }
 
-    layer->setImage(styleImage(property, value));
+    layer->setImage(styleImage(property, *value));
 }
 
 void CSSToStyleMap::mapFillRepeatX(CSSPropertyID, FillLayer* layer, CSSValue* value)
@@ -322,32 +325,30 @@ void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID, FillLayer* layer, CSSVa
     layer->setMaskSourceType(type);
 }
 
-void CSSToStyleMap::mapAnimationDelay(Animation* animation, CSSValue* value)
+void CSSToStyleMap::mapAnimationDelay(Animation* animation, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         animation->setDelay(Animation::initialAnimationDelay());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    animation->setDelay(primitiveValue.computeTime<double, CSSPrimitiveValue::Seconds>());
+    animation->setDelay(downcast<CSSPrimitiveValue>(value).computeTime<double, CSSPrimitiveValue::Seconds>());
 }
 
-void CSSToStyleMap::mapAnimationDirection(Animation* layer, CSSValue* value)
+void CSSToStyleMap::mapAnimationDirection(Animation* layer, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         layer->setDirection(Animation::initialAnimationDirection());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    switch (primitiveValue.getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
     case CSSValueNormal:
         layer->setDirection(Animation::AnimationDirectionNormal);
         break;
@@ -365,32 +366,30 @@ void CSSToStyleMap::mapAnimationDirection(Animation* layer, CSSValue* value)
     }
 }
 
-void CSSToStyleMap::mapAnimationDuration(Animation* animation, CSSValue* value)
+void CSSToStyleMap::mapAnimationDuration(Animation* animation, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         animation->setDuration(Animation::initialAnimationDuration());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    animation->setDuration(primitiveValue.computeTime<double, CSSPrimitiveValue::Seconds>());
+    animation->setDuration(downcast<CSSPrimitiveValue>(value).computeTime<double, CSSPrimitiveValue::Seconds>());
 }
 
-void CSSToStyleMap::mapAnimationFillMode(Animation* layer, CSSValue* value)
+void CSSToStyleMap::mapAnimationFillMode(Animation* layer, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         layer->setFillMode(Animation::initialAnimationFillMode());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    switch (primitiveValue.getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
     case CSSValueNone:
         layer->setFillMode(AnimationFillModeNone);
         break;
@@ -408,67 +407,66 @@ void CSSToStyleMap::mapAnimationFillMode(Animation* layer, CSSValue* value)
     }
 }
 
-void CSSToStyleMap::mapAnimationIterationCount(Animation* animation, CSSValue* value)
+void CSSToStyleMap::mapAnimationIterationCount(Animation* animation, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         animation->setIterationCount(Animation::initialAnimationIterationCount());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.getValueID() == CSSValueInfinite)
         animation->setIterationCount(Animation::IterationCountInfinite);
     else
         animation->setIterationCount(primitiveValue.getFloatValue());
 }
 
-void CSSToStyleMap::mapAnimationName(Animation* layer, CSSValue* value)
+void CSSToStyleMap::mapAnimationName(Animation* layer, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         layer->setName(Animation::initialAnimationName());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.getValueID() == CSSValueNone)
         layer->setIsNoneAnimation(true);
     else
         layer->setName(primitiveValue.getStringValue());
 }
 
-void CSSToStyleMap::mapAnimationPlayState(Animation* layer, CSSValue* value)
+void CSSToStyleMap::mapAnimationPlayState(Animation* layer, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         layer->setPlayState(Animation::initialAnimationPlayState());
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    EAnimPlayState playState = (primitiveValue.getValueID() == CSSValuePaused) ? AnimPlayStatePaused : AnimPlayStatePlaying;
+    EAnimPlayState playState = (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValuePaused) ? AnimPlayStatePaused : AnimPlayStatePlaying;
     layer->setPlayState(playState);
 }
 
-void CSSToStyleMap::mapAnimationProperty(Animation* animation, CSSValue* value)
+void CSSToStyleMap::mapAnimationProperty(Animation* animation, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         animation->setAnimationMode(Animation::AnimateAll);
         animation->setProperty(CSSPropertyInvalid);
         return;
     }
 
-    if (!is<CSSPrimitiveValue>(*value))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.getValueID() == CSSValueAll) {
         animation->setAnimationMode(Animation::AnimateAll);
         animation->setProperty(CSSPropertyInvalid);
@@ -481,16 +479,15 @@ void CSSToStyleMap::mapAnimationProperty(Animation* animation, CSSValue* value)
     }
 }
 
-void CSSToStyleMap::mapAnimationTimingFunction(Animation* animation, CSSValue* value)
+void CSSToStyleMap::mapAnimationTimingFunction(Animation* animation, CSSValue& value)
 {
-    if (value->isInitialValue()) {
+    if (value.isInitialValue()) {
         animation->setTimingFunction(Animation::initialAnimationTimingFunction());
         return;
     }
 
-    if (is<CSSPrimitiveValue>(*value)) {
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-        switch (primitiveValue.getValueID()) {
+    if (is<CSSPrimitiveValue>(value)) {
+        switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
         case CSSValueLinear:
             animation->setTimingFunction(LinearTimingFunction::create());
             break;
@@ -518,11 +515,11 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation* animation, CSSValue* v
         return;
     }
 
-    if (is<CSSCubicBezierTimingFunctionValue>(*value)) {
-        CSSCubicBezierTimingFunctionValue& cubicTimingFunction = downcast<CSSCubicBezierTimingFunctionValue>(*value);
+    if (is<CSSCubicBezierTimingFunctionValue>(value)) {
+        auto& cubicTimingFunction = downcast<CSSCubicBezierTimingFunctionValue>(value);
         animation->setTimingFunction(CubicBezierTimingFunction::create(cubicTimingFunction.x1(), cubicTimingFunction.y1(), cubicTimingFunction.x2(), cubicTimingFunction.y2()));
-    } else if (is<CSSStepsTimingFunctionValue>(*value)) {
-        CSSStepsTimingFunctionValue& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(*value);
+    } else if (is<CSSStepsTimingFunctionValue>(value)) {
+        auto& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(value);
         animation->setTimingFunction(StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart()));
     }
 }
@@ -545,33 +542,31 @@ void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, N
     else
         imageProperty = property;
 
-    for (unsigned i = 0 ; i < borderImage.length(); ++i) {
-        CSSValue* current = borderImage.item(i);
-
-        if (current->isImageValue() || current->isImageGeneratorValue()
+    for (auto& current : borderImage) {
+        if (is<CSSImageValue>(current.get()) || is<CSSImageGeneratorValue>(current.get())
 #if ENABLE(CSS_IMAGE_SET)
-            || current->isImageSetValue()
+            || is<CSSImageSetValue>(current.get())
 #endif
             )
-            image.setImage(styleImage(imageProperty, current));
-        else if (current->isBorderImageSliceValue())
-            mapNinePieceImageSlice(current, image);
-        else if (is<CSSValueList>(*current)) {
-            CSSValueList& slashList = downcast<CSSValueList>(*current);
+            image.setImage(styleImage(imageProperty, current.get()));
+        else if (is<CSSBorderImageSliceValue>(current.get()))
+            mapNinePieceImageSlice(current.get(), image);
+        else if (is<CSSValueList>(current.get())) {
+            CSSValueList& slashList = downcast<CSSValueList>(current.get());
             // Map in the image slices.
-            if (slashList.item(0) && slashList.item(0)->isBorderImageSliceValue())
-                mapNinePieceImageSlice(slashList.item(0), image);
+            if (is<CSSBorderImageSliceValue>(slashList.item(0)))
+                mapNinePieceImageSlice(*slashList.item(0), image);
 
             // Map in the border slices.
             if (slashList.item(1))
-                image.setBorderSlices(mapNinePieceImageQuad(slashList.item(1)));
+                image.setBorderSlices(mapNinePieceImageQuad(*slashList.item(1)));
 
             // Map in the outset.
             if (slashList.item(2))
-                image.setOutset(mapNinePieceImageQuad(slashList.item(2)));
-        } else if (current->isPrimitiveValue()) {
+                image.setOutset(mapNinePieceImageQuad(*slashList.item(2)));
+        } else if (is<CSSPrimitiveValue>(current.get())) {
             // Set the appropriate rules for stretch/round/repeat of the slices.
-            mapNinePieceImageRepeat(current, image);
+            mapNinePieceImageRepeat(current.get(), image);
         }
     }
 
@@ -590,13 +585,13 @@ void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, N
     }
 }
 
-void CSSToStyleMap::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& image)
+void CSSToStyleMap::mapNinePieceImageSlice(CSSValue& value, NinePieceImage& image)
 {
     if (!is<CSSBorderImageSliceValue>(value))
         return;
 
     // Retrieve the border image value.
-    CSSBorderImageSliceValue& borderImageSlice = downcast<CSSBorderImageSliceValue>(*value);
+    auto& borderImageSlice = downcast<CSSBorderImageSliceValue>(value);
 
     // Set up a length box to represent our image slices.
     LengthBox box;
@@ -623,7 +618,7 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& imag
     image.setFill(borderImageSlice.m_fill);
 }
 
-LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue* value)
+LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
 {
     if (!is<CSSPrimitiveValue>(value))
         return LengthBox();
@@ -632,7 +627,7 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue* value)
     CSSToLengthConversionData conversionData = useSVGZoomRules() ? m_resolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f) : m_resolver->state().cssToLengthConversionData();
 
     // Retrieve the primitive value.
-    CSSPrimitiveValue& borderWidths = downcast<CSSPrimitiveValue>(*value);
+    auto& borderWidths = downcast<CSSPrimitiveValue>(value);
 
     // Set up a length box to represent our image slices.
     LengthBox box; // Defaults to 'auto' so we don't have to handle that explicitly below.
@@ -668,12 +663,12 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue* value)
     return box;
 }
 
-void CSSToStyleMap::mapNinePieceImageRepeat(CSSValue* value, NinePieceImage& image)
+void CSSToStyleMap::mapNinePieceImageRepeat(CSSValue& value, NinePieceImage& image)
 {
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(value);
     Pair* pair = primitiveValue.getPairValue();
     if (!pair || !pair->first() || !pair->second())
         return;

@@ -201,8 +201,10 @@ inline LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResol
 inline TextDecoration StyleBuilderConverter::convertTextDecoration(StyleResolver&, CSSValue& value)
 {
     TextDecoration result = RenderStyle::initialTextDecoration();
-    for (CSSValueListIterator it(&value); it.hasMore(); it.advance())
-        result |= downcast<CSSPrimitiveValue>(*it.value());
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            result |= downcast<CSSPrimitiveValue>(currentValue.get());
+    }
     return result;
 }
 
@@ -242,7 +244,7 @@ inline NinePieceImage StyleBuilderConverter::convertBorderMask(StyleResolver& st
 template <CSSPropertyID property>
 inline PassRefPtr<StyleImage> StyleBuilderConverter::convertBorderImageSource(StyleResolver& styleResolver, CSSValue& value)
 {
-    return styleResolver.styleImage(property, &value);
+    return styleResolver.styleImage(property, value);
 }
 
 inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver& styleResolver, CSSValue& value)

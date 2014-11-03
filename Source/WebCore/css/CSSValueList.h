@@ -31,6 +31,9 @@ class CSSParserValueList;
 
 class CSSValueList : public CSSValue {
 public:
+    typedef Vector<Ref<CSSValue>, 4>::iterator iterator;
+    typedef Vector<Ref<CSSValue>, 4>::const_iterator const_iterator;
+
     static PassRef<CSSValueList> createCommaSeparated()
     {
         return adoptRef(*new CSSValueList(CommaSeparator));
@@ -53,6 +56,11 @@ public:
     const CSSValue* item(size_t index) const { return index < m_values.size() ? &m_values[index].get() : nullptr; }
     CSSValue* itemWithoutBoundsCheck(size_t index) { return &m_values[index].get(); }
     const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return &m_values[index].get(); }
+
+    const_iterator begin() const { return m_values.begin(); }
+    const_iterator end() const { return m_values.end(); }
+    iterator begin() { return m_values.begin(); }
+    iterator end() { return m_values.end(); }
 
     void append(PassRef<CSSValue>);
     void prepend(PassRef<CSSValue>);
@@ -91,38 +99,6 @@ inline void CSSValueList::prepend(PassRef<CSSValue> value)
     m_values.insert(0, WTF::move(value));
 }
 
-// Objects of this class are intended to be stack-allocated and scoped to a single function.
-// Please take care not to pass these around as they do hold onto a raw pointer.
-class CSSValueListInspector {
-public:
-    CSSValueListInspector(CSSValue* value)
-        : m_list(is<CSSValueList>(value) ? downcast<CSSValueList>(value) : nullptr)
-    {
-    }
-
-    CSSValue* item(size_t index) const { ASSERT_WITH_SECURITY_IMPLICATION(index < length()); return m_list->itemWithoutBoundsCheck(index); }
-    CSSValue* first() const { return item(0); }
-    CSSValue* second() const { return item(1); }
-    size_t length() const { return m_list ? m_list->length() : 0; }
-private:
-    CSSValueList* m_list;
-};
-
-// Wrapper that can be used to iterate over any CSSValue. Non-list values and 0 behave as zero-length lists.
-// Objects of this class are intended to be stack-allocated and scoped to a single function.
-// Please take care not to pass these around as they do hold onto a raw pointer.
-class CSSValueListIterator {
-public:
-    CSSValueListIterator(CSSValue* value) : m_inspector(value), m_position(0) { }
-    bool hasMore() const { return m_position < m_inspector.length(); }
-    CSSValue* value() const { return m_inspector.item(m_position); }
-    bool isPrimitiveValue() const { return value()->isPrimitiveValue(); }
-    void advance() { m_position++; ASSERT(m_position <= m_inspector.length());}
-    size_t index() const { return m_position; }
-private:
-    CSSValueListInspector m_inspector;
-    size_t m_position;
-};
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValueList, isValueList())

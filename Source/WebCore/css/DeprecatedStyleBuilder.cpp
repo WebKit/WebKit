@@ -32,6 +32,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -163,7 +164,7 @@ public:
 template <StyleImage* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<StyleImage>), StyleImage* (*initialFunction)(), CSSPropertyID property>
 class ApplyPropertyStyleImage {
 public:
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value) { (styleResolver->style()->*setterFunction)(styleResolver->styleImage(property, value)); }
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value) { (styleResolver->style()->*setterFunction)(styleResolver->styleImage(property, *value)); }
     static PropertyHandler createHandler()
     {
         PropertyHandler handler = ApplyPropertyDefaultBase<StyleImage*, getterFunction, PassRefPtr<StyleImage>, setterFunction, StyleImage*, initialFunction>::createHandler();
@@ -850,16 +851,16 @@ public:
         NinePieceImage image(getValue(styleResolver->style()));
         switch (modifier) {
         case Outset:
-            image.setOutset(styleResolver->styleMap()->mapNinePieceImageQuad(value));
+            image.setOutset(styleResolver->styleMap()->mapNinePieceImageQuad(*value));
             break;
         case Repeat:
-            styleResolver->styleMap()->mapNinePieceImageRepeat(value, image);
+            styleResolver->styleMap()->mapNinePieceImageRepeat(*value, image);
             break;
         case Slice:
-            styleResolver->styleMap()->mapNinePieceImageSlice(value, image);
+            styleResolver->styleMap()->mapNinePieceImageSlice(*value, image);
             break;
         case Width:
-            image.setBorderSlices(styleResolver->styleMap()->mapNinePieceImageQuad(value));
+            image.setBorderSlices(styleResolver->styleMap()->mapNinePieceImageQuad(*value));
             break;
         }
         setValue(styleResolver->style(), image);
@@ -961,7 +962,7 @@ public:
                     CSSCursorImageValue& image = downcast<CSSCursorImageValue>(*item);
                     if (image.updateIfSVGCursorIsUsed(styleResolver->element())) // Elements with SVG cursors are not allowed to share style.
                         styleResolver->style()->setUnique();
-                    styleResolver->style()->addCursor(styleResolver->styleImage(CSSPropertyCursor, &image), image.hotSpot());
+                    styleResolver->style()->addCursor(styleResolver->styleImage(CSSPropertyCursor, image), image.hotSpot());
                 } else if (is<CSSPrimitiveValue>(*item)) {
                     CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*item);
                     if (primitiveValue.isValueID())
@@ -1043,8 +1044,10 @@ public:
         }
 
         TextDecorationSkip skip = RenderStyle::initialTextDecorationSkip();
-        for (CSSValueListIterator i(value); i.hasMore(); i.advance())
-            skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(*i.value()));
+        if (is<CSSValueList>(*value)) {
+            for (auto& currentValue : downcast<CSSValueList>(*value))
+                skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get()));
+        }
         styleResolver->style()->setTextDecorationSkip(skip);
     }
     static PropertyHandler createHandler()
@@ -1120,10 +1123,11 @@ public:
         }
 
         unsigned t = 0;
-        for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
-            CSSValue* item = i.value();
-            TextUnderlinePosition t2 = downcast<CSSPrimitiveValue>(*item);
-            t |= t2;
+        if (is<CSSValueList>(*value)) {
+            for (auto& currentValue : downcast<CSSValueList>(*value)) {
+                TextUnderlinePosition t2 = downcast<CSSPrimitiveValue>(currentValue.get());
+                t |= t2;
+            }
         }
         styleResolver->style()->setTextUnderlinePosition(static_cast<TextUnderlinePosition>(t));
     }
@@ -1340,35 +1344,41 @@ public:
         Length width;
         Length height;
         PageSizeType pageSizeType = PAGE_SIZE_AUTO;
-        CSSValueListInspector inspector(value);
-        switch (inspector.length()) {
+        if (!is<CSSValueList>(value))
+            return;
+
+        auto& valueList = downcast<CSSValueList>(*value);
+        switch (valueList.length()) {
         case 2: {
+            CSSValue* firstValue = valueList.itemWithoutBoundsCheck(0);
+            CSSValue* secondValue = valueList.itemWithoutBoundsCheck(1);
             // <length>{2} | <page-size> <orientation>
-            if (!is<CSSPrimitiveValue>(*inspector.first()) || !is<CSSPrimitiveValue>(*inspector.second()))
+            if (!is<CSSPrimitiveValue>(*firstValue) || !is<CSSPrimitiveValue>(*secondValue))
                 return;
-            CSSPrimitiveValue& first = downcast<CSSPrimitiveValue>(*inspector.first());
-            CSSPrimitiveValue& second = downcast<CSSPrimitiveValue>(*inspector.second());
-            if (first.isLength()) {
+            auto& firstPrimitiveValue = downcast<CSSPrimitiveValue>(*firstValue);
+            auto& secondPrimitiveValue = downcast<CSSPrimitiveValue>(*secondValue);
+            if (firstPrimitiveValue.isLength()) {
                 // <length>{2}
-                if (!second.isLength())
+                if (!secondPrimitiveValue.isLength())
                     return;
                 CSSToLengthConversionData conversionData = styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
-                width = first.computeLength<Length>(conversionData);
-                height = second.computeLength<Length>(conversionData);
+                width = firstPrimitiveValue.computeLength<Length>(conversionData);
+                height = secondPrimitiveValue.computeLength<Length>(conversionData);
             } else {
                 // <page-size> <orientation>
                 // The value order is guaranteed. See CSSParser::parseSizeParameter.
-                if (!getPageSizeFromName(&first, &second, width, height))
+                if (!getPageSizeFromName(&firstPrimitiveValue, &secondPrimitiveValue, width, height))
                     return;
             }
             pageSizeType = PAGE_SIZE_RESOLVED;
             break;
         }
         case 1: {
+            CSSValue* value = valueList.itemWithoutBoundsCheck(0);
             // <length> | auto | <page-size> | [ portrait | landscape]
-            if (!is<CSSPrimitiveValue>(*inspector.first()))
+            if (!is<CSSPrimitiveValue>(*value))
                 return;
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*inspector.first());
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
             if (primitiveValue.isLength()) {
                 // <length>
                 pageSizeType = PAGE_SIZE_RESOLVED;
@@ -1498,8 +1508,10 @@ public:
         }
 
         TextEmphasisPosition position = 0;
-        for (CSSValueListIterator i(value); i.hasMore(); i.advance())
-            position |= valueToEmphasisPosition(downcast<CSSPrimitiveValue>(*i.value()));
+        if (is<CSSValueList>(*value)) {
+            for (auto& currentValue : downcast<CSSValueList>(*value))
+                position |= valueToEmphasisPosition(downcast<CSSPrimitiveValue>(currentValue.get()));
+        }
         styleResolver->style()->setTextEmphasisPosition(position);
     }
     static PropertyHandler createHandler()
@@ -1515,7 +1527,7 @@ template <typename T,
           bool (Animation::*testFunction)() const,
           void (Animation::*clearFunction)(),
           T (*initialFunction)(),
-          void (CSSToStyleMap::*mapFunction)(Animation*, CSSValue*),
+          void (CSSToStyleMap::*mapFunction)(Animation*, CSSValue&),
           AnimationList* (RenderStyle::*animationGetterFunction)(),
           const AnimationList* (RenderStyle::*immutableAnimationGetterFunction)() const>
 class ApplyPropertyAnimation {
@@ -1525,7 +1537,7 @@ public:
     static bool test(const Animation& animation) { return (animation.*testFunction)(); }
     static void clear(Animation& animation) { (animation.*clearFunction)(); }
     static T initial() { return (*initialFunction)(); }
-    static void map(StyleResolver* styleResolver, Animation& animation, CSSValue* value) { (styleResolver->styleMap()->*mapFunction)(&animation, value); }
+    static void map(StyleResolver* styleResolver, Animation& animation, CSSValue& value) { (styleResolver->styleMap()->*mapFunction)(&animation, value); }
     static AnimationList* accessAnimations(RenderStyle* style) { return (style->*animationGetterFunction)(); }
     static const AnimationList* animations(RenderStyle* style) { return (style->*immutableAnimationGetterFunction)(); }
 
@@ -1562,18 +1574,18 @@ public:
     {
         AnimationList* list = accessAnimations(styleResolver->style());
         size_t childIndex = 0;
-        if (value->isValueList()) {
+        if (is<CSSValueList>(*value)) {
             /* Walk each value and put it into an animation, creating new animations as needed. */
-            for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            for (auto& currentValue : downcast<CSSValueList>(*value)) {
                 if (childIndex <= list->size())
                     list->append(Animation::create());
-                map(styleResolver, list->animation(childIndex), i.value());
+                map(styleResolver, list->animation(childIndex), currentValue.get());
                 ++childIndex;
             }
         } else {
             if (list->isEmpty())
                 list->append(Animation::create());
-            map(styleResolver, list->animation(childIndex), value);
+            map(styleResolver, list->animation(childIndex), *value);
             childIndex = 1;
         }
         for ( ; childIndex < list->size(); ++childIndex) {
