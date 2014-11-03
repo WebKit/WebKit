@@ -1,5 +1,20 @@
 2014-11-03  Tim Horton  <timothy_horton@apple.com>
 
+        _actionMenuItemsForHitTestResult is given kWKActionMenuLink but an empty array of defaultMenuItems
+        https://bugs.webkit.org/show_bug.cgi?id=138321
+        <rdar://problem/18855134>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForLink]):
+        (-[WKActionMenuController _defaultMenuItems:]):
+        Move the HTTP-family-URLs-only condition to the place where we decide what kind of menu to
+        show. We depend on _defaultMenuItemsForLink returning the link menu, and should never
+        set the link menu type if we aren't going to build a link menu.
+
+2014-11-03  Tim Horton  <timothy_horton@apple.com>
+
         Use FrameSnapshotting functions in FindController::getFindIndicatorBitmap
         https://bugs.webkit.org/show_bug.cgi?id=138300
         <rdar://problem/18855863>
