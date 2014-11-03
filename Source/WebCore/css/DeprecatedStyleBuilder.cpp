@@ -1708,58 +1708,6 @@ public:
     }
 };
 
-class ApplyPropertyZoom {
-private:
-    static void resetEffectiveZoom(StyleResolver* styleResolver)
-    {
-        // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
-        styleResolver->setEffectiveZoom(styleResolver->parentStyle() ? styleResolver->parentStyle()->effectiveZoom() : RenderStyle::initialZoom());
-    }
-
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        resetEffectiveZoom(styleResolver);
-        styleResolver->setZoom(styleResolver->parentStyle()->zoom());
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        resetEffectiveZoom(styleResolver);
-        styleResolver->setZoom(RenderStyle::initialZoom());
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-
-        if (primitiveValue.getValueID() == CSSValueNormal) {
-            resetEffectiveZoom(styleResolver);
-            styleResolver->setZoom(RenderStyle::initialZoom());
-        } else if (primitiveValue.getValueID() == CSSValueReset) {
-            styleResolver->setEffectiveZoom(RenderStyle::initialZoom());
-            styleResolver->setZoom(RenderStyle::initialZoom());
-        } else if (primitiveValue.getValueID() == CSSValueDocument) {
-            float docZoom = styleResolver->rootElementStyle() ? styleResolver->rootElementStyle()->zoom() : RenderStyle::initialZoom();
-            styleResolver->setEffectiveZoom(docZoom);
-            styleResolver->setZoom(docZoom);
-        } else if (primitiveValue.isPercentage()) {
-            resetEffectiveZoom(styleResolver);
-            if (float percent = primitiveValue.getFloatValue())
-                styleResolver->setZoom(percent / 100.0f);
-        } else if (primitiveValue.isNumber()) {
-            resetEffectiveZoom(styleResolver);
-            if (float number = primitiveValue.getFloatValue())
-                styleResolver->setZoom(number);
-        }
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-};
-
 class ApplyPropertyDisplay {
 private:
     static inline bool isValidDisplayValue(StyleResolver* styleResolver, EDisplay displayPropertyValue)
@@ -2129,7 +2077,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyWordSpacing::createHandler());
 
     setPropertyHandler(CSSPropertyZIndex, ApplyPropertyAuto<int, &RenderStyle::zIndex, &RenderStyle::setZIndex, &RenderStyle::hasAutoZIndex, &RenderStyle::setHasAutoZIndex>::createHandler());
-    setPropertyHandler(CSSPropertyZoom, ApplyPropertyZoom::createHandler());
 }
 
 

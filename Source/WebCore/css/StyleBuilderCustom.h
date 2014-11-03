@@ -66,6 +66,49 @@ inline void applyValueDirection(StyleResolver& styleResolver, CSSValue& value)
         element->document().setDirectionSetOnDocumentElement(true);
 }
 
+static inline void resetEffectiveZoom(StyleResolver& styleResolver)
+{
+    // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
+    styleResolver.setEffectiveZoom(styleResolver.parentStyle() ? styleResolver.parentStyle()->effectiveZoom() : RenderStyle::initialZoom());
+}
+
+inline void applyInitialZoom(StyleResolver& styleResolver)
+{
+    resetEffectiveZoom(styleResolver);
+    styleResolver.setZoom(RenderStyle::initialZoom());
+}
+
+inline void applyInheritZoom(StyleResolver& styleResolver)
+{
+    resetEffectiveZoom(styleResolver);
+    styleResolver.setZoom(styleResolver.parentStyle()->zoom());
+}
+
+inline void applyValueZoom(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.getValueID() == CSSValueNormal) {
+        resetEffectiveZoom(styleResolver);
+        styleResolver.setZoom(RenderStyle::initialZoom());
+    } else if (primitiveValue.getValueID() == CSSValueReset) {
+        styleResolver.setEffectiveZoom(RenderStyle::initialZoom());
+        styleResolver.setZoom(RenderStyle::initialZoom());
+    } else if (primitiveValue.getValueID() == CSSValueDocument) {
+        float docZoom = styleResolver.rootElementStyle() ? styleResolver.rootElementStyle()->zoom() : RenderStyle::initialZoom();
+        styleResolver.setEffectiveZoom(docZoom);
+        styleResolver.setZoom(docZoom);
+    } else if (primitiveValue.isPercentage()) {
+        resetEffectiveZoom(styleResolver);
+        if (float percent = primitiveValue.getFloatValue())
+            styleResolver.setZoom(percent / 100.0f);
+    } else if (primitiveValue.isNumber()) {
+        resetEffectiveZoom(styleResolver);
+        if (float number = primitiveValue.getFloatValue())
+            styleResolver.setZoom(number);
+    }
+}
+
 } // namespace StyleBuilderFunctions
 
 } // namespace WebCore

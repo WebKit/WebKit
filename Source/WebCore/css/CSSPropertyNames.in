@@ -44,11 +44,13 @@
 // can indicate that a Converter helper function in
 // css/StyleBuilderConverter.h should be used.
 //
-// * Custom=Value:
-// This option is used to indicate that the CSS property requires special
+// * Custom=[Value|All]:
+// Custom=Value option is used to indicate that the CSS property requires special
 // handling to set its value, and a regular Converter helper cannot be
 // used. The Custom code for the property should be located in
 // css/StyleBuilderCustom.h and named applyValue[CSSPropertyName]().
+// If special handling is also needed to apply inherit or initial value, use
+// Custom=All.
 
 
 // high-priority property names have to be listed first, to simplify the check
@@ -75,7 +77,7 @@ text-rendering [Inherited]
 #endif
 -webkit-writing-mode [Inherited]
 -epub-writing-mode = -webkit-writing-mode
-zoom
+zoom [NewStyleBuilder, Custom=All]
 
 // line height needs to be right after the above high-priority properties
 line-height [Inherited]

@@ -379,6 +379,8 @@ foreach my $name (@names) {
   # Skip properties not using the new style builder yet.
   next unless exists($propertiesUsingNewStyleBuilder{$name});
 
+  next if $propertiesUsingNewStyleBuilder{$name}{"Custom"} eq "All";
+
   my $setValue = "styleResolver.style()->" . $propertiesUsingNewStyleBuilder{$name}{"Setter"};
   print STYLEBUILDER "    inline void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   print STYLEBUILDER "    {\n";
