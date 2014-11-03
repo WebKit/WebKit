@@ -1,3 +1,13 @@
+2014-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix bad assertion in r175487.
+
+        I mistakenly used it != values.end() instead of it == values.end()
+        so the debug bots are crashing.
+
+        * css/StyleResolver.cpp:
+        (WebCore::createGridPosition):
+
 2014-11-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(VIDEO) build after r175279

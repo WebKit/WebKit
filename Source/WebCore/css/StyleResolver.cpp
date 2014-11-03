@@ -2034,7 +2034,7 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
         ++it;
     }
 
-    ASSERT(it != values.end());
+    ASSERT(it == values.end());
     if (isSpanPosition)
         position.setSpanPosition(gridLineNumber ? gridLineNumber : 1, gridLineName);
     else
