@@ -26,6 +26,7 @@
 
 #if !LOG_DISABLED
 
+#include <Eina.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
