@@ -340,7 +340,9 @@ public:
 #endif
 
     virtual bool supportsVideoFullscreen() { return false; }
+#if ENABLE(VIDEO)
     virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement*, HTMLMediaElement::VideoFullscreenMode) { }
+#endif
     virtual void exitVideoFullscreen() { }
     virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 

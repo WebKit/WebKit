@@ -1,3 +1,12 @@
+2014-11-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(VIDEO) build after r175279
+        https://bugs.webkit.org/show_bug.cgi?id=138320
+
+        Reviewed by Jer Noble.
+
+        * page/ChromeClient.h:
+
 2014-11-03  Chris Dumez  <cdumez@apple.com>
 
         Support modern range loops over CSSValueList
