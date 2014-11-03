@@ -1,3 +1,12 @@
+2014-11-03  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Subpixel layout): Bubbles don't fit in Bugzilla review page
+        https://bugs.webkit.org/show_bug.cgi?id=138323
+
+        Reviewed by Zalan Bujtas.
+
+        * QueueStatusServer/templates/statusbubble.html: Round the sizes up, not down.
+
 2014-11-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [ninja] Don't remove response files for verbose builds
