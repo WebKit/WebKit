@@ -64,6 +64,7 @@ using namespace WebKit;
 
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 - (void)_updateActionMenuItems;
+- (BOOL)_canAddImageToPhotos;
 @end
 
 @interface WKView (WKDeprecatedSPI)
@@ -188,7 +189,11 @@ using namespace WebKit;
 - (NSArray *)_defaultMenuItemsForImage
 {
     RetainPtr<NSMenuItem> copyImageItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyImage];
-    RetainPtr<NSMenuItem> addToPhotosItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddImageToPhotos];
+    RetainPtr<NSMenuItem> addToPhotosItem;
+    if ([self _canAddImageToPhotos])
+        addToPhotosItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddImageToPhotos];
+    else
+        addToPhotosItem = [NSMenuItem separatorItem];
     RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveImageToDownloads];
     RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareImage];
 
@@ -266,10 +271,14 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return path;
 }
 
+- (BOOL)_canAddImageToPhotos
+{
+    return [getIKSlideshowClass() canExportToApplication:@"com.apple.Photos"];
+}
+
 - (void)_addImageToPhotos:(id)sender
 {
-    // FIXME: We shouldn't even add the menu item if this is the case, for now.
-    if (![getIKSlideshowClass() canExportToApplication:@"com.apple.Photos"])
+    if (![self _canAddImageToPhotos])
         return;
 
     RefPtr<ShareableBitmap> bitmap = _hitTestResult.image;
