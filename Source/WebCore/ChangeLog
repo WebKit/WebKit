@@ -1,5 +1,25 @@
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173845. <rdar://problem/18856008>
+
+    2014-09-22  David Hyatt  <hyatt@apple.com>
+    
+            Bad cast in isValidColumnSpanner.
+            https://bugs.webkit.org/show_bug.cgi?id=133380.
+    
+            Reviewed by Simon Fraser.
+    
+            Added fast/multicol/multicol-crazy-nesting.html
+    
+            * rendering/RenderMultiColumnFlowThread.cpp:
+            (WebCore::isValidColumnSpanner):
+            The crawl up the chain looking for unsplittable objects should use containing blocks
+            and not be casting to parent boxes. You can have an inline in the parent chain, so
+            this was not the right way to walk up the tree.
+    
+
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r173843. <rdar://problem/18856048>
 
     2014-09-22  David Hyatt  <hyatt@apple.com>
