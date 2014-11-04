@@ -115,12 +115,12 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
-    if (_type != kWKActionMenuReadOnlyText)
+    if (_type != kWKActionMenuReadOnlyText && _type != kWKActionMenuEditableText)
         return;
 
     // Action menus for text should highlight the text so that it is clear what the action menu actions
     // will apply to. If the text is already selected, the menu will use the existing selection.
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:MenuUpdateStage::MenuNeedsUpdate];
     if (!hitTestResult->isSelected())
         _page->selectLookupTextAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 }
@@ -314,6 +314,17 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 #pragma mark Text actions
 
+- (NSArray *)_defaultMenuItemsForDataDetectedText
+{
+    DDActionContext *actionContext = _hitTestResult.actionContext.get();
+    if (!actionContext)
+        return @[ ];
+
+    WKSetDDActionContextIsForActionMenu(actionContext);
+    actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.actionBoundingBox toView:nil]];
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_hitTestResult.actionContext mainResult] actionContext:actionContext];
+}
+
 - (NSArray *)_defaultMenuItemsForText
 {
     RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
@@ -322,9 +333,23 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return @[ copyTextItem.get(), lookupTextItem.get() ];
 }
 
--(void)_copyText:(id)sender
+- (NSArray *)_defaultMenuItemsForEditableText
+{
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
+    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
+
+    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
+}
+
+-(void)_copySelection:(id)sender
 {
     _page->executeEditCommand("copy");
+}
+
+-(void)_paste:(id)sender
+{
+    _page->executeEditCommand("paste");
 }
 
 -(void)_lookupText:(id)sender
@@ -430,7 +455,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         break;
 
     case kWKContextActionItemTagCopyText:
-        selector = @selector(_copyText:);
+        selector = @selector(_copySelection:);
         title = @"Copy";
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
         break;
@@ -439,6 +464,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_lookupText:);
         title = @"Lookup";
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
+        break;
+
+    case kWKContextActionItemTagPaste:
+        selector = @selector(_paste:);
+        title = @"Paste";
+        image = [NSImage imageNamed:@"NSActionMenuPaste"];
         break;
 
     default:
@@ -458,43 +489,8 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     return [[NSBundle bundleForClass:[WKView class]] imageForResource:name];
 }
 
-- (NSArray *)_defaultMenuItems
+- (PassRefPtr<WebHitTestResult>)_hitTestResultForStage:(MenuUpdateStage)stage
 {
-    if (WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult()) {
-        if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
-            _type = kWKActionMenuImage;
-            return [self _defaultMenuItemsForImage];
-        }
-
-        if (!hitTestResult->absoluteLinkURL().isEmpty()) {
-            _type = kWKActionMenuLink;
-            return [self _defaultMenuItemsForLink];
-        }
-
-        if (hitTestResult->isTextNode()) {
-            if (DDActionContext *actionContext = _hitTestResult.actionContext.get()) {
-                WKSetDDActionContextIsForActionMenu(actionContext);
-                actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.actionBoundingBox toView:nil]];
-                NSArray *dataDetectorMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_hitTestResult.actionContext mainResult] actionContext:actionContext];
-                if (dataDetectorMenuItems.count) {
-                    _type = kWKActionMenuDataDetectedItem;
-                    return dataDetectorMenuItems;
-                }
-            }
-            _type = kWKActionMenuReadOnlyText;
-            return [self _defaultMenuItemsForText];
-        }
-    }
-
-    _type = kWKActionMenuNone;
-    return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
-}
-
-- (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage
-{
-    [_wkView.actionMenu removeAllItems];
-
-    NSArray *menuItems = [self _defaultMenuItems];
     RefPtr<WebHitTestResult> hitTestResult;
     switch (stage) {
     case MenuUpdateStage::PrepareForMenu:
@@ -507,6 +503,54 @@ static NSImage *webKitBundleImageNamed(NSString *name)
             hitTestResult = _page->activeActionMenuHitTestResult();
         break;
     }
+
+        return hitTestResult.release(); 
+}
+
+- (NSArray *)_defaultMenuItems:(MenuUpdateStage)stage
+{
+    RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:stage];
+    if (!hitTestResult) {
+        _type = kWKActionMenuNone;
+        return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
+    }
+
+    if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
+        _type = kWKActionMenuImage;
+        return [self _defaultMenuItemsForImage];
+    }
+
+    if (!hitTestResult->absoluteLinkURL().isEmpty()) {
+       _type = kWKActionMenuLink;
+       return [self _defaultMenuItemsForLink];
+    }
+
+    if (hitTestResult->isTextNode()) {
+        NSArray *dataDetectorMenuItems = [self _defaultMenuItemsForDataDetectedText];
+        if (dataDetectorMenuItems.count) {
+            _type = kWKActionMenuDataDetectedItem;
+            return dataDetectorMenuItems;
+        }
+
+        if (hitTestResult->isContentEditable()) {
+            _type = kWKActionMenuEditableText;
+            return [self _defaultMenuItemsForEditableText];
+        }
+
+        _type = kWKActionMenuReadOnlyText;
+        return [self _defaultMenuItemsForText];
+    }
+
+    _type = kWKActionMenuNone;
+    return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
+}
+
+- (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage
+{
+    [_wkView.actionMenu removeAllItems];
+
+    NSArray *menuItems = [self _defaultMenuItems:stage];
+    RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:stage];
 
     if ([_wkView respondsToSelector:@selector(_actionMenuItemsForHitTestResult:defaultActionMenuItems:)])
         menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(hitTestResult.get()) defaultActionMenuItems:menuItems];
