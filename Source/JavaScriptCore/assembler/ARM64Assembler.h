@@ -1568,6 +1568,7 @@ public:
     ALWAYS_INLINE void madd(RegisterID rd, RegisterID rn, RegisterID rm, RegisterID ra)
     {
         CHECK_DATASIZE();
+        nopCortexA53Fix835769<datasize>();
         insn(dataProcessing3Source(DATASIZE, DataOp_MADD, rm, ra, rn, rd));
     }
 
@@ -1620,6 +1621,7 @@ public:
     ALWAYS_INLINE void msub(RegisterID rd, RegisterID rn, RegisterID rm, RegisterID ra)
     {
         CHECK_DATASIZE();
+        nopCortexA53Fix835769<datasize>();
         insn(dataProcessing3Source(DATASIZE, DataOp_MSUB, rm, ra, rn, rd));
     }
 
@@ -1806,6 +1808,7 @@ public:
 
     ALWAYS_INLINE void smaddl(RegisterID rd, RegisterID rn, RegisterID rm, RegisterID ra)
     {
+        nopCortexA53Fix835769<64>();
         insn(dataProcessing3Source(Datasize_64, DataOp_SMADDL, rm, ra, rn, rd));
     }
 
@@ -1816,6 +1819,7 @@ public:
 
     ALWAYS_INLINE void smsubl(RegisterID rd, RegisterID rn, RegisterID rm, RegisterID ra)
     {
+        nopCortexA53Fix835769<64>();
         insn(dataProcessing3Source(Datasize_64, DataOp_SMSUBL, rm, ra, rn, rd));
     }
 
@@ -2059,6 +2063,7 @@ public:
 
     ALWAYS_INLINE void umaddl(RegisterID rd, RegisterID rn, RegisterID rm, RegisterID ra)
     {
+        nopCortexA53Fix835769<64>();
         insn(dataProcessing3Source(Datasize_64, DataOp_UMADDL, rm, ra, rn, rd));
     }
 
@@ -2069,6 +2074,7 @@ public:
 
     ALWAYS_INLINE void umsubl(RegisterID rd, RegisterID rn, RegisterID rm, RegisterID ra)
     {
+        nopCortexA53Fix835769<64>();
         insn(dataProcessing3Source(Datasize_64, DataOp_UMSUBL, rm, ra, rn, rd));
     }
 
@@ -3627,6 +3633,26 @@ private:
         const int op3 = 0;
         const int op4 = 0;
         return (0xd6000000 | opc << 21 | op2 << 16 | op3 << 10 | xOrZr(rn) << 5 | op4);
+    }
+
+    // Workaround for Cortex-A53 erratum (835769). Emit an extra nop if the
+    // last instruction in the buffer is a load, store or prefetch. Needed
+    // before 64-bit multiply-accumulate instructions.
+    template<int datasize>
+    ALWAYS_INLINE void nopCortexA53Fix835769()
+    {
+#if CPU(ARM64_CORTEXA53)
+        CHECK_DATASIZE();
+        if (datasize == 64) {
+            if (LIKELY(m_buffer.codeSize() >= sizeof(int32_t))) {
+                // From ARMv8 Reference Manual, Section C4.1: the encoding of the
+                // instructions in the Loads and stores instruction group is:
+                // ---- 1-0- ---- ---- ---- ---- ---- ----
+                if (UNLIKELY((*reinterpret_cast_ptr<int32_t*>(reinterpret_cast_ptr<char*>(m_buffer.data()) + m_buffer.codeSize() - sizeof(int32_t)) & 0x0a000000) == 0x08000000))
+                    nop();
+            }
+        }
+#endif
     }
 
     AssemblerBuffer m_buffer;

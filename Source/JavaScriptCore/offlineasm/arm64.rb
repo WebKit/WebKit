@@ -228,6 +228,34 @@ def arm64LowerMalformedLoadStoreAddresses(list)
     newList
 end
 
+# Workaround for Cortex-A53 erratum (835769)
+def arm64CortexA53Fix835769(list)
+    newList = []
+    lastOpcodeUnsafe = false
+
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^store/, /^load/
+                # List all macro instructions that can be lowered to a load, store or prefetch ARM64 assembly instruction
+                lastOpcodeUnsafe = true
+            when  "muli", "mulp", "mulq", "smulli"
+                # List all macro instructions that can be lowered to a 64-bit multiply-accumulate ARM64 assembly instruction
+                # (defined as one of MADD, MSUB, SMADDL, SMSUBL, UMADDL or UMSUBL).
+                if lastOpcodeUnsafe
+                    newList << Instruction.new(node.codeOrigin, "nopCortexA53Fix835769", [])
+                end
+                lastOpcodeUnsafe = false
+            else
+                lastOpcodeUnsafe = false
+            end
+        end
+        newList << node
+    }
+    newList
+end
+
 class Sequence
     def getModifiedListARM64
         result = @list
@@ -284,6 +312,7 @@ class Sequence
         result = riscLowerTest(result)
         result = assignRegistersToTemporaries(result, :gpr, ARM64_EXTRA_GPRS)
         result = assignRegistersToTemporaries(result, :fpr, ARM64_EXTRA_FPRS)
+        result = arm64CortexA53Fix835769(result)
         return result
     end
 end
@@ -837,7 +866,11 @@ class Instruction
         when "memfence"
             $asm.puts "dmb sy"
         when "pcrtoaddr"
-          $asm.puts "adr #{operands[1].arm64Operand(:ptr)}, #{operands[0].value}"
+            $asm.puts "adr #{operands[1].arm64Operand(:ptr)}, #{operands[0].value}"
+        when "nopCortexA53Fix835769"
+            $asm.putStr("#if CPU(ARM64_CORTEXA53)")
+            $asm.puts "nop"
+            $asm.putStr("#endif")
         else
             lowerDefault
         end

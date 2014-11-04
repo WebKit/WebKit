@@ -1,3 +1,20 @@
+2014-11-03  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Workaround for Cortex-A53 erratum 835769
+        https://bugs.webkit.org/show_bug.cgi?id=138315
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces CMake variable and preprocessor macro
+        WTF_CPU_ARM64_CORTEXA53 with the aim of enabling Cortex-A53-specific
+        code paths, if set true.
+
+        * Source/cmake/OptionsCommon.cmake:
+        Add -mfix-cortex-a53-835769 to the compiler flags if compiler supports
+        it.
+        * Source/cmakeconfig.h.cmake:
+        #cmakedefine01 for WTF_CPU_ARM64_CORTEXA53
+
 2014-11-02  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         [GTK] Fix the build of FTL JIT

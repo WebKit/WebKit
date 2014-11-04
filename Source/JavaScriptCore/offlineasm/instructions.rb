@@ -266,7 +266,8 @@ ARM_INSTRUCTIONS =
 
 ARM64_INSTRUCTIONS =
     [
-     "pcrtoaddr"    # Address from PC relative offset - adr instruction
+     "pcrtoaddr",   # Address from PC relative offset - adr instruction
+     "nopFixCortexA53Err835769" # nop on Cortex-A53 (nothing otherwise)
     ]
 
 RISC_INSTRUCTIONS =
