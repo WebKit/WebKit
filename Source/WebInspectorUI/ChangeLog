@@ -1,3 +1,16 @@
+2014-11-04  Andrei Bucur  <abucur@adobe.com>
+
+        Building WebInspectorUI should not run the clang static analyzer by default
+        https://bugs.webkit.org/show_bug.cgi?id=137652
+
+        Reviewed by Timothy Hatcher.
+
+        There's no need to have the static analyzer enabled at compile time by default for the WebInspectorUI project.
+        It also breaks the ASAN build because the static analyzing step runs using the default compiler not the
+        ASAN clang.
+
+        * Configurations/DebugRelease.xcconfig: Remove the RUN_CLANG_STATIC_ANALYZER variable.
+
 2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exceptions when paused and hovering JavaScript without CallFrames
