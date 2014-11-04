@@ -1527,7 +1527,7 @@ public:
         else if (primitiveValue->isLength()) {
             wordSpacing = primitiveValue->computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(*styleResolver));
         } else if (primitiveValue->isPercentage())
-            wordSpacing = Length(primitiveValue->getDoubleValue(), Percent);
+            wordSpacing = Length(clampTo<float>(primitiveValue->getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
         else if (primitiveValue->isNumber())
             wordSpacing = Length(primitiveValue->getDoubleValue(), Fixed);
         else
