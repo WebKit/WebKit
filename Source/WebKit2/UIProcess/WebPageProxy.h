@@ -1295,7 +1295,7 @@ private:
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
 
-    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&);
+    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, IPC::MessageDecoder&);
 
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;

@@ -410,5 +410,5 @@ messages -> WebPageProxy {
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilter contentFilter, uint64_t frameID)
 #endif
 
-    DidPerformActionMenuHitTest(WebKit::ActionMenuHitTestResult result)
+    DidPerformActionMenuHitTest(WebKit::ActionMenuHitTestResult result, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 }

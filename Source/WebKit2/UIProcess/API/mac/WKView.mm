@@ -3658,9 +3658,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [_data->_actionMenuController didCloseMenu:menu withEvent:event];
 }
 
-- (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult
+- (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
 {
-    [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult];
+    [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
 }
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
@@ -4136,6 +4136,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems
 {
     return defaultMenuItems;
+}
+
+- (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems userData:(WKTypeRef)userData
+{
+    return [self _actionMenuItemsForHitTestResult:hitTestResult withType:type defaultActionMenuItems:defaultMenuItems];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

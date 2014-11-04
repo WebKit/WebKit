@@ -20,6 +20,67 @@
 
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175444. <rdar://problem/18830771>
+
+    2014-10-31  Sam Weinig  <sam@webkit.org>
+    
+            Add bundle SPI to customize the action menu
+            <rdar://problem/18830771>
+            https://bugs.webkit.org/show_bug.cgi?id=138271
+    
+            Reviewed by Anders Carlsson.
+    
+            - Adds a new function to the WKBundlePageContextMenuClient that allows the client to pass construct
+              user data in the bundle that can be available when customizing the menu in -[WKView _actionMenuItemsForHitTestResult...].
+            - Changes the signature of  -[WKView _actionMenuItemsForHitTestResult...] to add userData.
+            - Makes the actual hit test result available in the second invocation of -[WKView _actionMenuItemsForHitTestResult...]
+              by serializing it in the ActionMenuHitTestResult.
+    
+            * Shared/mac/ActionMenuHitTestResult.h:
+            * Shared/mac/ActionMenuHitTestResult.mm:
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+            Adds the WebHitTestResult and the original hit test request location.
+            
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Adds a new version of _actionMenuItemsForHitTestResult that passes userData along.
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _didPerformActionMenuHitTest:userData:]):
+            (-[WKView _actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:userData:]):
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didPerformActionMenuHitTest):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::didPerformActionMenuHitTest):
+            Pipe the user data through to the WKView.
+    
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            (-[WKActionMenuController didPerformActionMenuHitTest:userData:]):
+            (-[WKActionMenuController menuNeedsUpdate:]):
+            (-[WKActionMenuController _updateActionMenuItemsForStage:]):
+            Differentiate between the two times _updateActionMenuItems was called via a new stage parameter,
+            (it is called once in prepareForMenu, and once in menuNeedsUpdate). Use the last mouse move hit
+            test result in the prepareForMenu case (as we don't have a real result yet), and the hit result
+            passed in via didPerformActionMenuHitTest in the menuNeedsUpdate case (assuming we didn't time out)
+            waiting on the web process.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundlePageContextMenuClient.h:
+            * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+            (WebKit::InjectedBundlePageContextMenuClient::prepareForActionMenu):
+            * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Adds new bundle SPI to collect user data to pass to the -[WKView _actionMenuItemsForHitTestResult...] method.
+    
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r175428. <rdar://problem/18841709>
 
     2014-10-31  Tim Horton  <timothy_horton@apple.com>
