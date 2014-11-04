@@ -137,8 +137,7 @@ using namespace WebKit;
     if (!view || !delegate)
         return CGRectZero;
 
-    return [self _presentationRectForSheetGivenPoint:[delegate positionInformation].point inHostView:view];
-
+    return [self _presentationRectForSheetGivenPoint:[delegate positionInformationForActionSheetAssistant:self].point inHostView:view];
 }
 
 - (CGRect)presentationRectInHostViewForSheet
@@ -148,7 +147,7 @@ using namespace WebKit;
     if (!view || !delegate)
         return CGRectZero;
 
-    const auto& positionInformation = [delegate positionInformation];
+    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     CGRect boundingRect = positionInformation.bounds;
     CGPoint fromPoint = positionInformation.point;
@@ -164,7 +163,7 @@ using namespace WebKit;
 
 - (void)updatePositionInformation
 {
-    [_delegate.get() updatePositionInformation];
+    [_delegate.get() updatePositionInformationForActionSheetAssistant:self];
 }
 
 - (BOOL)presentSheet
@@ -192,7 +191,7 @@ using namespace WebKit;
     if (!delegate)
         return;
 
-    const auto& positionInformation = [delegate positionInformation];
+    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
     NSString *urlScheme = [targetURL scheme];
@@ -225,7 +224,7 @@ using namespace WebKit;
 
     for (_WKElementAction *action in actions) {
         [_interactionSheet _addActionWithTitle:[action title] style:UIAlertActionStyleDefault handler:^{
-            [action _runActionWithElementInfo:_elementInfo.get() delegate:delegate.get()];
+            [action _runActionWithElementInfo:_elementInfo.get() forActionSheetAssistant:self];
             [self cleanupSheet];
         } shouldDismissHandler:^{
             return (BOOL)(!action.dismissalHandler || action.dismissalHandler());
@@ -237,7 +236,7 @@ using namespace WebKit;
                                                         handler:^(UIAlertAction *action) {
                                                             [self cleanupSheet];
                                                         }]];
-    [delegate startInteractionWithElement:_elementInfo.get()];
+    [delegate actionSheetAssistant:self willStartInteractionWithElement:_elementInfo.get()];
 }
 
 - (void)showImageSheet
@@ -249,7 +248,7 @@ using namespace WebKit;
     if (!delegate)
         return;
 
-    const auto& positionInformation = [delegate positionInformation];
+    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
@@ -265,7 +264,7 @@ using namespace WebKit;
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
 
-    RetainPtr<NSArray> actions = [delegate actionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
+    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
 
     if (![actions count])
         return;
@@ -289,7 +288,7 @@ using namespace WebKit;
     if (!delegate)
         return;
 
-    const auto& positionInformation = [delegate positionInformation];
+    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
     if (!targetURL)
@@ -305,7 +304,7 @@ using namespace WebKit;
     RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
 
-    RetainPtr<NSArray> actions = [delegate actionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
+    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
 
     if (![actions count])
         return;
@@ -328,7 +327,7 @@ using namespace WebKit;
     if (!delegate)
         return;
 
-    NSURL *targetURL = [NSURL URLWithString:[delegate positionInformation].url];
+    NSURL *targetURL = [NSURL URLWithString:[delegate positionInformationForActionSheetAssistant:self].url];
     if (!targetURL)
         return;
 
@@ -366,7 +365,7 @@ using namespace WebKit;
 
 - (void)cleanupSheet
 {
-    [_delegate.get() stopInteraction];
+    [_delegate.get() actionSheetAssistantDidStopInteraction:self];
 
     [_interactionSheet doneWithSheet];
     [_interactionSheet setSheetDelegate:nil];
