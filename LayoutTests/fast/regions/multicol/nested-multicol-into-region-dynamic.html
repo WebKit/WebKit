@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <style id="style">
+            #outer, #inner { -webkit-column-count: 2; }
+        </style>
+    </head>
+    <body>
+        <p>Test that a multicolumn element with flow-from style, inside another multicolumn element, is correctly transformed into a region when its multicolumn style is dynamically removed.</p>
+        <p>On success you should see PASS below.</p>
+        <div id="article" style="-webkit-flow-into: article;">PASS</div>
+        <div id="outer">
+            <div id="inner"></div>
+        </div>
+        <script id="script">
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+
+            document.getElementById("inner").style.webkitFlowFrom = "article";
+            document.body.offsetTop;
+
+            var styleElement = document.getElementById("style");
+            styleElement.parentNode.removeChild(styleElement);
+        </script>
+    </body>
+</html>

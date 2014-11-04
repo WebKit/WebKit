@@ -1,0 +1,6 @@
+Test that a multicolumn element with flow-from style, inside another multicolumn element, is correctly transformed into a region when its multicolumn style is dynamically removed.
+
+On success you should see PASS below.
+
+PASS
+
