@@ -1,3 +1,26 @@
+2014-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Move -webkit-text-emphasis-position to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138359
+
+        Reviewed by Andreas Kling.
+
+        Move -webkit-text-emphasis-position from DeprecatedStyleBilder to the
+        new StyleBuilder so that it is now generated from CSSPropertyNames.in.
+        A new TextEmphasisPosition Converter was added to support this.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::valueToEmphasisPosition): Deleted.
+        (WebCore::ApplyPropertyTextEmphasisPosition::applyValue): Deleted.
+        (WebCore::ApplyPropertyTextEmphasisPosition::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::valueToEmphasisPosition):
+        (WebCore::StyleBuilderConverter::convertTextEmphasisPosition):
+
 2014-11-04  Andreas Kling  <akling@apple.com>
 
         RenderBox shouldn't need a pre-destructor hook.

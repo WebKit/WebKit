@@ -56,9 +56,11 @@ public:
     static String convertString(StyleResolver&, CSSValue&);
     static String convertStringOrAuto(StyleResolver&, CSSValue&);
     static String convertStringOrNone(StyleResolver&, CSSValue&);
+    static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
+    static TextEmphasisPosition valueToEmphasisPosition(CSSPrimitiveValue&);
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -271,6 +273,38 @@ inline String StyleBuilderConverter::convertStringOrNone(StyleResolver& styleRes
     if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
         return nullAtom;
     return convertString(styleResolver, value);
+}
+
+inline TextEmphasisPosition StyleBuilderConverter::valueToEmphasisPosition(CSSPrimitiveValue& primitiveValue)
+{
+    ASSERT(primitiveValue.isValueID());
+
+    switch (primitiveValue.getValueID()) {
+    case CSSValueOver:
+        return TextEmphasisPositionOver;
+    case CSSValueUnder:
+        return TextEmphasisPositionUnder;
+    case CSSValueLeft:
+        return TextEmphasisPositionLeft;
+    case CSSValueRight:
+        return TextEmphasisPositionRight;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return RenderStyle::initialTextEmphasisPosition();
+}
+
+inline TextEmphasisPosition StyleBuilderConverter::convertTextEmphasisPosition(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value))
+        return valueToEmphasisPosition(downcast<CSSPrimitiveValue>(value));
+
+    TextEmphasisPosition position = 0;
+    for (auto& currentValue : downcast<CSSValueList>(value))
+        position |= valueToEmphasisPosition(downcast<CSSPrimitiveValue>(currentValue.get()));
+    return position;
 }
 
 } // namespace WebCore

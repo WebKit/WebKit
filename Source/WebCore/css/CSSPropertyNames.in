@@ -481,7 +481,7 @@ text-emphasis = -webkit-text-emphasis
 -webkit-text-emphasis-color [Inherited]
 -epub-text-emphasis-color = -webkit-text-emphasis-color
 text-emphasis-color = -webkit-text-emphasis-color
--webkit-text-emphasis-position [Inherited]
+-webkit-text-emphasis-position [Inherited, NewStyleBuilder, Converter=TextEmphasisPosition]
 text-emphasis-position = -webkit-text-emphasis-position
 -webkit-text-emphasis-style [Inherited]
 -epub-text-emphasis-style = -webkit-text-emphasis-style
