@@ -251,13 +251,12 @@ struct WKViewInterpretKeyEventsParameters {
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     BOOL _automaticallyAdjustsContentInsets;
+    RetainPtr<WKActionMenuController> _actionMenuController;
 #endif
 
 #if WK_API_ENABLED
     _WKThumbnailView *_thumbnailView;
 #endif
-
-    RetainPtr<WKActionMenuController> _actionMenuController;
 }
 
 @end
@@ -304,7 +303,9 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)dealloc
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController willDestroyView:self];
+#endif
 
     _data->_page->close();
 
@@ -3534,12 +3535,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate:) name:NSApplicationWillTerminateNotification object:NSApp];
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
         self.actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
         self.actionMenu.delegate = _data->_actionMenuController.get();
     }
+#endif
 
     return self;
 }
@@ -3638,6 +3641,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_gestureController->removeSwipeSnapshot();
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     [_data->_actionMenuController prepareForMenu:menu withEvent:event];
@@ -3657,6 +3662,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult];
 }
+
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 @end
 

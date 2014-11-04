@@ -26,6 +26,8 @@
 #ifndef WKActionMenuController_h
 #define WKActionMenuController_h
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 #import "ActionMenuHitTestResult.h"
 #import "WKActionMenuItemTypes.h"
 #import "WKActionMenuTypes.h"
@@ -65,5 +67,7 @@ enum class ActionMenuState {
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult;
 
 @end
+
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 #endif // WKActionMenuController_h
