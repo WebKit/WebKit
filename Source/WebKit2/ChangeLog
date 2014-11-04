@@ -1,3 +1,23 @@
+2014-11-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173851.
+
+    2014-09-22  Daniel Bates  <dabates@apple.com>
+
+            [Cocoa] Add UI delegate callback when window.close() is called
+            https://bugs.webkit.org/show_bug.cgi?id=137008
+            <rdar://problem/17801001>
+
+            Reviewed by Anders Carlsson.
+
+            Implement support infrastructure to notify the UI client when window.close() is called.
+
+            * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Added method declaration for -_webViewClose:.
+            * UIProcess/Cocoa/UIDelegate.h: Added override declaration for API::UIClient::close().
+            * UIProcess/Cocoa/UIDelegate.mm:
+            (WebKit::UIDelegate::setDelegate): Wire up delegate method to Objective-C selector, -[WKUIDelegatePrivate _webViewClose:].
+            (WebKit::UIDelegate::UIClient::close): Added; turns around and calls -[WKUIDelegatePrivate _webViewClose:] (if applicable).
+
 2014-10-27  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r175235.

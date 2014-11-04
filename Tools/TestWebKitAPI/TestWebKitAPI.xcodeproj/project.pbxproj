@@ -241,6 +241,8 @@
 		CDC2C71517970DDB00E627FB /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC2C7141797089D00E627FB /* TimeRanges.cpp */; };
 		CE14F1A4181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */; };
 		CE32C7C818184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */; };
+		CEA6CF2319CCF5BD0064F5A7 /* OpenAndCloseWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */; };
+		CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */; };
 		E1220DA0155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */; };
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
 		E194E1BB177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */; };
@@ -329,6 +331,7 @@
 				517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */,
 				33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */,
 				A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */,
+				CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */,
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
 				52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */,
 				1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */,
@@ -602,6 +605,8 @@
 		CDC2C7141797089D00E627FB /* TimeRanges.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeRanges.cpp; sourceTree = "<group>"; };
 		CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = WillPerformClientRedirectToURLCrash.html; sourceTree = "<group>"; };
 		CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WillPerformClientRedirectToURLCrash.mm; sourceTree = "<group>"; };
+		CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenAndCloseWindow.mm; sourceTree = "<group>"; };
+		CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "open-and-close-window.html"; sourceTree = "<group>"; };
 		E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheDisableWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCacheDisableWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
 		E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StopLoadingFromDidReceiveResponse.mm; sourceTree = "<group>"; };
@@ -704,6 +709,7 @@
 			children = (
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
+				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
 			);
 			name = "WebKit2 Cocoa";
@@ -946,6 +952,7 @@
 				930AD401150698B30067970F /* lots-of-text.html */,
 				2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */,
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,
+				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
 				1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */,
 				C0ADBE8412FCA6B600D2C129 /* simple-form.html */,
@@ -1356,6 +1363,7 @@
 				1AA9BAE418500450003B6BC6 /* WeakObjCPtr.mm in Sources */,
 				A5E2027315B2181900C13E14 /* WindowlessWebViewWithMedia.mm in Sources */,
 				F6B7BE9417469209008A3445 /* DidAssociateFormControls.cpp in Sources */,
+				CEA6CF2319CCF5BD0064F5A7 /* OpenAndCloseWindow.mm in Sources */,
 				BC3C4C7F14587AA60025FB62 /* WKBrowsingContextGroupTest.mm in Sources */,
 				BC3C4C7214575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
 				93A7EB3D18FA63A4009E7670 /* URLExtras.mm in Sources */,

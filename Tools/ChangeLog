@@ -1,3 +1,22 @@
+2014-11-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173851.
+
+    2014-09-22  Daniel Bates  <dabates@apple.com>
+
+            [Cocoa] Add UI delegate callback when window.close() is called
+            https://bugs.webkit.org/show_bug.cgi?id=137008
+            <rdar://problem/17801001>
+
+            Reviewed by Anders Carlsson.
+
+            Add a test to ensure that -[WKUIDelegatePrivate _webViewClose:] is called on window.close()
+            for window opened via JavaScript (i.e. window.open()).
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2/open-and-close-window.html: Added.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/OpenAndCloseWindow.mm: Added.
+
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171626. <rdar://problem/17730536>
