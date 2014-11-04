@@ -45,8 +45,8 @@ public:
 
     static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 
-    Pattern& pattern() { return m_pattern.get(); }
-    const Pattern& pattern() const { return m_pattern.get(); }
+    Pattern& pattern() { return m_pattern; }
+    const Pattern& pattern() const { return m_pattern; }
 
     bool originClean() const { return m_originClean; }
 

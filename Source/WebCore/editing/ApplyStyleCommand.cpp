@@ -1051,8 +1051,8 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
-        for (size_t i = 0; i < currentChildren.size(); ++i) {
-            Node& child = currentChildren[i].get();
+        for (Ref<Node>& childRef : currentChildren) {
+            Node& child = childRef;
             if (!child.parentNode())
                 continue;
             if (!child.contains(targetNode) && elementsToPushDown.size()) {

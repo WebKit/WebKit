@@ -61,6 +61,9 @@ public:
     const T& get() const { return *m_ptr; }
     T& get() { return *m_ptr; }
 
+    operator T&() { return *m_ptr; }
+    operator const T&() const { return *m_ptr; }
+
     template<typename U> PassRef<T> replace(PassRef<U>) WARN_UNUSED_RETURN;
 
 private:

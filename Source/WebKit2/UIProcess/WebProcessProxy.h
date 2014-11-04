@@ -78,7 +78,7 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
-    WebContext& context() { return m_context.get(); }
+    WebContext& context() { return m_context; }
 
     static WebPageProxy* webPage(uint64_t pageID);
     PassRefPtr<WebPageProxy> createWebPage(PageClient&, const WebPageConfiguration&);

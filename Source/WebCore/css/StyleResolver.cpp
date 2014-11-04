@@ -1979,7 +1979,7 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
 
         ++currentNamedGridLine;
         GridTrackSize trackSize;
-        if (!createGridTrackSize(currentValue.get(), trackSize, state))
+        if (!createGridTrackSize(currentValue, trackSize, state))
             return false;
 
         trackSizes.append(trackSize);

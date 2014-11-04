@@ -128,8 +128,8 @@ private:
     void clearContentElements();
     void updateWritingMode();
 
-    WebKitNamedFlow& namedFlow() { return m_namedFlow.get(); }
-    const WebKitNamedFlow& namedFlow() const { return m_namedFlow.get(); }
+    WebKitNamedFlow& namedFlow() { return m_namedFlow; }
+    const WebKitNamedFlow& namedFlow() const { return m_namedFlow; }
 
     // Observer flow threads have invalid regions that depend on the state of this thread
     // to re-validate their regions. Keeping a set of observer threads make it easy

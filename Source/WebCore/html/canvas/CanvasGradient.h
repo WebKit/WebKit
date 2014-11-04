@@ -47,8 +47,8 @@ namespace WebCore {
             return adoptRef(new CanvasGradient(p0, r0, p1, r1));
         }
         
-        Gradient& gradient() { return m_gradient.get(); }
-        const Gradient& gradient() const { return m_gradient.get(); }
+        Gradient& gradient() { return m_gradient; }
+        const Gradient& gradient() const { return m_gradient; }
 
         void addColorStop(float value, const String& color, ExceptionCode&);
 

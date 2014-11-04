@@ -103,7 +103,7 @@ namespace WebCore {
         WEBCORE_EXPORT const ResourceRequest& request() const;
         WEBCORE_EXPORT ResourceRequest& request();
 
-        CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader.get(); }
+        CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
 
         const SubstituteData& substituteData() const { return m_substituteData; }
 

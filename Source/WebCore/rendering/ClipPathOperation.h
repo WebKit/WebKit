@@ -101,7 +101,7 @@ public:
         return adoptRef(new ShapeClipPathOperation(WTF::move(shape)));
     }
 
-    const BasicShape& basicShape() const { return m_shape.get(); }
+    const BasicShape& basicShape() const { return m_shape; }
     WindRule windRule() const { return m_shape.get().windRule(); }
     const Path pathForReferenceRect(const FloatRect& boundingRect)
     {

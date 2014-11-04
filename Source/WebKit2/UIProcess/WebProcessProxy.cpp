@@ -616,7 +616,7 @@ DownloadProxy* WebProcessProxy::createDownloadProxy(const ResourceRequest& reque
     if (!m_downloadProxyMap)
         m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
 
-    return m_downloadProxyMap->createDownloadProxy(m_context.get(), request);
+    return m_downloadProxyMap->createDownloadProxy(m_context, request);
 }
 
 void WebProcessProxy::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 

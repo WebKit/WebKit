@@ -41,7 +41,7 @@ public:
     }
     virtual ~EmptyNodeList();
 
-    Node& ownerNode() { return m_owner.get(); }
+    Node& ownerNode() { return m_owner; }
 
 private:
     explicit EmptyNodeList(Node& owner) : m_owner(owner) { }
@@ -65,7 +65,7 @@ public:
 
     virtual ~ChildNodeList();
 
-    ContainerNode& ownerNode() { return m_parent.get(); }
+    ContainerNode& ownerNode() { return m_parent; }
 
     void invalidateCache();
 

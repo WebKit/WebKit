@@ -41,7 +41,7 @@ public:
     {
     }
 
-    RunLoop& runLoop() { return m_runLoop.get(); }
+    RunLoop& runLoop() { return m_runLoop; }
 
 private:
     Ref<RunLoop> m_runLoop;

@@ -52,7 +52,7 @@ static const StyleProperties& leftToRightDeclaration()
     static NeverDestroyed<Ref<MutableStyleProperties>> leftToRightDecl(MutableStyleProperties::create());
     if (leftToRightDecl.get()->isEmpty())
         leftToRightDecl.get()->setProperty(CSSPropertyDirection, CSSValueLtr);
-    return leftToRightDecl.get().get();
+    return leftToRightDecl.get();
 }
 
 static const StyleProperties& rightToLeftDeclaration()
@@ -60,7 +60,7 @@ static const StyleProperties& rightToLeftDeclaration()
     static NeverDestroyed<Ref<MutableStyleProperties>> rightToLeftDecl(MutableStyleProperties::create());
     if (rightToLeftDecl.get()->isEmpty())
         rightToLeftDecl.get()->setProperty(CSSPropertyDirection, CSSValueRtl);
-    return rightToLeftDecl.get().get();
+    return rightToLeftDecl.get();
 }
 
 class MatchRequest {

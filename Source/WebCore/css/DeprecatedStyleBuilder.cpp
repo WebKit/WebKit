@@ -1579,7 +1579,7 @@ public:
             for (auto& currentValue : downcast<CSSValueList>(*value)) {
                 if (childIndex <= list->size())
                     list->append(Animation::create());
-                map(styleResolver, list->animation(childIndex), currentValue.get());
+                map(styleResolver, list->animation(childIndex), currentValue);
                 ++childIndex;
             }
         } else {

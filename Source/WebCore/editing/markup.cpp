@@ -957,25 +957,25 @@ PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTML
     ASSERT(element);
     if (element->ieForbidsInsertHTML()) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (element->hasTagName(colTag) || element->hasTagName(colgroupTag) || element->hasTagName(framesetTag)
         || element->hasTagName(headTag) || element->hasTagName(styleTag) || element->hasTagName(titleTag)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, element, parserContentPolicy, ec);
     if (!fragment)
-        return 0;
+        return nullptr;
 
     // We need to pop <html> and <body> elements and remove <head> to
     // accommodate folks passing complete HTML documents to make the
     // child of an element.
     auto toRemove = collectElementsToRemoveFromFragment(*fragment);
-    for (unsigned i = 0; i < toRemove.size(); ++i)
-        removeElementFromFragmentPreservingChildren(*fragment, toRemove[i].get());
+    for (auto& element : toRemove)
+        removeElementFromFragmentPreservingChildren(*fragment, element);
 
     return fragment.release();
 }
@@ -994,7 +994,7 @@ static inline bool hasOneTextChild(ContainerNode* node)
 void replaceChildrenWithFragment(ContainerNode& container, PassRefPtr<DocumentFragment> fragment, ExceptionCode& ec)
 {
     Ref<ContainerNode> containerNode(container);
-    ChildListMutationScope mutation(containerNode.get());
+    ChildListMutationScope mutation(containerNode);
 
     if (!fragment->firstChild()) {
         containerNode->removeChildren();
@@ -1018,7 +1018,7 @@ void replaceChildrenWithFragment(ContainerNode& container, PassRefPtr<DocumentFr
 void replaceChildrenWithText(ContainerNode& container, const String& text, ExceptionCode& ec)
 {
     Ref<ContainerNode> containerNode(container);
-    ChildListMutationScope mutation(containerNode.get());
+    ChildListMutationScope mutation(containerNode);
 
     if (hasOneTextChild(&containerNode.get())) {
         downcast<Text>(*containerNode->firstChild()).setData(text, ec);

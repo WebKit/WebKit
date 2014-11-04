@@ -96,8 +96,8 @@ PassRefPtr<CSSValueList> CSSValueList::copy()
     default:
         ASSERT_NOT_REACHED();
     }
-    for (unsigned i = 0, size = m_values.size(); i < size; ++i)
-        newList->append(m_values[i].get());
+    for (auto& value : m_values)
+        newList->append(value.get());
     return newList.release();
 }
 
@@ -119,10 +119,10 @@ String CSSValueList::customCSSText() const
         ASSERT_NOT_REACHED();
     }
 
-    for (unsigned i = 0, size = m_values.size(); i < size; i++) {
+    for (auto& value : m_values) {
         if (!result.isEmpty())
             result.append(separator);
-        result.append(m_values[i].get().cssText());
+        result.append(value.get().cssText());
     }
 
     return result.toString();
@@ -137,7 +137,7 @@ bool CSSValueList::equals(const CSSValueList& other) const
         return false;
 
     for (unsigned i = 0, size = m_values.size(); i < size; ++i) {
-        if (!m_values[i].get().equals(other.m_values[i].get()))
+        if (!m_values[i].get().equals(other.m_values[i]))
             return false;
     }
     return true;

@@ -1,3 +1,15 @@
+2014-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Allow implicit conversion from Ref<T> to T&
+        https://bugs.webkit.org/show_bug.cgi?id=138331
+
+        Reviewed by Andreas Kling.
+
+        Remove unnecessary calls to Ref<T>::get() now that a Ref<T> can be
+        converted implicitly to a T&.
+
+        No new tests, no behavior change.
+
 2014-11-03  Simon Fraser  <simon.fraser@apple.com>
 
         Non-fast scrollable region overlay offsets the overlay by topContentInset

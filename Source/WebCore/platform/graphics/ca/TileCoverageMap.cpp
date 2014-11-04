@@ -48,7 +48,7 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_visibleRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
     m_visibleRectIndicatorLayer.get().setBorderColor(Color(255, 0, 0));
 
-    m_layer.get().appendSublayer(m_visibleRectIndicatorLayer.get());
+    m_layer.get().appendSublayer(m_visibleRectIndicatorLayer);
 
     update();
 }

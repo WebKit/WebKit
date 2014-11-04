@@ -255,7 +255,7 @@ public:
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
 #endif
 
-    WebBackForwardList& backForwardList() { return m_backForwardList.get(); }
+    WebBackForwardList& backForwardList() { return m_backForwardList; }
 
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
@@ -738,13 +738,13 @@ public:
     bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }
 #endif
 
-    WebProcessProxy& process() { return m_process.get(); }
+    WebProcessProxy& process() { return m_process; }
     PlatformProcessIdentifier processIdentifier() const;
 
-    WebPreferences& preferences() { return m_preferences.get(); }
+    WebPreferences& preferences() { return m_preferences; }
     void setPreferences(WebPreferences&);
 
-    WebPageGroup& pageGroup() { return m_pageGroup.get(); }
+    WebPageGroup& pageGroup() { return m_pageGroup; }
 
     bool isValid() const;
 

@@ -3286,8 +3286,8 @@ void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
 
     Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
-    for (size_t i = 0; i < worlds.size(); ++i)
-        dispatchDidClearWindowObjectInWorld(worlds[i].get());
+    for (auto& world : worlds)
+        dispatchDidClearWindowObjectInWorld(world);
 }
 
 void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
@@ -3309,8 +3309,8 @@ void FrameLoader::dispatchGlobalObjectAvailableInAllWorlds()
 {
     Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
-    for (size_t i = 0; i < worlds.size(); ++i)
-        m_client.dispatchGlobalObjectAvailable(worlds[i].get());
+    for (auto& world : worlds)
+        m_client.dispatchGlobalObjectAvailable(world);
 }
 
 SandboxFlags FrameLoader::effectiveSandboxFlags() const

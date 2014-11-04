@@ -247,7 +247,7 @@ inline bool compareCSSValuePtr(const RefPtr<CSSValueType>& first, const RefPtr<C
 template<typename CSSValueType>
 inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueType>& second)
 {
-    return first.get().equals(second.get());
+    return first.get().equals(second);
 }
 
 } // namespace WebCore

@@ -91,7 +91,7 @@ Node* ChildNodeList::namedItem(const AtomicString& name) const
         if (!element || !m_parent.get().treeScope().containsMultipleElementsWithId(name))
             return nullptr;
     }
-    for (auto& element : childrenOfType<Element>(m_parent.get())) {
+    for (auto& element : childrenOfType<Element>(m_parent)) {
         if (element.hasID() && element.idForStyleResolution() == name)
             return const_cast<Element*>(&element);
     }

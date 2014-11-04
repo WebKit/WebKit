@@ -62,7 +62,7 @@ namespace WebCore {
             return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
         }
 
-        DOMWrapperWorld& world() { return m_world.get(); }
+        DOMWrapperWorld& world() { return m_world; }
 
     protected:
         JSDOMWindowShell(JSC::VM&, JSC::Structure*, DOMWrapperWorld&);

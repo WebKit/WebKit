@@ -254,8 +254,8 @@ bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
     for (auto it = set.begin(), end = set.end(); it != end; ++it)
         windows.uncheckedAppend(*it->key);
 
-    for (unsigned i = 0; i < windows.size(); ++i) {
-        DOMWindow& window = windows[i].get();
+    for (Ref<DOMWindow>& windowRef : windows) {
+        DOMWindow& window = windowRef;
         if (!set.contains(&window))
             continue;
 
@@ -291,11 +291,11 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
 
     Vector<Ref<DOMWindow>> windows;
     windows.reserveInitialCapacity(set.size());
-    for (auto it = set.begin(), end = set.end(); it != end; ++it)
-        windows.uncheckedAppend(*it->key);
+    for (auto& keyValue : set)
+        windows.uncheckedAppend(*keyValue.key);
 
-    for (unsigned i = 0; i < windows.size(); ++i) {
-        DOMWindow& window = windows[i].get();
+    for (Ref<DOMWindow>& windowRef : windows) {
+        DOMWindow& window = windowRef;
         if (!set.contains(&window))
             continue;
 

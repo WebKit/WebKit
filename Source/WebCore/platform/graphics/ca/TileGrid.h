@@ -51,7 +51,7 @@ public:
     TileGrid(TileController&);
     ~TileGrid();
 
-    PlatformCALayer& containerLayer() { return m_containerLayer.get(); }
+    PlatformCALayer& containerLayer() { return m_containerLayer; }
 
     void setScale(float);
     float scale() const { return m_scale; }

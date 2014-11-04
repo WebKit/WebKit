@@ -85,7 +85,7 @@ void ChildListMutationAccumulator::childAdded(Node& childRef)
 
     Ref<Node> child(childRef);
 
-    if (!isAddedNodeInOrder(child.get()))
+    if (!isAddedNodeInOrder(child))
         enqueueMutationRecord();
 
     if (isEmpty()) {
@@ -108,7 +108,7 @@ void ChildListMutationAccumulator::willRemoveChild(Node& childRef)
 
     Ref<Node> child(childRef);
 
-    if (!m_addedNodes.isEmpty() || !isRemovedNodeInOrder(child.get()))
+    if (!m_addedNodes.isEmpty() || !isRemovedNodeInOrder(child))
         enqueueMutationRecord();
 
     if (isEmpty()) {
@@ -128,7 +128,7 @@ void ChildListMutationAccumulator::enqueueMutationRecord()
 
     RefPtr<NodeList> addedNodes = StaticNodeList::adopt(m_addedNodes);
     RefPtr<NodeList> removedNodes = StaticNodeList::adopt(m_removedNodes);
-    RefPtr<MutationRecord> record = MutationRecord::createChildList(m_target.get(), addedNodes.release(), removedNodes.release(), m_previousSibling.release(), m_nextSibling.release());
+    RefPtr<MutationRecord> record = MutationRecord::createChildList(m_target, addedNodes.release(), removedNodes.release(), m_previousSibling.release(), m_nextSibling.release());
     m_observers->enqueueMutationRecord(record.release());
     m_lastAdded = 0;
     ASSERT(isEmpty());

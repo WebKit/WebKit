@@ -1,3 +1,20 @@
+2014-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Allow implicit conversion from Ref<T> to T&
+        https://bugs.webkit.org/show_bug.cgi?id=138331
+
+        Reviewed by Andreas Kling.
+
+        Allow implicit conversion from Ref<T> to T& to reduce the amount of
+        Ref<>::get() calls in the code and increase readability. Unlike for
+        RefPtr, doing this for Ref should not be error prone.
+
+        * wtf/Ref.h:
+        (WTF::Ref::operator T&):
+        (WTF::Ref::operator const T&):
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::Holder::runLoop):
+
 2014-10-31  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed, fix ASan build after r175382

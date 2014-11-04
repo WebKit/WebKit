@@ -516,7 +516,7 @@ PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& render
     Ref<RenderStyle> newStyleBeforeAnimation(WTF::move(newStyle));
 
     CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(renderer);
-    auto blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyleBeforeAnimation.get());
+    auto blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyleBeforeAnimation);
 
     if (renderer.parent() || newStyleBeforeAnimation->animations() || (oldStyle && oldStyle->animations())) {
         m_data->updateAnimationTimerForRenderer(renderer);

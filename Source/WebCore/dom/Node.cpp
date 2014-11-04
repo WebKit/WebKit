@@ -1364,7 +1364,7 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         case ENTITY_REFERENCE_NODE:
         case DOCUMENT_FRAGMENT_NODE: {
             Ref<ContainerNode> container(downcast<ContainerNode>(*this));
-            ChildListMutationScope mutation(container.get());
+            ChildListMutationScope mutation(container);
             container->removeChildren();
             if (!text.isEmpty())
                 container->appendChild(document().createTextNode(text), ec);

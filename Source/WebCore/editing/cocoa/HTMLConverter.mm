@@ -563,7 +563,7 @@ HTMLConverter::~HTMLConverter()
 
 NSAttributedString *HTMLConverter::convert()
 {
-    Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(m_range.get());
+    Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(m_range);
     ASSERT(commonAncestorContainer);
 
     m_dataSource = commonAncestorContainer->document().frame()->loader().documentLoader();

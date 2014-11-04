@@ -110,7 +110,7 @@ public:
     ~StyleRule();
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
-    const StyleProperties& properties() const { return m_properties.get(); }
+    const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
     
     void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
@@ -145,7 +145,7 @@ public:
     
     ~StyleRuleFontFace();
 
-    const StyleProperties& properties() const { return m_properties.get(); }
+    const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
     PassRef<StyleRuleFontFace> copy() const { return adoptRef(*new StyleRuleFontFace(*this)); }
@@ -165,7 +165,7 @@ public:
     ~StyleRulePage();
 
     const CSSSelector* selector() const { return m_selectorList.first(); }    
-    const StyleProperties& properties() const { return m_properties.get(); }
+    const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
     void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }

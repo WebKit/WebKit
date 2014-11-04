@@ -41,7 +41,7 @@ public:
     static PassRefPtr<WebUserContentController> getOrCreate(uint64_t identifier);
     virtual ~WebUserContentController();
 
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
+    WebCore::UserContentController& userContentController() { return m_userContentController; }
 
     uint64_t identifier() { return m_identifier; } 
 

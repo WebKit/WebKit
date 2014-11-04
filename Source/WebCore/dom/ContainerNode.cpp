@@ -115,8 +115,8 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
     if (oldParent->document().hasMutationObserversOfType(MutationObserver::ChildList)) {
         ChildListMutationScope mutation(*oldParent);
-        for (unsigned i = 0; i < children.size(); ++i)
-            mutation.willRemoveChild(children[i].get());
+        for (auto& child : children)
+            mutation.willRemoveChild(child);
     }
 
     // FIXME: We need to do notifyMutationObserversNodeWillDetach() for each child,
@@ -124,13 +124,11 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
     oldParent->removeDetachedChildren();
 
-    for (unsigned i = 0; i < children.size(); ++i) {
-        Node& child = children[i].get();
-
+    for (auto& child : children) {
         destroyRenderTreeIfNeeded(child);
 
         // FIXME: We need a no mutation event version of adoptNode.
-        RefPtr<Node> adoptedChild = document().adoptNode(&children[i].get(), ASSERT_NO_EXCEPTION);
+        RefPtr<Node> adoptedChild = document().adoptNode(&child.get(), ASSERT_NO_EXCEPTION);
         parserAppendChild(adoptedChild.get());
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
@@ -299,7 +297,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
         treeScope().adoptIfNeeded(&child);
 
-        insertBeforeCommon(next.get(), child);
+        insertBeforeCommon(next, child);
 
         updateTreeAfterInsertion(child);
     }
@@ -549,7 +547,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         return false;
     }
 
-    willRemoveChild(child.get());
+    willRemoveChild(child);
 
     // Mutation events might have moved this child into a different parent.
     if (child->parentNode() != this) {
@@ -562,11 +560,11 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
         Node* prev = child->previousSibling();
         Node* next = child->nextSibling();
-        removeBetween(prev, next, child.get());
+        removeBetween(prev, next, child);
 
-        notifyChildRemoved(child.get(), prev, next, ChildChangeSourceAPI);
+        notifyChildRemoved(child, prev, next, ChildChangeSourceAPI);
 
-        ChildNodeRemovalNotifier(*this).notify(child.get());
+        ChildNodeRemovalNotifier(*this).notify(child);
     }
 
 
@@ -663,8 +661,8 @@ void ContainerNode::removeChildren()
         ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSourceAPI };
         childrenChanged(change);
         
-        for (size_t i = 0; i < removedChildren.size(); ++i)
-            ChildNodeRemovalNotifier(*this).notify(removedChildren[i].get());
+        for (auto& removedChild : removedChildren)
+            ChildNodeRemovalNotifier(*this).notify(removedChild);
     }
 
     if (document().svgExtensions()) {

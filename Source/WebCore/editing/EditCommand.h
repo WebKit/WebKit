@@ -64,7 +64,7 @@ protected:
     EditCommand(Document&, const VisibleSelection&, const VisibleSelection&);
 
     Frame& frame();
-    Document& document() { return m_document.get(); }
+    Document& document() { return m_document; }
     CompositeEditCommand* parent() const { return m_parent; }
     void setStartingSelection(const VisibleSelection&);
     WEBCORE_EXPORT void setEndingSelection(const VisibleSelection&);

@@ -167,12 +167,13 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
     // insert more frames and create loaded frames in detached subtrees.
     SubframeLoadingDisabler disabler(root);
 
-    for (unsigned i = 0; i < frameOwners.size(); ++i) {
-        auto& owner = frameOwners[i].get();
+    bool isFirst = true;
+    for (auto& owner : frameOwners) {
         // Don't need to traverse up the tree for the first owner since no
         // script could have moved it.
-        if (!i || root.containsIncludingShadowDOM(&owner))
-            owner.disconnectContentFrame();
+        if (isFirst || root.containsIncludingShadowDOM(&owner.get()))
+            owner.get().disconnectContentFrame();
+        isFirst = false;
     }
 }
 

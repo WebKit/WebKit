@@ -50,7 +50,7 @@ public:
     void update();
     void setPosition(const FloatPoint& position) { m_position = position; }
 
-    PlatformCALayer& layer() { return m_layer.get(); }
+    PlatformCALayer& layer() { return m_layer; }
 
     void setDeviceScaleFactor(float);
 

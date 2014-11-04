@@ -49,7 +49,7 @@ public:
 
     void getKeys(Vector<double>& keys) const   { parseKeyString(m_key, keys); }
     
-    const StyleProperties& properties() const { return m_properties.get(); }
+    const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
     
     String cssText() const;
