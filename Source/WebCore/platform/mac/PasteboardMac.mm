@@ -51,7 +51,6 @@
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
 #import "RenderImage.h"
-#import "ResourceBuffer.h"
 #import "Text.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebNSAttributedStringExtras.h"

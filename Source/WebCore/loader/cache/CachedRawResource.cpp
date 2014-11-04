@@ -30,7 +30,7 @@
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
 #include "HTTPHeaderNames.h"
-#include "ResourceBuffer.h"
+#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringView.h>
@@ -46,7 +46,7 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type
     ASSERT(isMainOrRawResource());
 }
 
-const char* CachedRawResource::calculateIncrementalDataChunk(ResourceBuffer* data, unsigned& incrementalDataLength)
+const char* CachedRawResource::calculateIncrementalDataChunk(SharedBuffer* data, unsigned& incrementalDataLength)
 {
     incrementalDataLength = 0;
     if (!data)
@@ -58,34 +58,37 @@ const char* CachedRawResource::calculateIncrementalDataChunk(ResourceBuffer* dat
     return data->data() + previousDataLength;
 }
 
-void CachedRawResource::addDataBuffer(ResourceBuffer* data)
+void CachedRawResource::addDataBuffer(SharedBuffer& data)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
-    ASSERT(m_options.dataBufferingPolicy() == BufferData);
-    m_data = data;
+    ASSERT(dataBufferingPolicy() == BufferData);
+    m_data = &data;
 
     unsigned incrementalDataLength;
-    const char* incrementalData = calculateIncrementalDataChunk(data, incrementalDataLength);
-    if (data)
-        setEncodedSize(data->size());
+    const char* incrementalData = calculateIncrementalDataChunk(&data, incrementalDataLength);
+    setEncodedSize(data.size());
     notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
-    if (m_options.dataBufferingPolicy() == DoNotBufferData) {
+    if (dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
+        return;
     }
+
+    CachedResource::addDataBuffer(data);
 }
 
 void CachedRawResource::addData(const char* data, unsigned length)
 {
-    ASSERT(m_options.dataBufferingPolicy() == DoNotBufferData);
+    ASSERT(dataBufferingPolicy() == DoNotBufferData);
     notifyClientsDataWasReceived(data, length);
+    CachedResource::addData(data, length);
 }
 
-void CachedRawResource::finishLoading(ResourceBuffer* data)
+void CachedRawResource::finishLoading(SharedBuffer* data)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
-    DataBufferingPolicy dataBufferingPolicy = m_options.dataBufferingPolicy();
+    DataBufferingPolicy dataBufferingPolicy = this->dataBufferingPolicy();
     if (dataBufferingPolicy == BufferData) {
         m_data = data;
 
@@ -99,7 +102,7 @@ void CachedRawResource::finishLoading(ResourceBuffer* data)
     m_allowEncodedDataReplacement = !m_loader->isQuickLookResource();
 
     CachedResource::finishLoading(data);
-    if (dataBufferingPolicy == BufferData && m_options.dataBufferingPolicy() == DoNotBufferData) {
+    if (dataBufferingPolicy == BufferData && this->dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
@@ -222,7 +225,7 @@ static bool shouldIgnoreHeaderForCacheReuse(HTTPHeaderName name)
 
 bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
 {
-    if (m_options.dataBufferingPolicy() == DoNotBufferData)
+    if (dataBufferingPolicy() == DoNotBufferData)
         return false;
 
     if (m_resourceRequest.httpMethod() != newRequest.httpMethod())

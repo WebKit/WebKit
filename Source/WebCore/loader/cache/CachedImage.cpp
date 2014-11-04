@@ -37,7 +37,6 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "RenderElement.h"
-#include "ResourceBuffer.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -116,31 +115,31 @@ void CachedImage::load(CachedResourceLoader* cachedResourceLoader, const Resourc
         setLoading(false);
 }
 
-void CachedImage::didAddClient(CachedResourceClient* c)
+void CachedImage::didAddClient(CachedResourceClient* client)
 {
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
-        m_image->setData(m_data->sharedBuffer(), true);
+        m_image->setData(m_data, true);
     }
     
-    ASSERT(c->resourceClientType() == CachedImageClient::expectedType());
+    ASSERT(client->resourceClientType() == CachedImageClient::expectedType());
     if (m_image && !m_image->isNull())
-        static_cast<CachedImageClient*>(c)->imageChanged(this);
+        static_cast<CachedImageClient*>(client)->imageChanged(this);
 
-    CachedResource::didAddClient(c);
+    CachedResource::didAddClient(client);
 }
 
-void CachedImage::didRemoveClient(CachedResourceClient* c)
+void CachedImage::didRemoveClient(CachedResourceClient* client)
 {
-    ASSERT(c);
-    ASSERT(c->resourceClientType() == CachedImageClient::expectedType());
+    ASSERT(client);
+    ASSERT(client->resourceClientType() == CachedImageClient::expectedType());
 
-    m_pendingContainerSizeRequests.remove(static_cast<CachedImageClient*>(c));
+    m_pendingContainerSizeRequests.remove(static_cast<CachedImageClient*>(client));
 
     if (m_svgImageCache)
-        m_svgImageCache->removeClientFromCache(static_cast<CachedImageClient*>(c));
+        m_svgImageCache->removeClientFromCache(static_cast<CachedImageClient*>(client));
 
-    CachedResource::didRemoveClient(c);
+    CachedResource::didRemoveClient(client);
 }
 
 void CachedImage::switchClientsToRevalidatedResource()
@@ -365,18 +364,16 @@ inline void CachedImage::clearImage()
     m_image.clear();
 }
 
-void CachedImage::addIncrementalDataBuffer(ResourceBuffer* data)
+void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
 {
-    m_data = data;
-    if (!data)
-        return;
+    m_data = &data;
 
     createImage();
 
     // Have the image update its data from its internal buffer.
     // It will not do anything now, but will delay decoding until
     // queried for info (like size or specific image frames).
-    bool sizeAvailable = m_image->setData(m_data->sharedBuffer(), false);
+    bool sizeAvailable = m_image->setData(&data, false);
     if (!sizeAvailable)
         return;
 
@@ -398,26 +395,28 @@ void CachedImage::addIncrementalDataBuffer(ResourceBuffer* data)
     setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
 }
 
-void CachedImage::addDataBuffer(ResourceBuffer* data)
+void CachedImage::addDataBuffer(SharedBuffer& data)
 {
-    ASSERT(m_options.dataBufferingPolicy() == BufferData);
+    ASSERT(dataBufferingPolicy() == BufferData);
     addIncrementalDataBuffer(data);
+    CachedResource::addDataBuffer(data);
 }
 
 void CachedImage::addData(const char* data, unsigned length)
 {
-    ASSERT(m_options.dataBufferingPolicy() == DoNotBufferData);
-    addIncrementalDataBuffer(ResourceBuffer::create(data, length).get());
+    ASSERT(dataBufferingPolicy() == DoNotBufferData);
+    addIncrementalDataBuffer(*SharedBuffer::create(data, length));
+    CachedResource::addData(data, length);
 }
 
-void CachedImage::finishLoading(ResourceBuffer* data)
+void CachedImage::finishLoading(SharedBuffer* data)
 {
     m_data = data;
     if (!m_image && data)
         createImage();
 
     if (m_image)
-        m_image->setData(m_data->sharedBuffer(), true);
+        m_image->setData(data, true);
 
     if (!m_image || m_image->isNull()) {
         // Image decoding failed; the image data is malformed.

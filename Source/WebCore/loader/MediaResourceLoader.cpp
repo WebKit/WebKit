@@ -27,12 +27,12 @@
 #include "MediaResourceLoader.h"
 
 #if ENABLE(VIDEO)
+
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
-#include "ResourceBuffer.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -112,13 +112,10 @@ void MediaResourceLoader::responseReceived(CachedResource* resource, const Resou
 
 void MediaResourceLoader::dataReceived(CachedResource* resource, const char* data, int dataLength)
 {
-    ASSERT(resource == m_resource);
+    ASSERT_UNUSED(resource, resource == m_resource);
 
     RefPtr<MediaResourceLoader> protect(this);
     m_client->dataReceived(data, dataLength);
-
-    if (SharedBuffer* buffer = resource->resourceBuffer() ? resource->resourceBuffer()->sharedBuffer() : nullptr)
-        m_client->bufferReceived(buffer);
 }
 
 void MediaResourceLoader::notifyFinished(CachedResource* resource)
@@ -129,7 +126,7 @@ void MediaResourceLoader::notifyFinished(CachedResource* resource)
     if (resource->loadFailedOrCanceled())
         m_client->loadFailed(resource->resourceError());
     else
-        m_client->loadFinished(resource->resourceBuffer() ? resource->resourceBuffer()->sharedBuffer() : nullptr);
+        m_client->loadFinished();
     stop();
 }
 

@@ -54,7 +54,6 @@
 #include "NetworkResourcesData.h"
 #include "Page.h"
 #include "ProgressTracker.h"
-#include "ResourceBuffer.h"
 #include "ResourceError.h"
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
@@ -405,8 +404,9 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, Document
 
     String requestId = IdentifiersFactory::requestId(identifier);
     if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource) {
-        RefPtr<ResourceBuffer> buffer = loader->frameLoader()->documentLoader()->mainResourceData();
-        m_resourcesData->addResourceSharedBuffer(requestId, buffer ? buffer->sharedBuffer() : nullptr, loader->frame()->document()->inputEncoding());
+        m_resourcesData->addResourceSharedBuffer(requestId,
+            loader->frameLoader()->documentLoader()->mainResourceData(),
+            loader->frame()->document()->inputEncoding());
     }
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
@@ -435,8 +435,9 @@ void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLo
     if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource) {
         Frame* frame = loader ? loader->frame() : nullptr;
         if (frame && frame->loader().documentLoader() && frame->document()) {
-            RefPtr<ResourceBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
-            m_resourcesData->addResourceSharedBuffer(requestId, buffer ? buffer->sharedBuffer() : nullptr, frame->document()->inputEncoding());
+            m_resourcesData->addResourceSharedBuffer(requestId,
+                frame->loader().documentLoader()->mainResourceData(),
+                frame->document()->inputEncoding());
         }
     }
 

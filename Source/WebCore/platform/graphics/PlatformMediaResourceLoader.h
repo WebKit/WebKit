@@ -27,6 +27,7 @@
 #define PlatformMediaResourceLoader_h
 
 #if ENABLE(VIDEO)
+
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 
@@ -35,7 +36,6 @@ namespace WebCore {
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
 
 class PlatformMediaResourceLoaderClient {
 public:
@@ -43,10 +43,9 @@ public:
 
     virtual void responseReceived(const ResourceResponse&) { }
     virtual void dataReceived(const char*, int) { }
-    virtual void bufferReceived(SharedBuffer*) { }
     virtual void accessControlCheckFailed(const ResourceError&) { }
     virtual void loadFailed(const ResourceError&) { }
-    virtual void loadFinished(SharedBuffer*) { }
+    virtual void loadFinished() { }
 #if USE(SOUP)
     virtual char* getOrCreateReadBuffer(size_t /*requestedSize*/, size_t& /*actualSize*/) { return nullptr; };
 #endif
@@ -68,7 +67,7 @@ public:
     virtual bool didPassAccessControlCheck() const { return false; }
 
 protected:
-    PlatformMediaResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
+    explicit PlatformMediaResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
         : m_client(WTF::move(client))
     {
     }

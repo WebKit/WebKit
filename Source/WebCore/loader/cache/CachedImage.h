@@ -71,8 +71,8 @@ public:
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
 
-    virtual void addDataBuffer(ResourceBuffer*) override;
-    virtual void finishLoading(ResourceBuffer*) override;
+    virtual void addDataBuffer(SharedBuffer&) override;
+    virtual void finishLoading(SharedBuffer*) override;
 
     enum SizeType {
         UsedSize,
@@ -94,7 +94,7 @@ private:
     void createImage();
     void clearImage();
     // If not null, changeRect is the changed part of the image.
-    void notifyObservers(const IntRect* changeRect = 0);
+    void notifyObservers(const IntRect* changeRect = nullptr);
     void checkShouldPaintBrokenImage();
 
     virtual void switchClientsToRevalidatedResource() override;
@@ -122,7 +122,7 @@ private:
     virtual void animationAdvanced(const Image*) override;
     virtual void changedInRect(const Image*, const IntRect&) override;
 
-    void addIncrementalDataBuffer(ResourceBuffer*);
+    void addIncrementalDataBuffer(SharedBuffer&);
 
     typedef std::pair<LayoutSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
@@ -130,8 +130,8 @@ private:
 
     RefPtr<Image> m_image;
     std::unique_ptr<SVGImageCache> m_svgImageCache;
-    unsigned char m_isManuallyCached : 1;
-    unsigned char m_shouldPaintBrokenImage : 1;
+    unsigned m_isManuallyCached : 1;
+    unsigned m_shouldPaintBrokenImage : 1;
 };
 
 } // namespace WebCore

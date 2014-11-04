@@ -33,8 +33,8 @@
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
-#include "ResourceBuffer.h"
 #include "RuntimeApplicationChecks.h"
+#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
 
@@ -76,14 +76,13 @@ const String& CachedScript::script()
         setDecodedSize(m_script.sizeInBytes());
     }
     m_decodedDataDeletionTimer.restart();
-    
     return m_script;
 }
 
-void CachedScript::finishLoading(ResourceBuffer* data)
+void CachedScript::finishLoading(SharedBuffer* data)
 {
     m_data = data;
-    setEncodedSize(m_data.get() ? m_data->size() : 0);
+    setEncodedSize(data ? data->size() : 0);
     CachedResource::finishLoading(data);
 }
 

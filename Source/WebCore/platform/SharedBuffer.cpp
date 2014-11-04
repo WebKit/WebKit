@@ -33,6 +33,7 @@
 namespace WebCore {
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+
 static const unsigned segmentSize = 0x1000;
 static const unsigned segmentPositionMask = 0x0FFF;
 
@@ -56,6 +57,7 @@ static inline void freeSegment(char* p)
 {
     fastFree(p);
 }
+
 #endif
 
 SharedBuffer::SharedBuffer()
@@ -214,9 +216,8 @@ void SharedBuffer::clear()
     clearPlatformData();
     
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    for (unsigned i = 0; i < m_segments.size(); ++i)
-        freeSegment(m_segments[i]);
-
+    for (char* segment : m_segments)
+        freeSegment(segment);
     m_segments.clear();
 #else
     m_dataArray.clear();
@@ -228,23 +229,25 @@ void SharedBuffer::clear()
 
 PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 {
-    RefPtr<SharedBuffer> clone(adoptRef(new SharedBuffer));
+    RefPtr<SharedBuffer> clone { adoptRef(*new SharedBuffer) };
     if (hasPlatformData()) {
         clone->append(data(), size());
-        return clone;
+        return clone.release();
     }
 
     clone->m_size = m_size;
     clone->m_buffer->data.reserveCapacity(m_size);
     clone->m_buffer->data.append(m_buffer->data.data(), m_buffer->data.size());
+
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    for (unsigned i = 0; i < m_segments.size(); ++i)
-        clone->m_buffer->data.append(m_segments[i], segmentSize);
+    for (char* segment : m_segments)
+        clone->m_buffer->data.append(segment, segmentSize);
 #else
-    for (unsigned i = 0; i < m_dataArray.size(); ++i)
-        clone->append(m_dataArray[i].get());
+    for (auto& data : m_dataArray)
+        clone->append(data.get());
 #endif
-    return clone;
+
+    return clone.release();
 }
 
 void SharedBuffer::duplicateDataBufferIfNecessary() const
@@ -275,17 +278,19 @@ void SharedBuffer::clearDataBuffer()
 }
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+
 void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const
 {
-    for (unsigned i = 0; i < m_segments.size(); ++i) {
+    for (char* segment : m_segments) {
         unsigned effectiveBytesToCopy = std::min(bytesToCopy, segmentSize);
-        memcpy(destination, m_segments[i], effectiveBytesToCopy);
+        memcpy(destination, segment, effectiveBytesToCopy);
         destination += effectiveBytesToCopy;
         bytesToCopy -= effectiveBytesToCopy;
-        freeSegment(m_segments[i]);
+        freeSegment(segment);
     }
     m_segments.clear();
 }
+
 #endif
 
 const Vector<char>& SharedBuffer::buffer() const

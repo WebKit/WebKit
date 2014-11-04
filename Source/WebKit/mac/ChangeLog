@@ -1,3 +1,15 @@
+2014-11-04  Darin Adler  <darin@apple.com>
+
+        Eliminate ResourceBuffer and use SharedBuffer directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=138174
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource data]): Use SharedBuffer directly.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+
 2014-11-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r175406, r175413, and r175423.

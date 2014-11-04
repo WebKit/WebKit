@@ -59,10 +59,10 @@ NetworkDiskCacheMonitor::NetworkDiskCacheMonitor(CFCachedURLResponseRef cachedRe
 {
 }
 
-void NetworkDiskCacheMonitor::resourceBecameFileBacked(PassRefPtr<SharedBuffer> fileBackedBuffer)
+void NetworkDiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)
 {
     ShareableResource::Handle handle;
-    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(handle, fileBackedBuffer.get());
+    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(handle, fileBackedBuffer);
     if (handle.isNull())
         return;
 

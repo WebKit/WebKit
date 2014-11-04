@@ -47,7 +47,6 @@ class DocumentLoader;
 class Frame;
 class FrameLoader;
 class URL;
-class ResourceBuffer;
 
 #if USE(QUICK_LOOK)
 class QuickLookHandle;
@@ -88,7 +87,7 @@ public:
     virtual void releaseResources();
     const ResourceResponse& response() const;
 
-    ResourceBuffer* resourceData() const { return m_resourceData.get(); }
+    SharedBuffer* resourceData() const { return m_resourceData.get(); }
     void clearResourceData();
     
     virtual bool isSubresourceLoader();
@@ -204,7 +203,7 @@ private:
 
     ResourceRequest m_request;
     ResourceRequest m_originalRequest; // Before redirects.
-    RefPtr<ResourceBuffer> m_resourceData;
+    RefPtr<SharedBuffer> m_resourceData;
     
     unsigned long m_identifier;
 

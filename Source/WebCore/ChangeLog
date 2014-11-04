@@ -1,3 +1,205 @@
+2014-11-04  Darin Adler  <darin@apple.com>
+
+        Eliminate ResourceBuffer and use SharedBuffer directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=138174
+
+        Reviewed by Antti Koivisto.
+
+        Refactoring, with test coverage across many existing tests.
+
+        * CMakeLists.txt: Deleted ResourceBuffer.cpp.
+
+        * WebCore.exp.in: Removed ResourceBuffer-related symbols, and updated symbol
+        for one function that used to take a PassRefPtr but now takes a reference instead.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Deleted ResourceBuffer.cpp/.h.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Deleted ResourceBuffer.mm/.cpp/.h.
+
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMHTMLImageElement dataRepresentation:]): Use SharedBuffer directly.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeImageToPasteboard): Ditto.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeImageToPasteboard): Ditto.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::updateDuringParsing): Use SharedBuffer directly, and
+        also pass a reference only if non-null rather than passing a pointer.
+        (WebCore::ImageDocument::finishedParsing): Ditto. Added a missing null check.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent): Use SharedBuffer directly.
+        (WebCore::InspectorPageAgent::mainResourceContent): Ditto.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didFinishLoading): Ditto.
+        (WebCore::InspectorResourceAgent::didFailLoading): Ditto.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainResourceData): Use SharedBuffer directly,
+        and use the copy function rather than a hand-written alternative.
+        (WebCore::DocumentLoader::maybeCreateArchive): Ditto.
+        (WebCore::DocumentLoader::mainResource): Ditto.
+        (WebCore::DocumentLoader::subresource): Ditto.
+        (WebCore::DocumentLoader::maybeFinishLoadingMultipartContent): Ditto.
+
+        * loader/DocumentLoader.h: Changed mainResourceData to return a
+        PassRefPtr<SharedBuffer>. Would be better if it returned a SharedBuffer&,
+        but it currently returns a newly created buffer when there is substitute
+        data and can also return null, even though many callers assume it will not!
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::dataReceived): Removed call to unused client
+        function bufferReceived.
+        (WebCore::MediaResourceLoader::notifyFinished): Removed unused buffer
+        argument to client function loadFinished.
+
+        * loader/ResourceBuffer.cpp: Removed.
+        * loader/ResourceBuffer.h: Removed.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::addDataOrBuffer): Use SharedBuffer directly.
+
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::resourceData): Use SharedBuffer.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Use SharedBuffer.
+        (WebCore::SubresourceLoader::didReceiveDataOrBuffer): Ditto.
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData): Use SharedBuffer.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource): Ditto.
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Ditto.
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::finishLoading): Use SharedBuffer.
+        * loader/cache/CachedCSSStyleSheet.h: Ditto.
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::finishLoading): Ditto.
+        (WebCore::CachedFont::ensureCustomFontData): Ditto.
+        * loader/cache/CachedFont.h: Ditto.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient): Use SharedBuffer.
+        (WebCore::CachedImage::didRemoveClient): Ditto.
+        (WebCore::CachedImage::addIncrementalDataBuffer): Ditto. Changed to take
+        a reference rather than a pointer.
+        (WebCore::CachedImage::addDataBuffer): Ditto. Also added call through
+        to base class and changed to take a reference rather than a pointer.
+        (WebCore::CachedImage::addData): Ditto. Also added call through to base class.
+        (WebCore::CachedImage::finishLoading): Ditto.
+        * loader/cache/CachedImage.h: Ditto. Also changed the type of some bit fields
+        to be unsigned instead of unsigend char.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::calculateIncrementalDataChunk): Use SharedBuffer.
+        (WebCore::CachedRawResource::addDataBuffer): Ditto. Changed to take
+        a reference rather than a pointer.
+        (WebCore::CachedRawResource::addData): Ditto.
+        (WebCore::CachedRawResource::finishLoading): Ditto.
+        (WebCore::CachedRawResource::canReuse): Ditto.
+        * loader/cache/CachedRawResource.h: Ditto.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource): Reordered data members due to change
+        in header.
+        (WebCore::CachedResource::addDataBuffer): Changed argument type.
+        (WebCore::CachedResource::finishLoading): Ditto.
+        (WebCore::CachedResource::didAddClient): Refactored to eliminate one extra hash
+        table lookup by using the return value from the remove function.
+        (WebCore::CachedResource::addClientToSet): Use std::make_unique directly instead
+        of using a function named "schedule" to allocate the callback object.
+        (WebCore::CachedResource::Callback::Callback): Changed function and data member
+        name.
+        (WebCore::CachedResource::Callback::cancel): Ditto.
+        (WebCore::CachedResource::Callback::timerFired): Ditto.
+        (WebCore::CachedResource::tryReplaceEncodedData): Changed to take a SharedBuffer&.
+
+        * loader/cache/CachedResource.h: Changed types to use SharedBuffer. Also made most
+        data members and one function member private instead of protected. Also renamed the
+        CachedResource::CachedResourceCallback function CachedResource::Callback and moved
+        its definition out of the CachedResource class definition.
+
+        * loader/cache/CachedResourceClient.h: Removed unneeded include.
+
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::finishLoading): Use SharedBuffer.
+
+        * loader/cache/CachedSVGDocument.h: Ditto. Made data members private.
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::finishLoading): Use SharedBuffer.
+        * loader/cache/CachedScript.h: Ditto. Also fixed indenting and removed unneeded
+        forward declaration.
+
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::updateData): Added, so that finishLoading does not
+        call addDataBuffer.
+        (WebCore::CachedTextTrack::addDataBuffer): Take SharedBuffer, call updateData.
+        (WebCore::CachedTextTrack::finishLoading): Ditto.
+        * loader/cache/CachedTextTrack.h: Take out unneeded explicit override of the
+        destructor. Updated for above changes.
+
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::finishLoading): Updated to use SharedBuffer.
+        * loader/cache/CachedXSLStyleSheet.h: Took out unneeded includes, made everything
+        private rather than protected. Added an explicit virtual constructor so we can
+        compile without knowing how to ref/deref TextResourceDecoder.
+
+        * loader/cf/SubresourceLoaderCF.cpp:
+        (WebCore::SubresourceLoader::didReceiveDataArray): Updated to use SharedBuffer
+        and to call addDataBuffer only if there is a new data buffer.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.h: Use SharedBuffer& instead of PassRefPtr.
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor): Ditto.
+        (WebCore::DiskCacheMonitor::resourceBecameFileBacked): Ditto.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished): Use SharedBuffer* instead of
+        RefPtr<ResourceBuffer>.
+
+        * loader/mac/ResourceBuffer.mm: Removed.
+
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::didReceiveDataArray): Use SharedBuffer.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::clear): Use a modern for loop.
+        (WebCore::SharedBuffer::copy): Return a PassRef instead of a PassRefPtr, since
+        this never returns null. Use modern for loops.
+        (WebCore::SharedBuffer::copyBufferAndClear): Use a modern for loop.
+
+        * platform/SharedBuffer.h: Changed copy to return PassRef instead of PassRefPtr.
+        Changed tryReplaceContentsWithPlatformBuffer to take a reference rather than
+        a pointer.
+
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::tryReplaceContentsWithPlatformBuffer): Take a reference
+        instead of a pointer.
+
+        * platform/graphics/PlatformMediaResourceLoader.h: Removed unused function
+        bufferReceived and unneeded buffer argument from loadFinished. Also marked the
+        constructor explicit.
+
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        Removed include of ResourceBuffer.h.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource): Use
+        SharedBuffer directly.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::loadFinished): Updated for change to
+        PlatformMediaResourceLoaderClient.
+
+        * platform/mac/PasteboardMac.mm: Removed include of ResourceBuffer.h.
+
+        * platform/soup/SharedBufferSoup.cpp: Removed unused, unneeded
+        tryReplaceContentsWithPlatformBuffer function.
+
 2014-11-04  Chris Dumez  <cdumez@apple.com>
 
         Use SPECIALIZE_TYPE_TRAITS_*() macro for StyleRuleGroup subclasses
