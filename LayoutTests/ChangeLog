@@ -1,5 +1,21 @@
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173738. <rdar://problem/18856133>
+
+    2014-09-18  Daniel Bates  <dabates@apple.com>
+    
+            REGRESSION (r168921): SVG elements may be unnecessarily rebuilt
+            https://bugs.webkit.org/show_bug.cgi?id=136373
+    
+            Reviewed by David Kilzer.
+    
+            Add a test to ensure that we don't rebuild a SVG element that will be removed from the document.
+    
+            * svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path-expected.txt: Added.
+            * svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path.html: Added.
+    
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r173424. <rdar://problem/18856153>
 
     2014-09-08  Mihnea Ovidenie  <mihnea@adobe.com>
