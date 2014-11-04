@@ -50,8 +50,8 @@
       href="http://downloads.sourceforge.net/project/"/>
   <repository type="svn" name="llvm.org"
       href="http://llvm.org/svn/llvm-project/"/>
-  <repository type="git" name="llvm-git"
-      href="https://github.com/pille5"/>
+  <repository type="tarball" name="llvm-tar"
+      href="http://llvm.org"/>
 
   <autotools id="cairo" autogen-sh="configure"
              makeargs="CFLAGS='-fno-lto' CXXFLAGS='-fno-lto' LDFLAGS='-fno-lto'">
@@ -137,7 +137,12 @@
   <autotools id="llvm"
              autogen-sh="configure"
              autogenargs="--enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no --disable-expensive-checks --disable-debug-runtime --disable-assertions">
-    <branch repo="llvm-git" module="llvm.git" revision="FTL_fixes_for_EFL" checkoutdir="llvm" version="r206311"/>
+    <branch repo="llvm-tar"
+            module="/releases/3.5.0/llvm-3.5.0.src.tar.xz" version="3.5.0" checkoutdir="llvm"
+            hash="sha256:28e199f368ef0a4666708f31c7991ad3bcc3a578342b0306526dd35f07595c03">
+      <patch file="llvm-elf-fix-x86_64-fdecfiencoding.patch" strip="1"/>
+      <patch file="llvm-elf-add-stackmaps.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="clang"
@@ -145,7 +150,7 @@
     <dependencies>
       <dep package="llvm"/>
     </dependencies>
-    <branch repo="llvm.org" module="cfe/trunk" version="r206311" revision="206311" checkoutdir="llvm/tools/clang">
+    <branch repo="llvm.org" module="/cfe/tags/RELEASE_350/final" version="3.5.0" checkoutdir="llvm/tools/clang">
     </branch>
   </autotools>
 
