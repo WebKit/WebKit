@@ -15,6 +15,21 @@
 
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173845. <rdar://problem/18856008>
+
+    2014-09-22  David Hyatt  <hyatt@apple.com>
+    
+            Bad cast in isValidColumnSpanner.
+            https://bugs.webkit.org/show_bug.cgi?id=133380.
+    
+            Reviewed by Simon Fraser.
+    
+            * fast/multicol/multicol-crazy-nesting-expected.txt: Added.
+            * fast/multicol/multicol-crazy-nesting.html: Added.
+    
+
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r173843. <rdar://problem/18856048>
 
     2014-09-22  David Hyatt  <hyatt@apple.com>
