@@ -494,7 +494,7 @@ extend(QUnit, {
 			stats: { all: 0, bad: 0 },
 			moduleStats: { all: 0, bad: 0 },
 			started: +new Date,
-			updateRate: 1000,
+			updateRate: 0, // Do not update results regularly as this is not needed for layout tests.
 			blocking: false,
 			autostart: true,
 			autorun: false,

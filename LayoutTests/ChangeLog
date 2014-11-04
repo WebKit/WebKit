@@ -1,3 +1,21 @@
+2014-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Fix jquery/manipulation.html flakiness on debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=138335
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update jquery's qunit config to not refresh the test results
+        regularly as this is not useful as part of layout testing.
+
+        This was causing qunit to set a timer every 13ms to check if
+        results should be updated and this timer would sometimes get
+        throttled after r175441.
+
+        * TestExpectations:
+        * jquery/resources/test/qunit/qunit/qunit.js:
+        (.):
+
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Selector's Specificity
