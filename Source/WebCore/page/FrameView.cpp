@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
+#include "DebugPageOverlays.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
@@ -1393,6 +1394,8 @@ void FrameView::layout(bool allowSubtree)
     }
 
     InspectorInstrumentation::didLayout(cookie, root);
+    if (frame().isMainFrame())
+        DebugPageOverlays::didLayout(frame().mainFrame());
 
     --m_nestedLayoutCount;
 }

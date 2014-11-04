@@ -236,6 +236,9 @@
     macro(LogsPageMessagesToSystemConsoleEnabled, logsPageMessagesToSystemConsoleEnabled, Bool, bool, false) \
     \
 
+#define FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \
+    macro(VisibleDebugOverlayRegions, visibleDebugOverlayRegions, UInt32, uint32_t, 0)
+
 #if PLATFORM(COCOA)
 
 #if PLATFORM(IOS)
@@ -283,6 +286,7 @@
 
 #define FOR_EACH_WEBKIT_DEBUG_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_DEBUG_BOOL_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \
     \
 
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \

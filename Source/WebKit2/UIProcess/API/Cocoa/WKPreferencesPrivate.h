@@ -37,6 +37,11 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
     _WKStorageBlockingPolicyBlockAll,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
+typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
+    _WKNonFastScrollableRegion = 1 << 0,
+    _WKWheelEventHandlerRegion = 1 << 1
+} WK_ENUM_AVAILABLE(10_11, 9_0);
+
 @interface WKPreferences (WKPrivate)
 
 // FIXME: This property should not have the verb "is" in it.
@@ -46,6 +51,7 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 @property (nonatomic, setter=_setCompositingBordersVisible:) BOOL _compositingBordersVisible;
 @property (nonatomic, setter=_setCompositingRepaintCountersVisible:) BOOL _compositingRepaintCountersVisible;
 @property (nonatomic, setter=_setTiledScrollingIndicatorVisible:) BOOL _tiledScrollingIndicatorVisible;
+@property (nonatomic, setter=_setVisibleDebugOverlayRegions:) _WKDebugOverlayRegions _visibleDebugOverlayRegions;
 
 @property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled;
 

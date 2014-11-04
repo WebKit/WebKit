@@ -37,6 +37,7 @@
 #import "RemoteScrollingCoordinatorTransaction.h"
 #import "WebPage.h"
 #import "WebProcess.h"
+#import <WebCore/DebugPageOverlays.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
@@ -169,6 +170,9 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     settings.setFixedPositionCreatesStackingContext(true);
 
     m_rootLayer->setShowDebugBorder(settings.showDebugBorders());
+
+    if (MainFrame* mainFrame = m_webPage.mainFrame())
+        DebugPageOverlays::settingsChanged(*mainFrame);
 }
 
 #if PLATFORM(IOS)

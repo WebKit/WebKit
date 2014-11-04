@@ -60,6 +60,13 @@ enum TextDirectionSubmenuInclusionBehavior {
     TextDirectionSubmenuAlwaysIncluded
 };
 
+enum DebugOverlayRegionFlags {
+    NonFastScrollableRegion = 1 << 0,
+    WheelEventHandlerRegion = 1 << 1,
+};
+
+typedef unsigned DebugOverlayRegions;
+
 class Settings : public RefCounted<Settings> {
     WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
 public:

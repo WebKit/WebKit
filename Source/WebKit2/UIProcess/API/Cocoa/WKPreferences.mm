@@ -203,6 +203,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setTiledScrollingIndicatorVisible(tiledScrollingIndicatorVisible);
 }
 
+- (_WKDebugOverlayRegions)_visibleDebugOverlayRegions
+{
+    return _preferences->visibleDebugOverlayRegions();
+}
+
+- (void)_setVisibleDebugOverlayRegions:(_WKDebugOverlayRegions)regionFlags
+{
+    _preferences->setVisibleDebugOverlayRegions(regionFlags);
+}
+
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();

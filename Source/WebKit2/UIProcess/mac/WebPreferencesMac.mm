@@ -131,6 +131,17 @@ static void setDebugBoolValueIfInUserDefaults(const String& identifier, const St
     store.setBoolValueForKey(key, [object boolValue]);
 }
 
+static void setDebugUInt32ValueIfInUserDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix, const String& key, WebPreferencesStore& store)
+{
+    id object = debugUserDefaultsValue(identifier, keyPrefix, globalDebugKeyPrefix, key);
+    if (!object)
+        return;
+    if (![object respondsToSelector:@selector(unsignedIntegerValue)])
+        return;
+
+    store.setUInt32ValueForKey(key, [object unsignedIntegerValue]);
+}
+
 void WebPreferences::platformInitializeStore()
 {
 #define INITIALIZE_DEBUG_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \

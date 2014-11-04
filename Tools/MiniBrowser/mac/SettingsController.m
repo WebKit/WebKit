@@ -35,12 +35,20 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
 
+static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
+static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
+
 static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWindows";
 static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPixelCSSOMMetrics";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
+
+typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
+    NonFastScrollableRegionOverlayTag = 100,
+    WheelEventHandlerRegionOverlayTag
+};
 
 @implementation SettingsController
 
@@ -94,8 +102,27 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
     [self _addItemWithTitle:@"Show Layer Borders" action:@selector(toggleShowLayerBorders:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
+
     [self _addItemWithTitle:@"Show Tiled Scrolling Indicator" action:@selector(toggleShowTiledScrollingIndicator:) indented:YES];
     [self _addItemWithTitle:@"Use UI-Side Compositing" action:@selector(toggleUseUISideCompositing:) indented:YES];
+
+    NSMenuItem *debugOverlaysSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Debug Overlays" action:nil keyEquivalent:@""];
+    NSMenu *debugOverlaysMenu = [[NSMenu alloc] initWithTitle:@"Debug Overlays"];
+    [debugOverlaysSubmenuItem setSubmenu:debugOverlaysMenu];
+
+    NSMenuItem *nonFastScrollableRegionItem = [[NSMenuItem alloc] initWithTitle:@"Non-fast Scrollable Region" action:@selector(toggleDebugOverlay:) keyEquivalent:@""];
+    [nonFastScrollableRegionItem setTag:NonFastScrollableRegionOverlayTag];
+    [nonFastScrollableRegionItem setTarget:self];
+    [debugOverlaysMenu addItem:[nonFastScrollableRegionItem autorelease]];
+
+    NSMenuItem *wheelEventHandlerRegionItem = [[NSMenuItem alloc] initWithTitle:@"Wheel Event Handler Region" action:@selector(toggleDebugOverlay:) keyEquivalent:@""];
+    [wheelEventHandlerRegionItem setTag:WheelEventHandlerRegionOverlayTag];
+    [wheelEventHandlerRegionItem setTarget:self];
+    [debugOverlaysMenu addItem:[wheelEventHandlerRegionItem autorelease]];
+    [debugOverlaysMenu release];
+    
+    [_menu addItem:debugOverlaysSubmenuItem];
+    [debugOverlaysSubmenuItem release];
 
     [self _addHeaderWithTitle:@"WebKit1-only Settings"];
     [self _addItemWithTitle:@"Enable Subpixel CSSOM Metrics" action:@selector(toggleEnableSubPixelCSSOMMetrics:) indented:YES];
@@ -119,6 +146,8 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
         [menuItem setState:[self useUISideCompositing] ? NSOnState : NSOffState];
     else if (action == @selector(toggleEnableSubPixelCSSOMMetrics:))
         [menuItem setState:[self subPixelCSSOMMetricsEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleDebugOverlay:))
+        [menuItem setState:[self debugOverlayVisible:menuItem] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -199,6 +228,44 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
 - (BOOL)subPixelCSSOMMetricsEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:EnableSubPixelCSSOMMetricsPreferenceKey];
+}
+
+- (BOOL)nonFastScrollableRegionOverlayVisible
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:NonFastScrollableRegionOverlayVisiblePreferenceKey];
+}
+
+- (BOOL)wheelEventHandlerRegionOverlayVisible
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WheelEventHandlerRegionOverlayVisiblePreferenceKey];
+}
+
+- (NSString *)preferenceKeyForRegionOverlayTag:(NSUInteger)tag
+{
+    switch (tag) {
+    case NonFastScrollableRegionOverlayTag:
+        return NonFastScrollableRegionOverlayVisiblePreferenceKey;
+
+    case WheelEventHandlerRegionOverlayTag:
+        return WheelEventHandlerRegionOverlayVisiblePreferenceKey;
+    }
+    return nil;
+}
+
+- (void)toggleDebugOverlay:(id)sender
+{
+    NSString *preferenceKey = [self preferenceKeyForRegionOverlayTag:[sender tag]];
+    if (preferenceKey)
+        [self _toggleBooleanDefault:preferenceKey];
+}
+
+- (BOOL)debugOverlayVisible:(NSMenuItem *)menuItem
+{
+    NSString *preferenceKey = [self preferenceKeyForRegionOverlayTag:[menuItem tag]];
+    if (preferenceKey)
+        return [[NSUserDefaults standardUserDefaults] boolForKey:preferenceKey];
+
+    return NO;
 }
 
 - (NSString *)defaultURL

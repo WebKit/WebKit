@@ -59,6 +59,7 @@ acceleratedCompositingEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 acceleratedCompositedAnimationsEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 showDebugBorders initial=false, setNeedsStyleRecalcInAllFrames=1
 showRepaintCounter initial=false, setNeedsStyleRecalcInAllFrames=1
+visibleDebugOverlayRegions type=DebugOverlayRegions, initial=0
 
 # This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
 # making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,

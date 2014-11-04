@@ -1,5 +1,59 @@
 2014-11-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Add page overlays that show regions with mouseWheel event handlers, and the non-fast-scrollable region, and code to toggle them in MiniBrowser WK2
+        https://bugs.webkit.org/show_bug.cgi?id=138257
+
+        Reviewed by Tim Horton.
+
+        Add code for debugging page overlays that show the non-fast scrollable region,
+        and the region with wheel event handlers. The list of region types is intended
+        to be easily extensible.
+        
+        A singleton DebugPageOverlays maintains a map of Frame -> vector of overlays.
+        A purely inline code path is provided so that DebugPageOverlays::didLayout() is
+        fast.
+        
+        For each region type, a PageOverlay::Client subclass knows how to generate
+        the region, which is painted into a document-level page overlay.
+        
+        Add a set of bitflags to Settings to control region visibility.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DebugPageOverlays.cpp: Added.
+        (WebCore::RegionOverlay::overlay):
+        (WebCore::MouseWheelRegionOverlay::updateRegion):
+        (WebCore::NonFastScrollableRegionOverlay::updateRegion):
+        (WebCore::RegionOverlay::create):
+        (WebCore::RegionOverlay::RegionOverlay):
+        (WebCore::RegionOverlay::~RegionOverlay):
+        (WebCore::RegionOverlay::pageOverlayDestroyed):
+        (WebCore::RegionOverlay::willMoveToPage):
+        (WebCore::RegionOverlay::didMoveToPage):
+        (WebCore::RegionOverlay::drawRect):
+        (WebCore::RegionOverlay::mouseEvent):
+        (WebCore::RegionOverlay::didScrollFrame):
+        (WebCore::RegionOverlay::recomputeRegion):
+        (WebCore::DebugPageOverlays::shared):
+        (WebCore::indexOf):
+        (WebCore::DebugPageOverlays::ensureRegionOverlayForFrame):
+        (WebCore::DebugPageOverlays::showRegionOverlay):
+        (WebCore::DebugPageOverlays::hideRegionOverlay):
+        (WebCore::DebugPageOverlays::regionChanged):
+        (WebCore::DebugPageOverlays::regionOverlayForFrame):
+        (WebCore::DebugPageOverlays::updateOverlayRegionVisibility):
+        (WebCore::DebugPageOverlays::settingsChanged):
+        * page/DebugPageOverlays.h: Added.
+        (WebCore::DebugPageOverlays::hasOverlaysForFrame):
+        (WebCore::DebugPageOverlays::hasOverlays):
+        (WebCore::DebugPageOverlays::didLayout):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/Settings.h:
+        * page/Settings.in:
+
+2014-11-03  Simon Fraser  <simon.fraser@apple.com>
+
         Video controls have lots of compositing layers
         https://bugs.webkit.org/show_bug.cgi?id=138294
 

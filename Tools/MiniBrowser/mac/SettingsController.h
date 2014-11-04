@@ -38,6 +38,8 @@
 @property (nonatomic, readonly) BOOL usePaginatedMode;
 @property (nonatomic, readonly) BOOL layerBordersVisible;
 @property (nonatomic, readonly) BOOL tiledScrollingIndicatorVisible;
+@property (nonatomic, readonly) BOOL nonFastScrollableRegionOverlayVisible;
+@property (nonatomic, readonly) BOOL wheelEventHandlerRegionOverlayVisible;
 @property (nonatomic, readonly) BOOL useUISideCompositing;
 @property (nonatomic, readonly) BOOL subPixelCSSOMMetricsEnabled;
 @property (nonatomic, readonly) NSString *defaultURL;

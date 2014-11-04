@@ -298,6 +298,14 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         } else
             _webView._paginationMode = _WKPaginationModeUnpaginated;
     }
+    
+    NSUInteger visibleOverlayRegions = 0;
+    if (settings.nonFastScrollableRegionOverlayVisible)
+        visibleOverlayRegions |= _WKNonFastScrollableRegion;
+    if (settings.wheelEventHandlerRegionOverlayVisible)
+        visibleOverlayRegions |= _WKWheelEventHandlerRegion;
+    
+    preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

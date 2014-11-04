@@ -39,6 +39,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/DebugPageOverlays.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
@@ -199,6 +200,9 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     // <rdar://problem/9813262> for more details.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     settings.setFixedPositionCreatesStackingContext(true);
+
+    if (MainFrame* mainFrame = m_webPage.mainFrame())
+        DebugPageOverlays::settingsChanged(*mainFrame);
 
     bool showTiledScrollingIndicator = settings.showTiledScrollingIndicator();
     if (showTiledScrollingIndicator == !!m_debugInfoLayer)
