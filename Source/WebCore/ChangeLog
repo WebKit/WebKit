@@ -1,5 +1,31 @@
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175074. <rdar://problem/18856016>
+
+    2014-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+    
+            SVG loaded through html <img> can't request to load any external resources.
+            https://bugs.webkit.org/show_bug.cgi?id=137762.
+    
+            Reviewed by Daniel Bates.
+    
+            SVG images have unique security rules that prevent them from loading any external
+            resources. This patch enforces these rules in CachedResourceLoader::canRequest for
+            all non-data-uri resources.
+    
+            The fix and the tests are ported but modified a little from the chromium fix:
+            http://src.chromium.org/viewvc/blink?view=rev&rev=176084
+    
+            Test: http/tests/security/svg-image-with-cached-remote-image.html
+                  http/tests/security/svg-image-with-css-cross-domain.html
+    
+            For the SVG image, prevent loading any external sub-resource except for data urls.
+            * loader/cache/CachedResourceLoader.cpp:
+            (WebCore::CachedResourceLoader::canRequest):
+    
+
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174946. <rdar://problem/18856024>
 
     2014-10-21  Manuel Rego Casasnovas  <rego@igalia.com>
