@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+    #multicol {
+        border: thin solid green;
+        height: 300px;
+        width: 200px;
+        text-align: justify;
+    }
+
+    #multicol.has-first-letter::first-letter {
+        color: red;
+        font-size: 10px;
+    }
+
+    #float {
+        float: left;
+        width: 20px;
+        height: 10px;
+        background: blue;
+    }
+    </style>
+</head>
+<body>
+    <p><a href="https://bugs.webkit.org/show_bug.cgi?id=135127">b135127</a>: The test passes if it doesn't hang or crash</p>
+    <div id="multicol" class="has-first-letter">
+        Text text text text text text text text <div id="float">A</div>Text text text text Text  text text text Text text text text  text text text text
+    </div>
+    <script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var multicolElement = document.getElementById("multicol");
+    var floatElement = document.getElementById("float");
+
+    document.body.offsetTop;
+
+    multicolElement.style.webkitColumnCount = "2";
+    document.body.offsetTop;
+
+    multicolElement.style.webkitColumnCount = "auto";
+    document.body.offsetLeft;
+
+    multicolElement.className = "";
+    document.body.offsetLeft;
+
+    multicolElement.remove();
+    </script>
+</body>
+</html>

@@ -1,3 +1,25 @@
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171849. <rdar://problem/18856036>
+
+    2014-07-31  Andrei Bucur  <abucur@adobe.com>
+    
+            [CSS Multicolumn] Clear the lines when switching to multi-column layout
+            https://bugs.webkit.org/show_bug.cgi?id=135127
+    
+            Reviewed by Alexandru Chiculita.
+    
+            Tests that verifies lines are correctly cleared when an element is switched to
+            multi-column layout.
+    
+            * fast/multicol/inline-container-to-multicol-expected.txt: Added.
+            * fast/multicol/inline-container-to-multicol.html: Added.
+            * fast/multicol/inline-container-to-multicol-float-expected.txt: Added.
+            * fast/multicol/inline-container-to-multicol-float.html: Added.
+            * fast/multicol/inline-container-to-multicol-positioned-expected.txt: Added.
+            * fast/multicol/inline-container-to-multicol-positioned.html: Added.
+    
+
 2014-10-21  Dana Burkart  <dburkart@apple.com>
 
         Merge r173246
