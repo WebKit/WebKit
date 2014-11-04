@@ -1,3 +1,22 @@
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r175339. <rdar://problem/18814999>
+
+    2014-10-29  Tim Horton  <timothy_horton@apple.com>
+    
+            Hide the 'Add to Photos' item if it isn't available
+            https://bugs.webkit.org/show_bug.cgi?id=138182
+            <rdar://problem/18814999>
+    
+            Reviewed by Beth Dakin.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForImage]):
+            (-[WKActionMenuController _canAddImageToPhotos]):
+            (-[WKActionMenuController _addImageToPhotos:]):
+            Factor _canAddImageToPhotos out of _addImageToPhotos:, and use it in
+            _defaultMenuItemsForImage to avoid including the menu item in the first place.
+    
 2014-10-31  Dana Burkart  <dburkart@apple.com>
 
         Rollout rollout of r174369. <rdar://problem/18813684>
