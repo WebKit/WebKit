@@ -1,3 +1,15 @@
+2014-11-03  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Adding test for array buffer and data view POST in XMLHttpRequest async send.
+        https://bugs.webkit.org/show_bug.cgi?id=138304
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adding test for array buffer and data view
+
+        * http/tests/xmlhttprequest/send-data-view-async-expected.txt: Added.
+        * http/tests/xmlhttprequest/send-data-view-async.html: Added.
+
 2014-11-03  Chris Dumez  <cdumez@apple.com>
 
         Fix jquery/manipulation.html flakiness on debug builds
