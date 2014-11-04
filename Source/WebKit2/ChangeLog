@@ -1,3 +1,44 @@
+2014-11-03  Beth Dakin  <bdakin@apple.com>
+
+        Implement action menus for editable text
+        https://bugs.webkit.org/show_bug.cgi?id=138284
+        -and corresponding-
+        rdar://problem/18742323
+
+        Reviewed by Tim Horton.
+
+        New item type for paste.
+        * Shared/API/c/WKActionMenuItemTypes.h:
+
+        New menu type for editable text.
+        * Shared/API/c/WKActionMenuTypes.h:
+        * UIProcess/mac/WKActionMenuController.mm:
+
+        willOpenMenu should select text for both regular text menus and editable text 
+        menus. 
+        (-[WKActionMenuController willOpenMenu:withEvent:]):
+
+        Default items for editable text.
+        (-[WKActionMenuController _defaultMenuItemsForEditableText]):
+        (-[WKActionMenuController _paste:]):
+        (-[WKActionMenuController _createActionMenuItemForTag:]):
+
+        New method _hitTestResultForStage:(MenuUpdateStage)stage will figure out whether 
+        we can use the WebHitTestResult from the ActionMenuHitTestResult or if we have to 
+        use the potentially out-of-date WebHitTestResult that is cached on WebPageProxy. 
+        An important difference between these results is that the ActionMenuHitTest 
+        result, in addition to being more recent and accurate, also now includes shadow 
+        content, which affects some editable regions on important sites such as 
+        bugs.webkit.org and nytimes.com.
+        (-[WKActionMenuController _defaultMenuItems:]):
+        (-[WKActionMenuController _updateActionMenuItemsForStage:]):
+        (imageForResource:name::if): Deleted.
+
+        Allow shadow content in action menu hit testing.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        (WebKit::WebPage::selectLookupTextAtLocation):
+
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
         Merge r175482. <rdar://problem/18855190>

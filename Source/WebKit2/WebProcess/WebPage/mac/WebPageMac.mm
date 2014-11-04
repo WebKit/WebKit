@@ -1137,7 +1137,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     RenderView& mainRenderView = *mainFrame.view()->renderView();
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
 
     IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates));
     HitTestResult hitTestResult(locationInContentCoordinates);
@@ -1174,7 +1174,7 @@ void WebPage::selectLookupTextAtLocation(FloatPoint locationInWindowCooordinates
         return;
 
     IntPoint point = roundedIntPoint(locationInWindowCooordinates);
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
     Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
     NSDictionary *options = nil;
     RefPtr<Range> lookupRange = rangeForDictionaryLookupAtHitTestResult(result, &options);
