@@ -39,9 +39,9 @@ struct Highlight;
 
 namespace WebKit {
 class DrawingAreaProxy;
-class FindIndicator;
 class GeolocationPermissionRequestProxy;
 class RemoteLayerTreeTransaction;
+class TextIndicator;
 class WebContext;
 class WebFrameProxy;
 class WebPageProxy;

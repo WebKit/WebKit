@@ -54,7 +54,7 @@ struct Highlight;
 namespace WebKit {
 
 class DrawingAreaProxy;
-class FindIndicator;
+class TextIndicator;
 class NativeWebKeyboardEvent;
 class RemoteLayerTreeTransaction;
 class ViewSnapshot;
@@ -214,7 +214,7 @@ public:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
 #endif
 
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) = 0;
+    virtual void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, bool animate) = 0;
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;

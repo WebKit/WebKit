@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FindIndicator.h"
+#include "TextIndicator.h"
 
 #include "ShareableBitmap.h"
 #include <WebCore/GeometryUtilities.h>
@@ -34,14 +34,14 @@
 #include <WebCore/Path.h>
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 1
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
 #else
-#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 0
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
 #endif
 
 using namespace WebCore;
 
-#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
+#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
 static const float cornerRadius = 3.0;
 
 static const float shadowOffsetX = 0.0;
@@ -93,14 +93,14 @@ const float flatRimShadowBlurRadius = 2;
 
 namespace WebKit {
 
-PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle)
+PassRefPtr<TextIndicator> TextIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle)
 {
     RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(contentImageHandle);
     if (!contentImage)
         return 0;
     ASSERT(contentImageScaleFactor != 1 || contentImage->size() == enclosingIntRect(selectionRectInWindowCoordinates).size());
 
-    return adoptRef(new FindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImage.release()));
+    return adoptRef(new TextIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImage.release()));
 }
 
 static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflateY)
@@ -113,7 +113,7 @@ static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflat
 
 static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
 {
-#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
+#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
     FloatRect outsetRect = rect;
     outsetRect.move(-leftBorderThickness, -topBorderThickness);
     outsetRect.expand(leftBorderThickness + rightBorderThickness, topBorderThickness + bottomBorderThickness);
@@ -123,7 +123,7 @@ static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
 #endif
 }
 
-static bool findIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
+static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
 {
     size_t count = textRects.size();
     if (count <= 1)
@@ -147,28 +147,28 @@ static bool findIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
     return false;
 }
 
-FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage)
+TextIndicator::TextIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage)
     : m_selectionRectInWindowCoordinates(selectionRectInWindowCoordinates)
     , m_textRectsInSelectionRectCoordinates(textRectsInSelectionRectCoordinates)
     , m_contentImageScaleFactor(contentImageScaleFactor)
     , m_contentImage(contentImage)
 {
-    if (findIndicatorsForTextRectsOverlap(m_textRectsInSelectionRectCoordinates)) {
+    if (textIndicatorsForTextRectsOverlap(m_textRectsInSelectionRectCoordinates)) {
         m_textRectsInSelectionRectCoordinates[0] = unionRect(m_textRectsInSelectionRectCoordinates);
         m_textRectsInSelectionRectCoordinates.shrink(1);
     }
 }
 
-FindIndicator::~FindIndicator()
+TextIndicator::~TextIndicator()
 {
 }
 
-FloatRect FindIndicator::frameRect() const
+FloatRect TextIndicator::frameRect() const
 {
     return outsetIndicatorRectIncludingShadow(m_selectionRectInWindowCoordinates);
 }
 
-#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
+#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
 static inline Color lightBorderColor()
 {
     return Color(lightBorderRed, lightBorderGreen, lightBorderBlue, lightBorderAlpha);
@@ -213,9 +213,9 @@ static inline Color flatDropShadowColor()
 }
 #endif
     
-void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirtyRect*/)
+void TextIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirtyRect*/)
 {
-#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
+#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
     for (size_t i = 0; i < m_textRectsInSelectionRectCoordinates.size(); ++i) {
         FloatRect textRect = m_textRectsInSelectionRectCoordinates[i];
         textRect.move(leftBorderThickness, topBorderThickness);
@@ -236,7 +236,7 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirt
             RefPtr<Gradient> gradient = Gradient::create(FloatPoint(innerPathRect.x(), innerPathRect.y()), FloatPoint(innerPathRect.x(), innerPathRect.maxY()));
             gradient->addColorStop(0, gradientLightColor());
             gradient->addColorStop(1, gradientDarkColor());
-            graphicsContext.setFillGradient(gradient);
+            graphicsContext.setFillGradient(gradient.releaseNonNull());
             graphicsContext.fillRect(outerPathRect);
         }
 

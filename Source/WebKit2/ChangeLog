@@ -1,3 +1,43 @@
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r175476. <rdar://problem/18855190>
+
+    2014-11-03  Tim Horton  <timothy_horton@apple.com>
+    
+            Rename FindIndicator{Window} to TextIndicator{Window}
+            https://bugs.webkit.org/show_bug.cgi?id=138302
+            <rdar://problem/18855190>
+    
+            Reviewed by Anders Carlsson.
+    
+            Rename FindIndicator{Window} to TextIndicator{Window} (and related),
+            because it will soon be used to indicate ranges of text that are not
+            necessarily find-in-page results.
+    
+            FindController still has things named 'findIndicator' internally,
+            and I left the API alone (because all the API bits are actually find-specific),
+            but the actual FindIndicator/Window and the message to set it up, etc. are all
+            now called Text*.
+    
+            * CMakeLists.txt:
+            * UIProcess/API/mac/WKView.mm:
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/TextIndicator.cpp: Renamed from Source/WebKit2/UIProcess/FindIndicator.cpp.
+            * UIProcess/TextIndicator.h: Renamed from Source/WebKit2/UIProcess/FindIndicator.h.
+            * UIProcess/WebPageProxy.cpp:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            * UIProcess/ios/WKContentView.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            * UIProcess/mac/TextIndicatorWindow.h: Renamed from Source/WebKit2/UIProcess/mac/FindIndicatorWindow.h.
+            * UIProcess/mac/TextIndicatorWindow.mm: Renamed from Source/WebKit2/UIProcess/mac/FindIndicatorWindow.mm.
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/WebPage/FindController.cpp:
+    
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175425. <rdar://problem/18841659>

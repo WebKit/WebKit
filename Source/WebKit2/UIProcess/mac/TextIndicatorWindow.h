@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FindIndicatorWindow_h
-#define FindIndicatorWindow_h
+#ifndef TextIndicatorWindow_h
+#define TextIndicatorWindow_h
 
 #if PLATFORM(MAC)
 
@@ -34,21 +34,21 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-@class WKFindIndicatorWindowAnimation;
+@class WKTextIndicatorWindowAnimation;
 @class WKView;
 
 namespace WebKit {
 
-class FindIndicator;
+class TextIndicator;
 
-class FindIndicatorWindow {
-    WTF_MAKE_NONCOPYABLE(FindIndicatorWindow);
+class TextIndicatorWindow {
+    WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
 
 public:
-    explicit FindIndicatorWindow(WKView *);
-    ~FindIndicatorWindow();
+    explicit TextIndicatorWindow(WKView *);
+    ~TextIndicatorWindow();
 
-    void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
+    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, bool animate);
 
 private:
     void closeWindow();
@@ -62,18 +62,18 @@ private:
     void bounceAnimationDidEnd();
 
     WKView* m_wkView;
-    RefPtr<FindIndicator> m_findIndicator;
-    RetainPtr<NSWindow> m_findIndicatorWindow;
+    RefPtr<TextIndicator> m_textIndicator;
+    RetainPtr<NSWindow> m_textIndicatorWindow;
 
     WKWindowBounceAnimationContextRef m_bounceAnimationContext;
-    RetainPtr<WKFindIndicatorWindowAnimation> m_bounceAnimation;
+    RetainPtr<WKTextIndicatorWindowAnimation> m_bounceAnimation;
 
-    RunLoop::Timer<FindIndicatorWindow> m_startFadeOutTimer;
-    RetainPtr<WKFindIndicatorWindowAnimation> m_fadeOutAnimation;
+    RunLoop::Timer<TextIndicatorWindow> m_startFadeOutTimer;
+    RetainPtr<WKTextIndicatorWindowAnimation> m_fadeOutAnimation;
 };
 
 } // namespace WebKit
 
-#endif // FindIndicatorWindow_h
+#endif // TextIndicatorWindow_h
 
 #endif // PLATFORM(MAC)
