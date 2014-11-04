@@ -1,5 +1,24 @@
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173046. <rdar://problem/18856004>
+
+    2014-08-27  Daniel Bates  <dabates@apple.com>
+    
+            Scrollbar corner can be drawn outside containing frame
+            https://bugs.webkit.org/show_bug.cgi?id=133131
+            <rdar://problem/16382769>
+    
+            Reviewed by Simon Fraser.
+    
+            Add DRT test that was derived from the test included in
+            <https://src.chromium.org/viewvc/blink?revision=170625&view=revision>.
+    
+            * scrollbars/custom-scrollbars-paint-outside-iframe-expected.html: Added.
+            * scrollbars/custom-scrollbars-paint-outside-iframe.html: Added.
+    
+
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171849. <rdar://problem/18856036>
 
     2014-07-31  Andrei Bucur  <abucur@adobe.com>
