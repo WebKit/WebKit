@@ -58,7 +58,7 @@ ChildListMutationAccumulator::~ChildListMutationAccumulator()
 {
     if (!isEmpty())
         enqueueMutationRecord();
-    accumulatorMap().remove(&m_target.get());
+    accumulatorMap().remove(m_target.ptr());
 }
 
 PassRefPtr<ChildListMutationAccumulator> ChildListMutationAccumulator::getOrCreate(ContainerNode& target)
@@ -93,7 +93,7 @@ void ChildListMutationAccumulator::childAdded(Node& childRef)
         m_nextSibling = child->nextSibling();
     }
 
-    m_lastAdded = &child.get();
+    m_lastAdded = child.ptr();
     m_addedNodes.append(child.get());
 }
 

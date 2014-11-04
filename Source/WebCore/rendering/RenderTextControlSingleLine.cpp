@@ -368,7 +368,7 @@ PassRef<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const Ren
 {
     auto textBlockStyle = RenderStyle::create();
     textBlockStyle.get().inheritFrom(startStyle);
-    adjustInnerTextStyle(startStyle, &textBlockStyle.get());
+    adjustInnerTextStyle(startStyle, textBlockStyle.get());
 
     textBlockStyle.get().setWhiteSpace(PRE);
     textBlockStyle.get().setOverflowWrap(NormalOverflowWrap);

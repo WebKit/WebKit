@@ -175,7 +175,7 @@ bool HTMLLinkElement::shouldLoadLink()
     if (!dispatchBeforeLoadEvent(getNonEmptyURLAttribute(hrefAttr)))
         return false;
     // A beforeload handler might have removed us from the document or changed the document.
-    if (!inDocument() || &document() != &originalDocument.get())
+    if (!inDocument() || &document() != originalDocument.ptr())
         return false;
     return true;
 }

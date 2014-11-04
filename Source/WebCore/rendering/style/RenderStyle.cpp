@@ -406,227 +406,227 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
     return false;
 }
 
-bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
+bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
 {
-    if (m_box->width() != other->m_box->width()
-        || m_box->minWidth() != other->m_box->minWidth()
-        || m_box->maxWidth() != other->m_box->maxWidth()
-        || m_box->height() != other->m_box->height()
-        || m_box->minHeight() != other->m_box->minHeight()
-        || m_box->maxHeight() != other->m_box->maxHeight())
+    if (m_box->width() != other.m_box->width()
+        || m_box->minWidth() != other.m_box->minWidth()
+        || m_box->maxWidth() != other.m_box->maxWidth()
+        || m_box->height() != other.m_box->height()
+        || m_box->minHeight() != other.m_box->minHeight()
+        || m_box->maxHeight() != other.m_box->maxHeight())
         return true;
 
-    if (m_box->verticalAlign() != other->m_box->verticalAlign() || noninherited_flags.verticalAlign() != other->noninherited_flags.verticalAlign())
+    if (m_box->verticalAlign() != other.m_box->verticalAlign() || noninherited_flags.verticalAlign() != other.noninherited_flags.verticalAlign())
         return true;
 
-    if (m_box->boxSizing() != other->m_box->boxSizing())
+    if (m_box->boxSizing() != other.m_box->boxSizing())
         return true;
 
-    if (surround->margin != other->surround->margin)
+    if (surround->margin != other.surround->margin)
         return true;
 
-    if (surround->padding != other->surround->padding)
+    if (surround->padding != other.surround->padding)
         return true;
 
     // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
-    if (changeAffectsVisualOverflow(*other))
+    if (changeAffectsVisualOverflow(other))
         return true;
 
-    if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
-        if (rareNonInheritedData->m_appearance != other->rareNonInheritedData->m_appearance 
-            || rareNonInheritedData->marginBeforeCollapse != other->rareNonInheritedData->marginBeforeCollapse
-            || rareNonInheritedData->marginAfterCollapse != other->rareNonInheritedData->marginAfterCollapse
-            || rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp
-            || rareNonInheritedData->m_initialLetter != other->rareNonInheritedData->m_initialLetter
-            || rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
+    if (rareNonInheritedData.get() != other.rareNonInheritedData.get()) {
+        if (rareNonInheritedData->m_appearance != other.rareNonInheritedData->m_appearance
+            || rareNonInheritedData->marginBeforeCollapse != other.rareNonInheritedData->marginBeforeCollapse
+            || rareNonInheritedData->marginAfterCollapse != other.rareNonInheritedData->marginAfterCollapse
+            || rareNonInheritedData->lineClamp != other.rareNonInheritedData->lineClamp
+            || rareNonInheritedData->m_initialLetter != other.rareNonInheritedData->m_initialLetter
+            || rareNonInheritedData->textOverflow != other.rareNonInheritedData->textOverflow)
             return true;
 
-        if (rareNonInheritedData->m_regionFragment != other->rareNonInheritedData->m_regionFragment)
+        if (rareNonInheritedData->m_regionFragment != other.rareNonInheritedData->m_regionFragment)
             return true;
 
 #if ENABLE(CSS_SHAPES)
-        if (rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin)
+        if (rareNonInheritedData->m_shapeMargin != other.rareNonInheritedData->m_shapeMargin)
             return true;
 #endif
 
-        if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()
-            && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other->rareNonInheritedData->m_deprecatedFlexibleBox.get())
+        if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other.rareNonInheritedData->m_deprecatedFlexibleBox.get()
+            && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other.rareNonInheritedData->m_deprecatedFlexibleBox.get())
             return true;
 
-        if (rareNonInheritedData->m_flexibleBox.get() != other->rareNonInheritedData->m_flexibleBox.get()
-            && *rareNonInheritedData->m_flexibleBox.get() != *other->rareNonInheritedData->m_flexibleBox.get())
+        if (rareNonInheritedData->m_flexibleBox.get() != other.rareNonInheritedData->m_flexibleBox.get()
+            && *rareNonInheritedData->m_flexibleBox.get() != *other.rareNonInheritedData->m_flexibleBox.get())
             return true;
-        if (rareNonInheritedData->m_order != other->rareNonInheritedData->m_order
-            || rareNonInheritedData->m_alignContent != other->rareNonInheritedData->m_alignContent
-            || rareNonInheritedData->m_alignItems != other->rareNonInheritedData->m_alignItems
-            || rareNonInheritedData->m_alignSelf != other->rareNonInheritedData->m_alignSelf
-            || rareNonInheritedData->m_justifyContent != other->rareNonInheritedData->m_justifyContent)
-            return true;
-
-        if (!rareNonInheritedData->reflectionDataEquivalent(*other->rareNonInheritedData.get()))
+        if (rareNonInheritedData->m_order != other.rareNonInheritedData->m_order
+            || rareNonInheritedData->m_alignContent != other.rareNonInheritedData->m_alignContent
+            || rareNonInheritedData->m_alignItems != other.rareNonInheritedData->m_alignItems
+            || rareNonInheritedData->m_alignSelf != other.rareNonInheritedData->m_alignSelf
+            || rareNonInheritedData->m_justifyContent != other.rareNonInheritedData->m_justifyContent)
             return true;
 
-        if (rareNonInheritedData->m_multiCol.get() != other->rareNonInheritedData->m_multiCol.get()
-            && *rareNonInheritedData->m_multiCol.get() != *other->rareNonInheritedData->m_multiCol.get())
+        if (!rareNonInheritedData->reflectionDataEquivalent(*other.rareNonInheritedData.get()))
             return true;
 
-        if (rareNonInheritedData->m_transform.get() != other->rareNonInheritedData->m_transform.get()
-            && *rareNonInheritedData->m_transform.get() != *other->rareNonInheritedData->m_transform.get()) {
+        if (rareNonInheritedData->m_multiCol.get() != other.rareNonInheritedData->m_multiCol.get()
+            && *rareNonInheritedData->m_multiCol.get() != *other.rareNonInheritedData->m_multiCol.get())
+            return true;
+
+        if (rareNonInheritedData->m_transform.get() != other.rareNonInheritedData->m_transform.get()
+            && *rareNonInheritedData->m_transform.get() != *other.rareNonInheritedData->m_transform.get()) {
             changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
             // Don't return; keep looking for another change
         }
 
 #if ENABLE(CSS_GRID_LAYOUT)
-        if (rareNonInheritedData->m_grid.get() != other->rareNonInheritedData->m_grid.get()
-            || rareNonInheritedData->m_gridItem.get() != other->rareNonInheritedData->m_gridItem.get())
+        if (rareNonInheritedData->m_grid.get() != other.rareNonInheritedData->m_grid.get()
+            || rareNonInheritedData->m_gridItem.get() != other.rareNonInheritedData->m_gridItem.get())
             return true;
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.
-        if (rareNonInheritedData->m_dashboardRegions != other->rareNonInheritedData->m_dashboardRegions)
+        if (rareNonInheritedData->m_dashboardRegions != other.rareNonInheritedData->m_dashboardRegions)
             return true;
 #endif
     }
 
-    if (rareInheritedData.get() != other->rareInheritedData.get()) {
-        if (rareInheritedData->indent != other->rareInheritedData->indent
+    if (rareInheritedData.get() != other.rareInheritedData.get()) {
+        if (rareInheritedData->indent != other.rareInheritedData->indent
 #if ENABLE(CSS3_TEXT)
-            || rareInheritedData->m_textAlignLast != other->rareInheritedData->m_textAlignLast
-            || rareInheritedData->m_textJustify != other->rareInheritedData->m_textJustify
-            || rareInheritedData->m_textIndentLine != other->rareInheritedData->m_textIndentLine
+            || rareInheritedData->m_textAlignLast != other.rareInheritedData->m_textAlignLast
+            || rareInheritedData->m_textJustify != other.rareInheritedData->m_textJustify
+            || rareInheritedData->m_textIndentLine != other.rareInheritedData->m_textIndentLine
 #endif
-            || rareInheritedData->m_effectiveZoom != other->rareInheritedData->m_effectiveZoom
+            || rareInheritedData->m_effectiveZoom != other.rareInheritedData->m_effectiveZoom
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-            || rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust
+            || rareInheritedData->textSizeAdjust != other.rareInheritedData->textSizeAdjust
 #endif
-            || rareInheritedData->wordBreak != other->rareInheritedData->wordBreak
-            || rareInheritedData->overflowWrap != other->rareInheritedData->overflowWrap
-            || rareInheritedData->nbspMode != other->rareInheritedData->nbspMode
-            || rareInheritedData->lineBreak != other->rareInheritedData->lineBreak
-            || rareInheritedData->textSecurity != other->rareInheritedData->textSecurity
-            || rareInheritedData->hyphens != other->rareInheritedData->hyphens
-            || rareInheritedData->hyphenationLimitBefore != other->rareInheritedData->hyphenationLimitBefore
-            || rareInheritedData->hyphenationLimitAfter != other->rareInheritedData->hyphenationLimitAfter
-            || rareInheritedData->hyphenationString != other->rareInheritedData->hyphenationString
-            || rareInheritedData->locale != other->rareInheritedData->locale
-            || rareInheritedData->m_rubyPosition != other->rareInheritedData->m_rubyPosition
-            || rareInheritedData->textEmphasisMark != other->rareInheritedData->textEmphasisMark
-            || rareInheritedData->textEmphasisPosition != other->rareInheritedData->textEmphasisPosition
-            || rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark
-            || rareInheritedData->m_textOrientation != other->rareInheritedData->m_textOrientation
-            || rareInheritedData->m_tabSize != other->rareInheritedData->m_tabSize
-            || rareInheritedData->m_lineBoxContain != other->rareInheritedData->m_lineBoxContain
-            || rareInheritedData->m_lineGrid != other->rareInheritedData->m_lineGrid
+            || rareInheritedData->wordBreak != other.rareInheritedData->wordBreak
+            || rareInheritedData->overflowWrap != other.rareInheritedData->overflowWrap
+            || rareInheritedData->nbspMode != other.rareInheritedData->nbspMode
+            || rareInheritedData->lineBreak != other.rareInheritedData->lineBreak
+            || rareInheritedData->textSecurity != other.rareInheritedData->textSecurity
+            || rareInheritedData->hyphens != other.rareInheritedData->hyphens
+            || rareInheritedData->hyphenationLimitBefore != other.rareInheritedData->hyphenationLimitBefore
+            || rareInheritedData->hyphenationLimitAfter != other.rareInheritedData->hyphenationLimitAfter
+            || rareInheritedData->hyphenationString != other.rareInheritedData->hyphenationString
+            || rareInheritedData->locale != other.rareInheritedData->locale
+            || rareInheritedData->m_rubyPosition != other.rareInheritedData->m_rubyPosition
+            || rareInheritedData->textEmphasisMark != other.rareInheritedData->textEmphasisMark
+            || rareInheritedData->textEmphasisPosition != other.rareInheritedData->textEmphasisPosition
+            || rareInheritedData->textEmphasisCustomMark != other.rareInheritedData->textEmphasisCustomMark
+            || rareInheritedData->m_textOrientation != other.rareInheritedData->m_textOrientation
+            || rareInheritedData->m_tabSize != other.rareInheritedData->m_tabSize
+            || rareInheritedData->m_lineBoxContain != other.rareInheritedData->m_lineBoxContain
+            || rareInheritedData->m_lineGrid != other.rareInheritedData->m_lineGrid
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-            || rareInheritedData->m_imageOrientation != other->rareInheritedData->m_imageOrientation
+            || rareInheritedData->m_imageOrientation != other.rareInheritedData->m_imageOrientation
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-            || rareInheritedData->m_imageResolutionSource != other->rareInheritedData->m_imageResolutionSource
-            || rareInheritedData->m_imageResolutionSnap != other->rareInheritedData->m_imageResolutionSnap
-            || rareInheritedData->m_imageResolution != other->rareInheritedData->m_imageResolution
+            || rareInheritedData->m_imageResolutionSource != other.rareInheritedData->m_imageResolutionSource
+            || rareInheritedData->m_imageResolutionSnap != other.rareInheritedData->m_imageResolutionSnap
+            || rareInheritedData->m_imageResolution != other.rareInheritedData->m_imageResolution
 #endif
-            || rareInheritedData->m_lineSnap != other->rareInheritedData->m_lineSnap
-            || rareInheritedData->m_lineAlign != other->rareInheritedData->m_lineAlign
+            || rareInheritedData->m_lineSnap != other.rareInheritedData->m_lineSnap
+            || rareInheritedData->m_lineAlign != other.rareInheritedData->m_lineAlign
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-            || rareInheritedData->useTouchOverflowScrolling != other->rareInheritedData->useTouchOverflowScrolling
+            || rareInheritedData->useTouchOverflowScrolling != other.rareInheritedData->useTouchOverflowScrolling
 #endif
-            || rareInheritedData->listStyleImage != other->rareInheritedData->listStyleImage)
+            || rareInheritedData->listStyleImage != other.rareInheritedData->listStyleImage)
             return true;
 
-        if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))
+        if (!rareInheritedData->shadowDataEquivalent(*other.rareInheritedData.get()))
             return true;
 
-        if (textStrokeWidth() != other->textStrokeWidth())
+        if (textStrokeWidth() != other.textStrokeWidth())
             return true;
     }
 
 #if ENABLE(TEXT_AUTOSIZING)
-    if (visual->m_textAutosizingMultiplier != other->visual->m_textAutosizingMultiplier)
+    if (visual->m_textAutosizingMultiplier != other.visual->m_textAutosizingMultiplier)
         return true;
 #endif
 
-    if (inherited->line_height != other->inherited->line_height
+    if (inherited->line_height != other.inherited->line_height
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-        || inherited->specifiedLineHeight != other->inherited->specifiedLineHeight
+        || inherited->specifiedLineHeight != other.inherited->specifiedLineHeight
 #endif
-        || inherited->font != other->inherited->font
-        || inherited->horizontal_border_spacing != other->inherited->horizontal_border_spacing
-        || inherited->vertical_border_spacing != other->inherited->vertical_border_spacing
-        || inherited_flags._box_direction != other->inherited_flags._box_direction
-        || inherited_flags.m_rtlOrdering != other->inherited_flags.m_rtlOrdering
-        || noninherited_flags.position() != other->noninherited_flags.position()
-        || noninherited_flags.floating() != other->noninherited_flags.floating()
-        || noninherited_flags.originalDisplay() != other->noninherited_flags.originalDisplay())
+        || inherited->font != other.inherited->font
+        || inherited->horizontal_border_spacing != other.inherited->horizontal_border_spacing
+        || inherited->vertical_border_spacing != other.inherited->vertical_border_spacing
+        || inherited_flags._box_direction != other.inherited_flags._box_direction
+        || inherited_flags.m_rtlOrdering != other.inherited_flags.m_rtlOrdering
+        || noninherited_flags.position() != other.noninherited_flags.position()
+        || noninherited_flags.floating() != other.noninherited_flags.floating()
+        || noninherited_flags.originalDisplay() != other.noninherited_flags.originalDisplay())
         return true;
 
 
     if ((noninherited_flags.effectiveDisplay()) >= TABLE) {
-        if (inherited_flags._border_collapse != other->inherited_flags._border_collapse
-            || inherited_flags._empty_cells != other->inherited_flags._empty_cells
-            || inherited_flags._caption_side != other->inherited_flags._caption_side
-            || noninherited_flags.tableLayout() != other->noninherited_flags.tableLayout())
+        if (inherited_flags._border_collapse != other.inherited_flags._border_collapse
+            || inherited_flags._empty_cells != other.inherited_flags._empty_cells
+            || inherited_flags._caption_side != other.inherited_flags._caption_side
+            || noninherited_flags.tableLayout() != other.noninherited_flags.tableLayout())
             return true;
 
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
         // does not, so these style differences can be width differences.
         if (inherited_flags._border_collapse
-            && ((borderTopStyle() == BHIDDEN && other->borderTopStyle() == BNONE)
-                || (borderTopStyle() == BNONE && other->borderTopStyle() == BHIDDEN)
-                || (borderBottomStyle() == BHIDDEN && other->borderBottomStyle() == BNONE)
-                || (borderBottomStyle() == BNONE && other->borderBottomStyle() == BHIDDEN)
-                || (borderLeftStyle() == BHIDDEN && other->borderLeftStyle() == BNONE)
-                || (borderLeftStyle() == BNONE && other->borderLeftStyle() == BHIDDEN)
-                || (borderRightStyle() == BHIDDEN && other->borderRightStyle() == BNONE)
-                || (borderRightStyle() == BNONE && other->borderRightStyle() == BHIDDEN)))
+            && ((borderTopStyle() == BHIDDEN && other.borderTopStyle() == BNONE)
+                || (borderTopStyle() == BNONE && other.borderTopStyle() == BHIDDEN)
+                || (borderBottomStyle() == BHIDDEN && other.borderBottomStyle() == BNONE)
+                || (borderBottomStyle() == BNONE && other.borderBottomStyle() == BHIDDEN)
+                || (borderLeftStyle() == BHIDDEN && other.borderLeftStyle() == BNONE)
+                || (borderLeftStyle() == BNONE && other.borderLeftStyle() == BHIDDEN)
+                || (borderRightStyle() == BHIDDEN && other.borderRightStyle() == BNONE)
+                || (borderRightStyle() == BNONE && other.borderRightStyle() == BHIDDEN)))
             return true;
     }
 
     if (noninherited_flags.effectiveDisplay() == LIST_ITEM) {
-        if (inherited_flags._list_style_type != other->inherited_flags._list_style_type
-            || inherited_flags._list_style_position != other->inherited_flags._list_style_position)
+        if (inherited_flags._list_style_type != other.inherited_flags._list_style_type
+            || inherited_flags._list_style_position != other.inherited_flags._list_style_position)
             return true;
     }
 
-    if (inherited_flags._text_align != other->inherited_flags._text_align
-        || inherited_flags._text_transform != other->inherited_flags._text_transform
-        || inherited_flags._direction != other->inherited_flags._direction
-        || inherited_flags._white_space != other->inherited_flags._white_space
-        || noninherited_flags.clear() != other->noninherited_flags.clear()
-        || noninherited_flags.unicodeBidi() != other->noninherited_flags.unicodeBidi())
+    if (inherited_flags._text_align != other.inherited_flags._text_align
+        || inherited_flags._text_transform != other.inherited_flags._text_transform
+        || inherited_flags._direction != other.inherited_flags._direction
+        || inherited_flags._white_space != other.inherited_flags._white_space
+        || noninherited_flags.clear() != other.noninherited_flags.clear()
+        || noninherited_flags.unicodeBidi() != other.noninherited_flags.unicodeBidi())
         return true;
 
     // Check block flow direction.
-    if (inherited_flags.m_writingMode != other->inherited_flags.m_writingMode)
+    if (inherited_flags.m_writingMode != other.inherited_flags.m_writingMode)
         return true;
 
     // Check text combine mode.
-    if (rareNonInheritedData->m_textCombine != other->rareNonInheritedData->m_textCombine)
+    if (rareNonInheritedData->m_textCombine != other.rareNonInheritedData->m_textCombine)
         return true;
 
     // Overflow returns a layout hint.
-    if (noninherited_flags.overflowX() != other->noninherited_flags.overflowX()
-        || noninherited_flags.overflowY() != other->noninherited_flags.overflowY())
+    if (noninherited_flags.overflowX() != other.noninherited_flags.overflowX()
+        || noninherited_flags.overflowY() != other.noninherited_flags.overflowY())
         return true;
 
     // If our border widths change, then we need to layout.  Other changes to borders
     // only necessitate a repaint.
-    if (borderLeftWidth() != other->borderLeftWidth()
-        || borderTopWidth() != other->borderTopWidth()
-        || borderBottomWidth() != other->borderBottomWidth()
-        || borderRightWidth() != other->borderRightWidth())
+    if (borderLeftWidth() != other.borderLeftWidth()
+        || borderTopWidth() != other.borderTopWidth()
+        || borderBottomWidth() != other.borderBottomWidth()
+        || borderRightWidth() != other.borderRightWidth())
         return true;
 
     // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
     const CounterDirectiveMap* mapA = rareNonInheritedData->m_counterDirectives.get();
-    const CounterDirectiveMap* mapB = other->rareNonInheritedData->m_counterDirectives.get();
+    const CounterDirectiveMap* mapB = other.rareNonInheritedData->m_counterDirectives.get();
     if (!(mapA == mapB || (mapA && mapB && *mapA == *mapB)))
         return true;
 
-    if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
+    if ((visibility() == COLLAPSE) != (other.visibility() == COLLAPSE))
         return true;
 
-    if (rareNonInheritedData->hasOpacity() != other->rareNonInheritedData->hasOpacity()) {
+    if (rareNonInheritedData->hasOpacity() != other.rareNonInheritedData->hasOpacity()) {
         // FIXME: We would like to use SimplifiedLayout here, but we can't quite do that yet.
         // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
         // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
@@ -635,16 +635,16 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         return true;
     }
 
-    if (rareNonInheritedData->hasFilters() != other->rareNonInheritedData->hasFilters())
+    if (rareNonInheritedData->hasFilters() != other.rareNonInheritedData->hasFilters())
         return true;
 
     const QuotesData* quotesDataA = rareInheritedData->quotes.get();
-    const QuotesData* quotesDataB = other->rareInheritedData->quotes.get();
+    const QuotesData* quotesDataB = other.rareInheritedData->quotes.get();
     if (!(quotesDataA == quotesDataB || (quotesDataA && quotesDataB && *quotesDataA == *quotesDataB)))
         return true;
 
     if (position() != StaticPosition) {
-        if (surround->offset != other->surround->offset) {
+        if (surround->offset != other.surround->offset) {
             // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
             // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
             // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
@@ -652,7 +652,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
                 return true;
 
             // Optimize for the case where a positioned layer is moving but not changing size.
-            if (!positionChangeIsMovementOnly(surround->offset, other->surround->offset, m_box->width()))
+            if (!positionChangeIsMovementOnly(surround->offset, other.surround->offset, m_box->width()))
                 return true;
         }
     }
@@ -660,121 +660,121 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
     return false;
 }
 
-bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle* other, unsigned&) const
+bool RenderStyle::changeRequiresPositionedLayoutOnly(const RenderStyle& other, unsigned&) const
 {
     if (position() == StaticPosition)
         return false;
 
-    if (surround->offset != other->surround->offset) {
+    if (surround->offset != other.surround->offset) {
         // Optimize for the case where a positioned layer is moving but not changing size.
-        if (position() == AbsolutePosition && positionChangeIsMovementOnly(surround->offset, other->surround->offset, m_box->width()))
+        if (position() == AbsolutePosition && positionChangeIsMovementOnly(surround->offset, other.surround->offset, m_box->width()))
             return true;
     }
     
     return false;
 }
 
-bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
+bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
 {
     // StyleResolver has ensured that zIndex is non-auto only if it's applicable.
-    if (m_box->zIndex() != other->m_box->zIndex() || m_box->hasAutoZIndex() != other->m_box->hasAutoZIndex())
+    if (m_box->zIndex() != other.m_box->zIndex() || m_box->hasAutoZIndex() != other.m_box->hasAutoZIndex())
         return true;
 
     if (position() != StaticPosition) {
-        if (visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip) {
+        if (visual->clip != other.visual->clip || visual->hasClip != other.visual->hasClip) {
             changedContextSensitiveProperties |= ContextSensitivePropertyClipRect;
             return true;
         }
     }
 
 #if ENABLE(CSS_COMPOSITING)
-    if (rareNonInheritedData->m_effectiveBlendMode != other->rareNonInheritedData->m_effectiveBlendMode)
+    if (rareNonInheritedData->m_effectiveBlendMode != other.rareNonInheritedData->m_effectiveBlendMode)
         return true;
 #endif
 
-    if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity) {
+    if (rareNonInheritedData->opacity != other.rareNonInheritedData->opacity) {
         changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
         // Don't return; keep looking for another change.
     }
 
-    if (rareNonInheritedData->m_filter.get() != other->rareNonInheritedData->m_filter.get()
-        && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
+    if (rareNonInheritedData->m_filter.get() != other.rareNonInheritedData->m_filter.get()
+        && *rareNonInheritedData->m_filter.get() != *other.rareNonInheritedData->m_filter.get()) {
         changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
         // Don't return; keep looking for another change.
     }
 
-    if (rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask
-        || rareNonInheritedData->m_maskBoxImage != other->rareNonInheritedData->m_maskBoxImage)
+    if (rareNonInheritedData->m_mask != other.rareNonInheritedData->m_mask
+        || rareNonInheritedData->m_maskBoxImage != other.rareNonInheritedData->m_maskBoxImage)
         return true;
 
     return false;
 }
 
-bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) const
+bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned&) const
 {
-    if (inherited_flags._visibility != other->inherited_flags._visibility
-        || inherited_flags.m_printColorAdjust != other->inherited_flags.m_printColorAdjust
-        || inherited_flags._insideLink != other->inherited_flags._insideLink
-        || inherited_flags._insideDefaultButton != other->inherited_flags._insideDefaultButton
-        || surround->border != other->surround->border
-        || !m_background->isEquivalentForPainting(*other->m_background)
-        || rareInheritedData->userModify != other->rareInheritedData->userModify
-        || rareInheritedData->userSelect != other->rareInheritedData->userSelect
-        || rareNonInheritedData->userDrag != other->rareNonInheritedData->userDrag
-        || rareNonInheritedData->m_borderFit != other->rareNonInheritedData->m_borderFit
-        || rareNonInheritedData->m_objectFit != other->rareNonInheritedData->m_objectFit
-        || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
+    if (inherited_flags._visibility != other.inherited_flags._visibility
+        || inherited_flags.m_printColorAdjust != other.inherited_flags.m_printColorAdjust
+        || inherited_flags._insideLink != other.inherited_flags._insideLink
+        || inherited_flags._insideDefaultButton != other.inherited_flags._insideDefaultButton
+        || surround->border != other.surround->border
+        || !m_background->isEquivalentForPainting(*other.m_background)
+        || rareInheritedData->userModify != other.rareInheritedData->userModify
+        || rareInheritedData->userSelect != other.rareInheritedData->userSelect
+        || rareNonInheritedData->userDrag != other.rareNonInheritedData->userDrag
+        || rareNonInheritedData->m_borderFit != other.rareNonInheritedData->m_borderFit
+        || rareNonInheritedData->m_objectFit != other.rareNonInheritedData->m_objectFit
+        || rareInheritedData->m_imageRendering != other.rareInheritedData->m_imageRendering)
         return true;
 
 #if ENABLE(CSS_SHAPES)
-    if (rareNonInheritedData->m_shapeOutside != other->rareNonInheritedData->m_shapeOutside)
+    if (rareNonInheritedData->m_shapeOutside != other.rareNonInheritedData->m_shapeOutside)
         return true;
 #endif
 
-    if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)
+    if (rareNonInheritedData->m_clipPath != other.rareNonInheritedData->m_clipPath)
         return true;
 
     return false;
 }
 
-bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle* other, unsigned&) const
+bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle& other, unsigned&) const
 {
-    if (inherited->color != other->inherited->color
-        || inherited_flags._text_decorations != other->inherited_flags._text_decorations
-        || visual->textDecoration != other->visual->textDecoration
-        || rareNonInheritedData->m_textDecorationStyle != other->rareNonInheritedData->m_textDecorationStyle
-        || rareNonInheritedData->m_textDecorationColor != other->rareNonInheritedData->m_textDecorationColor
-        || rareInheritedData->m_textDecorationSkip != other->rareInheritedData->m_textDecorationSkip
-        || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
-        || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
-        || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
-        || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill)
+    if (inherited->color != other.inherited->color
+        || inherited_flags._text_decorations != other.inherited_flags._text_decorations
+        || visual->textDecoration != other.visual->textDecoration
+        || rareNonInheritedData->m_textDecorationStyle != other.rareNonInheritedData->m_textDecorationStyle
+        || rareNonInheritedData->m_textDecorationColor != other.rareNonInheritedData->m_textDecorationColor
+        || rareInheritedData->m_textDecorationSkip != other.rareInheritedData->m_textDecorationSkip
+        || rareInheritedData->textFillColor != other.rareInheritedData->textFillColor
+        || rareInheritedData->textStrokeColor != other.rareInheritedData->textStrokeColor
+        || rareInheritedData->textEmphasisColor != other.rareInheritedData->textEmphasisColor
+        || rareInheritedData->textEmphasisFill != other.rareInheritedData->textEmphasisFill)
         return true;
 
     return false;
 }
 
-bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle* other, unsigned&) const
+bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, unsigned&) const
 {
-    if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
-        if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D
-            || rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility
-            || rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective
-            || rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX
-            || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
+    if (rareNonInheritedData.get() != other.rareNonInheritedData.get()) {
+        if (rareNonInheritedData->m_transformStyle3D != other.rareNonInheritedData->m_transformStyle3D
+            || rareNonInheritedData->m_backfaceVisibility != other.rareNonInheritedData->m_backfaceVisibility
+            || rareNonInheritedData->m_perspective != other.rareNonInheritedData->m_perspective
+            || rareNonInheritedData->m_perspectiveOriginX != other.rareNonInheritedData->m_perspectiveOriginX
+            || rareNonInheritedData->m_perspectiveOriginY != other.rareNonInheritedData->m_perspectiveOriginY)
             return true;
     }
 
     return false;
 }
 
-StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
+StyleDifference RenderStyle::diff(const RenderStyle& other, unsigned& changedContextSensitiveProperties) const
 {
     changedContextSensitiveProperties = ContextSensitivePropertyNone;
 
     StyleDifference svgChange = StyleDifferenceEqual;
-    if (m_svgStyle != other->m_svgStyle) {
-        svgChange = m_svgStyle->diff(other->m_svgStyle.get());
+    if (m_svgStyle != other.m_svgStyle) {
+        svgChange = m_svgStyle->diff(other.m_svgStyle.get());
         if (svgChange == StyleDifferenceLayout)
             return svgChange;
     }
@@ -816,10 +816,10 @@ bool RenderStyle::diffRequiresLayerRepaint(const RenderStyle& style, bool isComp
 {
     unsigned changedContextSensitiveProperties = 0;
 
-    if (changeRequiresRepaint(&style, changedContextSensitiveProperties))
+    if (changeRequiresRepaint(style, changedContextSensitiveProperties))
         return true;
 
-    if (isComposited && changeRequiresLayerRepaint(&style, changedContextSensitiveProperties))
+    if (isComposited && changeRequiresLayerRepaint(style, changedContextSensitiveProperties))
         return changedContextSensitiveProperties & ContextSensitivePropertyClipRect;
 
     return false;

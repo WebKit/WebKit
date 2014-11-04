@@ -4755,7 +4755,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     if (Frame* coreFrame = core([self _frame])) {
         // FIXME: We shouldn't have to make a copy here. We want callers of this function to work directly with StyleProperties eventually.
         Ref<MutableStyleProperties> properties(core(style)->copyProperties());
-        coreFrame->editor().applyStyleToSelection(&properties.get(), undoAction);
+        coreFrame->editor().applyStyleToSelection(properties.ptr(), undoAction);
     }
 }
 
@@ -5065,7 +5065,7 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
         if (Frame* coreFrame = core([self _frame])) {
             // FIXME: We shouldn't have to make a copy here.
             Ref<MutableStyleProperties> properties(core(style)->copyProperties());
-            coreFrame->editor().applyStyle(&properties.get(), [self _undoActionFromColorPanelWithSelector:selector]);
+            coreFrame->editor().applyStyle(properties.ptr(), [self _undoActionFromColorPanelWithSelector:selector]);
         }
     }
 

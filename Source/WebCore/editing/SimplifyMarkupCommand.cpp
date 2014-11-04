@@ -79,7 +79,7 @@ void SimplifyMarkupCommand::doApply()
             }
             
             unsigned context;
-            if (currentNode->renderStyle()->diff(startingStyle, context) == StyleDifferenceEqual)
+            if (currentNode->renderStyle()->diff(*startingStyle, context) == StyleDifferenceEqual)
                 topNodeWithStartingStyle = currentNode;
             
         }

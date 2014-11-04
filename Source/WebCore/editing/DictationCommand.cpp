@@ -86,9 +86,9 @@ DictationCommand::DictationCommand(Document& document, const String& text, const
 {
 }
 
-void DictationCommand::insertText(Document* document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
+void DictationCommand::insertText(Document& document, const String& text, const Vector<DictationAlternative>& alternatives, const VisibleSelection& selectionForInsertion)
 {
-    RefPtr<Frame> frame = document->frame();
+    RefPtr<Frame> frame = document.frame();
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection().selection();
@@ -97,11 +97,11 @@ void DictationCommand::insertText(Document* document, const String& text, const 
 
     RefPtr<DictationCommand> cmd;
     if (newText == text)
-        cmd = DictationCommand::create(*document, newText, alternatives);
+        cmd = DictationCommand::create(document, newText, alternatives);
     else
         // If the text was modified before insertion, the location of dictation alternatives
         // will not be valid anymore. We will just drop the alternatives.
-        cmd = DictationCommand::create(*document, newText, Vector<DictationAlternative>());
+        cmd = DictationCommand::create(document, newText, Vector<DictationAlternative>());
     applyTextInsertionCommand(frame.get(), cmd, selectionForInsertion, currentSelection);
 }
 

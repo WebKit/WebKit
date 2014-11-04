@@ -1,3 +1,21 @@
+2014-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Add ptr() method to Ref class
+        https://bugs.webkit.org/show_bug.cgi?id=138361
+
+        Reviewed by Darin Adler.
+
+        It is a very common pattern in our code base to get a pointer from a
+        Ref object. Previously, we have to call Ref.get() and take its address
+        which is not very nice. This patch adds a ptr() method to Ref class
+        to simplify the code a bit.
+
+        * wtf/PassRef.h:
+        (WTF::PassRef<T>::ptr):
+        * wtf/Ref.h:
+        (WTF::Ref::ptr):
+        (WTF::GetPtrHelper<Ref<T>>::getPtr):
+
 2014-11-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         ATTR_USED incorrectly applying to Clang

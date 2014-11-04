@@ -293,7 +293,7 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         return 0;
     }
     CSSParser p(m_contents.get().parserContext());
-    RefPtr<StyleRuleBase> rule = p.parseRule(&m_contents.get(), ruleString);
+    RefPtr<StyleRuleBase> rule = p.parseRule(m_contents.ptr(), ruleString);
 
     if (!rule) {
         ec = SYNTAX_ERR;

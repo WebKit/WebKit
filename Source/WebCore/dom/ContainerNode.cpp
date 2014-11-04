@@ -534,7 +534,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     Ref<Node> child(*oldChild);
 
-    document().removeFocusedNodeOfSubtree(&child.get());
+    document().removeFocusedNodeOfSubtree(child.ptr());
 
 #if ENABLE(FULLSCREEN_API)
     document().removeFullScreenElementOfSubtree(&child.get());

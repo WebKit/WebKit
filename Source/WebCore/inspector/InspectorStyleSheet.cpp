@@ -1041,10 +1041,10 @@ PassRefPtr<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObj
     String selectorText = rule->selectorText();
 
     if (sourceData)
-        selectors = selectorsFromSource(sourceData.get(), m_parsedStyleSheet->text(), rule->styleRule()->selectorList());
+        selectors = selectorsFromSource(sourceData.get(), m_parsedStyleSheet->text(), rule->styleRule().selectorList());
     else {
         selectors = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>::create();
-        const CSSSelectorList& selectorList = rule->styleRule()->selectorList();
+        const CSSSelectorList& selectorList = rule->styleRule().selectorList();
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
             selectors->addItem(buildObjectForSelector(selector));
     }
@@ -1065,7 +1065,7 @@ PassRefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectFo
 
     RefPtr<Inspector::Protocol::CSS::CSSRule> result = Inspector::Protocol::CSS::CSSRule::create()
         .setSelectorList(buildObjectForSelectorList(rule))
-        .setSourceLine(rule->styleRule()->sourceLine())
+        .setSourceLine(rule->styleRule().sourceLine())
         .setOrigin(m_origin)
         .setStyle(buildObjectForStyle(&rule->style()));
 
@@ -1361,7 +1361,7 @@ void InspectorStyleSheet::revalidateStyle(CSSStyleDeclaration* pageStyle)
     for (unsigned i = 0, size = m_flatRules.size(); i < size; ++i) {
         CSSStyleRule* parsedRule = m_flatRules.at(i).get();
         if (&parsedRule->style() == pageStyle) {
-            if (parsedRule->styleRule()->properties().asText() != pageStyle->cssText()) {
+            if (parsedRule->styleRule().properties().asText() != pageStyle->cssText()) {
                 // Clear the disabled properties for the invalid style here.
                 m_inspectorStyles.remove(pageStyle);
 

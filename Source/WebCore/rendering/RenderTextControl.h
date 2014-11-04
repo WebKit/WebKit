@@ -51,7 +51,7 @@ protected:
     TextControlInnerTextElement* innerTextElement() const;
 
     int scrollbarThickness() const;
-    void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;
+    void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle& textBlockStyle) const;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

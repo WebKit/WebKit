@@ -39,7 +39,7 @@ StyleGeneratedImage::StyleGeneratedImage(PassRef<CSSImageGeneratorValue> value)
 
 PassRefPtr<CSSValue> StyleGeneratedImage::cssValue() const
 {
-    return &const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get());
+    return const_cast<CSSImageGeneratorValue*>(m_imageGeneratorValue.ptr());
 }
 
 FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const

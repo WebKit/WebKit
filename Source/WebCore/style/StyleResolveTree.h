@@ -47,7 +47,7 @@ void detachTextRenderer(Text&);
 
 void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
-Change determineChange(const RenderStyle*, const RenderStyle*);
+Change determineChange(const RenderStyle&, const RenderStyle&);
 
 void queuePostResolutionCallback(std::function<void ()>);
 bool postResolutionCallbacksAreSuspended();

@@ -35,7 +35,7 @@ public:
     DataRef(const DataRef& other) : m_data(const_cast<T&>(other.m_data.get())) { }
     DataRef& operator=(const DataRef& other) { m_data = const_cast<T&>(other.m_data.get()); return *this; }
 
-    const T* get() const { return &m_data.get(); }
+    const T* get() const { return m_data.ptr(); }
 
     const T& operator*() const { return *get(); }
     const T* operator->() const { return get(); }
@@ -44,17 +44,17 @@ public:
     {
         if (!m_data->hasOneRef())
             m_data = m_data->copy();
-        return &m_data.get();
+        return m_data.ptr();
     }
 
     bool operator==(const DataRef<T>& o) const
     {
-        return &m_data.get() == &o.m_data.get() || m_data.get() == o.m_data.get();
+        return m_data.ptr() == o.m_data.ptr() || m_data.get() == o.m_data.get();
     }
     
     bool operator!=(const DataRef<T>& o) const
     {
-        return &m_data.get() != &o.m_data.get() && m_data.get() != o.m_data.get();
+        return m_data.ptr() != o.m_data.ptr() && m_data.get() != o.m_data.get();
     }
 
 private:

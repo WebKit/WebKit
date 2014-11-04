@@ -2976,7 +2976,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
     return firstLineBlock;
 }
 
-static RenderStyle* styleForFirstLetter(RenderObject* firstLetterBlock, RenderObject* firstLetterContainer)
+static RenderStyle& styleForFirstLetter(RenderObject* firstLetterBlock, RenderObject* firstLetterContainer)
 {
     RenderStyle* pseudoStyle = firstLetterBlock->getCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer->firstLineStyle());
     
@@ -3021,7 +3021,7 @@ static RenderStyle* styleForFirstLetter(RenderObject* firstLetterBlock, RenderOb
     pseudoStyle->setDisplay(pseudoStyle->isFloating() ? BLOCK : INLINE);
     // CSS2 says first-letter can't be positioned.
     pseudoStyle->setPosition(StaticPosition);
-    return pseudoStyle;
+    return *pseudoStyle;
 }
 
 // CSS 2.1 http://www.w3.org/TR/CSS21/selector.html#first-letter
@@ -3061,16 +3061,16 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
 {
     RenderElement* firstLetter = currentChild->parent();
     RenderElement* firstLetterContainer = firstLetter->parent();
-    RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    RenderStyle& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
-    if (Style::determineChange(&firstLetter->style(), pseudoStyle) == Style::Detach) {
+    if (Style::determineChange(firstLetter->style(), pseudoStyle) == Style::Detach) {
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
-        if (pseudoStyle->display() == INLINE)
-            newFirstLetter = new RenderInline(document(), *pseudoStyle);
+        if (pseudoStyle.display() == INLINE)
+            newFirstLetter = new RenderInline(document(), pseudoStyle);
         else
-            newFirstLetter = new RenderBlockFlow(document(), *pseudoStyle);
+            newFirstLetter = new RenderBlockFlow(document(), pseudoStyle);
         newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
@@ -3096,18 +3096,18 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);
     } else
-        firstLetter->setStyle(*pseudoStyle);
+        firstLetter->setStyle(pseudoStyle);
 }
 
 void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderText* currentTextChild)
 {
     RenderElement* firstLetterContainer = currentTextChild->parent();
-    RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
-    RenderBoxModelObject* firstLetter = 0;
-    if (pseudoStyle->display() == INLINE)
-        firstLetter = new RenderInline(document(), *pseudoStyle);
+    RenderStyle& pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    RenderBoxModelObject* firstLetter = nullptr;
+    if (pseudoStyle.display() == INLINE)
+        firstLetter = new RenderInline(document(), pseudoStyle);
     else
-        firstLetter = new RenderBlockFlow(document(), *pseudoStyle);
+        firstLetter = new RenderBlockFlow(document(), pseudoStyle);
     firstLetter->initializeStyle();
     firstLetterContainer->addChild(firstLetter, currentTextChild);
 

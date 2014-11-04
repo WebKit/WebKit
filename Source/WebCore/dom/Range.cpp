@@ -128,7 +128,7 @@ Range::~Range()
 
 void Range::setDocument(Document& document)
 {
-    ASSERT(&m_ownerDocument.get() != &document);
+    ASSERT(m_ownerDocument.ptr() != &document);
     m_ownerDocument->detachRange(this);
     m_ownerDocument = document;
     m_start.setToStartOfNode(&document);

@@ -79,7 +79,7 @@ private:
 
     void addImageToResources(CachedImage*, RenderElement*, const URL&);
     void retrieveResourcesForProperties(const StyleProperties*, Document*);
-    void retrieveResourcesForRule(StyleRule*, Document*);
+    void retrieveResourcesForRule(StyleRule&, Document*);
 
     Vector<Resource>* m_resources;
     ListHashSet<URL> m_resourceURLs;

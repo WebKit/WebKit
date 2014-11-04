@@ -45,6 +45,9 @@ public:
     const T& get() const;
     T& get();
 
+    const T* ptr() const;
+    T* ptr();
+
     void dropRef();
     T& leakRef() WARN_UNUSED_RETURN;
 
@@ -123,6 +126,18 @@ template<typename T> inline T& PassRef<T>::get()
 {
     ASSERT(!m_gaveUpReference);
     return m_reference;
+}
+
+template<typename T> const T* PassRef<T>::ptr() const
+{
+    ASSERT(!m_gaveUpReference);
+    return &m_reference;
+}
+
+template<typename T> T* PassRef<T>::ptr()
+{
+    ASSERT(!m_gaveUpReference);
+    return &m_reference;
 }
 
 template<typename T> inline T& PassRef<T>::leakRef()

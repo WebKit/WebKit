@@ -72,7 +72,7 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
             break;
 #endif
         case CSSRule::STYLE_RULE:
-            m_styleRuleToCSSOMWrapperMap.add(downcast<CSSStyleRule>(*cssRule).styleRule(), downcast<CSSStyleRule>(cssRule));
+            m_styleRuleToCSSOMWrapperMap.add(&downcast<CSSStyleRule>(*cssRule).styleRule(), downcast<CSSStyleRule>(cssRule));
             break;
         default:
             break;

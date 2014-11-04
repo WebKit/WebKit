@@ -525,7 +525,7 @@ PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& render
 #endif
     }
 
-    if (&blendedStyle.get() != &newStyleBeforeAnimation.get()) {
+    if (blendedStyle.ptr() != newStyleBeforeAnimation.ptr()) {
         // If the animations/transitions change opacity or transform, we need to update
         // the style to impose the stacking rules. Note that this is also
         // done in StyleResolver::adjustRenderStyle().

@@ -86,7 +86,7 @@ Node* ChildNodeList::namedItem(const AtomicString& name) const
     // FIXME: According to the spec child node list should not have namedItem().
     if (m_parent.get().inDocument()) {
         Element* element = m_parent.get().treeScope().getElementById(name);
-        if (element && element->parentNode() == &m_parent.get())
+        if (element && element->parentNode() == m_parent.ptr())
             return element;
         if (!element || !m_parent.get().treeScope().containsMultipleElementsWithId(name))
             return nullptr;

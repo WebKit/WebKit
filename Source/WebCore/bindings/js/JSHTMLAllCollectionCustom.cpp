@@ -49,7 +49,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, P
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
-        return toJS(exec, collection->globalObject(), &namedItems[0].get());
+        return toJS(exec, collection->globalObject(), namedItems[0].ptr());
 
     // FIXME: HTML5 specification says this should be a HTMLCollection.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#htmlallcollection

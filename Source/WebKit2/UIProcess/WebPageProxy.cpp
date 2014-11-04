@@ -467,7 +467,7 @@ bool WebPageProxy::isValid() const
 
 void WebPageProxy::setPreferences(WebPreferences& preferences)
 {
-    if (&preferences == &m_preferences.get())
+    if (&preferences == m_preferences.ptr())
         return;
 
     m_preferences->removePage(*this);

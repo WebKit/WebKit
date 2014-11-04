@@ -587,9 +587,9 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
 bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newFocusedFrame, FocusDirection direction)
 {
     RefPtr<Frame> oldFocusedFrame = focusedFrame();
-    RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : 0;
+    RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
-    Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : 0;
+    Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     if (oldFocusedElement == element)
         return true;
 
@@ -603,7 +603,7 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
 
     if (!element) {
         if (oldDocument)
-            oldDocument->setFocusedElement(0);
+            oldDocument->setFocusedElement(nullptr);
         m_page.editorClient()->setInputMethodState(false);
         return true;
     }
@@ -615,11 +615,11 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
         return true;
     }
     
-    if (oldDocument && oldDocument != &newDocument.get())
-        oldDocument->setFocusedElement(0);
+    if (oldDocument && oldDocument != newDocument.ptr())
+        oldDocument->setFocusedElement(nullptr);
 
     if (newFocusedFrame && !newFocusedFrame->page()) {
-        setFocusedFrame(0);
+        setFocusedFrame(nullptr);
         return false;
     }
     setFocusedFrame(newFocusedFrame);

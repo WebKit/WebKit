@@ -436,9 +436,9 @@ void CompositeEditCommand::moveRemainingSiblingsToNewParent(Node* node, Node* pa
     for (; node && node != pastLastNodeToMove; node = node->nextSibling())
         nodesToRemove.append(*node);
 
-    for (unsigned i = 0; i < nodesToRemove.size(); i++) {
-        removeNode(&nodesToRemove[i].get());
-        appendNode(&nodesToRemove[i].get(), newParent);
+    for (auto& nodeToRemove : nodesToRemove) {
+        removeNode(nodeToRemove.ptr());
+        appendNode(nodeToRemove.ptr(), newParent);
     }
 }
 

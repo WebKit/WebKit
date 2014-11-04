@@ -472,7 +472,7 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
         if (!shouldCacheRegionStyle) {
             // Check whether we should cache the computed style in region.
             unsigned changedContextSensitiveProperties = ContextSensitivePropertyNone;
-            StyleDifference styleDiff = objectOriginalStyle->diff(objectRegionStyle.get(), changedContextSensitiveProperties);
+            StyleDifference styleDiff = objectOriginalStyle->diff(*objectRegionStyle, changedContextSensitiveProperties);
             if (styleDiff < StyleDifferenceLayoutPositionedMovementOnly)
                 shouldCacheRegionStyle = true;
         }

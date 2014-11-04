@@ -312,9 +312,9 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imag
     m_resourceURLs.add(url);
 }
 
-void PageSerializer::retrieveResourcesForRule(StyleRule* rule, Document* document)
+void PageSerializer::retrieveResourcesForRule(StyleRule& rule, Document* document)
 {
-    retrieveResourcesForProperties(&rule->properties(), document);
+    retrieveResourcesForProperties(&rule.properties(), document);
 }
 
 void PageSerializer::retrieveResourcesForProperties(const StyleProperties* styleDeclaration, Document* document)

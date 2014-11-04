@@ -39,7 +39,7 @@ unsigned StaticNodeList::length() const
 Node* StaticNodeList::item(unsigned index) const
 {
     if (index < m_nodes.size())
-        return &const_cast<Node&>(m_nodes[index].get());
+        return const_cast<Node*>(m_nodes[index].ptr());
     return nullptr;
 }
 
@@ -61,7 +61,7 @@ unsigned StaticElementList::length() const
 Node* StaticElementList::item(unsigned index) const
 {
     if (index < m_elements.size())
-        return &const_cast<Element&>(m_elements[index].get());
+        return const_cast<Element*>(m_elements[index].ptr());
     return nullptr;
 }
 

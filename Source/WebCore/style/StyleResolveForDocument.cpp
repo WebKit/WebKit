@@ -90,7 +90,7 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
         documentStyle.get().setColumnStylesFromPaginationMode(pagination.mode);
         documentStyle.get().setColumnGap(pagination.gap);
         if (renderView.multiColumnFlowThread())
-            renderView.updateColumnProgressionFromStyle(&documentStyle.get());
+            renderView.updateColumnProgressionFromStyle(documentStyle.get());
     }
 
     const Settings& settings = renderView.frame().settings();
@@ -108,7 +108,7 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
     int size = fontSizeForKeyword(CSSValueMedium, false, document);
     fontDescription.setSpecifiedSize(size);
     bool useSVGZoomRules = document.isSVGDocument();
-    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, &documentStyle.get(), document));
+    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle.ptr(), document));
 
     FontOrientation fontOrientation;
     NonCJKGlyphOrientation glyphOrientation;
@@ -118,7 +118,7 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
 
     documentStyle.get().setFontDescription(fontDescription);
 
-    CSSFontSelector* fontSelector = document.styleResolverIfExists() ? document.styleResolverIfExists()->fontSelector() : 0;
+    CSSFontSelector* fontSelector = document.styleResolverIfExists() ? document.styleResolverIfExists()->fontSelector() : nullptr;
     documentStyle.get().font().update(fontSelector);
 
     return documentStyle;

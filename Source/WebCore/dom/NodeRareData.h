@@ -75,7 +75,7 @@ public:
         if (m_childNodeList)
             return *m_childNodeList;
         auto list = ChildNodeList::create(node);
-        m_childNodeList = &list.get();
+        m_childNodeList = list.ptr();
         return list;
     }
 
@@ -93,7 +93,7 @@ public:
         if (m_emptyChildNodeList)
             return *m_emptyChildNodeList;
         auto list = EmptyNodeList::create(node);
-        m_emptyChildNodeList = &list.get();
+        m_emptyChildNodeList = list.ptr();
         return list;
     }
 
@@ -138,7 +138,7 @@ public:
             return *result.iterator->value;
 
         auto list = TagNodeList::create(node, namespaceURI, localName);
-        result.iterator->value = &list.get();
+        result.iterator->value = list.ptr();
         return list;
     }
 

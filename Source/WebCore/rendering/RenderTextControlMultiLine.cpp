@@ -91,7 +91,7 @@ PassRef<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const Rend
 {
     auto textBlockStyle = RenderStyle::create();
     textBlockStyle.get().inheritFrom(startStyle);
-    adjustInnerTextStyle(startStyle, &textBlockStyle.get());
+    adjustInnerTextStyle(startStyle, textBlockStyle.get());
     textBlockStyle.get().setDisplay(BLOCK);
 
 #if PLATFORM(IOS)

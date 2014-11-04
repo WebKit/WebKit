@@ -102,7 +102,7 @@ void TileCoverageMap::update()
 
 void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&)
 {
-    ASSERT_UNUSED(platformCALayer, platformCALayer == &m_layer.get());
+    ASSERT_UNUSED(platformCALayer, platformCALayer == m_layer.ptr());
     m_controller.tileGrid().drawTileMapContents(context.platformContext(), m_layer.get().bounds());
 }
 

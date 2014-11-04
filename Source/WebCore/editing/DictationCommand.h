@@ -36,7 +36,7 @@ class DocumentMarker;
 class DictationCommand : public TextInsertionBaseCommand {
     friend class DictationCommandLineOperation;
 public:
-    static void insertText(Document*, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
+    static void insertText(Document&, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
     virtual bool isDictationCommand() const { return true; }
 private:
     static PassRefPtr<DictationCommand> create(Document& document, const String& text, const Vector<DictationAlternative>& alternatives)

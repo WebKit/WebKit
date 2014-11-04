@@ -52,10 +52,10 @@ public:
     }
 
     size_t length() const { return m_values.size(); }
-    CSSValue* item(size_t index) { return index < m_values.size() ? &m_values[index].get() : nullptr; }
-    const CSSValue* item(size_t index) const { return index < m_values.size() ? &m_values[index].get() : nullptr; }
-    CSSValue* itemWithoutBoundsCheck(size_t index) { return &m_values[index].get(); }
-    const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return &m_values[index].get(); }
+    CSSValue* item(size_t index) { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
+    const CSSValue* item(size_t index) const { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
+    CSSValue* itemWithoutBoundsCheck(size_t index) { return m_values[index].ptr(); }
+    const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return m_values[index].ptr(); }
 
     const_iterator begin() const { return m_values.begin(); }
     const_iterator end() const { return m_values.end(); }

@@ -1,5 +1,138 @@
 2014-11-04  Chris Dumez  <cdumez@apple.com>
 
+        Add ptr() method to Ref class
+        https://bugs.webkit.org/show_bug.cgi?id=138361
+
+        Reviewed by Darin Adler.
+
+        Use the new Ref::ptr() method.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * css/CSSStyleRule.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::insertRule):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::item):
+        (WebCore::CSSValueList::itemWithoutBoundsCheck):
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collect):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationAccumulator::~ChildListMutationAccumulator):
+        (WebCore::ChildListMutationAccumulator::childAdded):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::namedItem):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+        * dom/CurrentScriptIncrementer.h:
+        (WebCore::CurrentScriptIncrementer::CurrentScriptIncrementer):
+        (WebCore::CurrentScriptIncrementer::~CurrentScriptIncrementer):
+        * dom/MutationRecord.cpp:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::ensureChildNodeList):
+        (WebCore::NodeListsNodeData::ensureEmptyChildNodeList):
+        (WebCore::NodeListsNodeData::addCacheWithQualifiedName):
+        * dom/Range.cpp:
+        (WebCore::Range::setDocument):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        (WebCore::ScriptElement::executeScript):
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::item):
+        (WebCore::StaticElementList::item):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveRemainingSiblingsToNewParent):
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationCommand::insertText):
+        * editing/DictationCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        * editing/markup.cpp:
+        (WebCore::hasOneChild):
+        (WebCore::hasOneTextChild):
+        (WebCore::replaceChildrenWithFragment):
+        (WebCore::replaceChildrenWithText):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::checkValidity):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getNamedElements):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::shouldLoadLink):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::revalidateStyle):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedElement):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForRule):
+        * page/PageSerializer.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations):
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::platformCALayerPaintContents):
+        * rendering/ClipPathOperation.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::styleForFirstLetter):
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::updateColumnProgressionFromStyle):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::styleDidChange):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::adjustInnerTextStyle):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        * rendering/style/DataRef.h:
+        (WebCore::DataRef::get):
+        (WebCore::DataRef::access):
+        (WebCore::DataRef::operator==):
+        (WebCore::DataRef::operator!=):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresPositionedLayoutOnly):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+        (WebCore::RenderStyle::changeRequiresRepaint):
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline):
+        (WebCore::RenderStyle::changeRequiresRecompositeLayer):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::diffRequiresLayerRepaint):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::cssValue):
+        * rendering/style/StyleGeneratedImage.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::determineChange):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::resolveTree):
+        * style/StyleResolveTree.h:
+
+2014-11-04  Chris Dumez  <cdumez@apple.com>
+
         Move -webkit-text-emphasis-position to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=138359
 

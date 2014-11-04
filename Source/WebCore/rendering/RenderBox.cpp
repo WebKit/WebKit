@@ -403,7 +403,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (viewChangedWritingMode && pagination.mode != Pagination::Unpaginated) {
             viewStyle.setColumnStylesFromPaginationMode(pagination.mode);
             if (view().multiColumnFlowThread())
-                view().updateColumnProgressionFromStyle(&viewStyle);
+                view().updateColumnProgressionFromStyle(viewStyle);
         }
         
         if (viewStyleChanged && view().multiColumnFlowThread())

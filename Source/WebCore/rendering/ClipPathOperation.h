@@ -119,7 +119,7 @@ private:
         if (!isSameType(other))
             return false;
         const auto& shapeClip = downcast<ShapeClipPathOperation>(other);
-        return &m_shape.get() == &shapeClip.m_shape.get();
+        return m_shape.ptr() == shapeClip.m_shape.ptr();
     }
 
     explicit ShapeClipPathOperation(PassRef<BasicShape> shape)

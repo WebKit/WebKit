@@ -953,7 +953,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return;
     // FIXME: We shouldn't have to create a copy here.
     Ref<MutableStyleProperties> properties(core(style)->copyProperties());
-    _private->coreFrame->editor().computeAndSetTypingStyle(&properties.get(), undoAction);
+    _private->coreFrame->editor().computeAndSetTypingStyle(properties.ptr(), undoAction);
 }
 
 #if ENABLE(DRAG_SUPPORT)

@@ -1,3 +1,15 @@
+2014-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Add ptr() method to Ref class
+        https://bugs.webkit.org/show_bug.cgi?id=138361
+
+        Reviewed by Darin Adler.
+
+        Use the new Ref::ptr() method.
+
+        * TestWebKitAPI/Tests/WTF/Ref.cpp:
+        (TestWebKitAPI::TEST):
+
 2014-11-04  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [jhbuild] Make it possible to build GTK/EFL in same repository

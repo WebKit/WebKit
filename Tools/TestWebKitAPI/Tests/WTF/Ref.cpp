@@ -38,14 +38,14 @@ TEST(WTF_Ref, Basic)
 
     {
         Ref<RefLogger> ptr(a);
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         ASSERT_EQ(&a.name, &ptr->name);
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
         Ref<RefLogger> ptr(adoptRef(a));
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         ASSERT_EQ(&a.name, &ptr->name);
     }
     ASSERT_STREQ("deref(a) ", takeLogStr().c_str());
@@ -59,40 +59,40 @@ TEST(WTF_Ref, Assignment)
 
     {
         Ref<RefLogger> ptr(a);
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         log() << "| ";
         ptr = b;
-        ASSERT_EQ(&b, &ptr.get());
+        ASSERT_EQ(&b, ptr.ptr());
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) | ref(b) deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
         Ref<RefLogger> ptr(a);
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         log() << "| ";
         ptr = c;
-        ASSERT_EQ(&c, &ptr.get());
+        ASSERT_EQ(&c, ptr.ptr());
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) | ref(c) deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
         Ref<RefLogger> ptr(a);
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         log() << "| ";
         ptr = adoptRef(b);
-        ASSERT_EQ(&b, &ptr.get());
+        ASSERT_EQ(&b, ptr.ptr());
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
         Ref<RefLogger> ptr(a);
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         log() << "| ";
         ptr = adoptRef(c);
-        ASSERT_EQ(&c, &ptr.get());
+        ASSERT_EQ(&c, ptr.ptr());
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -116,16 +116,16 @@ TEST(WTF_Ref, ReturnValue)
 
     {
         Ref<RefLogger> ptr(passWithPassRef(a));
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
         Ref<RefLogger> ptr(a);
-        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a, ptr.ptr());
         log() << "| ";
         ptr = passWithPassRef(b);
-        ASSERT_EQ(&b, &ptr.get());
+        ASSERT_EQ(&b, ptr.ptr());
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) | ref(b) deref(a) | deref(b) ", takeLogStr().c_str());

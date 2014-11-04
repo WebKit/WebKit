@@ -125,7 +125,7 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
             downcast<AccessibilityMenuListPopup>(*childObjects[0]).didUpdateActiveOption(optionIndex);
     }
 
-    cache->postNotification(this, &document.get(), AXObjectCache::AXMenuListValueChanged, TargetElement, PostSynchronously);
+    cache->postNotification(this, document.ptr(), AXObjectCache::AXMenuListValueChanged, TargetElement, PostSynchronously);
 }
 
 } // namespace WebCore

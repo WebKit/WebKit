@@ -855,7 +855,7 @@ WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
 PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageConfiguration configuration)
 {
     if (!configuration.pageGroup)
-        configuration.pageGroup = &m_defaultPageGroup.get();
+        configuration.pageGroup = m_defaultPageGroup.ptr();
     if (!configuration.preferences)
         configuration.preferences = &configuration.pageGroup->preferences();
     if (!configuration.visitedLinkProvider)
