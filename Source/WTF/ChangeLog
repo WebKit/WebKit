@@ -1,3 +1,15 @@
+2014-11-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        ATTR_USED incorrectly applying to Clang
+        https://bugs.webkit.org/show_bug.cgi?id=138313
+
+        Reviewed by Csaba Osztrogonác.
+
+        ATTR_USED was only intended for GCC. Also limit it to ENABLE(FTL_NATIVE_CALL_INLINING)
+        since that's the only thing it's needed for.
+
+        * wtf/Platform.h:
+
 2014-11-03  Chris Dumez  <cdumez@apple.com>
 
         Allow implicit conversion from Ref<T> to T&

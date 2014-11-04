@@ -747,7 +747,7 @@
 #endif
 
 /* Used to make GCC's optimization not throw away a symbol that we would need for native inlining */
-#if COMPILER(GCC)
+#if ENABLE(FTL_NATIVE_CALL_INLINING) && COMPILER(GCC) && !COMPILER(CLANG)
 #define ATTR_USED __attribute__ ((used))
 #else
 #define ATTR_USED
