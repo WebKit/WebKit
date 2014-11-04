@@ -54,11 +54,11 @@ def init(jhbuildrc_globals, platform):
         jhbuildrc_globals["modules"].extend(__extra_modules)
 
     if 'WEBKIT_OUTPUTDIR' in os.environ:
-        jhbuildrc_globals["checkoutroot"] = checkoutroot = os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies', 'Source'))
-        jhbuildrc_globals["prefix"] = os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies', 'Root'))
+        jhbuildrc_globals["checkoutroot"] = checkoutroot = os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies' + platform.upper(), 'Source'))
+        jhbuildrc_globals["prefix"] = os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies' + platform.upper(), 'Root'))
     else:
-        jhbuildrc_globals["checkoutroot"] = checkoutroot = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies', 'Source'))
-        jhbuildrc_globals["prefix"] = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies', 'Root'))
+        jhbuildrc_globals["checkoutroot"] = checkoutroot = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies' + platform.upper(), 'Source'))
+        jhbuildrc_globals["prefix"] = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies' + platform.upper(), 'Root'))
 
     jhbuildrc_globals["nonotify"] = True
     jhbuildrc_globals["notrayicon"] = True

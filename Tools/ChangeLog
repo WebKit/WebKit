@@ -1,3 +1,22 @@
+2014-11-04  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [jhbuild] Make it possible to build GTK/EFL in same repository
+        https://bugs.webkit.org/show_bug.cgi?id=137448
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (getJhbuildPath):
+        * WebKitTestRunner/InjectedBundle/efl/FontManagement.cpp:
+        (getPlatformFontsPath):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getFontsPath):
+        * jhbuild/jhbuild-wrapper:
+        (determine_platform):
+        (install_jhbuild):
+        * jhbuild/jhbuildrc_common.py:
+        (init):
+
 2014-11-04  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [EFL] Bump LLVM to version 3.5.0

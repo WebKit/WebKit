@@ -102,7 +102,7 @@ static CString getPlatformFontsPath()
 {
     CString customBuildDir = getCustomBuildDir();
     if (!customBuildDir.isNull()) {
-        CString fontsPath = buildPath(customBuildDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", 0);
+        CString fontsPath = buildPath(customBuildDir.data(), "DependenciesEFL", "Root", "webkitgtk-test-fonts", 0);
         if (!ecore_file_exists(fontsPath.data()))
             fprintf(stderr, "WEBKIT_OUTPUTDIR set to '%s', but could not local test fonts.\n", customBuildDir.data());
         return fontsPath;

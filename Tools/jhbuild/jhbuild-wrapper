@@ -26,9 +26,21 @@ import sys
 
 jhbuild_revision = 'c0cb46177d79189ffe0f760703c732f1c7ea8b29'
 
+def determine_platform():
+    if '--efl' in sys.argv:
+        return "efl";
+    if '--gtk' in sys.argv:
+        return "gtk";
+    raise ValueError('No platform specified for jhbuild-wrapper.')
+
+try:
+    platform = determine_platform()
+except ValueError as e:
+    sys.exit(e)
+
 dependencies_path = jhbuildutils.get_dependencies_path()
-installation_prefix = os.path.abspath(os.path.join(dependencies_path, 'Root'))
-source_path = os.path.abspath(os.path.join(dependencies_path, 'Source'))
+installation_prefix = os.path.abspath(os.path.join(dependencies_path + platform.upper(), 'Root'))
+source_path = os.path.abspath(os.path.join(dependencies_path + platform.upper(), 'Source'))
 jhbuild_source_path = os.path.join(source_path, 'jhbuild')
 jhbuild_path = os.path.join(installation_prefix, 'bin', 'jhbuild')
 
@@ -92,15 +104,6 @@ def install_jhbuild():
     if process.returncode != 0:
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
 
-
-def determine_platform():
-    if '--efl' in sys.argv:
-        return "efl";
-    if '--gtk' in sys.argv:
-        return "gtk";
-    raise ValueError('No platform specified for jhbuild-wrapper.')
-
-
 def ensure_jhbuild(platform):
     if not jhbuild_cloned():
         clone_jhbuild()
@@ -116,10 +119,6 @@ def ensure_jhbuild(platform):
 if os.environ.has_key('UNDER_JHBUILD') and os.environ.has_key('ACLOCAL_FLAGS'):
     del os.environ['ACLOCAL_FLAGS']
 
-try:
-    platform = determine_platform()
-except ValueError as e:
-    sys.exit(e)
 ensure_jhbuild(platform)
 
 os.execve(jhbuild_path, [jhbuild_path, '--no-interact', '-f', jhbuildutils.get_config_file_for_platform(platform)] + sys.argv[2:], os.environ)

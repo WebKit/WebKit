@@ -1636,7 +1636,13 @@ sub getJhbuildPath()
     if (isGit() && isGitBranchBuild() && gitBranch()) {
         pop(@jhbuildPath);
     }
-    push(@jhbuildPath, "Dependencies");
+    if (isEfl()) {
+        push(@jhbuildPath, "DependenciesEFL");
+    } elsif (isGtk()) {
+        push(@jhbuildPath, "DependenciesGTK");
+    } else {
+        die "Cannot get JHBuild path for platform that isn't GTK+ or EFL.\n";
+    }
     return File::Spec->catdir(@jhbuildPath);
 }
 
