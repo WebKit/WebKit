@@ -1,3 +1,22 @@
+2014-11-03  Dan Bernstein  <mitz@apple.com>
+
+        Client certificate credentials with session persistence don’t work
+        https://bugs.webkit.org/show_bug.cgi?id=138330
+
+        Reviewed by Alexey Proskuryakov.
+
+        I think this is not testable with our test HTTP server.
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::set): Don’t require a valid URL for client certificate
+        credentials, since they don’t apply to a specific path. Don’t save such credentials to
+        CFNetwork’s persistent storage (we only do that as a workaround for sharing credentials
+        with the media framework, and we don’t want to expand the scope of the workaround).
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::receivedCredential): Changed to use the Credential consturctor
+        that takes a Credential and a new persistence, so that this code works not only with
+        user+password credentials.
+
 2014-11-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add page overlays that show regions with mouseWheel event handlers, and the non-fast-scrollable region, and code to toggle them in MiniBrowser WK2
