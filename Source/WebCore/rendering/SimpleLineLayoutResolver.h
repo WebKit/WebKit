@@ -168,8 +168,8 @@ inline LayoutRect RunResolver::Run::rect() const
     auto& run = m_iterator.simpleRun();
 
     float baselinePosition = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
-    LayoutPoint linePosition(LayoutUnit::fromFloatFloor(run.left), roundToInt(baselinePosition - resolver.m_ascent + resolver.m_borderAndPaddingBefore));
-    LayoutSize lineSize(LayoutUnit::fromFloatCeil(run.right) - LayoutUnit::fromFloatFloor(run.left), resolver.m_ascent + resolver.m_descent);
+    LayoutPoint linePosition(LayoutUnit::fromFloatFloor(run.logicalLeft), roundToInt(baselinePosition - resolver.m_ascent + resolver.m_borderAndPaddingBefore));
+    LayoutSize lineSize(LayoutUnit::fromFloatCeil(run.logicalRight) - LayoutUnit::fromFloatFloor(run.logicalLeft), resolver.m_ascent + resolver.m_descent);
     return LayoutRect(linePosition, lineSize);
 }
 
@@ -179,7 +179,7 @@ inline FloatPoint RunResolver::Run::baseline() const
     auto& run = m_iterator.simpleRun();
 
     float baselinePosition = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
-    return FloatPoint(run.left, roundToInt(baselinePosition + resolver.m_borderAndPaddingBefore));
+    return FloatPoint(run.logicalLeft, roundToInt(baselinePosition + resolver.m_borderAndPaddingBefore));
 }
 
 inline StringView RunResolver::Run::text() const

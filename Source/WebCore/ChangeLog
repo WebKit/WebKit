@@ -1,3 +1,37 @@
+2014-11-04  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Cleanup line initialization and line closing.
+        https://bugs.webkit.org/show_bug.cgi?id=138273
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to support multiple render elements.
+
+        Move line start and line end activities to dedicated functions.
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::LineState): Add lineStartRunIndex to be more explicit
+        about whether a line advanced with new runs. Rename a few members. Introduce LineState::oveflowedFragment
+        so that line closing can handled separately.
+        (WebCore::SimpleLineLayout::LineState::commitAndCreateRun):
+        (WebCore::SimpleLineLayout::LineState::addUncommitted):
+        (WebCore::SimpleLineLayout::LineState::jumpTo):
+        (WebCore::SimpleLineLayout::LineState::addUncommittedWhitespace): Deleted. : Remove redundant function.  
+        (WebCore::SimpleLineLayout::LineState::removeCommittedTrailingWhitespace):
+        (WebCore::SimpleLineLayout::LineState::resetTrailingWhitespace):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace): Add resetTrailingWhitespace()
+        so that all trailing whitespace handling is in one function.
+        (WebCore::SimpleLineLayout::initializeNewLine): Separate line start and line end initialization/reset.
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns): This function manages all line ending activities.
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::initializeLine): Deleted.
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Run::Run): Deleted.
+
 2014-11-04  Tim Horton  <timothy_horton@apple.com>
 
         Implement yellow highlight over data detected items
