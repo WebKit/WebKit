@@ -114,7 +114,7 @@ public:
 
 private:
     explicit NonFastScrollableRegionOverlay(MainFrame& frame)
-        : RegionOverlay(frame, Color(0.0f, 0.5f, 0.0f, 0.4f))
+        : RegionOverlay(frame, Color(1.0f, 0.5f, 0.0f, 0.4f))
     {
     }
 
@@ -129,6 +129,9 @@ bool NonFastScrollableRegionOverlay::updateRegion()
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             *region = scrollingCoordinator->computeNonFastScrollableRegion(&m_frame, IntPoint());
     }
+
+    // computeNonFastScrollableRegion() applies topContentInset.
+    region->translate(IntSize(0, -m_frame.view()->topContentInset()));
 
     bool regionChanged = !m_region || !(*m_region == *region);
     m_region = WTF::move(region);

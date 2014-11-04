@@ -1,3 +1,15 @@
+2014-11-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Non-fast scrollable region overlay offsets the overlay by topContentInset
+        https://bugs.webkit.org/show_bug.cgi?id=138344
+
+        Reviewed Tim Horton.
+        
+        Offset the region by topContentInset, and make it not green.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::updateRegion):
+
 2014-11-03  Andreas Kling  <akling@apple.com>
 
         Clarify RenderListMarker ownership model.
