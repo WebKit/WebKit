@@ -1,3 +1,18 @@
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175425. <rdar://problem/18841659>
+
+    2014-10-31  Beth Dakin  <bdakin@apple.com>
+    
+            Use system art for action menus when possible
+            https://bugs.webkit.org/show_bug.cgi?id=138260
+    
+            Reviewed by Tim Horton.
+    
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _createActionMenuItemForTag:withHitTestResult:]):
+    
+
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
         Fix the branch pre-Yosemite build by moving an #if to encompass the whole file.

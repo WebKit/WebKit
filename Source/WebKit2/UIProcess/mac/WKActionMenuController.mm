@@ -391,7 +391,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     case kWKContextActionItemTagPreviewLink:
         selector = @selector(_quickLookURLFromActionMenu:);
         title = @"Preview";
-        image = [NSImage imageNamed:NSImageNameQuickLookTemplate];
+        image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
 
     case kWKContextActionItemTagAddLinkToSafariReadingList:
@@ -403,24 +403,24 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     case kWKContextActionItemTagCopyImage:
         selector = @selector(_copyImage:);
         title = @"Copy";
-        image = webKitBundleImageNamed(@"CopyImageTemplate");
+        image = [NSImage imageNamed:@"NSActionMenuCopy"];
         break;
 
     case kWKContextActionItemTagAddImageToPhotos:
         selector = @selector(_addImageToPhotos:);
         title = @"Add to Photos";
-        image = webKitBundleImageNamed(@"AddImageToPhotosTemplate");
+        image = [NSImage imageNamed:@"NSActionMenuAddToPhotos"];
         break;
 
     case kWKContextActionItemTagSaveImageToDownloads:
         selector = @selector(_saveImageToDownloads:);
         title = @"Save to Downloads";
-        image = webKitBundleImageNamed(@"SaveImageToDownloadsTemplate");
+        image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
     case kWKContextActionItemTagShareImage:
         title = @"Share";
-        image = webKitBundleImageNamed(@"ShareImageTemplate");
+        image = [NSImage imageNamed:@"NSActionMenuShare"];
         break;
 
     case kWKContextActionItemTagCopyText:
