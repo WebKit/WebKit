@@ -1,5 +1,30 @@
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175388. <rdar://problem/18819547>
+
+    2014-10-30  Tim Horton  <timothy_horton@apple.com>
+    
+            Long spins under rangeExpandedAroundPosition on Yahoo Mail
+            https://bugs.webkit.org/show_bug.cgi?id=138223
+            <rdar://problem/18819547>
+    
+            Reviewed by Enrica Casucci.
+    
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::rangeExpandedAroundPositionByCharacters):
+            Reimplement rangeExpandedAroundPosition to operate on characters instead of lines,
+            and to use Position. Moving VisiblePositions by line can be very expensive in some cases,
+            and for generating lookup/Data Detectors context, we don't care about that kind of precision.
+            This makes this function ~1000x faster when it hits on a row in the Yahoo Mail message list.
+    
+            (WebKit::WebPage::performDictionaryLookupAtLocation):
+            (WebKit::scanForDataDetectedItems):
+            Adopt the new rangeExpandedAroundPositionByCharacters, expanding 250 characters
+            before and after, which roughly matches what we were usually getting going by line,
+            and is a reasonable amount of context for these operations.
+    
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r175349. <rdar://problem/18855953>
 
     2014-10-29  Anders Carlsson  <andersca@apple.com>
