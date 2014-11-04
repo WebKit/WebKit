@@ -490,6 +490,9 @@ webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-04.html [ Skip ]
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-05.html [ Skip ]
 
+# websocket tests are very flakey due to bug116587 and bug111976
+webkit.org/b/116587 http/tests/websocket [ Skip ]
+
 webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Timeout Pass ]
 
 # EFL media control has broken since r166395.
@@ -578,9 +581,6 @@ webkit.org/b/103445 http/tests/css/shared-stylesheet-mutation-preconstruct.html 
 webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure Pass ]
 webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure Pass ]
 webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure Pass ]
-
-# Flaky websocket tests.
-Bug(EFL) http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html [ Failure Pass ]
 
 # Aborting application cache downloads is flaky.
 webkit.org/b/87633 http/tests/appcache/abort-cache-onchecking-manifest-404.html [ Crash Pass ]
@@ -1535,10 +1535,6 @@ webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
-# EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found).
-webkit.org/b/116587 http/tests/websocket/tests/hybi/close-on-navigate-new-location.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/reload-crash.html [ Skip ]
-
 # Synthesized italics not supported
 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 
@@ -1736,18 +1732,6 @@ webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-change.html 
 webkit.org/b/114946 compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Crash ]
 
 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
-
-# Websocket tests are flaky on WK2
-webkit.org/b/111976 http/tests/websocket/tests/hybi/close-on-unload-reference-in-parent.html [ Crash Pass ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html [ Crash Pass Failure ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header.html [ Crash Pass ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/simple-stress.html [ Crash Pass ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/websocket-event-target.html [ Crash Pass Failure ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/websocket-pending-activity.html [ Crash Pass ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/workers/no-onmessage-in-sync-op.html [ Crash Pass Failure ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/workers/no-subprotocol.html [ Crash Pass Failure ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/workers/receive-arraybuffer.html [ Crash Pass ]
-webkit.org/b/111976 http/tests/websocket/tests/hybi/workers/worker-simple.html [ Crash Pass ]
 
 # Most probably failures are result of delay in scrolling caused by 'delegated scrolling' usage.
 webkit.org/b/107286 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
