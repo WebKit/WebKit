@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<body>
+This test passes if it does not crash.
+<script>
+var elem = document.body;
+var frame = document.createElement("iframe");
+frame.setAttribute("id", "frame");
+document.body.appendChild(frame);
+var div = document.createElement("div");
+div.setAttribute("id", "div");
+frame.appendChild(div);
+for (var i = 0; i < 10; i++) {
+    var div = document.getElementById("div");
+    var clone = elem.parentElement.cloneNode(true);
+    div.appendChild(clone);
+}
+frame.parentElement.removeChild(frame);
+</script>
+</body>
+</html>
