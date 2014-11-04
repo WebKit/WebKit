@@ -1273,7 +1273,7 @@ LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)
     JSObject* o = v.toObject(exec);
     LLINT_CHECK_EXCEPTION();
 
-    exec->uncheckedR(pc[1].u.operand) = JSWithScope::create(exec, o);
+    exec->setScope(JSWithScope::create(exec, o));
     
     LLINT_END();
 }
@@ -1281,9 +1281,7 @@ LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)
 LLINT_SLOW_PATH_DECL(slow_path_pop_scope)
 {
     LLINT_BEGIN();
-    int scopeReg = pc[1].u.operand;
-    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
-    exec->uncheckedR(scopeReg) = scope->next();
+    exec->setScope(exec->scope()->next());
     LLINT_END();
 }
 
@@ -1293,7 +1291,7 @@ LLINT_SLOW_PATH_DECL(slow_path_push_name_scope)
     CodeBlock* codeBlock = exec->codeBlock();
     JSNameScope::Type type = static_cast<JSNameScope::Type>(pc[5].u.operand);
     JSNameScope* scope = JSNameScope::create(exec, codeBlock->identifier(pc[2].u.operand), LLINT_OP(3).jsValue(), pc[4].u.operand, type);
-    exec->uncheckedR(pc[1].u.operand) = scope;
+    exec->setScope(scope);
     LLINT_END();
 }
 

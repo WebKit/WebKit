@@ -444,16 +444,13 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    callOperation(operationPushWithScope, dst, regT0);
+    callOperation(operationPushWithScope, regT0);
 }
 
-void JIT::emit_op_pop_scope(Instruction* currentInstruction)
+void JIT::emit_op_pop_scope(Instruction*)
 {
-    int scope = currentInstruction[1].u.operand;
-
-    callOperation(operationPopScope, scope);
+    callOperation(operationPopScope);
 }
 
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)
@@ -509,9 +506,8 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
 
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
     emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
-    callOperation(operationPushNameScope, dst, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT0, currentInstruction[4].u.operand, currentInstruction[5].u.operand);
+    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT0, currentInstruction[4].u.operand, currentInstruction[5].u.operand);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

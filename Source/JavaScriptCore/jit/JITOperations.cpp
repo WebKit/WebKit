@@ -1308,7 +1308,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
 }
 #endif
 
-void JIT_OPERATION operationPushNameScope(ExecState* exec, int32_t dst, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes, int32_t type)
+void JIT_OPERATION operationPushNameScope(ExecState* exec, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes, int32_t type)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1316,22 +1316,10 @@ void JIT_OPERATION operationPushNameScope(ExecState* exec, int32_t dst, Identifi
     JSNameScope::Type scopeType = static_cast<JSNameScope::Type>(type);
     JSNameScope* scope = JSNameScope::create(exec, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
 
-    exec->uncheckedR(dst) = scope;
+    exec->setScope(scope);
 }
 
-#if USE(JSVALUE32_64)
-void JIT_OPERATION operationPushCatchScope(ExecState* exec, int32_t dst, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes)
-{
-    operationPushNameScope(exec, dst, identifier, encodedValue, attibutes, JSNameScope::CatchScope);
-}
-
-void JIT_OPERATION operationPushFunctionNameScope(ExecState* exec, int32_t dst, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes)
-{
-    operationPushNameScope(exec, dst, identifier, encodedValue, attibutes, JSNameScope::FunctionNameScope);
-}
-#endif
-
-void JIT_OPERATION operationPushWithScope(ExecState* exec, int32_t dst, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPushWithScope(ExecState* exec, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1340,16 +1328,15 @@ void JIT_OPERATION operationPushWithScope(ExecState* exec, int32_t dst, EncodedJ
     if (vm.exception())
         return;
 
-    exec->uncheckedR(dst) = JSWithScope::create(exec, o);
+    exec->setScope(JSWithScope::create(exec, o));
 }
 
-void JIT_OPERATION operationPopScope(ExecState* exec, int32_t scopeReg)
+void JIT_OPERATION operationPopScope(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
-    exec->uncheckedR(scopeReg) = scope->next();
+    exec->setScope(exec->scope()->next());
 }
 
 void JIT_OPERATION operationProfileDidCall(ExecState* exec, EncodedJSValue encodedValue)
