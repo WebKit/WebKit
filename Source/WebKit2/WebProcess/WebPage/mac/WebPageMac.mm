@@ -571,6 +571,9 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
     NSDictionary *options = nil;
     RefPtr<Range> range = rangeForDictionaryLookupAtHitTestResult(result, &options);
+    if (!range)
+        return;
+
     performDictionaryLookupForRange(frame, *range, options);
 }
 
