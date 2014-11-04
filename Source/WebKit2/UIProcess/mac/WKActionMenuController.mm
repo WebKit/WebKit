@@ -157,20 +157,20 @@ using namespace WebKit;
 
 - (void)_openURLFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     [[NSWorkspace sharedWorkspace] openURL:[NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()]];
 }
 
 - (void)_addToReadingListFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     NSSharingService *service = [NSSharingService sharingServiceNamed:NSSharingServiceNameAddToSafariReadingList];
     [service performWithItems:@[ [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] ]];
 }
 
 - (void)_quickLookURLFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     NSRect itemFrame = [_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil];
     NSSize maximumPreviewSize = NSMakeSize(_wkView.bounds.size.width * 0.75, _wkView.bounds.size.height * 0.75);
 
@@ -225,7 +225,7 @@ using namespace WebKit;
 
 - (void)_saveImageToDownloads:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     _page->process().context().download(_page, hitTestResult->absoluteImageURL());
 }
 
@@ -490,13 +490,13 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     RefPtr<WebHitTestResult> hitTestResult;
     switch (stage) {
     case MenuUpdateStage::PrepareForMenu:
-        hitTestResult = _page->activeActionMenuHitTestResult();
+        hitTestResult = _page->lastMouseMoveHitTestResult();
         break;
     case MenuUpdateStage::MenuNeedsUpdate:
         if (_state == ActionMenuState::Ready)
             hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
         else
-            hitTestResult = _page->activeActionMenuHitTestResult();
+            hitTestResult = _page->lastMouseMoveHitTestResult();
         break;
     }
 

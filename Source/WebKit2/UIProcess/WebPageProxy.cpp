@@ -3078,7 +3078,7 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
     if (!decoder.decode(messageDecoder))
         return;
 
-    m_activeActionMenuHitTestResult = WebHitTestResult::create(hitTestResultData);
+    m_lastMouseMoveHitTestResult = WebHitTestResult::create(hitTestResultData);
 
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
