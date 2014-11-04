@@ -1,3 +1,11 @@
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
+        Potential build-fix for Mountain Lion / Mavericks
+
+        Unreviewed.
+
+        * platform/spi/mac/NSViewSPI.h:
+
 2014-11-03  Tim Horton  <timothy_horton@apple.com>
 
         Use FrameSnapshotting functions in FindController::getFindIndicatorBitmap
