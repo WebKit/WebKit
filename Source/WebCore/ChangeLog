@@ -1,3 +1,26 @@
+2014-11-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move WebCore/bridge to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=138280
+
+        Reviewed by Anders Carlsson.
+
+        Clean up OwnPtr in WebCore/bridge.
+
+        No new tests, no behavior changes.
+
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::methodNamed):
+        (JSC::Bindings::CClass::fieldNamed):
+        * bridge/c/c_class.h: Use std::unique_ptr instead of OwnPtr.
+        * bridge/objc/objc_class.h: ditto.
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::methodNamed):
+        (JSC::Bindings::ObjcClass::fieldNamed):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_method.h:
+
 2014-11-03  Dan Bernstein  <mitz@apple.com>
 
         Client certificate credentials with session persistence don’t work

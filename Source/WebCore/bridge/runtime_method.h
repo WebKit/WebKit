@@ -29,7 +29,6 @@
 #include "BridgeJSC.h"
 #include <runtime/InternalFunction.h>
 #include <runtime/JSGlobalObject.h>
-#include <wtf/OwnPtr.h>
 
 namespace JSC {
 

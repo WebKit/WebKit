@@ -48,8 +48,8 @@ public:
 
 private:
     NPClass* m_isa;
-    mutable HashMap<RefPtr<StringImpl>, OwnPtr<Method>> m_methods;
-    mutable HashMap<RefPtr<StringImpl>, OwnPtr<Field>> m_fields;
+    mutable HashMap<RefPtr<StringImpl>, std::unique_ptr<Method>> m_methods;
+    mutable HashMap<RefPtr<StringImpl>, std::unique_ptr<Field>> m_fields;
 };
 
 } // namespace Bindings

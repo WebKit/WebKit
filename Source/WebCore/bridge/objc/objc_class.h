@@ -50,8 +50,8 @@ public:
     
 private:
     ClassStructPtr _isa;
-    mutable HashMap<String, OwnPtr<Method>> m_methodCache;
-    mutable HashMap<String, OwnPtr<Field>> m_fieldCache;
+    mutable HashMap<String, std::unique_ptr<Method>> m_methodCache;
+    mutable HashMap<String, std::unique_ptr<Field>> m_fieldCache;
 };
 
 } // namespace Bindings
