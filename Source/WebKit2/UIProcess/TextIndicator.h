@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FindIndicator_h
-#define FindIndicator_h
+#ifndef TextIndicator_h
+#define TextIndicator_h
 
 #include "ShareableBitmap.h"
 #include <WebCore/FloatRect.h>
@@ -33,15 +33,15 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    class GraphicsContext;
+class GraphicsContext;
 }
 
 namespace WebKit {
 
-class FindIndicator : public RefCounted<FindIndicator> {
+class TextIndicator : public RefCounted<TextIndicator> {
 public:
-    static PassRefPtr<FindIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle);
-    ~FindIndicator();
+    static PassRefPtr<TextIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle);
+    ~TextIndicator();
 
     WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_selectionRectInWindowCoordinates; }
     WebCore::FloatRect frameRect() const;
@@ -51,7 +51,7 @@ public:
     void draw(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
 private:
-    FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage);
+    TextIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage);
 
     WebCore::FloatRect m_selectionRectInWindowCoordinates;
     Vector<WebCore::FloatRect> m_textRectsInSelectionRectCoordinates;
@@ -61,4 +61,4 @@ private:
 
 } // namespace WebKit
 
-#endif // FindIndicator_h
+#endif // TextIndicator_h

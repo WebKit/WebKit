@@ -368,7 +368,7 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
     }            
 
-    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->corePage()->deviceScaleFactor(), handle, !isShowingOverlay, shouldAnimate));
+    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->corePage()->deviceScaleFactor(), handle, !isShowingOverlay, shouldAnimate));
     m_findIndicatorRect = selectionRectInWindowCoordinates;
     m_isShowingFindIndicator = true;
 
@@ -381,7 +381,7 @@ void FindController::hideFindIndicator()
         return;
 
     ShareableBitmap::Handle handle;
-    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->corePage()->deviceScaleFactor(), handle, false, true));
+    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->corePage()->deviceScaleFactor(), handle, false, true));
     m_isShowingFindIndicator = false;
     m_foundStringMatchIndex = -1;
     didHideFindIndicator();
