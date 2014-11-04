@@ -1,3 +1,25 @@
+2014-11-03  Dana Burkart  <dburkart@apple.com>
+
+        Merge r171849. <rdar://problem/18856127>
+
+    2014-07-31  Andrei Bucur  <abucur@adobe.com>
+    
+            [CSS Multicolumn] Clear the lines when switching to multi-column layout
+            https://bugs.webkit.org/show_bug.cgi?id=135127
+    
+            Reviewed by Alexandru Chiculita.
+    
+            When switching an element to multi-column layout it becomes a container of block
+            children. When this happens the existing line boxes must be deleted in addition
+            to clearing the hasInlineChildren flag.
+    
+            Tests: fast/multicol/inline-container-to-multicol.html
+                   fast/multicol/inline-container-to-multicol-float.html
+                   fast/multicol/inline-container-to-multicol-positioned.html
+    
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::RenderBlockFlow::createMultiColumnFlowThread):
+    
 2014-10-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Add a missing symbol to fix the build after the merge of r175335. rdar://problem/18709436
