@@ -148,10 +148,6 @@ using namespace WebKit;
 
 - (NSArray *)_defaultMenuItemsForLink
 {
-    WebHitTestResult* hitTestResult = _page->activeActionMenuHitTestResult();
-    if (!WebCore::protocolIsInHTTPFamily(hitTestResult->absoluteLinkURL()))
-        return @[ ];
-
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
     RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPreviewLink];
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddLinkToSafariReadingList];
@@ -520,7 +516,8 @@ static NSImage *webKitBundleImageNamed(NSString *name)
         return [self _defaultMenuItemsForImage];
     }
 
-    if (!hitTestResult->absoluteLinkURL().isEmpty()) {
+    String absoluteLinkURL = hitTestResult->absoluteLinkURL();
+    if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
        _type = kWKActionMenuLink;
        return [self _defaultMenuItemsForLink];
     }
