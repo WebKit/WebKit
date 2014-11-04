@@ -1214,7 +1214,13 @@ WebInspector.SourceCodeTextEditor.prototype = {
             }
         }
 
-        DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression: candidate.expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this));
+        if (WebInspector.debuggerManager.activeCallFrame) {
+            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression: candidate.expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this));
+            return;
+        }
+
+        // No call frame available. Use the main page's context.
+        RuntimeAgent.evaluate.invoke({expression: candidate.expression, objectGroup: "popover", doNotPauseOnExceptionsAndMuteConsole: true}, populate.bind(this));
     },
 
     _tokenTrackingControllerHighlightedJavaScriptTypeInformation: function(candidate)
