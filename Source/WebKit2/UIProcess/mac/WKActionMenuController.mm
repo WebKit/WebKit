@@ -346,6 +346,19 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 #pragma mark NSSharingServicePickerDelegate implementation
 
+- (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
+{
+    NSMutableArray *services = [[NSMutableArray alloc] initWithCapacity:proposedServices.count];
+
+    for (NSSharingService *service in proposedServices) {
+        if ([service.name isEqualToString:NSSharingServiceNameAddToIPhoto])
+            continue;
+        [services addObject:service];
+    }
+
+    return services;
+}
+
 - (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
 {
     return self;
