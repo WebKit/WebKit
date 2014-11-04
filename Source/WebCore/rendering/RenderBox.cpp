@@ -131,6 +131,20 @@ RenderBox::RenderBox(Document& document, PassRef<RenderStyle> style, unsigned ba
 
 RenderBox::~RenderBox()
 {
+    if (frame().eventHandler().autoscrollRenderer() == this)
+        frame().eventHandler().stopAutoscrollTimer(true);
+
+    clearOverrideSize();
+#if ENABLE(CSS_GRID_LAYOUT)
+    clearContainingBlockOverrideSize();
+#endif
+
+    RenderBlock::removePercentHeightDescendantIfNeeded(*this);
+
+#if ENABLE(CSS_SHAPES)
+    ShapeOutsideInfo::removeInfo(*this);
+#endif
+
     view().unscheduleLazyRepaint(*this);
     if (hasControlStatesForRenderer(this))
         removeControlStatesForRenderer(this);
@@ -234,25 +248,6 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
     if (isHorizontalWritingMode())
         return LayoutRect(logicalLeft, 0, logicalWidth, height());
     return LayoutRect(0, logicalLeft, width(), logicalWidth);
-}
-
-void RenderBox::willBeDestroyed()
-{
-    if (frame().eventHandler().autoscrollRenderer() == this)
-        frame().eventHandler().stopAutoscrollTimer(true);
-
-    clearOverrideSize();
-#if ENABLE(CSS_GRID_LAYOUT)
-    clearContainingBlockOverrideSize();
-#endif
-
-    RenderBlock::removePercentHeightDescendantIfNeeded(*this);
-
-#if ENABLE(CSS_SHAPES)
-    ShapeOutsideInfo::removeInfo(*this);
-#endif
-
-    RenderBoxModelObject::willBeDestroyed();
 }
 
 RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()

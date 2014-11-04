@@ -615,8 +615,6 @@ protected:
     RenderBox(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
     RenderBox(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
-    virtual void willBeDestroyed() override;
-
     virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateFromStyle() override;
