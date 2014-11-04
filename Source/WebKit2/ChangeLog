@@ -1,5 +1,22 @@
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175482. <rdar://problem/18855190>
+
+    2014-11-03  Csaba Osztrogonác  <ossy@webkit.org>
+    
+            URTBF after r175476 to make GTK and EFL build happy.
+    
+            * UIProcess/API/gtk/PageClientImpl.cpp:
+            (WebKit::PageClientImpl::setTextIndicator):
+            (WebKit::PageClientImpl::setFindIndicator): Deleted.
+            * UIProcess/API/gtk/PageClientImpl.h:
+            * UIProcess/CoordinatedGraphics/WebView.cpp:
+            (WebKit::WebView::setTextIndicator):
+            (WebKit::WebView::setFindIndicator): Deleted.
+            * UIProcess/CoordinatedGraphics/WebView.h:
+    
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r175476. <rdar://problem/18855190>
 
     2014-11-03  Tim Horton  <timothy_horton@apple.com>
