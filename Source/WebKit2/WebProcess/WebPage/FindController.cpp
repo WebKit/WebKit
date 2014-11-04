@@ -36,8 +36,10 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FrameSnapshotting.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
@@ -257,38 +259,22 @@ void FindController::findStringMatches(const String& string, FindOptions options
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
 }
 
-bool FindController::getFindIndicatorBitmapAndRect(Frame& frame, ShareableBitmap::Handle& handle, IntRect& selectionRect)
+static bool getFindIndicatorBitmap(Frame& frame, ShareableBitmap::Handle& handle)
 {
-    selectionRect = enclosingIntRect(frame.selection().selectionBounds());
-
-    // Selection rect can be empty for matches that are currently obscured from view.
-    if (selectionRect.isEmpty())
+    std::unique_ptr<ImageBuffer> snapshot = snapshotSelection(frame, WebCore::SnapshotOptionsForceBlackText);
+    if (!snapshot)
         return false;
 
-    IntSize backingStoreSize = selectionRect.size();
-    float deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
-    backingStoreSize.scale(deviceScaleFactor);
-
-    // Create a backing store and paint the find indicator text into it.
-    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
+    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
     if (!findIndicatorTextBackingStore)
         return false;
 
     // FIXME: We should consider using subpixel antialiasing for the snapshot
     // if we're compositing this image onto a solid color (the modern find indicator style).
     auto graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
+    float deviceScaleFactor = frame.page()->deviceScaleFactor();
     graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-
-    IntRect paintRect = selectionRect;
-    paintRect.move(frame.view()->frameRect().x(), frame.view()->frameRect().y());
-    paintRect.move(-frame.view()->scrollOffset());
-
-    graphicsContext->translate(-paintRect.x(), -paintRect.y());
-    frame.view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
-    frame.document()->updateLayout();
-
-    frame.view()->paint(graphicsContext.get(), paintRect);
-    frame.view()->setPaintBehavior(PaintBehaviorNormal);
+    graphicsContext->drawImageBuffer(snapshot.get(), ColorSpaceDeviceRGB, FloatPoint());
 
     if (!findIndicatorTextBackingStore->createHandle(handle))
         return false;
@@ -306,9 +292,8 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
 
-    IntRect selectionRect;
     ShareableBitmap::Handle handle;
-    getFindIndicatorBitmapAndRect(*frame, handle, selectionRect);
+    getFindIndicatorBitmap(*frame, handle);
 
     frame->selection().setSelection(oldSelection);
 
@@ -347,9 +332,9 @@ void FindController::hideFindUI()
 #if !PLATFORM(IOS)
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
-    IntRect selectionRect;
+    IntRect selectionRect = enclosingIntRect(selectedFrame.selection().selectionBounds());
     ShareableBitmap::Handle handle;
-    if (!getFindIndicatorBitmapAndRect(selectedFrame, handle, selectionRect))
+    if (!getFindIndicatorBitmap(selectedFrame, handle))
         return false;
 
     // We want the selection rect in window coordinates.

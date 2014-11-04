@@ -1,3 +1,33 @@
+2014-11-03  Tim Horton  <timothy_horton@apple.com>
+
+        Use FrameSnapshotting functions in FindController::getFindIndicatorBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=138300
+        <rdar://problem/18855863>
+
+        Reviewed by Simon Fraser.
+
+        Share more code by using WebCore's FrameSnapshotting::snapshotSelection
+        in FindController instead of copying it into FindController wholesale.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::getFindIndicatorBitmap):
+        Make getFindIndicatorBitmap static, rename it from getFindIndicatorBitmapAndRect,
+        and drop the rect argument because only one caller wanted it, and we no longer need
+        to compute it (this happens in WebCore now).
+
+        Use snapshotSelection; all of the removed paint behaviors get added by
+        code in or underneath snapshotSelection now.
+
+        Draw the snapshot into our ShareableBitmap; we could avoid this in a future patch
+        by refactoring the FrameSnapshotting functions to take GraphicsContexts.
+
+        (WebKit::FindController::getImageForFindMatch):
+        (WebKit::FindController::updateFindIndicator):
+        Adopt the new getFindIndicatorBitmap.
+
+        * WebProcess/WebPage/FindController.h:
+        Remove getFindIndicatorBitmap(AndRect), which is now static.
+
 2014-11-03  Beth Dakin  <bdakin@apple.com>
 
         Implement action menus for editable text
