@@ -42,7 +42,10 @@ enum SVGMarkerUnitsType {
 enum SVGMarkerOrientType {
     SVGMarkerOrientUnknown = 0,
     SVGMarkerOrientAuto,
-    SVGMarkerOrientAngle
+    SVGMarkerOrientAngle,
+
+    // Add new elements before here.
+    SVGMarkerOrientMax
 };
 
 template<>
@@ -155,7 +158,7 @@ public:
     // Custom 'orientType' property.
     static void synchronizeOrientType(SVGElement* contextElement);
     static PassRefPtr<SVGAnimatedProperty> lookupOrCreateOrientTypeWrapper(SVGElement* contextElement);
-    SVGMarkerOrientType& orientType() const { return m_orientType.value; }
+    SVGMarkerOrientType& orientType() const;
     SVGMarkerOrientType& orientTypeBaseValue() const { return m_orientType.value; }
     void setOrientTypeBaseValue(const SVGMarkerOrientType& type) { m_orientType.value = type; }
     PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>> orientTypeAnimated();

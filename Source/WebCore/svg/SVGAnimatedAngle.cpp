@@ -96,23 +96,21 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
     std::pair<SVGAngle, unsigned>& animatedAngleAndEnumeration = animated->angleAndEnumeration();
 
     if (fromAngleAndEnumeration.second != toAngleAndEnumeration.second) {
-        // Animating from eg. auto to 90deg, or auto to 90deg.
-        if (fromAngleAndEnumeration.second == SVGMarkerOrientAngle) {
-            // Animating from an angle value to eg. 'auto' - this disabled additive as 'auto' is a keyword..
-            if (toAngleAndEnumeration.second == SVGMarkerOrientAuto) {
-                if (percentage < 0.5f) {
-                    animatedAngleAndEnumeration.first = fromAngleAndEnumeration.first;
-                    animatedAngleAndEnumeration.second = SVGMarkerOrientAngle;
-                    return;
-                }
+        // Discrete animation - no linear interpolation possible between values (e.g. auto to angle).
+        if (percentage < 0.5f) {
+            animatedAngleAndEnumeration.second = fromAngleAndEnumeration.second;
+            if (fromAngleAndEnumeration.second == SVGMarkerOrientAngle)
+                animatedAngleAndEnumeration.first = fromAngleAndEnumeration.first;
+            else
                 animatedAngleAndEnumeration.first.setValue(0);
-                animatedAngleAndEnumeration.second = SVGMarkerOrientAuto;
-                return;
-            }
-            animatedAngleAndEnumeration.first.setValue(0);
-            animatedAngleAndEnumeration.second = SVGMarkerOrientUnknown;
             return;
         }
+        animatedAngleAndEnumeration.second = toAngleAndEnumeration.second;
+        if (toAngleAndEnumeration.second == SVGMarkerOrientAngle)
+            animatedAngleAndEnumeration.first = toAngleAndEnumeration.first;
+        else
+            animatedAngleAndEnumeration.first.setValue(0);
+        return;
     }
 
     // From 'auto' to 'auto'.
