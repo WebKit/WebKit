@@ -43,6 +43,12 @@ enum WKStorageBlockingPolicy {
 };
 typedef enum WKStorageBlockingPolicy WKStorageBlockingPolicy;
 
+enum WKDebugOverlayRegionFlags {
+    kWKNonFastScrollableRegion = 1 << 0,
+    kWKWheelEventHandlerRegion = 1 << 1
+};
+typedef unsigned WKDebugOverlayRegions;
+
 WK_EXPORT WKTypeID WKPreferencesGetTypeID();
 
 WK_EXPORT WKPreferencesRef WKPreferencesCreate();
@@ -247,6 +253,10 @@ WK_EXPORT bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRe
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetSpatialNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetSpatialNavigationEnabled(WKPreferencesRef preferencesRef);
+
+// Defaults to 0.
+WK_EXPORT void WKPreferencesSetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef, WKDebugOverlayRegions enabled);
+WK_EXPORT WKDebugOverlayRegions WKPreferencesGetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

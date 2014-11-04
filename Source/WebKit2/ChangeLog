@@ -1,3 +1,17 @@
+2014-11-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose visibleDebugOverlayRegions pref via the WK2 C SPI
+        https://bugs.webkit.org/show_bug.cgi?id=138342
+
+        Reviewed by Dan Bernstein.
+        
+        Expose WKDebugOverlayRegions via the C SPI.
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetVisibleDebugOverlayRegions):
+        (WKPreferencesGetVisibleDebugOverlayRegions):
+        * UIProcess/API/C/WKPreferencesRef.h:
+
 2014-11-03  Beth Dakin  <bdakin@apple.com>
 
         Implement action menus for editable text with spelling suggestions

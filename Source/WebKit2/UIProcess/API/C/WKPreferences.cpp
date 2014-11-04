@@ -1295,3 +1295,14 @@ double WKPreferencesGetMinimumZoomFontSize(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->minimumZoomFontSize();
 }
+
+void WKPreferencesSetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef, WKDebugOverlayRegions visibleRegions)
+{
+    toImpl(preferencesRef)->setVisibleDebugOverlayRegions(visibleRegions);
+}
+
+WKDebugOverlayRegions WKPreferencesGetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->visibleDebugOverlayRegions();
+}
+
