@@ -37,6 +37,7 @@
 #include "JSCell.h"
 #include "JSEnvironmentRecord.h"
 #include "JSFunction.h"
+#include "JSNameScope.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
@@ -752,13 +753,15 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
+    int dst = currentInstruction[1].u.operand;
     emitLoad(currentInstruction[2].u.operand, regT1, regT0);
-    callOperation(operationPushWithScope, regT1, regT0);
+    callOperation(operationPushWithScope, dst, regT1, regT0);
 }
 
-void JIT::emit_op_pop_scope(Instruction*)
+void JIT::emit_op_pop_scope(Instruction* currentInstruction)
 {
-    callOperation(operationPopScope);
+    int scope = currentInstruction[1].u.operand;
+    callOperation(operationPopScope, scope);
 }
 
 void JIT::emit_op_to_number(Instruction* currentInstruction)
@@ -786,8 +789,15 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
+    int dst = currentInstruction[1].u.operand;
     emitLoad(currentInstruction[3].u.operand, regT1, regT0);
-    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT0, currentInstruction[4].u.operand, currentInstruction[5].u.operand);
+    if (currentInstruction[5].u.operand == JSNameScope::CatchScope) {
+        callOperation(operationPushCatchScope, dst, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT0, currentInstruction[4].u.operand);
+        return;
+    }
+
+    RELEASE_ASSERT(currentInstruction[5].u.operand == JSNameScope::FunctionNameScope);
+    callOperation(operationPushFunctionNameScope, dst, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT0, currentInstruction[4].u.operand);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

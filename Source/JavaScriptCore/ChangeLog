@@ -1,5 +1,51 @@
 2014-11-03  Michael Saboff  <msaboff@apple.com>
 
+        Update scope related slow path code to use scope register added to opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=138254
+
+        Reviewed by Mark Lam.
+
+        Updated slow paths for op_pop_scope, op_push_name_scope and op_push_with_scope.
+        Added scope register index parameter to the front of the relevant argument lists of the
+        slow functions.  In the case of op_push_name_scope for x86 (32 bit), there aren't enough
+        registers to accomodate all the parameters.  Therefore, added two new JSVALUE32_64 slow
+        paths called operationPushCatchScope() and operationPushFunctionNameScope() to eliminate
+        the last "type" argument.
+        
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr): Added a new template to take 6 arguments.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        New variants of setupArgumentsWithExecState() and callOperation() to handle the new
+        combinations of argument types and counts.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::emit_op_pop_scope):
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::emit_op_pop_scope):
+        (JSC::JIT::emit_op_push_name_scope):
+        Use the new slow paths.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        Updates to set the scope result using the scope register index.  Added operationPushCatchScope()
+        and operationPushFunctionNameScope().
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        Updated the scope slow paths to use the scope register index in the instruction to read and
+        write the register instead of using CallFrame::scope() and CallFrame::setScope().
+
+2014-11-03  Michael Saboff  <msaboff@apple.com>
+
         Add "get scope" byte code
         https://bugs.webkit.org/show_bug.cgi?id=138326
 
