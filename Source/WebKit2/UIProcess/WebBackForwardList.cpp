@@ -72,7 +72,8 @@ void WebBackForwardList::pageClosed()
             ASSERT(m_entries[i]);
             if (!m_entries[i])
                 continue;
-            m_page->backForwardRemovedItem(m_entries[i]->itemID());
+
+            didRemoveItem(*m_entries[i]);
         }
     }
 
@@ -95,7 +96,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         unsigned targetSize = m_currentIndex + 1;
         removedItems.reserveCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
-            m_page->backForwardRemovedItem(m_entries.last()->itemID());
+            didRemoveItem(*m_entries.last());
             removedItems.append(m_entries.last().release());
             m_entries.removeLast();
         }
@@ -103,7 +104,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         // Toss the first item if the list is getting too big, as long as we're not using it
         // (or even if we are, if we only want 1 entry).
         if (m_entries.size() == m_capacity && (m_currentIndex || m_capacity == 1)) {
-            m_page->backForwardRemovedItem(m_entries[0]->itemID());
+            didRemoveItem(*m_entries[0]);
             removedItems.append(m_entries[0].release());
             m_entries.remove(0);
 
@@ -122,7 +123,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
             ASSERT(m_entries[i]);
             if (!m_entries[i])
                 continue;
-            m_page->backForwardRemovedItem(m_entries[i]->itemID());
+            didRemoveItem(*m_entries[i]);
             removedItems.append(m_entries[i].release());
         }
         m_entries.clear();
@@ -314,7 +315,7 @@ void WebBackForwardList::removeAllItems()
         if (!entry)
             continue;
 
-        m_page->backForwardRemovedItem(entry->itemID());
+        didRemoveItem(*entry);
         removedItems.append(WTF::move(entry));
     }
 
@@ -344,7 +345,7 @@ void WebBackForwardList::clear()
             if (!m_entries[i])
                 continue;
 
-            m_page->backForwardRemovedItem(m_entries[i]->itemID());
+            didRemoveItem(*m_entries[i]);
             removedItems.append(m_entries[i].release());
         }
 
@@ -358,7 +359,7 @@ void WebBackForwardList::clear()
     for (size_t i = 0; i < size; ++i) {
         ASSERT(m_entries[i]);
         if (m_entries[i] && m_entries[i] != currentItem)
-            m_page->backForwardRemovedItem(m_entries[i]->itemID());
+            didRemoveItem(*m_entries[i]);
     }
 
     removedItems.reserveCapacity(size - 1);
@@ -427,6 +428,14 @@ Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
         itemStates.uncheckedAppend(entry->itemState());
 
     return itemStates;
+}
+
+void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListItem)
+{
+    // FIXME: This should really also delete the item from the map.
+    m_page->backForwardRemovedItem(backForwardListItem.itemID());
+
+    backForwardListItem.setSnapshot(nullptr);
 }
 
 } // namespace WebKit
