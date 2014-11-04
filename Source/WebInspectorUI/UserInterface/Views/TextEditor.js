@@ -813,6 +813,11 @@ WebInspector.TextEditor.prototype = {
 
     // Private
 
+    hasEdits: function()
+    {
+        return !this._codeMirror.isClean();
+    },
+
     _contentChanged: function(codeMirror, change)
     {
         if (this._ignoreCodeMirrorContentDidChangeEvent > 0)

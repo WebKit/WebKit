@@ -1,5 +1,20 @@
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: TextEditor search doesn't work after editing contents
+        https://bugs.webkit.org/show_bug.cgi?id=138198
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.customPerformSearch):
+        Fallback to pure TextEditor content searching (CodeMirror) if the editor has edits.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.hasEdits):
+        Check the CodeMirror clean state to known if we have edits or not.
+
+2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Show Selector's Specificity
         https://bugs.webkit.org/show_bug.cgi?id=138189
 

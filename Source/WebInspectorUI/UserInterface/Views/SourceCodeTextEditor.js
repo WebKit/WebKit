@@ -206,6 +206,9 @@ WebInspector.SourceCodeTextEditor.prototype = {
             this.dispatchEventToListeners(WebInspector.TextEditor.Event.NumberOfSearchResultsDidChange);
         }
 
+        if (this.hasEdits())
+            return false;
+
         if (this._sourceCode instanceof WebInspector.SourceMapResource)
             return false;
 
