@@ -1,3 +1,8 @@
+2014-11-04  Darin Adler  <darin@apple.com>
+
+        * TestExpectations: Turn off http/tests/multipart/stop-crash.html.
+        Will turn it back on soon.
+
 2014-11-04  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [EFL] Skip websocket tests

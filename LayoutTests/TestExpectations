@@ -240,3 +240,6 @@ webkit.org/b/137883 transitions/color-transition-rounding.html [ Failure Pass ]
 webkit.org/b/137883 transitions/created-while-suspended.html [ Failure Pass ]
 
 webkit.org/b/138145 fast/multicol/multicol-crazy-nesting.html [ Skip ]
+
+# Temporarily turn this off. Back on soon.
+webkit.org/b/138358 http/tests/multipart/stop-crash.html [ Skip ]
