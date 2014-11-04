@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#import "TextIndicator.h"
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WebContext.h"
@@ -71,6 +72,8 @@ using namespace WebKit;
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 - (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
 - (BOOL)_canAddImageToPhotos;
+- (void)_showTextIndicator;
+- (void)_hideTextIndicator;
 @end
 
 @interface WKView (WKDeprecatedSPI)
@@ -97,6 +100,7 @@ using namespace WebKit;
 {
     _page = nullptr;
     _wkView = nullptr;
+    _hitTestResult = ActionMenuHitTestResult();
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -108,6 +112,8 @@ using namespace WebKit;
 
     _state = ActionMenuState::Pending;
     [self _updateActionMenuItemsForStage:MenuUpdateStage::PrepareForMenu];
+
+    [self _hideTextIndicator];
 }
 
 - (BOOL)isMenuForTextContent
@@ -119,6 +125,9 @@ using namespace WebKit;
 {
     if (menu != _wkView.actionMenu)
         return;
+
+    if (_type == kWKActionMenuDataDetectedItem)
+        [self _showTextIndicator];
 
     if (![self isMenuForTextContent])
         return;
@@ -134,6 +143,9 @@ using namespace WebKit;
 {
     if (menu != _wkView.actionMenu)
         return;
+
+    if (_type == kWKActionMenuDataDetectedItem && menu.numberOfItems > 1)
+        [self _hideTextIndicator];
     
     _state = ActionMenuState::None;
     _hitTestResult = ActionMenuHitTestResult();
@@ -147,6 +159,28 @@ using namespace WebKit;
     _state = ActionMenuState::Ready;
     _hitTestResult = hitTestResult;
     _userData = userData;
+}
+
+#pragma mark Text Indicator
+
+- (void)_showTextIndicator
+{
+    if (_isShowingTextIndicator)
+        return;
+
+    if (_hitTestResult.detectedDataTextIndicator) {
+        _page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false, true);
+        _isShowingTextIndicator = YES;
+    }
+}
+
+- (void)_hideTextIndicator
+{
+    if (!_isShowingTextIndicator)
+        return;
+
+    _page->clearTextIndicator(false, true);
+    _isShowingTextIndicator = NO;
 }
 
 #pragma mark Link actions
@@ -321,8 +355,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!actionContext)
         return @[ ];
 
+    actionContext.completionHandler = ^() {
+        [self _hideTextIndicator];
+    };
+
     WKSetDDActionContextIsForActionMenu(actionContext);
-    actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.actionBoundingBox toView:nil]];
+    actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]];
     return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_hitTestResult.actionContext mainResult] actionContext:actionContext];
 }
 

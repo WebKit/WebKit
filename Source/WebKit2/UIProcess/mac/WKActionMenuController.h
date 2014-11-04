@@ -56,6 +56,8 @@ enum class ActionMenuState {
     RefPtr<API::Object> _userData;
     _WKActionMenuType _type;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
+
+    BOOL _isShowingTextIndicator;
 }
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView;

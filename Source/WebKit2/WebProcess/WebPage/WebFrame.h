@@ -27,6 +27,7 @@
 #define WebFrame_h
 
 #include "APIObject.h"
+#include "ShareableBitmap.h"
 #include "WKBase.h"
 #include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/JSBase.h>
@@ -148,6 +149,8 @@ public:
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
     RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context);
 #endif
+
+    PassRefPtr<ShareableBitmap> createSelectionSnapshot();
 
 private:
     static PassRefPtr<WebFrame> create(std::unique_ptr<WebFrameLoaderClient>);

@@ -26,7 +26,16 @@
 #include "config.h"
 #include "TextIndicator.h"
 
+#include "ArgumentCodersCF.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 #include "ShareableBitmap.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
+#include "WebPage.h"
+#include <WebCore/Frame.h>
+#include <WebCore/FrameSelection.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
@@ -93,16 +102,6 @@ const float flatRimShadowBlurRadius = 2;
 
 namespace WebKit {
 
-PassRefPtr<TextIndicator> TextIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle)
-{
-    RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(contentImageHandle);
-    if (!contentImage)
-        return 0;
-    ASSERT(contentImageScaleFactor != 1 || contentImage->size() == enclosingIntRect(selectionRectInWindowCoordinates).size());
-
-    return adoptRef(new TextIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImage.release()));
-}
-
 static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflateY)
 {
     FloatRect inflatedRect = rect;
@@ -147,15 +146,56 @@ static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
     return false;
 }
 
-TextIndicator::TextIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage)
-    : m_selectionRectInWindowCoordinates(selectionRectInWindowCoordinates)
-    , m_textRectsInSelectionRectCoordinates(textRectsInSelectionRectCoordinates)
-    , m_contentImageScaleFactor(contentImageScaleFactor)
-    , m_contentImage(contentImage)
+PassRefPtr<TextIndicator> TextIndicator::create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage)
 {
-    if (textIndicatorsForTextRectsOverlap(m_textRectsInSelectionRectCoordinates)) {
-        m_textRectsInSelectionRectCoordinates[0] = unionRect(m_textRectsInSelectionRectCoordinates);
-        m_textRectsInSelectionRectCoordinates.shrink(1);
+    TextIndicator::Data data;
+    data.selectionRectInWindowCoordinates = selectionRectInWindowCoordinates;
+    data.textRectsInSelectionRectCoordinates = textRectsInSelectionRectCoordinates;
+    data.contentImageScaleFactor = contentImageScaleFactor;
+    data.contentImage = contentImage;
+
+    return TextIndicator::create(data);
+}
+
+PassRefPtr<TextIndicator> TextIndicator::create(const TextIndicator::Data& data)
+{
+    return adoptRef(new TextIndicator(data));
+}
+
+PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(WebFrame& frame)
+{
+    Frame& coreFrame = *frame.coreFrame();
+    IntRect selectionRect = enclosingIntRect(coreFrame.selection().selectionBounds());
+    RefPtr<ShareableBitmap> indicatorBitmap = frame.createSelectionSnapshot();
+    if (!indicatorBitmap)
+        return nullptr;
+
+    // We want the selection rect in window coordinates.
+    IntRect selectionRectInWindowCoordinates = coreFrame.view()->contentsToWindow(selectionRect);
+
+    Vector<FloatRect> textRects;
+    coreFrame.selection().getClippedVisibleTextRectangles(textRects);
+
+    // We want the text rects in selection rect coordinates.
+    Vector<FloatRect> textRectsInSelectionRectCoordinates;
+
+    for (const FloatRect& textRect : textRects) {
+        IntRect textRectInSelectionRectCoordinates = coreFrame.view()->contentsToWindow(enclosingIntRect(textRect));
+        textRectInSelectionRectCoordinates.move(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());
+        textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
+    }
+
+    return TextIndicator::create(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, frame.page()->deviceScaleFactor(), indicatorBitmap);
+}
+
+TextIndicator::TextIndicator(const TextIndicator::Data& data)
+    : m_data(data)
+{
+    ASSERT(m_data.contentImageScaleFactor != 1 || m_data.contentImage->size() == enclosingIntRect(m_data.selectionRectInWindowCoordinates).size());
+
+    if (textIndicatorsForTextRectsOverlap(m_data.textRectsInSelectionRectCoordinates)) {
+        m_data.textRectsInSelectionRectCoordinates[0] = unionRect(m_data.textRectsInSelectionRectCoordinates);
+        m_data.textRectsInSelectionRectCoordinates.shrink(1);
     }
 }
 
@@ -165,7 +205,7 @@ TextIndicator::~TextIndicator()
 
 FloatRect TextIndicator::frameRect() const
 {
-    return outsetIndicatorRectIncludingShadow(m_selectionRectInWindowCoordinates);
+    return outsetIndicatorRectIncludingShadow(m_data.selectionRectInWindowCoordinates);
 }
 
 #if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
@@ -216,8 +256,8 @@ static inline Color flatDropShadowColor()
 void TextIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirtyRect*/)
 {
 #if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-    for (size_t i = 0; i < m_textRectsInSelectionRectCoordinates.size(); ++i) {
-        FloatRect textRect = m_textRectsInSelectionRectCoordinates[i];
+    for (size_t i = 0; i < m_data.textRectsInSelectionRectCoordinates.size(); ++i) {
+        FloatRect textRect = m_data.textRectsInSelectionRectCoordinates[i];
         textRect.move(leftBorderThickness, topBorderThickness);
 
         FloatRect outerPathRect = inflateRect(textRect, horizontalOutsetToCenterOfLightBorder, verticalOutsetToCenterOfLightBorder);
@@ -244,12 +284,12 @@ void TextIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirt
             GraphicsContextStateSaver stateSaver(graphicsContext);
             graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
 
-            IntRect contentImageRect = enclosingIntRect(m_textRectsInSelectionRectCoordinates[i]);
-            m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, contentImageRect.location(), contentImageRect);
+            IntRect contentImageRect = enclosingIntRect(m_data.textRectsInSelectionRectCoordinates[i]);
+            m_data.contentImage->paint(graphicsContext, m_data.contentImageScaleFactor, contentImageRect.location(), contentImageRect);
         }
     }
 #else
-    for (auto& textRect : m_textRectsInSelectionRectCoordinates) {
+    for (auto& textRect : m_data.textRectsInSelectionRectCoordinates) {
         FloatRect blurRect = textRect;
         blurRect.move(flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder);
         FloatRect outerPathRect = inflateRect(blurRect, flatStyleHorizontalBorder, flatStyleVerticalBorder);
@@ -268,10 +308,43 @@ void TextIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirt
             graphicsContext.translate(FloatSize(flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder));
 
             IntRect contentImageRect = enclosingIntRect(textRect);
-            m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, contentImageRect.location(), contentImageRect);
+            m_data.contentImage->paint(graphicsContext, m_data.contentImageScaleFactor, contentImageRect.location(), contentImageRect);
         }
     }
 #endif
+}
+
+void TextIndicator::Data::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << selectionRectInWindowCoordinates;
+    encoder << textRectsInSelectionRectCoordinates;
+    encoder << contentImageScaleFactor;
+
+    ShareableBitmap::Handle contentImageHandle;
+    if (contentImage)
+        contentImage->createHandle(contentImageHandle, SharedMemory::ReadOnly);
+    encoder << contentImageHandle;
+}
+
+bool TextIndicator::Data::decode(IPC::ArgumentDecoder& decoder, TextIndicator::Data& textIndicatorData)
+{
+    if (!decoder.decode(textIndicatorData.selectionRectInWindowCoordinates))
+        return false;
+
+    if (!decoder.decode(textIndicatorData.textRectsInSelectionRectCoordinates))
+        return false;
+
+    if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
+        return false;
+
+    ShareableBitmap::Handle contentImageHandle;
+    if (!decoder.decode(contentImageHandle))
+        return false;
+
+    if (!contentImageHandle.isNull())
+        textIndicatorData.contentImage = ShareableBitmap::create(contentImageHandle, SharedMemory::ReadOnly);
+
+    return true;
 }
 
 } // namespace WebKit
