@@ -1,3 +1,26 @@
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r173424. <rdar://problem/18856153>
+
+    2014-09-08  Mihnea Ovidenie  <mihnea@adobe.com>
+    
+            [CSSRegions]Incorrect layout for multicol element transformed into region
+            https://bugs.webkit.org/show_bug.cgi?id=136459
+    
+            Reviewed by David Hyatt.
+    
+            Until we will support the multicolumn region functionality, a multicolumn element
+            that also has flow-from style is not transformed into a region (https://bugs.webkit.org/show_bug.cgi?id=135153).
+            However, when a multicolumn element with flow-from style dynamically loses
+            its multicolumn style while keeping the flow-from style, we have to transform
+            the element into a region by detaching and attaching the associated DOM node,
+            in the same way we are proceeding when an element receives a different flow-from style.
+    
+            Test: fast/regions/multicol/nested-multicol-into-region-dynamic.html
+    
+            * style/StyleResolveTree.cpp:
+            (WebCore::Style::determineChange):
+    
 2014-11-03  Dana Burkart  <dburkart@apple.com>
 
         Merge r173061. <rdar://problem/18856115>
