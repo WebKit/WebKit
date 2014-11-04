@@ -46,6 +46,11 @@
 #import <WebCore/SoftLinking.h>
 #import <WebCore/URL.h>
 
+enum class MenuUpdateStage {
+    PrepareForMenu,
+    MenuNeedsUpdate
+};
+
 // FIXME: This should move into an SPI header if it stays.
 @class QLPreviewBubble;
 @interface NSObject (WKQLPreviewBubbleDetails)
@@ -64,7 +69,7 @@ using namespace WebCore;
 using namespace WebKit;
 
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
-- (void)_updateActionMenuItems;
+- (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
 - (BOOL)_canAddImageToPhotos;
 @end
 
@@ -102,7 +107,7 @@ using namespace WebKit;
     _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
     _state = ActionMenuState::Pending;
-    [self _updateActionMenuItems];
+    [self _updateActionMenuItemsForStage:MenuUpdateStage::PrepareForMenu];
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -131,11 +136,12 @@ using namespace WebKit;
     _sharingServicePicker = nil;
 }
 
-- (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult
+- (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
 {
     // FIXME: This needs to use the WebKit2 callback mechanism to avoid out-of-order replies.
     _state = ActionMenuState::Ready;
     _hitTestResult = hitTestResult;
+    _userData = userData;
 }
 
 #pragma mark Link actions
@@ -342,7 +348,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
             connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
     }
 
-    [self _updateActionMenuItems];
+    [self _updateActionMenuItemsForStage:MenuUpdateStage::MenuNeedsUpdate];
 }
 
 #pragma mark NSSharingServicePickerDelegate implementation
@@ -484,15 +490,28 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
 }
 
-- (void)_updateActionMenuItems
+- (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage
 {
     [_wkView.actionMenu removeAllItems];
 
     NSArray *menuItems = [self _defaultMenuItems];
+    RefPtr<WebHitTestResult> hitTestResult;
+    switch (stage) {
+    case MenuUpdateStage::PrepareForMenu:
+        hitTestResult = _page->activeActionMenuHitTestResult();
+        break;
+    case MenuUpdateStage::MenuNeedsUpdate:
+        if (_state == ActionMenuState::Ready)
+            hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+        else
+            hitTestResult = _page->activeActionMenuHitTestResult();
+        break;
+    }
+
     if ([_wkView respondsToSelector:@selector(_actionMenuItemsForHitTestResult:defaultActionMenuItems:)])
-        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) defaultActionMenuItems:menuItems];
+        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(hitTestResult.get()) defaultActionMenuItems:menuItems];
     else
-        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(_page->activeActionMenuHitTestResult()) withType:_type defaultActionMenuItems:menuItems];
+        menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(hitTestResult.get()) withType:_type defaultActionMenuItems:menuItems userData:toAPI(_userData.get())];
 
     for (NSMenuItem *item in menuItems)
         [_wkView.actionMenu addItem:item];

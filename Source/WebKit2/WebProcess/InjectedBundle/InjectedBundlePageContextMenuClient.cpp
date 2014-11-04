@@ -76,5 +76,15 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage*
     return true;
 }
 
+void InjectedBundlePageContextMenuClient::prepareForActionMenu(WebPage* page, InjectedBundleHitTestResult* hitTestResult, RefPtr<API::Object>& userData)
+{
+    if (!m_client.prepareForActionMenu)
+        return;
+
+    WKTypeRef userDataToPass = nullptr;
+    m_client.prepareForActionMenu(toAPI(page), toAPI(hitTestResult), &userDataToPass, m_client.base.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
 } // namespace WebKit
 #endif // ENABLE(CONTEXT_MENUS)

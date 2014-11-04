@@ -29,6 +29,7 @@
 #include <WebKit/WKBase.h>
 
 typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo);
+typedef void (*WKBundlePagePrepareForActionMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKTypeRef* userData, const void* clientInfo);
 
 typedef struct WKBundlePageContextMenuClientBase {
     int                                                                 version;
@@ -38,9 +39,15 @@ typedef struct WKBundlePageContextMenuClientBase {
 typedef struct WKBundlePageContextMenuClientV0 {
     WKBundlePageContextMenuClientBase                                   base;
 
-    // Version 0.
     WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
 } WKBundlePageContextMenuClientV0;
+
+typedef struct WKBundlePageContextMenuClientV1 {
+    WKBundlePageContextMenuClientBase                                   base;
+
+    WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
+    WKBundlePagePrepareForActionMenuCallback                            prepareForActionMenu;
+} WKBundlePageContextMenuClientV1;
 
 enum { kWKBundlePageContextMenuClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageContextMenuClient {

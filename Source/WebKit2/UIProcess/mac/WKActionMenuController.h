@@ -53,6 +53,7 @@ enum class ActionMenuState {
 
     WebKit::ActionMenuState _state;
     WebKit::ActionMenuHitTestResult _hitTestResult;
+    RefPtr<API::Object> _userData;
     _WKActionMenuType _type;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
 }
@@ -64,7 +65,7 @@ enum class ActionMenuState {
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 
-- (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult;
+- (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
 @end
 

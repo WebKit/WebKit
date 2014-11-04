@@ -34,6 +34,8 @@
 #import "DictionaryPopupInfo.h"
 #import "EditingRange.h"
 #import "EditorState.h"
+#import "InjectedBundleHitTestResult.h"
+#import "InjectedBundleUserMessageCoders.h"
 #import "PDFKitImports.h"
 #import "PageBanner.h"
 #import "PluginView.h"
@@ -1129,7 +1131,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView()) {
-        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(ActionMenuHitTestResult()));
+        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(ActionMenuHitTestResult(), InjectedBundleUserMessageEncoder(nullptr)));
         return;
     }
 
@@ -1142,6 +1144,8 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     mainRenderView.hitTest(request, hitTestResult);
 
     ActionMenuHitTestResult actionMenuResult;
+    actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
+    actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
 
     if (Image* image = hitTestResult.image()) {
         actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
@@ -1155,8 +1159,12 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         actionMenuResult.actionContext = scanForDataDetectedItems(hitTestResult, actionBoundingBox);
         actionMenuResult.actionBoundingBox = actionBoundingBox;
     }
-    
-    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult));
+
+    RefPtr<API::Object> userData;
+    RefPtr<InjectedBundleHitTestResult> injectedBundleHitTestResult = InjectedBundleHitTestResult::create(hitTestResult);
+    injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
+
+    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebPage::selectLookupTextAtLocation(FloatPoint locationInWindowCooordinates)

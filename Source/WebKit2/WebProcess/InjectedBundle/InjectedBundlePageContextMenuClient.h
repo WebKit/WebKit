@@ -36,7 +36,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKBundlePageContextMenuClientBase> {
-    typedef std::tuple<WKBundlePageContextMenuClientV0> Versions;
+    typedef std::tuple<WKBundlePageContextMenuClientV0, WKBundlePageContextMenuClientV1> Versions;
 };
 }
 
@@ -53,6 +53,7 @@ class WebPage;
 class InjectedBundlePageContextMenuClient : public API::Client<WKBundlePageContextMenuClientBase> {
 public:
     bool getCustomMenuFromDefaultItems(WebPage*, InjectedBundleHitTestResult*, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData);
+    void prepareForActionMenu(WebPage*, InjectedBundleHitTestResult*, RefPtr<API::Object>& userData);
 };
 
 } // namespace WebKit
