@@ -1891,7 +1891,11 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
 bool RenderObject::isSelectionBorder() const
 {
     SelectionState st = selectionState();
-    return st == SelectionStart || st == SelectionEnd || st == SelectionBoth;
+    return st == SelectionStart
+        || st == SelectionEnd
+        || st == SelectionBoth
+        || view().selectionStart() == this
+        || view().selectionEnd() == this;
 }
 
 inline void RenderObject::clearLayoutRootIfNeeded() const

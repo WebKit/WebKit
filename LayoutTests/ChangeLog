@@ -1,5 +1,20 @@
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173061. <rdar://problem/18856030>
+
+    2014-08-28  Mihnea Ovidenie  <mihnea@adobe.com>
+    
+            [CSSRegions] Incorrect selection clearing on a document without regions
+            https://bugs.webkit.org/show_bug.cgi?id=134901
+    
+            Reviewed by David Hyatt.
+    
+            * fast/regions/selection/select-all-without-regions-expected.txt: Added.
+            * fast/regions/selection/select-all-without-regions.html: Added.
+    
+
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r173046. <rdar://problem/18856004>
 
     2014-08-27  Daniel Bates  <dabates@apple.com>
