@@ -43,6 +43,7 @@ namespace SimpleLineLayout {
 bool canUseFor(const RenderBlockFlow&);
 
 struct Run {
+    Run() { }
     Run(unsigned start, unsigned end, float logicalLeft, float logicalRight, bool isEndOfLine)
         : start(start)
         , end(end)
