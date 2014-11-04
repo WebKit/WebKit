@@ -496,32 +496,23 @@ static bool shouldUseSelection(const VisiblePosition& position, const VisibleSel
     return isPositionInRange(position, selectedRange.get());
 }
 
-static PassRefPtr<Range> rangeExpandedAroundPosition(const VisiblePosition& position, int numberOfLinesToExpand)
+static PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
 {
-    VisiblePosition contextStart = position;
-    VisiblePosition contextEnd = position;
-    for (int i = 0; i < numberOfLinesToExpand; i++) {
-        VisiblePosition n = previousLinePosition(contextStart, contextStart.lineDirectionPointForBlockDirectionNavigation());
-        if (n.isNull() || n == contextStart)
-            break;
-        contextStart = n;
-    }
-    for (int i = 0; i < numberOfLinesToExpand; i++) {
-        VisiblePosition n = nextLinePosition(contextEnd, contextEnd.lineDirectionPointForBlockDirectionNavigation());
-        if (n.isNull() || n == contextEnd)
-            break;
-        contextEnd = n;
+    Position start = position.deepEquivalent();
+    Position end = position.deepEquivalent();
+    for (int i = 0; i < numberOfCharactersToExpand; ++i) {
+        if (directionOfEnclosingBlock(start) == LTR)
+            start = start.previous(Character);
+        else
+            start = start.next(Character);
+
+        if (directionOfEnclosingBlock(end) == LTR)
+            end = end.next(Character);
+        else
+            end = end.previous(Character);
     }
 
-    VisiblePosition lineStart = startOfLine(contextStart);
-    if (!lineStart.isNull())
-        contextStart = lineStart;
-
-    VisiblePosition lineEnd = endOfLine(contextEnd);
-    if (!lineEnd.isNull())
-        contextEnd = lineEnd;
-    
-    return makeRange(contextStart, contextEnd);
+    return makeRange(start, end);
 }
 
 PassRefPtr<Range> WebPage::rangeForDictionaryLookupAtHitTestResult(const WebCore::HitTestResult& hitTestResult, NSDictionary **options)
@@ -552,8 +543,8 @@ PassRefPtr<Range> WebPage::rangeForDictionaryLookupAtHitTestResult(const WebCore
         return nullptr;
     }
 
-    // As context, we are going to use four lines of text before and after the point. (Dictionary can sometimes look up things that are four lines long)
-    RefPtr<Range> fullCharacterRange = rangeExpandedAroundPosition(position, 4);
+    // As context, we are going to use 250 characters of text before and after the point.
+    RefPtr<Range> fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
     NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get()), 0);
 
     String fullPlainTextString = plainText(fullCharacterRange.get());
@@ -1085,7 +1076,7 @@ static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& 
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    RefPtr<Range> contextRange = rangeExpandedAroundPosition(position, 4);
+    RefPtr<Range> contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
     if (!contextRange)
         return nullptr;
 
