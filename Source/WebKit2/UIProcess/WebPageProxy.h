@@ -914,7 +914,7 @@ public:
     void removeNavigationGestureSnapshot();
 
 #if PLATFORM(MAC)
-    WebHitTestResult* activeActionMenuHitTestResult() const { return m_activeActionMenuHitTestResult.get(); }
+    WebHitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
     void selectLookupTextAtLocation(WebCore::FloatPoint);
 #endif
@@ -1365,7 +1365,7 @@ private:
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
     ContextMenuContextData m_activeContextMenuContextData;
 #endif
-    RefPtr<WebHitTestResult> m_activeActionMenuHitTestResult;
+    RefPtr<WebHitTestResult> m_lastMouseMoveHitTestResult;
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
     GeolocationPermissionRequestManagerProxy m_geolocationPermissionRequestManager;

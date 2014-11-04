@@ -1,3 +1,26 @@
+2014-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Rename WebPageProxy::activeActionMenuHitTestResult to lastMouseMoveHitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=138137
+        <rdar://problem/18798257>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::lastMouseMoveHitTestResult):
+        (WebKit::WebPageProxy::activeActionMenuHitTestResult): Deleted.
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForLink]):
+        (-[WKActionMenuController _openURLFromActionMenu:]):
+        (-[WKActionMenuController _addToReadingListFromActionMenu:]):
+        (-[WKActionMenuController _quickLookURLFromActionMenu:]):
+        (-[WKActionMenuController _saveImageToDownloads:]):
+        (imageForResource:name::if):
+        (-[WKActionMenuController _updateActionMenuItems]):
+        Rename to the more accurate and general name.
+
 2014-11-03  Tim Horton  <timothy_horton@apple.com>
 
         _actionMenuItemsForHitTestResult is given kWKActionMenuLink but an empty array of defaultMenuItems
