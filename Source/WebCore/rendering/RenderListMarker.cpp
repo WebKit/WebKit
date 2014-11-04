@@ -1128,6 +1128,7 @@ RenderListMarker::RenderListMarker(RenderListItem& listItem, PassRef<RenderStyle
 
 RenderListMarker::~RenderListMarker()
 {
+    m_listItem.didDestroyListMarker();
     if (m_image)
         m_image->removeClient(this);
 }

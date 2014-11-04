@@ -521,8 +521,8 @@ RenderObject* RenderElement::removeChild(RenderObject& oldChild)
 void RenderElement::destroyLeftoverChildren()
 {
     while (m_firstChild) {
-        if (m_firstChild->isListMarker() || (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText())) {
-            m_firstChild->removeFromParent(); // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
+        if (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText()) {
+            m_firstChild->removeFromParent(); // :first-letter fragment renderers are destroyed by their remaining text fragment.
         } else {
             // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
             if (m_firstChild->node())

@@ -45,6 +45,7 @@ using namespace HTMLNames;
 
 RenderListItem::RenderListItem(Element& element, PassRef<RenderStyle> style)
     : RenderBlockFlow(element, WTF::move(style))
+    , m_marker(nullptr)
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
     , m_notInList(false)
@@ -52,12 +53,24 @@ RenderListItem::RenderListItem(Element& element, PassRef<RenderStyle> style)
     setInline(false);
 }
 
+RenderListItem::~RenderListItem()
+{
+    ASSERT(!m_marker || !m_marker->parent());
+    if (m_marker) {
+        m_marker->destroy();
+        ASSERT(!m_marker);
+    }
+}
+
 void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     if (style().listStyleType() == NoneListStyle && (!style().listStyleImage() || style().listStyleImage()->errorOccurred())) {
-        m_marker = nullptr;
+        if (m_marker) {
+            m_marker->destroy();
+            ASSERT(!m_marker);
+        }
         return;
     }
 
@@ -66,16 +79,10 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
     // up (e.g., in some deeply nested line box). See CSS3 spec.
     newStyle.get().inheritFrom(&style());
     if (!m_marker) {
-        m_marker = createRenderer<RenderListMarker>(*this, WTF::move(newStyle));
+        m_marker = createRenderer<RenderListMarker>(*this, WTF::move(newStyle)).leakPtr();
         m_marker->initializeStyle();
     } else
         m_marker->setStyle(WTF::move(newStyle));
-}
-
-void RenderListItem::willBeDestroyed()
-{
-    m_marker = nullptr;
-    RenderBlockFlow::willBeDestroyed();
 }
 
 void RenderListItem::insertedIntoTree()
@@ -273,7 +280,7 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
         return;
 
     RenderElement* currentParent = m_marker->parent();
-    RenderBlock* newParent = getParentOfFirstLineBox(this, m_marker.get());
+    RenderBlock* newParent = getParentOfFirstLineBox(this, m_marker);
     if (!newParent) {
         // If the marker is currently contained inside an anonymous box,
         // then we are the only item in that anonymous box (since no line box
@@ -292,7 +299,7 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
         // containers other than ourselves, so we need to disable LayoutState.
         LayoutStateDisabler layoutStateDisabler(&view());
         m_marker->removeFromParent();
-        newParent->addChild(m_marker.get(), firstNonMarkerChild(newParent));
+        newParent->addChild(m_marker, firstNonMarkerChild(newParent));
         m_marker->updateMarginsAndContent();
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
@@ -400,7 +407,7 @@ void RenderListItem::positionListMarker()
             LayoutRect markerRect(markerLogicalLeft + lineOffset, blockOffset, m_marker->width(), m_marker->height());
             if (!style().isHorizontalWritingMode())
                 markerRect = markerRect.transposedRect();
-            RenderBox* o = m_marker.get();
+            RenderBox* o = m_marker;
             bool propagateVisualOverflow = true;
             bool propagateLayoutOverflow = true;
             do {

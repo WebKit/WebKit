@@ -1,3 +1,48 @@
+2014-11-03  Andreas Kling  <akling@apple.com>
+
+        Clarify RenderListMarker ownership model.
+        <https://webkit.org/b/138329>
+
+        Reviewed by Antti Koivisto.
+
+        A RenderListMarker is either in-tree and owned by the tree, or out-of-tree
+        and owned by a RenderListItem.
+
+        This patch changes RenderListItem::m_marker to be a raw pointer, and removes
+        the special handling of list markers in RenderElement child teardown.
+
+        We also remove the willBeDestroyed() hook. It was used to clear out the
+        m_marker pointer, but this is now done in the regular ~RenderListItem()
+        destructor with an assertion for marker sanity. m_marker is automatically
+        nulled out by a didDestroyListMarker() callback on RenderListItem.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::destroyLeftoverChildren):
+
+            Removed special handling of list marker renderers when deleting a
+            RenderElement's children.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem):
+        (WebCore::RenderListItem::~RenderListItem):
+        (WebCore::RenderListItem::styleDidChange):
+        (WebCore::RenderListItem::insertOrMoveMarkerRendererIfNeeded):
+        (WebCore::RenderListItem::positionListMarker):
+
+            Made m_marker a raw pointer instead of a RenderPtr since the ownership
+            really switches between weak and strong reference.
+
+        (WebCore::RenderListItem::willBeDestroyed):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::~RenderListMarker):
+
+            Added a regular destructor to replace the willBeDestroyed() hook.
+
+        * rendering/RenderListItem.h:
+        (WebCore::RenderListItem::didDestroyListMarker):
+
+            Added. Called by ~RenderListMarker to null out RenderListItem::m_marker.
+
 2014-11-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move WebCore/bridge to std::unique_ptr

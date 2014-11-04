@@ -34,6 +34,7 @@ class RenderListMarker;
 class RenderListItem final : public RenderBlockFlow {
 public:
     RenderListItem(Element&, PassRef<RenderStyle>);
+    virtual ~RenderListItem();
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
@@ -55,13 +56,13 @@ public:
     static void updateItemValuesForOrderedList(const HTMLOListElement*);
     static unsigned itemCountForOrderedList(const HTMLOListElement*);
 
+    void didDestroyListMarker() { m_marker = nullptr; }
+
 private:
     virtual const char* renderName() const override { return "RenderListItem"; }
 
     virtual bool isListItem() const override { return true; }
     
-    virtual void willBeDestroyed() override;
-
     virtual void insertedIntoTree() override;
     virtual void willBeRemovedFromTree() override;
 
@@ -85,7 +86,7 @@ private:
     void explicitValueChanged();
 
     int m_explicitValue;
-    RenderPtr<RenderListMarker> m_marker;
+    RenderListMarker* m_marker;
     mutable int m_value;
 
     bool m_hasExplicitValue : 1;
