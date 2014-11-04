@@ -80,6 +80,8 @@ public:
 private:
     explicit WebBackForwardList(WebPageProxy&);
 
+    void didRemoveItem(WebBackForwardListItem&);
+
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
     
