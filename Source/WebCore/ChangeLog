@@ -1,3 +1,13 @@
+2014-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(VIDEO) build after r175380
+        https://bugs.webkit.org/show_bug.cgi?id=138322
+
+        Reviewed by Benjamin Poulain.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+
 2014-11-03  Philippe Normand  <pnormand@igalia.com>
 
         [LEAK] [GStreamer] Removing video element will not free assigned memory

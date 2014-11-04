@@ -49,9 +49,11 @@ HTMLImageLoader::~HTMLImageLoader()
 
 void HTMLImageLoader::dispatchLoadEvent()
 {
+#if ENABLE(VIDEO)
     // HTMLVideoElement uses this class to load the poster image, but it should not fire events for loading or failure.
     if (is<HTMLVideoElement>(element()))
         return;
+#endif
 
     bool errorOccurred = image()->errorOccurred();
     if (!errorOccurred && image()->response().httpStatusCode() >= 400)
