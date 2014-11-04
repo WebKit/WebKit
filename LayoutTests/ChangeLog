@@ -1,3 +1,17 @@
+2014-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OSX] CJK characters styled with font-family: cursive are italicized
+        https://bugs.webkit.org/show_bug.cgi?id=138328
+        rdar://problem/18801907
+
+        Reviewed by Simon Fraser.
+
+        Make sure that the text matches the output of a different codepath.
+
+        * platform/mac/fast/text/font-cursive-italic-cjk-expected.html: Added.
+        * platform/mac/fast/text/font-cursive-italic-cjk.html: Added.
+        * platform/mac/TestExpectations: Skipped test on non-Yosemite platforms.
+
 2014-11-04  Benjamin Poulain  <bpoulain@apple.com>
 
         When computing the specificity of selectors, use saturated arithmetic per component

@@ -134,12 +134,13 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    NSFontTraitMask traits;
+    NSFontTraitMask traits = 0;
     NSInteger weight;
     CGFloat size;
 
     if (nsFont) {
-        traits = [fontManager traitsOfFont:nsFont];
+        if (description.italic())
+            traits = [fontManager traitsOfFont:nsFont];
         if (platformData.m_syntheticBold)
             traits |= NSBoldFontMask;
         if (platformData.m_syntheticOblique)

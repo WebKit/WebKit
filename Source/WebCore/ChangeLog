@@ -1,3 +1,21 @@
+2014-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OSX] CJK characters styled with font-family: cursive are italicized
+        https://bugs.webkit.org/show_bug.cgi?id=138328
+        rdar://problem/18801907
+
+        Reviewed by Simon Fraser.
+
+        FontCache::createFontPlatformData doesn’t set the oblique flag if
+        the requested font isn’t oblique, but
+        FontCache::systemFallbackForCharacters() does. This patch simply
+        adopts this behavior in both places.
+
+        Test: fast/text/font-cursive-italic-cjk.html
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::systemFallbackForCharacters):
+
 2014-11-04  Benjamin Poulain  <bpoulain@apple.com>
 
         When computing the specificity of selectors, use saturated arithmetic per component
