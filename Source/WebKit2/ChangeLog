@@ -1,5 +1,21 @@
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175418. <rdar://problem/18837197>
+
+    2014-10-31  Timothy Horton  <timothy_horton@apple.com>
+    
+            Remove "Add to iPhoto" from the action menu's sharing menu
+            https://bugs.webkit.org/show_bug.cgi?id=138251
+            <rdar://problem/18837197>
+    
+            Reviewed by Anders Carlsson.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController sharingServicePicker:sharingServicesForItems:mask:proposedSharingServices:]):
+            Retain/autorelease the new array.
+    
+2014-11-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r175417. <rdar://problem/18837197>
 
     2014-10-31  Tim Horton  <timothy_horton@apple.com>
