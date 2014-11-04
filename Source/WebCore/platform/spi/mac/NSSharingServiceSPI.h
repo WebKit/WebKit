@@ -48,6 +48,7 @@ typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
 @interface NSSharingService (Private)
 + (NSArray *)sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)maskForFiltering;
 @property (readonly) NSSharingServiceType type;
+@property (readwrite, copy) NSString *name;
 @end
 
 #endif
