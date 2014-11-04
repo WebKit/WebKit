@@ -51,7 +51,7 @@ String WebKitCSSRegionRule::cssText() const
     result.appendLiteral("@-webkit-region ");
 
     // First add the selectors.
-    result.append(toStyleRuleRegion(&m_groupRule.get())->selectorList().selectorsText());
+    result.append(downcast<StyleRuleRegion>(m_groupRule.get()).selectorList().selectorsText());
 
     // Then add the rules.
     result.appendLiteral(" { \n");

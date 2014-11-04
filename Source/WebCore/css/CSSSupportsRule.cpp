@@ -59,7 +59,7 @@ String CSSSupportsRule::cssText() const
 
 String CSSSupportsRule::conditionText() const
 {
-    return toStyleRuleSupports(&m_groupRule.get())->conditionText();
+    return downcast<StyleRuleSupports>(m_groupRule.get()).conditionText();
 }
 
 } // namespace WebCore

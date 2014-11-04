@@ -26,6 +26,7 @@
 #include "MediaList.h"
 #include "StyleProperties.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -271,24 +272,18 @@ private:
 };
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
-inline const StyleRuleMedia* toStyleRuleMedia(const StyleRuleGroup* rule)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isMediaRule());
-    return static_cast<const StyleRuleMedia*>(rule);
-}
-
-inline const StyleRuleSupports* toStyleRuleSupports(const StyleRuleGroup* rule)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isSupportsRule());
-    return static_cast<const StyleRuleSupports*>(rule);
-}
-
-inline const StyleRuleRegion* toStyleRuleRegion(const StyleRuleGroup* rule)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isRegionRule());
-    return static_cast<const StyleRuleRegion*>(rule);
-}
-
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleMedia)
+    static bool isType(const WebCore::StyleRuleGroup& group) { return group.isMediaRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleSupports)
+    static bool isType(const WebCore::StyleRuleGroup& group) { return group.isSupportsRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleRegion)
+    static bool isType(const WebCore::StyleRuleGroup& group) { return group.isRegionRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // StyleRule_h
