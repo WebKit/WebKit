@@ -726,6 +726,16 @@ _llint_op_create_lexical_environment:
     dispatch(2)
 
 
+_llint_op_get_scope:
+    traceExecution()
+    loadi Callee + PayloadOffset[cfr], t0
+    loadi JSCallee::m_scope[t0], t0
+    loadisFromInstruction(1, t1)
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+    dispatch(2)
+
+
 _llint_op_init_lazy_reg:
     traceExecution()
     loadi 4[PC], t0

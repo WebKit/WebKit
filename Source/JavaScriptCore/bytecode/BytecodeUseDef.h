@@ -59,6 +59,7 @@ void computeUsesForBytecodeOffset(
         return;
     case op_new_func:
     case op_create_lexical_environment: 
+    case op_get_scope:
     case op_create_arguments:
     case op_to_this:
     case op_profile_will_call:
@@ -365,6 +366,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_get_callee:
     case op_init_lazy_reg:
     case op_create_lexical_environment:
+    case op_get_scope:
     case op_create_arguments:
     case op_del_by_id:
     case op_del_by_val:

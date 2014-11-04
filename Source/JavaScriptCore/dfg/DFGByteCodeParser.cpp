@@ -3399,6 +3399,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_lexical_environment);
         }
             
+        case op_get_scope: {
+            NEXT_OPCODE(op_get_scope);
+        }
+            
         case op_create_arguments: {
             m_graph.m_hasArguments = true;
             Node* createArguments = addToGraph(CreateArguments, get(VirtualRegister(currentInstruction[1].u.operand)));

@@ -748,6 +748,11 @@ void CodeBlock::dumpBytecode(
             printLocationOpAndRegisterOperand(out, exec, location, it, "create_lexical_environment", r0);
             break;
         }
+        case op_get_scope: {
+            int r0 = (++it)->u.operand;
+            printLocationOpAndRegisterOperand(out, exec, location, it, "get_scope", r0);
+            break;
+        }
         case op_create_arguments: {
             int r0 = (++it)->u.operand;
             printLocationOpAndRegisterOperand(out, exec, location, it, "create_arguments", r0);

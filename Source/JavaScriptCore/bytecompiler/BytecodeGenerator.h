@@ -541,6 +541,7 @@ namespace JSC {
         void emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
         void emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
 
+        void emitGetScope();
         RegisterID* emitPushWithScope(RegisterID* dst, RegisterID* scope);
         void emitPopScope(RegisterID* srcDst);
 

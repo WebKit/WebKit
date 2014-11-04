@@ -1,3 +1,47 @@
+2014-11-03  Michael Saboff  <msaboff@apple.com>
+
+        Add "get scope" byte code
+        https://bugs.webkit.org/show_bug.cgi?id=138326
+
+        Reviewed by Mark Lam.
+
+        Added op_get_scope.  Added implementations for the LLInt and baseline JIT.
+        Provided nop implementation for DFG and FTL.  The new byte code is emitted
+        after op_enter for any function, program or eval.  It is expected that the
+        DFG will be implemented such that unneeded op_get_scope would be eliminated
+        during DFG compilation.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        Added new op_get_scope bytecode.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitGetScope):
+        * bytecompiler/BytecodeGenerator.h:
+        Emit new op_get_scope bytecode.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        Added framework for new op_get_scope bytecode.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_scope):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Implementation of op_get_scope bytecode.
+
 2014-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix RWIProtocol 64-to-32 bit conversion warnings

@@ -670,6 +670,14 @@ void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
     emitStoreCell(dst, returnValueGPR);
 }
 
+void JIT::emit_op_get_scope(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT0);
+    emitStoreCell(dst, regT0);
+}
+
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

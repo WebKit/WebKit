@@ -210,6 +210,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_end)
         DEFINE_OP(op_enter)
         DEFINE_OP(op_create_lexical_environment)
+        DEFINE_OP(op_get_scope)
         DEFINE_OP(op_eq)
         DEFINE_OP(op_eq_null)
         case op_get_by_id_out_of_line:

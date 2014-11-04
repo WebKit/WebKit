@@ -190,6 +190,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     emitOpcode(op_enter);
 
+    emitGetScope();
+
     const VarStack& varStack = programNode->varStack();
     const FunctionStack& functionStack = programNode->functionStack();
 
@@ -248,6 +250,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     m_symbolTable->setParameterCountIncludingThis(functionBody->parameters()->size() + 1);
 
     emitOpcode(op_enter);
+
+    emitGetScope();
+
     if (m_codeBlock->needsFullScopeChain() || m_shouldEmitDebugHooks) {
         m_lexicalEnvironmentRegister = addVar();
         m_codeBlock->setActivationRegister(m_lexicalEnvironmentRegister->virtualRegister());
@@ -472,6 +477,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     m_codeBlock->setNumParameters(1);
 
     emitOpcode(op_enter);
+
+    emitGetScope();
 
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
@@ -2053,6 +2060,12 @@ void BytecodeGenerator::emitToPrimitive(RegisterID* dst, RegisterID* src)
     emitOpcode(op_to_primitive);
     instructions().append(dst->index());
     instructions().append(src->index());
+}
+
+void BytecodeGenerator::emitGetScope()
+{
+    emitOpcode(op_get_scope);
+    instructions().append(scopeRegister()->index());
 }
 
 RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* dst, RegisterID* scope)

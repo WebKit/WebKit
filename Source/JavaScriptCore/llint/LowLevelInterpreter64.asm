@@ -614,6 +614,15 @@ _llint_op_create_lexical_environment:
     dispatch(2)
 
 
+_llint_op_get_scope:
+    traceExecution()
+    loadp Callee[cfr], t0
+    loadp JSCallee::m_scope[t0], t0
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+    dispatch(2)
+
+
 _llint_op_init_lazy_reg:
     traceExecution()
     loadisFromInstruction(1, t0)
