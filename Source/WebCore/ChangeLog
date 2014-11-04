@@ -1,3 +1,17 @@
+2014-11-04  Andreas Kling  <akling@apple.com>
+
+        Remove two unused ScrollingCoordinator methods.
+        <https://webkit.org/b/138377>
+
+        Reviewed by Chris Dumez.
+
+        These appear to be leftovers from the now-defunct chromium port.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::horizontalScrollbarLayerForScrollableArea): Deleted.
+        (WebCore::ScrollingCoordinator::verticalScrollbarLayerForScrollableArea): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+
 2014-11-04  Chris Dumez  <cdumez@apple.com>
 
         Add ptr() method to Ref class

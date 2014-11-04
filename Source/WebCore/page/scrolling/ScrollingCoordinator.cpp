@@ -199,16 +199,6 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForScrollableArea(ScrollableArea
     return scrollableArea->layerForScrolling();
 }
 
-GraphicsLayer* ScrollingCoordinator::horizontalScrollbarLayerForScrollableArea(ScrollableArea* scrollableArea)
-{
-    return scrollableArea->layerForHorizontalScrollbar();
-}
-
-GraphicsLayer* ScrollingCoordinator::verticalScrollbarLayerForScrollableArea(ScrollableArea* scrollableArea)
-{
-    return scrollableArea->layerForVerticalScrollbar();
-}
-
 GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameView)
 {
     if (RenderView* renderView = frameView->frame().contentRenderer())

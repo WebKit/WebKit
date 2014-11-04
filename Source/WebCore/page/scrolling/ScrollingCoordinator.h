@@ -209,8 +209,6 @@ protected:
     explicit ScrollingCoordinator(Page*);
 
     static GraphicsLayer* scrollLayerForScrollableArea(ScrollableArea*);
-    static GraphicsLayer* horizontalScrollbarLayerForScrollableArea(ScrollableArea*);
-    static GraphicsLayer* verticalScrollbarLayerForScrollableArea(ScrollableArea*);
 
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
