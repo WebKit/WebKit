@@ -40,6 +40,7 @@
 #import <ImageIO/ImageIO.h>
 #import <ImageKit/ImageKit.h>
 #import <WebCore/DataDetectorsSPI.h>
+#import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/SoftLinking.h>
