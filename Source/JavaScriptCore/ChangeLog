@@ -1,3 +1,23 @@
+2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Enum value collisions between different generators
+        https://bugs.webkit.org/show_bug.cgi?id=138343
+
+        Reviewed by Brian Burg.
+
+        Each generator was using its own filtered list of domains_to_generate
+        to build the shared unique list of enum value encodings. This list
+        was slightly different across different generators. Instead always
+        use the list of all non-supplemental domains to generate the shared
+        list of enum values.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.non_supplemental_domains):
+        (Generator.domains_to_generate):
+        (Generator._traverse_and_assign_enum_values):
+        * inspector/scripts/tests/enum-values.json: Added.
+        * inspector/scripts/tests/expected/enum-values.json-result: Added.
+
 2014-11-03  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Workaround for Cortex-A53 erratum 835769

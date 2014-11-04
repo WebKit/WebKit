@@ -94,8 +94,11 @@ class Generator:
         return Template(Templates.CopyrightBlock).substitute(None, inputFilename=os.path.basename(self._input_filepath))
 
     # These methods are overridden by subclasses.
-    def domains_to_generate(self):
+    def non_supplemental_domains(self):
         return filter(lambda domain: not domain.is_supplemental, self.model().domains)
+
+    def domains_to_generate(self):
+        return self.non_supplemental_domains()
 
     def generate_output(self):
         pass
@@ -170,7 +173,7 @@ class Generator:
         self._assigned_enum_values = []
         all_types = []
 
-        domains = self.domains_to_generate()
+        domains = self.non_supplemental_domains()
 
         for domain in domains:
             for type_declaration in domain.type_declarations:
