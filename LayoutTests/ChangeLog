@@ -1,5 +1,16 @@
 2014-11-05  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        [CSS Shapes] Positioned polygon reftests failing again
+        https://bugs.webkit.org/show_bug.cgi?id=138058
+
+        Reviewed by Anders Carlsson.
+
+        Remove these tests from TestExpectations since they do pass.
+
+        * TestExpectations:
+
+2014-11-05  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         [CSS Shapes] shape-image-threshold parsing tests have a few failures
         https://bugs.webkit.org/show_bug.cgi?id=138060
 

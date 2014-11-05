@@ -139,11 +139,6 @@ webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outsid
 webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html [ ImageOnlyFailure ]
 webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html [ ImageOnlyFailure ]
 
-webkit.org/b/138058 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html [ ImageOnlyFailure ]
-webkit.org/b/138058 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-013.html [ ImageOnlyFailure ]
-webkit.org/b/138058 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html [ ImageOnlyFailure ]
-webkit.org/b/138058 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html [ ImageOnlyFailure ]
-
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-010.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-011.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-012.html [ ImageOnlyFailure ]
