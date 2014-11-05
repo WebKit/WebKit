@@ -272,6 +272,14 @@ class Git(SCM, SVNRepository):
             return ""
         return str(match.group('svn_revision'))
 
+    def svn_url(self):
+        git_command = ['svn', 'info']
+        status = self._run_git(git_command)
+        match = re.search(r'^URL: (?P<url>.*)$', status, re.MULTILINE)
+        if not match:
+            return ""
+        return match.group('url')
+
     def timestamp_of_revision(self, path, revision):
         git_log = self._most_recent_log_matching('git-svn-id:.*@%s' % revision, path)
         match = re.search("^Date:\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$", git_log, re.MULTILINE)
