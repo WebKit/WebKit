@@ -242,12 +242,8 @@ RenderObject* RenderMultiColumnFlowThread::resolveMovedChild(RenderObject* child
 static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, RenderObject* descendant)
 {
     // We assume that we're inside the flow thread. This function is not to be called otherwise.
-    // ASSERT(descendant->isDescendantOf(flowThread));
-    // FIXME: Put this back in when we figure out why spanner-crash.html is triggering it.
-    // See https://bugs.webkit.org/show_bug.cgi?id=137273
-    if (!descendant->isDescendantOf(flowThread))
-        return false;
-    
+    ASSERT(descendant->isDescendantOf(flowThread));
+
     // First make sure that the renderer itself has the right properties for becoming a spanner.
     RenderStyle& style = descendant->style();
     if (style.columnSpan() != ColumnSpanAll || !is<RenderBox>(*descendant) || descendant->isFloatingOrOutOfFlowPositioned())
@@ -386,9 +382,10 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject* des
                 
                 // We have to nuke the placeholder, since the ancestor already lost the mapping to it when
                 // we shifted the placeholder down into this flow thread.
-                ancestorBlock.multiColumnFlowThread()->handleSpannerRemoval(spanner);
-                placeholder.destroy();
-                
+                if (subtreeRoot == descendant)
+                    subtreeRoot = spanner;
+                placeholder.parent()->removeChild(placeholder);
+
                 // Now we process the spanner.
                 descendant = processPossibleSpannerDescendant(subtreeRoot, spanner);
                 continue;

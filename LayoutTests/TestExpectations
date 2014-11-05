@@ -104,8 +104,6 @@ webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 
-webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Crash Pass ]
-
 # These tests are incorrect in the CSS test suite and should be fixed there first.
 css2.1/20110323/replaced-intrinsic-001.htm [ Failure ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
@@ -231,8 +229,6 @@ webkit.org/b/137883 transitions/color-transition-all.html [ Failure Pass ]
 webkit.org/b/137883 transitions/color-transition-premultiplied.html [ Failure Pass ]
 webkit.org/b/137883 transitions/color-transition-rounding.html [ Failure Pass ]
 webkit.org/b/137883 transitions/created-while-suspended.html [ Failure Pass ]
-
-webkit.org/b/138145 fast/multicol/multicol-crazy-nesting.html [ Skip ]
 
 # Temporarily turn this off. Back on soon.
 webkit.org/b/138358 http/tests/multipart/stop-crash.html [ Skip ]
