@@ -30,7 +30,7 @@ namespace TestWebKitAPI {
 TEST(WebKit1, TypingStyleCrash)
 {
     WebView *webView = [[WebView alloc] init];
-    [webView typingStyle];
+    (void)[webView typingStyle];
     [webView release];
 }
 

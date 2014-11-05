@@ -1,3 +1,10 @@
+2014-11-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for some compiler versions.
+
+        * TestWebKitAPI/Tests/mac/TypingStyleCrash.mm: (TestWebKitAPI::TEST): Compiler was
+        unhappy because this is a getter, and these shouldn't have side effects.
+
 2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Add a method for performing cherrypick-merges.
