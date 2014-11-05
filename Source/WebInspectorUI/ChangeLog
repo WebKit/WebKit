@@ -1,3 +1,17 @@
+2014-11-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Specificity not shown for pseudo element styles
+        https://bugs.webkit.org/show_bug.cgi?id=138436
+
+        Reviewed by Benjamin Poulain.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        Previously we were skipping the pre-selector <span>s when we were
+        not getting a listing of matched selector indices, and missing out
+        on the opportunity to give each selector a specificity. Now, always
+        loop over selectors if we have them.
+
 2014-11-05  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: Add infrastructure for eslint based static analyzer

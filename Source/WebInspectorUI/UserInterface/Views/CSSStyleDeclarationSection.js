@@ -201,9 +201,10 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
             var selectors = this._style.ownerRule.selectors;
             var matchedSelectorIndices = this._style.ownerRule.matchedSelectorIndices;
-            if (selectors.length && matchedSelectorIndices.length) {
+            var alwaysMatch = !matchedSelectorIndices.length;
+            if (selectors.length) {
                 for (var i = 0; i < selectors.length; ++i) {
-                    appendSelector.call(this, selectors[i], matchedSelectorIndices.contains(i));
+                    appendSelector.call(this, selectors[i], alwaysMatch || matchedSelectorIndices.contains(i));
                     if (i < selectors.length - 1)
                         this._selectorElement.appendChild(document.createTextNode(", "));
                 }
