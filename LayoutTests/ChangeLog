@@ -1,3 +1,15 @@
+2014-11-04  Michael Saboff  <msaboff@apple.com>
+
+        Disable flakey dfg-int8array.js and dfg-int16array.js tests for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=138379
+
+        Reviewed by Mark Lam.
+
+        Disabled these test for ARM64.  Will address the failures and then re-enable.
+
+        * js/script-tests/dfg-int16array.js:
+        * js/script-tests/dfg-int8array.js:
+
 2014-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OSX] CJK characters styled with font-family: cursive are italicized
