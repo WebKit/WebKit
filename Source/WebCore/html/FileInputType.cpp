@@ -71,7 +71,7 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document&
 UploadButtonElement::UploadButtonElement(Document& document)
     : HTMLInputElement(inputTag, document, 0, false)
 {
-    setType(ASCIILiteral("button"));
+    setType(AtomicString("button", AtomicString::ConstructFromLiteral));
     setPseudo(AtomicString("-webkit-file-upload-button", AtomicString::ConstructFromLiteral));
 }
 
