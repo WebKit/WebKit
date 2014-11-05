@@ -29,6 +29,7 @@ void webkitWebResourceSetResponse(WebKitWebResource*, WebKitURIResponse*);
 void webkitWebResourceNotifyProgress(WebKitWebResource*, guint64 bytesReceived);
 void webkitWebResourceFinished(WebKitWebResource*);
 void webkitWebResourceFailed(WebKitWebResource*, GError*);
+void webkitWebResourceFailedWithTLSErrors(WebKitWebResource*, GTlsCertificateFlags, GTlsCertificate*);
 WebKit::WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource*);
 
 

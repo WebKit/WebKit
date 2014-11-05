@@ -53,6 +53,7 @@ enum {
     RECEIVED_DATA,
     FINISHED,
     FAILED,
+    FAILED_WITH_TLS_ERRORS,
 
     LAST_SIGNAL
 };
@@ -197,6 +198,26 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
                      g_cclosure_marshal_VOID__POINTER,
                      G_TYPE_NONE, 1,
                      G_TYPE_POINTER);
+
+    /**
+     * WebKitWebResource::failed-with-tls-errors:
+     * @resource: the #WebKitWebResource
+     * @certificate: a #GTlsCertificate
+     * @errors: a #GTlsCertificateFlags with the verification status of @certificate
+     *
+     * This signal is emitted when a TLS error occurs during the resource load operation.
+     *
+     * Since: 2.8
+     */
+    signals[FAILED_WITH_TLS_ERRORS] =
+        g_signal_new("failed-with-tls-errors",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, nullptr, nullptr,
+            g_cclosure_marshal_generic,
+            G_TYPE_NONE, 2,
+            G_TYPE_TLS_CERTIFICATE,
+            G_TYPE_TLS_CERTIFICATE_FLAGS);
 }
 
 static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CString& requestURI)
@@ -244,6 +265,12 @@ void webkitWebResourceFailed(WebKitWebResource* resource, GError* error)
 {
     g_signal_emit(resource, signals[FAILED], 0, error);
     g_signal_emit(resource, signals[FINISHED], 0, NULL);
+}
+
+void webkitWebResourceFailedWithTLSErrors(WebKitWebResource* resource, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
+{
+    g_signal_emit(resource, signals[FAILED_WITH_TLS_ERRORS], 0, certificate, tlsErrors);
+    g_signal_emit(resource, signals[FINISHED], 0, nullptr);
 }
 
 WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource* resource)

@@ -1,3 +1,26 @@
+2014-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebResource::failed-with-tls-errors signal
+        https://bugs.webkit.org/show_bug.cgi?id=137862
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a test case to check that WebKitWebResource::failed-with-tls-errors
+        is emitted when a subresource load fails due to TLS errors.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (TLSSubresourceTest::resourceLoadStartedCallback):
+        (TLSSubresourceTest::TLSSubresourceTest):
+        (TLSSubresourceTest::subresourceFailedCallback):
+        (TLSSubresourceTest::subresourceFailedWithTLSErrorsCallback):
+        (TLSSubresourceTest::subresourceLoadStarted):
+        (TLSSubresourceTest::subresourceFailedWithTLSErrors):
+        (TLSSubresourceTest::waitUntilSubresourceLoadFail):
+        (testSubresourceLoadFailedWithTLSErrors):
+        (httpsServerCallback):
+        (httpServerCallback):
+        (beforeAll):
+
 2014-11-05  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix for some compiler versions.

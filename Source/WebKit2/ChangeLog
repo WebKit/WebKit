@@ -1,3 +1,22 @@
+2014-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebResource::failed-with-tls-errors signal
+        https://bugs.webkit.org/show_bug.cgi?id=137862
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When a resource load fails due to TLS errors emit WebKitWebResource::failed-with-tls-errors
+        signal instead of WebKitWebResource::failed so that TLS errors information and certificate
+        are provided.
+
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle): Check if the error
+        is a TLS failure to emit failed-with-tls-errors instead of failed.
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_class_init): Add WebKitWebResource::failed-with-tls-errors signal.
+        (webkitWebResourceFailedWithTLSErrors): Emit failed-with-tls-errors and finish signals.
+        * UIProcess/API/gtk/WebKitWebResourcePrivate.h:
+
 2014-11-05  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix build warning in WebKit2/WebProcess module.

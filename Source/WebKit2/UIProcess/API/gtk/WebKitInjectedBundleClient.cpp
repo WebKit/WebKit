@@ -89,8 +89,11 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         const ResourceError& platformError = webError->platformError();
         GUniquePtr<GError> resourceError(g_error_new_literal(g_quark_from_string(platformError.domain().utf8().data()),
             toWebKitError(platformError.errorCode()), platformError.localizedDescription().utf8().data()));
+        if (platformError.tlsErrors())
+            webkitWebResourceFailedWithTLSErrors(resource.get(), static_cast<GTlsCertificateFlags>(platformError.tlsErrors()), platformError.certificate());
+        else
+            webkitWebResourceFailed(resource.get(), resourceError.get());
 
-        webkitWebResourceFailed(resource.get(), resourceError.get());
         webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
     } else if (g_str_equal(messageName, "DidGetSnapshot")) {
         API::UInt64* callbackID = static_cast<API::UInt64*>(message.get("CallbackID"));
