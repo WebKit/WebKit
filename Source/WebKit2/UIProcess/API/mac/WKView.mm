@@ -3664,12 +3664,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
 }
 
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 - (void)_dismissActionMenuDataDetectorPopovers
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController dismissActionMenuDataDetectorPopovers];
+#endif
 }
-
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 @end
 
