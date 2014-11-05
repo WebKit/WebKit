@@ -1,3 +1,21 @@
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Re-evaluate if a repetitive timer should be throttled upon firing
+        https://bugs.webkit.org/show_bug.cgi?id=138339
+
+        Reviewed by Gavin Barraclough.
+
+        Re-evaluate if a repetitive timer should be throttled upon firing in
+        case the plugin observability state has changed:
+        - It used to be visible but now isn't and thus the timer can be throttled
+        - It used to play audio but now doesn't and thus the timer can be throttled
+
+        We already stopped throttling if the plugin became observable. However,
+        we didn't start throttling if the plugin became non-observable.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::updateThrottlingStateIfNecessary):
+
 2014-11-03  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_FILTERS_LEVEL_2 feature guard.

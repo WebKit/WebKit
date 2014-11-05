@@ -190,12 +190,16 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
 
 void DOMTimer::updateThrottlingStateIfNecessary(const DOMTimerFireState& fireState)
 {
-    if (fireState.scriptDidInteractWithUserObservablePlugin && m_throttleState != ShouldNotThrottle) {
-        m_throttleState = ShouldNotThrottle;
-        updateTimerIntervalIfNecessary();
-    } else if (fireState.scriptDidInteractWithNonUserObservablePlugin && m_throttleState == Undetermined) {
-        m_throttleState = ShouldThrottle;
-        updateTimerIntervalIfNecessary();
+    if (fireState.scriptDidInteractWithUserObservablePlugin) {
+        if (m_throttleState != ShouldNotThrottle) {
+            m_throttleState = ShouldNotThrottle;
+            updateTimerIntervalIfNecessary();
+        }
+    } else if (fireState.scriptDidInteractWithNonUserObservablePlugin) {
+        if (m_throttleState != ShouldThrottle) {
+            m_throttleState = ShouldThrottle;
+            updateTimerIntervalIfNecessary();
+        }
     }
 }
 
