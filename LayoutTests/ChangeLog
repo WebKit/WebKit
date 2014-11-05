@@ -1,3 +1,23 @@
+2014-11-05  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] shape-image-threshold parsing tests have a few failures
+        https://bugs.webkit.org/show_bug.cgi?id=138060
+
+        Reviewed by Dirk Schulze.
+
+        Remove testing for inline style from the CSSWG test because it isn't
+        specified and isn't consistent across browsers. This has been updated
+        upstream as well.
+
+        Add inline style tests to the WebKit test suite to make sure that
+        WebKIt doesn't lose coverage with this change.
+
+        * TestExpectations:
+        * css3/shapes/shape-outside/values/shape-image-threshold-001-expected.txt:
+        * css3/shapes/shape-outside/values/shape-image-threshold-001.html:
+        * fast/shapes/parsing/parsing-shape-image-threshold-expected.txt:
+        * fast/shapes/parsing/parsing-shape-image-threshold.html:
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Stop special-casing the empty string in HTMLInputElement.type setter

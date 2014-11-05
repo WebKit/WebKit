@@ -18,27 +18,21 @@
         var shape_image_threshold_valid_tests = [
             {
               "actual": "calc(10/100)",
-              "expected_inline": "calc(0.1)",
               "expected_computed": "0.1"
             },
             {
               "actual": "calc(10/100 + 30/100)",
-              "expected_inline": "calc(0.1 + 0.3)",
               "expected_computed": "0.4"
             },
             {
               "actual": "calc(150/100)",
-              "expected_inline": "calc(1.5)",
               "expected_computed": "1"
             },
             {
               "actual": "calc(150/100 - 2)",
-              "expected_inline": "calc(-0.5)",
               "expected_computed": "0"
             }
         ];
-        generate_tests( ParsingUtils.testShapeThresholdInlineStyle,
-                        ParsingUtils.buildTestCases(shape_image_threshold_valid_tests, 'inline') );
         generate_tests( ParsingUtils.testShapeThresholdComputedStyle,
                         ParsingUtils.buildTestCases(shape_image_threshold_valid_tests, 'computed') );
         </script>
