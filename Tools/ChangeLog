@@ -1,3 +1,17 @@
+2014-11-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Add a branch keyword argument to _run_git_svn_find_rev.
+        https://bugs.webkit.org/show_bug.cgi?id=138372
+
+        Reviewed by Ryosuke Niwa.
+
+        The addition of this keyword argument allows clients to determine the Git hash
+        of commits made on an SVN branch, provided that branch has been fetched locally.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._run_git_svn_find_rev):
+        Add a branch keyword argument that is added to the end of the command, if present.
+
 2014-11-04  Chris Dumez  <cdumez@apple.com>
 
         Add ptr() method to Ref class

@@ -308,9 +308,17 @@ class Git(SCM, SVNRepository):
             command += changed_files
         return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
 
-    def _run_git_svn_find_rev(self, arg):
+    def _run_git_svn_find_rev(self, revision, branch=None):
+        revision = str(revision)
+        if revision and revision[0] != 'r':
+            revision = 'r' + revision
+
         # git svn find-rev always exits 0, even when the revision or commit is not found.
-        return self._run_git(['svn', 'find-rev', arg]).rstrip()
+        command = ['svn', 'find-rev', revision]
+        if branch:
+            command.append(branch)
+
+        return self._run_git(command).rstrip()
 
     def _string_to_int_or_none(self, string):
         try:
