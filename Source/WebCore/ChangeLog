@@ -1,3 +1,14 @@
+2014-11-05  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r175601): Assertion failures in SimpleLineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=138422
+
+        Check for end.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::FlowContentIterator::isNewlineCharacter):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+
 2014-11-05  Andreas Kling  <akling@apple.com>
 
         Simple line layout: support text-transform: lowercase|uppercase|capitalize
