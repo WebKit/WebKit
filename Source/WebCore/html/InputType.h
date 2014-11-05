@@ -271,9 +271,7 @@ public:
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();
     virtual void requiredAttributeChanged();
-    virtual void valueAttributeChanged();
     virtual String defaultToolTip() const;
-    virtual void updateClearButtonVisibility();
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();

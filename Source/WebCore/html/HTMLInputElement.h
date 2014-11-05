@@ -259,8 +259,6 @@ public:
     void addSearchResult();
     void onSearch();
 
-    void updateClearButtonVisibility();
-
     virtual bool willRespondToMouseClickEvents() override;
 
 #if ENABLE(DATALIST_ELEMENT)

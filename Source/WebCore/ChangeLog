@@ -1,5 +1,27 @@
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
+        Remove 2 unnecessary virtual functions on InputType
+        https://bugs.webkit.org/show_bug.cgi?id=138433
+
+        Reviewed by Andreas Kling.
+
+        Remove 2 unused virtual functions on InputType:
+        - valueAttributeChanged()
+        - updateClearButtonVisibility()
+
+        No new tests, no behavior change.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::updateClearButtonVisibility): Deleted.
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::valueAttributeChanged): Deleted.
+        (WebCore::InputType::updateClearButtonVisibility): Deleted.
+        * html/InputType.h:
+
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
         Re-evaluate if a repetitive timer should be throttled upon firing
         https://bugs.webkit.org/show_bug.cgi?id=138339
 
