@@ -207,6 +207,13 @@ class Git(SCM, SVNRepository):
 
         return self.remote_merge_base()
 
+    def modifications_staged_for_commit(self):
+        # This will only return non-deleted files with the "updated in index" status
+        # as defined by http://git-scm.com/docs/git-status.
+        status_command = [self.executable_name, 'status', '--short']
+        updated_in_index_regexp = '^M[ M] (?P<filename>.+)$'
+        return self.run_status_and_extract_filenames(status_command, updated_in_index_regexp)
+
     def changed_files(self, git_commit=None):
         # FIXME: --diff-filter could be used to avoid the "extract_filenames" step.
         status_command = [self.executable_name, 'diff', '-r', '--name-status', "--no-renames", "--no-ext-diff", "--full-index", self.merge_base(git_commit)]
