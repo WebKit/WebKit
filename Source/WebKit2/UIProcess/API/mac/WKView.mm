@@ -242,6 +242,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     std::unique_ptr<ViewGestureController> _gestureController;
     BOOL _allowsMagnification;
+    BOOL _ignoresNonWheelMouseEvents;
     BOOL _allowsBackForwardNavigationGestures;
 
     RetainPtr<CALayer> _rootLayer;
@@ -1095,7 +1096,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 // Events
 
--(BOOL)shouldIgnoreMouseEvents
+- (BOOL)shouldIgnoreMouseEvents
 {
     // FIXME: This check is surprisingly specific. Are there any other cases where we need to block mouse events?
     // Do we actually need to in thumbnail view? And if we do, what about non-mouse events?
@@ -1103,6 +1104,28 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
     if (_data->_thumbnailView)
         return YES;
 #endif
+
+    // -scrollWheel: uses -_shouldIgnoreWheelEvents, so for all other event types it is correct to use this.
+    return _data->_ignoresNonWheelMouseEvents;
+}
+
+- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
+{
+    _data->_ignoresNonWheelMouseEvents = ignoresNonWheelMouseEvents;
+}
+
+- (BOOL)_ignoresNonWheelMouseEvents
+{
+    return _data->_ignoresNonWheelMouseEvents;
+}
+
+- (BOOL)_shouldIgnoreWheelEvents
+{
+#if WK_API_ENABLED
+    if (_data->_thumbnailView)
+        return YES;
+#endif
+
     return NO;
 }
 
@@ -1185,7 +1208,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)scrollWheel:(NSEvent *)event
 {
-    if ([self shouldIgnoreMouseEvents])
+    if ([self _shouldIgnoreWheelEvents])
         return;
 
     if (_data->_allowsBackForwardNavigationGestures) {

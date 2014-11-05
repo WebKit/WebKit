@@ -2470,6 +2470,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     [_wkView _setTopContentInset:contentInset];
 }
 
+- (BOOL)_ignoresNonWheelMouseEvents
+{
+    return [_wkView _ignoresNonWheelMouseEvents];
+}
+
+- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
+{
+    [_wkView _setIgnoresNonWheelMouseEvents:ignoresNonWheelMouseEvents];
+}
+
 - (CGFloat)_topContentInset
 {
     return [_wkView _topContentInset];
