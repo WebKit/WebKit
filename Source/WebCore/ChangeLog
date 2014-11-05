@@ -1,3 +1,14 @@
+2014-11-05  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error, missing guard.
+        https://bugs.webkit.org/show_bug.cgi?id=138421
+
+        Reviewed by Brent Fulgham.
+
+        There is missing a guard for CSS_SELECTORS_LEVEL4 in CSSParserValues.cpp.
+
+        * css/CSSParserValues.cpp:
+
 2014-11-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r175601): Assertion failures in SimpleLineLayout

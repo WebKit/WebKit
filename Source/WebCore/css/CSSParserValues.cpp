@@ -261,6 +261,7 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
     m_selector->setSelectorList(WTF::move(selectorList));
 }
 
+#if ENABLE(CSS_SELECTORS_LEVEL4)
 void CSSParserSelector::setArgumentList(Vector<CSSParserString>& stringVector)
 {
     ASSERT_WITH_MESSAGE(!stringVector.isEmpty(), "No CSS Selector takes an empty argument list.");
@@ -270,6 +271,7 @@ void CSSParserSelector::setArgumentList(Vector<CSSParserString>& stringVector)
         argumentList->append(argument);
     m_selector->setArgumentList(WTF::move(argumentList));
 }
+#endif
 
 void CSSParserSelector::setPseudoClassValue(const CSSParserString& pseudoClassString)
 {
