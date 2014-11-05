@@ -215,11 +215,6 @@ template<> struct ArgumentCoder<WebCore::PluginInfo> {
     static bool decode(ArgumentDecoder&, WebCore::PluginInfo&);
 };
 
-template<> struct ArgumentCoder<WebCore::HTTPHeaderMap> {
-    static void encode(ArgumentEncoder&, const WebCore::HTTPHeaderMap&);
-    static bool decode(ArgumentDecoder&, WebCore::HTTPHeaderMap&);
-};
-
 template<> struct ArgumentCoder<WebCore::AuthenticationChallenge> {
     static void encode(ArgumentEncoder&, const WebCore::AuthenticationChallenge&);
     static bool decode(ArgumentDecoder&, WebCore::AuthenticationChallenge&);

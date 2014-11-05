@@ -170,10 +170,47 @@ public:
         return !(a == b);
     }
 
+    template <class Encoder> void encode(Encoder&) const;
+    template <class Decoder> static bool decode(Decoder&, HTTPHeaderMap&);
+
 private:
     CommonHeadersHashMap m_commonHeaders;
     UncommonHeadersHashMap m_uncommonHeaders;
 };
+
+template <class Encoder>
+void HTTPHeaderMap::encode(Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(m_commonHeaders.size());
+    for (const auto& keyValuePair : m_commonHeaders) {
+        encoder.encodeEnum(keyValuePair.key);
+        encoder << keyValuePair.value;
+    }
+
+    encoder << m_uncommonHeaders;
+}
+
+template <class Decoder>
+bool HTTPHeaderMap::decode(Decoder& decoder, HTTPHeaderMap& headerMap)
+{
+    uint64_t commonHeadersSize;
+    if (!decoder.decode(commonHeadersSize))
+        return false;
+    for (size_t i = 0; i < commonHeadersSize; ++i) {
+        HTTPHeaderName name;
+        if (!decoder.decodeEnum(name))
+            return false;
+        String value;
+        if (!decoder.decode(value))
+            return false;
+        headerMap.m_commonHeaders.add(name, value);
+    }
+
+    if (!decoder.decode(headerMap.m_uncommonHeaders))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

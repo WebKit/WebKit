@@ -464,59 +464,6 @@ bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder& decoder, PluginInfo& plu
     return true;
 }
 
-
-void ArgumentCoder<HTTPHeaderMap>::encode(ArgumentEncoder& encoder, const HTTPHeaderMap& headerMap)
-{
-    encoder << static_cast<uint64_t>(headerMap.commonHeaders().size());
-    for (const auto& keyValuePair : headerMap.commonHeaders()) {
-        encoder.encodeEnum(keyValuePair.key);
-        encoder << keyValuePair.value;
-    }
-    encoder << static_cast<uint64_t>(headerMap.uncommonHeaders().size());
-    for (const auto& keyValuePair : headerMap.uncommonHeaders()) {
-        encoder << keyValuePair.key;
-        encoder << keyValuePair.value;
-    }
-}
-
-bool ArgumentCoder<HTTPHeaderMap>::decode(ArgumentDecoder& decoder, HTTPHeaderMap& headerMap)
-{
-    uint64_t commonHeadersSize;
-    if (!decoder.decode(commonHeadersSize))
-        return false;
-
-    for (size_t i = 0; i < commonHeadersSize; ++i) {
-        HTTPHeaderName name;
-        if (!decoder.decodeEnum(name))
-            return false;
-
-        String value;
-        if (!decoder.decode(value))
-            return false;
-
-        headerMap.commonHeaders().add(name, value);
-    }
-
-    uint64_t uncommonHeadersSize;
-    if (!decoder.decode(uncommonHeadersSize))
-        return false;
-
-    for (size_t i = 0; i < uncommonHeadersSize; ++i) {
-        String name;
-        if (!decoder.decode(name))
-            return false;
-
-        String value;
-        if (!decoder.decode(value))
-            return false;
-
-        headerMap.uncommonHeaders().add(name, value);
-    }
-
-    return true;
-}
-
-
 void ArgumentCoder<AuthenticationChallenge>::encode(ArgumentEncoder& encoder, const AuthenticationChallenge& challenge)
 {
     encoder << challenge.protectionSpace() << challenge.proposedCredential() << challenge.previousFailureCount() << challenge.failureResponse() << challenge.error();
