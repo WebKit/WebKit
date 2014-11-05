@@ -49,6 +49,8 @@ public:
     GraphicsLayer& documentOverlayRootLayer();
     GraphicsLayer& viewOverlayRootLayer();
 
+    const Vector<RefPtr<PageOverlay>>& pageOverlays() const { return m_pageOverlays; }
+
     void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
     void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
 

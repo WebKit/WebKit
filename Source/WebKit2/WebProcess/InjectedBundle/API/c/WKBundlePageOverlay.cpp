@@ -42,7 +42,7 @@
 namespace API {
 
 template<> struct ClientTraits<WKBundlePageOverlayClientBase> {
-    typedef std::tuple<WKBundlePageOverlayClientV0> Versions;
+    typedef std::tuple<WKBundlePageOverlayClientV0, WKBundlePageOverlayClientV1> Versions;
 };
 
 template<> struct ClientTraits<WKBundlePageOverlayAccessibilityClientBase> {
@@ -131,6 +131,20 @@ private:
             return false;
         }
     }
+
+    virtual bool prepareForActionMenu(WebPageOverlay& pageOverlay, RefPtr<API::Object>& userData) override
+    {
+        if (!m_client.prepareForActionMenu)
+            return false;
+
+        WKTypeRef userDataToPass = nullptr;
+        if (m_client.prepareForActionMenu(toAPI(&pageOverlay), &userDataToPass, m_client.base.clientInfo)) {
+            userData = adoptRef(toImpl(userDataToPass));
+            return true;
+        }
+
+        return false;
+    }
     
     virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, String& value) override
     {
@@ -181,9 +195,6 @@ WKTypeID WKBundlePageOverlayGetTypeID()
 
 WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return nullptr;
-
     auto clientImpl = std::make_unique<PageOverlayClientImpl>(wkClient);
 
     // FIXME: Looks like this leaks the clientImpl.
@@ -192,8 +203,6 @@ WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* 
 
 void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlayRef, WKBundlePageOverlayAccessibilityClientBase* client)
 {
-    if (client && client->version)
-        return;
     static_cast<PageOverlayClientImpl&>(toImpl(bundlePageOverlayRef)->client()).setAccessibilityClient(client);
 }
 
