@@ -1,3 +1,11 @@
+2014-11-04  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the 32-bit build.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForLink]):
+        (-[WKActionMenuController _createActionMenuItemForTag:]):
+
 2014-11-04  Conrad Shultz  <conrad_shultz@apple.com>
 
         Use a web view for Quick Look in action menus
