@@ -1,5 +1,20 @@
 2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Too much whitespace in resource details sidebar in groups
+        https://bugs.webkit.org/show_bug.cgi?id=138386
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content > .group:first-child > .row.simple:first-child > *):
+        (body.mac-platform.legacy .details-section > .content > .group:first-child > .row.simple:first-child > *):
+        (body.mac-platform.legacy .details-section > .content > .group > .row.text):
+        (.details-section > .content > .group > .row.properties:not(.empty)):
+        (body.mac-platform.legacy .details-section > .content > .group > .row.properties:not(.empty)):
+        Adjust top and bottom padding.
+
+2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Lots of TimelineDataGridNode asserts on reloads
         https://bugs.webkit.org/show_bug.cgi?id=138387
 
