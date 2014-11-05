@@ -253,7 +253,7 @@ SVGMarkerOrientType& SVGMarkerElement::orientType() const
 {
     if (SVGAnimatedEnumeration* wrapper = SVGAnimatedProperty::lookupWrapper<UseOwnerType, SVGAnimatedEnumeration>(this, orientTypePropertyInfo())) {
         if (wrapper->isAnimating()) {
-            ASSERT(wrapper->currentAnimatedValue() >= 0 && wrapper->currentAnimatedValue() < SVGMarkerOrientMax);
+            ASSERT(wrapper->currentAnimatedValue() < SVGMarkerOrientMax);
             return reinterpret_cast<SVGMarkerOrientType&>(wrapper->currentAnimatedValue());
         }
     }

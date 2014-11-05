@@ -1,3 +1,15 @@
+2014-11-05  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        Fix build warning in SVGMarkerElement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=138407
+
+        Reviewed by Darin Adler.
+
+        Build warning in debug cause 'comparison of unsigned expression >= 0 is always true [-Wtype-limits]'
+
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientType): Removed useless condition in ASSERT.
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Stop special-casing the empty string in HTMLInputElement.type setter
