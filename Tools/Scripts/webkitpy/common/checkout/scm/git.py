@@ -498,6 +498,10 @@ class Git(SCM, SVNRepository):
         first_remote_branch_ref = remote_branch_refs.split('\n')[0]
         return first_remote_branch_ref.split(':')[1]
 
+    def cherrypick_merge(self, commit):
+        git_args = ['cherry-pick', '-n', commit]
+        return self._run_git(git_args)
+
     def commit_locally_with_message(self, message):
         self._run_git(['commit', '--all', '-F', '-'], input=message)
 
