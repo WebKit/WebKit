@@ -60,7 +60,7 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 using namespace WebCore;
 using namespace WebKit;
 
-@interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
+@interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate>
 - (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
 - (BOOL)_canAddImageToPhotos;
 - (void)_showTextIndicator;
@@ -132,6 +132,8 @@ using namespace WebKit;
     _page = nullptr;
     _wkView = nullptr;
     _hitTestResult = ActionMenuHitTestResult();
+    [_previewPopover setDelegate:nil];
+    _previewPopover = nil;
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -145,6 +147,7 @@ using namespace WebKit;
     [self _updateActionMenuItemsForStage:MenuUpdateStage::PrepareForMenu];
 
     [self _hideTextIndicator];
+    _shouldKeepPreviewPopoverOpen = NO;
 }
 
 - (BOOL)isMenuForTextContent
@@ -177,7 +180,13 @@ using namespace WebKit;
 
     if (_type == kWKActionMenuDataDetectedItem && menu.numberOfItems > 1)
         [self _hideTextIndicator];
-    
+
+    if (!_shouldKeepPreviewPopoverOpen) {
+        [_previewPopover close];
+        [_previewPopover setDelegate:nil];
+        _previewPopover = nil;
+    }
+
     _state = ActionMenuState::None;
     _hitTestResult = ActionMenuHitTestResult();
     _type = kWKActionMenuNone;
@@ -251,24 +260,33 @@ using namespace WebKit;
 }
 
 #if WK_API_ENABLED
-- (void)_previewURLFromActionMenu:(id)sender
+- (void)_keepPreviewOpenFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
-    NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
-    RetainPtr<NSPopover> popover = [self _createPreviewPopoverForURL:url];
-    [popover showRelativeToRect:hitTestResult->elementBoundingBox() ofView:_wkView preferredEdge:NSMaxYEdge];
+    _shouldKeepPreviewPopoverOpen = YES;
 }
 
-- (RetainPtr<NSPopover>)_createPreviewPopoverForURL:(NSURL *)url
+- (void)_previewURLFromActionMenu:(id)sender
+{
+    // We might already have a preview showing if the menu item was highlighted earlier.
+    if (_previewPopover)
+        return;
+
+    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
+    NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
+    [self _createPreviewPopoverForURL:url];
+    [_previewPopover showRelativeToRect:hitTestResult->elementBoundingBox() ofView:_wkView preferredEdge:NSMaxYEdge];
+}
+
+- (void)_createPreviewPopoverForURL:(NSURL *)url
 {
     RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url]);
     NSRect wkViewBounds = [_wkView bounds];
     previewViewController->_preferredSize = NSMakeSize(NSWidth(wkViewBounds) * 0.75, NSHeight(wkViewBounds) * 0.75);
 
-    RetainPtr<NSPopover> popover = adoptNS([[NSPopover alloc] init]);
-    [popover setBehavior:NSPopoverBehaviorTransient];
-    [popover setContentViewController:previewViewController.get()];
-    return popover;
+    _previewPopover = adoptNS([[NSPopover alloc] init]);
+    [_previewPopover setBehavior:NSPopoverBehaviorTransient];
+    [_previewPopover setContentViewController:previewViewController.get()];
+    [_previewPopover setDelegate:self];
 }
 #endif
 
@@ -505,6 +523,15 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     [self _updateActionMenuItemsForStage:MenuUpdateStage::MenuNeedsUpdate];
 }
 
+- (void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
+{
+#if WK_API_ENABLED
+    if (item.tag != kWKContextActionItemTagPreviewLink)
+        return;
+    [self _previewURLFromActionMenu:item];
+#endif
+}
+
 #pragma mark NSSharingServicePickerDelegate implementation
 
 - (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
@@ -532,6 +559,14 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return _wkView.window;
 }
 
+#pragma mark NSPopoverDelegate implementation
+
+- (void)popoverWillClose:(NSNotification *)notification
+{
+    _shouldKeepPreviewPopoverOpen = NO;
+    _previewPopover = nil;
+}
+
 #pragma mark Menu Items
 
 - (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag
@@ -550,7 +585,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 #if WK_API_ENABLED
     case kWKContextActionItemTagPreviewLink:
-        selector = @selector(_previewURLFromActionMenu:);
+        selector = @selector(_keepPreviewOpenFromActionMenu:);
         title = @"Preview";
         image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
