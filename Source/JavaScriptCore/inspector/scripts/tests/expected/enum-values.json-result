@@ -101,6 +101,7 @@ InspectorBackend.activateDomain("CommandDomain");
 
 // EventDomain.
 InspectorBackend.registerEventDomainDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "EventDomain");
+InspectorBackend.registerEnum("EventDomain.EventWithEnumParameterParameter", {Shared: "shared", Black: "black", White: "white"});
 InspectorBackend.registerEvent("EventDomain.eventWithEnumParameter", ["parameter"]);
 InspectorBackend.activateDomain("EventDomain");
 ### End File: InspectorBackendCommands.js

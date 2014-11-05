@@ -143,10 +143,14 @@ bool InspectorDebuggerAgent::isPaused()
     return scriptDebugServer().isPaused();
 }
 
-void InspectorDebuggerAgent::handleConsoleAssert()
+void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
 {
-    if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
-        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Assert, nullptr);
+    if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions) {
+        RefPtr<Inspector::Protocol::Debugger::AssertPauseReason> reason = Inspector::Protocol::Debugger::AssertPauseReason::create();
+        if (!message.isNull())
+            reason->setMessage(message);
+        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Assert, reason->openAccessors());
+    }
 }
 
 static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<InspectorArray>& actions, bool isRegex, bool autoContinue)
@@ -548,9 +552,8 @@ void InspectorDebuggerAgent::setOverlayMessage(ErrorString&, const String*)
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
 {
     if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions) {
-        RefPtr<InspectorObject> directive = InspectorObject::create();
-        directive->setString(ASCIILiteral("directiveText"), directiveText);
-        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::CSPViolation, directive.release());
+        RefPtr<Inspector::Protocol::Debugger::CSPViolationPauseReason> reason = Inspector::Protocol::Debugger::CSPViolationPauseReason::create().setDirective(directiveText);
+        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::CSPViolation, reason->openAccessors());
     }
 }
 

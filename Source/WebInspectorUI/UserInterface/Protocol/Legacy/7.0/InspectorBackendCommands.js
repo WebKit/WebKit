@@ -264,6 +264,7 @@ InspectorBackend.registerEvent("Debugger.globalObjectCleared", []);
 InspectorBackend.registerEvent("Debugger.scriptParsed", ["scriptId", "url", "startLine", "startColumn", "endLine", "endColumn", "isContentScript", "sourceMapURL", "hasSourceURL"]);
 InspectorBackend.registerEvent("Debugger.scriptFailedToParse", ["url", "scriptSource", "startLine", "errorLine", "errorMessage"]);
 InspectorBackend.registerEvent("Debugger.breakpointResolved", ["breakpointId", "location"]);
+InspectorBackend.registerEnum("Debugger.PausedReason", {XHR: "XHR", DOM: "DOM", EventListener: "EventListener", Exception: "exception", Assert: "assert", CSPViolation: "CSPViolation", Other: "other"});
 InspectorBackend.registerEvent("Debugger.paused", ["callFrames", "reason", "data"]);
 InspectorBackend.registerEvent("Debugger.resumed", []);
 InspectorBackend.registerCommand("Debugger.enable", [], []);

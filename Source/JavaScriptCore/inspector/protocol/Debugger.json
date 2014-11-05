@@ -96,6 +96,22 @@
                 { "name": "timestamp", "type": "number", "description": "Timestamp of when the sample was taken." },
                 { "name": "payload", "$ref": "Runtime.RemoteObject", "description": "Contents of the sample." }
             ]
+        },
+        {
+            "id": "AssertPauseReason",
+            "description": "The pause reason auxiliary data when paused because of an assertion.",
+            "type": "object",
+            "properties": [
+                { "name": "message", "type": "string", "optional": true, "description": "The console.assert message string if provided." }
+            ]
+        },
+        {
+            "id": "CSPViolationPauseReason",
+            "description": "The pause reason auxiliary data when paused because of a Content Security Policy directive.",
+            "type": "object",
+            "properties": [
+                { "name": "directive", "type": "string", "description": "The CSP directive that blocked script execution." }
+            ]
         }
     ],
     "commands": [

@@ -1,3 +1,63 @@
+2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pause on exceptions should show the actual exception
+        https://bugs.webkit.org/show_bug.cgi?id=63096
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings / files.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.get pauseReason):
+        (WebInspector.DebuggerManager.prototype.get pauseData):
+        (WebInspector.DebuggerManager.prototype.reset):
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        (WebInspector.DebuggerManager.prototype._pauseReasonFromPayload):
+        Maintain the current pause reason and auxiliary data in the manager.
+
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WebInspector.DebuggerObserver.prototype.paused):
+        Pass previously unused event parameters on to the manager.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl):
+        Style error objects in the console like Objects. The new description
+        string provides a richer message if you console.log(exception).
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidPause):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidResume):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReason):
+        Update the UI when we pause / resume to show / hide a pause reason section.
+
+        * UserInterface/Views/DetailsSectionRow.js:
+        (WebInspector.DetailsSectionRow.prototype.set emptyMessage):
+        Fix a latent bug that would have thrown an exception if the setter was ever used.
+
+        * UserInterface/Views/DetailsSectionTextRow.js: Added.
+        (WebInspector.DetailsSectionTextRow):
+        (WebInspector.DetailsSectionTextRow.prototype.get text):
+        (WebInspector.DetailsSectionTextRow.prototype.set text):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content > .group > .row.simple.data > .value):
+        (.details-section > .content > .group > .row.text):
+        Simple class for a section of centered text. This is modelled after
+        the empty message text style in other sections.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-formatted-object, .console-formatted-node, .console-formatted-error):
+        (.console-formatted-object .section, .console-formatted-node .section, .console-formatted-error .section):
+        (.console-formatted-object .properties, .console-formatted-node .properties, .console-formatted-error .properties):
+        Style "error" objects like regular objects. We may wish to treat differently later.
+
+        * UserInterface/Protocol/Legacy/6.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        Regenerate legacy backend commands to get the new enum.
+
 2014-11-04  Andrei Bucur  <abucur@adobe.com>
 
         Building WebInspectorUI should not run the clang static analyzer by default

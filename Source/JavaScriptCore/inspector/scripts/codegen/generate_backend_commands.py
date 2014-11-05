@@ -88,7 +88,18 @@ class BackendCommandsGenerator(Generator):
                 }
                 lines.append('InspectorBackend.registerEnum("%(domain)s.%(enumName)s", {%(enumMap)s});' % enum_args)
 
+        def is_anonymous_enum_param(param):
+            return isinstance(param.type, EnumType) and param.type.is_anonymous
+
         for event in domain.events:
+            for param in filter(is_anonymous_enum_param, event.event_parameters):
+                enum_args = {
+                    'domain': domain.domain_name,
+                    'enumName': '%s%s' % (ucfirst(event.event_name), ucfirst(param.parameter_name)),
+                    'enumMap': ", ".join(['%s: "%s"' % (Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in param.type.enum_values()])
+                }
+                lines.append('InspectorBackend.registerEnum("%(domain)s.%(enumName)s", {%(enumMap)s});' % enum_args)
+
             event_args = {
                 'domain': domain.domain_name,
                 'eventName': event.event_name,
@@ -97,7 +108,6 @@ class BackendCommandsGenerator(Generator):
             lines.append('InspectorBackend.registerEvent("%(domain)s.%(eventName)s", [%(params)s]);' % event_args)
 
         for command in domain.commands:
-
             def generate_parameter_object(parameter):
                 optional_string = "true" if parameter.is_optional else "false"
                 pairs = []

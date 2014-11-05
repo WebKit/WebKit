@@ -55,6 +55,10 @@ WebInspector.DebuggerManager = function()
 
     this._nextBreakpointActionIdentifier = 1;
 
+    this._paused = false;
+    this._pauseReason = null;
+    this._pauseData = null;
+
     this._scriptIdMap = {};
     this._scriptURLMap = {};
 
@@ -91,6 +95,13 @@ WebInspector.DebuggerManager.Event = {
     BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change"
 };
 
+WebInspector.DebuggerManager.PauseReason = {
+    Exception: "exception",
+    Assertion: "assertion",
+    CSPViolation: "CSP-violation",
+    Other: "other",
+}
+
 WebInspector.DebuggerManager.prototype = {
     constructor: WebInspector.DebuggerManager,
 
@@ -118,6 +129,16 @@ WebInspector.DebuggerManager.prototype = {
     get paused()
     {
         return this._paused;
+    },
+
+    get pauseReason()
+    {
+        return this._pauseReason;
+    },
+
+    get pauseData()
+    {
+        return this._pauseData;
     },
 
     get callFrames()
@@ -404,6 +425,9 @@ WebInspector.DebuggerManager.prototype = {
         WebInspector.Script.resetUniqueDisplayNameNumbers();
 
         this._paused = false;
+        this._pauseReason = null;
+        this._pauseData = null;
+
         this._scriptIdMap = {};
         this._scriptURLMap = {};
 
@@ -426,7 +450,7 @@ WebInspector.DebuggerManager.prototype = {
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.Resumed);
     },
 
-    debuggerDidPause: function(callFramesPayload)
+    debuggerDidPause: function(callFramesPayload, reason, data)
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -439,6 +463,9 @@ WebInspector.DebuggerManager.prototype = {
 
         this._paused = true;
         this._callFrames = [];
+
+        this._pauseReason = this._pauseReasonFromPayload(reason);
+        this._pauseData = data || null;
 
         for (var i = 0; i < callFramesPayload.length; ++i) {
             var callFramePayload = callFramesPayload[i];
@@ -581,6 +608,21 @@ WebInspector.DebuggerManager.prototype = {
 
         var object = WebInspector.RemoteObject.fromPayload(payload.object);
         return new WebInspector.ScopeChainNode(type, object);
+    },
+
+    _pauseReasonFromPayload: function(payload)
+    {
+        // FIXME: Handle other backend pause seasons.
+        switch (payload) {
+        case DebuggerAgent.PausedReason.Exception:
+            return WebInspector.DebuggerManager.PauseReason.Exception;
+        case DebuggerAgent.PausedReason.Assert:
+            return WebInspector.DebuggerManager.PauseReason.Assertion;
+        case DebuggerAgent.PausedReason.CSPViolation:
+            return WebInspector.DebuggerManager.PauseReason.CSPViolation;
+        default:
+            return WebInspector.DebuggerManager.PauseReason.Other;
+        }
     },
 
     _debuggerBreakpointActionType: function(type)

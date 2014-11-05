@@ -290,10 +290,15 @@ body.mac-platform.legacy .details-section > .content > .group:last-child > .row.
     word-break: break-all;
 }
 
-.details-section > .content > .group > .row.empty {
-    padding: 6px;
+.details-section > .content > .group > .row.empty,
+.details-section > .content > .group > .row.text {
+    padding: 0 6px 7px 6px;
     text-align: center;
     color: gray;
+}
+
+.details-section > .content > .group > .row.text {
+    -webkit-user-select: text;
 }
 
 .details-section > .content > .group > .row.properties:not(.empty) {

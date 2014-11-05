@@ -750,6 +750,9 @@ InjectedScript.prototype = {
         if (subtype === "date")
             return this._toString(obj);
 
+        if (subtype === "error")
+            return this._toString(obj);
+
         if (subtype === "node") {
             var description = obj.nodeName.toLowerCase();
             switch (obj.nodeType) {

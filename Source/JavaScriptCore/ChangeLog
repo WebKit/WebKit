@@ -1,3 +1,44 @@
+2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pause on exceptions should show the actual exception
+        https://bugs.webkit.org/show_bug.cgi?id=63096
+
+        Reviewed by Timothy Hatcher.
+
+        * debugger/Debugger.h:
+        Expose accessor for the pause reason to subclasses.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::type):
+        New "error" subtype for error objects.
+
+        * inspector/InjectedScriptSource.js:
+        When an object is an error object, use toString to provide a richer description.
+
+        * inspector/protocol/Runtime.json:
+        Expose a new "error" subtype for Error types (TypeError, ReferenceError, EvalError, etc).
+
+        * inspector/protocol/Debugger.json:
+        Provide type checked objects for different Debugger.pause pause reasons.
+        An exception provides the thrown object, but assert / CSP pauses provide
+        a richer typed object as the auxiliary data.
+
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchDidPause):
+        When paused because of an exception, pass the exception on.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::handleConsoleAssert):
+        (Inspector::InspectorDebuggerAgent::scriptExecutionBlockedByCSP):
+        Provide richer data in pause events.
+
+        * inspector/scripts/codegen/generate_backend_commands.py:
+        (BackendCommandsGenerator.generate_domain.is_anonymous_enum_param):
+        (BackendCommandsGenerator.generate_domain):
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        Generate frontend enums for anonymous enum event parameters.
+
 2014-11-04  Michael Saboff  <msaboff@apple.com>
 
         Disable flakey float32-repeat-out-of-bounds.js and int8-repeat-out-of-bounds.js tests for ARM64

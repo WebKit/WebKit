@@ -246,18 +246,18 @@
     display: none;
 }
 
-.console-formatted-object, .console-formatted-node {
+.console-formatted-object, .console-formatted-node, .console-formatted-error {
     position: relative;
     display: inline-block;
     vertical-align: top;
     color: black;
 }
 
-.console-formatted-object .section, .console-formatted-node .section {
+.console-formatted-object .section, .console-formatted-node .section, .console-formatted-error .section {
     position: static;
 }
 
-.console-formatted-object .properties, .console-formatted-node .properties {
+.console-formatted-object .properties, .console-formatted-node .properties, .console-formatted-error .properties {
     padding-left: 0 !important;
 }
 

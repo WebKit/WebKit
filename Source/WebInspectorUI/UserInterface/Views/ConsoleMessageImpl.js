@@ -41,6 +41,7 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
 
     this._customFormatters = {
         "object": this._formatParameterAsObject,
+        "error": this._formatParameterAsObject,
         "array":  this._formatParameterAsArray,
         "node":   this._formatParameterAsNode,
         "string": this._formatParameterAsString

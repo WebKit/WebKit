@@ -888,7 +888,7 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))
-            debuggerAgent->handleConsoleAssert();
+            debuggerAgent->handleConsoleAssert(message);
     }
 }
 
@@ -899,7 +899,7 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))
-            debuggerAgent->handleConsoleAssert();
+            debuggerAgent->handleConsoleAssert(message);
     }
 }
 
@@ -907,6 +907,11 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
 {
     if (WebConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
+    // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
+        if (isConsoleAssertMessage(source, type))
+            debuggerAgent->handleConsoleAssert(message);
+    }
 }
 
 void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents* instrumentingAgents, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)

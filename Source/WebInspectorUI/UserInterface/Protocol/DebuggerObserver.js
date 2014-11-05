@@ -55,7 +55,7 @@ WebInspector.DebuggerObserver.prototype = {
 
     paused: function(callFrames, reason, data)
     {
-        WebInspector.debuggerManager.debuggerDidPause(callFrames);
+        WebInspector.debuggerManager.debuggerDidPause(callFrames, reason, data);
     },
 
     resumed: function()

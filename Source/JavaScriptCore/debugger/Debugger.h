@@ -122,6 +122,8 @@ protected:
         PausedForBreakpoint
     };
 
+    ReasonForPause reasonForPause() const { return m_reasonForPause; }
+
     virtual void handlePause(ReasonForPause, JSGlobalObject*) { }
     virtual void notifyDoneProcessingDebuggerEvents() { }
 

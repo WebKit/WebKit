@@ -54,7 +54,7 @@ WebInspector.DetailsSectionRow.prototype = {
     {
         this._emptyMessage = emptyMessage || "";
 
-        if (!this.childNodes.length)
+        if (!this._element.childNodes.length)
             this.showEmptyMessage();
     },
 

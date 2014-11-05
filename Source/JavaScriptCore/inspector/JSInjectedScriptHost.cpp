@@ -121,6 +121,10 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     if (value.isNumber())
         return exec->vm().smallStrings.numberString();
 
+    JSObject* object = asObject(value);
+    if (object && object->isErrorInstance())
+        return jsNontrivialString(exec, ASCIILiteral("error"));
+
     if (value.inherits(JSArray::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(DateInstance::info()))

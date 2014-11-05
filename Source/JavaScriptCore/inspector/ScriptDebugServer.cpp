@@ -138,7 +138,8 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
     JSC::ExecState* state = globalObject->globalExec();
     RefPtr<JavaScriptCallFrame> javaScriptCallFrame = JavaScriptCallFrame::create(debuggerCallFrame);
     JSValue jsCallFrame = toJS(state, globalObject, javaScriptCallFrame.get());
-    listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), Deprecated::ScriptValue());
+    Deprecated::ScriptValue exception = reasonForPause() == PausedForException ? Deprecated::ScriptValue(state->vm(), currentException()) : Deprecated::ScriptValue();
+    listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), exception);
 }
 
 void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const String& message)

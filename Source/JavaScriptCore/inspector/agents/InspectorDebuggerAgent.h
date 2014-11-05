@@ -93,7 +93,7 @@ public:
 
     bool isPaused();
     
-    void handleConsoleAssert();
+    void handleConsoleAssert(const String& message);
 
     void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();

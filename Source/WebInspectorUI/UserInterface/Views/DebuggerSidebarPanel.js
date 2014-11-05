@@ -132,6 +132,10 @@ WebInspector.DebuggerSidebarPanel = function()
     var callStackGroup = new WebInspector.DetailsSectionGroup([this._callStackRow]);
     this._callStackSection = new WebInspector.DetailsSection("call-stack", WebInspector.UIString("Call Stack"), [callStackGroup]);
 
+    this._pauseReasonRow = new WebInspector.DetailsSectionTextRow;
+    this._pauseReasonGroup = new WebInspector.DetailsSectionGroup([this._pauseReasonRow]);
+    this._pauseReasonSection = new WebInspector.DetailsSection("paused-reason", null, [this._pauseReasonGroup]);
+
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
 };
 
@@ -229,6 +233,8 @@ WebInspector.DebuggerSidebarPanel.prototype = {
     _debuggerDidPause: function(event)
     {
         this.contentElement.insertBefore(this._callStackSection.element, this.contentElement.firstChild);
+        if (this._updatePauseReason())
+            this.contentElement.insertBefore(this._pauseReasonSection.element, this.contentElement.firstChild);
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = true;
@@ -239,6 +245,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
     _debuggerDidResume: function(event)
     {
         this._callStackSection.element.remove();
+        this._pauseReasonSection.element.remove();
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = false;
@@ -584,6 +591,50 @@ WebInspector.DebuggerSidebarPanel.prototype = {
             return comparisonResult;
 
         return aLocation.displayColumnNumber - bLocation.displayColumnNumber;
+    },
+
+    _updatePauseReason: function()
+    {
+        var pauseData = WebInspector.debuggerManager.pauseData;
+        
+        switch (WebInspector.debuggerManager.pauseReason) {
+        case WebInspector.DebuggerManager.PauseReason.Exception:
+            console.assert(pauseData, "Expected data with an exception, but found none.");
+            if (pauseData) {
+                // FIXME: We should improve the appearance of thrown objects. This works well for exception strings.
+                var data = WebInspector.RemoteObject.fromPayload(pauseData);
+                this._pauseReasonRow.text = data.description;
+                this._pauseReasonSection.title = WebInspector.UIString("Exception");
+                return true;
+            }
+            break;
+
+        case WebInspector.DebuggerManager.PauseReason.Assertion:
+            console.assert(pauseData, "Expected data with an assertion, but found none.");
+            if (pauseData && pauseData.message) {
+                // FIXME: We should include the assertion condition string.
+                this._pauseReasonRow.text = pauseData.message;
+                this._pauseReasonSection.title = WebInspector.UIString("Assertion");
+                return true;
+            }
+            break;
+
+        case WebInspector.DebuggerManager.PauseReason.CSPViolation:
+            console.assert(pauseData, "Expected data with a CSP Violation, but found none.");
+            if (pauseData) {
+                // COMPATIBILITY (iOS 8): 'directive' was 'directiveText'.
+                this._pauseReasonRow.text = pauseData.directive || pauseData.directiveText;
+                this._pauseReasonSection.title = WebInspector.UIString("Content Security Policy Violation");
+                return true;
+            }
+            break;
+
+        case WebInspector.DebuggerManager.PauseReason.Other:
+            console.error("Paused for unknown reason. We should always have a reason.");
+            break;
+        }
+
+        return false;
     }
 };
 
