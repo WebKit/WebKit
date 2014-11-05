@@ -30,7 +30,6 @@
 
 #import "APIUIClient.h"
 #import "SessionState.h"
-#import "WKNSURLExtras.h"
 #import "WKPDFPageNumberIndicator.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -358,7 +357,7 @@ typedef struct {
     if (NSUInteger pageNumber = linkAnnotation.pageNumber) {
         String anchorString = ASCIILiteral("#page");
         anchorString.append(String::number(pageNumber));
-        return [NSURL _web_URLWithWTFString:anchorString relativeToURL:documentURL];
+        return [NSURL URLWithString:anchorString relativeToURL:documentURL];
     }
 
     return nil;
