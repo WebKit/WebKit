@@ -76,6 +76,11 @@ WebInspector.OverviewTimelineView.prototype = {
         return this._timelineRuler.secondsPerPixel;
     },
 
+    set secondsPerPixel(x)
+    {
+        this._timelineRuler.secondsPerPixel = x;
+    },
+
     shown: function()
     {
         WebInspector.TimelineView.prototype.shown.call(this);

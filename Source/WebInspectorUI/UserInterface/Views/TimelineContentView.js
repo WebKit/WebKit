@@ -53,6 +53,7 @@ WebInspector.TimelineContentView = function(recording)
     this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
 
     this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
+    this._overviewTimelineView.secondsPerPixel = this._timelineOverview.secondsPerPixel;
 
     this._discreteTimelineViewMap = new Map;
     for (var [identifier, timeline] of recording.timelines)
