@@ -1096,7 +1096,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
 // Events
 
-- (BOOL)shouldIgnoreMouseEvents
+- (BOOL)_shouldIgnoreMouseEvents
 {
     // FIXME: This check is surprisingly specific. Are there any other cases where we need to block mouse events?
     // Do we actually need to in thumbnail view? And if we do, what about non-mouse events?
@@ -1151,7 +1151,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
-        if ([self shouldIgnoreMouseEvents]) \
+        if (self._shouldIgnoreMouseEvents) \
             return; \
         if (NSTextInputContext *context = [self inputContext]) { \
             [context handleEvent:theEvent completionHandler:^(BOOL handled) { \
@@ -1171,7 +1171,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
-        if ([self shouldIgnoreMouseEvents]) \
+        if (self._shouldIgnoreMouseEvents) \
             return; \
         if ([[self inputContext] handleEvent:theEvent]) { \
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
@@ -1223,7 +1223,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)swipeWithEvent:(NSEvent *)event
 {
-    if ([self shouldIgnoreMouseEvents])
+    if (self._shouldIgnoreMouseEvents)
         return;
 
     if (!_data->_allowsBackForwardNavigationGestures) {
@@ -1241,7 +1241,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseMoved:(NSEvent *)event
 {
-    if ([self shouldIgnoreMouseEvents])
+    if (self._shouldIgnoreMouseEvents)
         return;
 
     // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
@@ -1253,7 +1253,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDown:(NSEvent *)event
 {
-    if ([self shouldIgnoreMouseEvents])
+    if (self._shouldIgnoreMouseEvents)
         return;
 
     [self _setMouseDownEvent:event];
@@ -1263,7 +1263,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseUp:(NSEvent *)event
 {
-    if ([self shouldIgnoreMouseEvents])
+    if (self._shouldIgnoreMouseEvents)
         return;
 
     [self _setMouseDownEvent:nil];
@@ -1272,7 +1272,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    if ([self shouldIgnoreMouseEvents])
+    if (self._shouldIgnoreMouseEvents)
         return;
 
     if (_data->_ignoringMouseDraggedEvents)
