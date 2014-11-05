@@ -443,7 +443,7 @@ macro writeBarrierOnOperand(cellOperand)
     if GGC
         loadisFromInstruction(cellOperand, t1)
         loadConstantOrVariableCell(t1, t2, .writeBarrierDone)
-        checkMarkByte(t2, t1, t3, 
+        skipIfIsRememberedOrInEden(t2, t1, t3, 
             macro(gcData)
                 btbnz gcData, .writeBarrierDone
                 push PB, PC
@@ -474,7 +474,7 @@ macro writeBarrierOnGlobalObject(valueOperand)
     
         loadp CodeBlock[cfr], t3
         loadp CodeBlock::m_globalObject[t3], t3
-        checkMarkByte(t3, t1, t2,
+        skipIfIsRememberedOrInEden(t3, t1, t2,
             macro(gcData)
                 btbnz gcData, .writeBarrierDone
                 push PB, PC
