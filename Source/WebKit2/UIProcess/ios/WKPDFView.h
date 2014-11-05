@@ -25,12 +25,13 @@
 
 #if PLATFORM(IOS)
 
+#import "WKActionSheetAssistant.h"
 #import "WKWebViewContentProvider.h"
 #import <CorePDF/UIPDFAnnotationController.h>
 #import <CorePDF/UIPDFPageView.h>
 #import <UIKit/UIView.h>
 
-@interface WKPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate>
+@interface WKPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>
 
 @property (nonatomic, readonly) NSString *suggestedFilename;
 @property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;

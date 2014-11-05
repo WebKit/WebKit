@@ -28,7 +28,9 @@
 
 #if PLATFORM(IOS)
 
+#import "APIUIClient.h"
 #import "SessionState.h"
+#import "WKNSURLExtras.h"
 #import "WKPDFPageNumberIndicator.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -36,10 +38,10 @@
 #import <CorePDF/UIPDFLinkAnnotation.h>
 #import <CorePDF/UIPDFPage.h>
 #import <CorePDF/UIPDFPageView.h>
+#import <MobileCoreServices/UTCoreTypes.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/_UIHighlightViewSPI.h>
-#import <chrono>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -79,6 +81,9 @@ typedef struct {
 
     BOOL _isStartingZoom;
     BOOL _isPerformingSameDocumentNavigation;
+
+    RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
+    WebKit::InteractionInformationAtPosition _positionInformation;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -94,6 +99,9 @@ typedef struct {
     [_scrollView setMinimumZoomScale:pdfMinimumZoomScale];
     [_scrollView setMaximumZoomScale:pdfMaximumZoomScale];
     [_scrollView setBackgroundColor:[UIColor grayColor]];
+
+    _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
+    [_actionSheetAssistant setDelegate:self];
 
     return self;
 }
@@ -319,17 +327,41 @@ typedef struct {
     _isStartingZoom = NO;
 }
 
-- (RetainPtr<_UIHighlightView>)_createHighlightViewWithFrame:(CGRect)frame
+- (void)_highlightLinkAnnotation:(UIPDFLinkAnnotation *)linkAnnotation forDuration:(NSTimeInterval)duration completionHandler:(void (^)())completionHandler
 {
     static const CGFloat highlightBorderRadius = 3;
     static const CGFloat highlightColorComponent = 26.0 / 255;
     static UIColor *highlightColor = [[UIColor alloc] initWithRed:highlightColorComponent green:highlightColorComponent blue:highlightColorComponent alpha:0.3];
 
-    RetainPtr<_UIHighlightView> highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectInset(frame, -highlightBorderRadius, -highlightBorderRadius)]);
+    UIPDFPageView *pageView = linkAnnotation.annotationController.pageView;
+    CGRect highlightViewFrame = [self convertRect:[pageView convertRectFromPDFPageSpace:linkAnnotation.Rect] fromView:pageView];
+    RetainPtr<_UIHighlightView> highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectInset(highlightViewFrame, -highlightBorderRadius, -highlightBorderRadius)]);
     [highlightView setOpaque:NO];
     [highlightView setCornerRadius:highlightBorderRadius];
     [highlightView setColor:highlightColor];
-    return highlightView;
+
+    ASSERT(isMainThread());
+    [self addSubview:highlightView.get()];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [highlightView removeFromSuperview];
+        completionHandler();
+    });
+}
+
+- (NSURL *)_URLForLinkAnnotation:(UIPDFLinkAnnotation *)linkAnnotation
+{
+    NSURL *documentURL = _webView.URL;
+
+    if (NSURL *url = linkAnnotation.url)
+        return [NSURL URLWithString:url.relativeString relativeToURL:documentURL];
+
+    if (NSUInteger pageNumber = linkAnnotation.pageNumber) {
+        String anchorString = ASCIILiteral("#page");
+        anchorString.append(String::number(pageNumber));
+        return [NSURL _web_URLWithWTFString:anchorString relativeToURL:documentURL];
+    }
+
+    return nil;
 }
 
 #pragma mark UIPDFPageViewDelegate
@@ -360,35 +392,71 @@ typedef struct {
 
 - (void)annotation:(UIPDFAnnotation *)annotation wasTouchedAtPoint:(CGPoint)point controller:(UIPDFAnnotationController *)controller
 {
-    ASSERT(isMainThread());
-
     if (![annotation isKindOfClass:[UIPDFLinkAnnotation class]])
         return;
 
     UIPDFLinkAnnotation *linkAnnotation = (UIPDFLinkAnnotation *)annotation;
-    String urlString;
-    if (NSURL *url = linkAnnotation.url)
-        urlString = url.absoluteString;
-    else if (NSUInteger pageNumber = linkAnnotation.pageNumber) {
-        urlString = ASCIILiteral("#page");
-        urlString.append(String::number(pageNumber));
-    }
-
-    if (urlString.isEmpty())
+    RetainPtr<NSURL> url = [self _URLForLinkAnnotation:linkAnnotation];
+    if (!url)
         return;
 
     CGPoint documentPoint = [controller.pageView convertPoint:point toView:self];
     CGPoint screenPoint = [self.window convertPoint:[self convertPoint:documentPoint toView:nil] toWindow:nil];
-    static const int64_t dispatchOffset = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(200)).count();
     RetainPtr<WKWebView> retainedWebView = _webView;
 
-    CGRect highlightViewFrame = [self convertRect:[controller.pageView convertRectFromPDFPageSpace:annotation.Rect] fromView:controller.pageView];
-    RetainPtr<_UIHighlightView> highlightView = [self _createHighlightViewWithFrame:highlightViewFrame];
-    [self addSubview:highlightView.get()];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, dispatchOffset), dispatch_get_main_queue(), ^ {
-        retainedWebView->_page->navigateToURLWithSimulatedClick(urlString, roundedIntPoint(documentPoint), roundedIntPoint(screenPoint));
-        [highlightView removeFromSuperview];
-    });
+    [self _highlightLinkAnnotation:linkAnnotation forDuration:.2 completionHandler:^{
+        retainedWebView->_page->navigateToURLWithSimulatedClick([url absoluteString], roundedIntPoint(documentPoint), roundedIntPoint(screenPoint));
+    }];
+}
+
+- (void)annotation:(UIPDFAnnotation *)annotation isBeingPressedAtPoint:(CGPoint)point controller:(UIPDFAnnotationController *)controller
+{
+    if (![annotation isKindOfClass:[UIPDFLinkAnnotation class]])
+        return;
+
+    UIPDFLinkAnnotation *linkAnnotation = (UIPDFLinkAnnotation *)annotation;
+    NSURL *url = [self _URLForLinkAnnotation:linkAnnotation];
+    if (!url)
+        return;
+
+    _positionInformation.url = url.absoluteString;
+    _positionInformation.point = roundedIntPoint([controller.pageView convertPoint:point toView:self]);
+    _positionInformation.bounds = roundedIntRect([self convertRect:[controller.pageView convertRectFromPDFPageSpace:annotation.Rect] fromView:controller.pageView]);
+
+    [self _highlightLinkAnnotation:linkAnnotation forDuration:.75 completionHandler:^{
+        [_actionSheetAssistant showLinkSheet];
+    }];
+}
+
+#pragma mark WKActionSheetAssistantDelegate
+
+- (const WebKit::InteractionInformationAtPosition&)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    return _positionInformation;
+}
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action
+{
+    if (action != WebKit::SheetAction::Copy)
+        return;
+
+    NSDictionary *representations = @{
+        (NSString *)kUTTypeUTF8PlainText : _positionInformation.url,
+        (NSString *)kUTTypeURL : [NSURL URLWithString:_positionInformation.url]
+    };
+
+    [UIPasteboard generalPasteboard].items = @[ representations ];
+}
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
+{
+    CGPoint screenPoint = [self.window convertPoint:[self convertPoint:location toView:nil] toWindow:nil];
+    _webView->_page->navigateToURLWithSimulatedClick(_positionInformation.url, roundedIntPoint(location), roundedIntPoint(screenPoint));
+}
+
+- (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
+{
+    return _webView->_page->uiClient().actionsForElement(element, WTF::move(defaultActions));
 }
 
 @end

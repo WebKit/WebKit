@@ -163,7 +163,9 @@ using namespace WebKit;
 
 - (void)updatePositionInformation
 {
-    [_delegate.get() updatePositionInformationForActionSheetAssistant:self];
+    auto delegate = _delegate.get();
+    if ([delegate respondsToSelector:@selector(updatePositionInformationForActionSheetAssistant:)])
+        [delegate updatePositionInformationForActionSheetAssistant:self];
 }
 
 - (BOOL)presentSheet
@@ -236,7 +238,9 @@ using namespace WebKit;
                                                         handler:^(UIAlertAction *action) {
                                                             [self cleanupSheet];
                                                         }]];
-    [delegate actionSheetAssistant:self willStartInteractionWithElement:_elementInfo.get()];
+
+    if ([delegate respondsToSelector:@selector(actionSheetAssistant:willStartInteractionWithElement:)])
+        [delegate actionSheetAssistant:self willStartInteractionWithElement:_elementInfo.get()];
 }
 
 - (void)showImageSheet
@@ -365,7 +369,9 @@ using namespace WebKit;
 
 - (void)cleanupSheet
 {
-    [_delegate.get() actionSheetAssistantDidStopInteraction:self];
+    auto delegate = _delegate.get();
+    if ([delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
+        [delegate actionSheetAssistantDidStopInteraction:self];
 
     [_interactionSheet doneWithSheet];
     [_interactionSheet setSheetDelegate:nil];
