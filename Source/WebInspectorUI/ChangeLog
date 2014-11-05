@@ -1,3 +1,28 @@
+2014-11-05  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: Add infrastructure for eslint based static analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=137890
+
+        Reviewed by Timothy Hatcher.
+
+        Adding a manager to analyze source code, return warnings (AnalyzerMessages), and cache warnings.
+
+        * UserInterface/Base/Main.js: Create analyzerManager singleton.
+        * UserInterface/Controllers/AnalyzerManager.js: Added.
+        (WebInspector.AnalyzerManager):
+        (set WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode.):
+        (set WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode):
+        (set WebInspector.AnalyzerManager.prototype.set get sourceCodeCanBeAnalyzed):
+        (set WebInspector.AnalyzerManager.prototype._handleSourceCodeContentDidChange):
+        * UserInterface/Main.html: Add new files.
+        * UserInterface/Models/AnalyzerMessage.js: Added.
+        (WebInspector.AnalyzerMessage):
+        (WebInspector.AnalyzerMessage.prototype.get sourceCodeLocation):
+        (WebInspector.AnalyzerMessage.prototype.get sourceCode):
+        (WebInspector.AnalyzerMessage.prototype.get text):
+        (WebInspector.AnalyzerMessage.prototype.get ruleIdentifier):
+        * UserInterface/Models/SourceCode.js: Added call to WebInspector.Object.addConstructorFunctions().
+
 2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Too much whitespace in resource details sidebar in groups
