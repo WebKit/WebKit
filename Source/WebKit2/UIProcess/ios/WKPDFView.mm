@@ -147,6 +147,7 @@ typedef struct {
 
     [self _computePageAndDocumentFrames];
     [self _revalidateViews];
+    [self _scrollToFragment:_webView.URL.fragment];
 }
 
 - (void)web_setMinimumSize:(CGSize)size
@@ -250,17 +251,8 @@ typedef struct {
         [_fixedOverlayView addSubview:_pageNumberIndicator.get()];
 }
 
-- (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType
+- (void)_scrollToFragment:(NSString *)fragment
 {
-    // Check for kWKSameDocumentNavigationSessionStatePop instead of kWKSameDocumentNavigationAnchorNavigation since the
-    // latter is only called once when navigating to the same anchor in succession. If the user navigates to a page
-    // then scrolls back and clicks on the same link a second time, we want to scroll again.
-    if (navigationType != kWKSameDocumentNavigationSessionStatePop)
-        return;
-
-    // FIXME: restore the scroll position and page scale if navigating back from a fragment.
-
-    NSString *fragment = _webView.URL.fragment;
     if (![fragment hasPrefix:@"page"])
         return;
 
@@ -278,6 +270,19 @@ typedef struct {
     [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x, verticalOffset) animated:NO];
 
     _isPerformingSameDocumentNavigation = NO;
+}
+
+- (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType
+{
+    // Check for kWKSameDocumentNavigationSessionStatePop instead of kWKSameDocumentNavigationAnchorNavigation since the
+    // latter is only called once when navigating to the same anchor in succession. If the user navigates to a page
+    // then scrolls back and clicks on the same link a second time, we want to scroll again.
+    if (navigationType != kWKSameDocumentNavigationSessionStatePop)
+        return;
+
+    // FIXME: restore the scroll position and page scale if navigating back from a fragment.
+
+    [self _scrollToFragment:_webView.URL.fragment];
 }
 
 - (void)_computePageAndDocumentFrames
