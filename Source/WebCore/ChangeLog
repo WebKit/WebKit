@@ -1,3 +1,12 @@
+2014-11-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix build after r138351
+        https://bugs.webkit.org/show_bug.cgi?id=138401
+
+        Ureviewed. Make return type match.
+
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+
 2014-11-04  Tim Horton  <timothy_horton@apple.com>
 
         Add bundle SPI allowing PageOverlay to customize the action menu

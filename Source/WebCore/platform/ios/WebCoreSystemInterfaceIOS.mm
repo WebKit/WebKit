@@ -130,7 +130,7 @@ WEBCORE_EXPORT CFStringRef (*wkGetOSNameForUserAgent)(void);
 WEBCORE_EXPORT CFStringRef (*wkGetPlatformNameForNavigator)(void);
 WEBCORE_EXPORT CFStringRef (*wkGetVendorNameForNavigator)(void);
 
-WEBCORE_EXPORT BOOL (*wkIsOptimizedFullscreenSupported)(void);
+WEBCORE_EXPORT bool (*wkIsOptimizedFullscreenSupported)(void);
 
 WEBCORE_EXPORT int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
