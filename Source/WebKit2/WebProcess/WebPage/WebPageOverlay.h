@@ -50,7 +50,7 @@ public:
         virtual void drawRect(WebPageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(WebPageOverlay&, const WebCore::PlatformMouseEvent&) = 0;
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
-        virtual bool prepareForActionMenu(WebPageOverlay&, RefPtr<API::Object>& userData) { return false; }
+        virtual bool prepareForActionMenu(WebPageOverlay&, RefPtr<API::Object>&) { return false; }
 
         virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& /* value */) { return false; }
         virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& /* value */) { return false; }
