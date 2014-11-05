@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm64" and $hostOS == "darwin"
 //@ defaultNoEagerRun
 
 function foo(a) {
