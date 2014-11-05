@@ -34,15 +34,25 @@
 #import "ExceptionCode.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/NeverDestroyed.h>
+#import <yarr/RegularExpression.h>
+
+using JSC::Yarr::RegularExpression;
 
 namespace WebCore {
+
+static RegularExpression& validKeySystemRE()
+{
+    static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.2_\\d+(?:,\\d+)*$", TextCaseInsensitive);
+    return keySystemRE;
+}
 
 bool CDMPrivateMediaSourceAVFObjC::supportsKeySystem(const String& keySystem)
 {
     if (!wkQueryDecoderAvailability())
         return false;
 
-    if (!keySystem.isEmpty() && !equalIgnoringCase(keySystem, "com.apple.fps.2_0"))
+    if (!keySystem.isEmpty() && validKeySystemRE().match(keySystem) < 0)
         return false;
 
     return true;
@@ -81,7 +91,17 @@ bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
 
 std::unique_ptr<CDMSession> CDMPrivateMediaSourceAVFObjC::createSession()
 {
-    return std::make_unique<CDMSessionMediaSourceAVFObjC>();
+    String keySystem = m_cdm->keySystem();
+    ASSERT(validKeySystemRE().match(keySystem) >= 0);
+
+    Vector<String> protocolVersionsStrings;
+    keySystem.substring(16).split(',', false, protocolVersionsStrings);
+
+    Vector<int> protocolVersions;
+    for (auto& protocolVersionString : protocolVersionsStrings)
+        protocolVersions.append(protocolVersionString.toInt());
+
+    return std::make_unique<CDMSessionMediaSourceAVFObjC>(protocolVersions);
 }
 
 }
