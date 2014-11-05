@@ -1,3 +1,22 @@
+2014-11-05  Andreas Kling  <akling@apple.com>
+
+        RenderBlock shouldn't need a pre-destructor hook.
+        <https://webkit.org/b/138430>
+
+        Reviewed by Antti Koivisto.
+
+        All that was interesting in RenderBlock::willBeDestroyed() has migrated
+        to RenderBlockFlow. removeFromUpdateScrollInfoAfterLayoutTransaction()
+        can be called from the plain destructor, so just move it there.
+
+        We don't have to worry about destroyLeftoverChildren(), since RenderElement
+        will take care of that for us.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::willBeDestroyed): Deleted.
+        * rendering/RenderBlock.h:
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Remove 2 unnecessary virtual functions on InputType
