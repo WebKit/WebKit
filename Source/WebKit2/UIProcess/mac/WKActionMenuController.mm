@@ -60,6 +60,8 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 using namespace WebCore;
 using namespace WebKit;
 
+static const CGFloat popoverToViewScale = 0.75;
+
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate>
 - (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
 - (BOOL)_canAddImageToPhotos;
@@ -74,7 +76,7 @@ using namespace WebKit;
 #if WK_API_ENABLED
 @interface WKPagePreviewViewController : NSViewController {
 @public
-    NSSize _preferredSize;
+    NSSize _mainViewSize;
 
 @private
     RetainPtr<NSURL> _url;
@@ -92,19 +94,22 @@ using namespace WebKit;
         return nil;
 
     _url = URL;
-    _preferredSize = NSMakeSize(320, 568);
+    _mainViewSize = NSMakeSize(320, 568);
 
     return self;
 }
 
 - (void)loadView
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, _preferredSize.width, _preferredSize.height)]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, _mainViewSize.width, _mainViewSize.height)]);
     [webView _setIgnoresNonWheelMouseEvents:YES];
     if (_url) {
         NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
         [webView loadRequest:request];
     }
+
+    // Setting the webView bounds will scale it to 75% of the _mainViewSize. 
+    [webView setBounds:NSMakeRect(0, 0, _mainViewSize.width / popoverToViewScale, _mainViewSize.height / popoverToViewScale)];
     self.view = webView.get();
 }
 
@@ -291,17 +296,17 @@ using namespace WebKit;
 - (void)_createPreviewPopoverForURL:(NSURL *)url originRect:(NSRect)originRect
 {
     RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url]);
-    previewViewController->_preferredSize = [self _preferredSizeForPopoverPresentedFromOriginRect:originRect];
+    previewViewController->_mainViewSize = _wkView.bounds.size;
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
     [_previewPopover setBehavior:NSPopoverBehaviorTransient];
+    [_previewPopover setContentSize:[self _preferredSizeForPopoverPresentedFromOriginRect:originRect]];
     [_previewPopover setContentViewController:previewViewController.get()];
     [_previewPopover setDelegate:self];
 }
 
 - (NSSize)_preferredSizeForPopoverPresentedFromOriginRect:(NSRect)originRect
 {
-    static const CGFloat preferredPopoverToWKViewScale = 0.75;
     static const CGFloat screenPadding = 40;
 
     NSWindow *window = _wkView.window;
@@ -317,7 +322,7 @@ using namespace WebKit;
     CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - screenPadding;
 
     NSRect wkViewBounds = _wkView.bounds;
-    NSSize preferredSize = NSMakeSize(NSWidth(wkViewBounds) * preferredPopoverToWKViewScale, NSHeight(wkViewBounds) * preferredPopoverToWKViewScale);
+    NSSize preferredSize = NSMakeSize(NSWidth(wkViewBounds) * popoverToViewScale, NSHeight(wkViewBounds) * popoverToViewScale);
     preferredSize.width = fmin(preferredSize.width, maxAvailableHorizontalSpace);
     preferredSize.height = fmin(preferredSize.height, maxAvailableVerticalSpace);
     return preferredSize;
