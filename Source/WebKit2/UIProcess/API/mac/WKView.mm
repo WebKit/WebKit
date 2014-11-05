@@ -2539,6 +2539,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         _data->_flagsChangedEventMonitor = nil;
 
         WKHideWordDefinitionWindow();
+        [self _dismissActionMenuDataDetectorPopovers];
     }
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
@@ -3661,6 +3662,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
 {
     [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
+}
+
+- (void)_dismissActionMenuDataDetectorPopovers
+{
+    [_data->_actionMenuController dismissActionMenuDataDetectorPopovers];
 }
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
