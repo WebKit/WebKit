@@ -1048,7 +1048,7 @@ private:
 #if PLATFORM(MAC)
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint);
-    void selectLookupTextAtLocation(WebCore::FloatPoint);
+    void selectLastActionMenuRange();
 #endif
 
     uint64_t m_pageID;
@@ -1272,6 +1272,10 @@ private:
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;
+#endif
+
+#if PLATFORM(MAC)
+    RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
 #endif
 };
 
