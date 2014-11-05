@@ -1,3 +1,38 @@
+2014-11-04  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Abstract out content iteration and text handling in general.
+        https://bugs.webkit.org/show_bug.cgi?id=138346
+
+        Reviewed by Antti Koivisto.
+
+        Add a class that can act as the primary iterator/fragment handling interface to the line parser.
+        This helps adding support multiple renderer elements without changing the parser logic.
+        Currently it operates strictly on the first child of the RenderBlockFlow.  
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::FlowContentIterator::FlowContentIterator):
+        (WebCore::SimpleLineLayout::FlowContentIterator::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::FlowContentIterator::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContentIterator::textWidth):
+        (WebCore::SimpleLineLayout::FlowContentIterator::isNewlineCharacter):
+        (WebCore::SimpleLineLayout::FlowContentIterator::isEndOfContent):
+        (WebCore::SimpleLineLayout::FlowContentIterator::style):
+        (WebCore::SimpleLineLayout::computeLineLeft):
+        (WebCore::SimpleLineLayout::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::nextFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::skipWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::textWidth): Deleted.
+        * rendering/SimpleLineLayout.h:
+
 2014-11-04  Jeremy Jones  <jeremyj@apple.com>
 
         Fix build after r138351
