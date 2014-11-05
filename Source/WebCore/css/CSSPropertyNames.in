@@ -215,7 +215,7 @@ src
 speak [Inherited, NewStyleBuilder]
 table-layout [NewStyleBuilder]
 tab-size [Inherited, NewStyleBuilder, TypeName=unsigned]
-text-align [Inherited]
+text-align [Inherited, NewStyleBuilder, Converter=TextAlign]
 text-decoration [NewStyleBuilder, Converter=TextDecoration]
 text-indent [Inherited]
 text-line-through

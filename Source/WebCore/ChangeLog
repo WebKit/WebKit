@@ -1,3 +1,24 @@
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Move text-align CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138398
+
+        Reviewed by Antti Koivisto.
+
+        Move text-align CSS property from DeprecatedStyleBuilder to the new
+        StyleBuilder so that it is now generated from CSSPropertyNames.in.
+        This patch adds a TextAlign Converter to support this.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyTextAlign::applyValue): Deleted.
+        (WebCore::ApplyPropertyTextAlign::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTextAlign):
+
 2014-11-05  Sanghyup Lee  <sh53.lee@samsung.com>
 
         Fix build warning in SVGMarkerElement.cpp

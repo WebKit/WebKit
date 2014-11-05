@@ -57,6 +57,7 @@ public:
     static String convertStringOrAuto(StyleResolver&, CSSValue&);
     static String convertStringOrNone(StyleResolver&, CSSValue&);
     static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, CSSValue&);
+    static ETextAlign convertTextAlign(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -305,6 +306,22 @@ inline TextEmphasisPosition StyleBuilderConverter::convertTextEmphasisPosition(S
     for (auto& currentValue : downcast<CSSValueList>(value))
         position |= valueToEmphasisPosition(downcast<CSSPrimitiveValue>(currentValue.get()));
     return position;
+}
+
+inline ETextAlign StyleBuilderConverter::convertTextAlign(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    ASSERT(primitiveValue.isValueID());
+
+    if (primitiveValue.getValueID() != CSSValueWebkitMatchParent)
+        return primitiveValue;
+
+    auto* parentStyle = styleResolver.parentStyle();
+    if (parentStyle->textAlign() == TASTART)
+        return parentStyle->isLeftToRightDirection() ? LEFT : RIGHT;
+    if (parentStyle->textAlign() == TAEND)
+        return parentStyle->isLeftToRightDirection() ? RIGHT : LEFT;
+    return parentStyle->textAlign();
 }
 
 } // namespace WebCore
