@@ -209,7 +209,9 @@ audio::-webkit-media-controls-start-playback-button.failed {
 video::-webkit-media-controls-play-button,
 audio::-webkit-media-controls-play-button,
 video::-webkit-media-controls-fullscreen-button,
-audio::-webkit-media-controls-fullscreen-button {
+audio::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-optimized-fullscreen-button,
+audio::-webkit-media-controls-optimized-fullscreen-button {
     -webkit-appearance: none;
     display: block;
     padding: 0;
@@ -241,6 +243,14 @@ video::-webkit-media-controls-fullscreen-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 44"><g stroke="rgba(0, 0, 0, 0.4)" fill="none"><path d="M 10.5,20.5 v -5 h 5 M 10.5,15.5 l 5,5"/><path d="M 24.5,24.5 v 5 h -5 M 24.5,29.5 l -5,-5"/></g></svg>');
 }
 
+video::-webkit-media-controls-optimized-fullscreen-button {
+    width: 35px;
+    height: 44px;
+    background-size: 35px 44px;
+    opacity: 0.9;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 44"><g stroke="rgba(0, 0, 0, 0.4)" fill="none"><path d="M 10,15 h 14 v 14 h -14 v -14"/></g></svg>');
+}
+
 video::-webkit-media-controls-play-button {
     width: 41px;
     height: 44px;
@@ -259,6 +269,10 @@ video::-webkit-media-controls-play-button.paused {
 
 video::-webkit-media-controls-fullscreen-button:active {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 44"><g stroke="white" fill="none"><path d="M 10,20 v -5 h 5 M 10,15 l 5,5"/><path d="M 24,24 v 5 h -5 M 24,29 l -5,-5"/></g></svg>');
+}
+
+video::-webkit-media-controls-optimized-fullscreen-button:active {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 44"><g stroke="white" fill="none"><path d="M 10,15 h 14 v 14 h -14 v -14"/></g></svg>');
 }
 
 video::-webkit-media-controls-timeline,

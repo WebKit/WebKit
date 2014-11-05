@@ -1,3 +1,50 @@
+2014-11-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Add button and enable optimized fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=138351
+
+        Reviewed by Eric Carlson.
+
+        Added optimizedFullscreenButton to js media element controls. Remove #if conditional 
+        and use optimizedFullscreenSupported to enable feature at runtime
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::enterFullscreenOptimized): enable
+        (WebCore::MediaControlsHost::optimizedFullscreenSupported): added
+        * Modules/mediacontrols/MediaControlsHost.h: add optimizedFullscreenSupported
+        * Modules/mediacontrols/MediaControlsHost.idl: ditto
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-optimized-fullscreen-button): added
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls): add button
+        (Controller.prototype.handleReadyStateChange): update button
+        (Controller.prototype.updateOptimizedFullscreenButton): added
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-optimized-fullscreen-button): added
+        (video::-webkit-media-controls-optimized-fullscreen-button): added
+        (video::-webkit-media-controls-optimized-fullscreen-button:active): added
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): listen for events from optimizedFullscreenButton
+        (ControllerIOS.prototype.configureInlineControls): add button for non-audio when supported.
+        (ControllerIOS.prototype.handleBaseGestureChange): 2-finger double-tap gesture for optimized fullscreen
+        (ControllerIOS.prototype.handleWrapperTouchStart): ditto
+        (ControllerIOS.prototype.handleOptimizedFullscreenButtonClicked): added
+        (ControllerIOS.prototype.handleOptimizedFullscreenTouchStart): added 
+        (ControllerIOS.prototype.handleOptimizedFullscreenTouchEnd): added
+        (ControllerIOS.prototype.handleOptimizedFullscreenTouchCancel): added
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchStart): fix typo
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchEnd): fix typo
+        (ControllerIOS.prototype.handleStartPlaybackButtonTouchCancel): fix typo
+        * WebCore.exp.in:
+        * platform/ios/WebCoreSystemInterfaceIOS.h: added wkIsOptimizedFullscreenSupported
+        * platform/ios/WebCoreSystemInterfaceIOS.mm: added wkIsOptimizedFullscreenSupported
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): enable feature
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): enable feature
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen): only request exit when entered and not requested exit
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): ditto
+
 2014-11-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Pause on exceptions should show the actual exception

@@ -2848,6 +2848,7 @@ _wkGetUserAgent
 _wkGetVendorNameForNavigator
 _wkGetVerticalGlyphsForCharacters
 _wkIsGB18030ComplianceRequired
+_wkIsOptimizedFullscreenSupported
 _wkSetLayerContentsScale
 #endif
 

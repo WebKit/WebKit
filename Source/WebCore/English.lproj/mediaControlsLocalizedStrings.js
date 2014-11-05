@@ -11,6 +11,7 @@ var UIStringTable = {
     'Captions': 'Captions',
     'Choose Wireless Display': 'Choose Wireless Display',
     'Display Full Screen': 'Display Full Screen',
+    'Display Optimized Full Screen': 'Display Optimized Full Screen',
     'Duration': 'Duration',
     'Elapsed': 'Elapsed',
     'Error': 'Error',

@@ -56,4 +56,5 @@ enum DeviceType {
     void enteredFullscreen();
     void exitedFullscreen();
     void enterFullscreenOptimized();
+    readonly attribute boolean optimizedFullscreenSupported;
 };

@@ -167,6 +167,9 @@ ControllerIOS.prototype = {
         this.listenFor(this.controls.fullscreenButton, 'touchstart', this.handleFullscreenTouchStart);
         this.listenFor(this.controls.fullscreenButton, 'touchend', this.handleFullscreenTouchEnd);
         this.listenFor(this.controls.fullscreenButton, 'touchcancel', this.handleFullscreenTouchCancel);
+        this.listenFor(this.controls.optimizedFullscreenButton, 'touchstart', this.handleOptimizedFullscreenTouchStart);
+        this.listenFor(this.controls.optimizedFullscreenButton, 'touchend', this.handleOptimizedFullscreenTouchEnd);
+        this.listenFor(this.controls.optimizedFullscreenButton, 'touchcancel', this.handleOptimizedFullscreenTouchCancel);
         this.stopListeningFor(this.controls.playButton, 'click', this.handlePlayButtonClicked);
     },
 
@@ -204,8 +207,11 @@ ControllerIOS.prototype = {
             this.controls.timelineBox.appendChild(this.controls.timeline);
             this.controls.timelineBox.appendChild(this.controls.remainingTime);
         }
-        if (!this.isAudio())
+        if (!this.isAudio()) {
             this.controls.panel.appendChild(this.controls.fullscreenButton);
+            if (this.host.optimizedFullscreenSupported)
+                this.controls.panel.appendChild(this.controls.optimizedFullscreenButton);
+        }
     },
 
     configureFullScreenControls: function() {
@@ -320,6 +326,10 @@ ControllerIOS.prototype = {
     handleBaseGestureChange: function(event) {
         if (!this.video.controls || this.isAudio() || this.isFullScreen() || this.gestureStartTime === undefined || this.controlsType == ControllerIOS.StartPlaybackControls)
             return;
+        
+        var scaleDetectionThreshold = 0.2;
+        if (event.scale > 1 + scaleDetectionThreshold || event.scale < 1 - scaleDetectionThreshold)
+            delete this.lastDoubleTouchTime;
 
         if (this.mostRecentNumberOfTargettedTouches == 2 && event.scale >= 1.0)
             event.preventDefault();
@@ -331,16 +341,13 @@ ControllerIOS.prototype = {
 
         var velocity = Math.abs(event.scale - 1) / duration;
         
-        if (velocity < 2)
+        var pinchOutVelocityThreshold = 2;
+        var pinchOutGestureScaleThreshold = 1.25;
+        if (velocity < pinchOutVelocityThreshold || event.scale < pinchOutGestureScaleThreshold)
             return;
 
-        if (event.scale >= 1.25) {
-            delete this.gestureStartTime;
-            this.video.webkitEnterFullscreen();
-        } else if (event.scale <= 0.75) {
-            delete this.gestureStartTime;
-            this.host.enterFullscreenOptimized();
-        }
+        delete this.gestureStartTime;
+        this.video.webkitEnterFullscreen();
     },
 
     handleBaseGestureEnd: function(event) {
@@ -352,7 +359,24 @@ ControllerIOS.prototype = {
             return;
 
         this.mostRecentNumberOfTargettedTouches = event.targetTouches.length;
-
+        
+        if (this.host.optimizedFullscreenSupported) {
+            if (this.mostRecentNumberOfTargettedTouches == 2) {
+                var now = new Date();
+                if (this.lastDoubleTouchTime === undefined) {
+                    this.lastDoubleTouchTime = now;
+                } else {
+                    var doubleTouchIntervalThresholdms = 300
+                    if (now - this.lastDoubleTouchTime < doubleTouchSpeedThreshold) {
+                        delete this.lastDoubleTouchTime;
+                        event.preventDefault();
+                        this.host.enterFullscreenOptimized();
+                    } else
+                        this.lastDoubleTouchTime = now;
+                }
+            }
+        }
+        
         if (this.controlsAreHidden()) {
             this.showControls();
             if (this.hideTimer)
@@ -407,12 +431,36 @@ ControllerIOS.prototype = {
         return true;
     },
 
+    handleOptimizedFullscreenButtonClicked: function(event) {
+        if (this.isFullenterFullscreenOptimizedScreen())
+            this.video.webkitExitFullscreen();
+        else
+            this.host.enterFullscreenOptimized();
+    },
+        
+    handleOptimizedFullscreenTouchStart: function() {
+        this.controls.optimizedFullscreenButton.classList.add('active');
+    },
+        
+    handleOptimizedFullscreenTouchEnd: function(event) {
+        this.controls.optimizedFullscreenButton.classList.remove('active');
+        
+        this.handleOptimizedFullscreenButtonClicked();
+        
+        return true;
+    },
+        
+    handleOptimizedFullscreenTouchCancel: function(event) {
+        this.controls.optimizedFullscreenButton.classList.remove('active');
+        return true;
+    },
+
     handleStartPlaybackButtonTouchStart: function(event) {
-        this.controls.fullscreenButton.classList.add('active');
+        this.controls.startPlaybackButton.classList.add('active');
     },
 
     handleStartPlaybackButtonTouchEnd: function(event) {
-        this.controls.fullscreenButton.classList.remove('active');
+        this.controls.startPlaybackButton.classList.remove('active');
         if (this.video.error)
             return true;
 
@@ -422,7 +470,7 @@ ControllerIOS.prototype = {
     },
 
     handleStartPlaybackButtonTouchCancel: function(event) {
-        this.controls.fullscreenButton.classList.remove('active');
+        this.controls.startPlaybackButton.classList.remove('active');
         return true;
     },
 

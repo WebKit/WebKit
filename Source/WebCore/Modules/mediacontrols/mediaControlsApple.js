@@ -395,6 +395,11 @@ Controller.prototype = {
         fullscreenButton.setAttribute('pseudo', '-webkit-media-controls-fullscreen-button');
         fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
         this.listenFor(fullscreenButton, 'click', this.handleFullscreenButtonClicked);
+
+        var optimizedFullscreenButton = this.controls.optimizedFullscreenButton = document.createElement('button');
+        optimizedFullscreenButton.setAttribute('pseudo', '-webkit-media-controls-optimized-fullscreen-button');
+        optimizedFullscreenButton.setAttribute('aria-label', this.UIString('Display Optimized Full Screen'));
+        this.listenFor(optimizedFullscreenButton, 'click', this.handleOptimizedFullscreenButtonClicked);
     },
 
     setControlsType: function(type)
@@ -554,6 +559,7 @@ Controller.prototype = {
         this.updateCaptionButton();
         this.updateCaptionContainer();
         this.updateFullscreenButton();
+        this.updateOptimizedFullscreenButton();
         this.updateProgress();
     },
 
@@ -859,6 +865,11 @@ Controller.prototype = {
         this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, !this.video.webkitSupportsFullscreen);
     },
 
+    updateOptimizedFullscreenButton: function()
+    {
+        this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, !this.video.webkitSupportsFullscreen);
+    },
+    
     handleFullscreenButtonClicked: function(event)
     {
         if (this.isFullScreen())

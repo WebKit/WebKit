@@ -131,6 +131,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetAvailableScreenSize);
     INIT(GetScreenScaleFactor);
     INIT(IsGB18030ComplianceRequired);
+    INIT(IsOptimizedFullscreenSupported);
 #endif
 
     INIT(CreateCTLineWithUniCharProvider);

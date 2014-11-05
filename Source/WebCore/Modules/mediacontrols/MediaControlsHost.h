@@ -71,6 +71,7 @@ public:
     void enteredFullscreen();
     void exitedFullscreen();
     void enterFullscreenOptimized();
+    bool optimizedFullscreenSupported();
 
     String externalDeviceDisplayName() const;
     String externalDeviceType() const;

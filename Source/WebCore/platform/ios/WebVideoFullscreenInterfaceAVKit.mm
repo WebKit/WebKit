@@ -861,10 +861,10 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
     
     m_exitCompleted = false;
     m_exitRequested = false;
+    m_enterRequested = true;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() blackColor] CGColor]];
-#if ENABLE(OPTIMIZED_FULLSCREEN)
         if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized) {
             [m_playerViewController startOptimizedFullscreenWithStartCompletionHandler:^(BOOL success, NSError *) {
                 
@@ -897,7 +897,6 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
                 }
             }];
         } else
-#endif
         if (m_mode == HTMLMediaElement::VideoFullscreenModeStandard) {
             [m_playerViewController enterFullScreenWithCompletionHandler:^(BOOL, NSError*)
             {
@@ -941,12 +940,10 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect
             [m_videoLayerContainer setVideoLayerGravity:AVVideoLayerGravityResizeAspect];
         [[m_playerViewController view] layoutIfNeeded];
         
-#if ENABLE(OPTIMIZED_FULLSCREEN)
         if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized) {
             [m_window setHidden:NO];
             [m_playerViewController stopOptimizedFullscreen];
         } else
-#endif
         if (m_mode == HTMLMediaElement::VideoFullscreenModeStandard) {
             [m_playerViewController exitFullScreenWithCompletionHandler:^(BOOL, NSError*) {
                 m_exitCompleted = true;
@@ -1003,6 +1000,7 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
         WebThreadRun(^{
             if (m_fullscreenChangeObserver)
                 m_fullscreenChangeObserver->didCleanupFullscreen();
+            m_enterRequested = false;
             protect = nullptr;
         });
     });
@@ -1034,6 +1032,9 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
 
 void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
 {
+    if (!m_enterRequested)
+        return;
+    
     if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized)
         return;
     
@@ -1047,7 +1048,7 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
         }];
     });
 
-    if (m_videoFullscreenModel)
+    if (m_videoFullscreenModel && !m_exitRequested)
         m_videoFullscreenModel->requestExitFullscreen();
 }
 

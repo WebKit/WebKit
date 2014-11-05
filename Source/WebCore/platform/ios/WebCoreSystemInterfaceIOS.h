@@ -73,4 +73,6 @@ extern CFStringRef (*wkGetOSNameForUserAgent)(void);
 extern CFStringRef (*wkGetPlatformNameForNavigator)(void);
 extern CFStringRef (*wkGetVendorNameForNavigator)(void);
 
+extern bool (*wkIsOptimizedFullscreenSupported)(void);
+
 #endif // WebCoreSystemInterfaceIOS_h

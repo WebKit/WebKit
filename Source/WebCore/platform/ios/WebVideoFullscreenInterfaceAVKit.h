@@ -105,6 +105,7 @@ protected:
     HTMLMediaElement::VideoFullscreenMode m_mode;
     bool m_exitRequested;
     bool m_exitCompleted;
+    bool m_enterRequested;
 
     WebAVPlayerController *playerController();
     

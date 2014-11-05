@@ -190,8 +190,17 @@ void MediaControlsHost::exitedFullscreen()
     
 void MediaControlsHost::enterFullscreenOptimized()
 {
-#if ENABLE(OPTIMIZED_FULLSCREEN)
+#if PLATFORM(IOS)
     m_mediaElement->enterFullscreenOptimized();
+#endif
+}
+    
+bool MediaControlsHost::optimizedFullscreenSupported()
+{
+#if PLATFORM(IOS)
+    return wkIsOptimizedFullscreenSupported();
+#else
+    return false;
 #endif
 }
 
