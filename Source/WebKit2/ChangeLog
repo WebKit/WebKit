@@ -1,3 +1,18 @@
+2014-11-05  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/dom/remove-body-during-body-replacement2.html fails on WK2
+        https://bugs.webkit.org/show_bug.cgi?id=138334
+
+        Reviewed by Anders Carlsson.
+
+        Added an SPI to focus a frame.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameFocus):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setViewState):
+
 2014-11-05  Tim Horton  <timothy_horton@apple.com>
 
         Select Data Detectors results instead of just highlighting them

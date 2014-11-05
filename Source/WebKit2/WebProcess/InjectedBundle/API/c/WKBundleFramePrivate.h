@@ -54,6 +54,8 @@ WK_EXPORT WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFram
 
 WK_EXPORT bool WKBundleFrameHandlesPageScaleGesture(WKBundleFrameRef frame);
 
+WK_EXPORT void WKBundleFrameFocus(WKBundleFrameRef frame);
+
 #ifdef __cplusplus
 }
 #endif

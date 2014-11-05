@@ -418,6 +418,11 @@ void InjectedBundlePage::prepare()
 void InjectedBundlePage::resetAfterTest()
 {
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
+
+    // WebKit currently doesn't reset focus even when navigating to a new page. This may or may not be a bug
+    // (see <https://bugs.webkit.org/show_bug.cgi?id=138334>), however for tests, we want to start each one with a clean state.
+    WKBundleFrameFocus(frame);
+
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
     WebCoreTestSupport::resetInternalsObject(context);
     assignedUrlsCache.clear();

@@ -1,3 +1,21 @@
+2014-11-05  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/dom/remove-body-during-body-replacement2.html fails on WK2
+        https://bugs.webkit.org/show_bug.cgi?id=138334
+
+        Reviewed by Anders Carlsson.
+
+        Reset focus to main frame between tests. DumpRenderTree does this via -makeFirstResponder
+        calls, which works because each frame is an NSView in WK1. WK2 makes equivalent
+        -makeFirstResponder calls, which may or may not be needed for other reasons, but
+        it also needs to reset internal focus explicitly.
+
+        It's not clear if this is the right long-term fix or a workaround for a WebKit bug.
+        WebKit behavior appears wrong, but it matches Firefox.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+
 2014-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebResource::failed-with-tls-errors signal
