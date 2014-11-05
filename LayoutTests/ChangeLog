@@ -1,3 +1,15 @@
+2014-11-05  Andreas Kling  <akling@apple.com>
+
+        Simple line layout: support text-transform: lowercase|uppercase|capitalize
+        <https://webkit.org/b/138406>
+
+        Reviewed by Antti Koivisto.
+
+        Add ref test for simple line layout with all text-transform values.
+
+        * fast/text/simple-lines-text-transform-expected.html: Added.
+        * fast/text/simple-lines-text-transform.html: Added.
+
 2014-11-04  Michael Saboff  <msaboff@apple.com>
 
         Disable flakey dfg-int8array.js and dfg-int16array.js tests for ARM64

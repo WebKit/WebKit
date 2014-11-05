@@ -1,3 +1,19 @@
+2014-11-05  Andreas Kling  <akling@apple.com>
+
+        Simple line layout: support text-transform: lowercase|uppercase|capitalize
+        <https://webkit.org/b/138406>
+
+        Reviewed by Antti Koivisto.
+
+        Expand the simple line layout coverage to include all text-transform values.
+        Since the property works on the text string level, it's really only a matter
+        of removing the short-circuit.
+
+        Test: fast/text/simple-lines-text-transform.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2014-11-05  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Allow the client to specify FPS protocol versions in the keySystem type field.

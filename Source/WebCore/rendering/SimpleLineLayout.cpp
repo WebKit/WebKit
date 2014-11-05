@@ -130,8 +130,6 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (!style.wordSpacing().isZero() || style.letterSpacing())
         return false;
-    if (style.textTransform() != TTNONE)
-        return false;
     if (!style.isLeftToRightDirection())
         return false;
     if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
