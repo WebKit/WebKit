@@ -84,7 +84,7 @@ private:
     CGSize m_tileSize;
     CGSize m_constrainedSize;
     RetainPtr<CACFLayerRef> m_tileParent;
-    OwnPtr<TileController> m_tileController;
+    std::unique_ptr<TileController> m_tileController;
 };
 
 }

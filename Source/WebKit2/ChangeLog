@@ -1,3 +1,14 @@
+2014-11-05  Sam Weinig  <sam@webkit.org>
+
+        Use std::unique_ptr for TileController
+        https://bugs.webkit.org/show_bug.cgi?id=138429
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        (WebKit::PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
 2014-11-06  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.

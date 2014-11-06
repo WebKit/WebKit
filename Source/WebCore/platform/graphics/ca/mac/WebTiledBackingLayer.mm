@@ -64,7 +64,7 @@ using namespace WebCore;
 - (TileController*)createTileController:(PlatformCALayer*)rootLayer
 {
     ASSERT(!_tileController);
-    _tileController = TileController::create(rootLayer);
+    _tileController = std::make_unique<WebCore::TileController>(rootLayer);
     return _tileController.get();
 }
 

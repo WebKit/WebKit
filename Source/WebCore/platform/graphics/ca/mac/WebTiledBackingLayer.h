@@ -37,7 +37,7 @@ class TiledBacking;
 }
 
 @interface WebTiledBackingLayer : CALayer {
-    OwnPtr<WebCore::TileController> _tileController;
+    std::unique_ptr<WebCore::TileController> _tileController;
 }
 
 - (WebCore::TileController*)createTileController:(WebCore::PlatformCALayer*)rootLayer;

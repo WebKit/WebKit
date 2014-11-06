@@ -529,7 +529,7 @@ void PlatformCALayerWinInternal::drawTile(CACFLayerRef tile, CGContextRef contex
 TileController* PlatformCALayerWinInternal::createTileController(PlatformCALayer* rootLayer)
 {
     ASSERT(!m_tileController);
-    m_tileController = TileController::create(rootLayer);
+    m_tileController = std::make_unique<TileController>(rootLayer);
     return m_tileController.get();
 }
 
