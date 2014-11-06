@@ -749,6 +749,8 @@ webkit.org/b/123431 [ Yosemite ] http/tests/local/link-stylesheet-load-order.htm
 [ Yosemite ] fast/events/page-visibility-iframe-propagation-test.html [ Failure Timeout ]
 [ Yosemite ] fast/events/page-visibility-transition-test.html [ Failure Timeout ]
 
+[ Yosemite ] webkit.org/b/138097 inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Pass Failure Timeout ]
+
 # ======================================================================
 # Section 9
 # Unmarking WebKit1-only failures in Yosemite
