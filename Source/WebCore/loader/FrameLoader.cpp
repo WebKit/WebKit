@@ -47,6 +47,7 @@
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "DatabaseManager.h"
+#include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
@@ -2261,7 +2262,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 return;
 
             m_progressTracker->progressCompleted();
-            if (Page* page = m_frame.page()) {
+            Page* page = m_frame.page();
+            if (page) {
                 if (m_frame.isMainFrame())
                     page->resetRelevantPaintedObjectCounter();
             }
@@ -2280,6 +2282,11 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             // Notify accessibility.
             if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache())
                 cache->frameLoadingEventNotification(&m_frame, loadingEvent);
+
+            if (!page || !page->settings().diagnosticLoggingEnabled())
+                return;
+
+            page->chrome().client().logDiagnosticMessage(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingKeys::passKey() : DiagnosticLoggingKeys::failKey());
 
             return;
         }

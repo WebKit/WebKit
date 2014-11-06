@@ -83,4 +83,9 @@ String DiagnosticLoggingKeys::noopKey()
     return ASCIILiteral("noop");
 }
 
+String DiagnosticLoggingKeys::pageLoadedKey()
+{
+    return WTF::ASCIILiteral("pageLoaded");
+}
+
 }
