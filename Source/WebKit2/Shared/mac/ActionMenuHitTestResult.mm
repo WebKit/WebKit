@@ -29,6 +29,7 @@
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
+#import "TextIndicator.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/DataDetectorsSPI.h>
 
@@ -58,9 +59,14 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
         [archiver finishEncoding];
 
         IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
-    }
 
-    encoder << actionBoundingBox;
+        encoder << detectedDataBoundingBox;
+
+        bool hasTextIndicator = detectedDataTextIndicator;
+        encoder << hasTextIndicator;
+        if (hasTextIndicator)
+            encoder << detectedDataTextIndicator->data();
+    }
 }
 
 bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHitTestResult& actionMenuHitTestResult)
@@ -100,10 +106,22 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
         }
         
         [unarchiver finishDecoding];
-    }
 
-    if (!decoder.decode(actionMenuHitTestResult.actionBoundingBox))
-        return false;
+        if (!decoder.decode(actionMenuHitTestResult.detectedDataBoundingBox))
+            return false;
+
+        bool hasTextIndicator;
+        if (!decoder.decode(hasTextIndicator))
+            return false;
+
+        if (hasTextIndicator) {
+            TextIndicator::Data indicatorData;
+            if (!decoder.decode(indicatorData))
+                return false;
+
+            actionMenuHitTestResult.detectedDataTextIndicator = TextIndicator::create(indicatorData);
+        }
+    }
 
     return true;
 }

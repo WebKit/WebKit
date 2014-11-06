@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "PluginView.h"
 #include "ShareableBitmap.h"
+#include "TextIndicator.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -36,10 +37,8 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/FrameSnapshotting.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/ImageBuffer.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
@@ -259,28 +258,6 @@ void FindController::findStringMatches(const String& string, FindOptions options
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
 }
 
-static bool getFindIndicatorBitmap(Frame& frame, ShareableBitmap::Handle& handle)
-{
-    std::unique_ptr<ImageBuffer> snapshot = snapshotSelection(frame, WebCore::SnapshotOptionsForceBlackText);
-    if (!snapshot)
-        return false;
-
-    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
-    if (!findIndicatorTextBackingStore)
-        return false;
-
-    // FIXME: We should consider using subpixel antialiasing for the snapshot
-    // if we're compositing this image onto a solid color (the modern find indicator style).
-    auto graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
-    float deviceScaleFactor = frame.page()->deviceScaleFactor();
-    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-    graphicsContext->drawImageBuffer(snapshot.get(), ColorSpaceDeviceRGB, FloatPoint());
-
-    if (!findIndicatorTextBackingStore->createHandle(handle))
-        return false;
-    return true;
-}
-
 void FindController::getImageForFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
@@ -292,10 +269,15 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
 
-    ShareableBitmap::Handle handle;
-    getFindIndicatorBitmap(*frame, handle);
+    RefPtr<ShareableBitmap> selectionSnapshot = WebFrame::fromCoreFrame(*frame)->createSelectionSnapshot();
 
     frame->selection().setSelection(oldSelection);
+
+    if (!selectionSnapshot)
+        return;
+
+    ShareableBitmap::Handle handle;
+    selectionSnapshot->createHandle(handle);
 
     if (handle.isNull())
         return;
@@ -332,29 +314,12 @@ void FindController::hideFindUI()
 #if !PLATFORM(IOS)
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
-    IntRect selectionRect = enclosingIntRect(selectedFrame.selection().selectionBounds());
-    ShareableBitmap::Handle handle;
-    if (!getFindIndicatorBitmap(selectedFrame, handle))
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(selectedFrame));
+    if (!indicator)
         return false;
 
-    // We want the selection rect in window coordinates.
-    IntRect selectionRectInWindowCoordinates = selectedFrame.view()->contentsToWindow(selectionRect);
-
-    Vector<FloatRect> textRects;
-    selectedFrame.selection().getClippedVisibleTextRectangles(textRects);
-
-    // We want the text rects in selection rect coordinates.
-    Vector<FloatRect> textRectsInSelectionRectCoordinates;
-    
-    for (size_t i = 0; i < textRects.size(); ++i) {
-        IntRect textRectInSelectionRectCoordinates = selectedFrame.view()->contentsToWindow(enclosingIntRect(textRects[i]));
-        textRectInSelectionRectCoordinates.move(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());
-
-        textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
-    }            
-
-    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->corePage()->deviceScaleFactor(), handle, !isShowingOverlay, shouldAnimate));
-    m_findIndicatorRect = selectionRectInWindowCoordinates;
+    m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInWindowCoordinates());
+    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), !isShowingOverlay, shouldAnimate));
     m_isShowingFindIndicator = true;
 
     return true;
@@ -365,8 +330,7 @@ void FindController::hideFindIndicator()
     if (!m_isShowingFindIndicator)
         return;
 
-    ShareableBitmap::Handle handle;
-    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->corePage()->deviceScaleFactor(), handle, false, true));
+    m_webPage->send(Messages::WebPageProxy::ClearTextIndicator(false, true));
     m_isShowingFindIndicator = false;
     m_foundStringMatchIndex = -1;
     didHideFindIndicator();

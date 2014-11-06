@@ -3548,10 +3548,14 @@ void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& conten
     m_findMatchesClient.didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
 }
 
-void WebPageProxy::setTextIndicator(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut, bool animate)
+void WebPageProxy::setTextIndicator(const TextIndicator::Data& indicatorData, bool fadeOut, bool animate)
 {
-    RefPtr<TextIndicator> textIndicator = TextIndicator::create(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImageHandle);
-    m_pageClient.setTextIndicator(textIndicator.release(), fadeOut, animate);
+    m_pageClient.setTextIndicator(TextIndicator::create(indicatorData), fadeOut, animate);
+}
+
+void WebPageProxy::clearTextIndicator(bool fadeOut, bool animate)
+{
+    m_pageClient.setTextIndicator(nullptr, fadeOut, animate);
 }
 
 void WebPageProxy::didFindString(const String& string, uint32_t matchCount, int32_t matchIndex)

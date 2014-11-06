@@ -1,5 +1,91 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175564. <rdar://problem/18840102>
+
+    2014-11-04  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement yellow highlight over data detected items
+            https://bugs.webkit.org/show_bug.cgi?id=138340
+            <rdar://problem/18840102>
+    
+            Reviewed by Anders Carlsson.
+    
+            * Shared/TextIndicator.cpp: Renamed from Source/WebKit2/UIProcess/TextIndicator.cpp.
+            * Shared/TextIndicator.h: Renamed from Source/WebKit2/UIProcess/TextIndicator.h.
+            Move TextIndicator to Shared.
+            Move all of the members to a Data struct.
+            Implement encode/decode for TextIndicator::Data, so it can be passed as
+            the argument to SetTextIndicator, and also as a field on ActionMenuHitTestResult.
+            Add 'createWithSelectionInFrame', which builds a TextIndicator
+            from the selection in the given frame.
+    
+            * Shared/mac/ActionMenuHitTestResult.h:
+            * Shared/mac/ActionMenuHitTestResult.mm:
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+            Rename actionBoundingBox to detectedDataBoundingBox.
+            Store/encode/decode detectedDataTextIndicator.
+    
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setTextIndicator):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            Create a TextIndicator from the TextIndicator::Data.
+            Add an explicit ClearTextIndicator message instead of sending empty Data.
+            
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            If the text indicator is up when preparing for a new menu invocation, hide it.
+    
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            Show the text indicator when the menu opens, for data detected items.
+    
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            Hide the text indicator when the menu closes, unless we only had one item.
+            Then, we'll hide it in the DDActionContext completionHandler block.
+            
+            (-[WKActionMenuController _showTextIndicator]):
+            (-[WKActionMenuController _hideTextIndicator]):
+            Added. Show and hide the text indicator based on the TextIndicator
+            data included in the action menu hit test result.
+    
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            Hide the text indicator when the data detector popover completes.
+    
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/WebPage/FindController.cpp:
+            (WebKit::FindController::getImageForFindMatch):
+            Make use of the newly-moved createSelectionSnapshot.
+    
+            (WebKit::FindController::updateFindIndicator):
+            Make use of TextIndicator::createWithSelectionInFrame, which allows
+            us to share this code for building a TextIndicator with other callers.
+    
+            (WebKit::FindController::hideFindIndicator):
+    
+            (WebKit::getFindIndicatorBitmap): Deleted.
+            Move getFindIndicatorBitmap to WebFrame::createSelectionSnapshot.
+    
+            * WebProcess/WebPage/WebFrame.cpp:
+            (WebKit::WebFrame::createSelectionSnapshot):
+            Moved from FindController's getFindIndicatorBitmap.
+            Now returns a ShareableBitmap instead of going ahead and making a Handle.
+    
+            * WebProcess/WebPage/WebFrame.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::scanForDataDetectedItems):
+            (WebKit::textIndicatorForRange):
+            Temporarily change the selection to the given range, then use
+            TextIndicator::indicatorWithSelectionInFrame to acquire a TextIndicator,
+            then reset the selection.
+    
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Create a TextIndicator from the data detected range.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175524. <rdar://problem/18861406>
 
     2014-11-04  Tim Horton  <timothy_horton@apple.com>

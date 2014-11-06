@@ -36,27 +36,44 @@ namespace WebCore {
 class GraphicsContext;
 }
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace WebKit {
+
+class WebFrame;
 
 class TextIndicator : public RefCounted<TextIndicator> {
 public:
-    static PassRefPtr<TextIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle);
+    struct Data {
+        WebCore::FloatRect selectionRectInWindowCoordinates;
+        Vector<WebCore::FloatRect> textRectsInSelectionRectCoordinates;
+        float contentImageScaleFactor;
+        RefPtr<ShareableBitmap> contentImage;
+
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Data&);
+    };
+
+    static PassRefPtr<TextIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage);
+    static PassRefPtr<TextIndicator> create(const TextIndicator::Data&);
+    static PassRefPtr<TextIndicator> createWithSelectionInFrame(WebFrame&);
+
     ~TextIndicator();
 
-    WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_selectionRectInWindowCoordinates; }
+    WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_data.selectionRectInWindowCoordinates; }
     WebCore::FloatRect frameRect() const;
-
-    ShareableBitmap* contentImage() const { return m_contentImage.get(); }
+    ShareableBitmap* contentImage() const { return m_data.contentImage.get(); }
+    Data data() const { return m_data; }
 
     void draw(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
 private:
-    TextIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage);
+    TextIndicator(const TextIndicator::Data&);
 
-    WebCore::FloatRect m_selectionRectInWindowCoordinates;
-    Vector<WebCore::FloatRect> m_textRectsInSelectionRectCoordinates;
-    float m_contentImageScaleFactor;
-    RefPtr<ShareableBitmap> m_contentImage;
+    Data m_data;
 };
 
 } // namespace WebKit
