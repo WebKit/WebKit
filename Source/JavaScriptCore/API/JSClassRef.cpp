@@ -62,7 +62,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     initializeThreading();
 
     if (const JSStaticValue* staticValue = definition->staticValues) {
-        m_staticValues = adoptPtr(new OpaqueJSClassStaticValuesTable);
+        m_staticValues = std::make_unique<OpaqueJSClassStaticValuesTable>();
         while (staticValue->name) {
             String valueName = String::fromUTF8(staticValue->name);
             if (!valueName.isNull())
@@ -72,7 +72,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     }
 
     if (const JSStaticFunction* staticFunction = definition->staticFunctions) {
-        m_staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
+        m_staticFunctions = std::make_unique<OpaqueJSClassStaticFunctionsTable>();
         while (staticFunction->name) {
             String functionName = String::fromUTF8(staticFunction->name);
             if (!functionName.isNull())

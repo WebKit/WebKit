@@ -1,3 +1,15 @@
+2014-11-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr in JSClassRef and JSCallbackObject
+        https://bugs.webkit.org/show_bug.cgi?id=138402
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSCallbackObject.h: Use std::unique_ptr instead of OwnPtr|PassOwnPtr.
+        (JSC::JSCallbackObjectData::setPrivateProperty): ditto.
+        * API/JSClassRef.cpp: ditto.
+        * API/JSClassRef.h: ditto.
+
 2014-11-05  Michael Saboff  <msaboff@apple.com>
 
         Disable flakey float32-repeat-out-of-bounds.js and int8-repeat-out-of-bounds.js tests for ARM64
