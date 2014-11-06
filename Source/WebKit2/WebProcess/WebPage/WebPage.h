@@ -1041,6 +1041,7 @@ private:
 
 #if PLATFORM(MAC)
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+    PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint);
     void selectLookupTextAtLocation(WebCore::FloatPoint);
 #endif
 

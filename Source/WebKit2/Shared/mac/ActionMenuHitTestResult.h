@@ -29,6 +29,7 @@
 #include "ShareableBitmap.h"
 #include "WebHitTestResult.h"
 #include <WebCore/FloatRect.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS DDActionContext;
 
@@ -46,6 +47,7 @@ struct ActionMenuHitTestResult {
     WebCore::FloatPoint hitTestLocationInViewCooordinates;
     WebHitTestResult::Data hitTestResult;
 
+    String lookupText;
     RefPtr<ShareableBitmap> image;
 
     RetainPtr<DDActionContext> actionContext;
