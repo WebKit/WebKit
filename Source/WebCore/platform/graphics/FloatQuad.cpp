@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -90,15 +91,10 @@ FloatRect FloatQuad::boundingBox() const
     return FloatRect(left, top, right - left, bottom - top);
 }
 
-static inline bool withinEpsilon(float a, float b)
-{
-    return fabs(a - b) < std::numeric_limits<float>::epsilon();
-}
-
 bool FloatQuad::isRectilinear() const
 {
-    return (withinEpsilon(m_p1.x(), m_p2.x()) && withinEpsilon(m_p2.y(), m_p3.y()) && withinEpsilon(m_p3.x(), m_p4.x()) && withinEpsilon(m_p4.y(), m_p1.y()))
-        || (withinEpsilon(m_p1.y(), m_p2.y()) && withinEpsilon(m_p2.x(), m_p3.x()) && withinEpsilon(m_p3.y(), m_p4.y()) && withinEpsilon(m_p4.x(), m_p1.x()));
+    return (WTF::withinEpsilon(m_p1.x(), m_p2.x()) && WTF::withinEpsilon(m_p2.y(), m_p3.y()) && WTF::withinEpsilon(m_p3.x(), m_p4.x()) && WTF::withinEpsilon(m_p4.y(), m_p1.y()))
+        || (WTF::withinEpsilon(m_p1.y(), m_p2.y()) && WTF::withinEpsilon(m_p2.x(), m_p3.x()) && WTF::withinEpsilon(m_p3.y(), m_p4.y()) && WTF::withinEpsilon(m_p4.x(), m_p1.x()));
 }
 
 bool FloatQuad::containsPoint(const FloatPoint& p) const
