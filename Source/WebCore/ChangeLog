@@ -1,5 +1,25 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175375. <rdar://problem/18883807>
+
+    2014-10-30  Eric Carlson  <eric.carlson@apple.com>
+    
+            Add diagnostic logging to track page loads.
+            https://bugs.webkit.org/show_bug.cgi?id=138205
+            <rdar://problem/18173017>
+    
+            Reviewed by Jer Noble.
+    
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Log page load success or failure.
+    
+            * page/DiagnosticLoggingKeys.cpp:
+            (WebCore::DiagnosticLoggingKeys::pageLoadedKey): New.
+            * page/DiagnosticLoggingKeys.h:
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r174740. <rdar://problem/18883801>
 
     2014-10-15  Simon Fraser  <simon.fraser@apple.com>

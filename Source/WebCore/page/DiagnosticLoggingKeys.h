@@ -41,6 +41,7 @@ public:
     static String pageContainsAtLeastOnePluginKey();
     static String pageContainsMediaEngineKey();
     static String pageContainsAtLeastOneMediaEngineKey();
+    static String pageLoadedKey();
 
     // Success keys.
     static String passKey();
