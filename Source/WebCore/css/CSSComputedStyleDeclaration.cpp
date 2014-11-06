@@ -91,6 +91,7 @@ namespace WebCore {
 
 // List of all properties we know how to compute, omitting shorthands.
 static const CSSPropertyID computedProperties[] = {
+    CSSPropertyAlt,
     CSSPropertyBackgroundAttachment,
     CSSPropertyBackgroundBlendMode,
     CSSPropertyBackgroundClip,
@@ -224,7 +225,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyZIndex,
     CSSPropertyZoom,
 
-    CSSPropertyWebkitAlt,
     CSSPropertyWebkitAnimationDelay,
     CSSPropertyWebkitAnimationDirection,
     CSSPropertyWebkitAnimationDuration,
@@ -2840,7 +2840,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return CSSPrimitiveValue::create(style->textOrientation());
         case CSSPropertyWebkitLineBoxContain:
             return createLineBoxContainValue(style->lineBoxContain());
-        case CSSPropertyWebkitAlt:
+        case CSSPropertyAlt:
             return altTextToCSSValue(style.get());
         case CSSPropertyContent:
             return contentToCSSValue(style.get());

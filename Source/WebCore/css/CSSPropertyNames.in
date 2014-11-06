@@ -256,7 +256,8 @@ word-break [Inherited, NewStyleBuilder]
 word-spacing [Inherited]
 word-wrap [Inherited, NewStyleBuilder=EOverflowWrap, NameForMethods=OverflowWrap]
 z-index
--webkit-alt
+alt
+-webkit-alt = alt
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction

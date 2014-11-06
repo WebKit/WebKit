@@ -1867,7 +1867,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // close-quote | no-open-quote | no-close-quote ]+ | inherit
         return parseContent(propId, important);
 
-    case CSSPropertyWebkitAlt: // [ <string> | attr(X) ]
+    case CSSPropertyAlt: // [ <string> | attr(X) ]
         return parseAlt(propId, important);
             
     case CSSPropertyClip:                 // <shape> | auto | inherit

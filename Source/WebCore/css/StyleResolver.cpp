@@ -2230,7 +2230,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 state.style()->clearContent();
             return;
         }
-    case CSSPropertyWebkitAlt:
+    case CSSPropertyAlt:
         {
             bool didSet = false;
             if (primitiveValue->isString()) {
