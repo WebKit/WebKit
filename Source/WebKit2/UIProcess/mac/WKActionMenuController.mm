@@ -31,6 +31,7 @@
 #import "TextIndicator.h"
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
+#import "WKWebView.h"
 #import "WebContext.h"
 #import "WebKitSystemInterface.h"
 #import "WebPageMessages.h"
@@ -52,17 +53,6 @@ enum class MenuUpdateStage {
     MenuNeedsUpdate
 };
 
-// FIXME: This should move into an SPI header if it stays.
-@class QLPreviewBubble;
-@interface NSObject (WKQLPreviewBubbleDetails)
-@property (copy) NSArray * controls;
-@property NSSize maximumSize;
-@property NSRectEdge preferredEdge;
-@property (retain) IBOutlet NSWindow* parentWindow;
-- (void)showPreviewItem:(id)previewItem itemFrame:(NSRect)frame;
-- (void)setAutomaticallyCloseWithMask:(NSEventMask)autocloseMask filterMask:(NSEventMask)filterMask block:(void (^)(void))block;
-@end
-
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
@@ -78,6 +68,43 @@ using namespace WebKit;
 
 @interface WKView (WKDeprecatedSPI)
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult defaultActionMenuItems:(NSArray *)defaultMenuItems;
+@end
+
+@interface WKPagePreviewViewController : NSViewController {
+@public
+    NSSize _preferredSize;
+
+@private
+    RetainPtr<NSURL> _url;
+}
+
+- (instancetype)initWithPageURL:(NSURL *)URL;
+
+@end
+
+@implementation WKPagePreviewViewController
+
+- (instancetype)initWithPageURL:(NSURL *)URL
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _url = URL;
+    _preferredSize = NSMakeSize(320, 568);
+
+    return self;
+}
+
+- (void)loadView
+{
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, _preferredSize.width, _preferredSize.height)];
+    if (_url) {
+        NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
+        [webView loadRequest:request];
+    }
+    [self setView:webView];
+}
+
 @end
 
 @implementation WKActionMenuController
@@ -215,23 +242,24 @@ using namespace WebKit;
     [service performWithItems:@[ [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] ]];
 }
 
-- (void)_quickLookURLFromActionMenu:(id)sender
+- (void)_previewURLFromActionMenu:(id)sender
 {
     WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
-    NSRect itemFrame = [_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil];
-    NSSize maximumPreviewSize = NSMakeSize(_wkView.bounds.size.width * 0.75, _wkView.bounds.size.height * 0.75);
+    NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
+    RetainPtr<NSPopover> popover = [self _createPreviewPopoverForURL:url];
+    [popover showRelativeToRect:hitTestResult->elementBoundingBox() ofView:_wkView preferredEdge:NSMaxYEdge];
+}
 
-    RetainPtr<QLPreviewBubble> bubble = adoptNS([[NSClassFromString(@"QLPreviewBubble") alloc] init]);
-    [bubble setParentWindow:_wkView.window];
-    [bubble setMaximumSize:maximumPreviewSize];
-    [bubble setPreferredEdge:NSMaxYEdge];
-    [bubble setControls:@[ ]];
-    NSEventMask filterMask = NSAnyEventMask & ~(NSAppKitDefinedMask | NSSystemDefinedMask | NSApplicationDefinedMask | NSMouseEnteredMask | NSMouseExitedMask);
-    NSEventMask autocloseMask = NSLeftMouseDownMask | NSRightMouseDownMask | NSKeyDownMask;
-    [bubble setAutomaticallyCloseWithMask:autocloseMask filterMask:filterMask block:[bubble] {
-        [bubble close];
-    }];
-    [bubble showPreviewItem:[NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] itemFrame:itemFrame];
+- (RetainPtr<NSPopover>)_createPreviewPopoverForURL:(NSURL *)url
+{
+    RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url]);
+    NSRect wkViewBounds = [_wkView bounds];
+    previewViewController->_preferredSize = NSMakeSize(NSWidth(wkViewBounds) * 0.75, NSHeight(wkViewBounds) * 0.75);
+
+    RetainPtr<NSPopover> popover = adoptNS([[NSPopover alloc] init]);
+    [popover setBehavior:NSPopoverBehaviorTransient];
+    [popover setContentViewController:previewViewController.get()];
+    return popover;
 }
 
 #pragma mark Image actions
@@ -511,7 +539,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         break;
 
     case kWKContextActionItemTagPreviewLink:
-        selector = @selector(_quickLookURLFromActionMenu:);
+        selector = @selector(_previewURLFromActionMenu:);
         title = @"Preview";
         image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
