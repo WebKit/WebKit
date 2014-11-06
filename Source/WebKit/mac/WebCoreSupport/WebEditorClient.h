@@ -106,10 +106,6 @@ private:
     virtual void toggleAutomaticSpellingCorrection() override;
 #endif
 
-#if ENABLE(DELETION_UI)
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) override;
-#endif
-
     virtual TextCheckerClient* textChecker() override { return this; }
 
     virtual void respondToChangedContents() override;

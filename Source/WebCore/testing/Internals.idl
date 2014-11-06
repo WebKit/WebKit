@@ -137,8 +137,6 @@ enum PageOverlayType {
 
     void updateEditorUINowIfScheduled();
 
-    Node findEditingDeleteButton();
-
     [RaisesException] boolean hasSpellingMarker(long from, long length);
     [RaisesException] boolean hasGrammarMarker(long from, long length);
     [RaisesException] boolean hasAutocorrectedMarker(long from, long length);

@@ -94,10 +94,6 @@
 #include "markup.h"
 #include <wtf/unicode/CharacterNames.h>
 
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
-
 #if PLATFORM(IOS)
 #include "DictationCommandIOS.h"
 #include <wtf/text/StringBuilder.h>
@@ -147,63 +143,6 @@ void ClearTextCommand::CreateAndApply(const RefPtr<Frame> frame)
 using namespace HTMLNames;
 using namespace WTF;
 using namespace Unicode;
-
-#if ENABLE(DELETION_UI)
-
-PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Range* range) const
-{
-    if (!range)
-        return 0;
-
-    Node* startContainer = range->startContainer();
-    int startOffset = range->startOffset();
-    Node* endContainer = range->endContainer();
-    int endOffset = range->endOffset();
-
-    if (!startContainer)
-        return 0;
-
-    ASSERT(endContainer);
-
-    Element* element = m_deleteButtonController->containerElement();
-    if (startContainer == element || startContainer->isDescendantOf(element)) {
-        ASSERT(element->parentNode());
-        startContainer = element->parentNode();
-        startOffset = element->computeNodeIndex();
-    }
-    if (endContainer == element || endContainer->isDescendantOf(element)) {
-        ASSERT(element->parentNode());
-        endContainer = element->parentNode();
-        endOffset = element->computeNodeIndex();
-    }
-
-    return Range::create(range->ownerDocument(), startContainer, startOffset, endContainer, endOffset);
-}
-
-VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const
-{
-    if (selection.isNone())
-        return selection;
-
-    Element* element = m_deleteButtonController->containerElement();
-    if (!element)
-        return selection;
-    VisibleSelection updatedSelection = selection;
-
-    Position updatedBase = selection.base();
-    updatePositionForNodeRemoval(updatedBase, element);
-    if (updatedBase != selection.base())
-        updatedSelection.setBase(updatedBase);
-
-    Position updatedExtent = selection.extent();
-    updatePositionForNodeRemoval(updatedExtent, element);
-    if (updatedExtent != selection.extent())
-        updatedSelection.setExtent(updatedExtent);
-
-    return updatedSelection;
-}
-
-#endif
 
 // When an event handler has moved the selection outside of a text control
 // we should use the target control's selection for this editing operation.
@@ -1127,9 +1066,6 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
 Editor::Editor(Frame& frame)
     : m_frame(frame)
-#if ENABLE(DELETION_UI)
-    , m_deleteButtonController(std::make_unique<DeleteButtonController>(frame))
-#endif
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
@@ -1159,10 +1095,6 @@ void Editor::clear()
     m_customCompositionUnderlines.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
-
-#if ENABLE(DELETION_UI)
-    m_deleteButtonController = std::make_unique<DeleteButtonController>(m_frame);
-#endif
 }
 
 bool Editor::insertText(const String& text, Event* triggeringEvent)
@@ -2785,7 +2717,7 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
     IntPoint framePoint = frameView->windowToContents(windowPoint);
     VisibleSelection selection(frame->visiblePositionForPoint(framePoint));
 
-    return avoidIntersectionWithDeleteButtonController(selection.toNormalizedRange().get());
+    return selection.toNormalizedRange();
 }
 
 void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignment, RevealExtentOption revealExtentOption)
@@ -3508,9 +3440,6 @@ void Editor::editorUIUpdateTimerFired(Timer<Editor>&)
     if (!isContinuousGrammarCheckingEnabled)
         document().markers().removeMarkers(DocumentMarker::Grammar);
 
-#if ENABLE(DELETION_UI)
-    m_deleteButtonController->respondToChangedSelection(oldSelection);
-#endif
     if (!m_editorUIUpdateTimerWasTriggeredByDictation)
         m_alternativeTextController->respondToChangedSelection(oldSelection);
 
@@ -3590,13 +3519,6 @@ TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask te
 #endif // !PLATFORM(IOS)
 
     return checkingTypes;
-}
-
-void Editor::deviceScaleFactorChanged()
-{
-#if ENABLE(DELETION_UI)
-    m_deleteButtonController->deviceScaleFactorChanged();
-#endif
 }
 
 bool Editor::unifiedTextCheckerEnabled() const

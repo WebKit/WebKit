@@ -72,11 +72,6 @@
 #include "htmlediting.h"
 #include "markup.h"
 
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
-
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -116,15 +111,9 @@ void EditCommandComposition::unapply()
     frame->editor().cancelComposition();
 #endif
 
-    {
-#if ENABLE(DELETION_UI)
-        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame.get());
-#endif
-
-        size_t size = m_commands.size();
-        for (size_t i = size; i; --i)
-            m_commands[i - 1]->doUnapply();
-    }
+    size_t size = m_commands.size();
+    for (size_t i = size; i; --i)
+        m_commands[i - 1]->doUnapply();
 
     frame->editor().unappliedEditing(this);
 }
@@ -140,15 +129,10 @@ void EditCommandComposition::reapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
 
-    {
-#if ENABLE(DELETION_UI)
-        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame.get());
-#endif
-        size_t size = m_commands.size();
-        for (size_t i = 0; i != size; ++i)
-            m_commands[i]->doReapply();
-    }
-    
+    size_t size = m_commands.size();
+    for (size_t i = 0; i != size; ++i)
+        m_commands[i]->doReapply();
+
     frame->editor().reappliedEditing(this);
 }
 
@@ -220,9 +204,6 @@ void CompositeEditCommand::apply()
 
     {
         EventQueueScope eventQueueScope;
-#if ENABLE(DELETION_UI)
-        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(&frame());
-#endif
         doApply();
     }
 

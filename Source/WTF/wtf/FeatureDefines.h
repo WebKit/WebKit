@@ -175,10 +175,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 
-#if !defined(ENABLE_DELETION_UI)
-#define ENABLE_DELETION_UI 1
-#endif
-
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 #if !defined(ENABLE_ENCRYPTED_MEDIA)
 #define ENABLE_ENCRYPTED_MEDIA 1
@@ -387,10 +383,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_DATA_TRANSFER_ITEMS)
 #define ENABLE_DATA_TRANSFER_ITEMS 0
-#endif
-
-#if !defined(ENABLE_DELETION_UI)
-#define ENABLE_DELETION_UI 0
 #endif
 
 #if !defined(ENABLE_DETAILS_ELEMENT)

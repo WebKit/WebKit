@@ -1,3 +1,14 @@
+2014-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Remove the unused deletion UI feature
+        https://bugs.webkit.org/show_bug.cgi?id=138442
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldShowDeleteInterface): Deleted.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
 
         It should be possible to open a page preview by clicking on it

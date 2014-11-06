@@ -1,3 +1,18 @@
+2014-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Remove the unused deletion UI feature
+        https://bugs.webkit.org/show_bug.cgi?id=138442
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:shouldShowDeleteInterfaceForElement:]): Deleted.
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldShowDeleteInterface): Deleted.
+        * WebView/WebEditingDelegatePrivate.h: Removed declaration of
+        -webView:shouldShowDeleteInterfaceForElement:.
+
 2014-11-03  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_FILTERS_LEVEL_2 feature guard.

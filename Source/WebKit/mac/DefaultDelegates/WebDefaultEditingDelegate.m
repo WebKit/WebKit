@@ -45,13 +45,6 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-#if ENABLE(DELETION_UI)
-- (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element
-{
-    return NO;
-}
-#endif
-
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range
 {
     return YES;

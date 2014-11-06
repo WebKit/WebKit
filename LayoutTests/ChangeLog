@@ -1,3 +1,31 @@
+2014-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Remove the unused deletion UI feature
+        https://bugs.webkit.org/show_bug.cgi?id=138442
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Removed tests, expected results, and support files for this feature.
+
+        * platform/mac/editing/deleting/deletionUI-borders-expected.txt: Removed.
+        * platform/mac/editing/deleting/deletionUI-borders.html: Removed.
+        * platform/mac/editing/deleting/deletionUI-click-on-delete-button-expected.txt: Removed.
+        * platform/mac/editing/deleting/deletionUI-click-on-delete-button.html: Removed.
+        * platform/mac/editing/deleting/deletionUI-differing-background-expected.txt: Removed.
+        * platform/mac/editing/deleting/deletionUI-differing-background.html: Removed.
+        * platform/mac/editing/deleting/deletionUI-minimum-size-expected.txt: Removed.
+        * platform/mac/editing/deleting/deletionUI-minimum-size.html: Removed.
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.png: Removed.
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.txt: Removed.
+        * platform/mac/editing/deleting/deletionUI-single-instance.html: Removed.
+        * platform/mac/editing/deleting/deletionUI-successful-deletion-expected.txt: Removed.
+        * platform/mac/editing/deleting/deletionUI-successful-deletion.html: Removed.
+        * platform/mac/editing/deleting/id-in-deletebutton-expected.txt: Removed.
+        * platform/mac/editing/deleting/id-in-deletebutton.html: Removed.
+        * platform/mac/editing/deleting/resources: Removed.
+        * platform/mac/editing/deleting/resources/deletionUI-helpers.js: Removed.
+        * platform/wk2/TestExpectations:
+
 2014-11-04  David Hyatt  <hyatt@apple.com>
 
         Descendant ends up in wrong flow thread with nested columns and spans.

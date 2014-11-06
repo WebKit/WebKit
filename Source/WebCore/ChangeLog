@@ -1,3 +1,73 @@
+2014-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Remove the unused deletion UI feature
+        https://bugs.webkit.org/show_bug.cgi?id=138442
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * Resources/deleteButton.png: Removed.
+        * Resources/deleteButton@2x.png: Removed.
+        * Resources/deleteButtonPressed.png: Removed.
+        * Resources/deleteButtonPressed@2x.png: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed references to removed files.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes): Folded the below helper function into this member
+        function, after removing the deleteButtonContainerElement parameter.
+        (WebCore::cloneChildNodesAvoidingDeleteButton): Deleted.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply): Removed use of
+        DeleteButtonControllerDisableScope.
+        (WebCore::EditCommandComposition::reapply): Ditto.
+        (WebCore::CompositeEditCommand::apply): Ditto.
+
+        * editing/DeleteButton.cpp: Removed.
+        * editing/DeleteButton.h: Removed.
+        * editing/DeleteButtonController.cpp: Removed.
+        * editing/DeleteButtonController.h: Removed.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand): Removed use of
+        Editor::avoidIntersectionWithDeleteButtonController.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor): Removed initialization of m_deleteButtonController.
+        (WebCore::Editor::rangeForPoint): Removed use of avoidIntersectionWithDeleteButtonController.
+        (WebCore::Editor::editorUIUpdateTimerFired): Removed call to DeleteButtonController function.
+        (WebCore::Editor::avoidIntersectionWithDeleteButtonController): Deleted.
+        (WebCore::Editor::deviceScaleFactorChanged): Deleted.
+
+        * editing/Editor.h:
+        (WebCore::Editor::deleteButtonController): Deleted.
+        (WebCore::Editor::avoidIntersectionWithDeleteButtonController): Deleted.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodes): Removed nodeToSkip parameter.
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces): Ditto.
+
+        * editing/MarkupAccumulator.h:
+
+        * editing/markup.cpp:
+        (WebCore::createMarkupInternal): Removed updateRange parameter, which had become identical
+        to the range parameter, and changed to use the latter everywhere instead.
+        (WebCore::createMarkup): Don’t compute and pass separate updateRanage parameter.
+
+        * loader/EmptyClients.h: Removed shouldShowDeleteInterface override.
+        * page/EditorClient.h: Removed shouldShowDeleteInterface.
+
+        * page/Page.cpp:
+        (WebCore::Page::setDeviceScaleFactor): Removed call to Editor::deviceScaleFactorChanged.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame): Updated for MarkupAccumulator::serializeNodes change.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::findEditingDeleteButton): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-11-04  David Hyatt  <hyatt@apple.com>
 
         Descendant ends up in wrong flow thread with nested columns and spans.

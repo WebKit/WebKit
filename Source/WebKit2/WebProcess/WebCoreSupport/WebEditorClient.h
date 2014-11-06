@@ -121,10 +121,6 @@ private:
     virtual void toggleAutomaticSpellingCorrection() override;
 #endif
 
-#if ENABLE(DELETION_UI)
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) override;
-#endif
-
 #if PLATFORM(GTK)
     bool executePendingEditorCommands(WebCore::Frame*, const Vector<WTF::String>&, bool);
     void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);

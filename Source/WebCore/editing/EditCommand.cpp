@@ -42,7 +42,7 @@ EditCommand::EditCommand(Document& document)
     , m_parent(0)
 {
     ASSERT(document.frame());
-    setStartingSelection(m_document->frame()->editor().avoidIntersectionWithDeleteButtonController(m_document->frame()->selection().selection()));
+    setStartingSelection(m_document->frame()->selection().selection());
     setEndingSelection(m_startingSelection);
 }
 

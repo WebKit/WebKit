@@ -62,10 +62,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -556,15 +552,15 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
-static String createMarkupInternal(Document& document, const Range& range, const Range& updatedRange, Vector<Node*>* nodes,
+static String createMarkupInternal(Document& document, const Range& range, Vector<Node*>* nodes,
     EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, (ASCIILiteral("<br class=\"" AppleInterchangeNewline "\">")));
 
-    bool collapsed = updatedRange.collapsed(ASSERT_NO_EXCEPTION);
+    bool collapsed = range.collapsed(ASSERT_NO_EXCEPTION);
     if (collapsed)
         return emptyString();
-    Node* commonAncestor = updatedRange.commonAncestorContainer(ASSERT_NO_EXCEPTION);
+    Node* commonAncestor = range.commonAncestorContainer(ASSERT_NO_EXCEPTION);
     if (!commonAncestor)
         return emptyString();
 
@@ -576,16 +572,16 @@ static String createMarkupInternal(Document& document, const Range& range, const
     if (body && VisiblePosition(firstPositionInNode(body)) == VisiblePosition(range.startPosition())
         && VisiblePosition(lastPositionInNode(body)) == VisiblePosition(range.endPosition()))
         fullySelectedRoot = body;
-    Node* specialCommonAncestor = highestAncestorToWrapMarkup(&updatedRange, shouldAnnotate);
+    Node* specialCommonAncestor = highestAncestorToWrapMarkup(&range, shouldAnnotate);
 
     bool needsPositionStyleConversion = body && fullySelectedRoot == body
         && document.settings() && document.settings()->shouldConvertPositionStyleOnCopy();
-    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, &updatedRange, needsPositionStyleConversion, specialCommonAncestor);
-    Node* pastEnd = updatedRange.pastLastNode();
+    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, &range, needsPositionStyleConversion, specialCommonAncestor);
+    Node* pastEnd = range.pastLastNode();
 
-    Node* startNode = updatedRange.firstNode();
-    VisiblePosition visibleStart(updatedRange.startPosition(), VP_DEFAULT_AFFINITY);
-    VisiblePosition visibleEnd(updatedRange.endPosition(), VP_DEFAULT_AFFINITY);
+    Node* startNode = range.firstNode();
+    VisiblePosition visibleStart(range.startPosition(), VP_DEFAULT_AFFINITY);
+    VisiblePosition visibleEnd(range.endPosition(), VP_DEFAULT_AFFINITY);
     if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
@@ -651,25 +647,7 @@ static String createMarkupInternal(Document& document, const Range& range, const
 
 String createMarkup(const Range& range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
-    Document& document = range.ownerDocument();
-    const Range* updatedRange = &range;
-
-#if ENABLE(DELETION_UI)
-    // Disable the delete button so it's elements are not serialized into the markup,
-    // but make sure neither endpoint is inside the delete user interface.
-    Frame* frame = document.frame();
-    DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
-
-    RefPtr<Range> updatedRangeRef;
-    if (frame) {
-        updatedRangeRef = frame->editor().avoidIntersectionWithDeleteButtonController(&range);
-        updatedRange = updatedRangeRef.get();
-        if (!updatedRange)
-            return emptyString();
-    }
-#endif
-
-    return createMarkupInternal(document, range, *updatedRange, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
+    return createMarkupInternal(range.ownerDocument(), range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
 }
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document& document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
@@ -688,17 +666,8 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document& document, const 
 
 String createMarkup(const Node& node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, Vector<QualifiedName>* tagNamesToSkip, EFragmentSerialization fragmentSerialization)
 {
-    HTMLElement* deleteButtonContainerElement = 0;
-#if ENABLE(DELETION_UI)
-    if (Frame* frame = node.document().frame()) {
-        deleteButtonContainerElement = frame->editor().deleteButtonController().containerElement();
-        if (node.isDescendantOf(deleteButtonContainerElement))
-            return emptyString();
-    }
-#endif
-
     MarkupAccumulator accumulator(nodes, shouldResolveURLs, 0, fragmentSerialization);
-    return accumulator.serializeNodes(const_cast<Node&>(node), deleteButtonContainerElement, childrenOnly, tagNamesToSkip);
+    return accumulator.serializeNodes(const_cast<Node&>(node), childrenOnly, tagNamesToSkip);
 }
 
 static void fillContainerFromString(ContainerNode* paragraph, const String& string)

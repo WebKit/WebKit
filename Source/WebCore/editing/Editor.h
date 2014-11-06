@@ -390,15 +390,10 @@ public:
     
     WEBCORE_EXPORT void simplifyMarkup(Node* startNode, Node* endNode);
 
-    void deviceScaleFactorChanged();
-
     EditorParagraphSeparator defaultParagraphSeparator() const { return m_defaultParagraphSeparator; }
     void setDefaultParagraphSeparator(EditorParagraphSeparator separator) { m_defaultParagraphSeparator = separator; }
     Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
     void applyDictationAlternativelternative(const String& alternativeString);
-
-    PassRefPtr<Range> avoidIntersectionWithDeleteButtonController(const Range*) const;
-    VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection&) const;
 
 #if USE(APPKIT)
     WEBCORE_EXPORT void uppercaseWord();
@@ -420,10 +415,6 @@ public:
     WEBCORE_EXPORT void toggleAutomaticTextReplacement();
     WEBCORE_EXPORT bool isAutomaticSpellingCorrectionEnabled();
     WEBCORE_EXPORT void toggleAutomaticSpellingCorrection();
-#endif
-
-#if ENABLE(DELETION_UI)
-    DeleteButtonController& deleteButtonController() const { return *m_deleteButtonController; }
 #endif
 
     PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
@@ -496,9 +487,6 @@ private:
 #endif
 
     Frame& m_frame;
-#if ENABLE(DELETION_UI)
-    std::unique_ptr<DeleteButtonController> m_deleteButtonController;
-#endif
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Text> m_compositionNode;
     unsigned m_compositionStart;
@@ -549,20 +537,6 @@ inline bool Editor::markedTextMatchesAreHighlighted() const
 {
     return m_areMarkedTextMatchesHighlighted;
 }
-
-#if !ENABLE(DELETION_UI)
-
-inline PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Range* range) const
-{
-    return const_cast<Range*>(range);
-}
-
-inline VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const
-{
-    return selection;
-}
-
-#endif
 
 } // namespace WebCore
 

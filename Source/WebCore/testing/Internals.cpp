@@ -1285,18 +1285,6 @@ void Internals::updateEditorUINowIfScheduled()
     }
 }
 
-Node* Internals::findEditingDeleteButton()
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame())
-        return 0;
-
-    updateEditorUINowIfScheduled();
-
-    // FIXME: We shouldn't pollute the id namespace with this name.
-    return document->getElementById(String(ASCIILiteral("WebKit-Editing-Delete-Button")));
-}
-
 bool Internals::hasSpellingMarker(int from, int length, ExceptionCode&)
 {
     Document* document = contextDocument();

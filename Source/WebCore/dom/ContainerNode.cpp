@@ -54,10 +54,6 @@
 #include "TemplateContentDocumentFragment.h"
 #include <wtf/CurrentTime.h>
 
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
-
 namespace WebCore {
 
 static void dispatchChildInsertionEvents(Node&);
@@ -769,36 +765,16 @@ void ContainerNode::childrenChanged(const ChildChange& change)
     invalidateNodeListAndCollectionCachesInAncestors();
 }
 
-inline static void cloneChildNodesAvoidingDeleteButton(ContainerNode* parent, ContainerNode* clonedParent, HTMLElement* deleteButtonContainerElement)
-{
-    ExceptionCode ec = 0;
-    for (Node* child = parent->firstChild(); child && !ec; child = child->nextSibling()) {
-
-#if ENABLE(DELETION_UI)
-        if (child == deleteButtonContainerElement)
-            continue;
-#else
-        UNUSED_PARAM(deleteButtonContainerElement);
-#endif
-
-        RefPtr<Node> clonedChild = child->cloneNode(false);
-        clonedParent->appendChild(clonedChild, ec);
-
-        if (!ec && is<ContainerNode>(child))
-            cloneChildNodesAvoidingDeleteButton(downcast<ContainerNode>(child), downcast<ContainerNode>(clonedChild.get()), deleteButtonContainerElement);
-    }
-}
-
 void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
-#if ENABLE(DELETION_UI)
-    HTMLElement* deleteButtonContainerElement = 0;
-    if (Frame* frame = document().frame())
-        deleteButtonContainerElement = frame->editor().deleteButtonController().containerElement();
-    cloneChildNodesAvoidingDeleteButton(this, clone, deleteButtonContainerElement);
-#else
-    cloneChildNodesAvoidingDeleteButton(this, clone, 0);
-#endif
+    ExceptionCode ec = 0;
+    for (Node* child = firstChild(); child && !ec; child = child->nextSibling()) {
+        RefPtr<Node> clonedChild = child->cloneNode(false);
+        clone->appendChild(clonedChild, ec);
+
+        if (!ec && is<ContainerNode>(child))
+            downcast<ContainerNode>(child)->cloneChildNodes(downcast<ContainerNode>(clonedChild.get()));
+    }
 }
 
 bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const

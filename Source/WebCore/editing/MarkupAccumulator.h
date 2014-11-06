@@ -63,7 +63,7 @@ public:
     MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = 0, EFragmentSerialization = HTMLFragmentSerialization);
     virtual ~MarkupAccumulator();
 
-    String serializeNodes(Node& targetNode, Node* nodeToSkip, EChildrenOnly, Vector<QualifiedName>* tagNamesToSkip = nullptr);
+    String serializeNodes(Node& targetNode, EChildrenOnly, Vector<QualifiedName>* tagNamesToSkip = nullptr);
 
     static void appendCharactersReplacingEntities(StringBuilder&, const String&, unsigned, unsigned, EntityMask);
 
@@ -113,7 +113,7 @@ protected:
 private:
     String resolveURLIfNeeded(const Element&, const String&) const;
     void appendQuotedURLAttributeValue(StringBuilder&, const Element&, const Attribute&);
-    void serializeNodesWithNamespaces(Node& targetNode, Node* nodeToSkip, EChildrenOnly, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
+    void serializeNodesWithNamespaces(Node& targetNode, EChildrenOnly, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
     bool inXMLFragmentSerialization() const { return m_fragmentSerialization == XMLFragmentSerialization; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
 

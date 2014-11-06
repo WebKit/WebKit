@@ -216,7 +216,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         // FIXME: iframes used as images trigger this. We should deal with them correctly.
         return;
     }
-    String text = accumulator.serializeNodes(*document->documentElement(), 0, IncludeNode);
+    String text = accumulator.serializeNodes(*document->documentElement(), IncludeNode);
     CString frameHTML = textEncoding.encode(text, EntitiesForUnencodables);
     m_resources->append(Resource(url, document->suggestedMIMEType(), SharedBuffer::create(frameHTML.data(), frameHTML.length())));
     m_resourceURLs.add(url);

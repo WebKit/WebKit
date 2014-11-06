@@ -76,14 +76,6 @@ bool WebEditorClient::shouldDeleteRange(Range* range)
     return result;
 }
 
-#if ENABLE(DELETION_UI)
-bool WebEditorClient::shouldShowDeleteInterface(HTMLElement*)
-{
-    notImplemented();
-    return false;
-}
-#endif
-
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
     return m_page->isSmartInsertDeleteEnabled();

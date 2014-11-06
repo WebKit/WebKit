@@ -525,10 +525,6 @@ public:
     virtual void toggleAutomaticSpellingCorrection() override { }
 #endif
 
-#if ENABLE(DELETION_UI)
-    virtual bool shouldShowDeleteInterface(HTMLElement*) override { return false; }
-#endif
-
 #if PLATFORM(GTK)
     virtual bool shouldShowUnicodeMenu() override { return false; }
 #endif

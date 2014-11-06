@@ -168,7 +168,6 @@ public:
 
     String parserMetaData(Deprecated::ScriptValue = Deprecated::ScriptValue());
 
-    Node* findEditingDeleteButton();
     void updateEditorUINowIfScheduled();
 
     bool hasSpellingMarker(int from, int length, ExceptionCode&);

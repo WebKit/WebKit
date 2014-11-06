@@ -237,14 +237,6 @@ bool WebEditorClient::shouldDeleteRange(Range* range)
         shouldDeleteDOMRange:kit(range)];
 }
 
-#if ENABLE(DELETION_UI)
-bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
-{
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldShowDeleteInterfaceForElement:kit(element)];
-}
-#endif
-
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
     Page* page = [m_webView page];
