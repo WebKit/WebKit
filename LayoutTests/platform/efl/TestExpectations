@@ -446,6 +446,9 @@ media/encrypted-media/encrypted-media-events.html [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ WontFix ]
 media/encrypted-media/encrypted-media-syntax.html [ WontFix ]
 
+# No support for Filters Level 2 on EFL yet
+Bug(EFL) css3/filters/backdrop [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////

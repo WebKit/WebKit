@@ -371,6 +371,9 @@ flex-wrap [NewStyleBuilder]
 -webkit-flex-wrap = flex-wrap
 justify-content [NewStyleBuilder]
 -webkit-justify-content = justify-content
+#if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
+-webkit-backdrop-filter
+#endif
 -webkit-justify-self
 -webkit-font-size-delta
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT

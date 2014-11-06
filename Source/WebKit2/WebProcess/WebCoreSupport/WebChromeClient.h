@@ -229,7 +229,7 @@ private:
         return static_cast<CompositingTriggerFlags>(
             ThreeDTransformTrigger |
             VideoTrigger |
-            PluginTrigger| 
+            PluginTrigger|
             CanvasTrigger |
 #if PLATFORM(IOS)
             AnimatedOpacityTrigger | // Allow opacity animations to trigger compositing mode for iPhone: <rdar://problem/7830677>

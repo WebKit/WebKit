@@ -1,3 +1,117 @@
+2014-11-06  Dean Jackson  <dino@apple.com>
+
+        [filters2] Support for backdrop-filter
+        https://bugs.webkit.org/show_bug.cgi?id=138384
+        <rdar://problem/18874494>
+
+        Reviewed by Simon Fraser.
+
+        Take 2!! Previous patch was rolled out.
+
+        Add prototype support for backdrop-filter
+        http://dev.w3.org/fxtf/filters-2/#BackdropFilterProperty
+
+        This adds support for parsing the new CSS property, adding
+        the value to RenderStyle, noticing that on the layer tree,
+        and the platform code in GraphicsLayer to render a backdrop
+        and apply an effect to the result.
+
+        Some things are missing:
+        - animation of the backdrop-filter is not yet supported
+        - backdrops will not work in cloned layers yet (e.g. reflections)
+
+        Tests: css3/filters/backdrop/backdropfilter-property-computed-style.html
+               css3/filters/backdrop/backdropfilter-property-parsing-invalid.html
+               css3/filters/backdrop/backdropfilter-property-parsing.html
+               css3/filters/backdrop/backdropfilter-property.html
+               css3/filters/backdrop/effect-hw.html
+
+        * WebCore.exp.in: Export the setBackdropFilters method so it can
+        be used from WebKit.
+
+        * css/CSSComputedStyleDeclaration.cpp: New property name.
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue): Use the existing valueForFilter method.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Piggyback on the filter parser.
+
+        * css/CSSPropertyNames.in: Add -webkit-backdrop-filter.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Add test for backdrop.
+        (WebCore::StyleResolver::applyProperty): Support new property.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::needsBackdrop): New method to test for existence of values.
+        (WebCore::GraphicsLayer::backdropFilters): Keeps the list of filters.
+        (WebCore::GraphicsLayer::setBackdropFilters):
+        (WebCore::GraphicsLayer::clearBackdropFilters):
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp: This adds a new m_backdropLayer CALayer
+        that will sit behind the contents layer and provide the element's backdrop.
+        (WebCore::GraphicsLayerCA::willBeDestroyed):
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimations):
+        (WebCore::GraphicsLayerCA::setBackdropFilters): Set a custom appearance so
+        remote layer hosts will notice the special layer. Also set the actual
+        layer properties.
+        (WebCore::GraphicsLayerCA::addAnimation): Remove whitespace.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Update backdrop if necessary.
+        (WebCore::GraphicsLayerCA::updateLayerNames): Give the new layer a name.
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::updateGeometry): Make the backdrop layer match the contents
+        layer geometry.
+        (WebCore::GraphicsLayerCA::updateBackdropFilters): Create the backdrop layer if necessary,
+        and copy the filter values to any clones.
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer): We need a structural layer if we
+        have backdrop filters.
+        (WebCore::GraphicsLayerCA::structuralLayerPurpose):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h: New StructuralLayerPurpose, new LayerChangeFlag.
+
+        * platform/graphics/ca/PlatformCALayer.h: New LayerType.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: Define CABackdropLayer.
+        (PlatformCALayerMac::PlatformCALayerMac): Create the correct CALayer type.
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::createsGroup):
+        (WebCore::RenderElement::hasBackdropFilter): This method is always around, but
+        only can return true when FILTERS_LEVEL_2 is enabled.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintsWithFilters): Remove an unnecessary comment.
+        (WebCore::RenderLayer::calculateClipRects):
+
+        * rendering/RenderLayer.h: Add hasBackdropFilter.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): Update the backdrop filters.
+        (WebCore::RenderLayerBacking::updateBackdropFilters): Set the filters on the GraphicsLayer.
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerBacking.h:
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Needs backingstore if it has a backdrop filter.
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFilters): Return early if we have
+        a backdrop filter, because currently we absolutely require compositing.
+
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleWillChange): Add hasBackdropFilter().
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout): Check backdrops for change.
+
+        * rendering/style/RenderStyle.h: Add the backdropFilter style stuff.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::hasBackdropFilters):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-11-06  Benjamin Poulain  <bpoulain@apple.com>
 
         Give pseudo elements the correct specificity

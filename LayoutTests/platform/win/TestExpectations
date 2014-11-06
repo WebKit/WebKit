@@ -44,6 +44,7 @@ css3/filters/effect-sepia-hw.html
 css3/filters/animation-from-initial-values-with-color-matrix.html
 css3/filters/filter-is-on-subpixel-position.html
 css3/masking/clip-path-filter.html
+css3/filters/backdrop
 
 # Remove from list after enabling CANVAS_PATH
 fast/canvas/canvas-path-constructors.html

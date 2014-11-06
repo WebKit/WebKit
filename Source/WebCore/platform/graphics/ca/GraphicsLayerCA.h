@@ -105,6 +105,8 @@ public:
     WEBCORE_EXPORT virtual bool setFilters(const FilterOperations&) override;
     virtual bool filtersCanBeComposited(const FilterOperations&);
 
+    WEBCORE_EXPORT virtual bool setBackdropFilters(const FilterOperations&) override;
+
 #if ENABLE(CSS_COMPOSITING)
     WEBCORE_EXPORT virtual void setBlendMode(BlendMode) override;
 #endif
@@ -202,6 +204,7 @@ private:
     WEBCORE_EXPORT void layerDidDisplay(PlatformCALayer*);
     void updateOpacityOnLayer();
     void updateFilters();
+    void updateBackdropFilters();
 
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
@@ -383,7 +386,8 @@ private:
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
         StructuralLayerForPreserves3D,
-        StructuralLayerForReplicaFlattening
+        StructuralLayerForReplicaFlattening,
+        StructuralLayerForBackdrop
     };
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
@@ -427,12 +431,13 @@ private:
         ContentsVisibilityChanged = 1LLU << 24,
         VisibleRectChanged = 1LLU << 25,
         FiltersChanged = 1LLU << 26,
-        TilingAreaChanged = 1LLU << 27,
-        TilesAdded = 1LLU < 28,
-        DebugIndicatorsChanged = 1LLU << 29,
-        CustomAppearanceChanged = 1LLU << 30,
-        CustomBehaviorChanged = 1LLU << 31,
-        BlendModeChanged = 1LLU << 32
+        BackdropFiltersChanged = 1LLU << 27,
+        TilingAreaChanged = 1LLU << 28,
+        TilesAdded = 1LLU < 29,
+        DebugIndicatorsChanged = 1LLU << 30,
+        CustomAppearanceChanged = 1LLU << 31,
+        CustomBehaviorChanged = 1LLU << 32,
+        BlendModeChanged = 1LLU << 33
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
@@ -446,6 +451,7 @@ private:
     RefPtr<PlatformCALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
     RefPtr<PlatformCALayer> m_contentsClippingLayer; // A layer used to clip inner content
     RefPtr<PlatformCALayer> m_contentsLayer; // A layer used for inner content, like image and video
+    RefPtr<PlatformCALayer> m_backdropLayer; // The layer used for backdrop rendering, if necessary.
 
     // References to clones of our layers, for replicated layers.
     OwnPtr<LayerMap> m_layerClones;

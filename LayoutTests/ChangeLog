@@ -1,3 +1,40 @@
+2014-11-06  Dean Jackson  <dino@apple.com>
+
+        [filters2] Support for backdrop-filter
+        https://bugs.webkit.org/show_bug.cgi?id=138384
+        <rdar://problem/18874494>
+
+        Reviewed by Simon Fraser.
+
+        Take 2!! Previous patch was rolled out.
+
+        Tests for backdrop-filter. These are skipped on non-Apple platforms.
+
+        * platform/win/TestExpections: Skip these tests.
+        * platform/efl/TestExpections:
+        * platform/gtk/TestExpections:
+        * platform/mac-mavericks/TestExpectations: Yosemite only.
+
+        * css3/filters/backdrop/backdropfilter-property-computed-style-expected.txt: Added.
+        * css3/filters/backdrop/backdropfilter-property-computed-style.html: Added.
+        * css3/filters/backdrop/backdropfilter-property-expected.txt: Added.
+        * css3/filters/backdrop/backdropfilter-property-parsing-expected.txt: Added.
+        * css3/filters/backdrop/backdropfilter-property-parsing-invalid-expected.txt: Added.
+        * css3/filters/backdrop/backdropfilter-property-parsing-invalid.html: Added.
+        * css3/filters/backdrop/backdropfilter-property-parsing.html: Added.
+        * css3/filters/backdrop/backdropfilter-property.html: Added.
+        * css3/filters/backdrop/effect-hw-expected.html: Added.
+        * css3/filters/backdrop/effect-hw.html: Added.
+        * css3/filters/backdrop/script-tests/backdropfilter-property-computed-style.js: Added.
+        (testComputedFilterRule):
+        * css3/filters/backdrop/script-tests/backdropfilter-property-parsing-invalid.js: Added.
+        (testInvalidFilterRule):
+        * css3/filters/backdrop/script-tests/backdropfilter-property-parsing.js: Added.
+        (jsWrapperClass):
+        (shouldBeType):
+        (testFilterRule):
+        * css3/filters/backdrop/script-tests/backdropfilter-property.js: Added.
+
 2014-11-06  Benjamin Poulain  <bpoulain@apple.com>
 
         Give pseudo elements the correct specificity
