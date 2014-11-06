@@ -1,5 +1,35 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175589. <rdar://problem/18871842>
+
+    2014-11-04  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            Use a web view for Quick Look in action menus
+            https://bugs.webkit.org/show_bug.cgi?id=138370
+    
+            Reviewed by Anders Carlsson.
+    
+            Instead of using the QLPreviewBubble SPI, show a popover containing a web view. This currently
+            does not inherit any configuration from the presenting WKView and does not expose any
+            customization options.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            Declare new internal NSViewController subclass, WKPagePreviewViewController.
+            (-[WKPagePreviewViewController initWithPageURL:]):
+            Store the passed-in URL and set a somewhat arbitrary (iPhone 5 screen size) default preferred size.
+            (-[WKPagePreviewViewController loadView]):
+            Create a WKWebView and load the URL passed into the initializer.
+            (-[WKActionMenuController _previewURLFromActionMenu:]):
+            Renamed from -_quickLookURLFromActionMenu:; present the popover returned by -_createPreviewPopoverForURL:.
+            (-[WKActionMenuController _createPreviewPopoverForURL:]):
+            New helper method; return a popover that owns a _WKPagePreviewViewController configured to show a scaled-down web page.
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+            Update to reflect method rename.
+            (-[WKActionMenuController _quickLookURLFromActionMenu:]): Deleted.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175610. <rdar://problem/18869345>
 
     2014-11-04  Beth Dakin  <bdakin@apple.com>
