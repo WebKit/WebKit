@@ -1,3 +1,16 @@
+2014-11-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr in CodeBlock class
+        https://bugs.webkit.org/show_bug.cgi?id=138395
+
+        Reviewed by Darin Adler.
+
+        * bytecode/CodeBlock.h: Use std::unique_ptr.
+        (JSC::CodeBlock::setJITCodeMap):
+        * jit/CompactJITCodeMap.h: Use std::unique_ptr instead of OwnPtr|PassOwnPtr.
+        (JSC::CompactJITCodeMap::CompactJITCodeMap):
+        (JSC::CompactJITCodeMap::Encoder::finish): Use std::unique_ptr instead of PassOwnPtr.
+
 2014-11-05  Mark Lam  <mark.lam@apple.com>
 
         PutById inline caches should have a store barrier when it triggers a structure transition.

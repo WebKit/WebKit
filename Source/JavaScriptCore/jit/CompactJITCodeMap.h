@@ -32,8 +32,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -47,7 +45,7 @@ namespace JSC {
 // CompactJITCodeMap::Encoder encoder(map);
 // encoder.append(a, b);
 // encoder.append(c, d); // preconditions: c >= a, d >= b
-// OwnPtr<CompactJITCodeMap> map = encoder.finish();
+// auto map = encoder.finish();
 //
 // At some later time:
 //
@@ -80,6 +78,16 @@ struct BytecodeAndMachineOffset {
 class CompactJITCodeMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    CompactJITCodeMap(uint8_t* buffer, unsigned size, unsigned numberOfEntries)
+        : m_buffer(buffer)
+#if !ASSERT_DISABLED
+        , m_size(size)
+#endif
+        , m_numberOfEntries(numberOfEntries)
+    {
+        UNUSED_PARAM(size);
+    }
+
     ~CompactJITCodeMap()
     {
         if (m_buffer)
@@ -94,16 +102,6 @@ public:
     void decode(Vector<BytecodeAndMachineOffset>& result) const;
     
 private:
-    CompactJITCodeMap(uint8_t* buffer, unsigned size, unsigned numberOfEntries)
-        : m_buffer(buffer)
-#if !ASSERT_DISABLED
-        , m_size(size)
-#endif
-        , m_numberOfEntries(numberOfEntries)
-    {
-        UNUSED_PARAM(size);
-    }
-    
     uint8_t at(unsigned index) const
     {
         ASSERT(index < m_size);
@@ -138,8 +136,8 @@ public:
         
         void ensureCapacityFor(unsigned numberOfEntriesToAdd);
         void append(unsigned bytecodeIndex, unsigned machineCodeOffset);
-        PassOwnPtr<CompactJITCodeMap> finish();
-        
+        std::unique_ptr<CompactJITCodeMap> finish();
+
     private:
         void appendByte(uint8_t value);
         void encodeNumber(uint32_t value);
@@ -212,18 +210,18 @@ inline void CompactJITCodeMap::Encoder::append(unsigned bytecodeIndex, unsigned 
     m_numberOfEntries++;
 }
 
-inline PassOwnPtr<CompactJITCodeMap> CompactJITCodeMap::Encoder::finish()
+inline std::unique_ptr<CompactJITCodeMap> CompactJITCodeMap::Encoder::finish()
 {
     m_capacity = m_size;
     m_buffer = static_cast<uint8_t*>(fastRealloc(m_buffer, m_capacity));
-    OwnPtr<CompactJITCodeMap> result = adoptPtr(new CompactJITCodeMap(m_buffer, m_size, m_numberOfEntries));
+    auto result = std::make_unique<CompactJITCodeMap>(m_buffer, m_size, m_numberOfEntries);
     m_buffer = 0;
     m_size = 0;
     m_capacity = 0;
     m_numberOfEntries = 0;
     m_previousBytecodeIndex = 0;
     m_previousMachineCodeOffset = 0;
-    return result.release();
+    return result;
 }
         
 inline void CompactJITCodeMap::Encoder::appendByte(uint8_t value)

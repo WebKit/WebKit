@@ -239,9 +239,9 @@ public:
 
     void linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo*);
 
-    void setJITCodeMap(PassOwnPtr<CompactJITCodeMap> jitCodeMap)
+    void setJITCodeMap(std::unique_ptr<CompactJITCodeMap> jitCodeMap)
     {
-        m_jitCodeMap = jitCodeMap;
+        m_jitCodeMap = WTF::move(jitCodeMap);
     }
     CompactJITCodeMap* jitCodeMap()
     {
@@ -1054,7 +1054,7 @@ private:
     Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
 #endif
-    OwnPtr<CompactJITCodeMap> m_jitCodeMap;
+    std::unique_ptr<CompactJITCodeMap> m_jitCodeMap;
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
