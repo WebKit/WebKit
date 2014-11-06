@@ -74,12 +74,18 @@ static const CGFloat popoverToViewScale = 0.75;
 @end
 
 #if WK_API_ENABLED
+
+@class WKPagePreviewViewController;
+
+@protocol WKPagePreviewViewControllerDelegate <NSObject>
+- (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController;
+@end
+
 @interface WKPagePreviewViewController : NSViewController {
 @public
     NSSize _mainViewSize;
-
-@private
     RetainPtr<NSURL> _url;
+    id <WKPagePreviewViewControllerDelegate> _delegate;
 }
 
 - (instancetype)initWithPageURL:(NSURL *)URL;
@@ -110,10 +116,22 @@ static const CGFloat popoverToViewScale = 0.75;
 
     // Setting the webView bounds will scale it to 75% of the _mainViewSize. 
     [webView setBounds:NSMakeRect(0, 0, _mainViewSize.width / popoverToViewScale, _mainViewSize.height / popoverToViewScale)];
+
+    RetainPtr<NSClickGestureRecognizer> clickRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(_clickRecognized:)]);
+    [webView addGestureRecognizer:clickRecognizer.get()];
     self.view = webView.get();
 }
 
+- (void)_clickRecognized:(NSGestureRecognizer *)gestureRecognizer
+{
+    [_delegate pagePreviewViewControllerWasClicked:self];
+}
+
 @end
+
+@interface WKActionMenuController () <WKPagePreviewViewControllerDelegate>
+@end
+
 #endif
 
 @implementation WKActionMenuController
@@ -137,8 +155,7 @@ static const CGFloat popoverToViewScale = 0.75;
     _page = nullptr;
     _wkView = nullptr;
     _hitTestResult = ActionMenuHitTestResult();
-    [_previewPopover setDelegate:nil];
-    _previewPopover = nil;
+
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -196,11 +213,8 @@ static const CGFloat popoverToViewScale = 0.75;
     if (_type == kWKActionMenuDataDetectedItem && menu.numberOfItems > 1)
         [self _hideTextIndicator];
 
-    if (!_shouldKeepPreviewPopoverOpen) {
-        [_previewPopover close];
-        [_previewPopover setDelegate:nil];
-        _previewPopover = nil;
-    }
+    if (!_shouldKeepPreviewPopoverOpen)
+        [self _clearPreviewPopover];
 
     _state = ActionMenuState::None;
     _hitTestResult = ActionMenuHitTestResult();
@@ -297,6 +311,7 @@ static const CGFloat popoverToViewScale = 0.75;
 {
     RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url]);
     previewViewController->_mainViewSize = _wkView.bounds.size;
+    previewViewController->_delegate = self;
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
     [_previewPopover setBehavior:NSPopoverBehaviorTransient];
@@ -329,6 +344,18 @@ static const CGFloat popoverToViewScale = 0.75;
 }
 
 #endif // WK_API_ENABLED
+
+- (void)_clearPreviewPopover
+{
+#if WK_API_ENABLED
+    if (WKPagePreviewViewController *pagePreviewViewController = (WKPagePreviewViewController *)[_previewPopover contentViewController])
+        pagePreviewViewController->_delegate = nil;
+#endif
+
+    [_previewPopover close];
+    [_previewPopover setDelegate:nil];
+    _previewPopover = nil;
+}
 
 #pragma mark Image actions
 
@@ -604,7 +631,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (void)popoverWillClose:(NSNotification *)notification
 {
     _shouldKeepPreviewPopoverOpen = NO;
-    _previewPopover = nil;
+    [self _clearPreviewPopover];
 }
 
 #pragma mark Menu Items
@@ -778,6 +805,18 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     for (NSMenuItem *item in menuItems)
         [_wkView.actionMenu addItem:item];
 }
+
+#if WK_API_ENABLED
+
+#pragma mark WKPagePreviewViewControllerDelegate
+
+- (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController
+{
+    if (NSURL *url = pagePreviewViewController->_url.get())
+        [[NSWorkspace sharedWorkspace] openURL:url];
+}
+
+#endif
 
 @end
 

@@ -1,5 +1,38 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175646. <rdar://problem/18887218>
+
+    2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            It should be possible to open a page preview by clicking on it
+            https://bugs.webkit.org/show_bug.cgi?id=138445
+    
+            Reviewed by Tim Horton.
+    
+            Add a click recognizer to WKPagePreviewViewController and plumb it through to WKActionMenuController.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            Declare <WKPagePreviewViewControllerDelegate>, currently home to just a single method.
+            (-[WKPagePreviewViewController loadView]):
+            Configure and add a click gesture recognizer to the WKWebView.
+            (-[WKPagePreviewViewController _clickRecognized:]):
+            Gesture recognizer action; send -pagePreviewViewControllerWasClicked: to the delegate.
+            (-[WKActionMenuController willDestroyView:]):
+            Extract code to -_clearPreviewPopover.
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            Ditto.
+            (-[WKActionMenuController _createPreviewPopoverForURL:]):
+            Set ourself as the delegate of the page preview controller.
+            (-[WKActionMenuController _clearPreviewPopover]):
+            Extracted from various other methods; if appropriate, nil out the preview view controller's delegate.
+            (-[WKActionMenuController popoverWillClose:]):
+            Extract code to -_clearPreviewPopover.
+            (-[WKActionMenuController pagePreviewViewControllerWasClicked:]):
+            WKPagePreviewViewControllerDelegate method; open the URL of the clicked page.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175645. <rdar://problem/18887140>
 
     2014-11-05  Beth Dakin  <bdakin@apple.com>
