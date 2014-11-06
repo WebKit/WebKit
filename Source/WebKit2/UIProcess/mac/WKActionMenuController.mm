@@ -283,22 +283,47 @@ using namespace WebKit;
 
     WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
     NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
-    [self _createPreviewPopoverForURL:url];
-    [_previewPopover showRelativeToRect:hitTestResult->elementBoundingBox() ofView:_wkView preferredEdge:NSMaxYEdge];
+    NSRect originRect = hitTestResult->elementBoundingBox();
+    [self _createPreviewPopoverForURL:url originRect:originRect];
+    [_previewPopover showRelativeToRect:originRect ofView:_wkView preferredEdge:NSMaxYEdge];
 }
 
-- (void)_createPreviewPopoverForURL:(NSURL *)url
+- (void)_createPreviewPopoverForURL:(NSURL *)url originRect:(NSRect)originRect
 {
     RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url]);
-    NSRect wkViewBounds = [_wkView bounds];
-    previewViewController->_preferredSize = NSMakeSize(NSWidth(wkViewBounds) * 0.75, NSHeight(wkViewBounds) * 0.75);
+    previewViewController->_preferredSize = [self _preferredSizeForPopoverPresentedFromOriginRect:originRect];
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
     [_previewPopover setBehavior:NSPopoverBehaviorTransient];
     [_previewPopover setContentViewController:previewViewController.get()];
     [_previewPopover setDelegate:self];
 }
-#endif
+
+- (NSSize)_preferredSizeForPopoverPresentedFromOriginRect:(NSRect)originRect
+{
+    static const CGFloat preferredPopoverToWKViewScale = 0.75;
+    static const CGFloat screenPadding = 40;
+
+    NSWindow *window = _wkView.window;
+    NSRect originScreenRect = [window convertRectToScreen:[_wkView convertRect:originRect toView:nil]];
+    NSRect screenFrame = window.screen.visibleFrame;
+
+    CGFloat availableSpaceAbove = NSMaxY(screenFrame) - NSMaxY(originScreenRect);
+    CGFloat availableSpaceBelow = NSMinY(originScreenRect) - NSMinY(screenFrame);
+    CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - screenPadding;
+
+    CGFloat availableSpaceAtLeft = NSMinX(originScreenRect) - NSMinX(screenFrame);
+    CGFloat availableSpaceAtRight = NSMaxX(screenFrame) - NSMaxX(originScreenRect);
+    CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - screenPadding;
+
+    NSRect wkViewBounds = _wkView.bounds;
+    NSSize preferredSize = NSMakeSize(NSWidth(wkViewBounds) * preferredPopoverToWKViewScale, NSHeight(wkViewBounds) * preferredPopoverToWKViewScale);
+    preferredSize.width = fmin(preferredSize.width, maxAvailableHorizontalSpace);
+    preferredSize.height = fmin(preferredSize.height, maxAvailableVerticalSpace);
+    return preferredSize;
+}
+
+#endif // WK_API_ENABLED
 
 #pragma mark Image actions
 

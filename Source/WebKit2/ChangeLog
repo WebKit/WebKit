@@ -1,5 +1,32 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175643. <rdar://problem/18885782>
+
+    2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            Page preview popovers sometimes cover their originating element
+            https://bugs.webkit.org/show_bug.cgi?id=138437
+    
+            Reviewed by Beth Dakin.
+    
+            If a popover is sufficiently large, and the originating element is in a particular location, it's
+            possible that the popover can't be positioned in a manner that doesn't occlude the originating element.
+            Address this by scaling down the popover content if it can't fit entirely between the originating
+            element and the screen edge.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _previewURLFromActionMenu:]):
+            Update to use -_createPreviewPopoverForURL:originRect:.
+            (-[WKActionMenuController _createPreviewPopoverForURL:originRect:]):
+            Renamed from -_createPreviewPopoverForURL:; extract code to -_preferredSizeForPopoverPresentedFromOriginRect:.
+            (-[WKActionMenuController _preferredSizeForPopoverPresentedFromOriginRect:]):
+            Compute a size that is as large as possible while keeping the popover between the origin rect and screen edge
+            (with an arbitrary padding applied to keep from directly abutting the screen edge).
+            (-[WKActionMenuController _createPreviewPopoverForURL:]): Deleted.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175637. <rdar://problem/18877675>
 
     2014-11-05  Tim Horton  <timothy_horton@apple.com>
