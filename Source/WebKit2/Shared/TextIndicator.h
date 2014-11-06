@@ -49,7 +49,8 @@ class TextIndicator : public RefCounted<TextIndicator> {
 public:
     struct Data {
         WebCore::FloatRect selectionRectInWindowCoordinates;
-        Vector<WebCore::FloatRect> textRectsInSelectionRectCoordinates;
+        WebCore::FloatRect textBoundingRectInWindowCoordinates;
+        Vector<WebCore::FloatRect> textRectsInBoundingRectCoordinates;
         float contentImageScaleFactor;
         RefPtr<ShareableBitmap> contentImage;
 
@@ -57,7 +58,6 @@ public:
         static bool decode(IPC::ArgumentDecoder&, Data&);
     };
 
-    static PassRefPtr<TextIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionCoordinates, float contentImageScaleFactor, PassRefPtr<ShareableBitmap> contentImage);
     static PassRefPtr<TextIndicator> create(const TextIndicator::Data&);
     static PassRefPtr<TextIndicator> createWithSelectionInFrame(WebFrame&);
 
@@ -65,13 +65,14 @@ public:
 
     WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_data.selectionRectInWindowCoordinates; }
     WebCore::FloatRect frameRect() const;
-    ShareableBitmap* contentImage() const { return m_data.contentImage.get(); }
     Data data() const { return m_data; }
 
     void draw(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
 private:
     TextIndicator(const TextIndicator::Data&);
+
+    void drawContentImage(WebCore::GraphicsContext&, WebCore::FloatRect textRect);
 
     Data m_data;
 };
