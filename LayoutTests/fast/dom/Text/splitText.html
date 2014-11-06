@@ -1,0 +1,24 @@
+<html>
+<head>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<head>
+<script>
+description("Tests the splitText API arguments.");
+
+var text = document.createTextNode("abcdefg");
+
+shouldBeEqualToString("text.data", "abcdefg");
+shouldBeEqualToString("text.splitText(4).data", "efg");
+shouldBeEqualToString("text.data", "abcd");
+shouldThrow("text.splitText()", "'TypeError: Not enough arguments'");
+shouldThrow("text.splitText(999)", '"Error: IndexSizeError: DOM Exception 1"');
+shouldThrow("text.splitText(-1)", '"Error: IndexSizeError: DOM Exception 1"');
+shouldBeEqualToString("text.data", "abcd");
+shouldBeEqualToString("text.splitText(-4294967294).data", "cd");
+shouldBeEqualToString("text.data", "ab");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
