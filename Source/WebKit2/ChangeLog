@@ -1,3 +1,43 @@
+2014-11-03  Beth Dakin  <bdakin@apple.com>
+
+        Implement action menus for editable text with spelling suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=138333
+        -and corresponding-
+        rdar://problem/18742371
+
+        Reviewed by Tim Horton.
+
+        New types.
+        * Shared/API/c/WKActionMenuItemTypes.h:
+        * Shared/API/c/WKActionMenuTypes.h:
+
+        ActionMenuHitTestResult now stores the String result of the lookup.
+        * Shared/mac/ActionMenuHitTestResult.h:
+        * Shared/mac/ActionMenuHitTestResult.mm:
+        (WebKit::ActionMenuHitTestResult::encode):
+        (WebKit::ActionMenuHitTestResult::decode):
+
+        Make getGuessesForWord() public so we can call it from WKActionMenuController.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKActionMenuController.mm:
+
+        Select the text for all types of text menus.
+        (-[WKActionMenuController isMenuForTextContent]):
+        (-[WKActionMenuController willOpenMenu:withEvent:]):
+
+        Spelling suggestions are presented in a sub-menu and will replace the selection 
+        when chosen.
+        (-[WKActionMenuController _defaultMenuItemsForEditableTextWithSuggestions:]):
+        (-[WKActionMenuController _changeSelectionToSuggestion:]):
+        (-[WKActionMenuController _createActionMenuItemForTag:]):
+        (-[WKActionMenuController _defaultMenuItems:]):
+
+        New function to store the lookupText as a String on the ActionMenuHitTestResult.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        (WebKit::WebPage::lookupTextAtLocation):
+
 2014-10-29  Tim Horton  <timothy_horton@apple.com>
 
         Rename WebPageProxy::activeActionMenuHitTestResult to lastMouseMoveHitTestResult

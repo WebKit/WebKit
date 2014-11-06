@@ -1147,6 +1147,9 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
     actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
 
+    RefPtr<WebCore::Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates);
+    actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
+
     if (Image* image = hitTestResult.image()) {
         actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
         if (actionMenuResult.image)
@@ -1165,6 +1168,18 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
 
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, InjectedBundleUserMessageEncoder(userData.get())));
+}
+
+PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCooordinates)
+{
+    MainFrame& mainFrame = corePage()->mainFrame();
+    if (!mainFrame.view() || !mainFrame.view()->renderView())
+        return nullptr;
+
+    IntPoint point = roundedIntPoint(locationInViewCooordinates);
+    HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
+    NSDictionary *options = nil;
+    return rangeForDictionaryLookupAtHitTestResult(result, &options);
 }
 
 void WebPage::selectLookupTextAtLocation(FloatPoint locationInWindowCooordinates)

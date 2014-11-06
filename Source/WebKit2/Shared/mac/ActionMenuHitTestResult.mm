@@ -38,6 +38,7 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << hitTestLocationInViewCooordinates;
     encoder << hitTestResult;
+    encoder << lookupText;
 
     ShareableBitmap::Handle handle;
 
@@ -68,6 +69,9 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
         return false;
 
     if (!decoder.decode(actionMenuHitTestResult.hitTestResult))
+        return false;
+
+    if (!decoder.decode(actionMenuHitTestResult.lookupText))
         return false;
 
     ShareableBitmap::Handle handle;

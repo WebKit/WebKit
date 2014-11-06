@@ -110,12 +110,17 @@ using namespace WebKit;
     [self _updateActionMenuItemsForStage:MenuUpdateStage::PrepareForMenu];
 }
 
+- (BOOL)isMenuForTextContent
+{
+    return _type == kWKActionMenuReadOnlyText || _type == kWKActionMenuEditableText || _type == kWKActionMenuEditableTextWithSuggestions;
+}
+
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != _wkView.actionMenu)
         return;
 
-    if (_type != kWKActionMenuReadOnlyText && _type != kWKActionMenuEditableText)
+    if (![self isMenuForTextContent])
         return;
 
     // Action menus for text should highlight the text so that it is clear what the action menu actions
@@ -338,19 +343,63 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
 }
 
--(void)_copySelection:(id)sender
+- (NSArray *)_defaultMenuItemsForEditableTextWithSuggestions
+{
+    if (_hitTestResult.lookupText.isEmpty())
+        return @[ ];
+
+    Vector<TextCheckingResult> results;
+    _page->checkTextOfParagraph(_hitTestResult.lookupText, NSTextCheckingTypeSpelling, results);
+    if (results.isEmpty())
+        return @[ ];
+
+    Vector<String> guesses;
+    _page->getGuessesForWord(_hitTestResult.lookupText, String(), guesses);
+    if (guesses.isEmpty())
+        return @[ ];
+
+    RetainPtr<NSMenu> spellingSubMenu = adoptNS([[NSMenu alloc] init]);
+    for (const auto& guess : guesses) {
+        RetainPtr<NSMenuItem> item = adoptNS([[NSMenuItem alloc] initWithTitle:guess action:@selector(_changeSelectionToSuggestion:) keyEquivalent:@""]);
+        [item setRepresentedObject:guess];
+        [item setTarget:self];
+        [spellingSubMenu addItem:item.get()];
+    }
+
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
+    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
+    RetainPtr<NSMenuItem> textSuggestionsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagTextSuggestions];
+
+    [textSuggestionsItem setSubmenu:spellingSubMenu.get()];
+
+    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get(), textSuggestionsItem.get() ];
+}
+
+- (void)_copySelection:(id)sender
 {
     _page->executeEditCommand("copy");
 }
 
--(void)_paste:(id)sender
+- (void)_paste:(id)sender
 {
     _page->executeEditCommand("paste");
 }
 
--(void)_lookupText:(id)sender
+- (void)_lookupText:(id)sender
 {
     _page->performDictionaryLookupOfCurrentSelection();
+}
+
+- (void)_changeSelectionToSuggestion:(id)sender
+{
+    NSString *selectedCorrection = [sender representedObject];
+    if (!selectedCorrection)
+        return;
+
+    ASSERT([selectedCorrection isKindOfClass:[NSString class]]);
+
+    _page->changeSpellingToWord(selectedCorrection);
 }
 
 #pragma mark NSMenuDelegate implementation
@@ -468,6 +517,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = [NSImage imageNamed:@"NSActionMenuPaste"];
         break;
 
+    case kWKContextActionItemTagTextSuggestions:
+        title = @"Suggestions";
+        image = [NSImage imageNamed:@"NSActionMenuSpelling"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -530,6 +584,12 @@ static NSImage *webKitBundleImageNamed(NSString *name)
         }
 
         if (hitTestResult->isContentEditable()) {
+            NSArray *editableTextWithSuggestions = [self _defaultMenuItemsForEditableTextWithSuggestions];
+            if (editableTextWithSuggestions.count) {
+                _type = kWKActionMenuEditableTextWithSuggestions;
+                return editableTextWithSuggestions;
+            }
+
             _type = kWKActionMenuEditableText;
             return [self _defaultMenuItemsForEditableText];
         }
