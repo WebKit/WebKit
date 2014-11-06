@@ -173,21 +173,21 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
-    -webkit-appearance: media-slider;
-    display: -webkit-flex;
-    -webkit-flex: 1 1 auto;
-    height: 8px;
-    margin: 0 15px 0 1px;
-    padding: 0;
-    background-color: transparent;
-    min-width: 25px;
-    border-radius: 4px;
-    color: rgba(230, 230, 230, 0.35);
-    outline: none;
+    -webkit-appearance: media-slider !important;
+    display: -webkit-flex !important;
+    -webkit-flex: 1 1 auto !important;
+    height: 8px !important;
+    margin: 0 15px 0 1px !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    min-width: 25px !important;
+    border-radius: 4px !important;
+    color: rgba(230, 230, 230, 0.35) !important;
+    outline: none !important;
 }
 
 audio::-webkit-media-controls-timeline[disabled], video::-webkit-media-controls-timeline[disabled] {
-    opacity: 0.3;
+    opacity: 0.3 !important;
 }
 
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
@@ -224,18 +224,18 @@ video::-webkit-media-controls-panel .hiding.down {
 }
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
-    -webkit-appearance: media-volume-slider;
-    display: -webkit-flex;
-    -webkit-align-items: center;
-    -webkit-flex-direction: column;
-    box-sizing: border-box;
-    height: 80px;
-    width: 8px;
-    margin: 10px auto;
-    border-radius: 4px;
-    background-color: transparent;
-    color: rgba(230, 230, 230, 0.35);
-    outline: none;
+    -webkit-appearance: media-volume-slider !important;
+    display: -webkit-flex !important;
+    -webkit-align-items: center !important;
+    -webkit-flex-direction: column !important;
+    box-sizing: border-box !important;
+    height: 80px !important;
+    width: 8px !important;
+    margin: 10px auto !important;
+    border-radius: 4px !important;
+    background-color: transparent !important;
+    color: rgba(230, 230, 230, 0.35) !important;
+    outline: none !important;
 }
 
 audio::-webkit-media-controls-volume-slider-container input[type="range"]::-webkit-media-slider-container > div, video::-webkit-media-controls-volume-slider-container input[type="range"]::-webkit-media-slider-container > div {

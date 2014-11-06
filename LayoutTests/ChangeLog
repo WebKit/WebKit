@@ -1,3 +1,23 @@
+2014-11-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        Give pseudo elements the correct specificity
+        https://bugs.webkit.org/show_bug.cgi?id=138378
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/pseudo-element-specificity-expected.html: Added.
+        * fast/css/pseudo-element-specificity.html: Added.
+        Given that all selector affecting the pseudo element were offset by one,
+        it is impossible to use a pseudo element directly to affect the order, making the bug
+        hard to test.
+
+        What I did here for testing is use the stauration at 255 of any specificity field.
+        With 255 class + 1 pseudo element, the old code would saturate at (0, 255, 0), while
+        the fixed code would correctly give (0, 255, 1). By comparing that to a non-saturated
+        selector, I can show the fix is correct.
+
+        * inspector/css/selector-specificity-expected.txt:
+
 2014-11-06  Alexey Proskuryakov  <ap@apple.com>
 
         inspector-protocol/debugger/setPauseOnExceptions-uncaught.html frequently times out on Yosemite

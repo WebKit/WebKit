@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        testcase::before {
+            content:"Before";
+            display: block;
+            background-color: green;
+            color: white;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <p>Test the specificity of pseudo elements. If the text succeed, there should be a green rectangle with the text "Before".</p>
+    <testcase class="testcase"></testcase>
+</body>
+</html>

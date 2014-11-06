@@ -224,42 +224,42 @@ audio::-webkit-media-controls-panel .volume-box:active {
 
 audio::-webkit-media-controls-volume-slider,
 video::-webkit-media-controls-volume-slider {
-    -webkit-appearance: none;
-    box-sizing: border-box;
-    height: 10px;
-    width: 80px;
-    padding: 0;
-    margin-right: 6px;
+    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
+    height: 10px !important;
+    width: 80px !important;
+    padding: 0 !important;
+    margin-right: 6px !important;
 
-    border-radius: 5px;
-    background-color: transparent;
+    border-radius: 5px !important;
+    background-color: transparent !important;
     background-image: -webkit-linear-gradient(
         top,
         rgba(15, 15, 15, .85) 0,
         rgba(23, 23, 23, .85) 50%,
         rgba(15, 15, 15, .85) 100%
-    );
-    border: 1px solid rgba(0, 0, 0, 0.875);
+    ) !important;
+    border: 1px solid rgba(0, 0, 0, 0.875) !important;
 }
 
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb,
 audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    background-color: transparent;
+    -webkit-appearance: none !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 4px !important;
+    background-color: transparent !important;
 
     /* rotateZ() forces the layer into compositing mode.
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: rotateZ(0);
+    -webkit-transform: rotateZ(0) !important;
     background-image: -webkit-linear-gradient(
         left,
         rgba(99, 99, 99, 1),
         rgba(144, 144, 144, 1)
-    );
-    box-shadow: inset -1px 0 0 rgba(255, 255, 255, .5), 0 1px rgba(255, 255, 255, .14);
+    ) !important;
+    box-shadow: inset -1px 0 0 rgba(255, 255, 255, .5), 0 1px rgba(255, 255, 255, .14) !important;
 }
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slider-thumb:active,
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb,
@@ -269,7 +269,7 @@ audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webki
         right top,
         rgba(160, 160, 160, 1),
         rgba(221, 221, 221, 1)
-    );
+    ) !important;
 }
 
 video::-webkit-media-controls-mute-button.muted,
@@ -415,26 +415,26 @@ audio::-webkit-media-controls-status-display {
 }
 video::-webkit-media-controls-timeline,
 audio::-webkit-media-controls-timeline {
-    -webkit-appearance: none;
-    -webkit-flex: 1 1 0;
-    height: 9px;
-    margin: 0;
+    -webkit-appearance: none !important;
+    -webkit-flex: 1 1 0 !important;
+    height: 9px !important;
+    margin: 0 !important;
 
-    border-radius: 4.5px;
-    background-color: rgb(74, 74, 74);
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08);
+    border-radius: 4.5px !important;
+    background-color: rgb(74, 74, 74) !important;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08) !important;
 }
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width:6px;
-    height: 6px;
-    background-color: white;
+    -webkit-appearance: none !important;
+    width:6px !important;
+    height: 6px !important;
+    background-color: white !important;
 
     /* rotateZ() forces the layer into compositing mode.
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: translateY(1px) rotateZ(-45deg);
+    -webkit-transform: translateY(1px) rotateZ(-45deg) !important;
 
     background-image: -webkit-gradient(
         linear,
@@ -442,7 +442,7 @@ audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
         right top,
         color-stop(0, rgba(99,  99,  99,  1)),
         color-stop(1, rgba(144, 144, 144, 1))
-    );
+    ) !important;
 }
 video::-webkit-media-controls-timeline::-webkit-slider-thumb:active,
 video::-webkit-media-controls-timeline:active::-webkit-slider-thumb,
@@ -455,7 +455,7 @@ audio::-webkit-media-controls-timeline:active::-webkit-slider-thumb,
         right top,
         color-stop(0, rgba(160, 160, 160, 1)),
         color-stop(1, rgba(221, 221, 221, 1))
-    );
+    ) !important;
 }
 video::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-time-remaining-display,
@@ -597,24 +597,24 @@ video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
 }
 
 video:-webkit-full-screen::-webkit-media-controls-volume-slider {
-    height: 6px;
-    border-radius: 3px;
+    height: 6px !important;
+    border-radius: 3px !important;
     background-image: -webkit-linear-gradient(top,
         rgba(16, 16, 16, .300) 0,
         rgba(9,  9,  9,  .629) 100%
-    );
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08);
+    ) !important;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08) !important;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 5px !important;
 
     /* rotateZ() forces the layer into compositing mode.
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
-    -webkit-transform: rotateZ(270deg);
+    -webkit-transform: rotateZ(270deg) !important;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button {

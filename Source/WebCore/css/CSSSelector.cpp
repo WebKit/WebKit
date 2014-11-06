@@ -92,8 +92,6 @@ unsigned CSSSelector::specificity() const
 
 inline unsigned CSSSelector::specificityForOneSelector() const
 {
-    // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
-    // isn't quite correct.
     switch (match()) {
     case Id:
         return 0x10000;
@@ -124,13 +122,14 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case Set:
     case List:
     case Hyphen:
-    case PseudoElement:
     case Contain:
     case Begin:
     case End:
         return 0x100;
     case Tag:
         return (tagQName().localName() != starAtom) ? 1 : 0;
+    case PseudoElement:
+        return 1;
     case Unknown:
         return 0;
     }

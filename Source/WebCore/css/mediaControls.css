@@ -129,10 +129,10 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 }
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
-    background-color: initial;
-    border: initial;
-    color: inherit;
-    margin: initial;
+    background-color: initial !important;
+    border: initial !important;
+    color: inherit !important;
+    margin: initial !important;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
@@ -198,11 +198,11 @@ audio::-webkit-media-controls-closed-captions-track-list, video::-webkit-media-c
 }
 
 audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button {
-    -webkit-appearance: media-volume-slider-mute-button;
-    display: none;
-    background-color: initial;
-    border: initial;
-    color: inherit;
+    -webkit-appearance: media-volume-slider-mute-button !important;
+    display: none !important;
+    background-color: initial !important;
+    border: initial !important;
+    color: inherit !important;
 }
 
 audio::-webkit-media-controls-fullscreen-volume-slider, video::-webkit-media-controls-fullscreen-volume-slider {

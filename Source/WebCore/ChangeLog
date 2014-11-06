@@ -1,3 +1,56 @@
+2014-11-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        Give pseudo elements the correct specificity
+        https://bugs.webkit.org/show_bug.cgi?id=138378
+
+        Reviewed by Dean Jackson.
+
+        WebKit had an old silly bug where pseudo elements were given specificity in the class B
+        instead of the class C.
+
+        Now that the inspector shows the specificity, this bug is much more visible which is why
+        I fix it now.
+
+        Test: fast/css/pseudo-element-specificity.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+        Give pseudo-elements the right specificity.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-timeline:active::-webkit-slider-thumb,):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-thumb):
+        * Modules/mediacontrols/mediaControlsBase.css:
+        (video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb):
+        (audio::-webkit-media-controls-timeline:active::-webkit-slider-thumb,):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-thumb):
+        * css/mediaControls.css:
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button):
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-timeline[disabled], video::-webkit-media-controls-timeline[disabled]):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        The media controls were relying on the bug to override the style of input[type=range].
+
+        Ideally we should either:
+        -Implement some kind of high level style isolation (e.g. CSS Scoping).
+        -Fix the media control tree to use regular CSS scoped by a shadow pseudo ID.
+
+        Until we have one of those, I just fixed the styling by forcing the properties with lower
+        specificity with !important. 
+
 2014-11-06  Beth Dakin  <bdakin@apple.com>
 
         Preview views often misplaced inside popover
