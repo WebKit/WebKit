@@ -50,6 +50,7 @@ public:
         virtual void drawRect(WebPageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(WebPageOverlay&, const WebCore::PlatformMouseEvent&) = 0;
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
+        virtual bool prepareForActionMenu(WebPageOverlay&, RefPtr<API::Object>& userData) { return false; }
 
         virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) { return false; }
         virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) { return false; }
@@ -57,6 +58,7 @@ public:
     };
 
     static PassRefPtr<WebPageOverlay> create(Client&, WebCore::PageOverlay::OverlayType = WebCore::PageOverlay::OverlayType::View);
+    static WebPageOverlay* fromCoreOverlay(WebCore::PageOverlay&);
     virtual ~WebPageOverlay();
 
     void setNeedsDisplay(const WebCore::IntRect& dirtyRect);
@@ -66,6 +68,8 @@ public:
 
     WebCore::PageOverlay* coreOverlay() const { return m_overlay.get(); }
     Client& client() const { return m_client; }
+
+    bool prepareForActionMenu(RefPtr<API::Object>& userData);
 
 private:
     WebPageOverlay(Client&, WebCore::PageOverlay::OverlayType);

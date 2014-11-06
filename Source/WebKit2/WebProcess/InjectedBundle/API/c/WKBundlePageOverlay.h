@@ -48,6 +48,7 @@ typedef bool (*WKBundlePageOverlayMouseDownCallback)(WKBundlePageOverlayRef page
 typedef bool (*WKBundlePageOverlayMouseUpCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
 typedef bool (*WKBundlePageOverlayMouseMovedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
 typedef bool (*WKBundlePageOverlayMouseDraggedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
+typedef bool (*WKBundlePageOverlayPrepareForActionMenuCallback)(WKBundlePageOverlayRef pageOverlay, WKTypeRef* userData, const void* clientInfo);
 
 typedef struct WKBundlePageOverlayClientBase {
     int                                                                 version;
@@ -57,7 +58,6 @@ typedef struct WKBundlePageOverlayClientBase {
 typedef struct WKBundlePageOverlayClientV0 {
     WKBundlePageOverlayClientBase                                       base;
 
-    // Version 0.
     WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
     WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
     WKBundlePageOverlayDrawRectCallback                                 drawRect;
@@ -67,12 +67,25 @@ typedef struct WKBundlePageOverlayClientV0 {
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
 } WKBundlePageOverlayClientV0;
 
+typedef struct WKBundlePageOverlayClientV1 {
+    WKBundlePageOverlayClientBase                                       base;
+
+    WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
+    WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
+    WKBundlePageOverlayDrawRectCallback                                 drawRect;
+    WKBundlePageOverlayMouseDownCallback                                mouseDown;
+    WKBundlePageOverlayMouseUpCallback                                  mouseUp;
+    WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
+    WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
+
+    WKBundlePageOverlayPrepareForActionMenuCallback                     prepareForActionMenu;
+} WKBundlePageOverlayClientV1;
+
 enum { kWKBundlePageOverlayClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageOverlayClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
-    // Version 0.
     WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
     WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
     WKBundlePageOverlayDrawRectCallback                                 drawRect;

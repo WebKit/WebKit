@@ -47,6 +47,7 @@
 #import "WebFrame.h"
 #import "WebImage.h"
 #import "WebInspector.h"
+#import "WebPageOverlay.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
 #import "WebPreferencesStore.h"
@@ -68,6 +69,7 @@
 #import <WebCore/MainFrame.h>
 #import <WebCore/NetworkingContext.h>
 #import <WebCore/Page.h>
+#import <WebCore/PageOverlayController.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/RenderElement.h>
@@ -1193,8 +1195,22 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     }
 
     RefPtr<API::Object> userData;
-    RefPtr<InjectedBundleHitTestResult> injectedBundleHitTestResult = InjectedBundleHitTestResult::create(hitTestResult);
-    injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
+
+    bool handled = false;
+    for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
+        WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay);
+        if (!webOverlay)
+            continue;
+        if (webOverlay->prepareForActionMenu(userData)) {
+            handled = true;
+            break;
+        }
+    }
+
+    if (!handled) {
+        RefPtr<InjectedBundleHitTestResult> injectedBundleHitTestResult = InjectedBundleHitTestResult::create(hitTestResult);
+        injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
+    }
 
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, InjectedBundleUserMessageEncoder(userData.get())));
 }
