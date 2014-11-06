@@ -1,5 +1,27 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175645. <rdar://problem/18887140>
+
+    2014-11-05  Beth Dakin  <bdakin@apple.com>
+    
+            Page preview popover should show scaled-down web content
+            https://bugs.webkit.org/show_bug.cgi?id=138444
+    
+            Reviewed by Anders Carlsson.
+    
+            Instead of keeping the preferred size in the controller, keep the main view’s 
+            size, and then scale the bounds of the popover’s view using that and the scale 
+            factor as a constant. Set the size of the popover explicitly so that it doesn’t 
+            get the view’s size. This will cause it to scale the WKWebView.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKPagePreviewViewController initWithPageURL:]):
+            (-[WKPagePreviewViewController loadView]):
+            (-[WKActionMenuController _createPreviewPopoverForURL:originRect:]):
+            (-[WKActionMenuController _preferredSizeForPopoverPresentedFromOriginRect:]):
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175643. <rdar://problem/18885782>
 
     2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
