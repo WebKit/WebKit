@@ -1,3 +1,5 @@
+/*global self*/
+/*jshint latedef: nofunc*/
 /*
 Distributed under both the W3C Test Suite License [1] and the W3C
 3-clause BSD License [2]. To contribute to a W3C Test Suite, see the
@@ -8,374 +10,19 @@ policies and contribution forms [3].
 [3] http://www.w3.org/2004/10/27-testcases
 */
 
-/*
- * == Introduction ==
- *
- * This file provides a framework for writing testcases. It is intended to
- * provide a convenient API for making common assertions, and to work both
- * for testing synchronous and asynchronous DOM features in a way that
- * promotes clear, robust, tests.
- *
- * == Basic Usage ==
- *
- * To use this file, import the script and the testharnessreport script into
- * the test document:
- * <script src="/resources/testharness.js"></script>
- * <script src="/resources/testharnessreport.js"></script>
- *
- * Within each file one may define one or more tests. Each test is atomic
- * in the sense that a single test has a single result (pass/fail/timeout).
- * Within each test one may have a number of asserts. The test fails at the
- * first failing assert, and the remainder of the test is (typically) not run.
- *
- * If the file containing the tests is a HTML file with an element of id "log"
- * this will be populated with a table containing the test results after all
- * the tests have run.
- *
- * NOTE: By default tests must be created before the load event fires. For ways
- *       to create tests after the load event, see "Determining when all tests
- *       are complete", below
- *
- * == Synchronous Tests ==
- *
- * To create a synchronous test use the test() function:
- *
- * test(test_function, name, properties)
- *
- * test_function is a function that contains the code to test. For example a
- * trivial passing test would be:
- *
- * test(function() {assert_true(true)}, "assert_true with true")
- *
- * The function passed in is run in the test() call.
- *
- * properties is an object that overrides default test properties. The
- * recognised properties are:
- *    timeout - the test timeout in ms
- *
- * e.g.
- * test(test_function, "Sample test", {timeout:1000})
- *
- * would run test_function with a timeout of 1s.
- *
- * Additionally, test-specific metadata can be passed in the properties. These
- * are used when the individual test has different metadata from that stored
- * in the <head>.
- * The recognized metadata properties are:
- *
- *    help - The url of the part of the specification being tested
- *
- *    assert - A human readable description of what the test is attempting
- *             to prove
- *
- *    author - Name and contact information for the author of the test in the
- *             format: "Name <email_addr>" or "Name http://contact/url"
- *
- * == Asynchronous Tests ==
- *
- * Testing asynchronous features is somewhat more complex since the result of
- * a test may depend on one or more events or other callbacks. The API provided
- * for testing these features is indended to be rather low-level but hopefully
- * applicable to many situations.
- *
- * To create a test, one starts by getting a Test object using async_test:
- *
- * async_test(name, properties)
- *
- * e.g.
- * var t = async_test("Simple async test")
- *
- * Assertions can be added to the test by calling the step method of the test
- * object with a function containing the test assertions:
- *
- * t.step(function() {assert_true(true)});
- *
- * When all the steps are complete, the done() method must be called:
- *
- * t.done();
- *
- * As a convenience, async_test can also takes a function as first argument.
- * This function is called with the test object as both its `this` object and
- * first argument. The above example can be rewritten as:
- *
- * async_test(function(t) {
- *     object.some_event = function() {
- *         t.step(function (){assert_true(true); t.done();});
- *     };
- * }, "Simple async test");
- *
- * which avoids cluttering the global scope with references to async
- * tests instances.
- *
- * The properties argument is identical to that for test().
- *
- * In many cases it is convenient to run a step in response to an event or a
- * callback. A convenient method of doing this is through the step_func method
- * which returns a function that, when called runs a test step. For example
- *
- * object.some_event = t.step_func(function(e) {assert_true(e.a)});
- *
- * == Making assertions ==
- *
- * Functions for making assertions start assert_
- * The best way to get a list is to look in this file for functions names
- * matching that pattern. The general signature is
- *
- * assert_something(actual, expected, description)
- *
- * although not all assertions precisely match this pattern e.g. assert_true
- * only takes actual and description as arguments.
- *
- * The description parameter is used to present more useful error messages when
- * a test fails
- *
- * NOTE: All asserts must be located in a test() or a step of an async_test().
- *       asserts outside these places won't be detected correctly by the harness
- *       and may cause a file to stop testing.
- *
- * == Harness Timeout ==
- * 
- * The overall harness admits two timeout values "normal" (the
- * default) and "long", used for tests which have an unusually long
- * runtime. After the timeout is reached, the harness will stop
- * waiting for further async tests to complete. By default the
- * timeouts are set to 10s and 60s, respectively, but may be changed
- * when the test is run on hardware with different performance
- * characteristics to a common desktop computer.  In order to opt-in
- * to the longer test timeout, the test must specify a meta element:
- * <meta name="timeout" content="long">
- *
- * == Setup ==
- *
- * Sometimes tests require non-trivial setup that may fail. For this purpose
- * there is a setup() function, that may be called with one or two arguments.
- * The two argument version is:
- *
- * setup(func, properties)
- *
- * The one argument versions may omit either argument.
- * func is a function to be run synchronously. setup() becomes a no-op once
- * any tests have returned results. Properties are global properties of the test
- * harness. Currently recognised properties are:
- *
- *
- * explicit_done - Wait for an explicit call to done() before declaring all
- *                 tests complete (see below)
- *
- * output_document - The document to which results should be logged. By default
- *                   this is the current document but could be an ancestor
- *                   document in some cases e.g. a SVG test loaded in an HTML
- *                   wrapper
- *
- * explicit_timeout - disable file timeout; only stop waiting for results
- *                    when the timeout() function is called (typically for
- *                    use when integrating with some existing test framework
- *                    that has its own timeout mechanism).
- *
- * allow_uncaught_exception - don't treat an uncaught exception as an error;
- *                            needed when e.g. testing the window.onerror
- *                            handler.
- *
- * timeout_multiplier - Multiplier to apply to per-test timeouts.
- *
- * == Determining when all tests are complete ==
- *
- * By default the test harness will assume there are no more results to come
- * when:
- * 1) There are no Test objects that have been created but not completed
- * 2) The load event on the document has fired
- *
- * This behaviour can be overridden by setting the explicit_done property to
- * true in a call to setup(). If explicit_done is true, the test harness will
- * not assume it is done until the global done() function is called. Once done()
- * is called, the two conditions above apply like normal.
- *
- * == Generating tests ==
- *
- * NOTE: this functionality may be removed
- *
- * There are scenarios in which is is desirable to create a large number of
- * (synchronous) tests that are internally similar but vary in the parameters
- * used. To make this easier, the generate_tests function allows a single
- * function to be called with each set of parameters in a list:
- *
- * generate_tests(test_function, parameter_lists, properties)
- *
- * For example:
- *
- * generate_tests(assert_equals, [
- *     ["Sum one and one", 1+1, 2],
- *     ["Sum one and zero", 1+0, 1]
- *     ])
- *
- * Is equivalent to:
- *
- * test(function() {assert_equals(1+1, 2)}, "Sum one and one")
- * test(function() {assert_equals(1+0, 1)}, "Sum one and zero")
- *
- * Note that the first item in each parameter list corresponds to the name of
- * the test.
- *
- * The properties argument is identical to that for test(). This may be a
- * single object (used for all generated tests) or an array.
- *
- * == Callback API ==
- *
- * The framework provides callbacks corresponding to 3 events:
- *
- * start - happens when the first Test is created
- * result - happens when a test result is recieved
- * complete - happens when all results are recieved
- *
- * The page defining the tests may add callbacks for these events by calling
- * the following methods:
- *
- *   add_start_callback(callback) - callback called with no arguments
- *   add_result_callback(callback) - callback called with a test argument
- *   add_completion_callback(callback) - callback called with an array of tests
- *                                       and an status object
- *
- * tests have the following properties:
- *   status: A status code. This can be compared to the PASS, FAIL, TIMEOUT and
- *           NOTRUN properties on the test object
- *   message: A message indicating the reason for failure. In the future this
- *            will always be a string
- *
- *  The status object gives the overall status of the harness. It has the
- *  following properties:
- *    status: Can be compared to the OK, ERROR and TIMEOUT properties
- *    message: An error message set when the status is ERROR
- *
- * == External API ==
- *
- * In order to collect the results of multiple pages containing tests, the test
- * harness will, when loaded in a nested browsing context, attempt to call
- * certain functions in each ancestor and opener browsing context:
- *
- * start - start_callback
- * result - result_callback
- * complete - completion_callback
- *
- * These are given the same arguments as the corresponding internal callbacks
- * described above.
- *
- * == External API through cross-document messaging ==
- *
- * Where supported, the test harness will also send messages using
- * cross-document messaging to each ancestor and opener browsing context. Since
- * it uses the wildcard keyword (*), cross-origin communication is enabled and
- * script on different origins can collect the results.
- *
- * This API follows similar conventions as those described above only slightly
- * modified to accommodate message event API. Each message is sent by the harness
- * is passed a single vanilla object, available as the `data` property of the
- * event object. These objects are structures as follows:
- *
- * start - { type: "start" }
- * result - { type: "result", test: Test }
- * complete - { type: "complete", tests: [Test, ...], status: TestsStatus }
- *
- * == List of assertions ==
- *
- * assert_true(actual, description)
- *   asserts that /actual/ is strictly true
- *
- * assert_false(actual, description)
- *   asserts that /actual/ is strictly false
- *
- * assert_equals(actual, expected, description)
- *   asserts that /actual/ is the same value as /expected/
- *
- * assert_not_equals(actual, expected, description)
- *   asserts that /actual/ is a different value to /expected/. Yes, this means
- *   that "expected" is a misnomer
- *
- * assert_in_array(actual, expected, description)
- *   asserts that /expected/ is an Array, and /actual/ is equal to one of the
- *   members -- expected.indexOf(actual) != -1
- *
- * assert_array_equals(actual, expected, description)
- *   asserts that /actual/ and /expected/ have the same length and the value of
- *   each indexed property in /actual/ is the strictly equal to the corresponding
- *   property value in /expected/
- *
- * assert_approx_equals(actual, expected, epsilon, description)
- *   asserts that /actual/ is a number within +/- /epsilon/ of /expected/
- *
- * assert_less_than(actual, expected, description)
- *   asserts that /actual/ is a number less than /expected/
- *
- * assert_greater_than(actual, expected, description)
- *   asserts that /actual/ is a number greater than /expected/
- *
- * assert_less_than_equal(actual, expected, description)
- *   asserts that /actual/ is a number less than or equal to /expected/
- *
- * assert_greater_than_equal(actual, expected, description)
- *   asserts that /actual/ is a number greater than or equal to /expected/
- *
- * assert_regexp_match(actual, expected, description)
- *   asserts that /actual/ matches the regexp /expected/
- *
- * assert_class_string(object, class_name, description)
- *   asserts that the class string of /object/ as returned in
- *   Object.prototype.toString is equal to /class_name/.
- *
- * assert_own_property(object, property_name, description)
- *   assert that object has own property property_name
- *
- * assert_inherits(object, property_name, description)
- *   assert that object does not have an own property named property_name
- *   but that property_name is present in the prototype chain for object
- *
- * assert_idl_attribute(object, attribute_name, description)
- *   assert that an object that is an instance of some interface has the
- *   attribute attribute_name following the conditions specified by WebIDL
- *
- * assert_readonly(object, property_name, description)
- *   assert that property property_name on object is readonly
- *
- * assert_throws(code, func, description)
- *   code - the expected exception:
- *     o string: the thrown exception must be a DOMException with the given
- *               name, e.g., "TimeoutError" (for compatibility with existing
- *               tests, a constant is also supported, e.g., "TIMEOUT_ERR")
- *     o object: the thrown exception must have a property called "name" that
- *               matches code.name
- *     o null:   allow any exception (in general, one of the options above
- *               should be used)
- *   func - a function that should throw
- *
- * assert_unreached(description)
- *   asserts if called. Used to ensure that some codepath is *not* taken e.g.
- *   an event does not fire.
- *
- * assert_any(assert_func, actual, expected_array, extra_arg_1, ... extra_arg_N)
- *   asserts that one assert_func(actual, expected_array_N, extra_arg1, ..., extra_arg_N)
- *   is true for some expected_array_N in expected_array. This only works for assert_func
- *   with signature assert_func(actual, expected, args_1, ..., args_N). Note that tests
- *   with multiple allowed pass conditions are bad practice unless the spec specifically
- *   allows multiple behaviours. Test authors should not use this method simply to hide
- *   UA bugs.
- *
- * assert_exists(object, property_name, description)
- *   *** deprecated ***
- *   asserts that object has an own property property_name
- *
- * assert_not_exists(object, property_name, description)
- *   *** deprecated ***
- *   assert that object does not have own property property_name
- */
+/* Documentation is in docs/api.md */
 
 (function ()
 {
     var debug = false;
     // default timeout is 10 seconds, test can override if needed
     var settings = {
-      output:true,
-      harness_timeout:{"normal":10000,
-                       "long":60000},
-      test_timeout:null
+        output:false,
+        harness_timeout:{
+            "normal":10000,
+            "long":60000
+        },
+        test_timeout:null
     };
 
     var xhtml_ns = "http://www.w3.org/1999/xhtml";
@@ -387,19 +34,16 @@ policies and contribution forms [3].
     (function ()
     {
         var scripts = document.getElementsByTagName("script");
-        for (var i = 0; i < scripts.length; i++)
-        {
-            if (scripts[i].src)
-            {
-                var src = scripts[i].src;
-            }
-            else if (scripts[i].href)
-            {
+        for (var i = 0; i < scripts.length; i++) {
+            var src;
+            if (scripts[i].src) {
+                src = scripts[i].src;
+            } else if (scripts[i].href) {
                 //SVG case
-                var src = scripts[i].href.baseVal;
+                src = scripts[i].href.baseVal;
             }
-            if (src && src.slice(src.length - "testharness.js".length) === "testharness.js")
-            {
+
+            if (src && src.slice(src.length - "testharness.js".length) === "testharness.js") {
                 script_prefix = src.slice(0, src.length - "testharness.js".length);
                 break;
             }
@@ -426,7 +70,7 @@ policies and contribution forms [3].
         var test_name = name ? name : next_default_name();
         properties = properties ? properties : {};
         var test_obj = new Test(test_name, properties);
-        test_obj.step(func);
+        test_obj.step(func, test_obj, test_obj);
         if (test_obj.phase === test_obj.phases.STARTED) {
             test_obj.done();
         }
@@ -455,7 +99,7 @@ policies and contribution forms [3].
         if (arguments.length === 2) {
             func = func_or_properties;
             properties = maybe_properties;
-        } else if (func_or_properties instanceof Function){
+        } else if (func_or_properties instanceof Function) {
             func = func_or_properties;
         } else {
             properties = func_or_properties;
@@ -465,6 +109,12 @@ policies and contribution forms [3].
     }
 
     function done() {
+        if (tests.tests.length === 0) {
+            tests.set_file_is_test();
+        }
+        if (tests.file_is_test) {
+            tests.tests[0].done();
+        }
         tests.end_wait();
     }
 
@@ -483,7 +133,7 @@ policies and contribution forms [3].
 
     function on_event(object, event, callback)
     {
-      object.addEventListener(event, callback, false);
+        object.addEventListener(event, callback, false);
     }
 
     expose(test, 'test');
@@ -514,17 +164,13 @@ policies and contribution forms [3].
         // instanceof doesn't work if the node is from another window (like an
         // iframe's contentWindow):
         // http://www.w3.org/Bugs/Public/show_bug.cgi?id=12295
-        if ("nodeType" in object
-        && "nodeName" in object
-        && "nodeValue" in object
-        && "childNodes" in object)
-        {
-            try
-            {
+        if ("nodeType" in object &&
+            "nodeName" in object &&
+            "nodeValue" in object &&
+            "childNodes" in object) {
+            try {
                 object.nodeType;
-            }
-            catch (e)
-            {
+            } catch (e) {
                 // The object is probably Node.prototype or another prototype
                 // object that inherits from it, and not a Node instance.
                 return false;
@@ -542,25 +188,20 @@ policies and contribution forms [3].
         if (!seen) {
             seen = [];
         }
-        if (typeof val === "object" && val !== null)
-        {
-            if (seen.indexOf(val) >= 0)
-            {
+        if (typeof val === "object" && val !== null) {
+            if (seen.indexOf(val) >= 0) {
                 return "[...]";
             }
             seen.push(val);
         }
-        if (Array.isArray(val))
-        {
-            return "[" + val.map(function(x) {return format_value(x, seen)}).join(", ") + "]";
+        if (Array.isArray(val)) {
+            return "[" + val.map(function(x) {return format_value(x, seen);}).join(", ") + "]";
         }
 
-        switch (typeof val)
-        {
+        switch (typeof val) {
         case "string":
             val = val.replace("\\", "\\\\");
-            for (var i = 0; i < 32; i++)
-            {
+            for (var i = 0; i < 32; i++) {
                 var replace = "\\";
                 switch (i) {
                 case 0: replace += "0"; break;
@@ -605,30 +246,25 @@ policies and contribution forms [3].
         case "number":
             // In JavaScript, -0 === 0 and String(-0) == "0", so we have to
             // special-case.
-            if (val === -0 && 1/val === -Infinity)
-            {
+            if (val === -0 && 1/val === -Infinity) {
                 return "-0";
             }
             return String(val);
         case "object":
-            if (val === null)
-            {
+            if (val === null) {
                 return "null";
             }
 
             // Special-case Node objects, since those come up a lot in my tests.  I
             // ignore namespaces.
-            if (is_node(val))
-            {
-                switch (val.nodeType)
-                {
+            if (is_node(val)) {
+                switch (val.nodeType) {
                 case Node.ELEMENT_NODE:
-                    var ret = "<" + val.tagName.toLowerCase();
-                    for (var i = 0; i < val.attributes.length; i++)
-                    {
+                    var ret = "<" + val.localName;
+                    for (var i = 0; i < val.attributes.length; i++) {
                         ret += " " + val.attributes[i].name + '="' + val.attributes[i].value + '"';
                     }
-                    ret += ">" + val.innerHTML + "</" + val.tagName.toLowerCase() + ">";
+                    ret += ">" + val.innerHTML + "</" + val.localName + ">";
                     return "Element node " + truncate(ret, 60);
                 case Node.TEXT_NODE:
                     return 'Text node "' + truncate(val.data, 60) + '"';
@@ -647,7 +283,7 @@ policies and contribution forms [3].
                 }
             }
 
-            // Fall through to default
+        /* falls through */
         default:
             return typeof val + ' "' + truncate(String(val), 60) + '"';
         }
@@ -662,31 +298,26 @@ policies and contribution forms [3].
     {
         assert(actual === true, "assert_true", description,
                                 "expected true got ${actual}", {actual:actual});
-    };
+    }
     expose(assert_true, "assert_true");
 
     function assert_false(actual, description)
     {
         assert(actual === false, "assert_false", description,
                                  "expected false got ${actual}", {actual:actual});
-    };
+    }
     expose(assert_false, "assert_false");
 
     function same_value(x, y) {
-        if (y !== y)
-        {
+        if (y !== y) {
             //NaN case
             return x !== x;
         }
-        else if (x === 0 && y === 0) {
+        if (x === 0 && y === 0) {
             //Distinguish +0 and -0
             return 1/x === 1/y;
         }
-        else
-        {
-            //typical case
-            return x === y;
-        }
+        return x === y;
     }
 
     function assert_equals(actual, expected, description)
@@ -695,8 +326,7 @@ policies and contribution forms [3].
           * Test if two primitives are equal or two objects
           * are the same object
           */
-        if (typeof actual != typeof expected)
-        {
+        if (typeof actual != typeof expected) {
             assert(false, "assert_equals", description,
                           "expected (" + typeof expected + ") ${expected} but got (" + typeof actual + ") ${actual}",
                           {expected:expected, actual:actual});
@@ -705,7 +335,7 @@ policies and contribution forms [3].
         assert(same_value(actual, expected), "assert_equals", description,
                                              "expected ${expected} but got ${actual}",
                                              {expected:expected, actual:actual});
-    };
+    }
     expose(assert_equals, "assert_equals");
 
     function assert_not_equals(actual, expected, description)
@@ -717,7 +347,7 @@ policies and contribution forms [3].
         assert(!same_value(actual, expected), "assert_not_equals", description,
                                               "got disallowed value ${actual}",
                                               {actual:actual});
-    };
+    }
     expose(assert_not_equals, "assert_not_equals");
 
     function assert_in_array(actual, expected, description)
@@ -736,27 +366,21 @@ policies and contribution forms [3].
              stack.push(actual);
 
              var p;
-             for (p in actual)
-             {
+             for (p in actual) {
                  assert(expected.hasOwnProperty(p), "assert_object_equals", description,
                                                     "unexpected property ${p}", {p:p});
 
-                 if (typeof actual[p] === "object" && actual[p] !== null)
-                 {
-                     if (stack.indexOf(actual[p]) === -1)
-                     {
+                 if (typeof actual[p] === "object" && actual[p] !== null) {
+                     if (stack.indexOf(actual[p]) === -1) {
                          check_equal(actual[p], expected[p], stack);
                      }
-                 }
-                 else
-                 {
+                 } else {
                      assert(same_value(actual[p], expected[p]), "assert_object_equals", description,
                                                        "property ${p} expected ${expected} got ${actual}",
                                                        {p:p, expected:expected, actual:actual});
                  }
              }
-             for (p in expected)
-             {
+             for (p in expected) {
                  assert(actual.hasOwnProperty(p),
                         "assert_object_equals", description,
                         "expected property ${p} missing", {p:p});
@@ -764,7 +388,7 @@ policies and contribution forms [3].
              stack.pop();
          }
          check_equal(actual, expected, []);
-    };
+    }
     expose(assert_object_equals, "assert_object_equals");
 
     function assert_array_equals(actual, expected, description)
@@ -774,8 +398,7 @@ policies and contribution forms [3].
                "lengths differ, expected ${expected} got ${actual}",
                {expected:expected.length, actual:actual.length});
 
-        for (var i=0; i < actual.length; i++)
-        {
+        for (var i = 0; i < actual.length; i++) {
             assert(actual.hasOwnProperty(i) === expected.hasOwnProperty(i),
                    "assert_array_equals", description,
                    "property ${i}, property expected to be $expected but was $actual",
@@ -803,7 +426,7 @@ policies and contribution forms [3].
                "assert_approx_equals", description,
                "expected ${expected} +/- ${epsilon} but got ${actual}",
                {expected:expected, actual:actual, epsilon:epsilon});
-    };
+    }
     expose(assert_approx_equals, "assert_approx_equals");
 
     function assert_less_than(actual, expected, description)
@@ -820,7 +443,7 @@ policies and contribution forms [3].
                "assert_less_than", description,
                "expected a number less than ${expected} but got ${actual}",
                {expected:expected, actual:actual});
-    };
+    }
     expose(assert_less_than, "assert_less_than");
 
     function assert_greater_than(actual, expected, description)
@@ -837,7 +460,7 @@ policies and contribution forms [3].
                "assert_greater_than", description,
                "expected a number greater than ${expected} but got ${actual}",
                {expected:expected, actual:actual});
-    };
+    }
     expose(assert_greater_than, "assert_greater_than");
 
     function assert_less_than_equal(actual, expected, description)
@@ -854,7 +477,7 @@ policies and contribution forms [3].
                "assert_less_than", description,
                "expected a number less than or equal to ${expected} but got ${actual}",
                {expected:expected, actual:actual});
-    };
+    }
     expose(assert_less_than_equal, "assert_less_than_equal");
 
     function assert_greater_than_equal(actual, expected, description)
@@ -871,7 +494,7 @@ policies and contribution forms [3].
                "assert_greater_than_equal", description,
                "expected a number greater than or equal to ${expected} but got ${actual}",
                {expected:expected, actual:actual});
-    };
+    }
     expose(assert_greater_than_equal, "assert_greater_than_equal");
 
     function assert_regexp_match(actual, expected, description) {
@@ -908,7 +531,7 @@ policies and contribution forms [3].
         assert(!object.hasOwnProperty(property_name),
                "assert_not_exists", description,
                "unexpected property ${p} found", {p:property_name});
-    };
+    }
     expose(assert_not_exists, "assert_not_exists");
 
     function _assert_inherits(name) {
@@ -947,33 +570,26 @@ policies and contribution forms [3].
                     "assert_readonly", description,
                     "changing property ${p} succeeded",
                     {p:property_name});
-         }
-         finally
-         {
+         } finally {
              object[property_name] = initial_value;
          }
-    };
+    }
     expose(assert_readonly, "assert_readonly");
 
     function assert_throws(code, func, description)
     {
-        try
-        {
+        try {
             func.call(this);
             assert(false, "assert_throws", description,
                    "${func} did not throw", {func:func});
-        }
-        catch(e)
-        {
+        } catch (e) {
             if (e instanceof AssertionError) {
-                throw(e);
+                throw e;
             }
-            if (code === null)
-            {
+            if (code === null) {
                 return;
             }
-            if (typeof code === "object")
-            {
+            if (typeof code === "object") {
                 assert(typeof e == "object" && "name" in e && e.name == code.name,
                        "assert_throws", description,
                        "${func} threw ${actual} (${actual_name}) expected ${expected} (${expected_name})",
@@ -1040,16 +656,14 @@ policies and contribution forms [3].
                 VersionError: 0
             };
 
-            if (!(name in name_code_map))
-            {
+            if (!(name in name_code_map)) {
                 throw new AssertionError('Test bug: unrecognized DOMException code "' + code + '" passed to assert_throws()');
             }
 
             var required_props = { code: name_code_map[name] };
 
-            if (required_props.code === 0
-            || ("name" in e && e.name !== e.name.toUpperCase() && e.name !== "DOMException"))
-            {
+            if (required_props.code === 0 ||
+               ("name" in e && e.name !== e.name.toUpperCase() && e.name !== "DOMException")) {
                 // New style exception: also test the name property.
                 required_props.name = name;
             }
@@ -1064,8 +678,7 @@ policies and contribution forms [3].
                    "${func} threw ${e} with type ${type}, not an object",
                    {func:func, e:e, type:typeof e});
 
-            for (var prop in required_props)
-            {
+            for (var prop in required_props) {
                 assert(typeof e == "object" && prop in e && e[prop] == required_props[prop],
                        "assert_throws", description,
                        "${func} threw ${e} that is not a DOMException " + code + ": property ${prop} is equal to ${actual}, expected ${expected}",
@@ -1083,16 +696,16 @@ policies and contribution forms [3].
 
     function assert_any(assert_func, actual, expected_array)
     {
-        var args = [].slice.call(arguments, 3)
-        var errors = []
+        var args = [].slice.call(arguments, 3);
+        var errors = [];
         var passed = false;
         forEach(expected_array,
                 function(expected)
                 {
                     try {
-                        assert_func.apply(this, [actual, expected].concat(args))
+                        assert_func.apply(this, [actual, expected].concat(args));
                         passed = true;
-                    } catch(e) {
+                    } catch (e) {
                         errors.push(e.message);
                     }
                 });
@@ -1104,6 +717,9 @@ policies and contribution forms [3].
 
     function Test(name, properties)
     {
+        if (tests.file_is_test && tests.tests.length) {
+            throw new Error("Tried to create a test with file_is_test");
+        }
         this.name = name;
 
         this.phases = {
@@ -1118,7 +734,7 @@ policies and contribution forms [3].
         this.timeout_id = null;
 
         this.properties = properties;
-        var timeout = properties.timeout ? properties.timeout : settings.test_timeout
+        var timeout = properties.timeout ? properties.timeout : settings.test_timeout;
         if (timeout != null) {
             this.timeout_length = timeout * tests.timeout_multiplier;
         } else {
@@ -1127,8 +743,9 @@ policies and contribution forms [3].
 
         this.message = null;
 
-        var this_obj = this;
         this.steps = [];
+
+        this.cleanup_callbacks = [];
 
         tests.push(this);
     }
@@ -1144,8 +761,7 @@ policies and contribution forms [3].
 
     Test.prototype.structured_clone = function()
     {
-        if(!this._structured_clone)
-        {
+        if (!this._structured_clone) {
             var msg = this.message;
             msg = msg ? String(msg) : msg;
             this._structured_clone = merge({
@@ -1159,9 +775,8 @@ policies and contribution forms [3].
 
     Test.prototype.step = function(func, this_obj)
     {
-        if (this.phase > this.phases.STARTED)
-        {
-          return;
+        if (this.phase > this.phases.STARTED) {
+            return;
         }
         this.phase = this.phases.STARTED;
         //If we don't get a result before the harness times out that will be a test timout
@@ -1169,26 +784,20 @@ policies and contribution forms [3].
 
         tests.started = true;
 
-        if (this.timeout_id === null)
-        {
+        if (this.timeout_id === null) {
             this.set_timeout();
         }
 
         this.steps.push(func);
 
-        if (arguments.length === 1)
-        {
+        if (arguments.length === 1) {
             this_obj = this;
         }
 
-        try
-        {
+        try {
             return func.apply(this_obj, Array.prototype.slice.call(arguments, 2));
-        }
-        catch(e)
-        {
-            if (this.phase >= this.phases.HAS_RESULT)
-            {
+        } catch (e) {
+            if (this.phase >= this.phases.HAS_RESULT) {
                 return;
             }
             var message = (typeof e === "object" && e !== null) ? e.message : e;
@@ -1209,14 +818,13 @@ policies and contribution forms [3].
     {
         var test_this = this;
 
-        if (arguments.length === 1)
-        {
+        if (arguments.length === 1) {
             this_obj = test_this;
         }
 
         return function()
         {
-            test_this.step.apply(test_this, [func, this_obj].concat(
+            return test_this.step.apply(test_this, [func, this_obj].concat(
                 Array.prototype.slice.call(arguments)));
         };
     };
@@ -1225,41 +833,57 @@ policies and contribution forms [3].
     {
         var test_this = this;
 
-        if (arguments.length === 1)
-        {
+        if (arguments.length === 1) {
             this_obj = test_this;
         }
 
         return function()
         {
-            test_this.step.apply(test_this, [func, this_obj].concat(
-                Array.prototype.slice.call(arguments)));
+            if (func) {
+                test_this.step.apply(test_this, [func, this_obj].concat(
+                    Array.prototype.slice.call(arguments)));
+            }
             test_this.done();
         };
+    };
+
+    Test.prototype.unreached_func = function(description)
+    {
+        return this.step_func(function() {
+            assert_unreached(description);
+        });
+    };
+
+    Test.prototype.add_cleanup = function(callback) {
+        this.cleanup_callbacks.push(callback);
+    };
+
+    Test.prototype.force_timeout = function() {
+        this.set_status(this.TIMEOUT);
+        this.phase = this.phases.HAS_RESULT;
     }
 
     Test.prototype.set_timeout = function()
     {
-        if (this.timeout_length !== null)
-        {
+        if (this.timeout_length !== null) {
             var this_obj = this;
             this.timeout_id = setTimeout(function()
                                          {
                                              this_obj.timeout();
                                          }, this.timeout_length);
         }
-    }
+    };
 
     Test.prototype.set_status = function(status, message)
     {
         this.status = status;
         this.message = message;
-    }
+    };
 
     Test.prototype.timeout = function()
     {
         this.timeout_id = null;
-        this.set_status(this.TIMEOUT, "Test timed out")
+        this.set_status(this.TIMEOUT, "Test timed out");
         this.phase = this.phases.HAS_RESULT;
         this.done();
     };
@@ -1268,13 +892,13 @@ policies and contribution forms [3].
     {
         if (this.phase == this.phases.COMPLETE) {
             return;
-        } else if (this.phase <= this.phases.STARTED)
-        {
+        }
+
+        if (this.phase <= this.phases.STARTED) {
             this.set_status(this.PASS, null);
         }
 
-        if (this.status == this.NOTRUN)
-        {
+        if (this.status == this.NOTRUN) {
             alert(this.phase);
         }
 
@@ -1282,8 +906,15 @@ policies and contribution forms [3].
 
         clearTimeout(this.timeout_id);
         tests.result(this);
+        this.cleanup();
     };
 
+    Test.prototype.cleanup = function() {
+        forEach(this.cleanup_callbacks,
+                function(cleanup_callback) {
+                    cleanup_callback();
+                });
+    };
 
     /*
      * Harness
@@ -1305,8 +936,7 @@ policies and contribution forms [3].
 
     TestsStatus.prototype.structured_clone = function()
     {
-        if(!this._structured_clone)
-        {
+        if (!this._structured_clone) {
             var msg = this.message;
             msg = msg ? String(msg) : msg;
             this._structured_clone = merge({
@@ -1340,6 +970,8 @@ policies and contribution forms [3].
 
         this.allow_uncaught_exception = false;
 
+        this.file_is_test = false;
+
         this.timeout_multiplier = 1;
         this.timeout_length = this.get_timeout();
         this.timeout_id = null;
@@ -1367,80 +999,73 @@ policies and contribution forms [3].
 
     Tests.prototype.setup = function(func, properties)
     {
-        if (this.phase >= this.phases.HAVE_RESULTS)
-        {
+        if (this.phase >= this.phases.HAVE_RESULTS) {
             return;
         }
-        if (this.phase < this.phases.SETUP)
-        {
+
+        if (this.phase < this.phases.SETUP) {
             this.phase = this.phases.SETUP;
         }
 
         this.properties = properties;
 
-        for (var p in properties)
-        {
-            if (properties.hasOwnProperty(p))
-            {
-                var value = properties[p]
+        for (var p in properties) {
+            if (properties.hasOwnProperty(p)) {
+                var value = properties[p];
                 if (p == "allow_uncaught_exception") {
                     this.allow_uncaught_exception = value;
-                }
-                else if (p == "explicit_done" && value)
-                {
+                } else if (p == "explicit_done" && value) {
                     this.wait_for_finish = true;
-                }
-                else if (p == "explicit_timeout" && value) {
+                } else if (p == "explicit_timeout" && value) {
                     this.timeout_length = null;
                     if (this.timeout_id)
                     {
                         clearTimeout(this.timeout_id);
                     }
-                }
-                else if (p == "timeout_multiplier")
-                {
+                } else if (p == "timeout_multiplier") {
                     this.timeout_multiplier = value;
                 }
             }
         }
 
-        if (func)
-        {
-            try
-            {
+        if (func) {
+            try {
                 func();
-            } catch(e)
-            {
+            } catch (e) {
                 this.status.status = this.status.ERROR;
-                this.status.message = e;
-            };
+                this.status.message = String(e);
+            }
         }
         this.set_timeout();
     };
 
-    Tests.prototype.get_timeout = function()
-    {
+    Tests.prototype.set_file_is_test = function() {
+        if (this.tests.length > 0) {
+            throw new Error("Tried to set file as test after creating a test");
+        }
+        this.wait_for_finish = true;
+        this.file_is_test = true;
+        // Create the test, which will add it to the list of tests
+        async_test();
+    };
+
+    Tests.prototype.get_timeout = function() {
         var metas = document.getElementsByTagName("meta");
-        for (var i=0; i<metas.length; i++)
-        {
-            if (metas[i].name == "timeout")
-            {
-                if (metas[i].content == "long")
-                {
+        for (var i = 0; i < metas.length; i++) {
+            if (metas[i].name == "timeout") {
+                if (metas[i].content == "long") {
                     return settings.harness_timeout.long;
                 }
                 break;
             }
         }
         return settings.harness_timeout.normal;
-    }
+    };
 
-    Tests.prototype.set_timeout = function()
-    {
+    Tests.prototype.set_timeout = function() {
         var this_obj = this;
         clearTimeout(this.timeout_id);
-        if (this.timeout_length !== null)
-        {
+        if (this.timeout_length !== null) {
             this.timeout_id = setTimeout(function() {
                                              this_obj.timeout();
                                          }, this.timeout_length);
@@ -1448,7 +1073,9 @@ policies and contribution forms [3].
     };
 
     Tests.prototype.timeout = function() {
-        this.status.status = this.status.TIMEOUT;
+        if (this.status.status === null) {
+            this.status.status = this.status.TIMEOUT;
+        }
         this.complete();
     };
 
@@ -1470,7 +1097,7 @@ policies and contribution forms [3].
     };
 
     Tests.prototype.all_done = function() {
-        return (this.all_loaded && this.num_pending === 0 &&
+        return (this.tests.length > 0 && this.all_loaded && this.num_pending === 0 &&
                 !this.wait_for_finish && !this.processing_callbacks);
     };
 
@@ -1489,22 +1116,16 @@ policies and contribution forms [3].
         forEach_windows(
                 function(w, is_same_origin)
                 {
-                    if(is_same_origin && w.start_callback)
-                    {
-                        try
-                        {
+                    if (is_same_origin && w.start_callback) {
+                        try {
                             w.start_callback(this_obj.properties);
-                        }
-                        catch(e)
-                        {
-                            if (debug)
-                            {
-                                throw(e);
+                        } catch (e) {
+                            if (debug) {
+                                throw e;
                             }
                         }
                     }
-                    if (supports_post_message(w) && w !== self)
-                    {
+                    if (supports_post_message(w) && w !== self) {
                         w.postMessage({
                             type: "start",
                             properties: this_obj.properties
@@ -1515,8 +1136,7 @@ policies and contribution forms [3].
 
     Tests.prototype.result = function(test)
     {
-        if (this.phase > this.phases.HAVE_RESULTS)
-        {
+        if (this.phase > this.phases.HAVE_RESULTS) {
             return;
         }
         this.phase = this.phases.HAVE_RESULTS;
@@ -1536,21 +1156,16 @@ policies and contribution forms [3].
         forEach_windows(
                 function(w, is_same_origin)
                 {
-                    if(is_same_origin && w.result_callback)
-                    {
-                        try
-                        {
+                    if (is_same_origin && w.result_callback) {
+                        try {
                             w.result_callback(test);
-                        }
-                        catch(e)
-                        {
-                            if(debug) {
+                        } catch (e) {
+                            if (debug) {
                                 throw e;
                             }
                         }
                     }
-                    if (supports_post_message(w) && w !== self)
-                    {
+                    if (supports_post_message(w) && w !== self) {
                         w.postMessage({
                             type: "result",
                             test: test.structured_clone()
@@ -1558,8 +1173,7 @@ policies and contribution forms [3].
                     }
                 });
         this.processing_callbacks = false;
-        if (this_obj.all_done())
-        {
+        if (this_obj.all_done()) {
             this_obj.complete();
         }
     };
@@ -1573,9 +1187,9 @@ policies and contribution forms [3].
         this.tests.forEach(
             function(x)
             {
-                if(x.status === x.NOTRUN)
-                {
+                if (x.status === x.NOTRUN) {
                     this_obj.notify_result(x);
+                    x.cleanup();
                 }
             }
         );
@@ -1591,8 +1205,7 @@ policies and contribution forms [3].
                         {
                             return test.structured_clone();
                         });
-        if (this.status.status === null)
-        {
+        if (this.status.status === null) {
             this.status.status = this.status.OK;
         }
 
@@ -1605,22 +1218,16 @@ policies and contribution forms [3].
         forEach_windows(
                 function(w, is_same_origin)
                 {
-                    if(is_same_origin && w.completion_callback)
-                    {
-                        try
-                        {
+                    if (is_same_origin && w.completion_callback) {
+                        try {
                             w.completion_callback(this_obj.tests, this_obj.status);
-                        }
-                        catch(e)
-                        {
-                            if (debug)
-                            {
+                        } catch (e) {
+                            if (debug) {
                                 throw e;
                             }
                         }
                     }
-                    if (supports_post_message(w) && w !== self)
-                    {
+                    if (supports_post_message(w) && w !== self) {
                         w.postMessage({
                             type: "complete",
                             tests: tests,
@@ -1632,18 +1239,25 @@ policies and contribution forms [3].
 
     var tests = new Tests();
 
-    window.onerror = function(msg) {
-        if (!tests.allow_uncaught_exception)
-        {
+    addEventListener("error", function(e) {
+        if (tests.file_is_test) {
+            var test = tests.tests[0];
+            if (test.phase >= test.phases.HAS_RESULT) {
+                return;
+            }
+            var message = e.message;
+            test.set_status(test.FAIL, message);
+            test.phase = test.phases.HAS_RESULT;
+            test.done();
+            done();
+        } else if (!tests.allow_uncaught_exception) {
             tests.status.status = tests.status.ERROR;
-            tests.status.message = msg;
-            tests.complete();
+            tests.status.message = e.message;
         }
-    }
+    });
 
     function timeout() {
-        if (tests.timeout_length === null)
-        {
+        if (tests.timeout_length === null) {
             tests.timeout();
         }
     }
@@ -1672,11 +1286,11 @@ policies and contribution forms [3].
     */
 
     function Output() {
-      this.output_document = document;
-      this.output_node = null;
-      this.done_count = 0;
-      this.enabled = settings.output;
-      this.phase = this.INITIAL;
+        this.output_document = document;
+        this.output_node = null;
+        this.done_count = 0;
+        this.enabled = settings.output;
+        this.phase = this.INITIAL;
     }
 
     Output.prototype.INITIAL = 0;
@@ -1695,8 +1309,7 @@ policies and contribution forms [3].
                                         properties.output : settings.output);
     };
 
-    Output.prototype.init = function(properties)
-    {
+    Output.prototype.init = function(properties) {
         if (this.phase >= this.STARTED) {
             return;
         }
@@ -1708,63 +1321,57 @@ policies and contribution forms [3].
         this.phase = this.STARTED;
     };
 
-    Output.prototype.resolve_log = function()
-    {
+    Output.prototype.resolve_log = function() {
         var output_document;
-        if (typeof this.output_document === "function")
-        {
+        if (typeof this.output_document === "function") {
             output_document = this.output_document.apply(undefined);
-        } else 
-        {
+        } else {
             output_document = this.output_document;
         }
-        if (!output_document)
-        {
+        if (!output_document) {
             return;
         }
         var node = output_document.getElementById("log");
-        if (node)
-        {
-            this.output_document = output_document;
-            this.output_node = node;
+        if (!node) {
+            if (!document.body || document.readyState == "loading") {
+                return;
+            }
+            node = output_document.createElement("div");
+            node.id = "log";
+            output_document.body.appendChild(node);
         }
+        this.output_document = output_document;
+        this.output_node = node;
     };
 
-    Output.prototype.show_status = function(test)
-    {
-        if (this.phase < this.STARTED)
-        {
+    Output.prototype.show_status = function() {
+        if (this.phase < this.STARTED) {
             this.init();
         }
-        if (!this.enabled)
-        {
+        if (!this.enabled) {
             return;
         }
-        if (this.phase < this.HAVE_RESULTS)
-        {
+        if (this.phase < this.HAVE_RESULTS) {
             this.resolve_log();
             this.phase = this.HAVE_RESULTS;
         }
         this.done_count++;
-        if (this.output_node)
-        {
-            if (this.done_count < 100
-            || (this.done_count < 1000 && this.done_count % 100 == 0)
-            || this.done_count % 1000 == 0) {
-                this.output_node.textContent = "Running, "
-                    + this.done_count + " complete, "
-                    + tests.num_pending + " remain";
+        if (this.output_node) {
+            if (this.done_count < 100 ||
+                (this.done_count < 1000 && this.done_count % 100 === 0) ||
+                this.done_count % 1000 === 0) {
+                this.output_node.textContent = "Running, " +
+                    this.done_count + " complete, " +
+                    tests.num_pending + " remain";
             }
         }
     };
 
-    Output.prototype.show_results = function (tests, harness_status)
-    {
+    Output.prototype.show_results = function (tests, harness_status) {
         if (this.phase >= this.COMPLETE) {
             return;
         }
-        if (!this.enabled)
-        {
+        if (!this.enabled) {
             return;
         }
         if (!this.output_node) {
@@ -1773,14 +1380,12 @@ policies and contribution forms [3].
         this.phase = this.COMPLETE;
 
         var log = this.output_node;
-        if (!log)
-        {
+        if (!log) {
             return;
         }
         var output_document = this.output_document;
 
-        while (log.lastChild)
-        {
+        while (log.lastChild) {
             log.removeChild(log.lastChild);
         }
 
@@ -1806,10 +1411,10 @@ policies and contribution forms [3].
         status_text[Test.prototype.NOTRUN] = "Not Run";
 
         var status_number = {};
-        forEach(tests, function(test) {
+        forEach(tests,
+                function(test) {
                     var status = status_text[test.status];
-                    if (status_number.hasOwnProperty(status))
-                    {
+                    if (status_number.hasOwnProperty(status)) {
                         status_number[status] += 1;
                     } else {
                         status_number[status] = 1;
@@ -1823,38 +1428,28 @@ policies and contribution forms [3].
 
         var summary_template = ["section", {"id":"summary"},
                                 ["h2", {}, "Summary"],
-                                function(vars)
+                                function()
                                 {
-                                    if (harness_status.status === harness_status.OK)
-                                    {
-                                        return null;
-                                    }
-                                    else
-                                    {
-                                        var status = status_text_harness[harness_status.status];
-                                        var rv = [["p", {"class":status_class(status)}]];
 
-                                        if (harness_status.status === harness_status.ERROR)
-                                        {
-                                            rv[0].push("Harness encountered an error:");
-                                            rv.push(["pre", {}, harness_status.message]);
-                                        }
-                                        else if (harness_status.status === harness_status.TIMEOUT)
-                                        {
-                                            rv[0].push("Harness timed out.");
-                                        }
-                                        else
-                                        {
-                                            rv[0].push("Harness got an unexpected status.");
-                                        }
+                                    var status = status_text_harness[harness_status.status];
+                                    var rv = [["section", {},
+                                               ["p", {},
+                                                "Harness status: ",
+                                                ["span", {"class":status_class(status)},
+                                                 status
+                                                ],
+                                               ]
+                                              ]];
 
-                                        return rv;
+                                    if (harness_status.status === harness_status.ERROR) {
+                                        rv[0].push(["pre", {}, harness_status.message]);
                                     }
+                                    return rv;
                                 },
                                 ["p", {}, "Found ${num_tests} tests"],
-                                function(vars) {
+                                function() {
                                     var rv = [["div", {}]];
-                                    var i=0;
+                                    var i = 0;
                                     while (status_text.hasOwnProperty(i)) {
                                         if (status_number.hasOwnProperty(status_text[i])) {
                                             var status = status_text[i];
@@ -1866,7 +1461,8 @@ policies and contribution forms [3].
                                         i++;
                                     }
                                     return rv;
-                                }];
+                                },
+                               ];
 
         log.appendChild(render(summary_template, {num_tests:tests.length}, output_document));
 
@@ -1876,8 +1472,7 @@ policies and contribution forms [3].
                     on_event(element, "click",
                              function(e)
                              {
-                                 if (output_document.getElementById("results") === null)
-                                 {
+                                 if (output_document.getElementById("results") === null) {
                                      e.preventDefault();
                                      return;
                                  }
@@ -1930,22 +1525,22 @@ policies and contribution forms [3].
 
         log.appendChild(document.createElementNS(xhtml_ns, "section"));
         var assertions = has_assertions();
-        var html = "<h2>Details</h2><table id='results' " + (assertions ? "class='assertions'" : "" ) + ">"
-            + "<thead><tr><th>Result</th><th>Test Name</th>"
-            + (assertions ? "<th>Assertion</th>" : "")
-            + "<th>Message</th></tr></thead>"
-            + "<tbody>";
+        var html = "<h2>Details</h2><table id='results' " + (assertions ? "class='assertions'" : "" ) + ">" +
+            "<thead><tr><th>Result</th><th>Test Name</th>" +
+            (assertions ? "<th>Assertion</th>" : "") +
+            "<th>Message</th></tr></thead>" +
+            "<tbody>";
         for (var i = 0; i < tests.length; i++) {
-            html += '<tr class="'
-                + escape_html(status_class(status_text[tests[i].status]))
-                + '"><td>'
-                + escape_html(status_text[tests[i].status])
-                + "</td><td>"
-                + escape_html(tests[i].name)
-                + "</td><td>"
-                + (assertions ? escape_html(get_assertion(tests[i])) + "</td><td>" : "")
-                + escape_html(tests[i].message ? tests[i].message : " ")
-                + "</td></tr>";
+            html += '<tr class="' +
+                escape_html(status_class(status_text[tests[i].status])) +
+                '"><td>' +
+                escape_html(status_text[tests[i].status]) +
+                "</td><td>" +
+                escape_html(tests[i].name) +
+                "</td><td>" +
+                (assertions ? escape_html(get_assertion(tests[i])) + "</td><td>" : "") +
+                escape_html(tests[i].message ? tests[i].message : " ") +
+                "</td></tr>";
         }
         html += "</tbody></table>";
         try {
@@ -1960,7 +1555,7 @@ policies and contribution forms [3].
 
     var output = new Output();
     add_start_callback(function (properties) {output.init(properties);});
-    add_result_callback(function (test) {output.show_status(tests);});
+    add_result_callback(function () {output.show_status();});
     add_completion_callback(function (tests, harness_status) {output.show_results(tests, harness_status);});
 
     /*
@@ -2005,41 +1600,64 @@ policies and contribution forms [3].
     {
         if (typeof template === "function") {
             var replacement = template(substitutions);
-            if (replacement)
-            {
-                var rv = substitute(replacement, substitutions);
-                return rv;
-            }
-            else
-            {
+            if (!replacement) {
                 return null;
             }
+
+            return substitute(replacement, substitutions);
         }
-        else if (is_single_node(template))
-        {
+
+        if (is_single_node(template)) {
             return substitute_single(template, substitutions);
         }
-        else
-        {
-            return filter(map(template, function(x) {
-                                  return substitute(x, substitutions);
-                              }), function(x) {return x !== null;});
-        }
+
+        return filter(map(template, function(x) {
+                              return substitute(x, substitutions);
+                          }), function(x) {return x !== null;});
     }
 
     function substitute_single(template, substitutions)
     {
-        var substitution_re = /\${([^ }]*)}/g;
+        var substitution_re = /\$\{([^ }]*)\}/g;
 
         function do_substitution(input) {
             var components = input.split(substitution_re);
             var rv = [];
-            for (var i=0; i<components.length; i+=2)
-            {
+            for (var i = 0; i < components.length; i += 2) {
                 rv.push(components[i]);
-                if (components[i+1])
-                {
-                    rv.push(String(substitutions[components[i+1]]));
+                if (components[i + 1]) {
+                    rv.push(String(substitutions[components[i + 1]]));
+                }
+            }
+            return rv;
+        }
+
+        function substitute_attrs(attrs, rv)
+        {
+            rv[1] = {};
+            for (var name in template[1]) {
+                if (attrs.hasOwnProperty(name)) {
+                    var new_name = do_substitution(name).join("");
+                    var new_value = do_substitution(attrs[name]).join("");
+                    rv[1][new_name] = new_value;
+                }
+            }
+        }
+
+        function substitute_children(children, rv)
+        {
+            for (var i = 0; i < children.length; i++) {
+                if (children[i] instanceof Object) {
+                    var replacement = substitute(children[i], substitutions);
+                    if (replacement !== null) {
+                        if (is_single_node(replacement)) {
+                            rv.push(replacement);
+                        } else {
+                            extend(rv, replacement);
+                        }
+                    }
+                } else {
+                    extend(rv, do_substitution(String(children[i])));
                 }
             }
             return rv;
@@ -2055,104 +1673,53 @@ policies and contribution forms [3].
             substitute_children(template.slice(2), rv);
         }
 
-        function substitute_attrs(attrs, rv)
-        {
-            rv[1] = {};
-            for (var name in template[1])
-            {
-                if (attrs.hasOwnProperty(name))
-                {
-                    var new_name = do_substitution(name).join("");
-                    var new_value = do_substitution(attrs[name]).join("");
-                    rv[1][new_name] = new_value;
-                };
-            }
-        }
-
-        function substitute_children(children, rv)
-        {
-            for (var i=0; i<children.length; i++)
-            {
-                if (children[i] instanceof Object) {
-                    var replacement = substitute(children[i], substitutions);
-                    if (replacement !== null)
-                    {
-                        if (is_single_node(replacement))
-                        {
-                            rv.push(replacement);
-                        }
-                        else
-                        {
-                            extend(rv, replacement);
-                        }
-                    }
-                }
-                else
-                {
-                    extend(rv, do_substitution(String(children[i])));
-                }
-            }
-            return rv;
-        }
-
         return rv;
     }
 
- function make_dom_single(template, doc)
- {
-     var output_document = doc || document;
-     if (template[0] === "{text}")
-     {
-         var element = output_document.createTextNode("");
-         for (var i=1; i<template.length; i++)
-         {
-             element.data += template[i];
-         }
-     }
-     else
-     {
-         var element = output_document.createElementNS(xhtml_ns, template[0]);
-         for (var name in template[1]) {
-             if (template[1].hasOwnProperty(name))
-             {
-                 element.setAttribute(name, template[1][name]);
-             }
-         }
-         for (var i=2; i<template.length; i++)
-         {
-             if (template[i] instanceof Object)
-             {
-                 var sub_element = make_dom(template[i]);
-                 element.appendChild(sub_element);
-             }
-             else
-             {
-                 var text_node = output_document.createTextNode(template[i]);
-                 element.appendChild(text_node);
-             }
-         }
-     }
-
-     return element;
- }
-
-
-
- function make_dom(template, substitutions, output_document)
+    function make_dom_single(template, doc)
     {
-        if (is_single_node(template))
-        {
-            return make_dom_single(template, output_document);
+        var output_document = doc || document;
+        var element;
+        if (template[0] === "{text}") {
+            element = output_document.createTextNode("");
+            for (var i = 1; i < template.length; i++) {
+                element.data += template[i];
+            }
+        } else {
+            element = output_document.createElementNS(xhtml_ns, template[0]);
+            for (var name in template[1]) {
+                if (template[1].hasOwnProperty(name)) {
+                    element.setAttribute(name, template[1][name]);
+                }
+            }
+            for (var i = 2; i < template.length; i++) {
+                if (template[i] instanceof Object) {
+                    var sub_element = make_dom(template[i]);
+                    element.appendChild(sub_element);
+                } else {
+                    var text_node = output_document.createTextNode(template[i]);
+                    element.appendChild(text_node);
+                }
+            }
         }
-        else
-        {
-            return map(template, function(x) {
-                           return make_dom_single(x, output_document);
-                       });
-        }
+
+        return element;
     }
 
- function render(template, substitutions, output_document)
+
+
+    function make_dom(template, substitutions, output_document)
+    {
+        if (is_single_node(template)) {
+            return make_dom_single(template, output_document);
+        }
+
+        return map(template, function(x) {
+                       return make_dom_single(x, output_document);
+                   });
+    }
+
+    function render(template, substitutions, output_document)
     {
         return make_dom(substitute(template, substitutions), output_document);
     }
@@ -2162,10 +1729,13 @@ policies and contribution forms [3].
      */
     function assert(expected_true, function_name, description, error, substitutions)
     {
-        if (expected_true !== true)
-        {
-            throw new AssertionError(make_message(function_name, description,
-                                                  error, substitutions));
+        if (tests.tests.length === 0) {
+            tests.set_file_is_test();
+        }
+        if (expected_true !== true) {
+            var msg = make_message(function_name, description,
+                                   error, substitutions);
+            throw new AssertionError(msg);
         }
     }
 
@@ -2173,6 +1743,10 @@ policies and contribution forms [3].
     {
         this.message = message;
     }
+
+    AssertionError.prototype.toString = function() {
+        return this.message;
+    };
 
     function make_message(function_name, description, error, substitutions)
     {
@@ -2190,10 +1764,8 @@ policies and contribution forms [3].
 
     function filter(array, callable, thisObj) {
         var rv = [];
-        for (var i=0; i<array.length; i++)
-        {
-            if (array.hasOwnProperty(i))
-            {
+        for (var i = 0; i < array.length; i++) {
+            if (array.hasOwnProperty(i)) {
                 var pass = callable.call(thisObj, array[i], i, array);
                 if (pass) {
                     rv.push(array[i]);
@@ -2207,10 +1779,8 @@ policies and contribution forms [3].
     {
         var rv = [];
         rv.length = array.length;
-        for (var i=0; i<array.length; i++)
-        {
-            if (array.hasOwnProperty(i))
-            {
+        for (var i = 0; i < array.length; i++) {
+            if (array.hasOwnProperty(i)) {
                 rv[i] = callable.call(thisObj, array[i], i, array);
             }
         }
@@ -2224,10 +1794,8 @@ policies and contribution forms [3].
 
     function forEach (array, callback, thisObj)
     {
-        for (var i=0; i<array.length; i++)
-        {
-            if (array.hasOwnProperty(i))
-            {
+        for (var i = 0; i < array.length; i++) {
+            if (array.hasOwnProperty(i)) {
                 callback.call(thisObj, array[i], i, array);
             }
         }
@@ -2237,8 +1805,7 @@ policies and contribution forms [3].
     {
         var rv = {};
         var p;
-        for (p in a)
-        {
+        for (p in a) {
             rv[p] = a[p];
         }
         for (p in b) {
@@ -2251,10 +1818,8 @@ policies and contribution forms [3].
     {
         var components = name.split(".");
         var target = window;
-        for (var i=0; i<components.length - 1; i++)
-        {
-            if (!(components[i] in target))
-            {
+        for (var i = 0; i < components.length - 1; i++) {
+            if (!(components[i] in target)) {
                 target[components[i]] = {};
             }
             target = target[components[i]];
@@ -2274,8 +1839,7 @@ policies and contribution forms [3].
             var i = 0;
             var so;
             var origins = location.ancestorOrigins;
-            while (w != w.parent)
-            {
+            while (w != w.parent) {
                 w = w.parent;
                 // In WebKit, calls to parent windows' properties that aren't on the same
                 // origin cause an error message to be displayed in the error console but
@@ -2288,19 +1852,16 @@ policies and contribution forms [3].
                 // `location.ancestorOrigins` property which returns an ordered list of
                 // the origins of enclosing windows. See:
                 // http://trac.webkit.org/changeset/113945.
-                if(origins) {
+                if (origins) {
                     so = (location.origin == origins[i]);
-                }
-                else
-                {
+                } else {
                     so = is_same_origin(w);
                 }
                 cache.push([w, so]);
                 i++;
             }
             w = window.opener;
-            if(w)
-            {
+            if (w) {
                 // window.opener isn't included in the `location.ancestorOrigins` prop.
                 // We'll just have to deal with a simple check and an error msg on WebKit
                 // browsers in this case.
@@ -2320,7 +1881,7 @@ policies and contribution forms [3].
         try {
             'random_prop' in w;
             return true;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -2337,27 +1898,24 @@ policies and contribution forms [3].
         // not from the same origin AND post message is not supported in that
         // browser. So just doing an existence test here won't do, you also need
         // to wrap it in a try..cacth block.
-        try
-        {
+        try {
             type = typeof w.postMessage;
-            if (type === "function")
-            {
+            if (type === "function") {
                 supports = true;
             }
+
             // IE8 supports postMessage, but implements it as a host object which
             // returns "object" as its `typeof`.
-            else if (type === "object")
-            {
+            else if (type === "object") {
                 supports = true;
             }
+
             // This is the case where postMessage isn't supported AND accessing a
             // window property across origins does NOT throw (e.g. old Safari browser).
-            else
-            {
+            else {
                 supports = false;
             }
-        }
-        catch(e) {
+        } catch (e) {
             // This is the case where postMessage isn't supported AND accessing a
             // window property across origins throws (e.g. old Firefox browser).
             supports = false;

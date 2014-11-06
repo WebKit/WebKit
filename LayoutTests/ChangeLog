@@ -1,3 +1,15 @@
+2014-11-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update testharness.js to the latest version
+        https://bugs.webkit.org/show_bug.cgi?id=138446
+
+        Reviewed by Ryosuke Niwa.
+
+        The only change I've made from upstream is to set output to false by
+        default.
+
+        * resources/testharness.js:
+
 2014-11-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix nits after r175688.
