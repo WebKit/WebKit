@@ -1,5 +1,16 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175568. <rdar://problem/18840102>
+
+    2014-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+    
+             URTBF after r175564 for !PLATFORM(COCOA).
+    
+            * Shared/TextIndicator.cpp:
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175564. <rdar://problem/18840102>
 
     2014-11-04  Tim Horton  <timothy_horton@apple.com>

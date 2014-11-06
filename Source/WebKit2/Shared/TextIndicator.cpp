@@ -26,7 +26,10 @@
 #include "config.h"
 #include "TextIndicator.h"
 
+#if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
+#endif
+
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "ShareableBitmap.h"
