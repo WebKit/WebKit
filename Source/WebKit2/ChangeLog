@@ -1,5 +1,35 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175635. <rdar://problem/18884674>
+
+    2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            Disable action menus on page previews
+            https://bugs.webkit.org/show_bug.cgi?id=138431
+    
+            Reviewed by Anders Carlsson.
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _shouldIgnoreMouseEvents]):
+            Renamed from -shouldIgnoreMouseEvents since this isn't actually public.
+            (-[WKView swipeWithEvent:]):
+            (-[WKView mouseMoved:]):
+            (-[WKView mouseDown:]):
+            (-[WKView mouseUp:]):
+            (-[WKView mouseDragged:]):
+            Updated to reflect method rename.
+            (-[WKView shouldIgnoreMouseEvents]): Deleted.
+    
+            * UIProcess/API/mac/WKViewInternal.h:
+            Expose -_shouldIgnoreMouseEvents.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            Cancel the menu if the presenting WKView should ignore mouse events.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175632. <rdar://problem/18774264>
 
     2014-11-05  Beth Dakin  <bdakin@apple.com>
