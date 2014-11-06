@@ -210,7 +210,7 @@ position [NewStyleBuilder]
 quotes [Inherited]
 resize [Inherited]
 right [NewStyleBuilder, Initial=initialOffset, Converter=LengthOrAuto]
-size
+size [NewStyleBuilder, Custom=All]
 src
 speak [Inherited, NewStyleBuilder]
 table-layout [NewStyleBuilder]

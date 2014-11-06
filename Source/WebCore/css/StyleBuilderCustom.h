@@ -148,6 +148,166 @@ inline void applyValueWebkitShapeOutside(StyleResolver& styleResolver, CSSValue&
 }
 #endif // ENABLE(CSS_SHAPES)
 
+static inline Length mmLength(double mm)
+{
+    Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM));
+    return value.get().computeLength<Length>(CSSToLengthConversionData());
+}
+static inline Length inchLength(double inch)
+{
+    Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN));
+    return value.get().computeLength<Length>(CSSToLengthConversionData());
+}
+static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
+{
+    static NeverDestroyed<Length> a5Width(mmLength(148));
+    static NeverDestroyed<Length> a5Height(mmLength(210));
+    static NeverDestroyed<Length> a4Width(mmLength(210));
+    static NeverDestroyed<Length> a4Height(mmLength(297));
+    static NeverDestroyed<Length> a3Width(mmLength(297));
+    static NeverDestroyed<Length> a3Height(mmLength(420));
+    static NeverDestroyed<Length> b5Width(mmLength(176));
+    static NeverDestroyed<Length> b5Height(mmLength(250));
+    static NeverDestroyed<Length> b4Width(mmLength(250));
+    static NeverDestroyed<Length> b4Height(mmLength(353));
+    static NeverDestroyed<Length> letterWidth(inchLength(8.5));
+    static NeverDestroyed<Length> letterHeight(inchLength(11));
+    static NeverDestroyed<Length> legalWidth(inchLength(8.5));
+    static NeverDestroyed<Length> legalHeight(inchLength(14));
+    static NeverDestroyed<Length> ledgerWidth(inchLength(11));
+    static NeverDestroyed<Length> ledgerHeight(inchLength(17));
+
+    if (!pageSizeName)
+        return false;
+
+    switch (pageSizeName->getValueID()) {
+    case CSSValueA5:
+        width = a5Width;
+        height = a5Height;
+        break;
+    case CSSValueA4:
+        width = a4Width;
+        height = a4Height;
+        break;
+    case CSSValueA3:
+        width = a3Width;
+        height = a3Height;
+        break;
+    case CSSValueB5:
+        width = b5Width;
+        height = b5Height;
+        break;
+    case CSSValueB4:
+        width = b4Width;
+        height = b4Height;
+        break;
+    case CSSValueLetter:
+        width = letterWidth;
+        height = letterHeight;
+        break;
+    case CSSValueLegal:
+        width = legalWidth;
+        height = legalHeight;
+        break;
+    case CSSValueLedger:
+        width = ledgerWidth;
+        height = ledgerHeight;
+        break;
+    default:
+        return false;
+    }
+
+    if (pageOrientation) {
+        switch (pageOrientation->getValueID()) {
+        case CSSValueLandscape:
+            std::swap(width, height);
+            break;
+        case CSSValuePortrait:
+            // Nothing to do.
+            break;
+        default:
+            return false;
+        }
+    }
+    return true;
+}
+
+inline void applyInheritSize(StyleResolver&) { }
+inline void applyInitialSize(StyleResolver&) { }
+inline void applyValueSize(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.style()->resetPageSizeType();
+    Length width;
+    Length height;
+    PageSizeType pageSizeType = PAGE_SIZE_AUTO;
+    if (!is<CSSValueList>(value))
+        return;
+
+    auto& valueList = downcast<CSSValueList>(value);
+    switch (valueList.length()) {
+    case 2: {
+        CSSValue* firstValue = valueList.itemWithoutBoundsCheck(0);
+        CSSValue* secondValue = valueList.itemWithoutBoundsCheck(1);
+        // <length>{2} | <page-size> <orientation>
+        if (!is<CSSPrimitiveValue>(*firstValue) || !is<CSSPrimitiveValue>(*secondValue))
+            return;
+        auto& firstPrimitiveValue = downcast<CSSPrimitiveValue>(*firstValue);
+        auto& secondPrimitiveValue = downcast<CSSPrimitiveValue>(*secondValue);
+        if (firstPrimitiveValue.isLength()) {
+            // <length>{2}
+            if (!secondPrimitiveValue.isLength())
+                return;
+            CSSToLengthConversionData conversionData = styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
+            width = firstPrimitiveValue.computeLength<Length>(conversionData);
+            height = secondPrimitiveValue.computeLength<Length>(conversionData);
+        } else {
+            // <page-size> <orientation>
+            // The value order is guaranteed. See CSSParser::parseSizeParameter.
+            if (!getPageSizeFromName(&firstPrimitiveValue, &secondPrimitiveValue, width, height))
+                return;
+        }
+        pageSizeType = PAGE_SIZE_RESOLVED;
+        break;
+    }
+    case 1: {
+        CSSValue* value = valueList.itemWithoutBoundsCheck(0);
+        // <length> | auto | <page-size> | [ portrait | landscape]
+        if (!is<CSSPrimitiveValue>(*value))
+            return;
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (primitiveValue.isLength()) {
+            // <length>
+            pageSizeType = PAGE_SIZE_RESOLVED;
+            width = height = primitiveValue.computeLength<Length>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        } else {
+            switch (primitiveValue.getValueID()) {
+            case 0:
+                return;
+            case CSSValueAuto:
+                pageSizeType = PAGE_SIZE_AUTO;
+                break;
+            case CSSValuePortrait:
+                pageSizeType = PAGE_SIZE_AUTO_PORTRAIT;
+                break;
+            case CSSValueLandscape:
+                pageSizeType = PAGE_SIZE_AUTO_LANDSCAPE;
+                break;
+            default:
+                // <page-size>
+                pageSizeType = PAGE_SIZE_RESOLVED;
+                if (!getPageSizeFromName(&primitiveValue, nullptr, width, height))
+                    return;
+            }
+        }
+        break;
+    }
+    default:
+        return;
+    }
+    styleResolver.style()->setPageSizeType(pageSizeType);
+    styleResolver.style()->setPageSize(LengthSize(width, height));
+}
+
 } // namespace StyleBuilderFunctions
 
 } // namespace WebCore

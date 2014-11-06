@@ -1,5 +1,35 @@
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
+        Move 'size' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138337
+
+        Reviewed by Andreas Kling.
+
+        Move 'size' CSS property from DeprecatedStyleBuilder to the new
+        StyleBuilder by using custom code as it requires special handling.
+
+        No new tests, new behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyPageSize::mmLength): Deleted.
+        (WebCore::ApplyPropertyPageSize::inchLength): Deleted.
+        (WebCore::ApplyPropertyPageSize::getPageSizeFromName): Deleted.
+        (WebCore::ApplyPropertyPageSize::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyPageSize::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyPageSize::applyValue): Deleted.
+        (WebCore::ApplyPropertyPageSize::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::mmLength):
+        (WebCore::StyleBuilderFunctions::inchLength):
+        (WebCore::StyleBuilderFunctions::getPageSizeFromName):
+        (WebCore::StyleBuilderFunctions::applyInheritSize):
+        (WebCore::StyleBuilderFunctions::applyInitialSize):
+        (WebCore::StyleBuilderFunctions::applyValueSize):
+
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
         Revert r175441 as it seems to be causing intermittent crashes in DOMTimer
         https://bugs.webkit.org/show_bug.cgi?id=138449
 
