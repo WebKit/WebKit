@@ -114,7 +114,7 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
                     || oldStyle->filter() != newStyle.filter()
                     )
                 layer()->repaintIncludingDescendants();
-            } else if (newStyle.hasTransform() || newStyle.opacity() < 1 || newStyle.hasFilter() || newStyle.hasBackdropFilter()) {
+            } else if (newStyle.hasTransform() || newStyle.opacity() < 1 || newStyle.hasFilter()) {
                 // If we don't have a layer yet, but we are going to get one because of transform or opacity,
                 //  then we need to repaint the old position of the object.
                 repaint();

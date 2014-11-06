@@ -1180,9 +1180,6 @@ CString RemoteLayerTreeTransaction::description() const
             case PlatformCALayer::LayerTypeRootLayer:
                 ts << "root-layer";
                 break;
-            case PlatformCALayer::LayerTypeBackdropLayer:
-                ts << "backdrop-layer";
-                break;
             case PlatformCALayer::LayerTypeAVPlayerLayer:
                 ts << "av-player-layer (context-id " << createdLayer.hostingContextID << ")";
                 break;

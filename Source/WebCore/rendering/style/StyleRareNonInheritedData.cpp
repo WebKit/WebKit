@@ -49,9 +49,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_multiCol(StyleMultiColData::create())
     , m_transform(StyleTransformData::create())
     , m_filter(StyleFilterData::create())
-#if ENABLE(FILTERS_LEVEL_2)
-    , m_backdropFilter(StyleFilterData::create())
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(StyleGridData::create())
     , m_gridItem(StyleGridItemData::create())
@@ -122,9 +119,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_multiCol(o.m_multiCol)
     , m_transform(o.m_transform)
     , m_filter(o.m_filter)
-#if ENABLE(FILTERS_LEVEL_2)
-    , m_backdropFilter(o.m_backdropFilter)
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(o.m_grid)
     , m_gridItem(o.m_gridItem)
@@ -220,9 +214,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform
         && m_filter == o.m_filter
-#if ENABLE(FILTERS_LEVEL_2)
-        && m_backdropFilter == o.m_backdropFilter
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
         && m_grid == o.m_grid
         && m_gridItem == o.m_gridItem
@@ -354,12 +345,5 @@ bool StyleRareNonInheritedData::hasFilters() const
 {
     return m_filter.get() && !m_filter->m_operations.isEmpty();
 }
-
-#if ENABLE(FILTERS_LEVEL_2)
-bool StyleRareNonInheritedData::hasBackdropFilters() const
-{
-    return m_backdropFilter.get() && !m_backdropFilter->m_operations.isEmpty();
-}
-#endif
 
 } // namespace WebCore

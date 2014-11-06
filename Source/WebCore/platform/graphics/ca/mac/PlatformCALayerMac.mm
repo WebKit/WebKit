@@ -62,10 +62,6 @@
 #import "ThemeMac.h"
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
-@interface CABackdropLayer : CALayer
-@end
-#endif
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
@@ -236,14 +232,6 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
         break;
     case LayerTypeTransformLayer:
         layerClass = [CATransformLayer class];
-        break;
-    case LayerTypeBackdropLayer:
-#if ENABLE(FILTERS_LEVEL_2)
-        layerClass = [CABackdropLayer class];
-#else
-        ASSERT_NOT_REACHED();
-        layerClass = [CALayer class];
-#endif
         break;
     case LayerTypeWebTiledLayer:
         ASSERT_NOT_REACHED();

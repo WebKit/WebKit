@@ -1,5 +1,2 @@
 # This test should only be run on Yosemite or later.
 platform/mac/editing/input/undo-grouping-on-text-insertion.html [ Skip ]
-
-# Backdrop filters are not supported on Mavericks
-css3/filters/backdrop [ Skip ]

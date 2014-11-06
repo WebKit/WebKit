@@ -1,3 +1,17 @@
+2014-11-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r175672.
+        https://bugs.webkit.org/show_bug.cgi?id=138455
+
+        Tries to make backdrop layers on every layer, asserts on
+        Mavericks (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "[filters2] Support for backdrop-filter"
+        https://bugs.webkit.org/show_bug.cgi?id=138384
+        http://trac.webkit.org/changeset/175672
+
 2014-11-04  Ada Chan  <adachan@apple.com>
 
         Figure out whether a plug-in is playing audio.

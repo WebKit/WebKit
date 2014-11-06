@@ -41,11 +41,6 @@
 #import <UIKit/UIView.h>
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
-@interface CABackdropLayer : CALayer
-@end
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -226,14 +221,6 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
         layer = adoptNS([[CATransformLayer alloc] init]);
-        break;
-    case PlatformCALayer::LayerTypeBackdropLayer:
-#if ENABLE(FILTERS_LEVEL_2)
-        layer = adoptNS([[CABackdropLayer alloc] init]);
-#else
-        ASSERT_NOT_REACHED();
-        layer = adoptNS([[CALayer alloc] init]);
-#endif
         break;
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:

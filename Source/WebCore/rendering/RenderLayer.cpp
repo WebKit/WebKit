@@ -315,6 +315,9 @@ bool RenderLayer::canRender3DTransforms() const
 
 bool RenderLayer::paintsWithFilters() const
 {
+    // FIXME: Eventually there will be cases where we paint with filters even without accelerated compositing,
+    // and this whole function won't be inside the #if below.
+
     if (!renderer().hasFilter())
         return false;
         
@@ -6215,7 +6218,6 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         && !renderer().hasTransform()
         && !renderer().hasClipPath()
         && !renderer().hasFilter()
-        && !renderer().hasBackdropFilter()
 #if PLATFORM(IOS)
         && !hasAcceleratedTouchScrolling()
 #endif

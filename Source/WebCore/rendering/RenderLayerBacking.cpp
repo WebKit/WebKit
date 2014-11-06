@@ -112,9 +112,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     , m_usingTiledCacheLayer(false)
     , m_requiresOwnBackingStore(true)
     , m_canCompositeFilters(false)
-#if ENABLE(FILTERS_LEVEL_2)
-    , m_canCompositeBackdropFilters(false)
-#endif
     , m_backgroundLayerPaintsFixedRootBackground(false)
 {
     Page* page = renderer().frame().page();
@@ -314,9 +311,6 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateOpacity(renderer().style());
     updateTransform(renderer().style());
     updateFilters(renderer().style());
-#if ENABLE(FILTERS_LEVEL_2)
-    updateBackdropFilters(renderer().style());
-#endif
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(renderer().style());
 #endif
@@ -380,13 +374,6 @@ void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
     m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
 }
-
-#if ENABLE(FILTERS_LEVEL_2)
-void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
-{
-    m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.backdropFilter());
-}
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
@@ -665,9 +652,7 @@ void RenderLayerBacking::updateGeometry()
         updateOpacity(style);
 
     updateFilters(style);
-#if ENABLE(FILTERS_LEVEL_2)
-    updateBackdropFilters(style);
-#endif
+
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif

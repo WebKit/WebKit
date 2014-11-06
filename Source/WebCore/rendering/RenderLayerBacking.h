@@ -232,9 +232,6 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 
     bool canCompositeFilters() const { return m_canCompositeFilters; }
-#if ENABLE(FILTERS_LEVEL_2)
-    bool canCompositeBackdropFilters() const { return m_canCompositeBackdropFilters; }
-#endif
 
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     double backingStoreMemoryEstimate() const;
@@ -282,9 +279,6 @@ private:
     void updateOpacity(const RenderStyle&);
     void updateTransform(const RenderStyle&);
     void updateFilters(const RenderStyle&);
-#if ENABLE(FILTERS_LEVEL_2)
-    void updateBackdropFilters(const RenderStyle&);
-#endif
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
 #endif
@@ -354,9 +348,6 @@ private:
     bool m_usingTiledCacheLayer;
     bool m_requiresOwnBackingStore;
     bool m_canCompositeFilters;
-#if ENABLE(FILTERS_LEVEL_2)
-    bool m_canCompositeBackdropFilters;
-#endif
     bool m_backgroundLayerPaintsFixedRootBackground;
 
     static bool m_creatingPrimaryGraphicsLayer;

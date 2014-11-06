@@ -638,11 +638,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
     if (rareNonInheritedData->hasFilters() != other.rareNonInheritedData->hasFilters())
         return true;
 
-#if ENABLE(FILTERS_LEVEL_2)
-    if (rareNonInheritedData->hasBackdropFilters() != other.rareNonInheritedData->hasBackdropFilters())
-        return true;
-#endif
-
     const QuotesData* quotesDataA = rareInheritedData->quotes.get();
     const QuotesData* quotesDataB = other.rareInheritedData->quotes.get();
     if (!(quotesDataA == quotesDataB || (quotesDataA && quotesDataB && *quotesDataA == *quotesDataB)))

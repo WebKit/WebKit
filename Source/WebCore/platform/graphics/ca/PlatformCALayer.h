@@ -77,7 +77,6 @@ public:
         LayerTypeRootLayer,
         LayerTypeAVPlayerLayer,
         LayerTypeWebGLLayer,
-        LayerTypeBackdropLayer,
         LayerTypeCustom
     };
     enum FilterType { Linear, Nearest, Trilinear };

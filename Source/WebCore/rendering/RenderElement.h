@@ -122,7 +122,7 @@ public:
     bool borderImageIsLoadedAndCanBeRendered() const;
 
     // Returns true if this renderer requires a new stacking context.
-    bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBackdropFilter() || hasBlendMode(); }
+    bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBlendMode(); }
 
     bool isTransparent() const { return style().opacity() < 1.0f; }
     float opacity() const { return style().opacity(); }
@@ -137,14 +137,6 @@ public:
     bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
 
     bool hasFilter() const { return style().hasFilter(); }
-    bool hasBackdropFilter() const
-    {
-#if ENABLE(FILTERS_LEVEL_2)
-        return style().hasBackdropFilter();
-#else
-        return false;
-#endif
-    }
 
 #if ENABLE(CSS_COMPOSITING)
     bool hasBlendMode() const { return style().hasBlendMode(); }

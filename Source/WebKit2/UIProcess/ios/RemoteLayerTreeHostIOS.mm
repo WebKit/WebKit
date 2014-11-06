@@ -38,9 +38,6 @@ using namespace WebCore;
 - (void)setContextId:(uint32_t)contextID;
 @end
 
-@interface CABackdropLayer : CALayer
-@end
-
 @interface UIView (WKHitTesting)
 - (UIView *)_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event;
 @end
@@ -107,17 +104,6 @@ using namespace WebCore;
 
 @end
 
-@interface WKBackdropView : WKCompositingView
-@end
-
-@implementation WKBackdropView
-+ (Class)layerClass
-{
-    return [CABackdropLayer self];
-}
-
-@end
-
 @interface WKRemoteView : WKCompositingView
 @end
 
@@ -164,9 +150,6 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
                 view = adoptNS([[UIView alloc] init]);
         } else
             view = adoptNS([[WKCompositingView alloc] init]);
-        break;
-    case PlatformCALayer::LayerTypeBackdropLayer:
-        view = adoptNS([[WKBackdropView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
         view = adoptNS([[WKTransformView alloc] init]);

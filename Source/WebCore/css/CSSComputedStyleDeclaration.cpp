@@ -291,9 +291,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyJustifyContent,
     CSSPropertyWebkitJustifySelf,
     CSSPropertyWebkitFilter,
-#if ENABLE(FILTERS_LEVEL_2)
-    CSSPropertyWebkitBackdropFilter,
-#endif
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitFontVariantLigatures,
@@ -1602,9 +1599,6 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransform:
     case CSSPropertyWebkitFilter:
-#if ENABLE(FILTERS_LEVEL_2)
-    case CSSPropertyWebkitBackdropFilter:
-#endif
         return true;
     case CSSPropertyMargin: {
         if (!renderer || !renderer->isBox())
@@ -2897,10 +2891,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #endif
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get(), style->filter());
-#if ENABLE(FILTERS_LEVEL_2)
-        case CSSPropertyWebkitBackdropFilter:
-            return valueForFilter(style.get(), style->backdropFilter());
-#endif
 #if ENABLE(CSS_COMPOSITING)
         case CSSPropertyMixBlendMode:
             return cssValuePool().createValue(style->blendMode());

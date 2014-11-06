@@ -791,14 +791,6 @@ public:
 
     void filterNeedsRepaint();
     bool hasFilter() const { return renderer().hasFilter(); }
-    bool hasBackdropFilter() const
-    {
-#if ENABLE(FILTERS_LEVEL_2)
-        return renderer().hasBackdropFilter();
-#else
-        return false;
-#endif
-    }
 
 #if ENABLE(CSS_COMPOSITING)
     bool hasBlendMode() const { return renderer().hasBlendMode(); }
