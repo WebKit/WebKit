@@ -389,6 +389,6 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(MAC)
     PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location)
-    SelectLookupTextAtLocation(WebCore::FloatPoint location)
+    SelectLastActionMenuRange()
 #endif
 }

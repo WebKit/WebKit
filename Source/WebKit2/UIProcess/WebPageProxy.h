@@ -918,7 +918,7 @@ public:
 #if PLATFORM(MAC)
     WebHitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
-    void selectLookupTextAtLocation(WebCore::FloatPoint);
+    void selectLastActionMenuRange();
 #endif
 
 #if USE(UNIFIED_TEXT_CHECKING)

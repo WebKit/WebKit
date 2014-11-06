@@ -1,5 +1,38 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175637. <rdar://problem/18877675>
+
+    2014-11-05  Tim Horton  <timothy_horton@apple.com>
+    
+            Select Data Detectors results instead of just highlighting them
+            https://bugs.webkit.org/show_bug.cgi?id=138435
+            <rdar://problem/18877675>
+    
+            Reviewed by Beth Dakin.
+    
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::selectLastActionMenuRange):
+            (WebKit::WebPageProxy::selectLookupTextAtLocation): Deleted.
+            Rename selectLookupTextAtLocation to selectLastActionMenuRange.
+    
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            Do a real selection for single-item Data Detector menus; show the yellow highlight otherwise.
+            Adopt selectLastActionMenuRange for non-detected text.
+    
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            (WebKit::WebPage::selectLastActionMenuRange):
+            (WebKit::WebPage::selectLookupTextAtLocation): Deleted.
+            Store the last (detected data or Lookup-derived) action menu range.
+            Select it upon selectLastActionMenuRange.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175635. <rdar://problem/18884674>
 
     2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
