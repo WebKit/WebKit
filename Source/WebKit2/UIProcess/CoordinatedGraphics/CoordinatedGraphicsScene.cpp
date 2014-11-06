@@ -59,7 +59,7 @@ CoordinatedGraphicsScene::~CoordinatedGraphicsScene()
 {
 }
 
-void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, TextureMapper::PaintFlags PaintFlags)
+void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, const FloatPoint& contentPosition, TextureMapper::PaintFlags PaintFlags)
 {
     if (!m_textureMapper) {
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
@@ -69,7 +69,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
     syncRemoteContent();
 
-    adjustPositionForFixedLayers();
+    adjustPositionForFixedLayers(contentPosition);
     TextureMapperLayer* currentRootLayer = rootLayer();
     if (!currentRootLayer)
         return;
@@ -135,11 +135,6 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* p
     m_textureMapper->setGraphicsContext(0);
 }
 
-void CoordinatedGraphicsScene::setScrollPosition(const FloatPoint& scrollPosition)
-{
-    m_scrollPosition = scrollPosition;
-}
-
 void CoordinatedGraphicsScene::updateViewport()
 {
     ASSERT(isMainThread());
@@ -147,7 +142,7 @@ void CoordinatedGraphicsScene::updateViewport()
         m_client->updateViewport();
 }
 
-void CoordinatedGraphicsScene::adjustPositionForFixedLayers()
+void CoordinatedGraphicsScene::adjustPositionForFixedLayers(const FloatPoint& contentPosition)
 {
     if (m_fixedLayers.isEmpty())
         return;
@@ -155,7 +150,7 @@ void CoordinatedGraphicsScene::adjustPositionForFixedLayers()
     // Fixed layer positions are updated by the web process when we update the visible contents rect / scroll position.
     // If we want those layers to follow accurately the viewport when we move between the web process updates, we have to offset
     // them by the delta between the current position and the position of the viewport used for the last layout.
-    FloatSize delta = m_scrollPosition - m_renderedContentsScrollPosition;
+    FloatSize delta = contentPosition - m_renderedContentsScrollPosition;
 
     for (auto& fixedLayer : m_fixedLayers.values())
         fixedLayer->setScrollPositionDeltaIfNeeded(delta);

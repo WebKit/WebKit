@@ -154,7 +154,7 @@ void WebView::paintToCurrentGLContext()
 
     const FloatRect& viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_size));
 
-    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), m_opacity, viewport, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground());
+    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), m_opacity, viewport, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground(), m_contentPosition);
 }
 
 void WebView::setDrawsBackground(bool drawsBackground)

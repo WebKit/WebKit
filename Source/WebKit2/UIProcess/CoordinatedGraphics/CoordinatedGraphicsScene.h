@@ -61,9 +61,8 @@ class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphics
 public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
-    void paintToCurrentGLContext(const TransformationMatrix&, float, const FloatRect&, const Color& backgroundColor, bool drawsBackground, TextureMapper::PaintFlags = 0);
+    void paintToCurrentGLContext(const TransformationMatrix&, float, const FloatRect&, const Color& backgroundColor, bool drawsBackground, const FloatPoint&, TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(PlatformGraphicsContext*, const Color& backgroundColor, bool drawsBackground);
-    void setScrollPosition(const FloatPoint&);
     void detach();
     void appendUpdate(std::function<void()>);
 
@@ -121,7 +120,7 @@ private:
     TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
     void syncRemoteContent();
-    void adjustPositionForFixedLayers();
+    void adjustPositionForFixedLayers(const FloatPoint& contentPosition);
 
     void dispatchOnMainThread(std::function<void()>);
     void updateViewport();
