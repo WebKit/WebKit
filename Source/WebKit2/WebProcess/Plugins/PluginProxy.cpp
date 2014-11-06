@@ -654,6 +654,11 @@ void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const Str
     releaseNPVariantValue(&npObjectAsVariant);
 }
 
+void PluginProxy::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
+{
+    controller()->setPluginIsPlayingAudio(pluginIsPlayingAudio);
+}
+
 void PluginProxy::cancelStreamLoad(uint64_t streamID)
 {
     controller()->cancelStreamLoad(streamID);

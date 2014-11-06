@@ -399,6 +399,11 @@ bool NetscapePlugin::getAuthenticationInfo(const ProtectionSpace& protectionSpac
     return controller()->getAuthenticationInfo(protectionSpace, username, password);
 }    
 
+void NetscapePlugin::setIsPlayingAudio(bool isPlayingAudio)
+{
+    controller()->setPluginIsPlayingAudio(isPlayingAudio);
+}
+
 NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
 {
     return m_pluginModule->pluginFuncs().newp(pluginType, &m_npp, mode, argc, argn, argv, savedData);

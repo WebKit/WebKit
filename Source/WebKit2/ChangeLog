@@ -1,3 +1,44 @@
+2014-11-04  Ada Chan  <adachan@apple.com>
+
+        Figure out whether a plug-in is playing audio.
+        https://bugs.webkit.org/show_bug.cgi?id=137219
+
+        Reviewed by Anders Carlsson.
+
+        Handle the setting of the NPPVpluginIsPlayingAudio variable.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::setPluginIsPlayingAudio):
+        Send a SetPluginIsPlayingAudio message to the WebProcess.
+        * PluginProcess/PluginControllerProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_SetValue):
+        Handle NPPVpluginIsPlayingAudio. Call NetscapePlugin::setIsPlayingAudio().
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::setIsPlayingAudio):
+        Call PluginControllerProxy::setPluginIsPlayingAudio().
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::setPluginIsPlayingAudio):
+        Call PluginView::setPluginIsPlayingAudio().
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add the SetPluginIsPlayingAudio message.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Initialize m_pluginIsPlayingAudio.
+        (WebKit::PluginView::~PluginView):
+        Remove itself from the Document's list of AudioProducers.
+        (WebKit::PluginView::initializePlugin):
+        Add itself to the Document's list of AudioProducers.
+        (WebKit::PluginView::pageMutedStateDidChange):
+        Add a FIXME.
+        (WebKit::PluginView::setPluginIsPlayingAudio):
+        If m_pluginIsPlayingAudio has changed, tell the Document to update its audio playing state.
+        * WebProcess/Plugins/PluginView.h:
+        Now inherits AudioProducer.
+
 2014-11-05  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the GTK build.

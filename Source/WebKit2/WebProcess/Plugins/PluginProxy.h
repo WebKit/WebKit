@@ -163,6 +163,7 @@ private:
     void getAuthenticationInfo(const WebCore::ProtectionSpace&, bool& returnValue, String& username, String& password);
     void getPluginElementNPObject(uint64_t& pluginElementNPObjectID);
     void evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData);
+    void setPluginIsPlayingAudio(bool);
     void cancelStreamLoad(uint64_t streamID);
     void cancelManualStreamLoad();
     void setStatusbarText(const String& statusbarText);

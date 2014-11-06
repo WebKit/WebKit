@@ -92,6 +92,7 @@ private:
     virtual NPObject* windowScriptNPObject() override;
     virtual NPObject* pluginElementNPObject() override;
     virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
+    virtual void setPluginIsPlayingAudio(bool) override;
     virtual void setStatusbarText(const String&) override;
     virtual bool isAcceleratedCompositingEnabled() override;
     virtual void pluginProcessCrashed() override;

@@ -1,3 +1,17 @@
+2014-11-04  Ada Chan  <adachan@apple.com>
+
+        Figure out whether a plug-in is playing audio.
+        https://bugs.webkit.org/show_bug.cgi?id=137219
+
+        Reviewed by Anders Carlsson.
+
+        Add NPPVpluginIsPlayingAudio. Export some WebCore methods that will be used in WebKit2.
+
+        No new tests, but manually tested with an example plugin.
+
+        * WebCore.exp.in:
+        * plugins/npapi.h:
+
 2014-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash introduced in r175656

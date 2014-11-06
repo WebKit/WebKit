@@ -297,6 +297,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_countSnapshotRetries(0)
     , m_didReceiveUserInteraction(false)
     , m_pageScaleFactor(1)
+    , m_pluginIsPlayingAudio(false)
 {
     m_webPage->addPluginView(this);
 }
@@ -310,6 +311,8 @@ PluginView::~PluginView()
 
     if (m_isWaitingUntilMediaCanStart)
         m_pluginElement->document().removeMediaCanStartListener(this);
+
+    m_pluginElement->document().removeAudioProducer(this);
 
     destroyPluginAndReset();
 
@@ -588,6 +591,8 @@ void PluginView::initializePlugin()
             }
         }
     }
+
+    m_pluginElement->document().addAudioProducer(this);
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
@@ -1324,6 +1329,11 @@ void PluginView::mediaCanStart()
     initializePlugin();
 }
 
+void PluginView::pageMutedStateDidChange()
+{
+    // FIXME: To be implemented (https://bugs.webkit.org/show_bug.cgi?id=138105).
+}
+
 bool PluginView::isPluginVisible()
 {
     return isVisible();
@@ -1432,6 +1442,15 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
 
     UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     return m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
+}
+
+void PluginView::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
+{
+    if (m_pluginIsPlayingAudio == pluginIsPlayingAudio)
+        return;
+
+    m_pluginIsPlayingAudio = pluginIsPlayingAudio;
+    m_pluginElement->document().updateIsPlayingAudio();
 }
 #endif
 

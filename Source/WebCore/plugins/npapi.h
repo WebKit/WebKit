@@ -379,6 +379,9 @@ typedef enum {
   , NPPVpluginCoreAnimationLayer = 1003
 #endif
 
+  /* Used for figuring out whether a plug-in is playing audio. */
+  , NPPVpluginIsPlayingAudio = 4000
+
 } NPPVariable;
 
 /*

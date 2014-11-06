@@ -310,6 +310,11 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
     return true;
 }
 
+void PluginControllerProxy::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
+{
+    m_connection->connection()->send(Messages::PluginProxy::SetPluginIsPlayingAudio(pluginIsPlayingAudio), m_pluginInstanceID);
+}
+
 void PluginControllerProxy::setStatusbarText(const String& statusbarText)
 {
     m_connection->connection()->send(Messages::PluginProxy::SetStatusbarText(statusbarText), m_pluginInstanceID);

@@ -83,6 +83,9 @@ messages -> PluginProxy LegacyReceiver {
     
     # Tells the WebProcess that the plug-in failed to initialize.
     DidFailToCreatePlugin() -> ()
+
+    # Tells the WebProcess that the plug-in has started or stopped playing audio.
+    SetPluginIsPlayingAudio(bool pluginIsPlayingAudio)
 }
 
 #endif

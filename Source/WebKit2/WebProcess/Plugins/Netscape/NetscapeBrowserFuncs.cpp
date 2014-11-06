@@ -575,6 +575,12 @@ static NPError NPN_SetValue(NPP npp, NPPVariable variable, void *value)
             return NPERR_NO_ERROR;
         }
 
+        case NPPVpluginIsPlayingAudio: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            plugin->setIsPlayingAudio(value);
+            return NPERR_NO_ERROR;
+        }
+
         default:
             notImplemented();
             return NPERR_GENERIC_ERROR;

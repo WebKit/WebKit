@@ -31,6 +31,7 @@
 #include "Plugin.h"
 #include "PluginController.h"
 #include "WebFrame.h"
+#include <WebCore/AudioProducer.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/Image.h>
 #include <WebCore/MediaCanStartListener.h>
@@ -56,7 +57,7 @@ namespace WebKit {
 
 class WebEvent;
 
-class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener {
+class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener, private WebCore::AudioProducer {
 public:
     static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 
@@ -179,6 +180,10 @@ private:
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart() override;
 
+    // WebCore::AudioProducer
+    virtual bool isPlayingAudio() override { return m_pluginIsPlayingAudio; }
+    virtual void pageMutedStateDidChange() override;
+
     // PluginController
     virtual bool isPluginVisible() override;
     virtual void invalidate(const WebCore::IntRect&) override;
@@ -190,6 +195,7 @@ private:
     virtual NPObject* windowScriptNPObject() override;
     virtual NPObject* pluginElementNPObject() override;
     virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
+    virtual void setPluginIsPlayingAudio(bool) override;
 #endif
     virtual void setStatusbarText(const String&) override;
     virtual bool isAcceleratedCompositingEnabled() override;
@@ -278,6 +284,8 @@ private:
     bool m_didReceiveUserInteraction;
 
     double m_pageScaleFactor;
+
+    bool m_pluginIsPlayingAudio;
 };
 
 } // namespace WebKit

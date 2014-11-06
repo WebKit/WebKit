@@ -129,6 +129,8 @@ public:
     void setCookiesForURL(const String& urlString, const String& cookieString);
     bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password);
 
+    void setIsPlayingAudio(bool);
+
     // Member functions for calling into the plug-in.
     NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData*);
     NPError NPP_Destroy(NPSavedData**);
