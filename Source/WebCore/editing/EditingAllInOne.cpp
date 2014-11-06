@@ -32,8 +32,6 @@
 #include <BreakBlockquoteCommand.cpp>
 #include <CompositeEditCommand.cpp>
 #include <CreateLinkCommand.cpp>
-#include <DeleteButton.cpp>
-#include <DeleteButtonController.cpp>
 #include <DeleteFromTextNodeCommand.cpp>
 #include <DeleteSelectionCommand.cpp>
 #include <DictationAlternative.cpp>

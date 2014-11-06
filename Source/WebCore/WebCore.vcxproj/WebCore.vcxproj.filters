@@ -3483,12 +3483,6 @@
     <ClCompile Include="..\editing\CreateLinkCommand.cpp">
       <Filter>editing</Filter>
     </ClCompile>
-    <ClCompile Include="..\editing\DeleteButton.cpp">
-      <Filter>editing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\editing\DeleteButtonController.cpp">
-      <Filter>editing</Filter>
-    </ClCompile>
     <ClCompile Include="..\editing\DeleteFromTextNodeCommand.cpp">
       <Filter>editing</Filter>
     </ClCompile>
@@ -10612,12 +10606,6 @@
       <Filter>editing</Filter>
     </ClInclude>
     <ClInclude Include="..\editing\CreateLinkCommand.h">
-      <Filter>editing</Filter>
-    </ClInclude>
-    <ClInclude Include="..\editing\DeleteButton.h">
-      <Filter>editing</Filter>
-    </ClInclude>
-    <ClInclude Include="..\editing\DeleteButtonController.h">
       <Filter>editing</Filter>
     </ClInclude>
     <ClInclude Include="..\editing\DeleteFromTextNodeCommand.h">

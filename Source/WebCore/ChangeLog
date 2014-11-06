@@ -1,3 +1,11 @@
+2014-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Windows build after removing the deletion UI.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * editing/EditingAllInOne.cpp:
+
 2014-11-04  Dean Jackson  <dino@apple.com>
 
         [filters2] Support for backdrop-filter
