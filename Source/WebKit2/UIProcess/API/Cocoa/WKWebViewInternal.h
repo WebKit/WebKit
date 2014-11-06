@@ -96,7 +96,10 @@ struct PrintInfo;
 - (void)_updateVisibleContentRects;
 
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
+#else
+@property (nonatomic, setter=_setIgnoresNonWheelMouseEvents:) BOOL _ignoresNonWheelMouseEvents;
 #endif
+
 @end
 
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);

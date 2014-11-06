@@ -32,6 +32,7 @@
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WKWebView.h"
+#import "WKWebViewInternal.h"
 #import "WebContext.h"
 #import "WebKitSystemInterface.h"
 #import "WebPageMessages.h"
@@ -98,12 +99,13 @@ using namespace WebKit;
 
 - (void)loadView
 {
-    WKWebView *webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, _preferredSize.width, _preferredSize.height)];
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, _preferredSize.width, _preferredSize.height)]);
+    [webView _setIgnoresNonWheelMouseEvents:YES];
     if (_url) {
         NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
         [webView loadRequest:request];
     }
-    [self setView:webView];
+    self.view = webView.get();
 }
 
 @end

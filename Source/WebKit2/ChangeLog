@@ -1,5 +1,49 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175630. <rdar://problem/18876437>
+
+    2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            Disable interaction with action menu page previews
+            https://bugs.webkit.org/show_bug.cgi?id=138400
+    
+            Reviewed by Tim Horton.
+    
+            Expand on the existing -[WKView shouldIgnoreMouseEvents] by adding facilities to suppress handling
+            of all non-wheel events, effectively creating a scroll-only web view. Deploy this in
+            WKPagePreviewViewController.
+    
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Declare the OS X-only ignoresNonWheelMouseEvents SPI.
+    
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _ignoresNonWheelMouseEvents]):
+            (-[WKWebView _setIgnoresNonWheelMouseEvents:]):
+            Wrap the underlying WKView methods.
+    
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            Declare the OS X-only ignoresNonWheelMouseEvents property.
+    
+            * UIProcess/API/mac/WKView.mm:
+            Add _ignoresNonWheelMouseEvents to WKViewData.
+            (-[WKView shouldIgnoreMouseEvents]):
+            Include a check for _ignoresNonWheelMouseEvents.
+            (-[WKView _setIgnoresNonWheelMouseEvents:]):
+            Set the ivar in WKViewData.
+            (-[WKView _ignoresNonWheelMouseEvents]):
+            Fetch the ivar in WKViewData.
+            (-[WKView _shouldIgnoreWheelEvents]):
+            Implement the old -shouldIgnoreMouseEvents behavior.
+            (-[WKView scrollWheel:]):
+            -shouldIgnoreMouseEvents -> -_shouldIgnoreWheelEvents.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKPagePreviewViewController loadView]):
+            Configure the WKWebView to ignore non-wheel mouse events; use RetainPtr for the WKWebView.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175591. <rdar://problem/18871842>
 
     2014-11-04  Anders Carlsson  <andersca@apple.com>
