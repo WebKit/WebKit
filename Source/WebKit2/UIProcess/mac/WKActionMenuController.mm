@@ -70,6 +70,7 @@ using namespace WebKit;
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult defaultActionMenuItems:(NSArray *)defaultMenuItems;
 @end
 
+#if WK_API_ENABLED
 @interface WKPagePreviewViewController : NSViewController {
 @public
     NSSize _preferredSize;
@@ -106,6 +107,7 @@ using namespace WebKit;
 }
 
 @end
+#endif
 
 @implementation WKActionMenuController
 
@@ -223,7 +225,11 @@ using namespace WebKit;
 - (NSArray *)_defaultMenuItemsForLink
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
+#if WK_API_ENABLED
     RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPreviewLink];
+#else
+    RetainPtr<NSMenuItem> previewLinkItem = [NSMenuItem separatorItem];
+#endif
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddLinkToSafariReadingList];
 
     return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
@@ -242,6 +248,7 @@ using namespace WebKit;
     [service performWithItems:@[ [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] ]];
 }
 
+#if WK_API_ENABLED
 - (void)_previewURLFromActionMenu:(id)sender
 {
     WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
@@ -261,6 +268,7 @@ using namespace WebKit;
     [popover setContentViewController:previewViewController.get()];
     return popover;
 }
+#endif
 
 #pragma mark Image actions
 
@@ -538,11 +546,13 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = webKitBundleImageNamed(@"OpenInNewWindowTemplate");
         break;
 
+#if WK_API_ENABLED
     case kWKContextActionItemTagPreviewLink:
         selector = @selector(_previewURLFromActionMenu:);
         title = @"Preview";
         image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
+#endif
 
     case kWKContextActionItemTagAddLinkToSafariReadingList:
         selector = @selector(_addToReadingListFromActionMenu:);
