@@ -1,5 +1,52 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175632. <rdar://problem/18774264>
+
+    2014-11-05  Beth Dakin  <bdakin@apple.com>
+    
+            Action menu URL preview should "peek," i.e. appear when the menu item is 
+            highlighted
+            https://bugs.webkit.org/show_bug.cgi?id=138432
+            -and corresponding-
+            rdar://problem/18774264
+    
+            Reviewed by Anders Carlsson.
+    
+            New ivars. Keep a reference to the popover, and a BOOL that indicates whether we 
+            should close the popover when the menu goes away.
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+    
+            Re-set the preview bool to NO whenever we are about to pop up a new menu.
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+    
+            Close the popover when the menu closes unless _shouldKeepPreviewPopoverOpen has 
+            been set.
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+    
+            Set _shouldKeepPreviewPopoverOpen.
+            (-[WKActionMenuController _keepPreviewOpen:]):
+    
+            Re-factored to use ivar.
+            (-[WKActionMenuController _previewURLFromActionMenu:]):
+            (-[WKActionMenuController _createPreviewPopoverForURL:]):
+    
+            Now call _previewURLFromActionMenu on menu item highlight.
+            (-[WKActionMenuController menu:willHighlightItem:]):
+    
+            NSPopover delegate method so that we can keep our BOOL and ivar accurate in the 
+            case where the popover is closed by some other mechanism than the action menu 
+            going away.
+            (-[WKActionMenuController popoverWillClose:]):
+    
+            New selector for the preview. Now when this item is actually selected, we just 
+            want to set the BOOL _shouldKeepPreviewPopoverOpen to YES so that we keep the 
+            preview open.
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175630. <rdar://problem/18876437>
 
     2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
