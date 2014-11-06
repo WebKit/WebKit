@@ -150,6 +150,32 @@ private:
     Frame m_frame;
 };
 
+class CallerFunctor {
+public:
+    CallerFunctor()
+        : m_hasSkippedFirstFrame(false)
+        , m_callerFrame(0)
+    {
+    }
+
+    CallFrame* callerFrame() const { return m_callerFrame; }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackVisitor::Continue;
+        }
+
+        m_callerFrame = visitor->callFrame();
+        return StackVisitor::Done;
+    }
+    
+private:
+    bool m_hasSkippedFirstFrame;
+    CallFrame* m_callerFrame;
+};
+
 } // namespace JSC
 
 #endif // StackVisitor_h

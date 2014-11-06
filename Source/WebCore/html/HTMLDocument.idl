@@ -25,8 +25,8 @@
 ] interface HTMLDocument : Document {
     [Custom, ForwardDeclareInHeader] void open();
     void close();
-    [Custom, ForwardDeclareInHeader] void write([Default=Undefined] optional DOMString text);
-    [Custom, ForwardDeclareInHeader] void writeln([Default=Undefined] optional DOMString text);
+    [Custom] void write([Default=Undefined] optional DOMString text);
+    [Custom] void writeln([Default=Undefined] optional DOMString text);
 
     readonly attribute HTMLCollection embeds;
     readonly attribute HTMLCollection plugins;

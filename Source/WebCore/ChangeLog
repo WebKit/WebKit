@@ -1,3 +1,23 @@
+2014-11-06  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r174985-174986): Site display disappears 
+        https://bugs.webkit.org/show_bug.cgi?id=138082
+
+        Reviewed by Geoffrey Garen.
+
+        This effectively reverts to the behavior before r174985 by using the 
+        lexical global object of the caller's frame to find the active document.
+        Before r174985, native functions are invoked with the ScopeShain of their
+        caller.  The lexical global object is accessed from the ScopeChain.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+        (WebCore::findOwningDocument):
+        (WebCore::documentWrite):
+        (WebCore::JSHTMLDocument::write):
+        (WebCore::JSHTMLDocument::writeln):
+        * html/HTMLDocument.idl:
+
 2014-11-05  Sam Weinig  <sam@webkit.org>
 
         Use std::unique_ptr for TileController
