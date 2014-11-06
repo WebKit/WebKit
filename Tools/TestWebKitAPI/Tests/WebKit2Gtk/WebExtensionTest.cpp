@@ -159,11 +159,67 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
     return FALSE;
 }
 
+static GVariant* serializeContextMenu(WebKitContextMenu* menu)
+{
+    GVariantBuilder builder;
+    g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
+    GList* items = webkit_context_menu_get_items(menu);
+    for (GList* it = items; it; it = g_list_next(it))
+        g_variant_builder_add(&builder, "u", webkit_context_menu_item_get_stock_action(WEBKIT_CONTEXT_MENU_ITEM(it->data)));
+    return g_variant_builder_end(&builder);
+}
+
+static GVariant* serializeNode(WebKitDOMNode* node)
+{
+    GVariantBuilder builder;
+    g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
+    g_variant_builder_add(&builder, "{sv}", "Name", g_variant_new_take_string(webkit_dom_node_get_node_name(node)));
+    g_variant_builder_add(&builder, "{sv}", "Type", g_variant_new_uint32(webkit_dom_node_get_node_type(node)));
+    g_variant_builder_add(&builder, "{sv}", "Contents", g_variant_new_take_string(webkit_dom_node_get_text_content(node)));
+    WebKitDOMNode* parent = webkit_dom_node_get_parent_node(node);
+    g_variant_builder_add(&builder, "{sv}", "Parent", parent ? g_variant_new_take_string(webkit_dom_node_get_node_name(parent)) : g_variant_new_string("ROOT"));
+    return g_variant_builder_end(&builder);
+}
+
+static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu, WebKitWebHitTestResult* hitTestResult, gpointer)
+{
+    const char* pageURI = webkit_web_page_get_uri(page);
+    if (!g_strcmp0(pageURI, "ContextMenuTestDefault")) {
+        webkit_context_menu_set_user_data(menu, serializeContextMenu(menu));
+        return FALSE;
+    }
+
+    if (!g_strcmp0(pageURI, "ContextMenuTestCustom")) {
+        // Remove Back and Forward, and add Inspector action.
+        webkit_context_menu_remove(menu, webkit_context_menu_first(menu));
+        webkit_context_menu_remove(menu, webkit_context_menu_first(menu));
+        webkit_context_menu_append(menu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(menu, webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_INSPECT_ELEMENT));
+        webkit_context_menu_set_user_data(menu, serializeContextMenu(menu));
+        return TRUE;
+    }
+
+    if (!g_strcmp0(pageURI, "ContextMenuTestClear")) {
+        webkit_context_menu_remove_all(menu);
+        return TRUE;
+    }
+
+    if (!g_strcmp0(pageURI, "ContextMenuTestNode")) {
+        WebKitDOMNode* node = webkit_web_hit_test_result_get_node(hitTestResult);
+        g_assert(WEBKIT_DOM_IS_NODE(node));
+        webkit_context_menu_set_user_data(menu, serializeNode(node));
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* webPage, gpointer)
 {
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
-    g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), 0);
+    g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
+    g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
 }
 
 static JSValueRef echoCallback(JSContextRef jsContext, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)

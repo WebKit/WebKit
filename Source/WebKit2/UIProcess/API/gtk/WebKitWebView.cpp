@@ -1891,7 +1891,7 @@ static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
 }
 
-void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* proposedMenu, WebHitTestResult* webHitTestResult)
+void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* proposedMenu, WebHitTestResult* webHitTestResult, GVariant* userData)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
@@ -1916,6 +1916,9 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* propos
 
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(data));
     GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
+
+    if (userData)
+        webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
 
     gboolean returnValue;
     g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), contextMenuEvent.get(), hitTestResult.get(), &returnValue);

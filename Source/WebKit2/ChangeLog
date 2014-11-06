@@ -1,3 +1,58 @@
+2014-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add context menu API to Web Process Extensions
+        https://bugs.webkit.org/show_bug.cgi?id=138311
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebKitWebPage::context-menu signal, similar to the
+        WebKitWebView one, but that receives a WebKitWebHitTestResult, a
+        class that extends WebKitTestResult to provide the WebKitDOMNode
+        from the Web Process Extensions API. This makes WebKitContextMenu,
+        WebKitContextMenuItem and WebKitTestResult classes shared between
+        UI and Web Extensions APIs. In addition to be able to customize
+        the context menu, it also provides API to set user data, as a
+        GVariant, in the Web Process that is sent to the UI Process.
+
+        * PlatformGTK.cmake: Add new files.
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        (webkit_context_menu_set_user_data): Add user data to the context
+        menu as a GVariant.
+        (webkit_context_menu_get_user_data): Get the user data previously
+        set with webkit_context_menu_set_user_data() either from the Web
+        or UI processes.
+        * UIProcess/API/gtk/WebKitContextMenu.h:
+        * UIProcess/API/gtk/WebKitContextMenuActions.h:
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        (getContextMenuFromProposedMenu): Convert the received user data
+        into a GVariant and pass it to webkitWebViewPopulateContextMenu().
+        * UIProcess/API/gtk/WebKitContextMenuItem.h:
+        * UIProcess/API/gtk/WebKitForwardDeclarations.h:
+        * UIProcess/API/gtk/WebKitHitTestResult.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPopulateContextMenu): Set the user data received
+        from the Web Process to the WebKitContextMenu before emitting
+        WebKitWebView::context-menu.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for WebKitWebHitTestResult.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add webkit_web_hit_test_result_get_type.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.cpp: Added.
+        (webkitWebHitTestResultGetProperty): Add getter for node property.
+        (webkitWebHitTestResultSetProperty): Add setter for node property.
+        (webkit_web_hit_test_result_class_init): Add node property.
+        (webkitWebHitTestResultCreate): Create a new
+        WebKitWebHitTestResult for the given InjectedBundleHitTestResult.
+        (webkit_web_hit_test_result_get_node): Return the WebKitDOMNode.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResultPrivate.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (getContextMenuFromDefaultMenu): Build a WebKitContextMenu and
+        WebKitWebHitTestResult and emit WebKitWebPage::context-menu signal.
+        (webkit_web_page_class_init): Add WebKitWebPage::context-menu signal.
+        (webkitWebPageCreate): Add implementation for getContextMenuFromDefaultMenu.
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+
 2014-11-06  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Remove m_scrollPosition from CoordinatedGraphicsScene

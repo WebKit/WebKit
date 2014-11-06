@@ -26,12 +26,16 @@
 
 #define __WEBKIT_WEB_EXTENSION_H_INSIDE__
 
+#include <webkit2/WebKitContextMenu.h>
+#include <webkit2/WebKitContextMenuActions.h>
+#include <webkit2/WebKitContextMenuItem.h>
 #include <webkit2/WebKitFrame.h>
 #include <webkit2/WebKitScriptWorld.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitURIResponse.h>
 #include <webkit2/WebKitVersion.h>
 #include <webkit2/WebKitWebExtension.h>
+#include <webkit2/WebKitWebHitTestResult.h>
 #include <webkit2/WebKitWebPage.h>
 
 #undef __WEBKIT_WEB_EXTENSION_H_INSIDE__

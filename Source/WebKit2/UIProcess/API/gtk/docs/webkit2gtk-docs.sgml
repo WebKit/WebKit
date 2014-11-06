@@ -53,6 +53,7 @@
     <xi:include href="xml/WebKitWebPage.xml"/>
     <xi:include href="xml/WebKitFrame.xml"/>
     <xi:include href="xml/WebKitScriptWorld.xml"/>
+    <xi:include href="xml/WebKitWebHitTestResult.xml"/>
   </chapter>
 
   <index id="index-all">

@@ -20,12 +20,15 @@
 #include "config.h"
 #include "WebKitWebPage.h"
 
+#include "APIArray.h"
 #include "ImageOptions.h"
 #include "ImmutableDictionary.h"
 #include "InjectedBundle.h"
 #include "WKBundleAPICast.h"
 #include "WKBundleFrame.h"
+#include "WebContextMenuItem.h"
 #include "WebImage.h"
+#include "WebKitContextMenuPrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitMarshal.h"
@@ -33,6 +36,7 @@
 #include "WebKitScriptWorldPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
+#include "WebKitWebHitTestResultPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
 #include <WebCore/Document.h>
@@ -50,6 +54,7 @@ using namespace WebCore;
 enum {
     DOCUMENT_LOADED,
     SEND_REQUEST,
+    CONTEXT_MENU,
 
     LAST_SIGNAL
 };
@@ -223,6 +228,36 @@ static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint6
     WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), ImmutableDictionary::create(WTF::move(message)).get());
 }
 
+static void getContextMenuFromDefaultMenu(WKBundlePageRef, WKBundleHitTestResultRef wkHitTestResult, WKArrayRef wkDefaultMenu, WKArrayRef* wkNewMenu, WKTypeRef* wkUserData, const void* clientInfo)
+{
+    GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(toImpl(wkDefaultMenu)));
+    GRefPtr<WebKitWebHitTestResult> webHitTestResult = adoptGRef(webkitWebHitTestResultCreate(*toImpl(wkHitTestResult)));
+    gboolean returnValue;
+    g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[CONTEXT_MENU], 0, contextMenu.get(), webHitTestResult.get(), &returnValue);
+    if (GVariant* userData = webkit_context_menu_get_user_data(contextMenu.get())) {
+        GUniquePtr<gchar> dataString(g_variant_print(userData, TRUE));
+        *wkUserData = static_cast<WKTypeRef>(WKStringCreateWithUTF8CString(dataString.get()));
+    }
+
+    if (!returnValue) {
+        WKRetain(wkDefaultMenu);
+        *wkNewMenu = wkDefaultMenu;
+        return;
+    }
+
+    Vector<ContextMenuItem> contextMenuItems;
+    webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
+
+    Vector<RefPtr<API::Object>> newMenuItems;
+    newMenuItems.reserveInitialCapacity(contextMenuItems.size());
+    for (const auto& item : contextMenuItems)
+        newMenuItems.uncheckedAppend(WebContextMenuItem::create(item));
+
+    RefPtr<API::Array> array = API::Array::create(WTF::move(newMenuItems));
+    *wkNewMenu = toAPI(array.get());
+    WKRetain(*wkNewMenu);
+}
+
 static void webkitWebPageGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
     WebKitWebPage* webPage = WEBKIT_WEB_PAGE(object);
@@ -305,6 +340,36 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         G_TYPE_BOOLEAN, 2,
         WEBKIT_TYPE_URI_REQUEST,
         WEBKIT_TYPE_URI_RESPONSE);
+
+    /**
+     * WebKitWebPage::context-menu:
+     * @web_page: the #WebKitWebPage on which the signal is emitted
+     * @context_menu: the proposed #WebKitContextMenu
+     * @hit_test_result: a #WebKitWebHitTestResult
+     *
+     * Emmited before a context menu is displayed in the UI Process to
+     * give the application a chance to customize the proposed menu,
+     * build its own context menu or pass user data to the UI Process.
+     * This signal is useful when the information available in the UI Process
+     * is not enough to build or customize the context menu, for example, to
+     * add menu entries depending on the #WebKitDOMNode at the coordinates of the
+     * @hit_test_result. Otherwise, it's recommened to use #WebKitWebView::context-menu
+     * signal instead.
+     *
+     * Returns: %TRUE if the proposed @context_menu has been modified, or %FALSE otherwise.
+     *
+     * Since: 2.8
+     */
+    signals[CONTEXT_MENU] = g_signal_new(
+        "context-menu",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled, 0,
+        webkit_marshal_BOOLEAN__OBJECT_OBJECT,
+        G_TYPE_BOOLEAN, 2,
+        WEBKIT_TYPE_CONTEXT_MENU,
+        WEBKIT_TYPE_WEB_HIT_TEST_RESULT);
 }
 
 WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
@@ -370,6 +435,15 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0 // shouldUseCredentialStorage
     };
     WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient.base);
+
+    WKBundlePageContextMenuClientV0 contextMenuClient = {
+        {
+            0, // version
+            page, // clientInfo
+        },
+        getContextMenuFromDefaultMenu,
+    };
+    WKBundlePageSetContextMenuClient(toAPI(webPage), &contextMenuClient.base);
 
     return page;
 }

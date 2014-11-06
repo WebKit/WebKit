@@ -982,6 +982,8 @@ webkit_context_menu_last
 webkit_context_menu_get_item_at_position
 webkit_context_menu_remove
 webkit_context_menu_remove_all
+webkit_context_menu_set_user_data
+webkit_context_menu_get_user_data
 
 <SUBSECTION Standard>
 WebKitContextMenuClass
@@ -1159,4 +1161,23 @@ WEBKIT_SCRIPT_WORLD_GET_CLASS
 <SUBSECTION Private>
 WebKitScriptWorldPrivate
 webkit_script_world_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebHitTestResult</FILE>
+WebKitWebHitTestResult
+webkit_web_hit_test_result_get_node
+
+<SUBSECTION Standard>
+WebKitWebHitTestResultClass
+WEBKIT_TYPE_WEB_HIT_TEST_RESULT
+WEBKIT_WEB_HIT_TEST_RESULT
+WEBKIT_IS_WEB_HIT_TEST_RESULT
+WEBKIT_WEB_HIT_TEST_RESULT_CLASS
+WEBKIT_IS_WEB_HIT_TEST_RESULT_CLASS
+WEBKIT_WEB_HIT_TEST_RESULT_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebHitTestResultPrivate
+webkit_web_hit_test_result_get_type
 </SECTION>

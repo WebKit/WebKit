@@ -26,9 +26,15 @@
 
 using namespace WebKit;
 
-static void getContextMenuFromProposedMenu(WKPageRef, WKArrayRef proposedMenu, WKArrayRef*, WKHitTestResultRef hitTestResult, WKTypeRef /* userData */, const void* clientInfo)
+static void getContextMenuFromProposedMenu(WKPageRef, WKArrayRef proposedMenu, WKArrayRef*, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void* clientInfo)
 {
-    webkitWebViewPopulateContextMenu(WEBKIT_WEB_VIEW(clientInfo), toImpl(proposedMenu), toImpl(hitTestResult));
+    GRefPtr<GVariant> variant;
+    if (userData) {
+        ASSERT(WKGetTypeID(userData) == WKStringGetTypeID());
+        CString userDataString = toImpl(static_cast<WKStringRef>(userData))->string().utf8();
+        variant = adoptGRef(g_variant_parse(nullptr, userDataString.data(), userDataString.data() + userDataString.length(), nullptr, nullptr));
+    }
+    webkitWebViewPopulateContextMenu(WEBKIT_WEB_VIEW(clientInfo), toImpl(proposedMenu), toImpl(hitTestResult), variant.get());
 }
 
 void attachContextMenuClientToView(WebKitWebView* webView)

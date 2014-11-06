@@ -24,6 +24,7 @@
 #include "WebContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
+#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -50,6 +51,7 @@ using namespace WebCore;
 struct _WebKitContextMenuPrivate {
     GList* items;
     WebKitContextMenuItem* parentItem;
+    GRefPtr<GVariant> userData;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitContextMenu, webkit_context_menu, G_TYPE_OBJECT)
@@ -315,4 +317,42 @@ void webkit_context_menu_remove_all(WebKitContextMenu* menu)
 
     g_list_free_full(menu->priv->items, reinterpret_cast<GDestroyNotify>(g_object_unref));
     menu->priv->items = 0;
+}
+
+/**
+ * webkit_context_menu_set_user_data:
+ * @menu: a #WebKitContextMenu
+ * @user_data: a #GVariant
+ *
+ * Sets user data to @menu.
+ * This function can be used from a Web Process extension to set user data
+ * that can be retrieved from the UI Process using webkit_context_menu_get_user_data().
+ *
+ * Since: 2.8
+ */
+void webkit_context_menu_set_user_data(WebKitContextMenu* menu, GVariant* userData)
+{
+    g_return_if_fail(WEBKIT_IS_CONTEXT_MENU(menu));
+    g_return_if_fail(userData);
+
+    menu->priv->userData = userData;
+}
+
+/**
+ * webkit_context_menu_get_user_data:
+ * @menu: a #WebKitContextMenu
+ *
+ * Gets the user data of @menu.
+ * This function can be used from the UI Process to get user data previously set
+ * from the Web Process with webkit_context_menu_set_user_data().
+ *
+ * Returns: (transfer none): the user data of @menu, or %NULL if @menu doesn't have user data
+ *
+ * Since: 2.8
+ */
+GVariant* webkit_context_menu_get_user_data(WebKitContextMenu* menu)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU(menu), nullptr);
+
+    return menu->priv->userData.get();
 }

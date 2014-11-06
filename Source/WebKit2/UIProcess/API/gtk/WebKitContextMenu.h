@@ -17,7 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__)
 #error "Only <webkit2/webkit2.h> can be included directly."
 #endif
 
@@ -104,6 +104,13 @@ webkit_context_menu_remove               (WebKitContextMenu     *menu,
 
 WEBKIT_API void
 webkit_context_menu_remove_all           (WebKitContextMenu     *menu);
+
+WEBKIT_API void
+webkit_context_menu_set_user_data        (WebKitContextMenu     *menu,
+                                          GVariant              *user_data);
+
+WEBKIT_API GVariant *
+webkit_context_menu_get_user_data        (WebKitContextMenu     *menu);
 
 G_END_DECLS
 
