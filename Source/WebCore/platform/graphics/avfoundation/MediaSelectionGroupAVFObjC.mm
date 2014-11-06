@@ -141,7 +141,7 @@ void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* 
     m_selectionTimer.startOneShot(0);
 }
 
-void MediaSelectionGroupAVFObjC::selectionTimerFired(Timer<MediaSelectionGroupAVFObjC>&)
+void MediaSelectionGroupAVFObjC::selectionTimerFired(Timer&)
 {
     [m_playerItem selectMediaOption:(m_selectedOption ? m_selectedOption->avMediaSelectionOption() : nil) inMediaSelectionGroup:m_mediaSelectionGroup.get()];
 }

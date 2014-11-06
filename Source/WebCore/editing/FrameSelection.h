@@ -309,7 +309,7 @@ private:
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
-    void caretBlinkTimerFired(Timer<FrameSelection>&);
+    void caretBlinkTimerFired(Timer&);
 
     void setCaretVisibility(CaretVisibility);
     bool recomputeCaretRect();
@@ -329,7 +329,7 @@ private:
 
     RefPtr<EditingStyle> m_typingStyle;
 
-    Timer<FrameSelection> m_caretBlinkTimer;
+    Timer m_caretBlinkTimer;
     // The painted bounds of the caret in absolute coordinates
     IntRect m_absCaretBounds;
     bool m_absCaretBoundsDirty : 1;

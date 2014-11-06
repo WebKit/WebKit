@@ -136,7 +136,7 @@ private:
     void simulatedMouseClickTimerFired();
 
     void restartSimilarPlugIns();
-    void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
+    void removeSnapshotTimerFired(Timer&);
     bool isTopLevelFullPagePlugin(const RenderEmbeddedObject&) const;
 
     URL m_loadedUrl;
@@ -145,7 +145,7 @@ private:
     bool m_needsDocumentActivationCallbacks;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer m_simulatedMouseClickTimer;
-    Timer<HTMLPlugInImageElement> m_removeSnapshotTimer;
+    Timer m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
     bool m_createdDuringUserGesture;
     bool m_isRestartedPlugin;

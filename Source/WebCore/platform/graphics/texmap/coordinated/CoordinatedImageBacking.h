@@ -72,7 +72,7 @@ private:
 
     void releaseSurfaceIfNeeded();
     void updateVisibilityIfNeeded(bool& changedToVisible);
-    void clearContentsTimerFired(Timer<CoordinatedImageBacking>*);
+    void clearContentsTimerFired(Timer*);
 
     Client* m_client;
     RefPtr<Image> m_image;
@@ -82,7 +82,7 @@ private:
 
     RefPtr<CoordinatedSurface> m_surface;
 
-    Timer<CoordinatedImageBacking> m_clearContentsTimer;
+    Timer m_clearContentsTimer;
 
     bool m_isDirty;
     bool m_isVisible;

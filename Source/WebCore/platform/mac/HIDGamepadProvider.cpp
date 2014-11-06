@@ -108,7 +108,7 @@ unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
-void HIDGamepadProvider::connectionDelayTimerFired(Timer<HIDGamepadProvider>&)
+void HIDGamepadProvider::connectionDelayTimerFired(Timer&)
 {
     m_shouldDispatchCallbacks = true;
 }
@@ -228,7 +228,7 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
         m_inputNotificationTimer.startOneShot(InputNotificationDelay);
 }
 
-void HIDGamepadProvider::inputNotificationTimerFired(Timer<HIDGamepadProvider>&)
+void HIDGamepadProvider::inputNotificationTimerFired(Timer&)
 {
     if (!m_shouldDispatchCallbacks)
         return;

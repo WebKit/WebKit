@@ -299,7 +299,7 @@ private:
 
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
-    void checkTimerFired(Timer<FrameLoader>&);
+    void checkTimerFired(Timer&);
     
     void loadSameDocumentItem(HistoryItem*);
     void loadDifferentDocumentItem(HistoryItem*, FrameLoadType, FormSubmissionCacheLoadPolicy);
@@ -423,7 +423,7 @@ private:
 
     URL m_submittedFormURL;
 
-    Timer<FrameLoader> m_checkTimer;
+    Timer m_checkTimer;
     bool m_shouldCallCheckCompleted;
     bool m_shouldCallCheckLoadComplete;
 

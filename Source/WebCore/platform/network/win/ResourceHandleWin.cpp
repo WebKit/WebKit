@@ -353,7 +353,7 @@ bool ResourceHandle::start()
     return true;
 }
 
-void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>*)
+void ResourceHandle::fileLoadTimer(Timer*)
 {
     RefPtr<ResourceHandle> protector(this);
     deref(); // balances ref in start

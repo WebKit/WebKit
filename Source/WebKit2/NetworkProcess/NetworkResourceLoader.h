@@ -148,7 +148,7 @@ private:
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
     void startBufferingTimerIfNeeded();
-    void bufferingTimerFired(WebCore::Timer<NetworkResourceLoader>&);
+    void bufferingTimerFired(WebCore::Timer&);
     void sendBuffer(WebCore::SharedBuffer*, int encodedDataLength);
 
     bool isSynchronous() const;
@@ -178,7 +178,7 @@ private:
     bool m_didConsumeSandboxExtensions;
     bool m_defersLoading;
 
-    WebCore::Timer<NetworkResourceLoader> m_bufferingTimer;
+    WebCore::Timer m_bufferingTimer;
 };
 
 } // namespace WebKit

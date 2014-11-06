@@ -396,7 +396,7 @@ void CompositingCoordinator::scheduleReleaseInactiveAtlases()
         m_releaseInactiveAtlasesTimer.startRepeating(ReleaseInactiveAtlasesTimerInterval);
 }
 
-void CompositingCoordinator::releaseInactiveAtlasesTimerFired(Timer<CompositingCoordinator>*)
+void CompositingCoordinator::releaseInactiveAtlasesTimerFired(Timer*)
 {
     // We always want to keep one atlas for root contents layer.
     std::unique_ptr<UpdateAtlas> atlasToKeepAnyway;

@@ -127,9 +127,9 @@ private:
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);
     bool processBuffer();
-    void resumeTimerFired(Timer<WebSocketChannel>*);
+    void resumeTimerFired(Timer*);
     void startClosingHandshake(int code, const String& reason);
-    void closingTimerFired(Timer<WebSocketChannel>*);
+    void closingTimerFired(Timer*);
 
     bool processFrame();
 
@@ -190,11 +190,11 @@ private:
     RefPtr<SocketStreamHandle> m_handle;
     Vector<char> m_buffer;
 
-    Timer<WebSocketChannel> m_resumeTimer;
+    Timer m_resumeTimer;
     bool m_suspended;
     bool m_closing;
     bool m_receivedClosingHandshake;
-    Timer<WebSocketChannel> m_closingTimer;
+    Timer m_closingTimer;
     bool m_closed;
     bool m_shouldDiscardReceivedData;
     unsigned long m_unhandledBufferedAmount;

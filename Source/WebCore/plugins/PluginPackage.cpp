@@ -63,7 +63,7 @@ void PluginPackage::freeLibrarySoon()
     m_freeLibraryTimer.startOneShot(0);
 }
 
-void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>*)
+void PluginPackage::freeLibraryTimerFired(Timer*)
 {
     ASSERT(m_module);
     // Do nothing if the module got loaded again meanwhile

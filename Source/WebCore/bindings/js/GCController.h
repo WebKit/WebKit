@@ -52,8 +52,8 @@ namespace WebCore {
         GCController(); // Use gcController() instead
 
 #if !USE(CF)
-        void gcTimerFired(Timer<GCController>*);
-        Timer<GCController> m_GCTimer;
+        void gcTimerFired(Timer*);
+        Timer m_GCTimer;
 #endif
     };
 

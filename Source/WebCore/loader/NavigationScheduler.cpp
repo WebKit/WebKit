@@ -74,7 +74,7 @@ public:
     virtual void fire(Frame&) = 0;
 
     virtual bool shouldStartTimer(Frame&) { return true; }
-    virtual void didStartTimer(Frame&, Timer<NavigationScheduler>&) { }
+    virtual void didStartTimer(Frame&, Timer&) { }
     virtual void didStopTimer(Frame&, bool /* newLoadInProgress */) { }
 
     double delay() const { return m_delay; }
@@ -113,7 +113,7 @@ protected:
         frame.loader().changeLocation(m_securityOrigin.get(), m_url, m_referrer, lockHistory(), lockBackForwardList(), false);
     }
 
-    virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) override
+    virtual void didStartTimer(Frame& frame, Timer& timer) override
     {
         if (m_haveToldClient)
             return;
@@ -249,7 +249,7 @@ public:
         frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes);
     }
     
-    virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) override
+    virtual void didStartTimer(Frame& frame, Timer& timer) override
     {
         if (m_haveToldClient)
             return;
@@ -430,7 +430,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     schedule(std::make_unique<ScheduledHistoryNavigation>(steps));
 }
 
-void NavigationScheduler::timerFired(Timer<NavigationScheduler>&)
+void NavigationScheduler::timerFired(Timer&)
 {
     if (!m_frame.page())
         return;

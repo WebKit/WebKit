@@ -45,12 +45,12 @@ public:
     BatteryStatus* batteryStatus() const;
 
 private:
-    void timerFired(Timer<BatteryProviderEfl>*);
+    void timerFired(Timer*);
     static void getBatteryStatus(void* data, void* replyData, DBusError*);
     static void setBatteryClient(void* data, void* replyData, DBusError*);
 
     BatteryProviderEflClient* m_client;
-    Timer<BatteryProviderEfl> m_timer;
+    Timer m_timer;
     RefPtr<BatteryStatus> m_batteryStatus;
     const double m_batteryStatusRefreshInterval;
 };

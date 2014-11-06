@@ -124,7 +124,7 @@ private:
     void checkInvalidRegions();
 
     bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentElements.isEmpty(); }
-    void regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>&);
+    void regionOversetChangeEventTimerFired(Timer&);
     void clearContentElements();
     void updateWritingMode();
 
@@ -154,7 +154,7 @@ private:
     // The DOM Object that represents a named flow.
     Ref<WebKitNamedFlow> m_namedFlow;
 
-    Timer<RenderNamedFlowThread> m_regionOversetChangeEventTimer;
+    Timer m_regionOversetChangeEventTimer;
 
     LayoutUnit m_flowContentBottom;
 };

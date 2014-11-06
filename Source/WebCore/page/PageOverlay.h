@@ -112,12 +112,12 @@ private:
     explicit PageOverlay(Client&, OverlayType);
 
     void startFadeAnimation();
-    void fadeAnimationTimerFired(Timer<PageOverlay>&);
+    void fadeAnimationTimerFired(Timer&);
 
     Client& m_client;
     Page* m_page;
 
-    Timer<PageOverlay> m_fadeAnimationTimer;
+    Timer m_fadeAnimationTimer;
     double m_fadeAnimationStartTime;
     double m_fadeAnimationDuration;
 

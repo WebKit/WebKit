@@ -472,7 +472,7 @@ void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
         m_requestAutocompleteTimer.startOneShot(0);
 }
 
-void HTMLFormElement::requestAutocompleteTimerFired(Timer<HTMLFormElement>*)
+void HTMLFormElement::requestAutocompleteTimerFired(Timer*)
 {
     Vector<RefPtr<Event>> pendingEvents;
     m_pendingAutocompleteEvents.swap(pendingEvents);

@@ -87,13 +87,13 @@ private:
     void tryEvictOldestCachedSurface();
 
     void scheduleCollectionTimer();
-    void collectionTimerFired(Timer<IOSurfacePool>&);
+    void collectionTimerFired(Timer&);
     void collectInUseSurfaces();
     bool markOlderSurfacesPurgeable();
 
     void platformGarbageCollectNow();
 
-    Timer<IOSurfacePool> m_collectionTimer;
+    Timer m_collectionTimer;
     CachedSurfaceMap m_cachedSurfaces;
     CachedSurfaceQueue m_inUseSurfaces;
     CachedSurfaceDetailsMap m_surfaceDetails;

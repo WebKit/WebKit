@@ -156,7 +156,7 @@ private:
     void updateStates();
     void doSeek();
     void cancelSeek();
-    void seekTimerFired(Timer<MediaPlayerPrivateQTKit>&);
+    void seekTimerFired(Timer&);
     MediaTime maxMediaTimeLoaded() const;
     void disableUnsupportedTracks();
     
@@ -180,7 +180,7 @@ private:
     RetainPtr<WebCoreMovieObserver> m_objcObserver;
     String m_movieURL;
     MediaTime m_seekTo;
-    Timer<MediaPlayerPrivateQTKit> m_seekTimer;
+    Timer m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     IntRect m_rect;

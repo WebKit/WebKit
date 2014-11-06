@@ -65,7 +65,7 @@ private:
 
     void startTimer();
     void stopTimer();
-    void transitionTimerFired(Timer<MediaControlPanelElement>&);
+    void transitionTimerFired(Timer&);
 
     void setPosition(const LayoutPoint&);
 
@@ -76,7 +76,7 @@ private:
     LayoutPoint m_lastDragEventLocation;
     LayoutPoint m_cumulativeDragOffset;
 
-    Timer<MediaControlPanelElement> m_transitionTimer;
+    Timer m_transitionTimer;
 };
 
 // ----------------------------
@@ -451,7 +451,7 @@ public:
     void exitedFullscreen();
 
 private:
-    void updateTimerFired(Timer<MediaControlTextTrackContainerElement>&);
+    void updateTimerFired(Timer&);
     void updateActiveCuesFontSize();
 
     explicit MediaControlTextTrackContainerElement(Document&);
@@ -465,7 +465,7 @@ private:
     void updateStyleForTextTrackRepresentation();
     OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
 
-    Timer<MediaControlTextTrackContainerElement> m_updateTimer;
+    Timer m_updateTimer;
     IntRect m_videoDisplaySize;
     int m_fontSize;
     bool m_fontSizeIsImportant;

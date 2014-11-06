@@ -201,7 +201,7 @@ private:
     void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
 
-    void animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*);
+    void animationStartedTimerFired(Timer*);
 
     CoordinatedLayerID m_id;
     CoordinatedGraphicsLayerState m_layerState;
@@ -243,7 +243,7 @@ private:
     IntSize m_platformLayerSize;
     GraphicsSurfaceToken m_platformLayerToken;
 #endif
-    Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
+    Timer m_animationStartedTimer;
     GraphicsLayerAnimations m_animations;
     double m_lastAnimationStartTime;
 

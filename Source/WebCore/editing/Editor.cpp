@@ -3270,7 +3270,7 @@ bool Editor::shouldDetectTelephoneNumbers()
     return document().isTelephoneNumberParsingEnabled() && TelephoneNumberDetector::isSupported();
 }
 
-void Editor::scanSelectionForTelephoneNumbers(Timer<Editor>&)
+void Editor::scanSelectionForTelephoneNumbers(Timer&)
 {
     scanSelectionForTelephoneNumbers();
 }
@@ -3377,7 +3377,7 @@ void Editor::updateEditorUINowIfScheduled()
     editorUIUpdateTimerFired(m_editorUIUpdateTimer);
 }
 
-void Editor::editorUIUpdateTimerFired(Timer<Editor>&)
+void Editor::editorUIUpdateTimerFired(Timer&)
 {
     VisibleSelection oldSelection = m_oldSelectionForEditorUIUpdate;
 

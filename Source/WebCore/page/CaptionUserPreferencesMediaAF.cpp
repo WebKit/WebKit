@@ -224,7 +224,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
 }
 
-void CaptionUserPreferencesMediaAF::updateTimerFired(Timer<CaptionUserPreferencesMediaAF>&)
+void CaptionUserPreferencesMediaAF::updateTimerFired(Timer&)
 {
     updateCaptionStyleSheetOveride();
 }

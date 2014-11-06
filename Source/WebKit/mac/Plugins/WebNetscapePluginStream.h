@@ -123,8 +123,8 @@ private:
     RetainPtr<NSMutableURLRequest> m_request;
     NPPluginFuncs *m_pluginFuncs;
 
-    void deliverDataTimerFired(WebCore::Timer<WebNetscapePluginStream>* timer);
-    WebCore::Timer<WebNetscapePluginStream> m_deliverDataTimer;
+    void deliverDataTimerFired(WebCore::Timer*);
+    WebCore::Timer m_deliverDataTimer;
     
     WebNetscapePluginStream(WebCore::FrameLoader*);
     WebNetscapePluginStream(NSURLRequest *, NPP, bool sendNotification, void* notifyData);

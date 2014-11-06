@@ -392,7 +392,7 @@ void NetworkResourceLoader::startBufferingTimerIfNeeded()
     m_bufferingTimer.startOneShot(m_parameters.maximumBufferingTime);
 }
 
-void NetworkResourceLoader::bufferingTimerFired(Timer<NetworkResourceLoader>&)
+void NetworkResourceLoader::bufferingTimerFired(Timer&)
 {
     ASSERT(m_bufferedData);
     ASSERT(m_handle);

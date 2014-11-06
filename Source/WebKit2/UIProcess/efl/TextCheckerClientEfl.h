@@ -55,14 +55,14 @@ private:
     TextCheckerClientEfl();
 
     // To set languages on timer.
-    void languagesUpdateTimerFired(WebCore::Timer<TextCheckerClientEfl>*);
-    WebCore::Timer<TextCheckerClientEfl> m_languagesUpdateTimer;
+    void languagesUpdateTimerFired(WebCore::Timer*);
+    WebCore::Timer m_languagesUpdateTimer;
     Vector<String> m_spellCheckingLanguages;
 
     // To notify the client about the setting change on timer.
-    void spellCheckingSettingChangeTimerFired(WebCore::Timer<TextCheckerClientEfl>*);
+    void spellCheckingSettingChangeTimerFired(WebCore::Timer*);
     void callContinuousSpellCheckingChangeCallbackAsync();
-    WebCore::Timer<TextCheckerClientEfl> m_spellCheckingSettingChangeTimer;
+    WebCore::Timer m_spellCheckingSettingChangeTimer;
 
     // WKTextCheckerClient callbacks.
     static bool isContinuousSpellCheckingEnabledCallback(const void*);

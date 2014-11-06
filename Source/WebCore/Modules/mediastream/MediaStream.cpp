@@ -361,7 +361,7 @@ void MediaStream::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void MediaStream::scheduledEventTimerFired(Timer<MediaStream>*)
+void MediaStream::scheduledEventTimerFired(Timer*)
 {
     Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);

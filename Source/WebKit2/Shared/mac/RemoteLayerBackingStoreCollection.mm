@@ -163,7 +163,7 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIf
     return successfullyMadeBackingStoreVolatile;
 }
 
-void RemoteLayerBackingStoreCollection::volatilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&)
+void RemoteLayerBackingStoreCollection::volatilityTimerFired(WebCore::Timer&)
 {
     bool successfullyMadeBackingStoreVolatile = true;
 

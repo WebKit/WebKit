@@ -115,7 +115,7 @@ static String scriptStringIfJavaScriptURL(const URL& url)
 
 PluginView* PluginView::s_currentPluginView = 0;
 
-void PluginView::popPopupsStateTimerFired(Timer<PluginView>*)
+void PluginView::popPopupsStateTimerFired(Timer*)
 {
     popPopupsEnabledState();
 }
@@ -479,7 +479,7 @@ void PluginView::performRequest(PluginRequest* request)
     }
 }
 
-void PluginView::requestTimerFired(Timer<PluginView>* timer)
+void PluginView::requestTimerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_requestTimer);
     ASSERT(!m_requests.isEmpty());
@@ -664,7 +664,7 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
     }
 }
 
-void PluginView::invalidateTimerFired(Timer<PluginView>* timer)
+void PluginView::invalidateTimerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_invalidateTimer);
 
@@ -1264,7 +1264,7 @@ const char* PluginView::userAgentStatic()
 #endif
 
 
-void PluginView::lifeSupportTimerFired(Timer<PluginView>*)
+void PluginView::lifeSupportTimerFired(Timer*)
 {
     deref();
 }

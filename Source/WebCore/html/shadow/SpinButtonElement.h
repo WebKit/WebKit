@@ -78,7 +78,7 @@ private:
     void doStepAction(int);
     void startRepeatingTimer();
     void stopRepeatingTimer();
-    void repeatingTimerFired(Timer<SpinButtonElement>*);
+    void repeatingTimerFired(Timer*);
     virtual void setHovered(bool = true) override;
     bool shouldRespondToMouseEvents();
     virtual bool isMouseFocusable() const override { return false; }
@@ -87,7 +87,7 @@ private:
     bool m_capturing;
     UpDownState m_upDownState;
     UpDownState m_pressStartingState;
-    Timer<SpinButtonElement> m_repeatingTimer;
+    Timer m_repeatingTimer;
 };
 
 } // namespace WebCore

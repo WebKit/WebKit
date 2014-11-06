@@ -347,11 +347,11 @@ public:
     void cancel();
 
 private:
-    void timerFired(Timer<Callback>&);
+    void timerFired(Timer&);
 
     CachedResource& m_resource;
     CachedResourceClient& m_client;
-    Timer<Callback> m_timer;
+    Timer m_timer;
 };
 
 } // namespace WebCore

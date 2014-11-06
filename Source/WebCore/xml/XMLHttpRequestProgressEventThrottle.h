@@ -60,7 +60,7 @@ private:
     static const double minimumProgressEventDispatchingIntervalInSeconds;
 
     virtual void fired();
-    void dispatchDeferredEvents(Timer<XMLHttpRequestProgressEventThrottle>*);
+    void dispatchDeferredEvents(Timer*);
     void flushProgressEvent();
     void dispatchEvent(PassRefPtr<Event>);
 
@@ -77,7 +77,7 @@ private:
     bool m_deferEvents;
     RefPtr<Event> m_deferredProgressEvent;
     Vector<RefPtr<Event>> m_deferredEvents;
-    Timer<XMLHttpRequestProgressEventThrottle> m_dispatchDeferredEventsTimer;
+    Timer m_dispatchDeferredEventsTimer;
 };
 
 } // namespace WebCore

@@ -505,7 +505,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     forcePaint();
 }
 
-void InspectorOverlay::updatePaintRectsTimerFired(Timer<InspectorOverlay>&)
+void InspectorOverlay::updatePaintRectsTimerFired(Timer&)
 {
     std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
     bool rectsChanged = false;

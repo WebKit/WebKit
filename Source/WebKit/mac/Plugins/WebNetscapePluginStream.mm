@@ -552,7 +552,7 @@ void WebNetscapePluginStream::deliverData()
     }
 }
 
-void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePluginStream>* timer)
+void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer* timer)
 {
     deliverData();
 }

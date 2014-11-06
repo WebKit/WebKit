@@ -108,7 +108,7 @@ void ResourceHandle::scheduleFailure(FailureType type)
     d->m_failureTimer.startOneShot(0);
 }
 
-void ResourceHandle::failureTimerFired(Timer<ResourceHandle>&)
+void ResourceHandle::failureTimerFired(Timer&)
 {
     if (!client())
         return;

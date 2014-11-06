@@ -122,7 +122,7 @@ private:
 
     void scheduleReleaseInactiveAtlases();
 
-    void releaseInactiveAtlasesTimerFired(Timer<CompositingCoordinator>*);
+    void releaseInactiveAtlasesTimerFired(Timer*);
 
     Page* m_page;
     CompositingCoordinator::Client* m_client;
@@ -146,7 +146,7 @@ private:
 
     bool m_shouldSyncFrame;
     bool m_didInitializeRootCompositingLayer;
-    Timer<CompositingCoordinator> m_releaseInactiveAtlasesTimer;
+    Timer m_releaseInactiveAtlasesTimer;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     double m_lastAnimationServiceTime;

@@ -138,7 +138,7 @@ private:
     static void registerHUDWindowClass();
     static LRESULT CALLBACK hudWndProc(HWND, UINT message, WPARAM, LPARAM);
     void createHUDWindow();
-    void timerFired(WebCore::Timer<FullscreenVideoController>*);
+    void timerFired(WebCore::Timer*);
 
     void togglePlay();
     void draw();
@@ -174,7 +174,7 @@ private:
     HUDWidget* m_hitWidget;
     WebCore::IntPoint m_moveOffset;
     bool m_movingWindow;
-    WebCore::Timer<FullscreenVideoController> m_timer;
+    WebCore::Timer m_timer;
 };
 
 #endif

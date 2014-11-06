@@ -312,7 +312,7 @@ void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void RTCDataChannel::scheduledEventTimerFired(Timer<RTCDataChannel>*)
+void RTCDataChannel::scheduledEventTimerFired(Timer*)
 {
     if (m_stopped)
         return;

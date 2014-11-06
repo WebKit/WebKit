@@ -139,7 +139,7 @@ private:
     void drawQuadHighlight();
     void drawPausedInDebuggerMessage();
     void drawPaintRects();
-    void updatePaintRectsTimerFired(Timer<InspectorOverlay>&);
+    void updatePaintRectsTimerFired(Timer&);
 
     Page* overlayPage();
 
@@ -160,7 +160,7 @@ private:
     
     typedef std::pair<std::chrono::steady_clock::time_point, FloatRect> TimeRectPair;
     Deque<TimeRectPair> m_paintRects;
-    Timer<InspectorOverlay> m_paintRectUpdateTimer;
+    Timer m_paintRectUpdateTimer;
     bool m_indicating;
     bool m_showingPaintRects;
 };

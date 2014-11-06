@@ -330,7 +330,7 @@ void MediaControls::defaultEventHandler(Event* event)
     }
 }
 
-void MediaControls::hideFullscreenControlsTimerFired(Timer<MediaControls>&)
+void MediaControls::hideFullscreenControlsTimerFired(Timer&)
 {
     if (m_mediaController->paused())
         return;

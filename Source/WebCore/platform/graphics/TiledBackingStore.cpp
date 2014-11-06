@@ -513,7 +513,7 @@ void TiledBackingStore::startTileBufferUpdateTimer()
     m_tileBufferUpdateTimer.startOneShot(0);
 }
 
-void TiledBackingStore::tileBufferUpdateTimerFired(Timer<TiledBackingStore>*)
+void TiledBackingStore::tileBufferUpdateTimerFired(Timer*)
 {
     ASSERT(m_commitTileUpdatesOnIdleEventLoop);
     updateTileBuffers();
@@ -529,7 +529,7 @@ void TiledBackingStore::startBackingStoreUpdateTimer(double interval)
     m_backingStoreUpdateTimer.startOneShot(interval);
 }
 
-void TiledBackingStore::backingStoreUpdateTimerFired(Timer<TiledBackingStore>*)
+void TiledBackingStore::backingStoreUpdateTimerFired(Timer*)
 {
     ASSERT(m_commitTileUpdatesOnIdleEventLoop);
     createTiles();

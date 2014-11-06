@@ -742,7 +742,7 @@ inline void CachedResource::Callback::cancel()
         m_timer.stop();
 }
 
-void CachedResource::Callback::timerFired(Timer<Callback>&)
+void CachedResource::Callback::timerFired(Timer&)
 {
     m_resource.didAddClient(&m_client);
 }

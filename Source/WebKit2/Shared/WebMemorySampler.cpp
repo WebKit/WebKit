@@ -154,13 +154,13 @@ void WebMemorySampler::writeHeaders()
     writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());
 }
 
-void WebMemorySampler::sampleTimerFired(Timer<WebMemorySampler>*)
+void WebMemorySampler::sampleTimerFired(Timer*)
 {
     sendMemoryPressureEvent();
     appendCurrentMemoryUsageToFile(m_sampleLogFile);
 }
 
-void WebMemorySampler::stopTimerFired(Timer<WebMemorySampler>*)
+void WebMemorySampler::stopTimerFired(Timer*)
 {
     if (!m_isRunning)
         return;

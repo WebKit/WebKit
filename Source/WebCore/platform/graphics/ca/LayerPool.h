@@ -61,7 +61,7 @@ private:
 
     bool canReuseLayerWithSize(const IntSize& size) const { return m_maxBytesForPool && !size.isEmpty(); }
     void schedulePrune();
-    void pruneTimerFired(Timer<LayerPool>&);
+    void pruneTimerFired(Timer&);
 
     typedef enum { LeaveUnchanged, MarkAsUsed } AccessType;
     LayerList& listOfLayersWithSize(const IntSize&, AccessType = LeaveUnchanged);
@@ -74,7 +74,7 @@ private:
     unsigned m_totalBytes;
     unsigned m_maxBytesForPool;
 
-    Timer<LayerPool> m_pruneTimer;
+    Timer m_pruneTimer;
 
     double m_lastAddTime;
 };

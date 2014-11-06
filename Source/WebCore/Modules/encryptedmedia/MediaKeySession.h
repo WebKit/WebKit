@@ -84,8 +84,8 @@ public:
 
 protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
-    void keyRequestTimerFired(Timer<MediaKeySession>&);
-    void addKeyTimerFired(Timer<MediaKeySession>&);
+    void keyRequestTimerFired(Timer&);
+    void addKeyTimerFired(Timer&);
 
     // CDMSessionClient
     virtual void sendMessage(Uint8Array*, String destinationURL);
@@ -104,10 +104,10 @@ protected:
         RefPtr<Uint8Array> initData;
     };
     Deque<PendingKeyRequest> m_pendingKeyRequests;
-    Timer<MediaKeySession> m_keyRequestTimer;
+    Timer m_keyRequestTimer;
 
     Deque<RefPtr<Uint8Array>> m_pendingKeys;
-    Timer<MediaKeySession> m_addKeyTimer;
+    Timer m_addKeyTimer;
 
 private:
     virtual void refEventTarget() override { ref(); }

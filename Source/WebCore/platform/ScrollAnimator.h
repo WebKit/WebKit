@@ -130,8 +130,8 @@ protected:
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     // Trivial wrappers around the actual update loop in AxisScrollSnapAnimator, since WebCore Timer requires a Timer argument.
-    void horizontalScrollSnapTimerFired(Timer<ScrollAnimator>&);
-    void verticalScrollSnapTimerFired(Timer<ScrollAnimator>&);
+    void horizontalScrollSnapTimerFired(Timer&);
+    void verticalScrollSnapTimerFired(Timer&);
 #endif
 
     ScrollableArea* m_scrollableArea;
@@ -139,10 +139,10 @@ protected:
     float m_currentPosY; // subclass code complexity.
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     std::unique_ptr<AxisScrollSnapAnimator> m_horizontalScrollSnapAnimator;
-    std::unique_ptr<Timer<ScrollAnimator>> m_horizontalScrollSnapTimer;
+    std::unique_ptr<Timer> m_horizontalScrollSnapTimer;
     // FIXME: Find a way to consolidate both timers into one variable.
     std::unique_ptr<AxisScrollSnapAnimator> m_verticalScrollSnapAnimator;
-    std::unique_ptr<Timer<ScrollAnimator>> m_verticalScrollSnapTimer;
+    std::unique_ptr<Timer> m_verticalScrollSnapTimer;
 #endif
 };
 

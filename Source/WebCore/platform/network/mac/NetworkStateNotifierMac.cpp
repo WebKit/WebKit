@@ -81,7 +81,7 @@ void NetworkStateNotifier::dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef, v
     notifier->m_networkStateChangeTimer.startOneShot(StateChangeTimerInterval);
 }
 
-void NetworkStateNotifier::networkStateChangeTimerFired(Timer<NetworkStateNotifier>&)
+void NetworkStateNotifier::networkStateChangeTimerFired(Timer&)
 {
     bool oldOnLine = m_isOnLine;
     

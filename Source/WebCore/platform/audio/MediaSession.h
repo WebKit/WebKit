@@ -106,11 +106,11 @@ protected:
     MediaSessionClient& client() const { return m_client; }
 
 private:
-    void clientDataBufferingTimerFired(Timer<MediaSession>&);
+    void clientDataBufferingTimerFired(Timer&);
     void updateClientDataBuffering();
 
     MediaSessionClient& m_client;
-    Timer<MediaSession> m_clientDataBufferingTimer;
+    Timer m_clientDataBufferingTimer;
     State m_state;
     State m_stateToRestore;
     bool m_notifyingClient;

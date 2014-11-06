@@ -104,12 +104,12 @@ void TextCheckerClientEfl::updateSpellCheckingLanguages(const Vector<String>& de
     m_languagesUpdateTimer.startOneShot(0);
 }
 
-void TextCheckerClientEfl::languagesUpdateTimerFired(Timer<TextCheckerClientEfl>*)
+void TextCheckerClientEfl::languagesUpdateTimerFired(Timer*)
 {
     m_textCheckerEnchant->updateSpellCheckingLanguages(m_spellCheckingLanguages);
 }
 
-void TextCheckerClientEfl::spellCheckingSettingChangeTimerFired(Timer<TextCheckerClientEfl>*)
+void TextCheckerClientEfl::spellCheckingSettingChangeTimerFired(Timer*)
 {
     m_clientCallbacks.continuous_spell_checking_change(
         isContinuousSpellCheckingEnabledCallback(0 /* clientInfo */)

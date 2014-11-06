@@ -305,7 +305,7 @@ bool ProgressTracker::isMainLoadProgressing() const
     return m_progressValue && m_progressValue < finalProgressValue && m_heartbeatsWithNoProgress < loadStalledHeartbeatCount;
 }
 
-void ProgressTracker::progressHeartbeatTimerFired(Timer<ProgressTracker>&)
+void ProgressTracker::progressHeartbeatTimerFired(Timer&)
 {
     if (m_totalBytesReceived < m_totalBytesReceivedBeforePreviousHeartbeat + minumumBytesPerHeartbeatForProgress)
         ++m_heartbeatsWithNoProgress;

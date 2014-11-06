@@ -73,7 +73,7 @@ void BatteryProviderEfl::setBatteryStatus(const AtomicString& eventType, PassRef
     m_client->didChangeBatteryStatus(eventType, m_batteryStatus);
 }
 
-void BatteryProviderEfl::timerFired(Timer<BatteryProviderEfl>* timer)
+void BatteryProviderEfl::timerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
     E_DBus_Connection* edbusConnection = e_dbus_bus_get(DBUS_BUS_SYSTEM);

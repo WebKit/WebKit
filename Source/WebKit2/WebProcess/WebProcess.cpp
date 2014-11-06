@@ -1195,7 +1195,7 @@ bool WebProcess::markAllLayersVolatileIfPossible()
     return successfullyMarkedAllLayersVolatile;
 }
 
-void WebProcess::processSuspensionCleanupTimerFired(Timer<WebProcess>* timer)
+void WebProcess::processSuspensionCleanupTimerFired(Timer* timer)
 {
     if (markAllLayersVolatileIfPossible()) {
         parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
@@ -1217,7 +1217,7 @@ void WebProcess::pageWillLeaveWindow(uint64_t pageID)
         m_nonVisibleProcessCleanupTimer.startOneShot(nonVisibleProcessCleanupDelay);
 }
     
-void WebProcess::nonVisibleProcessCleanupTimerFired(Timer<WebProcess>*)
+void WebProcess::nonVisibleProcessCleanupTimerFired(Timer*)
 {
     ASSERT(m_pagesInWindows.isEmpty());
     if (!m_pagesInWindows.isEmpty())

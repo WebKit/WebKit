@@ -64,8 +64,8 @@ private:
     void openAndScheduleManager();
     void closeAndUnscheduleManager();
 
-    void connectionDelayTimerFired(Timer<HIDGamepadProvider>&);
-    void inputNotificationTimerFired(Timer<HIDGamepadProvider>&);
+    void connectionDelayTimerFired(Timer&);
+    void inputNotificationTimerFired(Timer&);
 
     unsigned indexForNewlyConnectedDevice();
 
@@ -77,8 +77,8 @@ private:
     HashSet<GamepadProviderClient*> m_clients;
     bool m_shouldDispatchCallbacks;
 
-    Timer<HIDGamepadProvider> m_connectionDelayTimer;
-    Timer<HIDGamepadProvider> m_inputNotificationTimer;
+    Timer m_connectionDelayTimer;
+    Timer m_inputNotificationTimer;
 };
 
 } // namespace WebCore

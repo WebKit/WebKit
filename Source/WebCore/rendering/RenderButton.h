@@ -74,12 +74,12 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
-    void timerFired(Timer<RenderButton>&);
+    void timerFired(Timer&);
 
     RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;
 
-    std::unique_ptr<Timer<RenderButton>> m_timer;
+    std::unique_ptr<Timer> m_timer;
     bool m_default;
 };
 

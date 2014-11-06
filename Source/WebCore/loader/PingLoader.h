@@ -69,10 +69,10 @@ private:
     virtual void didFinishLoading(ResourceHandle*, double) override { delete this; }
     virtual void didFail(ResourceHandle*, const ResourceError&) override { delete this; }
     virtual bool shouldUseCredentialStorage(ResourceHandle*)  override { return m_shouldUseCredentialStorage; }
-    void timeoutTimerFired(Timer<PingLoader>&) { delete this; }
+    void timeoutTimerFired(Timer&) { delete this; }
 
     RefPtr<ResourceHandle> m_handle;
-    Timer<PingLoader> m_timeout;
+    Timer m_timeout;
     bool m_shouldUseCredentialStorage;
 };
 

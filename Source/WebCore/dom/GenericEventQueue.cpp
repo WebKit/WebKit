@@ -58,7 +58,7 @@ bool GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
     return true;
 }
 
-void GenericEventQueue::timerFired(Timer<GenericEventQueue>&)
+void GenericEventQueue::timerFired(Timer&)
 {
     ASSERT(!m_timer.isActive());
     ASSERT(!m_pendingEvents.isEmpty());

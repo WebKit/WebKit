@@ -270,7 +270,7 @@ void IDBTransactionBackend::commit()
     });
 }
 
-void IDBTransactionBackend::taskTimerFired(Timer<IDBTransactionBackend>&)
+void IDBTransactionBackend::taskTimerFired(Timer&)
 {
     LOG(StorageAPI, "IDBTransactionBackend::taskTimerFired");
 

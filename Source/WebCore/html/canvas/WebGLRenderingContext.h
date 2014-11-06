@@ -411,9 +411,9 @@ private:
     // likely that there's no JavaScript on the stack, but that might be dependent
     // on how exactly the platform discovers that the context was lost. For better
     // portability we always defer the dispatch of the event.
-    Timer<WebGLRenderingContext> m_dispatchContextLostEventTimer;
+    Timer m_dispatchContextLostEventTimer;
     bool m_restoreAllowed;
-    Timer<WebGLRenderingContext> m_restoreTimer;
+    Timer m_restoreTimer;
 
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
@@ -761,9 +761,9 @@ private:
     bool simulateVertexAttrib0(GC3Dsizei numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
-    void dispatchContextLostEvent(Timer<WebGLRenderingContext>*);
+    void dispatchContextLostEvent(Timer*);
     // Helper for restoration after context lost.
-    void maybeRestoreContext(Timer<WebGLRenderingContext>*);
+    void maybeRestoreContext(Timer*);
 
     // Determine if we are running privileged code in the browser, for example,
     // a Safari or Chrome extension.

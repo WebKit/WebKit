@@ -1310,7 +1310,7 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
     return ((isOverLink || isSubmitImage(node)) && (!editable || editableLinkEnabled));
 }
 
-void EventHandler::cursorUpdateTimerFired(Timer<EventHandler>&)
+void EventHandler::cursorUpdateTimerFired(Timer&)
 {
     ASSERT(m_frame.document());
     updateCursor();
@@ -1553,7 +1553,7 @@ void EventHandler::cancelAutoHideCursorTimer()
         m_autoHideCursorTimer.stop();
 }
 
-void EventHandler::autoHideCursorTimerFired(Timer<EventHandler>& timer)
+void EventHandler::autoHideCursorTimerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_autoHideCursorTimer);
     m_currentMouseCursor = noneCursor();
@@ -1576,7 +1576,7 @@ void EventHandler::beginTrackingPotentialLongMousePress(const HitTestResult& hit
     page->chrome().didBeginTrackingPotentialLongMousePress(m_mouseDownPos, hitTestResult);
 }
     
-void EventHandler::recognizeLongMousePress(Timer<EventHandler>& timer)
+void EventHandler::recognizeLongMousePress(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_longMousePressTimer);
 
@@ -2944,7 +2944,7 @@ void EventHandler::cancelFakeMouseMoveEvent()
     m_fakeMouseMoveEventTimer.stop();
 }
 
-void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>& timer)
+void EventHandler::fakeMouseMoveEventTimerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_fakeMouseMoveEventTimer);
     ASSERT(!m_mousePressed);
@@ -2980,7 +2980,7 @@ void EventHandler::resizeLayerDestroyed()
     m_resizeLayer = 0;
 }
 
-void EventHandler::hoverTimerFired(Timer<EventHandler>&)
+void EventHandler::hoverTimerFired(Timer&)
 {
     m_hoverTimer.stop();
 

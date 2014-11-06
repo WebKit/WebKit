@@ -491,7 +491,7 @@ void ScrollAnimatorNone::updateVisibleLengths()
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>*)
+void ScrollAnimatorNone::animationTimerFired(Timer*)
 {
     animationTimerFired();
 }

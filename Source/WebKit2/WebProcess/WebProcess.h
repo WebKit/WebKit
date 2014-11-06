@@ -173,7 +173,7 @@ public:
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);
 
-    void nonVisibleProcessCleanupTimerFired(WebCore::Timer<WebProcess>*);
+    void nonVisibleProcessCleanupTimerFired(WebCore::Timer*);
 
     void updateActivePages();
 
@@ -184,7 +184,7 @@ public:
     void processWillSuspend();
     void cancelProcessWillSuspend();
     bool markAllLayersVolatileIfPossible();
-    void processSuspensionCleanupTimerFired(WebCore::Timer<WebProcess>*);
+    void processSuspensionCleanupTimerFired(WebCore::Timer*);
 
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();
@@ -306,7 +306,7 @@ private:
 #if PLATFORM(IOS)
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
 #endif
-    WebCore::Timer<WebProcess> m_processSuspensionCleanupTimer;
+    WebCore::Timer m_processSuspensionCleanupTimer;
 
     bool m_inDidClose;
 
@@ -360,7 +360,7 @@ private:
 #endif
 
     HashSet<uint64_t> m_pagesInWindows;
-    WebCore::Timer<WebProcess> m_nonVisibleProcessCleanupTimer;
+    WebCore::Timer m_nonVisibleProcessCleanupTimer;
 
     std::unique_ptr<WebOriginDataManager> m_webOriginDataManager;
 };

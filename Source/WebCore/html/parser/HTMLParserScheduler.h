@@ -97,13 +97,13 @@ public:
     void resume();
 
 private:
-    void continueNextChunkTimerFired(Timer<HTMLParserScheduler>&);
+    void continueNextChunkTimerFired(Timer&);
 
     HTMLDocumentParser& m_parser;
 
     double m_parserTimeLimit;
     int m_parserChunkSize;
-    Timer<HTMLParserScheduler> m_continueNextChunkTimer;
+    Timer m_continueNextChunkTimer;
     bool m_isSuspendedWithActiveTimer;
 #if !ASSERT_DISABLED
     bool m_suspended;

@@ -105,7 +105,7 @@ private:
     // The timer is needed to continue processing when cue scrolling ended.
     void startTimer();
     void stopTimer();
-    void scrollTimerFired(Timer<VTTRegion>*);
+    void scrollTimerFired(Timer*);
 
     enum RegionSetting {
         None,
@@ -155,7 +155,7 @@ private:
     // soon as the animation for rolling out one line has finished, but
     // currently it is used also for non-scrolling regions to use a single
     // code path.
-    Timer<VTTRegion> m_scrollTimer;
+    Timer m_scrollTimer;
 };
 
 } // namespace WebCore

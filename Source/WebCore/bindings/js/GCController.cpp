@@ -73,7 +73,7 @@ void GCController::garbageCollectSoon()
 }
 
 #if !USE(CF)
-void GCController::gcTimerFired(Timer<GCController>*)
+void GCController::gcTimerFired(Timer*)
 {
     collect(nullptr);
 }

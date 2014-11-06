@@ -176,14 +176,14 @@ void ScrollAnimator::updateScrollAnimatorsAndTimers()
     // FIXME: Currently, scroll snap animators are recreated even though the snap offsets alone can be updated.
     if (m_scrollableArea->horizontalSnapOffsets()) {
         m_horizontalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea->horizontalSnapOffsets(), ScrollEventAxis::Horizontal);
-        m_horizontalScrollSnapTimer = std::make_unique<Timer<ScrollAnimator>>(this, &ScrollAnimator::horizontalScrollSnapTimerFired);
+        m_horizontalScrollSnapTimer = std::make_unique<Timer>(this, &ScrollAnimator::horizontalScrollSnapTimerFired);
     } else if (m_horizontalScrollSnapAnimator) {
         m_horizontalScrollSnapAnimator = nullptr;
         m_horizontalScrollSnapTimer = nullptr;
     }
     if (m_scrollableArea->verticalSnapOffsets()) {
         m_verticalScrollSnapAnimator = std::make_unique<AxisScrollSnapAnimator>(this, m_scrollableArea->verticalSnapOffsets(), ScrollEventAxis::Vertical);
-        m_verticalScrollSnapTimer = std::make_unique<Timer<ScrollAnimator>>(this, &ScrollAnimator::verticalScrollSnapTimerFired);
+        m_verticalScrollSnapTimer = std::make_unique<Timer>(this, &ScrollAnimator::verticalScrollSnapTimerFired);
     } else if (m_verticalScrollSnapAnimator) {
         m_verticalScrollSnapAnimator = nullptr;
         m_verticalScrollSnapTimer = nullptr;
@@ -207,24 +207,24 @@ void ScrollAnimator::immediateScrollInAxis(ScrollEventAxis axis, float delta)
 
 void ScrollAnimator::startScrollSnapTimer(ScrollEventAxis axis)
 {
-    Timer<ScrollAnimator>* scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer.get() : m_verticalScrollSnapTimer.get();
+    Timer* scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer.get() : m_verticalScrollSnapTimer.get();
     if (!scrollSnapTimer->isActive())
         scrollSnapTimer->startRepeating(1.0 / 60.0);
 }
 
 void ScrollAnimator::stopScrollSnapTimer(ScrollEventAxis axis)
 {
-    Timer<ScrollAnimator>* scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer.get() : m_verticalScrollSnapTimer.get();
+    Timer* scrollSnapTimer = axis == ScrollEventAxis::Horizontal ? m_horizontalScrollSnapTimer.get() : m_verticalScrollSnapTimer.get();
     if (scrollSnapTimer->isActive())
         scrollSnapTimer->stop();
 }
 
-void ScrollAnimator::horizontalScrollSnapTimerFired(Timer<ScrollAnimator>&)
+void ScrollAnimator::horizontalScrollSnapTimerFired(Timer&)
 {
     m_horizontalScrollSnapAnimator->scrollSnapAnimationUpdate();
 }
 
-void ScrollAnimator::verticalScrollSnapTimerFired(Timer<ScrollAnimator>&)
+void ScrollAnimator::verticalScrollSnapTimerFired(Timer&)
 {
     m_verticalScrollSnapAnimator->scrollSnapAnimationUpdate();
 }

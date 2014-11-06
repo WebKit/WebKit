@@ -1738,7 +1738,7 @@ IntPoint FrameView::maximumScrollPosition() const
     return maximumOffset;
 }
 
-void FrameView::delayedScrollEventTimerFired(Timer<FrameView>&)
+void FrameView::delayedScrollEventTimerFired(Timer&)
 {
     sendScrollEvent();
 }
@@ -2400,7 +2400,7 @@ void FrameView::enableSpeculativeTilingIfNeeded()
     m_speculativeTilingEnableTimer.startOneShot(speculativeTilingEnableDelay);
 }
 
-void FrameView::speculativeTilingEnableTimerFired(Timer<FrameView>&)
+void FrameView::speculativeTilingEnableTimerFired(Timer&)
 {
     if (m_speculativeTilingEnabled)
         return;
@@ -2408,7 +2408,7 @@ void FrameView::speculativeTilingEnableTimerFired(Timer<FrameView>&)
     adjustTiledBackingCoverage();
 }
 
-void FrameView::layoutTimerFired(Timer<FrameView>&)
+void FrameView::layoutTimerFired(Timer&)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!frame().document()->ownerElement())
@@ -2850,7 +2850,7 @@ bool FrameView::updateEmbeddedObjects()
     return m_embeddedObjectsToUpdate->isEmpty();
 }
 
-void FrameView::updateEmbeddedObjectsTimerFired(Timer<FrameView>*)
+void FrameView::updateEmbeddedObjectsTimerFired(Timer*)
 {
     RefPtr<FrameView> protect(this);
     m_updateEmbeddedObjectsTimer.stop();
@@ -2999,7 +2999,7 @@ void FrameView::willEndLiveResize()
     adjustTiledBackingCoverage();
 }
 
-void FrameView::postLayoutTimerFired(Timer<FrameView>&)
+void FrameView::postLayoutTimerFired(Timer&)
 {
     performPostLayoutTasks();
 }

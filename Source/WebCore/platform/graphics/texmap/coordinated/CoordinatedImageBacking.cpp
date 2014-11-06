@@ -173,7 +173,7 @@ void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
     }
 }
 
-void CoordinatedImageBacking::clearContentsTimerFired(Timer<CoordinatedImageBacking>*)
+void CoordinatedImageBacking::clearContentsTimerFired(Timer*)
 {
     m_client->clearImageBackingContents(id());
 }
