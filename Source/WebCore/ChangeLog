@@ -1,3 +1,47 @@
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
+        Merge r174740. <rdar://problem/18883801>
+
+    2014-10-15  Simon Fraser  <simon.fraser@apple.com>
+    
+            Sometimes can't scroll overflow:scroll areas in subframes
+            https://bugs.webkit.org/show_bug.cgi?id=137746
+            rdar://problem/18603560
+    
+            Reviewed by Tim Horton.
+            
+            r169733 introduced a regression which caused us to no longer update the non-fast
+            scrollable region on every layout in subframes, by adding a bogus isMainFrame() check.
+            Revert to the previous code.
+    
+            Test: platform/mac-wk2/tiled-drawing/scrolling/frames/scroll-region-after-frame-layout.html
+    
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
+        Merge r174740. <rdar://problem/18883801>
+
+    2014-10-15  Simon Fraser  <simon.fraser@apple.com>
+    
+            Sometimes can't scroll overflow:scroll areas in subframes
+            https://bugs.webkit.org/show_bug.cgi?id=137746
+            rdar://problem/18603560
+    
+            Reviewed by Tim Horton.
+            
+            r169733 introduced a regression which caused us to no longer update the non-fast
+            scrollable region on every layout in subframes, by adding a bogus isMainFrame() check.
+            Revert to the previous code.
+    
+            Test: platform/mac-wk2/tiled-drawing/scrolling/frames/scroll-region-after-frame-layout.html
+    
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+    
+
 2014-11-04  Dana Burkart  <dburkart@apple.com>
 
         Potential build-fix for Mountain Lion / Mavericks

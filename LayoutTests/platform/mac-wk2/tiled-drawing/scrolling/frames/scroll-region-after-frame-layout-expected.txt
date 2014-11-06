@@ -1,0 +1,8 @@
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 757)
+  (non-fast-scrollable region
+    at (68,68) size 300x300)
+)
+
