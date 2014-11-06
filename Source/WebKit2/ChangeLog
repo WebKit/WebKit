@@ -1,3 +1,15 @@
+2014-11-06  Tim Horton  <timothy_horton@apple.com>
+
+        Prefer link action menus over images
+        https://bugs.webkit.org/show_bug.cgi?id=138461
+        <rdar://problem/18768377>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItems:]):
+        Swap the priority of links and images.
+
 2014-11-05  Sam Weinig  <sam@webkit.org>
 
         Use std::unique_ptr for TileController
