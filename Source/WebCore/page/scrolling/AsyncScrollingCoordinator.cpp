@@ -73,8 +73,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     // frame view whose layout was updated is not the main frame.
     // In the future, we may want to have the ability to set non-fast scrolling regions for more than
     // just the root node. But right now, this concept only applies to the root.
-    if (frameView->frame().isMainFrame())
-        m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&frameView->frame(), IntPoint()));
+    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&m_page->mainFrame(), IntPoint()));
 
     if (!coordinatesScrollingForFrameView(frameView))
         return;
