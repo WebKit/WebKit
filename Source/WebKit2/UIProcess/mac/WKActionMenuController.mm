@@ -43,6 +43,7 @@
 #import <ImageIO/ImageIO.h>
 #import <ImageKit/ImageKit.h>
 #import <WebCore/DataDetectorsSPI.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
@@ -73,8 +74,6 @@ using namespace WebKit;
 
 #if WK_API_ENABLED
 
-static const CGFloat popoverToViewScale = 0.75;
-
 @class WKPagePreviewViewController;
 
 @protocol WKPagePreviewViewControllerDelegate <NSObject>
@@ -86,21 +85,23 @@ static const CGFloat popoverToViewScale = 0.75;
     NSSize _mainViewSize;
     RetainPtr<NSURL> _url;
     id <WKPagePreviewViewControllerDelegate> _delegate;
+    CGFloat _popoverToViewScale;
 }
 
-- (instancetype)initWithPageURL:(NSURL *)URL;
+- (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
 
 @end
 
 @implementation WKPagePreviewViewController
 
-- (instancetype)initWithPageURL:(NSURL *)URL
+- (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale
 {
     if (!(self = [super init]))
         return nil;
 
     _url = URL;
-    _mainViewSize = NSMakeSize(320, 568);
+    _mainViewSize = size;
+    _popoverToViewScale = scale;
 
     return self;
 }
@@ -115,7 +116,7 @@ static const CGFloat popoverToViewScale = 0.75;
     }
 
     // Setting the webView bounds will scale it to 75% of the _mainViewSize. 
-    [webView setBounds:NSMakeRect(0, 0, _mainViewSize.width / popoverToViewScale, _mainViewSize.height / popoverToViewScale)];
+    [webView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
 
     RetainPtr<NSClickGestureRecognizer> clickRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(_clickRecognized:)]);
     [webView addGestureRecognizer:clickRecognizer.get()];
@@ -309,38 +310,60 @@ static const CGFloat popoverToViewScale = 0.75;
 
 - (void)_createPreviewPopoverForURL:(NSURL *)url originRect:(NSRect)originRect
 {
-    RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url]);
-    previewViewController->_mainViewSize = _wkView.bounds.size;
+    NSSize popoverSize = [self _preferredSizeForPopoverPresentedFromOriginRect:originRect];
+    CGFloat actualPopoverToViewScale = popoverSize.width / NSWidth(_wkView.bounds);
+    RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
     previewViewController->_delegate = self;
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
     [_previewPopover setBehavior:NSPopoverBehaviorTransient];
-    [_previewPopover setContentSize:[self _preferredSizeForPopoverPresentedFromOriginRect:originRect]];
+    [_previewPopover setContentSize:popoverSize];
     [_previewPopover setContentViewController:previewViewController.get()];
     [_previewPopover setDelegate:self];
 }
 
+static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSpace)
+{
+    return targetSize.width <= availableSpace.width && targetSize.height <= availableSpace.height;
+}
+
 - (NSSize)_preferredSizeForPopoverPresentedFromOriginRect:(NSRect)originRect
 {
+    static const CGFloat preferredPopoverToViewScale = 0.75;
     static const CGFloat screenPadding = 40;
 
     NSWindow *window = _wkView.window;
     NSRect originScreenRect = [window convertRectToScreen:[_wkView convertRect:originRect toView:nil]];
     NSRect screenFrame = window.screen.visibleFrame;
 
+    NSRect wkViewBounds = _wkView.bounds;
+    NSSize targetSize = NSMakeSize(NSWidth(wkViewBounds) * preferredPopoverToViewScale, NSHeight(wkViewBounds) * preferredPopoverToViewScale);
+
     CGFloat availableSpaceAbove = NSMaxY(screenFrame) - NSMaxY(originScreenRect);
     CGFloat availableSpaceBelow = NSMinY(originScreenRect) - NSMinY(screenFrame);
     CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - screenPadding;
+    NSSize maxSpaceAvailableOnYEdge = NSMakeSize(screenFrame.size.width - screenPadding, maxAvailableVerticalSpace);
+    if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnYEdge))
+        return targetSize;
 
     CGFloat availableSpaceAtLeft = NSMinX(originScreenRect) - NSMinX(screenFrame);
     CGFloat availableSpaceAtRight = NSMaxX(screenFrame) - NSMaxX(originScreenRect);
     CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - screenPadding;
+    NSSize maxSpaceAvailableOnXEdge = NSMakeSize(maxAvailableHorizontalSpace, screenFrame.size.height - screenPadding);
+    if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnXEdge))
+        return targetSize;
 
-    NSRect wkViewBounds = _wkView.bounds;
-    NSSize preferredSize = NSMakeSize(NSWidth(wkViewBounds) * popoverToViewScale, NSHeight(wkViewBounds) * popoverToViewScale);
-    preferredSize.width = fmin(preferredSize.width, maxAvailableHorizontalSpace);
-    preferredSize.height = fmin(preferredSize.height, maxAvailableVerticalSpace);
-    return preferredSize;
+    // If the target size doesn't fit anywhere, we'll find the largest rect that does fit that also maintains the original view's aspect ratio.
+    CGFloat aspectRatio = wkViewBounds.size.width / wkViewBounds.size.height;
+    FloatRect maxVerticalTargetSizePreservingAspectRatioRect = largestRectWithAspectRatioInsideRect(aspectRatio, FloatRect(0, 0, maxSpaceAvailableOnYEdge.width, maxSpaceAvailableOnYEdge.height));
+    FloatRect maxHorizontalTargetSizePreservingAspectRatioRect = largestRectWithAspectRatioInsideRect(aspectRatio, FloatRect(0, 0, maxSpaceAvailableOnXEdge.width, maxSpaceAvailableOnXEdge.height));
+
+    NSSize maxVerticalTargetSizePreservingAspectRatio = NSMakeSize(maxVerticalTargetSizePreservingAspectRatioRect.width(), maxVerticalTargetSizePreservingAspectRatioRect.height());
+    NSSize maxHortizontalTargetSizePreservingAspectRatio = NSMakeSize(maxHorizontalTargetSizePreservingAspectRatioRect.width(), maxHorizontalTargetSizePreservingAspectRatioRect.height());
+
+    if ((maxVerticalTargetSizePreservingAspectRatio.width * maxVerticalTargetSizePreservingAspectRatio.height) > (maxHortizontalTargetSizePreservingAspectRatio.width * maxHortizontalTargetSizePreservingAspectRatio.height))
+        return maxVerticalTargetSizePreservingAspectRatio;
+    return maxHortizontalTargetSizePreservingAspectRatio;
 }
 
 #endif // WK_API_ENABLED

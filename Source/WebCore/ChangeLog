@@ -1,3 +1,17 @@
+2014-11-06  Dana Burkart  <dburkart@apple.com>
+
+        Merge r175710. <rdar://problem/18898712>
+
+    2014-11-06  Beth Dakin  <bdakin@apple.com>
+    
+            Preview views often misplaced inside popover
+            https://bugs.webkit.org/show_bug.cgi?id=138472
+    
+            Reviewed by Tim Horton.
+    
+            * WebCore.exp.in:
+    
+
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
         Merge r175609. <rdar://problem/18869345>
