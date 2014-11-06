@@ -60,8 +60,6 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 using namespace WebCore;
 using namespace WebKit;
 
-static const CGFloat popoverToViewScale = 0.75;
-
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate>
 - (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
 - (BOOL)_canAddImageToPhotos;
@@ -74,6 +72,8 @@ static const CGFloat popoverToViewScale = 0.75;
 @end
 
 #if WK_API_ENABLED
+
+static const CGFloat popoverToViewScale = 0.75;
 
 @class WKPagePreviewViewController;
 
