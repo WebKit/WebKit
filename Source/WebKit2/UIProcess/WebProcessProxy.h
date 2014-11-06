@@ -142,7 +142,9 @@ public:
     void processReadyToSuspend();
     void sendCancelProcessWillSuspend();
     void didCancelProcessSuspension();
-    
+
+    void setIsHoldingLockedFiles(bool);
+
     ProcessThrottler& throttler() { return *m_throttler; }
     
 private:
@@ -230,6 +232,7 @@ private:
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
     std::unique_ptr<ProcessThrottler> m_throttler;
+    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_tokenForHoldingLockedFiles;
 };
 
 } // namespace WebKit

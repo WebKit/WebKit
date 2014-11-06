@@ -113,6 +113,9 @@
 
 #if ENABLE(SQL_DATABASE)
 #include "WebDatabaseManager.h"
+#if PLATFORM(IOS)
+#include "WebSQLiteDatabaseTracker.h"
+#endif
 #endif
 
 #if ENABLE(BATTERY_STATUS)
@@ -193,7 +196,11 @@ WebProcess::WebProcess()
     
 #if ENABLE(SQL_DATABASE)
     addSupplement<WebDatabaseManager>();
+#if PLATFORM(IOS)
+    addSupplement<WebSQLiteDatabaseTracker>();
 #endif
+#endif
+
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
 #endif
