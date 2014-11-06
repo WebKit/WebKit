@@ -1,3 +1,22 @@
+2014-11-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Remove code that prepends a leading 'r' to the first argument of _run_git_svn_find_rev
+        https://bugs.webkit.org/show_bug.cgi?id=138475
+
+        Reviewed by Ryosuke Niwa.
+
+        The change in https://trac.webkit.org/175603 introduced broke compatibility with svn_revision_from_git_commit.
+        This patch reverts the part of that change that broke compatibility. In addition, this patch adds a comment to
+        explain that SVN revisions require a leading 'r', moves an existing comment to a more appropriate location and
+        renames the positional argument to better reflect that it can represent either an SVN revision or a Git tree-ish.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._run_git_svn_find_rev):
+        Add comment mentioning that svn_revisions need to begin with 'r'.
+        Move comment (explaining that git svn find-rev exits with code 0 when no match is found) to a more appropriate location.
+        Rename the argument 'revision' to 'revision_or_treeish' to reflect the dual form that argument can take.
+        Remove code that coerced the revision/treeish into a string and prepended an 'r'.
+
 2014-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add context menu API to Web Process Extensions

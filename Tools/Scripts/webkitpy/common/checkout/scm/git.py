@@ -323,16 +323,13 @@ class Git(SCM, SVNRepository):
             command += changed_files
         return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
 
-    def _run_git_svn_find_rev(self, revision, branch=None):
-        revision = str(revision)
-        if revision and revision[0] != 'r':
-            revision = 'r' + revision
-
-        # git svn find-rev always exits 0, even when the revision or commit is not found.
-        command = ['svn', 'find-rev', revision]
+    def _run_git_svn_find_rev(self, revision_or_treeish, branch=None):
+        # git svn find-rev requires SVN revisions to begin with the character 'r'.
+        command = ['svn', 'find-rev', revision_or_treeish]
         if branch:
             command.append(branch)
 
+        # git svn find-rev always exits 0, even when the revision or commit is not found.
         return self._run_git(command).rstrip()
 
     def _string_to_int_or_none(self, string):
