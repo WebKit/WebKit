@@ -1,3 +1,32 @@
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
+        Merge r175517. <rdar://problem/18861406>
+
+    2014-11-04  Tim Horton  <timothy_horton@apple.com>
+    
+            Dictionary lookup panel pops up at random when clicking on selected text
+            https://bugs.webkit.org/show_bug.cgi?id=138353
+            <rdar://problem/18861406>
+    
+            Reviewed by Andreas Kling.
+    
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::rangeForDictionaryLookupForSelection):
+            (WebKit::rangeForDictionaryLookupAtHitTestResult):
+            Factor rangeForDictionaryLookupForSelection out of performDictionaryLookupForSelection.
+    
+            Make use of rangeForDictionaryLookupForSelection in rangeForDictionaryLookupAtHitTestResult,
+            returning the selection-based range if the hit test intersects the selected text.
+            Previously, we were just going forward with performDictionaryLookupForSelection,
+            which would actually *do* the lookup, even if we just wanted to retrieve the range.
+    
+            Make rangeForDictionaryLookup* static.
+    
+            (WebKit::WebPage::performDictionaryLookupForSelection):
+            Make use of rangeForDictionaryLookupForSelection.
+    
+
 2014-11-03  Beth Dakin  <bdakin@apple.com>
 
         Implement action menus for editable text with spelling suggestions
