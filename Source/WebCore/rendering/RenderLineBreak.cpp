@@ -24,6 +24,7 @@
 
 #include "Document.h"
 #include "HTMLElement.h"
+#include "HTMLWBRElement.h"
 #include "InlineElementBox.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
@@ -43,7 +44,7 @@ RenderLineBreak::RenderLineBreak(HTMLElement& element, PassRef<RenderStyle> styl
     : RenderBoxModelObject(element, WTF::move(style), 0)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
-    , m_isWBR(element.hasTagName(HTMLNames::wbrTag))
+    , m_isWBR(is<HTMLWBRElement>(element))
 {
     setIsLineBreak();
 }

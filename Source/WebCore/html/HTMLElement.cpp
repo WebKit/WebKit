@@ -51,7 +51,7 @@
 #include "HTMLTemplateElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
-#include "RenderLineBreak.h"
+#include "RenderElement.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StyleProperties.h"
@@ -855,8 +855,6 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (hasTagName(wbrTag))
-        return createRenderer<RenderLineBreak>(*this, WTF::move(style));
     return RenderElement::createFor(*this, WTF::move(style));
 }
 

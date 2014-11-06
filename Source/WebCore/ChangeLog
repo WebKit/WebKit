@@ -1,3 +1,31 @@
+2014-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Stop special-casing wbr elements in HTMLElement::createElementRenderer()
+        https://bugs.webkit.org/show_bug.cgi?id=138474
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop special-casing wbr elements in HTMLElement::createElementRenderer()
+        and move the code to a HTMLWBRElement subclass instead, that is
+        overriding createElementRenderer(). This function is already virtual.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createElementRenderer):
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * html/HTMLWBRElement.cpp: Added.
+        (WebCore::HTMLWBRElement::create):
+        (WebCore::HTMLWBRElement::HTMLWBRElement):
+        (WebCore::HTMLWBRElement::createElementRenderer):
+        * html/HTMLWBRElement.h: Added.
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::RenderLineBreak):
+
 2014-11-05  Jer Noble  <jer.noble@apple.com>
 
         De-templatize Timer

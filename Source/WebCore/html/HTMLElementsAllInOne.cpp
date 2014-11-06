@@ -109,4 +109,5 @@
 #include "HTMLTrackElement.cpp"
 #include "HTMLUListElement.cpp"
 #include "HTMLVideoElement.cpp"
+#include "HTMLWBRElement.cpp"
 
