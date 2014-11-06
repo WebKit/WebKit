@@ -1,5 +1,39 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175609. <rdar://problem/18869345>
+
+    2014-11-04  Beth Dakin  <bdakin@apple.com>
+    
+            Un-anchor data detector popovers on scroll
+            https://bugs.webkit.org/show_bug.cgi?id=138385
+            -and corresponding-
+            rdar://problem/18869345
+    
+            Reviewed by Tim Horton.
+    
+            Whenever we dismiss the dictionary popover, and on scroll, we should try to 
+            dismiss the data detector popovers. Right now we don’t have the ability to know if 
+            a dismiss succeeded, so we will settle for un-anchoring the popover.
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView viewDidMoveToWindow]):
+            (-[WKView _dismissActionMenuDataDetetcorPopovers]):
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            (WebKit::WebPageProxy::pageDidScroll):
+            (WebKit::WebPageProxy::resetStateAfterProcessExited):
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::dismissActionMenuDataDetetcorPopovers):
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController dismissActionMenuDataDetetcorPopovers]):
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175597. <rdar://problem/18875579>
 
     2014-11-04  Tim Horton  <timothy_horton@apple.com>
