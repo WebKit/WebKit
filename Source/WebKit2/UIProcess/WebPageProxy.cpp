@@ -2603,6 +2603,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     m_pageClient.resetSecureInputState();
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient.dismissDictionaryLookupPanel();
+    m_pageClient.dismissActionMenuDataDetectorPopovers();
 #endif
 
     clearLoadDependentCallbacks();
@@ -3262,6 +3263,7 @@ void WebPageProxy::pageDidScroll()
 {
     m_uiClient->pageDidScroll(this);
 #if PLATFORM(MAC)
+    m_pageClient.dismissActionMenuDataDetectorPopovers();
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 #endif
 }
@@ -4469,6 +4471,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 #if PLATFORM(MAC)
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient.dismissDictionaryLookupPanel();
+    m_pageClient.dismissActionMenuDataDetectorPopovers();
 #endif
 
     PageLoadState::Transaction transaction = m_pageLoadState.transaction();

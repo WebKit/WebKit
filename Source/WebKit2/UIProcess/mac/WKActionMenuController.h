@@ -69,6 +69,8 @@ enum class ActionMenuState {
 
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
+- (void)dismissActionMenuDataDetectorPopovers;
+
 @end
 
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

@@ -1,5 +1,21 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175609. <rdar://problem/18869345>
+
+    2014-11-04  Beth Dakin  <bdakin@apple.com>
+    
+            Un-anchor data detector popovers on scroll
+            https://bugs.webkit.org/show_bug.cgi?id=138385
+            -and corresponding-
+            rdar://problem/18869345
+    
+            Reviewed by Tim Horton.
+    
+            * platform/spi/mac/DataDetectorsSPI.h:
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175597. <rdar://problem/18875579>
 
     2014-11-04  Tim Horton  <timothy_horton@apple.com>
