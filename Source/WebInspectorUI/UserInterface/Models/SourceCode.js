@@ -36,8 +36,6 @@ WebInspector.SourceCode = function()
     this._formatterSourceMap = null;
 };
 
-WebInspector.Object.addConstructorFunctions(WebInspector.SourceCode);
-
 WebInspector.SourceCode.Event = {
     ContentDidChange: "source-code-content-did-change",
     SourceMapAdded: "source-code-source-map-added",
