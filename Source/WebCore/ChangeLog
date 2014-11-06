@@ -1,5 +1,21 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175564. <rdar://problem/18840102>
+
+    2014-11-04  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement yellow highlight over data detected items
+            https://bugs.webkit.org/show_bug.cgi?id=138340
+            <rdar://problem/18840102>
+    
+            Reviewed by Anders Carlsson.
+    
+            * platform/spi/mac/DataDetectorsSPI.h:
+            Add completionHandler SPI.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175375. <rdar://problem/18883807>
 
     2014-10-30  Eric Carlson  <eric.carlson@apple.com>

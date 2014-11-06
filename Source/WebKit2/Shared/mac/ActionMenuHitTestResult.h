@@ -27,6 +27,7 @@
 #define ActionMenuHitTestResult_h
 
 #include "ShareableBitmap.h"
+#include "TextIndicator.h"
 #include "WebHitTestResult.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/text/WTFString.h>
@@ -51,7 +52,8 @@ struct ActionMenuHitTestResult {
     RefPtr<ShareableBitmap> image;
 
     RetainPtr<DDActionContext> actionContext;
-    WebCore::FloatRect actionBoundingBox;
+    WebCore::FloatRect detectedDataBoundingBox;
+    RefPtr<TextIndicator> detectedDataTextIndicator;
 };
 
 } // namespace WebKit

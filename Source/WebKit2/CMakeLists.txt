@@ -209,6 +209,7 @@ set(WebKit2_SOURCES
     Shared/ShareableBitmap.cpp
     Shared/ShareableResource.cpp
     Shared/StatisticsData.cpp
+    Shared/TextIndicator.cpp
     Shared/UpdateInfo.cpp
     Shared/UserData.cpp
     Shared/VisitedLinkTable.cpp
@@ -303,7 +304,6 @@ set(WebKit2_SOURCES
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
-    UIProcess/TextIndicator.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
     UIProcess/WebBackForwardList.cpp

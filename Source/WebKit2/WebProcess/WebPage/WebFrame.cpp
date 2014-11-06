@@ -50,12 +50,14 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameSnapshotting.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLTextAreaElement.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
@@ -781,5 +783,25 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
     return archive->rawDataRepresentation();
 }
 #endif
+
+PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot()
+{
+    std::unique_ptr<ImageBuffer> snapshot = snapshotSelection(*coreFrame(), WebCore::SnapshotOptionsForceBlackText);
+    if (!snapshot)
+        return nullptr;
+
+    RefPtr<ShareableBitmap> sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
+    if (!sharedSnapshot)
+        return nullptr;
+
+    // FIXME: We should consider providing a way to use subpixel antialiasing for the snapshot
+    // if we're compositing this image onto a solid color (e.g. the modern find indicator style).
+    auto graphicsContext = sharedSnapshot->createGraphicsContext();
+    float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
+    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    graphicsContext->drawImageBuffer(snapshot.get(), ColorSpaceDeviceRGB, FloatPoint());
+
+    return sharedSnapshot.release();
+}
     
 } // namespace WebKit

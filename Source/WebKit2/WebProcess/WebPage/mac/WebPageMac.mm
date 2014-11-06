@@ -1072,7 +1072,7 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& hitTestResult, FloatRect& actionBoundingBox)
+static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
 {
     Node* node = hitTestResult.innerNonSharedNode();
     if (!node)
@@ -1123,9 +1123,31 @@ static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& 
     Vector<FloatQuad> quads;
     mainResultRange->textQuads(quads);
     if (!quads.isEmpty())
-        actionBoundingBox = mainResultRange->ownerDocument().view()->contentsToWindow(quads[0].enclosingBoundingBox());
+        detectedDataBoundingBox = mainResultRange->ownerDocument().view()->contentsToWindow(quads[0].enclosingBoundingBox());
+
+    detectedDataRange = mainResultRange;
 
     return actionContext;
+}
+
+static PassRefPtr<TextIndicator> textIndicatorForRange(Range* range)
+{
+    if (!range)
+        return nullptr;
+
+    Frame* frame = range->startContainer()->document().frame();
+
+    if (!frame)
+        return nullptr;
+
+    VisibleSelection oldSelection = frame->selection().selection();
+    frame->selection().setSelection(range);
+
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(*frame));
+
+    frame->selection().setSelection(oldSelection);
+
+    return indicator.release();
 }
 
 void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
@@ -1161,9 +1183,13 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
     if (hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode()) {
-        FloatRect actionBoundingBox;
-        actionMenuResult.actionContext = scanForDataDetectedItems(hitTestResult, actionBoundingBox);
-        actionMenuResult.actionBoundingBox = actionBoundingBox;
+        FloatRect detectedDataBoundingBox;
+        RefPtr<Range> detectedDataRange;
+        actionMenuResult.actionContext = scanForDataDetectedItems(hitTestResult, detectedDataBoundingBox, detectedDataRange);
+        if (actionMenuResult.actionContext) {
+            actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
+            actionMenuResult.detectedDataTextIndicator = textIndicatorForRange(detectedDataRange.get());
+        }
     }
 
     RefPtr<API::Object> userData;
