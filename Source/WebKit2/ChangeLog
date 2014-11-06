@@ -1,5 +1,16 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175649. <rdar://problem/18887140>
+
+    2014-11-05  Timothy Horton  <timothy_horton@apple.com>
+    
+            Fix the build.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175646. <rdar://problem/18887218>
 
     2014-11-05  Conrad Shultz  <conrad_shultz@apple.com>
