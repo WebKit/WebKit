@@ -68,7 +68,8 @@ public:
     const Vector<Element*>* getAllElementsById(const AtomicStringImpl&, const TreeScope&) const;
 
 private:
-    template<bool keyMatches(const AtomicStringImpl&, const Element&)> Element* get(const AtomicStringImpl&, const TreeScope&) const;
+    template <typename KeyMatchingFunction>
+    Element* get(const AtomicStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
         MapEntry()
