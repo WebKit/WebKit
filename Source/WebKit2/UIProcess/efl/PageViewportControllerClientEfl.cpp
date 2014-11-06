@@ -57,9 +57,6 @@ void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
-    if (m_view->waitingForNewPage())
-        return;
-
     m_view->scheduleUpdateDisplay();
 }
 

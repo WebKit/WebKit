@@ -199,12 +199,6 @@ public:
 
     void didFindZoomableArea(const WKPoint&, const WKRect&);
 
-    // FIXME: PageViewportController needs to fix a problem that current page is shown in (0,0) position when starting to load new page.
-    // Below functions are to fix this problem for now.
-    void setWaitingForNewPage() { m_isWaitingForNewPage = true; }
-    bool waitingForNewPage() { return m_isWaitingForNewPage; }
-    void didCommitNewPage() { m_isWaitingForNewPage = false; }
-
     static const char smartClassName[];
 
 #if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)

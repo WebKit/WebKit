@@ -48,6 +48,7 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     , m_pageScaleFactor(1)
     , m_pendingPositionChange(false)
     , m_pendingScaleChange(false)
+    , m_layerTreeStateIsFrozen(false)
 {
     // Initializing Viewport Raw Attributes to avoid random negative or infinity scale factors
     // if there is a race condition between the first layout and setting the viewport attributes for the first time.
@@ -139,6 +140,8 @@ void PageViewportController::didCommitLoad()
     // Do not continue to use the content size of the previous page.
     m_contentsSize = IntSize();
 
+    m_layerTreeStateIsFrozen = true;
+
     // Reset the position to the top, page/history scroll requests may override this before we re-enable rendering.
     applyPositionAfterRenderingContents(FloatPoint());
 }
@@ -201,6 +204,8 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
         m_client.setViewportPosition(m_contentsPosition);
         m_pendingPositionChange = false;
     }
+
+    m_layerTreeStateIsFrozen = false;
 }
 
 void PageViewportController::pageTransitionViewportReady()
@@ -265,7 +270,8 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
     drawingArea->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 
-    m_client.didChangeVisibleContents();
+    if (!m_layerTreeStateIsFrozen)
+        m_client.didChangeVisibleContents();
 }
 
 void PageViewportController::didChangeViewportAttributes(const WebCore::ViewportAttributes& newAttributes)

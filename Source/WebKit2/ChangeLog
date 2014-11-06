@@ -1,3 +1,32 @@
+2014-11-05  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Improve previous temporary fix against drawing (0,0) position before rendering content of next web page
+        https://bugs.webkit.org/show_bug.cgi?id=138305
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit2 has freezed layer tree until frame load completion since r101838.
+        In EFL port, we unfreeze it when PageViewportController::pageTransitionViewportReady() is called though,
+        UIProcess on EFL port updates cairo surface during the freezing time of layer tree.
+        Thus UIProcess should not update the layer trees until the layerTreeState is unfrozen.
+
+        * UIProcess/API/efl/EwkView.h: Removed previous workarounds.
+        (EwkView::setWaitingForNewPage): Deleted.
+        (EwkView::waitingForNewPage): Deleted.
+        (EwkView::didCommitNewPage): Deleted.
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::didCommitLoad):
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::syncVisibleContents):
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didRenderFrame):
+
 2014-11-05  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

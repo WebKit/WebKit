@@ -114,8 +114,6 @@ void ViewClientEfl::didRenderFrame(WKViewRef, WKSize contentsSize, WKRect covere
         ewkView->pageViewportController().didRenderFrame(toIntSize(contentsSize), toIntRect(coveredRect));
     else
         ewkView->scheduleUpdateDisplay();
-
-    ewkView->didCommitNewPage();
 }
 
 void ViewClientEfl::didCompletePageTransition(WKViewRef, const void* clientInfo)
