@@ -302,7 +302,7 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
     return PlatformCALayerWin::filtersCanBeComposited(filters);
 #endif
 }
-    
+
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
 #if PLATFORM(COCOA)
@@ -376,7 +376,10 @@ void GraphicsLayerCA::willBeDestroyed()
         
     if (m_structuralLayer)
         m_structuralLayer->setOwner(nullptr);
-    
+
+    if (m_backdropLayer)
+        m_backdropLayer->setOwner(nullptr);
+
     removeCloneLayers();
 
     GraphicsLayer::willBeDestroyed();
@@ -567,7 +570,7 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
-            
+
             if (currAnimation.m_property == AnimatedPropertyWebkitTransform || currAnimation.m_property == AnimatedPropertyOpacity
                     || currAnimation.m_property == AnimatedPropertyBackgroundColor
                     || currAnimation.m_property == AnimatedPropertyWebkitFilter
@@ -685,6 +688,26 @@ bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
     return canCompositeFilters;
 }
 
+bool GraphicsLayerCA::setBackdropFilters(const FilterOperations& filterOperations)
+{
+    bool canCompositeFilters = filtersCanBeComposited(filterOperations);
+
+    if (m_backdropFilters == filterOperations)
+        return canCompositeFilters;
+
+    // Filters cause flattening, so we should never have filters on a layer with preserves3D().
+    ASSERT(!filterOperations.size() || !preserves3D());
+
+    if (canCompositeFilters)
+        GraphicsLayer::setBackdropFilters(filterOperations);
+    else {
+        // FIXME: This would clear the backdrop filters if we had a software implementation.
+        clearBackdropFilters();
+    }
+    noteLayerPropertyChanged(BackdropFiltersChanged);
+    return canCompositeFilters;
+}
+
 #if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::setBlendMode(BlendMode blendMode)
 {
@@ -799,7 +822,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
 
     if (createdAnimations)
         noteLayerPropertyChanged(AnimationChanged);
-        
+
     return createdAnimations;
 }
 
@@ -1265,7 +1288,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         swapFromOrToTiledLayer(needTiledLayer);
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
-    if (m_uncommittedChanges & (Preserves3DChanged | ReplicatedLayerChanged))
+    if (m_uncommittedChanges & (Preserves3DChanged | ReplicatedLayerChanged | BackdropFiltersChanged))
         updateStructuralLayer();
 
     if (m_uncommittedChanges & GeometryChanged)
@@ -1313,6 +1336,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     if (m_uncommittedChanges & FiltersChanged)
         updateFilters();
+
+    if (m_uncommittedChanges & BackdropFiltersChanged)
+        updateBackdropFilters();
 
 #if ENABLE(CSS_COMPOSITING)
     if (m_uncommittedChanges & BlendModeChanged)
@@ -1400,6 +1426,9 @@ void GraphicsLayerCA::updateLayerNames()
     case StructuralLayerForReplicaFlattening:
         m_structuralLayer->setName("Replica flattening layer " + name());
         break;
+    case StructuralLayerForBackdrop:
+        m_structuralLayer->setName("Backdrop hosting layer " + name());
+        break;
     case NoStructuralLayer:
         break;
     }
@@ -1424,6 +1453,9 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
         primaryLayerChildren.appendVector(*customSublayers);
 
     if (m_structuralLayer) {
+        if (m_backdropLayer)
+            structuralLayerChildren.append(m_backdropLayer);
+
         if (m_replicaLayer)
             structuralLayerChildren.append(downcast<GraphicsLayerCA>(*m_replicaLayer).primaryLayer());
     
@@ -1509,6 +1541,12 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     FloatRect adjustedBounds = FloatRect(FloatPoint(m_boundsOrigin - pixelAlignmentOffset), m_size);
     m_layer->setBounds(adjustedBounds);
     m_layer->setAnchorPoint(scaledAnchorPoint);
+
+    if (m_backdropLayer) {
+        m_backdropLayer->setPosition(adjustedPosition);
+        m_backdropLayer->setBounds(adjustedBounds);
+        m_backdropLayer->setAnchorPoint(scaledAnchorPoint);
+    }
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
@@ -1640,6 +1678,18 @@ void GraphicsLayerCA::updateFilters()
     }
 }
 
+void GraphicsLayerCA::updateBackdropFilters()
+{
+    if (!m_backdropLayer) {
+        m_backdropLayer = createPlatformCALayer(PlatformCALayer::LayerTypeBackdropLayer, this);
+        m_backdropLayer->setPosition(m_layer->position());
+        m_backdropLayer->setBounds(m_layer->bounds());
+        m_backdropLayer->setAnchorPoint(m_layer->anchorPoint());
+        m_backdropLayer->setMasksToBounds(true);
+    }
+    m_backdropLayer->setFilters(m_backdropFilters);
+}
+
 #if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::updateBlendMode()
 {
@@ -1670,6 +1720,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         | ChildrenChanged
         | BackfaceVisibilityChanged
         | FiltersChanged
+        | BackdropFiltersChanged
         | OpacityChanged;
 
     if (purpose == NoStructuralLayer) {
@@ -1749,7 +1800,10 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
     
     if (isReplicated())
         return StructuralLayerForReplicaFlattening;
-    
+
+    if (needsBackdrop())
+        return StructuralLayerForBackdrop;
+
     return NoStructuralLayer;
 }
 
@@ -2262,7 +2316,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
     ASSERT(valueList.property() != AnimatedPropertyWebkitTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyWebkitFilter));
-    
+
     bool isKeyframe = valueList.size() > 2;
     bool valuesOK;
     
@@ -2999,6 +3053,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         | ContentsScaleChanged
         | AcceleratesDrawingChanged
         | FiltersChanged
+        | BackdropFiltersChanged
         | MaskLayerChanged
         | OpacityChanged
         | DebugIndicatorsChanged;

@@ -362,7 +362,11 @@ void KeyframeAnimation::checkForMatchingFilterFunctionLists()
 {
     m_filterFunctionListsMatch = false;
 
+#if ENABLE(FILTERS_LEVEL_2)
+    if (m_keyframes.size() < 2 || (!m_keyframes.containsProperty(CSSPropertyWebkitFilter) && !m_keyframes.containsProperty(CSSPropertyWebkitBackdropFilter)))
+#else
     if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyWebkitFilter))
+#endif
         return;
 
     // Empty filters match anything, so find the first non-empty entry as the reference

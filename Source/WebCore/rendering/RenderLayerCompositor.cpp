@@ -2180,13 +2180,13 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || renderer.hasMask()
         || renderer.hasReflection()
         || renderer.hasFilter()
+        || renderer.hasBackdropFilter()
 #if PLATFORM(IOS)
         || requiresCompositingForScrolling(layer)
 #endif
         )
         return true;
-        
-    
+
     if (layer.mustCompositeForIndirectReasons()) {
         RenderLayer::IndirectCompositingReason reason = layer.indirectCompositingReason();
         return reason == RenderLayer::IndirectCompositingReason::Overlap
@@ -2273,7 +2273,7 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
         if (renderer->hasReflection())
             reasons |= CompositingReasonReflectionWithCompositedDescendants;
 
-        if (renderer->hasFilter())
+        if (renderer->hasFilter() || renderer->hasBackdropFilter())
             reasons |= CompositingReasonFilterWithCompositedDescendants;
 
 #if ENABLE(CSS_COMPOSITING)
@@ -2594,6 +2594,11 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
 
 bool RenderLayerCompositor::requiresCompositingForFilters(RenderLayerModelObject& renderer) const
 {
+#if ENABLE(FILTERS_LEVEL_2)
+    if (renderer.hasBackdropFilter())
+        return true;
+#endif
+
     if (!(m_compositingTriggers & ChromeClient::FilterTrigger))
         return false;
 

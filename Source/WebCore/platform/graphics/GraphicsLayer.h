@@ -325,6 +325,8 @@ public:
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     virtual void setAcceleratesDrawing(bool b) { m_acceleratesDrawing = b; }
 
+    bool needsBackdrop() const { return !m_backdropFilters.isEmpty(); }
+
     // The color used to paint the layer background. Pass an invalid color to remove it.
     // Note that this covers the entire layer. Use setContentsToSolidColor() if the color should
     // only cover the contentsRect.
@@ -342,9 +344,11 @@ public:
     virtual void setOpacity(float opacity) { m_opacity = opacity; }
 
     const FilterOperations& filters() const { return m_filters; }
-    
-    // Returns true if filter can be rendered by the compositor
+    // Returns true if filter can be rendered by the compositor.
     virtual bool setFilters(const FilterOperations& filters) { m_filters = filters; return true; }
+
+    const FilterOperations& backdropFilters() const { return m_backdropFilters; }
+    virtual bool setBackdropFilters(const FilterOperations& filters) { m_backdropFilters = filters; return true; }
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return m_blendMode; }
@@ -518,6 +522,7 @@ protected:
     // when compositing is not done in hardware. It is not virtual, so the caller
     // needs to notifiy the change to the platform layer as needed.
     void clearFilters() { m_filters.clear(); }
+    void clearBackdropFilters() { m_backdropFilters.clear(); }
 
     // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
     static int validateFilterOperations(const KeyframeValueList&);
@@ -564,6 +569,7 @@ protected:
     float m_zPosition;
     
     FilterOperations m_filters;
+    FilterOperations m_backdropFilters;
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode;
