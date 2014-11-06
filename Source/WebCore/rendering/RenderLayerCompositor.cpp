@@ -884,7 +884,7 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
     // FIXME: need to check everything that we consult to avoid backing store here: webkit.org/b/138383
     if (!oldStyle.opacity() != !newStyle.opacity()) {
         RenderLayerModelObject* repaintContainer = layer.renderer().containerForRepaint();
-        if (RenderLayerBacking* ancestorBacking = repaintContainer->layer()->backing()) {
+        if (RenderLayerBacking* ancestorBacking = repaintContainer ? repaintContainer->layer()->backing() : nullptr) {
             if (newStyle.opacity() != ancestorBacking->graphicsLayer()->drawsContent())
                 return true;
         }
