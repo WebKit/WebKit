@@ -1,3 +1,11 @@
+2014-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix nits after r175688.
+
+        Just a couple of non-functional fixes to the layout test.
+
+        * fast/dom/Text/splitText.html:
+
 2014-11-05  Shivakumar JM  <shiva.jm@samsung.com>
 
         splitText API does not match DOM specification.
