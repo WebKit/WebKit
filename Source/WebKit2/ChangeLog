@@ -1,3 +1,9 @@
+2014-11-05  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+
 2014-11-05  Dan Bernstein  <mitz@apple.com>
 
         Remove the unused deletion UI feature
