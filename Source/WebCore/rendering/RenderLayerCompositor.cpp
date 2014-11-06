@@ -881,6 +881,15 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
     if (oldStyle.clip() != newStyle.clip() || oldStyle.hasClip() != newStyle.hasClip())
         return true;
 
+    // FIXME: need to check everything that we consult to avoid backing store here: webkit.org/b/138383
+    if (!oldStyle.opacity() != !newStyle.opacity()) {
+        RenderLayerModelObject* repaintContainer = layer.renderer().containerForRepaint();
+        if (RenderLayerBacking* ancestorBacking = repaintContainer->layer()->backing()) {
+            if (newStyle.opacity() != ancestorBacking->graphicsLayer()->drawsContent())
+                return true;
+        }
+    }
+
     // When overflow changes, composited layers may need to update their ancestorClipping layers.
     if (!layer.isComposited() && (oldStyle.overflowX() != newStyle.overflowX() || oldStyle.overflowY() != newStyle.overflowY()) && layer.stackingContainer()->hasCompositingDescendant())
         return true;

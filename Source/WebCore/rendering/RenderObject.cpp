@@ -1195,7 +1195,7 @@ LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
 
 RenderLayerModelObject* RenderObject::containerForRepaint() const
 {
-    RenderLayerModelObject* repaintContainer = 0;
+    RenderLayerModelObject* repaintContainer = nullptr;
 
     if (view().usesCompositing()) {
         if (RenderLayer* parentLayer = enclosingLayer()) {

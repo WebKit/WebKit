@@ -6328,7 +6328,7 @@ bool RenderLayer::isVisuallyNonEmpty() const
 {
     ASSERT(!m_visibleDescendantStatusDirty);
 
-    if (!hasVisibleContent())
+    if (!hasVisibleContent() || !renderer().style().opacity())
         return false;
 
     if (renderer().isRenderReplaced() || hasOverflowControls())
