@@ -10,7 +10,7 @@ Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
 Do NOT modify or remove this file
 
 ------------------------------------------------------------------------
-Last Import: 2014-10-27 11:23
+Last Import: 2014-11-06 09:44
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
@@ -18,6 +18,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/css3/shapes/spec-examples/support/circle-no-shadow.png
-/LayoutTests/css3/shapes/spec-examples/support/circle-shadow.png
-/LayoutTests/css3/shapes/spec-examples/support/rounded-triangle.svg
+/LayoutTests/w3c/css-shapes-1/spec-examples/support/circle-no-shadow.png
+/LayoutTests/w3c/css-shapes-1/spec-examples/support/circle-shadow.png
+/LayoutTests/w3c/css-shapes-1/spec-examples/support/rounded-triangle.svg
+/LayoutTests/w3c/css-shapes-1/spec-examples/support/spec-example-utils.js

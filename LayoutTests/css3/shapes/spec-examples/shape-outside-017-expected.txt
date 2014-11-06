@@ -1,0 +1,6 @@
+The test passes if the short green horizontal bars are the right of the shape, the long green bar is beneath it, and no bars intersect it. There should be no red.
+
+XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXXXXXXXXXXX
+
+PASS CSS Test: Shape from box value - content-box 
+

@@ -1,0 +1,6 @@
+The test passes if the longest green horizontal bar is beneath the triangle and the rest of them are to its right and none intersect it. There should be no red.
+
+XXXXXXXXXX XXXXXXXX XXXXXX XXXX XXX XXXXXXXXXXXX
+
+PASS CSS Test: shape-margin offset from a polygonal shape-outside 
+

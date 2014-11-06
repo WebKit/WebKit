@@ -3,25 +3,22 @@
 <head>
     <title>CSS Test: shape-margin offset from a polygonal shape-outside</title>
     <link rel="author" title="Rebecca Hauck" href="mailto:rhauck@adobe.com"/>
+    <link rel="author" title="Bem Jones-Bey" href="mailto:bemjb@adobe.com"/>
     <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shapes-from-box-values"/>
     <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shape-outside-property"/>
-    <link rel="match" href="reference/shape-outside-018-ref.html"/>
-    <meta name="flags" content="ahem"/>
+    <meta name="flags" content="ahem dom"/>
     <meta name="assert" content="This test verifies that that content flows around the shape-margin
                                  defined on a polygonal shape-outside."/>
     <!--  This test is derived from Example 10 in this version of the spec:
          http://www.w3.org/TR/2014/WD-css-shapes-1-20140211/  -->
     <style type="text/css">
-        .container {
-            position: absolute;
-            top: 70px;
+        #test {
+            position: relative;
+            color: green;
             width: 300px;
             font-family: Ahem;
             font-size: 20px;
             line-height: 2em;
-        }
-        #test {
-            color: green;
         }
         #shape-box {
             float: left;
@@ -32,37 +29,33 @@
         }
         img {
             position: absolute;
-            top: 70px;
+            top: 0px;
+            left: 0px;
             z-index: -1;
         }
-        #failure {
-            color: red;
-            z-index: -2;
-        }
-        #line-1 { margin-left: 48px; }
-        #line-2 { margin-left: 88px; }
-        #line-3 { margin-left: 128px; }
-        #line-4 { margin-left: 168px; }
-        #line-5 { margin-left: 180px; }
     </style>
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+    <script src="support/spec-example-utils.js"></script>
 </head>
 <body>
     <p>
-        The test passes if the longest green horizontal bar is beneath the triangle and the 
+        The test passes if the longest green horizontal bar is beneath the triangle and the
         rest of them are to its right and none intersect it. There should be no red.
     </p>
-    <div id="test" class="container">
+    <div id="test">
         <div id="shape-box"></div>
-        XXXXXXXXXX XXXXXXXX XXXXXX XXXX XXX XXXXXXXXXXXX
+        <img src="support/rounded-triangle.svg">
+        <span id="line-0">XXXXXXXXXX</span>
+        <span id="line-1">XXXXXXXX</span>
+        <span id="line-2">XXXXXX</span>
+        <span id="line-3">XXXX</span>
+        <span id="line-4">XXX</span>
+        <span id="line-5">XXXXXXXXXXXX</span>
     </div>
-    <img src="support/rounded-triangle.svg">
-    <div id="failure" class="container">
-        <span id="line-1">XXXXXXXXXX</span>
-        <span id="line-2">XXXXXXXX</span>
-        <span id="line-3">XXXXXX</span>
-        <span id="line-4">XXXX</span>
-        <span id="line-5">XXX</span>
-        XXXXXXXXXXXX
-    </div>
+    <div id="log"></div>
+    <script>
+        approxShapeTest('test', 'line-', 2, [48, 88, 128, 168, 180, 0]);
+    </script>
 </body>
 </html>
