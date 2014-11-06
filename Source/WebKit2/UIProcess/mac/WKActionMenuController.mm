@@ -141,6 +141,11 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
+    if (_wkView._shouldIgnoreMouseEvents) {
+        [menu cancelTracking];
+        return;
+    }
+
     _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
     _state = ActionMenuState::Pending;
