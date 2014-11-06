@@ -254,20 +254,6 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
     ASSERT(!m_reachedTerminalState);
     
-#if PLATFORM(IOS)
-    // Ensure an identifier is always set. This ensures that this assetion is not hit:
-    // <rdar://problem/11059794> ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) in WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace loading the attached web archive
-    // This is not needed in WebKit2, as it doesn't use m_identifier in WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace
-    if (!m_identifier) {
-        m_identifier = m_frame->page()->progress().createUniqueIdentifier();
-        frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
-
-        // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
-        if (m_reachedTerminalState)
-            return;
-    }
-#endif
-
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
     bool createdResourceIdentifier = false;
     if (!m_identifier) {
@@ -278,6 +264,12 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     if (m_options.sendLoadCallbacks() == SendCallbacks) {
         if (createdResourceIdentifier)
             frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
+
+#if PLATFORM(IOS)
+        // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
+        if (m_reachedTerminalState)
+            return;
+#endif
 
         frameLoader()->notifier().willSendRequest(this, request, redirectResponse);
     }
