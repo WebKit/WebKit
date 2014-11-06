@@ -566,7 +566,7 @@ static PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestRe
 
     VisibleSelection selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
     if (shouldUseSelection(position, selection))
-        return rangeForDictionaryLookupForSelection(frame->selection().selection(), options);
+        return rangeForDictionaryLookupForSelection(selection, options);
 
     // As context, we are going to use 250 characters of text before and after the point.
     RefPtr<Range> fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
