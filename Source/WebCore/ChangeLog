@@ -1,3 +1,9 @@
+2014-11-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r175647
+
+        * CMakeLists.txt: Remove DeleteButton.cpp and DeleteButtonController.cpp.
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Allow constructing a PassRef from a Ref

@@ -1446,8 +1446,6 @@ set(WebCore_SOURCES
     editing/BreakBlockquoteCommand.cpp
     editing/CompositeEditCommand.cpp
     editing/CreateLinkCommand.cpp
-    editing/DeleteButton.cpp
-    editing/DeleteButtonController.cpp
     editing/DeleteFromTextNodeCommand.cpp
     editing/DeleteSelectionCommand.cpp
     editing/DictationAlternative.cpp
