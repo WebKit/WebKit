@@ -1176,6 +1176,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     RefPtr<WebCore::Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates);
     actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
+    m_lastActionMenuRangeForSelection = lookupRange;
 
     if (Image* image = hitTestResult.image()) {
         actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
@@ -1191,6 +1192,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         if (actionMenuResult.actionContext) {
             actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
             actionMenuResult.detectedDataTextIndicator = textIndicatorForRange(detectedDataRange.get());
+            m_lastActionMenuRangeForSelection = detectedDataRange;
         }
     }
 
@@ -1227,19 +1229,10 @@ PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInVi
     return rangeForDictionaryLookupAtHitTestResult(result, &options);
 }
 
-void WebPage::selectLookupTextAtLocation(FloatPoint locationInWindowCooordinates)
+void WebPage::selectLastActionMenuRange()
 {
-    MainFrame& mainFrame = corePage()->mainFrame();
-    if (!mainFrame.view() || !mainFrame.view()->renderView())
-        return;
-
-    IntPoint point = roundedIntPoint(locationInWindowCooordinates);
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
-    Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
-    NSDictionary *options = nil;
-    RefPtr<Range> lookupRange = rangeForDictionaryLookupAtHitTestResult(result, &options);
-    if (lookupRange)
-        frame->selection().setSelectedRange(lookupRange.get(), DOWNSTREAM, true);
+    if (m_lastActionMenuRangeForSelection)
+        corePage()->mainFrame().selection().setSelectedRange(m_lastActionMenuRangeForSelection.get(), DOWNSTREAM, true);
 }
 
 } // namespace WebKit

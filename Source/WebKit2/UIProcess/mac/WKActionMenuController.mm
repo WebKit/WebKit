@@ -165,8 +165,13 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
-    if (_type == kWKActionMenuDataDetectedItem)
-        [self _showTextIndicator];
+    if (_type == kWKActionMenuDataDetectedItem) {
+        if (menu.numberOfItems == 1)
+            [self _showTextIndicator];
+        else
+            _page->selectLastActionMenuRange();
+        return;
+    }
 
     if (![self isMenuForTextContent])
         return;
@@ -175,7 +180,7 @@ using namespace WebKit;
     // will apply to. If the text is already selected, the menu will use the existing selection.
     RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:MenuUpdateStage::MenuNeedsUpdate];
     if (!hitTestResult->isSelected())
-        _page->selectLookupTextAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
+        _page->selectLastActionMenuRange();
 }
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
