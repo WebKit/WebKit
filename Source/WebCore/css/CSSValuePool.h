@@ -45,9 +45,9 @@ class CSSValuePool {
 public:
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
     PassRef<CSSPrimitiveValue> createFontFamilyValue(const String&);
-    PassRef<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.get(); }
-    PassRef<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.get(); }
-    PassRef<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.get(); }
+    PassRef<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
+    PassRef<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }
+    PassRef<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue; }
     PassRef<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
     PassRef<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
     PassRef<CSSPrimitiveValue> createColorValue(unsigned rgbValue);

@@ -40,6 +40,7 @@ template<typename T> class PassRef {
 public:
     PassRef(T&);
     PassRef(PassRef&&);
+    template<typename U> PassRef(const Ref<U>&);
     template<typename U> PassRef(PassRef<U>);
 
     const T& get() const;
@@ -96,6 +97,15 @@ template<typename T> template<typename U> inline PassRef<T>::PassRef(PassRef<U> 
     , m_gaveUpReference(false)
 #endif
 {
+}
+
+template<typename T> template<typename U> inline PassRef<T>::PassRef(const Ref<U>& other)
+    : m_reference(const_cast<T&>(other.get()))
+#ifndef NDEBUG
+    , m_gaveUpReference(false)
+#endif
+{
+    m_reference.ref();
 }
 
 #ifndef NDEBUG

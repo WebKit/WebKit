@@ -69,12 +69,12 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
 {
     // These are the empty and deleted values of the hash table.
     if (rgbValue == Color::transparent)
-        return m_colorTransparent.get();
+        return m_colorTransparent;
     if (rgbValue == Color::white)
-        return m_colorWhite.get();
+        return m_colorWhite;
     // Just because it is common.
     if (rgbValue == Color::black)
-        return m_colorBlack.get();
+        return m_colorBlack;
 
     // Remove one entry at random if the cache grows too large.
     const int maximumColorCacheSize = 512;

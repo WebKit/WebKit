@@ -328,7 +328,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     }
 
     Ref<StyleSheetContents> styleSheet(StyleSheetContents::create(href, parserContext));
-    m_sheet = CSSStyleSheet::create(styleSheet.get(), this);
+    m_sheet = CSSStyleSheet::create(styleSheet, this);
     m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
     m_sheet->setTitle(title());
 
@@ -339,7 +339,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     styleSheet.get().checkLoaded();
 
     if (styleSheet.get().isCacheable())
-        const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(styleSheet.get());
+        const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(styleSheet);
 }
 
 bool HTMLLinkElement::styleSheetIsLoading() const
