@@ -547,12 +547,6 @@
     <None Include="WebKitPostBuild.cmd" />
     <None Include="WebKitPreBuild.cmd" />
     <None Include="WebKitPreLink.cmd" />
-    <None Include="..\..\win\WebKit.resources\deleteButton.png">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="..\..\win\WebKit.resources\deleteButtonPressed.png">
-      <Filter>Resources</Filter>
-    </None>
     <None Include="..\..\win\WebKit.resources\fsVideoAudioVolumeHigh.png">
       <Filter>Resources</Filter>
     </None>

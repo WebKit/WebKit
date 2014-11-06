@@ -554,8 +554,6 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">WebKitVersion.cmd</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Production|x64'">WebKitVersion.cmd</Command>
     </CustomBuild>
-    <None Include="..\..\win\WebKit.resources\deleteButton.png" />
-    <None Include="..\..\win\WebKit.resources\deleteButtonPressed.png" />
     <None Include="..\..\win\WebKit.resources\fsVideoAudioVolumeHigh.png" />
     <None Include="..\..\win\WebKit.resources\fsVideoAudioVolumeLow.png" />
     <None Include="..\..\win\WebKit.resources\fsVideoExitFullscreen.png" />

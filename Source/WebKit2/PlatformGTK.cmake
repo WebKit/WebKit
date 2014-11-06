@@ -525,8 +525,6 @@ add_custom_command(
 )
 
 set(WebKit2Resources
-    "        <file alias=\"images/deleteButton\">deleteButton.png</file>\n"
-    "        <file alias=\"images/deleteButton@2x\">deleteButton@2x.png</file>\n"
     "        <file alias=\"images/missingImage\">missingImage.png</file>\n"
     "        <file alias=\"images/missingImage@2x\">missingImage@2x.png</file>\n"
     "        <file alias=\"images/panIcon\">panIcon.png</file>\n"
