@@ -85,42 +85,6 @@ private:
 
 DOMTimerFireState* DOMTimerFireState::current = nullptr;
 
-struct NestedTimersVector {
-    typedef Vector<DOMTimer*, 1>::const_iterator const_iterator;
-
-    NestedTimersVector(ScriptExecutionContext* context)
-        : shouldSetCurrent(context->isDocument())
-    {
-        if (shouldSetCurrent) {
-            previous = current;
-            current = this;
-        }
-    }
-
-    ~NestedTimersVector()
-    {
-        if (shouldSetCurrent)
-            current = previous;
-    }
-
-    static NestedTimersVector* current;
-
-    void registerTimer(DOMTimer* timer)
-    {
-        nestedTimers.append(timer);
-    }
-
-    const_iterator begin() const { return nestedTimers.begin(); }
-    const_iterator end() const { return nestedTimers.end(); }
-
-private:
-    bool shouldSetCurrent;
-    NestedTimersVector* previous;
-    Vector<DOMTimer*, 1> nestedTimers;
-};
-
-NestedTimersVector* NestedTimersVector::current = nullptr;
-
 static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 {
     return UserGestureIndicator::processingUserGesture()
@@ -169,10 +133,6 @@ int DOMTimer::install(ScriptExecutionContext* context, std::unique_ptr<Scheduled
 
     timer->suspendIfNeeded();
     InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, singleShot);
-
-    // Keep track of nested timer installs.
-    if (NestedTimersVector::current)
-        NestedTimersVector::current->registerTimer(timer);
 
     return timer->m_timeoutId;
 }
@@ -278,8 +238,6 @@ void DOMTimer::fired()
     }
 #endif
 
-    // Keep track nested timer installs.
-    NestedTimersVector nestedTimers(context);
     m_action->execute(context);
 
 #if PLATFORM(IOS)
@@ -293,12 +251,6 @@ void DOMTimer::fired()
 #endif
 
     InspectorInstrumentation::didFireTimer(cookie);
-
-    // Check if we should throttle nested single-shot timers.
-    for (auto* timer : nestedTimers) {
-        if (!timer->repeatInterval())
-            timer->updateThrottlingStateIfNecessary(fireState);
-    }
 
     context->setTimerNestingLevel(0);
 }

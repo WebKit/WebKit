@@ -1,3 +1,22 @@
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Revert r175441 as it seems to be causing intermittent crashes in DOMTimer
+        https://bugs.webkit.org/show_bug.cgi?id=138449
+
+        Unreviewed roll out.
+
+        Revert r175441 as it seems to be causing intermittent crashes in DOMTimer due
+        to the scriptExecutionContext going away. See <rdar://problem/18883681>.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        (WebCore::NestedTimersVector::NestedTimersVector): Deleted.
+        (WebCore::NestedTimersVector::~NestedTimersVector): Deleted.
+        (WebCore::NestedTimersVector::registerTimer): Deleted.
+        (WebCore::NestedTimersVector::begin): Deleted.
+        (WebCore::NestedTimersVector::end): Deleted.
+
 2014-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store for opacity:0 descendant layers
