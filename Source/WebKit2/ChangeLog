@@ -1,5 +1,49 @@
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175597. <rdar://problem/18875579>
+
+    2014-11-04  Tim Horton  <timothy_horton@apple.com>
+    
+            Add bundle SPI allowing PageOverlay to customize the action menu
+            https://bugs.webkit.org/show_bug.cgi?id=138388
+            <rdar://problem/18875579>
+    
+            Reviewed by Anders Carlsson.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+            Bump the BundlePageOverlay client version.
+    
+            (WKBundlePageOverlayCreate):
+            (WKBundlePageOverlaySetAccessibilityClient):
+            Don't return if we have a version; the version check happens later anyway,
+            and now it is valid to have a version >0.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+            Bump the BundlePageOverlay client version.
+            Add prepareForActionMenu callback.
+    
+            * WebProcess/WebPage/WebPageOverlay.h:
+            (WebKit::WebPageOverlay::Client::prepareForActionMenu):
+            * WebProcess/WebPage/WebPageOverlay.cpp:
+            (WebKit::overlayMap):
+            (WebKit::WebPageOverlay::WebPageOverlay):
+            (WebKit::WebPageOverlay::~WebPageOverlay):
+            (WebKit::WebPageOverlay::fromCoreOverlay):
+            (WebKit::WebPageOverlay::pageOverlayDestroyed):
+            Keep track of a map of PageOverlay to WebPageOverlay.
+    
+            (WebKit::WebPageOverlay::prepareForActionMenu):
+            Forward prepareForActionMenu to the client.
+            
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Iterate through the overlays and let them prepareForActionMenu;
+            the first overlay that returns true wins. If no overlays want to
+            do anything, hand preparation along to the context menu client.
+    
+
+2014-11-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r175568. <rdar://problem/18840102>
 
     2014-11-04  Csaba Osztrogonác  <ossy@webkit.org>

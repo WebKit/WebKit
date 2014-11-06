@@ -30,10 +30,17 @@
 #include "WebPage.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/PageOverlay.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+static HashMap<PageOverlay*, WebPageOverlay*>& overlayMap()
+{
+    static NeverDestroyed<HashMap<PageOverlay*, WebPageOverlay*>> map;
+    return map;
+}
 
 PassRefPtr<WebPageOverlay> WebPageOverlay::create(WebPageOverlay::Client& client, PageOverlay::OverlayType overlayType)
 {
@@ -44,10 +51,21 @@ WebPageOverlay::WebPageOverlay(WebPageOverlay::Client& client, PageOverlay::Over
     : m_overlay(PageOverlay::create(*this, overlayType))
     , m_client(client)
 {
+    overlayMap().add(m_overlay.get(), this);
 }
 
 WebPageOverlay::~WebPageOverlay()
 {
+    if (!m_overlay)
+        return;
+
+    overlayMap().remove(m_overlay.get());
+    m_overlay = nullptr;
+}
+
+WebPageOverlay* WebPageOverlay::fromCoreOverlay(PageOverlay& overlay)
+{
+    return overlayMap().get(&overlay);
 }
 
 void WebPageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
@@ -67,6 +85,11 @@ void WebPageOverlay::clear()
 
 void WebPageOverlay::pageOverlayDestroyed(PageOverlay&)
 {
+    if (m_overlay) {
+        overlayMap().remove(m_overlay.get());
+        m_overlay = nullptr;
+    }
+
     m_client.pageOverlayDestroyed(*this);
 }
 
@@ -93,6 +116,11 @@ bool WebPageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 void WebPageOverlay::didScrollFrame(PageOverlay&, Frame& frame)
 {
     m_client.didScrollFrame(*this, WebFrame::fromCoreFrame(frame));
+}
+
+bool WebPageOverlay::prepareForActionMenu(RefPtr<API::Object>& userData)
+{
+    return m_client.prepareForActionMenu(*this, userData);
 }
 
 bool WebPageOverlay::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String attribute, FloatPoint parameter, String& value)
