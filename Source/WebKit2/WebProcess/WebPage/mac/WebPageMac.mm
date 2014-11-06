@@ -517,7 +517,32 @@ static PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePo
     return makeRange(start, end);
 }
 
-PassRefPtr<Range> WebPage::rangeForDictionaryLookupAtHitTestResult(const WebCore::HitTestResult& hitTestResult, NSDictionary **options)
+static PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& selection, NSDictionary **options)
+{
+    RefPtr<Range> selectedRange = selection.toNormalizedRange();
+    if (!selectedRange)
+        return nullptr;
+
+    VisiblePosition selectionStart = selection.visibleStart();
+    VisiblePosition selectionEnd = selection.visibleEnd();
+
+    // As context, we are going to use the surrounding paragraphs of text.
+    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
+    VisiblePosition paragraphEnd = endOfParagraph(selectionEnd);
+
+    int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+    int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
+    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
+
+    String fullPlainTextString = plainText(makeRange(paragraphStart, paragraphEnd).get());
+
+    // Since we already have the range we want, we just need to grab the returned options.
+    WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, options);
+    
+    return selectedRange.release();
+}
+
+static PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& hitTestResult, NSDictionary **options)
 {
     Node* node = hitTestResult.innerNonSharedNode();
     if (!node)
@@ -539,11 +564,9 @@ PassRefPtr<Range> WebPage::rangeForDictionaryLookupAtHitTestResult(const WebCore
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    VisibleSelection selection = m_page->focusController().focusedOrMainFrame().selection().selection();
-    if (shouldUseSelection(position, selection)) {
-        performDictionaryLookupForSelection(frame, selection);
-        return nullptr;
-    }
+    VisibleSelection selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
+    if (shouldUseSelection(position, selection))
+        return rangeForDictionaryLookupForSelection(frame->selection().selection(), options);
 
     // As context, we are going to use 250 characters of text before and after the point.
     RefPtr<Range> fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
@@ -581,28 +604,8 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
 void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
 {
-    RefPtr<Range> selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
-        return;
-
     NSDictionary *options = nil;
-
-    VisiblePosition selectionStart = selection.visibleStart();
-    VisiblePosition selectionEnd = selection.visibleEnd();
-
-    // As context, we are going to use the surrounding paragraphs of text.
-    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
-    VisiblePosition paragraphEnd = endOfParagraph(selectionEnd);
-
-    int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
-    int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
-    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
-
-    String fullPlainTextString = plainText(makeRange(paragraphStart, paragraphEnd).get());
-
-    // Since we already have the range we want, we just need to grab the returned options.
-    WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
-
+    RefPtr<Range> selectedRange = rangeForDictionaryLookupForSelection(selection, &options);
     performDictionaryLookupForRange(frame, *selectedRange, options);
 }
 

@@ -644,8 +644,6 @@ public:
     void dummy(bool&);
 
 #if PLATFORM(COCOA)
-    void performDictionaryLookupForSelection(WebCore::Frame*, const WebCore::VisibleSelection&);
-
     bool isSpeaking();
     void speak(const String&);
     void stopSpeaking();
@@ -964,9 +962,9 @@ private:
 
 #if PLATFORM(COCOA)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
-    void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options);
-    PassRefPtr<WebCore::Range> rangeForDictionaryLookupAtHitTestResult(const WebCore::HitTestResult&, NSDictionary **);
     void performDictionaryLookupOfCurrentSelection();
+    void performDictionaryLookupForSelection(WebCore::Frame*, const WebCore::VisibleSelection&);
+    void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options);
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
 
