@@ -1,3 +1,9 @@
+2014-11-06  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * WebProcess/Plugins/PluginController.h:
+
 2014-11-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebProcess needs to take a background task assertion to prevent being killed

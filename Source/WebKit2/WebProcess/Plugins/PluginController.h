@@ -81,6 +81,9 @@ public:
 
     // Evaluates the given script string in the context of the given NPObject.
     virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) = 0;
+
+    // Called by the Netscape plug-in when it starts or stops playing audio.
+    virtual void setPluginIsPlayingAudio(bool) = 0;
 #endif
 
     // Set the statusbar text.
@@ -154,9 +157,6 @@ public:
     
     // Called when the a plug-in instance fails to initialized, either synchronously or asynchronously.
     virtual void didFailToInitializePlugin() = 0;
-
-    // Called by the Netscape plug-in when it starts or stops playing audio.
-    virtual void setPluginIsPlayingAudio(bool) = 0;
 
     // Helper class for delaying destruction of a plug-in.
     class PluginDestructionProtector {
