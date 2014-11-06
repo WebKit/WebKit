@@ -332,7 +332,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_context = adoptWK(WKContextCreateWithConfiguration(configuration.get()));
     m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080) || PLATFORM(GTK)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
     WKContextSetUsesNetworkProcess(m_context.get(), true);
     WKContextSetProcessModel(m_context.get(), kWKProcessModelMultipleSecondaryProcesses);
 #endif
