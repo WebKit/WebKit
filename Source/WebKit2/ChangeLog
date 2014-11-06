@@ -1,5 +1,17 @@
 2014-11-06  Tim Horton  <timothy_horton@apple.com>
 
+        Null deref in rangeForDictionaryLookupAtHitTestResult on occasion
+        https://bugs.webkit.org/show_bug.cgi?id=138459
+        <rdar://problem/18872825>
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::rangeForDictionaryLookupAtHitTestResult):
+        rangeExpandedAroundPositionByCharacters can return null.
+
+2014-11-06  Tim Horton  <timothy_horton@apple.com>
+
         Prefer link action menus over images
         https://bugs.webkit.org/show_bug.cgi?id=138461
         <rdar://problem/18768377>
