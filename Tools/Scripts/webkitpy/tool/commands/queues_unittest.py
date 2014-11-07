@@ -308,9 +308,6 @@ MOCK: release_work_item: commit-queue 10000
             def results_from_patch_test_run(self, patch):
                 return LayoutTestResults([test_results.TestResult("mock_test_name.html", failures=[test_failures.FailureTextMismatch()])], did_exceed_test_failure_limit=False)
 
-            def results_from_test_run_without_patch(self, patch):
-                return LayoutTestResults([], did_exceed_test_failure_limit=False)
-
         queue = CommitQueue(MockCommitQueueTask)
 
         def mock_run_webkit_patch(command):

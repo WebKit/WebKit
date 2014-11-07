@@ -338,17 +338,13 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
 
     def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)
-        clean_results = task.results_from_test_run_without_patch(patch)
 
-        unexpected_failures = None
-        if results and clean_results:
-            unexpected_failures = list(set(results.failing_tests()) - set(clean_results.failing_tests()))
-        # FIXME: Can this ever happen?
-        if not unexpected_failures:
+        if not results:
             return None
-        if results and results.did_exceed_test_failure_limit():
+
+        if results.did_exceed_test_failure_limit():
             return "Number of test failures exceeded the failure limit."
-        return "New failing tests:\n%s" % "\n".join(unexpected_failures)
+        return "New failing tests:\n%s" % "\n".join(results.failing_tests())
 
     def _error_message_for_bug(self, task, patch, script_error):
         message = self._failing_tests_message(task, patch)

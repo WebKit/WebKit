@@ -181,6 +181,7 @@ class CommitQueueTaskTest(unittest.TestCase):
         # The failure status only means anything if we actually failed.
         if expected_analysis_result == PatchAnalysisResult.FAIL:
             self.assertEqual(task.failure_status_id, expected_failure_status_id)
+            self.assertIsInstance(task.results_from_patch_test_run(patch), LayoutTestResults)
 
     def _run_through_task(self, commit_queue, expected_logs, expected_exception=None, expect_retry=False):
         self.maxDiff = None

@@ -51,9 +51,8 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         task.results_from_patch_test_run = lambda a: LayoutTestResults([test_results.TestResult("foo.html", failures=[test_failures.FailureTextMismatch()]),
                                                                           test_results.TestResult("bar.html", failures=[test_failures.FailureTextMismatch()])],
                                                                           did_exceed_test_failure_limit=False)
-        task.results_from_test_run_without_patch = lambda a: LayoutTestResults([], did_exceed_test_failure_limit=False)
         patch = ews._tool.bugs.fetch_attachment(10000)
-        self.assertMultiLineEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")
+        self.assertMultiLineEqual(ews._failing_tests_message(task, patch), "New failing tests:\nfoo.html\nbar.html")
 
 
 class EarlyWarningSystemTest(QueuesTest):

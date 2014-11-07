@@ -82,7 +82,6 @@ class PatchAnalysisTask(object):
         self._script_error = None
         self._results_archive_from_patch_test_run = None
         self._results_from_patch_test_run = None
-        self._clean_tree_results = None
 
     def _run_command(self, command, success_message, failure_message):
         try:
@@ -185,16 +184,33 @@ class PatchAnalysisTask(object):
 
     def _continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(self, results, results_archive, script_error):
         self._build_and_test_without_patch()
-        self._clean_tree_results = self._delegate.test_results()
 
         # If we've made it here, then many (500) tests are failing with the patch applied, but
         # if the clean tree is also failing many tests, even if it's not quite as many (495),
         # then we can't be certain that the discrepancy isn't due to flakiness, and hence we must
         # defer judgement.
-        if (len(results.failing_tests()) - len(self._clean_tree_results.failing_tests())) <= 5:
+        if (len(results.failing_tests()) - len(self._delegate.test_results().failing_tests())) <= 5:
             return False
 
         return self.report_failure(results_archive, results, script_error)
+
+    def _should_defer_patch_or_throw(self, failures_with_patch, results_archive_for_failures_with_patch, script_error, failure_id):
+        self._build_and_test_without_patch()
+        clean_tree_results = self._delegate.test_results()
+
+        if clean_tree_results.did_exceed_test_failure_limit():
+            # We cannot know whether the failures we saw in the test runs with the patch are expected.
+            return True
+
+        failures_introduced_by_patch = frozenset(failures_with_patch) - frozenset(clean_tree_results.failing_test_results())
+        if failures_introduced_by_patch:
+            self.failure_status_id = failure_id
+            # report_failure will either throw or return false.
+            return not self.report_failure(results_archive_for_failures_with_patch, LayoutTestResults(failures_introduced_by_patch, did_exceed_test_failure_limit=False), script_error)
+
+        # In this case, we know that all of the failures that we saw with the patch were
+        # also present without the patch, so we don't need to defer.
+        return False
 
     def _test_patch(self):
         if self._test():
@@ -236,32 +252,15 @@ class PatchAnalysisTask(object):
 
             tests_that_consistently_failed = first_failing_results_set.intersection(second_failing_results_set)
             if tests_that_consistently_failed:
-                self._build_and_test_without_patch()
-                self._clean_tree_results = self._delegate.test_results()
-                tests_that_failed_on_tree = self._clean_tree_results.failing_test_results()
+                if self._should_defer_patch_or_throw(tests_that_consistently_failed, first_results_archive, first_script_error, first_failure_status_id):
+                    return False  # Defer patch
 
-                new_failures_introduced_by_patch = tests_that_consistently_failed.difference(set(tests_that_failed_on_tree))
-                if new_failures_introduced_by_patch:
-                    self.failure_status_id = first_failure_status_id
-                    return self.report_failure(first_results_archive, new_failures_introduced_by_patch, first_script_error)
-
-            # At this point we know that there is flakyness with the patch applied, but no consistent failures
+            # At this point we know that at least one test flaked, but no consistent failures
             # were introduced. This is a bit of a grey-zone.
-            return False
+            return False  # Defer patch
 
-        if self._build_and_test_without_patch():
-            # The error from the previous ._test() run is real, report it.
-            self.failure_status_id = first_failure_status_id
-            return self.report_failure(first_results_archive, first_results, first_script_error)
-
-        self._clean_tree_results = self._delegate.test_results()
-
-        if self._clean_tree_results.did_exceed_test_failure_limit():
-            return False
-
-        if set(first_results.failing_tests()) - set(self._clean_tree_results.failing_tests()):
-            self.failure_status_id = first_failure_status_id
-            return self.report_failure(first_results_archive, first_results, first_script_error)
+        if self._should_defer_patch_or_throw(first_results.failing_test_results(), first_results_archive, first_script_error, first_failure_status_id):
+            return False  # Defer patch
 
         # At this point, we know that the first and second runs had the exact same failures,
         # and that those failures are all present on the clean tree, so we can say with certainty
@@ -275,10 +274,6 @@ class PatchAnalysisTask(object):
     def results_from_patch_test_run(self, patch):
         assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
         return self._results_from_patch_test_run
-
-    def results_from_test_run_without_patch(self, patch):
-        assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
-        return self._clean_tree_results
 
     def report_failure(self, results_archive=None, results=None, script_error=None):
         if not self.validate():

@@ -1,3 +1,42 @@
+2014-11-06  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Remove duplicate code from PatchAnalysisTask._test_patch and fix bug
+        regarding incorrect call to PatchAnalysisTask.report_failure
+        https://bugs.webkit.org/show_bug.cgi?id=138229
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        Makes sure test_results returns a list.
+        (LayoutTestResults.test_results):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        Makes unit tests also check to make sure
+        task.results_from_patch_test_run() and
+        task.results_from_test_run_without_patch return instances of
+        LayoutTestResults.
+        (CommitQueueTaskTest._run_and_expect_patch_analysis_result):
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        Condenses duplicate code into _should_defer_patch_or_throw, and
+        removes the now-unused _clean_tree_results member.
+        (PatchAnalysisTask.__init__):
+        (PatchAnalysisTask._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try):
+        (PatchAnalysisTask._should_defer_patch_or_throw):
+        (PatchAnalysisTask._test_patch):
+        (PatchAnalysisTask.results_from_patch_test_run):
+        (PatchAnalysisTask.results_from_test_run_without_patch): Deleted.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        Removes needless call to results_from_test_run_without_patch
+        (AbstractEarlyWarningSystem._failing_tests_message):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        Changes order of test failure messages to be in the order that they
+        appear.
+        (AbstractEarlyWarningSystemTest.test_failing_tests_message):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Removes needless call to results_from_test_run_without_patch.
+        (CommitQueue._failing_tests_message):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (MockCommitQueueTask.results_from_test_run_without_patch): Deleted.
+
 2014-11-06  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Unreviewed. Reorder my e-mail addresses in contributors.json

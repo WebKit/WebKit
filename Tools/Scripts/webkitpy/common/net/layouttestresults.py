@@ -62,7 +62,7 @@ class LayoutTestResults(object):
         return self._did_exceed_test_failure_limit
 
     def test_results(self):
-        return self._test_results
+        return [result for result in self._test_results]
 
     def results_matching_failure_types(self, failure_types):
         return [result for result in self._test_results if result.has_failure_matching_types(*failure_types)]
