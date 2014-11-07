@@ -1,5 +1,20 @@
 2014-11-06  Mark Lam  <mark.lam@apple.com>
 
+        Refactor the get-by-pname.js test [follow up].
+        <https://webkit.org/b/138483>
+
+        Reviewed by Michael Saboff.
+
+        Used named properties to make the test code more readable.
+        
+        * js/script-tests/get-by-pname.js:
+        (isTierIteration):
+        (tierName):
+        (testExpr): Deleted.
+        (testExpectedResult): Deleted.
+
+2014-11-06  Mark Lam  <mark.lam@apple.com>
+
         slow_path_get_direct_pname() needs to be hardened against a constant baseValue.
         <https://webkit.org/b/138476>
 
