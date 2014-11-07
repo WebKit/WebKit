@@ -1,3 +1,27 @@
+2014-11-07  Antti Koivisto  <antti@apple.com>
+
+        Add cache coders
+        https://bugs.webkit.org/show_bug.cgi?id=138413
+
+        Reviewed by Anders Carlsson.
+
+        Add encoding and decoding support for cache types.
+
+        This is largely a copy of the IPC coder classes with some unnecessary features removed.
+        The coders compute a type-sensitive checksum that can be used to verify the data integrity.
+
+        The code is behind ENABLE(NETWORK_CACHE) and not yet used.
+
+        * NetworkProcess/cache: Added.
+        * NetworkProcess/cache/NetworkCacheCoder.h: Added.
+        * NetworkProcess/cache/NetworkCacheCoders.cpp: Added.
+        * NetworkProcess/cache/NetworkCacheCoders.h: Added.
+        * NetworkProcess/cache/NetworkCacheDecoder.cpp: Added.
+        * NetworkProcess/cache/NetworkCacheDecoder.h: Added.
+        * NetworkProcess/cache/NetworkCacheEncoder.cpp: Added.
+        * NetworkProcess/cache/NetworkCacheEncoder.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-11-06  Conrad Shultz  <conrad_shultz@apple.com>
 
         Clients should be able to customize the view used for page previews
