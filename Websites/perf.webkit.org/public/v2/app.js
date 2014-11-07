@@ -1671,7 +1671,7 @@ App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
         });
 
     }.observes('testSets.@each.selection'),
-    _updateRoots: function ()
+    roots: function ()
     {
         var analysisPoints = this.get('analysisPoints');
         if (!analysisPoints)
@@ -1705,6 +1705,6 @@ App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
                 ],
             }));
         }
-        return rooots;
+        return roots;
     }.property('analysisPoints'),
 });
