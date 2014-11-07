@@ -380,6 +380,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJJJ operat
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZJ operation, int dst, GPRReg arg)
+{
+    setupArgumentsWithExecState(TrustedImm32(dst), arg);
+    return appendCallWithExceptionCheck(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(JIT::WithProfileTag, J_JITOperation_ESsiJI operation, int dst, StructureStubInfo* stubInfo, GPRReg arg1, StringImpl* uid)
 {
     setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1, TrustedImmPtr(uid));
@@ -441,9 +447,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operati
     return appendCallWithExceptionCheck(operation);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EIdJZZ operation, const Identifier* identOp1, RegisterID regOp2, int32_t op3, int32_t op4)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZIdJZZ operation, int op1, const Identifier* identOp2, RegisterID regOp3, int32_t op4, int32_t op5)
 {
-    setupArgumentsWithExecState(TrustedImmPtr(identOp1), regOp2, TrustedImm32(op3), TrustedImm32(op4));
+    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(identOp2), regOp3, TrustedImm32(op4), TrustedImm32(op5));
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -575,9 +581,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJ operatio
     return appendCallWithExceptionCheck(operation);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EIdJZZ operation, const Identifier* identOp1, RegisterID regOp2Tag, RegisterID regOp2Payload, int32_t op3, int32_t op4)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZIdJZ operation, int32_t op1, const Identifier* identOp2, RegisterID regOp3Tag, RegisterID regOp3Payload, int32_t op4)
 {
-    setupArgumentsWithExecState(TrustedImmPtr(identOp1), regOp2Payload, regOp2Tag, TrustedImm32(op3), TrustedImm32(op4));
+    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(identOp2), regOp3Payload, regOp3Tag, TrustedImm32(op4));
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -590,6 +596,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ESsiJJI ope
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJJJ operation, RegisterID regOp1Tag, RegisterID regOp1Payload, RegisterID regOp2Tag, RegisterID regOp2Payload, RegisterID regOp3Tag, RegisterID regOp3Payload)
 {
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG regOp1Payload, regOp1Tag, SH4_32BIT_DUMMY_ARG regOp2Payload, regOp2Tag, regOp3Payload, regOp3Tag);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZJ operation, int dst, RegisterID regOp1Tag, RegisterID regOp1Payload)
+{
+    setupArgumentsWithExecState(TrustedImm32(dst), regOp1Payload, regOp1Tag);
     return appendCallWithExceptionCheck(operation);
 }
 
