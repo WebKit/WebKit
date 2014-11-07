@@ -1,3 +1,16 @@
+2014-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Try to fix GTK build after r175719.
+
+        Rename the Timer fired function as requestAnimationTimerFired() to
+        avoid ambiguity.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::requestAnimationTimerFired):
+        (WebCore::ScrollAnimatorNone::animationTimerFired): Deleted.
+        * platform/ScrollAnimatorNone.h:
+
 2014-11-06  Chris Dumez  <cdumez@apple.com>
 
         Remove useless if check in HTMLInputElement::setValue()

@@ -145,7 +145,7 @@ protected:
     };
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void animationTimerFired(Timer*);
+    void requestAnimationTimerFired(Timer*);
     void startNextTimer(double delay);
 #else
     void startNextTimer();
