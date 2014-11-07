@@ -1,3 +1,17 @@
+2014-11-06  Daniel Jalkut  <jalkut@red-sweater.com>
+
+        Wrap the bulk of -[WebView dealloc] with an autorelease pool.
+        https://bugs.webkit.org/show_bug.cgi?id=138443
+
+        Reviewed by Anders Carlsson.
+
+        Wrapping the dealloc method in its own autorelease pool avoids the problem of
+        complex tear-downs leading to the WebView itself being added to an autorelease
+        pool that is not drained until after the instance has been dealloc'd.
+ 
+        * WebView/WebView.mm:
+        (-[WebView dealloc]):
+
 2014-11-05  Jer Noble  <jer.noble@apple.com>
 
         De-templatize Timer
