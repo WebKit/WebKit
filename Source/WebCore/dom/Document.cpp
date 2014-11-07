@@ -806,11 +806,11 @@ void Document::resetActiveLinkColor()
     m_activeLinkColor.setNamedColor("red");
 }
 
-DOMImplementation* Document::implementation()
+DOMImplementation& Document::implementation()
 {
     if (!m_implementation)
         m_implementation = std::make_unique<DOMImplementation>(*this);
-    return m_implementation.get();
+    return *m_implementation;
 }
 
 bool Document::hasManifest() const
@@ -1123,17 +1123,17 @@ PassRefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
 
     updateStyleIfNeeded();
 
-    return namedFlows()->createCSSOMSnapshot();
+    return namedFlows().createCSSOMSnapshot();
 }
 
 #endif
 
-NamedFlowCollection* Document::namedFlows()
+NamedFlowCollection& Document::namedFlows()
 {
     if (!m_namedFlows)
         m_namedFlows = NamedFlowCollection::create(this);
 
-    return m_namedFlows.get();
+    return *m_namedFlows;
 }
 
 PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
@@ -1317,7 +1317,7 @@ void Document::setContentLanguage(const String& language)
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
 {
-    if (!implementation()->hasFeature("XML", String())) {
+    if (!implementation().hasFeature("XML", String())) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -1332,7 +1332,7 @@ void Document::setXMLVersion(const String& version, ExceptionCode& ec)
 
 void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
 {
-    if (!implementation()->hasFeature("XML", String())) {
+    if (!implementation().hasFeature("XML", String())) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -1582,11 +1582,11 @@ bool Document::hidden() const
 }
 
 #if ENABLE(CSP_NEXT)
-DOMSecurityPolicy* Document::securityPolicy()
+DOMSecurityPolicy& Document::securityPolicy()
 {
     if (!m_domSecurityPolicy)
         m_domSecurityPolicy = DOMSecurityPolicy::create(this);
-    return m_domSecurityPolicy.get();
+    return *m_domSecurityPolicy;
 }
 #endif
 
@@ -3164,11 +3164,11 @@ void Document::cloneDataFromDocument(const Document& other)
     setDecoder(other.decoder());
 }
 
-StyleSheetList* Document::styleSheets()
+StyleSheetList& Document::styleSheets()
 {
     if (!m_styleSheetList)
         m_styleSheetList = StyleSheetList::create(this);
-    return m_styleSheetList.get();
+    return *m_styleSheetList;
 }
 
 String Document::preferredStylesheetSet() const

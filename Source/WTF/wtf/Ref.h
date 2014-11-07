@@ -26,7 +26,8 @@
 #ifndef WTF_Ref_h
 #define WTF_Ref_h
 
-#include "Noncopyable.h"
+#include <wtf/GetPtr.h>
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 
@@ -72,6 +73,12 @@ template<typename T> template<typename U> inline PassRef<T> Ref<T>::replace(Pass
     m_ptr = &reference.leakRef();
     return oldReference;
 }
+
+template <typename T>
+struct GetPtrHelper<Ref<T>, false /* isSmartPtr */> {
+    typedef T* PtrType;
+    static T* getPtr(const Ref<T>& p) { return const_cast<T*>(&p.get()); }
+};
 
 } // namespace WTF
 

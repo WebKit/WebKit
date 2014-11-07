@@ -1,3 +1,61 @@
+2014-09-19  Chris Dumez  <cdumez@apple.com>
+
+        Allow DOM methods to return references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=136931
+
+        Reviewed by Sam Weinig.
+
+        It is common practice in WebKit to have methods return a reference
+        instead of a pointer if the pointer can never be null. However, this
+        unfortunately did not work for DOM methods (functions called by JS
+        bindings). This prevented further refactoring.
+
+        This patch brings support for having DOM methods to return references
+        instead of pointers when the pointer cannot be null. The generated
+        bindings were calling WTF::getPtr() on the pointer type returned by
+        the implementation already (in case it was a smart pointer type).
+        This patch leverages this by having WTF::getPtr() convert reference
+        arguments into raw pointers.
+
+        This patch also updates a few DOM methods on Document and Element
+        classes to return a reference instead of a pointer, to test the change.
+        There are likely more DOM methods that can be updated though.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::classList):
+        * bindings/js/JSDOMBinding.h:
+        (WTF::getPtr): Deleted.
+        * dom/Document.cpp:
+        (WebCore::Document::implementation):
+        (WebCore::Document::webkitGetNamedFlows):
+        (WebCore::Document::namedFlows):
+        (WebCore::Document::setXMLVersion):
+        (WebCore::Document::setXMLStandalone):
+        (WebCore::Document::securityPolicy):
+        (WebCore::Document::styleSheets):
+        * dom/Document.h:
+        (WebCore::Document::timing):
+        * dom/Element.cpp:
+        (WebCore::Element::classList):
+        (WebCore::Element::dataset):
+        * dom/Element.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::resetPosition):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::displayLastTextTrackCueBox):
+        (WebCore::VTTRegion::willRemoveTextTrackCueBox):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::documentTiming):
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::ensureRenderFlowThreadWithName):
+
 2014-10-17  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessary isSVGFont() check in SimpleFontData::applyTransforms()

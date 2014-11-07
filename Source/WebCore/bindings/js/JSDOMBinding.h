@@ -45,23 +45,13 @@
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/TypedArrays.h>
 #include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 class HashEntry;
 }
-
-#if ENABLE(GAMEPAD)
-namespace WTF {
-
-template<typename T> inline T* getPtr(const Ref<T>& p)
-{
-    return const_cast<T*>(&p.get());
-}
-
-}
-#endif
 
 namespace WebCore {
 

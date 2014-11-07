@@ -23,6 +23,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
+#include <wtf/GetPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtrCommon.h>
 #include <algorithm>
@@ -193,10 +194,9 @@ namespace WTF {
         return a != b.get(); 
     }
 
-    template<typename T> inline typename OwnPtr<T>::PtrType getPtr(const OwnPtr<T>& p)
-    {
-        return p.get();
-    }
+    template <typename T> struct IsSmartPtr<OwnPtr<T>> {
+        static const bool value = true;
+    };
 
     template<typename T> template<typename... Args> inline void OwnPtr<T>::createTransactionally(Args... args)
     {

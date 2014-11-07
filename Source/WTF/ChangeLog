@@ -1,3 +1,36 @@
+2014-09-19  Chris Dumez  <cdumez@apple.com>
+
+        Allow DOM methods to return references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=136931
+
+        Add support for having WTF::getPtr() transform reference arguments
+        into raw pointers so that DOM methods can now return references when
+        appropriate and so that the generated bindings code can handle this
+        via WTF::getPtr().
+
+        This patch had to alter the way getPtr() was overloaded for smart
+        pointer types so that we don't call &p on smart pointers but p.get().
+        This was needed because the new WTF::getPtr(T&) was being called for
+        RefPtr<T> arguments instead of the getPtr(const RefPtr<T>&) overload.
+        This was addressed using traits and template specialization to
+        distinguish WTF smart pointers from other types.
+
+        Reviewed by Sam Weinig.
+
+        * wtf/GetPtr.h:
+        (WTF::getPtr):
+        * wtf/OwnPtr.h:
+        (WTF::getPtr): Deleted.
+        * wtf/PassOwnPtr.h:
+        (WTF::getPtr): Deleted.
+        * wtf/PassRefPtr.h:
+        (WTF::getPtr): Deleted.
+        * wtf/Ref.h:
+        * wtf/RefPtr.h:
+        (WTF::getPtr): Deleted.
+        * wtf/gobject/GRefPtr.h:
+        (WTF::getPtr): Deleted.
+
 2014-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to GMainLoopSource to schedule sources after a delay in microseconds

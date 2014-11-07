@@ -25,6 +25,7 @@
 
 #if USE(GLIB)
 
+#include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include <algorithm>
 
@@ -41,6 +42,9 @@ template <typename T> GRefPtr<T> adoptGRef(T*);
 
 template <typename T> class GRefPtr {
 public:
+    typedef T ValueType;
+    typedef ValueType* PtrType;
+
     GRefPtr() : m_ptr(0) { }
 
     GRefPtr(T* ptr)
@@ -204,10 +208,9 @@ template <typename T, typename U> inline GRefPtr<T> const_pointer_cast(const GRe
     return GRefPtr<T>(const_cast<T*>(p.get()));
 }
 
-template <typename T> inline T* getPtr(const GRefPtr<T>& p)
-{
-    return p.get();
-}
+template <typename T> struct IsSmartPtr<GRefPtr<T>> {
+    static const bool value = true;
+};
 
 template <typename T> GRefPtr<T> adoptGRef(T* p)
 {

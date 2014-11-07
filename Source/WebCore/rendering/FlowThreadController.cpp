@@ -63,12 +63,12 @@ RenderNamedFlowThread& FlowThreadController::ensureRenderFlowThreadWithName(cons
         }
     }
 
-    NamedFlowCollection* namedFlows = m_view->document().namedFlows();
+    NamedFlowCollection& namedFlows = m_view->document().namedFlows();
 
     // Sanity check for the absence of a named flow in the "CREATED" state with the same name.
-    ASSERT(!namedFlows->flowByName(name));
+    ASSERT(!namedFlows.flowByName(name));
 
-    auto flowRenderer = new RenderNamedFlowThread(m_view->document(), RenderFlowThread::createFlowThreadStyle(&m_view->style()), namedFlows->ensureFlowWithName(name));
+    auto flowRenderer = new RenderNamedFlowThread(m_view->document(), RenderFlowThread::createFlowThreadStyle(&m_view->style()), namedFlows.ensureFlowWithName(name));
     flowRenderer->initializeStyle();
     m_renderNamedFlowThreadList->add(flowRenderer);
 

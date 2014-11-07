@@ -23,10 +23,11 @@
 #ifndef WTF_RefPtr_h
 #define WTF_RefPtr_h
 
-#include "FastMalloc.h"
-#include "PassRefPtr.h"
 #include <algorithm>
 #include <utility>
+#include <wtf/FastMalloc.h>
+#include <wtf/GetPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WTF {
 
@@ -35,6 +36,9 @@ namespace WTF {
     template<typename T> class RefPtr {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        typedef T ValueType;
+        typedef ValueType* PtrType;
+
         ALWAYS_INLINE RefPtr() : m_ptr(nullptr) { }
         ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
         ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(m_ptr); }
@@ -204,10 +208,9 @@ namespace WTF {
         return RefPtr<T>(static_cast<T*>(p.get())); 
     }
 
-    template<typename T> inline T* getPtr(const RefPtr<T>& p)
-    {
-        return p.get();
-    }
+    template <typename T> struct IsSmartPtr<RefPtr<T>> {
+        static const bool value = true;
+    };
 
 } // namespace WTF
 

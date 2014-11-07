@@ -28,6 +28,7 @@
 
 #include <cstddef>
 #include <wtf/Assertions.h>
+#include <wtf/GetPtr.h>
 #include <wtf/OwnPtrCommon.h>
 #include <type_traits>
 
@@ -156,10 +157,9 @@ namespace WTF {
         return adoptPtr(static_cast<T*>(p.leakPtr()));
     }
 
-    template<typename T> inline T* getPtr(const PassOwnPtr<T>& p)
-    {
-        return p.get();
-    }
+    template <typename T> struct IsSmartPtr<PassOwnPtr<T>> {
+        static const bool value = true;
+    };
 
 } // namespace WTF
 

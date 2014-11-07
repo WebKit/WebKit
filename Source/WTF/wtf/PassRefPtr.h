@@ -21,7 +21,8 @@
 #ifndef WTF_PassRefPtr_h
 #define WTF_PassRefPtr_h
 
-#include "PassRef.h"
+#include <wtf/GetPtr.h>
+#include <wtf/PassRef.h>
 
 namespace WTF {
 
@@ -41,6 +42,9 @@ namespace WTF {
 
     template<typename T> class PassRefPtr {
     public:
+        typedef T ValueType;
+        typedef ValueType* PtrType;
+
         PassRefPtr() : m_ptr(nullptr) { }
         PassRefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
         // It somewhat breaks the type system to allow transfer of ownership out of
@@ -153,10 +157,9 @@ namespace WTF {
         return adoptRef(static_cast<T*>(p.leakRef())); 
     }
 
-    template<typename T> inline T* getPtr(const PassRefPtr<T>& p)
-    {
-        return p.get();
-    }
+    template <typename T> struct IsSmartPtr<PassRefPtr<T>> {
+        static const bool value = true;
+    };
 
 } // namespace WTF
 

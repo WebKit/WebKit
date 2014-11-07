@@ -2122,12 +2122,10 @@ void AccessibilityObject::classList(Vector<String>& classList) const
         return;
     
     Element* element = toElement(node);
-    DOMTokenList* list = element->classList();
-    if (!list)
-        return;
-    unsigned length = list->length();
+    DOMTokenList& list = element->classList();
+    unsigned length = list.length();
     for (unsigned k = 0; k < length; k++)
-        classList.append(list->item(k).string());
+        classList.append(list.item(k).string());
 }
 
     

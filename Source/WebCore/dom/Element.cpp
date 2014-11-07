@@ -2326,20 +2326,20 @@ bool Element::shouldAppearIndeterminate() const
     return false;
 }
 
-DOMTokenList* Element::classList()
+DOMTokenList& Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.classList())
         data.setClassList(std::make_unique<ClassList>(*this));
-    return data.classList();
+    return *data.classList();
 }
 
-DatasetDOMStringMap* Element::dataset()
+DatasetDOMStringMap& Element::dataset()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.dataset())
         data.setDataset(std::make_unique<DatasetDOMStringMap>(*this));
-    return data.dataset();
+    return *data.dataset();
 }
 
 URL Element::getURLAttribute(const QualifiedName& name) const
