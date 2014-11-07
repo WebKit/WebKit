@@ -102,10 +102,9 @@ void SpeculativeJIT::emitAllocateJSArray(GPRReg resultGPR, Structure* structure,
     // I want a slow path that also loads out the storage pointer, and that's
     // what this custom CallArrayAllocatorSlowPathGenerator gives me. It's a lot
     // of work for a very small piece of functionality. :-/
-    addSlowPathGenerator(adoptPtr(
-        new CallArrayAllocatorSlowPathGenerator(
+    addSlowPathGenerator(std::make_unique<CallArrayAllocatorSlowPathGenerator>(
             slowCases, this, operationNewArrayWithSize, resultGPR, storageGPR,
-            structure, numElements)));
+            structure, numElements));
 }
 
 void SpeculativeJIT::emitAllocateArguments(GPRReg resultGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
@@ -257,9 +256,9 @@ RegisterSet SpeculativeJIT::usedRegisters()
     return result;
 }
 
-void SpeculativeJIT::addSlowPathGenerator(PassOwnPtr<SlowPathGenerator> slowPathGenerator)
+void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slowPathGenerator)
 {
-    m_slowPathGenerators.append(slowPathGenerator);
+    m_slowPathGenerators.append(WTF::move(slowPathGenerator));
 }
 
 void SpeculativeJIT::runSlowPathGenerators()
@@ -781,8 +780,8 @@ void SpeculativeJIT::arrayify(Node* node, GPRReg baseReg, GPRReg propertyReg)
         slowPath.append(jumpSlowForUnwantedArrayMode(tempGPR, node->arrayMode()));
     }
     
-    addSlowPathGenerator(adoptPtr(new ArrayifySlowPathGenerator(
-        slowPath, this, node, baseReg, propertyReg, tempGPR, structureGPR)));
+    addSlowPathGenerator(std::make_unique<ArrayifySlowPathGenerator>(
+        slowPath, this, node, baseReg, propertyReg, tempGPR, structureGPR));
     
     noResult(m_currentNode);
 }
@@ -879,7 +878,7 @@ void SpeculativeJIT::compileIn(Node* node)
             MacroAssembler::PatchableJump jump = m_jit.patchableJump();
             MacroAssembler::Label done = m_jit.label();
             
-            OwnPtr<SlowPathGenerator> slowPath = slowPathCall(
+            auto slowPath = slowPathCall(
                 jump.m_jump, this, operationInOptimize,
                 JSValueRegs::payloadOnly(resultGPR), stubInfo, baseGPR,
                 string->tryGetValueImpl());
@@ -889,17 +888,17 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
             stubInfo->patch.usedRegisters = usedRegisters();
             stubInfo->patch.spillMode = NeedToSpill;
-            
+
             m_jit.addIn(InRecord(jump, done, slowPath.get(), stubInfo));
-            addSlowPathGenerator(slowPath.release());
-                
+            addSlowPathGenerator(WTF::move(slowPath));
+
             base.use();
-            
+
             blessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
             return;
         }
     }
-        
+
     JSValueOperand key(this, node->child1());
     JSValueRegs regs = key.jsValueRegs();
         
@@ -1779,12 +1778,12 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
         if (globalObject->stringPrototypeChainIsSane()) {
 #if USE(JSVALUE64)
-            addSlowPathGenerator(adoptPtr(new SaneStringGetByValSlowPathGenerator(
-                outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg)));
+            addSlowPathGenerator(std::make_unique<SaneStringGetByValSlowPathGenerator>(
+                outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg));
 #else
-            addSlowPathGenerator(adoptPtr(new SaneStringGetByValSlowPathGenerator(
+            addSlowPathGenerator(std::make_unique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, JSValueRegs(resultTagReg, scratchReg),
-                baseReg, propertyReg)));
+                baseReg, propertyReg));
 #endif
         } else {
 #if USE(JSVALUE64)

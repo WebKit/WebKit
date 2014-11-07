@@ -316,7 +316,7 @@ public:
     GPRReg fillSpeculateBoolean(Edge);
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
-    void addSlowPathGenerator(PassOwnPtr<SlowPathGenerator>);
+    void addSlowPathGenerator(std::unique_ptr<SlowPathGenerator>);
     void runSlowPathGenerators();
     
     void compile(Node*);
@@ -2433,7 +2433,7 @@ public:
     
     bool m_isCheckingArgumentTypes;
     
-    Vector<OwnPtr<SlowPathGenerator>, 8> m_slowPathGenerators;
+    Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;
     Vector<SilentRegisterSavePlan> m_plans;
 };
 

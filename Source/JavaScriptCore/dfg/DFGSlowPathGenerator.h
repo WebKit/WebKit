@@ -329,94 +329,77 @@ protected:
 };
 
 template<typename JumpType, typename FunctionType, typename ResultType>
-inline PassOwnPtr<SlowPathGenerator> slowPathCall(
+inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     JumpType from, SpeculativeJIT* jit, FunctionType function,
     ResultType result, SpillRegistersMode spillMode = NeedToSpill)
 {
-    return adoptPtr(
-        new CallResultAndNoArgumentsSlowPathGenerator<
-            JumpType, FunctionType, ResultType>(
-                from, jit, function, spillMode, result));
+    return std::make_unique<CallResultAndNoArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType>>(
+        from, jit, function, spillMode, result);
 }
 
 template<
     typename JumpType, typename FunctionType, typename ResultType,
     typename ArgumentType1>
-inline PassOwnPtr<SlowPathGenerator> slowPathCall(
+inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     JumpType from, SpeculativeJIT* jit, FunctionType function,
     ResultType result, ArgumentType1 argument1,
     SpillRegistersMode spillMode = NeedToSpill)
 {
-    return adoptPtr(
-        new CallResultAndOneArgumentSlowPathGenerator<
-            JumpType, FunctionType, ResultType, ArgumentType1>(
-                from, jit, function, spillMode, result, argument1));
+    return std::make_unique<CallResultAndOneArgumentSlowPathGenerator<JumpType, FunctionType, ResultType, ArgumentType1>>(
+        from, jit, function, spillMode, result, argument1);
 }
 
 template<
     typename JumpType, typename FunctionType, typename ResultType,
     typename ArgumentType1, typename ArgumentType2>
-inline PassOwnPtr<SlowPathGenerator> slowPathCall(
+inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     JumpType from, SpeculativeJIT* jit, FunctionType function,
     ResultType result, ArgumentType1 argument1, ArgumentType2 argument2,
     SpillRegistersMode spillMode = NeedToSpill)
 {
-    return adoptPtr(
-        new CallResultAndTwoArgumentsSlowPathGenerator<
-            JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2>(
-                from, jit, function, spillMode, result, argument1, argument2));
+    return std::make_unique<CallResultAndTwoArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2>>(
+        from, jit, function, spillMode, result, argument1, argument2);
 }
 
 template<
     typename JumpType, typename FunctionType, typename ResultType,
     typename ArgumentType1, typename ArgumentType2, typename ArgumentType3>
-inline PassOwnPtr<SlowPathGenerator> slowPathCall(
+inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     JumpType from, SpeculativeJIT* jit, FunctionType function,
     ResultType result, ArgumentType1 argument1, ArgumentType2 argument2,
     ArgumentType3 argument3, SpillRegistersMode spillMode = NeedToSpill)
 {
-    return adoptPtr(
-        new CallResultAndThreeArgumentsSlowPathGenerator<
-            JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2,
-            ArgumentType3>(
-                from, jit, function, spillMode, result, argument1, argument2,
-                argument3));
+    return std::make_unique<CallResultAndThreeArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2,
+        ArgumentType3>>(from, jit, function, spillMode, result, argument1, argument2, argument3);
 }
 
 template<
     typename JumpType, typename FunctionType, typename ResultType,
     typename ArgumentType1, typename ArgumentType2, typename ArgumentType3,
     typename ArgumentType4>
-inline PassOwnPtr<SlowPathGenerator> slowPathCall(
+inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     JumpType from, SpeculativeJIT* jit, FunctionType function,
     ResultType result, ArgumentType1 argument1, ArgumentType2 argument2,
     ArgumentType3 argument3, ArgumentType4 argument4,
     SpillRegistersMode spillMode = NeedToSpill)
 {
-    return adoptPtr(
-        new CallResultAndFourArgumentsSlowPathGenerator<
-            JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2,
-            ArgumentType3, ArgumentType4>(
-                from, jit, function, spillMode, result, argument1, argument2,
-                argument3, argument4));
+    return std::make_unique<CallResultAndFourArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2,
+        ArgumentType3, ArgumentType4>>(from, jit, function, spillMode, result, argument1, argument2, argument3, argument4);
 }
 
 template<
     typename JumpType, typename FunctionType, typename ResultType,
     typename ArgumentType1, typename ArgumentType2, typename ArgumentType3,
     typename ArgumentType4, typename ArgumentType5>
-inline PassOwnPtr<SlowPathGenerator> slowPathCall(
+inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     JumpType from, SpeculativeJIT* jit, FunctionType function,
     ResultType result, ArgumentType1 argument1, ArgumentType2 argument2,
     ArgumentType3 argument3, ArgumentType4 argument4, ArgumentType5 argument5,
     SpillRegistersMode spillMode = NeedToSpill)
 {
-    return adoptPtr(
-        new CallResultAndFiveArgumentsSlowPathGenerator<
-            JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2,
-            ArgumentType3, ArgumentType4, ArgumentType5>(
-                from, jit, function, spillMode, result, argument1, argument2,
-                argument3, argument4, argument5));
+    return std::make_unique<CallResultAndFiveArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, ArgumentType1, ArgumentType2,
+        ArgumentType3, ArgumentType4, ArgumentType5>>(from, jit, function, spillMode, result, argument1, argument2, argument3,
+        argument4, argument5);
 }
 
 template<typename JumpType, typename DestinationType, typename SourceType, unsigned numberOfAssignments>
@@ -449,37 +432,31 @@ private:
 };
 
 template<typename JumpType, typename DestinationType, typename SourceType, unsigned numberOfAssignments>
-inline PassOwnPtr<SlowPathGenerator> slowPathMove(
+inline std::unique_ptr<SlowPathGenerator> slowPathMove(
     JumpType from, SpeculativeJIT* jit, SourceType source[numberOfAssignments], DestinationType destination[numberOfAssignments])
 {
-    return adoptPtr(
-        new AssigningSlowPathGenerator<
-            JumpType, DestinationType, SourceType, numberOfAssignments>(
-                from, jit, destination, source));
+    return std::make_unique<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, numberOfAssignments>>(
+        from, jit, destination, source);
 }
 
 template<typename JumpType, typename DestinationType, typename SourceType>
-inline PassOwnPtr<SlowPathGenerator> slowPathMove(
+inline std::unique_ptr<SlowPathGenerator> slowPathMove(
     JumpType from, SpeculativeJIT* jit, SourceType source, DestinationType destination)
 {
     SourceType sourceArray[1] = { source };
     DestinationType destinationArray[1] = { destination };
-    return adoptPtr(
-        new AssigningSlowPathGenerator<
-            JumpType, DestinationType, SourceType, 1>(
-                from, jit, destinationArray, sourceArray));
+    return std::make_unique<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 1>>(
+        from, jit, destinationArray, sourceArray);
 }
 
 template<typename JumpType, typename DestinationType, typename SourceType>
-inline PassOwnPtr<SlowPathGenerator> slowPathMove(
+inline std::unique_ptr<SlowPathGenerator> slowPathMove(
     JumpType from, SpeculativeJIT* jit, SourceType source1, DestinationType destination1, SourceType source2, DestinationType destination2)
 {
     SourceType sourceArray[2] = { source1, source2 };
     DestinationType destinationArray[2] = { destination1, destination2 };
-    return adoptPtr(
-        new AssigningSlowPathGenerator<
-            JumpType, DestinationType, SourceType, 2>(
-                from, jit, destinationArray, sourceArray));
+    return std::make_unique<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 2>>(
+        from, jit, destinationArray, sourceArray);
 }
 
 } } // namespace JSC::DFG
