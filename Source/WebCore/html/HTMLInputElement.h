@@ -310,8 +310,8 @@ public:
     virtual void setRangeText(const String& replacement, ExceptionCode&) override;
     virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) override;
 
-    bool hasImageLoader() const { return !!m_imageLoader; }
-    HTMLImageLoader* imageLoader();
+    HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
+    HTMLImageLoader& ensureImageLoader();
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     bool setupDateTimeChooserParameters(DateTimeChooserParameters&);

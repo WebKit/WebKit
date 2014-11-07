@@ -118,29 +118,29 @@ void ImageInputType::srcAttributeChanged()
 {
     if (!element().renderer())
         return;
-    element().imageLoader()->updateFromElementIgnoringPreviousError();
+    element().ensureImageLoader().updateFromElementIgnoringPreviousError();
 }
 
 void ImageInputType::attach()
 {
     BaseButtonInputType::attach();
 
-    HTMLImageLoader* imageLoader = element().imageLoader();
-    imageLoader->updateFromElement();
+    HTMLImageLoader& imageLoader = element().ensureImageLoader();
+    imageLoader.updateFromElement();
 
     auto* renderer = downcast<RenderImage>(element().renderer());
     if (!renderer)
         return;
 
-    if (imageLoader->hasPendingBeforeLoadEvent())
+    if (imageLoader.hasPendingBeforeLoadEvent())
         return;
 
     auto& imageResource = renderer->imageResource();
-    imageResource.setCachedImage(imageLoader->image());
+    imageResource.setCachedImage(imageLoader.image());
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.
-    if (!imageLoader->image() && !imageResource.cachedImage())
+    if (!imageLoader.image() && !imageResource.cachedImage())
         renderer->setImageSizeForAltText();
 }
 
@@ -180,11 +180,9 @@ unsigned ImageInputType::height() const
             return height;
 
         // If the image is available, use its height.
-        if (element->hasImageLoader()) {
-            HTMLImageLoader* imageLoader = element->imageLoader();
-            if (imageLoader->image())
-                return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height();
-        }
+        HTMLImageLoader* imageLoader = element->imageLoader();
+        if (imageLoader && imageLoader->image())
+            return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height();
     }
 
     element->document().updateLayout();
@@ -204,11 +202,9 @@ unsigned ImageInputType::width() const
             return width;
 
         // If the image is available, use its width.
-        if (element->hasImageLoader()) {
-            HTMLImageLoader* imageLoader = element->imageLoader();
-            if (imageLoader->image())
-                return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width();
-        }
+        HTMLImageLoader* imageLoader = element->imageLoader();
+        if (imageLoader && imageLoader->image())
+            return imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width();
     }
 
     element->document().updateLayout();

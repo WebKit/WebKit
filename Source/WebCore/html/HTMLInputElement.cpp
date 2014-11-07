@@ -134,11 +134,11 @@ PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagNa
     return inputElement.release();
 }
 
-HTMLImageLoader* HTMLInputElement::imageLoader()
+HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 {
     if (!m_imageLoader)
         m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-    return m_imageLoader.get();
+    return *m_imageLoader;
 }
 
 void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot*)
@@ -1436,7 +1436,7 @@ void HTMLInputElement::removedFrom(ContainerNode& insertionPoint)
 
 void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (hasImageLoader())
+    if (imageLoader())
         imageLoader()->elementDidMoveToNewDocument();
 
     bool needsSuspensionCallback = this->needsSuspensionCallback();
