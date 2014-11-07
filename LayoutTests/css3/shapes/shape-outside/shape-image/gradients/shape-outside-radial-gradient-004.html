@@ -6,7 +6,6 @@
     <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shapes-from-image"/>
     <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shape-outside-property"/>
     <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shape-image-threshold-property"/>
-    <link rel="match" href="reference/shape-outside-radial-gradient-001-ref.html"/>
     <meta name="flags" content="ahem dom"/>
     <meta name="assert" content="This test verifies that shape-outside respects a
                                 simple radial gradient on a right float when
@@ -52,6 +51,9 @@
         <span id='test9'>x</span><br/>
         x<br/>
     </div>
+    <div id="log"></div>
+    <script src="../../../../../resources/testharness.js"></script>
+    <script src="../../../../../resources/testharnessreport.js"></script>
     <script src="../../supported-shapes/support/rounded-rectangle.js"></script>
     <script src="../../supported-shapes/support/subpixel-utils.js"></script>
     <script src="../../supported-shapes/support/test-utils.js"></script>

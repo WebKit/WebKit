@@ -132,11 +132,6 @@ webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Skip 
 
 # Various failures from the W3C CSS Shapes test suite import
 
-webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html [ ImageOnlyFailure ]
-webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html [ ImageOnlyFailure ]
-webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html [ ImageOnlyFailure ]
-webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html [ ImageOnlyFailure ]
-
 webkit.org/b/137788 css3/shapes/shape-outside/shape-image/shape-image-010.html [ ImageOnlyFailure ]
 webkit.org/b/137788 css3/shapes/shape-outside/shape-image/shape-image-024.html [ ImageOnlyFailure ]
 

@@ -1,3 +1,32 @@
+2014-11-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] the sandbag JS utility code isn't producing the correct expected result in the shape-image gradient tests
+        https://bugs.webkit.org/show_bug.cgi?id=135923
+
+        Reviewed by Dirk Schulze.
+
+        Import tests from upstream. They have been modified so that they use
+        testharness to validate success or failure instead of being reftests,
+        allowing for fuzziness in matching to get around small variances
+        between implementations.
+
+        * TestExpectations:
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001-expected.txt: Added.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html:
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002-expected.txt: Added.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html:
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003-expected.txt: Added.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html:
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004-expected.txt: Added.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html:
+        * css3/shapes/shape-outside/shape-image/gradients/w3c-import.log:
+        * css3/shapes/shape-outside/supported-shapes/support/test-utils.js:
+        (verifyTextPoints):
+
 2014-11-07  Mark Lam  <mark.lam@apple.com>
 
         Gardening: get-by-pname.js is failing when run with JSC_useLLINT=false and other special JIT configurations.
