@@ -70,13 +70,6 @@ private:
     alignas(vmPageSize) char m_memory[];
 };
 
-inline LargeChunk* LargeChunk::create()
-{
-    size_t vmSize = bmalloc::vmSize(largeChunkSize);
-    std::pair<void*, Range> result = vmAllocate(vmSize, superChunkSize, largeChunkOffset);
-    return new (result.first) LargeChunk;
-}
-
 inline LargeChunk* LargeChunk::get(void* object)
 {
     BASSERT(!isSmallOrMedium(object));

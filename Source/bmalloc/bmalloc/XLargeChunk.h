@@ -56,8 +56,8 @@ inline XLargeChunk::XLargeChunk(const Range& range, size_t size)
 inline XLargeChunk* XLargeChunk::create(size_t size)
 {
     size_t vmSize = bmalloc::vmSize(sizeof(XLargeChunk) + size);
-    std::pair<void*, Range> result = vmAllocate(vmSize, superChunkSize, largeChunkOffset);
-    return new (result.first) XLargeChunk(result.second, size);
+    auto xlargeChunk = vmAllocate(vmSize, superChunkSize);
+    return new (xlargeChunk) XLargeChunk(Range(xlargeChunk, vmSize), size);
 }
 
 inline void XLargeChunk::destroy(XLargeChunk* chunk)

@@ -54,9 +54,7 @@ public:
     void deallocateLargeRange(std::unique_lock<StaticMutex>&, Range);
 
 private:
-    void allocateSmallChunk();
-    void allocateMediumChunk();
-    Range allocateLargeChunk();
+    void allocateSuperChunk();
 
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
@@ -66,7 +64,7 @@ private:
 inline SmallPage* VMHeap::allocateSmallPage()
 {
     if (!m_smallPages.size())
-        allocateSmallChunk();
+        allocateSuperChunk();
 
     return m_smallPages.pop();
 }
@@ -74,7 +72,7 @@ inline SmallPage* VMHeap::allocateSmallPage()
 inline MediumPage* VMHeap::allocateMediumPage()
 {
     if (!m_mediumPages.size())
-        allocateMediumChunk();
+        allocateSuperChunk();
 
     return m_mediumPages.pop();
 }
@@ -82,8 +80,11 @@ inline MediumPage* VMHeap::allocateMediumPage()
 inline Range VMHeap::allocateLargeRange(size_t size)
 {
     Range range = m_largeRanges.take(size);
-    if (!range)
-        range = allocateLargeChunk();
+    if (!range) {
+        allocateSuperChunk();
+        range = m_largeRanges.take(size);
+        BASSERT(range);
+    }
     return range;
 }
 

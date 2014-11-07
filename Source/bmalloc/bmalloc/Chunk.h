@@ -42,7 +42,6 @@ public:
     static const size_t chunkOffset = Traits::chunkOffset;
     static const uintptr_t chunkMask = Traits::chunkMask;
 
-    static Chunk* create();
     static Chunk* get(void*);
 
     Page* begin() { return Page::get(Line::get(m_memory)); }
@@ -65,14 +64,6 @@ private:
     // Otherwise, we'll confuse the scavenger into trying to scavenge metadata.
     alignas(vmPageSize) char m_memory[];
 };
-
-template<class Traits>
-inline auto Chunk<Traits>::create() -> Chunk*
-{
-    size_t vmSize = bmalloc::vmSize(chunkSize);
-    std::pair<void*, Range> result = vmAllocate(vmSize, superChunkSize, chunkOffset);
-    return new (result.first) Chunk;
-}
 
 template<class Traits>
 inline auto Chunk<Traits>::get(void* object) -> Chunk*

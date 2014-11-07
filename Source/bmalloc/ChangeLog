@@ -1,3 +1,50 @@
+2014-11-07  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc uses 8X more virtual memory than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=138495
+
+        Reviewed by Mark Lam.
+
+        iOS has a per-process virtual memory cap around 1GB, so there's some
+        value to not going totally ham with virtual memory.
+
+        We currently use about 8X the necessary amount:
+            - 2X to align our VM allocation
+            - 4X to reserve small / medium / (2) large chunk VM ranges per superchunk
+
+        We can cut that down:
+            - Return the unaligned portion of our VM allocation (-2X)
+            - Use all the chunks in a superchunk, instead of allocating one
+              chunk per superchunk (-4X)
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::roundUpToMultipleOf): Added a non-constant version of this
+        function so we can call it with getpagesize() at runtime.
+
+        * bmalloc/Chunk.h:
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::create): Deleted. Instead of each chunk allocating
+        its own VM, VMHeap allocates the superchunk and all the chunks in it at a time.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmValidate):
+        (bmalloc::vmAllocate): ASSERT that mmap succeeds to make crashes clearer
+        if it does not succeed. Allocate precisely, and give back the extra.
+
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::allocateSuperChunk):
+        (bmalloc::VMHeap::allocateSmallChunk): Deleted.
+        (bmalloc::VMHeap::allocateMediumChunk): Deleted.
+        (bmalloc::VMHeap::allocateLargeChunk): Deleted. Use all the chunks
+        in a superchunk, instead of just one.
+
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateMediumPage):
+        (bmalloc::VMHeap::allocateLargeRange):
+        * bmalloc/XLargeChunk.h:
+        (bmalloc::XLargeChunk::create): Updated to match changes above.
+
 2014-11-01  David Kilzer  <ddkilzer@apple.com>
 
         JavaScriptCore is missing debug info for bmalloc because libbmalloc.a is stripped

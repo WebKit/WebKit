@@ -36,24 +36,20 @@ VMHeap::VMHeap()
 {
 }
 
-void VMHeap::allocateSmallChunk()
+void VMHeap::allocateSuperChunk()
 {
-    SmallChunk* chunk = SmallChunk::create();
-    for (auto* it = chunk->begin(); it != chunk->end(); ++it)
+    char* superChunk = static_cast<char*>(vmAllocate(superChunkSize, superChunkSize));
+
+    SmallChunk* smallChunk = new (superChunk + smallChunkOffset) SmallChunk;
+    for (auto* it = smallChunk->begin(); it != smallChunk->end(); ++it)
         m_smallPages.push(it);
-}
 
-void VMHeap::allocateMediumChunk()
-{
-    MediumChunk* chunk = MediumChunk::create();
-    for (auto* it = chunk->begin(); it != chunk->end(); ++it)
+    MediumChunk* mediumChunk = new (superChunk + mediumChunkOffset) MediumChunk;
+    for (auto* it = mediumChunk->begin(); it != mediumChunk->end(); ++it)
         m_mediumPages.push(it);
-}
 
-Range VMHeap::allocateLargeChunk()
-{
-    LargeChunk* chunk = LargeChunk::create();
-    return BoundaryTag::init(chunk);
+    LargeChunk* largeChunk = new (superChunk + largeChunkOffset) LargeChunk;
+    m_largeRanges.insert(BoundaryTag::init(largeChunk));
 }
 
 } // namespace bmalloc

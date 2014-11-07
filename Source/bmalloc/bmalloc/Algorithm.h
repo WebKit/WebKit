@@ -62,10 +62,16 @@ template<typename T> inline constexpr bool test(T value, uintptr_t mask)
     return !!(reinterpret_cast<uintptr_t>(value) & mask);
 }
 
+template<typename T> inline T roundUpToMultipleOf(size_t divisor, T x)
+{
+    BASSERT(divisor && !(divisor & (divisor - 1)));
+    return reinterpret_cast<T>((reinterpret_cast<uintptr_t>(x) + (divisor - 1ul)) & ~(divisor - 1ul));
+}
+
 template<size_t divisor, typename T> inline constexpr T roundUpToMultipleOf(T x)
 {
     static_assert(divisor && !(divisor & (divisor - 1)), "'divisor' must be a power of two.");
-    return reinterpret_cast<T>((reinterpret_cast<uintptr_t>(x) + (divisor - 1ul)) & ~(divisor - 1ul));
+    return roundUpToMultipleOf(divisor, x);
 }
 
 template<size_t divisor, typename T> inline constexpr T roundDownToMultipleOf(T x)

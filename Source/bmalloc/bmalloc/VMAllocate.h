@@ -43,20 +43,24 @@ inline size_t vmSize(size_t size)
 {
     return roundUpToMultipleOf<vmPageSize>(size);
 }
-    
+
 inline void vmValidate(size_t vmSize)
 {
+    // We use getpagesize() here instead of vmPageSize because vmPageSize is
+    // allowed to be larger than the OS's true page size.
+
     UNUSED(vmSize);
     BASSERT(vmSize);
-    BASSERT(vmSize == bmalloc::vmSize(vmSize));
+    BASSERT(vmSize == roundUpToMultipleOf(static_cast<size_t>(getpagesize()), vmSize));
 }
 
 inline void vmValidate(void* p, size_t vmSize)
 {
-    vmValidate(vmSize);
-    
     // We use getpagesize() here instead of vmPageSize because vmPageSize is
     // allowed to be larger than the OS's true page size.
+
+    vmValidate(vmSize);
+    
     UNUSED(p);
     BASSERT(p);
     BASSERT(p == mask(p, ~(getpagesize() - 1)));
@@ -65,7 +69,9 @@ inline void vmValidate(void* p, size_t vmSize)
 inline void* vmAllocate(size_t vmSize)
 {
     vmValidate(vmSize);
-    return mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, BMALLOC_VM_TAG, 0);
+    void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, BMALLOC_VM_TAG, 0);
+    RELEASE_BASSERT(result != MAP_FAILED);
+    return result;
 }
 
 inline void vmDeallocate(void* p, size_t vmSize)
@@ -74,30 +80,28 @@ inline void vmDeallocate(void* p, size_t vmSize)
     munmap(p, vmSize);
 }
 
-// Allocates vmSize bytes at a specified offset from a power-of-two alignment.
-// Use this function to create pointer masks that aren't simple powers of two.
+// Allocates vmSize bytes at a specified power-of-two alignment.
+// Use this function to create maskable memory regions.
 
-inline std::pair<void*, Range> vmAllocate(size_t vmSize, size_t alignment, size_t offset)
+inline void* vmAllocate(size_t vmSize, size_t vmAlignment)
 {
     vmValidate(vmSize);
-    BASSERT(isPowerOfTwo(alignment));
+    vmValidate(vmAlignment);
 
-    size_t mappedSize = std::max(vmSize, alignment) + alignment;
+    size_t mappedSize = std::max(vmSize, vmAlignment) + vmAlignment;
     char* mapped = static_cast<char*>(vmAllocate(mappedSize));
-    
-    uintptr_t alignmentMask = alignment - 1;
-    if (!test(mapped, alignmentMask) && offset + vmSize <= alignment) {
-        // We got two perfectly aligned regions. Give one back to avoid wasting
-        // VM unnecessarily. This isn't costly because we aren't making holes.
-        vmDeallocate(mapped + alignment, alignment);
-        return std::make_pair(mapped + offset, Range(mapped, alignment));
-    }
+    char* mappedEnd = mapped + mappedSize;
 
-    // We got an unaligned region. Keep the whole thing to avoid creating holes,
-    // and hopefully realign the VM allocator for future allocations. On Darwin,
-    // VM holes trigger O(N^2) behavior in mmap, so we want to minimize them.
-    char* mappedAligned = mask(mapped, ~alignmentMask) + alignment;
-    return std::make_pair(mappedAligned + offset, Range(mapped, mappedSize));
+    char* aligned = roundUpToMultipleOf(vmAlignment, mapped);
+    char* alignedEnd = aligned + vmSize;
+    
+    if (size_t leftExtra = aligned - mapped)
+        vmDeallocate(mapped, leftExtra);
+    
+    if (size_t rightExtra = mappedEnd - alignedEnd)
+        vmDeallocate(alignedEnd, rightExtra);
+
+    return aligned;
 }
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
