@@ -547,9 +547,9 @@ void PageClientImpl::dismissDictionaryLookupPanel()
     WKHideWordDefinitionWindow();
 }
 
-void PageClientImpl::dismissActionMenuDataDetectorPopovers()
+void PageClientImpl::dismissActionMenuPopovers()
 {
-    [m_wkView _dismissActionMenuDataDetectorPopovers];
+    [m_wkView _dismissActionMenuPopovers];
 }
 
 void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)

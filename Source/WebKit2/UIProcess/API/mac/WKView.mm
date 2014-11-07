@@ -2562,7 +2562,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         _data->_flagsChangedEventMonitor = nil;
 
         WKHideWordDefinitionWindow();
-        [self _dismissActionMenuDataDetectorPopovers];
+        [self _dismissActionMenuPopovers];
     }
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
@@ -3689,10 +3689,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-- (void)_dismissActionMenuDataDetectorPopovers
+- (void)_dismissActionMenuPopovers
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_actionMenuController dismissActionMenuDataDetectorPopovers];
+    [_data->_actionMenuController dismissActionMenuPopovers];
 #endif
 }
 
