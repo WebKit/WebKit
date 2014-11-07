@@ -1,3 +1,22 @@
+2014-11-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r174740. <rdar://problem/rdar://problem/18883729>
+
+    2014-10-15  Simon Fraser  <simon.fraser@apple.com>
+    
+            Sometimes can't scroll overflow:scroll areas in subframes
+            https://bugs.webkit.org/show_bug.cgi?id=137746
+            rdar://problem/18603560
+    
+            Reviewed by Tim Horton.
+            
+            Test that changes an overflow size in a subframe and then dumps the non-fast scrollable region.
+    
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/layouting-frame.html: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/scroll-region-after-frame-layout-expected.txt: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/scroll-region-after-frame-layout.html: Added.
+    
+
 2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Clamp wordSpacing percentage value.
