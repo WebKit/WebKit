@@ -1294,6 +1294,14 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImmPtr arg2, TrustedImm32 arg3)
+    {
+        move(arg3, GPRInfo::argumentGPR3);
+        move(arg1, GPRInfo::argumentGPR1);
+        move(arg2, GPRInfo::argumentGPR2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2, TrustedImm32 arg3)
     {
         move(arg2, GPRInfo::argumentGPR2);
@@ -1411,6 +1419,14 @@ public:
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImmPtr arg2, GPRReg arg3, TrustedImm32 arg4, TrustedImm32 arg5)
     {
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImmPtr arg2, TrustedImm32 arg3, GPRReg arg4, GPRReg arg5, TrustedImm32 arg6)
+    {
+        poke(arg6, POKE_ARGUMENT_OFFSET + 2);
         poke(arg5, POKE_ARGUMENT_OFFSET + 1);
         poke(arg4, POKE_ARGUMENT_OFFSET);
         setupArgumentsWithExecState(arg1, arg2, arg3);

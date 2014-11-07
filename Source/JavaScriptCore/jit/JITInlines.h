@@ -583,7 +583,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJ operatio
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZIdJZ operation, int32_t op1, const Identifier* identOp2, RegisterID regOp3Tag, RegisterID regOp3Payload, int32_t op4)
 {
-    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(identOp2), regOp3Payload, regOp3Tag, TrustedImm32(op4));
+    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(identOp2), EABI_32BIT_DUMMY_ARG regOp3Payload, regOp3Tag, TrustedImm32(op4));
     return appendCallWithExceptionCheck(operation);
 }
 
