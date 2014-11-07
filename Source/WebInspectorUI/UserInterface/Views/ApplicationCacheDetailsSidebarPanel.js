@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheDetailsSidebarPanel = function() {
+WebInspector.ApplicationCacheDetailsSidebarPanel = function()
+{
     WebInspector.DetailsSidebarPanel.call(this, "application-cache-details", WebInspector.UIString("Storage"), WebInspector.UIString("Storage"), "Images/NavigationItemStorage.svg");
 
     this.element.classList.add(WebInspector.ApplicationCacheDetailsSidebarPanel.StyleClassName);
@@ -44,8 +45,8 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = function() {
 
     this._statusSection = new WebInspector.DetailsSection("application-cache-status", WebInspector.UIString("Status"), [this._statusGroup]);
 
-    this.element.appendChild(this._locationSection.element);
-    this.element.appendChild(this._statusSection.element);
+    this.contentElement.appendChild(this._locationSection.element);
+    this.contentElement.appendChild(this._statusSection.element);
 
     WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
     WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);
@@ -65,6 +66,7 @@ WebInspector.ApplicationCacheDetailsSidebarPanel.Status = {
 
 WebInspector.ApplicationCacheDetailsSidebarPanel.prototype = {
     constructor: WebInspector.ApplicationCacheDetailsSidebarPanel,
+    __proto__: WebInspector.DetailsSidebarPanel.prototype,
 
     // Public
 
@@ -148,5 +150,3 @@ WebInspector.ApplicationCacheDetailsSidebarPanel.prototype = {
         this._statusRow.value = WebInspector.ApplicationCacheDetailsSidebarPanel.Status[this.applicationCacheFrame.status];
     }
 };
-
-WebInspector.ApplicationCacheDetailsSidebarPanel.prototype.__proto__ = WebInspector.DetailsSidebarPanel.prototype;

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceDetailsSidebarPanel = function() {
+WebInspector.ResourceDetailsSidebarPanel = function()
+{
     WebInspector.DetailsSidebarPanel.call(this, "resource-details", WebInspector.UIString("Resource"), WebInspector.UIString("Resource"), "Images/NavigationItemFile.svg", "1");
 
     this.element.classList.add(WebInspector.ResourceDetailsSidebarPanel.StyleClassName);
@@ -99,17 +100,18 @@ WebInspector.ResourceDetailsSidebarPanel = function() {
     this._imageSizeSection = new WebInspector.DetailsSection("resource-type", WebInspector.UIString("Image Size"));
     this._imageSizeSection.groups = [new WebInspector.DetailsSectionGroup([this._imageWidthRow, this._imageHeightRow])];
 
-    this.element.appendChild(this._typeSection.element);
-    this.element.appendChild(this._locationSection.element);
-    this.element.appendChild(this._requestAndResponseSection.element);
-    this.element.appendChild(this._requestHeadersSection.element);
-    this.element.appendChild(this._responseHeadersSection.element);
+    this.contentElement.appendChild(this._typeSection.element);
+    this.contentElement.appendChild(this._locationSection.element);
+    this.contentElement.appendChild(this._requestAndResponseSection.element);
+    this.contentElement.appendChild(this._requestHeadersSection.element);
+    this.contentElement.appendChild(this._responseHeadersSection.element);
 };
 
 WebInspector.ResourceDetailsSidebarPanel.StyleClassName = "resource";
 
 WebInspector.ResourceDetailsSidebarPanel.prototype = {
     constructor: WebInspector.ResourceDetailsSidebarPanel,
+    __proto__: WebInspector.DetailsSidebarPanel.prototype,
 
     // Public
 
@@ -227,7 +229,7 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
 
         if (urlComponents.queryString) {
             // Ensure the "Query Parameters" section is displayed, right after the "Request & Response" section.
-            this.element.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
+            this.contentElement.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
 
             this._queryParametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(urlComponents.queryString, true));
         } else {
@@ -385,12 +387,12 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
         if (resource.type !== WebInspector.Resource.Type.Image || resource.failed) {
             var imageSectionElement = this._imageSizeSection.element;
             if (imageSectionElement.parentNode)
-                this.element.removeChild(imageSectionElement);
+                this.contentElement.removeChild(imageSectionElement);
             return;
         }
 
         // Ensure the section is displayed, right before the "Location" section.
-        this.element.insertBefore(this._imageSizeSection.element, this._locationSection.element);
+        this.contentElement.insertBefore(this._imageSizeSection.element, this._locationSection.element);
 
         // Get the metrics for this resource and fill in the metrics rows with that information.
         resource.getImageSize(function(size) {
@@ -419,7 +421,7 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
         }
 
         // Ensure the section is displayed, right before the "Request Headers" section.
-        this.element.insertBefore(this._requestDataSection.element, this._requestHeadersSection.element);
+        this.contentElement.insertBefore(this._requestDataSection.element, this._requestHeadersSection.element);
 
         var requestDataContentType = resource.requestDataContentType || "";
         if (requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i)) {
@@ -474,5 +476,3 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
         this._requestDataSection.groups = [new WebInspector.DetailsSectionGroup(rows)];
     }
 };
-
-WebInspector.ResourceDetailsSidebarPanel.prototype.__proto__ = WebInspector.DetailsSidebarPanel.prototype;

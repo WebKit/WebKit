@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMDetailsSidebarPanel = function(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element) {
+WebInspector.DOMDetailsSidebarPanel = function(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element)
+{
     WebInspector.DetailsSidebarPanel.call(this, identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element);
 
     this.element.addEventListener("click", this._mouseWasClicked.bind(this), true);
@@ -33,6 +34,7 @@ WebInspector.DOMDetailsSidebarPanel = function(identifier, displayName, singular
 
 WebInspector.DOMDetailsSidebarPanel.prototype = {
     constructor: WebInspector.DOMDetailsSidebarPanel,
+    __proto__: WebInspector.DetailsSidebarPanel.prototype,
 
     // Public
 
@@ -110,5 +112,3 @@ WebInspector.DOMDetailsSidebarPanel.prototype = {
         WebInspector.handlePossibleLinkClick(event, parentFrame);
     }
 };
-
-WebInspector.DOMDetailsSidebarPanel.prototype.__proto__ = WebInspector.DetailsSidebarPanel.prototype;

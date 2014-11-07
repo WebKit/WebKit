@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, keyboardShortcutKey, autoPruneOldTopLevelResourceTreeElements, autoHideToolbarItemWhenEmpty, wantsTopOverflowShadow, element, role, label) {
+WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, keyboardShortcutKey, autoPruneOldTopLevelResourceTreeElements, autoHideToolbarItemWhenEmpty, wantsTopOverflowShadow, element, role, label)
+{
     if (keyboardShortcutKey)
         this._keyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, keyboardShortcutKey, this.toggle.bind(this));
 
@@ -46,10 +47,7 @@ WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, k
 
     this._visibleContentTreeOutlines = new Set;
 
-    this._contentElement = document.createElement("div");
-    this._contentElement.className = WebInspector.NavigationSidebarPanel.ContentElementStyleClassName;
-    this._contentElement.addEventListener("scroll", this._updateContentOverflowShadowVisibility.bind(this));
-    this.element.appendChild(this._contentElement);
+    this.contentElement.addEventListener("scroll", this._updateContentOverflowShadowVisibility.bind(this));
 
     this._contentTreeOutline = this.createContentTreeOutline(true);
 
@@ -93,7 +91,6 @@ WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, k
 WebInspector.NavigationSidebarPanel.StyleClassName = "navigation";
 WebInspector.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
 WebInspector.NavigationSidebarPanel.TopOverflowShadowElementStyleClassName = "top";
-WebInspector.NavigationSidebarPanel.ContentElementStyleClassName = "content";
 WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName = "hidden";
 WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName = "navigation-sidebar-panel-content-tree-outline";
 WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName = "hide-disclosure-buttons";
@@ -106,13 +103,9 @@ WebInspector.NavigationSidebarPanel.DisclosureTriangleSelectedCanvasIdentifierSu
 
 WebInspector.NavigationSidebarPanel.prototype = {
     constructor: WebInspector.NavigationSidebarPanel,
+    __proto__: WebInspector.SidebarPanel.prototype,
 
     // Public
-
-    get contentElement()
-    {
-        return this._contentElement;
-    },
 
     get contentTreeOutlineElement()
     {
@@ -173,7 +166,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         contentTreeOutlineElement.className = WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName;
         if (!dontHideByDefault)
             contentTreeOutlineElement.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
-        this._contentElement.appendChild(contentTreeOutlineElement);
+        this.contentElement.appendChild(contentTreeOutlineElement);
 
         var contentTreeOutline = new TreeOutline(contentTreeOutlineElement);
         contentTreeOutline.allowsRepeatSelection = true;
@@ -441,8 +434,8 @@ WebInspector.NavigationSidebarPanel.prototype = {
     {
         delete this._updateContentOverflowShadowVisibilityIdentifier;
 
-        var scrollHeight = this._contentElement.scrollHeight;
-        var offsetHeight = this._contentElement.offsetHeight;
+        var scrollHeight = this.contentElement.scrollHeight;
+        var offsetHeight = this.contentElement.offsetHeight;
 
         if (scrollHeight < offsetHeight) {
             if (this._topOverflowShadowElement)
@@ -456,7 +449,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         else
             const edgeThreshold = 1;
 
-        var scrollTop = this._contentElement.scrollTop;
+        var scrollTop = this.contentElement.scrollTop;
 
         var topCoverage = Math.min(scrollTop, edgeThreshold);
         var bottomCoverage = Math.max(0, (offsetHeight + scrollTop) - (scrollHeight - edgeThreshold));
@@ -733,5 +726,3 @@ WebInspector.NavigationSidebarPanel.prototype = {
         }
     }
 };
-
-WebInspector.NavigationSidebarPanel.prototype.__proto__ = WebInspector.SidebarPanel.prototype;

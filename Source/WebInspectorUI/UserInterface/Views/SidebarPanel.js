@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideToolTip, image, element, role, label) {
+WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideToolTip, image, element, role, label)
+{
     WebInspector.Object.call(this);
 
     this._identifier = identifier;
@@ -39,13 +40,18 @@ WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideT
     this._element.setAttribute("role", role || "group");
     this._element.setAttribute("aria-label", label || displayName);
 
+    this._contentElement = document.createElement("div");
+    this._contentElement.className = WebInspector.SidebarPanel.ContentElementStyleClassName;
+    this._element.appendChild(this._contentElement);
 };
 
 WebInspector.SidebarPanel.StyleClassName = "panel";
 WebInspector.SidebarPanel.SelectedStyleClassName = "selected";
+WebInspector.SidebarPanel.ContentElementStyleClassName = "content";
 
 WebInspector.SidebarPanel.prototype = {
     constructor: WebInspector.SidebarPanel,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -62,6 +68,11 @@ WebInspector.SidebarPanel.prototype = {
     get element()
     {
         return this._element;
+    },
+
+    get contentElement()
+    {
+        return this._contentElement;
     },
 
     get visible()
@@ -152,5 +163,3 @@ WebInspector.SidebarPanel.prototype = {
         this._toolbarItem.activated = this.visible;
     }
 };
-
-WebInspector.SidebarPanel.prototype.__proto__ = WebInspector.Object.prototype;

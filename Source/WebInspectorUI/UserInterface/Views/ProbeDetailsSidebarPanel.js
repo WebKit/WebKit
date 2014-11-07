@@ -56,14 +56,14 @@ WebInspector.ProbeDetailsSidebarPanel.prototype = {
     {
         for (var probeSet of this._inspectedProbeSets) {
             var removedSection = this._probeSetSections.get(probeSet);
-            this.element.removeChild(removedSection.element);
+            this.contentElement.removeChild(removedSection.element);
         }
 
         this._inspectedProbeSets = newProbeSets;
 
         for (var probeSet of newProbeSets) {
             var shownSection = this._probeSetSections.get(probeSet);
-            this.element.appendChild(shownSection.element);
+            this.contentElement.appendChild(shownSection.element);
         }
     },
 

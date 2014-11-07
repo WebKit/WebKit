@@ -306,8 +306,8 @@ WebInspector.contentLoaded = function()
         this.domNodeDetailsSidebarPanel, this.cssStyleDetailsSidebarPanel, this.probeDetailsSidebarPanel];
 
     if (window.LayerTreeAgent) {
-        this.layerTreeSidebarPanel = new WebInspector.LayerTreeSidebarPanel;
-        this.detailsSidebarPanels.splice(this.detailsSidebarPanels.length - 1, 0, this.layerTreeSidebarPanel);
+        this.layerTreeDetailsSidebarPanel = new WebInspector.LayerTreeDetailsSidebarPanel;
+        this.detailsSidebarPanels.splice(this.detailsSidebarPanels.length - 1, 0, this.layerTreeDetailsSidebarPanel);
     }
 
     this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};

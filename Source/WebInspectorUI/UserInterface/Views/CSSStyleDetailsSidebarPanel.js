@@ -31,10 +31,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = function()
 
     this._navigationBar = new WebInspector.NavigationBar(null, null, "tablist");
     this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
-    this.element.appendChild(this._navigationBar.element);
-
-    this._contentElement = document.createElement("div");
-    this._contentElement.className = WebInspector.CSSStyleDetailsSidebarPanel.ContentStyleClassName;
+    this.element.insertBefore(this._navigationBar.element, this.contentElement);
 
     this._forcedPseudoClassCheckboxes = {};
 
@@ -68,10 +65,8 @@ WebInspector.CSSStyleDetailsSidebarPanel = function()
             groupElement.appendChild(labelElement);
         }, this);
 
-        this._contentElement.appendChild(this._forcedPseudoClassContainer);
+        this.contentElement.appendChild(this._forcedPseudoClassContainer);
     }
-
-    this.element.appendChild(this._contentElement);
 
     this._computedStyleDetailsPanel = new WebInspector.ComputedStyleDetailsPanel;
     this._rulesStyleDetailsPanel = new WebInspector.RulesStyleDetailsPanel;
@@ -89,13 +84,13 @@ WebInspector.CSSStyleDetailsSidebarPanel = function()
     this._navigationBar.selectedNavigationItem = this._lastSelectedSectionSetting.value;
 };
 
-WebInspector.CSSStyleDetailsSidebarPanel.ContentStyleClassName = "content";
 WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName = "pseudo-classes";
 WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName = "group";
 WebInspector.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = 38; // Default height of the forced pseudo classes container. Updated in widthDidChange.
 
 WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
     constructor: WebInspector.CSSStyleDetailsSidebarPanel,
+    __proto__: WebInspector.DOMDetailsSidebarPanel.prototype,
 
     // Public
 
@@ -110,7 +105,7 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
         if (!domNode)
             return;
 
-        this._contentElement.scrollTop = this._initialScrollOffset;
+        this.contentElement.scrollTop = this._initialScrollOffset;
 
         for (var i = 0; i < this._panels.length; ++i) {
             delete this._panels[i].element._savedScrollTop;
@@ -195,19 +190,19 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
 
         if (this._selectedPanel) {
             this._selectedPanel.hidden();
-            this._selectedPanel.element._savedScrollTop = this._contentElement.scrollTop;
+            this._selectedPanel.element._savedScrollTop = this.contentElement.scrollTop;
             this._selectedPanel.element.remove();
         }
 
         this._selectedPanel = selectedPanel;
 
         if (this._selectedPanel) {
-            this._contentElement.appendChild(this._selectedPanel.element);
+            this.contentElement.appendChild(this._selectedPanel.element);
 
             if (typeof this._selectedPanel.element._savedScrollTop === "number")
-                this._contentElement.scrollTop = this._selectedPanel.element._savedScrollTop;
+                this.contentElement.scrollTop = this._selectedPanel.element._savedScrollTop;
             else
-                this._contentElement.scrollTop = this._initialScrollOffset;
+                this.contentElement.scrollTop = this._initialScrollOffset;
 
             this._selectedPanel.shown();
         }
@@ -236,5 +231,3 @@ WebInspector.CSSStyleDetailsSidebarPanel.prototype = {
         }
     }
 };
-
-WebInspector.CSSStyleDetailsSidebarPanel.prototype.__proto__ = WebInspector.DOMDetailsSidebarPanel.prototype;

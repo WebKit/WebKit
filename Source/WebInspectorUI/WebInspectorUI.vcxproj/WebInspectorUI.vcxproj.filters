@@ -387,9 +387,6 @@
     <None Include="..\UserInterface\DetailsSectionSimpleRow.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\DetailsSidebarPanel.css">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\DetailsSidebarPanel.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -633,10 +630,10 @@
     <None Include="..\UserInterface\LayerTreeObserver.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\LayerTreeSidebarPanel.css">
+    <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.css">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\LayerTreeSidebarPanel.js">
+    <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\LayoutTimelineDataGrid.js">
@@ -895,6 +892,9 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\Sidebar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SidebarPanel.css">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\SidebarPanel.js">

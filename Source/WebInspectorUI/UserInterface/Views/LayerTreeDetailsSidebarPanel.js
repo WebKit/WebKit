@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayerTreeSidebarPanel = function() {
+WebInspector.LayerTreeDetailsSidebarPanel = function()
+{
     WebInspector.DOMDetailsSidebarPanel.call(this, "layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"), "Images/NavigationItemLayers.svg", "3");
 
     this._dataGridNodesByLayerId = {};
 
-    this.element.classList.add(WebInspector.LayerTreeSidebarPanel.StyleClassName);
+    this.element.classList.add(WebInspector.LayerTreeDetailsSidebarPanel.StyleClassName);
 
     WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
 
@@ -39,10 +40,11 @@ WebInspector.LayerTreeSidebarPanel = function() {
     this._buildBottomBar();
 };
 
-WebInspector.LayerTreeSidebarPanel.StyleClassName = "layer-tree";
+WebInspector.LayerTreeDetailsSidebarPanel.StyleClassName = "layer-tree";
 
-WebInspector.LayerTreeSidebarPanel.prototype = {
-    constructor: WebInspector.LayerTreeSidebarPanel,
+WebInspector.LayerTreeDetailsSidebarPanel.prototype = {
+    constructor: WebInspector.LayerTreeDetailsSidebarPanel,
+    __proto__: WebInspector.DOMDetailsSidebarPanel.prototype,
 
     // DetailsSidebarPanel Overrides.
 
@@ -119,7 +121,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
 
         this._layerInfoSection = new WebInspector.DetailsSection("layer-info", WebInspector.UIString("Layer Info"), [this._noLayerInformationGroup]);
 
-        this.element.appendChild(this._layerInfoSection.element);
+        this.contentElement.appendChild(this._layerInfoSection.element);
     },
 
     _buildDataGridSection: function()
@@ -156,7 +158,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
         var group = new WebInspector.DetailsSectionGroup([this._childLayersRow]);
         var section = new WebInspector.DetailsSection("layer-children", WebInspector.UIString("Child Layers"), [group], null, true);
 
-        var element = this.element.appendChild(section.element);
+        var element = this.contentElement.appendChild(section.element);
         element.classList.add(section.identifier);
     },
 
@@ -439,5 +441,3 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
             addReason(WebInspector.UIString("Element has “blend-mode” style"));
     }
 };
-
-WebInspector.LayerTreeSidebarPanel.prototype.__proto__ = WebInspector.DOMDetailsSidebarPanel.prototype;

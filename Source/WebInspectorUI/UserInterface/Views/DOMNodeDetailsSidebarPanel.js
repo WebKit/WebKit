@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMNodeDetailsSidebarPanel = function() {
+WebInspector.DOMNodeDetailsSidebarPanel = function()
+{
     WebInspector.DOMDetailsSidebarPanel.call(this, "dom-node-details", WebInspector.UIString("Node"), WebInspector.UIString("Node"), "Images/NavigationItemAngleBrackets.svg", "2");
 
     WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeModified, this._attributesChanged, this);
@@ -51,10 +52,10 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
     this._eventListenersSectionGroup = new WebInspector.DetailsSectionGroup;
     var eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup]);    
 
-    this.element.appendChild(identitySection.element);
-    this.element.appendChild(attributesSection.element);
-    this.element.appendChild(propertiesSection.element);
-    this.element.appendChild(eventListenersSection.element);
+    this.contentElement.appendChild(identitySection.element);
+    this.contentElement.appendChild(attributesSection.element);
+    this.contentElement.appendChild(propertiesSection.element);
+    this.contentElement.appendChild(eventListenersSection.element);
 
     if (this._accessibilitySupported()) {
         this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
@@ -84,7 +85,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
         this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
         var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);    
 
-        this.element.appendChild(accessibilitySection.element);
+        this.contentElement.appendChild(accessibilitySection.element);
     }
 };
 
@@ -93,6 +94,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.PropertiesObjectGroupName = "dom-node-de
 
 WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
     constructor: WebInspector.DOMNodeDetailsSidebarPanel,
+    __proto__: WebInspector.DOMDetailsSidebarPanel.prototype,
 
     // Public
 
@@ -589,5 +591,3 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
         return dataGrid;
     }
 };
-
-WebInspector.DOMNodeDetailsSidebarPanel.prototype.__proto__ = WebInspector.DOMDetailsSidebarPanel.prototype;

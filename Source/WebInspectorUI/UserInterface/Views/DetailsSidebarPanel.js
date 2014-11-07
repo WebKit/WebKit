@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSidebarPanel = function(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element) {
+WebInspector.DetailsSidebarPanel = function(identifier, displayName, singularDisplayName, image, keyboardShortcutKey, element)
+{
     if (keyboardShortcutKey)
         this._keyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.Shift, keyboardShortcutKey, this.toggle.bind(this));
 
@@ -44,6 +45,7 @@ WebInspector.DetailsSidebarPanel.StyleClassName = "details";
 
 WebInspector.DetailsSidebarPanel.prototype = {
     constructor: WebInspector.DetailsSidebarPanel,
+    __proto__: WebInspector.SidebarPanel.prototype,
 
     // Public
 
@@ -76,5 +78,3 @@ WebInspector.DetailsSidebarPanel.prototype = {
         // Implemented by subclasses.
     }
 };
-
-WebInspector.DetailsSidebarPanel.prototype.__proto__ = WebInspector.SidebarPanel.prototype;

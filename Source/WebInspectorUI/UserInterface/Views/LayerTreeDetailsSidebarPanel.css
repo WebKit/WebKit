@@ -23,45 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.layer-tree.panel .data-grid {
+.sidebar > .panel.details.layer-tree > .content {
+    bottom: 28px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.details.layer-tree > .content {
+    bottom: 22px;
+}
+
+.panel.details.layer-tree .data-grid {
     border-right: none;
     border-left: none;
     border-bottom: none;
 }
 
-.layer-tree.panel .name-column .icon {
+.panel.details.layer-tree .name-column .icon {
     content: url(../Images/DOMElement.svg);
 }
 
-.layer-tree.panel tr.reflection .name-column .icon {
+.panel.details.layer-tree tr.reflection .name-column .icon {
     content: url(../Images/Reflection.svg);
 }
 
-.layer-tree.panel tr.pseudo-element .name-column .icon {
+.panel.details.layer-tree tr.pseudo-element .name-column .icon {
     content: url(../Images/PseudoElement.svg);
 }
 
-.layer-tree.panel .name-column .pseudo-element,
-.layer-tree.panel .name-column .reflection {
+.panel.details.layer-tree .name-column .pseudo-element,
+.panel.details.layer-tree .name-column .reflection {
     color: rgb(128, 128, 128);
 }
 
-.layer-tree.panel tr.selected .name-column .pseudo-element,
-.layer-tree.panel tr.selected .name-column .reflection {
+.panel.details.layer-tree tr.selected .name-column .pseudo-element,
+.panel.details.layer-tree tr.selected .name-column .reflection {
     color: rgba(255, 255, 255, 0.75);
 }
 
-.layer-tree.panel .bottom-bar {
-    position: relative;
-    height: 28px;
+.panel.details.layer-tree .bottom-bar {
+    position: absolute;
     display: flex;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid rgb(179, 179, 179);
+    background-color: white;
 }
 
-body.mac-platform.legacy .layer-tree.panel .bottom-bar {
-    height: 22px;
+body.mac-platform.legacy .panel.details.layer-tree .bottom-bar {
+    height: 23px;
 }
 
-.layer-tree.panel .bottom-bar > div {
+.panel.details.layer-tree .bottom-bar > div {
     padding: 4px 6px;
 
     line-height: 20px;
@@ -74,12 +85,12 @@ body.mac-platform.legacy .layer-tree.panel .bottom-bar {
     flex: 1;
 }
 
-body.mac-platform.legacy .layer-tree.panel .bottom-bar > div {
+body.mac-platform.legacy .panel.details.layer-tree .bottom-bar > div {
     line-height: inherit;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 }
 
-.layer-tree.panel .layers-memory-label {
+.panel.details.layer-tree .layers-memory-label {
     justify-content: flex-end;
 }
 

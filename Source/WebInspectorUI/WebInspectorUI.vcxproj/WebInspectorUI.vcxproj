@@ -379,7 +379,6 @@
     <None Include="..\UserInterface\DetailsSectionPropertiesRow.js" />
     <None Include="..\UserInterface\DetailsSectionRow.js" />
     <None Include="..\UserInterface\DetailsSectionSimpleRow.js" />
-    <None Include="..\UserInterface\DetailsSidebarPanel.css" />
     <None Include="..\UserInterface\DetailsSidebarPanel.js" />
     <None Include="..\UserInterface\DividerNavigationItem.css" />
     <None Include="..\UserInterface\DividerNavigationItem.js" />
@@ -680,8 +679,8 @@
     <None Include="..\UserInterface\LayerTreeDataGridNode.js" />
     <None Include="..\UserInterface\LayerTreeManager.js" />
     <None Include="..\UserInterface\LayerTreeObserver.js" />
-    <None Include="..\UserInterface\LayerTreeSidebarPanel.css" />
-    <None Include="..\UserInterface\LayerTreeSidebarPanel.js" />
+    <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.css" />
+    <None Include="..\UserInterface\LayerTreeDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\LayoutTimelineDataGrid.js" />
     <None Include="..\UserInterface\LayoutTimelineDataGridNode.js" />
     <None Include="..\UserInterface\LayoutTimelineRecord.js" />
@@ -771,6 +770,7 @@
     <None Include="..\UserInterface\Setting.js" />
     <None Include="..\UserInterface\Sidebar.css" />
     <None Include="..\UserInterface\Sidebar.js" />
+    <None Include="..\UserInterface\SidebarPanel.css" />
     <None Include="..\UserInterface\SidebarPanel.js" />
     <None Include="..\UserInterface\SourceCode.js" />
     <None Include="..\UserInterface\SourceCodeLocation.js" />

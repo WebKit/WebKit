@@ -24,14 +24,7 @@
  */
 
 .sidebar > .panel.navigation > .content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     bottom: 28px;
-
-    overflow-x: hidden;
-    overflow-y: auto;
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation > .content {

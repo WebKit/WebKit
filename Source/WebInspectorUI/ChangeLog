@@ -1,3 +1,87 @@
+2014-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Layer summary should be bottom sticky
+        https://bugs.webkit.org/show_bug.cgi?id=138518
+
+        Reviewed by Timothy Hatcher.
+
+        Previously only NavigationSidebars had a content view. Now, give all
+        Sidebars a contentElement section for content.
+
+        Update all Details Sidebars to append content to the contentElement
+        instead of directly to the element. Only two Details sidebars append
+        to the element:
+
+          - CSSStyleDetailsSidebarPanel for the navigation bar at the top
+          - LayerTreeDetailsSidebarPanel for the summary view at the bottom
+
+        Take this opportunity to fix up some naming and styles as well.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        (WebInspector.SidebarPanel.prototype.get contentElement):
+        Give every SidebarPanel a content element.
+
+        * UserInterface/Views/DetailsSidebarPanel.css: Removed.
+        (.sidebar > .panel > .content):
+        * UserInterface/Views/SidebarPanel.css: Added.
+        (.sidebar > .panel > .content):
+        And give that content element a default style.
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .content):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+        (WebInspector.NavigationSidebarPanel.prototype.get contentElement): Deleted.
+        Navigation sidebar panels now use the parent's contentElement.
+        Also, carry over their default styles, overriding the base.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js: Renamed from Source/WebInspectorUI/UserInterface/Views/LayerTreeSidebarPanel.js.
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildLayerInfoSection):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildBottomBar):
+        Rename LayerTreeSidebarPanel to make it clear this is a DetailsSidebarPanel.
+        Add the "bottom bar" to the root element, and sections to the contentElement.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css: Renamed from Source/WebInspectorUI/UserInterface/Views/LayerTreeSidebarPanel.css.
+        (.sidebar > .layer-tree.panel > .content):
+        (body.mac-platform.legacy .sidebar > .layer-tree.panel > .content):
+        Style the bottom bar to pin it to the bottom of the sidebar panel.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.refresh):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._navigationItemSelected):
+        Add the navigation bar to the root element, and sections to the contentElement.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        * UserInterface/Main.html:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        Update for new names.
+
+        * UserInterface/Views/ApplicationCacheDetailsSidebarPanel.js:
+        (WebInspector.ApplicationCacheDetailsSidebarPanel):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        (WebInspector.DOMDetailsSidebarPanel):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+        * UserInterface/Views/DetailsSidebarPanel.js:
+        (WebInspector.DetailsSidebarPanel):
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshURL):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshImageSizeSection):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestDataSection):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.refresh.delayedWork):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.refresh):
+        All details sidebar panels now use the contentElement instead of element for content.
+
 2014-11-07  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Cursor and scroll view jumps around when modifying styles
