@@ -616,7 +616,8 @@ void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSel
 {
     NSDictionary *options = nil;
     RefPtr<Range> selectedRange = rangeForDictionaryLookupForSelection(selection, &options);
-    performDictionaryLookupForRange(frame, *selectedRange, options);
+    if (selectedRange)
+        performDictionaryLookupForRange(frame, *selectedRange, options);
 }
 
 void WebPage::performDictionaryLookupOfCurrentSelection()

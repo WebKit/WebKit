@@ -1,3 +1,15 @@
+2014-11-07  Beth Dakin  <bdakin@apple.com>
+
+        Null deref performing Lookup on Apple Trailers full screen button
+        https://bugs.webkit.org/show_bug.cgi?id=138513
+        -and corresponding-
+        rdar://problem/18909699
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+
 2014-11-07  Anshu Chimala  <anshu@apple.com>
 
         Make it possible to associate snapshots with back/forward list items other than the current item.
