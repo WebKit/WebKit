@@ -1,3 +1,32 @@
+2014-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Move nodeFromPoint() back to Document where it belongs
+        https://bugs.webkit.org/show_bug.cgi?id=137012
+
+        Reviewed by Zalan Bujtas.
+
+        nodeFromPoint() was moved into TreeScope for ShadowDOM work, but now we can move
+        it back to its logical place.
+        
+        Make versions of elementFromPoint and caretRangeFromPoint that take LayoutPoints,
+        and change the current scale/offset code to be in layout units (which results
+        in a small behavior change).
+        
+        elementFromPoint(int, int) and caretRangeFromPoint(int, int) are still required
+        for bindings code.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeFromPoint):
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+        * dom/Document.h:
+        (WebCore::Document::elementFromPoint): Move logic from TreeScope::elementFromPoint()
+        here.
+        * dom/TreeScope.cpp:
+        (WebCore::nodeFromPoint): Deleted.
+        (WebCore::TreeScope::elementFromPoint): Deleted.
+        * dom/TreeScope.h:
+
 2014-09-19  Chris Dumez  <cdumez@apple.com>
 
         Allow DOM methods to return references instead of pointers

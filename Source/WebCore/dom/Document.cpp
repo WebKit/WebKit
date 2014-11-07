@@ -1378,20 +1378,64 @@ String Document::suggestedMIMEType() const
     return String();
 }
 
-Element* Document::elementFromPoint(int x, int y) const
+Node* Document::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
+{
+    if (!frame() || !view())
+        return nullptr;
+    
+    Frame& frame = *this->frame();
+    
+    float scaleFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
+
+    LayoutPoint contentsPoint = clientPoint;
+    contentsPoint.scale(scaleFactor, scaleFactor);
+    contentsPoint.moveBy(view()->contentsScrollPosition());
+
+    LayoutRect visibleRect;
+#if PLATFORM(IOS)
+    visibleRect = view()->unobscuredContentRect();
+#else
+    visibleRect = view()->visibleContentRect();
+#endif
+    if (!visibleRect.contains(contentsPoint))
+        return nullptr;
+
+    HitTestResult result(contentsPoint);
+    renderView()->hitTest(HitTestRequest(), result);
+
+    if (localPoint)
+        *localPoint = result.localPoint();
+
+    return result.innerNode();
+}
+
+Element* Document::elementFromPoint(const LayoutPoint& clientPoint)
 {
     if (!hasLivingRenderTree())
         return nullptr;
 
-    return TreeScope::elementFromPoint(x, y);
+    Node* node = nodeFromPoint(clientPoint);
+    while (node && !node->isElementNode())
+        node = node->parentNode();
+
+    if (node)
+        node = ancestorInThisScope(node);
+
+    return toElement(node);
 }
 
 PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
+    return caretRangeFromPoint(LayoutPoint(x, y));
+}
+
+PassRefPtr<Range> Document::caretRangeFromPoint(const LayoutPoint& clientPoint)
+{
     if (!hasLivingRenderTree())
         return nullptr;
+
     LayoutPoint localPoint;
-    Node* node = nodeFromPoint(this, x, y, &localPoint);
+    Node* node = nodeFromPoint(clientPoint, &localPoint);
     if (!node)
         return nullptr;
 

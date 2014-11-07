@@ -24,11 +24,11 @@ PASS Range.startOffset check (got 14, expected 14)
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 1, expected 1)
 PASS Range.startContainer check (got [object Text], expected [object Text])
-PASS Range.startOffset check (got 13, expected 13)
+PASS Range.startOffset check (got 6, expected 6)
 PASS Range.startContainer check (got [object Text], expected [object Text])
 PASS Range.startOffset check (got 4, expected 4)
 PASS Range.startContainer check (got [object Text], expected [object Text])
-PASS Range.startOffset check (got 16, expected 16)
+PASS Range.startOffset check (got 10, expected 10)
  
 PASS successfullyParsed is true
 

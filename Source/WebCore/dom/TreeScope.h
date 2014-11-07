@@ -77,8 +77,6 @@ public:
     void removeImageMap(HTMLMapElement&);
     HTMLMapElement* getImageMap(const String& url) const;
 
-    Element* elementFromPoint(int x, int y) const;
-
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
     void addLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
@@ -148,7 +146,6 @@ inline bool TreeScope::containsMultipleElementsWithName(const AtomicString& name
     return m_elementsByName && name.impl() && m_elementsByName->containsMultiple(*name.impl());
 }
 
-Node* nodeFromPoint(Document*, int x, int y, LayoutPoint* localPoint = 0);
 TreeScope* commonTreeScope(Node*, Node*);
 
 } // namespace WebCore

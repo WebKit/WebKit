@@ -1,3 +1,17 @@
+2014-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Move nodeFromPoint() back to Document where it belongs
+        https://bugs.webkit.org/show_bug.cgi?id=137012
+
+        Reviewed by Zalan Bujtas.
+        
+        All platforms use subpixel layout now, so remove the conditional behavior in this test.
+        Fix the test to account for scaling now being done in layout units.
+
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt:
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html:
+        * platform/mac/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt:
+
 2014-10-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r169024): Undetermined text is not displayed in the search field of Adobe Help Website
