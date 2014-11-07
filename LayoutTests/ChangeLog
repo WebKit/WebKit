@@ -1,3 +1,17 @@
+2014-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pseudo element matchedCSSRules do not include matching selector info
+        https://bugs.webkit.org/show_bug.cgi?id=138438
+
+        Reviewed by Benjamin Poulain.
+
+        * inspector/css/pseudo-element-matches-expected.txt: Added.
+        * inspector/css/pseudo-element-matches.html: Added.
+        Add a test to ensure we get correct selector matches for a pseudo element
+        inside of an <audio> element. The test is heavily coupled to our UserAgent
+        stylesheet and Shadow DOM layout, so check for possible failures if
+        WebCore changes things.
+
 2014-11-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] the sandbag JS utility code isn't producing the correct expected result in the shape-image gradient tests

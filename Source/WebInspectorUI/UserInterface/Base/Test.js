@@ -63,6 +63,8 @@ WebInspector.loaded = function()
 
     // Perform one-time tasks.
     WebInspector.CSSCompletions.requestCSSNameCompletions();
+
+    this.showShadowDOMSetting = new WebInspector.Setting("test-show-shadow-dom", true);
 }
 
 WebInspector.contentLoaded = function()

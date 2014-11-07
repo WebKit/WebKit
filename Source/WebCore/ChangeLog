@@ -1,3 +1,27 @@
+2014-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pseudo element matchedCSSRules do not include matching selector info
+        https://bugs.webkit.org/show_bug.cgi?id=138438
+
+        Reviewed by Benjamin Poulain.
+
+        Test: inspector/css/psuedo-element-matches.html
+
+        Element::matches is not the correct API to use to check selectors with pseudo-elements.
+        Instead we should use the CSS Selector checking machinary which understands them.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow):
+        Some RefPtr release improvements.
+
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        Use a SelectorChecker to check each Selector against the element.
+        This matches the SelectorChecker used when we collected the rules
+        for this element.
+
 2014-11-07  Chris Dumez  <cdumez@apple.com>
 
         Drop useless HTMLElement::isURLAttribute() override

@@ -1,3 +1,15 @@
+2014-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pseudo element matchedCSSRules do not include matching selector info
+        https://bugs.webkit.org/show_bug.cgi?id=138438
+
+        Reviewed by Benjamin Poulain.
+
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        Include a global setting for shadow dom used by DOM model classes.
+        Give it a "test" specific name to not override non-test setting values.
+
 2014-11-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r175628.
