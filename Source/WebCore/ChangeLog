@@ -1,3 +1,18 @@
+2014-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Put names on a couple of video-related CALayers
+        https://bugs.webkit.org/show_bug.cgi?id=138491
+
+        Reviewed by Eric Carlson.
+
+        In debug, set layer names on a couple of video-related layers to make
+        debugging easier.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+
 2014-11-06  Darin Adler  <darin@apple.com>
 
         REGRESSION (r175549): http/tests/multipart/stop-crash.html failing (assertion failure in CachedResource::setEncodedSize)

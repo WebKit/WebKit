@@ -608,6 +608,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
 
     m_sampleBufferDisplayLayer = adoptNS([[getAVSampleBufferDisplayLayerClass() alloc] init]);
+#ifndef NDEBUG
+    [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
+#endif
+
     [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
 }
 

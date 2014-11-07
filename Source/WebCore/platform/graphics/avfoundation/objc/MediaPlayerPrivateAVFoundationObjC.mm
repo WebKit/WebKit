@@ -622,6 +622,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 #if PLATFORM(IOS)
     [m_videoLayer web_disableAllActions];
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
+#ifndef NDEBUG
+    [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
+#endif
     [m_videoInlineLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
