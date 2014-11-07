@@ -603,6 +603,15 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     _page->changeSpellingToWord(selectedCorrection);
 }
 
+#pragma mark Whitespace actions
+
+- (NSArray *)_defaultMenuItemsForWhitespaceInEditableArea
+{
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
+
+    return @[ [NSMenuItem separatorItem], [NSMenuItem separatorItem], pasteItem.get() ];
+}
+
 #pragma mark NSMenuDelegate implementation
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
@@ -816,6 +825,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 
         _type = kWKActionMenuReadOnlyText;
         return [self _defaultMenuItemsForText];
+    }
+
+    if (hitTestResult->isContentEditable()) {
+        _type = kWKActionMenuWhitespaceInEditableArea;
+        return [self _defaultMenuItemsForWhitespaceInEditableArea];
     }
 
     _type = kWKActionMenuNone;

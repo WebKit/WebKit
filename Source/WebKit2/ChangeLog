@@ -1,5 +1,20 @@
 2014-11-07  Beth Dakin  <bdakin@apple.com>
 
+        Support action menus for whitespace in editable areas
+        https://bugs.webkit.org/show_bug.cgi?id=138488
+        -and corresponding-
+        rdar://problem/18877717
+
+        Reviewed by Tim Horton.
+
+        Very simple menu for whitespace in editable areas.
+        * Shared/API/c/WKActionMenuTypes.h:
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForWhitespaceInEditableArea]):
+        (-[WKActionMenuController _defaultMenuItems:]):
+
+2014-11-07  Beth Dakin  <bdakin@apple.com>
+
         Invoking an action menu should dismiss existing selection
         https://bugs.webkit.org/show_bug.cgi?id=138496
         -and corresponding-
