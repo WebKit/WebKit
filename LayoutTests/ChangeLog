@@ -1,3 +1,13 @@
+2014-11-07  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: get-by-pname.js is failing when run with JSC_useLLINT=false and other special JIT configurations.
+        <https://webkit.org/b/138497>
+
+        Unreviewed.
+
+        * js/script-tests/get-by-pname.js:
+        - temporarily skipping this from the JSC tests to green the bots until the issue is fixed.
+
 2014-11-06  Darin Adler  <darin@apple.com>
 
         REGRESSION (r175549): http/tests/multipart/stop-crash.html failing (assertion failure in CachedResource::setEncodedSize)

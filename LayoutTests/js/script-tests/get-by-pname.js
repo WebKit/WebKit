@@ -1,3 +1,5 @@
+//@ skip
+
 description(
 "This tests that op_get_by_pname is compiled correctly."
 );
