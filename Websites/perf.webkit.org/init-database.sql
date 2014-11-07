@@ -138,3 +138,33 @@ CREATE TABLE bugs (
     CONSTRAINT bug_tracker_and_run_must_be_unique UNIQUE(bug_tracker, bug_run));
 CREATE INDEX bugs_tracker_number_index ON bugs(bug_tracker, bug_number);
 CREATE INDEX bugs_run_index ON bugs(bug_run);
+
+CREATE TABLE analysis_tasks (
+    task_id serial PRIMARY KEY,
+    task_name varchar(256) NOT NULL,
+    task_author varchar(256),
+    task_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    task_platform integer REFERENCES platforms NOT NULL,
+    task_metric integer REFERENCES test_metrics NOT NULL,
+    task_start_run integer REFERENCES test_runs,
+    task_end_run integer REFERENCES test_runs,
+    CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run));
+
+CREATE TABLE analysis_test_groups (
+    testgroup_id serial PRIMARY KEY,
+    testgroup_task integer REFERENCES analysis_tasks NOT NULL,
+    testgroup_name varchar(256),
+    testgroup_author varchar(256) NOT NULL,
+    testgroup_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'));
+CREATE INDEX testgroup_task_index ON analysis_test_groups(testgroup_task);
+
+CREATE TABLE root_sets (
+    rootset_id serial PRIMARY KEY);
+
+CREATE TABLE build_requests (
+    request_id serial PRIMARY KEY,
+    request_group integer REFERENCES analysis_test_groups NOT NULL,
+    request_order integer NOT NULL,
+    request_root_set integer REFERENCES root_sets NOT NULL,
+    request_build integer REFERENCES builds,
+    CONSTRAINT build_request_order_must_be_unique_in_group UNIQUE(request_group, request_order));

@@ -31,7 +31,7 @@ function main() {
     }
     $db->commit_transaction();
 
-    exit_with_success(array('bug_id' => $bug_id));
+    exit_with_success(array('bugId' => $bug_id));
 }
 
 main();

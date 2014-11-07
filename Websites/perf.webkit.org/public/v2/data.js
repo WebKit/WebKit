@@ -198,18 +198,18 @@ Measurement.prototype._formatRevisionRange = function (previousRevision, current
     } else if (currentRevision.indexOf(' ') >= 0) // e.g. 10.9 13C64.
         revisionDelimiter = ' - ';
     else if (currentRevision.length == 40) { // e.g. git hash
-        formattedCurrentHash = currentRevision.substring(0, 8);
+        var formattedCurrentHash = currentRevision.substring(0, 8);
         if (previousRevision)
             label = previousRevision.substring(0, 8) + '..' + formattedCurrentHash;
         else
-            label = 'At ' + formattedCurrentHash;
+            label = formattedCurrentHash;
     }
 
     if (!label) {
         if (previousRevision)
             label = revisionPrefix + previousRevision + revisionDelimiter + revisionPrefix + currentRevision;
         else
-            label = 'At ' + revisionPrefix + currentRevision;
+            label = revisionPrefix + currentRevision;
     }
 
     return {
@@ -373,6 +373,18 @@ function TimeSeries(series)
     });
     this._min = min;
     this._max = max;
+}
+
+TimeSeries.prototype.findPointByMeasurementId = function (measurementId)
+{
+    return this._series.find(function (point) { return point.measurement.id() == measurementId; });
+}
+
+TimeSeries.prototype.seriesBetweenPoints = function (startPoint, endPoint)
+{
+    if (!startPoint.seriesIndex || !endPoint.seriesIndex)
+        return null;
+    return this._series.slice(startPoint.seriesIndex, endPoint.seriesIndex + 1);
 }
 
 TimeSeries.prototype.minMaxForTimeRange = function (startTime, endTime)

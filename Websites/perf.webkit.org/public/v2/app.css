@@ -411,3 +411,63 @@ table.dashboard tbody td .progress {
     line-height: 12rem;
     vertical-align: center;
 }
+
+#analysis-tasks,
+.test-groups > table {
+    border: solid 0px #999;
+    border-collapse: collapse;
+}
+
+#analysis-tasks thead,
+.test-groups > table thead {
+    color: #c93;
+}
+
+#analysis-tasks th,
+.test-groups > table th {
+    font-weight: normal;
+}
+
+#analysis-tasks td,
+#analysis-tasks th,
+.test-groups > table td,
+.test-groups > table th {
+    padding: 0.2rem 0.5rem;
+}
+
+#analysis-tasks tbody td,
+#analysis-tasks tbody th,
+.test-groups > table tbody td,
+.test-groups > table tbody th {
+    border-top: solid 1px #ddd;
+}
+
+#analysis-task-title {
+    font-weight: normal;
+    font-size: 1.2rem;
+    margin: 0 0 0 0.5rem;
+    padding: 0;
+}
+
+#analysis-task-testname {
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0 0 1rem 0.5rem;
+    padding: 0;
+    color: #333;
+}
+
+.test-groups {
+    border: 1px solid #bbb;
+    border-radius: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
+
+    padding: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.test-groups caption {
+    font-size: 1.1rem;
+    text-align: left;
+    margin-bottom: 0.5rem;
+}

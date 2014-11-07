@@ -1,3 +1,101 @@
+2014-11-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Introduce the concept of analysis task to perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=138517
+
+        Reviewed by Andreas Kling.
+
+        Introduced the concept of an analysis task, which is created for a range of measurements for a given metric on
+        a single platform and used to bisect regressions in the range.
+        
+        Added a new page to see the list of active analysis tasks and a page to view the contents of an analysis task.
+
+        * init-database.sql: Added a bunch of tables to store information about analysis tasks.
+            analysis_tasks - Represents each analysis task. Associated with a platform and a metric and possibly with two
+            test runs. Analysis tasks not associated with test runs are used for try new patches.
+            analysis_test_groups - A test group in an analysis task represents a bunch of related A/B testing results.
+            root_sets - A root set represents a set of roots (or packages) installed in each A/B testing.
+            build_requests - A build request represents a single pending build for A/B testing.
+
+        * public/api/analysis-tasks.php: Added. Returns the specified analysis task or all analysis tasks in an array.
+        (main):
+        (format_task):
+
+        * public/api/test-groups.php: Added. Returns analysis task groups for the specified analysis task or returns
+        the specified analysis task group as well as build requests associated with them.
+        (main):
+        (fetch_test_groups_for_task):
+        (fetch_build_requests_for_task):
+        (fetch_build_requests_for_group):
+        (format_test_group):
+        (format_build_request):
+
+        * public/include/json-header.php:
+        (remote_user_name): Extracted from compute_token so that we can use it in create-analysis-task.php.
+        (compute_token):
+
+        * public/privileged-api/associate-bug.php:
+        (main): Fixed a typo.
+
+        * public/privileged-api/create-analysis-task.php: Added. Creates a new analysis task for a given test run range.
+        (main):
+        (ensure_row_by_id):
+        (ensure_config_from_runs):
+
+        * public/privileged-api/generate-csrf-token.php: Use remote_user_name.
+
+        * public/v2/analysis.js: Added. Various Ember data store models to represent analysis tasks and related objects.
+        (App.AnalysisTask):
+        (App.AnalysisTask.create):
+        (App.TestGroup):
+        (App.TestGroupAdapter):
+        (App.AnalysisTaskSerializer):
+        (App.TestGroupSerializer):
+        (App.BuildRequest):
+
+        * public/v2/app.css: Added style rules for the analysis page.
+
+        * public/v2/app.js:
+        (App.Pane._fetch): Use fetchRunsWithPlatformAndMetric, which has been refactored into App.Manifest.
+
+        (App.PaneController.actions.toggleBugsPane): Show bugs pane even when there are no bug trackers or there is not
+        exactly one selected point as we can still create an analysis task.
+        (App.PaneController.actions.associateBug): Renamed singlySelectedPoint to selectedSinglePoint to be more
+        grammatical and also alert'ed the error message when there is one.
+        (App.PaneController.actions.createAnalysisTask): Added. Creates a new analysis task and opens it in a new tab.
+        Since window.open only works during the click, we open the new "window" preemptively and navigates or closes it
+        once XHR request has completed.
+        (App.PaneController._detailsChanged): Changes due to singlySelectedPoint to selectedSinglePoint rename.
+        (App.PaneController._updateBugs): Fixed a bug that we were showing bugs in the previous point when a single point
+        is selected in the details pane.
+
+        (App.AnalysisRoute): Added.
+        (App.AnalysisTaskRoute): Added.
+        (App.AnalysisTaskViewModel): Added.
+        (App.AnalysisTaskViewModel._taskUpdated): Fetch runs for the associated platform and metric.
+        (App.AnalysisTaskViewModel._fetchedRuns): Setup the chart data to show.
+        (App.AnalysisTaskViewModel.testSets): The computed property used to update roots for all repositories/projects.
+        (App.AnalysisTaskViewModel._rootChangedForTestSet): Updates root selections for all repositories/projects when
+        the user selects an option for all roots in A or B configuration.
+        (App.AnalysisTaskViewModel.roots): The computed property used to show root choices for each repository/project.
+
+        * public/v2/chart-pane.css: Added style rules for details view in the analysis task page.
+
+        * public/v2/data.js:
+        (Measurement.prototype._formatRevisionRange): Don't prefix a revision number with "At " when there is no previous
+        point so that we can use it in App.AnalysisTaskViewModel.roots.
+        (TimeSeries.prototype.findPointByMeasurementId): Added.
+        (TimeSeries.prototype.seriesBetweenPoints): Added.
+
+        * public/v2/index.html: Use Metric.fullName since the same value is needed in the analysis task page. Also added
+        a button to create an analysis task, and made bugs pane button always enabled since we can an analysis task even
+        when multiple points are selected. Finally, added a new template for the analysis task page.
+
+        * public/v2/manifest.js:
+        (App.Metric.fullName): Added to share code between the charts page and the analysis task page.
+        (App.Manifest.fetchRunsWithPlatformAndMetric): Extracted from App.Pane._fetch to be reused in
+        App.AnalysisTaskViewModel._taskUpdated.
+
 2014-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove App.PaneController.bugsChangeCount in the new perf dashboard

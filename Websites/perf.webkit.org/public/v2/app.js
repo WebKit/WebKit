@@ -2,6 +2,8 @@ window.App = Ember.Application.create();
 
 App.Router.map(function () {
     this.resource('charts', {path: 'charts'});
+    this.resource('analysis', {path: 'analysis'});
+    this.resource('analysisTask', {path: 'analysis/task/:taskId'});
 });
 
 App.DashboardRow = Ember.Object.extend({
@@ -338,45 +340,19 @@ App.Pane = Ember.Object.extend({
         else {
             var self = this;
 
-            var metric;
-            var manifestPromise = App.Manifest.fetch(this.store).then(function () {
-                return new Ember.RSVP.Promise(function (resolve, reject) {
-                    var platform = App.Manifest.platform(platformId);
-                    metric = App.Manifest.metric(metricId);
-                    if (!platform)
-                        reject('Could not find the platform "' + platformId + '"');
-                    else if (!metric)
-                        reject('Could not find the metric "' + metricId + '"');
-                    else {
-                        self.set('platform', platform);
-                        self.set('metric', metric);
-                        resolve(null);
-                    }
-                });
-            });
-
-            Ember.RSVP.all([
-                RunsData.fetchRuns(platformId, metricId),
-                manifestPromise,
-            ]).then(function (values) {
-                var runs = values[0];
-
-                // FIXME: Include this information in JSON and process it in RunsData.fetchRuns
-                var unit = {'Combined': '', // Assume smaller is better for now.
-                    'FrameRate': 'fps',
-                    'Runs': 'runs/s',
-                    'Time': 'ms',
-                    'Malloc': 'bytes',
-                    'JSHeap': 'bytes',
-                    'Allocations': 'bytes',
-                    'EndAllocations': 'bytes',
-                    'MaxAllocations': 'bytes',
-                    'MeanAllocations': 'bytes'}[metric.get('name')];
-                runs.unit = unit;
-
-                self.set('chartData', runs);
-            }, function (status) {
-                self.set('failure', 'Failed to fetch the JSON with an error: ' + status);
+            App.Manifest.fetchRunsWithPlatformAndMetric(this.store, platformId, metricId).then(function (result) {
+                self.set('platform', result.platform);
+                self.set('metric', result.metric);
+                self.set('chartData', result.runs);
+            }, function (result) {
+                if (!result || typeof(result) === "string")
+                    self.set('failure', 'Failed to fetch the JSON with an error: ' + result);
+                else if (!result.platform)
+                    self.set('failure', 'Could not find the platform "' + platformId + '"');
+                else if (!result.metric)
+                    self.set('failure', 'Could not find the metric "' + metricId + '"');
+                else
+                    self.set('failure', 'An internal error');
             });
         }
     }.observes('platformId', 'metricId').on('init'),
@@ -675,20 +651,40 @@ App.PaneController = Ember.ObjectController.extend({
         },
         toggleBugsPane: function ()
         {
-            if (!App.Manifest.bugTrackers || !this.get('singlySelectedPoint'))
-                return;
             if (this.toggleProperty('showingBugsPane'))
                 this.set('showingSearchPane', false);
         },
         associateBug: function (bugTracker, bugNumber)
         {
-            var point = this.get('singlySelectedPoint');
+            var point = this.get('selectedSinglePoint');
             if (!point)
                 return;
             var self = this;
             point.measurement.associateBug(bugTracker.get('id'), bugNumber).then(function () {
                 self._updateBugs();
                 self._updateMarkedPoints();
+            }, function (error) {
+                alert(error);
+            });
+        },
+        createAnalysisTask: function ()
+        {
+            var name = this.get('newAnalysisTaskName');
+            var points = this._selectedPoints;
+            if (!name || !points || points.length < 2)
+                return;
+
+            var newWindow = window.open();
+            App.AnalysisTask.create(name, points[0].measurement, points[points.length - 1].measurement).then(function (data) {
+                // FIXME: Update the UI to show the new analysis task.
+                var url = App.Router.router.generate('analysisTask', data['taskId']);
+                newWindow.location.href = '#' + url;
+            }, function (error) {
+                newWindow.close();
+                if (error === 'DuplicateAnalysisTask') {
+                    // FIXME: Duplicate this error more gracefully.
+                }
+                alert(error);
             });
         },
         toggleSearchPane: function ()
@@ -732,7 +728,7 @@ App.PaneController = Ember.ObjectController.extend({
     _detailsChanged: function ()
     {
         this.set('showingBugsPane', false);
-        this.set('singlySelectedPoint', !this._hasRange && this._selectedPoints ? this._selectedPoints[0] : null);
+        this.set('selectedSinglePoint', !this._hasRange && this._selectedPoints ? this._selectedPoints[0] : null);
     }.observes('details'),
     _overviewSelectionChanged: function ()
     {
@@ -820,7 +816,9 @@ App.PaneController = Ember.ObjectController.extend({
         var bugTrackers = App.Manifest.get('bugTrackers');
         var trackerToBugNumbers = {};
         bugTrackers.forEach(function (tracker) { trackerToBugNumbers[tracker.get('id')] = new Array(); });
-        this._selectedPoints.map(function (point) {
+
+        var points = this._hasRange ? this._selectedPoints : [this._selectedPoints[1]];
+        points.map(function (point) {
             var bugs = point.measurement.bugs();
             bugTrackers.forEach(function (tracker) {
                 var bugNumber = bugs[tracker.get('id')];
@@ -1581,4 +1579,132 @@ App.CommitsViewerComponent = Ember.Component.extend({
                 self.set('commits', []);
         })
     }.observes('repository').observes('revisionInfo').on('init'),
+});
+
+
+App.AnalysisRoute = Ember.Route.extend({
+    model: function () {
+        return this.store.findAll('analysisTask').then(function (tasks) {
+            return Ember.Object.create({'tasks': tasks});
+        });
+    },
+});
+
+App.AnalysisTaskRoute = Ember.Route.extend({
+    model: function (param) {
+        var store = this.store;
+        return this.store.find('analysisTask', param.taskId).then(function (task) {
+            return App.AnalysisTaskViewModel.create({content: task});
+        });
+    },
+});
+
+App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
+    testSets: [],
+    roots: [],
+    _taskUpdated: function ()
+    {
+        var platformId = this.get('platform').get('id');
+        var metricId = this.get('metric').get('id');
+        App.Manifest.fetchRunsWithPlatformAndMetric(this.store, platformId, metricId).then(this._fetchedRuns.bind(this));
+    }.observes('platform', 'metric').on('init'),
+    _fetchedRuns: function (data) {
+        var runs = data.runs;
+
+        var currentTimeSeries = runs.current.timeSeriesByCommitTime();
+        if (!currentTimeSeries)
+            return; // FIXME: Report an error.
+
+        var start = currentTimeSeries.findPointByMeasurementId(this.get('startRun'));
+        var end = currentTimeSeries.findPointByMeasurementId(this.get('endRun'));
+        if (!start || !end)
+            return; // FIXME: Report an error.
+
+        var markedPoints = {};
+        markedPoints[start.measurement.id()] = true;
+        markedPoints[end.measurement.id()] = true;
+
+        var formatedPoints = currentTimeSeries.seriesBetweenPoints(start, end).map(function (point, index) {
+            return {
+                id: point.measurement.id(),
+                measurement: point.measurement,
+                label: 'Point ' + (index + 1),
+                value: point.value + (runs.unit ? ' ' + runs.unit : ''),
+            };
+        });
+
+        var margin = (end.time - start.time) * 0.1;
+        this.set('chartData', runs);
+        this.set('chartDomain', [start.time - margin, +end.time + margin]);
+        this.set('markedPoints', markedPoints);
+        this.set('analysisPoints', formatedPoints);
+    },
+    testSets: function ()
+    {
+        var analysisPoints = this.get('analysisPoints');
+        if (!analysisPoints)
+            return;
+        var pointOptions = [{value: ' ', label: 'None'}]
+            .concat(analysisPoints.map(function (point) { return {value: point.id, label: point.label}; }));
+        return [
+            Ember.Object.create({name: "A", options: pointOptions, selection: pointOptions[1]}),
+            Ember.Object.create({name: "B", options: pointOptions, selection: pointOptions[pointOptions.length - 1]}),
+        ];
+    }.property('analysisPoints'),
+    _rootChangedForTestSet: function () {
+        var sets = this.get('testSets');
+        var roots = this.get('roots');
+        if (!sets || !roots)
+            return;
+
+        sets.forEach(function (testSet, setIndex) {
+            var currentSelection = testSet.get('selection');
+            if (currentSelection == testSet.get('previousSelection'))
+                return;
+            testSet.set('previousSelection', currentSelection);
+            var pointIndex = testSet.get('options').indexOf(currentSelection);
+
+            roots.forEach(function (root) {
+                var set = root.sets[setIndex];
+                set.set('selection', set.revisions[pointIndex]);
+            });
+        });
+
+    }.observes('testSets.@each.selection'),
+    _updateRoots: function ()
+    {
+        var analysisPoints = this.get('analysisPoints');
+        if (!analysisPoints)
+            return [];
+        var repositoryToRevisions = {};
+        analysisPoints.forEach(function (point, pointIndex) {
+            var revisions = point.measurement.formattedRevisions();
+            for (var repositoryName in revisions) {
+                if (!repositoryToRevisions[repositoryName])
+                    repositoryToRevisions[repositoryName] = new Array(analysisPoints.length);
+                var revision = revisions[repositoryName];
+                repositoryToRevisions[repositoryName][pointIndex] = {
+                    label: point.label + ': ' + revision.label,
+                    value: revision.currentRevision,
+                };
+            }
+        });
+
+        var roots = [];
+        for (var repositoryName in repositoryToRevisions) {
+            var revisions = [{value: ' ', label: 'None'}].concat(repositoryToRevisions[repositoryName]);
+            roots.push(Ember.Object.create({
+                name: repositoryName,
+                sets: [
+                    Ember.Object.create({name: 'A[' + repositoryName + ']',
+                        revisions: revisions,
+                        selection: revisions[1]}),
+                    Ember.Object.create({name: 'B[' + repositoryName + ']',
+                        revisions: revisions,
+                        selection: revisions[revisions.length - 1]}),
+                ],
+            }));
+        }
+        return rooots;
+    }.property('analysisPoints'),
 });

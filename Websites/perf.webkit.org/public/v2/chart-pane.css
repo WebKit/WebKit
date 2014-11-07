@@ -171,6 +171,14 @@
     border-left: solid 1px #bbb;
 }
 
+.analysis-chart-pane .details {
+    overflow: scroll;
+}
+
+.analysis-chart-pane .details table {
+    margin: 0.5rem;
+}
+
 .chart-pane .overview {
     height: 5rem;
     border-bottom: solid 0px #eee;

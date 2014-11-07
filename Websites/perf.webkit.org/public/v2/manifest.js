@@ -30,6 +30,11 @@ App.Metric = App.NameLabelModel.extend({
         }
         return path.reverse();
     }.property('name', 'test'),
+    fullName: function ()
+    {
+        return this.get('path').join(' \u2208 ') /* &in; */
+            + ' : ' + this.get('label');
+    }.property('path', 'label'),
 });
 
 App.Builder = App.NameLabelModel.extend({
@@ -205,5 +210,32 @@ App.Manifest = Ember.Controller.extend({
             repositories.filter(function (repository) { return repository.get('hasReportedCommits'); }));
 
         this.set('bugTrackers', store.all('bugTracker').sortBy('name'));
-    }
+    },
+    fetchRunsWithPlatformAndMetric: function (store, platformId, metricId)
+    {
+        return Ember.RSVP.all([
+            RunsData.fetchRuns(platformId, metricId),
+            this.fetch(store),
+        ]).then(function (values) {
+            var runs = values[0];
+
+            var platform = App.Manifest.platform(platformId);
+            var metric = App.Manifest.metric(metricId);
+
+            // FIXME: Include this information in JSON and process it in RunsData.fetchRuns
+            var unit = {'Combined': '', // Assume smaller is better for now.
+                'FrameRate': 'fps',
+                'Runs': 'runs/s',
+                'Time': 'ms',
+                'Malloc': 'bytes',
+                'JSHeap': 'bytes',
+                'Allocations': 'bytes',
+                'EndAllocations': 'bytes',
+                'MaxAllocations': 'bytes',
+                'MeanAllocations': 'bytes'}[metric.get('name')];
+            runs.unit = unit;
+
+            return {platform: platform, metric: metric, runs: runs};
+        });
+    },
 }).create();

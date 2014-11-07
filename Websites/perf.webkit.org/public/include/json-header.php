@@ -93,10 +93,14 @@ function ensure_privileged_api_data_and_token() {
     return $data;
 }
 
+function remote_user_name() {
+    return array_get($_SERVER, 'REMOTE_USER');
+}
+
 function compute_token() {
     if (!array_key_exists('CSRFSalt', $_COOKIE) || !array_key_exists('CSRFExpiration', $_COOKIE))
         return NULL;
-    $user = array_get($_SERVER, 'REMOTE_USER');
+    $user = remote_user_name();
     $salt = $_COOKIE['CSRFSalt'];
     $expiration = $_COOKIE['CSRFExpiration'];
     return hash('sha256', "$salt|$user|$expiration");

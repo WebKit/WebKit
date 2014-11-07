@@ -12,6 +12,7 @@
     <script src="data.js" defer></script>
     <script src="app.js" defer></script>
     <script src="manifest.js" defer></script>
+    <script src="analysis.js" defer></script>
     <script src="popup.js" defer></script>
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="chart-pane.css">
@@ -128,17 +129,10 @@
         {{#each panes itemController="pane"}}
             <section class="chart-pane" tabindex="0">
                 <header>
-                    <h1 {{action "toggleDetails"}}>
-                    {{#each metric.path}}
-                        {{this}} &ni;
-                    {{/each}}
-                    {{metric.label}}
-                    - {{ platform.name}}</h2>
+                    <h1 {{action "toggleDetails"}}>{{metric.fullName}} - {{ platform.name}}</h1>
                     <a href="#" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
                     {{#if App.Manifest.bugTrackers}}
-                        <a href="#" title="Bugs"
-                            {{bind-attr class=":bugs-button singlySelectedPoint::disabled"}}
-                            {{action "toggleBugsPane"}}>
+                        <a href="#" title="Bugs and Analysis" class="bugs-button" {{action "toggleBugsPane"}}>
                             {{partial "bugs-button"}}
                         </a>
                     {{/if}}
@@ -202,16 +196,24 @@
 
                 <div {{bind-attr class=":bugs-pane showingBugsPane::hidden"}}>
                     <table>
-                        {{#each details.bugTrackers}}
-                            <tr>
-                                <th>{{label}}</th>
-                                <td>
-                                    <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                        {{input type=text value=editedBugNumber}}
-                                    </form>
-                                </td>
-                            </tr>
-                        {{/each}}
+                        {{#if selectedSinglePoint}}
+                            {{#each details.bugTrackers}}
+                                <tr>
+                                    <th>{{label}}</th>
+                                    <td>
+                                        <form {{action "associateBug" this editedBugNumber on="submit"}}>
+                                            {{input type=text value=editedBugNumber}}
+                                        </form>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        {{/if}}
+                        <tr>
+                            <th>
+                                <label>Name: {{input type=text value=newAnalysisTaskName}}</label>
+                                <button {{action "createAnalysisTask"}}>Analyze</button>
+                            </th>
+                        </tr>
                     </table>
                 </div>
 
@@ -361,6 +363,9 @@
                 {{#link-to 'charts' tagName='li'}}
                     {{#link-to 'charts'}}Charts{{/link-to}}
                 {{/link-to}}
+                {{#link-to 'analysis' tagName='li'}}
+                    {{#link-to 'analysis'}}Analysis{{/link-to}}
+                {{/link-to}}
             </ul>
         </nav>
     </script>
@@ -411,6 +416,138 @@
                 </li>
             {{/if}} {{/if}}
         {{/each}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysis">
+        <header id="header">
+            {{partial "navbar"}}
+        </header>
+
+        <table id="analysis-tasks">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Created at</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each model.tasks}}
+                    <tr>
+                        <td>{{#link-to 'analysisTask' id}}{{id}}{{/link-to}}</td>
+                        <td>{{name}}</td>
+                        <td>{{createdAt}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysisTask">
+        <header id="header">
+            {{partial "navbar"}}
+        </header>
+
+        <h2 id="analysis-task-title">{{name}}</h2>
+        {{#if platform.label}}
+            <h3 id="analysis-task-testname">{{metric.fullName}} - {{platform.label}}</h3>
+
+            <section class="analysis-chart-pane chart-pane">
+                <div class="svg-container">
+                    {{interactive-chart
+                        chartData=chartData
+                        enableSelection=false
+                        chartPointRadius=2
+                        domain=chartDomain
+                        markedPoints=markedPoints}}
+                </div>
+                <div class="details">
+                    <table>
+                        <tbody>
+                            {{#each analysisPoints}}
+                                <tr><td>{{label}}</td><td>{{value}}</td></tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            {{#each testGroups}}
+                <section class="test-groups">
+                    <table>
+                        <caption>{{name}}</caption>
+                        <thead>
+                            <tr>
+                                <td>Configuration</td>
+                                <td>Build</td>
+                                <td>Build Time</td>
+                                <td>{{../metric.fullName}}</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each buildRequests}}
+                                <tr>
+                                    <td>{{id}}</td>
+                                    <td>{{buildNumber}}</td>
+                                    <td>{{buildTime}}</td>
+                                    <td>{{mean}}</td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </section>
+            {{/each}}
+
+            <form class="test-groups">
+                <table>
+                    <caption><input name="name" placeholder="Test group name" required></caption>
+                    <thead>
+                        <tr>
+                            <th>Root</th>
+                            {{#each testSets}}
+                                <th>
+                                    {{name}}
+                                    {{view Ember.Select
+                                        content=options
+                                        optionValuePath="content.value"
+                                        optionLabelPath="content.label"
+                                        selection=selection}}
+                                </th>
+                            {{/each}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each roots}}
+                            <tr>
+                                <th>{{name}}</th>
+                                {{#each sets}}
+                                    <td>{{view Ember.Select name=name content=revisions
+                                        optionValuePath="content.value" optionLabelPath="content.label"
+                                        selection=selection}}</td>
+                                {{/each}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <th>Number of runs</th>
+                            <td colspan=2>
+                                <select>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button type="submit">Start A/B testing</button>
+            </form>
+        {{/if}}
     </script>
 
 </head>
