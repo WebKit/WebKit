@@ -1,5 +1,21 @@
 2014-11-06  Mark Lam  <mark.lam@apple.com>
 
+        Refactor the get-by-pname.js test [follow up 2].
+        <https://webkit.org/b/138483>
+
+        Reviewed by Michael Saboff.
+
+        Make unique copies of the test functions to ensure that each test case does not
+        affect the tiering up of other test cases.
+
+        * js/get-by-pname-expected.txt:
+        * js/script-tests/get-by-pname.js:
+        (foo): Deleted.
+        (getByPnameOnConstant): Deleted.
+        (getByPnameOnVar): Deleted.
+
+2014-11-06  Mark Lam  <mark.lam@apple.com>
+
         Refactor the get-by-pname.js test [follow up].
         <https://webkit.org/b/138483>
 
