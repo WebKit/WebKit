@@ -1,3 +1,19 @@
+2014-11-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop useless HTMLElement::isURLAttribute() override
+        https://bugs.webkit.org/show_bug.cgi?id=138479
+
+        Reviewed by Mark Lam.
+
+        Drop useless HTMLElement::isURLAttribute() override as it is doing
+        nothing but calling the parent class' isURLAttribute().
+
+        No new tests, no behavior change.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isURLAttribute): Deleted.
+        * html/HTMLElement.h:
+
 2014-11-07  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Update optimized fullscreen media controls

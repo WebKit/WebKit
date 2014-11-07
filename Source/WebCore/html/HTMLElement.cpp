@@ -1031,11 +1031,6 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     }
 }
 
-bool HTMLElement::isURLAttribute(const Attribute& attribute) const
-{
-    return StyledElement::isURLAttribute(attribute);
-}
-
 void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
 {
     // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct

@@ -120,8 +120,6 @@ protected:
     virtual void childrenChanged(const ChildChange&) override;
     void calculateAndAdjustDirectionality();
 
-    virtual bool isURLAttribute(const Attribute&) const override;
-
 private:
     virtual String nodeName() const override final;
 
