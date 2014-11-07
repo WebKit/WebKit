@@ -146,7 +146,7 @@ caption-side [Inherited, NewStyleBuilder]
 -epub-caption-side = caption-side
 clear [NewStyleBuilder]
 clip
--webkit-clip-path
+-webkit-clip-path [NewStyleBuilder, Converter=ClipPath]
 content
 counter-increment
 counter-reset

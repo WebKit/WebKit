@@ -1,3 +1,16 @@
+2014-11-07  Chris Dumez  <cdumez@apple.com>
+
+        Move 'webkit-clip-path' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138452
+
+        Reviewed by Andreas Kling.
+
+        Add layout test to make sure we don't crash in the StyleBuilder when
+        setting unexpected values to webkit-clip-path property.
+
+        * fast/masking/clip-path-bad-value-expected.txt: Added.
+        * fast/masking/clip-path-bad-value.html: Added.
+
 2014-11-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Pseudo element matchedCSSRules do not include matching selector info

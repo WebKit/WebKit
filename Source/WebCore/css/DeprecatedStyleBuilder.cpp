@@ -1527,60 +1527,6 @@ public:
     }
 };
 
-template <ClipPathOperation* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<ClipPathOperation>), ClipPathOperation* (*initialFunction)()>
-class ApplyPropertyClipPath {
-public:
-    static void setValue(RenderStyle* style, PassRefPtr<ClipPathOperation> value) { (style->*setterFunction)(value); }
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (is<CSSPrimitiveValue>(*value)) {
-            auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-            if (primitiveValue.getValueID() == CSSValueNone)
-                setValue(styleResolver->style(), 0);
-            else if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
-                String cssURLValue = primitiveValue.getStringValue();
-                URL url = styleResolver->document().completeURL(cssURLValue);
-                // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
-                setValue(styleResolver->style(), ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier()));
-            }
-            return;
-        }
-        if (!is<CSSValueList>(*value))
-            return;
-        CSSBoxType referenceBox = BoxMissing;
-        RefPtr<ClipPathOperation> operation;
-        auto& valueList = downcast<CSSValueList>(*value);
-        for (unsigned i = 0; i < valueList.length(); ++i) {
-            auto& primitiveValue = downcast<CSSPrimitiveValue>(*valueList.itemWithoutBoundsCheck(i));
-            if (primitiveValue.isShape() && !operation)
-                operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver->state().cssToLengthConversionData(), primitiveValue.getShapeValue()));
-            else if ((primitiveValue.getValueID() == CSSValueContentBox
-                || primitiveValue.getValueID() == CSSValueBorderBox
-                || primitiveValue.getValueID() == CSSValuePaddingBox
-                || primitiveValue.getValueID() == CSSValueMarginBox
-                || primitiveValue.getValueID() == CSSValueFill
-                || primitiveValue.getValueID() == CSSValueStroke
-                || primitiveValue.getValueID() == CSSValueViewBox)
-                && referenceBox == BoxMissing)
-                referenceBox = CSSBoxType(primitiveValue);
-            else
-                return;
-        }
-        if (!operation) {
-            if (referenceBox == BoxMissing)
-                return;
-            operation = BoxClipPathOperation::create(referenceBox);
-        } else
-            downcast<ShapeClipPathOperation>(*operation).setReferenceBox(referenceBox);
-        setValue(styleResolver->style(), operation.release());
-    }
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyDefaultBase<ClipPathOperation*, getterFunction, PassRefPtr<ClipPathOperation>, setterFunction, ClipPathOperation*, initialFunction>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
 #if ENABLE(CSS_IMAGE_RESOLUTION)
 class ApplyPropertyImageResolution {
 public:
@@ -1797,7 +1743,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitTransitionDuration, ApplyPropertyAnimation<double, &Animation::duration, &Animation::setDuration, &Animation::isDurationSet, &Animation::clearDuration, &Animation::initialAnimationDuration, &CSSToStyleMap::mapAnimationDuration, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionProperty, ApplyPropertyAnimation<CSSPropertyID, &Animation::property, &Animation::setProperty, &Animation::isPropertySet, &Animation::clearProperty, &Animation::initialAnimationProperty, &CSSToStyleMap::mapAnimationProperty, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionTimingFunction, ApplyPropertyAnimation<const PassRefPtr<TimingFunction>, &Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSToStyleMap::mapAnimationTimingFunction, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitClipPath, ApplyPropertyClipPath<&RenderStyle::clipPath, &RenderStyle::setClipPath, &RenderStyle::initialClipPath>::createHandler());
     setPropertyHandler(CSSPropertyWidows, ApplyPropertyAuto<short, &RenderStyle::widows, &RenderStyle::setWidows, &RenderStyle::hasAutoWidows, &RenderStyle::setHasAutoWidows>::createHandler());
     setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyWordSpacing::createHandler());
 

@@ -27,6 +27,7 @@
 #ifndef StyleBuilderConverter_h
 #define StyleBuilderConverter_h
 
+#include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Length.h"
@@ -58,6 +59,7 @@ public:
     static String convertStringOrNone(StyleResolver&, CSSValue&);
     static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, CSSValue&);
     static ETextAlign convertTextAlign(StyleResolver&, CSSValue&);
+    static PassRefPtr<ClipPathOperation> convertClipPath(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -322,6 +324,50 @@ inline ETextAlign StyleBuilderConverter::convertTextAlign(StyleResolver& styleRe
     if (parentStyle->textAlign() == TAEND)
         return parentStyle->isLeftToRightDirection() ? RIGHT : LEFT;
     return parentStyle->textAlign();
+}
+
+inline PassRefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
+            String cssURLValue = primitiveValue.getStringValue();
+            URL url = styleResolver.document().completeURL(cssURLValue);
+            // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
+            return ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier());
+        }
+        ASSERT(primitiveValue.getValueID() == CSSValueNone);
+        return nullptr;
+    }
+
+    CSSBoxType referenceBox = BoxMissing;
+    RefPtr<ClipPathOperation> operation;
+
+    for (auto& currentValue : downcast<CSSValueList>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
+        if (primitiveValue.isShape()) {
+            ASSERT(!operation);
+            operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver.state().cssToLengthConversionData(), primitiveValue.getShapeValue()));
+        } else {
+            ASSERT(primitiveValue.getValueID() == CSSValueContentBox
+                   || primitiveValue.getValueID() == CSSValueBorderBox
+                   || primitiveValue.getValueID() == CSSValuePaddingBox
+                   || primitiveValue.getValueID() == CSSValueMarginBox
+                   || primitiveValue.getValueID() == CSSValueFill
+                   || primitiveValue.getValueID() == CSSValueStroke
+                   || primitiveValue.getValueID() == CSSValueViewBox);
+            ASSERT(referenceBox == BoxMissing);
+            referenceBox = primitiveValue;
+        }
+    }
+    if (operation)
+        downcast<ShapeClipPathOperation>(*operation).setReferenceBox(referenceBox);
+    else {
+        ASSERT(referenceBox != BoxMissing);
+        operation = BoxClipPathOperation::create(referenceBox);
+    }
+
+    return operation.release();
 }
 
 } // namespace WebCore
