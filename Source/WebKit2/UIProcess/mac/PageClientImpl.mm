@@ -689,8 +689,9 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::navigationGestureDidBegin()
 {
-    // Hide the finde indicator if it's visible.
+    // Hide the text indicator and action menu popovers if they are visible.
     setTextIndicator(nullptr, false, false);
+    dismissActionMenuPopovers();
 
 #if WK_API_ENABLED
     if (m_webView)

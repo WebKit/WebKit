@@ -1,3 +1,15 @@
+2014-11-07  Tim Horton  <timothy_horton@apple.com>
+
+        Popovers do not dismiss when navigating back and forth using gestures
+        https://bugs.webkit.org/show_bug.cgi?id=138512
+        <rdar://problem/18900200>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        Dismiss action menu related popovers when navigation gestures begin.
+
 2014-11-07  Beth Dakin  <bdakin@apple.com>
 
         Action menu preview popover should dismiss on scroll
