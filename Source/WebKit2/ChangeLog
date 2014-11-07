@@ -1,3 +1,15 @@
+2014-11-07  Beth Dakin  <bdakin@apple.com>
+
+        Invoking an action menu should dismiss existing selection
+        https://bugs.webkit.org/show_bug.cgi?id=138496
+        -and corresponding-
+        rdar://problem/18892787
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController willOpenMenu:withEvent:]):
+
 2014-11-07  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Update optimized fullscreen media controls
