@@ -1,3 +1,12 @@
+2014-11-06  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r175549): http/tests/multipart/stop-crash.html failing (assertion failure in CachedResource::setEncodedSize)
+        https://bugs.webkit.org/show_bug.cgi?id=138358
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestExpectations: Turn the test back on.
+
 2014-11-06  Mark Lam  <mark.lam@apple.com>
 
         Refactor the get-by-pname.js test [follow up 2].

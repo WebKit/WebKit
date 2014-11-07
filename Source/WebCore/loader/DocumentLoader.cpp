@@ -1491,12 +1491,17 @@ void DocumentLoader::clearMainResource()
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)
 {
-    ASSERT(loader->identifier());
-    ASSERT(!m_multipartSubresourceLoaders.contains(loader->identifier()));
-    ASSERT(m_subresourceLoaders.contains(loader->identifier()));
+    unsigned long identifier = loader->identifier();
+    ASSERT(identifier);
 
-    m_multipartSubresourceLoaders.add(loader->identifier(), loader);
-    m_subresourceLoaders.remove(loader->identifier());
+    if (!m_multipartSubresourceLoaders.add(identifier, loader).isNewEntry) {
+        ASSERT(m_multipartSubresourceLoaders.get(identifier) == loader);
+        ASSERT(!m_subresourceLoaders.contains(identifier));
+    } else {
+        ASSERT(m_subresourceLoaders.contains(identifier));
+        m_subresourceLoaders.remove(identifier);
+    }
+
     checkLoadComplete();
     if (Frame* frame = m_frame)
         frame->loader().checkLoadComplete();    

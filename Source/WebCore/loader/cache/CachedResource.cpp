@@ -493,9 +493,8 @@ void CachedResource::setDecodedSize(unsigned size)
 
     int delta = size - m_decodedSize;
 
-    // The object must now be moved to a different queue, since its size has been changed.
-    // We have to remove explicitly before updating m_decodedSize, so that we find the correct previous
-    // queue.
+    // The object must be moved to a different queue, since its size has been changed.
+    // Remove before updating m_decodedSize, so we find the resource in the correct LRU list.
     if (inCache())
         memoryCache()->removeFromLRUList(this);
     
@@ -527,24 +526,17 @@ void CachedResource::setEncodedSize(unsigned size)
     if (size == m_encodedSize)
         return;
 
-    // The size cannot ever shrink (unless it is being nulled out because of an error).  If it ever does, assert.
-    ASSERT(size == 0 || size >= m_encodedSize);
-    
     int delta = size - m_encodedSize;
 
-    // The object must now be moved to a different queue, since its size has been changed.
-    // We have to remove explicitly before updating m_encodedSize, so that we find the correct previous
-    // queue.
+    // The object must be moved to a different queue, since its size has been changed.
+    // Remove before updating m_encodedSize, so we find the resource in the correct LRU list.
     if (inCache())
         memoryCache()->removeFromLRUList(this);
-    
+
     m_encodedSize = size;
-   
+
     if (inCache()) { 
-        // Now insert into the new LRU list.
         memoryCache()->insertInLRUList(this);
-        
-        // Update the cache's size totals.
         memoryCache()->adjustSize(hasClients(), delta);
     }
 }
