@@ -77,6 +77,7 @@ using namespace WebKit;
 @class WKPagePreviewViewController;
 
 @protocol WKPagePreviewViewControllerDelegate <NSObject>
+- (NSView *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
 - (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController;
 @end
 
@@ -108,19 +109,24 @@ using namespace WebKit;
 
 - (void)loadView
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, _mainViewSize.width, _mainViewSize.height)]);
-    [webView _setIgnoresNonWheelMouseEvents:YES];
-    if (_url) {
-        NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
-        [webView loadRequest:request];
+    NSRect defaultFrame = NSMakeRect(0, 0, _mainViewSize.width, _mainViewSize.height);
+    RetainPtr<NSView> previewView = [_delegate pagePreviewViewController:self viewForPreviewingURL:_url.get() initialFrameSize:defaultFrame.size];
+    if (!previewView) {
+        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:defaultFrame]);
+        [webView _setIgnoresNonWheelMouseEvents:YES];
+        if (_url) {
+            NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
+            [webView loadRequest:request];
+        }
+        previewView = webView;
     }
 
-    // Setting the webView bounds will scale it to 75% of the _mainViewSize. 
-    [webView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
+    // Setting the webView bounds will scale it to 75% of the _mainViewSize.
+    [previewView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
 
     RetainPtr<NSClickGestureRecognizer> clickRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(_clickRecognized:)]);
-    [webView addGestureRecognizer:clickRecognizer.get()];
-    self.view = webView.get();
+    [previewView addGestureRecognizer:clickRecognizer.get()];
+    self.view = previewView.get();
 }
 
 - (void)_clickRecognized:(NSGestureRecognizer *)gestureRecognizer
@@ -832,6 +838,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 #if WK_API_ENABLED
 
 #pragma mark WKPagePreviewViewControllerDelegate
+
+- (NSView *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize
+{
+    return [_wkView _viewForPreviewingURL:url initialFrameSize:initialFrameSize];
+}
 
 - (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController
 {
