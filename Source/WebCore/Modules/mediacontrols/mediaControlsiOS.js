@@ -367,7 +367,7 @@ ControllerIOS.prototype = {
                     this.lastDoubleTouchTime = now;
                 } else {
                     var doubleTouchIntervalThresholdms = 300
-                    if (now - this.lastDoubleTouchTime < doubleTouchSpeedThreshold) {
+                    if (now - this.lastDoubleTouchTime < doubleTouchIntervalThresholdms) {
                         delete this.lastDoubleTouchTime;
                         event.preventDefault();
                         this.host.enterFullscreenOptimized();
@@ -432,7 +432,7 @@ ControllerIOS.prototype = {
     },
 
     handleOptimizedFullscreenButtonClicked: function(event) {
-        if (this.isFullenterFullscreenOptimizedScreen())
+        if (this.isFullScreen())
             this.video.webkitExitFullscreen();
         else
             this.host.enterFullscreenOptimized();

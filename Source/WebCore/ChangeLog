@@ -1,3 +1,14 @@
+2014-11-06  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix typo in optimized fullscreen activation.
+        https://bugs.webkit.org/show_bug.cgi?id=138480
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handleWrapperTouchStart): fix typo doubleTouchIntervalThresholdms
+        (ControllerIOS.prototype.handleOptimizedFullscreenButtonClicked): fix typo isFullScreen
+
 2014-11-06  Chris Dumez  <cdumez@apple.com>
 
         Stop special-casing wbr elements in HTMLElement::createElementRenderer()
