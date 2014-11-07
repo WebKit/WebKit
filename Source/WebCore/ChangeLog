@@ -1,3 +1,16 @@
+2014-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Remove useless if check in HTMLInputElement::setValue()
+        https://bugs.webkit.org/show_bug.cgi?id=138485
+
+        Reviewed by Daniel Bates.
+
+        Remove useless if check in HTMLInputElement::setValue(). It was
+        inadvertently left in as part of r94836.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+
 2014-11-06  Simon Fraser  <simon.fraser@apple.com>
 
         Put names on a couple of video-related CALayers
