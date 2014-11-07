@@ -29,6 +29,18 @@ enum DeviceType {
     "tvout"
 };
 
+enum FullscreenMode {
+    "none",
+    "standard",
+    "optimized"
+};
+
+enum MediaUIPartID {
+    "optimized-fullscreen-button",
+    "optimized-fullscreen-button-hilited",
+    "optimized-fullscreen-placeholder"
+};
+
 [
     NoInterfaceObject,
     Conditional=MEDIA_CONTROLS_SCRIPT,
@@ -57,4 +69,6 @@ enum DeviceType {
     void exitedFullscreen();
     void enterFullscreenOptimized();
     readonly attribute boolean optimizedFullscreenSupported;
+    readonly attribute FullscreenMode fullscreenMode;
+    DOMString mediaUIImageData(MediaUIPartID partID);
 };

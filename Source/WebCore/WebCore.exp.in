@@ -2845,6 +2845,7 @@ _wkExecutableWasLinkedOnOrAfterIOSVersion
 _wkGetAvailableScreenSize
 _wkGetDeviceClass
 _wkGetDeviceName
+_wkGetMediaUIImageData
 _wkGetOSNameForUserAgent
 _wkGetPlatformNameForNavigator
 _wkGetScreenScaleFactor

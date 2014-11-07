@@ -286,6 +286,50 @@ void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
     m_mediaElement->setMediaControlsDependOnPageScaleFactor(value);
 }
 
+String MediaControlsHost::fullscreenMode() const
+{
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, standard, (ASCIILiteral("standard")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, optimized, (ASCIILiteral("optimized")));
+    String mode = none;
+
+    enum VideoFullscreenMode { VideoFullscreenModeNone, VideoFullscreenModeStandard, VideoFullscreenModeOptimized };
+
+    switch (m_mediaElement->fullscreenMode()) {
+    case HTMLMediaElement::VideoFullscreenModeNone:
+        mode = none;
+        break;
+    case HTMLMediaElement::VideoFullscreenModeStandard:
+        mode = standard;
+        break;
+    case HTMLMediaElement::VideoFullscreenModeOptimized:
+        mode = optimized;
+        break;
+    }
+    
+    LOG(Media, "MediaControlsHost::fullscreenMode - returning \"%s\"", mode.utf8().data());
+
+    return mode;
+}
+
+String MediaControlsHost::mediaUIImageData(const String& partID) const
+{
+#if PLATFORM(IOS)
+    if (partID == "optimized-fullscreen-button")
+        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButton);
+
+    if (partID == "optimized-fullscreen-button-hilited")
+        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButtonHilited);
+
+    if (partID == "optimized-fullscreen-placeholder")
+        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenPlaceholder);
+#else
+    UNUSED_PARAM(partID);
+#endif
+
+    return emptyString();
+}
+
 }
 
 #endif

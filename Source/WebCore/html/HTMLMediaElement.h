@@ -392,6 +392,8 @@ public:
     WEBCORE_EXPORT virtual bool isFullscreen() const override;
     void toggleFullscreenState();
     enum VideoFullscreenMode { VideoFullscreenModeNone, VideoFullscreenModeStandard, VideoFullscreenModeOptimized };
+    VideoFullscreenMode fullscreenMode() const { return m_videoFullscreenMode; }
+
     void enterFullscreen(VideoFullscreenMode);
     virtual void enterFullscreen() override;
     WEBCORE_EXPORT void exitFullscreen();

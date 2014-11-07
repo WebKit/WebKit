@@ -1,3 +1,13 @@
+2014-11-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Update optimized fullscreen media controls
+        https://bugs.webkit.org/show_bug.cgi?id=138493
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize GetMediaUIImageData.
+
 2014-11-06  Daniel Jalkut  <jalkut@red-sweater.com>
 
         Wrap the bulk of -[WebView dealloc] with an autorelease pool.

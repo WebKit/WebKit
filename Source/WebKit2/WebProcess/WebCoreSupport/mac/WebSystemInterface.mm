@@ -208,6 +208,7 @@ void InitWebCoreSystemInterface(void)
         INIT(GetScreenScaleFactor);
         INIT(IsGB18030ComplianceRequired);
         INIT(IsOptimizedFullscreenSupported);
+        INIT(GetMediaUIImageData);
 #endif
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)

@@ -1,3 +1,52 @@
+2014-11-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Update optimized fullscreen media controls
+        https://bugs.webkit.org/show_bug.cgi?id=138493
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::fullscreenMode): New.
+        (WebCore::MediaControlsHost::mediaUIImageData): New.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        Renamed -webkit-media-controls-wireless-playback-status to -webkit-media-controls-inline-playback-placeholder
+            because it is now used for other inline playback status display. Add z-index:0 so the placeholder
+            renders above captions. Remove the background-image, it is now set from script.
+        (audio::-webkit-media-controls-inline-playback-placeholder): 
+        (audio::-webkit-media-controls-inline-playback-placeholder.hidden):
+        (video::-webkit-media-controls-optimized-fullscreen-button):
+        (audio::-webkit-media-controls-wireless-playback-status): Deleted.
+        (audio::-webkit-media-controls-wireless-playback-status.hidden): Deleted.
+        (video::-webkit-media-controls-optimized-fullscreen-button:active): Deleted.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS): Set doingSetup to true around setup so we don't draw the inline controls
+            briefly when an element is created as a result of a user gesture.
+        (ControllerIOS.prototype.shouldHaveStartPlaybackButton): Don't allow inline controls during 
+            initial setup to prevent inline controls from begin drawn briefly when a media element
+            is created and inserted by a script called from a user gesture.
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): wirelessPlaybackStatus -> inlinePlaybackPlaceholder.
+        (ControllerIOS.prototype.createControls): Ditto. Add style rules for optimized fullscreen button.
+        (ControllerIOS.prototype.configureInlineControls): Add the inlinePlaybackPlaceholder as a peer of
+            the inline controls compositing child instead of as a child so it renders correctly.
+        (ControllerIOS.prototype.addControls):
+        (ControllerIOS.prototype.updateControls): wirelessPlaybackStatus -> inlinePlaybackPlaceholder.
+        (ControllerIOS.prototype.handleWrapperTouchStart):
+        (ControllerIOS.prototype.get pageScaleFactor): Cleanup.
+        (ControllerIOS.prototype.set pageScaleFactor): Ditto.
+        (ControllerIOS.prototype.handleFullscreenChange): Show the placeholder.
+
+        * WebCore.exp.in: Export _wkGetMediaUIImageData.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::fullscreenMode): Expose fullscreen mode.
+
+        * platform/ios/WebCoreSystemInterfaceIOS.h:
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+
 2014-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Try to fix GTK build after r175719.
