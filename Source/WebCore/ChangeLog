@@ -1,3 +1,23 @@
+2014-11-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge rr175375. <rdar://problem/rdar://problem/18883734>
+
+    2014-10-30  Eric Carlson  <eric.carlson@apple.com>
+    
+            Add diagnostic logging to track page loads.
+            https://bugs.webkit.org/show_bug.cgi?id=138205
+            <rdar://problem/18173017>
+    
+            Reviewed by Jer Noble.
+    
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Log page load success or failure.
+    
+            * page/DiagnosticLoggingKeys.cpp:
+            (WebCore::DiagnosticLoggingKeys::pageLoadedKey): New.
+            * page/DiagnosticLoggingKeys.h:
+    
+
 2014-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Notify Settings object when its Page object goes away.
