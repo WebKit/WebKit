@@ -29,6 +29,12 @@
 namespace WebCore {
     class CSSSelectorList;
 
+    enum class SelectorSpecificityIncrement {
+        ClassA = 0x10000,
+        ClassB = 0x100,
+        ClassC = 1
+    };
+
     // this class represents a selector for a StyleRule
     class CSSSelector {
         WTF_MAKE_FAST_ALLOCATED;

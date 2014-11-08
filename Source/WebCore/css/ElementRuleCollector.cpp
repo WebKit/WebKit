@@ -86,11 +86,11 @@ const Vector<RefPtr<StyleRule>>& ElementRuleCollector::matchedRuleList() const
     return m_matchedRuleList;
 }
 
-inline void ElementRuleCollector::addMatchedRule(const RuleData* rule)
+inline void ElementRuleCollector::addMatchedRule(const MatchedRule& matchedRule)
 {
     if (!m_matchedRules)
-        m_matchedRules = std::make_unique<Vector<const RuleData*, 32>>();
-    m_matchedRules->append(rule);
+        m_matchedRules = std::make_unique<Vector<MatchedRule, 32>>();
+    m_matchedRules->append(matchedRule);
 }
 
 void ElementRuleCollector::clearMatchedRules()
@@ -202,18 +202,18 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
 
     sortMatchedRules();
 
-    Vector<const RuleData*, 32>& matchedRules = *m_matchedRules;
+    Vector<MatchedRule, 32>& matchedRules = *m_matchedRules;
     if (m_mode == SelectorChecker::Mode::CollectingRules) {
-        for (unsigned i = 0; i < matchedRules.size(); ++i)
-            m_matchedRuleList.append(matchedRules[i]->rule());
+        for (const MatchedRule& matchedRule : matchedRules)
+            m_matchedRuleList.append(matchedRule.ruleData->rule());
         return;
     }
 
     // Now transfer the set of matched rules over to our list of declarations.
-    for (unsigned i = 0; i < matchedRules.size(); i++) {
-        if (m_style && matchedRules[i]->containsUncommonAttributeSelector())
+    for (const MatchedRule& matchedRule : matchedRules) {
+        if (m_style && matchedRule.ruleData->containsUncommonAttributeSelector())
             m_style->setUnique();
-        m_result.addMatchedProperties(matchedRules[i]->rule()->properties(), matchedRules[i]->rule(), matchedRules[i]->linkMatchType(), matchedRules[i]->propertyWhitelistType(MatchingUARulesScope::isMatchingUARules()));
+        m_result.addMatchedProperties(matchedRule.ruleData->rule()->properties(), matchedRule.ruleData->rule(), matchedRule.ruleData->linkMatchType(), matchedRule.ruleData->propertyWhitelistType(MatchingUARulesScope::isMatchingUARules()));
     }
 }
 
@@ -274,12 +274,31 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
     sortAndTransferMatchedRules();
 }
 
-inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
+inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity)
 {
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
-    if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element.isHTMLElement()) {
+    MatchBasedOnRuleHash matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
+    if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && m_element.isHTMLElement()) {
         ASSERT_WITH_MESSAGE(m_pseudoStyleRequest.pseudoId == NOPSEUDO, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
+
+        switch (matchBasedOnRuleHash) {
+        case MatchBasedOnRuleHash::None:
+            ASSERT_NOT_REACHED();
+            break;
+        case MatchBasedOnRuleHash::Universal:
+            specificity = 0;
+            break;
+        case MatchBasedOnRuleHash::ClassA:
+            specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
+            break;
+        case MatchBasedOnRuleHash::ClassB:
+            specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
+            break;
+        case MatchBasedOnRuleHash::ClassC:
+            specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
+            break;
+        }
         return true;
     }
 
@@ -296,12 +315,15 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
     }
 
     if (compiledSelectorChecker && ruleData.compilationStatus() == SelectorCompilationStatus::SimpleSelectorChecker) {
-        SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
-        ASSERT_WITH_MESSAGE(!selectorChecker(&m_element) || m_pseudoStyleRequest.pseudoId == NOPSEUDO, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+        SelectorCompiler::RuleCollectorSimpleSelectorChecker selectorChecker = SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
+#if !ASSERT_MSG_DISABLED
+        unsigned ignoreSpecificity;
+        ASSERT_WITH_MESSAGE(!selectorChecker(&m_element, &ignoreSpecificity) || m_pseudoStyleRequest.pseudoId == NOPSEUDO, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+#endif
 #if CSS_SELECTOR_JIT_PROFILING
         ruleData.compiledSelectorUsed();
 #endif
-        return selectorChecker(&m_element);
+        return selectorChecker(&m_element, &specificity);
     }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
@@ -315,18 +337,18 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
     if (compiledSelectorChecker) {
         ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
 
-        SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
+        SelectorCompiler::RuleCollectorSelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::ruleCollectorSelectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
 
 #if CSS_SELECTOR_JIT_PROFILING
         ruleData.compiledSelectorUsed();
 #endif
-        return selectorChecker(&m_element, &context);
+        return selectorChecker(&m_element, &context, &specificity);
     }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     // Slow path.
     SelectorChecker selectorChecker(m_element.document());
-    return selectorChecker.match(ruleData.selector(), &m_element, context);
+    return selectorChecker.match(ruleData.selector(), &m_element, context, specificity);
 }
 
 void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
@@ -354,23 +376,24 @@ void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* r
         if (m_sameOriginOnly && !ruleData.hasDocumentSecurityOrigin())
             continue;
 
-        if (ruleMatches(ruleData)) {
+        unsigned specificity;
+        if (ruleMatches(ruleData, specificity)) {
             // Update our first/last rule indices in the matched rules array.
             ++ruleRange.lastRuleIndex;
             if (ruleRange.firstRuleIndex == -1)
                 ruleRange.firstRuleIndex = ruleRange.lastRuleIndex;
 
             // Add this rule to our list of matched rules.
-            addMatchedRule(&ruleData);
+            addMatchedRule({&ruleData, specificity});
         }
     }
 }
 
-static inline bool compareRules(const RuleData* r1, const RuleData* r2)
+static inline bool compareRules(MatchedRule r1, MatchedRule r2)
 {
-    unsigned specificity1 = r1->specificity();
-    unsigned specificity2 = r2->specificity();
-    return (specificity1 == specificity2) ? r1->position() < r2->position() : specificity1 < specificity2;
+    unsigned specificity1 = r1.specificity;
+    unsigned specificity2 = r2.specificity;
+    return (specificity1 == specificity2) ? r1.ruleData->position() < r2.ruleData->position() : specificity1 < specificity2;
 }
 
 void ElementRuleCollector::sortMatchedRules()

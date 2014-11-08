@@ -54,6 +54,14 @@ class StyleResolver;
 class StyleRuleRegion;
 class StyleSheetContents;
 
+enum class MatchBasedOnRuleHash : unsigned {
+    None,
+    Universal,
+    ClassA,
+    ClassB,
+    ClassC
+};
+
 class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
@@ -66,9 +74,8 @@ public:
     unsigned selectorIndex() const { return m_selectorIndex; }
 
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
-    bool hasRightmostSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash; }
+    MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
-    unsigned specificity() const { return m_specificity; }
     unsigned linkMatchType() const { return m_linkMatchType; }
     bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
     PropertyWhitelistType propertyWhitelistType(bool isMatchingUARules = false) const { return isMatchingUARules ? PropertyWhitelistNone : static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
@@ -101,8 +108,7 @@ private:
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
     unsigned m_position : 18;
-    unsigned m_specificity : 24;
-    unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
+    unsigned m_matchBasedOnRuleHash : 3;
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask

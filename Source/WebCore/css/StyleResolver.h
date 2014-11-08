@@ -572,7 +572,8 @@ inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regi
     SelectorChecker selectorChecker(regionElement->document());
     for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s)) {
         SelectorChecker::CheckingContext selectorCheckingContext(SelectorChecker::Mode::QueryingRules);
-        if (selectorChecker.match(s, regionElement, selectorCheckingContext))
+        unsigned ignoredSpecificity;
+        if (selectorChecker.match(s, regionElement, selectorCheckingContext, ignoredSpecificity))
             return true;
     }
     return false;

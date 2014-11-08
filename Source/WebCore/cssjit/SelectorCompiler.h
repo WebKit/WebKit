@@ -77,22 +77,37 @@ enum class SelectorContext {
     QuerySelector
 };
 
-typedef unsigned (*SimpleSelectorChecker)(Element*);
-typedef unsigned (*SelectorCheckerWithCheckingContext)(Element*, const SelectorChecker::CheckingContext*);
+typedef unsigned (*RuleCollectorSimpleSelectorChecker)(Element*, unsigned*);
+typedef unsigned (*QuerySelectorSimpleSelectorChecker)(Element*);
+
+typedef unsigned (*RuleCollectorSelectorCheckerWithCheckingContext)(Element*, const SelectorChecker::CheckingContext*, unsigned*);
+typedef unsigned (*QuerySelectorSelectorCheckerWithCheckingContext)(Element*, const SelectorChecker::CheckingContext*);
+
 SelectorCompilationStatus compileSelector(const CSSSelector*, JSC::VM*, SelectorContext, JSC::MacroAssemblerCodeRef& outputCodeRef);
 
-inline SimpleSelectorChecker simpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline RuleCollectorSimpleSelectorChecker ruleCollectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    return reinterpret_cast<SimpleSelectorChecker>(executableAddress);
+    return reinterpret_cast<RuleCollectorSimpleSelectorChecker>(executableAddress);
 }
 
-inline SelectorCheckerWithCheckingContext selectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline QuerySelectorSimpleSelectorChecker querySelectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
+{
+    ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
+    return reinterpret_cast<QuerySelectorSimpleSelectorChecker>(executableAddress);
+}
+
+inline RuleCollectorSelectorCheckerWithCheckingContext ruleCollectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    return reinterpret_cast<SelectorCheckerWithCheckingContext>(executableAddress);
+    return reinterpret_cast<RuleCollectorSelectorCheckerWithCheckingContext>(executableAddress);
 }
 
+inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
+{
+    ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+    return reinterpret_cast<QuerySelectorSelectorCheckerWithCheckingContext>(executableAddress);
+}
 
 } // namespace SelectorCompiler
 } // namespace WebCore

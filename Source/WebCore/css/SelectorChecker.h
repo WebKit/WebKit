@@ -72,7 +72,7 @@ public:
 
     struct CheckingContextWithStatus;
 
-    bool match(const CSSSelector*, Element*, const CheckingContext&) const;
+    bool match(const CSSSelector*, Element*, const CheckingContext&, unsigned& specificity) const;
 
     static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);

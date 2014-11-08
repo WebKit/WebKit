@@ -94,7 +94,7 @@ inline unsigned CSSSelector::specificityForOneSelector() const
 {
     switch (match()) {
     case Id:
-        return 0x10000;
+        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
 
     case PagePseudoClass:
         break;
@@ -125,11 +125,11 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case Contain:
     case Begin:
     case End:
-        return 0x100;
+        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
     case Tag:
-        return (tagQName().localName() != starAtom) ? 1 : 0;
+        return (tagQName().localName() != starAtom) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
     case PseudoElement:
-        return 1;
+        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
     case Unknown:
         return 0;
     }

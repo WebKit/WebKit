@@ -357,9 +357,7 @@ private:
     StackAllocator::StackReference m_lastVisitedElement;
     StackAllocator::StackReference m_startElement;
 
-#if CSS_SELECTOR_JIT_DEBUGGING
     const CSSSelector* m_originalSelector;
-#endif
 };
 
 const Assembler::RegisterID SelectorCodeGenerator::returnRegister = JSC::GPRInfo::returnValueGPR;
@@ -798,9 +796,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     , m_functionType(FunctionType::SimpleSelectorChecker)
     , m_visitedMode(VisitedMode::None)
     , m_descendantBacktrackingStartInUse(false)
-#if CSS_SELECTOR_JIT_DEBUGGING
     , m_originalSelector(rootSelector)
-#endif
 {
 #if CSS_SELECTOR_JIT_DEBUGGING
     dataLogF("Compiling \"%s\"\n", m_originalSelector->selectorText().utf8().data());
@@ -1607,6 +1603,14 @@ void SelectorCodeGenerator::generateSelectorChecker()
     if (m_selectorContext != SelectorContext::QuerySelector && m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
         ASSERT_WITH_MESSAGE(fragmentMatchesTheRightmostElement(m_selectorContext, m_selectorFragments.first()), "Matching pseudo elements only make sense for the rightmost fragment.");
         generateRequestedPseudoElementEqualsToSelectorPseudoElement(failureOnFunctionEntry, m_selectorFragments.first(), checkingContextRegister);
+    }
+
+    if (m_selectorContext == SelectorContext::RuleCollector) {
+        unsigned specificity = m_originalSelector->specificity();
+        if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext)
+            m_assembler.store32(Assembler::TrustedImm32(specificity), JSC::GPRInfo::argumentGPR2);
+        else
+            m_assembler.store32(Assembler::TrustedImm32(specificity), JSC::GPRInfo::argumentGPR1);
     }
 
     computeBacktrackingMemoryRequirements(m_selectorFragments);

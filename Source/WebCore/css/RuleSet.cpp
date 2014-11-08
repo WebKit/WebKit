@@ -53,18 +53,28 @@ using namespace HTMLNames;
 
 // -----------------------------------------------------------------
 
-static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector& selector)
+static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector& selector)
 {
     if (selector.tagHistory())
-        return false;
+        return MatchBasedOnRuleHash::None;
 
     if (selector.match() == CSSSelector::Tag) {
-        const AtomicString& selectorNamespace = selector.tagQName().namespaceURI();
-        return selectorNamespace == starAtom || selectorNamespace == xhtmlNamespaceURI;
+        const QualifiedName& tagQualifiedName = selector.tagQName();
+        const AtomicString& selectorNamespace = tagQualifiedName.namespaceURI();
+        if (selectorNamespace == starAtom || selectorNamespace == xhtmlNamespaceURI) {
+            if (tagQualifiedName == anyQName())
+                return MatchBasedOnRuleHash::Universal;
+            return MatchBasedOnRuleHash::ClassC;
+        }
+        return MatchBasedOnRuleHash::None;
     }
     if (SelectorChecker::isCommonPseudoClassSelector(&selector))
-        return true;
-    return selector.match() == CSSSelector::Id || selector.match() == CSSSelector::Class;
+        return MatchBasedOnRuleHash::ClassB;
+    if (selector.match() == CSSSelector::Id)
+        return MatchBasedOnRuleHash::ClassA;
+    if (selector.match() == CSSSelector::Class)
+        return MatchBasedOnRuleHash::ClassB;
+    return MatchBasedOnRuleHash::None;
 }
 
 static bool selectorCanMatchPseudoElement(const CSSSelector& rootSelector)
@@ -149,8 +159,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     , m_selectorIndex(selectorIndex)
     , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
     , m_position(position)
-    , m_specificity(selector()->specificity())
-    , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(*selector()))
+    , m_matchBasedOnRuleHash(static_cast<unsigned>(computeMatchBasedOnRuleHash(*selector())))
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))

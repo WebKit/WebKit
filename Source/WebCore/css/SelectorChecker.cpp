@@ -168,7 +168,7 @@ SelectorChecker::SelectorChecker(Document& document)
 {
 }
 
-bool SelectorChecker::match(const CSSSelector* selector, Element* element, const CheckingContext& providedContext) const
+bool SelectorChecker::match(const CSSSelector* selector, Element* element, const CheckingContext& providedContext, unsigned& specificity) const
 {
     CheckingContextWithStatus context(providedContext, selector, element);
     PseudoId pseudoId = NOPSEUDO;
@@ -176,6 +176,8 @@ bool SelectorChecker::match(const CSSSelector* selector, Element* element, const
         return false;
     if (context.pseudoId != NOPSEUDO && context.pseudoId != pseudoId)
         return false;
+
+    specificity = selector->specificity();
     if (context.pseudoId == NOPSEUDO && pseudoId != NOPSEUDO) {
         if (context.resolvingMode == Mode::ResolvingStyle && pseudoId < FIRST_INTERNAL_PSEUDOID)
             context.elementStyle->setHasPseudoStyle(pseudoId);

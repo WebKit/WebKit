@@ -38,6 +38,11 @@ class RuleData;
 class RuleSet;
 class SelectorFilter;
 
+struct MatchedRule {
+    const RuleData* ruleData;
+    unsigned specificity;
+};
+
 class ElementRuleCollector {
 public:
     ElementRuleCollector(Element& element, RenderStyle* style, const DocumentRuleSets& ruleSets, const SelectorFilter& selectorFilter)
@@ -81,12 +86,12 @@ private:
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForRegion(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, StyleResolver::RuleRange&);
-    bool ruleMatches(const RuleData&);
+    bool ruleMatches(const RuleData&, unsigned &specificity);
 
     void sortMatchedRules();
     void sortAndTransferMatchedRules();
 
-    void addMatchedRule(const RuleData*);
+    void addMatchedRule(const MatchedRule&);
 
     Element& m_element;
     RenderStyle* m_style;
@@ -100,7 +105,7 @@ private:
     SelectorChecker::Mode m_mode;
     bool m_canUseFastReject;
 
-    std::unique_ptr<Vector<const RuleData*, 32>> m_matchedRules;
+    std::unique_ptr<Vector<MatchedRule, 32>> m_matchedRules;
 
     // Output.
     Vector<RefPtr<StyleRule>> m_matchedRuleList;
