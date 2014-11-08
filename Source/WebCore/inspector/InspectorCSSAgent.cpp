@@ -1073,7 +1073,8 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Insp
         const CSSSelectorList& selectorList = matchedStyleRule->selectorList();
         long index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-            bool matched = selectorChecker.match(selector, element, context);
+            unsigned ignoredSpecificity;
+            bool matched = selectorChecker.match(selector, element, context, ignoredSpecificity);
             if (matched)
                 matchingSelectors->addItem(index);
             ++index;

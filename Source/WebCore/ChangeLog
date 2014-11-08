@@ -1,3 +1,10 @@
+2014-11-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the build after r175772
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+
 2014-11-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Make the Selector's specificity part of Selector matching
