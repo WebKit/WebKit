@@ -738,7 +738,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     case kWKContextActionItemTagLookupText:
         selector = @selector(_lookupText:);
-        title = @"Lookup";
+        title = @"Look Up";
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
         break;
 

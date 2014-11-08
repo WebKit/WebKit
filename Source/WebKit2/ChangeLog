@@ -1,3 +1,13 @@
+2014-11-07  Conrad Shultz  <conrad_shultz@apple.com>
+
+        "Lookup" action menu should read "Look up"
+        https://bugs.webkit.org/show_bug.cgi?id=138509
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _createActionMenuItemForTag:]):
+
 2014-11-07  Beth Dakin  <bdakin@apple.com>
 
         Null deref performing Lookup on Apple Trailers full screen button
