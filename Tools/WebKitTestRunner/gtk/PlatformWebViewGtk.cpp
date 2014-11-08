@@ -34,8 +34,8 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup, WKPageRef /* relatedPage */, WKDictionaryRef options)
-    : m_view(WKViewCreate(context, pageGroup))
+PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup, WKPageRef relatedPage, WKDictionaryRef options)
+    : m_view(WKViewCreate(context, pageGroup, relatedPage))
     , m_window(gtk_window_new(GTK_WINDOW_POPUP))
     , m_windowIsKey(true)
     , m_options(options)
