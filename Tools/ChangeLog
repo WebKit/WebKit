@@ -1,5 +1,22 @@
 2014-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Run layout tests using the network process
+        https://bugs.webkit.org/show_bug.cgi?id=138428
+
+        Reviewed by Martin Robinson.
+
+        Shared secondary process is the default in the GTK+ port, but we
+        should run the tests using the network process to ensure
+        everything works with the network process. In the future, the
+        shared secondary process model might be a special case of multiple
+        processes with 1 as maximum number of processes, but always using
+        the network process.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
+2014-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Allow to create a view with a related page in WTR
         https://bugs.webkit.org/show_bug.cgi?id=138501
 
