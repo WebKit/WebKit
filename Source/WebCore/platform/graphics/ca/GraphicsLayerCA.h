@@ -350,8 +350,6 @@ private:
     void removeCloneLayers();
     FloatPoint positionForCloneRootLayer() const;
     
-    void propagateLayerChangeToReplicas();
-    
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateLayerNames();
     void updateSublayerList(bool maxLayerDepthReached = false);
@@ -444,6 +442,8 @@ private:
     void noteLayerPropertyChanged(LayerChangeFlags, ScheduleFlushOrNot = ScheduleFlush);
     void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);
     void noteChangesForScaleSensitiveProperties();
+
+    void propagateLayerChangeToReplicas(ScheduleFlushOrNot = ScheduleFlush);
 
     void repaintLayerDirtyRects();
 

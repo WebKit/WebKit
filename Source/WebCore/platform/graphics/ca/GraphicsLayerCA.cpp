@@ -3181,7 +3181,7 @@ FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
                       replicaPosition.y() + m_anchorPoint.y() * m_size.height());
 }
 
-void GraphicsLayerCA::propagateLayerChangeToReplicas()
+void GraphicsLayerCA::propagateLayerChangeToReplicas(ScheduleFlushOrNot scheduleFlush)
 {
     for (GraphicsLayer* currentLayer = this; currentLayer; currentLayer = currentLayer->parent()) {
         GraphicsLayerCA& currentLayerCA = downcast<GraphicsLayerCA>(*currentLayer);
@@ -3189,7 +3189,7 @@ void GraphicsLayerCA::propagateLayerChangeToReplicas()
             break;
 
         if (currentLayerCA.replicaLayer())
-            downcast<GraphicsLayerCA>(*currentLayerCA.replicaLayer()).noteLayerPropertyChanged(ReplicatedLayerChanged);
+            downcast<GraphicsLayerCA>(*currentLayerCA.replicaLayer()).noteLayerPropertyChanged(ReplicatedLayerChanged, scheduleFlush);
     }
 }
 
@@ -3390,7 +3390,7 @@ void GraphicsLayerCA::computePixelAlignment(float pageScale, const FloatPoint& p
 void GraphicsLayerCA::noteSublayersChanged(ScheduleFlushOrNot scheduleFlush)
 {
     noteLayerPropertyChanged(ChildrenChanged, scheduleFlush);
-    propagateLayerChangeToReplicas();
+    propagateLayerChangeToReplicas(scheduleFlush);
 }
 
 bool GraphicsLayerCA::canThrottleLayerFlush() const

@@ -1,3 +1,20 @@
+2014-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't try to schedule a GraphicsLayer flush when propagating changes to replicas inside a flush
+        https://bugs.webkit.org/show_bug.cgi?id=138532
+
+        Reviewed by Dan Bernstein.
+
+        When changing masks on replica layers with certain layer configurations, 
+        it was possible to hit an assertion that a flush was being scheduled when already
+        flushing, via propagateLayerChangeToReplicas(). Fix by passing the scheduleFlush
+        flag along.
+        
+        Not testable with current GraphicsLayer configurations.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2014-11-08  Beth Dakin  <bdakin@apple.com>
 
         Implement action menu support for videos
