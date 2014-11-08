@@ -65,7 +65,8 @@ WebNotificationProvider::WebNotificationProvider()
 
 WebNotificationProvider::~WebNotificationProvider()
 {
-    WKNotificationManagerSetProvider(m_notificationManager.get(), 0);
+    if (m_notificationManager)
+        WKNotificationManagerSetProvider(m_notificationManager.get(), nullptr);
 }
 
 WKNotificationProviderV0 WebNotificationProvider::provider()
