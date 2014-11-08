@@ -1,3 +1,20 @@
+2014-11-08  Beth Dakin  <bdakin@apple.com>
+
+        Implement action menu support for videos
+        https://bugs.webkit.org/show_bug.cgi?id=138534
+        -and corresponding-
+        rdar://problem/18742164
+
+        Reviewed by Tim Horton.
+
+        Export needed symbols and added not-yet-implemented 
+        HitTestResult::isMediaThatCanBeDownloaded() so that action menus will work as 
+        expected once it is implemented.
+        * WebCore.exp.in:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isMediaThatCanBeDownloaded):
+        * rendering/HitTestResult.h:
+
 2014-11-08  Chris Dumez  <cdumez@apple.com>
 
         Speed up HTMLInputElement::isEmptyValue()
