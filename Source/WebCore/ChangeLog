@@ -1,3 +1,23 @@
+2014-11-08  Chris Dumez  <cdumez@apple.com>
+
+        Speed up HTMLInputElement::isEmptyValue()
+        https://bugs.webkit.org/show_bug.cgi?id=138515
+
+        Reviewed by Geoffrey Garen.
+
+        HTMLInputElement::isEmptyValue() was calling
+        HTMLTextFormControlElement::innerTextValue() which causes a full
+        subtree traversal to construct a string representation of that subtree
+        using a StringBuilder. In the case of HTMLInputElement::isEmptyValue(),
+        we don't have to do all this: We don't need to construct a String
+        and we can return false as soon as we find a non-empty descendant.
+
+        No new tests, no behavior change.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isEmptyValue):
+        * html/HTMLInputElement.h:
+
 2014-11-07  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] video is sometimes allowed to play from the background

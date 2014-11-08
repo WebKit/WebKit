@@ -144,7 +144,7 @@ public:
 #endif
 
     HTMLElement* containerElement() const;
-    virtual TextControlInnerTextElement* innerTextElement() const override;
+    virtual TextControlInnerTextElement* innerTextElement() const override final;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;
@@ -341,7 +341,7 @@ private:
     virtual void updateFocusAppearance(bool restorePreviousSelection) override;
     virtual bool shouldUseInputMethod() override final;
 
-    virtual bool isTextFormControl() const override { return isTextField(); }
+    virtual bool isTextFormControl() const override final { return isTextField(); }
 
     virtual bool canTriggerImplicitSubmission() const override { return isTextField(); }
 
@@ -389,7 +389,7 @@ private:
 
     virtual bool supportsPlaceholder() const override;
     virtual void updatePlaceholderText() override;
-    virtual bool isEmptyValue() const override { return innerTextValue().isEmpty(); }
+    virtual bool isEmptyValue() const override final;
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection) override;
     virtual void handleBlurEvent() override;
 

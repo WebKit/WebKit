@@ -62,6 +62,8 @@
 #include "SearchInputType.h"
 #include "StyleResolver.h"
 #include "TextBreakIterator.h"
+#include "TextControlInnerElements.h"
+#include "TextNodeTraversal.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
 
@@ -1674,6 +1676,21 @@ bool HTMLInputElement::supportsPlaceholder() const
 void HTMLInputElement::updatePlaceholderText()
 {
     return m_inputType->updatePlaceholderText();
+}
+
+bool HTMLInputElement::isEmptyValue() const
+{
+    if (!isTextField())
+        return true;
+
+    TextControlInnerTextElement* innerText = innerTextElement();
+    ASSERT(innerText);
+
+    for (Text* text = TextNodeTraversal::firstWithin(innerText); text; text = TextNodeTraversal::next(text, innerText)) {
+        if (text->length())
+            return false;
+    }
+    return true;
 }
 
 void HTMLInputElement::parseMaxLengthAttribute(const AtomicString& value)
