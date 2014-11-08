@@ -102,6 +102,15 @@ public:
     virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
     void wirelessRoutesAvailableDidChange() const;
 
+    enum DisplayType {
+        Normal,
+        Fullscreen,
+        Optimized,
+    };
+    DisplayType displayType() const;
+
+    bool isHidden() const;
+
 protected:
     MediaSessionClient& client() const { return m_client; }
 
@@ -123,6 +132,7 @@ public:
     
     virtual MediaSession::MediaType mediaType() const = 0;
     virtual MediaSession::MediaType presentationType() const = 0;
+    virtual MediaSession::DisplayType displayType() const { return MediaSession::Normal; }
 
     virtual void resumePlayback() = 0;
     virtual void pausePlayback() = 0;

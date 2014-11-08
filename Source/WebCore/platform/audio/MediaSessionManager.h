@@ -76,6 +76,8 @@ public:
 
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
+    virtual bool sessionCanLoadMedia(const MediaSession&) const;
+
     virtual void configureWireLessTargetMonitoring() { }
 
 #if ENABLE(IOS_AIRPLAY)

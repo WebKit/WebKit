@@ -194,6 +194,16 @@ void MediaSession::updateClientDataBuffering()
     m_client.setShouldBufferData(shouldBuffer);
 }
 
+bool MediaSession::isHidden() const
+{
+    return m_client.elementIsHidden();
+}
+
+MediaSession::DisplayType MediaSession::displayType() const
+{
+    return m_client.displayType();
+}
+
 void MediaSession::wirelessRoutesAvailableDidChange() const
 {
     m_client.wirelessRoutesAvailableDidChange();

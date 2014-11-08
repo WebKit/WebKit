@@ -704,6 +704,7 @@ private:
     // MediaSessionClient Overrides
     virtual MediaSession::MediaType mediaType() const override;
     virtual MediaSession::MediaType presentationType() const override;
+    virtual MediaSession::DisplayType displayType() const override;
     virtual void pausePlayback() override;
     virtual void resumePlayback() override;
     virtual String mediaSessionTitle() const override;

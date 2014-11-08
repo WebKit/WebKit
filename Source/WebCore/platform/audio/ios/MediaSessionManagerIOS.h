@@ -60,6 +60,8 @@ private:
     virtual void configureWireLessTargetMonitoring() override;
 #endif
 
+    virtual bool sessionCanLoadMedia(const MediaSession&) const override;
+
     MediaSessionManageriOS();
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 };

@@ -260,6 +260,11 @@ bool MediaSessionManager::sessionRestrictsInlineVideoPlayback(const MediaSession
     return m_restrictions[sessionType] & InlineVideoPlaybackRestricted;
 }
 
+bool MediaSessionManager::sessionCanLoadMedia(const MediaSession& session) const
+{
+    return session.state() == MediaSession::Playing || !session.isHidden();
+}
+
 void MediaSessionManager::applicationWillEnterBackground() const
 {
     LOG(Media, "MediaSessionManager::applicationWillEnterBackground");

@@ -5974,6 +5974,23 @@ MediaSession::MediaType HTMLMediaElement::presentationType() const
     return MediaSession::Audio;
 }
 
+MediaSession::DisplayType HTMLMediaElement::displayType() const
+{
+    switch (m_videoFullscreenMode) {
+    case VideoFullscreenModeStandard:
+        return MediaSession::Fullscreen;
+    case VideoFullscreenModeOptimized:
+        return MediaSession::Optimized;
+    case VideoFullscreenModeNone:
+        return MediaSession::Normal;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return MediaSession::Normal;
+}
+
 #if ENABLE(MEDIA_SOURCE)
 size_t HTMLMediaElement::maximumSourceBufferSize(const SourceBuffer& buffer) const
 {

@@ -213,6 +213,11 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     [nowPlaying setNowPlayingInfo:info.get()];
 }
 
+bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) const
+{
+    return session.state() == MediaSession::Playing || !session.isHidden() || session.displayType() == MediaSession::Optimized;
+}
+
 } // namespace WebCore
 
 @implementation WebMediaSessionHelper

@@ -1,3 +1,30 @@
+2014-11-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] video is sometimes allowed to play from the background
+        https://bugs.webkit.org/show_bug.cgi?id=138522
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::displayType): New.
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::isHidden): New, client passthrough.
+        (WebCore::MediaSession::displayType): Ditto.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSessionClient::displayType):
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::sessionCanLoadMedia): New, default implementation returns
+            true if client is visible or playing.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionCanLoadMedia): iOS override, also allows buffering
+            when displaying optimized fullscreen.
+
 2014-11-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the build after r175772
