@@ -169,13 +169,9 @@ ContainerNode& HTMLCollection::rootNode() const
     return ownerNode();
 }
 
-inline bool isMatchingElement(const HTMLCollection& htmlCollection, Element& element)
+inline bool isMatchingHTMLElement(const HTMLCollection& collection, HTMLElement& element)
 {
-    CollectionType type = htmlCollection.type();
-    if (!element.isHTMLElement() && !(type == DocAll || type == NodeChildren || type == WindowNamedItems))
-        return false;
-
-    switch (type) {
+    switch (collection.type()) {
     case DocImages:
         return element.hasTagName(imgTag);
     case DocScripts:
@@ -209,19 +205,32 @@ inline bool isMatchingElement(const HTMLCollection& htmlCollection, Element& ele
         return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.fastHasAttribute(hrefAttr);
     case DocAnchors:
         return element.hasTagName(aTag) && element.fastHasAttribute(nameAttr);
+    case DocumentNamedItems:
+        return static_cast<const DocumentNameCollection&>(collection).elementMatches(element);
     case DocAll:
     case NodeChildren:
-        return true;
-    case DocumentNamedItems:
-        return static_cast<const DocumentNameCollection&>(htmlCollection).elementMatches(element);
     case WindowNamedItems:
-        return static_cast<const WindowNameCollection&>(htmlCollection).elementMatches(element);
     case FormControls:
     case TableRows:
         break;
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+inline bool isMatchingElement(const HTMLCollection& collection, Element& element)
+{
+    // Collection types that deal with any type of Elements, not just HTMLElements.
+    switch (collection.type()) {
+    case DocAll:
+    case NodeChildren:
+        return true;
+    case WindowNamedItems:
+        return static_cast<const WindowNameCollection&>(collection).elementMatches(element);
+    default:
+        // Collection types that only deal with HTMLElements.
+        return is<HTMLElement>(element) && isMatchingHTMLElement(collection, downcast<HTMLElement>(element));
+    }
 }
 
 static Element* previousElement(ContainerNode& base, Element* previous, bool onlyIncludeDirectChildren)

@@ -1,5 +1,22 @@
 2014-11-08  Chris Dumez  <cdumez@apple.com>
 
+        Call faster HTMLElement::hasTagName() in HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=138529
+
+        Reviewed by Darin Adler.
+
+        Call faster HTMLElement::hasTagName() in HTMLCollection instead of
+        slower Node::hasTagName() by restructuring the code a bit to
+        distinguish collection that deal only with HTMLElements from others.
+
+        No new tests, no behavior change.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingHTMLElement):
+        (WebCore::isMatchingElement):
+
+2014-11-08  Chris Dumez  <cdumez@apple.com>
+
         Move isEmptyValue() logic from HTMLInputElement to TextFieldInputType
         https://bugs.webkit.org/show_bug.cgi?id=138538
 
