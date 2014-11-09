@@ -1,3 +1,9 @@
+2014-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Put bug link at the start of the line.
+
+        * platform/mac-wk2/TestExpectations:
+
 2014-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Implement round-rect clipping on video elements
