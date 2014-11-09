@@ -1,3 +1,14 @@
+2014-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] generate-gtkdoc should ignore invalid files
+        https://bugs.webkit.org/show_bug.cgi?id=138542
+
+        Reviewed by Darin Adler.
+
+        * gtk/generate-gtkdoc:
+        (files_to_ignore.file_should_be_ignored): Return True to ignore
+        invalid files.
+
 2014-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Delete cookies between tests

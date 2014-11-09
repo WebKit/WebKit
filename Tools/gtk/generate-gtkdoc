@@ -92,7 +92,7 @@ def files_to_ignore(source_dirs, headers_with_gtkdoc):
         if os.path.splitext(file)[1] not in ['.h', '.c', '.cpp', '.cc']:
             return False # These files are ignored anyway.
         if not os.path.isfile(file):
-            return False
+            return True
         return os.path.abspath(file) not in implementation_files
 
     all_files = sum([[os.path.join(dir, file) for file in os.listdir(dir)] for dir in source_dirs], [])
