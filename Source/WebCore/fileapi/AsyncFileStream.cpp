@@ -192,10 +192,9 @@ void AsyncFileStream::read(char* buffer, int length)
 
 void AsyncFileStream::write(const URL& blobURL, long long position, int length)
 {
-    // FIXME: Would be more elegant to have a URLCapture for cases like this to avoid re-parsing the URL.
-    StringCapture capturedURL(blobURL.string());
+    URLCapture capturedURL(blobURL);
     perform([capturedURL, position, length](FileStream& stream) -> std::function<void(FileStreamClient&)> {
-        int bytesWritten = stream.write(URL(ParsedURLString, capturedURL.string()), position, length);
+        int bytesWritten = stream.write(capturedURL.url(), position, length);
         return [bytesWritten](FileStreamClient& client) {
             client.didWrite(bytesWritten);
         };

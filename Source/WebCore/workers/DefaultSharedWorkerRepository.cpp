@@ -34,7 +34,6 @@
 
 #include "DefaultSharedWorkerRepository.h"
 
-#include "ActiveDOMObject.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
@@ -44,10 +43,8 @@
 #include "PageGroup.h"
 #include "PlatformStrategies.h"
 #include "SecurityOrigin.h"
-#include "SecurityOriginHash.h"
 #include "SharedWorker.h"
 #include "SharedWorkerGlobalScope.h"
-#include "SharedWorkerRepository.h"
 #include "SharedWorkerStrategy.h"
 #include "SharedWorkerThread.h"
 #include "WorkerLoaderProxy.h"
@@ -55,42 +52,33 @@
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
 #include <inspector/ScriptCallStack.h>
-#include <mutex>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Threading.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class SharedWorkerProxy : public ThreadSafeRefCounted<SharedWorkerProxy>, public WorkerLoaderProxy, public WorkerReportingProxy {
+class SharedWorkerProxy final : public ThreadSafeRefCounted<SharedWorkerProxy>, public WorkerLoaderProxy, public WorkerReportingProxy {
 public:
     static PassRefPtr<SharedWorkerProxy> create(const String& name, const URL& url, PassRefPtr<SecurityOrigin> origin) { return adoptRef(new SharedWorkerProxy(name, url, origin)); }
 
     void setThread(PassRefPtr<SharedWorkerThread> thread) { m_thread = thread; }
     SharedWorkerThread* thread() { return m_thread.get(); }
     bool isClosing() const { return m_closing; }
-    URL url() const
-    {
-        // Don't use m_url.copy() because it isn't a threadsafe method.
-        return URL(ParsedURLString, m_url.string().isolatedCopy());
-    }
-
+    URL url() const { return m_url.copy(); }
     String name() const { return m_name.isolatedCopy(); }
     bool matches(const String& name, PassRefPtr<SecurityOrigin> origin, const URL& urlToMatch) const;
 
     // WorkerLoaderProxy
-    virtual void postTaskToLoader(ScriptExecutionContext::Task);
-    virtual bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task, const String&);
+    virtual void postTaskToLoader(ScriptExecutionContext::Task) override;
+    virtual bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task, const String&) override;
 
     // WorkerReportingProxy
-    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
-    virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL);
+    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) override;
+    virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL) override;
 #if ENABLE(INSPECTOR)
-    virtual void postMessageToPageInspector(const String&);
+    virtual void postMessageToPageInspector(const String&) override;
 #endif
-    virtual void workerGlobalScopeClosed();
-    virtual void workerGlobalScopeDestroyed();
+    virtual void workerGlobalScopeClosed() override;
+    virtual void workerGlobalScopeDestroyed() override;
 
     // Updates the list of the worker's documents, per section 4.5 of the WebWorkers spec.
     void addToWorkerDocuments(ScriptExecutionContext*);
@@ -181,24 +169,22 @@ GroupSettings* SharedWorkerProxy::groupSettings() const
 void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
-    String errorMessageCopy = errorMessage.isolatedCopy();
-    String sourceURLCopy = sourceURL.isolatedCopy();
-
+    StringCapture capturedErrorMessage(errorMessage);
+    StringCapture capturedSourceURL(sourceURL);
     for (auto& document : m_workerDocuments)
-        document->postTask([errorMessageCopy, lineNumber, columnNumber, sourceURLCopy] (ScriptExecutionContext& context) {
-            context.reportException(errorMessageCopy, lineNumber, columnNumber, sourceURLCopy, nullptr);
+        document->postTask([capturedErrorMessage, lineNumber, columnNumber, capturedSourceURL] (ScriptExecutionContext& context) {
+            context.reportException(capturedErrorMessage.string(), lineNumber, columnNumber, capturedSourceURL.string(), nullptr);
         });
 }
 
 void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, int columnNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
-    String messageCopy = message.isolatedCopy();
-    String sourceURLCopy = sourceURL.isolatedCopy();
-
+    StringCapture capturedMessage(message);
+    StringCapture capturedSourceURL(sourceURL);
     for (auto& document : m_workerDocuments)
-        document->postTask([source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber] (ScriptExecutionContext& context) {
-            context.addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
+        document->postTask([source, level, capturedMessage, capturedSourceURL, lineNumber, columnNumber] (ScriptExecutionContext& context) {
+            context.addConsoleMessage(source, level, capturedMessage.string(), capturedSourceURL.string(), lineNumber, columnNumber);
         });
 }
 
@@ -417,7 +403,7 @@ PassRefPtr<SharedWorkerProxy> DefaultSharedWorkerRepository::getProxy(const Stri
     // Look for an existing worker, and create one if it doesn't exist.
     // Items in the cache are freed on another thread, so do a threadsafe copy of the URL before creating the origin,
     // to make sure no references to external strings linger.
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(URL(ParsedURLString, url.string().isolatedCopy()));
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url.copy());
     for (unsigned i = 0; i < m_proxies.size(); i++) {
         if (!m_proxies[i]->isClosing() && m_proxies[i]->matches(name, origin, url))
             return m_proxies[i];

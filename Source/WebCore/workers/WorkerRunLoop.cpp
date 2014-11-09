@@ -199,17 +199,12 @@ void WorkerRunLoop::postTask(ScriptExecutionContext::Task task)
 
 void WorkerRunLoop::postTaskAndTerminate(ScriptExecutionContext::Task task)
 {
-    m_messageQueue.appendAndKill(Task::create(WTF::move(task), defaultMode().isolatedCopy()));
+    m_messageQueue.appendAndKill(std::make_unique<Task>(WTF::move(task), defaultMode()));
 }
 
 void WorkerRunLoop::postTaskForMode(ScriptExecutionContext::Task task, const String& mode)
 {
-    m_messageQueue.append(Task::create(WTF::move(task), mode.isolatedCopy()));
-}
-
-std::unique_ptr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(ScriptExecutionContext::Task task, const String& mode)
-{
-    return std::unique_ptr<Task>(new Task(WTF::move(task), mode));
+    m_messageQueue.append(std::make_unique<Task>(WTF::move(task), mode));
 }
 
 void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, WorkerGlobalScope* context)

@@ -266,12 +266,12 @@ void WorkerThreadableWebSocketChannel::Peer::didConnect()
     ASSERT(isMainThread());
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    String subprotocolCopy = m_mainWebSocketChannel->subprotocol().isolatedCopy();
-    String extensionsCopy = m_mainWebSocketChannel->extensions().isolatedCopy();
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, subprotocolCopy, extensionsCopy] (ScriptExecutionContext& context) {
+    StringCapture capturedSubprotocol(m_mainWebSocketChannel->subprotocol());
+    StringCapture capturedExtensions(m_mainWebSocketChannel->extensions());
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, capturedSubprotocol, capturedExtensions] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        workerClientWrapper->setSubprotocol(subprotocolCopy);
-        workerClientWrapper->setExtensions(extensionsCopy);
+        workerClientWrapper->setSubprotocol(capturedSubprotocol.string());
+        workerClientWrapper->setExtensions(capturedExtensions.string());
         workerClientWrapper->didConnect();
     }, m_taskMode);
 }
@@ -281,10 +281,10 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(const String& mes
     ASSERT(isMainThread());
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    String messageCopy = message.isolatedCopy();
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, messageCopy] (ScriptExecutionContext& context) {
+    StringCapture capturedMessage(message);
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, capturedMessage] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        workerClientWrapper->didReceiveMessage(messageCopy);
+        workerClientWrapper->didReceiveMessage(capturedMessage.string());
     }, m_taskMode);
 }
 
@@ -327,11 +327,11 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBuf
     m_mainWebSocketChannel = 0;
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    String reasonCopy = reason.isolatedCopy();
+    StringCapture capturedReason(reason);
     m_loaderProxy.postTaskForModeToWorkerGlobalScope(
-        [workerClientWrapper, unhandledBufferedAmount, closingHandshakeCompletion, code, reasonCopy] (ScriptExecutionContext& context) {
+        [workerClientWrapper, unhandledBufferedAmount, closingHandshakeCompletion, code, capturedReason] (ScriptExecutionContext& context) {
             ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-            workerClientWrapper->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reasonCopy);
+            workerClientWrapper->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, capturedReason.string());
         }, m_taskMode);
 }
 
@@ -399,9 +399,9 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize()
 
     WorkerLoaderProxy* loaderProxy = &m_loaderProxy;
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    String taskModeCopy = m_taskMode.isolatedCopy();
-    m_loaderProxy.postTaskToLoader([loaderProxy, workerClientWrapper, taskModeCopy] (ScriptExecutionContext& context) {
-        mainThreadInitialize(context, loaderProxy, workerClientWrapper, taskModeCopy);
+    StringCapture capturedTaskMode(m_taskMode);
+    m_loaderProxy.postTaskToLoader([loaderProxy, workerClientWrapper, capturedTaskMode] (ScriptExecutionContext& context) {
+        mainThreadInitialize(context, loaderProxy, workerClientWrapper, capturedTaskMode.string());
     });
     waitForMethodCompletion();
 
@@ -418,14 +418,14 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         return;
 
     Peer* peer = m_peer;
-    URL urlCopy = url.copy();
-    String protocolCopy = protocol.isolatedCopy();
-    m_loaderProxy.postTaskToLoader([peer, urlCopy, protocolCopy] (ScriptExecutionContext& context) {
+    URLCapture capturedURL(url);
+    StringCapture capturedProtocol(protocol);
+    m_loaderProxy.postTaskToLoader([peer, capturedURL, capturedProtocol] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->connect(urlCopy, protocolCopy);
+        peer->connect(capturedURL.url(), capturedProtocol.string());
     });
 }
 
@@ -436,13 +436,13 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
     setMethodNotCompleted();
 
     Peer* peer = m_peer;
-    String messageCopy = message.isolatedCopy();
-    m_loaderProxy.postTaskToLoader([peer, messageCopy] (ScriptExecutionContext& context) {
+    StringCapture capturedMessage(message);
+    m_loaderProxy.postTaskToLoader([peer, capturedMessage] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->send(messageCopy);
+        peer->send(capturedMessage.string());
     });
 
     Ref<Bridge> protect(*this);
@@ -490,16 +490,15 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
     setMethodNotCompleted();
 
     Peer* peer = m_peer;
-    URL urlCopy = binaryData.url().copy();
-    String typeCopy = binaryData.type().isolatedCopy();
+    URLCapture capturedURL(binaryData.url());
+    StringCapture capturedType(binaryData.type());
     long long size = binaryData.size();
-    m_loaderProxy.postTaskToLoader([peer, urlCopy, typeCopy, size] (ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([peer, capturedURL, capturedType, size] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        RefPtr<Blob> blob = Blob::deserialize(urlCopy, typeCopy, size);
-        peer->send(*blob);
+        peer->send(*Blob::deserialize(capturedURL.url(), capturedType.string(), size));
     });
 
     Ref<Bridge> protect(*this);
@@ -539,13 +538,13 @@ void WorkerThreadableWebSocketChannel::Bridge::close(int code, const String& rea
         return;
 
     Peer* peer = m_peer;
-    String reasonCopy = reason.isolatedCopy();
-    m_loaderProxy.postTaskToLoader([peer, code, reasonCopy] (ScriptExecutionContext& context) {
+    StringCapture capturedReason(reason);
+    m_loaderProxy.postTaskToLoader([peer, code, capturedReason] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->close(code, reasonCopy);
+        peer->close(code, capturedReason.string());
     });
 }
 
@@ -555,13 +554,13 @@ void WorkerThreadableWebSocketChannel::Bridge::fail(const String& reason)
         return;
 
     Peer* peer = m_peer;
-    String reasonCopy = reason.isolatedCopy();
-    m_loaderProxy.postTaskToLoader([peer, reasonCopy] (ScriptExecutionContext& context) {
+    StringCapture capturedReason(reason);
+    m_loaderProxy.postTaskToLoader([peer, capturedReason] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->fail(reasonCopy);
+        peer->fail(capturedReason.string());
     });
 }
 

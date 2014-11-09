@@ -222,7 +222,7 @@ void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const 
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, StringCapture(message)));
         return;
     }
 
@@ -233,7 +233,7 @@ void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel lev
 void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, StringCapture(message)));
         return;
     }
 

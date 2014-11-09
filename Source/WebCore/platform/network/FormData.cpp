@@ -283,7 +283,7 @@ static void appendBlobResolved(FormData* formData, const URL& url)
         LOG_ERROR("Tried to resolve a blob without a usable registry");
         return;
     }
-    BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(URL(ParsedURLString, url));
+    BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(url);
     if (!blobData) {
         LOG_ERROR("Could not get blob data from a registry");
         return;

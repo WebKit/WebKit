@@ -146,9 +146,9 @@ bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionCon
 
 void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    String errorMessageCopy = errorMessage.isolatedCopy();
-    String sourceURLCopy = sourceURL.isolatedCopy();
-    m_scriptExecutionContext->postTask([this, errorMessageCopy, sourceURLCopy, lineNumber, columnNumber] (ScriptExecutionContext& context) {
+    StringCapture capturedErrorMessage(errorMessage);
+    StringCapture capturedSourceURL(sourceURL);
+    m_scriptExecutionContext->postTask([this, capturedErrorMessage, capturedSourceURL, lineNumber, columnNumber] (ScriptExecutionContext& context) {
         Worker* workerObject = this->workerObject();
         if (!workerObject)
             return;
@@ -156,20 +156,20 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
         // We don't bother checking the askedToTerminate() flag here, because exceptions should *always* be reported even if the thread is terminated.
         // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
 
-        bool errorHandled = !workerObject->dispatchEvent(ErrorEvent::create(errorMessageCopy, sourceURLCopy, lineNumber, columnNumber));
+        bool errorHandled = !workerObject->dispatchEvent(ErrorEvent::create(capturedErrorMessage.string(), capturedSourceURL.string(), lineNumber, columnNumber));
         if (!errorHandled)
-            context.reportException(errorMessageCopy, lineNumber, columnNumber, sourceURLCopy, 0);
+            context.reportException(capturedErrorMessage.string(), lineNumber, columnNumber, capturedSourceURL.string(), 0);
     });
 }
 
 void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    String messageCopy = message.isolatedCopy();
-    String sourceURLCopy = sourceURL.isolatedCopy();
-    m_scriptExecutionContext->postTask([this, source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber] (ScriptExecutionContext& context) {
+    StringCapture capturedMessage(message);
+    StringCapture capturedSourceURL(sourceURL);
+    m_scriptExecutionContext->postTask([this, source, level, capturedMessage, capturedSourceURL, lineNumber, columnNumber] (ScriptExecutionContext& context) {
         if (askedToTerminate())
             return;
-        context.addConsoleMessage(source, level, messageCopy, sourceURLCopy, lineNumber, columnNumber);
+        context.addConsoleMessage(source, level, capturedMessage.string(), capturedSourceURL.string(), lineNumber, columnNumber);
     });
 }
 
@@ -242,9 +242,9 @@ void WorkerMessagingProxy::sendMessageToInspector(const String& message)
 {
     if (m_askedToTerminate)
         return;
-    String messageCopy = message.isolatedCopy();
-    m_workerThread->runLoop().postTaskForMode([messageCopy] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).workerInspectorController().dispatchMessageFromFrontend(messageCopy);
+    StringCapture capturedMessage(message);
+    m_workerThread->runLoop().postTaskForMode([capturedMessage] (ScriptExecutionContext& context) {
+        downcast<WorkerGlobalScope>(context).workerInspectorController().dispatchMessageFromFrontend(capturedMessage.string());
     }, WorkerDebuggerAgent::debuggerTaskMode);
     WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(m_workerThread.get());
 }
@@ -294,9 +294,9 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
 #if ENABLE(INSPECTOR)
 void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
-    String messageCopy = message.isolatedCopy();
-    m_scriptExecutionContext->postTask([this, messageCopy] (ScriptExecutionContext&) {
-        m_pageInspector->dispatchMessageFromWorker(messageCopy);
+    StringCapture capturedMessage(message);
+    m_scriptExecutionContext->postTask([this, capturedMessage] (ScriptExecutionContext&) {
+        m_pageInspector->dispatchMessageFromWorker(capturedMessage.string());
     });
 }
 #endif

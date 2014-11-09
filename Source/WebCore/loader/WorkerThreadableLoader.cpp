@@ -92,13 +92,13 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<Threadable
     ASSERT(m_workerClientWrapper.get());
 
     CrossThreadResourceRequestData* requestData = request.copyData().leakPtr();
-    String outgoingReferrerCopy = outgoingReferrer.isolatedCopy();
-    m_loaderProxy.postTaskToLoader([this, requestData, options, outgoingReferrerCopy] (ScriptExecutionContext& context) {
+    StringCapture capturedOutgoingReferrer(outgoingReferrer);
+    m_loaderProxy.postTaskToLoader([this, requestData, options, capturedOutgoingReferrer](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
         OwnPtr<ResourceRequest> request = ResourceRequest::adopt(adoptPtr(requestData));
-        request->setHTTPReferrer(outgoingReferrerCopy);
+        request->setHTTPReferrer(capturedOutgoingReferrer.string());
 
         // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
         // will return a 0 value. Either this should return 0 or the other code path should do a callback with
@@ -193,20 +193,22 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long id
 void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
     RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    ResourceError errorCopy = error.copy();
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, errorCopy] (ScriptExecutionContext& context) {
+    ResourceError* capturedError = new ResourceError(error.copy());
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, capturedError] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        workerClientWrapper->didFail(errorCopy);
+        workerClientWrapper->didFail(*capturedError);
+        delete capturedError;
     }, m_taskMode);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck(const ResourceError& error)
 {
     RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper = m_workerClientWrapper;
-    ResourceError errorCopy = error.copy();
-    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, errorCopy] (ScriptExecutionContext& context) {
+    ResourceError* capturedError = new ResourceError(error.copy());
+    m_loaderProxy.postTaskForModeToWorkerGlobalScope([workerClientWrapper, capturedError] (ScriptExecutionContext& context) {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        workerClientWrapper->didFailAccessControlCheck(errorCopy);
+        workerClientWrapper->didFailAccessControlCheck(*capturedError);
+        delete capturedError;
     }, m_taskMode);
 }
 

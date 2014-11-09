@@ -1,3 +1,71 @@
+2014-11-09  Darin Adler  <darin@apple.com>
+
+        Fix various cases of incorrect cross-thread capture of non-thread-safe RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=138539
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect): Use StringCapture
+        instead of isolatedCopy, to avoid a problem where the original thread does its deref
+        after passing the string to the other thread.
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close): Ditto.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage): Pass a StringCapture when creating
+        AddConsoleMessageTask. Same reason as above, but in a different context.
+        (WebCore::Document::addMessage): Ditto.
+
+        * dom/ScriptExecutionContext.h: Changed AddConsoleMessageTask to take and
+        capture a StringCapture rather than a String, for the same reason as above.
+
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::write): Use URLCapture instead of trying to use
+        StringCapture on a URL, since that doesn't preserve the validity flag.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Use StringCapture.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail): Ditto.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck): Ditto.
+
+        * platform/URL.h: Added URLCapture.
+
+        * platform/network/FormData.cpp:
+        (WebCore::appendBlobResolved): Remove incorrect pointless code that creates a new URL
+        from an existing URL with the ParsedURLString constructor.
+
+        * workers/DefaultSharedWorkerRepository.cpp: Fixed code that was trying to copy a URL
+        by copying a string to instead just use URL::copy. The comment claimed that URL::copy
+        is not thread safe, but that claim is incorrect.
+        (WebCore::SharedWorkerProxy::postExceptionToWorkerObject): Use StringCapture.
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject): Ditto.
+        (WebCore::DefaultSharedWorkerRepository::getProxy): Use URL::copy.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::addConsoleMessage): Use StringCapture.
+        (WebCore::WorkerGlobalScope::addMessage): Ditto.
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject): Ditto.
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject): Ditto.
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector): Ditto.
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector): Ditto.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::postTaskAndTerminate): Make a Task with make_unique
+        rather than with Task::create. Removed an extra isolatedCopy, unneeded because
+        the Task constructor already does an isolatedCopy.
+        (WebCore::WorkerRunLoop::postTaskForMode): Ditto.
+        (WebCore::WorkerRunLoop::Task::create): Deleted.
+
+        * workers/WorkerRunLoop.h: Removed unneeded create function and explicit
+        public empty destructor.
+
 2014-11-09  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for HTMLCollection subclasses

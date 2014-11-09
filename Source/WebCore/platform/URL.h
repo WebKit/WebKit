@@ -81,8 +81,9 @@ public:
     // standard String constructor.
 
     // Makes a deep copy. Helpful only if you need to use a URL on another
-    // thread.  Since the underlying StringImpl objects are immutable, there's
+    // thread. Since the underlying StringImpl objects are immutable, there's
     // no other reason to ever prefer copy() over plain old assignment.
+    // FIXME: Rename to isolatedCopy to match String.
     URL copy() const;
 
     bool isNull() const;
@@ -254,6 +255,24 @@ String decodeURLEscapeSequences(const String&, const TextEncoding&);
 
 WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);
 
+#if PLATFORM(IOS)
+WEBCORE_EXPORT void enableURLSchemeCanonicalization(bool);
+#endif
+
+// Like StringCapture, but for URLs.
+class URLCapture {
+public:
+    explicit URLCapture(const URL&);
+    explicit URLCapture(URL&&);
+    URLCapture(const URLCapture&);
+    const URL& url() const;
+    URL releaseURL();
+
+private:
+    void operator=(const URLCapture&) = delete;
+    URL m_URL;
+};
+
 // Inlines.
 
 inline bool operator==(const URL& a, const URL& b)
@@ -344,9 +363,30 @@ inline unsigned URL::pathAfterLastSlash() const
     return m_pathAfterLastSlash;
 }
 
-#if PLATFORM(IOS)
-WEBCORE_EXPORT void enableURLSchemeCanonicalization(bool);
-#endif
+inline URLCapture::URLCapture(const URL& url)
+    : m_URL(url)
+{
+}
+
+inline URLCapture::URLCapture(URL&& url)
+    : m_URL(url)
+{
+}
+
+inline URLCapture::URLCapture(const URLCapture& other)
+    : m_URL(other.m_URL.copy())
+{
+}
+
+inline const URL& URLCapture::url() const
+{
+    return m_URL;
+}
+
+inline URL URLCapture::releaseURL()
+{
+    return WTF::move(m_URL);
+}
 
 } // namespace WebCore
 
