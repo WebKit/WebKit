@@ -80,6 +80,7 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override final;
     virtual bool isMouseFocusable() const override final;
     virtual bool isTextField() const override final;
+    virtual bool isEmptyValue() const override final;
     virtual bool valueMissing(const String&) const override final;
     virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) override final;
     virtual void forwardEvent(Event*) override final;

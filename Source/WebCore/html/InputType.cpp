@@ -717,6 +717,11 @@ String InputType::visibleValue() const
     return element().value();
 }
 
+bool InputType::isEmptyValue() const
+{
+    return true;
+}
+
 String InputType::sanitizeValue(const String& proposedValue) const
 {
     return proposedValue;
