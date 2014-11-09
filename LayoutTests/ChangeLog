@@ -1,3 +1,12 @@
+2014-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/navigation/redirect-on-back-updates-history-item.html leaks a cookie
+        https://bugs.webkit.org/show_bug.cgi?id=138507
+
+        Reviewed by Pratik Solanki.
+
+        * http/tests/navigation/resources/redirect-updates-history-item-done.html:
+
 2014-11-07  Chris Dumez  <cdumez@apple.com>
 
         Move 'webkit-clip-path' CSS property to the new StyleBuilder
