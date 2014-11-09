@@ -1,3 +1,16 @@
+2014-11-09  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Move _ignoresNonWheelMouseEvents implementation to WKView(Private)
+        https://bugs.webkit.org/show_bug.cgi?id=138487
+
+        Reviewed by Dan Bernstein.
+
+        Relocate some methods that should have been in a category implementation.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setIgnoresNonWheelMouseEvents:]):
+        (-[WKView _ignoresNonWheelMouseEvents]):
+
 2014-11-08  Beth Dakin  <bdakin@apple.com>
 
         WKActionMenuController methods should be more careful to use the best 

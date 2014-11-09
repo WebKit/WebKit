@@ -1109,16 +1109,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
     return _data->_ignoresNonWheelMouseEvents;
 }
 
-- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
-{
-    _data->_ignoresNonWheelMouseEvents = ignoresNonWheelMouseEvents;
-}
-
-- (BOOL)_ignoresNonWheelMouseEvents
-{
-    return _data->_ignoresNonWheelMouseEvents;
-}
-
 - (BOOL)_shouldIgnoreWheelEvents
 {
 #if WK_API_ENABLED
@@ -3984,6 +3974,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (BOOL)allowsBackForwardNavigationGestures
 {
     return _data->_allowsBackForwardNavigationGestures;
+}
+
+- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
+{
+    _data->_ignoresNonWheelMouseEvents = ignoresNonWheelMouseEvents;
+}
+
+- (BOOL)_ignoresNonWheelMouseEvents
+{
+    return _data->_ignoresNonWheelMouseEvents;
 }
 
 - (void)_dispatchSetTopContentInset
