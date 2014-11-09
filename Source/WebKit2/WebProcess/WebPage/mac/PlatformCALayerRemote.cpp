@@ -132,8 +132,14 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setOpaque(isOpaque());
     clone.setBackgroundColor(backgroundColor());
     clone.setContentsScale(contentsScale());
+    clone.setCornerRadius(cornerRadius());
+
+    if (m_properties.shapeRoundedRect)
+        clone.setShapeRoundedRect(*m_properties.shapeRoundedRect);
+
     if (m_properties.filters)
         clone.copyFiltersFrom(*this);
+
     clone.updateCustomAppearance(customAppearance());
 }
 
@@ -360,6 +366,12 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const Str
     return m_animations.get(key);
 }
 
+static inline bool isEquivalentLayer(const PlatformCALayer* layer, GraphicsLayer::PlatformLayerID layerID)
+{
+    GraphicsLayer::PlatformLayerID newLayerID = layer ? layer->layerID() : 0;
+    return layerID == newLayerID;
+}
+
 void PlatformCALayerRemote::animationStarted(const String& key, CFTimeInterval beginTime)
 {
     auto it = m_animations.find(key);
@@ -378,6 +390,9 @@ void PlatformCALayerRemote::animationEnded(const String& key)
 
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 {
+    if (isEquivalentLayer(layer, m_properties.maskLayerID))
+        return;
+    
     if (layer) {
         m_maskLayer = downcast<PlatformCALayerRemote>(layer);
         m_properties.maskLayerID = m_maskLayer->layerID();
@@ -391,6 +406,9 @@ void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 
 void PlatformCALayerRemote::setClonedLayer(const PlatformCALayer* layer)
 {
+    if (isEquivalentLayer(layer, m_properties.clonedLayerID))
+        return;
+
     if (layer)
         m_properties.clonedLayerID = layer->layerID();
     else
@@ -656,10 +674,38 @@ void PlatformCALayerRemote::setContentsScale(float value)
     updateBackingStore();
 }
 
+float PlatformCALayerRemote::cornerRadius() const
+{
+    return m_properties.cornerRadius;
+}
+
+void PlatformCALayerRemote::setCornerRadius(float value)
+{
+    if (m_properties.cornerRadius == value)
+        return;
+
+    m_properties.cornerRadius = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CornerRadiusChanged);
+}
+
 void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned value)
 {
     m_properties.edgeAntialiasingMask = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged);
+}
+
+FloatRoundedRect PlatformCALayerRemote::shapeRoundedRect() const
+{
+    return m_properties.shapeRoundedRect ? *m_properties.shapeRoundedRect : FloatRoundedRect(FloatRect());
+}
+
+void PlatformCALayerRemote::setShapeRoundedRect(const FloatRoundedRect& roundedRect)
+{
+    if (m_properties.shapeRoundedRect && *m_properties.shapeRoundedRect == roundedRect)
+        return;
+
+    m_properties.shapeRoundedRect = std::make_unique<FloatRoundedRect>(roundedRect);
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ShapeRoundedRectChanged);
 }
 
 bool PlatformCALayerRemote::requiresCustomAppearanceUpdateOnBoundsChange() const

@@ -45,6 +45,7 @@
 
 namespace WebCore {
 
+class FloatRoundedRect;
 class Image;
 class TransformState;
 
@@ -116,7 +117,7 @@ public:
     WEBCORE_EXPORT virtual void setContentsNeedsDisplay() override;
     
     WEBCORE_EXPORT virtual void setContentsRect(const FloatRect&) override;
-    WEBCORE_EXPORT virtual void setContentsClippingRect(const FloatRect&) override;
+    WEBCORE_EXPORT virtual void setContentsClippingRect(const FloatRoundedRect&) override;
     
     WEBCORE_EXPORT virtual void suspendAnimations(double time) override;
     WEBCORE_EXPORT virtual void resumeAnimations() override;
@@ -266,6 +267,8 @@ private:
     void setupContentsLayer(PlatformCALayer*);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
+    void updateClippingStrategy(PlatformCALayer&, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect&);
+
     WEBCORE_EXPORT virtual void setReplicatedByLayer(GraphicsLayer*) override;
 
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const override;
@@ -344,12 +347,12 @@ private:
     PassRefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
 
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
-        RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, CloneLevel);
+        RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, CloneLevel);
 
-    bool hasCloneLayers() const { return m_layerClones; }
+    bool hasCloneLayers() const { return !!m_layerClones; }
     void removeCloneLayers();
     FloatPoint positionForCloneRootLayer() const;
-    
+
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateLayerNames();
     void updateSublayerList(bool maxLayerDepthReached = false);
@@ -450,14 +453,16 @@ private:
     RefPtr<PlatformCALayer> m_layer; // The main layer
     RefPtr<PlatformCALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
     RefPtr<PlatformCALayer> m_contentsClippingLayer; // A layer used to clip inner content
+    RefPtr<PlatformCALayer> m_shapeMaskLayer; // Used to clip with non-trivial corner radii.
     RefPtr<PlatformCALayer> m_contentsLayer; // A layer used for inner content, like image and video
     RefPtr<PlatformCALayer> m_backdropLayer; // The layer used for backdrop rendering, if necessary.
 
     // References to clones of our layers, for replicated layers.
-    OwnPtr<LayerMap> m_layerClones;
-    OwnPtr<LayerMap> m_structuralLayerClones;
-    OwnPtr<LayerMap> m_contentsLayerClones;
-    OwnPtr<LayerMap> m_contentsClippingLayerClones;
+    std::unique_ptr<LayerMap> m_layerClones;
+    std::unique_ptr<LayerMap> m_structuralLayerClones;
+    std::unique_ptr<LayerMap> m_contentsLayerClones;
+    std::unique_ptr<LayerMap> m_contentsClippingLayerClones;
+    std::unique_ptr<LayerMap> m_shapeMaskLayerClones;
 
 #ifdef VISIBLE_TILE_WASH
     RefPtr<PlatformCALayer> m_visibleTileWashLayer;

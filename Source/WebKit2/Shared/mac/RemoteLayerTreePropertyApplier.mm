@@ -29,7 +29,7 @@
 #import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
-#import <QuartzCore/CALayer.h>
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
@@ -188,6 +188,17 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
     if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged) {
         layer.contentsScale = properties.contentsScale;
         layer.rasterizationScale = properties.contentsScale;
+    }
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::CornerRadiusChanged)
+        layer.cornerRadius = properties.cornerRadius;
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::ShapeRoundedRectChanged) {
+        Path path;
+        if (properties.shapeRoundedRect)
+            path.addRoundedRect(*properties.shapeRoundedRect);
+        ASSERT([layer isKindOfClass:[CAShapeLayer class]]);
+        [(CAShapeLayer *)layer setPath:path.platformPath()];
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)

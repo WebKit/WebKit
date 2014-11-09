@@ -26,6 +26,7 @@
 #ifndef PlatformCALayer_h
 #define PlatformCALayer_h
 
+#include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
 #include "PlatformCALayerClient.h"
 #include <QuartzCore/CABase.h>
@@ -78,6 +79,7 @@ public:
         LayerTypeAVPlayerLayer,
         LayerTypeWebGLLayer,
         LayerTypeBackdropLayer,
+        LayerTypeShapeLayer,
         LayerTypeCustom
     };
     enum FilterType { Linear, Nearest, Trilinear };
@@ -199,7 +201,14 @@ public:
     virtual float contentsScale() const = 0;
     virtual void setContentsScale(float) = 0;
 
+    virtual float cornerRadius() const = 0;
+    virtual void setCornerRadius(float) = 0;
+
     virtual void setEdgeAntialiasingMask(unsigned) = 0;
+    
+    // Only used by LayerTypeShapeLayer.
+    virtual FloatRoundedRect shapeRoundedRect() const = 0;
+    virtual void setShapeRoundedRect(const FloatRoundedRect&) = 0;
     
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;

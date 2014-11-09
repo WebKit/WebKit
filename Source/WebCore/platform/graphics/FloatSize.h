@@ -168,6 +168,11 @@ inline bool operator==(const FloatSize& a, const FloatSize& b)
     return a.width() == b.width() && a.height() == b.height();
 }
 
+inline bool withinEpsilon(const FloatSize& a, const FloatSize& b)
+{
+    return WTF::withinEpsilon(a.width(), b.width()) && WTF::withinEpsilon(a.height(), b.height());
+}
+
 inline bool operator!=(const FloatSize& a, const FloatSize& b)
 {
     return a.width() != b.width() || a.height() != b.height();

@@ -349,6 +349,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeWebGLLayer:
     case PlatformCALayer::LayerTypeBackdropLayer:
+    case PlatformCALayer::LayerTypeShapeLayer:
     case PlatformCALayer::LayerTypeCustom:
         ASSERT_NOT_REACHED();
         break;

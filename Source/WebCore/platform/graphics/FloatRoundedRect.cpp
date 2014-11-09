@@ -62,6 +62,14 @@ bool FloatRoundedRect::Radii::isZero() const
     return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero();
 }
 
+bool FloatRoundedRect::Radii::isUniformCornerRadius() const
+{
+    return WTF::withinEpsilon(m_topLeft.width(), m_topLeft.height())
+        && withinEpsilon(m_topLeft, m_topRight)
+        && withinEpsilon(m_topLeft, m_bottomLeft)
+        && withinEpsilon(m_topLeft, m_bottomRight);
+}
+
 void FloatRoundedRect::Radii::scale(float factor)
 {
     scale(factor, factor);

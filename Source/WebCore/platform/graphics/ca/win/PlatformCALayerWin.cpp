@@ -581,6 +581,27 @@ void PlatformCALayerWin::setContentsScale(float)
 {
 }
 
+float PlatformCALayerWin::cornerRadius() const
+{
+    return 0; // FIXME: implement.
+}
+
+void PlatformCALayerWin::setCornerRadius(float value)
+{
+    // FIXME: implement.
+}
+
+FloatRoundedRect PlatformCALayerWin::shapeRoundedRect() const
+{
+    // FIXME: implement.
+    return FloatRoundedRect();
+}
+
+void PlatformCALayerWin::setShapeRoundedRect(const FloatRoundedRect&)
+{
+    // FIXME: implement.
+}
+
 #ifndef NDEBUG
 static void printIndent(int indent)
 {

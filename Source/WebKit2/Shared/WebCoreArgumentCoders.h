@@ -43,6 +43,7 @@ class FilterOperations;
 class FloatPoint;
 class FloatPoint3D;
 class FloatRect;
+class FloatRoundedRect;
 class FloatSize;
 class FixedPositionViewportConstraints;
 class HTTPHeaderMap;
@@ -161,6 +162,11 @@ template<> struct ArgumentCoder<WebCore::FloatRect> {
 template<> struct ArgumentCoder<WebCore::FloatSize> {
     static void encode(ArgumentEncoder&, const WebCore::FloatSize&);
     static bool decode(ArgumentDecoder&, WebCore::FloatSize&);
+};
+
+template<> struct ArgumentCoder<WebCore::FloatRoundedRect> {
+    static void encode(ArgumentEncoder&, const WebCore::FloatRoundedRect&);
+    static bool decode(ArgumentDecoder&, WebCore::FloatRoundedRect&);
 };
 
 #if PLATFORM(IOS)

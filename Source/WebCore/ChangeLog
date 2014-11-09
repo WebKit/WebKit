@@ -1,3 +1,71 @@
+2014-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement round-rect clipping on video elements
+        https://bugs.webkit.org/show_bug.cgi?id=138537
+        rdar://problem/9534399
+
+        Reviewed by Darin Adler.
+        
+        Support border-radius on video and other layers with composited contents,
+        by pushing a FloatRoundedRect onto the GraphicsLayer as the contentsClippingRect,
+        and, on Mac, using layer corner-radius or a CAShapeLayer mask.
+
+        Test: compositing/video/video-border-radius.html
+
+        * WebCore.exp.in:
+        * platform/graphics/FloatRoundedRect.cpp:
+        (WebCore::FloatRoundedRect::Radii::isUniformCornerRadius): Returns true if all
+        corner radii are the same, and have equal widths and heights.
+        * platform/graphics/FloatRoundedRect.h: Allow construction without an explicit
+        rect.
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer): nullptr goodness.
+        (showGraphicsLayerTree): Print contents layers when debugging.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsClippingRect): Make this take a FloatRoundedRect.
+        (WebCore::GraphicsLayer::setContentsClippingRect):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsClippingRect):
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        (WebCore::GraphicsLayerCA::setContentsToPlatformLayer):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateClippingStrategy): Determines whether we can simply
+        use corner-radius on the existing contentsClippingLayer, or whether we have to
+        create a shape layer to use as a mask.
+        (WebCore::GraphicsLayerCA::updateContentsRects): We have to add/remove the shape layer
+        based on the rounded rect radii. Calls updateClippingStrategy() on the clipping layer,
+        and also updates clones accordingly.
+        (WebCore::dumpInnerLayer):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties): Dump all the inner layers
+        (requiring on test rebaseline), including the new shape and backdrop layers.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h: Add a new shape layer type.
+        * platform/graphics/ca/mac/PlatformCALayerMac.h: Support for corner radius and
+        a rounded rect shape mask.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::PlatformCALayerMac):
+        (PlatformCALayerMac::clone):
+        (PlatformCALayerMac::setMask):
+        (PlatformCALayerMac::cornerRadius):
+        (PlatformCALayerMac::setCornerRadius):
+        (PlatformCALayerMac::shapeRoundedRect):
+        (PlatformCALayerMac::setShapeRoundedRect):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::cornerRadius):
+        (PlatformCALayerWin::setCornerRadius):
+        (PlatformCALayerWin::shapeRoundedRect):
+        (PlatformCALayerWin::setShapeRoundedRect):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::resetContentsRect): Use getRoundedInnerBorderFor() to get
+        the rounded rect used to clip contents.
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers): Push a FloatRoundedRect for the contents clip,
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundColor): Ditto.
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage): Ditto.
+        (WebCore::RenderLayerBacking::updateImageContents): Get the rounded rect clip.
+        * rendering/RenderLayerBacking.h: nullptr.
+
 2014-11-09  Darin Adler  <darin@apple.com>
 
         Fix various cases of incorrect cross-thread capture of non-thread-safe RefCounted

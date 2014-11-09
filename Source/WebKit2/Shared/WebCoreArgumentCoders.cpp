@@ -298,6 +298,16 @@ bool ArgumentCoder<FloatSize>::decode(ArgumentDecoder& decoder, FloatSize& float
 }
 
 
+void ArgumentCoder<FloatRoundedRect>::encode(ArgumentEncoder& encoder, const FloatRoundedRect& roundedRect)
+{
+    SimpleArgumentCoder<FloatRoundedRect>::encode(encoder, roundedRect);
+}
+
+bool ArgumentCoder<FloatRoundedRect>::decode(ArgumentDecoder& decoder, FloatRoundedRect& roundedRect)
+{
+    return SimpleArgumentCoder<FloatRoundedRect>::decode(decoder, roundedRect);
+}
+
 #if PLATFORM(IOS)
 void ArgumentCoder<FloatQuad>::encode(ArgumentEncoder& encoder, const FloatQuad& floatQuad)
 {

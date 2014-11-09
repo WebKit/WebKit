@@ -1,3 +1,18 @@
+2014-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement round-rect clipping on video elements
+        https://bugs.webkit.org/show_bug.cgi?id=138537
+        rdar://problem/9534399
+
+        Reviewed by Darin Adler.
+        
+        Test that uses clip() to compare a bit of rounded-rect video in the corner.
+        Rebaselined test that dumped contents layers.
+
+        * compositing/video/video-border-radius-expected.html: Added.
+        * compositing/video/video-border-radius.html: Added.
+        * platform/mac/compositing/reflections/direct-image-object-fit-reflected-expected.txt:
+
 2014-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/cross-origin-cookie-storage.html fails with PPT.

@@ -31,7 +31,7 @@
 #include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
-#include "FloatRect.h"
+#include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
@@ -382,8 +382,8 @@ public:
     FloatRect contentsRect() const { return m_contentsRect; }
     virtual void setContentsRect(const FloatRect& r) { m_contentsRect = r; }
 
-    FloatRect contentsClippingRect() const { return m_contentsClippingRect; }
-    virtual void setContentsClippingRect(const FloatRect& r) { m_contentsClippingRect = r; }
+    FloatRoundedRect contentsClippingRect() const { return m_contentsClippingRect; }
+    virtual void setContentsClippingRect(const FloatRoundedRect& roundedRect) { m_contentsClippingRect = roundedRect; }
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
@@ -602,7 +602,7 @@ protected:
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
     FloatRect m_contentsRect;
-    FloatRect m_contentsClippingRect;
+    FloatRoundedRect m_contentsClippingRect;
     FloatPoint m_contentsTilePhase;
     FloatSize m_contentsTileSize;
 

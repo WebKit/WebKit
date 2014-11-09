@@ -139,7 +139,13 @@ public:
     virtual float contentsScale() const override;
     virtual void setContentsScale(float) override;
 
+    virtual float cornerRadius() const override;
+    virtual void setCornerRadius(float) override;
+
     virtual void setEdgeAntialiasingMask(unsigned) override;
+
+    virtual WebCore::FloatRoundedRect shapeRoundedRect() const override;
+    virtual void setShapeRoundedRect(const WebCore::FloatRoundedRect&) override;
 
     virtual WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
     virtual void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;

@@ -243,6 +243,9 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         else
             layer = adoptNS([[CALayer alloc] init]);
         break;
+    case PlatformCALayer::LayerTypeShapeLayer:
+        layer = adoptNS([[CAShapeLayer alloc] init]);
+        break;
     default:
         ASSERT_NOT_REACHED();
     }

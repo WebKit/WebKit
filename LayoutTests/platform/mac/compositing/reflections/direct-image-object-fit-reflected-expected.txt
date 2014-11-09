@@ -16,6 +16,7 @@
               (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
               (replicated layer)
             )
+          (structural layer 128.00, 88.00 200.00 x 120.00)
           (contents clipping layer 0.00, 0.00 200.00 x 120.00)
           (contents layer -20.00, 0.00 240.00 x 120.00)
         )
@@ -28,6 +29,7 @@
               (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
               (replicated layer)
             )
+          (structural layer 372.00, 88.00 200.00 x 120.00)
           (contents layer 0.00, 10.00 200.00 x 100.00)
         )
         (GraphicsLayer
@@ -39,6 +41,7 @@
               (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
               (replicated layer)
             )
+          (structural layer 616.00, 88.00 200.00 x 120.00)
           (contents clipping layer 0.00, 0.00 200.00 x 120.00)
           (contents layer -44.00, -12.00 288.00 x 144.00)
         )

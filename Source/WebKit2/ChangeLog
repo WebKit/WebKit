@@ -1,3 +1,47 @@
+2014-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement round-rect clipping on video elements
+        https://bugs.webkit.org/show_bug.cgi?id=138537
+        rdar://problem/9534399
+
+        Reviewed by Darin Adler.
+
+        Support border-radius on video and other layers with composited contents,
+        by pushing a FloatRoundedRect onto the GraphicsLayer as the contentsClippingRect,
+        and, on Mac, using layer corner-radius or a CAShapeLayer mask.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FloatRoundedRect>::encode):
+        (IPC::ArgumentCoder<FloatRoundedRect>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/RemoteLayerBackingStore.mm: New shape layer type.
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::applyPropertiesToLayer): Apply corner-radius and shape path.
+        * Shared/mac/RemoteLayerTreeTransaction.h: Prettify the flags. Yes, I prefer this style.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (+[WKShapeView layerClass]): Make UIViews with a CAShapeLayer layer class.
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::updateClonedLayerProperties):
+        (WebKit::isEquivalentLayer):
+        (WebKit::PlatformCALayerRemote::setMask):
+        (WebKit::PlatformCALayerRemote::setClonedLayer):
+        (WebKit::PlatformCALayerRemote::cornerRadius):
+        (WebKit::PlatformCALayerRemote::setCornerRadius):
+        (WebKit::PlatformCALayerRemote::shapeRoundedRect):
+        (WebKit::PlatformCALayerRemote::setShapeRoundedRect):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2014-11-09  Conrad Shultz  <conrad_shultz@apple.com>
 
         Move _ignoresNonWheelMouseEvents implementation to WKView(Private)

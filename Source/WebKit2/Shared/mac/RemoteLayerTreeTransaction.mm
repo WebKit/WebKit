@@ -86,6 +86,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , timeOffset(0)
     , speed(1)
     , contentsScale(1)
+    , cornerRadius(0)
     , borderWidth(0)
     , opacity(1)
     , backgroundColor(Color::transparent)
@@ -120,6 +121,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , timeOffset(other.timeOffset)
     , speed(other.speed)
     , contentsScale(other.contentsScale)
+    , cornerRadius(other.cornerRadius)
     , borderWidth(other.borderWidth)
     , opacity(other.opacity)
     , backgroundColor(other.backgroundColor)
@@ -217,6 +219,12 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & ContentsScaleChanged)
         encoder << contentsScale;
+
+    if (changedProperties & CornerRadiusChanged)
+        encoder << cornerRadius;
+
+    if (changedProperties & ShapeRoundedRectChanged)
+        encoder << *shapeRoundedRect;
 
     if (changedProperties & MinificationFilterChanged)
         encoder.encodeEnum(minificationFilter);
@@ -375,6 +383,19 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
     if (result.changedProperties & ContentsScaleChanged) {
         if (!decoder.decode(result.contentsScale))
             return false;
+    }
+
+    if (result.changedProperties & CornerRadiusChanged) {
+        if (!decoder.decode(result.cornerRadius))
+            return false;
+    }
+
+    if (result.changedProperties & ShapeRoundedRectChanged) {
+        FloatRoundedRect roundedRect;
+        if (!decoder.decode(roundedRect))
+            return false;
+        
+        result.shapeRoundedRect = std::make_unique<FloatRoundedRect>(roundedRect);
     }
 
     if (result.changedProperties & MinificationFilterChanged) {
@@ -599,6 +620,7 @@ public:
 
     RemoteLayerTreeTextStream& operator<<(const TransformationMatrix&);
     RemoteLayerTreeTextStream& operator<<(PlatformCALayer::FilterType);
+    RemoteLayerTreeTextStream& operator<<(const FloatRoundedRect&);
     RemoteLayerTreeTextStream& operator<<(FloatPoint3D);
     RemoteLayerTreeTextStream& operator<<(Color);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
@@ -648,6 +670,25 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const Transform
     ts.writeIndent();
     ts << "[" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "]";
     ts.decreaseIndent();
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FloatRoundedRect& roundedRect)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    ts << roundedRect.rect().x() << " " << roundedRect.rect().y() << " " << roundedRect.rect().width() << " " << roundedRect.rect().height() << "\n";
+
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "topLeft=" << roundedRect.topLeftCorner().width() << " " << roundedRect.topLeftCorner().height() << "\n";
+    ts.writeIndent();
+    ts << "topRight=" << roundedRect.topRightCorner().width() << " " << roundedRect.topRightCorner().height() << "\n";
+    ts.writeIndent();
+    ts << "bottomLeft=" << roundedRect.bottomLeftCorner().width() << " " << roundedRect.bottomLeftCorner().height() << "\n";
+    ts.writeIndent();
+    ts << "bottomRight=" << roundedRect.bottomRightCorner().width() << " " << roundedRect.bottomRightCorner().height();
+    ts.decreaseIndent();
+
     return ts;
 }
 
@@ -1083,6 +1124,12 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged)
             dumpProperty(ts, "contentsScale", layerProperties.contentsScale);
 
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CornerRadiusChanged)
+            dumpProperty(ts, "cornerRadius", layerProperties.cornerRadius);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ShapeRoundedRectChanged)
+            dumpProperty(ts, "shapeRect", layerProperties.shapeRoundedRect ? *layerProperties.shapeRoundedRect : FloatRoundedRect());
+
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
             dumpProperty(ts, "minificationFilter", layerProperties.minificationFilter);
 
@@ -1188,6 +1235,9 @@ CString RemoteLayerTreeTransaction::description() const
                 break;
             case PlatformCALayer::LayerTypeWebGLLayer:
                 ts << "web-gl-layer (context-id " << createdLayer.hostingContextID << ")";
+                break;
+            case PlatformCALayer::LayerTypeShapeLayer:
+                ts << "shape-layer";
                 break;
             case PlatformCALayer::LayerTypeCustom:
                 ts << "custom-layer (context-id " << createdLayer.hostingContextID << ")";

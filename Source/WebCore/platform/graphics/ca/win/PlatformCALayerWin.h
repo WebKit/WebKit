@@ -122,6 +122,12 @@ public:
     virtual float contentsScale() const override;
     virtual void setContentsScale(float) override;
 
+    virtual float cornerRadius() const override;
+    virtual void setCornerRadius(float) override;
+
+    virtual FloatRoundedRect shapeRoundedRect() const override;
+    virtual void setShapeRoundedRect(const FloatRoundedRect&) override;
+
     virtual void setEdgeAntialiasingMask(unsigned) override;
 
     virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }

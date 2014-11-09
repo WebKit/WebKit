@@ -1097,12 +1097,12 @@ void RenderLayerBacking::resetContentsRect()
 {
     m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
     
-    LayoutRect contentsClippingRect;
-    if (is<RenderBox>(renderer()))
-        contentsClippingRect = downcast<RenderBox>(renderer()).contentBoxRect();
-
-    contentsClippingRect.move(contentOffsetInCompostingLayer());
-    m_graphicsLayer->setContentsClippingRect(snappedIntRect(contentsClippingRect));
+    if (is<RenderBox>(renderer())) {
+        LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
+        FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+        contentsClippingRect.move(contentOffsetInCompostingLayer());
+        m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
+    }
 
     m_graphicsLayer->setContentsTileSize(IntSize());
     m_graphicsLayer->setContentsTilePhase(IntPoint());
@@ -1270,7 +1270,7 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         if (layer->usesContentsLayer()) {
             IntRect barRect = IntRect(IntPoint(), hBarRect.size());
             layer->setContentsRect(barRect);
-            layer->setContentsClippingRect(barRect);
+            layer->setContentsClippingRect(FloatRoundedRect(barRect));
         }
         layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->usesContentsLayer());
     }
@@ -1282,7 +1282,7 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         if (layer->usesContentsLayer()) {
             IntRect barRect = IntRect(IntPoint(), vBarRect.size());
             layer->setContentsRect(barRect);
-            layer->setContentsClippingRect(barRect);
+            layer->setContentsClippingRect(FloatRoundedRect(barRect));
         }
         layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->usesContentsLayer());
     }
@@ -1587,7 +1587,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleCo
     m_graphicsLayer->setContentsToSolidColor(backgroundColor);
     FloatRect contentsRect = backgroundBoxForPainting();
     m_graphicsLayer->setContentsRect(contentsRect);
-    m_graphicsLayer->setContentsClippingRect(contentsRect);
+    m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(contentsRect));
     didUpdateContentsRect = true;
 }
 
@@ -1615,7 +1615,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);
-    m_graphicsLayer->setContentsClippingRect(destRect);
+    m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(destRect));
     m_graphicsLayer->setContentsToImage(image.get());
     didUpdateContentsRect = true;
 }
@@ -1905,9 +1905,10 @@ void RenderLayerBacking::updateImageContents()
     // This is a no-op if the layer doesn't have an inner layer for the image.
     m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
 
-    LayoutRect contentsClippingRect = imageRenderer.contentBoxRect();
+    LayoutRect boxRect(LayoutPoint(), imageRenderer.size());
+    FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
     contentsClippingRect.move(contentOffsetInCompostingLayer());
-    m_graphicsLayer->setContentsClippingRect(snappedIntRect(contentsClippingRect));
+    m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
 
     m_graphicsLayer->setContentsToImage(image);
     bool isSimpleContainer = false;

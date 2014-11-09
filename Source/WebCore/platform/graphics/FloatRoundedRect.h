@@ -67,6 +67,7 @@ public:
         const FloatSize& bottomRight() const { return m_bottomRight; }
 
         bool isZero() const;
+        bool isUniformCornerRadius() const; // Including no radius.
 
         void scale(float factor);
         void scale(float horizontalFactor, float verticalFactor);
@@ -82,7 +83,7 @@ public:
         FloatSize m_bottomRight;
     };
 
-    explicit FloatRoundedRect(const FloatRect&, const Radii& = Radii());
+    explicit FloatRoundedRect(const FloatRect& = FloatRect(), const Radii& = Radii());
     explicit FloatRoundedRect(const RoundedRect&);
     FloatRoundedRect(float x, float y, float width, float height);
     FloatRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);

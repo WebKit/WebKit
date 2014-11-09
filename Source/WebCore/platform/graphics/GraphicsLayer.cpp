@@ -93,10 +93,10 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient& client)
     , m_isMaskLayer(false)
     , m_paintingPhase(GraphicsLayerPaintAllWithOverflowClip)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
-    , m_parent(0)
-    , m_maskLayer(0)
-    , m_replicaLayer(0)
-    , m_replicatedLayer(0)
+    , m_parent(nullptr)
+    , m_maskLayer(nullptr)
+    , m_replicaLayer(nullptr)
+    , m_replicatedLayer(nullptr)
     , m_repaintCount(0)
     , m_customAppearance(NoCustomAppearance)
     , m_customBehavior(NoCustomBehavior)
@@ -808,7 +808,7 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     if (!layer)
         return;
 
-    String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextDebug | WebCore::LayerTreeAsTextIncludeVisibleRects | WebCore::LayerTreeAsTextIncludeTileCaches);
+    String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextDebug | WebCore::LayerTreeAsTextIncludeVisibleRects | WebCore::LayerTreeAsTextIncludeTileCaches | WebCore::LayerTreeAsTextIncludeContentLayers);
     fprintf(stderr, "%s\n", output.utf8().data());
 }
 #endif

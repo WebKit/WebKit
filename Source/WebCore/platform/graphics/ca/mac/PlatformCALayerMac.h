@@ -134,7 +134,13 @@ public:
     virtual float contentsScale() const override;
     virtual void setContentsScale(float) override;
 
+    virtual float cornerRadius() const override;
+    virtual void setCornerRadius(float) override;
+
     virtual void setEdgeAntialiasingMask(unsigned) override;
+
+    virtual FloatRoundedRect shapeRoundedRect() const override;
+    virtual void setShapeRoundedRect(const FloatRoundedRect&) override;
 
     virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
@@ -164,6 +170,7 @@ private:
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
     GraphicsLayer::CustomBehavior m_customBehavior;
+    std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
 };
 
 } // namespace WebCore

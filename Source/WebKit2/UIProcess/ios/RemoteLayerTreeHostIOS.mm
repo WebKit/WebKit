@@ -83,6 +83,7 @@ using namespace WebCore;
 @end
 
 @implementation WKCompositingView
+
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     return [self _findDescendantViewAtPoint:point withEvent:event];
@@ -94,12 +95,14 @@ using namespace WebCore;
     NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
     return [viewDescription stringByAppendingString:webKitDetails];
 }
+
 @end
 
 @interface WKTransformView : WKCompositingView
 @end
 
 @implementation WKTransformView
+
 + (Class)layerClass
 {
     return [CATransformLayer self];
@@ -118,10 +121,23 @@ using namespace WebCore;
 
 @end
 
+@interface WKShapeView : WKCompositingView
+@end
+
+@implementation WKShapeView
+
++ (Class)layerClass
+{
+    return [CAShapeLayer self];
+}
+
+@end
+
 @interface WKRemoteView : WKCompositingView
 @end
 
 @implementation WKRemoteView
+
 - (instancetype)initWithFrame:(CGRect)frame contextID:(uint32_t)contextID hostingDeviceScaleFactor:(float)scaleFactor
 {
     if ((self = [super initWithFrame:frame])) {
@@ -178,6 +194,9 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
             view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID hostingDeviceScaleFactor:properties.hostingDeviceScaleFactor]);
         else
             view = adoptNS([[WKCompositingView alloc] init]);
+        break;
+    case PlatformCALayer::LayerTypeSimpleLayer:
+        view = adoptNS([[WKShapeView alloc] init]);
         break;
     default:
         ASSERT_NOT_REACHED();
