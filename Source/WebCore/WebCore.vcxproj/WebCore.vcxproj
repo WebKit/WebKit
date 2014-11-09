@@ -14935,7 +14935,6 @@
     <ClCompile Include="..\fileapi\FileReader.cpp" />
     <ClCompile Include="..\fileapi\FileReaderLoader.cpp" />
     <ClCompile Include="..\fileapi\FileReaderSync.cpp" />
-    <ClCompile Include="..\fileapi\FileThread.cpp" />
     <ClCompile Include="..\html\FormAssociatedElement.cpp" />
     <ClCompile Include="..\html\FormController.cpp" />
     <ClCompile Include="..\html\FormDataList.cpp" />
@@ -20714,7 +20713,6 @@
     <ClInclude Include="..\fileapi\FileReaderLoader.h" />
     <ClInclude Include="..\fileapi\FileReaderLoaderClient.h" />
     <ClInclude Include="..\fileapi\FileReaderSync.h" />
-    <ClInclude Include="..\fileapi\FileThread.h" />
     <ClInclude Include="..\html\FormAssociatedElement.h" />
     <ClInclude Include="..\html\FormController.h" />
     <ClInclude Include="..\html\FormDataList.h" />

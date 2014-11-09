@@ -171,30 +171,18 @@ BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest
     , m_fileOpened(false)
 {
     if (m_async)
-        m_asyncStream = AsyncFileStream::create(this);
+        m_asyncStream = std::make_unique<AsyncFileStream>(*this);
     else
-        m_stream = FileStream::create();
+        m_stream = std::make_unique<FileStream>();
 }
 
 BlobResourceHandle::~BlobResourceHandle()
 {
-    if (m_async) {
-        if (m_asyncStream)
-            m_asyncStream->stop();
-    } else {
-        if (m_stream)
-            m_stream->stop();
-    }
 }
 
 void BlobResourceHandle::cancel()
 {
-    if (m_async) {
-        if (m_asyncStream) {
-            m_asyncStream->stop();
-            m_asyncStream = 0;
-        }
-    }
+    m_asyncStream = nullptr;
 
     m_aborted = true;
 

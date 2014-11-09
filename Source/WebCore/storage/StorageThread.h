@@ -46,7 +46,7 @@ public:
     bool start();
     void terminate();
 
-    void dispatch(const std::function<void ()>&);
+    void dispatch(const std::function<void()>&);
 
     static void releaseFastMallocFreeMemoryInAllThreads();
 
@@ -59,7 +59,7 @@ private:
     void performTerminate();
 
     ThreadIdentifier m_threadID;
-    MessageQueue<std::function<void ()>> m_queue;
+    MessageQueue<std::function<void()>> m_queue;
 };
 
 } // namespace WebCore

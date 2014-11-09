@@ -3717,9 +3717,6 @@
     <ClCompile Include="..\fileapi\FileReaderSync.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\fileapi\FileThread.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\FormAssociatedElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -10867,9 +10864,6 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\fileapi\FileReaderSync.h">
-      <Filter>html</Filter>
-    </ClInclude>
-    <ClInclude Include="..\fileapi\FileThread.h">
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\FormAssociatedElement.h">

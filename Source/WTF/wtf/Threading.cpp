@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,23 +33,14 @@ namespace WTF {
 struct NewThreadContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NewThreadContext(ThreadFunction entryPoint, void* data, const char* name)
-        : entryPoint(entryPoint)
-        , data(data)
-        , name(name)
-    {
-    }
-
-    ThreadFunction entryPoint;
-    void* data;
     const char* name;
-
+    std::function<void()> entryPoint;
     Mutex creationMutex;
 };
 
 static void threadEntryPoint(void* contextData)
 {
-    NewThreadContext* context = reinterpret_cast<NewThreadContext*>(contextData);
+    NewThreadContext* context = static_cast<NewThreadContext*>(contextData);
 
     // Block until our creating thread has completed any extra setup work, including
     // establishing ThreadIdentifier.
@@ -59,15 +50,15 @@ static void threadEntryPoint(void* contextData)
 
     initializeCurrentThreadInternal(context->name);
 
-    // Grab the info that we need out of the context, then deallocate it.
-    ThreadFunction entryPoint = context->entryPoint;
-    void* data = context->data;
+    auto entryPoint = WTF::move(context->entryPoint);
+
+    // Delete the context before starting the thread.
     delete context;
 
-    entryPoint(data);
+    entryPoint();
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char* name)
+ThreadIdentifier createThread(const char* name, std::function<void()> entryPoint)
 {
     // Visual Studio has a 31-character limit on thread names. Longer names will
     // be truncated silently, but we'd like callers to know about the limit.
@@ -76,12 +67,19 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*
         LOG_ERROR("Thread name \"%s\" is longer than 31 characters and will be truncated by Visual Studio", name);
 #endif
 
-    NewThreadContext* context = new NewThreadContext(entryPoint, data, name);
+    NewThreadContext* context = new NewThreadContext { name, WTF::move(entryPoint), { } };
 
     // Prevent the thread body from executing until we've established the thread identifier.
     MutexLocker locker(context->creationMutex);
 
     return createThreadInternal(threadEntryPoint, context, name);
+}
+
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char* name)
+{
+    return createThread(name, [entryPoint, data] {
+        entryPoint(data);
+    });
 }
 
 void setCurrentThreadIsUserInteractive()
@@ -97,62 +95,5 @@ void setCurrentThreadIsUserInitiated()
     pthread_set_qos_class_self_np(QOS_CLASS_USER_INITIATED, 0);
 #endif
 }
-
-#if PLATFORM(MAC) || PLATFORM(WIN)
-
-// For ABI compatibility with Safari on Mac / Windows: Safari uses the private
-// createThread() and waitForThreadCompletion() functions directly and we need
-// to keep the old ABI compatibility until it's been rebuilt.
-
-typedef void* (*ThreadFunctionWithReturnValue)(void* argument);
-
-WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data, const char* name);
-
-struct ThreadFunctionWithReturnValueInvocation {
-    ThreadFunctionWithReturnValueInvocation(ThreadFunctionWithReturnValue function, void* data)
-        : function(function)
-        , data(data)
-    {
-    }
-
-    ThreadFunctionWithReturnValue function;
-    void* data;
-};
-
-static void compatEntryPoint(void* param)
-{
-    // Balanced by .release() in createThread.
-    auto invocation = std::unique_ptr<ThreadFunctionWithReturnValueInvocation>(static_cast<ThreadFunctionWithReturnValueInvocation*>(param));
-    invocation->function(invocation->data);
-}
-
-ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data, const char* name)
-{
-    auto invocation = std::make_unique<ThreadFunctionWithReturnValueInvocation>(entryPoint, data);
-
-    // Balanced by std::unique_ptr constructor in compatEntryPoint.
-    return createThread(compatEntryPoint, invocation.release(), name);
-}
-
-WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier, void**);
-
-int waitForThreadCompletion(ThreadIdentifier threadID, void**)
-{
-    return waitForThreadCompletion(threadID);
-}
-
-// This function is deprecated but needs to be kept around for backward
-// compatibility. Use the 3-argument version of createThread above.
-
-WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data);
-
-ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data)
-{
-    auto invocation = std::make_unique<ThreadFunctionWithReturnValueInvocation>(entryPoint, data);
-
-    // Balanced by adoptPtr() in compatEntryPoint.
-    return createThread(compatEntryPoint, invocation.release(), 0);
-}
-#endif
 
 } // namespace WTF

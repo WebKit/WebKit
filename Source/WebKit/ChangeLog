@@ -1,3 +1,13 @@
+2014-11-08  Darin Adler  <darin@apple.com>
+
+        Replace FileThread class with a single function
+        https://bugs.webkit.org/show_bug.cgi?id=138282
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Removed exports of obsolete threading functions.
+
 2014-11-05  Dan Bernstein  <mitz@apple.com>
 
         Removed references to deletion UI resources that have been removed.

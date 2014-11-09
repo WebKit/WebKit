@@ -3475,8 +3475,6 @@
 		976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C67122B8A3D001FD1F7 /* FileList.h */; };
 		976D6C88122B8A3D001FD1F7 /* FileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C69122B8A3D001FD1F7 /* FileReader.cpp */; };
 		976D6C89122B8A3D001FD1F7 /* FileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C6A122B8A3D001FD1F7 /* FileReader.h */; };
-		976D6C8D122B8A3D001FD1F7 /* FileThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */; };
-		976D6C8E122B8A3D001FD1F7 /* FileThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C6F122B8A3D001FD1F7 /* FileThread.h */; };
 		976D6C94122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */; };
 		976D6C95122B8A3D001FD1F7 /* ThreadableBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */; };
 		976F36EA14686225005E93B4 /* SecurityContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976F36E814686225005E93B4 /* SecurityContext.cpp */; };
@@ -10641,8 +10639,6 @@
 		976D6C67122B8A3D001FD1F7 /* FileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileList.h; path = fileapi/FileList.h; sourceTree = "<group>"; };
 		976D6C69122B8A3D001FD1F7 /* FileReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReader.cpp; path = fileapi/FileReader.cpp; sourceTree = "<group>"; };
 		976D6C6A122B8A3D001FD1F7 /* FileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReader.h; path = fileapi/FileReader.h; sourceTree = "<group>"; };
-		976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileThread.cpp; path = fileapi/FileThread.cpp; sourceTree = "<group>"; };
-		976D6C6F122B8A3D001FD1F7 /* FileThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileThread.h; path = fileapi/FileThread.h; sourceTree = "<group>"; };
 		976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadableBlobRegistry.cpp; path = fileapi/ThreadableBlobRegistry.cpp; sourceTree = "<group>"; };
 		976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadableBlobRegistry.h; path = fileapi/ThreadableBlobRegistry.h; sourceTree = "<group>"; };
 		976F36E814686225005E93B4 /* SecurityContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityContext.cpp; sourceTree = "<group>"; };
@@ -18229,8 +18225,6 @@
 				2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */,
 				2EDF369B122C94B4002F7D4E /* FileReaderSync.h */,
 				E1AB1EBD14E9E3A800449E13 /* FileReaderSync.idl */,
-				976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */,
-				976D6C6F122B8A3D001FD1F7 /* FileThread.h */,
 				976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */,
 				976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */,
 				976D6C5C122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp */,
@@ -24324,7 +24318,6 @@
 				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 				26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */,
-				976D6C8E122B8A3D001FD1F7 /* FileThread.h in Headers */,
 				BC5EB69F0E81DAEB00B25965 /* FillLayer.h in Headers */,
 				845E72F80FD261EE00A87D79 /* Filter.h in Headers */,
 				08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */,
@@ -27820,7 +27813,6 @@
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
 				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,
 				5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */,
-				976D6C8D122B8A3D001FD1F7 /* FileThread.cpp in Sources */,
 				BC5EB69E0E81DAEB00B25965 /* FillLayer.cpp in Sources */,
 				08C925190FCC7C4A00480DEC /* FilterEffect.cpp in Sources */,
 				31313F651443B35F006E2A90 /* FilterEffectRenderer.cpp in Sources */,

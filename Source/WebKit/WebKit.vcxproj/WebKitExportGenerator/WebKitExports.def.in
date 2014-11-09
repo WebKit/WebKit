@@ -125,7 +125,6 @@ EXPORTS
         symbolWithPointer(?broadcast@ThreadCondition@WTF@@QAEXXZ, ?broadcast@ThreadCondition@WTF@@QEAAXXZ)
         symbolWithPointer(?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z, ?callOnMainThread@WTF@@YAXP6AXPEAX@Z0@Z)
         symbolWithPointer(?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z, ?counterValueForElement@WebCore@@YA?AVString@WTF@@PEAVElement@1@@Z)
-        symbolWithPointer(?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z, ?createThread@WTF@@YAIP6APEAXPEAX@Z0PEBD@Z)
         symbolWithPointer(?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z, ?createThread@WTF@@YAIP6AXPEAX@Z0PEBD@Z)
         ?currentThread@WTF@@YAIXZ
         ?detachThread@WTF@@YAXI@Z
@@ -144,8 +143,6 @@ EXPORTS
         symbolWithPointer(?unlock@Mutex@WTF@@QAEXXZ, ?unlock@Mutex@WTF@@QEAAXXZ)
         symbolWithPointer(?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z, ?wait@ThreadCondition@WTF@@QEAAXAEAVMutex@2@@Z)
         ?waitForThreadCompletion@WTF@@YAHI@Z
-        symbolWithPointer(?waitForThreadCompletion@WTF@@YAHIPAPAX@Z, ?waitForThreadCompletion@WTF@@YAHIPEAPEAX@Z)
-        symbolWithPointer(?createThread@WTF@@YAIP6APAXPAX@Z0@Z, ?createThread@WTF@@YAIP6APEAXPEAX@Z0@Z)
 
         ; Re-exports from WebCore for test harnesses
         symbolWithPointer(??0HitTestResult@WebCore@@QAE@ABVLayoutPoint@1@@Z, ??0HitTestResult@WebCore@@QEAA@AEBVLayoutPoint@1@@Z)

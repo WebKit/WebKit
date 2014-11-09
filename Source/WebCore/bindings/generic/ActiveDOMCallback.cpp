@@ -31,9 +31,7 @@
 #include "config.h"
 #include "ActiveDOMCallback.h"
 
-#include "ActiveDOMObject.h"
 #include "ScriptExecutionContext.h"
-#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 

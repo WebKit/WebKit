@@ -1,3 +1,77 @@
+2014-11-08  Darin Adler  <darin@apple.com>
+
+        Replace FileThread class with a single function
+        https://bugs.webkit.org/show_bug.cgi?id=138282
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CMakeLists.txt: Removed FileThread.cpp.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Removed FileThread.cpp/.h.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/generic/ActiveDOMCallback.cpp: Removed unneeded includes.
+        * dom/ActiveDOMObject.cpp: Ditto.
+
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::callOnFileThread): Added. Implements the file thread.
+        (WebCore::AsyncFileStream::AsyncFileStream): Take a reference to the client.
+        Make m_internals. Use the destroyed flag instead of trickier techniques to
+        handle stopping. Once the stream is destroyed, there will be no further callbacks.
+        (WebCore::AsyncFileStream::~AsyncFileStream): Added assertions and merged in the
+        stop behavior here. This class no longer requires an explicit stop function.
+        (WebCore::AsyncFileStream::perform): Added. Helper used for all the operations
+        below. Takes a function that performs an operation and then returns a client
+        callback function. Respects the m_stopped boolean on the file thread (so we
+        don't do extra operations) and on the client thread (so we are guaranteed not
+        to get any client callbacks even if the file thread was partway through an
+        operation).
+        (WebCore::AsyncFileStream::getSize): Changed to use the perform function.
+        (WebCore::AsyncFileStream::openForRead): Ditto. Also fixed reference count
+        thread safety issue by capturing a StringCapture rather than a String.
+        (WebCore::AsyncFileStream::openForWrite): Ditto.
+        (WebCore::AsyncFileStream::close): Changed to use callOnFileThread.
+        (WebCore::AsyncFileStream::read): Changed to use the perform function.
+        (WebCore::AsyncFileStream::write): Ditto. Also fixed reference count
+        thread safety issue by capturing a StringCapture rather than a URL.
+        (WebCore::AsyncFileStream::truncate): Ditto.
+
+        * fileapi/AsyncFileStream.h: Removed use of RefCounted since we only need
+        single ownership. Removed the stop function, since we can now stop when
+        the stream is destroyed since we have single ownership. Made a new Internals
+        object to handle destruction while operations are still going on the file thread.
+
+        * fileapi/FileThread.cpp: Removed.
+        * fileapi/FileThread.h: Removed.
+
+        * loader/ResourceLoader.cpp: Removed unneeded include.
+
+        * platform/FileStream.cpp:
+        (WebCore::FileStream::~FileStream): Merged the stop function in here.
+
+        * platform/FileStream.h: Removed use of RefCounted since we only need
+        single ownership. Removed the empty start function. Removed the stop function,
+        since we can now stop when the stream is destroyed since we have single ownership.
+
+        * platform/FileStreamClient.h: Removed unneeded didStart and didStop.
+
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::BlobResourceHandle): Use make_unique to make the
+        stream objects instead of custom create functions.
+        (WebCore::BlobResourceHandle::~BlobResourceHandle): Removed now-unneeded code
+        to call stop functions. Destroying the objects now takes care of the this, and
+        that's done by the unique_ptrs.
+        (WebCore::BlobResourceHandle::cancel): Removed the rest of the code to stop the
+        m_asyncStream, keeping only the code that sets it to null. That now stops the
+        stream by destroying it.
+
+        * platform/network/BlobResourceHandle.h: Use std::unique_ptr rather than
+        RefPtr for the file stream objects.
+
+        * storage/StorageThread.h: Tweaked formatting of std::function<void()> to
+        match the format used elsewhere in WebKit.
+
 2014-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Don't try to schedule a GraphicsLayer flush when propagating changes to replicas inside a flush

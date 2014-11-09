@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc.  All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,14 +36,10 @@ namespace WebCore {
 class FileStreamClient {
 public:
     virtual void didOpen(bool) { } // false signals failure.
-    virtual void didStop() { }
     virtual void didGetSize(long long) { } // -1 signals failure.
     virtual void didRead(int) { } // -1 signals failure.
     virtual void didWrite(int) { } // -1 signals failure.
     virtual void didTruncate(bool) { } // false signals failure.
-
-    // FIXME: To be removed when we switch to using BlobData.
-    virtual void didStart() { }
 
 protected:
     virtual ~FileStreamClient() { }

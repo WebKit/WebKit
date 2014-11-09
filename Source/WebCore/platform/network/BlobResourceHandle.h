@@ -92,8 +92,8 @@ private:
 
     RefPtr<BlobData> m_blobData;
     bool m_async;
-    RefPtr<AsyncFileStream> m_asyncStream; // For asynchronous loading.
-    RefPtr<FileStream> m_stream; // For synchronous loading.
+    std::unique_ptr<AsyncFileStream> m_asyncStream; // For asynchronous loading.
+    std::unique_ptr<FileStream> m_stream; // For synchronous loading.
     Vector<char> m_buffer;
     Vector<long long> m_itemLengthList;
     int m_errorCode;

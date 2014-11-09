@@ -32,28 +32,16 @@
 #define FileStream_h
 
 #include "FileSystem.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class URL;
 
 // All methods are synchronous.
-class FileStream : public RefCounted<FileStream> {
+class FileStream {
 public:
-    static PassRefPtr<FileStream> create()
-    {
-        return adoptRef(new FileStream());
-    }
+    FileStream();
     ~FileStream();
-
-    // FIXME: To be removed when we switch to using BlobData.
-    void start();
-
-    // Aborts the operation.
-    void stop();
 
     // Gets the size of a file. Also validates if the file has been changed or not if the expected modification time is provided, i.e. non-zero.
     // Returns total number of bytes if successful. -1 otherwise.
@@ -84,8 +72,6 @@ public:
     bool truncate(long long position);
 
 private:
-    FileStream();
-
     PlatformFileHandle m_handle;
     long long m_bytesProcessed;
     long long m_totalBytesToRead;

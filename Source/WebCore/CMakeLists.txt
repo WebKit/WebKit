@@ -1505,7 +1505,6 @@ set(WebCore_SOURCES
     fileapi/FileReader.cpp
     fileapi/FileReaderLoader.cpp
     fileapi/FileReaderSync.cpp
-    fileapi/FileThread.cpp
     fileapi/ThreadableBlobRegistry.cpp
     fileapi/WebKitBlobBuilder.cpp
 

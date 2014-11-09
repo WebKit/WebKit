@@ -28,8 +28,6 @@
 #include "ActiveDOMObject.h"
 
 #include "ScriptExecutionContext.h"
-#include "WorkerGlobalScope.h"
-#include "WorkerThread.h"
 
 namespace WebCore {
 

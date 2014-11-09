@@ -1,3 +1,23 @@
+2014-11-08  Darin Adler  <darin@apple.com>
+
+        Replace FileThread class with a single function
+        https://bugs.webkit.org/show_bug.cgi?id=138282
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/MessageQueue.h: Made queue work on any type and not require wrapping
+        everything in a unique_ptr.
+
+        * wtf/Threading.cpp:
+        (WTF::threadEntryPoint): Changed to use a std::function instead of a function pointer.
+        (WTF::createThread): Add a version that takes a std::function. Reimplemented the
+        old version using lambdas. Removed the obsolete versions that were there just to support
+        binary compatibility with very old versions of Safari.
+
+        * wtf/Threading.h: Removed an incorrect license header that covers code that was long ago
+        moved to a different file. Changed createThread to take a std::function instead of a function
+        pointer and data pointer. Moved internal functions after public functions.
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit DOMTimer::updateTimerIntervalIfNecessary()
