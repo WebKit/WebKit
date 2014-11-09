@@ -1,3 +1,29 @@
+2014-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for HTMLCollection subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=138541
+
+        Reviewed by Sam Weinig.
+
+        Use is<>() / downcast<>() for HTMLCollection subclasses for
+        safety and consistency with the rest of the code base.
+
+        No new tests, no behavior change.
+
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap):
+        * html/HTMLAllCollection.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingHTMLElement):
+        (WebCore::isMatchingElement):
+        * html/HTMLCollection.h:
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLNameCollection.h:
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::options):
+        * html/HTMLTableRowsCollection.h:
+
 2014-11-08  Chris Dumez  <cdumez@apple.com>
 
         Call faster HTMLElement::hasTagName() in HTMLCollection

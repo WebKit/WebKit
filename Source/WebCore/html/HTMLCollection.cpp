@@ -206,7 +206,7 @@ inline bool isMatchingHTMLElement(const HTMLCollection& collection, HTMLElement&
     case DocAnchors:
         return element.hasTagName(aTag) && element.fastHasAttribute(nameAttr);
     case DocumentNamedItems:
-        return static_cast<const DocumentNameCollection&>(collection).elementMatches(element);
+        return downcast<DocumentNameCollection>(collection).elementMatches(element);
     case DocAll:
     case NodeChildren:
     case WindowNamedItems:
@@ -226,7 +226,7 @@ inline bool isMatchingElement(const HTMLCollection& collection, Element& element
     case NodeChildren:
         return true;
     case WindowNamedItems:
-        return static_cast<const WindowNameCollection&>(collection).elementMatches(element);
+        return downcast<WindowNameCollection>(collection).elementMatches(element);
     default:
         // Collection types that only deal with HTMLElements.
         return is<HTMLElement>(element) && isMatchingHTMLElement(collection, downcast<HTMLElement>(element));

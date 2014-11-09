@@ -33,6 +33,7 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -175,6 +176,11 @@ private:
     const unsigned m_usesCustomForwardOnlyTraversal : 1;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#define SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassName, Type) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
+    static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::Type; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // HTMLCollection_h

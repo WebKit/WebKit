@@ -57,6 +57,8 @@ private:
     mutable unsigned m_cachedElementOffsetInArray;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLFormControlsCollection, FormControls)
+
+#endif // HTMLFormControlsCollection_h

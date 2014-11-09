@@ -54,6 +54,8 @@ private:
     explicit HTMLOptionsCollection(HTMLSelectElement&);
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection, SelectOptions)
+
+#endif // HTMLOptionsCollection_h

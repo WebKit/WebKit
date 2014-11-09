@@ -149,8 +149,8 @@ WebKitDOMHTMLCollection* wrap(HTMLCollection* collection)
 {
     ASSERT(collection);
 
-    if (collection->type() == WebCore::SelectOptions)
-        return WEBKIT_DOM_HTML_COLLECTION(wrapHTMLOptionsCollection(static_cast<HTMLOptionsCollection*>(collection)));
+    if (is<HTMLOptionsCollection>(*collection))
+        return WEBKIT_DOM_HTML_COLLECTION(wrapHTMLOptionsCollection(downcast<HTMLOptionsCollection>(collection)));
     return wrapHTMLCollection(collection);
 }
 

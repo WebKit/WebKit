@@ -52,6 +52,8 @@ private:
     virtual Element* customElementAfter(Element*) const override;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTableRowsCollection, TableRows)
+
+#endif // HTMLTableRowsCollection_h
