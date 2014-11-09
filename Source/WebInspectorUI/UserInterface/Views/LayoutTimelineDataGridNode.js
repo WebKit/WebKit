@@ -64,7 +64,7 @@ WebInspector.LayoutTimelineDataGridNode.prototype = {
 
         switch (columnIdentifier) {
         case "eventType":
-            return WebInspector.LayoutTimelineRecord.EventType.displayName(value);
+            return WebInspector.LayoutTimelineRecord.displayNameForEventType(value);
 
         case "width":
         case "height":

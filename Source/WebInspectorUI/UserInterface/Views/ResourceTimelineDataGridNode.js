@@ -127,7 +127,7 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
             return fragment;
 
         case "type":
-            return WebInspector.Resource.Type.displayName(value);
+            return WebInspector.Resource.displayNameForType(value);
 
         case "statusCode":
             cell.title = resource.statusText || "";

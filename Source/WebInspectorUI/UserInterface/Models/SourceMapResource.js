@@ -41,7 +41,7 @@ WebInspector.SourceMapResource = function(url, sourceMap)
     // FIXME: This is a layering violation. It should use a helper function on the
     // Resource base-class to set _mimeType and _type.
     this._mimeType = fileExtensionMIMEType || inheritedMIMEType || "text/javascript";
-    this._type = WebInspector.Resource.Type.fromMIMEType(this._mimeType);
+    this._type = WebInspector.Resource.typeFromMIMEType(this._mimeType);
 
     // Mark the resource as loaded so it does not show a spinner in the sidebar.
     // We will really load the resource the first time content is requested.

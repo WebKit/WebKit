@@ -27,7 +27,7 @@ WebInspector.SourceCodeTreeElement = function(sourceCode, classNames, title, sub
 {
     console.assert(sourceCode instanceof WebInspector.SourceCode);
 
-    WebInspector.GeneralTreeElement.call(this, classNames, title, subtitle, representedObject || sourceCode, hasChildren);
+    WebInspector.FolderizedTreeElement.call(this, classNames, title, subtitle, representedObject || sourceCode, hasChildren);
 
     this.small = true;
 
@@ -36,6 +36,7 @@ WebInspector.SourceCodeTreeElement = function(sourceCode, classNames, title, sub
 
 WebInspector.SourceCodeTreeElement.prototype = {
     constructor: WebInspector.SourceCodeTreeElement,
+    __proto__: WebInspector.FolderizedTreeElement.prototype,
 
     // Public
 
@@ -204,5 +205,3 @@ WebInspector.SourceCodeTreeElement.prototype = {
         this.updateSourceMapResources();
     }
 };
-
-WebInspector.SourceCodeTreeElement.prototype.__proto__ = WebInspector.GeneralTreeElement.prototype;

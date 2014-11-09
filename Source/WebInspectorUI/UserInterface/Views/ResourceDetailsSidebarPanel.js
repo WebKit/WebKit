@@ -245,7 +245,7 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
         if (!this._resource)
             return;
 
-        this._typeResourceTypeRow.value = WebInspector.Resource.Type.displayName(this._resource.type);
+        this._typeResourceTypeRow.value = WebInspector.Resource.displayNameForType(this._resource.type);
     },
 
     _refreshMIMEType: function()

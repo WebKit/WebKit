@@ -34,7 +34,7 @@ WebInspector.Resource = function(url, mimeType, type, loaderIdentifier, requestI
 
     this._url = url;
     this._mimeType = mimeType;
-    this._type = type || WebInspector.Resource.Type.fromMIMEType(mimeType);
+    this._type = type || WebInspector.Resource.typeFromMIMEType(mimeType);
     this._loaderIdentifier = loaderIdentifier || null;
     this._requestIdentifier = requestIdentifier || null;
     this._requestMethod = requestMethod || null;
@@ -85,8 +85,8 @@ WebInspector.Resource.Type = {
     Other: "resource-type-other"
 };
 
-// This MIME Type map is private, use WebInspector.Resource.Type.fromMIMEType().
-WebInspector.Resource.Type._mimeTypeMap = {
+// This MIME Type map is private, use WebInspector.Resource.typeFromMIMEType().
+WebInspector.Resource._mimeTypeMap = {
     "text/html": WebInspector.Resource.Type.Document,
     "text/xml": WebInspector.Resource.Type.Document,
     "text/plain": WebInspector.Resource.Type.Document,
@@ -126,15 +126,15 @@ WebInspector.Resource.Type._mimeTypeMap = {
     "text/x-coffeescript": WebInspector.Resource.Type.Script
 };
 
-WebInspector.Resource.Type.fromMIMEType = function(mimeType)
+WebInspector.Resource.typeFromMIMEType = function(mimeType)
 {
     if (!mimeType)
         return WebInspector.Resource.Type.Other;
 
     mimeType = parseMIMEType(mimeType).type;
 
-    if (mimeType in WebInspector.Resource.Type._mimeTypeMap)
-        return WebInspector.Resource.Type._mimeTypeMap[mimeType];
+    if (mimeType in WebInspector.Resource._mimeTypeMap)
+        return WebInspector.Resource._mimeTypeMap[mimeType];
 
     if (mimeType.startsWith("image/"))
         return WebInspector.Resource.Type.Image;
@@ -145,7 +145,7 @@ WebInspector.Resource.Type.fromMIMEType = function(mimeType)
     return WebInspector.Resource.Type.Other;
 };
 
-WebInspector.Resource.Type.displayName = function(type, plural)
+WebInspector.Resource.displayNameForType = function(type, plural)
 {
     switch(type) {
     case WebInspector.Resource.Type.Document:
@@ -235,7 +235,7 @@ WebInspector.Resource.prototype = {
         // This getter generates a MIME-type, if needed, that matches the resource type.
 
         // If the type matches the Resource.Type of the MIME-type, then return the actual MIME-type.
-        if (this._type === WebInspector.Resource.Type.fromMIMEType(this._mimeType))
+        if (this._type === WebInspector.Resource.typeFromMIMEType(this._mimeType))
             return this._mimeType;
 
         // Return the default MIME-types for the Resource.Type, since the current MIME-type
@@ -497,7 +497,7 @@ WebInspector.Resource.prototype = {
 
         this._url = url;
         this._mimeType = mimeType;
-        this._type = type || WebInspector.Resource.Type.fromMIMEType(mimeType);
+        this._type = type || WebInspector.Resource.typeFromMIMEType(mimeType);
         this._statusCode = statusCode;
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};

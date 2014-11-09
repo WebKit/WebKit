@@ -49,7 +49,7 @@ WebInspector.LayoutTimelineRecord.EventType = {
     Paint: "layout-timeline-record-paint"
 };
 
-WebInspector.LayoutTimelineRecord.EventType.displayName = function(eventType)
+WebInspector.LayoutTimelineRecord.displayNameForEventType = function(eventType)
 {
     switch(eventType) {
     case WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles:

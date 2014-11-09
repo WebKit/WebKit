@@ -38,7 +38,14 @@ WebInspector.LayoutTimelineView = function(timeline)
 
     columns.eventType.title = WebInspector.UIString("Type");
     columns.eventType.width = "15%";
-    columns.eventType.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", WebInspector.LayoutTimelineRecord.EventType);
+
+    var typeToLabelMap = new Map;
+    for (var key in WebInspector.LayoutTimelineRecord.EventType) {
+        var value = WebInspector.LayoutTimelineRecord.EventType[key];
+        typeToLabelMap.set(value, WebInspector.LayoutTimelineRecord.displayNameForEventType(value));
+    }
+
+    columns.eventType.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
     columns.eventType.hidden = true;
 
     columns.initiatorCallFrame.title = WebInspector.UIString("Initiator");

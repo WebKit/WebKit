@@ -77,16 +77,11 @@ WebInspector.TimelineDataGrid.createColumnScopeBar = function(prefix, dictionary
 {
     prefix = prefix + "-timeline-data-grid-";
 
-    var keys = Object.keys(dictionary).filter(function(key) {
-        return typeof dictionary[key] === "string" || dictionary[key] instanceof String;
-    });
-
-    var scopeBarItems = keys.map(function(key) {
-        var value = dictionary[key];
-        var id = prefix + value;
-        var label = dictionary.displayName(value, true);
+    var scopeBarItems = Object.keys(dictionary).map(function(key) {
+        var id = prefix + key;
+        var label = dictionary[key];
         var item = new WebInspector.ScopeBarItem(id, label);
-        item.value = value;
+        item.value = key;
         return item;
     });
 

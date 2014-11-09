@@ -1863,7 +1863,7 @@ WebInspector.canArchiveMainFrame = function()
     if (!PageAgent.archive)
         return false;
 
-    return WebInspector.Resource.Type.fromMIMEType(WebInspector.frameResourceManager.mainFrame.mainResource.mimeType) === WebInspector.Resource.Type.Document;
+    return WebInspector.Resource.typeFromMIMEType(WebInspector.frameResourceManager.mainFrame.mainResource.mimeType) === WebInspector.Resource.Type.Document;
 }
 
 WebInspector.addWindowKeydownListener = function(listener)

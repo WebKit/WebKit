@@ -41,7 +41,14 @@ WebInspector.NetworkTimelineView = function(timeline)
 
     columns.type.title = WebInspector.UIString("Type");
     columns.type.width = "8%";
-    columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("network", WebInspector.Resource.Type);
+
+    var typeToLabelMap = new Map;
+    for (var key in WebInspector.Resource.Type) {
+        var value = WebInspector.Resource.Type[key];
+        typeToLabelMap.set(value, WebInspector.Resource.displayNameForType(value, true));
+    }
+
+    columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("network", typeToLabelMap);
 
     columns.method.title = WebInspector.UIString("Method");
     columns.method.width = "6%";

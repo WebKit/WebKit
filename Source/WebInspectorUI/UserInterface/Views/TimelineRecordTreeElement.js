@@ -46,7 +46,7 @@ WebInspector.TimelineRecordTreeElement = function(timelineRecord, subtitleNameSt
 
     switch (timelineRecord.type) {
     case WebInspector.TimelineRecord.Type.Layout:
-        title = WebInspector.LayoutTimelineRecord.EventType.displayName(timelineRecord.eventType);
+        title = WebInspector.LayoutTimelineRecord.displayNameForEventType(timelineRecord.eventType);
 
         switch (timelineRecord.eventType) {
         case WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles:

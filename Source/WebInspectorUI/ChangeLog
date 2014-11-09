@@ -1,3 +1,111 @@
+2014-11-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: decouple child element folderization logic from FrameTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=138364
+
+        Reviewed by Timothy Hatcher.
+
+        Created FolderizedTreeElement base class, which FrameTreeElement now inherits via SourceCodeTreeElement.
+        FolderizedTreeElement uses settings provided by derived classes for labeling subfolders and to determine
+        folder membership for child items.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.canArchiveMainFrame):
+        * UserInterface/Main.html:
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord.displayNameForEventType):
+        (WebInspector.LayoutTimelineRecord.EventType.displayName): Deleted.
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.typeFromMIMEType):
+        (WebInspector.Resource.displayNameForType):
+        (WebInspector.Resource.prototype.get syntheticMIMEType):
+        (WebInspector.Resource.prototype.updateForResponse):
+        (WebInspector.Resource.Type.fromMIMEType): Deleted.
+        (WebInspector.Resource.Type.displayName): Deleted.
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource):
+        * UserInterface/Views/FolderizedTreeElement.js: Added.
+        (WebInspector.FolderizedTreeElement):
+        (WebInspector.FolderizedTreeElement.prototype.get groupedIntoFolders):
+        (WebInspector.FolderizedTreeElement.prototype.set folderSettingsKey):
+        (WebInspector.FolderizedTreeElement.prototype.registerFolderizeSettings):
+        (WebInspector.FolderizedTreeElement.prototype.set removeChildren):
+        (WebInspector.FolderizedTreeElement.prototype.addChildForRepresentedObject):
+        (WebInspector.FolderizedTreeElement.prototype.addRepresentedObjectToNewChildQueue):
+        (WebInspector.FolderizedTreeElement.prototype.removeChildForRepresentedObject):
+        (WebInspector.FolderizedTreeElement.prototype.compareChildTreeElements):
+        (WebInspector.FolderizedTreeElement.prototype.updateParentStatus):
+        (WebInspector.FolderizedTreeElement.prototype._clearNewChildQueue):
+        (WebInspector.FolderizedTreeElement.prototype._populateFromNewChildQueue):
+        (WebInspector.FolderizedTreeElement.prototype._removeRepresentedObjectFromNewChildQueue):
+        (WebInspector.FolderizedTreeElement.prototype._addTreeElement):
+        (WebInspector.FolderizedTreeElement.prototype._compareTreeElementsByMainTitle):
+        (WebInspector.FolderizedTreeElement.prototype._insertFolderTreeElement):
+        (WebInspector.FolderizedTreeElement.prototype._insertChildTreeElement):
+        (WebInspector.FolderizedTreeElement.prototype._removeTreeElement):
+        (WebInspector.FolderizedTreeElement.prototype._parentTreeElementForRepresentedObject):
+        (WebInspector.FolderizedTreeElement.prototype._folderTreeElementExpandedStateChange):
+        (WebInspector.FolderizedTreeElement.prototype._settingsForRepresentedObject):
+        (WebInspector.FolderizedTreeElement.prototype._shouldGroupIntoFolders.pushCategory):
+        (WebInspector.FolderizedTreeElement.prototype._shouldGroupIntoFolders):
+        * UserInterface/Views/FrameTreeElement.js:
+        (.this):
+        (WebInspector.FrameTreeElement.prototype.updateSourceMapResources):
+        (WebInspector.FrameTreeElement.prototype.onattach):
+        (WebInspector.FrameTreeElement.prototype.ondetach):
+        (WebInspector.FrameTreeElement.prototype.compareChildTreeElements):
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        (WebInspector.FrameTreeElement.prototype._mainResourceDidChange):
+        (WebInspector.FrameTreeElement.prototype._resourceWasAdded):
+        (WebInspector.FrameTreeElement.prototype._resourceWasRemoved):
+        (WebInspector.FrameTreeElement.prototype._childFrameWasAdded):
+        (WebInspector.FrameTreeElement.prototype._childFrameWasRemoved):
+        (WebInspector.FrameTreeElement.prototype._childContentFlowWasAdded):
+        (WebInspector.FrameTreeElement.prototype._childContentFlowWasRemoved):
+        (WebInspector.FrameTreeElement.prototype._rootDOMNodeInvalidated):
+        (WebInspector.FrameTreeElement): Deleted.
+        (WebInspector.FrameTreeElement.prototype.removeChildren): Deleted.
+        (WebInspector.FrameTreeElement.prototype._updateParentStatus): Deleted.
+        (WebInspector.FrameTreeElement.prototype._addRepresentedObjectToNewChildQueue): Deleted.
+        (WebInspector.FrameTreeElement.prototype._removeRepresentedObjectFromNewChildQueue): Deleted.
+        (WebInspector.FrameTreeElement.prototype._populateFromNewChildQueue): Deleted.
+        (WebInspector.FrameTreeElement.prototype._clearNewChildQueue): Deleted.
+        (WebInspector.FrameTreeElement.prototype._addChildForRepresentedObject): Deleted.
+        (WebInspector.FrameTreeElement.prototype._removeChildForRepresentedObject): Deleted.
+        (WebInspector.FrameTreeElement.prototype._addTreeElementForRepresentedObject): Deleted.
+        (WebInspector.FrameTreeElement.prototype._addTreeElement): Deleted.
+        (WebInspector.FrameTreeElement.prototype._compareTreeElementsByMainTitle): Deleted.
+        (WebInspector.FrameTreeElement.prototype._insertFolderTreeElement): Deleted.
+        (WebInspector.FrameTreeElement.prototype._compareResourceTreeElements): Deleted.
+        (WebInspector.FrameTreeElement.prototype._insertResourceTreeElement): Deleted.
+        (WebInspector.FrameTreeElement.prototype._removeTreeElement): Deleted.
+        (WebInspector.FrameTreeElement.prototype._folderNameForResourceType): Deleted.
+        (WebInspector.FrameTreeElement.prototype._parentTreeElementForRepresentedObject.createFolderTreeElement): Deleted.
+        (WebInspector.FrameTreeElement.prototype._parentTreeElementForRepresentedObject): Deleted.
+        (WebInspector.FrameTreeElement.prototype._folderTreeElementExpandedStateChange): Deleted.
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders.pushResourceType): Deleted.
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders.pushCategory): Deleted.
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders): Deleted.
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView): Deleted.
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView): Deleted.
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshResourceType):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WebInspector.SourceCodeTreeElement):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.createColumnScopeBar):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2014-11-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Layer summary should be bottom sticky

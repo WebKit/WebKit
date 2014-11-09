@@ -440,6 +440,7 @@
     <None Include="..\UserInterface\FlexibleSpaceNavigationItem.js" />
     <None Include="..\UserInterface\FolderIcon.css" />
     <None Include="..\UserInterface\FolderTreeElement.js" />
+    <None Include="..\UserInterface\FolderizedTreeElement.js" />
     <None Include="..\UserInterface\FontResourceContentView.css" />
     <None Include="..\UserInterface\FontResourceContentView.js" />
     <None Include="..\UserInterface\Formatter.js" />
