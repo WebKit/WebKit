@@ -1158,7 +1158,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._yAxisUnitContainer = this._yAxisLabels.append("text")
             .attr("x", 0.5 * this._rem)
             .attr("y", this._rem)
-            .attr("dy", '0.8rem')
+            .attr("dy", 0.8 * this._rem)
             .style("text-anchor", "start")
             .style("z-index", "100")
             .text(this._yAxisUnit);

@@ -196,24 +196,26 @@
 
                 <div {{bind-attr class=":bugs-pane showingBugsPane::hidden"}}>
                     <table>
-                        {{#if selectedSinglePoint}}
-                            {{#each details.bugTrackers}}
-                                <tr>
-                                    <th>{{label}}</th>
-                                    <td>
-                                        <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                            {{input type=text value=editedBugNumber}}
-                                        </form>
-                                    </td>
-                                </tr>
-                            {{/each}}
-                        {{/if}}
-                        <tr>
-                            <th>
-                                <label>Name: {{input type=text value=newAnalysisTaskName}}</label>
-                                <button {{action "createAnalysisTask"}}>Analyze</button>
-                            </th>
-                        </tr>
+                        <tbody>
+                            {{#if selectedSinglePoint}}
+                                {{#each details.bugTrackers}}
+                                    <tr>
+                                        <th>{{label}}</th>
+                                        <td>
+                                            <form {{action "associateBug" this editedBugNumber on="submit"}}>
+                                                {{input type=text value=editedBugNumber}}
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            {{/if}}
+                            <tr>
+                                <th>
+                                    <label>Name: {{input type=text value=newAnalysisTaskName}}</label>
+                                    <button {{action "createAnalysisTask"}}>Analyze</button>
+                                </th>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
 

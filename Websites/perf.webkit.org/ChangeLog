@@ -1,3 +1,19 @@
+2014-11-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix Ember.js warnings the new perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=138531
+
+        Reviewed by Darin Adler.
+
+        Fixed various warnings.
+
+        * public/v2/app.js:
+        (App.InteractiveChartComponent._relayoutDataAndAxes): We can't use "rem". Use this._rem as done for x.
+        * public/v2/data.js:
+        (PrivilegedAPI._post): Removed the superfluous console.log.
+        (CommitLogs.fetchForTimeRange): Ditto.
+        * public/v2/index.html: Added tbody as required by the HTML specification.
+
 2014-11-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix typos in r175768.

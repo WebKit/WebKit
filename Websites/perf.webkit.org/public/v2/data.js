@@ -44,8 +44,7 @@ PrivilegedAPI._post = function (url, parameters)
             else
                 resolve(data);
         }).fail(function (xhr, status, error) {
-            console.log(xhr);
-            reject(xhr.status + (error ? ', ' + error : ''));
+            reject(xhr.status + (error ? ', ' + error : '') + '\n\nWith response:\n' + xhr.responseText);
         });
     });
 }
@@ -76,8 +75,6 @@ CommitLogs.fetchForTimeRange = function (repository, from, to, keyword)
         if (cachedCommitsForRange)
             return new Ember.RSVP.Promise(function (resolve) { resolve(cachedCommitsForRange); });
     }
-
-    console.log('Fecthing ' + url);
 
     return new Ember.RSVP.Promise(function (resolve, reject) {
         $.getJSON(url, function (data) {
