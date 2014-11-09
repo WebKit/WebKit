@@ -627,6 +627,7 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 
 # testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
 [ Mavericks ] http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 
 # <rdar://problem/12829991>
 # PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
@@ -733,6 +734,7 @@ webkit.org/b/123431 [ Yosemite ] http/tests/local/link-stylesheet-load-order.htm
 
 # testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
 [ Yosemite ] http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+[ Yosemite ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/12829991>)
 # PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.

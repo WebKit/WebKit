@@ -1,5 +1,14 @@
 2014-11-08  Alexey Proskuryakov  <ap@apple.com>
 
+        http/tests/xmlhttprequest/cross-origin-cookie-storage.html fails with PPT.
+
+        This test used to pass because some previous test leaked a cookie. Now that we
+        clear cookies between tests, it fails, and will fail until we implement testRunner.setAlwaysAcceptCookies.
+
+        * platform/mac-wk2/TestExpectations:
+
+2014-11-08  Alexey Proskuryakov  <ap@apple.com>
+
         http/tests/navigation/redirect-on-back-updates-history-item.html leaks a cookie
         https://bugs.webkit.org/show_bug.cgi?id=138507
 
