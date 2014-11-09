@@ -899,6 +899,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaSourceEnabled:YES];
 #endif
 
+    [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 

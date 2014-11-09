@@ -314,6 +314,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 // For DumpRenderTree use only.
 + (void)_switchNetworkLoaderToNewTestingSession;
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
++ (void)_clearNetworkLoaderSession;
 
 + (void)setWebKitLinkTimeVersion:(int)version;
 

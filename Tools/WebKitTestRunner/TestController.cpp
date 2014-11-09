@@ -35,6 +35,7 @@
 #include <WebKit/WKAuthenticationDecisionListener.h>
 #include <WebKit/WKContextConfigurationRef.h>
 #include <WebKit/WKContextPrivate.h>
+#include <WebKit/WKCookieManager.h>
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKIconDatabase.h>
 #include <WebKit/WKNotification.h>
@@ -588,7 +589,9 @@ void TestController::resetPreferencesToConsistentValues()
 #endif
 
     WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing);
-    
+
+    WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
+
     platformResetPreferencesToConsistentValues();
 }
 

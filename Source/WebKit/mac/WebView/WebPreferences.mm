@@ -43,6 +43,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/AudioSession.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/PlatformCookieJar.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/TextEncodingRegistry.h>
 #import <runtime/InitializeThreading.h>
@@ -1730,6 +1731,11 @@ static NSString *classIBCreatorID = nil;
 + (void)_switchNetworkLoaderToNewTestingSession
 {
     NetworkStorageSession::switchToNewTestingSession();
+}
+
++ (void)_clearNetworkLoaderSession
+{
+    WebCore::deleteAllCookies(NetworkStorageSession::defaultStorageSession());
 }
 
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy

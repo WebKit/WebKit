@@ -1,3 +1,14 @@
+2014-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Delete cookies between tests
+        https://bugs.webkit.org/show_bug.cgi?id=138528
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebPreferences.mm: (+[WebPreferences _clearNetworkLoaderSession]):
+        * WebView/WebPreferencesPrivate.h:
+        Added an SPI for DumpRenderTree.
+
 2014-11-07  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Update optimized fullscreen media controls
