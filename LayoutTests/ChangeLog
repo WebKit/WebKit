@@ -1,3 +1,13 @@
+2014-11-10  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL] Add missing test results since r169631, r174992 
+        https://bugs.webkit.org/show_bug.cgi?id=138502
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl/accessibility/aria-inherits-presentational-expected.txt: Added.
+        * platform/efl/accessibility/css-content-attribute-expected.txt: Added.
+
 2014-11-09  Simon Fraser  <simon.fraser@apple.com>
 
         Put bug link at the start of the line.
