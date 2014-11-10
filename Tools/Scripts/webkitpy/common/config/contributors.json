@@ -562,6 +562,14 @@
             "collinjackson"
          ]
       },
+      "Conrad Shultz" : {
+         "emails" : [
+            "conrad_shultz@apple.com"
+         ],
+         "nicks" : [
+            "shultzc"
+         ]
+      },
       "Cosmin Truta" : {
          "emails" : [
             "ctruta@gmail.com",
@@ -2943,14 +2951,6 @@
       "Commit Queue" : {
          "emails" : [
             "commit-queue@webkit.org"
-         ]
-      },
-      "Conrad Shultz" : {
-         "emails" : [
-            "conrad_shultz@apple.com"
-         ],
-         "nicks" : [
-            "shultzc"
          ]
       },
       "Daniel Sievers" : {
