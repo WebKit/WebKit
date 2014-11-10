@@ -1,3 +1,18 @@
+2014-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        make-passwords-json.py should generarate everything needed for testing
+        https://bugs.webkit.org/show_bug.cgi?id=138503
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/make_passwords_json.py:
+        Renamed from make-passwords-json.py to be able included from mastercfg_unittest.py.
+        Additionally generate auth.json, credentials.cfg and committers.cfg too.
+        (create_mock_slave_passwords_dict): Moved from mastercfg_unittest.py
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (BuildBotConfigLoader._mock_open): Use make_passwords_json.create_mock_slave_passwords_dict() to avoid duplication.
+        (BuildBotConfigLoader._create_mock_passwords_dict): Deleted.
+
 2014-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] generate-gtkdoc should ignore invalid files

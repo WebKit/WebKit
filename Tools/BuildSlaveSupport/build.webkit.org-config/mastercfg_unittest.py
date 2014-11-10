@@ -4,6 +4,8 @@ import sys
 import os
 import StringIO
 import unittest
+import make_passwords_json
+import json
 
 # Show DepricationWarnings come from buildbot - it isn't default with Python 2.7 or newer.
 # See https://bugs.webkit.org/show_bug.cgi?id=90161 for details.
@@ -20,13 +22,9 @@ class BuildBotConfigLoader(object):
         scripts_dir = os.path.join(webkit_tools_dir, 'Scripts')
         sys.path.append(scripts_dir)
 
-    def _create_mock_passwords_dict(self):
-        config_dict = json.load(open('config.json'))
-        return dict([(slave['name'], '1234') for slave in config_dict['slaves']])
-
     def _mock_open(self, filename):
         if filename == 'passwords.json':
-            return StringIO.StringIO(json.dumps(self._create_mock_passwords_dict()))
+            return StringIO.StringIO(json.dumps(make_passwords_json.create_mock_slave_passwords_dict()))
         return __builtins__.open(filename)
 
     def _add_dependant_modules_to_sys_modules(self):
