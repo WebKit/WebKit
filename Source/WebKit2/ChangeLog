@@ -1,3 +1,19 @@
+2014-11-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove create() factory function in FooAnimationValue classes
+        https://bugs.webkit.org/show_bug.cgi?id=138206
+
+        Reviewed by Darin Adler.
+
+        As a step to use std::unique_ptr and std::make_unique, this patch removes create()
+        factory function in FooAnimationValue classes. As this changes, FooAnimationValue::create()
+        are changed to std::make_unique<>.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<GraphicsLayerAnimation>::decode):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+
 2014-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix typo in r175796.

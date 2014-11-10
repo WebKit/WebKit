@@ -156,11 +156,9 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
     paintLayer->setBackgroundColor(Color(1.0f, 0.0f, 0.0f, 0.2f));
 
     KeyframeValueList fadeKeyframes(AnimatedPropertyOpacity);
-    OwnPtr<AnimationValue> intialValue = FloatAnimationValue::create(0, 1);
-    fadeKeyframes.insert(intialValue.release());
+    fadeKeyframes.insert(std::make_unique<FloatAnimationValue>(0, 1));
 
-    OwnPtr<AnimationValue> finalValue = FloatAnimationValue::create(0.25, 0);
-    fadeKeyframes.insert(finalValue.release());
+    fadeKeyframes.insert(std::make_unique<FloatAnimationValue>(0.25, 0));
     
     RefPtr<Animation> opacityAnimation = Animation::create();
     opacityAnimation->setDuration(0.25);

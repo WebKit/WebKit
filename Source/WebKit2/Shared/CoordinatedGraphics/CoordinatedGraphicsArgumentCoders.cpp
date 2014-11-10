@@ -524,21 +524,21 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             float value;
             if (!decoder.decode(value))
                 return false;
-            keyframes.insert(FloatAnimationValue::create(keyTime, value, timingFunction.get()));
+            keyframes.insert(std::make_unique<FloatAnimationValue>(keyTime, value, timingFunction.get()));
             break;
         }
         case AnimatedPropertyWebkitTransform: {
             TransformOperations transform;
             if (!decoder.decode(transform))
                 return false;
-            keyframes.insert(TransformAnimationValue::create(keyTime, transform, timingFunction.get()));
+            keyframes.insert(std::make_unique<TransformAnimationValue>(keyTime, transform, timingFunction.get()));
             break;
         }
         case AnimatedPropertyWebkitFilter: {
             FilterOperations filter;
             if (!decoder.decode(filter))
                 return false;
-            keyframes.insert(FilterAnimationValue::create(keyTime, filter, timingFunction.get()));
+            keyframes.insert(std::make_unique<FilterAnimationValue>(keyTime, filter, timingFunction.get()));
             break;
         }
         default:

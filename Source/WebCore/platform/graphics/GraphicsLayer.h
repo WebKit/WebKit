@@ -66,7 +66,7 @@ public:
 
     double keyTime() const { return m_keyTime; }
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
-    virtual PassOwnPtr<AnimationValue> clone() const = 0;
+    virtual std::unique_ptr<AnimationValue> clone() const = 0;
 
 protected:
     AnimationValue(double keyTime, TimingFunction* timingFunction = nullptr)
@@ -84,25 +84,20 @@ private:
 // FIXME: Should be moved to its own header file.
 class FloatAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<FloatAnimationValue> create(double keyTime, float value, TimingFunction* timingFunction = nullptr)
-    {
-        return adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction));
-    }
-
-    virtual PassOwnPtr<AnimationValue> clone() const override
-    {
-        return adoptPtr(new FloatAnimationValue(*this));
-    }
-
-    float value() const { return m_value; }
-
-private:
-    FloatAnimationValue(double keyTime, float value, TimingFunction* timingFunction)
+    FloatAnimationValue(double keyTime, float value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
     }
 
+    virtual std::unique_ptr<AnimationValue> clone() const override
+    {
+        return std::make_unique<FloatAnimationValue>(*this);
+    }
+
+    float value() const { return m_value; }
+
+private:
     float m_value;
 };
 
@@ -110,25 +105,20 @@ private:
 // FIXME: Should be moved to its own header file.
 class TransformAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<TransformAnimationValue> create(double keyTime, const TransformOperations& value, TimingFunction* timingFunction = nullptr)
-    {
-        return adoptPtr(new TransformAnimationValue(keyTime, value, timingFunction));
-    }
-
-    virtual PassOwnPtr<AnimationValue> clone() const override
-    {
-        return adoptPtr(new TransformAnimationValue(*this));
-    }
-
-    const TransformOperations& value() const { return m_value; }
-
-private:
-    TransformAnimationValue(double keyTime, const TransformOperations& value, TimingFunction* timingFunction)
+    TransformAnimationValue(double keyTime, const TransformOperations& value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
     }
 
+    virtual std::unique_ptr<AnimationValue> clone() const override
+    {
+        return std::make_unique<TransformAnimationValue>(*this);
+    }
+
+    const TransformOperations& value() const { return m_value; }
+
+private:
     TransformOperations m_value;
 };
 
@@ -136,25 +126,20 @@ private:
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<FilterAnimationValue> create(double keyTime, const FilterOperations& value, TimingFunction* timingFunction = nullptr)
-    {
-        return adoptPtr(new FilterAnimationValue(keyTime, value, timingFunction));
-    }
-
-    virtual PassOwnPtr<AnimationValue> clone() const override
-    {
-        return adoptPtr(new FilterAnimationValue(*this));
-    }
-
-    const FilterOperations& value() const { return m_value; }
-
-private:
-    FilterAnimationValue(double keyTime, const FilterOperations& value, TimingFunction* timingFunction)
+    FilterAnimationValue(double keyTime, const FilterOperations& value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
     }
 
+    virtual std::unique_ptr<AnimationValue> clone() const override
+    {
+        return std::make_unique<FilterAnimationValue>(*this);
+    }
+
+    const FilterOperations& value() const { return m_value; }
+
+private:
     FilterOperations m_value;
 };
 
@@ -198,10 +183,10 @@ public:
     const AnimationValue& at(size_t i) const { return *m_values.at(i); }
     
     // Insert, sorted by keyTime.
-    void insert(PassOwnPtr<const AnimationValue>);
+    void insert(std::unique_ptr<const AnimationValue>);
     
 protected:
-    Vector<OwnPtr<const AnimationValue>> m_values;
+    Vector<std::unique_ptr<const AnimationValue>> m_values;
     AnimatedPropertyID m_property;
 };
 

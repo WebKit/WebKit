@@ -51,24 +51,24 @@ static RepaintMap& repaintRectMap()
     return map;
 }
 
-void KeyframeValueList::insert(PassOwnPtr<const AnimationValue> value)
+void KeyframeValueList::insert(std::unique_ptr<const AnimationValue> value)
 {
     for (size_t i = 0; i < m_values.size(); ++i) {
         const AnimationValue* curValue = m_values[i].get();
         if (curValue->keyTime() == value->keyTime()) {
             ASSERT_NOT_REACHED();
             // insert after
-            m_values.insert(i + 1, value);
+            m_values.insert(i + 1, WTF::move(value));
             return;
         }
         if (curValue->keyTime() > value->keyTime()) {
             // insert before
-            m_values.insert(i, value);
+            m_values.insert(i, WTF::move(value));
             return;
         }
     }
     
-    m_values.append(value);
+    m_values.append(WTF::move(value));
 }
 
 GraphicsLayer::GraphicsLayer(GraphicsLayerClient& client)

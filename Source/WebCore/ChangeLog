@@ -1,3 +1,29 @@
+2014-11-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove create() factory function in FooAnimationValue classes
+        https://bugs.webkit.org/show_bug.cgi?id=138206
+
+        Reviewed by Darin Adler.
+
+        As a step to use std::unique_ptr and std::make_unique, this patch removes create()
+        factory function in FooAnimationValue classes. As this changes, FooAnimationValue::create()
+        are changed to std::make_unique<>.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::KeyframeValueList::insert):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::FloatAnimationValue::FloatAnimationValue):
+        (WebCore::TransformAnimationValue::TransformAnimationValue):
+        (WebCore::FilterAnimationValue::FilterAnimationValue):
+        (WebCore::FloatAnimationValue::create): Deleted.
+        (WebCore::TransformAnimationValue::create): Deleted.
+        (WebCore::FilterAnimationValue::create): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+
 2014-11-09  Chris Dumez  <cdumez@apple.com>
 
         Add a more correct way to compare floating point numbers and use it
