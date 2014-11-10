@@ -1,3 +1,27 @@
+2014-11-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OSX] Some words are placed on top of each other in complex text layout
+        https://bugs.webkit.org/show_bug.cgi?id=138348
+
+        Reviewed by Simon Fraser.
+
+        Updating tests to not use cached space width.
+
+        * fast/text/large-space-width-complex-expected.html: Added.
+        * fast/text/large-space-width-complex.html: Added.
+        * fast/text/resources/NotoNastaliqUrduDraft.ttf: Added.
+        * platform/mac-mavericks/fast/text/emphasis-expected.png:
+        * platform/mac-mavericks/fast/text/emphasis-expected.txt: This test is orthogonal to space widths.
+        * platform/mac-mountainlion/fast/text/emphasis-expected.png:
+        * platform/mac-mountainlion/fast/text/emphasis-expected.txt:
+        * platform/mac/fast/text/emphasis-expected.png:
+        * platform/mac/fast/text/emphasis-expected.txt:
+        * platform/mac/fast/text/sticky-typesetting-features-expected.png:
+        * platform/mac/fast/text/sticky-typesetting-features-expected.txt: Ditto.
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.png:
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.txt: This test actually is improved with
+        this patch. Instead of a weirdly wide space width, the two words are spaced appropriately now.
+
 2014-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Crash in WebCore::Node::getFlag

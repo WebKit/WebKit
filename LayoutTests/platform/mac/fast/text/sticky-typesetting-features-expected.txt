@@ -13,5 +13,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 324x18
           text run at (0,0) width 324: "This should be rendered with kerning and ligatures:"
       RenderBlock {DIV} at (0,250) size 784x166
-        RenderText {#text} at (0,0) size 754x166
-          text run at (0,0) width 754: "Office Today"
+        RenderText {#text} at (0,0) size 751x166
+          text run at (0,0) width 751: "Office Today"

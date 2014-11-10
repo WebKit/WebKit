@@ -1,3 +1,21 @@
+2014-11-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OSX] Some words are placed on top of each other in complex text layout
+        https://bugs.webkit.org/show_bug.cgi?id=138348
+
+        Reviewed by Simon Fraser.
+
+        Some complex text layouts have lots of diacritics being placed all over the place.
+        CoreText sometimes compensates for this by adjusting the advances of the glyphs
+        throughout the string to make glyphs appear in the correct place. This means that
+        we can't naively cache the width of a space character; instead, we must obey
+        CoreText when it gives us an advance for a space.
+
+        Test: fast/text/large-space-width-complex.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2014-11-10  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] wireless playback placeholder UI doesn't always draw
