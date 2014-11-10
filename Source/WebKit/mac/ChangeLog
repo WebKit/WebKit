@@ -1,5 +1,11 @@
 2014-11-10  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix.
+
+        * WebView/WebActionMenuController.mm:
+
+2014-11-10  Beth Dakin  <bdakin@apple.com>
+
         Action menu initialization should be moved to _commonInitializationWithFrameName
         https://bugs.webkit.org/show_bug.cgi?id=138572
         -and corresponding-
