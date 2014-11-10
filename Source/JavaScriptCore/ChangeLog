@@ -1,3 +1,17 @@
+2014-11-09  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Fix 'noreturn' function does return warning in LLVMOverrides.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=138306
+
+        Reviewed by Filip Pizlo.
+
+        Adding NO_RETURN where needed.
+
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+        * llvm/library/LLVMOverrides.cpp:
+        * llvm/library/LLVMTrapCallback.h:
+
 2014-11-07  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Fix an alignment issue with operationPushCatchScope on ARMv7

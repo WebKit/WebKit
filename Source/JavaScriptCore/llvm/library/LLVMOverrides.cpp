@@ -32,13 +32,13 @@
 extern "C" int __cxa_atexit();
 extern "C" int __cxa_atexit() { return 0; }
 
-void (*g_llvmTrapCallback)(const char* message, ...);
+void (*g_llvmTrapCallback)(const char* message, ...) NO_RETURN;
 
 // If LLVM tries to raise signals, abort, or fail an assertion, then let
 // WebKit handle it instead of trapping.
 extern "C" int raise(int signal);
-extern "C" void __assert_rtn(const char* function, const char* filename, int lineNumber, const char* expression);
-extern "C" void abort(void);
+extern "C" void __assert_rtn(const char* function, const char* filename, int lineNumber, const char* expression) NO_RETURN;
+extern "C" void abort(void) NO_RETURN;
 
 extern "C" int raise(int signal)
 {

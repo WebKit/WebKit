@@ -53,14 +53,15 @@
 #undef __STDC_LIMIT_MACROS
 #undef __STDC_CONSTANT_MACROS
 
-extern "C" WTF_EXPORT_PRIVATE JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*)(const char*, ...));
+static void llvmCrash(const char*) NO_RETURN;
+extern "C" WTF_EXPORT_PRIVATE JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*)(const char*, ...) NO_RETURN);
 
 static void llvmCrash(const char* reason)
 {
     g_llvmTrapCallback("LLVM fatal error: %s", reason);
 }
 
-extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*, ...))
+extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*, ...) NO_RETURN)
 {
     g_llvmTrapCallback = callback;
     

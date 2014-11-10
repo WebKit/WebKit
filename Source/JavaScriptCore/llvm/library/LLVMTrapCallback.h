@@ -26,7 +26,9 @@
 #ifndef LLVMTrapCallback_h
 #define LLVMTrapCallback_h
 
-extern void (*g_llvmTrapCallback)(const char* message, ...);
+#include <wtf/Assertions.h>
+
+extern void (*g_llvmTrapCallback)(const char* message, ...) NO_RETURN;
 
 #endif // LLVMTrapCallback_h
 
