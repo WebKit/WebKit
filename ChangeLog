@@ -1,3 +1,20 @@
+2014-11-10  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Enable Cortex-A53-specific code paths by default if core is detected.
+        https://bugs.webkit.org/show_bug.cgi?id=138499
+
+        Reviewed by Csaba Osztrogonác.
+
+        On ARM64/Linux, check /proc/cpuinfo for CPU part 0xd03 (signaling
+        Cortex-A53) and set the initial value of WTF_CPU_ARM64_CORTEXA53 to true
+        if found.
+
+        Since on ARM64/Linux the part number that cpuinfo reports depends on
+        the core the query is run on, the check is bound to and executed on the
+        available cores one by one.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2014-11-10  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Remove unnecessary version check from OptionsEfl.cmake

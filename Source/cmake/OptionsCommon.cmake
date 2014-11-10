@@ -30,6 +30,23 @@ if (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif ()
 
+# Detect Cortex-A53 core if CPU is ARM64 and OS is Linux.
+# Query /proc/cpuinfo for each available core and check reported CPU part number: 0xd03 signals Cortex-A53.
+# (see Main ID Register in ARM Cortex-A53 MPCore Processor Technical Reference Manual)
+set(WTF_CPU_ARM64_CORTEXA53_INITIALVALUE OFF)
+if (WTF_CPU_ARM64 AND (${CMAKE_SYSTEM_NAME} STREQUAL "Linux"))
+    execute_process(COMMAND nproc OUTPUT_VARIABLE PROC_COUNT)
+    math(EXPR PROC_MAX ${PROC_COUNT}-1)
+    foreach (PROC_ID RANGE ${PROC_MAX})
+        execute_process(COMMAND taskset -c ${PROC_ID} grep "^CPU part" /proc/cpuinfo OUTPUT_VARIABLE PROC_PART)
+        if (PROC_PART MATCHES "0xd03")
+            set(WTF_CPU_ARM64_CORTEXA53_INITIALVALUE ON)
+            break ()
+        endif ()
+    endforeach ()
+endif ()
+option(WTF_CPU_ARM64_CORTEXA53 "Enable Cortex-A53-specific code paths" ${WTF_CPU_ARM64_CORTEXA53_INITIALVALUE})
+
 if (WTF_CPU_ARM64_CORTEXA53)
     if (NOT WTF_CPU_ARM64)
         message(FATAL_ERROR "WTF_CPU_ARM64_CORTEXA53 set without WTF_CPU_ARM64")
