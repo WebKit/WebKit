@@ -4504,6 +4504,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         editCommandVector[i]->invalidate();
 
     m_activePopupMenu = 0;
+    m_isPlayingAudio = false;
 }
 
 void WebPageProxy::resetStateAfterProcessExited()
