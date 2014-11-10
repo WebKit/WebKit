@@ -1,5 +1,12 @@
 2014-11-10  Beth Dakin  <bdakin@apple.com>
 
+        Rolling out failed build fix 
+        http://trac.webkit.org/changeset/175819
+
+        * WebCore.exp.in:
+
+2014-11-10  Beth Dakin  <bdakin@apple.com>
+
         Speculative build fix.
 
         * WebCore.exp.in:
