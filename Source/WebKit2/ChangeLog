@@ -1,5 +1,16 @@
 2014-11-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix typo in r175796.
+
+        Rename areEssentialEqualAsFloat to areEssentiallyEqualAsFloat.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::areEssentiallyEqualAsFloat):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::areEssentialEqualAsFloat): Deleted.
+
+2014-11-09  Chris Dumez  <cdumez@apple.com>
+
         Add a more correct way to compare floating point numbers and use it
         https://bugs.webkit.org/show_bug.cgi?id=138527
 
