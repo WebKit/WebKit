@@ -103,6 +103,7 @@ OBJC_CLASS NSControl;
 OBJC_CLASS NSCursor;
 OBJC_CLASS NSData;
 OBJC_CLASS NSDate;
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSFont;
 OBJC_CLASS NSHTTPCookie;
@@ -259,6 +260,8 @@ extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 extern int (*wkRecommendedScrollerStyle)(void);
 
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
+
+extern NSRange (*wkExtractWordDefinitionTokenRangeFromContextualString)(NSString *contextString, NSRange range, NSDictionary **options);
 
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 

@@ -116,12 +116,15 @@ enum {
     WebActionMenuItemTagNoAction = 0,
     WebActionMenuItemTagOpenLinkInDefaultBrowser,
     WebActionMenuItemTagPreviewLink,
-    WebActionMenuItemTagAddLinkToSafariReadingList
+    WebActionMenuItemTagAddLinkToSafariReadingList,
+    WebActionMenuItemTagCopyText,
+    WebActionMenuItemTagLookupText
 };
 
 typedef enum {
     WebActionMenuNone = 0,
-    WebActionMenuLink
+    WebActionMenuLink,
+    WebActionMenuReadOnlyText
 } WebActionMenuType;
 
 // Message Sources.
