@@ -388,27 +388,27 @@ bool Connection::open()
         }
     }
 
+    RefPtr<Connection> protectedThis(this);
     m_isConnected = true;
 #if PLATFORM(GTK)
-    RefPtr<Connection> protector(this);
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
-        [=] {
-            protector->readyReadHandler();
+        [protectedThis] {
+            protectedThis->readyReadHandler();
         },
-        [=] {
-            protector->connectionDidClose();
+        [protectedThis] {
+            protectedThis->connectionDidClose();
         });
 #elif PLATFORM(EFL)
-    RefPtr<Connection> protector(this);
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
-        [protector] {
-            protector->readyReadHandler();
+        [protectedThis] {
+            protectedThis->readyReadHandler();
         });
 #endif
 
-    // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
-    // handler.
-    m_connectionQueue->dispatch(WTF::bind(&Connection::readyReadHandler, this));
+    // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal handler.
+    m_connectionQueue->dispatch([protectedThis] {
+        protectedThis->readyReadHandler();
+    });
 
     return true;
 }

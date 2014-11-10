@@ -1,3 +1,25 @@
+2014-11-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Use C++ lambdas in IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=138018
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of WTF::bind() in the IPC::Connection class with C++11 lambdas.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::invalidate):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::enqueueIncomingMessage):
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::initializeDeadNameSource):
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::open):
+
 2014-11-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove create() factory function in FooAnimationValue classes
