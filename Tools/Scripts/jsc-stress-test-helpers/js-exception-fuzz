@@ -100,7 +100,7 @@ if (!$checkCount) {
 srand($seed);
 
 for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
-    my $target = int(rand() * $checkCount);
+    my $target = int(rand() * ($checkCount - 1)) + 2;
     if ($verbose) {
         print "iteration($iteration) target($target): Running.\n";
     }

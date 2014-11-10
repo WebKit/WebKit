@@ -1,3 +1,21 @@
+2014-11-10  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Fix the exception fuzz helper to generate targets in the correct range
+        https://bugs.webkit.org/show_bug.cgi?id=138544
+
+        Reviewed by Filip Pizlo.
+
+        Currently, the script generates exception fuzz targets in the range of
+        0..($checkCount-1). However, target 0 is never hit, while target 1 is
+        always outside of the outermost try block of the tests, which therefore
+        prints unexpected output and results in false failures when fired at.
+        Additionally, target $checkCount is never generated.
+
+        This patch fixes the script to generate targets in the range of
+        2..$checkCount.
+
+        * Scripts/jsc-stress-test-helpers/js-exception-fuzz:
+
 2014-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         make-passwords-json.py should generarate everything needed for testing
