@@ -111,6 +111,17 @@
     WKScrollViewDelegateForwarder *_delegateForwarder;
 }
 
+- (id)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+        ASSERT([self verticalScrollDecelerationFactor] == [self horizontalScrollDecelerationFactor]);
+        // FIXME: use UIWebPreferredScrollDecelerationFactor() from UIKit: rdar://problem/18931007.
+        _preferredScrollDecelerationFactor = [self verticalScrollDecelerationFactor];
+    }
+    
+    return self;
+}
+
 - (void)setInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate
 {
     if (internalDelegate == _internalDelegate)

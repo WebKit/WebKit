@@ -1,3 +1,23 @@
+2014-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Scroll deceleration rate is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=138574
+        rdar://problem/18715303
+
+        Reviewed by Benjamin Poulain.
+        
+        The CSS Snap Points code incorrectly set the WKScrollView's deceleration rate,
+        overriding the custom value that UIWebScrollView sets.
+        
+        Fix by having WKScrollView store the custom rate at init time, and
+        using that value in -scrollViewWillBeginDragging:.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillBeginDragging:]):
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+
 2014-11-09  Ada Chan  <adachan@apple.com>
 
         Reset WebPageProxy's isPlayingAudio state after web process crash or page invalidation.
