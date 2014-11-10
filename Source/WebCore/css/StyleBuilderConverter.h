@@ -32,6 +32,7 @@
 #include "CSSPrimitiveValue.h"
 #include "Length.h"
 #include "Pair.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include "TransformFunctions.h"
 
@@ -61,6 +62,7 @@ public:
     static TextEmphasisPosition convertTextEmphasisPosition(StyleResolver&, CSSValue&);
     static ETextAlign convertTextAlign(StyleResolver&, CSSValue&);
     static PassRefPtr<ClipPathOperation> convertClipPath(StyleResolver&, CSSValue&);
+    static EResize convertResize(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -369,6 +371,20 @@ inline PassRefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(Styl
     }
 
     return operation.release();
+}
+
+inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    EResize resize = RESIZE_NONE;
+    if (primitiveValue.getValueID() == CSSValueAuto) {
+        if (Settings* settings = styleResolver.document().settings())
+            resize = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+    } else
+        resize = primitiveValue;
+
+    return resize;
 }
 
 } // namespace WebCore

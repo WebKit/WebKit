@@ -1,3 +1,23 @@
+2014-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Move 'resize' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138550
+
+        Reviewed by Andreas Kling.
+
+        No new tests, no behavior change.
+
+        Move 'resize' CSS property from DeprecatedStyleBuilder to the new
+        StyleBuilder by adding a new 'Resize' Converter function.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyResize::applyValue): Deleted.
+        (WebCore::ApplyPropertyResize::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertResize):
+
 2014-11-10  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.

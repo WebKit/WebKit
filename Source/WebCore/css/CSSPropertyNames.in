@@ -208,7 +208,7 @@ paint-order
 pointer-events [Inherited, NewStyleBuilder]
 position [NewStyleBuilder]
 quotes [Inherited]
-resize [Inherited]
+resize [Inherited, NewStyleBuilder, Converter=Resize]
 right [NewStyleBuilder, Initial=initialOffset, Converter=LengthOrAuto]
 size [NewStyleBuilder, Custom=All]
 src
