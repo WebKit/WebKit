@@ -37,8 +37,6 @@ template <unsigned keyBits>
 class BloomFilter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static_assert(keyBits <= 16, "BloomFilter key size must be less than or equal to 16!");
-
     static const size_t tableSize = 1 << keyBits;
     static const unsigned keyMask = (1 << keyBits) - 1;
     static uint8_t maximumCount() { return std::numeric_limits<uint8_t>::max(); }
