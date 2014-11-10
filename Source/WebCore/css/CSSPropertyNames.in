@@ -217,7 +217,7 @@ table-layout [NewStyleBuilder]
 tab-size [Inherited, NewStyleBuilder, TypeName=unsigned]
 text-align [Inherited, NewStyleBuilder, Converter=TextAlign]
 text-decoration [NewStyleBuilder, Converter=TextDecoration]
-text-indent [Inherited]
+text-indent [Inherited, NewStyleBuilder, Custom=All]
 text-line-through
 text-line-through-color
 text-line-through-mode

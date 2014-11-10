@@ -1576,67 +1576,6 @@ public:
 };
 #endif
 
-class ApplyPropertyTextIndent {
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setTextIndent(styleResolver->parentStyle()->textIndent());
-#if ENABLE(CSS3_TEXT)
-        styleResolver->style()->setTextIndentLine(styleResolver->parentStyle()->textIndentLine());
-        styleResolver->style()->setTextIndentType(styleResolver->parentStyle()->textIndentType());
-#endif
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setTextIndent(RenderStyle::initialTextIndent());
-#if ENABLE(CSS3_TEXT)
-        styleResolver->style()->setTextIndentLine(RenderStyle::initialTextIndentLine());
-        styleResolver->style()->setTextIndentType(RenderStyle::initialTextIndentType());
-#endif
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSValueList>(*value))
-            return;
-
-        Length lengthOrPercentageValue;
-#if ENABLE(CSS3_TEXT)
-        TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
-        TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
-#endif
-        CSSValueList& valueList = downcast<CSSValueList>(*value);
-        for (size_t i = 0; i < valueList.length(); ++i) {
-            CSSValue* item = valueList.itemWithoutBoundsCheck(i);
-            if (!is<CSSPrimitiveValue>(*item))
-                continue;
-
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*item);
-            if (!primitiveValue.getValueID())
-                lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData());
-#if ENABLE(CSS3_TEXT)
-            else if (primitiveValue.getValueID() == CSSValueWebkitEachLine)
-                textIndentLineValue = TextIndentEachLine;
-            else if (primitiveValue.getValueID() == CSSValueWebkitHanging)
-                textIndentTypeValue = TextIndentHanging;
-#endif
-        }
-
-        ASSERT(!lengthOrPercentageValue.isUndefined());
-        styleResolver->style()->setTextIndent(lengthOrPercentageValue);
-#if ENABLE(CSS3_TEXT)
-        styleResolver->style()->setTextIndentLine(textIndentLineValue);
-        styleResolver->style()->setTextIndentType(textIndentTypeValue);
-#endif
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-};
-
 const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
     static NeverDestroyed<DeprecatedStyleBuilder> styleBuilderInstance;
@@ -1695,7 +1634,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitTextDecorationColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationSkip, ApplyPropertyTextDecorationSkip::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextUnderlinePosition, ApplyPropertyTextUnderlinePosition::createHandler());
-    setPropertyHandler(CSSPropertyTextIndent, ApplyPropertyTextIndent::createHandler());
     setPropertyHandler(CSSPropertyTextRendering, ApplyPropertyFont<TextRenderingMode, &FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering>::createHandler());
     setPropertyHandler(CSSPropertyVerticalAlign, ApplyPropertyVerticalAlign::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationDelay, ApplyPropertyAnimation<double, &Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSToStyleMap::mapAnimationDelay, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());

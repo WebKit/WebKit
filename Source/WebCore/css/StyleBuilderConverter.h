@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+// Note that we assume the CSS parser only allows valid CSSValue types.
 class StyleBuilderConverter {
 public:
     static Length convertLength(StyleResolver&, CSSValue&);

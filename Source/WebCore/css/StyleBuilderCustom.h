@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+// Note that we assume the CSS parser only allows valid CSSValue types.
 namespace StyleBuilderFunctions {
 
 inline void applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
@@ -306,6 +307,51 @@ inline void applyValueSize(StyleResolver& styleResolver, CSSValue& value)
     }
     styleResolver.style()->setPageSizeType(pageSizeType);
     styleResolver.style()->setPageSize(LengthSize(width, height));
+}
+
+inline void applyInheritTextIndent(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setTextIndent(styleResolver.parentStyle()->textIndent());
+#if ENABLE(CSS3_TEXT)
+    styleResolver.style()->setTextIndentLine(styleResolver.parentStyle()->textIndentLine());
+    styleResolver.style()->setTextIndentType(styleResolver.parentStyle()->textIndentType());
+#endif
+}
+
+inline void applyInitialTextIndent(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setTextIndent(RenderStyle::initialTextIndent());
+#if ENABLE(CSS3_TEXT)
+    styleResolver.style()->setTextIndentLine(RenderStyle::initialTextIndentLine());
+    styleResolver.style()->setTextIndentType(RenderStyle::initialTextIndentType());
+#endif
+}
+
+inline void applyValueTextIndent(StyleResolver& styleResolver, CSSValue& value)
+{
+    Length lengthOrPercentageValue;
+#if ENABLE(CSS3_TEXT)
+    TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
+    TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
+#endif
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+        if (!primitiveValue.getValueID())
+            lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData());
+#if ENABLE(CSS3_TEXT)
+        else if (primitiveValue.getValueID() == CSSValueWebkitEachLine)
+            textIndentLineValue = TextIndentEachLine;
+        else if (primitiveValue.getValueID() == CSSValueWebkitHanging)
+            textIndentTypeValue = TextIndentHanging;
+#endif
+    }
+
+    ASSERT(!lengthOrPercentageValue.isUndefined());
+    styleResolver.style()->setTextIndent(lengthOrPercentageValue);
+#if ENABLE(CSS3_TEXT)
+    styleResolver.style()->setTextIndentLine(textIndentLineValue);
+    styleResolver.style()->setTextIndentType(textIndentTypeValue);
+#endif
 }
 
 } // namespace StyleBuilderFunctions
