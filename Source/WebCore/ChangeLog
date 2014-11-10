@@ -1,3 +1,39 @@
+2014-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Support throttling of DOMTimers using nested setTimeout() calls
+        https://bugs.webkit.org/show_bug.cgi?id=138262
+
+        Reviewed by Gavin Barraclough.
+
+        Extend DOMTimers throttling support to timers that are using nested
+        setTimeout() calls instead of a setInterval(). To achieve this, this
+        patch introduces a NestedTimersMap singleton class where nested timers
+        are added, and for which we potentially update the next firing time,
+        after the parent timer is done executing.
+
+        I have verified this helps on ebay.com for example, which has timers
+        interacting with non-visible plugins that are scheduled using nested
+        setTimeout() calls with a frequency of 150 / 200 ms.
+
+        This is a second take on r175441, which caused intermittent crashes.
+        This time, nested timers are removed from the NestedTimersMap when
+        DOMTimer::removeById() is called. It would be unsafe to use the nested
+        timer afterwards because we don't hold a strong reference to it and
+        the ScriptExecutionContext is unref'ing the DOMTimer when
+        ScriptExecutionContext::removeTimeout() is called from
+        DOMTimer::removeById().
+
+        * page/DOMTimer.cpp:
+        (WebCore::NestedTimersMap::NestedTimersMap):
+        (WebCore::NestedTimersMap::~NestedTimersMap):
+        (WebCore::NestedTimersMap::add):
+        (WebCore::NestedTimersMap::remove):
+        (WebCore::NestedTimersMap::begin):
+        (WebCore::NestedTimersMap::end):
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::removeById):
+        (WebCore::DOMTimer::fired):
+
 2014-11-10  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Add a systemCode to distinguish when no expired sessions were found in response to a "keyrelease" message.
