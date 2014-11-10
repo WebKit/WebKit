@@ -93,8 +93,8 @@ FloatRect FloatQuad::boundingBox() const
 
 bool FloatQuad::isRectilinear() const
 {
-    return (WTF::withinEpsilon(m_p1.x(), m_p2.x()) && WTF::withinEpsilon(m_p2.y(), m_p3.y()) && WTF::withinEpsilon(m_p3.x(), m_p4.x()) && WTF::withinEpsilon(m_p4.y(), m_p1.y()))
-        || (WTF::withinEpsilon(m_p1.y(), m_p2.y()) && WTF::withinEpsilon(m_p2.x(), m_p3.x()) && WTF::withinEpsilon(m_p3.y(), m_p4.y()) && WTF::withinEpsilon(m_p4.x(), m_p1.x()));
+    return (WTF::areEssentiallyEqual(m_p1.x(), m_p2.x()) && WTF::areEssentiallyEqual(m_p2.y(), m_p3.y()) && WTF::areEssentiallyEqual(m_p3.x(), m_p4.x()) && WTF::areEssentiallyEqual(m_p4.y(), m_p1.y()))
+        || (WTF::areEssentiallyEqual(m_p1.y(), m_p2.y()) && WTF::areEssentiallyEqual(m_p2.x(), m_p3.x()) && WTF::areEssentiallyEqual(m_p3.y(), m_p4.y()) && WTF::areEssentiallyEqual(m_p4.x(), m_p1.x()));
 }
 
 bool FloatQuad::containsPoint(const FloatPoint& p) const

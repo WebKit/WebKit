@@ -270,11 +270,11 @@ void DOMTimer::updateTimerIntervalIfNecessary()
     double previousInterval = m_currentTimerInterval;
     m_currentTimerInterval = intervalClampedToMinimum();
 
-    if (WTF::withinEpsilon(previousInterval, m_currentTimerInterval))
+    if (WTF::areEssentiallyEqual(previousInterval, m_currentTimerInterval))
         return;
 
     if (repeatInterval()) {
-        ASSERT(WTF::withinEpsilon(repeatInterval(), previousInterval));
+        ASSERT(WTF::areEssentiallyEqual(repeatInterval(), previousInterval));
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
     } else
         augmentFireInterval(m_currentTimerInterval - previousInterval);

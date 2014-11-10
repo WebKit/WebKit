@@ -1,3 +1,35 @@
+2014-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Add a more correct way to compare floating point numbers and use it
+        https://bugs.webkit.org/show_bug.cgi?id=138527
+
+        Reviewed by Darin Adler.
+
+        Use the new WTF::areEssentuallyEqual() utility function from MathExtras.h
+        to compare floating-point numbers.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (withinEpsilon):
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        (WebKit::fuzzyCompare): Deleted.
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::withinEpsilon):
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (areEssentiallyEqualAsFloat):
+        (-[WKWebView _didCommitLayerTree:]):
+        (withinEpsilon): Deleted.
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        (WebKit::fuzzyCompare): Deleted.
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::areEssentialEqualAsFloat):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::withinEpsilon): Deleted.
+
 2014-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Implement round-rect clipping on video elements

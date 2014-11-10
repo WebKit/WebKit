@@ -1,3 +1,32 @@
+2014-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Add a more correct way to compare floating point numbers and use it
+        https://bugs.webkit.org/show_bug.cgi?id=138527
+
+        Reviewed by Darin Adler.
+
+        To compare floating point numbers in the code base, we would often rely
+        on the following check:
+        std::abs(a - b) <= std::numeric_limits<T>::epsilon()
+
+        However, this is not correct for arbitrary floating point values, and
+        will fail for values that are not close to zero.
+
+        This patch introduces a WTF::areEssentiallyEqual() templated function
+        that can only be called with floating point types and relies on the
+        following formula from [1][2] that defines u as being "essentially
+        equal" to v if: | u - v | / |u| <= e and | u - v | / |v| <= e
+
+        [1] Knuth, D. E. "Accuracy of Floating Point Arithmetic." The Art of
+            Computer Programming. 3rd ed. Vol. 2. Boston: Addison-Wesley, 1998.
+            229-45.
+        [2] http://www.boost.org/doc/libs/1_34_0/libs/test/doc/components/test_tools/floating_point_comparison.html
+
+        * wtf/MathExtras.h:
+        (WTF::safeFPDivision):
+        (WTF::areEssentiallyEqual):
+        (WTF::withinEpsilon): Deleted.
+
 2014-11-08  Darin Adler  <darin@apple.com>
 
         Replace FileThread class with a single function

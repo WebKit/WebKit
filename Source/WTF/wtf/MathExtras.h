@@ -393,9 +393,30 @@ inline unsigned fastLog2(unsigned i)
 }
 
 template <typename T>
-inline bool withinEpsilon(T a, T b)
+inline typename std::enable_if<std::is_floating_point<T>::value, T>::type safeFPDivision(T u, T v)
 {
-    return std::abs(a - b) <= std::numeric_limits<T>::epsilon();
+    // Protect against overflow / underflow.
+    if (v < 1 && u > v * std::numeric_limits<T>::max())
+        return std::numeric_limits<T>::max();
+    if (v > 1 && u < v * std::numeric_limits<T>::min())
+        return 0;
+    return u / v;
+}
+
+// Floating point numbers comparison:
+// u is "essentially equal" [1][2] to v if: | u - v | / |u| <= e and | u - v | / |v| <= e
+//
+// [1] Knuth, D. E. "Accuracy of Floating Point Arithmetic." The Art of Computer Programming. 3rd ed. Vol. 2.
+//     Boston: Addison-Wesley, 1998. 229-45.
+// [2] http://www.boost.org/doc/libs/1_34_0/libs/test/doc/components/test_tools/floating_point_comparison.html
+template <typename T>
+inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type areEssentiallyEqual(T u, T v, T epsilon = std::numeric_limits<T>::epsilon())
+{
+    if (u == v)
+        return true;
+
+    const T delta = std::abs(u - v);
+    return safeFPDivision(delta, std::abs(u)) <= epsilon && safeFPDivision(delta, std::abs(v)) <= epsilon;
 }
 
 } // namespace WTF

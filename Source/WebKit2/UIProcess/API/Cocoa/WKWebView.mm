@@ -75,6 +75,7 @@
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSValue.h>
 #import <wtf/HashMap.h>
+#import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
@@ -829,10 +830,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
 // WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
 // we need to ignore differences that are within a small rounding error on floats.
-template <typename TypeA, typename TypeB>
-static inline bool withinEpsilon(TypeA a, TypeB b)
+static inline bool areEssentiallyEqualAsFloat(float a, float b)
 {
-    return std::abs(a - b) < std::numeric_limits<float>::epsilon();
+    return WTF::areEssentiallyEqual(a, b);
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
@@ -882,7 +882,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
     if (_needsToRestoreExposedRect && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
         _needsToRestoreExposedRect = NO;
 
-        if (withinEpsilon(contentZoomScale(self), _scaleToRestore)) {
+        if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
             WebCore::FloatPoint exposedPosition = _exposedRectToRestore.location();
             exposedPosition.scale(_scaleToRestore, _scaleToRestore);
 
@@ -894,7 +894,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
     if (_needsToRestoreUnobscuredCenter && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
         _needsToRestoreUnobscuredCenter = NO;
 
-        if (withinEpsilon(contentZoomScale(self), _scaleToRestore)) {
+        if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
             CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
             WebCore::FloatSize unobscuredContentSizeAtNewScale(unobscuredRect.size.width / _scaleToRestore, unobscuredRect.size.height / _scaleToRestore);
             WebCore::FloatPoint topLeftInDocumentCoordinate(_unobscuredCenterToRestore.x() - unobscuredContentSizeAtNewScale.width() / 2, _unobscuredCenterToRestore.y() - unobscuredContentSizeAtNewScale.height() / 2);

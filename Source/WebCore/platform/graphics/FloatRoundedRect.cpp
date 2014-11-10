@@ -64,10 +64,10 @@ bool FloatRoundedRect::Radii::isZero() const
 
 bool FloatRoundedRect::Radii::isUniformCornerRadius() const
 {
-    return WTF::withinEpsilon(m_topLeft.width(), m_topLeft.height())
-        && withinEpsilon(m_topLeft, m_topRight)
-        && withinEpsilon(m_topLeft, m_bottomLeft)
-        && withinEpsilon(m_topLeft, m_bottomRight);
+    return WTF::areEssentiallyEqual(m_topLeft.width(), m_topLeft.height())
+        && areEssentiallyEqual(m_topLeft, m_topRight)
+        && areEssentiallyEqual(m_topLeft, m_bottomLeft)
+        && areEssentiallyEqual(m_topLeft, m_bottomRight);
 }
 
 void FloatRoundedRect::Radii::scale(float factor)

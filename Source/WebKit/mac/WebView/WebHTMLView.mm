@@ -126,6 +126,7 @@
 #import <limits>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/MathExtras.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 
@@ -2412,7 +2413,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 #ifdef __LP64__
     // If the new bottom is equal to the old bottom (when both are treated as floats), we just return the original
     // bottom. This prevents rounding errors that can occur when converting newBottom to a double.
-    if (fabs(static_cast<float>(bottom) - newBottom) <= std::numeric_limits<float>::epsilon()) 
+    if (WTF::areEssentiallyEqual(static_cast<float>(bottom), newBottom))
         return bottom;
     else
 #endif

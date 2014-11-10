@@ -108,8 +108,6 @@ private:
     WebCore::FloatRect m_lastFrameCoveredRect;
 };
 
-bool fuzzyCompare(float, float, float epsilon);
-
 } // namespace WebKit
 
 #endif // PageViewportController_h

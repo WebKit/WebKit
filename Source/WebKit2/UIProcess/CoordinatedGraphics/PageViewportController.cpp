@@ -33,11 +33,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool fuzzyCompare(float a, float b, float epsilon)
-{
-    return std::abs(a - b) < epsilon;
-}
-
 PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, PageViewportControllerClient& client)
     : m_webPageProxy(proxy)
     , m_client(client)
@@ -327,14 +322,16 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
     if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return false;
 
-    bool currentlyScaledToFit = fuzzyCompare(m_pageScaleFactor, m_minimumScaleToFit, 0.0001);
+    // FIXME: Why this arbitrary precision? We likely want to omit the third argument so that
+    // std::numeric_limits<float>::epsilon() is used instead, similarly to Mac / iOS.
+    bool currentlyScaledToFit = WTF::areEssentiallyEqual(m_pageScaleFactor, m_minimumScaleToFit, 0.0001f);
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize));
 
     if (minimumScale <= 0)
         return false;
 
-    if (!fuzzyCompare(minimumScale, m_minimumScaleToFit, 0.0001)) {
+    if (!WTF::areEssentiallyEqual(minimumScale, m_minimumScaleToFit, 0.0001f)) {
         m_minimumScaleToFit = minimumScale;
 
         if (!m_webPageProxy->areActiveDOMObjectsAndAnimationsSuspended()) {
@@ -343,7 +340,7 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
             else {
                 // Ensure the effective scale stays within bounds.
                 float boundedScale = innerBoundedViewportScale(m_pageScaleFactor);
-                if (!fuzzyCompare(boundedScale, m_pageScaleFactor, 0.0001))
+                if (!WTF::areEssentiallyEqual(boundedScale, m_pageScaleFactor, 0.0001f))
                     applyScaleAfterRenderingContents(boundedScale);
             }
         }
