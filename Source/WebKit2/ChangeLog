@@ -1,3 +1,10 @@
+2014-11-10  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
 2014-11-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Use C++ lambdas in IPC::Connection

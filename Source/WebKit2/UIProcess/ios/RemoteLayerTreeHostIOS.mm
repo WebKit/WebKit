@@ -195,7 +195,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         else
             view = adoptNS([[WKCompositingView alloc] init]);
         break;
-    case PlatformCALayer::LayerTypeSimpleLayer:
+    case PlatformCALayer::LayerTypeShapeLayer:
         view = adoptNS([[WKShapeView alloc] init]);
         break;
     default:
