@@ -143,17 +143,8 @@ endif ()
 find_package(Eo QUIET)
 if (EO_FOUND)
     add_definitions(-DWTF_USE_EO=1)
-
-    # EFL 1.8 provides FooConfig.cmake and it is preferred because FindFoo.cmake's
-    # tricky check routine for version is not availiable on EFL 1.8.
-    # But FindFoo.cmake is still required to support EFL 1.7 and config mode of CMake
-    # is supported after CMake 2.8.8.
-    # So, just disabled version requirement if CMake version is lower than 2.8.8 to
-    # build with EFL 1.8. Eo probably guarantee their version.
-    if (NOT (CMAKE_VERSION VERSION_LESS 2.8.8))
-       set(EFL_CONFIG_MODE CONFIG)
-       set(EFL_REQUIRED_VERSION 1.8)
-    endif ()
+    set(EFL_CONFIG_MODE CONFIG)
+    set(EFL_REQUIRED_VERSION 1.8)
 else ()
     set(EFL_REQUIRED_VERSION 1.7)
 endif ()
