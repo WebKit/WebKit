@@ -118,15 +118,28 @@ struct DictionaryPopupInfo {
     WebElementDictionary *hitTestResult = [self performHitTestAtPoint:[_webView convertPoint:event.locationInWindow fromView:nil]];
     NSArray *menuItems = [self _defaultMenuItemsForHitTestResult:hitTestResult];
 
-    if (_type != WebActionMenuReadOnlyText)
-        [[_webView _selectedOrMainFrame] _clearSelection];
-
     // Allow clients to customize the menu items.
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:)])
         menuItems = [[_webView UIDelegate] _webView:_webView actionMenuItemsForHitTestResult:hitTestResult withType:_type defaultActionMenuItems:menuItems];
 
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
+}
+
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != _webView.actionMenu)
+        return;
+
+    if (_type != WebActionMenuReadOnlyText) {
+        [[_webView _selectedOrMainFrame] _clearSelection];
+        return;
+    }
+
+    // Action menus for text should highlight the text so that it is clear what the action menu actions
+    // will apply to. If the text is already selected, the menu will use the existing selection.
+    if (!_hitTestResult.isSelected())
+        [self _selectLookupText];
 }
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -270,19 +283,19 @@ struct DictionaryPopupInfo {
     WKShowWordDefinitionWindow(popupInfo.attributedString.get(), textBaselineOrigin, popupInfo.options.get());
 }
 
-- (BOOL)_selectLookupText
+- (void)_selectLookupText
 {
     NSDictionary *options = nil;
     RefPtr<Range> lookupRange = rangeForDictionaryLookupAtHitTestResult(_hitTestResult, &options);
     if (!lookupRange)
-        return false;
+        return;
 
     Frame* frame = _hitTestResult.innerNode()->document().frame();
     if (!frame)
-        return false;
+        return;
 
     frame->selection().setSelectedRange(lookupRange.get(), DOWNSTREAM, true);
-    return true;
+    return;
 }
 
 static DictionaryPopupInfo performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
@@ -406,10 +419,6 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 
     Node* node = _hitTestResult.innerNode();
     if (node && node->isTextNode()) {
-        if (![[hitTestResult objectForKey:WebElementIsSelectedKey] boolValue]) {
-            if (![self _selectLookupText])
-                return @[ ];
-        }
         _type = WebActionMenuReadOnlyText;
         return [self _defaultMenuItemsForText:hitTestResult];
     }
