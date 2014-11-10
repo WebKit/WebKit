@@ -277,7 +277,6 @@ static void appendArgumentList(StringBuilder& str, const Vector<AtomicString>& a
             str.appendLiteral(", ");
     }
 }
-#endif
 
 static void appendSelectorList(StringBuilder& str, const CSSSelectorList* selectorList)
 {
@@ -288,6 +287,7 @@ static void appendSelectorList(StringBuilder& str, const CSSSelectorList* select
         str.append(subSelector->selectorText());
     }
 }
+#endif
 
 String CSSSelector::selectorText(const String& rightSide) const
 {

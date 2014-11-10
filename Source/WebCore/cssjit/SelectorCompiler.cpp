@@ -2459,7 +2459,11 @@ void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& fai
 
 void SelectorCodeGenerator::generateElementLinkMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLink) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassVisited) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLinkDeprecated))
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassLink)
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLink)
+#endif
+        || fragment.pseudoClasses.contains(CSSSelector::PseudoClassVisited) || fragment.pseudoClasses.contains(CSSSelector::PseudoClassAnyLinkDeprecated))
         generateElementIsLink(failureCases);
 }
 
