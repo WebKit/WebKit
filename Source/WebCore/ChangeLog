@@ -1,3 +1,22 @@
+2014-11-04  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r174823): Several tests fail due to canplaythrough firing before tracks are available
+        https://bugs.webkit.org/show_bug.cgi?id=137882
+
+        Reviewed by Eric Carlson.
+
+        For HLS streams with only one video, audio, or text track, there will be no media selection group
+        for that media characteristic. When culling out AVPlayerItemTracks in tracksDidChange(), do not skip
+        tracks for which there is no matching AVMediaSelectionGroup.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups): Refactored.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForLegibleMedia): Call above.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForVisualMedia): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange):
+
 2014-11-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r175813.

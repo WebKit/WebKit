@@ -2328,23 +2328,28 @@ void MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks()
 #endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
-AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForLegibleMedia()
+bool MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups()
 {
     if (!m_avAsset)
-        return nil;
-    
+        return false;
+
     if ([m_avAsset.get() statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
+        return false;
+
+    return true;
+}
+
+AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForLegibleMedia()
+{
+    if (!hasLoadedMediaSelectionGroups())
         return nil;
-    
+
     return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
 }
 
 AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia()
 {
-    if (!m_avAsset)
-        return nil;
-
-    if ([m_avAsset.get() statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
+    if (!hasLoadedMediaSelectionGroups())
         return nil;
 
     return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
@@ -2352,10 +2357,7 @@ AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectio
 
 AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForVisualMedia()
 {
-    if (!m_avAsset)
-        return nil;
-
-    if ([m_avAsset.get() statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
+    if (!hasLoadedMediaSelectionGroups())
         return nil;
 
     return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicVisual];
@@ -2753,10 +2755,26 @@ void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> trac
 
     NSArray *assetTracks = [m_avAsset tracks];
 
-    // Tracks which are not present in the AVAsset are streaming tracks, and will instead be represented by
-    // AVMediaSelectionOptions.
     m_cachedTracks = [tracks objectsAtIndexes:[tracks indexesOfObjectsPassingTest:^(id obj, NSUInteger, BOOL*) {
-        return [assetTracks containsObject:[obj assetTrack]];
+        AVAssetTrack* assetTrack = [obj assetTrack];
+
+        if ([assetTracks containsObject:assetTrack])
+            return YES;
+
+        // Track is a streaming track. Omit if it belongs to a valid AVMediaSelectionGroup.
+        if (!hasLoadedMediaSelectionGroups())
+            return NO;
+
+        if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicAudible] && safeMediaSelectionGroupForAudibleMedia())
+            return NO;
+
+        if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicVisual] && safeMediaSelectionGroupForVisualMedia())
+            return NO;
+
+        if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicLegible] && safeMediaSelectionGroupForLegibleMedia())
+            return NO;
+
+        return YES;
     }]];
 
     for (AVPlayerItemTrack *track in m_cachedTracks.get())

@@ -1502,9 +1502,7 @@ webkit.org/b/136109 [ Yosemite ] fast/multicol/mixed-opacity-fixed-test.html  [ 
 [ Yosemite ] inspector/model/parse-script-syntax-tree.html [ Failure Crash ]
 [ Yosemite ] inspector/protocol-promise-result.html [ Failure Crash ]
 
-webkit.org/b/137882 http/tests/media/hls/video-controls-live-stream.html [ Failure ]
-webkit.org/b/137882 http/tests/media/track-in-band-hls-metadata.html [ Failure ]
-webkit.org/b/137882 media/track/audio-track.html [ Pass Failure ]
+webkit.org/b/138394 media/track/audio-track.html [ Pass Failure ]
 
 # Specific to Yosemite's font fallback
 webkit.org/b/138328 [ Mavericks MountainLion ] platform/mac/fast/text/font-cursive-italic-cjk.html [ Skip ]

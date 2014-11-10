@@ -245,6 +245,8 @@ private:
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     void processMediaSelectionOptions();
+    bool hasLoadedMediaSelectionGroups();
+
     AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
     AVMediaSelectionGroup* safeMediaSelectionGroupForAudibleMedia();
     AVMediaSelectionGroup* safeMediaSelectionGroupForVisualMedia();
