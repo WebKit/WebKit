@@ -1,5 +1,22 @@
 2014-11-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        [EFL] Remove GamepadDeviceEfl::create()
+        https://bugs.webkit.org/show_bug.cgi?id=138553
+
+        Reviewed by Darin Adler.
+
+        As a step to use std::unique_ptr<> and std::make_unique<>, this patch removes GamepadDeviceEfl::create().
+        Instead we use std::make_unique<>.
+
+        No new tests, no behavior changes.
+
+        * platform/efl/GamepadsEfl.cpp:
+        (WebCore::GamepadsEfl::registerDevice):
+        (WebCore::GamepadDeviceEfl::create): Deleted.
+        (WebCore::GamepadsEfl::unregisterDevice): Deleted.
+
+2014-11-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Remove create() factory function in FooAnimationValue classes
         https://bugs.webkit.org/show_bug.cgi?id=138206
 

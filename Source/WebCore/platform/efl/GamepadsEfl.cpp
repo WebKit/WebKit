@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
@@ -47,16 +46,12 @@ static const char joystickPrefix[] = "/dev/input/js";
 
 class GamepadDeviceEfl : public GamepadDeviceLinux {
 public:
-    static PassOwnPtr<GamepadDeviceEfl> create(const String& deviceFile)
-    {
-        return adoptPtr(new GamepadDeviceEfl(deviceFile));
-    }
+    explicit GamepadDeviceEfl(const String& deviceFile);
     ~GamepadDeviceEfl();
     void resetFdHandler() { m_fdHandler = 0; }
     const String& deviceFile() const { return m_deviceFile; }
 
 private:
-    GamepadDeviceEfl(const String& deviceFile);
     static Eina_Bool readCallback(void* userData, Ecore_Fd_Handler*);
 
     Ecore_Fd_Handler* m_fdHandler;
@@ -124,7 +119,7 @@ private:
     ~GamepadsEfl();
     static void onGamePadChange(const char* syspath, Eeze_Udev_Event, void* userData, Eeze_Udev_Watch* watcher);
 
-    Vector<OwnPtr<GamepadDeviceEfl> > m_slots;
+    Vector<std::unique_ptr<GamepadDeviceEfl>> m_slots;
     HashMap<String, GamepadDeviceEfl*> m_deviceMap;
 
     Eeze_Udev_Watch* m_gamepadsWatcher;
@@ -190,7 +185,7 @@ void GamepadsEfl::registerDevice(const String& syspath)
     const size_t slotCount = m_slots.size();
     for (size_t index = 0; index < slotCount; ++index) {
         if (!m_slots[index]) {
-            m_slots[index] = GamepadDeviceEfl::create(String::fromUTF8(deviceFile));
+            m_slots[index] = std::make_unique<GamepadDeviceEfl>(String::fromUTF8(deviceFile));
             LOG(Gamepad, "Gamepad device name is %s", m_slots[index]->id().utf8().data());
             m_deviceMap.add(syspath, m_slots[index].get());
             break;
@@ -205,10 +200,10 @@ void GamepadsEfl::unregisterDevice(const String& syspath)
 
     GamepadDeviceEfl* gamepadDevice = m_deviceMap.take(syspath);
     LOG(Gamepad, "Unregistering gamepad at %s", gamepadDevice->deviceFile().utf8().data());
-    const size_t index = m_slots.find(gamepadDevice);
+    const size_t index = m_slots.find(std::make_unique<GamepadDeviceEfl>(gamepadDevice->deviceFile()));
     ASSERT(index != notFound);
 
-    m_slots[index].clear();
+    m_slots[index] = nullptr;
 }
 
 void GamepadsEfl::updateGamepadList(GamepadList* into)
