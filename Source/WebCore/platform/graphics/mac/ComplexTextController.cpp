@@ -617,7 +617,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             bool treatAsSpace = Font::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
-            CGSize advance = advances[i];
+            CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 #if PLATFORM(IOS)
             if (isEmoji && advance.width)
                 advance.width = fontData->widthForGlyph(glyph);

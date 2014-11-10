@@ -25,9 +25,9 @@ layer at (0,0) size 800x562
         RenderInline {SPAN} at (0,0) size 217x28
           RenderText {#text} at (3,45) size 217x28
             text run at (3,45) width 217: "consectetur adipiscing"
-        RenderText {#text} at (220,45) size 134x28
+        RenderText {#text} at (220,45) size 135x28
           text run at (220,45) width 6: " "
-          text run at (226,45) width 128: "elit. Aliquam"
+          text run at (226,45) width 129: "elit. Aliquam"
         RenderInline {SPAN} at (0,0) size 111x28
           RenderText {#text} at (3,73) size 111x28
             text run at (3,73) width 111: "odio sa\x{300}pien"
