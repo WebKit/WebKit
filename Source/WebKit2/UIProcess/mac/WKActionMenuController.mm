@@ -63,7 +63,7 @@ using namespace WebKit;
 
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate>
 - (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
-- (BOOL)_canAddImageToPhotos;
+- (BOOL)_canAddMediaToPhotos;
 - (void)_showTextIndicator;
 - (void)_hideTextIndicator;
 @end
@@ -391,13 +391,51 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     _previewPopover = nil;
 }
 
+#pragma mark Video actions
+
+- (NSArray *)_defaultMenuItemsForVideo
+{
+    RetainPtr<NSMenuItem> copyVideoURLItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyVideoURL];
+
+    RetainPtr<NSMenuItem> saveToDownloadsItem;
+    RefPtr<WebHitTestResult> hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+    if (hitTestResult->isDownloadableMedia())
+        saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveVideoToDownloads];
+    else
+        saveToDownloadsItem = [NSMenuItem separatorItem];
+
+    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareVideo];
+    String videoURL = hitTestResult->absoluteMediaURL();
+    if (!videoURL.isEmpty()) {
+        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ videoURL ]]);
+        [_sharingServicePicker setDelegate:self];
+        [shareItem setSubmenu:[_sharingServicePicker menu]];
+    }
+
+    return @[ copyVideoURLItem.get(), [NSMenuItem separatorItem], saveToDownloadsItem.get(), shareItem.get() ];
+}
+
+- (void)_copyVideoURL:(id)sender
+{
+    RefPtr<WebHitTestResult> hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+
+    [[NSPasteboard generalPasteboard] clearContents];
+    [[NSPasteboard generalPasteboard] writeObjects:@[ hitTestResult->absoluteMediaURL() ]];
+}
+
+- (void)_saveVideoToDownloads:(id)sender
+{
+    RefPtr<WebHitTestResult> hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+    _page->process().context().download(_page, hitTestResult->absoluteMediaURL());
+}
+
 #pragma mark Image actions
 
 - (NSArray *)_defaultMenuItemsForImage
 {
     RetainPtr<NSMenuItem> copyImageItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyImage];
     RetainPtr<NSMenuItem> addToPhotosItem;
-    if ([self _canAddImageToPhotos])
+    if ([self _canAddMediaToPhotos])
         addToPhotosItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddImageToPhotos];
     else
         addToPhotosItem = [NSMenuItem separatorItem];
@@ -478,14 +516,14 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return path;
 }
 
-- (BOOL)_canAddImageToPhotos
+- (BOOL)_canAddMediaToPhotos
 {
     return [getIKSlideshowClass() canExportToApplication:@"com.apple.Photos"];
 }
 
 - (void)_addImageToPhotos:(id)sender
 {
-    if (![self _canAddImageToPhotos])
+    if (![self _canAddMediaToPhotos])
         return;
 
     RefPtr<ShareableBitmap> bitmap = _hitTestResult.image;
@@ -753,6 +791,23 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         image = [NSImage imageNamed:@"NSActionMenuSpelling"];
         break;
 
+    case kWKContextActionItemTagCopyVideoURL:
+        selector = @selector(_copyVideoURL:);
+        title = @"Copy";
+        image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        break;
+
+    case kWKContextActionItemTagSaveVideoToDownloads:
+        selector = @selector(_saveVideoToDownloads:);
+        title = @"Save to Downloads";
+        image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
+        break;
+
+    case kWKContextActionItemTagShareVideo:
+        title = @"Share";
+        image = [NSImage imageNamed:@"NSActionMenuShare"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -800,6 +855,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
        _type = kWKActionMenuLink;
        return [self _defaultMenuItemsForLink];
+    }
+
+    if (!hitTestResult->absoluteMediaURL().isEmpty()) {
+        _type = kWKActionMenuVideo;
+        return [self _defaultMenuItemsForVideo];
     }
 
     if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {

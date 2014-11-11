@@ -1176,6 +1176,15 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     HitTestResult hitTestResult(locationInContentCoordinates);
     mainRenderView.hitTest(request, hitTestResult);
 
+    // We hit test including shadow content to get the desired result for editable text regions.
+    // But for media, we want to re-set to the shadow root.
+    if (Node* node = hitTestResult.innerNode()) {
+        if (Element* shadowHost = node->shadowHost()) {
+            if (shadowHost->isMediaElement())
+                hitTestResult.setToNonShadowAncestor();
+        }
+    }
+
     ActionMenuHitTestResult actionMenuResult;
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
     actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
