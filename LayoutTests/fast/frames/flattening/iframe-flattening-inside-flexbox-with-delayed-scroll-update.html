@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#flex-box-in-main-frame {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    internals.settings.setFrameFlatteningEnabled(true);
+
+function runTest()
+{
+    var iframeDocument = document.getElementById("iframe").contentDocument;
+    iframeDocument.getElementById("container").style.display = "inline"; // Removes anonymous wrapper around "This is some inline text."
+    iframeDocument.body.offsetWidth; // Force layout
+
+    document.getElementById("console").innerText = "PASS";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<p>Test that the layout of a frame-flattened &lt;iframe&gt; inside a flex box doesn't try to modify the list of elements in the main frame that are waiting for a scroll update. This test passed if you see the word PASS below. Otherwise, it failed.</p>
+<div id="flex-box-in-main-frame">
+    <!-- Note, we defer scroll updates to this flex box until we finish the layout of its children. -->
+    <iframe id="iframe" onload="runTest()" width="20%" height="20%" scrolling="auto" srcdoc="
+        <div id='container'>
+            This is some inline text.
+            <p>This is some text in a block.</p>
+        </div>
+    "></iframe>
+</div>
+<pre id="console">FAIL</pre>
+</body>
+</html>

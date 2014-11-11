@@ -896,8 +896,8 @@ void RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
     if (UNLIKELY(updateScrollInfoAfterLayoutTransactionStack().get() != 0)) {
         UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
         ASSERT(transaction);
-        ASSERT(transaction->view == &view());
-        transaction->blocks.remove(this);
+        if (transaction->view == &view())
+            transaction->blocks.remove(this);
     }
 }
 
