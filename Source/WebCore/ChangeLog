@@ -1,3 +1,33 @@
+2014-10-31  Benjamin Poulain  <bpoulain@apple.com>
+
+        Pseudo classes with an escaped parenthesis generate invalid rules
+        https://bugs.webkit.org/show_bug.cgi?id=138266
+
+        Reviewed by Antti Koivisto.
+
+        Since the functional pseudo classes are part of the list of PseudoClassAndCompatibilityElement,
+        they could be created by the rule
+             pseudo:
+                 ':' IDENT
+        if the parenthesis is escaped. For example, with ":not\\(", the IDENT would be
+        "not(", CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector would
+        find a pseudo class type of PseudoClassNot, and the action would create an invalid
+        CSSSelector for a :not() without nested selector.
+
+        This patch fixes the issue by detecting the function case in
+        CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector().
+
+        An other solution would be to split PseudoClassAndCompatibilityElement into simple pseudo class
+        and functional pseudo classes. We may do that some day but at the moment it is a lot of work with
+        a little benefit.
+
+        Tests: fast/css/crash-on-incomplete-webkit-any.html
+               fast/css/pseudo-escaped-parenthesis.html
+               fast/selectors/invalid-functional-pseudo-class.html
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector):
+
 2014-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Short-circuit repaints with empty rects

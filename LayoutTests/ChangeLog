@@ -1,3 +1,23 @@
+2014-10-31  Benjamin Poulain  <bpoulain@apple.com>
+
+        Pseudo classes with an escaped parenthesis generate invalid rules
+        https://bugs.webkit.org/show_bug.cgi?id=138266
+
+        Reviewed by Antti Koivisto.
+
+        * fast/selectors/invalid-functional-pseudo-class-expected.txt: Added.
+        * fast/selectors/invalid-functional-pseudo-class.html: Added.
+        New test for all the functional pseudo classes.
+
+        * fast/css/crash-on-incomplete-webkit-any-expected.txt: Added.
+        * fast/css/crash-on-incomplete-webkit-any.html: Added.
+        * fast/css/pseudo-escaped-parenthesis-expected.txt: Added.
+        * fast/css/pseudo-escaped-parenthesis.html: Added.
+        Those tests come from blink. Rune solved the same problem a year ago on blink
+        in https://chromiumcodereview.appspot.com/23710067
+        The patch is quite different because blink uses an ancient code base, but the tests
+        can still be useful so I included them here.
+
 2014-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         ASSERTION NOT REACHED because RenderStyle::setWordSpacing() does not handle a Length value of type 'Calculated'.

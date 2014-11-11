@@ -1,0 +1,441 @@
+Verify the never generates a valid selector for an invalid functional pseudo class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll(":-webkit-any\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":-webkit-any\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":-webkit-any\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":-webkit-any\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":lang\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":lang\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":lang\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":not\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":not\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":not\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":not\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":nth-child\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-child\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-child\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-child\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":nth-last-child\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-last-child\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-last-child\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-child\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":nth-last-of-type\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-last-of-type\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-last-of-type\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":nth-of-type\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-of-type\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":nth-of-type\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":nth-of-type\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":matches\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":matches\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":matches\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":matches\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
