@@ -44,27 +44,19 @@ COMPILE_ASSERT(sizeof(FontDescription) == sizeof(SameSizeAsFontDescription), Fon
 
 FontWeight FontDescription::lighterWeight(void) const
 {
-    // FIXME: Should actually return the CSS weight corresponding to next lightest
-    // weight of the currently used font family.
     switch (m_weight) {
         case FontWeight100:
         case FontWeight200:
-            return FontWeight100;
-
         case FontWeight300:
-            return FontWeight200;
-
         case FontWeight400:
         case FontWeight500:
-            return FontWeight300;
+            return FontWeight100;
 
         case FontWeight600:
         case FontWeight700:
             return FontWeight400;
 
         case FontWeight800:
-            return FontWeight500;
-
         case FontWeight900:
             return FontWeight700;
     }
@@ -74,13 +66,9 @@ FontWeight FontDescription::lighterWeight(void) const
 
 FontWeight FontDescription::bolderWeight(void) const
 {
-    // FIXME: Should actually return the CSS weight corresponding to next heaviest
-    // weight of the currently used font family.
     switch (m_weight) {
         case FontWeight100:
         case FontWeight200:
-            return FontWeight300;
-
         case FontWeight300:
             return FontWeight400;
 
@@ -90,8 +78,6 @@ FontWeight FontDescription::bolderWeight(void) const
 
         case FontWeight600:
         case FontWeight700:
-            return FontWeight800;
-
         case FontWeight800:
         case FontWeight900:
             return FontWeight900;

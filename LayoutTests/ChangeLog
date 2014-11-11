@@ -1,3 +1,19 @@
+2014-10-22  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Match spec for font-weight: bolder|lighter
+        https://bugs.webkit.org/show_bug.cgi?id=137919
+
+        Reviewed by Andreas Kling.
+
+        This patch is a merge of Blink's
+        https://chromiumcodereview.appspot.com/15994009 and
+        https://codereview.chromium.org/137813004
+
+        * css3/font-weight-expected.txt: Added.
+        * css3/font-weight-multiple-selectors-expected.txt: Added.
+        * css3/font-weight-multiple-selectors.html: Added.
+        * css3/font-weight.html: Added.
+
 2014-10-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] CSS-generated text content not exposed to assistive technologies

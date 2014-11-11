@@ -1,3 +1,39 @@
+2014-10-22  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Match spec for font-weight: bolder|lighter
+        https://bugs.webkit.org/show_bug.cgi?id=137919
+
+        Reviewed by Andreas Kling.
+
+        This patch is a merge of Blink's
+        https://chromiumcodereview.appspot.com/15994009
+        
+        Currently, bolder and lighter change font-weight in a non-compliant way.
+        The spec (http://www.w3.org/TR/css3-fonts/#bolderlighter) defines
+        exactly what the computed values should be given the inherited weight values,
+        so we should match those.
+        
+        The removed FIXME's for selecting the next lightest/heaviest weight from
+        the used font family seems to refer to behaviour from
+        CSS1 (http://www.w3.org/TR/CSS1/#font-weight), while this is replaced
+        with a simpler procedure for resolving bolder and lighter in font weights
+        in CSS2 (http://www.w3.org/TR/CSS2/fonts.html#propdef-font-weight) and CSS3 (link above).
+        
+        and https://codereview.chromium.org/137813004
+        
+        According to http://dev.w3.org/csswg/css-fonts/#font-weight-prop, the computed
+        weight of 'lighter' and 'bolder' are based on the inherited 'font-weight', so set
+        that inherited weight before calculating 'lighter' and 'bolder'.
+
+        Tests: css3/font-weight-multiple-selectors.html
+               css3/font-weight.html
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontWeight::applyValue):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::lighterWeight):
+        (WebCore::FontDescription::bolderWeight):
+
 2014-10-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] CSS-generated text content not exposed to assistive technologies
