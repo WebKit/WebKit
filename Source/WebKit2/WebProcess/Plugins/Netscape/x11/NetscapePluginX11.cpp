@@ -202,7 +202,9 @@ void NetscapePlugin::platformPreInitialize()
 bool NetscapePlugin::platformPostInitialize()
 {
     uint64_t windowID = 0;
-    NPBool needsXEmbed = false;
+    // NPPVpluginNeedsXEmbed is a boolean value, but at least the
+    // Flash player plugin is using an 'int' instead.
+    int needsXEmbed = 0;
     if (m_isWindowed) {
         NPP_GetValue(NPPVpluginNeedsXEmbed, &needsXEmbed);
         if (needsXEmbed) {
