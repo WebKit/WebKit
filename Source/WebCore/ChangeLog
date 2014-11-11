@@ -1,3 +1,15 @@
+2014-10-17  Jeffrey Pfau  <jpfau@apple.com>
+
+        Ensure attached frame count doesn't exceed the maximum allowed frames
+        https://bugs.webkit.org/show_bug.cgi?id=136457
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/frames/exponential-frames.html
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+
 2014-10-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Tighten XMLHttpRequest setRequestHeader value check
