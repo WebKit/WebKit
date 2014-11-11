@@ -329,14 +329,23 @@ inline Element* HTMLCollection::traverseForward(Element& current, unsigned count
 {
     Element* element = &current;
     if (usesCustomForwardOnlyTraversal()) {
-        for (traversedCount = 0; element && traversedCount < count; ++traversedCount)
+        for (traversedCount = 0; traversedCount < count; ++traversedCount) {
             element = customElementAfter(element);
+            if (!element)
+                return nullptr;
+        }
     } else if (m_shouldOnlyIncludeDirectChildren) {
-        for (traversedCount = 0; element && traversedCount < count; ++traversedCount)
+        for (traversedCount = 0; traversedCount < count; ++traversedCount) {
             element = nextMatchingSiblingElement(*this, *element);
+            if (!element)
+                return nullptr;
+        }
     } else {
-        for (traversedCount = 0; element && traversedCount < count; ++traversedCount)
+        for (traversedCount = 0; traversedCount < count; ++traversedCount) {
             element = nextMatchingElement(*this, *element, root);
+            if (!element)
+                return nullptr;
+        }
     }
     return element;
 }

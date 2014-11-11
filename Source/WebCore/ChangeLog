@@ -1,3 +1,19 @@
+2014-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r175947): Caused assertions in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=138620
+
+        Reviewed by Benjamin Poulain.
+
+        In HTMLCollection::traverseForward(), traversedCount was incremented 1
+        time too many when hitting the end of the collection (i.e. element
+        becomes null). Doing a partial revert.
+
+        No new tests, already covered by existing tests.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::traverseForward):
+
 2014-11-11  Tim Horton  <timothy_horton@apple.com>
 
         DataDetectors' menu items aren't presented in the telephone number menu
