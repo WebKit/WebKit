@@ -1,3 +1,23 @@
+2014-10-20  Roger Fong  <roger_fong@apple.com>
+
+        Use glFlush instead of glFinish when drawing WebGL output to screen.
+        https://bugs.webkit.org/show_bug.cgi?id=137897.
+        <rdar://problem/15846550>
+
+        Reviewed by Brent Fulgham.
+
+        Passes all conformance tests.
+        Performance tested by http://threejs.org/examples/#webgl_performance and Unity WebGL performance tests.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::prepareTexture):
+        Use glFlush instead of glFinish. glFinish is a blocking operation pushed out queued up WebGL operations and then waits until 
+        every operation has completed before returning and every pixel has been updated. This causes severe performance problems,
+        about a 10 fps difference on http://threejs.org/examples/#webgl_performance. glFlush, like glFinish,
+        forces all queued WebGL operations to take place, but returns immediately. Switching to glFlush does not seem
+        make our rendering quality any worse for the handful of sites I've tested and makes our performance on WebGL much better.
+        However, we should continue to be on the watch for any potential rendering issues after this lands.
+
 2014-10-19  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Style fix following r174855.

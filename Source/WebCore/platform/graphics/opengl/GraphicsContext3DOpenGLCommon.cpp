@@ -223,7 +223,7 @@ void GraphicsContext3D::prepareTexture()
     ::glActiveTexture(m_state.activeTexture);
     if (m_state.boundFBO != m_fbo)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
-    ::glFinish();
+    ::glFlush();
 }
 
 void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
