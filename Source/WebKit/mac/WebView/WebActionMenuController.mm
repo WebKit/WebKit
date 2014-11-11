@@ -126,12 +126,17 @@ struct DictionaryPopupInfo {
         [actionMenu addItem:item];
 }
 
+- (BOOL)isMenuForTextContent
+{
+    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText;
+}
+
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != _webView.actionMenu)
         return;
 
-    if (_type != WebActionMenuReadOnlyText) {
+    if (![self isMenuForTextContent]) {
         [[_webView _selectedOrMainFrame] _clearSelection];
         return;
     }
@@ -259,6 +264,15 @@ struct DictionaryPopupInfo {
     return @[ copyTextItem.get(), lookupTextItem.get() ];
 }
 
+- (NSArray *)_defaultMenuItemsForEditableText:(WebElementDictionary *)hitTestResult
+{
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:WebActionMenuItemTagCopyText withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:WebActionMenuItemTagLookupText withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPaste withHitTestResult:hitTestResult];
+
+    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
+}
+
 - (void)_copySelection:(id)sender
 {
     [_webView _executeCoreCommandByName:@"copy" value:nil];
@@ -281,6 +295,11 @@ struct DictionaryPopupInfo {
     textBaselineOrigin = [_webView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
     WKShowWordDefinitionWindow(popupInfo.attributedString.get(), textBaselineOrigin, popupInfo.options.get());
+}
+
+- (void)_paste:(id)sender
+{
+    [_webView _executeCoreCommandByName:@"paste" value:nil];
 }
 
 - (void)_selectLookupText
@@ -391,6 +410,12 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
         break;
 
+    case WebActionMenuItemTagPaste:
+        selector = @selector(_paste:);
+        title = @"Paste";
+        image = [NSImage imageNamed:@"NSActionMenuPaste"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -419,6 +444,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 
     Node* node = _hitTestResult.innerNode();
     if (node && node->isTextNode()) {
+        if (_hitTestResult.isContentEditable()) {
+            _type = WebActionMenuEditableText;
+            return [self _defaultMenuItemsForEditableText:hitTestResult];
+        }
+
         _type = WebActionMenuReadOnlyText;
         return [self _defaultMenuItemsForText:hitTestResult];
     }
