@@ -109,9 +109,6 @@ bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], 
 void* wkGetHyphenationLocationBeforeIndex;
 
 CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, wkCTFontTransformOptions options);
-#endif
 
 CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
 

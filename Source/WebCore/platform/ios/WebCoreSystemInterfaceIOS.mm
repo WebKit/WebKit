@@ -73,7 +73,6 @@ WEBCORE_EXPORT void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMuta
 
 WEBCORE_EXPORT bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], size_t);
 WEBCORE_EXPORT CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-WEBCORE_EXPORT bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, wkCTFontTransformOptions options);
 
 WEBCORE_EXPORT CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
 

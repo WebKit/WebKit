@@ -30,6 +30,9 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
+#include "CoreTextSPI.h"
+#endif
 #include "Font.h"
 #include "FontCache.h"
 #include "OpenTypeMathData.h"
@@ -307,6 +310,22 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
         return 0;
 
     return platformCreateScaledFontData(fontDescription, scaleFactor);
+}
+
+bool SimpleFontData::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advances, size_t glyphCount, TypesettingFeatures typesettingFeatures) const
+{
+    // We need to handle transforms on SVG fonts internally, since they are rendered internally.
+    ASSERT(!isSVGFont());
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
+    CTFontTransformOptions options = (typesettingFeatures & Kerning ? kCTFontTransformApplyPositioning : 0) | (typesettingFeatures & Ligatures ? kCTFontTransformApplyShaping : 0);
+    return CTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
+#else
+    UNUSED_PARAM(glyphs);
+    UNUSED_PARAM(advances);
+    UNUSED_PARAM(glyphCount);
+    UNUSED_PARAM(typesettingFeatures);
+    return false;
+#endif
 }
 
 } // namespace WebCore

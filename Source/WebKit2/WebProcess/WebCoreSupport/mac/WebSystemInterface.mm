@@ -46,9 +46,6 @@ void InitWebCoreSystemInterface(void)
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         INIT(CGContextDrawsWithCorrectShadowOffsets);
 #endif
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-        INIT(CTFontTransformGlyphs);
-#endif
         INIT(CopyCONNECTProxyResponse);
         INIT(CopyNSURLResponseStatusLine);
         INIT(CopyNSURLResponseCertificateChain);

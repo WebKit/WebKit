@@ -29,17 +29,27 @@
 #include <CoreText/CoreText.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+#include <CoreText/CTFontPriv.h>
 #include <CoreText/CTLinePriv.h>
 #endif
+
+extern "C" {
 
 typedef const UniChar* (*CTUniCharProviderCallback)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon);
 typedef void (*CTUniCharDisposeCallback)(const UniChar* chars, void* refCon);
 
-extern "C" {
+#if !USE(APPLE_INTERNAL_SDK)
+typedef CF_OPTIONS(uint32_t, CTFontTransformOptions)
+{
+    kCTFontTransformApplyShaping = (1 << 0),
+    kCTFontTransformApplyPositioning = (1 << 1)
+};
+#endif
 
 CGSize CTRunGetInitialAdvance(CTRunRef run);
 CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon);
 CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon, CFDictionaryRef options);
+bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
 
 }
 
