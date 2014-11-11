@@ -258,6 +258,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_codeBlock->setActivationRegister(m_lexicalEnvironmentRegister->virtualRegister());
         emitOpcode(op_create_lexical_environment);
         instructions().append(m_lexicalEnvironmentRegister->index());
+        instructions().append(scopeRegister()->index());
     }
     RegisterID* localArgumentsRegister = nullptr;
     RegisterID* scratch = addVar();

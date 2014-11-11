@@ -723,7 +723,7 @@ _llint_op_create_lexical_environment:
     traceExecution()
     loadi 4[PC], t0
     callSlowPath(_llint_slow_path_create_lexical_environment)
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_get_scope:

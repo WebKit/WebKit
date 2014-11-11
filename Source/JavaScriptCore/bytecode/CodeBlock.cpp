@@ -745,7 +745,9 @@ void CodeBlock::dumpBytecode(
         }
         case op_create_lexical_environment: {
             int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "create_lexical_environment", r0);
+            int r1 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "create_lexical_environment");
+            out.printf("%s %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
         case op_get_scope: {
