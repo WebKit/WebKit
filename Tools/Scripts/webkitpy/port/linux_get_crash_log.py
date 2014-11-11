@@ -70,6 +70,9 @@ class GDBCrashLogGenerator(object):
 
         stderr_lines = errors + str(stderr or '<empty>').decode('utf8', 'ignore').splitlines()
         errors_str = '\n'.join(('STDERR: ' + stderr_line) for stderr_line in stderr_lines)
+        cppfilt_proc = subprocess.Popen(['c++filt', ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        errors_str = cppfilt_proc.communicate(errors_str)[0]
+
         if not crash_log:
             if not log_directory:
                 log_directory = "/path/to/coredumps"

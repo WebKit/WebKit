@@ -1,5 +1,16 @@
 2014-11-10  Philippe Normand  <pnormand@igalia.com>
 
+        webkitpy: demangle C++ symbols from crash log stderr
+        https://bugs.webkit.org/show_bug.cgi?id=138565
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator.generate_crash_log): Process stderr output
+        with c++filt.
+
+2014-11-10  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] fix up the GDB backtrace report tool
         https://bugs.webkit.org/show_bug.cgi?id=138564
 
