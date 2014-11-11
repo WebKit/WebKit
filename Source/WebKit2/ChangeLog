@@ -1,5 +1,23 @@
 2014-11-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175790. <rdar://problem/18919700>
+
+    2014-11-09  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            Move _ignoresNonWheelMouseEvents implementation to WKView(Private)
+            https://bugs.webkit.org/show_bug.cgi?id=138487
+    
+            Reviewed by Dan Bernstein.
+    
+            Relocate some methods that should have been in a category implementation.
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setIgnoresNonWheelMouseEvents:]):
+            (-[WKView _ignoresNonWheelMouseEvents]):
+    
+
+2014-11-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175780. <rdar://problem/18919195>
 
     2014-11-08  Beth Dakin  <bdakin@apple.com>
