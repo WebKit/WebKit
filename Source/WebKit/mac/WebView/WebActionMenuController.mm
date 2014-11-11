@@ -128,7 +128,7 @@ struct DictionaryPopupInfo {
 
 - (BOOL)isMenuForTextContent
 {
-    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText;
+    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText || _type == WebActionMenuWhitespaceInEditableArea;
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -366,6 +366,15 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     return popupInfo;
 }
 
+#pragma mark Whitespace actions
+
+- (NSArray *)_defaultMenuItemsForWhitespaceInEditableArea:(WebElementDictionary *)hitTestResult
+{
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPaste withHitTestResult:hitTestResult];
+
+    return @[ [NSMenuItem separatorItem], [NSMenuItem separatorItem], pasteItem.get() ];
+}
+
 #pragma mark Menu Items
 
 - (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag withHitTestResult:(WebElementDictionary *)hitTestResult
@@ -451,6 +460,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 
         _type = WebActionMenuReadOnlyText;
         return [self _defaultMenuItemsForText:hitTestResult];
+    }
+
+    if (_hitTestResult.isContentEditable()) {
+        _type = WebActionMenuWhitespaceInEditableArea;
+        return [self _defaultMenuItemsForWhitespaceInEditableArea:hitTestResult];
     }
 
     _type = WebActionMenuNone;
