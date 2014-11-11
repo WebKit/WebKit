@@ -210,7 +210,7 @@ using namespace WebKit;
 
     // Action menus for text should highlight the text so that it is clear what the action menu actions
     // will apply to. If the text is already selected, the menu will use the existing selection.
-    RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:MenuUpdateStage::MenuNeedsUpdate];
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     if (!hitTestResult->isSelected())
         _page->selectLastActionMenuRange();
 }
@@ -289,13 +289,13 @@ using namespace WebKit;
 
 - (void)_openURLFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()]];
 }
 
 - (void)_addToReadingListFromActionMenu:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     NSSharingService *service = [NSSharingService sharingServiceNamed:NSSharingServiceNameAddToSafariReadingList];
     [service performWithItems:@[ [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()] ]];
 }
@@ -312,7 +312,7 @@ using namespace WebKit;
     if (_previewPopover)
         return;
 
-    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
     NSRect originRect = hitTestResult->elementBoundingBox();
     [self _createPreviewPopoverForURL:url originRect:originRect];
@@ -398,7 +398,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     RetainPtr<NSMenuItem> copyVideoURLItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyVideoURL];
 
     RetainPtr<NSMenuItem> saveToDownloadsItem;
-    RefPtr<WebHitTestResult> hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     if (hitTestResult->isDownloadableMedia())
         saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveVideoToDownloads];
     else
@@ -417,7 +417,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 - (void)_copyVideoURL:(id)sender
 {
-    RefPtr<WebHitTestResult> hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
 
     [[NSPasteboard generalPasteboard] clearContents];
     [[NSPasteboard generalPasteboard] writeObjects:@[ hitTestResult->absoluteMediaURL() ]];
@@ -425,7 +425,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 - (void)_saveVideoToDownloads:(id)sender
 {
-    RefPtr<WebHitTestResult> hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     _page->process().context().download(_page, hitTestResult->absoluteMediaURL());
 }
 
@@ -467,7 +467,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 - (void)_saveImageToDownloads:(id)sender
 {
-    WebHitTestResult* hitTestResult = _page->lastMouseMoveHitTestResult();
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     _page->process().context().download(_page, hitTestResult->absoluteImageURL());
 }
 
@@ -825,27 +825,20 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     return [[NSBundle bundleForClass:[WKView class]] imageForResource:name];
 }
 
-- (PassRefPtr<WebHitTestResult>)_hitTestResultForStage:(MenuUpdateStage)stage
+- (PassRefPtr<WebHitTestResult>)_webHitTestResult
 {
     RefPtr<WebHitTestResult> hitTestResult;
-    switch (stage) {
-    case MenuUpdateStage::PrepareForMenu:
+    if (_state == ActionMenuState::Ready)
+        hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
+    else
         hitTestResult = _page->lastMouseMoveHitTestResult();
-        break;
-    case MenuUpdateStage::MenuNeedsUpdate:
-        if (_state == ActionMenuState::Ready)
-            hitTestResult = WebHitTestResult::create(_hitTestResult.hitTestResult);
-        else
-            hitTestResult = _page->lastMouseMoveHitTestResult();
-        break;
-    }
 
         return hitTestResult.release(); 
 }
 
-- (NSArray *)_defaultMenuItems:(MenuUpdateStage)stage
+- (NSArray *)_defaultMenuItems
 {
-    RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:stage];
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     if (!hitTestResult) {
         _type = kWKActionMenuNone;
         return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
@@ -902,8 +895,8 @@ static NSImage *webKitBundleImageNamed(NSString *name)
 {
     [_wkView.actionMenu removeAllItems];
 
-    NSArray *menuItems = [self _defaultMenuItems:stage];
-    RefPtr<WebHitTestResult> hitTestResult = [self _hitTestResultForStage:stage];
+    NSArray *menuItems = [self _defaultMenuItems];
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
 
     if ([_wkView respondsToSelector:@selector(_actionMenuItemsForHitTestResult:defaultActionMenuItems:)])
         menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(hitTestResult.get()) defaultActionMenuItems:menuItems];
