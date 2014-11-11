@@ -1,3 +1,16 @@
+2014-10-30  Jeffrey Pfau  <jpfau@apple.com>
+
+        ASSERT(!m_deletionHasBegun) in RefCounted.h should be ASSERT_WITH_SECURITY_IMPLICATION
+        https://bugs.webkit.org/show_bug.cgi?id=138141
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref):
+        (WTF::RefCountedBase::relaxAdoptionRequirement):
+        (WTF::RefCountedBase::derefBase):
+        (WTF::adopted):
+
 2014-10-27  Chris Dumez  <cdumez@apple.com>
 
         Use separate HashMaps for common and uncommon headers in HTTPHeaderMap
