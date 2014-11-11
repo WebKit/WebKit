@@ -754,8 +754,8 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         return action;
 
     // Optimize self access.
-    if (slot.slotBase() == baseValue
-        && slot.isCacheableValue()
+    if (slot.isCacheableValue()
+        && slot.slotBase() == baseValue
         && !slot.watchpointSet()
         && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
         structure->startWatchingPropertyForReplacements(*vm, slot.cachedOffset());

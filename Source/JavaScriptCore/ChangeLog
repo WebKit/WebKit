@@ -1,5 +1,15 @@
 2014-11-10  Andreas Kling  <akling@apple.com>
 
+        Assertion fix for debug builds after r175846.
+
+        PropertySlot::slotBase() will assert if the slot is unset, so reorder
+        the tests to check for isCacheableValue() first.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+
+2014-11-10  Andreas Kling  <akling@apple.com>
+
         The JIT should cache property lookup misses.
         <https://webkit.org/b/135578>
 
