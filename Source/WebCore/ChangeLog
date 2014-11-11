@@ -1,3 +1,20 @@
+2014-10-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Shrink MathMLOperatorDictionary::dictionary table
+        https://bugs.webkit.org/show_bug.cgi?id=137914
+
+        Reviewed by Darin Adler.
+
+        Improve packing of the Entry structure that's used for elements
+        of the MathMLOperatorDictionary::dictionary table. This drops the
+        size of the struct from 16 bytes to just 4 bytes, and shrinks the
+        size of the dictionary table from rougly 16 kB down to 4 kB.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::MathMLOperatorDictionary::ExtractKey):
+        (WebCore::RenderMathMLOperator::setOperatorProperties):
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2014-10-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Images with usemap should not have a link state
