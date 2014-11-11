@@ -192,9 +192,9 @@ PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString
     ASSERT(isMainThread());
     ASSERT(!keyString.isNull());
 
-    auto& table = spaceSplitStringTable();
-    if (SpaceSplitStringData* data = table.get(keyString))
-        return data;
+    auto addResult = spaceSplitStringTable().add(keyString, nullptr);
+    if (!addResult.isNewEntry)
+        return addResult.iterator->value;
 
     // Nothing in the cache? Let's create a new SpaceSplitStringData if the input has something useful.
     // 1) We find the number of strings in the input to know how much size we need to allocate.
@@ -206,7 +206,7 @@ PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString
         return nullptr;
 
     RefPtr<SpaceSplitStringData> spaceSplitStringData = create(keyString, tokenCount);
-    table.add(keyString, spaceSplitStringData.get());
+    addResult.iterator->value = spaceSplitStringData.get();
     return spaceSplitStringData.release();
 }
 

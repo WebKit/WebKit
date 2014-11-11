@@ -1,3 +1,19 @@
+2014-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Avoid double hash table lookup in SpaceSplitStringData::create()
+        https://bugs.webkit.org/show_bug.cgi?id=138396
+
+        Reviewed by Ryosuke Niwa.
+
+        Avoid double hash table lookup in SpaceSplitStringData::create() by
+        calling HashMap::add() and using the AddResult, instead of calling
+        HashMap::get() then HashMap::add().
+
+        No new tests, no behavior change.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::create):
+
 2014-11-04  Andreas Kling  <akling@apple.com>
 
         RenderBox shouldn't need a pre-destructor hook.
