@@ -1122,7 +1122,7 @@ static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& 
         return nullptr;
 
     RetainPtr<DDActionContext> actionContext = adoptNS([[getDDActionContextClass() alloc] init]);
-    [actionContext setAllResults:(NSArray *)results.get()];
+    [actionContext setAllResults:@[ (id)mainResult ]];
     [actionContext setMainResult:mainResult];
 
     Vector<FloatQuad> quads;
