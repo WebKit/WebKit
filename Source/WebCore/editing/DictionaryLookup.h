@@ -26,6 +26,8 @@
 #ifndef DictionaryLookup_h
 #define DictionaryLookup_h
 
+#if !PLATFORM(IOS)
+
 #include <wtf/PassRefPtr.h>
 
 @class NSDictionary;
@@ -47,5 +49,7 @@ PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, 
 PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
 
 } // namespace WebCore
+
+#endif // !PLATFORM(IOS)
 
 #endif // DictionaryLookup_h
