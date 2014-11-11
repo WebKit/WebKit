@@ -1,3 +1,24 @@
+2014-10-27  Mark Lam  <mark.lam@apple.com>
+
+        Crash when attempting to perform array iteration on a non-array with numeric keys not initialized.
+        <https://webkit.org/b/137814>
+
+        Reviewed by Geoffrey Garen.
+
+        The arrayIteratorNextThunkGenerator() thunk was not checking for the case where
+        the butterfly may be NULL.  This was the source of the crash, and is now fixed.
+
+        In addition, it is also not checking for the case where a property named "length"
+        may have been set on the iterated object.  The thunk only checks the butterfly's
+        publicLength for its iteration operation.  Array objects will work fine with this
+        because it always updates its butterfly's publicLength when its length changes.
+        In the case of iterable non-Array objects, the "length" property will require a
+        look up outside of the scope of this thunk.  The fix is simply to limit the fast
+        case checks in this thunk to Array objects.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::arrayIteratorNextThunkGenerator):
+
 2014-10-22  Byungseon Shin  <sun.shin@lge.com>
 
         String(new Date(Mar 30 2014 01:00:00)) is wrong in CET

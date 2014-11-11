@@ -1074,10 +1074,12 @@ static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterat
     // Pull out the butterfly from iteratedObject
     jit.load8(Address(SpecializedThunkJIT::regT0, JSCell::indexingTypeOffset()), SpecializedThunkJIT::regT3);
     jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
+    Jump nullButterfly = jit.branchTestPtr(SpecializedThunkJIT::Zero, SpecializedThunkJIT::regT2);
     
-    jit.and32(TrustedImm32(IndexingShapeMask), SpecializedThunkJIT::regT3);
-
     Jump notDone = jit.branch32(SpecializedThunkJIT::Below, SpecializedThunkJIT::regT1, Address(SpecializedThunkJIT::regT2, Butterfly::offsetOfPublicLength()));
+
+    nullButterfly.link(&jit);
+
     // Return the termination signal to indicate that we've finished
     jit.move(TrustedImmPtr(vm->iterationTerminator.get()), SpecializedThunkJIT::regT0);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
@@ -1096,8 +1098,8 @@ static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterat
     jit.appendFailure(jit.branch32(SpecializedThunkJIT::AboveOrEqual, SpecializedThunkJIT::regT1, Address(SpecializedThunkJIT::regT2, Butterfly::offsetOfVectorLength())));
     
     // So now we perform inline loads for int32, value/undecided, and double storage
-    Jump undecidedStorage = jit.branch32(SpecializedThunkJIT::Equal, SpecializedThunkJIT::regT3, TrustedImm32(UndecidedShape));
-    Jump notContiguousStorage = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(ContiguousShape));
+    Jump undecidedStorage = jit.branch32(SpecializedThunkJIT::Equal, SpecializedThunkJIT::regT3, TrustedImm32(ArrayWithUndecided));
+    Jump notContiguousStorage = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(ArrayWithContiguous));
     
     undecidedStorage.link(&jit);
     
@@ -1125,14 +1127,14 @@ static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterat
 #endif
     notContiguousStorage.link(&jit);
     
-    Jump notInt32Storage = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(Int32Shape));
+    Jump notInt32Storage = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(ArrayWithInt32));
     jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
     jit.load32(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight, JSValue::offsetOfPayload()), SpecializedThunkJIT::regT0);
     jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
     jit.returnInt32(SpecializedThunkJIT::regT0);
     notInt32Storage.link(&jit);
     
-    jit.appendFailure(jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(DoubleShape)));
+    jit.appendFailure(jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(ArrayWithDouble)));
     jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
     jit.loadDouble(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight), SpecializedThunkJIT::fpRegT0);
     jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
