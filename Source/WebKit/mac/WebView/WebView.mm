@@ -8555,6 +8555,14 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     [_private->actionMenuController prepareForMenu:menu withEvent:event];
 }
 
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != self.actionMenu)
+        return;
+
+    [_private->actionMenuController willOpenMenu:menu withEvent:event];
+}
+
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != self.actionMenu)

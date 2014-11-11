@@ -38,6 +38,7 @@
 - (id)initWithWebView:(WebView *)webView;
 - (void)webViewClosed;
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 
 @end
