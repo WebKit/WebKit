@@ -776,15 +776,15 @@ static NSImage *webKitBundleImageNamed(NSString *name)
         return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
     }
 
-    if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
-        _type = kWKActionMenuImage;
-        return [self _defaultMenuItemsForImage];
-    }
-
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
     if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
        _type = kWKActionMenuLink;
        return [self _defaultMenuItemsForLink];
+    }
+
+    if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
+        _type = kWKActionMenuImage;
+        return [self _defaultMenuItemsForImage];
     }
 
     if (hitTestResult->isTextNode()) {
