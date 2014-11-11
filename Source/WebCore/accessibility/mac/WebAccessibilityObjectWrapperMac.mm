@@ -1587,7 +1587,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     else if (m_object->isTextControl())
         objectAttributes = textAttrs;
     
-    else if (m_object->isAnchor() || m_object->isImage() || m_object->isLink())
+    else if (m_object->isLink() || m_object->isImage())
         objectAttributes = anchorAttrs;
     
     else if (m_object->isAccessibilityTable())

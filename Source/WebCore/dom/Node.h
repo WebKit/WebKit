@@ -326,7 +326,6 @@ public:
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_nodeFlags & StyleChangeMask); }
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
     bool styleIsAffectedByPreviousSibling() const { return getFlag(StyleIsAffectedByPreviousSibling); }
-    bool isLink() const { return getFlag(IsLinkFlag); }
     bool isEditingText() const { return getFlag(IsEditingTextFlag); }
 
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
@@ -335,9 +334,8 @@ public:
     WEBCORE_EXPORT void setNeedsStyleRecalc(StyleChangeType = FullStyleChange);
     void clearNeedsStyleRecalc() { m_nodeFlags &= ~StyleChangeMask; }
 
-    void setIsLink(bool f) { setFlag(f, IsLinkFlag); }
-    void setIsLink() { setFlag(IsLinkFlag); }
-    void clearIsLink() { clearFlag(IsLinkFlag); }
+    bool isLink() const { return getFlag(IsLinkFlag); }
+    void setIsLink(bool flag) { setFlag(flag, IsLinkFlag); }
 
     void setIsNamedFlowContentNode() { setFlag(IsNamedFlowContentNodeFlag); }
     void clearIsNamedFlowContentNode() { clearFlag(IsNamedFlowContentNodeFlag); }

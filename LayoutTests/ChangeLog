@@ -1,3 +1,13 @@
+2014-10-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Images with usemap should not have a link state
+        https://bugs.webkit.org/show_bug.cgi?id=138071
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/images-with-usemap-should-not-match-link-expected.txt: Added.
+        * fast/selectors/images-with-usemap-should-not-match-link.html: Added.
+
 2014-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Carets in GMail and iCloud compositions are the foreground text color

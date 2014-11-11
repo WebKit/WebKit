@@ -1,3 +1,61 @@
+2014-10-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Images with usemap should not have a link state
+        https://bugs.webkit.org/show_bug.cgi?id=138071
+
+        Reviewed by Andreas Kling.
+
+        Image tags were incorrectly getting a link state if a usemap is defined.
+        The <area> of the usemap is supposed to get the link state, but never the image.
+
+        Unfortunately, the Accessibility code was relying on the wrong behavior
+        to set the ImageMapRole, most of the patch is updating that code to get
+        the correct role without the link state.
+
+        Test: fast/selectors/images-with-usemap-should-not-match-link.html
+
+        The accessibility code is covered by a few tests in accessibility/.
+        The test accessibility/aria-used-on-image-maps.html ensure the <area>
+        elements also get the correct role.
+
+        * dom/Node.h:
+        (WebCore::Node::setIsLink):
+        (WebCore::Node::clearIsLink): Deleted.
+        Unused code.
+
+        (WebCore::Node::isLink):
+        Move with its setter for clarity.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        This is the bug.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        Here the branches for the role ImageMap where behind isLink() which would
+        never be valid after the fix.
+
+        My fix here was to use the same definition previously set by HTMLImageElement::parseAttribute(),
+        any usemap attribute qualifies the node for ImageMapRole.
+
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::linkedUIElements):
+        (WebCore::AccessibilityRenderObject::url):
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAnchor): Deleted.
+        Something funny I discovered is the Accessibility code worked around the bug
+        by defining isAnchor() that exclude images from isLink().
+
+        Since isLink() will no longer be true for images, the hack can be removed.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::anchorElement):
+        (WebCore::AccessibilityNodeObject::isAnchor): Deleted.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2014-10-23  Zalan Bujtas  <zalan@apple.com>
 
         WebContent crash at WebCore::RenderTextControl::textFormControlElement const.
