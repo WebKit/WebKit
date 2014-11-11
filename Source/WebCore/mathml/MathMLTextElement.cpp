@@ -64,6 +64,17 @@ void MathMLTextElement::childrenChanged(const ChildChange& change)
         toRenderMathMLToken(renderer())->updateTokenContent();
 }
 
+void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if (name == stretchyAttr) {
+        if (renderer() && renderer()->isRenderMathMLOperator())
+            toRenderMathMLOperator(renderer())->setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Stretchy, value);
+        return;
+    }
+
+    MathMLElement::parseAttribute(name, value);
+}
+
 RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (hasTagName(MathMLNames::moTag))

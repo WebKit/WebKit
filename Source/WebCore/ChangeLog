@@ -1,3 +1,28 @@
+2014-10-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Changes in the stretchy attribute do not update rendering
+        https://bugs.webkit.org/show_bug.cgi?id=136883
+
+        Reviewed by Darin Adler.
+
+        Test: mathml/presentation/mo-stretch-update.html
+
+        We need to relayout when a change in the stretchy attribute
+        happens.
+
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::parseAttribute): Parse the
+        modifications of the stretchy attribute.
+        * mathml/MathMLTextElement.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::setOperatorFlagAndScheduleLayoutIfNeeded):
+        Add function that receives the value instead of looking for it and
+        checks if the change should schedule a layout.
+        (WebCore::RenderMathMLOperator::setOperatorFlagFromAttribute):
+        (WebCore::RenderMathMLOperator::setOperatorFlagFromAttributeValue):
+        Add function that receives the value instead of looking for it.
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2014-10-12  Mike West  <mkwst@chromium.org>
 
         Referrer Policy: Update <meta name="referrer"> values to match the spec

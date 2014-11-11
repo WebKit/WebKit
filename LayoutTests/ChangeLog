@@ -1,3 +1,15 @@
+2014-10-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Changes in the stretchy attribute do not update rendering
+        https://bugs.webkit.org/show_bug.cgi?id=136883
+
+        Reviewed by Darin Adler.
+
+        The test updates the stretchy value in a timeout.
+
+        * mathml/presentation/mo-stretch-update-expected.html: Added.
+        * mathml/presentation/mo-stretch-update.html: Added.
+
 2014-10-12  Mike West  <mkwst@chromium.org>
 
         Referrer Policy: Update <meta name="referrer"> values to match the spec

@@ -79,6 +79,7 @@ public:
     void updateTokenContent(const String& operatorString);
     void updateTokenContent() override final;
     void updateOperatorProperties();
+    void setOperatorFlagAndScheduleLayoutIfNeeded(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
 
 protected:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
@@ -186,6 +187,7 @@ protected:
     LayoutUnit m_maxSize;
 
     void setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag, const QualifiedName&);
+    void setOperatorFlagFromAttributeValue(MathMLOperatorDictionary::Flag, const AtomicString& attributeValue);
     void setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry*);
     virtual void SetOperatorProperties();
 };
