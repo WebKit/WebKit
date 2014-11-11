@@ -51,13 +51,9 @@
 
     function init()
     {
-        setSrcByTagName("video", findMediaFile("video", "../../media/content/counting"));
-
         var totalCount = document.getElementsByTagName('video').length;
         var count = totalCount;
-        window.console.log('loading videos')
         document.addEventListener("canplaythrough", function () {
-            window.console.log('loaded videos ' + count)
             if (!--count) {
                 if (window.testRunner)
                     setTimeout(function() {
@@ -65,6 +61,8 @@
                     }, totalCount * 150);
             }
         }, true);
+
+        setSrcByTagName("video", findMediaFile("video", "../../media/content/counting"));
     }
 </script>
 

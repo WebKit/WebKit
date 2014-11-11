@@ -1,3 +1,12 @@
+2014-11-11  Alexey Proskuryakov  <ap@apple.com>
+
+        compositing/video/video-border-radius.html frequently times out on 10.8
+
+        Add an event listener before setting source, not after. This should not affect
+        anything, but seems worth a try.
+
+        * compositing/video/video-border-radius.html:
+
 2014-11-11  Daniel Bates  <dabates@apple.com>
 
         [Frame Flattening] ASSERT(transaction->view == &view()) fails in RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
