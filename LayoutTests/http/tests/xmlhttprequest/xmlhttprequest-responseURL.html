@@ -53,11 +53,6 @@ runTest('resources/reply.txt', 'text').then(function(req) {
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi');
 
-    return runTest('resources/network-simulator.php?command=connect/', 'text');
-}).then(function(req) {
-    window.responseURL = req.responseURL;
-    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/network-simulator.php?command=connect/');
-
     return runTest("resources/supported-xml-content-types.cgi?type=foo#bar/baz+xml", 'xml');
 }).then(function(req) {
     window.responseURL = req.responseURL;

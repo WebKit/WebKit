@@ -1,7 +1,7 @@
 <?php
 require_once '../../resources/portabilityLayer.php';
 
-$tmpFile = sys_get_temp_dir() . "/xsrf.txt";
+$tmpFile = sys_get_temp_dir() . "/" . $_GET["test"];
 
 function fail($state)
 {

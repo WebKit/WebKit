@@ -1,6 +1,6 @@
 <?php
-if (file_exists(sys_get_temp_dir() . "/reload-main-resource.tmp")) {
-    unlink(sys_get_temp_dir() . "/reload-main-resource.tmp");
+if (file_exists(sys_get_temp_dir() . "/cache-reload-main-resource.tmp")) {
+    unlink(sys_get_temp_dir() . "/cache-reload-main-resource.tmp");
     echo "<body>";
     echo "<script>";
     echo "window.parent.finish();";
@@ -9,7 +9,7 @@ if (file_exists(sys_get_temp_dir() . "/reload-main-resource.tmp")) {
     exit();
 }
 
-$tmpFile = fopen(sys_get_temp_dir() . "/reload-main-resource.tmp", 'w');
+$tmpFile = fopen(sys_get_temp_dir() . "/cache-reload-main-resource.tmp", 'w');
 fclose($tmpFile);
 
 $max_age = 12 * 31 * 24 * 60 * 60; //one year

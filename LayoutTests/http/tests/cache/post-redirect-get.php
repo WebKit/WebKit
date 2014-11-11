@@ -30,7 +30,7 @@ function logAndFinish(message)
 {
     document.getElementById("result").appendChild(document.createTextNode(message));
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "../resources/reset-temp-file.php?filename=post.tmp", false);
+    xhr.open("GET", "../resources/reset-temp-file.php?filename=cache_post-redirect-get_state", false);
     xhr.send(null);
     if (window.testRunner)
         testRunner.notifyDone();
@@ -41,19 +41,19 @@ clearstatcache();
 if ($_GET["finish"] == "true") {
     // The initial load of the image might have been done from the cache. In that case, touch the
     // state file to indicate a load has already occurred.
-    if (!file_exists(sys_get_temp_dir() . "/post.tmp")) {
+    if (!file_exists(sys_get_temp_dir() . "/cache_post-redirect-get_state")) {
         echo "<script>";
         echo "xhr = new XMLHttpRequest;";
-        echo "xhr.open('GET', '../resources/touch-temp-file.php?filename=post.tmp', false);";
+        echo "xhr.open('GET', '../resources/touch-temp-file.php?filename=cache_post-redirect-get_state', false);";
         echo "xhr.send(null);";
         echo "</script>";
     }
-    echo "<img src='resources/post-image-to-verify.php' onload=\"logAndFinish('PASS');\" onerror=\"logAndFinish('FAIL');\"></img>";
+    echo "<img src='resources/post-image-to-verify.php?test=cache_post-redirect-get' onload=\"logAndFinish('PASS');\" onerror=\"logAndFinish('FAIL');\"></img>";
 } else {
     echo "<form action='post-redirect-get.php' method='post'>";
     echo "<input type='submit' id='submit' name='submit' value='redirect'>";
     echo "</form>";
-    echo "<img src='resources/post-image-to-verify.php' onload=\"document.getElementById('submit').click();\" onerror=\"logAndFinish('FAIL on initial load');\"></img>";
+    echo "<img src='resources/post-image-to-verify.php?test=cache_post-redirect-get' onload=\"document.getElementById('submit').click();\" onerror=\"logAndFinish('FAIL on initial load');\"></img>";
 } 
 ?>
 </body>

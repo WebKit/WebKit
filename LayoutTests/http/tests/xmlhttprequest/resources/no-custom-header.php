@@ -1,7 +1,7 @@
 <?php
 require_once '../../resources/portabilityLayer.php';
 
-$stateFile = sys_get_temp_dir() . "/access-control-preflight-headers-status";
+$stateFile = sys_get_temp_dir() . "/" . $_GET['filename'];
 
 function setState($newState, $file)
 {

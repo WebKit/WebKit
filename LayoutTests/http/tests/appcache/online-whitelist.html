@@ -43,22 +43,22 @@ function load(url)
 
 function test()
 {
-    if (load("resources/counter.php?cached") != load("resources/counter.php?cached")) {
+    if (load("resources/online-whitelist.php?cached") != load("resources/online-whitelist.php?cached")) {
         log("FAIL: Explicit entry didn't override online whitelist.");
         hadError = true;
     }
 
-    if (load("resources/counter.php?uncached") == load("resources/counter.php?uncached")) {
+    if (load("resources/online-whitelist.php?uncached") == load("resources/online-whitelist.php?uncached")) {
         log("FAIL: Online whitelist resource wasn't reloaded from network.");
         hadError = true;
     }
 
-    if (load("resources/counter.php?uncachedxxx") == load("resources/counter.php?uncachedxxx")) {
+    if (load("resources/online-whitelist.php?uncachedxxx") == load("resources/online-whitelist.php?uncachedxxx")) {
         log("FAIL: Online whitelist resource wasn't reloaded from network (prefix matching).");
         hadError = true;
     }
 
-    if (canLoad("resources/counter.php?foobar")) {
+    if (canLoad("resources/online-whitelist.php?foobar")) {
         log("FAIL: Uncached resource was successfully loaded.");
         hadError = true;
     }

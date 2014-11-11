@@ -18,7 +18,7 @@ function log(message)
 function setNetworkEnabled(state)
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+    req.open("GET", "/resources/network-simulator.php?test=appcache-main-resource-main-resource-hash&command=" + (state ? "connect" : "disconnect"), false);
     req.send("");
 }
 
@@ -28,7 +28,7 @@ function frameCreated()
         stage = 1;
         setNetworkEnabled(false);
         var ifr = document.createElement("iframe");
-        ifr.setAttribute("src", "/resources/network-simulator.php?path=/appcache/resources/main-resource-hash-frame.html#bar");
+        ifr.setAttribute("src", "/resources/network-simulator.php?test=appcache-main-resource-main-resource-hash&path=/appcache/resources/main-resource-hash-frame.html#bar");
         document.body.appendChild(ifr);
     } else {
         log("SUCCESS");
@@ -43,7 +43,7 @@ window.addEventListener("message", frameCreated, false);
 var stage = 0;
 setNetworkEnabled(true);
 var ifr = document.createElement("iframe");
-ifr.setAttribute("src", "/resources/network-simulator.php?path=/appcache/resources/main-resource-hash-frame.html#foo");
+ifr.setAttribute("src", "/resources/network-simulator.php?test=appcache-main-resource-main-resource-hash&path=/appcache/resources/main-resource-hash-frame.html#foo");
 document.body.appendChild(ifr);
 
 </script>

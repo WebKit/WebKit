@@ -1,7 +1,8 @@
 <?php
 require_once '../../resources/portabilityLayer.php';
 
-$tmpFile = sys_get_temp_dir() . "/" . "appcache_manifest_counter";
+# This script may only be used by appcache/update-cache.html test, since it uses global data.
+$tmpFile = sys_get_temp_dir() . "/" . "appcache_update-cache_state";
 
 function getCount($file)
 {
@@ -30,8 +31,7 @@ if ("step" == $_GET['command'])
 
 print("CACHE MANIFEST\n");
 print("# version " . getCount($tmpFile) . "\n");
-print("counter.php\n");
 print("uncacheable-resource.php\n"); // with Cache-control: no-store
 print("NETWORK:\n");
-print("versioned-manifest.php?command=\n");
+print("update-cache.php?command=\n");
 ?>

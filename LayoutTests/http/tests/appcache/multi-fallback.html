@@ -21,7 +21,7 @@ function setNetworkEnabled(state)
 {
     try {
         var req = new XMLHttpRequest;
-        req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+        req.open("GET", "/resources/network-simulator.php?test=appcache-multi-fallback&command=" + (state ? "connect" : "disconnect"), false);
         req.send("");
     } catch (ex) {
         log("Cannot access network simulator URL, ex = " + ex);

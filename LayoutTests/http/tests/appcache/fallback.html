@@ -21,7 +21,7 @@ function setNetworkEnabled(state)
 {
     try {
         var req = new XMLHttpRequest;
-        req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+        req.open("GET", "/resources/network-simulator.php?test=appcache-fallback&command=" + (state ? "connect" : "disconnect"), false);
         req.send("");
     } catch (ex) {
         log("Cannot access network simulator URL");
@@ -43,7 +43,7 @@ function load(url)
     }
 }
 
-var testURL = "/resources/network-simulator.php?path=/appcache/resources/not-in-cache.txt";
+var testURL = "/resources/network-simulator.php?test=appcache-fallback&path=/appcache/resources/not-in-cache.txt";
 var nonexistentURL = "resources/does-not-exist";
 var redirectURL = "resources/fallback-redirect.php";
 

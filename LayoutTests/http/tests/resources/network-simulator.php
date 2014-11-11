@@ -5,8 +5,20 @@ require_once 'portabilityLayer.php';
 // offline, it simulates a network error with a nonsense response.
 
 if (!sys_get_temp_dir()) {
+    header("HTTP/1.1 500 Internal Server Error");
     echo "FAIL: No temp dir was returned.\n";
     exit();
+}
+
+if (!isset($_GET['test'])) {
+    header("HTTP/1.1 500 Internal Server Error");
+    echo "test parameter must be specified for a unique test name\n";
+    exit();
+}
+
+function tempPathBase()
+{
+    return sys_get_temp_dir() . "/" . $_GET['test'];
 }
 
 function setState($newState, $file)
@@ -89,7 +101,7 @@ function generateResponse($path)
 
 function handleIncreaseResourceCountCommand($path)
 {
-    $resourceCountFile = sys_get_temp_dir() . "/resource-count";
+    $resourceCountFile = tempPathBase() . "-count";
     $resourceCount = getState($resourceCountFile);
     $pieces = explode(" ", $resourceCount);
     $count = 0;
@@ -104,7 +116,7 @@ function handleIncreaseResourceCountCommand($path)
 
 function handleResetResourceCountCommand()
 {
-    $resourceCountFile = sys_get_temp_dir() . "/resource-count";
+    $resourceCountFile = tempPathBase() . "-count";
     file_put_contents($resourceCountFile, 0);
     generateNoCacheHTTPHeader();
     header('HTTP/1.1 200 OK');
@@ -112,7 +124,7 @@ function handleResetResourceCountCommand()
 
 function handleGetResourceCountCommand($path)
 {
-    $resourceCountFile = sys_get_temp_dir() . "/resource-count";
+    $resourceCountFile = tempPathBase() . "-count";
     $resourceCount = getState($resourceCountFile);
     $pieces = explode(" ", $resourceCount);
     generateNoCacheHTTPHeader();
@@ -126,19 +138,19 @@ function handleGetResourceCountCommand($path)
 
 function handleStartResourceRequestsLog()
 {
-    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    $resourceLogFile = tempPathBase() . "-log";
     file_put_contents($resourceLogFile,  "");
 }
 
 function handleClearResourceRequestsLog()
 {
-    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    $resourceLogFile = tempPathBase() . "-log";
     file_put_contents($resourceLogFile, "");
 }
 
 function handleGetResourceRequestsLog()
 {
-    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    $resourceLogFile = tempPathBase() . "-log";
 
     generateNoCacheHTTPHeader();
     header("Content-Type: text/plain");
@@ -148,14 +160,14 @@ function handleGetResourceRequestsLog()
 
 function handleLogResourceRequest($path)
 {
-    $resourceLogFile = sys_get_temp_dir() . "/resource-log";
+    $resourceLogFile = tempPathBase() . "-log";
     
     $newData = "\n".$path;
     // Documentation says that appends are atomic.
     file_put_contents($resourceLogFile, $newData, FILE_APPEND);
 }
 
-$stateFile = sys_get_temp_dir() . "/network-simulator-state";
+$stateFile = tempPathBase() . "-state";
 $command = $_GET['command'];
 if ($command) {
     if ($command == "connect")

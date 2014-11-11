@@ -6,7 +6,7 @@ function test()
 
     try {
         var req = new XMLHttpRequest;
-        req.open("GET", "/resources/network-simulator.php?path=/appcache/resources/simple.txt", false);
+        req.open("GET", "/resources/network-simulator.php?test=appcache-offline-access&path=/appcache/resources/simple.txt", false);
         req.send(null);
         if (req.responseText == "Hello, World!")
             parent.postMessage("done", "*");

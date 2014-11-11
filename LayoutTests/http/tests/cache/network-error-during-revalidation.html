@@ -16,7 +16,7 @@ function setNetworkEnabled(state)
 {
     log(state ? "Enabling network" : "Disabling network");
     var req = new XMLHttpRequest;
-    req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+    req.open("GET", "/resources/network-simulator.php?test=cache-network-error-during-revalidation&command=" + (state ? "connect" : "disconnect"), false);
     req.send("");
 }
 

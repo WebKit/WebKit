@@ -49,16 +49,6 @@ req.readyState = 1: responseURL =
 PASS responseURL is ""
 req.readyState = 1: responseURL = 
 PASS responseURL is ""
-req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/network-simulator.php?command=connect/
-req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/network-simulator.php?command=connect/
-req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/network-simulator.php?command=connect/
-PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/network-simulator.php?command=connect/"
-req.readyState = 0: responseURL = 
-PASS responseURL is ""
-req.readyState = 1: responseURL = 
-PASS responseURL is ""
-req.readyState = 1: responseURL = 
-PASS responseURL is ""
 req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/supported-xml-content-types.cgi?type=foo
 req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/supported-xml-content-types.cgi?type=foo
 req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/supported-xml-content-types.cgi?type=foo

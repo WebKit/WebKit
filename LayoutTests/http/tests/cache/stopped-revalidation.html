@@ -5,15 +5,6 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-function setNetworkEnabled(state)
-{
-    var req = new XMLHttpRequest;
-    req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
-    req.send("");
-}
-
-setNetworkEnabled(true);
-
 function test()
 {
     location='resources/stopped-revalidation-result.html';

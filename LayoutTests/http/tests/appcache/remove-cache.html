@@ -1,4 +1,4 @@
-<html manifest="resources/fail-on-update.php">
+<html manifest="resources/remove-cache.php">
 <p>Test that a 404 response for manifest results in cache removal.</p>
 <body>
 <ul>
@@ -24,7 +24,7 @@ function log(message)
 function setManifestDeleted(state)
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "resources/fail-on-update.php?command=" + (state ? "delete" : "reset"), false);
+    req.open("GET", "resources/remove-cache.php?command=" + (state ? "delete" : "reset"), false);
     req.send(null);
 }
 

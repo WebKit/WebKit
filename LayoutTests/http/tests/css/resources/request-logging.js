@@ -1,41 +1,47 @@
-function CallCommand(cmd)
-{
- try {
-     var req = new XMLHttpRequest;
-     req.open("GET", "/resources/network-simulator.php?command=" + cmd, false);
-     req.send(null);
-     return req.responseText;
- } catch (ex) {
-     return "";
- }
-}
+var ResourceLogging = {
+    CallCommand: function(cmd)
+    {
+        try {
+            var req = new XMLHttpRequest;
+            req.open("GET", "/resources/network-simulator.php?test=" + this.testName + "&command=" + cmd, false);
+            req.send(null);
+            return req.responseText;
+        } catch (ex) {
+            return "";
+        }
+    },
 
-function startTest()
-{
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
+    startTest: function()
+    {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
  
-    window.setTimeout(endTest, 0);
-}
+        window.setTimeout(this.endTest.bind(this), 0);
+    },
 
-function endTest()
-{
-    getResourceLog();
-    CallCommand("clear-resource-request-log");
+    endTest: function()
+    {
+        this.getResourceLog();
+        this.CallCommand("clear-resource-request-log");
 
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
+        if (window.testRunner)
+            testRunner.notifyDone();
+    },
 
-function getResourceLog()
-{
-    var log = CallCommand("get-resource-request-log");
-    var logLines = log.split('\n');
-    logLines.sort();
-    document.getElementById('result').innerText = logLines.join('\n');
-}
+    getResourceLog: function()
+    {
+        var log = this.CallCommand("get-resource-request-log");
+        var logLines = log.split('\n');
+        logLines.sort();
+        document.getElementById('result').innerText = logLines.join('\n');
+    },
 
-CallCommand("start-resource-request-log");
-window.addEventListener('load', startTest, false);
+    start: function(testName)
+    {
+        this.testName = testName;
+        this.CallCommand("start-resource-request-log");
+        window.addEventListener('load', this.startTest.bind(this), false);
+    },
+};

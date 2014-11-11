@@ -1,8 +1,8 @@
 <?php
 require_once '../resources/portabilityLayer.php';
 clearstatcache();
-if (file_exists(sys_get_temp_dir() . "/reload-main-resource.tmp"))
-    unlink(sys_get_temp_dir() . "/reload-main-resource.tmp");
+if (file_exists(sys_get_temp_dir() . "/cache-reload-main-resource.tmp"))
+    unlink(sys_get_temp_dir() . "/cache-reload-main-resource.tmp");
 ?>
 
 <body>

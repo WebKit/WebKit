@@ -1,5 +1,5 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      manifest="/resources/network-simulator.php?path=/appcache/resources/non-html.manifest">
+      manifest="/resources/network-simulator.php?test=appcache-non-html&amp;path=/appcache/resources/non-html.manifest">
 <head><title/></head>
 <body>
 <p>Test that non-HTML main resources work with application cache correctly.</p>
@@ -19,14 +19,14 @@ function log(message)
 function setNetworkEnabled(state)
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+    req.open("GET", "/resources/network-simulator.php?test=appcache-non-html&amp;command=" + (state ? "connect" : "disconnect"), false);
     req.send("");
 }
 
 function createFrame()
 {
     var ifr = document.createElement("iframe");
-    ifr.setAttribute("src", "/resources/network-simulator.php?path=/appcache/resources/abe.png");
+    ifr.setAttribute("src", "/resources/network-simulator.php?test=appcache-non-html&amp;path=/appcache/resources/abe.png");
     ifr.onload = frameCreated;
     document.body.appendChild(ifr);
 }
@@ -43,7 +43,7 @@ function cached()
     // Load a resource that does not exist in the cache.
     try {
         var req = new XMLHttpRequest();
-        req.open("GET", "/resources/network-simulator.php?path=/appcache/resources/not-in-cache.txt", false);
+        req.open("GET", "/resources/network-simulator.php?test=appcache-non-html&amp;path=/appcache/resources/not-in-cache.txt", false);
         req.send();
     } catch (e) {
         if (e.code == XMLHttpRequestException.NETWORK_ERR)
@@ -58,7 +58,7 @@ function cached()
     // Load a resource that exists in the cache.
     try {
         var req = new XMLHttpRequest();
-        req.open("GET", "/resources/network-simulator.php?path=/appcache/resources/simple.txt", false);
+        req.open("GET", "/resources/network-simulator.php?test=appcache-non-html&amp;path=/appcache/resources/simple.txt", false);
         req.send();
     } catch (e) {
         document.getElementById('result').innerHTML = "FAILURE: Could not load data from cache"

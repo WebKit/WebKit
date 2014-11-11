@@ -1,5 +1,5 @@
 <?php
-require_once 'portabilityLayer.php';
+require_once '../../resources/portabilityLayer.php';
 
 // This script detects requests that could not be sent before cross-site XMLHttpRequest appeared.
 
@@ -25,7 +25,7 @@ function getState($file)
     return file_get_contents($file);
 }
 
-$stateFile = sys_get_temp_dir() . "/tripmine-status";
+$stateFile = sys_get_temp_dir() . "/xmlhttprequest-redirect-cross-origin-tripmine_status";
 $command = $_GET['command'];
 if ($command) {
     if ($command == "status")

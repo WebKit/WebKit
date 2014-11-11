@@ -8,7 +8,7 @@ if (window.testRunner) {
 function setManifestDeleted(state)
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "resources/fail-on-update.php?command=" + (state ? "delete" : "reset"), false);
+    req.open("GET", "resources/fail-on-update-2.php?command=" + (state ? "delete" : "reset"), false);
     req.send(null);
 }
 

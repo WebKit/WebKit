@@ -1,4 +1,4 @@
-<html manifest="resources/versioned-manifest.php">
+<html manifest="resources/update-cache.php">
 <body>
 <p>Test a simple offline application self-update process. Should print a series of messages followed with DONE:</p>
 <div id=result></div>
@@ -17,7 +17,7 @@ function log(message)
 function modifyManifest()
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "resources/versioned-manifest.php?command=step", false);
+    req.open("GET", "resources/update-cache.php?command=step", false);
     req.send(false);
 }
 

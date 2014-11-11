@@ -14,7 +14,7 @@ if (window.testRunner)
     var xhr = new XMLHttpRequest();
 
     try {
-        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=reset", false);
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-header-denied&state=reset", false);
         xhr.send(null);
     } catch(e) {
         log("FAIL: Unable to reset server state: [" + e.message + "].");
@@ -24,7 +24,7 @@ if (window.testRunner)
     xhr = new XMLHttpRequest();
 
     try {
-        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=header", false);
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-header-denied&state=header", false);
         xhr.setRequestHeader("X-NON-STANDARD", "filler");
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in first 'open'. [" + e.message + "].");
@@ -42,7 +42,7 @@ if (window.testRunner)
     xhr = new XMLHttpRequest();
 
     try {
-        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=complete", false);
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-header-denied&state=complete", false);
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in second 'open'. [" + e.message + "].");
         return;

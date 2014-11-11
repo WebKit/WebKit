@@ -2,11 +2,11 @@
 require_once '../../resources/portabilityLayer.php';
 
 clearstatcache();
-if (file_exists(sys_get_temp_dir() . "/post.tmp")) {
+if (file_exists(sys_get_temp_dir() . "/" . $_GET["test"] . "_state")) {
     header('HTTP/1.1 404 Not Found');
     exit();
 } else {
-    $tmpFile = fopen(sys_get_temp_dir() . "/post.tmp", 'w');
+    $tmpFile = fopen(sys_get_temp_dir() . "/" . $_GET["test"] . "_state", 'w');
     fclose($tmpFile);
     
     $filename = 'compass-no-cache.jpg';

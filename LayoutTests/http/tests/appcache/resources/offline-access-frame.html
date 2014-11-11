@@ -1,4 +1,4 @@
-<html manifest="/resources/network-simulator.php?path=/appcache/resources/offline-access.manifest">
+<html manifest="/resources/network-simulator.php?test=appcache-offline-access&path=/appcache/resources/offline-access.manifest">
 <div id=result></div>
 <script>
 function log(message)
@@ -11,7 +11,7 @@ applicationCache.onprogress = function() { log("progress") }
 applicationCache.onupdateready = function() { log("updateready") }
 applicationCache.onobsolete = function() { log("obsolete") }
 </script>
-<script src="/resources/network-simulator.php?path=/appcache/resources/offline-access.js"></script>
+<script src="/resources/network-simulator.php?test=appcache-offline-access&path=/appcache/resources/offline-access.js"></script>
 <script>
 
 applicationCache.oncached = function() { log("cached"); test() }

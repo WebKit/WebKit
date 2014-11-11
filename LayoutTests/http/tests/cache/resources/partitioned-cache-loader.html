@@ -5,7 +5,7 @@
 function setServerState(string)
 {
     var xhr = new XMLHttpRequest;
-    xhr.open('POST', '/resources/write-temp-file.php?filename=partitioned-cache-state&data=' + string, false);
+    xhr.open('POST', '/resources/write-temp-file.php?filename=cache-partitioned-cache-state&data=' + string, false);
     xhr.send();
 }
 

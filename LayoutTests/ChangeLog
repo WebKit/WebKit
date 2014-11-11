@@ -1,3 +1,86 @@
+2014-11-10  Alexey Proskuryakov  <ap@apple.com>
+
+        http tests should not use shared temporary files
+        https://bugs.webkit.org/show_bug.cgi?id=138583
+
+        Reviewed by Tim Horton.
+
+        Made some of the scripts that write to files take a path argument, and made others
+        more strictly serve only one test.
+
+        This way, we don't race for any files.
+
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fallback.html:
+        * http/tests/appcache/main-resource-fallback-for-network-error-crash.html:
+        * http/tests/appcache/main-resource-hash.html:
+        * http/tests/appcache/main-resource-redirect.html:
+        * http/tests/appcache/multi-fallback.html:
+        * http/tests/appcache/non-html.xhtml:
+        * http/tests/appcache/offline-access.html:
+        * http/tests/appcache/online-whitelist.html:
+        * http/tests/appcache/remove-cache.html:
+        * http/tests/appcache/resources/counter.php: Removed.
+        * http/tests/appcache/resources/fail-on-update-2.php:
+        * http/tests/appcache/resources/fail-on-update.php:
+        * http/tests/appcache/resources/main-resource-redirect-frame.php:
+        * http/tests/appcache/resources/main-resource-redirect.manifest:
+        * http/tests/appcache/resources/non-html.manifest:
+        * http/tests/appcache/resources/offline-access-frame.html:
+        * http/tests/appcache/resources/offline-access.js:
+        * http/tests/appcache/resources/offline-access.manifest:
+        * http/tests/appcache/resources/online-whitelist.manifest:
+        * http/tests/appcache/resources/online-whitelist.php: Copied from LayoutTests/http/tests/appcache/resources/counter.php.
+        * http/tests/appcache/resources/remove-cache-frame-2.html:
+        * http/tests/appcache/resources/remove-cache-frame.html:
+        * http/tests/appcache/resources/remove-cache.php: Copied from LayoutTests/http/tests/appcache/resources/fail-on-update.php.
+        * http/tests/appcache/resources/update-cache.php: Copied from LayoutTests/http/tests/appcache/resources/versioned-manifest.php.
+        * http/tests/appcache/resources/versioned-manifest.php: Removed.
+        * http/tests/appcache/update-cache.html:
+        * http/tests/cache/network-error-during-revalidation.html:
+        * http/tests/cache/post-redirect-get.php:
+        * http/tests/cache/post-with-cached-subresources.php:
+        * http/tests/cache/reload-main-resource.php:
+        * http/tests/cache/resources/network-error-during-revalidation-frame.html:
+        * http/tests/cache/resources/partitioned-cache-echo-state.php:
+        * http/tests/cache/resources/partitioned-cache-loader.html:
+        * http/tests/cache/resources/post-image-to-verify.php:
+        * http/tests/cache/resources/reload-main-resource-iframe.php:
+        * http/tests/cache/stopped-revalidation.html:
+        * http/tests/cache/subresource-fragment-identifier.html:
+        * http/tests/css/border-image-loading.html:
+        * http/tests/css/css-image-loading.html:
+        * http/tests/css/mask-image-loading.html:
+        * http/tests/css/reflection-mask-image-loading.html:
+        * http/tests/css/resources/request-logging.js:
+        * http/tests/loading/preload-img-test.html:
+        * http/tests/local/link-stylesheet-load-order-preload.html:
+        * http/tests/local/link-stylesheet-load-order.html:
+        * http/tests/misc/link-rel-prefetch-and-subresource.html:
+        * http/tests/resources/network-simulator.php:
+        * http/tests/resources/tripmine.php: Removed.
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html:
+        * http/tests/xmlhttprequest/access-control-preflight-headers-async.html:
+        * http/tests/xmlhttprequest/access-control-preflight-headers-sync.html:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-not-supported.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html:
+        * http/tests/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php:
+        * http/tests/xmlhttprequest/resources/no-custom-header.php:
+        * http/tests/xmlhttprequest/resources/redirect-cross-origin-tripmine.php: Copied from LayoutTests/http/tests/resources/tripmine.php.
+        * http/tests/xmlhttprequest/state-after-network-error.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-responseURL-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-responseURL.html:
+
 2014-11-10  Michael Saboff  <msaboff@apple.com>
 
         Add test for fix of REGRESSION (r174985-174986): Site display disappears

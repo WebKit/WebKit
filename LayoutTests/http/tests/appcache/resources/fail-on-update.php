@@ -1,7 +1,8 @@
 <?php
 require_once '../../resources/portabilityLayer.php';
 
-$tmpFile = sys_get_temp_dir() . "/" . "fail_on_update_state";
+# This script may only be used by appcache/fail-on-update.html test, since it uses global data.
+$tmpFile = sys_get_temp_dir() . "/" . "appcache_fail-on-update_state";
 
 function setState($newState, $file)
 {

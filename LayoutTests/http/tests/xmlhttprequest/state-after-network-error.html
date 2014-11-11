@@ -17,7 +17,7 @@ function log(message)
 function setNetworkEnabled(state)
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+    req.open("GET", "/resources/network-simulator.php?test=xmlhttprequest-state-after-network-error&command=" + (state ? "connect" : "disconnect"), false);
     req.send("");
 }
 
@@ -34,7 +34,7 @@ function onReadyStateChange()
 setNetworkEnabled(false);
 var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = onReadyStateChange;
-xhr.open('GET', '/resources/network-simulator.php?path=/', true);
+xhr.open('GET', '/resources/network-simulator.php?test=xmlhttprequest-state-after-network-error&path=/', true);
 xhr.send(null);
 
 </script>

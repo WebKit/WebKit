@@ -11,7 +11,7 @@ if (window.testRunner) {
 function setNetworkEnabled(state)
 {
     var req = new XMLHttpRequest;
-    req.open("GET", "/resources/network-simulator.php?command=" + (state ? "connect" : "disconnect"), false);
+    req.open("GET", "/resources/network-simulator.php?test=appcache-main-resource-main-resource-redirect&command=" + (state ? "connect" : "disconnect"), false);
     req.send("");
 }
 

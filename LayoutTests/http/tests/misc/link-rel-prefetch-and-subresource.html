@@ -5,7 +5,7 @@ function CallCommand(cmd)
 {
  try {
      var req = new XMLHttpRequest;
-     req.open("GET", "/resources/network-simulator.php?command=" + cmd, false);
+     req.open("GET", "/resources/network-simulator.php?test=misc-link-rel-prefetch-and-subresource&command=" + cmd, false);
      req.send(null);
      return req.responseText;
  } catch (ex) {
@@ -57,11 +57,11 @@ window.addEventListener('load', startTest, false);
       }
   }
   </script>
-  <link rel=prefetch onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?command=log-resource-request&path=1st.jpg">
-  <link rel=subresource onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?command=log-resource-request&path=2nd.jpg">
-  <link rel=prefetch onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?command=log-resource-request&path=3rd.jpg">
-  <link rel=prefetch onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?command=log-resource-request&path=4th.jpg">
-  <link rel=subresource onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?command=log-resource-request&path=5th.jpg">
+  <link rel=prefetch onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?test=misc-link-rel-prefetch-and-subresource&command=log-resource-request&path=1st.jpg">
+  <link rel=subresource onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?test=misc-link-rel-prefetch-and-subresource&command=log-resource-request&path=2nd.jpg">
+  <link rel=prefetch onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?test=misc-link-rel-prefetch-and-subresource&command=log-resource-request&path=3rd.jpg">
+  <link rel=prefetch onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?test=misc-link-rel-prefetch-and-subresource&command=log-resource-request&path=4th.jpg">
+  <link rel=subresource onload="decrementLinkLoadCount()" href="/resources/network-simulator.php?test=misc-link-rel-prefetch-and-subresource&command=log-resource-request&path=5th.jpg">
 </head>
 <body>
 
