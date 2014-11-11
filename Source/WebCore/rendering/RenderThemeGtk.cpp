@@ -1664,6 +1664,7 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
 
+#if ENABLE(VIDEO)
 String RenderThemeGtk::mediaControlsScript()
 {
     StringBuilder scriptBuilder;
@@ -1672,6 +1673,7 @@ String RenderThemeGtk::mediaControlsScript()
     scriptBuilder.append(mediaControlsGtkJavaScript, sizeof(mediaControlsGtkJavaScript));
     return scriptBuilder.toString();
 }
+#endif // ENABLE(VIDEO)
 
 #endif // GTK_API_VERSION_2
 }
