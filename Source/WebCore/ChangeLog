@@ -1,3 +1,22 @@
+2014-10-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        AX: Do the early return when role is different than UnknownRole
+        https://bugs.webkit.org/show_bug.cgi?id=137880
+
+        Reviewed by Chris Fleizach.
+
+        We do not need to call ariaRoleAttribute() to check whether m_ariaRole is different than UnknownRole.
+        Just check m_ariaRole instead.
+
+        No new tests, no behavior change, just some cleanup
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::determineAccessibilityRole):
+
 2014-10-23  Milan Crha  <mcrha@redhat.com>
 
         RenderThemeGtk::mediaControlsScript() is not defined when VIDEO is disabled.

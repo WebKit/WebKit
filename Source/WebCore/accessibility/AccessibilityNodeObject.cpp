@@ -278,12 +278,9 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
     if (!node())
         return UnknownRole;
 
-    m_ariaRole = determineAriaRoleAttribute();
+    if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole)
+        return m_ariaRole;
     
-    AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (ariaRole != UnknownRole)
-        return ariaRole;
-
     if (node()->isLink())
         return WebCoreLinkRole;
     if (node()->isTextNode())
