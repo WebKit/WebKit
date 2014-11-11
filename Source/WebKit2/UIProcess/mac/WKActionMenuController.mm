@@ -176,12 +176,13 @@ using namespace WebKit;
         return;
     }
 
+    [self dismissActionMenuPopovers];
+
     _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
     _state = ActionMenuState::Pending;
     [self _updateActionMenuItemsForStage:MenuUpdateStage::PrepareForMenu];
 
-    [self _hideTextIndicator];
     _shouldKeepPreviewPopoverOpen = NO;
 }
 
@@ -243,9 +244,7 @@ using namespace WebKit;
 
 - (void)dismissActionMenuPopovers
 {
-    // Ideally, this would actually dismiss the data detector popovers. We don't currently have the ability to request
-    // that and know whether or not it succeeded, so we'll settle for unanchoring.
-    [[getDDActionsManagerClass() sharedManager] unanchorBubbles];
+    [[getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
 
     [self _hideTextIndicator];
     [self _clearPreviewPopover];
