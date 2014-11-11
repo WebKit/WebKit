@@ -119,7 +119,8 @@ enum {
     WebActionMenuItemTagAddLinkToSafariReadingList,
     WebActionMenuItemTagCopyText,
     WebActionMenuItemTagLookupText,
-    WebActionMenuItemTagPaste
+    WebActionMenuItemTagPaste,
+    WebActionMenuItemTagTextSuggestions
 };
 
 typedef enum {
@@ -127,7 +128,8 @@ typedef enum {
     WebActionMenuLink,
     WebActionMenuReadOnlyText,
     WebActionMenuEditableText,
-    WebActionMenuWhitespaceInEditableArea
+    WebActionMenuWhitespaceInEditableArea,
+    WebActionMenuEditableTextWithSuggestions
 } WebActionMenuType;
 
 // Message Sources.
