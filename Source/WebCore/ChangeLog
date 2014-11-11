@@ -1,3 +1,22 @@
+2014-11-02  Chris Dumez  <cdumez@apple.com>
+
+        Reduce the cost of argumentCount checks in the JS bindings
+        https://bugs.webkit.org/show_bug.cgi?id=138289
+
+        Reviewed by Sam Weinig.
+
+        Slightly reduce the cost of argumentCount checks in the JS bindings by
+        hinting to the compiler that it is UNLIKELY that those methods are
+        called with too few arguments.
+
+        I see a 3% progression on PerformanceTests/DOM/DOMDivWalk.html
+        performance test.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateArgumentsCountCheck):
+
 2014-10-31  Benjamin Poulain  <bpoulain@apple.com>
 
         Pseudo classes with an escaped parenthesis generate invalid rules
