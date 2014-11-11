@@ -1,5 +1,15 @@
 2014-11-11  Eric Carlson  <eric.carlson@apple.com>
 
+        [iOS] video is sometimes allowed to play from the background
+        https://bugs.webkit.org/show_bug.cgi?id=138522
+
+        Rubber-stamped by Jer Noble.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::updateClientDataBuffering): Call MediaSessionManager::sessionCanLoadMedia.
+
+2014-11-11  Eric Carlson  <eric.carlson@apple.com>
+
         [iOS] a page with video in optimized fullscreen is visible
         https://bugs.webkit.org/show_bug.cgi?id=138632
 

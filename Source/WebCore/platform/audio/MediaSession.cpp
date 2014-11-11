@@ -190,8 +190,7 @@ void MediaSession::updateClientDataBuffering()
     if (m_clientDataBufferingTimer.isActive())
         m_clientDataBufferingTimer.stop();
 
-    bool shouldBuffer = m_state == Playing || !m_client.elementIsHidden();
-    m_client.setShouldBufferData(shouldBuffer);
+    m_client.setShouldBufferData(MediaSessionManager::sharedManager().sessionCanLoadMedia(*this));
 }
 
 bool MediaSession::isHidden() const
