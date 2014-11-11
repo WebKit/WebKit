@@ -54,7 +54,7 @@ interface HTMLInputElement : HTMLElement {
 #endif
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString step;
-    [TreatNullAs=NullString] attribute DOMString type; // readonly dropped as part of DOM level 2
+    attribute DOMString type; // readonly dropped as part of DOM level 2
     [TreatNullAs=NullString] attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

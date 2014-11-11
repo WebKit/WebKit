@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests the HTMLInputElement type attribute");
+
+var input;
+evalAndLog("input = document.createElement('input')");
+
+shouldBeEqualToString("input.type", "text");
+shouldBeFalse("input.hasAttribute('type')");
+shouldBeNull("input.getAttribute('type')");
+
+evalAndLog("input.type = 'button'");
+shouldBeEqualToString("input.type", "button");
+shouldBeTrue("input.hasAttribute('type')");
+shouldBeEqualToString("input.getAttribute('type')", "button");
+
+evalAndLog("input.type = ''");
+shouldBeEqualToString("input.type", "text");
+shouldBeTrue("input.hasAttribute('type')");
+shouldBeEqualToString("input.getAttribute('type')", "");
+
+evalAndLog("input.type = 'text'");
+shouldBeEqualToString("input.type", "text");
+shouldBeTrue("input.hasAttribute('type')");
+shouldBeEqualToString("input.getAttribute('type')", "text");
+
+evalAndLog("input.type = 'invalid'");
+shouldBeEqualToString("input.type", "text");
+shouldBeTrue("input.hasAttribute('type')");
+shouldBeEqualToString("input.getAttribute('type')", "invalid");
+
+evalAndLog("input.type = null");
+shouldBeEqualToString("input.type", "text");
+shouldBeTrue("input.hasAttribute('type')");
+shouldBeEqualToString("input.getAttribute('type')", "null");
+
+evalAndLog("input.removeAttribute('type')");
+shouldBeEqualToString("input.type", "text");
+shouldBeFalse("input.hasAttribute('type')");
+shouldBeNull("input.getAttribute('type')");
+</script>
+<script src="../../../resources/js-test-post.js"></script>

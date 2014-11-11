@@ -1,3 +1,16 @@
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Stop special-casing the empty string in HTMLInputElement.type setter
+        https://bugs.webkit.org/show_bug.cgi?id=138403
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test to check the functionality of the HTMLInputElement.type
+        getter and setter.
+
+        * fast/dom/HTMLInputElement/input-type-attribute-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-type-attribute.html: Added.
+
 2014-11-04  Nikos Andrkos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Fix animation of orient attribute on marker element

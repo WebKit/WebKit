@@ -1,3 +1,33 @@
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Stop special-casing the empty string in HTMLInputElement.type setter
+        https://bugs.webkit.org/show_bug.cgi?id=138403
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop special-casing the empty string in HTMLInputElement.type setter.
+        Previously, if input.type is set to "", we would remove the type
+        attribute. This is inconsistent with the specification and the behavior
+        of other browsers (tested Firefox 33 and Chrome 38). Instead, we should
+        set the attribute to the empty string.
+
+        Also stop treating null as a null string to align with the
+        specification and other browsers (tested Firefox 33 and Chrome 38).
+
+        Finally, update HTMLInputElement::setType() to take an AtomicString in
+        argument instead of a String as it ends up calling setAttribute(), and
+        thus needing an AtomicString.
+
+
+        Test: fast/dom/HTMLInputElement/input-type-attribute.html
+
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::UploadButtonElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setType):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+
 2014-11-04  Chris Dumez  <cdumez@apple.com>
 
         Avoid double hash table lookup in SpaceSplitStringData::create()
