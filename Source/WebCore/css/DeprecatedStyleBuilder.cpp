@@ -1051,40 +1051,6 @@ public:
     }
 };
 
-class ApplyPropertyMarqueeSpeed {
-public:
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-        if (CSSValueID ident = primitiveValue.getValueID()) {
-            switch (ident) {
-            case CSSValueSlow:
-                styleResolver->style()->setMarqueeSpeed(500); // 500 msec.
-                break;
-            case CSSValueNormal:
-                styleResolver->style()->setMarqueeSpeed(85); // 85msec. The WinIE default.
-                break;
-            case CSSValueFast:
-                styleResolver->style()->setMarqueeSpeed(10); // 10msec. Super fast.
-                break;
-            default:
-                break;
-            }
-        } else if (primitiveValue.isTime())
-            styleResolver->style()->setMarqueeSpeed(primitiveValue.computeTime<int, CSSPrimitiveValue::Milliseconds>());
-        else if (primitiveValue.isNumber()) // For scrollamount support.
-            styleResolver->style()->setMarqueeSpeed(primitiveValue.getIntValue());
-    }
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyDefault<int, &RenderStyle::marqueeSpeed, int, &RenderStyle::setMarqueeSpeed, int, &RenderStyle::initialMarqueeSpeed>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
 class ApplyPropertyTextUnderlinePosition {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
@@ -1626,7 +1592,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitFontSmoothing, ApplyPropertyFont<FontSmoothingMode, &FontDescription::fontSmoothing, &FontDescription::setFontSmoothing, AutoSmoothing>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFontVariantLigatures, ApplyPropertyFontVariantLigatures::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeRepetition, ApplyPropertyMarqueeRepetition::createHandler());
-    setPropertyHandler(CSSPropertyWebkitMarqueeSpeed, ApplyPropertyMarqueeSpeed::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageOutset, ApplyPropertyBorderImageModifier<BorderMask, Outset>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageRepeat, ApplyPropertyBorderImageModifier<BorderMask, Repeat>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageSlice, ApplyPropertyBorderImageModifier<BorderMask, Slice>::createHandler());

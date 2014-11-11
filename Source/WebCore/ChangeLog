@@ -1,3 +1,23 @@
+2014-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-marquee-speed' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138595
+
+        Reviewed by Antti Koivisto.
+
+        Move '-webkit-marquee-speed' CSS property from DeprecatedStyleBuilder
+        to the new StyleBuilder by adding a new MarqueeSpeed Converter.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyMarqueeSpeed::applyValue): Deleted.
+        (WebCore::ApplyPropertyMarqueeSpeed::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertMarqueeSpeed):
+
 2014-10-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Limit the size of explicit/implicit grid

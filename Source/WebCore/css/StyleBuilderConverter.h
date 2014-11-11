@@ -63,6 +63,7 @@ public:
     static ETextAlign convertTextAlign(StyleResolver&, CSSValue&);
     static PassRefPtr<ClipPathOperation> convertClipPath(StyleResolver&, CSSValue&);
     static EResize convertResize(StyleResolver&, CSSValue&);
+    static int convertMarqueeSpeed(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -385,6 +386,35 @@ inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver
         resize = primitiveValue;
 
     return resize;
+}
+
+inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    int speed = 85;
+    if (CSSValueID ident = primitiveValue.getValueID()) {
+        switch (ident) {
+        case CSSValueSlow:
+            speed = 500; // 500 msec.
+            break;
+        case CSSValueNormal:
+            speed = 85; // 85msec. The WinIE default.
+            break;
+        case CSSValueFast:
+            speed = 10; // 10msec. Super fast.
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    } else if (primitiveValue.isTime())
+        speed = primitiveValue.computeTime<int, CSSPrimitiveValue::Milliseconds>();
+    else {
+        // For scrollamount support.
+        ASSERT(primitiveValue.isNumber());
+        speed = primitiveValue.getIntValue();
+    }
+    return speed;
 }
 
 } // namespace WebCore

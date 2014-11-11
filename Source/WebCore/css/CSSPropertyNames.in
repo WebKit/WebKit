@@ -421,7 +421,7 @@ justify-content [NewStyleBuilder]
 -webkit-marquee-direction [NewStyleBuilder]
 -webkit-marquee-increment [NewStyleBuilder, Custom=Value]
 -webkit-marquee-repetition
--webkit-marquee-speed
+-webkit-marquee-speed [NewStyleBuilder, Converter=MarqueeSpeed]
 -webkit-marquee-style [NewStyleBuilder, TypeName=EMarqueeBehavior, NameForMethods=MarqueeBehavior]
 -webkit-mask
 -webkit-mask-box-image [NewStyleBuilder, Initial=initialNinePieceImage, Converter=BorderMask<CSSPropertyWebkitMaskBoxImage>]
