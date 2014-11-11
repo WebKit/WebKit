@@ -297,11 +297,18 @@ Arguments* StackVisitor::Frame::existingArguments()
 #endif // ENABLE(DFG_JIT)
         reg = codeBlock()->argumentsRegister();
 
-    if (codeBlock()->needsActivation())
-        return jsCast<Arguments*>(callFrame()->lexicalEnvironment()->registerAt(unmodifiedArgumentsRegister(reg).offset()).get());
-    
-    JSValue result = callFrame()->r(unmodifiedArgumentsRegister(reg).offset()).jsValue();
-    if (!result || !result.isCell()) // Protect against Undefined in case we throw in op_enter.
+    // Care should be taken here since exception fuzzing may raise exceptions in
+    // places where they would be otherwise impossible. Therefore, callFrame may
+    // lack activation even if the codeBlock signals need of activation. Also,
+    // even if codeBlock signals the use of arguments, the
+    // unmodifiedArgumentsRegister may not be initialized yet (neither locally
+    // nor in lexicalEnvironment).
+    JSValue result = jsUndefined();
+    if (codeBlock()->needsActivation() && callFrame()->hasActivation())
+        result = callFrame()->lexicalEnvironment()->registerAt(unmodifiedArgumentsRegister(reg).offset()).get();
+    if (!result || !result.isCell()) // Try local unmodifiedArgumentsRegister if lexicalEnvironment is not present (generally possible) or has not set up registers yet (only possible if fuzzing exceptions).
+        result = callFrame()->r(unmodifiedArgumentsRegister(reg).offset()).jsValue();
+    if (!result || !result.isCell()) // Protect against the case when exception fuzzing throws when unmodifiedArgumentsRegister is not set up yet (e.g., in op_enter).
         return 0;
     return jsCast<Arguments*>(result);
 }

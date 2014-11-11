@@ -139,6 +139,12 @@ inline unsigned CallFrame::locationAsCodeOriginIndex() const
     return Location::decode(locationAsRawBits());
 }
 
+inline bool CallFrame::hasActivation() const
+{
+    JSValue activation = uncheckedActivation();
+    return !!activation && activation.isCell();
+}
+
 inline JSValue CallFrame::uncheckedActivation() const
 {
     CodeBlock* codeBlock = this->codeBlock();

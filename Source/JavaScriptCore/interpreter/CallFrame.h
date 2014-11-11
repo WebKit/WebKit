@@ -51,7 +51,7 @@ namespace JSC  {
             return this[JSStack::ScopeChain].Register::scope();
         }
 
-        bool hasActivation() const { return !!uncheckedActivation(); }
+        bool hasActivation() const;
         JSLexicalEnvironment* lexicalEnvironment() const;
         JSValue uncheckedActivation() const;
 
