@@ -126,7 +126,8 @@ typedef enum {
     WebActionMenuNone = 0,
     WebActionMenuLink,
     WebActionMenuReadOnlyText,
-    WebActionMenuEditableText
+    WebActionMenuEditableText,
+    WebActionMenuWhitespaceInEditableArea
 } WebActionMenuType;
 
 // Message Sources.
