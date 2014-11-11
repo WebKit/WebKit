@@ -88,8 +88,6 @@ struct PlatformMedia {
         QTMovieType,
         QTMovieGWorldType,
         QTMovieVisualContextType,
-        ChromiumMediaPlayerType,
-        QtMediaPlayerType,
         AVFoundationMediaPlayerType,
         AVFoundationCFMediaPlayerType,
         AVFoundationAssetType,
@@ -99,8 +97,6 @@ struct PlatformMedia {
         QTMovie* qtMovie;
         QTMovieGWorld* qtMovieGWorld;
         QTMovieVisualContext* qtMovieVisualContext;
-        MediaPlayerPrivateInterface* chromiumMediaPlayer;
-        MediaPlayerPrivateInterface* qtMediaPlayer;
         AVPlayer* avfMediaPlayer;
         AVCFPlayer* avcfMediaPlayer;
         AVAsset* avfAsset;
