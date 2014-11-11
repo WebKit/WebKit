@@ -858,7 +858,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     MatchResult result = regExpConstructor->performMatch(*vm, regExp, string, s, 0);
     // case without 'g' flag is handled like RegExp.prototype.exec
     if (!global)
-        return JSValue::encode(result ? RegExpMatchesArray::create(exec, string, regExp, result) : jsNull());
+        return JSValue::encode(result ? createRegExpMatchesArray(exec, string, regExp, result) : jsNull());
 
     // return array of matches
     MarkedArgumentBuffer list;

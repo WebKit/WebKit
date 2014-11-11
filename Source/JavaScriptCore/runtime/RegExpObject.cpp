@@ -302,7 +302,7 @@ void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 JSValue RegExpObject::exec(ExecState* exec, JSString* string)
 {
     if (MatchResult result = match(exec, string))
-        return RegExpMatchesArray::create(exec, string, regExp(), result);
+        return createRegExpMatchesArray(exec, string, regExp(), result);
     return jsNull();
 }
 

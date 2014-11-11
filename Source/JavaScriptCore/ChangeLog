@@ -1,3 +1,68 @@
+2014-10-29  Andreas Kling  <akling@apple.com>
+
+        Use plain JSArray for RegExp matches instead of a lazily populated custom object.
+        <https://webkit.org/b/138191>
+
+        Reviewed by Geoffrey Garen.
+
+        We're already offering two RegExp matching APIs, one that collects subpattern
+        matches (exec), and one that simply tests for a match (test).
+        Given that, it was pretty overkill to lazily populate the resulting array of
+        matches, since the user could simply use test() if they didn't need them.
+
+        This allows the JIT to generate better code for RegExp match arrays, and also
+        enables some fast paths in the JSC runtime that check if an object isJSArray().
+
+        Looks like ~1.5% improvement on Octane/regexp according to run-jsc-benchmarks.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * runtime/JSArray.h:
+        (JSC::createArrayButterflyWithExactLength): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::visitChildren):
+        (JSC::RegExpCachedResult::lastResult):
+        (JSC::RegExpCachedResult::leftContext):
+        (JSC::RegExpCachedResult::rightContext):
+        * runtime/RegExpCachedResult.h:
+        (JSC::RegExpCachedResult::RegExpCachedResult):
+        (JSC::RegExpCachedResult::record):
+        (JSC::RegExpCachedResult::input):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getBackref):
+        (JSC::RegExpConstructor::getLastParen):
+        (JSC::RegExpConstructor::getLeftContext):
+        (JSC::RegExpConstructor::getRightContext):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createRegExpMatchesArray):
+        (JSC::RegExpMatchesArray::RegExpMatchesArray): Deleted.
+        (JSC::RegExpMatchesArray::create): Deleted.
+        (JSC::RegExpMatchesArray::finishCreation): Deleted.
+        (JSC::RegExpMatchesArray::visitChildren): Deleted.
+        (JSC::RegExpMatchesArray::reifyAllProperties): Deleted.
+        (JSC::RegExpMatchesArray::reifyMatchProperty): Deleted.
+        (JSC::RegExpMatchesArray::leftContext): Deleted.
+        (JSC::RegExpMatchesArray::rightContext): Deleted.
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::createStructure): Deleted.
+        (JSC::RegExpMatchesArray::reifyAllPropertiesIfNecessary): Deleted.
+        (JSC::RegExpMatchesArray::reifyMatchPropertyIfNecessary): Deleted.
+        (JSC::RegExpMatchesArray::getOwnPropertySlot): Deleted.
+        (JSC::RegExpMatchesArray::getOwnPropertySlotByIndex): Deleted.
+        (JSC::RegExpMatchesArray::put): Deleted.
+        (JSC::RegExpMatchesArray::putByIndex): Deleted.
+        (JSC::RegExpMatchesArray::deleteProperty): Deleted.
+        (JSC::RegExpMatchesArray::deletePropertyByIndex): Deleted.
+        (JSC::RegExpMatchesArray::getOwnPropertyNames): Deleted.
+        (JSC::RegExpMatchesArray::defineOwnProperty): Deleted.
+        (JSC::isRegExpMatchesArray): Deleted.
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::exec):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+
 2014-10-27  Mark Lam  <mark.lam@apple.com>
 
         Crash when attempting to perform array iteration on a non-array with numeric keys not initialized.

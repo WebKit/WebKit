@@ -288,8 +288,8 @@ void JSGlobalObject::init(VM& vm)
     m_originalArrayStructureForIndexingShape[SlowPutArrayStorageShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
         m_arrayStructureForIndexingShapeDuringAllocation[i] = m_originalArrayStructureForIndexingShape[i];
-    
-    m_regExpMatchesArrayStructure.set(vm, this, RegExpMatchesArray::createStructure(vm, this, m_arrayPrototype.get()));
+
+    m_regExpMatchesArrayStructure.set(vm, this, Structure::create(vm, this, m_arrayPrototype.get(), TypeInfo(ObjectType, StructureFlags), JSArray::info(), ArrayWithSlowPutArrayStorage));
     
     RegExp* emptyRegex = RegExp::create(vm, "", NoFlags);
     

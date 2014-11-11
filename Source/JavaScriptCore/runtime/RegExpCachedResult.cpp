@@ -37,16 +37,38 @@ void RegExpCachedResult::visitChildren(SlotVisitor& visitor)
     visitor.append(&m_lastRegExp);
     visitor.append(&m_reifiedInput);
     visitor.append(&m_reifiedResult);
+    visitor.append(&m_reifiedLeftContext);
+    visitor.append(&m_reifiedRightContext);
 }
 
-RegExpMatchesArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
+JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
 {
-    if (m_result) {
+    if (!m_reified) {
         m_reifiedInput.set(exec->vm(), owner, m_lastInput.get());
-        m_reifiedResult.set(exec->vm(), owner, RegExpMatchesArray::create(exec, m_lastInput.get(), m_lastRegExp.get(), m_result));
-        m_result = MatchResult::failed();
+        m_reifiedResult.set(exec->vm(), owner, createRegExpMatchesArray(exec, m_lastInput.get(), m_lastRegExp.get(), m_result));
+        m_reified = true;
     }
     return m_reifiedResult.get();
+}
+
+JSString* RegExpCachedResult::leftContext(ExecState* exec, JSObject* owner)
+{
+    // Make sure we're reified.
+    lastResult(exec, owner);
+    if (!m_reifiedLeftContext)
+        m_reifiedLeftContext.set(exec->vm(), owner, m_result.start ? jsSubstring(exec, m_reifiedInput.get(), 0, m_result.start) : jsEmptyString(exec));
+    return m_reifiedLeftContext.get();
+}
+
+JSString* RegExpCachedResult::rightContext(ExecState* exec, JSObject* owner)
+{
+    // Make sure we're reified.
+    lastResult(exec, owner);
+    if (!m_reifiedRightContext) {
+        unsigned length = m_reifiedInput->length();
+        m_reifiedRightContext.set(exec->vm(), owner, m_result.end != length ? jsSubstring(exec, m_reifiedInput.get(), m_result.end, length - m_result.end) : jsEmptyString(exec));
+    }
+    return m_reifiedRightContext.get();
 }
 
 void RegExpCachedResult::setInput(ExecState* exec, JSObject* owner, JSString* input)
