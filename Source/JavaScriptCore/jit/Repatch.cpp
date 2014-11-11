@@ -362,7 +362,7 @@ static void generateByIdStub(
                 failureCases, scratchGPR);
             currStructure = it->get();
         }
-        ASSERT(protoObject->structure() == currStructure);
+        ASSERT(!protoObject || protoObject->structure() == currStructure);
     }
     
     currStructure->startWatchingPropertyForReplacements(*vm, offset);
