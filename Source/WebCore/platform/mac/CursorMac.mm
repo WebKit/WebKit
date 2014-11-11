@@ -53,22 +53,6 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     return 0;
 }
 
-static RetainPtr<NSCursor> createNamedCursor(const char* name, int x, int y)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    RetainPtr<NSString> resourceName = adoptNS([[NSString alloc] initWithUTF8String:name]);
-    RetainPtr<NSImage> cursorImage = adoptNS([[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreCursorBundle class]] pathForResource:resourceName.get() ofType:@"png"]]);
-    
-    RetainPtr<NSCursor> cursor;
-
-    if (cursorImage)
-        cursor = adoptNS([[NSCursor alloc] initWithImage:cursorImage.get() hotSpot:NSMakePoint(x, y)]);
-
-    return cursor;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return nil;
-}
-
 void Cursor::ensurePlatformCursor() const
 {
     if (m_platformCursor)
@@ -97,9 +81,6 @@ void Cursor::ensurePlatformCursor() const
 
     case Cursor::Help:
         m_platformCursor = wkCursor("Help");
-        if (m_platformCursor)
-            break;
-        m_platformCursor = createNamedCursor("helpCursor", 8, 8);
         break;
 
     case Cursor::Move:
@@ -177,9 +158,6 @@ void Cursor::ensurePlatformCursor() const
 
     case Cursor::Cell:
         m_platformCursor = wkCursor("Cell");
-        if (m_platformCursor)
-            break;
-        m_platformCursor = createNamedCursor("cellCursor", 7, 7);
         break;
 
     case Cursor::ContextMenu:
@@ -203,7 +181,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::None:
-        m_platformCursor = createNamedCursor("noneCursor", 7, 7);
+        m_platformCursor = adoptNS([[NSCursor alloc] initWithImage:adoptNS([[NSImage alloc] initWithSize:NSMakeSize(1, 1)]).get() hotSpot:NSZeroPoint]);
         break;
 
     case Cursor::NotAllowed:
@@ -212,16 +190,10 @@ void Cursor::ensurePlatformCursor() const
 
     case Cursor::ZoomIn:
         m_platformCursor = wkCursor("ZoomIn");
-        if (m_platformCursor)
-            break;
-        m_platformCursor = createNamedCursor("zoomInCursor", 7, 7);
         break;
 
     case Cursor::ZoomOut:
         m_platformCursor = wkCursor("ZoomOut");
-        if (m_platformCursor)
-            break;
-        m_platformCursor = createNamedCursor("zoomOutCursor", 7, 7);
         break;
 
     case Cursor::Grab:

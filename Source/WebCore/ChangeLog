@@ -1,3 +1,46 @@
+2014-11-11  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] WebCore includes unused cursor image resources
+        https://bugs.webkit.org/show_bug.cgi?id=138605
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/aliasCursor.png: Removed.
+        * Resources/cellCursor.png: Removed.
+        * Resources/contextMenuCursor.png: Removed.
+        * Resources/copyCursor.png: Removed.
+        * Resources/eastResizeCursor.png: Removed.
+        * Resources/eastWestResizeCursor.png: Removed.
+        * Resources/helpCursor.png: Removed.
+        * Resources/linkCursor.png: Removed.
+        * Resources/moveCursor.png: Removed.
+        * Resources/noDropCursor.png: Removed.
+        * Resources/noneCursor.png: Removed.
+        * Resources/northEastResizeCursor.png: Removed.
+        * Resources/northEastSouthWestResizeCursor.png: Removed.
+        * Resources/northResizeCursor.png: Removed.
+        * Resources/northSouthResizeCursor.png: Removed.
+        * Resources/northWestResizeCursor.png: Removed.
+        * Resources/northWestSouthEastResizeCursor.png: Removed.
+        * Resources/progressCursor.png: Removed.
+        * Resources/southEastResizeCursor.png: Removed.
+        * Resources/southResizeCursor.png: Removed.
+        * Resources/southWestResizeCursor.png: Removed.
+        * Resources/verticalTextCursor.png: Removed.
+        * Resources/waitCursor.png: Removed.
+        * Resources/westResizeCursor.png: Removed.
+        * Resources/zoomInCursor.png: Removed.
+        * Resources/zoomOutCursor.png: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed references to the above files.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor): For Help, Cell, ZoomIn and ZoomOut, don’t check
+        for a nil return value from wkCursor(), which can’t occur in any supported configuration.
+        For None, create a cursor with an empty NSImage instead of loading a transparent image from
+        the file system.
+        (WebCore::createNamedCursor): Deleted.
+
 2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r175844.
