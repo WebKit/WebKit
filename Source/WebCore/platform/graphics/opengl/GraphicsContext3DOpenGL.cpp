@@ -44,6 +44,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
+#if USE(ACCELERATE)
+#include <Accelerate/Accelerate.h>
+#endif
+
 #if PLATFORM(IOS)
 #import <OpenGLES/ES2/glext.h>
 // From <OpenGLES/glext.h>
@@ -65,7 +69,32 @@ void GraphicsContext3D::releaseShaderCompiler()
 
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
-    ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
+    // NVIDIA drivers have a bug where calling readPixels in BGRA can return the wrong values for the alpha channel when the alpha is off for the context.
+    if (!m_attrs.alpha && getExtensions()->isNVIDIA()) {
+        ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+#if USE(ACCELERATE)
+        vImage_Buffer src;
+        src.height = height;
+        src.width = width;
+        src.rowBytes = width * 4;
+        src.data = pixels;
+
+        vImage_Buffer dest;
+        dest.height = height;
+        dest.width = width;
+        dest.rowBytes = width * 4;
+        dest.data = pixels;
+
+        // Swap pixel channels from RGBA to BGRA.
+        const uint8_t map[4] = { 2, 1, 0, 3 };
+        vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
+#else
+        int totalBytes = width * height * 4;
+        for (int i = 0; i < totalBytes; i += 4)
+            std::swap(pixels[i], pixels[i + 2]);
+#endif
+    } else
+        ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
 }
 
 void GraphicsContext3D::validateAttributes()

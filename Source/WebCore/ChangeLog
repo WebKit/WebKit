@@ -1,3 +1,24 @@
+2014-10-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Style fix following r174855.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+
+2014-10-16  Roger Fong  <roger_fong@apple.com>
+
+        Calling glReadPixels with BGRA format on an NVIDIA machine with an opaque context returns the wrong alpha values.
+        https://bugs.webkit.org/show_bug.cgi?id=137793.
+        <rdar://problem/15408133>
+
+        Reviewed by Dean Jackson.
+
+        This fixes conformance test context/context-attribute-preserve-drawing-buffer.html.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+        On an NVIDIA machine, when the context has alpha turned off, call glReadPixels with RGBA format and then convert to RGBA.
+
 2014-10-16  Adrien Destugues  <pulkomandy@gmail.com>
 
         Missing RefPtr.release() calls in TextureMapper
