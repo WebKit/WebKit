@@ -121,9 +121,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(TOUCH_EVENTS)
     , m_hasTouchEventHandler(false)
 #endif
-    // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType and
-    // its shadow subtree, just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
-    , m_inputType(createdByParser ? nullptr : InputType::createText(*this))
+    , m_inputType(InputType::createText(*this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
     setHasCustomStyleResolveCallbacks();
@@ -131,10 +129,8 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
 
 PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
-    bool shouldCreateShadowRootLazily = createdByParser;
     RefPtr<HTMLInputElement> inputElement = adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
-    if (!shouldCreateShadowRootLazily)
-        inputElement->ensureUserAgentShadowRoot();
+    inputElement->ensureUserAgentShadowRoot();
     return inputElement.release();
 }
 
@@ -436,7 +432,6 @@ void HTMLInputElement::setType(const AtomicString& type)
 
 void HTMLInputElement::updateType()
 {
-    ASSERT(m_inputType);
     auto newType = InputType::create(*this, fastGetAttribute(typeAttr));
     bool hadType = m_hasType;
     m_hasType = true;
@@ -461,6 +456,17 @@ void HTMLInputElement::updateType()
     m_inputType = WTF::move(newType);
     m_inputType->createShadowSubtree();
     updateInnerTextElementEditability();
+
+#if ENABLE(TOUCH_EVENTS)
+    bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
+    if (hasTouchEventHandler != m_hasTouchEventHandler) {
+        if (hasTouchEventHandler)
+            document().didAddTouchEventHandler(this);
+        else
+            document().didRemoveTouchEventHandler(this);
+        m_hasTouchEventHandler = hasTouchEventHandler;
+    }
+#endif
 
     setNeedsWillValidateCheck();
 
@@ -496,23 +502,6 @@ void HTMLInputElement::updateType()
         if (const Attribute* align = findAttributeByName(alignAttr))
             attributeChanged(alignAttr, nullAtom, align->value());
     }
-
-    runPostTypeUpdateTasks();
-}
-
-inline void HTMLInputElement::runPostTypeUpdateTasks()
-{
-    ASSERT(m_inputType);
-#if ENABLE(TOUCH_EVENTS)
-    bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
-    if (hasTouchEventHandler != m_hasTouchEventHandler) {
-        if (hasTouchEventHandler)
-            document().didAddTouchEventHandler(this);
-        else
-            document().didRemoveTouchEventHandler(this);
-        m_hasTouchEventHandler = hasTouchEventHandler;
-    }
-#endif
 
     if (renderer())
         setNeedsStyleRecalc(ReconstructRenderTree);
@@ -607,35 +596,8 @@ void HTMLInputElement::collectStyleForPresentationAttribute(const QualifiedName&
         HTMLTextFormControlElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-inline void HTMLInputElement::ensureInputType()
-{
-    ASSERT(m_parsingInProgress);
-    if (m_inputType)
-        return;
-
-    if (!hasAttribute(typeAttr)) {
-        m_inputType = InputType::createText(*this);
-        ensureUserAgentShadowRoot();
-        return;
-    }
-
-    m_hasType = true;
-    m_inputType = InputType::create(*this, fastGetAttribute(typeAttr));
-    ensureUserAgentShadowRoot();
-    registerForSuspensionCallbackIfNeeded();
-    runPostTypeUpdateTasks();
-}
-
 void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (m_parsingInProgress) {
-        // A lot of the code below requires m_inputType to be initialized so make sure we do.
-        // By the time parseAttribute() is called during parsing anyway, all attributes have
-        // been set on the element already so there is no point in delaying m_inputType
-        // initialization further.
-        ensureInputType();
-    }
-
     if (name == nameAttr) {
         removeFromRadioButtonGroup();
         m_name = value;
@@ -741,12 +703,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else
         HTMLTextFormControlElement::parseAttribute(name, value);
     m_inputType->attributeChanged();
-}
-
-void HTMLInputElement::parserDidFinishParsingAttributes()
-{
-    ASSERT(m_inputType || !hasAttributes());
-    ensureInputType();
 }
 
 void HTMLInputElement::finishParsingChildren()
