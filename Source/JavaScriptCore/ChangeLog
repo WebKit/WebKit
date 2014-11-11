@@ -1,3 +1,20 @@
+2014-10-31  Andreas Kling  <akling@apple.com>
+
+        Make writes to RegExpObject.lastIndex cacheable.
+        <https://webkit.org/b/138255>
+
+        Reviewed by Geoffrey Garen.
+
+        We were neglecting to IC the puts to RegExpObject.lastIndex on Octane/regexp,
+        and ended up spending 4.5% of a time profile in operationPutByIdNonStrict.
+
+        ~3% progression on Octane/regexp.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectSetLastIndexStrict):
+        (JSC::regExpObjectSetLastIndexNonStrict):
+        (JSC::RegExpObject::put):
+
 2014-10-30  Andreas Kling  <akling@apple.com>
 
         Unreviewed assertion fix.
