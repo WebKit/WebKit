@@ -1,3 +1,16 @@
+2014-10-28  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Cast std::chrono::duration.count() to int64_t in ArgumentCoder
+        https://bugs.webkit.org/show_bug.cgi?id=136981
+
+        Reviewed by Alexey Proskuryakov.
+
+        Explicitly cast the return value of std::chrono::duration.count() to
+        a fixed-size interger type, which prevents compilation error when
+        the return value type matches neither int32_t nor int64_t.
+
+        * Platform/IPC/ArgumentCoders.h:
+
 2014-10-27  Chris Dumez  <cdumez@apple.com>
 
         Use separate HashMaps for common and uncommon headers in HTTPHeaderMap

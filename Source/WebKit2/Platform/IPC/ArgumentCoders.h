@@ -107,15 +107,16 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
 template<typename Rep, typename Period> struct ArgumentCoder<std::chrono::duration<Rep, Period>> {
     static void encode(ArgumentEncoder& encoder, const std::chrono::duration<Rep, Period>& duration)
     {
-        encoder << duration.count();
+        static_assert(std::is_integral<Rep>::value && std::is_signed<Rep>::value && sizeof(Rep) <= sizeof(int64_t), "Serialization of this Rep type is not supported yet. Only signed integer type which can be fit in an int64_t is currently supported.");
+        encoder << static_cast<int64_t>(duration.count());
     }
 
     static bool decode(ArgumentDecoder& decoder, std::chrono::duration<Rep, Period>& result)
     {
-        Rep count;
+        int64_t count;
         if (!decoder.decode(count))
             return false;
-        result = std::chrono::duration<Rep, Period>(count);
+        result = std::chrono::duration<Rep, Period>(static_cast<Rep>(count));
         return true;
     }
 };
