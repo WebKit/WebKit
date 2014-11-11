@@ -1,3 +1,22 @@
+2014-10-12  Mike West  <mkwst@chromium.org>
+
+        Referrer Policy: Update <meta name="referrer"> values to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=137635
+
+        Reviewed by Jochen Eisinger.
+
+        * http/tests/security/referrer-policy-https-no-referrer-expected.txt: Added.
+        * http/tests/security/referrer-policy-https-no-referrer-when-downgrade-expected.txt: Added.
+        * http/tests/security/referrer-policy-https-no-referrer-when-downgrade.html: Added.
+        * http/tests/security/referrer-policy-https-no-referrer.html: Added.
+        * http/tests/security/referrer-policy-https-unsafe-url-expected.txt: Added.
+        * http/tests/security/referrer-policy-https-unsafe-url.html: Added.
+        * http/tests/security/referrer-policy-invalid-expected.txt: Update the error message with new keywords.
+        * http/tests/security/referrer-policy-no-referrer-expected.txt: Added.
+        * http/tests/security/referrer-policy-no-referrer-when-downgrade-expected.txt: Added.
+        * http/tests/security/referrer-policy-no-referrer-when-downgrade.html: Added.
+        * http/tests/security/referrer-policy-no-referrer.html: Added.
+
 2014-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderMathMLUnderOver adds spacing to the child operator indefinitely when zooming or resizing the window.

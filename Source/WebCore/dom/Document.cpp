@@ -3040,17 +3040,19 @@ void Document::processReferrerPolicy(const String& policy)
 {
     ASSERT(!policy.isNull());
 
-    if (equalIgnoringCase(policy, "never"))
-        m_referrerPolicy = ReferrerPolicyNever;
-    else if (equalIgnoringCase(policy, "always"))
-        m_referrerPolicy = ReferrerPolicyAlways;
+    // Note that we're supporting both the standard and legacy keywords for referrer
+    // policies, as defined by http://www.w3.org/TR/referrer-policy/#referrer-policy-delivery-meta
+    if (equalIgnoringCase(policy, "no-referrer") || equalIgnoringCase(policy, "never"))
+        setReferrerPolicy(ReferrerPolicyNever);
+    else if (equalIgnoringCase(policy, "unsafe-url") || equalIgnoringCase(policy, "always"))
+        setReferrerPolicy(ReferrerPolicyAlways);
     else if (equalIgnoringCase(policy, "origin"))
-        m_referrerPolicy = ReferrerPolicyOrigin;
-    else if (equalIgnoringCase(policy, "default"))
-        m_referrerPolicy = ReferrerPolicyDefault;
+        setReferrerPolicy(ReferrerPolicyOrigin);
+    else if (equalIgnoringCase(policy, "no-referrer-when-downgrade") || equalIgnoringCase(policy, "default"))
+        setReferrerPolicy(ReferrerPolicyDefault);
     else {
-        addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, "Failed to set referrer policy: The value '" + policy + "' is not one of 'always', 'default', 'never', or 'origin'. Defaulting to 'never'.");
-        m_referrerPolicy = ReferrerPolicyNever;
+        addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, "Failed to set referrer policy: The value '" + policy + "' is not one of 'no-referrer', 'origin', 'no-referrer-when-downgrade', or 'unsafe-url'. Defaulting to 'no-referrer'.");
+        setReferrerPolicy(ReferrerPolicyNever);
     }
 }
 
