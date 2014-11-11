@@ -734,7 +734,6 @@ _WKGetCFURLResponseMIMEType
 __ZN20WebFrameLoaderClient38dispatchDidLoadResourceFromMemoryCacheEPN7WebCore14DocumentLoaderERKNS0_15ResourceRequestERKNS0_16ResourceResponseEi
 -[WebFrame(WebInternal) _characterRangeAtPoint:]
 _WKCreateCTTypesetterWithUniCharProviderAndOptions
-_WKCTRunGetInitialAdvance
 -[WebView(WebViewEditing) selectedDOMRange]
 -[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]
 -[WebHTMLView shouldDelayWindowOrderingForEvent:]

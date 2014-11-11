@@ -945,7 +945,6 @@ _WKPageCanGoForward
 __ZNK6WebKit12WebPageProxy12canGoForwardEv
 __ZN6WebKit18WebBackForwardList11forwardItemEv
 _WKCreateCTLineWithUniCharProvider
-_WKCTRunGetInitialAdvance
 _WKCreateCTTypesetterWithUniCharProviderAndOptions
 _WKSetCGFontRenderingMode
 -[WKView(Private) updateLayer]

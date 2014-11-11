@@ -2150,7 +2150,6 @@ _wkCGContextIsPDFContext
 _wkCGContextResetClip
 _wkCGPathAddRoundedRect
 _wkCGPatternCreateWithImageAndTransform
-_wkCTRunGetInitialAdvance
 _wkCopyCFURLResponseSuggestedFilename
 _wkCopyCONNECTProxyResponse
 _wkCopyHTTPCookieStorage

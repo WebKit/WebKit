@@ -139,7 +139,6 @@ void InitWebCoreSystemInterface(void)
     INIT(IOSurfaceContextCreateImage);
 #endif
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
-    INIT(CTRunGetInitialAdvance);
 #if !PLATFORM(IOS)
     INIT(RecommendedScrollerStyle);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
