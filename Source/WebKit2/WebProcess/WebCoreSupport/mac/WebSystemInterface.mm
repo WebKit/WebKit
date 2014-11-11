@@ -49,7 +49,6 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyCONNECTProxyResponse);
         INIT(CopyNSURLResponseStatusLine);
         INIT(CopyNSURLResponseCertificateChain);
-        INIT(CreateCTLineWithUniCharProvider);
 #if !PLATFORM(IOS)
         INIT(DrawBezeledTextArea);
         INIT(DrawCapsLockIndicator);
@@ -61,7 +60,6 @@ void InitWebCoreSystemInterface(void)
         INIT(GetFontInLanguageForCharacter);
         INIT(GetFontInLanguageForRange);
 #endif
-        INIT(GetVerticalGlyphsForCharacters);
         INIT(GetHTTPRequestPriority);
         INIT(GetNSURLResponseLastModifiedDate);
 #if !PLATFORM(IOS)
@@ -128,7 +126,6 @@ void InitWebCoreSystemInterface(void)
         INIT(IOSurfaceContextCreate);
         INIT(IOSurfaceContextCreateImage);
 #endif // !PLATFORM(IOS_SIMULATOR)
-        INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
 #if !PLATFORM(IOS)
         INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);

@@ -29,6 +29,7 @@
 
 #import "BlockExceptions.h"
 #import "Color.h"
+#import "CoreTextSPI.h"
 #import "FloatRect.h"
 #import "Font.h"
 #import "FontCache.h"
@@ -492,7 +493,7 @@ bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters
     RetainPtr<CGFontRef> cgFont = adoptCF(CTFontCopyGraphicsFont(platformData().ctFont(), 0));
 
     ProviderInfo info = { characters, length, getCFStringAttributes(0, platformData().orientation()) };
-    RetainPtr<CTLineRef> line = adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
+    RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, 0, &info));
 
     CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
     CFIndex runCount = CFArrayGetCount(runArray);

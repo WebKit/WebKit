@@ -2156,8 +2156,6 @@ _wkCopyHTTPCookieStorage
 _wkCopyNSURLResponseCertificateChain
 _wkCopyNSURLResponseStatusLine
 _wkCopyRequestWithStorageSession
-_wkCreateCTLineWithUniCharProvider
-_wkCreateCTTypesetterWithUniCharProviderAndOptions
 _wkCreatePrivateStorageSession
 _wkDeleteAllHTTPCookies
 _wkDeleteHTTPCookie
@@ -2451,7 +2449,6 @@ _wkGetHyphenationLocationBeforeIndex
 _wkGetNSEventKeyChar
 _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseMustRevalidate
-_wkGetVerticalGlyphsForCharacters
 _wkGetWheelEventDeltas
 _wkHitTestMediaUIPart
 _wkMeasureMediaUIPart
@@ -2863,7 +2860,6 @@ _wkGetScreenScaleFactor
 _wkGetScreenSize
 _wkGetUserAgent
 _wkGetVendorNameForNavigator
-_wkGetVerticalGlyphsForCharacters
 _wkIsGB18030ComplianceRequired
 _wkIsOptimizedFullscreenSupported
 _wkSetLayerContentsScale

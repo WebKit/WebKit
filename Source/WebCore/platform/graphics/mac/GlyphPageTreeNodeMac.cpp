@@ -30,6 +30,7 @@
 #include "GlyphPageTreeNode.h"
 
 #include "CGFontUnicodeSupportSPI.h"
+#include "CoreTextSPI.h"
 #include "Font.h"
 #include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
@@ -83,9 +84,9 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                 haveGlyphs = true;
             }
         }
-    } else if (!fontData->platformData().isCompositeFontReference() && ((fontData->platformData().widthVariant() == RegularWidth) ? wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
+    } else if (!fontData->platformData().isCompositeFontReference() && ((fontData->platformData().widthVariant() == RegularWidth) ? CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
                : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength))) {
-        // When buffer consists of surrogate pairs, wkGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
+        // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
         // place the glyphs at indices corresponding to the first character of each pair.
         unsigned glyphStep = bufferLength / length;
         for (unsigned i = 0; i < length; ++i) {

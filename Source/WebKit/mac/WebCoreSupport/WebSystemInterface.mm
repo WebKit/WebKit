@@ -120,7 +120,6 @@ void InitWebCoreSystemInterface(void)
     INIT(QTClearMediaDownloadCache);
 #endif
 
-    INIT(GetVerticalGlyphsForCharacters);
 #if PLATFORM(IOS)
     INIT(ExecutableWasLinkedOnOrAfterIOSVersion);
     INIT(GetDeviceClass);
@@ -132,13 +131,10 @@ void InitWebCoreSystemInterface(void)
     INIT(GetMediaUIImageData);
 #endif
 
-    INIT(CreateCTLineWithUniCharProvider);
-
 #if !PLATFORM(IOS_SIMULATOR)
     INIT(IOSurfaceContextCreate);
     INIT(IOSurfaceContextCreateImage);
 #endif
-    INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
 #if !PLATFORM(IOS)
     INIT(RecommendedScrollerStyle);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);

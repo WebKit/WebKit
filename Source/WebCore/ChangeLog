@@ -1,5 +1,25 @@
 2014-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Finish moving CTFontGetVerticalGlyphsForCharacters and CTLineCreateWithUniCharProvider out from WKSI
+        https://bugs.webkit.org/show_bug.cgi?id=138623
+
+        Reviewed by Geoff Garen.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/spi/cocoa/CoreTextSPI.h:
+
+2014-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Unreviewed Mountain Lion build fix
 
         * platform/spi/cocoa/CoreTextSPI.h:

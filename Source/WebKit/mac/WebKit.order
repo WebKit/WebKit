@@ -733,7 +733,6 @@ _WKSetNSURLRequestShouldContentSniff
 _WKGetCFURLResponseMIMEType
 __ZN20WebFrameLoaderClient38dispatchDidLoadResourceFromMemoryCacheEPN7WebCore14DocumentLoaderERKNS0_15ResourceRequestERKNS0_16ResourceResponseEi
 -[WebFrame(WebInternal) _characterRangeAtPoint:]
-_WKCreateCTTypesetterWithUniCharProviderAndOptions
 -[WebView(WebViewEditing) selectedDOMRange]
 -[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]
 -[WebHTMLView shouldDelayWindowOrderingForEvent:]
@@ -1530,7 +1529,6 @@ __ZN7WebCore17FrameLoaderClient13didChangeNameERKN3WTF6StringE
 -[WebBackForwardList addItem:]
 __Z4coreP14WebHistoryItem
 -[WebBackForwardList goToItem:]
-_WKCreateCTLineWithUniCharProvider
 -[WebInspector show:]
 -[WebInspector showWindow]
 __ZN18WebInspectorClient21openInspectorFrontendEPN7WebCore19InspectorControllerE
@@ -2313,8 +2311,6 @@ __ZN20WebContextMenuClient10isSpeakingEv
 -[WebHTMLView(WebNSTextInputSupport) selectedRange]
 -[WebFrame(WebPrivate) _selectedNSRange]
 -[WebFrameView _pageHorizontally:]
-_WKGetVerticalGlyphsForCharacters
-_CTFontGetVerticalGlyphsForCharacters
 __ZThn8_N15WebEditorClient17getGuessesForWordERKN3WTF6StringES3_RNS0_6VectorIS1_Lm0ENS0_15CrashOnOverflowEEE
 __ZN15WebEditorClient17getGuessesForWordERKN3WTF6StringES3_RNS0_6VectorIS1_Lm0ENS0_15CrashOnOverflowEEE
 __ZN3WTF6VectorINS_6StringELm0ENS_15CrashOnOverflowEE14shrinkCapacityEm
