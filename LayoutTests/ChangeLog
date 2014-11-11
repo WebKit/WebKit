@@ -1,3 +1,13 @@
+2014-10-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: input type=hidden is being exposed when aria-hidden=false
+        https://bugs.webkit.org/show_bug.cgi?id=138106
+
+        Reviewed by Benjamin Poulain.
+
+        * accessibility/input-type-hidden-in-aria-hidden-false-expected.txt: Added.
+        * accessibility/input-type-hidden-in-aria-hidden-false.html: Added.
+
 2014-10-29  Chris Dumez  <cdumez@apple.com>
 
         Crash in CachedRawResource::canReuse() when reloading http://dnd.wizards.com/dungeons-and-dragons/story

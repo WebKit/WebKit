@@ -1,3 +1,20 @@
+2014-10-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: input type=hidden is being exposed when aria-hidden=false
+        https://bugs.webkit.org/show_bug.cgi?id=138106
+
+        Reviewed by Benjamin Poulain.
+
+        If an input type=hidden was inside an aria-hidden=false, it would appear because
+        the lack of a RenderObject behind that object was not blocking its adoption into the AX tree.
+        We should explicity check for whether the type is hidden and then return an appropriate role. 
+
+        Test: accessibility/input-type-hidden-in-aria-hidden-false.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::computeAccessibilityIsIgnored):
+
 2014-10-29  Chris Dumez  <cdumez@apple.com>
 
         Crash in CachedRawResource::canReuse() when reloading http://dnd.wizards.com/dungeons-and-dragons/story
