@@ -195,15 +195,18 @@ using namespace WebKit;
         return;
 
     if (_type == kWKActionMenuDataDetectedItem) {
-        if (menu.numberOfItems == 1)
+        if (menu.numberOfItems == 1) {
+            _page->clearSelection();
             [self _showTextIndicator];
-        else
+        } else
             _page->selectLastActionMenuRange();
         return;
     }
 
-    if (![self isMenuForTextContent])
+    if (![self isMenuForTextContent]) {
+        _page->clearSelection();
         return;
+    }
 
     // Action menus for text should highlight the text so that it is clear what the action menu actions
     // will apply to. If the text is already selected, the menu will use the existing selection.

@@ -1,5 +1,22 @@
 2014-11-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175753. <rdar://problem/18892787>
+
+    2014-11-07  Beth Dakin  <bdakin@apple.com>
+    
+            Invoking an action menu should dismiss existing selection
+            https://bugs.webkit.org/show_bug.cgi?id=138496
+            -and corresponding-
+            rdar://problem/18892787
+    
+            Reviewed by Tim Horton.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+    
+
+2014-11-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175732. <rdar://problem/18889231>
 
     2014-11-06  Conrad Shultz  <conrad_shultz@apple.com>
