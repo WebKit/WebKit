@@ -335,6 +335,14 @@ String XMLHttpRequest::responseType()
     return "";
 }
 
+String XMLHttpRequest::responseURL() const
+{
+    URL responseURL(m_response.url());
+    responseURL.removeFragmentIdentifier();
+
+    return responseURL.string();
+}
+
 void XMLHttpRequest::setLastSendLineAndColumnNumber(unsigned lineNumber, unsigned columnNumber)
 {
     m_lastSendLineNumber = lineNumber;

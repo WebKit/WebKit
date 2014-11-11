@@ -1,0 +1,49 @@
+Test XMLHttpRequest responseURL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+req.readyState = 0: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi
+req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi
+req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi
+PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi"
+req.readyState = 0: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:7/
+req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:7/
+req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:7/
+PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:7/"
+req.readyState = 0: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:22/
+req.readyState = 3: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:22/
+req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:22/
+PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/redirect.php?url=http://localhost:22/"
+req.readyState = 0: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 1: responseURL = 
+PASS responseURL is ""
+req.readyState = 2: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect-cors.php
+req.readyState = 4: responseURL = http://127.0.0.1:8000/xmlhttprequest/resources/redirect-cors.php
+PASS responseURL is "http://127.0.0.1:8000/xmlhttprequest/resources/redirect-cors.php"
+req.readyState = 1: responseURL = 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

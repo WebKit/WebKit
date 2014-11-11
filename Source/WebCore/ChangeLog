@@ -1,3 +1,22 @@
+2014-10-22  Shivakumar JM  <shiva.jm@samsung.com>
+
+        XMLHttpRequest should support attribute responseURL as per latest XHR spec.
+        https://bugs.webkit.org/show_bug.cgi?id=136938
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: http/tests/xmlhttprequest/basic-auth-responseURL.html
+               http/tests/xmlhttprequest/cross-origin-redirect-responseURL.html
+               http/tests/xmlhttprequest/redirect-credentials-responseURL.html
+               http/tests/xmlhttprequest/xmlhttprequest-responseURL.html
+
+        XMLHttpRequest should support attribute responseURL
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseURL):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2014-10-22  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Match spec for font-weight: bolder|lighter
