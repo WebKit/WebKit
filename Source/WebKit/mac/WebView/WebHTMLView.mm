@@ -5962,6 +5962,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #endif
 }
 
+#if PLATFORM(MAC)
 - (void)_changeSpellingToWord:(NSString *)newWord
 {
     if (![self _canEdit])
@@ -5979,6 +5980,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if ([self _shouldReplaceSelectionWithText:newWord givenAction:WebViewInsertActionPasted])
         [[self _frame] _replaceSelectionWithText:newWord selectReplacement:YES smartReplace:NO];
 }
+#endif
 
 @end
 
