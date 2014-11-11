@@ -1,5 +1,20 @@
 2014-11-10  Jonathan Wells  <jonowells@apple.com>
 
+        Web Inspector: Update Esprima, remove WebInspector.Esprima global.
+        https://bugs.webkit.org/show_bug.cgi?id=138579
+
+        Reviewed by Timothy Hatcher.
+
+        Update esprima.js file to be unchanged by removing WebInspector.Esprima global object. Move esprima.js include
+        so that all external libraries load before the WebInspector namespace is declared in the combined Main.js.
+
+        * UserInterface/External/Esprima/esprima.js: File updated, no changes made.
+        * UserInterface/Main.html: esprima.js script tag moved up with other externals.
+        * UserInterface/Models/ScriptSyntaxTree.js: WebInspector.Esprima changed to esprima
+        (WebInspector.ScriptSyntaxTree):
+
+2014-11-10  Jonathan Wells  <jonowells@apple.com>
+
         Web Inspector: Add infrastructure for eslint based static analyzer
         https://bugs.webkit.org/show_bug.cgi?id=137890
 

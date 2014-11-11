@@ -31,7 +31,7 @@ WebInspector.ScriptSyntaxTree = function(sourceText, script)
     this._script = script;
 
     try {
-        var esprimaSyntaxTree = WebInspector.Esprima.parse(sourceText, {range: true});
+        var esprimaSyntaxTree = esprima.parse(sourceText, {range: true});
         this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
         this._parsedSuccessfully = true;
     } catch (error) {

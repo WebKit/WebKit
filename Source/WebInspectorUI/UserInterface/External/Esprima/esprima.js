@@ -31,12 +31,32 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// WebKit Modifications:
-// - The only edit made to this file is the use 'WebInspector.Esprima' as the 'exports' object for esprima.
-//   The code that determines the context esprima is loaded in (node.js, the browser, etc.) has been replaced with a reference to 'WebInspector.Esprima'.
-WebInspector.Esprima = {};
+/*jslint bitwise:true plusplus:true */
+/*global esprima:true, define:true, exports:true, window: true,
+throwErrorTolerant: true,
+throwError: true, generateStatement: true, peek: true,
+parseAssignmentExpression: true, parseBlock: true, parseExpression: true,
+parseFunctionDeclaration: true, parseFunctionExpression: true,
+parseFunctionSourceElements: true, parseVariableIdentifier: true,
+parseLeftHandSideExpression: true,
+parseUnaryExpression: true,
+parseStatement: true, parseSourceElement: true */
 
-(function (exports) {
+(function (root, factory) {
+    'use strict';
+
+    // Universal Module Definition (UMD) to support AMD, CommonJS/Node.js,
+    // Rhino, and plain browser loading.
+
+    /* istanbul ignore next */
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], factory);
+    } else if (typeof exports !== 'undefined') {
+        factory(exports);
+    } else {
+        factory((root.esprima = {}));
+    }
+}(this, function (exports) {
     'use strict';
 
     var Token,
@@ -3732,4 +3752,5 @@ WebInspector.Esprima = {};
         return types;
     }());
 
-})(WebInspector.Esprima);
+}));
+/* vim: set sw=4 ts=4 et tw=80 : */
