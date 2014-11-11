@@ -1,5 +1,23 @@
 2014-11-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175704. <rdar://problem/18869036>
+
+    2014-11-06  Tim Horton  <timothy_horton@apple.com>
+    
+            Only provide a single result to the action menu DDActionContext
+            https://bugs.webkit.org/show_bug.cgi?id=138469
+            <rdar://problem/18869036>
+    
+            Reviewed by Anders Carlsson.
+    
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::scanForDataDetectedItems):
+            Only provide one result; secondary results can be extremely unrelated to
+            the primary one and confuse Data Detectors further down the line.
+    
+
+2014-11-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175702. <rdar://problem/18872825>
 
     2014-11-06  Tim Horton  <timothy_horton@apple.com>
