@@ -30,7 +30,6 @@
 #include "SelectionSubtreeRoot.h"
 #include <memory>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "SelectionRectGatherer.h"
