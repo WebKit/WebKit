@@ -1,3 +1,19 @@
+2014-10-16  Adrien Destugues  <pulkomandy@gmail.com>
+
+        Missing RefPtr.release() calls in TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=137777
+
+        Reviewed by Chris Dumez.
+
+        No new tests: no functional change, cleanup/optimization.
+
+        Avoids useless ref/deref cycle when returning from functions.
+
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::acquireTextureFromPool):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+
 2014-10-15  Andrei Bucur  <abucur@adobe.com>
 
         ASSERTION  FAILED in WebCore::RenderFlowThread::getRegionRangeForBox

@@ -385,7 +385,7 @@ PassRefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapp
         m_state.maskLayer->applyMask(options);
     surface = surface->applyFilters(options.textureMapper, m_currentFilters);
     options.textureMapper->bindSurface(surface.get());
-    return surface;
+    return surface.release();
 }
 
 static void commitSurface(const TextureMapperPaintOptions& options, PassRefPtr<BitmapTexture> surface, const IntRect& rect, float opacity)
