@@ -44,6 +44,7 @@
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKitSystemInterface.h>
