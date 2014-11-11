@@ -1,3 +1,16 @@
+2014-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Short-circuit repaints with empty rects
+        https://bugs.webkit.org/show_bug.cgi?id=138234
+
+        Reviewed by Zalan Bujtas.
+        
+        Repaints with an empty rectangle are common enough that it's worth
+        short-circuiting them.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+
 2014-10-24  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Video resolution changes trigger a crash in the TextureMapper

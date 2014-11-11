@@ -1231,6 +1231,9 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
 
 void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
 {
+    if (r.isEmpty())
+        return;
+
     if (!repaintContainer) {
         view().repaintViewRectangle(r);
         return;
