@@ -1,3 +1,27 @@
+2014-11-10  Andreas Kling  <akling@apple.com>
+
+        The JIT should cache property lookup misses.
+        <https://webkit.org/b/135578>
+
+        Add a JSRegress test for caching of property lookup misses.
+        There are three subtests:
+
+            1. Pure speed test.
+            2. Test for when a property previously cached as missing suddenly
+               appears on the object.
+            3. Same as (2), but it appears on the prototype.
+
+        The test runs ~5.5x faster with the optimization.
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/script-tests/undefined-property-access.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * js/regress/undefined-property-access-expected.txt: Added.
+        * js/regress/undefined-property-access.html: Added.
+
 2014-11-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test that complext and fast text codepaths measure the same width

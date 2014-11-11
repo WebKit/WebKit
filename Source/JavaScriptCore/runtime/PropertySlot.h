@@ -78,6 +78,7 @@ public:
     JSValue getValue(ExecState*, unsigned propertyName) const;
 
     bool isCacheable() const { return m_cacheability == CachingAllowed && m_offset != invalidOffset; }
+    bool isUnset() const { return m_propertyType == TypeUnset; }
     bool isValue() const { return m_propertyType == TypeValue; }
     bool isAccessor() const { return m_propertyType == TypeGetter; }
     bool isCustom() const { return m_propertyType == TypeCustom; }

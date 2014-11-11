@@ -47,7 +47,8 @@ public:
         SimpleStub, // This is a stub.
         WatchedStub,
         Getter,
-        CustomGetter
+        CustomGetter,
+        SimpleMiss,
     };
     
     GetByIdAccess()

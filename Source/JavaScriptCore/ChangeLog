@@ -1,3 +1,41 @@
+2014-11-10  Andreas Kling  <akling@apple.com>
+
+        The JIT should cache property lookup misses.
+        <https://webkit.org/b/135578>
+
+        Add support for inline caching of missed property lookups.
+        Previously this would banish us to C++ slow path.
+
+        It's implemented as a simple GetById cache that returns jsUndefined()
+        as long as the Structure chain check passes. There's no DFG exploitation
+        of this knowledge in this patch.
+
+        Test: js/regress/undefined-property-access.js (~5.5x speedup)
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/PolymorphicGetByIdList.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+
+            Add GetByIdAccess::SimpleMiss so we can communicate to the DFG that
+            the access has been cached.
+
+        * jit/Repatch.cpp:
+        (JSC::toString):
+        (JSC::kindFor):
+        (JSC::generateByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+
+            Added a GetUndefined stub kind, just a simple "store jsUndefined()" snippet.
+            Use this to cache missed lookups, piggybacking mostly on the GetValue kind.
+
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isUnset):
+
+            Exposed the unset state so PropertySlot can communicate that lookup failed.
+
 2014-11-10  Michael Saboff  <msaboff@apple.com>
 
         Add scope operand to op_create_lexical_environment

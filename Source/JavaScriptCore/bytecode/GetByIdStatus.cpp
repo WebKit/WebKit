@@ -189,6 +189,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
                             locker, profiledBlock, *stub->m_callLinkInfo, callExitSiteData));
                     break;
                 }
+                case GetByIdAccess::SimpleMiss:
                 case GetByIdAccess::CustomGetter:
                 case GetByIdAccess::WatchedStub:{
                     // FIXME: It would be totally sweet to support this at some point in the future.
