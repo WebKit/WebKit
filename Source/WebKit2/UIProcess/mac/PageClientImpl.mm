@@ -689,6 +689,8 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::navigationGestureDidBegin()
 {
+    dismissActionMenuPopovers();
+
 #if WK_API_ENABLED
     if (m_webView)
         NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
