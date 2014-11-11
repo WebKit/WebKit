@@ -186,7 +186,7 @@ using namespace WebKit;
 
 - (BOOL)isMenuForTextContent
 {
-    return _type == kWKActionMenuReadOnlyText || _type == kWKActionMenuEditableText || _type == kWKActionMenuEditableTextWithSuggestions;
+    return _type == kWKActionMenuReadOnlyText || _type == kWKActionMenuEditableText || _type == kWKActionMenuEditableTextWithSuggestions || _type == kWKActionMenuWhitespaceInEditableArea;
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
