@@ -33,7 +33,6 @@
 #include "Counter.h"
 #include "ExceptionCode.h"
 #include "Font.h"
-#include "LayoutUnit.h"
 #include "Node.h"
 #include "Pair.h"
 #include "RGBColor.h"
@@ -58,11 +57,6 @@
 using namespace WTF;
 
 namespace WebCore {
-
-// Max/min values for CSS, needs to slightly smaller/larger than the true max/min values to allow for rounding without overflowing.
-// Subtract two (rather than one) to allow for values to be converted to float and back without exceeding the LayoutUnit::max.
-const int maxValueForCssLength = intMaxForLayoutUnit - 2;
-const int minValueForCssLength = intMinForLayoutUnit + 2;
 
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::UnitTypes unitType)
 {

@@ -1,3 +1,26 @@
+2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Clamp wordSpacing percentage value.
+        https://bugs.webkit.org/show_bug.cgi?id=129350.
+
+        Reviewed by Zalan Bujtas.
+
+        When the CSS wordSpacing property is percentage, its value has to be within the
+        pre-defined min/max values for the CSS length type. This is done the same way
+        the wordSpacing of type <length> is handled.
+
+        Tests: css3/infinite-word-spacing.html.
+
+        Move the definitions of minValueForCssLength and maxValueForCssLength from the
+        .cpp file to the .h file.
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValue.h:
+
+        Clamp the wordSpacing value to minValueForCssLength and maxValueForCssLength when
+        its type is percentage.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyWordSpacing::applyValue):
+
 2014-10-24  Zalan Bujtas  <zalan@apple.com>
 
         Replace INT_MIN/MAX / kFixedPointDenominator with intMin/MaxForLayoutUnit.

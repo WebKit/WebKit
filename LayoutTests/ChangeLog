@@ -1,3 +1,20 @@
+2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Clamp wordSpacing percentage value.
+        https://bugs.webkit.org/show_bug.cgi?id=129350.
+
+        Reviewed by Zalan Bujtas.
+
+        Make sure that setting the CSS style wordSpacing property to very huge percentage
+        value and blending this value with other values for animating key frames does
+        not assert or crash. The expectation is to have this huge value to be clamped to
+        the pre-defined min/max values for the CSS length type. So when blending the clamped
+        value with other wordSpacing values, the result can't be NaN. This should be very
+        similar to the case when it is set to a huge <length> value.
+
+        * css3/infinite-word-spacing-expected.txt: Added.
+        * css3/infinite-word-spacing.html: Added.
+
 2014-10-29  Zalan Bujtas  <zalan@apple.com>
 
         Remove invalid float from RootInlineBox.
