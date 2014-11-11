@@ -40,7 +40,8 @@ class GDBCrashLogGenerator(object):
         self._path_to_driver = path_to_driver
 
     def _get_gdb_output(self, coredump_path):
-        cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', str(self._path_to_driver()), coredump_path]
+        process_name = os.path.join(os.path.dirname(str(self._path_to_driver())), self.name)
+        cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', process_name, coredump_path]
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
         errors = [stderr_line.strip().decode('utf8', 'ignore') for stderr_line in stderr.splitlines()]
@@ -72,7 +73,7 @@ class GDBCrashLogGenerator(object):
         if not crash_log:
             if not log_directory:
                 log_directory = "/path/to/coredumps"
-            core_pattern = os.path.join(log_directory, "core-pid_%p-_-process_%e")
+            core_pattern = os.path.join(log_directory, "core-pid_%p-_-process_%E")
             crash_log = """\
 Coredump %(expected_crash_dump_filename)s not found. To enable crash logs:
 

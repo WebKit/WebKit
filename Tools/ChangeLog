@@ -1,3 +1,19 @@
+2014-11-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] fix up the GDB backtrace report tool
+        https://bugs.webkit.org/show_bug.cgi?id=138564
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._get_crash_log): Match the process name reported by the
+        driver with the GTK port WebProcess executable filename.
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_gdb_output): Invoke gdb for the crashed
+        program.
+        (GDBCrashLogGenerator.generate_crash_log): Use %E in the core
+        pattern to workaround the 16 characters size limit of %e.
+
 2014-11-10  Conrad Shultz  <conrad_shultz@apple.com>
 
         Unreviewed, moved myself to the list of committers.
