@@ -67,6 +67,7 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
+    , m_diskCacheIsDisabledForTesting(false)
     , m_canHandleHTTPSServerTrustEvaluation(true)
 #if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
@@ -161,7 +162,9 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     memoryPressureHandler().setLowMemoryHandler(lowMemoryHandler);
     memoryPressureHandler().install();
 
+    m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
+
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
 #if PLATFORM(MAC) || USE(CFNETWORK)

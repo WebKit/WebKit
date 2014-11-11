@@ -156,6 +156,7 @@ WebProcess::WebProcess()
     , m_inDidClose(false)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
+    , m_diskCacheIsDisabledForTesting(false)
 #if PLATFORM(COCOA)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
     , m_clearResourceCachesDispatchGroup(0)
@@ -306,6 +307,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
 
+    m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
     if (!parameters.languages.isEmpty())

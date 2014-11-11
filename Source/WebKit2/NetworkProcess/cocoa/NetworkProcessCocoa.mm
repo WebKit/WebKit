@@ -67,6 +67,13 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #endif
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
+    // FIXME: Most of what this function does for cache size gets immediately overridden by setCacheModel().
+    // - memory cache size passed from UI process is always ignored;
+    // - disk cache size passed from UI process is effectively a minimum size.
+    // One non-obvious constraint is that we need to use -setSharedURLCache: even in testing mode, to prevent creating a default one on disk later, when some other code touches the cache.
+
+    ASSERT(!m_diskCacheIsDisabledForTesting || !parameters.nsURLCacheDiskCapacity);
+
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 #if PLATFORM(IOS)
@@ -134,10 +141,10 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
         pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
-
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
-    [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
+    if (!m_diskCacheIsDisabledForTesting)
+        [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
 }

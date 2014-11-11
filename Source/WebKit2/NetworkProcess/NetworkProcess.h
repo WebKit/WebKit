@@ -137,6 +137,7 @@ private:
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
+    bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;

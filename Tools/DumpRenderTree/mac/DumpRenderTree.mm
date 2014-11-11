@@ -1088,15 +1088,15 @@ static void prepareConsistentTestingEnvironment()
     [[WebPreferences standardPreferences] setAutosaves:NO];
 
 #if !PLATFORM(IOS)
-    // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
-    [WebPreferences _switchNetworkLoaderToNewTestingSession];
-
-    NSURLCache *sharedCache =
-        [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
+    // +[WebPreferences _switchNetworkLoaderToNewTestingSession] calls +[NSURLCache sharedURLCache], which initializes a default cache on disk.
+    // Making the shared cache memory-only avoids touching the file system.
+    RetainPtr<NSURLCache> sharedCache =
+        adoptNS([[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
                                       diskCapacity:0
-                                          diskPath:[libraryPathForDumpRenderTree() stringByAppendingPathComponent:@"URLCache"]];
-    [NSURLCache setSharedURLCache:sharedCache];
-    [sharedCache release];
+                                          diskPath:nil]);
+    [NSURLCache setSharedURLCache:sharedCache.get()];
+
+    [WebPreferences _switchNetworkLoaderToNewTestingSession];
 
     adjustFonts();
     registerMockScrollbars();

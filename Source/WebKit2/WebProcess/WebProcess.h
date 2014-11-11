@@ -315,6 +315,7 @@ private:
 
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
+    bool m_diskCacheIsDisabledForTesting;
 
 #if PLATFORM(COCOA)
     mach_port_t m_compositingRenderServerPort;

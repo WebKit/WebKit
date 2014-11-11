@@ -121,7 +121,8 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
-    [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
+    if (!m_diskCacheIsDisabledForTesting)
+        [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
 void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)
@@ -167,6 +168,13 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.hstsDatabasePathExtensionHandle);
 #endif
 #endif
+
+    // FIXME: Most of what this function does for cache size gets immediately overridden by setCacheModel().
+    // - memory cache size passed from UI process is always ignored;
+    // - disk cache size passed from UI process is effectively a minimum size.
+    // One non-obvious constraint is that we need to use -setSharedURLCache: even in testing mode, to prevent creating a default one on disk later, when some other code touches the cache.
+
+    ASSERT(!m_diskCacheIsDisabledForTesting || !parameters.nsURLCacheDiskCapacity);
 
 #if PLATFORM(IOS)
     if (!parameters.uiProcessBundleIdentifier.isNull()) {
