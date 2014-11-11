@@ -1,3 +1,21 @@
+2014-10-29  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [GTK] Bump libsoup's minimum version to 2.42.0.
+        https://bugs.webkit.org/show_bug.cgi?id=138086
+
+        Reviewed by Martin Robinson.
+
+        The SOUP_CHECK_VERSION macro was added in libsoup 2.41.1, and the
+        soup-version.h header was added to soup.h in 2.41.4, which then becomes
+        the minimum version required to build the port these days.
+
+        In addition, since the autotools build system required 2.42.0 before
+        being retired, require the same version here. Version 2.42.0 was also
+        recommended in
+        https://lists.webkit.org/pipermail/webkit-gtk/2013-March/001387.html.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable CSS_IMAGE_SET in production builds
