@@ -35,6 +35,7 @@
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(IOS)
@@ -261,11 +262,11 @@ void DOMTimer::updateTimerIntervalIfNecessary()
     double previousInterval = m_currentTimerInterval;
     m_currentTimerInterval = intervalClampedToMinimum();
 
-    if (previousInterval == m_currentTimerInterval)
+    if (WTF::withinEpsilon(previousInterval, m_currentTimerInterval))
         return;
 
     if (repeatInterval()) {
-        ASSERT(repeatInterval() == previousInterval);
+        ASSERT(WTF::withinEpsilon(repeatInterval(), previousInterval));
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
     } else
         augmentFireInterval(m_currentTimerInterval - previousInterval);

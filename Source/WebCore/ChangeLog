@@ -1,5 +1,32 @@
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
+        Assertion hit DOMTimer::updateTimerIntervalIfNecessary()
+        https://bugs.webkit.org/show_bug.cgi?id=138440
+
+        Reviewed by Geoffrey Garen.
+
+        We sometimes hit the ASSERT(repeatInterval() == previousInterval)
+        assertion in DOMTimer::updateTimerIntervalIfNecessary() when visiting
+        the following pages:
+        http://lifehacker.com/the-healthiest-foods-for-one-handed-snacking-while-gami-1654728164
+        http://longform.org/posts/like-something-the-lord-made
+
+        After debugging, the issue turned out to be that we are comparing
+        floating point numbers using ==, and the check sometimes fails even
+        though the values really close to each other. This patch updates the
+        DOMTimer code to use WTF::withinEpsilon() instead of operator==()
+        to compare the floating point intervals.
+
+        I confirmed manually that the assertion is no longer hit.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::FloatQuad::isRectilinear):
+        (WebCore::withinEpsilon): Deleted.
+
+2014-11-05  Chris Dumez  <cdumez@apple.com>
+
         Stop special-casing the empty string in HTMLInputElement.type setter
         https://bugs.webkit.org/show_bug.cgi?id=138403
 

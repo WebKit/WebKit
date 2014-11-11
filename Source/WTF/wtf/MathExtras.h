@@ -384,6 +384,12 @@ inline unsigned fastLog2(unsigned i)
     return log2;
 }
 
+template <typename T>
+inline bool withinEpsilon(T a, T b)
+{
+    return std::abs(a - b) <= std::numeric_limits<T>::epsilon();
+}
+
 } // namespace WTF
 
 #endif // #ifndef WTF_MathExtras_h
