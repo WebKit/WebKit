@@ -1,3 +1,23 @@
+2014-10-16  Adrien Destugues  <pulkomandy@gmail.com>
+
+        Use isnan from std namespace in ProfileGenerator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=137653
+
+        Reviewed by Darin Adler.
+
+        The C++ isnan() function is in the std namespace. The unprefixed isnan
+        may be available because of C99 headers leakage in C++, but should not
+        be used.
+
+        No new tests: no functional change, build fix on platforms which don't
+        export C99 functions in C++.
+
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::beginCallEntry):
+        (JSC::ProfileGenerator::endCallEntry):
+        (JSC::ProfileGenerator::didPause):
+        (JSC::ProfileGenerator::didContinue):
+
 2014-10-09  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Ensure that inline assembly Thunk functions don't conflict with the section designations of the compiler

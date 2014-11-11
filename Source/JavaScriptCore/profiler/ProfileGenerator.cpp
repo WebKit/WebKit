@@ -116,7 +116,7 @@ void ProfileGenerator::beginCallEntry(ProfileNode* node, double startTime)
 {
     ASSERT_ARG(node, node);
 
-    if (isnan(startTime))
+    if (std::isnan(startTime))
         startTime = currentTime();
     node->appendCall(ProfileNode::Call(startTime));
 }
@@ -126,7 +126,7 @@ void ProfileGenerator::endCallEntry(ProfileNode* node)
     ASSERT_ARG(node, node);
 
     ProfileNode::Call& last = node->lastCall();
-    ASSERT(isnan(last.totalTime()));
+    ASSERT(std::isnan(last.totalTime()));
 
     last.setTotalTime(m_debuggerPaused ? 0.0 : currentTime() - last.startTime());
 }
