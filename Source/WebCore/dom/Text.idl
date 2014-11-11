@@ -23,7 +23,7 @@
 
     // DOM Level 1
 
-    [RaisesException] Text splitText([IsIndex,Default=Undefined] optional unsigned long offset);
+    [RaisesException] Text splitText(unsigned long offset);
 
     // Introduced in DOM Level 3:
     readonly attribute DOMString       wholeText;

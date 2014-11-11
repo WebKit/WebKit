@@ -1,3 +1,18 @@
+2014-11-05  Shivakumar JM  <shiva.jm@samsung.com>
+
+        splitText API does not match DOM specification.
+        https://bugs.webkit.org/show_bug.cgi?id=138405
+
+        Reviewed by Chris Dumez.
+ 
+        Make the offset argument for splitText API as mandatory (and thus throw if it is omitted) and stop throwing if the offset argument is
+        negative (and wraps to a valid index) as per specification: https://w3c.github.io/dom/#interface-text. Also This matches the behavior
+        of both Firefox 33 and Chrome 38.
+
+        Test: fast/dom/Text/splitText.html
+
+        * dom/Text.idl:
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit DOMTimer::updateTimerIntervalIfNecessary()

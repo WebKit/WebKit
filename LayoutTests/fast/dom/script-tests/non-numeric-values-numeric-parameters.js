@@ -327,7 +327,7 @@ shouldBe("nonNumericPolicy('document.styleSheets.item(x)')", "'any type allowed'
 
 // Text
 
-shouldBe("nonNumericPolicy('document.createTextNode(\"a\").splitText(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.createTextNode(\"a\").splitText(x)')", "'any type allowed (but not omitted)'");
 
 // TimeRanges
 

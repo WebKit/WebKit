@@ -1,3 +1,15 @@
+2014-11-05  Shivakumar JM  <shiva.jm@samsung.com>
+
+        splitText API does not match DOM specification.
+        https://bugs.webkit.org/show_bug.cgi?id=138405
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/Text/splitText-expected.txt: Added.
+        * fast/dom/Text/splitText.html: Added.
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Stop special-casing the empty string in HTMLInputElement.type setter
