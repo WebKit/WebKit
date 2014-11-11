@@ -729,7 +729,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     case kWKContextActionItemTagOpenLinkInDefaultBrowser:
         selector = @selector(_openURLFromActionMenu:);
         title = WEB_UI_STRING_KEY("Open", "Open (action menu item)", "action menu item");
-        image = webKitBundleImageNamed(@"OpenInNewWindowTemplate");
+        image = [NSImage imageNamed:@"NSActionMenuOpenInNewWindow"];
         break;
 
 #if WK_API_ENABLED
@@ -743,7 +743,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     case kWKContextActionItemTagAddLinkToSafariReadingList:
         selector = @selector(_addToReadingListFromActionMenu:);
         title = WEB_UI_STRING_KEY("Add to Reading List", "Add to Reading List (action menu item)", "action menu item");
-        image = [NSImage imageNamed:NSImageNameBookmarksTemplate];
+        image = [NSImage imageNamed:@"NSActionMenuAddToReadingList"];
         break;
 
     case kWKContextActionItemTagCopyImage:
@@ -819,11 +819,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     [item setTarget:self];
     [item setTag:tag];
     return item;
-}
-
-static NSImage *webKitBundleImageNamed(NSString *name)
-{
-    return [[NSBundle bundleForClass:[WKView class]] imageForResource:name];
 }
 
 - (PassRefPtr<WebHitTestResult>)_webHitTestResult
