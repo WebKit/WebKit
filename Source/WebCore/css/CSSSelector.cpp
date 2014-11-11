@@ -466,7 +466,16 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassNthLastChild:
                 str.appendLiteral(":nth-last-child(");
-                appendPseudoClassFunctionTail(str, cs);
+                str.append(cs->argument());
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                if (const CSSSelectorList* selectorList = cs->selectorList()) {
+                    str.appendLiteral(" of ");
+                    appendSelectorList(str, selectorList);
+                }
+#else
+                ASSERT(!cs->selectorList());
+#endif
+                str.append(')');
                 break;
             case CSSSelector::PseudoClassNthLastOfType:
                 str.appendLiteral(":nth-last-of-type(");

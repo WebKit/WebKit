@@ -135,6 +135,19 @@ testSelectorRoundTrip(":nth-child(-5n-7 of .foo, :nth-child(odd))");
 
 debug('');
 
+testSelectorRoundTrip(":nth-last-child(odd of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(even of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(n of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(-n of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(5 of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(-5 of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(5n+7 of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(-5n+7 of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(5n-7 of .foo, :nth-last-child(odd))");
+testSelectorRoundTrip(":nth-last-child(-5n-7 of .foo, :nth-last-child(odd))");
+
+debug('');
+
 testSelectorRoundTrip(':matches(single)');
 testSelectorRoundTrip(':matches(a, b, p)');
 testSelectorRoundTrip(':matches(#alice, #bob, #chris)');

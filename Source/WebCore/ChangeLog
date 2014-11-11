@@ -1,3 +1,24 @@
+2014-11-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add parsing support for the extended :nth-last-child(An+B of selector-list) defined
+        https://bugs.webkit.org/show_bug.cgi?id=138520
+
+        Reviewed by Andreas Kling.
+
+        Add parsing for :nth-last-child(An+B of selector-list). The selector is defined
+        in CSS Selectors Level 4: http://dev.w3.org/csswg/selectors4/#the-nth-last-child-pseudo
+
+        Tests: fast/css/parsing-css-nth-last-child-of-1.html
+               fast/css/parsing-css-nth-last-child-of-2.html
+               fast/css/parsing-css-nth-last-child-of-3.html
+               fast/css/parsing-css-nth-last-child-of-4.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+
 2014-11-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG foreign objects do not inherit the container coordinates system if they are repainted.

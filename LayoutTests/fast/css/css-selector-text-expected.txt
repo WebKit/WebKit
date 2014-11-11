@@ -90,6 +90,17 @@ PASS parseThenSerializeRule(':nth-child(-5n+7 of .foo, :nth-child(odd)) { }') is
 PASS parseThenSerializeRule(':nth-child(5n-7 of .foo, :nth-child(odd)) { }') is ':nth-child(5n-7 of .foo, :nth-child(odd)) { }'
 PASS parseThenSerializeRule(':nth-child(-5n-7 of .foo, :nth-child(odd)) { }') is ':nth-child(-5n-7 of .foo, :nth-child(odd)) { }'
 
+PASS parseThenSerializeRule(':nth-last-child(odd of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(odd of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(even of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(even of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(n of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(n of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(-n of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(-n of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(5 of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(5 of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(-5 of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(-5 of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(5n+7 of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(5n+7 of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(-5n+7 of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(-5n+7 of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(5n-7 of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(5n-7 of .foo, :nth-last-child(odd)) { }'
+PASS parseThenSerializeRule(':nth-last-child(-5n-7 of .foo, :nth-last-child(odd)) { }') is ':nth-last-child(-5n-7 of .foo, :nth-last-child(odd)) { }'
+
 PASS parseThenSerializeRule(':matches(single) { }') is ':matches(single) { }'
 PASS parseThenSerializeRule(':matches(a, b, p) { }') is ':matches(a, b, p) { }'
 PASS parseThenSerializeRule(':matches(#alice, #bob, #chris) { }') is ':matches(#alice, #bob, #chris) { }'

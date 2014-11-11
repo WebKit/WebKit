@@ -10692,7 +10692,7 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
 
     case 9:
         if (isEqualToCSSIdentifier(name, "nth-child")) {
-            m_token = NTHCHILDFUNCTION;
+            m_token = NTHCHILDFUNCTIONS;
             m_parsingMode = NthChildMode;
             return true;
         }
@@ -10707,6 +10707,7 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
 
     case 14:
         if (isEqualToCSSIdentifier(name, "nth-last-child")) {
+            m_token = NTHCHILDFUNCTIONS;
             m_parsingMode = NthChildMode;
             return true;
         }
