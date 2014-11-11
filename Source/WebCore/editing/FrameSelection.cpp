@@ -1476,6 +1476,11 @@ void FrameSelection::paintCaret(GraphicsContext* context, const LayoutPoint& pai
         CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
 }
 
+static inline bool disappearsIntoBackground(Color foreground, Color background)
+{
+    return background.blend(foreground) == background;
+}
+
 void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
@@ -1501,9 +1506,11 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
         if (rootEditableElement && rootEditableElement->renderer()) {
             const auto& rootEditableStyle = rootEditableElement->renderer()->style();
             const auto& elementStyle = element->renderer()->style();
-            if (rootEditableStyle.visitedDependentColor(CSSPropertyBackgroundColor) == elementStyle.visitedDependentColor(CSSPropertyBackgroundColor)) {
-                caretColor = rootEditableElement->renderer()->style().visitedDependentColor(CSSPropertyColor);
-                colorSpace = rootEditableElement->renderer()->style().colorSpace();
+            auto rootEditableBGColor = rootEditableStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+            auto elementBGColor = elementStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+            if (disappearsIntoBackground(elementBGColor, rootEditableBGColor)) {
+                caretColor = rootEditableStyle.visitedDependentColor(CSSPropertyColor);
+                colorSpace = rootEditableStyle.colorSpace();
                 setToRootEditableElement = true;
             }
         }
