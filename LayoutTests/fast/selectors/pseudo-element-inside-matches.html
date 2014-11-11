@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<style>
+#target1:matches(::first-letter) {
+    background-color: lime;
+}
+
+#target2:matches(::after) {
+    background-color: lime;
+    content: "cocoa";
+}
+
+#target3:matches(::before) {
+    background-color: lime;
+    content: "cappuccino";
+}
+
+#target4:matches(::before, ::after) {
+    background-color: lime;
+    content: "around";
+}
+
+#target5:matches(::first-letter, p) {
+    background-color: lime;
+}
+
+#target6:matches(p, :matches(p, ::first-letter)) {
+    background-color: lime;
+}
+
+#target7:matches(::before, ::after, *) {
+    background-color: lime;
+    content: "around";
+}
+
+#target8:not(:matches(::first-line)) {
+    background-color: red;
+}
+
+::first-line #target9 {
+    background-color: red;
+}
+
+:matches(::first-line) #target10 {
+    background-color: red;
+}
+
+#target11:matches(::first-line > p) {
+    background-color: red;
+}
+
+/* first letter of before content is colored blue. */
+#target12:matches(::first-letter, ::after, ::before) {
+    background-color: lime;
+    content: "around";
+}
+
+#target12::first-letter {
+    background-color: blue !important;
+}
+
+#target13:matches(::after > p) {
+    background-color: red;
+    content: "bug";
+}
+
+#target14:matches(::after) > p {
+    background-color: red;
+}
+
+#target15:matches(::after > p) > p {
+    background-color: red;
+}
+
+#target16:matches(*) > p {
+    background-color: lime;
+}
+
+</style>
+</head>
+<body>
+<div>
+    <p id="target1">pseudo element inside :matches has effect.</p>
+    <p id="target2">pseudo element inside :matches has effect.</p>
+    <p id="target3">pseudo element inside :matches has effect.</p>
+    <p id="target4">pseudo element inside :matches has effect.</p>
+    <p id="target5">pseudo element inside :matches has effect, so all selectors should be checked.</p>
+    <p id="target6">pseudo element inside nested :matches should have effect.</p>
+    <p id="target7">both line itself and before/after should be colored.</p>
+    <p id="target8">pseudo element inside :not doesn't have effect.</p>
+    <p id="target9">::first-line in non-rightmost fragment always unmatch.</p>
+    <p id="target10">:matches(::first-line) in non-rightmost fragment always unmatches.</p>
+    <p id="target11">pseudo element in non-rightmost fragment inside :matches always unmatches.</p>
+    <p id="target12">before/after contents are colored lime and first-letter of before content is colored blue.</p>
+    <p id="target13">non-rightmost pseudo element has no effect.</p>
+    <p id="target14"><p>non-rightmost pseudo element has no effect.</p></p>
+    <p id="target15"><p>non-rightmost pseudo element has no effect.</p></p>
+    <p id="target16"><p>matchType should be effective for normal element.</p></p>
+</div>
+</body>
+</html>

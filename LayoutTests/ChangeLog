@@ -1,3 +1,19 @@
+2014-11-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS4 Selectors: Add multiple pseudo elements support to :matches
+        https://bugs.webkit.org/show_bug.cgi?id=138214
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/selectors/pseudo-element-in-non-rightmost-fragments-expected.html: Added.
+        * fast/selectors/pseudo-element-in-non-rightmost-fragments.html: Added.
+        In this test, we ensure that pseudo elements selector in the
+        non-rightmost fragments becomes unmatched.
+        * fast/selectors/pseudo-element-inside-matches-expected.html: Added.
+        * fast/selectors/pseudo-element-inside-matches.html: Added.
+        * fast/selectors/ignore-pseudo-element-inside-non-rightmost-fragments-expected.txt: Added.
+        * fast/selectors/ignore-pseudo-element-inside-non-rightmost-fragments.html: Added.
+
 2014-11-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Add parsing support for the extended :nth-last-child(An+B of selector-list)

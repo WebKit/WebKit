@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<style>
+#target1::first-letter {
+    background-color: lime;
+}
+
+#target2::after {
+    background-color: lime;
+    content: "cocoa";
+}
+
+#target3::before {
+    background-color: lime;
+    content: "cappuccino";
+}
+
+#target4::before,
+#target4::after {
+    background-color: lime;
+    content: "around";
+}
+
+#target5,
+#target5::first-letter {
+    background-color: lime;
+}
+
+#target6,
+#target6::first-letter {
+    background-color: lime;
+}
+
+#target7,
+#target7::before,
+#target7::after {
+    background-color: lime;
+    content: "around";
+}
+
+/* first letter of before content is colored blue. */
+#target12::after,
+#target12::before {
+    background-color: lime;
+    content: "around";
+}
+
+#target12::first-letter {
+    background-color: blue;
+}
+
+#target16 > p {
+    background-color: lime;
+}
+
+</style>
+</head>
+<body>
+<div>
+    <p id="target1">pseudo element inside :matches has effect.</p>
+    <p id="target2">pseudo element inside :matches has effect.</p>
+    <p id="target3">pseudo element inside :matches has effect.</p>
+    <p id="target4">pseudo element inside :matches has effect.</p>
+    <p id="target5">pseudo element inside :matches has effect, so all selectors should be checked.</p>
+    <p id="target6">pseudo element inside nested :matches should have effect.</p>
+    <p id="target7">both line itself and before/after should be colored.</p>
+    <p id="target8">pseudo element inside :not doesn't have effect.</p>
+    <p id="target9">::first-line in non-rightmost fragment always unmatch.</p>
+    <p id="target10">:matches(::first-line) in non-rightmost fragment always unmatches.</p>
+    <p id="target11">pseudo element in non-rightmost fragment inside :matches always unmatches.</p>
+    <p id="target12">before/after contents are colored lime and first-letter of before content is colored blue.</p>
+    <p id="target13">non-rightmost pseudo element has no effect.</p>
+    <p id="target14"><p>non-rightmost pseudo element has no effect.</p></p>
+    <p id="target15"><p>non-rightmost pseudo element has no effect.</p></p>
+    <p id="target16"><p>matchType should be effective for normal element.</p></p>
+</div>
+</body>
+</html>

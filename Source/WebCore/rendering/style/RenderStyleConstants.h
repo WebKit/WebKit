@@ -26,6 +26,8 @@
 #ifndef RenderStyleConstants_h
 #define RenderStyleConstants_h
 
+#include <initializer_list>
+
 namespace WebCore {
 
 static const size_t PrintColorAdjustBits = 1;
@@ -78,6 +80,67 @@ enum PseudoId : unsigned char {
     FIRST_PUBLIC_PSEUDOID = FIRST_LINE,
     FIRST_INTERNAL_PSEUDOID = SCROLLBAR_THUMB,
     PUBLIC_PSEUDOID_MASK = ((1 << FIRST_INTERNAL_PSEUDOID) - 1) & ~((1 << FIRST_PUBLIC_PSEUDOID) - 1)
+};
+
+class PseudoIdSet {
+public:
+    PseudoIdSet()
+        : m_data(0)
+    {
+    }
+
+    PseudoIdSet(std::initializer_list<PseudoId> initializerList)
+        : m_data(0)
+    {
+        for (PseudoId pseudoId : initializerList)
+            add(pseudoId);
+    }
+
+    static PseudoIdSet fromMask(unsigned rawPseudoIdSet)
+    {
+        return PseudoIdSet(rawPseudoIdSet);
+    }
+
+    bool has(PseudoId pseudoId) const
+    {
+        ASSERT((sizeof(m_data) * 8) > pseudoId);
+        return m_data & (1U << pseudoId);
+    }
+
+    void add(PseudoId pseudoId)
+    {
+        ASSERT((sizeof(m_data) * 8) > pseudoId);
+        m_data |= (1U << pseudoId);
+    }
+
+    void merge(PseudoIdSet source)
+    {
+        m_data |= source.m_data;
+    }
+
+    PseudoIdSet operator &(const PseudoIdSet& pseudoIdSet) const
+    {
+        return PseudoIdSet(m_data & pseudoIdSet.m_data);
+    }
+
+    PseudoIdSet operator |(const PseudoIdSet& pseudoIdSet) const
+    {
+        return PseudoIdSet(m_data | pseudoIdSet.m_data);
+    }
+
+    explicit operator bool() const
+    {
+        return m_data;
+    }
+
+    unsigned data() const { return m_data; }
+private:
+    explicit PseudoIdSet(unsigned rawPseudoIdSet)
+        : m_data(rawPseudoIdSet)
+    {
+    }
+
+    unsigned m_data;
 };
 
 enum ColumnFill { ColumnFillBalance, ColumnFillAuto };

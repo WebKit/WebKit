@@ -234,6 +234,14 @@ public:
             ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
             m_flags |= oneBitMask << (pseudoBitsOffset - 1 + pseudo);
         }
+        void setHasPseudoStyles(PseudoIdSet pseudoIdSet)
+        {
+            ASSERT(pseudoIdSet);
+            uint64_t rawPseudoIdSet = pseudoIdSet.data();
+            ASSERT((rawPseudoIdSet & PUBLIC_PSEUDOID_MASK) == rawPseudoIdSet);
+            static_assert(pseudoBitsOffset >= 1, "(pseudoBitsOffset - 1) should be valid.");
+            m_flags |= (static_cast<uint64_t>(rawPseudoIdSet) << (pseudoBitsOffset - 1));
+        }
 
         ETableLayout tableLayout() const { return static_cast<ETableLayout>(getValue(tableLayoutBitMask, tableLayoutOffset)); }
         void setTableLayout(ETableLayout tableLayout) { updateValue(tableLayout, tableLayoutBitMask, tableLayoutOffset); }
@@ -561,6 +569,7 @@ public:
     bool hasAnyPublicPseudoStyles() const;
     bool hasPseudoStyle(PseudoId pseudo) const;
     void setHasPseudoStyle(PseudoId pseudo);
+    void setHasPseudoStyles(PseudoIdSet);
     bool hasUniquePseudoStyle() const;
 
     // attribute getter methods
@@ -2167,6 +2176,11 @@ inline bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
 inline void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 {
     noninherited_flags.setHasPseudoStyle(pseudo);
+}
+
+inline void RenderStyle::setHasPseudoStyles(PseudoIdSet pseudoIdSet)
+{
+    noninherited_flags.setHasPseudoStyles(pseudoIdSet);
 }
 
 } // namespace WebCore
