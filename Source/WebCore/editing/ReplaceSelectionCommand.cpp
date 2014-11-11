@@ -1391,7 +1391,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
         return;
 
     if (is<Text>(text->previousSibling())) {
-        RefPtr<Text> previous = downcast<Text>(text->previousSibling());
+        Ref<Text> previous(downcast<Text>(*text->previousSibling()));
         insertTextIntoNode(text, 0, previous->data());
 
         if (positionIsOffsetInAnchor)
@@ -1402,27 +1402,27 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
         if (positionOnlyToBeUpdatedIsOffsetInAnchor) {
             if (positionOnlyToBeUpdated.containerNode() == text)
                 positionOnlyToBeUpdated.moveToOffset(previous->length() + positionOnlyToBeUpdated.offsetInContainerNode());
-            else if (positionOnlyToBeUpdated.containerNode() == previous)
+            else if (positionOnlyToBeUpdated.containerNode() == previous.ptr())
                 positionOnlyToBeUpdated.moveToPosition(text, positionOnlyToBeUpdated.offsetInContainerNode());
         } else
             updatePositionForNodeRemoval(positionOnlyToBeUpdated, previous.get());
 
-        removeNode(previous);
+        removeNode(previous.ptr());
     }
     if (is<Text>(text->nextSibling())) {
-        RefPtr<Text> next = downcast<Text>(text->nextSibling());
+        Ref<Text> next(downcast<Text>(*text->nextSibling()));
         unsigned originalLength = text->length();
         insertTextIntoNode(text, originalLength, next->data());
 
         if (!positionIsOffsetInAnchor)
             updatePositionForNodeRemoval(position, next.get());
 
-        if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next)
+        if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next.ptr())
             positionOnlyToBeUpdated.moveToPosition(text, originalLength + positionOnlyToBeUpdated.offsetInContainerNode());
         else
             updatePositionForNodeRemoval(positionOnlyToBeUpdated, next.get());
 
-        removeNode(next);
+        removeNode(next.ptr());
     }
 }
 

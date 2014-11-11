@@ -139,7 +139,7 @@ public:
 
     void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);
-    void nodeWillBeRemoved(Node*);
+    void nodeWillBeRemoved(Node&);
 
     void textInserted(Node*, unsigned offset, unsigned length);
     void textRemoved(Node*, unsigned offset, unsigned length);

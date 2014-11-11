@@ -3661,19 +3661,19 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
     for (auto it = m_nodeIterators.begin(), end = m_nodeIterators.end(); it != end; ++it) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
-            (*it)->nodeWillBeRemoved(n);
+            (*it)->nodeWillBeRemoved(*n);
     }
 
     if (Frame* frame = this->frame()) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling()) {
-            frame->eventHandler().nodeWillBeRemoved(n);
-            frame->selection().nodeWillBeRemoved(n);
-            frame->page()->dragCaretController().nodeWillBeRemoved(n);
+            frame->eventHandler().nodeWillBeRemoved(*n);
+            frame->selection().nodeWillBeRemoved(*n);
+            frame->page()->dragCaretController().nodeWillBeRemoved(*n);
         }
     }
 }
 
-void Document::nodeWillBeRemoved(Node* n)
+void Document::nodeWillBeRemoved(Node& n)
 {
     HashSet<NodeIterator*>::const_iterator nodeIteratorsEnd = m_nodeIterators.end();
     for (HashSet<NodeIterator*>::const_iterator it = m_nodeIterators.begin(); it != nodeIteratorsEnd; ++it)

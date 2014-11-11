@@ -796,7 +796,7 @@ public:
     // nodeChildrenWillBeRemoved is used when removing all node children at once.
     void nodeChildrenWillBeRemoved(ContainerNode&);
     // nodeWillBeRemoved is only safe when removing one node at a time.
-    void nodeWillBeRemoved(Node*);
+    void nodeWillBeRemoved(Node&);
     bool canReplaceChild(Node* newChild, Node* oldChild);
 
     void textInserted(Node*, unsigned offset, unsigned length);

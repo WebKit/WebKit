@@ -984,32 +984,32 @@ unsigned numEnclosingMailBlockquotes(const Position& p)
     return num;
 }
 
-void updatePositionForNodeRemoval(Position& position, Node* node)
+void updatePositionForNodeRemoval(Position& position, Node& node)
 {
     if (position.isNull())
         return;
     switch (position.anchorType()) {
     case Position::PositionIsBeforeChildren:
-        if (node->containsIncludingShadowDOM(position.containerNode()))
-            position = positionInParentBeforeNode(node);
+        if (node.containsIncludingShadowDOM(position.containerNode()))
+            position = positionInParentBeforeNode(&node);
         break;
     case Position::PositionIsAfterChildren:
-        if (node->containsIncludingShadowDOM(position.containerNode()))
-            position = positionInParentBeforeNode(node);
+        if (node.containsIncludingShadowDOM(position.containerNode()))
+            position = positionInParentBeforeNode(&node);
         break;
     case Position::PositionIsOffsetInAnchor:
-        if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->computeNodeIndex())
+        if (position.containerNode() == node.parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node.computeNodeIndex())
             position.moveToOffset(position.offsetInContainerNode() - 1);
-        else if (node->containsIncludingShadowDOM(position.containerNode()))
-            position = positionInParentBeforeNode(node);
+        else if (node.containsIncludingShadowDOM(position.containerNode()))
+            position = positionInParentBeforeNode(&node);
         break;
     case Position::PositionIsAfterAnchor:
-        if (node->containsIncludingShadowDOM(position.anchorNode()))
-            position = positionInParentAfterNode(node);
+        if (node.containsIncludingShadowDOM(position.anchorNode()))
+            position = positionInParentAfterNode(&node);
         break;
     case Position::PositionIsBeforeAnchor:
-        if (node->containsIncludingShadowDOM(position.anchorNode()))
-            position = positionInParentBeforeNode(node);
+        if (node.containsIncludingShadowDOM(position.anchorNode()))
+            position = positionInParentBeforeNode(&node);
         break;
     }
 }

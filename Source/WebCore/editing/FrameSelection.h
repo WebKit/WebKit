@@ -103,7 +103,7 @@ public:
     void setCaretPosition(const VisiblePosition&);
     WEBCORE_EXPORT void clear() { setCaretPosition(VisiblePosition()); }
 
-    void nodeWillBeRemoved(Node*);
+    void nodeWillBeRemoved(Node&);
 
 private:
     VisiblePosition m_position;
@@ -187,7 +187,7 @@ public:
 
     void debugRenderer(RenderObject*, bool selected) const;
 
-    void nodeWillBeRemoved(Node*);
+    void nodeWillBeRemoved(Node&);
     void textWasReplaced(CharacterData*, unsigned offset, unsigned oldLength, unsigned newLength);
 
     void setCaretVisible(bool caretIsVisible) { setCaretVisibility(caretIsVisible ? Visible : Hidden); }
@@ -276,7 +276,7 @@ private:
 
     bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, SetSelectionOptions, CursorAlignOnScroll, TextGranularity);
 
-    void respondToNodeModification(Node*, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved);
+    void respondToNodeModification(Node&, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved);
     TextDirection directionOfEnclosingBlock();
     TextDirection directionOfSelection();
 

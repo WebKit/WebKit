@@ -51,7 +51,7 @@ namespace WebCore {
         bool pointerBeforeReferenceNode() const { return m_referenceNode.isPointerBeforeNode; }
 
         // This function is called before any node is removed from the document tree.
-        void nodeWillBeRemoved(Node*);
+        void nodeWillBeRemoved(Node&);
 
         // Do not call these functions. They are just scaffolding to support the Objective-C bindings.
         // They operate in the main thread normal world, and they swallow JS exceptions.
@@ -71,7 +71,7 @@ namespace WebCore {
             bool moveToPrevious(Node* root);
         };
 
-        void updateForNodeRemoval(Node* nodeToBeRemoved, NodePointer&) const;
+        void updateForNodeRemoval(Node& nodeToBeRemoved, NodePointer&) const;
 
         NodePointer m_referenceNode;
         NodePointer m_candidateNode;

@@ -1050,7 +1050,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
             return;
 
         if (collapsed && newText->parentNode() == container && &container->document() == &ownerDocument())
-            m_end.setToBeforeChild(newText.get());
+            m_end.setToBeforeChild(*newText);
     } else {
         container = m_start.container();
         RefPtr<Node> firstInsertedChild = newNodeType == Node::DOCUMENT_FRAGMENT_NODE ? newNode->firstChild() : newNode;
@@ -1062,7 +1062,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
 
         if (collapsed && numNewChildren && &container->document() == &ownerDocument()) {
             if (firstInsertedChild->parentNode() == container)
-                m_start.setToBeforeChild(firstInsertedChild.get());
+                m_start.setToBeforeChild(*firstInsertedChild);
             if (lastInsertedChild->parentNode() == container)
                 m_end.set(container, lastInsertedChild->computeNodeIndex() + 1, lastInsertedChild.get());
         }
@@ -2060,27 +2060,26 @@ void Range::nodeChildrenWillBeRemoved(ContainerNode& container)
     boundaryNodeChildrenWillBeRemoved(m_end, container);
 }
 
-static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node* nodeToBeRemoved)
+static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node& nodeToBeRemoved)
 {
-    if (boundary.childBefore() == nodeToBeRemoved) {
+    if (boundary.childBefore() == &nodeToBeRemoved) {
         boundary.childBeforeWillBeRemoved();
         return;
     }
 
     for (Node* n = boundary.container(); n; n = n->parentNode()) {
-        if (n == nodeToBeRemoved) {
+        if (n == &nodeToBeRemoved) {
             boundary.setToBeforeChild(nodeToBeRemoved);
             return;
         }
     }
 }
 
-void Range::nodeWillBeRemoved(Node* node)
+void Range::nodeWillBeRemoved(Node& node)
 {
-    ASSERT(node);
-    ASSERT(&node->document() == &ownerDocument());
-    ASSERT(node != &ownerDocument());
-    ASSERT(node->parentNode());
+    ASSERT(&node.document() == &ownerDocument());
+    ASSERT(&node != &ownerDocument());
+    ASSERT(node.parentNode());
     boundaryNodeWillBeRemoved(m_start, node);
     boundaryNodeWillBeRemoved(m_end, node);
 }

@@ -1,3 +1,55 @@
+2014-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Remove unnecessary null check in FrameSelection::nodeWillBeRemoved()
+        https://bugs.webkit.org/show_bug.cgi?id=138578
+
+        Reviewed by Andreas Kling.
+
+        Remove unnecessary null check in FrameSelection::nodeWillBeRemoved()
+        and turn the argument into a reference to make it clear it cannot be
+        null.
+
+        No new tests, no behavior change.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::willRemoveChild):
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        * dom/Document.h:
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::nodeWillBeRemoved):
+        (WebCore::NodeIterator::updateForNodeRemoval):
+        * dom/NodeIterator.h:
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+        (WebCore::boundaryNodeWillBeRemoved):
+        (WebCore::Range::nodeWillBeRemoved):
+        * dom/Range.h:
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::setToBeforeChild):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::updatePositionForNodeRemovalPreservingChildren):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::removeRedundantBlocks):
+        * editing/FrameSelection.cpp:
+        (WebCore::removingNodeRemovesPosition):
+        (WebCore::DragCaretController::nodeWillBeRemoved):
+        (WebCore::FrameSelection::nodeWillBeRemoved):
+        (WebCore::FrameSelection::respondToNodeModification):
+        * editing/FrameSelection.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+        * editing/htmlediting.cpp:
+        (WebCore::updatePositionForNodeRemoval):
+        * editing/htmlediting.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::nodeWillBeRemoved):
+        * page/EventHandler.h:
+
 2014-11-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the build when CSS Selectors Level 4 is disabled

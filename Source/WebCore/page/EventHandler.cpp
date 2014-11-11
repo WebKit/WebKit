@@ -503,10 +503,10 @@ void EventHandler::clear()
     m_didLongPressInvokeContextMenu = false;
 }
 
-void EventHandler::nodeWillBeRemoved(Node* nodeToBeRemoved)
+void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
 {
-    if (nodeToBeRemoved->contains(m_clickNode.get()))
-        m_clickNode = 0;
+    if (nodeToBeRemoved.contains(m_clickNode.get()))
+        m_clickNode = nullptr;
 }
 
 static void setSelectionIfNeeded(FrameSelection& selection, const VisibleSelection& newSelection)

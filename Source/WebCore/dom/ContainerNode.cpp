@@ -476,7 +476,7 @@ void ContainerNode::willRemoveChild(Node& child)
     if (child.parentNode() != this)
         return;
 
-    child.document().nodeWillBeRemoved(&child); // e.g. mutation event listener can create a new range.
+    child.document().nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
     if (is<ContainerNode>(child))
         disconnectSubframesIfNeeded(downcast<ContainerNode>(child), RootAndDescendants);
 }
