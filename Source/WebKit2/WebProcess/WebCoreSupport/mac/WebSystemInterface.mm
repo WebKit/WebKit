@@ -153,6 +153,7 @@ void InitWebCoreSystemInterface(void)
 #if !PLATFORM(IOS)
         INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
+        INIT(ExtractWordDefinitionTokenRangeFromContextualString);
         INIT(CopyDefaultSearchProviderDisplayName);
         INIT(Cursor);
         INIT(WindowSetScaledFrame);

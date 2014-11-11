@@ -23,21 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebUIDelegatePrivate.h"
-#import <WebCore/HitTestResult.h>
+#ifndef DictionaryLookup_h
+#define DictionaryLookup_h
 
-@class WebView;
+#include <wtf/PassRefPtr.h>
 
-@interface WebActionMenuController : NSObject {
-@private
-    WebView *_webView;
-    WebActionMenuType _type;
-    WebCore::HitTestResult _hitTestResult;
-}
+@class NSDictionary;
 
-- (id)initWithWebView:(WebView *)webView;
-- (void)webViewClosed;
-- (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
-- (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
+namespace WebCore {
 
-@end
+class HitTestResult;
+class Range;
+class VisiblePosition;
+class VisibleSelection;
+
+// FIXME: Some of these functions should probably be in a more generic class.
+// https://bugs.webkit.org/show_bug.cgi?id=138567
+bool isPositionInRange(const VisiblePosition&, Range*);
+bool shouldUseSelection(const VisiblePosition&, const VisibleSelection&);
+
+PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
+PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
+PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
+
+} // namespace WebCore
+
+#endif // DictionaryLookup_h
