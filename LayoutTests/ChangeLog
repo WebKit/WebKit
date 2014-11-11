@@ -1,3 +1,12 @@
+2014-11-11  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [EFL] Unskip now passing http tests
+        https://bugs.webkit.org/show_bug.cgi?id=137694
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/efl/TestExpectations:
+
 2014-10-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Limit the size of explicit/implicit grid
