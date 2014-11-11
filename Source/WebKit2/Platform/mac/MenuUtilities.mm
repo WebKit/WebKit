@@ -53,11 +53,6 @@ namespace WebKit {
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-static NSString *menuItemTitleForTelephoneNumber(const String& telephoneNumber)
-{
-    return [NSString stringWithFormat:WEB_UI_STRING("Call “%@” Using iPhone", "menu item for making a telephone call to a telephone number"), formattedPhoneNumberString(telephoneNumber)];
-}
-
 NSString *menuItemTitleForTelephoneNumberGroup()
 {
     return WEB_UI_STRING("Call Using iPhone:", "menu item title for phone number");
@@ -84,9 +79,9 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
     return nil;
 }
 
-NSArray *menuItemsForTelephoneNumber(const String& telephoneNumber)
+RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
 {
-    NSMutableArray *items = [NSMutableArray array];
+    RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
     NSMutableArray *faceTimeItems = [NSMutableArray array];
     NSMenuItem *dialItem = nil;
 
@@ -101,7 +96,6 @@ NSArray *menuItemsForTelephoneNumber(const String& telephoneNumber)
             continue;
 
         if ([actionObject.actionUTI hasPrefix:@"com.apple.dial"]) {
-            item.title = menuItemTitleForTelephoneNumber(telephoneNumber);
             dialItem = item;
             continue;
         }
@@ -111,15 +105,16 @@ NSArray *menuItemsForTelephoneNumber(const String& telephoneNumber)
     }
 
     if (dialItem)
-        [items addObject:dialItem];
+        [menu addItem:dialItem];
 
     if (faceTimeItems.count) {
-        if (items.count)
-            [items addObject:[NSMenuItem separatorItem]];
-        [items addObjectsFromArray:faceTimeItems];
+        if ([menu numberOfItems])
+            [menu addItem:[NSMenuItem separatorItem]];
+        for (NSMenuItem *item in faceTimeItems)
+            [menu addItem:item];
     }
 
-    return items.count ? items : nil;
+    return menu;
 }
 #endif
 
