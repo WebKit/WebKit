@@ -1,3 +1,18 @@
+2014-10-21  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] CSS-generated text content not exposed to assistive technologies
+        https://bugs.webkit.org/show_bug.cgi?id=137669
+
+        Reviewed by Chris Fleizach.
+
+        Do not use a text iterator to get the text for elements which include
+        pseudo elements.
+
+        Test: accessibility/css-content-attribute.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+
 2014-10-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: Google Search (mobile) video thumbnails are too large.

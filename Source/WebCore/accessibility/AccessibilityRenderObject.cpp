@@ -650,6 +650,10 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         return toRenderText(*m_renderer).text();
 #endif
 
+    // rangeOfContents does not include CSS-generated content.
+    if (m_renderer->isBeforeOrAfterContent())
+        return AccessibilityNodeObject::textUnderElement(mode);
+
     // We use a text iterator for text objects AND for those cases where we are
     // explicitly asking for the full text under a given element.
     if (m_renderer->isText() || mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren) {
@@ -658,6 +662,12 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         Document* nodeDocument = nullptr;
         RefPtr<Range> textRange;
         if (Node* node = m_renderer->node()) {
+            // rangeOfContents does not include CSS-generated content.
+            Node* firstChild = node->pseudoAwareFirstChild();
+            Node* lastChild = node->pseudoAwareLastChild();
+            if ((firstChild && firstChild->isPseudoElement()) || (lastChild && lastChild->isPseudoElement()))
+                return AccessibilityNodeObject::textUnderElement(mode);
+
             nodeDocument = &node->document();
             textRange = rangeOfContents(*node);
         } else {
