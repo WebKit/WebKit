@@ -123,7 +123,7 @@ private:
     std::unique_ptr<PlatformTimeRanges> buffered() const;
     MediaTime maxMediaTimeSeekable() const;
     bool didLoadingProgress() const;
-    unsigned totalBytes() const;
+    unsigned long long totalBytes() const;
     
     void setVisible(bool);
     void setSize(const IntSize&);

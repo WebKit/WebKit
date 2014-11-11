@@ -292,8 +292,6 @@ protected:
 
     virtual String engineDescription() const { return "AVFoundation"; }
 
-    virtual size_t extraMemoryCost() const override;
-
     virtual void trackModeChanged() override;
 #if ENABLE(AVF_CAPTIONS)
     virtual void notifyTrackModeChanged() { }

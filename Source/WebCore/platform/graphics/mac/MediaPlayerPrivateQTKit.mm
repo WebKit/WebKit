@@ -978,11 +978,11 @@ bool MediaPlayerPrivateQTKit::didLoadingProgress() const
     return didLoadingProgress;
 }
 
-unsigned MediaPlayerPrivateQTKit::totalBytes() const
+unsigned long long MediaPlayerPrivateQTKit::totalBytes() const
 {
     if (!metaDataAvailable())
         return 0;
-    return [[m_qtMovie.get() attributeForKey:QTMovieDataSizeAttribute] intValue];
+    return [[m_qtMovie.get() attributeForKey:QTMovieDataSizeAttribute] longLongValue];
 }
 
 void MediaPlayerPrivateQTKit::cancelLoad()

@@ -1,3 +1,26 @@
+2014-11-03  Philippe Normand  <pnormand@igalia.com>
+
+        [LEAK] [GStreamer] Removing video element will not free assigned memory
+        https://bugs.webkit.org/show_bug.cgi?id=46560
+
+        Reviewed by Eric Carlson.
+
+        Moved the ::extraMemoryCost() implementation to the
+        MediaPlayerPivateInterface base class. This default implementation
+        is now shared between the various MediaPlayerPrivate backends,
+        excepted the AVF MediaSource player which still reports no extra
+        memory cost.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::totalBytes): Make
+        totalBytes() part of the MediaPlayerPrivate interface.
+        (WebCore::MediaPlayerPrivateInterface::extraMemoryCost): Default
+        implementation.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extraMemoryCost): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2014-11-04  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Fix animation of orient attribute on marker element

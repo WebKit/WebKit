@@ -947,16 +947,6 @@ void MediaPlayerPrivateAVFoundation::trackModeChanged()
     scheduleMainThreadNotification(Notification::InbandTracksNeedConfiguration);
 }
 
-size_t MediaPlayerPrivateAVFoundation::extraMemoryCost() const
-{
-    MediaTime duration = this->durationMediaTime();
-    if (!duration)
-        return 0;
-
-    unsigned long long extra = totalBytes() * buffered()->totalDuration().toDouble() / duration.toDouble();
-    return static_cast<unsigned>(extra);
-}
-
 void MediaPlayerPrivateAVFoundation::clearTextTracks()
 {
     for (unsigned i = 0; i < m_textTracks.size(); ++i) {

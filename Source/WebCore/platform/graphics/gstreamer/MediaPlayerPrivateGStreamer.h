@@ -92,7 +92,7 @@ public:
     std::unique_ptr<PlatformTimeRanges> buffered() const;
     float maxTimeSeekable() const;
     bool didLoadingProgress() const;
-    unsigned totalBytes() const;
+    unsigned long long totalBytes() const;
     float maxTimeLoaded() const;
 
     void loadStateChanged();
@@ -207,7 +207,7 @@ private:
     GThreadSafeMainLoopSource m_videoTimerHandler;
     GThreadSafeMainLoopSource m_videoCapsTimerHandler;
     GThreadSafeMainLoopSource m_readyTimerHandler;
-    mutable long m_totalBytes;
+    mutable unsigned long long m_totalBytes;
     URL m_url;
     bool m_preservesPitch;
     GstState m_requestedState;
