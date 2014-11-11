@@ -1,5 +1,14 @@
 2014-10-22  Milan Crha  <mcrha@redhat.com>
 
+        Do not include GraphicsContext3D.h when 3D_GRAPHICS is not used.
+        <https://webkit.org/b/137969>.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+
+2014-10-22  Milan Crha  <mcrha@redhat.com>
+
         Do not build WidgetBackingStoreGtkX11 when not used.
         <https://webkit.org/b/137972>.
 
