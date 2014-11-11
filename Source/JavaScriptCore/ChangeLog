@@ -1,3 +1,18 @@
+2014-10-21  Mark Lam  <mark.lam@apple.com>
+
+        Remove erroneous canUseJIT() in the intrinsics version of JITThunks::hostFunctionStub().
+        <https://webkit.org/b/137937>
+
+        Reviewed by Michael Saboff.
+
+        This version of JITThunks::hostFunctionStub() can only be called from the intrinsics
+        version of VM::getHostFunction() which asserts canUseJIT().  Hence, we can eliminate
+        the canUseJIT() check in JITThunks::hostFunctionStub().  We don't handle the
+        !canUseJIT() case properly there anyway.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+
 2014-10-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Remove duplicated source files
