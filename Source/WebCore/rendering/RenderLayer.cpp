@@ -3674,10 +3674,19 @@ static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLaye
 
 void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsContext* context, const ClipRect& clipRect, BorderRadiusClippingRule rule)
 {
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    if (clipRect.hasRadius()) {
+    bool needsClipping = clipRect.rect() != paintingInfo.paintDirtyRect;
+    if (needsClipping || clipRect.affectedByRadius())
         context->save();
-        
+
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    bool layerHasBorderRadius = renderer().style().hasBorderRadius();
+    if (needsClipping && !layerHasBorderRadius) {
+        LayoutRect adjustedClipRect = clipRect.rect();
+        adjustedClipRect.move(paintingInfo.subpixelAccumulation);
+        context->clip(snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor));
+    }
+
+    if (clipRect.affectedByRadius()) {
         // If the clip rect has been tainted by a border radius, then we have to walk up our layer chain applying the clips from
         // any layers with overflow. The condition for being able to apply these clips is that the overflow object be in our
         // containing block chain so we check that also.
@@ -3691,17 +3700,12 @@ void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsCont
             if (layer == paintingInfo.rootLayer)
                 break;
         }
-    } else if (clipRect.rect() != paintingInfo.paintDirtyRect) {
-        context->save();
-        LayoutRect adjustedClipRect = clipRect.rect();
-        adjustedClipRect.move(paintingInfo.subpixelAccumulation);
-        context->clip(snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor));
     }
 }
 
 void RenderLayer::restoreClip(GraphicsContext* context, const LayoutRect& paintDirtyRect, const ClipRect& clipRect)
 {
-    if (clipRect.rect() != paintDirtyRect || clipRect.hasRadius())
+    if (clipRect.rect() != paintDirtyRect || clipRect.affectedByRadius())
         context->restore();
 }
 
@@ -4407,10 +4411,10 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         fragment.intersect(ancestorClipRect.rect());
         
         // If the ancestor clip rect has border-radius, make sure to apply it to the fragments.
-        if (ancestorClipRect.hasRadius()) {
-            fragment.foregroundRect.setHasRadius(true);
-            fragment.backgroundRect.setHasRadius(true);
-            fragment.outlineRect.setHasRadius(true);
+        if (ancestorClipRect.affectedByRadius()) {
+            fragment.foregroundRect.setAffectedByRadius(true);
+            fragment.backgroundRect.setAffectedByRadius(true);
+            fragment.outlineRect.setAffectedByRadius(true);
         }
 
         // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
@@ -5314,7 +5318,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         
         if (renderer().hasOverflowClip()) {
             ClipRect newOverflowClip = toRenderBox(renderer()).overflowClipRectForChildLayers(offset, currentRenderNamedFlowFragment(), clipRectsContext.overlayScrollbarSizeRelevancy);
-            newOverflowClip.setHasRadius(renderer().style().hasBorderRadius());
+            newOverflowClip.setAffectedByRadius(renderer().style().hasBorderRadius());
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().isPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
@@ -5439,7 +5443,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         if (renderer().hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
             foregroundRect.intersect(toRenderBox(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), namedFlowFragment, clipRectsContext.overlayScrollbarSizeRelevancy));
             if (renderer().style().hasBorderRadius())
-                foregroundRect.setHasRadius(true);
+                foregroundRect.setAffectedByRadius(true);
         }
 
         if (renderer().hasClip()) {

@@ -1,3 +1,32 @@
+2014-10-21  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: Google Search (mobile) video thumbnails are too large.
+        https://bugs.webkit.org/show_bug.cgi?id=137895
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes layer clipping when an ancestor layer has border-radius clipping.
+
+        In cases, where the current layer has non-radius cliprect, while an ancestor layer
+        has border-radius clipping, we only use the border-radius rect to clip.
+
+        Test: fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::restoreClip):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRect::ClipRect):
+        (WebCore::ClipRect::effectedByRadius):
+        (WebCore::ClipRect::setEffectedByRadius):
+        (WebCore::ClipRect::operator==):
+        (WebCore::ClipRect::operator!=):
+        (WebCore::ClipRect::intersect):
+        (WebCore::ClipRect::hasRadius): Deleted.
+        (WebCore::ClipRect::setHasRadius): Deleted.
+
 2014-10-17  Jeffrey Pfau  <jpfau@apple.com>
 
         Ensure attached frame count doesn't exceed the maximum allowed frames
