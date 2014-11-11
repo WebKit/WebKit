@@ -18,31 +18,22 @@
  */
 
 #include "config.h"
-#include "HTMLFormControlsCollection.h"
-
-
-#include "HTMLAllCollection.h"
-#include "JSDOMBinding.h"
-#include "JSHTMLCollection.h"
 #include "JSHTMLFormControlsCollection.h"
+
+#include "HTMLFormControlsCollection.h"
 #include "JSNode.h"
-#include "JSNodeList.h"
 #include "JSRadioNodeList.h"
-#include "Node.h"
 #include "RadioNodeList.h"
 #include <runtime/IdentifierInlines.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-static JSValue getNamedItems(ExecState* exec, JSHTMLFormControlsCollection* collection, PropertyName propertyName)
+static JSValue namedItems(ExecState* exec, JSHTMLFormControlsCollection* collection, PropertyName propertyName)
 {
-    Vector<Ref<Element>> namedItems;
     const AtomicString& name = propertyNameToAtomicString(propertyName);
-    collection->impl().namedItems(name, namedItems);
+    Vector<Ref<Element>> namedItems = collection->impl().namedItems(name);
 
     if (namedItems.isEmpty())
         return jsUndefined();
@@ -61,12 +52,12 @@ bool JSHTMLFormControlsCollection::canGetItemsForName(ExecState*, HTMLFormContro
 EncodedJSValue JSHTMLFormControlsCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
     JSHTMLFormControlsCollection* thisObj = jsCast<JSHTMLFormControlsCollection*>(slotBase);
-    return JSValue::encode(getNamedItems(exec, thisObj, propertyName));
+    return JSValue::encode(namedItems(exec, thisObj, propertyName));
 }
 
 JSValue JSHTMLFormControlsCollection::namedItem(ExecState* exec)
 {
-    JSValue value = getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    JSValue value = namedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
     return value.isUndefined() ? jsNull() : value;
 }
 

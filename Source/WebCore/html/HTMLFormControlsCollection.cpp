@@ -121,18 +121,17 @@ static HTMLElement* firstNamedItem(const Vector<FormAssociatedElement*>& element
     return nullptr;
 }
 
-Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
+HTMLElement* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    const Vector<HTMLImageElement*>* imagesElements = is<HTMLFieldSetElement>(ownerNode()) ? nullptr : &formImageElements();
-    if (HTMLElement* item = firstNamedItem(formControlElements(), imagesElements, idAttr, name))
+    auto* imageElements = is<HTMLFieldSetElement>(ownerNode()) ? nullptr : &formImageElements();
+    if (HTMLElement* item = firstNamedItem(formControlElements(), imageElements, idAttr, name))
         return item;
-
-    return firstNamedItem(formControlElements(), imagesElements, nameAttr, name);
+    return firstNamedItem(formControlElements(), imageElements, nameAttr, name);
 }
 
 void HTMLFormControlsCollection::updateNamedElementCache() const
@@ -141,41 +140,41 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         return;
 
     auto cache = std::make_unique<CollectionNamedElementCache>();
-    HashSet<AtomicStringImpl*> foundInputElements;
-    const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
 
-    for (unsigned i = 0; i < elementsArray.size(); ++i) {
-        FormAssociatedElement& associatedElement = *elementsArray[i];
+    bool ownerIsFormElement = is<HTMLFormElement>(ownerNode());
+    HashSet<AtomicStringImpl*> foundInputElements;
+
+    for (auto& elementPtr : formControlElements()) {
+        FormAssociatedElement& associatedElement = *elementPtr;
         if (associatedElement.isEnumeratable()) {
             HTMLElement& element = associatedElement.asHTMLElement();
-            const AtomicString& idAttrVal = element.getIdAttribute();
-            const AtomicString& nameAttrVal = element.getNameAttribute();
-            if (!idAttrVal.isEmpty()) {
-                cache->appendIdCache(idAttrVal, &element);
-                foundInputElements.add(idAttrVal.impl());
+            const AtomicString& id = element.getIdAttribute();
+            if (!id.isEmpty()) {
+                cache->appendToIdCache(id, element);
+                if (ownerIsFormElement)
+                    foundInputElements.add(id.impl());
             }
-            if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
-                cache->appendNameCache(nameAttrVal, &element);
-                foundInputElements.add(nameAttrVal.impl());
+            const AtomicString& name = element.getNameAttribute();
+            if (!name.isEmpty() && id != name) {
+                cache->appendToNameCache(name, element);
+                if (ownerIsFormElement)
+                    foundInputElements.add(name.impl());
             }
         }
     }
-
-    if (is<HTMLFormElement>(ownerNode())) {
-        const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
-        for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
-            HTMLImageElement& element = *imageElementsArray[i];
-            const AtomicString& idAttrVal = element.getIdAttribute();
-            const AtomicString& nameAttrVal = element.getNameAttribute();
-            if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
-                cache->appendIdCache(idAttrVal, &element);
-            if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
-                cache->appendNameCache(nameAttrVal, &element);
+    if (ownerIsFormElement) {
+        for (auto* elementPtr : formImageElements()) {
+            HTMLImageElement& element = *elementPtr;
+            const AtomicString& id = element.getIdAttribute();
+            if (!id.isEmpty() && !foundInputElements.contains(id.impl()))
+                cache->appendToIdCache(id, element);
+            const AtomicString& name = element.getNameAttribute();
+            if (!name.isEmpty() && id != name && !foundInputElements.contains(name.impl()))
+                cache->appendToNameCache(name, element);
         }
     }
 
-    cache->didPopulate();
-    setNameItemCache(WTF::move(cache));
+    setNamedItemCache(WTF::move(cache));
 }
 
 void HTMLFormControlsCollection::invalidateCache(Document& document) const

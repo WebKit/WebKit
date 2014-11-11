@@ -52,7 +52,7 @@ public:
 
     PassRefPtr<HTMLCollection> elements();
     bool hasNamedElement(const AtomicString&);
-    void getNamedElements(const AtomicString&, Vector<Ref<Element>>&);
+    Vector<Ref<Element>> namedElements(const AtomicString&);
 
     unsigned length() const;
     Node* item(unsigned index);

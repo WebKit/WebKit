@@ -27,24 +27,18 @@
 #include "JSHTMLAllCollection.h"
 
 #include "HTMLAllCollection.h"
-#include "JSDOMBinding.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
-#include "Node.h"
 #include "StaticNodeList.h"
 #include <runtime/IdentifierInlines.h>
-#include <runtime/JSCJSValue.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, PropertyName propertyName)
+static JSValue namedItems(ExecState* exec, JSHTMLAllCollection* collection, PropertyName propertyName)
 {
-    Vector<Ref<Element>> namedItems;
-    collection->impl().namedItems(propertyNameToAtomicString(propertyName), namedItems);
+    Vector<Ref<Element>> namedItems = collection->impl().namedItems(propertyNameToAtomicString(propertyName));
 
     if (namedItems.isEmpty())
         return jsUndefined();
@@ -76,15 +70,15 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index)));
 
         // Support for document.images('<name>') etc.
-        return JSValue::encode(getNamedItems(exec, jsCollection, Identifier(exec, string)));
+        return JSValue::encode(namedItems(exec, jsCollection, Identifier(exec, string)));
     }
 
     // The second arg, if set, is the index of the item we want
     String string = exec->argument(0).toString(exec)->value(exec);
     unsigned index = toUInt32FromStringImpl(exec->argument(1).toWTFString(exec).impl());
     if (index != PropertyName::NotAnIndex) {
-        if (Node* node = collection.namedItemWithIndex(string, index))
-            return JSValue::encode(toJS(exec, jsCollection->globalObject(), node));
+        if (auto* item = collection.namedItemWithIndex(string, index))
+            return JSValue::encode(toJS(exec, jsCollection->globalObject(), item));
     }
 
     return JSValue::encode(jsUndefined());
@@ -104,7 +98,7 @@ bool JSHTMLAllCollection::canGetItemsForName(ExecState*, HTMLAllCollection* coll
 EncodedJSValue JSHTMLAllCollection::nameGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)
 {
     JSHTMLAllCollection* thisObj = jsCast<JSHTMLAllCollection*>(slotBase);
-    return JSValue::encode(getNamedItems(exec, thisObj, propertyName));
+    return JSValue::encode(namedItems(exec, thisObj, propertyName));
 }
 
 JSValue JSHTMLAllCollection::item(ExecState* exec)
@@ -112,12 +106,12 @@ JSValue JSHTMLAllCollection::item(ExecState* exec)
     uint32_t index = toUInt32FromStringImpl(exec->argument(0).toString(exec)->value(exec).impl());
     if (index != PropertyName::NotAnIndex)
         return toJS(exec, globalObject(), impl().item(index));
-    return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    return namedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
 }
 
 JSValue JSHTMLAllCollection::namedItem(ExecState* exec)
 {
-    JSValue value = getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    JSValue value = namedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
     return value.isUndefined() ? jsNull() : value;
 }
 

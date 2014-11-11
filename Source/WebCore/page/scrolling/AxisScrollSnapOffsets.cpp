@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AxisScrollSnapOffsets.h"
 
+#include "ElementChildIterator.h"
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
 #include "RenderBox.h"
@@ -38,16 +39,16 @@ namespace WebCore {
 
 static void appendChildSnapOffsets(HTMLElement& parent, bool shouldAddHorizontalChildOffsets, Vector<LayoutUnit>& horizontalSnapOffsetSubsequence, bool shouldAddVerticalChildOffsets, Vector<LayoutUnit>& verticalSnapOffsetSubsequence)
 {
-    Element* child = parent.children()->collectionBegin();
     // FIXME: Instead of traversing all children, register children with snap coordinates before appending to snapOffsetSubsequence.
-    while (child) {
-        if (RenderBox* box = child->renderBox()) {
+    for (auto& child : childrenOfType<Element>(parent)) {
+        if (RenderBox* box = child.renderBox()) {
             LayoutUnit viewWidth = box->width();
             LayoutUnit viewHeight = box->height();
 #if PLATFORM(IOS)
-            // FIXME: Investigate why using localToContainerPoint gives the wrong offsets for iOS mainframe. Also, these offsets won't take transforms into account (make sure to test this!)
-            float left = child->offsetLeft();
-            float top = child->offsetTop();
+            // FIXME: Dangerous to call offsetLeft and offsetTop because they call updateLayoutIgnorePendingStylesheets, which can invalidate the RenderBox pointer we are holding.
+            // FIXME: Investigate why using localToContainerPoint gives the wrong offsets for iOS main frame. Also, these offsets won't take transforms into account (make sure to test this!).
+            float left = child.offsetLeft();
+            float top = child.offsetTop();
 #else
             // FIXME: Check that localToContainerPoint works with CSS rotations.
             FloatPoint position = box->localToContainerPoint(FloatPoint(), parent.renderBox());
@@ -64,7 +65,6 @@ static void appendChildSnapOffsets(HTMLElement& parent, bool shouldAddHorizontal
                     verticalSnapOffsetSubsequence.append(lastPotentialSnapPositionY);
             }
         }
-        child = child->nextElementSibling();
     }
 }
 

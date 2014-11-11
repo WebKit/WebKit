@@ -28,12 +28,12 @@
 
 #include "Event.h"
 #include "HTMLFormControlElementWithState.h"
+#include "HTMLOptionElement.h"
 #include "TypeAhead.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class HTMLOptionElement;
 class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState, public TypeAheadDataSource {
@@ -87,8 +87,8 @@ public:
     void setOption(unsigned index, HTMLOptionElement*, ExceptionCode&);
     void setLength(unsigned, ExceptionCode&);
 
-    Node* namedItem(const AtomicString& name);
-    Node* item(unsigned index);
+    HTMLOptionElement* namedItem(const AtomicString& name);
+    HTMLOptionElement* item(unsigned index);
 
     void scrollToSelection();
 

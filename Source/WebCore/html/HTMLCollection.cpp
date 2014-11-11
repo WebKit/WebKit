@@ -65,7 +65,7 @@ static bool shouldOnlyIncludeDirectChildren(CollectionType type)
     return false;
 }
 
-static HTMLCollection::RootType rootTypeFromCollectionType(CollectionType type)
+inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> RootType
 {
     switch (type) {
     case DocImages:
@@ -169,7 +169,7 @@ ContainerNode& HTMLCollection::rootNode() const
     return ownerNode();
 }
 
-inline bool isMatchingHTMLElement(const HTMLCollection& collection, HTMLElement& element)
+static inline bool isMatchingHTMLElement(const HTMLCollection& collection, HTMLElement& element)
 {
     switch (collection.type()) {
     case DocImages:
@@ -218,7 +218,7 @@ inline bool isMatchingHTMLElement(const HTMLCollection& collection, HTMLElement&
     return false;
 }
 
-inline bool isMatchingElement(const HTMLCollection& collection, Element& element)
+static inline bool isMatchingElement(const HTMLCollection& collection, Element& element)
 {
     // Collection types that deal with any type of Elements, not just HTMLElements.
     switch (collection.type()) {
@@ -233,23 +233,23 @@ inline bool isMatchingElement(const HTMLCollection& collection, Element& element
     }
 }
 
-static Element* previousElement(ContainerNode& base, Element* previous, bool onlyIncludeDirectChildren)
+static inline Element* previousElement(ContainerNode& base, Element& element, bool onlyIncludeDirectChildren)
 {
-    return onlyIncludeDirectChildren ? ElementTraversal::previousSibling(previous) : ElementTraversal::previous(previous, &base);
+    return onlyIncludeDirectChildren ? ElementTraversal::previousSibling(&element) : ElementTraversal::previous(&element, &base);
 }
 
-ALWAYS_INLINE Element* HTMLCollection::iterateForPreviousElement(Element* current) const
+ALWAYS_INLINE Element* HTMLCollection::iterateForPreviousElement(Element* element) const
 {
     bool onlyIncludeDirectChildren = m_shouldOnlyIncludeDirectChildren;
     ContainerNode& rootNode = this->rootNode();
-    for (; current; current = previousElement(rootNode, current, onlyIncludeDirectChildren)) {
-        if (isMatchingElement(*this, *current))
-            return current;
+    for (; element; element = previousElement(rootNode, *element, onlyIncludeDirectChildren)) {
+        if (isMatchingElement(*this, *element))
+            return element;
     }
     return nullptr;
 }
 
-inline Element* firstMatchingElement(const HTMLCollection& collection, ContainerNode& root)
+static inline Element* firstMatchingElement(const HTMLCollection& collection, ContainerNode& root)
 {
     Element* element = ElementTraversal::firstWithin(&root);
     while (element && !isMatchingElement(collection, *element))
@@ -257,12 +257,13 @@ inline Element* firstMatchingElement(const HTMLCollection& collection, Container
     return element;
 }
 
-inline Element* nextMatchingElement(const HTMLCollection& collection, Element* current, ContainerNode& root)
+static inline Element* nextMatchingElement(const HTMLCollection& collection, Element& element, ContainerNode& root)
 {
+    Element* next = &element;
     do {
-        current = ElementTraversal::next(current, &root);
-    } while (current && !isMatchingElement(collection, *current));
-    return current;
+        next = ElementTraversal::next(next, &root);
+    } while (next && !isMatchingElement(collection, *next));
+    return next;
 }
 
 unsigned HTMLCollection::length() const
@@ -270,7 +271,7 @@ unsigned HTMLCollection::length() const
     return m_indexCache.nodeCount(*this);
 }
 
-Node* HTMLCollection::item(unsigned offset) const
+Element* HTMLCollection::item(unsigned offset) const
 {
     return m_indexCache.nodeAt(*this, offset);
 }
@@ -288,7 +289,12 @@ static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement& element)
         || element.hasTagName(selectTag);
 }
 
-inline Element* firstMatchingChildElement(const HTMLCollection& nodeList, ContainerNode& root)
+static inline bool nameShouldBeVisibleInDocumentAll(Element& element)
+{
+    return is<HTMLElement>(element) && nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element));
+}
+
+static inline Element* firstMatchingChildElement(const HTMLCollection& nodeList, ContainerNode& root)
 {
     Element* element = ElementTraversal::firstWithin(&root);
     while (element && !isMatchingElement(nodeList, *element))
@@ -296,12 +302,18 @@ inline Element* firstMatchingChildElement(const HTMLCollection& nodeList, Contai
     return element;
 }
 
-inline Element* nextMatchingSiblingElement(const HTMLCollection& nodeList, Element* current)
+static inline Element* nextMatchingSiblingElement(const HTMLCollection& nodeList, Element& element)
 {
+    Element* next = &element;
     do {
-        current = ElementTraversal::nextSibling(current);
-    } while (current && !isMatchingElement(nodeList, *current));
-    return current;
+        next = ElementTraversal::nextSibling(next);
+    } while (next && !isMatchingElement(nodeList, *next));
+    return next;
+}
+
+inline bool HTMLCollection::usesCustomForwardOnlyTraversal() const
+{
+    return m_usesCustomForwardOnlyTraversal;
 }
 
 inline Element* HTMLCollection::firstElement(ContainerNode& root) const
@@ -317,25 +329,14 @@ inline Element* HTMLCollection::traverseForward(Element& current, unsigned count
 {
     Element* element = &current;
     if (usesCustomForwardOnlyTraversal()) {
-        for (traversedCount = 0; traversedCount < count; ++traversedCount) {
+        for (traversedCount = 0; element && traversedCount < count; ++traversedCount)
             element = customElementAfter(element);
-            if (!element)
-                return nullptr;
-        }
-        return element;
-    }
-    if (m_shouldOnlyIncludeDirectChildren) {
-        for (traversedCount = 0; traversedCount < count; ++traversedCount) {
-            element = nextMatchingSiblingElement(*this, element);
-            if (!element)
-                return nullptr;
-        }
-        return element;
-    }
-    for (traversedCount = 0; traversedCount < count; ++traversedCount) {
-        element = nextMatchingElement(*this, element, root);
-        if (!element)
-            return nullptr;
+    } else if (m_shouldOnlyIncludeDirectChildren) {
+        for (traversedCount = 0; element && traversedCount < count; ++traversedCount)
+            element = nextMatchingSiblingElement(*this, *element);
+    } else {
+        for (traversedCount = 0; element && traversedCount < count; ++traversedCount)
+            element = nextMatchingElement(*this, *element, root);
     }
     return element;
 }
@@ -361,13 +362,13 @@ void HTMLCollection::collectionTraverseForward(Element*& current, unsigned count
 void HTMLCollection::collectionTraverseBackward(Element*& current, unsigned count) const
 {
     // FIXME: This should be optimized similarly to the forward case.
-    auto& root = rootNode();
     if (m_shouldOnlyIncludeDirectChildren) {
-        for (; count && current ; --count)
+        for (; count && current; --count)
             current = iterateForPreviousElement(ElementTraversal::previousSibling(current));
         return;
     }
-    for (; count && current ; --count)
+    auto& root = rootNode();
+    for (; count && current; --count)
         current = iterateForPreviousElement(ElementTraversal::previous(current, &root));
 }
 
@@ -388,7 +389,7 @@ void HTMLCollection::invalidateNamedElementCache(Document& document) const
     m_namedElementCache = nullptr;
 }
 
-Node* HTMLCollection::namedItem(const AtomicString& name) const
+Element* HTMLCollection::namedItem(const AtomicString& name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
@@ -401,23 +402,25 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
     ContainerNode& root = rootNode();
     if (!usesCustomForwardOnlyTraversal() && root.isInTreeScope()) {
-        TreeScope& treeScope = root.treeScope();
         Element* candidate = nullptr;
+
+        TreeScope& treeScope = root.treeScope();
         if (treeScope.hasElementWithId(*name.impl())) {
             if (!treeScope.containsMultipleElementsWithId(name))
                 candidate = treeScope.getElementById(name);
         } else if (treeScope.hasElementWithName(*name.impl())) {
             if (!treeScope.containsMultipleElementsWithName(name)) {
                 candidate = treeScope.getElementByName(name);
-                if (candidate && type() == DocAll && (!is<HTMLElement>(*candidate) || !nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*candidate))))
+                if (candidate && type() == DocAll && !nameShouldBeVisibleInDocumentAll(*candidate))
                     candidate = nullptr;
             }
         } else
             return nullptr;
 
-        if (candidate && isMatchingElement(*this, *candidate)
-            && (m_shouldOnlyIncludeDirectChildren ? candidate->parentNode() == &root : candidate->isDescendantOf(&root)))
-            return candidate;
+        if (candidate && isMatchingElement(*this, *candidate)) {
+            if (m_shouldOnlyIncludeDirectChildren ? candidate->parentNode() == &root : candidate->isDescendantOf(&root))
+                return candidate;
+        }
     }
 
     // The pathological case. We need to walk the entire subtree.
@@ -442,25 +445,22 @@ void HTMLCollection::updateNamedElementCache() const
     if (hasNamedElementCache())
         return;
 
-
     auto cache = std::make_unique<CollectionNamedElementCache>();
 
     unsigned size = m_indexCache.nodeCount(*this);
-    for (unsigned i = 0; i < size; i++) {
-        Element* element = m_indexCache.nodeAt(*this, i);
-        ASSERT(element);
-        const AtomicString& idAttrVal = element->getIdAttribute();
-        if (!idAttrVal.isEmpty())
-            cache->appendIdCache(idAttrVal, element);
-        if (!is<HTMLElement>(*element))
+    for (unsigned i = 0; i < size; ++i) {
+        Element& element = *m_indexCache.nodeAt(*this, i);
+        const AtomicString& id = element.getIdAttribute();
+        if (!id.isEmpty())
+            cache->appendToIdCache(id, element);
+        if (!is<HTMLElement>(element))
             continue;
-        const AtomicString& nameAttrVal = element->getNameAttribute();
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(*element))))
-            cache->appendNameCache(nameAttrVal, element);
+        const AtomicString& name = element.getNameAttribute();
+        if (!name.isEmpty() && id != name && (type() != DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element))))
+            cache->appendToNameCache(name, element);
     }
 
-    cache->didPopulate();
-    setNameItemCache(WTF::move(cache));
+    setNamedItemCache(WTF::move(cache));
 }
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const
@@ -469,28 +469,45 @@ bool HTMLCollection::hasNamedItem(const AtomicString& name) const
     return namedItem(name);
 }
 
-void HTMLCollection::namedItems(const AtomicString& name, Vector<Ref<Element>>& result) const
+Vector<Ref<Element>> HTMLCollection::namedItems(const AtomicString& name) const
 {
-    ASSERT(result.isEmpty());
+    // FIXME: This non-virtual function can't possibly be doing the correct thing for
+    // any derived class that overrides the virtual namedItem function.
+
+    Vector<Ref<Element>> elements;
+
     if (name.isEmpty())
-        return;
+        return elements;
 
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
 
-    const Vector<Element*>* idResults = m_namedElementCache->findElementsWithId(name);
-    const Vector<Element*>* nameResults = m_namedElementCache->findElementsWithName(name);
+    auto* elementsWithId = m_namedElementCache->findElementsWithId(name);
+    auto* elementsWithName = m_namedElementCache->findElementsWithName(name);
 
-    for (unsigned i = 0; idResults && i < idResults->size(); ++i)
-        result.append(*idResults->at(i));
+    elements.reserveInitialCapacity((elementsWithId ? elementsWithId->size() : 0) + (elementsWithName ? elementsWithName->size() : 0));
 
-    for (unsigned i = 0; nameResults && i < nameResults->size(); ++i)
-        result.append(*nameResults->at(i));
+    if (elementsWithId) {
+        for (auto& element : *elementsWithId)
+            elements.uncheckedAppend(*element);
+    }
+    if (elementsWithName) {
+        for (auto& element : *elementsWithName)
+            elements.uncheckedAppend(*element);
+    }
+
+    return elements;
 }
 
 PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
 {
     return ownerNode().getElementsByTagName(name);
+}
+
+Element* HTMLCollection::customElementAfter(Element*) const
+{
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } // namespace WebCore

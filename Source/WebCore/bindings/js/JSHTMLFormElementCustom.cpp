@@ -47,8 +47,7 @@ EncodedJSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSObject* slotBase
     JSHTMLFormElement* jsForm = jsCast<JSHTMLFormElement*>(slotBase);
     HTMLFormElement& form = jsForm->impl();
 
-    Vector<Ref<Element>> namedItems;
-    form.getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
+    Vector<Ref<Element>> namedItems = form.namedElements(propertyNameToAtomicString(propertyName));
     
     if (namedItems.isEmpty())
         return JSValue::encode(jsUndefined());

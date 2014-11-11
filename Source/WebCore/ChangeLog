@@ -1,3 +1,123 @@
+2014-11-09  Darin Adler  <darin@apple.com>
+
+        Minor tweaks to HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=138556
+
+        Reviewed by Chris Dumez.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        Update for namedElements function that now returns a Vector; also use
+        a new style for loop to iterate it.
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp: Removed some unneeded includes.
+        (WebCore::namedItems): Updated name to match WebKit coding style, and also
+        updated to use the return value from namedItems, which now returns a Vector.
+        (WebCore::callHTMLAllCollection): Updated for namedItems name change.
+        Also removed explicit Node* type from result of namedItemWithIndex, since that
+        function now returns a more specific type.
+        (WebCore::JSHTMLAllCollection::nameGetter): Update for namedItems name change.
+        (WebCore::JSHTMLAllCollection::item): Ditto.
+        (WebCore::JSHTMLAllCollection::namedItem): Ditto.
+
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp: Removed some unneeded includes.
+        (WebCore::namedItems): Updated name to match WebKit coding style, and also
+        updated to use the return value from namedItems, which now returns a Vector.
+        (WebCore::JSHTMLFormControlsCollection::nameGetter): Update for namedItems name change.
+        (WebCore::JSHTMLFormControlsCollection::namedItem): Ditto.
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter): Updated to use the return value from
+        namedItems, which now returns a Vector.
+
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::HTMLAllCollection): Marked the constructor inline,
+        since it's only used in one place, the create function.
+        (WebCore::HTMLAllCollection::~HTMLAllCollection): Deleted. No need to have an
+        explicit destructor since there's nothing special to implement, and includers of
+        the header file have everything they ened to compile the compiler-generated one.
+        (WebCore::HTMLAllCollection::namedItemWithIndex): Changed return type to Element.
+
+        * html/HTMLAllCollection.h: Removed unneeded explicit declaration of destructor.
+        Chagned return type of namedItemWithIndex to Element.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::rootTypeFromCollectionType): Marked this inline. Also
+        changed this to be a static member function so it can use the RootType enum, which
+        is now private to the class.
+        (WebCore::isMatchingHTMLElement): Marked this function static so it will get
+        internal linkage.
+        (WebCore::isMatchingElement): Ditto.
+        (WebCore::previousElement): Marked this function inline since it's called in only
+        one place. Changed argument type to a reference since it can never be null.
+        (WebCore::HTMLCollection::iterateForPreviousElement): Changed argument name and
+        also updated for above changes.
+        (WebCore::firstMatchingElement): Marked this function static so it will get
+        internal linkage.
+        (WebCore::nextMatchingElement): Ditto. Changed argument type to a reference
+        since it can never be null.
+        (WebCore::HTMLCollection::item): Changed return type to Element.
+        (WebCore::nameShouldBeVisibleInDocumentAll): Added an overload that takes an
+        Element. This streamlines the code below that calls it so it fits on one line.
+        (WebCore::firstMatchingChildElement): Marked this function static so it will get
+        internal linkage.
+        (WebCore::nextMatchingSiblingElement): Ditto. Changed argument type to a reference
+        since it can never be null.
+        (WebCore::HTMLCollection::usesCustomForwardOnlyTraversal): Moved here from the
+        header since, although it's marked inline, it's only used inside this file.
+        (WebCore::HTMLCollection::traverseForward): Restructured the code a little bit
+        to make the function smaller and possibly easier to read. This does add one
+        redundant null check, but it seems OK to do that.
+        (WebCore::HTMLCollection::collectionTraverseBackward): Tweaked foramtting a bit.
+        (WebCore::HTMLCollection::namedItem): Changed return type to Element. Tightened
+        the code that calls nameShouldBeVisibleInDocumentAll so it fits better on one line.
+        Changed code that handles m_shouldOnlyIncludeDirectChildren to use a nested if
+        instead of an && since it makes the code a little easier to read.
+        (WebCore::HTMLCollection::updateNamedElementCache): Tweaked code a little bit,
+        using shorter variable names, and using references instead of pointers. Also removed
+        the call to didPopulate, since setNamedItemCache now takes care of that.
+        (WebCore::HTMLCollection::namedItems): Changed to return a Vector instead of
+        appending to an existing one. Also use reserveInitialCapacity and uncheckedAppend
+        for better performance. Added a FIXME, because there seems to be something wrong
+        here about this being non-virtual. Made other small tweaks to streamline the code.
+        (WebCore::HTMLCollection::customElementAfter): Moved this here from the header.
+        There is no reason to need to inline this.
+
+        * html/HTMLCollection.h: Removed unneeded includes. Moved function bodies out
+        of the class definitions so the class definitions are easier to read. Made some
+        functions that were formerly public or protected be private instead. Added a call
+        to didPopulate to setNamedItemCache so the callers don't have to do it.
+
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::namedItem): Changed return value to Element.
+        Tweaked coding style a little bit.
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache): Rearranged to
+        simplify a bit. Don't build the foundInputElements set when the owner is not a
+        form element, since we don't use the set in that case. Use shorter variable names,
+        and modern for loops. Also removed the call to didPopulate, since setNamedItemCache
+        now takes care of that.
+
+        * html/HTMLFormControlsCollection.h: Removed some uneeded forward declarations.
+        Updated return type for namedItem, and also made the override private.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::namedElements): Changed to return a Vector and updated
+        function name accordingly.
+        * html/HTMLFormElement.h: Ditto.
+
+        * html/HTMLNameCollection.h: Removed a stray blank line.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::namedItem): Changed return value to Element.
+        (WebCore::HTMLSelectElement::item): Ditto.
+        * html/HTMLSelectElement.h: Ditto.
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::appendChildSnapOffsets): Rewrote loop as a for loop rather than a while
+        loop. Removed unwanted use of children()->collectionBegin() to get the first element
+        child of an HTMLElement. This function uses a mix of DOM and rendering functions that
+        is probably incorrect, but I did not tackle fixing that at this time.
+
 2014-11-11  Dan Bernstein  <mitz@apple.com>
 
         [Mac] WebCore includes unused cursor image resources

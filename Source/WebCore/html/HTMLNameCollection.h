@@ -24,7 +24,6 @@
 #define HTMLNameCollection_h
 
 #include "HTMLCollection.h"
-
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
