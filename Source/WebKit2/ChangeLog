@@ -1,3 +1,15 @@
+2014-11-05  Alberto Garcia  <berto@igalia.com>
+
+        NetscapePlugin: NPP_GetValue should receive a pointer to NPBool, not bool
+        https://bugs.webkit.org/show_bug.cgi?id=138418
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace bool with NPBool, which is actually an unsigned char.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+
 2014-10-28  Ting-Wei Lan  <lantw44@gmail.com>
 
         Cast std::chrono::duration.count() to int64_t in ArgumentCoder

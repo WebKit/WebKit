@@ -202,7 +202,7 @@ void NetscapePlugin::platformPreInitialize()
 bool NetscapePlugin::platformPostInitialize()
 {
     uint64_t windowID = 0;
-    bool needsXEmbed = false;
+    NPBool needsXEmbed = false;
     if (m_isWindowed) {
         NPP_GetValue(NPPVpluginNeedsXEmbed, &needsXEmbed);
         if (needsXEmbed) {
