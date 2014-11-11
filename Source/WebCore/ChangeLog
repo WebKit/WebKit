@@ -1,3 +1,20 @@
+2014-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        ASSERTION NOT REACHED because RenderStyle::setWordSpacing() does not handle a Length value of type 'Calculated'.
+        https://bugs.webkit.org/show_bug.cgi?id=138054.
+
+        Reviewed by Zalan Bujtas.
+
+        A Length of type 'Calculated' can be generated from blending two lengths of
+        different types. Setting the wordSpacing of the render style should be handled
+        correctly when the type of the new value is 'Calculated'.
+
+        Tests: css3/calculated-word-spacing.html.
+
+        Add a case for setting the render style wordSpacing to a <length> of type 'Calculated'.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setWordSpacing):
+
 2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Clamp wordSpacing percentage value.
