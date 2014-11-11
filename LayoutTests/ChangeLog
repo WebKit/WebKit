@@ -1,3 +1,16 @@
+2014-10-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Tighten XMLHttpRequest setRequestHeader value check
+        https://bugs.webkit.org/show_bug.cgi?id=128593
+
+        Reviewed by Darin Adler.
+
+        Added a test originating from w3c-test.org to test header values checking.
+        Testing headers with non ASCII characters and various control characters. 
+
+        * http/tests/xmlhttprequest/set-bad-headervalue-expected.txt: Added.
+        * http/tests/xmlhttprequest/set-bad-headervalue.html: Added.
+
 2014-10-15  Andrei Bucur  <abucur@adobe.com>
 
         ASSERTION  FAILED in WebCore::RenderFlowThread::getRegionRangeForBox

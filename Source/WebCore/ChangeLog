@@ -1,3 +1,16 @@
+2014-10-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Tighten XMLHttpRequest setRequestHeader value check
+        https://bugs.webkit.org/show_bug.cgi?id=128593
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/xmlhttprequest/set-bad-headervalue.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidHTTPHeaderValue): Updated header values check according RFC 7230.
+        (WebCore::isValidHTTPToken): Renamed variable name and updated RFC related comment.
+
 2014-10-20  Roger Fong  <roger_fong@apple.com>
 
         Use glFlush instead of glFinish when drawing WebGL output to screen.
