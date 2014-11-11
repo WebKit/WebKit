@@ -1,3 +1,12 @@
+2014-10-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Remove duplicated source files
+        https://bugs.webkit.org/show_bug.cgi?id=137875
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+
 2014-10-16  Adrien Destugues  <pulkomandy@gmail.com>
 
         Use isnan from std namespace in ProfileGenerator.cpp
