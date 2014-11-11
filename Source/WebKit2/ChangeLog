@@ -1,3 +1,30 @@
+2014-11-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175732. <rdar://problem/18889231>
+
+    2014-11-06  Conrad Shultz  <conrad_shultz@apple.com>
+    
+            Clients should be able to customize the view used for page previews
+            https://bugs.webkit.org/show_bug.cgi?id=138447
+    
+            Reviewed by Tim Horton.
+    
+            Add SPI to WKView that clients can use to customize the view used in the page preview popover.
+    
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Declare -_viewForPreviewingURL:initialFrameSize:.
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _viewForPreviewingURL:initialFrameSize:]):
+            Return nil in the default implementation.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKPagePreviewViewController loadView]):
+            Only spin up a WKWebView if the delegate (and, therefore, the presenting WKView) doesn't supply a custom view.
+            (-[WKActionMenuController pagePreviewViewController:viewForPreviewingURL:initialFrameSize:]):
+            WKPagePreviewViewControllerDelegate method; wrap the WKView SPI.
+    
+
 2014-11-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175711. <rdar://problem/18893079>
