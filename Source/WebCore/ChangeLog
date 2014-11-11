@@ -1,3 +1,23 @@
+2014-11-03  Andreas Kling  <akling@apple.com>
+
+        RenderCounter shouldn't need a pre-destructor hook.
+        <https://webkit.org/b/138316>
+
+        Reviewed by Antti Koivisto.
+
+        RenderCounter will automatically register/unregister itself with
+        the RenderView when constructed/destroyed.
+
+        It was using a willBeDestroyed() hook because it used to be that you
+        couldn't get to the RenderView in the destructor. That's no longer
+        an issue as Document promises that RenderView is the last render tree
+        node to go away.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::~RenderCounter):
+        (WebCore::RenderCounter::willBeDestroyed): Deleted.
+        * rendering/RenderCounter.h:
+
 2014-11-03  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: Using a media element changes window.name

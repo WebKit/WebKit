@@ -42,9 +42,6 @@ public:
 
     void updateCounter();
 
-protected:
-    virtual void willBeDestroyed();
-
 private:
     virtual const char* renderName() const;
     virtual bool isCounter() const;
