@@ -179,7 +179,7 @@ bool PageClientImpl::isViewFocused()
 
 bool PageClientImpl::isViewVisible()
 {
-    return isViewInWindow() && !m_contentView.isBackground;
+    return isViewInWindow() && (!m_contentView.isBackground || [m_webView _isPlayingFullscreenOptimizedVideo]);
 }
 
 bool PageClientImpl::isViewInWindow()

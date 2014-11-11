@@ -1,3 +1,18 @@
+2014-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] a page with video in optimized fullscreen is visible
+        https://bugs.webkit.org/show_bug.cgi?id=138632
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isPlayingFullscreenOptimizedVideo]): New.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewVisible): Return true if displaying optimized fullscreen
+            video.
+
 2014-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Occasional assertion failure under recommendedScrollbarStyleDidChange()

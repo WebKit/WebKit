@@ -87,7 +87,9 @@ public:
     WEBCORE_EXPORT virtual void cleanupFullscreen();
     WEBCORE_EXPORT virtual void invalidate();
     WEBCORE_EXPORT virtual void requestHideAndExitFullscreen();
-    
+
+    HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
+
 protected:
         
     RetainPtr<WebAVPlayerController> m_playerController;

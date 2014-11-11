@@ -90,6 +90,7 @@
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebPageMessages.h"
+#import "WebVideoFullscreenManagerProxy.h"
 #import <CoreGraphics/CGFloat.h>
 #import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <UIKit/UIApplication.h>
@@ -236,6 +237,11 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 static int32_t deviceOrientation()
 {
     return deviceOrientationForUIInterfaceOrientation([[UIApplication sharedApplication] statusBarOrientation]);
+}
+
+- (BOOL)_isPlayingFullscreenOptimizedVideo
+{
+    return _page->videoFullscreenManager() && _page->videoFullscreenManager()->mode() == WebCore::HTMLMediaElement::HTMLMediaElement::VideoFullscreenModeOptimized;
 }
 #endif
 
