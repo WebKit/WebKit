@@ -66,6 +66,8 @@ public:
     static PassRefPtr<Settings> create(Page*);
     ~Settings();
 
+    void pageDestroyed() { m_page = nullptr; }
+
     WEBCORE_EXPORT void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
 

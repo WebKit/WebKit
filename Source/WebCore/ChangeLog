@@ -1,3 +1,40 @@
+2014-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Notify Settings object when its Page object goes away.
+        https://bugs.webkit.org/show_bug.cgi?id=138183
+        rdar://problem/18786900
+
+        Reviewed by Andreas Kling.
+
+        I could not make a test for this issue.
+
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        * page/Settings.cpp:
+        (WebCore::setImageLoadingSettings):
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setTextAutosizingEnabled):
+        (WebCore::Settings::setTextAutosizingWindowSizeOverride):
+        (WebCore::Settings::setTextAutosizingFontScaleFactor):
+        (WebCore::Settings::setMediaTypeOverride):
+        (WebCore::Settings::setScriptEnabled):
+        (WebCore::Settings::setUserStyleSheetLocation):
+        (WebCore::Settings::setMinDOMTimerInterval):
+        (WebCore::Settings::minDOMTimerInterval):
+        (WebCore::Settings::domTimerAlignmentInterval):
+        (WebCore::Settings::setUsesPageCache):
+        (WebCore::Settings::setScreenFontSubstitutionEnabled):
+        (WebCore::Settings::setFontRenderingMode):
+        (WebCore::Settings::setDNSPrefetchingEnabled):
+        (WebCore::Settings::setStorageBlockingPolicy):
+        (WebCore::Settings::setBackgroundShouldExtendBeyondPage):
+        (WebCore::Settings::setScrollingPerformanceLoggingEnabled):
+        (WebCore::Settings::setHiddenPageDOMTimerThrottlingEnabled):
+        (WebCore::Settings::setHiddenPageCSSAnimationSuspensionEnabled):
+        (WebCore::Settings::setFontFallbackPrefersPictographs):
+        * page/Settings.h:
+        (WebCore::Settings::pageDestroyed):
+
 2014-10-29  Zalan Bujtas  <zalan@apple.com>
 
         Remove invalid float from RootInlineBox.
