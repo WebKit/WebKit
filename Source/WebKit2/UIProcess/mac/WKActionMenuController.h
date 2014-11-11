@@ -71,7 +71,7 @@ enum class ActionMenuState {
 
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
-- (void)dismissActionMenuDataDetectorPopovers;
+- (void)dismissActionMenuPopovers;
 
 @end
 

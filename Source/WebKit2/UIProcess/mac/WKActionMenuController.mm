@@ -240,12 +240,14 @@ using namespace WebKit;
     _userData = userData;
 }
 
-- (void)dismissActionMenuDataDetectorPopovers
+- (void)dismissActionMenuPopovers
 {
-    // Ideally, this would actually dismiss the popovers. We don't currently have the ability to request
+    // Ideally, this would actually dismiss the data detector popovers. We don't currently have the ability to request
     // that and know whether or not it succeeded, so we'll settle for unanchoring.
     [[getDDActionsManagerClass() sharedManager] unanchorBubbles];
+
     [self _hideTextIndicator];
+    [self _clearPreviewPopover];
 }
 
 #pragma mark Text Indicator
