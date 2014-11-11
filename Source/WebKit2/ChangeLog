@@ -1,5 +1,55 @@
 2014-11-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175705. <rdar://problem/18892496>
+
+    2014-11-06  Tim Horton  <timothy_horton@apple.com>
+    
+            TextIndicatorWindow's bounce animation is lopsided when indicating two short lines of text
+            https://bugs.webkit.org/show_bug.cgi?id=138458
+    
+            Reviewed by Simon Fraser.
+    
+            Previously, the TextIndicator's frame() covered the entire selection highlight bounds.
+            This was undesirable in cases where the highlight included areas far outside the
+            bounds of the selected text, as the TextIndicatorWindow's 'bounce' animation
+            would be misaligned (centered on the highlight instead of on the text).
+    
+            * Shared/TextIndicator.cpp:
+            Get rid of the many-argument TextIndicator::create, because it was only used
+            internally, and have createWithSelectionInFrame make a ::Data instead.
+    
+            (WebKit::TextIndicator::createWithSelectionInFrame):
+            Compute and store the bounding rect of all of the selected text rects, and store
+            all of the text rects relative to that bounding rect instead of relative to the
+            selection highlight bounds. We do this because the selection highlight bounds
+            often includes area which is far outside of the text bounds (in the case of a
+            selection that spans multiple lines), and causes the text indicator bounce
+            animation to bounce in a lopsided manner.
+    
+            (WebKit::TextIndicator::TextIndicator):
+            Adjust to the rename of textRectsInSelectionRectCoordinates -> textRectsInBoundingRectCoordinates.
+    
+            (WebKit::TextIndicator::frameRect):
+            Instead of the TextIndicator's frame being the selection highlight bounds,
+            it is now the bounds of all of the text rects.
+    
+            (WebKit::TextIndicator::draw):
+            Translate into the image by the difference between the selection highlight bounds
+            and the text bounding rect. This is necessary because the content image is still generated
+            covering the entire selection highlight bounds, but the text rects are in text-rect-bounds coordinates.
+    
+            (WebKit::TextIndicator::Data::encode):
+            (WebKit::TextIndicator::Data::decode):
+            Adjust to the rename of textRectsInSelectionRectCoordinates -> textRectsInBoundingRectCoordinates.
+            Encode/decode textBoundingRectInWindowCoordinates.
+    
+            * Shared/TextIndicator.h:
+            (WebKit::TextIndicator::contentImage): Deleted.
+            Get rid of an unnecessary getter and constructor.
+    
+
+2014-11-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175704. <rdar://problem/18869036>
 
     2014-11-06  Tim Horton  <timothy_horton@apple.com>
