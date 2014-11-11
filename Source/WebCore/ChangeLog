@@ -1,3 +1,14 @@
+2014-11-11  Tim Horton  <timothy_horton@apple.com>
+
+        Localize strings for action menus
+        https://bugs.webkit.org/show_bug.cgi?id=138591
+        <rdar://problem/18815343>
+
+        Reviewed by Dan Bates.
+
+        * English.lproj/Localizable.strings:
+        Add a bunch of localizable strings.
+
 2014-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Cleanup from r175379
