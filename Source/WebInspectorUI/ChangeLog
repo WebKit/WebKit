@@ -1,3 +1,29 @@
+2014-11-10  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: Add infrastructure for eslint based static analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=137890
+
+        Reviewed by Timothy Hatcher.
+
+        Fix to previous patch to add AnalyzerManager and AnalyzerMessage classes. Changed Main.html to include ESLint.js
+        before Main.js in the combined resources.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Controllers/AnalyzerManager.js: Added.
+        (WebInspector.AnalyzerManager):
+        (set WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode.):
+        (set WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode):
+        (set WebInspector.AnalyzerManager.prototype.set get sourceCodeCanBeAnalyzed):
+        (set WebInspector.AnalyzerManager.prototype._handleSourceCodeContentDidChange):
+        * UserInterface/Main.html:
+        * UserInterface/Models/AnalyzerMessage.js: Added.
+        (WebInspector.AnalyzerMessage):
+        (WebInspector.AnalyzerMessage.prototype.get sourceCodeLocation):
+        (WebInspector.AnalyzerMessage.prototype.get sourceCode):
+        (WebInspector.AnalyzerMessage.prototype.get text):
+        (WebInspector.AnalyzerMessage.prototype.get ruleIdentifier):
+        * UserInterface/Models/SourceCode.js:
+
 2014-11-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: decouple child element folderization logic from FrameTreeElement
