@@ -1,3 +1,14 @@
+2014-10-24  Zalan Bujtas  <zalan@apple.com>
+
+        Replace INT_MIN/MAX / kFixedPointDenominator with intMin/MaxForLayoutUnit.
+        https://bugs.webkit.org/show_bug.cgi?id=138047
+
+        Reviewed by Andreas Kling.
+
+        No change in functionality.
+
+        * css/CSSPrimitiveValue.cpp:
+
 2014-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Notify Settings object when its Page object goes away.
