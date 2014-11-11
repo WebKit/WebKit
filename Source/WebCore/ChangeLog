@@ -1,3 +1,54 @@
+2014-10-24  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Video resolution changes trigger a crash in the TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=137065
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Switch to GstSample for buffer+caps communication between the
+        video sink and the player. Using a single object type for this
+        avoid issues where the caps might not correctly describe the
+        buffer contents anymore, for example when the video resolution is
+        changed.
+
+        * platform/graphics/gstreamer/ImageGStreamer.h: Use GstSample
+        instead of GstBuffer+GstCaps.
+        (WebCore::ImageGStreamer::createImage):
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp: Ditto.
+        (ImageGStreamer::ImageGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::mediaPlayerPrivateRepaintCallback): The repaint signal
+        now uses a GstSample instead of a GstBuffer.
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        Store the current sample instead of a buffer. Also renamed the
+        mutex protecting access to the sample.
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize): Return
+        early if no sample is available. The caps used to get the video
+        size are store in the sample.
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture): Use
+        GstSample instead of GstBuffer.
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp: Now store a
+        GstSample internally. Also removed the now useless current-caps property.
+        (_WebKitVideoSinkPrivate::_WebKitVideoSinkPrivate): Renamed the
+        mutex protecting access to the sample.
+        (_WebKitVideoSinkPrivate::~_WebKitVideoSinkPrivate): Ditto.
+        (webkit_video_sink_init): Disable last-sample in basesink since we
+        already store one in our sink anyway.
+        (webkitVideoSinkTimeoutCallback): Switch to GstSample.
+        (webkitVideoSinkRender): Ditto.
+        (unlockSampleMutex): Ditto.
+        (webkitVideoSinkUnlock): Ditto.
+        (webkitVideoSinkUnlockStop): Ditto.
+        (webkitVideoSinkStop): Ditto!
+        (webkitVideoSinkStart): Ditto.
+        (webkit_video_sink_class_init): Drop current-caps property.
+        (webkitVideoSinkGetProperty): Deleted.
+        (unlockBufferMutex): Deleted.
+
 2014-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         ASSERTION NOT REACHED because RenderStyle::setWordSpacing() does not handle a Length value of type 'Calculated'.
