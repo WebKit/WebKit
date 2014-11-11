@@ -124,6 +124,7 @@ public:
     bool mediaIsVideo() const;
     bool mediaMuted() const;
     void toggleMediaMuteState() const;
+    bool isDownloadableMedia() const;
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.

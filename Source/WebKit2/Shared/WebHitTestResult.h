@@ -54,6 +54,7 @@ public:
         bool isScrollbar;
         bool isSelected;
         bool isTextNode;
+        bool isDownloadableMedia;
 
         Data();
         explicit Data(const WebCore::HitTestResult&);
@@ -84,6 +85,8 @@ public:
     bool isSelected() const { return m_data.isSelected; }
 
     bool isTextNode() const { return m_data.isTextNode; }
+
+    bool isDownloadableMedia() const { return m_data.isDownloadableMedia; }
 
 private:
     explicit WebHitTestResult(const WebHitTestResult::Data& hitTestResultData)
