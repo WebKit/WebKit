@@ -1127,8 +1127,10 @@ static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& 
 
     Vector<FloatQuad> quads;
     mainResultRange->textQuads(quads);
-    if (!quads.isEmpty())
-        detectedDataBoundingBox = mainResultRange->ownerDocument().view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    detectedDataBoundingBox = FloatRect();
+    FrameView* frameView = mainResultRange->ownerDocument().view();
+    for (const auto& quad : quads)
+        detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
 
     detectedDataRange = mainResultRange;
 
