@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DictionaryLookup.h"
 
+#if !PLATFORM(IOS)
+
 #import "Document.h"
 #import "FocusController.h"
 #import "Frame.h"
@@ -162,4 +164,7 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
     return TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
 }
 
-} 
+} // namespace WebCore
+
+#endif // !PLATFORM(IOS)
+
