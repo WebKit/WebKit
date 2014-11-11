@@ -1,3 +1,27 @@
+2014-11-10  Beth Dakin  <bdakin@apple.com>
+
+        WK1: Support default actions for read-only text
+        https://bugs.webkit.org/show_bug.cgi?id=138552
+        -and corresponding-
+        rdar://problem/18877483
+
+        Reviewed by Tim Horton.
+
+        WK1 now needs to do a lot of dictionary lookup operations that it did not 
+        previously have to handle. So this patch takes a lot of that functionality, which 
+        was implemented as static functions in WebPageMac for WK2 and moves it into 
+        WebCore.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        (WebKit::isPositionInRange): Deleted.
+        (WebKit::shouldUseSelection): Deleted.
+        (WebKit::rangeExpandedAroundPositionByCharacters): Deleted.
+        (WebKit::rangeForDictionaryLookupForSelection): Deleted.
+        (WebKit::rangeForDictionaryLookupAtHitTestResult): Deleted.
+
 2014-11-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175790. <rdar://problem/18919700>

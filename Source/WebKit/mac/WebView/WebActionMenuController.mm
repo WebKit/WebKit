@@ -27,13 +27,26 @@
 
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
+#import "WebDocumentInternal.h"
+#import "WebElementDictionary.h"
+#import "WebFrameInternal.h"
+#import "WebHTMLView.h"
+#import "WebHTMLViewInternal.h"
+#import "WebSystemInterface.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/DictionaryLookup.h>
 #import <WebCore/Element.h>
+#import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/HTMLConverter.h>
 #import <WebCore/NSViewSPI.h>
+#import <WebCore/Page.h>
+#import <WebCore/Range.h>
+#import <WebCore/RenderObject.h>
 #import <WebCore/SoftLinking.h>
+#import <WebKitSystemInterface.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
 
@@ -51,6 +64,12 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewBubble)
 @end
 
 using namespace WebCore;
+
+struct DictionaryPopupInfo {
+    NSPoint origin;
+    RetainPtr<NSDictionary> options;
+    RetainPtr<NSAttributedString> attributedString;
+};
 
 @implementation WebActionMenuController
 
@@ -70,6 +89,20 @@ using namespace WebCore;
     _webView = nil;
 }
 
+- (WebElementDictionary *)performHitTestAtPoint:(NSPoint)windowPoint
+{
+    WebHTMLView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
+    NSPoint point = [documentView convertPoint:windowPoint fromView:nil];
+
+    Frame* coreFrame = core([documentView _frame]);
+    if (!coreFrame)
+        return nil;
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
+    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point), hitType);
+
+    return [[[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult] autorelease];
+}
+
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (!_webView)
@@ -81,9 +114,11 @@ using namespace WebCore;
 
     [actionMenu removeAllItems];
 
-    NSDictionary *hitTestResult = [_webView elementAtPoint:[_webView convertPoint:event.locationInWindow fromView:nil]];
-
+    WebElementDictionary *hitTestResult = [self performHitTestAtPoint:[_webView convertPoint:event.locationInWindow fromView:nil]];
     NSArray *menuItems = [self _defaultMenuItemsForHitTestResult:hitTestResult];
+
+    if (_type != WebActionMenuReadOnlyText)
+        [[_webView _selectedOrMainFrame] _clearSelection];
 
     // Allow clients to customize the menu items.
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:)])
@@ -92,6 +127,16 @@ using namespace WebCore;
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
 }
+
+- (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    if (menu != _webView.actionMenu)
+        return;
+
+    _type = WebActionMenuNone;
+}
+
+#pragma mark Link actions
 
 - (void)_openURLFromActionMenu:(id)sender
 {
@@ -174,7 +219,123 @@ using namespace WebCore;
     [bubble showPreviewItem:url itemFrame:itemFrame];
 }
 
-- (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag withHitTestResult:(NSDictionary *)hitTestResult
+- (NSArray *)_defaultMenuItemsForLink:(WebElementDictionary *)hitTestResult
+{
+    NSURL *url = [hitTestResult objectForKey:WebElementLinkURLKey];
+    if (!url)
+        return @[ ];
+
+    if (!WebCore::protocolIsInHTTPFamily([url absoluteString]))
+        return @[ ];
+
+    RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPreviewLink withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList withHitTestResult:hitTestResult];
+
+    return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
+}
+
+#pragma mark Text actions
+
+- (NSArray *)_defaultMenuItemsForText:(WebElementDictionary *)hitTestResult
+{
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:WebActionMenuItemTagCopyText withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:WebActionMenuItemTagLookupText withHitTestResult:hitTestResult];
+
+    return @[ copyTextItem.get(), lookupTextItem.get() ];
+}
+
+- (void)_copySelection:(id)sender
+{
+    [_webView _executeCoreCommandByName:@"copy" value:nil];
+}
+
+- (void)_lookupText:(id)sender
+{
+    Frame* frame = core([_webView _selectedOrMainFrame]);
+    if (!frame)
+        return;
+
+    DictionaryPopupInfo popupInfo = performDictionaryLookupForSelection(frame, frame->selection().selection());
+    if (!popupInfo.attributedString)
+        return;
+
+    NSPoint textBaselineOrigin = popupInfo.origin;
+
+    // Convert to screen coordinates.
+    textBaselineOrigin = [_webView convertPoint:textBaselineOrigin toView:nil];
+    textBaselineOrigin = [_webView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    WKShowWordDefinitionWindow(popupInfo.attributedString.get(), textBaselineOrigin, popupInfo.options.get());
+}
+
+- (BOOL)_selectLookupText
+{
+    NSDictionary *options = nil;
+    RefPtr<Range> lookupRange = rangeForDictionaryLookupAtHitTestResult(_hitTestResult, &options);
+    if (!lookupRange)
+        return false;
+
+    Frame* frame = _hitTestResult.innerNode()->document().frame();
+    if (!frame)
+        return false;
+
+    frame->selection().setSelectedRange(lookupRange.get(), DOWNSTREAM, true);
+    return true;
+}
+
+static DictionaryPopupInfo performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
+{
+    NSDictionary *options = nil;
+    DictionaryPopupInfo popupInfo;
+    RefPtr<Range> selectedRange = rangeForDictionaryLookupForSelection(selection, &options);
+    if (selectedRange)
+        popupInfo = performDictionaryLookupForRange(frame, *selectedRange, options);
+    return popupInfo;
+}
+
+static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options)
+{
+    DictionaryPopupInfo popupInfo;
+    if (range.text().stripWhiteSpace().isEmpty())
+        return popupInfo;
+    
+    RenderObject* renderer = range.startContainer()->renderer();
+    const RenderStyle& style = renderer->style();
+
+    Vector<FloatQuad> quads;
+    range.textQuads(quads);
+    if (quads.isEmpty())
+        return popupInfo;
+
+    IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+
+    popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().descent() * frame->page()->pageScaleFactor()));
+    popupInfo.options = options;
+
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range);
+    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
+
+        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font) {
+            font = [fontManager convertFont:font toSize:[font pointSize] * frame->page()->pageScaleFactor()];
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+        }
+
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    popupInfo.attributedString = scaledNSAttributedString.get();
+    return popupInfo;
+}
+
+#pragma mark Menu Items
+
+- (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag withHitTestResult:(WebElementDictionary *)hitTestResult
 {
     SEL selector = nullptr;
     NSString *title = nil;
@@ -204,6 +365,18 @@ using namespace WebCore;
         representedObject = [hitTestResult objectForKey:WebElementLinkURLKey];
         break;
 
+    case WebActionMenuItemTagCopyText:
+        selector = @selector(_copySelection:);
+        title = @"Copy";
+        image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        break;
+
+    case WebActionMenuItemTagLookupText:
+        selector = @selector(_lookupText:);
+        title = @"Look Up";
+        image = [NSImage imageNamed:@"NSActionMenuLookup"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -222,29 +395,22 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     return [[NSBundle bundleForClass:NSClassFromString(@"WKView")] imageForResource:name];
 }
 
-- (NSArray *)_defaultMenuItemsForLink:(NSDictionary *)hitTestResult
+- (NSArray *)_defaultMenuItemsForHitTestResult:(WebElementDictionary *)hitTestResult
 {
     NSURL *url = [hitTestResult objectForKey:WebElementLinkURLKey];
-    if (!url)
-        return @[ ];
-
-    if (!WebCore::protocolIsInHTTPFamily([url absoluteString]))
-        return @[ ];
-
-    RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser withHitTestResult:hitTestResult];
-    RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPreviewLink withHitTestResult:hitTestResult];
-    RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList withHitTestResult:hitTestResult];
-
-    return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
-}
-
-- (NSArray *)_defaultMenuItemsForHitTestResult:(NSDictionary *)hitTestResult
-{
-    NSURL *url = [hitTestResult objectForKey:WebElementLinkURLKey];
-
     if (url) {
         _type = WebActionMenuLink;
         return [self _defaultMenuItemsForLink:hitTestResult];
+    }
+
+    Node* node = _hitTestResult.innerNode();
+    if (node && node->isTextNode()) {
+        if (![[hitTestResult objectForKey:WebElementIsSelectedKey] boolValue]) {
+            if (![self _selectLookupText])
+                return @[ ];
+        }
+        _type = WebActionMenuReadOnlyText;
+        return [self _defaultMenuItemsForText:hitTestResult];
     }
 
     _type = WebActionMenuNone;
