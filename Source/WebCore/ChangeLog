@@ -1,5 +1,21 @@
 2014-11-04  Andreas Kling  <akling@apple.com>
 
+        RenderBox shouldn't need a pre-destructor hook.
+        <https://webkit.org/b/138367>
+
+        Reviewed by Antti Koivisto.
+
+        Move teardown logic from willBeDestroyed() to the regular ~RenderBox()
+        destructor since none of it depends on being in-tree or having a fully
+        constructed vtable.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::~RenderBox):
+        (WebCore::RenderBox::willBeDestroyed): Deleted.
+        * rendering/RenderBox.h:
+
+2014-11-04  Andreas Kling  <akling@apple.com>
+
         RenderQuote shouldn't need a pre-destructor hook.
         <https://webkit.org/b/138352>
 
