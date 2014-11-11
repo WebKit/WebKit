@@ -27,25 +27,98 @@
 #ifndef HTTPHeaderMap_h
 #define HTTPHeaderMap_h
 
+#include "HTTPHeaderNames.h"
 #include <utility>
 #include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-enum class HTTPHeaderName;
-
-typedef Vector<std::pair<String, String>> CrossThreadHTTPHeaderMapData;
+struct CrossThreadHTTPHeaderMapData {
+    Vector<std::pair<HTTPHeaderName, String>> commonHeaders;
+    Vector<std::pair<String, String>> uncommonHeaders;
+};
 
 // FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
 class HTTPHeaderMap {
-    typedef HashMap<String, String, CaseFoldingHash> HashMapType;
 public:
-    typedef HashMapType::const_iterator const_iterator;
+    typedef HashMap<HTTPHeaderName, String, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> CommonHeadersHashMap;
+    typedef HashMap<String, String, CaseFoldingHash> UncommonHeadersHashMap;
+
+    class HTTPHeaderMapConstIterator {
+    public:
+        HTTPHeaderMapConstIterator(const HTTPHeaderMap& table, CommonHeadersHashMap::const_iterator commonHeadersIt, UncommonHeadersHashMap::const_iterator uncommonHeadersIt)
+            : m_table(table)
+            , m_commonHeadersIt(commonHeadersIt)
+            , m_uncommonHeadersIt(uncommonHeadersIt)
+        {
+            updateKeyValue(m_commonHeadersIt);
+        }
+
+        struct KeyValue {
+            String key;
+            Optional<HTTPHeaderName> keyAsHTTPHeaderName;
+            String value;
+        };
+
+        const KeyValue* get() const
+        {
+            ASSERT(*this != m_table.end());
+            return &m_keyValue;
+        }
+        const KeyValue& operator*() const { return *get(); }
+        const KeyValue* operator->() const { return get(); }
+
+        HTTPHeaderMapConstIterator& operator++()
+        {
+            if (m_commonHeadersIt != m_table.m_commonHeaders.end()) {
+                if (updateKeyValue(++m_commonHeadersIt))
+                    return *this;
+            } else
+                ++m_uncommonHeadersIt;
+
+            updateKeyValue(m_uncommonHeadersIt);
+            return *this;
+        }
+
+        bool operator!=(const HTTPHeaderMapConstIterator& other) const { return !(*this == other); }
+        bool operator==(const HTTPHeaderMapConstIterator& other) const
+        {
+            return m_commonHeadersIt == other.m_commonHeadersIt && m_uncommonHeadersIt == other.m_uncommonHeadersIt;
+        }
+
+    private:
+        bool updateKeyValue(CommonHeadersHashMap::const_iterator it)
+        {
+            if (it == m_table.commonHeaders().end())
+                return false;
+            m_keyValue.key = httpHeaderNameString(it->key).toStringWithoutCopying();
+            m_keyValue.keyAsHTTPHeaderName = it->key;
+            m_keyValue.value = it->value;
+            return true;
+        }
+        bool updateKeyValue(UncommonHeadersHashMap::const_iterator it)
+        {
+            if (it == m_table.uncommonHeaders().end())
+                return false;
+            m_keyValue.key = it->key;
+            m_keyValue.keyAsHTTPHeaderName = Nullopt;
+            m_keyValue.value = it->value;
+            return true;
+        }
+
+        const HTTPHeaderMap& m_table;
+        CommonHeadersHashMap::const_iterator m_commonHeadersIt;
+        UncommonHeadersHashMap::const_iterator m_uncommonHeadersIt;
+        KeyValue m_keyValue;
+    };
+    typedef HTTPHeaderMapConstIterator const_iterator;
 
     WEBCORE_EXPORT HTTPHeaderMap();
     WEBCORE_EXPORT ~HTTPHeaderMap();
@@ -54,10 +127,14 @@ public:
     std::unique_ptr<CrossThreadHTTPHeaderMapData> copyData() const;
     void adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData>);
 
-    bool isEmpty() const { return m_headers.isEmpty(); }
-    int size() const { return m_headers.size(); }
+    bool isEmpty() const { return m_commonHeaders.isEmpty() && m_uncommonHeaders.isEmpty(); }
+    int size() const { return m_commonHeaders.size() + m_uncommonHeaders.size(); }
 
-    void clear() { m_headers.clear(); }
+    void clear()
+    {
+        m_commonHeaders.clear();
+        m_uncommonHeaders.clear();
+    }
 
     WEBCORE_EXPORT String get(const String& name) const;
     WEBCORE_EXPORT void set(const String& name, const String& value);
@@ -65,23 +142,27 @@ public:
 
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
+    void add(HTTPHeaderName, const String& value);
     bool contains(HTTPHeaderName) const;
-    const_iterator find(HTTPHeaderName) const;
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String get(const char (&)[length]) const = delete;
     template<size_t length> void set(const char (&)[length], const String&) = delete;
     template<size_t length> bool contains(const char (&)[length]) = delete;
-    template<size_t length> const_iterator find(const char(&)[length]) = delete;
     template<size_t length> bool remove(const char (&)[length]) = delete;
 
-    const_iterator begin() const { return m_headers.begin(); }
-    const_iterator end() const { return m_headers.end(); }
+    const CommonHeadersHashMap& commonHeaders() const { return m_commonHeaders; }
+    const UncommonHeadersHashMap& uncommonHeaders() const { return m_uncommonHeaders; }
+    CommonHeadersHashMap& commonHeaders() { return m_commonHeaders; }
+    UncommonHeadersHashMap& uncommonHeaders() { return m_uncommonHeaders; }
+
+    const_iterator begin() const { return const_iterator(*this, m_commonHeaders.begin(), m_uncommonHeaders.begin()); }
+    const_iterator end() const { return const_iterator(*this, m_commonHeaders.end(), m_uncommonHeaders.end()); }
 
     friend bool operator==(const HTTPHeaderMap& a, const HTTPHeaderMap& b)
     {
-        return a.m_headers == b.m_headers;
+        return a.m_commonHeaders == b.m_commonHeaders && a.m_uncommonHeaders == b.m_uncommonHeaders;
     }
 
     friend bool operator!=(const HTTPHeaderMap& a, const HTTPHeaderMap& b)
@@ -90,10 +171,8 @@ public:
     }
 
 private:
-    // FIXME: Instead of having a HashMap<String, String>, we could have two hash maps,
-    // one HashMap<HTTPHeaderName, String> for common headers and another HashMap<String, String> for
-    // less common headers.
-    HashMapType m_headers;
+    CommonHeadersHashMap m_commonHeaders;
+    UncommonHeadersHashMap m_uncommonHeaders;
 };
 
 } // namespace WebCore

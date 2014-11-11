@@ -1,3 +1,75 @@
+2014-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Use separate HashMaps for common and uncommon headers in HTTPHeaderMap
+        https://bugs.webkit.org/show_bug.cgi?id=138079
+
+        Reviewed by Anders Carlsson.
+
+        Use separate HashMaps for common and uncommon headers in HTTPHeaderMap:
+        - a (faster) HashMap<HTTPHeaderMap, String> for common HTTP headers
+        - a HashMap<String, String, CaseFoldingHash> for uncommon ones
+
+        This avoids having to construct Strings from HTTPHeaderMap values for
+        storing. This also means we have less isolated String copies to do when
+        creating cross-thread data. The common headers HashMap should also be
+        a bit more efficient due to faster hashing and faster key comparison in
+        case of collision.
+
+        Some calls sites can also benefit from having direct access to common
+        headers of the request in HTTPHeaderName type.
+
+        This patch adds a new HTTPHeaderMapConstIterator iterator type for
+        HTTPHeaderMap so that call sites that do not need / want to distinguish
+        common / uncommon headers still do not need to. They can keep using
+        modern C++ loops over HTTPHeaderMap objects and get <String, String>
+        key/value pairs.
+
+        No new tests, no behavior change.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist):
+        Have isOnAccessControlSimpleRequestHeaderWhitelist() take a
+        HTTPHeaderName in argument instead of a String as only common headers
+        are in the whitelist.
+
+        (WebCore::isSimpleCrossOriginAccessRequest):
+        Call isOnAccessControlSimpleRequestHeaderWhitelist() only for common
+        HTTP headers.
+
+        * loader/CrossOriginAccessControl.h:
+        Have isOnAccessControlSimpleRequestHeaderWhitelist() take a
+        HTTPHeaderName in argument instead of a String as only common headers
+        are in the whitelist.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders):
+        Call isOnAccessControlSimpleRequestHeaderWhitelist() only for common
+        HTTP headers.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        Call httpHeaderFields().commonHeaders().find() instead of
+        httpHeaderFields().find() as we are looking for a common header.
+        HTTPHeaderMap::find(HTTPHeaderName) was removed now that we have a
+        HashMap dedicated to common headers.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::shouldIgnoreHeaderForCacheReuse):
+        Update argument type to be a HTTPHeaderName instead of a String as
+        only common HTTP headers can be ignored for cache reuse. The
+        implementation already dealt with HTTPHeaderName type and had to
+        call findHTTPHeaderName(). This is no longer needed now that the
+        call site now has direct access to common headers in HTTPHeaderName
+        type.
+
+        (WebCore::CachedRawResource::canReuse):
+        - Only call shouldIgnoreHeaderForCacheReuse() for common HTTP headers.
+        - Slightly optimize the second loop (the one over oldHeaderMap) to only
+          check that the key is present in newHeaderMap, without actually
+          comparing the String values. If the String values were different, the
+          first loop would have seen it already and we would have returned
+          early.
+
 2014-10-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Shrink MathMLOperatorDictionary::dictionary table

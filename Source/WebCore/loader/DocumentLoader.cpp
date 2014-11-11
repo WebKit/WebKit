@@ -605,8 +605,9 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     if (willLoadFallback)
         return;
 
-    auto it = response.httpHeaderFields().find(HTTPHeaderName::XFrameOptions);
-    if (it != response.httpHeaderFields().end()) {
+    const auto& commonHeaders = response.httpHeaderFields().commonHeaders();
+    auto it = commonHeaders.find(HTTPHeaderName::XFrameOptions);
+    if (it != commonHeaders.end()) {
         String content = it->value;
         ASSERT(m_mainResource);
         unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();

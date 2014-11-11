@@ -31,7 +31,6 @@
 #include "config.h"
 #include "HTTPHeaderMap.h"
 
-#include "HTTPHeaderNames.h"
 #include <utility>
 #include <wtf/text/StringView.h>
 
@@ -48,75 +47,85 @@ HTTPHeaderMap::~HTTPHeaderMap()
 std::unique_ptr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 {
     auto data = std::make_unique<CrossThreadHTTPHeaderMapData>();
-    data->reserveInitialCapacity(m_headers.size());
 
-    for (const auto& header : *this)
-        data->uncheckedAppend(std::make_pair(header.key.isolatedCopy(), header.value.isolatedCopy()));
+    data->commonHeaders.reserveInitialCapacity(m_commonHeaders.size());
+    for (const auto& header : m_commonHeaders)
+        data->commonHeaders.uncheckedAppend(std::make_pair(header.key, header.value.isolatedCopy()));
+
+    data->uncommonHeaders.reserveInitialCapacity(m_uncommonHeaders.size());
+    for (const auto& header : m_uncommonHeaders)
+        data->uncommonHeaders.uncheckedAppend(std::make_pair(header.key.isolatedCopy(), header.value.isolatedCopy()));
 
     return data;
 }
 
 void HTTPHeaderMap::adopt(std::unique_ptr<CrossThreadHTTPHeaderMapData> data)
 {
-    m_headers.clear();
+    m_commonHeaders.clear();
+    m_uncommonHeaders.clear();
 
-    for (auto& header : *data)
-        m_headers.add(WTF::move(header.first), WTF::move(header.second));
-}
+    for (auto& header : data->commonHeaders)
+        m_commonHeaders.add(header.first, WTF::move(header.second));
 
-static String internHTTPHeaderNameString(const String& nameString)
-{
-    HTTPHeaderName headerName;
-    if (!findHTTPHeaderName(nameString, headerName))
-        return nameString;
-
-    return httpHeaderNameString(headerName).toStringWithoutCopying();
+    for (auto& header : data->uncommonHeaders)
+        m_uncommonHeaders.add(WTF::move(header.first), WTF::move(header.second));
 }
 
 String HTTPHeaderMap::get(const String& name) const
 {
-    return m_headers.get(internHTTPHeaderNameString(name));
+    HTTPHeaderName headerName;
+    if (!findHTTPHeaderName(name, headerName))
+        return m_uncommonHeaders.get(name);
+    return m_commonHeaders.get(headerName);
 }
 
 void HTTPHeaderMap::set(const String& name, const String& value)
 {
-    m_headers.set(internHTTPHeaderNameString(name), value);
+    HTTPHeaderName headerName;
+    if (!findHTTPHeaderName(name, headerName)) {
+        m_uncommonHeaders.set(name, value);
+        return;
+    }
+    m_commonHeaders.set(headerName, value);
 }
 
 void HTTPHeaderMap::add(const String& name, const String& value)
 {
-    auto result = m_headers.add(internHTTPHeaderNameString(name), value);
-    if (!result.isNewEntry)
-        result.iterator->value = result.iterator->value + ", " + value;
+    HTTPHeaderName headerName;
+    if (!findHTTPHeaderName(name, headerName)) {
+        auto result = m_uncommonHeaders.add(name, value);
+        if (!result.isNewEntry)
+            result.iterator->value = result.iterator->value + ", " + value;
+        return;
+    }
+    add(headerName, value);
 }
 
 String HTTPHeaderMap::get(HTTPHeaderName name) const
 {
-    auto it = find(name);
-    if (it == end())
-        return String();
-
-    return it->value;
+    return m_commonHeaders.get(name);
 }
 
 void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
 {
-    m_headers.set(httpHeaderNameString(name).toStringWithoutCopying(), value);
+    m_commonHeaders.set(name, value);
 }
 
 bool HTTPHeaderMap::contains(HTTPHeaderName name) const
 {
-    return m_headers.contains(httpHeaderNameString(name).toStringWithoutCopying());
-}
-
-HTTPHeaderMap::const_iterator HTTPHeaderMap::find(HTTPHeaderName name) const
-{
-    return m_headers.find(httpHeaderNameString(name).toStringWithoutCopying());
+    return m_commonHeaders.contains(name);
 }
 
 bool HTTPHeaderMap::remove(HTTPHeaderName name)
 {
-    return m_headers.remove(httpHeaderNameString(name).toStringWithoutCopying());
+    return m_commonHeaders.remove(name);
+}
+
+void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
+{
+    auto result = m_commonHeaders.add(name, value);
+    if (!result.isNewEntry)
+        result.iterator->value = result.iterator->value + ", " + value;
 }
 
 } // namespace WebCore

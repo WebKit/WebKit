@@ -1,3 +1,19 @@
+2014-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Use separate HashMaps for common and uncommon headers in HTTPHeaderMap
+        https://bugs.webkit.org/show_bug.cgi?id=138079
+
+        Reviewed by Anders Carlsson.
+
+        Add HashTraits for C++11 strong enum types. Using integer HashTraits for
+        strong enums would be inconvenient as it would require casting between
+        integer and strong enum types.
+
+        * wtf/HashTraits.h:
+        (WTF::StrongEnumHashTraits::emptyValue):
+        (WTF::StrongEnumHashTraits::constructDeletedValue):
+        (WTF::StrongEnumHashTraits::isDeletedValue):
+
 2014-10-23  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fix build on Hurd
