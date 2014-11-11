@@ -131,6 +131,6 @@ struct WebPageConfiguration;
 - (void)_didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 #endif
 
-- (void)_dismissActionMenuDataDetectorPopovers;
+- (void)_dismissActionMenuPopovers;
 
 @end
