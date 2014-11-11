@@ -1,3 +1,28 @@
+2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr<>|std::make_unique_ptr in RenderThemeEfl::ThemePartCacheEntry::create()
+        https://bugs.webkit.org/show_bug.cgi?id=138558
+
+        Reviewed by Anders Carlsson.
+
+        This patch removes PassOwnPtr and OwnPtr in RenderThemeEfl::ThemePartCacheEntry::create().
+        It would be good if we also remove create() factory function though, in this case, it is
+        a little hard to remove it since the create() factory function does many works to create
+        a ThemePartCacheEntry instance. Thus this patch just replaces PassOwnPtr|OwnPtr with
+        std::unique_ptr<> and std::make_unique<> in RenderThemeEfl::ThemePartCacheEntry::create().
+
+        Besides the theme entries have been maintained by Eina_List*. Unfortunately it doesn't support
+        std::unique_ptr<> yet. Thus the Eina_List* should be replaced with Vector<std::unique_ptr<>>
+        so that m_partCache has ownship of all EFL theme entries. This patch tries to keep original
+        cache algorithm based on Vector class.
+
+        No new tests, no behavior changes.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::ThemePartCacheEntry::create):
+        (WebCore::RenderThemeEfl::getThemePartFromCache):
+        * platform/efl/RenderThemeEfl.h:
+
 2014-11-09  Darin Adler  <darin@apple.com>
 
         Minor tweaks to HTMLCollection
