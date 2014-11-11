@@ -1,3 +1,13 @@
+2014-11-11  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        webkitpy test fix after r175867
+        https://bugs.webkit.org/show_bug.cgi?id=138607
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/port/linux_get_crash_log_unittest.py:
+        (GDBCrashLogGeneratorTest.test_generate_crash_log):
+
 2014-11-10  Philippe Normand  <pnormand@igalia.com>
 
         webkitpy: demangle C++ symbols from crash log stderr
