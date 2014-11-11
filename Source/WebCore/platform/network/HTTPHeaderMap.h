@@ -58,7 +58,8 @@ public:
             , m_commonHeadersIt(commonHeadersIt)
             , m_uncommonHeadersIt(uncommonHeadersIt)
         {
-            updateKeyValue(m_commonHeadersIt);
+            if (!updateKeyValue(m_commonHeadersIt))
+                updateKeyValue(m_uncommonHeadersIt);
         }
 
         struct KeyValue {

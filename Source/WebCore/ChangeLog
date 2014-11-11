@@ -1,3 +1,32 @@
+2014-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Crash in CachedRawResource::canReuse() when reloading http://dnd.wizards.com/dungeons-and-dragons/story
+        https://bugs.webkit.org/show_bug.cgi?id=138164
+
+        Reviewed by Andreas Kling.
+
+        This patch fixes a crash when reloading the following URL:
+        http://dnd.wizards.com/dungeons-and-dragons/story
+
+        We were crashing in CachedRawResource::canReuse() because header.key
+        would sometimes be a null String and we would call
+        HashMap::get(nullString).
+
+        The real issue was that header.key was null in the first place, which
+        means that even though the HTTPHeaderMap iterator is valid, it->key
+        is a null String, which should never happen. There was a bug in the
+        HTTPHeaderMapConstIterator() constructor that would cause the
+        iterator key/value pair to not get initialized if the HTTPHeaderMap
+        contained *only* uncommon HTTP headers. This patch updates the
+        constructor so that we fall back to updating the key/value from the
+        uncommon header map, if we failed to initialized from the common
+        header map (because it was empty).
+
+        Test: http/tests/cache/xhr-uncommon-header.html
+
+        * platform/network/HTTPHeaderMap.h:
+        (WebCore::HTTPHeaderMap::HTTPHeaderMapConstIterator::HTTPHeaderMapConstIterator):
+
 2014-10-27  Chris Dumez  <cdumez@apple.com>
 
         Use separate HashMaps for common and uncommon headers in HTTPHeaderMap
