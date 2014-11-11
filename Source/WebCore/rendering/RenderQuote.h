@@ -37,7 +37,6 @@ public:
 private:
     void detachQuote();
 
-    virtual void willBeDestroyed() override;
     virtual const char* renderName() const override { return "RenderQuote"; }
     virtual bool isQuote() const override { return true; };
     virtual void styleDidChange(StyleDifference, const RenderStyle*) override;

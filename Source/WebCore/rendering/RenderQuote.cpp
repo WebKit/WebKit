@@ -43,15 +43,11 @@ RenderQuote::RenderQuote(Document& document, PassRef<RenderStyle> style, QuoteTy
 
 RenderQuote::~RenderQuote()
 {
+    detachQuote();
+
     ASSERT(!m_isAttached);
     ASSERT(!m_next);
     ASSERT(!m_previous);
-}
-
-void RenderQuote::willBeDestroyed()
-{
-    detachQuote();
-    RenderInline::willBeDestroyed();
 }
 
 void RenderQuote::willBeRemovedFromTree()
