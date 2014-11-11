@@ -562,7 +562,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         [self _hideTextIndicator];
     };
 
-    WKSetDDActionContextIsForActionMenu(actionContext);
+    actionContext.forActionMenuContent = YES;
     actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]];
     return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_hitTestResult.actionContext mainResult] actionContext:actionContext];
 }
