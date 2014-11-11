@@ -878,6 +878,12 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [frameView release];
 
 #if !PLATFORM(IOS)
+    if ([self respondsToSelector:@selector(setActionMenu:)]) {
+        RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
+        self.actionMenu = actionMenu.get();
+        _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
+    }
+
     static bool didOneTimeInitialization = false;
 #endif
     if (!didOneTimeInitialization) {
@@ -1075,12 +1081,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [self setMaintainsBackForwardList: YES];
 #if !PLATFORM(IOS)
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-
-    if ([self respondsToSelector:@selector(setActionMenu:)]) {
-        RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
-        self.actionMenu = actionMenu.get();
-        _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
-    }
 #endif
     return self;
 }
