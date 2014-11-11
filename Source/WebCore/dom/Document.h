@@ -1201,7 +1201,7 @@ public:
     WEBCORE_EXPORT void didRemoveWheelEventHandler();
 
     double lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
-    void resetLastHandledUserGestureTimestamp();
+    void updateLastHandledUserGestureTimestamp();
 
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandlers() const { return (m_touchEventTargets.get()) ? m_touchEventTargets->size() : false; }

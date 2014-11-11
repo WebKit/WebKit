@@ -1650,7 +1650,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture, m_frame.document());
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
     m_frame.loader().resetMultipleFormSubmissionProtection();
@@ -1787,7 +1787,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     m_frame.selection().setCaretBlinkingSuspended(false);
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture, m_frame.document());
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
@@ -2026,7 +2026,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture, m_frame.document());
 
 #if ENABLE(PAN_SCROLLING)
     m_autoscrollController->handleMouseReleaseEvent(platformMouseEvent);
@@ -3065,7 +3065,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (!element)
         return false;
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture, m_frame.document());
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     if (FrameView* view = m_frame.view())
@@ -3793,7 +3793,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture, m_frame.document());
 
     unsigned i;
     bool freshTouchEvents = true;

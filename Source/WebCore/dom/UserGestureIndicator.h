@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class Document;
+
 enum ProcessingUserGestureState {
     DefinitelyProcessingUserGesture,
     PossiblyProcessingUserGesture,
@@ -41,9 +43,9 @@ class UserGestureIndicator {
 public:
     static bool processingUserGesture();
 
-    WEBCORE_EXPORT explicit UserGestureIndicator(ProcessingUserGestureState);
+    // If a document is provided, its last known user gesture timestamp is updated.
+    WEBCORE_EXPORT explicit UserGestureIndicator(ProcessingUserGestureState, Document* = nullptr);
     WEBCORE_EXPORT ~UserGestureIndicator();
-
 
 private:
     WEBCORE_EXPORT static ProcessingUserGestureState s_state;

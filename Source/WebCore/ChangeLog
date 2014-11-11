@@ -1,3 +1,56 @@
+2014-10-14  Dean Jackson  <dino@apple.com>
+
+        Crash in WebCore::UserGestureIndicator::processingUserGesture with WebWorkers
+        https://bugs.webkit.org/show_bug.cgi?id=137676
+        <rdar://problem/15735049>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the code I added that tracks the timestamp of the most recent
+        user gesture from the event handling dispatch, as it was both
+        a silly place to do it and it originally crashed when events were fired from
+        Worker threads (although this was fixed in r152238).
+
+        It's now recorded by going through UserGestureIndicator, which is good because
+        it knows when a user has triggered an event. Its constructor now takes
+        a pointer to Document, and updates the timestamp there if necessary.
+
+        Not all UserGestureIndicator instances needed to reset the timestamp; Those did
+        not have to pass along the Document.
+
+        This is untestable due to the fix mentioned above.
+
+        * WebCore.exp.in: Change constructor signature.
+
+        * accessibility/AccessibilityNodeObject.cpp: Pass a pointer to the Document into the UserGestureIndicator.
+        (WebCore::AccessibilityNodeObject::increment):
+        (WebCore::AccessibilityNodeObject::decrement):
+        * accessibility/AccessibilityObject.cpp: Ditto.
+        (WebCore::AccessibilityObject::press):
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLastHandledUserGestureTimestamp): Renamed.
+        * dom/Document.h:
+
+        * dom/EventTarget.cpp: Remove the code to update the timestamp.
+        (WebCore::EventTarget::fireEventListeners):
+
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::UserGestureIndicator): If there is a Document and
+        this is a user gesture, then reset the timestamp.
+        * dom/UserGestureIndicator.h:
+
+        * page/EventHandler.cpp: Pass a pointer to the Document.
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::handleTouchEvent):
+
+        * rendering/HitTestResult.cpp: Ditto.
+        (WebCore::HitTestResult::toggleMediaFullscreenState):
+        (WebCore::HitTestResult::enterFullscreenForVideo):
+
 2014-10-14  Alejandro G. Castro  <alex@igalia.com>
 
         Changes in the stretchy attribute do not update rendering

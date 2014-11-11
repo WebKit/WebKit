@@ -5876,8 +5876,7 @@ void Document::didRemoveEventTargetNode(Node* handler)
     }
 }
 #endif
-
-void Document::resetLastHandledUserGestureTimestamp()
+void Document::updateLastHandledUserGestureTimestamp()
 {
     m_lastHandledUserGestureTimestamp = monotonicallyIncreasingTime();
 }

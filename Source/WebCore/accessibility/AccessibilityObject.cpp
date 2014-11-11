@@ -845,7 +845,8 @@ bool AccessibilityObject::press()
     // Hit test at this location to determine if there is a sub-node element that should act
     // as the target of the action.
     Element* hitTestElement = nullptr;
-    if (Document* document = this->document()) {
+    Document* document = this->document();
+    if (document) {
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);
         HitTestResult hitTestResult(clickPoint());
         document->renderView()->hitTest(request, hitTestResult);
@@ -866,7 +867,7 @@ bool AccessibilityObject::press()
     if (hitTestElement && hitTestElement->isDescendantOf(pressElement))
         pressElement = hitTestElement;
     
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture, document);
     pressElement->accessKeyAction(true);
     return true;
 }
