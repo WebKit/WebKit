@@ -1,3 +1,15 @@
+2014-10-22  Byungseon Shin  <sun.shin@lge.com>
+
+        String(new Date(Mar 30 2014 01:00:00)) is wrong in CET
+        https://bugs.webkit.org/show_bug.cgi?id=130967
+
+        Reviewed by Mark Lam.
+
+        Set latest DST timezone boundary values on
+        <http://www.timeanddate.com/time/zone/usa/los-angeles>
+
+        * js/dom/script-tests/date-DST-time-cusps.js:
+
 2014-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG loaded through html <img> can't request to load any external resources.

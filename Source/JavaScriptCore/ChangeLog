@@ -1,3 +1,52 @@
+2014-10-22  Byungseon Shin  <sun.shin@lge.com>
+
+        String(new Date(Mar 30 2014 01:00:00)) is wrong in CET
+        https://bugs.webkit.org/show_bug.cgi?id=130967
+
+        Reviewed by Mark Lam.
+
+        By definition of calculateLocalTimeOffset, input time should be UTC time.
+        But there are many cases when input time is based on local time.
+        So, it gives erroneous results while calculating offset of DST boundary time.
+        By adding a argument to distinguish UTC and local time, we can get the correct offset.
+
+        * JavaScriptCore.order:
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::callDate):
+        (JSC::dateUTC):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::calculateGregorianDateTime):
+        (JSC::DateInstance::calculateGregorianDateTimeUTC):
+        * runtime/DatePrototype.cpp:
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/JSDateMath.cpp:
+        (JSC::localTimeOffset):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * runtime/JSDateMath.h:
+        * runtime/VM.h:
+        (JSC::LocalTimeOffsetCache::LocalTimeOffsetCache):
+        (JSC::LocalTimeOffsetCache::reset):
+        Passing TimeType argument to distingush UTC time and local time.
+
 2014-10-21  Mark Lam  <mark.lam@apple.com>
 
         Remove erroneous canUseJIT() in the intrinsics version of JITThunks::hostFunctionStub().

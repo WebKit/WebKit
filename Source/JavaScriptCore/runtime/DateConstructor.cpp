@@ -166,7 +166,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             t.setSecond(JSC::toInt32(doubleArguments[5]));
             t.setIsDST(-1);
             double ms = (numArgs >= 7) ? doubleArguments[6] : 0;
-            value = gregorianDateTimeToMS(vm, t, ms, false);
+            value = gregorianDateTimeToMS(vm, t, ms, WTF::LocalTime);
         }
     }
 
@@ -190,7 +190,7 @@ static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
     VM& vm = exec->vm();
     GregorianDateTime ts;
-    msToGregorianDateTime(vm, currentTimeMS(), false, ts);
+    msToGregorianDateTime(vm, currentTimeMS(), WTF::LocalTime, ts);
     return JSValue::encode(jsNontrivialString(&vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 
@@ -244,7 +244,7 @@ EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec)
     t.setMinute(JSC::toInt32(doubleArguments[4]));
     t.setSecond(JSC::toInt32(doubleArguments[5]));
     double ms = (n >= 7) ? doubleArguments[6] : 0;
-    return JSValue::encode(jsNumber(timeClip(gregorianDateTimeToMS(exec->vm(), t, ms, true))));
+    return JSValue::encode(jsNumber(timeClip(gregorianDateTimeToMS(exec->vm(), t, ms, WTF::UTCTime))));
 }
 
 } // namespace JSC

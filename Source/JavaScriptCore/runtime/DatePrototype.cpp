@@ -859,7 +859,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(ExecState* exec)
     return JSValue::encode(result);
 }
 
-static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse, bool inputIsUTC)
+static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse, WTF::TimeType inputTimeType)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(DateInstance::info()))
@@ -878,7 +878,7 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
     double secs = floor(milli / msPerSecond);
     double ms = milli - secs * msPerSecond;
 
-    const GregorianDateTime* other = inputIsUTC 
+    const GregorianDateTime* other = inputTimeType == WTF::UTCTime
         ? thisDateObj->gregorianDateTimeUTC(exec)
         : thisDateObj->gregorianDateTime(exec);
     if (!other)
@@ -892,12 +892,12 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
         return JSValue::encode(result);
     } 
     
-    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputIsUTC));
+    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType));
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }
 
-static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse, bool inputIsUTC)
+static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse, WTF::TimeType inputTimeType)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(DateInstance::info()))
@@ -916,10 +916,10 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
 
     GregorianDateTime gregorianDateTime; 
     if (numArgsToUse == 3 && std::isnan(milli)) 
-        msToGregorianDateTime(vm, 0, true, gregorianDateTime);
+        msToGregorianDateTime(vm, 0, WTF::UTCTime, gregorianDateTime);
     else { 
         ms = milli - floor(milli / msPerSecond) * msPerSecond; 
-        const GregorianDateTime* other = inputIsUTC 
+        const GregorianDateTime* other = inputTimeType == WTF::UTCTime
             ? thisDateObj->gregorianDateTimeUTC(exec)
             : thisDateObj->gregorianDateTime(exec);
         if (!other)
@@ -933,93 +933,93 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
         return JSValue::encode(result);
     } 
            
-    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputIsUTC));
+    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType));
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMilliSeconds(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromTimeArgs(exec, 1, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromTimeArgs(exec, 1, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMilliseconds(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromTimeArgs(exec, 1, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromTimeArgs(exec, 1, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetSeconds(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromTimeArgs(exec, 2, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromTimeArgs(exec, 2, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCSeconds(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromTimeArgs(exec, 2, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromTimeArgs(exec, 2, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMinutes(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromTimeArgs(exec, 3, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromTimeArgs(exec, 3, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMinutes(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromTimeArgs(exec, 3, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromTimeArgs(exec, 3, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetHours(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromTimeArgs(exec, 4, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromTimeArgs(exec, 4, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCHours(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromTimeArgs(exec, 4, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromTimeArgs(exec, 4, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetDate(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromDateArgs(exec, 1, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromDateArgs(exec, 1, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCDate(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromDateArgs(exec, 1, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromDateArgs(exec, 1, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMonth(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromDateArgs(exec, 2, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromDateArgs(exec, 2, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCMonth(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromDateArgs(exec, 2, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromDateArgs(exec, 2, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetFullYear(ExecState* exec)
 {
-    const bool inputIsUTC = false;
-    return setNewValueFromDateArgs(exec, 3, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::LocalTime;
+    return setNewValueFromDateArgs(exec, 3, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetUTCFullYear(ExecState* exec)
 {
-    const bool inputIsUTC = true;
-    return setNewValueFromDateArgs(exec, 3, inputIsUTC);
+    const WTF::TimeType inputTimeType = WTF::UTCTime;
+    return setNewValueFromDateArgs(exec, 3, inputTimeType);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
@@ -1043,7 +1043,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     if (std::isnan(milli))
         // Based on ECMA 262 B.2.5 (setYear)
         // the time must be reset to +0 if it is NaN.
-        msToGregorianDateTime(vm, 0, true, gregorianDateTime);
+        msToGregorianDateTime(vm, 0, WTF::UTCTime, gregorianDateTime);
     else {
         double secs = floor(milli / msPerSecond);
         ms = milli - secs * msPerSecond;
@@ -1059,7 +1059,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     }
 
     gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
-    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, false));
+    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, WTF::LocalTime));
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }

@@ -1,3 +1,22 @@
+2014-10-22  Byungseon Shin  <sun.shin@lge.com>
+
+        String(new Date(Mar 30 2014 01:00:00)) is wrong in CET
+        https://bugs.webkit.org/show_bug.cgi?id=130967
+
+        Reviewed by Mark Lam.
+
+        By definition of calculateLocalTimeOffset, input time should be UTC time.
+        But there are many cases when input time is based on local time.
+        So, it gives erroneous results while calculating offset of DST boundary time.
+        By adding a argument to distinguish UTC and local time, we can get the correct offset.
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateLocalTimeOffset):
+        (WTF::parseDateFromNullTerminatedCharacters):
+        Compensate time offset depends on UTC time or local time.
+        * wtf/DateMath.h:
+        Add argument to differenciate UTC or local time.
+
 2014-10-09  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Enable ARM64 disassembler for all platforms

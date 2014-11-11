@@ -133,6 +133,7 @@ struct LocalTimeOffsetCache {
         : start(0.0)
         , end(-1.0)
         , increment(0.0)
+        , timeType(WTF::UTCTime)
     {
     }
 
@@ -142,12 +143,14 @@ struct LocalTimeOffsetCache {
         start = 0.0;
         end = -1.0;
         increment = 0.0;
+        timeType = WTF::UTCTime;
     }
 
     LocalTimeOffset offset;
     double start;
     double end;
     double increment;
+    WTF::TimeType timeType;
 };
 
 class ConservativeRoots;

@@ -363,8 +363,6 @@ int equivalentYearForDST(int year)
     return year;
 }
 
-#if !HAVE(TM_GMTOFF)
-
 static int32_t calculateUTCOffset()
 {
 #if OS(WINDOWS)
@@ -405,6 +403,8 @@ static int32_t calculateUTCOffset()
     return static_cast<int32_t>(utcOffset * 1000);
 #endif
 }
+
+#if !HAVE(TM_GMTOFF)
 
 #if OS(WINDOWS)
 // Code taken from http://support.microsoft.com/kb/167296
@@ -467,8 +467,16 @@ static double calculateDSTOffset(time_t localTime, double utcOffset)
 #endif
 
 // Returns combined offset in millisecond (UTC + DST).
-LocalTimeOffset calculateLocalTimeOffset(double ms)
+LocalTimeOffset calculateLocalTimeOffset(double ms, TimeType inputTimeType)
 {
+#if HAVE(TM_GMTOFF)
+    double localToUTCTimeOffset = inputTimeType == LocalTime ? calculateUTCOffset() : 0;
+#else
+    double localToUTCTimeOffset = calculateUTCOffset();
+#endif
+    if (inputTimeType == LocalTime)
+        ms -= localToUTCTimeOffset;
+
     // On Mac OS X, the call to localtime (see calculateDSTOffset) will return historically accurate
     // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript
     // standard explicitly dictates that historical information should not be considered when
@@ -498,9 +506,8 @@ LocalTimeOffset calculateLocalTimeOffset(double ms)
     getLocalTime(&localTime, &localTM);
     return LocalTimeOffset(localTM.tm_isdst, localTM.tm_gmtoff * msPerSecond);
 #else
-    double utcOffset = calculateUTCOffset();
-    double dstOffset = calculateDSTOffset(localTime, utcOffset);
-    return LocalTimeOffset(dstOffset, utcOffset + dstOffset);
+    double dstOffset = calculateDSTOffset(localTime, localToUTCTimeOffset);
+    return LocalTimeOffset(dstOffset, localToUTCTimeOffset + dstOffset);
 #endif
 }
 
@@ -1091,7 +1098,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
 
     // fall back to local timezone
     if (!haveTZ)
-        offset = calculateLocalTimeOffset(ms).offset / msPerMinute;
+        offset = calculateLocalTimeOffset(ms, LocalTime).offset / msPerMinute; // ms value is in local time milliseconds.
 
     return ms - (offset * msPerMinute);
 }

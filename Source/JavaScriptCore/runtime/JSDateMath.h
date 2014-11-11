@@ -50,8 +50,8 @@ namespace JSC {
 
 class VM;
 
-JS_EXPORT_PRIVATE void msToGregorianDateTime(VM&, double, bool outputIsUTC, GregorianDateTime&);
-JS_EXPORT_PRIVATE double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, bool inputIsUTC);
+JS_EXPORT_PRIVATE void msToGregorianDateTime(VM&, double, WTF::TimeType outputTimeType, GregorianDateTime&);
+JS_EXPORT_PRIVATE double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, WTF::TimeType inputTimeType);
 JS_EXPORT_PRIVATE double getUTCOffset(VM&);
 JS_EXPORT_PRIVATE double parseDateFromNullTerminatedCharacters(VM&, const char* dateString);
 JS_EXPORT_PRIVATE double parseDate(VM&, const WTF::String&);

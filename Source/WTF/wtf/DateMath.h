@@ -53,6 +53,11 @@
 
 namespace WTF {
 
+enum TimeType {
+    UTCTime = 0,
+    LocalTime
+};
+
 struct LocalTimeOffset {
     LocalTimeOffset()
         : isDST(false)
@@ -126,7 +131,7 @@ WTF_EXPORT_PRIVATE int monthFromDayInYear(int dayInYear, bool leapYear);
 WTF_EXPORT_PRIVATE int dayInMonthFromDayInYear(int dayInYear, bool leapYear);
 
 // Returns combined offset in millisecond (UTC + DST).
-WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds);
+WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);
 
 } // namespace WTF
 
