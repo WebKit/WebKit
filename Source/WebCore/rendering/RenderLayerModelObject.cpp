@@ -47,6 +47,11 @@ RenderLayerModelObject::RenderLayerModelObject(Document& document, PassRef<Rende
 
 RenderLayerModelObject::~RenderLayerModelObject()
 {
+    if (isPositioned()) {
+        if (style().hasViewportConstrainedPosition())
+            view().frameView().removeViewportConstrainedObject(this);
+    }
+
     // Our layer should have been destroyed and cleared by now
     ASSERT(!hasLayer());
     ASSERT(!m_layer);
@@ -70,17 +75,6 @@ void RenderLayerModelObject::createLayer()
 bool RenderLayerModelObject::hasSelfPaintingLayer() const
 {
     return m_layer && m_layer->isSelfPaintingLayer();
-}
-
-void RenderLayerModelObject::willBeDestroyed()
-{
-    if (isPositioned()) {
-        if (style().hasViewportConstrainedPosition())
-            view().frameView().removeViewportConstrainedObject(this);
-    }
-
-    // RenderObject::willBeDestroyed calls back to destroyLayer() for layer destruction
-    RenderElement::willBeDestroyed();
 }
 
 void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

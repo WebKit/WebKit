@@ -1,3 +1,23 @@
+2014-11-03  Andreas Kling  <akling@apple.com>
+
+        RenderLayerModelObject shouldn't need a pre-destructor hook.
+        <https://webkit.org/b/138314>
+
+        Reviewed by Antti Koivisto.
+
+        Move code from the willBeDestroyed() pre-destructor hook to the regular
+        ~RenderLayerModelObject() destructor.
+
+        We just need to unregister the renderer from the FrameView's set of
+        viewport-constrained objects. That doesn't require being able to walk
+        the render tree or call virtuals, which is the main reason you'd use
+        willBeDestroyed().
+
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::~RenderLayerModelObject):
+        (WebCore::RenderLayerModelObject::willBeDestroyed): Deleted.
+        * rendering/RenderLayerModelObject.h:
+
 2014-11-02  Chris Dumez  <cdumez@apple.com>
 
         Reduce the cost of argumentCount checks in the JS bindings
