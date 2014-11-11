@@ -1,5 +1,11 @@
 2014-11-11  Dan Bernstein  <mitz@apple.com>
 
+        More iOS build fix.
+
+        * WebView/WebHTMLViewInternal.h:
+
+2014-11-11  Dan Bernstein  <mitz@apple.com>
+
         iOS build fix.
 
         * WebView/WebHTMLView.mm:
