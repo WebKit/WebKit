@@ -1,3 +1,17 @@
+2014-10-29  Zalan Bujtas  <zalan@apple.com>
+
+        Remove invalid float from RootInlineBox.
+        https://bugs.webkit.org/show_bug.cgi?id=137707
+
+        Reviewed by Antti Koivisto.
+
+        In certain cases, floating boxes get attached to the last (root) inline box.
+        When this particular floating box gets destroyed, it also needs to be detached
+        from the last inline box.
+
+        * fast/inline/crash-when-inline-box-has-invalid-float-expected.txt: Added.
+        * fast/inline/crash-when-inline-box-has-invalid-float.html: Added.
+
 2014-10-27  Mark Lam  <mark.lam@apple.com>
 
         Crash when attempting to perform array iteration on a non-array with numeric keys not initialized.

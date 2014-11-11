@@ -2237,6 +2237,7 @@ void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
                     logicalBottom = std::max(logicalBottom, logicalTop + 1);
                 }
                 if (floatingObject->originatingLine()) {
+                    floatingObject->originatingLine()->removeFloat(floatBox);
                     if (!selfNeedsLayout()) {
                         ASSERT(&floatingObject->originatingLine()->renderer() == this);
                         floatingObject->originatingLine()->markDirty();
@@ -2694,10 +2695,7 @@ void RenderBlockFlow::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRe
     if (floatToRemove)
         removeFloatingObject(*floatToRemove);
 
-    if (childrenInline())
-        return;
-
-    // Iterate over our children and mark them as needed.
+    // Iterate over our block children and mark them as needed.
     for (auto& block : childrenOfType<RenderBlock>(*this)) {
         if (!floatToRemove && block.isFloatingOrOutOfFlowPositioned())
             continue;
