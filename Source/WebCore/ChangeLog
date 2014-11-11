@@ -1,3 +1,20 @@
+2014-10-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        FrameProgressTracker expects Page to not have detached
+        https://bugs.webkit.org/show_bug.cgi?id=138061
+
+        Reviewed by Alexey Proskuryakov.
+
+        In some cases, a Page may be detached from a Frame before its
+        FrameLoader is torn down, causing FrameProgressTracker's destructor
+        to hit a null pointer.
+
+        No new tests; it is impossible to reliably simulate the null pointer
+        case without intrusive code changes.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameProgressTracker::~FrameProgressTracker):
+
 2014-10-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: input type=hidden is being exposed when aria-hidden=false
