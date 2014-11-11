@@ -244,6 +244,7 @@
 		C95501BF19AD2FAF0049BE3E /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = C95501BE19AD2FAF0049BE3E /* Preferences.mm */; };
 		CD5393C81757BA9700C07123 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C71757BA9700C07123 /* MD5.cpp */; };
 		CD5393CA1757BAC400C07123 /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C91757BAC400C07123 /* SHA1.cpp */; };
+		CD5451EA19E41F9D0016936F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5451E919E41F9D0016936F /* CSSParser.cpp */; };
 		CD5497B415857F0C00B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497B315857F0C00B5BC30 /* MediaTime.cpp */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
@@ -622,6 +623,7 @@
 		C95501BE19AD2FAF0049BE3E /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Preferences.mm; sourceTree = "<group>"; };
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
 		CD5393C91757BAC400C07123 /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
+		CD5451E919E41F9D0016936F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSParser.cpp; sourceTree = "<group>"; };
 		CD5497B315857F0C00B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD59F53219E910AA00CF1835 /* file-with-mse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-mse.html"; sourceTree = "<group>"; };
 		CD59F53319E910BC00CF1835 /* test-mse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test-mse.mp4"; sourceTree = "<group>"; };
@@ -753,6 +755,7 @@
 		440A1D3614A01000008A66F2 /* WebCore */ = {
 			isa = PBXGroup;
 			children = (
+				CD5451E919E41F9D0016936F /* CSSParser.cpp */,
 				93A720E518F1A0E800A848E1 /* CalculationValue.cpp */,
 				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				440A1D3814A0103A008A66F2 /* URL.cpp */,
@@ -1396,6 +1399,7 @@
 				1A7BFC0C171A0BDB00BC5F64 /* WillSendSubmitEvent.mm in Sources */,
 				BC22D31514DC689800FFB1DD /* UserMessage.cpp in Sources */,
 				BC55F5F914AD78EE00484BE1 /* Vector.cpp in Sources */,
+				CD5451EA19E41F9D0016936F /* CSSParser.cpp in Sources */,
 				290A9BB71735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
 				FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */,
 				520BCF4D141EB09E00937EA8 /* WebArchive.cpp in Sources */,

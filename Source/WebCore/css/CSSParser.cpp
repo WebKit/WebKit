@@ -60,6 +60,7 @@
 #include "Counter.h"
 #include "Document.h"
 #include "FloatConversion.h"
+#include "GridCoordinate.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
 #include "MediaList.h"
@@ -150,9 +151,6 @@ namespace WebCore {
 
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
 static const double MAX_SCALE = 1000000;
-#if ENABLE(CSS_GRID_LAYOUT)
-static const unsigned MAX_GRID_TRACK_REPETITIONS = 10000;
-#endif
 
 template <unsigned N>
 static bool equal(const CSSParserString& a, const char (&b)[N])
@@ -5268,12 +5266,11 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     if (!arguments || arguments->size() < 3 || !validUnit(arguments->valueAt(0), FPositiveInteger) || !isComma(arguments->valueAt(1)))
         return false;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(arguments->valueAt(0)->fValue > 0);
-    size_t repetitions = arguments->valueAt(0)->fValue;
-    // Clamp repetitions at MAX_GRID_TRACK_REPETITIONS.
-    // http://www.w3.org/TR/css-grid-1/#repeat-notation
-    if (repetitions > MAX_GRID_TRACK_REPETITIONS)
-        repetitions = MAX_GRID_TRACK_REPETITIONS;
+    ASSERT(arguments->valueAt(0)->fValue > 0);
+    // If arguments->valueAt(0)->fValue > SIZE_MAX then repetitions becomes 0 during the type casting, that's why we
+    // clamp it down to kGridMaxTracks before the type casting.
+    size_t repetitions = clampTo<size_t>(arguments->valueAt(0)->fValue, 0, kGridMaxTracks);
+
     RefPtr<CSSValueList> repeatedValues = CSSValueList::createSpaceSeparated();
     arguments->next(); // Skip the repetition count.
     arguments->next(); // Skip the comma.
@@ -5283,14 +5280,14 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     if (currentValue && currentValue->unit == CSSParserValue::ValueList)
         parseGridLineNames(*arguments, *repeatedValues);
 
-    bool sawTrackSize = false;
+    unsigned numberOfTracks = 0;
     while (arguments->current()) {
         RefPtr<CSSValue> trackSize = parseGridTrackSize(*arguments);
         if (!trackSize)
             return false;
 
         repeatedValues->append(trackSize.releaseNonNull());
-        sawTrackSize = true;
+        ++numberOfTracks;
 
         // This takes care of any trailing <custom-ident>* in the grammar.
         currentValue = arguments->current();
@@ -5299,8 +5296,12 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     }
 
     // We should have found at least one <track-size>, otherwise the declaration is invalid.
-    if (!sawTrackSize)
+    if (!numberOfTracks)
         return false;
+
+    // We clamp the number of repetitions to a multiple of the repeat() track list's size, while staying below the max
+    // grid size.
+    repetitions = std::min(repetitions, kGridMaxTracks / numberOfTracks);
 
     for (size_t i = 0; i < repetitions; ++i) {
         for (size_t j = 0; j < repeatedValues->length(); ++j)

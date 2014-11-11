@@ -57,6 +57,7 @@ list(APPEND TestJavaScriptCore_LIBRARIES
 # Release builds before adding it to test_{webkit2_api|webcore}_BINARIES.
 
 set(test_webcore_BINARIES
+    CSSParser
     LayoutUnit
     URL
 )

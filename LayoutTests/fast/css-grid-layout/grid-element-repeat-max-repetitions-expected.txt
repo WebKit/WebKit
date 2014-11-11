@@ -1,4 +1,0 @@
-Test the values greater than the maximum repetitions value are clamped through CSS.
-PASS
-PASS
-PASS

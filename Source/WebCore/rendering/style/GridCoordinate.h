@@ -40,14 +40,17 @@
 
 namespace WebCore {
 
+// Recommended maximum size for both explicit and implicit grids.
+const size_t kGridMaxTracks = 1000000;
+
 // A span in a single direction (either rows or columns). Note that |resolvedInitialPosition|
 // and |resolvedFinalPosition| are grid areas' indexes, NOT grid lines'. Iterating over the
 // span should include both |resolvedInitialPosition| and |resolvedFinalPosition| to be correct.
 class GridSpan {
 public:
     GridSpan(const GridResolvedPosition& resolvedInitialPosition, const GridResolvedPosition& resolvedFinalPosition)
-        : resolvedInitialPosition(resolvedInitialPosition)
-        , resolvedFinalPosition(resolvedFinalPosition)
+        : resolvedInitialPosition(std::min(resolvedInitialPosition.toInt(), kGridMaxTracks - 1))
+        , resolvedFinalPosition(std::min(resolvedFinalPosition.toInt(), kGridMaxTracks))
     {
         ASSERT(resolvedInitialPosition <= resolvedFinalPosition);
     }

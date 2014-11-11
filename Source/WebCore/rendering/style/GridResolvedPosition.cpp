@@ -48,9 +48,19 @@ static inline bool isStartSide(GridPositionSide side)
     return side == ColumnStartSide || side == RowStartSide;
 }
 
+size_t GridResolvedPosition::explicitGridColumnCount(const RenderStyle& gridContainerStyle)
+{
+    return std::min(gridContainerStyle.gridColumns().size(), kGridMaxTracks);
+}
+
+size_t GridResolvedPosition::explicitGridRowCount(const RenderStyle& gridContainerStyle)
+{
+    return std::min(gridContainerStyle.gridRows().size(), kGridMaxTracks);
+}
+
 static size_t explicitGridSizeForSide(const RenderStyle& gridContainerStyle, GridPositionSide side)
 {
-    return isColumnSide(side) ? gridContainerStyle.gridColumns().size() : gridContainerStyle.gridRows().size();
+    return isColumnSide(side) ? GridResolvedPosition::explicitGridColumnCount(gridContainerStyle) : GridResolvedPosition::explicitGridRowCount(gridContainerStyle);
 }
 
 GridSpan GridResolvedPosition::resolveGridPositionsFromAutoPlacementPosition(const RenderStyle& gridContainerStyle, const RenderBox& gridItem, GridTrackSizingDirection direction, const GridResolvedPosition& resolvedInitialPosition)

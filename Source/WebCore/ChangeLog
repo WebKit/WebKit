@@ -1,3 +1,38 @@
+2014-10-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Limit the size of explicit/implicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=136217
+
+        Reviewed by Andreas Kling.
+
+        A recent change in the specs allow us to set a limit (maximum
+        size) for both the explicit and implicit grids so we can protect
+        ourselves from absurdly huge grid specifications. It was decided
+        to use the recommended limit which is 1 million.
+
+        This means that we can remove the old limitation for the number of
+        repetitions in repeat(). Instead we now clamp the number of
+        repetitions to the maximum value that allow us to have the maximum
+        number of whole repetitions without exceeding the track number
+        limit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackRepeatFunction): Replaced the
+        old limit by the new one.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeItemsOnGrid): Use the amount of tracks
+        provided by GridResolvedPosition.
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator): Ditto.
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::GridSpan):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::explicitGridColumnCount): Bring
+        the static function back to life.
+        (WebCore::GridResolvedPosition::explicitGridRowCount): Ditto.
+        (WebCore::explicitGridSizeForSide):
+        * rendering/style/GridResolvedPosition.h:
+
 2014-11-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS4 Selectors: Add multiple pseudo elements support to :matches

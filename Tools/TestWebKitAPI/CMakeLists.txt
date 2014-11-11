@@ -19,12 +19,17 @@ include_directories(${CMAKE_BINARY_DIR}
     ${JAVASCRIPTCORE_DIR}/parser
     ${JAVASCRIPTCORE_DIR}/runtime
     ${THIRDPARTY_DIR}/gtest/include
+    ${WEBCORE_DIR}/css
+    ${WEBCORE_DIR}/dom
     ${WEBCORE_DIR}/editing
     ${WEBCORE_DIR}/platform
+    ${WEBCORE_DIR}/platform/animation
     ${WEBCORE_DIR}/platform/graphics
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/platform/network
     ${WEBCORE_DIR}/platform/network/soup
+    ${WEBCORE_DIR}/rendering
+    ${WEBCORE_DIR}/rendering/style
     ${WEBKIT2_DIR}/Platform/IPC
     ${WEBKIT2_DIR}/Shared
     ${WEBKIT2_DIR}/Shared/API/c

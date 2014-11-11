@@ -1,3 +1,23 @@
+2014-10-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Limit the size of explicit/implicit grid
+        https://bugs.webkit.org/show_bug.cgi?id=136217
+
+        Reviewed by Andreas Kling.
+
+        Added a new unit test for the CSS parser. Right now it only checks
+        that we properly clamp the maximum number of tracks on a grid to a
+        maximum of 1 million.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/CSSParser.cpp: Added.
+        (TestWebKitAPI::computeNumberOfTracks): Helper function.
+        (TestWebKitAPI::TEST): Added a
+        CSSPropertyParserTest.GridTrackLimits test case.
+
 2014-11-11  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         webkitpy test fix after r175867

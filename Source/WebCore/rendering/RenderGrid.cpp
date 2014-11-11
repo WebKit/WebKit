@@ -740,8 +740,8 @@ void RenderGrid::placeItemsOnGrid()
         insertItemIntoGrid(*child, GridCoordinate(*rowPositions, *columnPositions));
     }
 
-    ASSERT(gridRowCount() >= style().gridRows().size());
-    ASSERT(gridColumnCount() >= style().gridColumns().size());
+    ASSERT(gridRowCount() >= GridResolvedPosition::explicitGridRowCount(style()));
+    ASSERT(gridColumnCount() >= GridResolvedPosition::explicitGridColumnCount(style()));
 
     // FIXME: Implement properly "stack" value in auto-placement algorithm.
     if (style().isGridAutoFlowAlgorithmStack()) {
@@ -758,8 +758,8 @@ void RenderGrid::placeItemsOnGrid()
 void RenderGrid::populateExplicitGridAndOrderIterator()
 {
     OrderIteratorPopulator populator(m_orderIterator);
-    size_t maximumRowIndex = std::max<size_t>(1, style().gridRows().size());
-    size_t maximumColumnIndex = std::max<size_t>(1, style().gridColumns().size());
+    size_t maximumRowIndex = std::max<size_t>(1, GridResolvedPosition::explicitGridRowCount(style()));
+    size_t maximumColumnIndex = std::max<size_t>(1, GridResolvedPosition::explicitGridColumnCount(style()));
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         populator.collectChild(*child);

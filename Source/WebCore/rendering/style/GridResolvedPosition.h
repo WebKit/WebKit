@@ -146,6 +146,9 @@ public:
         return GridResolvedPosition(m_integerPosition + 1);
     }
 
+    static size_t explicitGridColumnCount(const RenderStyle&);
+    static size_t explicitGridRowCount(const RenderStyle&);
+
 private:
 
     size_t m_integerPosition;
