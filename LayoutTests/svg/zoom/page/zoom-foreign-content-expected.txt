@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
-      RenderSVGRoot {svg} at (0,0) size 99x99
-        RenderSVGRect {rect} at (0,0) size 99x99 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=99.00] [height=99.00]
+      RenderSVGRoot {svg} at (0,0) size 206x206
+        RenderSVGRect {rect} at (0,0) size 206x206 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=99.00] [height=99.00]
       RenderText {#text} at (0,0) size 0x0
     RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
       RenderBlock {html} at (0,0) size 800x99

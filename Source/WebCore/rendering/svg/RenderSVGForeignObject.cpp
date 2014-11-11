@@ -102,6 +102,13 @@ void RenderSVGForeignObject::computeFloatRectForRepaint(const RenderLayerModelOb
     SVGRenderSupport::computeFloatRectForRepaint(*this, repaintContainer, repaintRect, fixed);
 }
 
+void RenderSVGForeignObject::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const
+{
+    FloatRect floatRect(repaintRect);
+    computeFloatRectForRepaint(repaintContainer, floatRect, fixed);
+    repaintRect = enclosingLayoutRect(floatRect);
+}
+
 const AffineTransform& RenderSVGForeignObject::localToParentTransform() const
 {
     m_localToParentTransform = localTransform();

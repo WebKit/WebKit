@@ -1,3 +1,28 @@
+2014-11-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG foreign objects do not inherit the container coordinates system if they are repainted.
+        https://bugs.webkit.org/show_bug.cgi?id=138481.
+
+        Reviewed by Simon Fraser.
+
+        If a foreign object is included in an SVG, it should inherit the coordinates system
+        of the container if it is repainted. The foreign object is actually redrawn in the
+        CSS coordinates system regardless of the transformation that may be applied to the
+        container.
+
+        The bug is RenderSVG* classes use computeFloatRectForRepaint(), but the rest of the
+        render classes use computeRectForRepaint(). RenderSVGForeignObject::computeRectForRepaint()
+        was not defined, so we end up hitting RenderObject::computeRectForRepaint() for 
+        a RenderSVGTransformableContainer and completely miss the transform.
+
+        Tests: svg/transforms/svg-transform-foreign-object-repaint.html
+
+        Implement RenderSVGForeignObject::computeRectForRepaint() so we can apply the
+        container transformation on the SVG foreign object repaint rectangle.
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeRectForRepaint):
+        * rendering/svg/RenderSVGForeignObject.h:
+
 2014-11-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr<> and std::make_unique<> in WebCore

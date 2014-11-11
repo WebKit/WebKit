@@ -1,3 +1,23 @@
+2014-11-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG foreign objects do not inherit the container coordinates system if they are repainted..
+        https://bugs.webkit.org/show_bug.cgi?id=138481.
+
+        Reviewed by Simon Fraser.
+
+        Ensure the repaint rectangle of the SVG foreign object is calculated correctly
+        when the container element has transformation.
+        
+        * svg/transforms/svg-transform-foreign-object-repaint-expected.png: Added.
+        * svg/transforms/svg-transform-foreign-object-repaint-expected.txt: Added.
+        * svg/transforms/svg-transform-foreign-object-repaint.html: Added.
+        
+        Re-baseline these tests since the render tree dumping uses renderer.absoluteClippedOverflowRect() 
+        in writePositionAndStyle() to get the object rectangle so this issue only affects test output.
+
+        * svg/zoom/page/zoom-foreign-content-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.txt:
+
 2014-11-10  Andreas Kling  <akling@apple.com>
 
         The JIT should cache property lookup misses.

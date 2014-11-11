@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
           text run at (0,0) width 56: "[HTML]"
     RenderSVGRect {rect} at (0,0) size 361x289 [stroke={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=250.00] [height=200.00]
     RenderSVGForeignObject {foreignObject} at (260,0) size 250x200
-      RenderSVGRoot {svg} at (260,5) size 250x195
-        RenderSVGContainer {g} at (260,5) size 250x195 [transform={m=((3.00,0.26)(0.26,3.02)) t=(0.00,0.00)}]
+      RenderSVGRoot {svg} at (374,7) size 361x281
+        RenderSVGContainer {g} at (374,7) size 361x281 [transform={m=((3.00,0.26)(0.26,3.02)) t=(0.00,0.00)}]
           RenderSVGText {text} at (0,1) size 82x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 82x19
               chunk 1 text run 1 at (0.00,16.00) startOffset 0 endOffset 14 width 81.05: "This is a text"
-          RenderSVGContainer {a} at (265,62) size 204x74
+          RenderSVGContainer {a} at (381,89) size 295x107
             RenderSVGText {text} at (0,20) size 67x19 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 67x19
                 chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 11 width 66.16: "and a link."
