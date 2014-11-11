@@ -36,6 +36,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/Editor.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
@@ -47,6 +48,7 @@
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextCheckerClient.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
@@ -128,7 +130,7 @@ struct DictionaryPopupInfo {
 
 - (BOOL)isMenuForTextContent
 {
-    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText || _type == WebActionMenuWhitespaceInEditableArea;
+    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText || _type == WebActionMenuEditableTextWithSuggestions || _type == WebActionMenuWhitespaceInEditableArea;
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -273,6 +275,49 @@ struct DictionaryPopupInfo {
     return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
 }
 
+- (NSArray *)_defaultMenuItemsForEditableTextWithSuggestions:(WebElementDictionary *)hitTestResult
+{
+    Frame* frame = core([_webView _selectedOrMainFrame]);
+    if (!frame)
+        return @[ ];
+
+    NSDictionary *options = nil;
+    RefPtr<Range> lookupRange = rangeForDictionaryLookupAtHitTestResult(_hitTestResult, &options);
+    if (!lookupRange)
+        return @[ ];
+
+    String lookupText = lookupRange->text();
+    TextCheckerClient* textChecker = frame->editor().textChecker();
+    if (!textChecker)
+        return @[ ];
+
+    Vector<TextCheckingResult> results = textChecker->checkTextOfParagraph(lookupText, NSTextCheckingTypeSpelling);
+    if (results.isEmpty())
+        return @[ ];
+
+    Vector<String> guesses;
+    frame->editor().textChecker()->getGuessesForWord(lookupText, String(), guesses);
+    if (guesses.isEmpty())
+        return @[ ];
+
+    RetainPtr<NSMenu> spellingSubMenu = adoptNS([[NSMenu alloc] init]);
+    for (const auto& guess : guesses) {
+        RetainPtr<NSMenuItem> item = adoptNS([[NSMenuItem alloc] initWithTitle:guess action:@selector(_changeSelectionToSuggestion:) keyEquivalent:@""]);
+        [item setRepresentedObject:guess];
+        [item setTarget:self];
+        [spellingSubMenu addItem:item.get()];
+    }
+
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:WebActionMenuItemTagCopyText withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:WebActionMenuItemTagLookupText withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPaste withHitTestResult:hitTestResult];
+    RetainPtr<NSMenuItem> textSuggestionsItem = [self _createActionMenuItemForTag:WebActionMenuItemTagTextSuggestions withHitTestResult:hitTestResult];
+
+    [textSuggestionsItem setSubmenu:spellingSubMenu.get()];
+
+    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get(), textSuggestionsItem.get() ];
+}
+
 - (void)_copySelection:(id)sender
 {
     [_webView _executeCoreCommandByName:@"copy" value:nil];
@@ -315,6 +360,18 @@ struct DictionaryPopupInfo {
 
     frame->selection().setSelectedRange(lookupRange.get(), DOWNSTREAM, true);
     return;
+}
+
+- (void)_changeSelectionToSuggestion:(id)sender
+{
+    NSString *selectedCorrection = [sender representedObject];
+    if (!selectedCorrection)
+        return;
+
+    ASSERT([selectedCorrection isKindOfClass:[NSString class]]);
+
+    WebHTMLView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
+    [documentView _changeSpellingToWord:selectedCorrection];
 }
 
 static DictionaryPopupInfo performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
@@ -425,6 +482,11 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         image = [NSImage imageNamed:@"NSActionMenuPaste"];
         break;
 
+    case WebActionMenuItemTagTextSuggestions:
+        title = @"Suggestions";
+        image = [NSImage imageNamed:@"NSActionMenuSpelling"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -454,6 +516,12 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     Node* node = _hitTestResult.innerNode();
     if (node && node->isTextNode()) {
         if (_hitTestResult.isContentEditable()) {
+            NSArray *editableTextWithSuggestions = [self _defaultMenuItemsForEditableTextWithSuggestions:hitTestResult];
+            if (editableTextWithSuggestions.count) {
+                _type = WebActionMenuEditableTextWithSuggestions;
+                return editableTextWithSuggestions;
+            }
+
             _type = WebActionMenuEditableText;
             return [self _defaultMenuItemsForEditableText:hitTestResult];
         }

@@ -71,6 +71,7 @@ namespace WebCore {
 - (void)_layoutIfNeeded;
 #endif
 
+- (void)_changeSpellingToWord:(NSString *)newWord;
 @end
 
 #if PLATFORM(IOS)
