@@ -248,7 +248,18 @@ PassRefPtr<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrappe
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGMarkerElement, SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>, SVGMarkerOrientType>
            (ownerType, orientTypePropertyInfo(), ownerType->m_orientType.value);
 }
-  
+
+SVGMarkerOrientType& SVGMarkerElement::orientType() const
+{
+    if (SVGAnimatedEnumeration* wrapper = SVGAnimatedProperty::lookupWrapper<UseOwnerType, SVGAnimatedEnumeration>(this, orientTypePropertyInfo())) {
+        if (wrapper->isAnimating()) {
+            ASSERT(wrapper->currentAnimatedValue() >= 0 && wrapper->currentAnimatedValue() < SVGMarkerOrientMax);
+            return reinterpret_cast<SVGMarkerOrientType&>(wrapper->currentAnimatedValue());
+        }
+    }
+    return m_orientType.value;
+}
+
 PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>> SVGMarkerElement::orientTypeAnimated()
 {
     m_orientType.shouldSynchronize = true;

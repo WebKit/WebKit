@@ -1,3 +1,32 @@
+2014-11-04  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        Fix animation of orient attribute on marker element
+        https://bugs.webkit.org/show_bug.cgi?id=137942
+
+        Reviewed by Dirk Schulze.
+
+        Fixed implementation of SVG animated angles and the SVG
+        marker element orient attribute.
+        SVG animated angle was missing the logic to support animation
+        from auto to a numeric angle value - this is now added.
+        The SVG marker element getter for orientType was not returning
+        the animated value for orientType so in some cases (i.e. when
+        the initial value and the animated values were of different types)
+        the animation was not being rendered - although it was running.
+
+        Tests: svg/animations/animate-marker-orienttype-1.html
+               svg/animations/animate-marker-orienttype-2.html
+               svg/animations/animate-marker-orienttype-3.html
+
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::calculateAnimatedValue):
+        Added logic to support auto to angle animation.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientType):
+        This method now returns the animated value if an animation is
+        running.
+        * svg/SVGMarkerElement.h:
+
 2014-11-03  Andreas Kling  <akling@apple.com>
 
         RenderCounter shouldn't need a pre-destructor hook.
