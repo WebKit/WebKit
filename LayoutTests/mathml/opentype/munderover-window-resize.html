@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Open Type MATH - under-over operator</title>
+  <meta charset="utf-8">
+  <style type="text/css">
+    /* This font is taken from Mozilla's test suite. */
+    @font-face {
+      font-family: stretchy;
+      src: url("stretchy.woff");
+    }
+    math {
+      font-family: stretchy;
+      font-size: 10px;
+    }
+  </style>
+<body>
+<div>
+  <math display='block'>
+    <mrow>
+      <mmultiscripts>
+        <mi>C</mi>
+        <none/>
+        <mi>16</mi>
+        <mprescripts/>
+        <mi>5</mi>
+        <mi>10</mi>
+      </mmultiscripts>
+    </mrow>
+    <mspace width="0.5em"/>
+    <mrow>
+      <mn>2</mn>
+      <mo>&InvisibleTimes;</mo>
+      <msub>
+        <mi>H</mi>
+        <mn>2</mn>
+      </msub>
+      <mo>+</mo>
+      <msub>
+        <mi>O</mi>
+        <mn>2</mn>
+      </msub>
+    </mrow>
+    <mover>
+      <mo>&#x02192;</mo>
+      <mrow>
+        <mi>m</mi>
+        <mo>,</mo>
+        <mi>n</mi>
+      </mrow>
+    </mover>
+    <mrow>
+      <mn>2</mn>
+      <mo>&InvisibleTimes;</mo>
+      <msub>
+        <mi>H</mi>
+        <mn>2</mn>
+      </msub>
+      <mo>&InvisibleTimes;</mo>
+      <mi>O</mi>
+    </mrow>
+    <mspace width="0.5em"/>
+    <mrow>
+      <mi>A</mi>
+    </mrow>
+    <munderover>
+      <mo>&#x02194;</mo>
+      <mi>b</mi>
+      <mn>a</mn>
+    </munderover>
+    <mrow>
+      <mi>B</mi>
+    </mrow>
+    <mspace width="0.5em"/>
+    <mrow>
+      <mi>A</mi>
+    </mrow>
+    <munderover>
+      <mo>&#x021C4;</mo>
+      <mi>0</mi>
+      <mn>a</mn>
+    </munderover>
+    <mrow>
+      <mi>B</mi>
+    </mrow>
+    <mspace width="0.5em"/>
+    <mrow>
+      <mi>A</mi>
+    </mrow>
+    <munderover>
+      <mo>&#x021C4;</mo>
+      <mn>0&#x000B0;C</mn>
+      <mn>100&#x000B0;C</mn>
+    </munderover>
+    <mrow>
+      <mi>B</mi>
+    </mrow>
+  </math>
+</div>
+<script>
+	for (var zoom = 110; zoom <= 200; zoom += 10) {
+        document.body.style.zoom = zoom + "%";
+	}
+    document.body.style.zoom="100%";
+    var width = window.outerWidth;
+    window.resizeTo(250, window.outerHeight); 
+    window.resizeTo(width, window.outerHeight);
+</script>
+</body>
+</html>

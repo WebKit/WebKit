@@ -7,8 +7,8 @@ layer at (0,0) size 800x153
         RenderMathMLMath {math} at (0,3) size 18x22 [padding: 0 1 0 1]
           RenderMathMLRow {mstyle} at (1,0) size 16x22
             RenderMathMLUnderOver {mover} at (0,0) size 16x22
-              RenderMathMLOperator {mo} at (-6,1) size 27x21
-                RenderMathMLBlock (anonymous, flex) at (2,0) size 22x4
+              RenderMathMLOperator {mo} at (0,1) size 16x21
+                RenderMathMLBlock (anonymous, flex) at (2,0) size 11x4
                   RenderBlock (anonymous) at (0,0) size 2x4
                     RenderText at (0,-3) size 2x10
                       text run at (0,-3) width 2: "\x{219C}"
@@ -18,8 +18,8 @@ layer at (0,0) size 800x153
         RenderMathMLMath {math} at (0,3) size 28x22 [padding: 0 1 0 1]
           RenderMathMLRow {mstyle} at (1,0) size 26x22
             RenderMathMLUnderOver {mover} at (0,0) size 26x22
-              RenderMathMLOperator {mo} at (-6,1) size 38x21
-                RenderMathMLBlock (anonymous, flex) at (2,0) size 32x4
+              RenderMathMLOperator {mo} at (0,1) size 26x21
+                RenderMathMLBlock (anonymous, flex) at (2,0) size 22x4
                   RenderBlock (anonymous) at (0,0) size 2x4
                     RenderText at (0,-3) size 2x10
                       text run at (0,-3) width 2: "\x{219C}"
@@ -29,8 +29,8 @@ layer at (0,0) size 800x153
         RenderMathMLMath {math} at (0,0) size 158x42 [padding: 0 1 0 1]
           RenderMathMLRow {mstyle} at (1,0) size 156x42
             RenderMathMLUnderOver {mover} at (0,0) size 156x42
-              RenderMathMLOperator {mo} at (-3,1) size 162x41
-                RenderMathMLBlock (anonymous, flex) at (2,0) size 157x4
+              RenderMathMLOperator {mo} at (0,1) size 156x41
+                RenderMathMLBlock (anonymous, flex) at (2,0) size 151x4
                   RenderBlock (anonymous) at (0,0) size 2x4
                     RenderText at (0,-3) size 2x10
                       text run at (0,-3) width 2: "\x{219C}"

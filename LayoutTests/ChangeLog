@@ -1,3 +1,27 @@
+2014-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RenderMathMLUnderOver adds spacing to the child operator indefinitely when zooming or resizing the window.
+        https://bugs.webkit.org/show_bug.cgi?id=137330
+
+        Reviewed by Darin Adler, Daniel Bates.
+
+        When the alignment is center, which is the common case for math, changing the size of
+        an object affects the position of this object also.  We need to confirm that zooming or
+        resizing the window should not affect the rectangle of the over/under math object operator.  
+
+        * mathml/opentype/munderover-window-resize-expected.txt: Added.
+        * mathml/opentype/munderover-window-resize.html: Added.
+        New test with many under and over math objects.  After loading the page, the window is resized and
+        the view is zoomed in and out to make sure the layout of these under and over objects were not changed.
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        This test was wrong because of the spacing issue. The page has two <mover> math objects at the beginning.
+        Each of them has an <mspace> child. The width of the first <mspace> is 1em while the width of the second
+        <mspace> is 2em. The font size is 10pt. So it is expected to have the first one 10 pixels and the second 
+        to be 20 pixels. In the test, the width of the first is 22 and the width of the second is 32.
+        I do expect this test to fail on other platforms since they have the same mistake which is now fixed. I am
+        going to submit the mac expected version only and when it fails I am going to collect the result and submit
+        another patch for the other platforms expected files.
+
 2014-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Move nodeFromPoint() back to Document where it belongs

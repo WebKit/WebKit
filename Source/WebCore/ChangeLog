@@ -1,3 +1,42 @@
+2014-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RenderMathMLUnderOver adds spacing to the child operator indefinitely when resizing the window.
+        https://bugs.webkit.org/show_bug.cgi?id=137330
+
+        Reviewed by Darin Adler.
+
+        The layout for the <mundercover> math object happens in two separate passes. The first pass runs
+        the layout for the two children and then calculates the maximum child width.  It then sets the 
+        stretch size for the math operator child.  And finally it runs the second layout pass by calling
+        the base class layout() function. The base class function then runs the layout for the children
+        rendering blocks.  In the operator child function computePreferredLogicalWidths(), the stretch 
+        size is used to adjust the width (or the height) of the operator. Then it adds the leading and
+        trailing spaces and the total will be the operator child width.
+
+        When resizing or zooming the window, the render objects are just invalidated but marked as 'needs-
+        Layout'.  The problem is happening because the stretch size of the math operator is not reset
+        before running the layout.  The old logical width (or height) of the the math operator child which
+        is equal to the stretch size plus the leading and trailing spaces for is compared with the glyph
+        size if the old logical width ( or height) is larger, it is set to be the stretch size.  When it
+        is used again because of invalidation, new leading and trailing spaces are included in the new
+        logical width.  So with every zooming-in or out or window resizing, new leading and trailing 
+        spaces are added to the logical width of the math operator child or the math <munderober> object.
+        
+        Ensure the stretch size of the math operator render object is reset before running its layout.
+        Running the layout means either the page is just loaded or it's invalidated which means, no 
+        layout stall data should be used.
+
+        Test: mathml/opentype/munderover-window-resize.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::resetStretchSize):
+        * rendering/mathml/RenderMathMLOperator.h:
+        resetStretchSize() sets the stretch size to its original value when the class is created.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layout):
+        Make sure the operator stretch size is reset before calling its layout. Also make sure the new 
+        maximum stretch size to the operator objects that were invalid and needsLayout.
+
 2014-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Move nodeFromPoint() back to Document where it belongs
