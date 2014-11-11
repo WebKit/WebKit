@@ -55,6 +55,8 @@ namespace WebCore {
         DragController(Page&, DragClient&);
         ~DragController();
 
+        static PassOwnPtr<DragController> create(Page*, DragClient*);
+
         DragClient& client() const { return m_client; }
 
         WEBCORE_EXPORT DragOperation dragEntered(DragData&);

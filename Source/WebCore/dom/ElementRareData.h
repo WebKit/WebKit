@@ -30,6 +30,7 @@
 #include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

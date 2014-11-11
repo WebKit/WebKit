@@ -27,6 +27,7 @@
 #define CDMPrivateMediaPlayer_h
 
 #include "CDMPrivate.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
