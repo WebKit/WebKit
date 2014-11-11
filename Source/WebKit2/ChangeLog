@@ -1,3 +1,17 @@
+2014-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix possible crash when closing the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=138597
+        rdar://problem/18872688
+
+        Reviewed by Andreas Kling.
+        
+        I reported a crash when reloading a page after inspecting it, possibly caused by
+        r172864. Speculatively fix by null-checking the main frame.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::~WebInspectorClient):
+
 2014-11-10  Beth Dakin  <bdakin@apple.com>
 
         Whitespace action menus aren't working properly

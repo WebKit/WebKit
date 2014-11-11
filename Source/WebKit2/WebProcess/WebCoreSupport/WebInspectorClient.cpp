@@ -74,7 +74,7 @@ WebInspectorClient::~WebInspectorClient()
         delete layer;
     }
 
-    if (m_paintRectOverlay)
+    if (m_paintRectOverlay && m_page->mainFrame())
         m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(m_paintRectOverlay.get(), PageOverlay::FadeMode::Fade);
 }
 
