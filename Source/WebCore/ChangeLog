@@ -1,3 +1,100 @@
+2014-10-15  Andrei Bucur  <abucur@adobe.com>
+
+        ASSERTION  FAILED in WebCore::RenderFlowThread::getRegionRangeForBox
+        https://bugs.webkit.org/show_bug.cgi?id=135563
+
+        Reviewed by David Hyatt.
+
+        The new multi-column code doesn't work correctly when the document contains nested fragmentation
+        contexts. The problem is the current flow thread concept that can store only one RenderFlowThread
+        at a time and use it during layout.
+
+        The stored flow thread is always correct for regions because named flow threads are absolutley positioned
+        so every child renderer is contained inside them (with the expcetion of fixed positioned elements which are
+        treated separately).
+
+        For multi-column elements this is no longer the case. An absolutely positioned element inside a static
+        multi-column element will be contained by a block outside the fragmentation context. It can even be
+        contained by a different multi-column element in the case of nested flow threads.
+
+        The patch below explores a solution that's not based on a current flow thread stored globally. The proposed
+        patch makes every block to store a pointer to its fragmentation context and a flag that states if this pointer
+        needs to be updated or not. If the renderer is not a block it will get its flow thread from the containing
+        block. Once the containing flow thread is requested for the block, the pointer is computed and cached until
+        invalidated:
+        - when a subtree is removed from a flow thread
+        - when the position property of an element inside a flow thread changes
+
+        The process is recursive and it doesn't affect elements that are not nested inside a flow thread. If a block
+        changes position from relative to static, any element that was contained by it can only be contained by an
+        ancestor of the block. This ancestor will still be outside of any flow thread. This ensures that non-fragmentation
+        code is not affected from a performance perspective.
+
+        The patch affects the results of the performance tests:
+        - the regions layout tests have a decreased performance raging from 2% to 5-6%
+        - the regions selection tests have an increased performance raging from 1-2% to 10%
+        - the multicolumn layout tests (now pending review in b137687) have an increased performance
+        raging from 1.8% to 5%
+
+        Tests: fast/multicol/multicol-all-positioned-crash.html
+               fast/multicol/multicol-transform-containing-block.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::FlowThreadController):
+        * rendering/FlowThreadController.h:
+        (WebCore::FlowThreadController::currentRenderFlowThread): Deleted.
+        (WebCore::FlowThreadController::setCurrentRenderFlowThread): Deleted.
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::currentRenderFlowThread):
+        (WebCore::LayoutState::setCurrentRenderFlowThread):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlockRareData::RenderBlockRareData):
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        (WebCore::RenderBlock::cachedFlowThreadContainingBlock):
+        (WebCore::RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate):
+        (WebCore::RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate):
+        (WebCore::RenderBlock::updateCachedFlowThreadContainingBlock):
+        (WebCore::RenderBlock::locateFlowThreadContainingBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleWillChange):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::updateAllLayerToRegionMappings):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer): Deleted.
+        (WebCore::CurrentRenderFlowThreadMaintainer::~CurrentRenderFlowThreadMaintainer): Deleted.
+        (WebCore::CurrentRenderFlowThreadDisabler::CurrentRenderFlowThreadDisabler): Deleted.
+        (WebCore::CurrentRenderFlowThreadDisabler::~CurrentRenderFlowThreadDisabler): Deleted.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRegionsInformation):
+        (WebCore::RenderObject::insertedIntoTree):
+        (WebCore::RenderObject::removeFromRenderFlowThread):
+        (WebCore::RenderObject::removeFromRenderFlowThreadIncludingDescendants):
+        (WebCore::RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants):
+        (WebCore::RenderObject::currentRenderNamedFlowFragment):
+        (WebCore::RenderObject::locateFlowThreadContainingBlock):
+        (WebCore::RenderObject::locateFlowThreadContainingBlockNoCache): Deleted.
+        (WebCore::RenderObject::removeFromRenderFlowThreadRecursive): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::flowThreadContainingBlock):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::computeOverflowFromFlowThread):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutStateForCurrentFlowThread):
+        (WebCore::RenderView::popLayoutStateForCurrentFlowThread):
+        * rendering/RenderView.h:
+
 2014-10-14  Dean Jackson  <dino@apple.com>
 
         Crash in WebCore::UserGestureIndicator::processingUserGesture with WebWorkers

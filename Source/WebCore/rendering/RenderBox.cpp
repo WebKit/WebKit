@@ -195,7 +195,7 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
         // FIXME: In a perfect world this condition should never happen.
         return borderBoxRect();
     }
-    
+
     ASSERT(flowThread->regionInRange(region, startRegion, endRegion));
 
     // Compute the logical width and placement in this region.
@@ -206,21 +206,26 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
     // We have cached insets.
     LayoutUnit logicalWidth = boxInfo->logicalWidth();
     LayoutUnit logicalLeft = boxInfo->logicalLeft();
-        
+
     // Now apply the parent inset since it is cumulative whenever anything in the containing block chain shifts.
     // FIXME: Doesn't work right with perpendicular writing modes.
     const RenderBlock* currentBox = containingBlock();
-    RenderBoxRegionInfo* currentBoxInfo = currentBox->renderBoxRegionInfo(region);
+    RenderBoxRegionInfo* currentBoxInfo = isRenderFlowThread() ? nullptr : currentBox->renderBoxRegionInfo(region);
     while (currentBoxInfo && currentBoxInfo->isShifted()) {
         if (currentBox->style().direction() == LTR)
             logicalLeft += currentBoxInfo->logicalLeft();
         else
             logicalLeft -= (currentBox->logicalWidth() - currentBoxInfo->logicalWidth()) - currentBoxInfo->logicalLeft();
+
+        // Once we reach the fragmentation container we should stop.
+        if (currentBox->isRenderFlowThread())
+            break;
+
         currentBox = currentBox->containingBlock();
         region = currentBox->clampToStartAndEndRegions(region);
         currentBoxInfo = currentBox->renderBoxRegionInfo(region);
     }
-    
+
     if (cacheFlag == DoNotCacheRenderBoxRegionInfo)
         delete boxInfo;
 

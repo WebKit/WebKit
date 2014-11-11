@@ -65,7 +65,9 @@
 #include "ShadowRoot.h"
 #include "TextBreakIterator.h"
 #include "TransformState.h"
+
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Optional.h>
 #include <wtf/StackStats.h>
 #include <wtf/TemporaryChange.h>
 
@@ -91,7 +93,7 @@ static TrackedDescendantsMap* gPercentHeightDescendantsMap = 0;
 
 static TrackedContainerMap* gPositionedContainerMap = 0;
 static TrackedContainerMap* gPercentHeightContainerMap = 0;
-    
+
 typedef HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
 
 struct UpdateScrollInfoAfterLayoutTransaction {
@@ -118,14 +120,17 @@ static std::unique_ptr<DelayedUpdateScrollInfoStack>& updateScrollInfoAfterLayou
 struct RenderBlockRareData {
     WTF_MAKE_NONCOPYABLE(RenderBlockRareData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderBlockRareData() 
+    RenderBlockRareData()
         : m_paginationStrut(0)
         , m_pageLogicalOffset(0)
-    { 
+        , m_flowThreadContainingBlock(Nullopt)
+    {
     }
 
     LayoutUnit m_paginationStrut;
     LayoutUnit m_pageLogicalOffset;
+
+    Optional<RenderFlowThread*> m_flowThreadContainingBlock;
 };
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
@@ -263,7 +268,7 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newSt
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
 
     setReplaced(newStyle.isDisplayInlineType());
-    
+
     if (oldStyle && parent() && diff == StyleDifferenceLayout && oldStyle->position() != newStyle.position()) {
         if (newStyle.position() == StaticPosition)
             // Clear our positioned objects list. Our absolutely positioned descendants will be
@@ -305,9 +310,19 @@ static bool borderOrPaddingLogicalWidthChanged(const RenderStyle* oldStyle, cons
 
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBox::styleDidChange(diff, oldStyle);
-    
     RenderStyle& newStyle = style();
+
+    bool hadTransform = hasTransform();
+    bool flowThreadContainingBlockInvalidated = false;
+    if (oldStyle && oldStyle->position() != newStyle.position()) {
+        invalidateFlowThreadContainingBlockIncludingDescendants();
+        flowThreadContainingBlockInvalidated = true;
+    }
+
+    RenderBox::styleDidChange(diff, oldStyle);
+
+    if (hadTransform != hasTransform() && !flowThreadContainingBlockInvalidated)
+        invalidateFlowThreadContainingBlockIncludingDescendants();
 
     if (!isAnonymousBlock()) {
         // Ensure that all of our continuation blocks pick up the new style.
@@ -321,7 +336,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 
     propagateStyleToAnonymousChildren(PropagateToBlockChildrenOnly);
     m_lineHeight = -1;
-    
+
     // It's possible for our border/padding to change, but for the overall logical width of the block to
     // end up being the same. We keep track of this change so in layoutBlock, we can know to set relayoutChildren=true.
     m_hasBorderOrPaddingLogicalWidthChanged = oldStyle && diff == StyleDifferenceLayout && needsLayout() && borderOrPaddingLogicalWidthChanged(oldStyle, &newStyle);
@@ -760,7 +775,6 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     RenderObject* nextSibling = child->nextSibling();
 
     RenderFlowThread* childFlowThread = child->flowThreadContainingBlock();
-    CurrentRenderFlowThreadMaintainer flowThreadMaintainer(childFlowThread);
     if (childFlowThread && childFlowThread->isRenderNamedFlowThread())
         toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(child);
 
@@ -3322,6 +3336,50 @@ void RenderBlock::updateFirstLetter()
     LayoutStateDisabler layoutStateDisabler(&view());
 
     createFirstLetterRenderer(firstLetterContainer, toRenderText(firstLetterObj));
+}
+
+RenderFlowThread* RenderBlock::cachedFlowThreadContainingBlock() const
+{
+    RenderBlockRareData* rareData = getRareData(this);
+
+    if (!rareData || !rareData->m_flowThreadContainingBlock)
+        return nullptr;
+
+    return rareData->m_flowThreadContainingBlock.value();
+}
+
+bool RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate() const
+{
+    RenderBlockRareData* rareData = getRareData(this);
+
+    if (!rareData || !rareData->m_flowThreadContainingBlock)
+        return true;
+
+    return false;
+}
+
+void RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate()
+{
+    RenderBlockRareData& rareData = ensureRareData(this);
+    rareData.m_flowThreadContainingBlock = Nullopt;
+}
+
+RenderFlowThread* RenderBlock::updateCachedFlowThreadContainingBlock(RenderFlowThread* flowThread) const
+{
+    RenderBlockRareData& rareData = ensureRareData(this);
+    rareData.m_flowThreadContainingBlock = flowThread;
+
+    return flowThread;
+}
+
+RenderFlowThread* RenderBlock::locateFlowThreadContainingBlock() const
+{
+    RenderBlockRareData* rareData = getRareData(this);
+    if (!rareData || !rareData->m_flowThreadContainingBlock)
+        return updateCachedFlowThreadContainingBlock(RenderBox::locateFlowThreadContainingBlock());
+
+    ASSERT(rareData->m_flowThreadContainingBlock.value() == RenderBox::locateFlowThreadContainingBlock());
+    return rareData->m_flowThreadContainingBlock.value();
 }
 
 LayoutUnit RenderBlock::paginationStrut() const

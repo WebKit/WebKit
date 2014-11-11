@@ -312,7 +312,12 @@ public:
     virtual bool canHaveChildren() const override { return true; }
     virtual bool canCollapseAnonymousBlockChild() const { return true; }
 
+    RenderFlowThread* cachedFlowThreadContainingBlock() const;
+    void setCachedFlowThreadContainingBlockNeedsUpdate();
+    virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const;
+
 protected:
+    virtual RenderFlowThread* locateFlowThreadContainingBlock() const override;
     virtual void willBeDestroyed() override;
 
     virtual void layout() override;
@@ -449,7 +454,7 @@ private:
 
     virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const override final;
     virtual const RenderStyle& outlineStyleForRepaint() const override final;
-    
+
     virtual RenderElement* hoverAncestor() const override final;
     virtual void updateDragState(bool dragOn) override final;
     virtual void childBecameNonInline(RenderObject* child) override final;
@@ -492,6 +497,8 @@ private:
                    RenderObject* newChild, RenderBoxModelObject* oldCont);
     RenderPtr<RenderBlock> clone() const;
     RenderBlock* continuationBefore(RenderObject* beforeChild);
+
+    RenderFlowThread* updateCachedFlowThreadContainingBlock(RenderFlowThread*) const;
 
 private:
     bool hasRareData() const;

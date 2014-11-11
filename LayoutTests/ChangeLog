@@ -1,3 +1,18 @@
+2014-10-15  Andrei Bucur  <abucur@adobe.com>
+
+        ASSERTION  FAILED in WebCore::RenderFlowThread::getRegionRangeForBox
+        https://bugs.webkit.org/show_bug.cgi?id=135563
+
+        Reviewed by David Hyatt.
+
+        A test verifying that positioned elements inside multi-column containers don't
+        cause assertions or crashes.
+
+        * fast/multicol/multicol-all-positioned-crash-expected.txt: Added.
+        * fast/multicol/multicol-all-positioned-crash.html: Added.
+        * fast/multicol/multicol-transform-containing-block-expected.txt: Added.
+        * fast/multicol/multicol-transform-containing-block.html: Added.
+
 2014-10-14  Alejandro G. Castro  <alex@igalia.com>
 
         Changes in the stretchy attribute do not update rendering

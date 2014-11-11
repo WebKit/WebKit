@@ -521,38 +521,6 @@ static bool hasFixedPosInNamedFlowContainingBlock(const RenderObject* renderer)
     return false;
 }
 
-RenderFlowThread* RenderObject::locateFlowThreadContainingBlockNoCache() const
-{
-    ASSERT(flowThreadState() != NotInsideFlowThread);
-
-    RenderObject* curr = const_cast<RenderObject*>(this);
-    while (curr) {
-        if (curr->isRenderFlowThread())
-            return toRenderFlowThread(curr);
-        curr = curr->containingBlock();
-    }
-    return 0;
-}
-
-RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
-{
-    ASSERT(flowThreadState() != NotInsideFlowThread);
-
-    // See if we have the thread cached because we're in the middle of layout.
-    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
-    if (flowThread && (flowThreadState() == flowThread->flowThreadState())) {
-        // Make sure the slow path would return the same result as our cache.
-        // FIXME: For the moment, only apply this assertion to regions, as multicol
-        // still has some issues and triggers this assert.
-        // Created https://bugs.webkit.org/show_bug.cgi?id=132946 for this issue.
-        ASSERT(!flowThread->isRenderNamedFlowThread() || flowThread == locateFlowThreadContainingBlockNoCache());
-        return flowThread;
-    }
-    
-    // Not in the middle of layout so have to find the thread the slow way.
-    return locateFlowThreadContainingBlockNoCache();
-}
-
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return 0;
@@ -1437,8 +1405,6 @@ void RenderObject::showLineTreeForThis() const
 
 void RenderObject::showRegionsInformation() const
 {
-    CurrentRenderFlowThreadDisabler flowThreadDisabler(&view());
-
     if (RenderFlowThread* flowThread = flowThreadContainingBlock()) {
         const RenderBox* box = isBox() ? toRenderBox(this) : nullptr;
         if (box) {
@@ -2048,17 +2014,9 @@ void RenderObject::insertedIntoTree()
 
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
-    
-    // We have to unset the current layout RenderFlowThread here, since insertedIntoTree() can happen in
-    // the middle of layout but for objects inside a nested flow thread that is still being populated. This
-    // will cause an accurate crawl to happen in order to ensure that the right flow thread is notified.
-    RenderFlowThread* previousThread = view().flowThreadController().currentRenderFlowThread();
-    view().flowThreadController().setCurrentRenderFlowThread(nullptr);
-    if (parent()->isRenderFlowThread())
-        toRenderFlowThread(parent())->flowThreadDescendantInserted(this);
-    else if (RenderFlowThread* flowThread = parent()->flowThreadContainingBlock())
+
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock())
         flowThread->flowThreadDescendantInserted(this);
-    view().flowThreadController().setCurrentRenderFlowThread(previousThread);
 }
 
 void RenderObject::willBeRemovedFromTree()
@@ -2075,25 +2033,54 @@ void RenderObject::removeFromRenderFlowThread()
 {
     if (flowThreadState() == NotInsideFlowThread)
         return;
-    
+
     // Sometimes we remove the element from the flow, but it's not destroyed at that time.
-    // It's only until later when we actually destroy it and remove all the children from it. 
+    // It's only until later when we actually destroy it and remove all the children from it.
     // Currently, that happens for firstLetter elements and list markers.
     // Pass in the flow thread so that we don't have to look it up for all the children.
-    removeFromRenderFlowThreadRecursive(flowThreadContainingBlock());
+    removeFromRenderFlowThreadIncludingDescendants(true);
 }
 
-void RenderObject::removeFromRenderFlowThreadRecursive(RenderFlowThread* renderFlowThread)
+void RenderObject::removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState)
 {
-    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
-        child->removeFromRenderFlowThreadRecursive(renderFlowThread);
+    // Once we reach another flow thread we don't need to update the flow thread state
+    // but we have to continue cleanup the flow thread info.
+    if (isRenderFlowThread())
+        shouldUpdateState = false;
 
-    RenderFlowThread* localFlowThread = renderFlowThread;
-    if (flowThreadState() == InsideInFlowThread)
-        localFlowThread = flowThreadContainingBlock(); // We have to ask. We can't just assume we are in the same flow thread.
-    if (localFlowThread)
-        localFlowThread->removeFlowChildInfo(this);
-    setFlowThreadState(NotInsideFlowThread);
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
+        child->removeFromRenderFlowThreadIncludingDescendants(shouldUpdateState);
+
+    // We have to ask for our containing flow thread as it may be above the removed sub-tree.
+    RenderFlowThread* flowThreadContainingBlock = this->flowThreadContainingBlock();
+    if (flowThreadContainingBlock)
+        flowThreadContainingBlock->removeFlowChildInfo(this);
+    if (isRenderBlock())
+        toRenderBlock(this)->setCachedFlowThreadContainingBlockNeedsUpdate();
+    if (shouldUpdateState)
+        setFlowThreadState(NotInsideFlowThread);
+}
+
+void RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants(RenderFlowThread* flowThread)
+{
+    if (flowThreadState() == NotInsideFlowThread)
+        return;
+
+    if (isRenderBlock()) {
+        RenderBlock& block = *toRenderBlock(this);
+
+        if (block.cachedFlowThreadContainingBlockNeedsUpdate())
+            return;
+
+        flowThread = block.cachedFlowThreadContainingBlock();
+        block.setCachedFlowThreadContainingBlockNeedsUpdate();
+    }
+
+    if (flowThread)
+        flowThread->removeFlowChildInfo(this);
+
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
+        child->invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
 }
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()
@@ -2597,22 +2584,22 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
 
 RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
 {
-    if (flowThreadState() == NotInsideFlowThread)
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread || !flowThread->isRenderNamedFlowThread())
         return nullptr;
-
-    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
-    if (!flowThread)
-        return nullptr;
-
-    ASSERT(flowThread == flowThreadContainingBlock());
 
     // FIXME: Once regions are fully integrated with the compositing system we should uncomment this assert.
     // This assert needs to be disabled because it's possible to ask for the ancestor clipping rectangle of
     // a layer without knowing the containing region in advance.
     // ASSERT(flowThread->currentRegion() && flowThread->currentRegion()->isRenderNamedFlowFragment());
 
-    RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(flowThread->currentRegion());
-    return namedFlowFragment;
+    return toRenderNamedFlowFragment(flowThread->currentRegion());
+}
+
+RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
+{
+    RenderBlock* containingBlock = this->containingBlock();
+    return containingBlock ? containingBlock->flowThreadContainingBlock() : nullptr;
 }
 
 } // namespace WebCore

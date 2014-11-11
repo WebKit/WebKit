@@ -197,7 +197,6 @@ void RenderFlowThread::layout()
 
     validateRegions();
 
-    CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
     RenderBlockFlow::layout();
 
     m_pageLogicalSizeChanged = false;
@@ -287,10 +286,6 @@ bool RenderFlowThread::updateAllLayerToRegionMappings()
 {
     if (!collectsGraphicsLayersUnderRegions())
         return false;
-
-    // We can't use currentFlowThread as it is possible to have interleaved flow threads and the wrong one could be used.
-    // Let each region figure out the proper enclosing flow thread.
-    CurrentRenderFlowThreadDisabler disabler(&view());
 
     // If the RenderFlowThread had a z-index layer update, then we need to update the composited layers too.
     bool needsLayerUpdate = layer()->isDirtyRenderFlowThread() || m_layersToRegionMappingsDirty || !m_layerToRegionMap.get();
@@ -388,10 +383,6 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect) 
 
     LayoutStateDisabler layoutStateDisabler(&view()); // We can't use layout state to repaint, since the regions are somewhere else.
 
-    // We can't use currentFlowThread as it is possible to have interleaved flow threads and the wrong one could be used.
-    // Let each region figure out the proper enclosing flow thread.
-    CurrentRenderFlowThreadDisabler disabler(&view());
-    
     for (auto& region : m_regionList)
         region->repaintFlowThreadContent(repaintRect);
 }
@@ -1523,43 +1514,6 @@ ContainingRegionMap& RenderFlowThread::containingRegionMap()
         m_lineToRegionMap = std::make_unique<ContainingRegionMap>();
 
     return *m_lineToRegionMap.get();
-}
-
-CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
-    : m_renderFlowThread(renderFlowThread)
-    , m_previousRenderFlowThread(0)
-{
-    if (!m_renderFlowThread)
-        return;
-    FlowThreadController& controller = m_renderFlowThread->view().flowThreadController();
-    m_previousRenderFlowThread = controller.currentRenderFlowThread();
-    // Remove the assert so we can use this to change the flow thread context.
-    // ASSERT(!m_previousRenderFlowThread || !renderFlowThread->isRenderNamedFlowThread());
-    controller.setCurrentRenderFlowThread(m_renderFlowThread);
-}
-
-CurrentRenderFlowThreadMaintainer::~CurrentRenderFlowThreadMaintainer()
-{
-    if (!m_renderFlowThread)
-        return;
-    FlowThreadController& controller = m_renderFlowThread->view().flowThreadController();
-    ASSERT(controller.currentRenderFlowThread() == m_renderFlowThread);
-    controller.setCurrentRenderFlowThread(m_previousRenderFlowThread);
-}
-
-CurrentRenderFlowThreadDisabler::CurrentRenderFlowThreadDisabler(RenderView* view)
-    : m_view(view)
-    , m_renderFlowThread(0)
-{
-    m_renderFlowThread = m_view->flowThreadController().currentRenderFlowThread();
-    if (m_renderFlowThread)
-        view->flowThreadController().setCurrentRenderFlowThread(0);
-}
-
-CurrentRenderFlowThreadDisabler::~CurrentRenderFlowThreadDisabler()
-{
-    if (m_renderFlowThread)
-        m_view->flowThreadController().setCurrentRenderFlowThread(m_renderFlowThread);
 }
 
 

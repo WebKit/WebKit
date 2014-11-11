@@ -48,9 +48,6 @@ public:
     explicit FlowThreadController(RenderView*);
     ~FlowThreadController();
 
-    RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
-    void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
-
     bool isRenderNamedFlowThreadOrderDirty() const { return m_isRenderNamedFlowThreadOrderDirty; }
     void setIsRenderNamedFlowThreadOrderDirty(bool dirty)
     {
@@ -96,7 +93,6 @@ protected:
 
 private:
     RenderView* m_view;
-    RenderFlowThread* m_currentRenderFlowThread;
     bool m_isRenderNamedFlowThreadOrderDirty;
     unsigned m_flowThreadsWithAutoLogicalHeightRegions;
     std::unique_ptr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;

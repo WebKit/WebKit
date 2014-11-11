@@ -211,18 +211,14 @@ public:
 
     bool fixedPositionedWithNamedFlowContainingBlock() const;
 
-    enum ShouldUseFlowThreadCache {
-        UseFlowThreadCache,
-        SkipFlowThreadCache
-    };
-
     // Function to return our enclosing flow thread if we are contained inside one. This
     // function follows the containing block chain.
-    RenderFlowThread* flowThreadContainingBlock(ShouldUseFlowThreadCache useCache = UseFlowThreadCache) const
+    RenderFlowThread* flowThreadContainingBlock() const
     {
         if (flowThreadState() == NotInsideFlowThread)
-            return 0;
-        return (useCache == SkipFlowThreadCache) ? locateFlowThreadContainingBlockNoCache() : locateFlowThreadContainingBlock();
+            return nullptr;
+
+        return locateFlowThreadContainingBlock();
     }
 
     RenderNamedFlowFragment* currentRenderNamedFlowFragment() const;
@@ -891,12 +887,12 @@ protected:
     void setPosChildNeedsLayoutBit(bool b) { m_bitfields.setPosChildNeedsLayout(b); }
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
 
+    virtual RenderFlowThread* locateFlowThreadContainingBlock() const;
+    void invalidateFlowThreadContainingBlockIncludingDescendants(RenderFlowThread* = nullptr);
+
 private:
-    RenderFlowThread* locateFlowThreadContainingBlock() const;
-    RenderFlowThread* locateFlowThreadContainingBlockNoCache() const;
-    
     void removeFromRenderFlowThread();
-    void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
+    void removeFromRenderFlowThreadIncludingDescendants(bool);
 
     Color selectionColor(int colorProperty) const;
     PassRefPtr<RenderStyle> selectionPseudoStyle() const;

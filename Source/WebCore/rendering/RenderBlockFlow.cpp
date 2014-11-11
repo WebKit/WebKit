@@ -1985,18 +1985,10 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& n
     if (oldStyle) {
         EPosition oldPosition = oldStyle->position();
         EPosition newPosition = newStyle.position();
-        
+
         if (parent() && diff == StyleDifferenceLayout && oldPosition != newPosition) {
             if (containsFloats() && !isFloating() && !isOutOfFlowPositioned() && newStyle.hasOutOfFlowPosition())
                 markAllDescendantsWithFloatsForLayout();
-
-            // If this block is inside a multicol and is moving from in-flow positioning to out-of-flow positioning,
-            // remove its info (such as lines-to-region mapping) from the flowthread because it won't be able to do it later.
-            // The flowthread will no longer be in its containing block chain and, as such, flowThreadContainingBlock will return null.
-            if (RenderFlowThread* flowThread = flowThreadContainingBlock(SkipFlowThreadCache)) {
-                if (flowThread->isRenderMultiColumnFlowThread() && !isOutOfFlowPositioned() && (newPosition == AbsolutePosition || newPosition == FixedPosition))
-                    flowThread->removeFlowChildInfo(this);
-            }
         }
     }
 

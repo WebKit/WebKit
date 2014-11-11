@@ -295,7 +295,7 @@ private:
 
     void pushLayoutStateForCurrentFlowThread(const RenderObject&);
     void popLayoutStateForCurrentFlowThread();
-    
+
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
 

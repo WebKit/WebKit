@@ -83,6 +83,10 @@ public:
     void setLineGridPaginationOrigin(const LayoutSize& origin) { m_lineGridPaginationOrigin = origin; }
     
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
+
+    RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
+    void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
+
 private:
     void propagateLineGridInfo(RenderBox*);
     void establishLineGrid(RenderBlockFlow*);
@@ -121,6 +125,8 @@ public:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
+
+    RenderFlowThread* m_currentRenderFlowThread { nullptr };
 
 #ifndef NDEBUG
     RenderObject* m_renderer;

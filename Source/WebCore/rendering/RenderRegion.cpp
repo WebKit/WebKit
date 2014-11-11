@@ -218,15 +218,8 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 void RenderRegion::computeOverflowFromFlowThread()
 {
     ASSERT(isValid());
-    
-    LayoutRect layoutRect;
-    {
-        // When getting the overflow from the flow thread we need to temporarly reset the current flow thread because
-        // we're changing flows.
-        CurrentRenderFlowThreadMaintainer flowThreadMaintainer(m_flowThread);
-        layoutRect = layoutOverflowRectForBox(m_flowThread);
-    }
 
+    LayoutRect layoutRect = layoutOverflowRectForBox(m_flowThread);
     layoutRect.setLocation(contentBoxRect().location() + (layoutRect.location() - m_flowThreadPortionRect.location()));
 
     // FIXME: Correctly adjust the layout overflow for writing modes.

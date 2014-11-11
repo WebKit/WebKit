@@ -236,6 +236,8 @@ public:
 
     ContainingRegionMap& containingRegionMap();
 
+    virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const override { return false; }
+
     // FIXME: Eventually as column and region flow threads start nesting, this may end up changing.
     virtual bool shouldCheckColumnBreaks() const { return false; }
 
@@ -248,6 +250,8 @@ private:
 
 protected:
     RenderFlowThread(Document&, PassRef<RenderStyle>);
+
+    virtual RenderFlowThread* locateFlowThreadContainingBlock() const override { return const_cast<RenderFlowThread*>(this); }
 
     virtual const char* renderName() const = 0;
 
@@ -380,26 +384,6 @@ protected:
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderFlowThread, isRenderFlowThread())
-
-class CurrentRenderFlowThreadMaintainer {
-    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadMaintainer);
-public:
-    CurrentRenderFlowThreadMaintainer(RenderFlowThread*);
-    ~CurrentRenderFlowThreadMaintainer();
-private:
-    RenderFlowThread* m_renderFlowThread;
-    RenderFlowThread* m_previousRenderFlowThread;
-};
-
-class CurrentRenderFlowThreadDisabler {
-    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadDisabler);
-public:
-    CurrentRenderFlowThreadDisabler(RenderView*);
-    ~CurrentRenderFlowThreadDisabler();
-private:
-    RenderView* m_view;
-    RenderFlowThread* m_renderFlowThread;
-};
 
 // This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG

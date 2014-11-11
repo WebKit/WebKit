@@ -3781,12 +3781,6 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
 
     // Don't paint the layer if the renderer doesn't belong to this region.
     // This is true as long as we clamp the range of a box to its containing block range.
-
-    // Disable named flow region information for in flow threads such as multi-col.
-    std::unique_ptr<CurrentRenderFlowThreadDisabler> flowThreadDisabler;
-    if (enclosingPaginationLayer(ExcludeCompositedPaginatedLayers))
-        flowThreadDisabler = std::make_unique<CurrentRenderFlowThreadDisabler>(&renderer().view());
-
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
     if (namedFlowFragment) {
         ASSERT(namedFlowFragment->isValid());
@@ -4831,11 +4825,6 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
         return 0;
 
-    // Disable named flow region information for in flow threads such as multi-col.
-    std::unique_ptr<CurrentRenderFlowThreadDisabler> flowThreadDisabler;
-    if (enclosingPaginationLayer(ExcludeCompositedPaginatedLayers))
-        flowThreadDisabler = std::make_unique<CurrentRenderFlowThreadDisabler>(&renderer().view());
-
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
 
     // Prevent hitting the fixed layers inside the flow thread when hitting through regions.
@@ -5242,8 +5231,7 @@ bool RenderLayer::mapLayerClipRectsToFragmentationLayer(ClipRects& clipRects) co
         return false;
 
     ASSERT(namedFlowFragment->parent() && namedFlowFragment->parent()->isRenderNamedFlowFragmentContainer());
-    
-    CurrentRenderFlowThreadDisabler flowThreadDisabler(&renderer().view());
+
     ClipRectsContext targetClipRectsContext(&namedFlowFragment->fragmentContainerLayer(), TemporaryClipRects);
     namedFlowFragment->fragmentContainerLayer().calculateClipRects(targetClipRectsContext, clipRects);
 
@@ -6759,7 +6747,6 @@ void RenderLayer::filterNeedsRepaint()
 void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, RenderNamedFlowFragment* region, LayoutRect paintDirtyRect, LayoutPoint paintOffset, PaintBehavior paintBehavior, PaintLayerFlags paintFlags)
 {
     LayoutRect regionContentBox = toRenderBox(region->layerOwner()).contentBoxRect();
-    CurrentRenderFlowThreadMaintainer flowThreadMaintainer(toRenderFlowThread(&renderer()));
     CurrentRenderRegionMaintainer regionMaintainer(*region);
     region->setRegionObjectsRegionStyle();
 
@@ -6866,7 +6853,6 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         hitTestRectInFlowThread.move(hitTestOffset);
         hitTestRectInFlowThread.expand(LayoutSize(fabs((double)hitTestOffset.width()), fabs((double)hitTestOffset.height())));
 
-        CurrentRenderFlowThreadMaintainer flowThreadMaintainer(flowThread);
         CurrentRenderRegionMaintainer regionMaintainer(*region);
 
         HitTestResult tempResult(result.hitTestLocation());
