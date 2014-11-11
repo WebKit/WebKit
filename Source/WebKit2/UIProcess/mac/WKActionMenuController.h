@@ -46,6 +46,10 @@ enum class ActionMenuState {
 
 @class WKView;
 
+#if WK_API_ENABLED
+@class WKPagePreviewViewController;
+#endif
+
 @interface WKActionMenuController : NSObject <NSMenuDelegate> {
 @private
     WebKit::WebPageProxy *_page;
@@ -60,6 +64,10 @@ enum class ActionMenuState {
 
     BOOL _isShowingTextIndicator;
     BOOL _shouldKeepPreviewPopoverOpen;
+
+#if WK_API_ENABLED
+    RetainPtr<WKPagePreviewViewController> _previewViewController;
+#endif
 }
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView;
