@@ -262,12 +262,12 @@ webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* s
 /**
  * webkit_dom_test_obj_serialized_value:
  * @self: A #WebKitDOMTestObj
- * @serializedArg: A #WebKitDOMSerializedScriptValue
+ * @serializedArg: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerializedScriptValue* serializedArg);
+webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, const gchar* serializedArg);
 
 /**
  * webkit_dom_test_obj_options_object:

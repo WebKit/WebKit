@@ -51,64 +51,64 @@ webkit_dom_test_serialized_script_value_interface_get_type(void);
  * webkit_dom_test_serialized_script_value_interface_get_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
- * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ * Returns: A #gchar
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMSerializedScriptValue*
+WEBKIT_API gchar*
 webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_set_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
- * @value: A #WebKitDOMSerializedScriptValue
+ * @value: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
+webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, const gchar* value);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_get_readonly_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
- * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ * Returns: A #gchar
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMSerializedScriptValue*
+WEBKIT_API gchar*
 webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_get_cached_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
- * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ * Returns: A #gchar
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMSerializedScriptValue*
+WEBKIT_API gchar*
 webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_set_cached_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
- * @value: A #WebKitDOMSerializedScriptValue
+ * @value: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
+webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, const gchar* value);
 
 /**
  * webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value:
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
- * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ * Returns: A #gchar
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMSerializedScriptValue*
+WEBKIT_API gchar*
 webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self);
 
 G_END_DECLS

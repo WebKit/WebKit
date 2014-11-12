@@ -380,6 +380,7 @@ sub GetGlibTypeName {
     my %types = ("DOMString", "gchar*",
                  "DOMTimeStamp", "guint32",
                  "CompareHow", "gushort",
+                 "SerializedScriptValue", "gchar*",
                  "float", "gfloat",
                  "unrestricted float", "gfloat",
                  "double", "gdouble",
@@ -406,7 +407,7 @@ sub GetGlibTypeName {
 sub IsGDOMClassType {
     my $type = shift;
 
-    return 0 if $codeGenerator->IsNonPointerType($type) || $codeGenerator->IsStringType($type);
+    return 0 if $codeGenerator->IsNonPointerType($type) || $codeGenerator->IsStringType($type) || $type eq "SerializedScriptValue";
     return 1;
 }
 
@@ -989,6 +990,10 @@ sub GenerateFunction {
         if ($paramIDLType eq "NodeFilter" || $paramIDLType eq "XPathNSResolver") {
             $paramName = "WTF::getPtr(" . $paramName . ")";
         }
+        if ($paramIDLType eq "SerializedScriptValue") {
+            $implIncludes{"SerializedScriptValue.h"} = 1;
+            $paramName = "WebCore::SerializedScriptValue::create(WTF::String::fromUTF8(" . $paramName . "))";
+        }
         push(@callImplParams, $paramName);
     }
 
@@ -1121,6 +1126,11 @@ sub GenerateFunction {
         } else {
             $assign = "${returnType} result = ";
         }
+
+        if ($functionSigType eq "SerializedScriptValue") {
+            $assignPre = "convertToUTF8String(";
+            $assignPost = "->toString())";
+        }
     }
 
     # FIXME: Should we return a default value when isNull == true?
@@ -1194,7 +1204,7 @@ EOF
             } else {
                 $functionName = "item->${functionName}";
             }
-            $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
+            $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . ")${assignPost};\n";
         } elsif ($prefix eq "set_") {
             my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $function);
             push(@arguments, @callImplParams);
@@ -1203,10 +1213,10 @@ EOF
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
                 $functionName = "WebCore::${implementedBy}::${functionName}";
-                $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . ")${assignPost};\n";
             } else {
                 $functionName = "item->${functionName}";
-                $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . ")${assignPost};\n";
             }
         } else {
             my @arguments = @callImplParams;
@@ -1214,9 +1224,9 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $contentHead = "${assign}${assignPre}WebCore::${implementedBy}::${functionImplementationName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}WebCore::${implementedBy}::${functionImplementationName}(" . join(", ", @arguments) . ")${assignPost};\n";
             } else {
-                $contentHead = "${assign}${assignPre}item->${functionImplementationName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}item->${functionImplementationName}(" . join(", ", @arguments) . ")${assignPost};\n";
             }
         }
         push(@cBody, "    ${contentHead}");

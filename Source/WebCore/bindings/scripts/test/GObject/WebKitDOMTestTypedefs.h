@@ -127,22 +127,22 @@ webkit_dom_test_typedefs_set_unsigned_long_long_attr(WebKitDOMTestTypedefs* self
  * webkit_dom_test_typedefs_get_immutable_serialized_script_value:
  * @self: A #WebKitDOMTestTypedefs
  *
- * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
+ * Returns: A #gchar
  *
  * Stability: Unstable
 **/
-WEBKIT_API WebKitDOMSerializedScriptValue*
+WEBKIT_API gchar*
 webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestTypedefs* self);
 
 /**
  * webkit_dom_test_typedefs_set_immutable_serialized_script_value:
  * @self: A #WebKitDOMTestTypedefs
- * @value: A #WebKitDOMSerializedScriptValue
+ * @value: A #gchar
  *
  * Stability: Unstable
 **/
 WEBKIT_API void
-webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestTypedefs* self, WebKitDOMSerializedScriptValue* value);
+webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestTypedefs* self, const gchar* value);
 
 /**
  * webkit_dom_test_typedefs_get_attr_with_getter_exception:

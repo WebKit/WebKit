@@ -73,7 +73,7 @@ webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, 
 /**
  * webkit_dom_test_callback_callback_with_serialized_script_value_param:
  * @self: A #WebKitDOMTestCallback
- * @srzParam: A #WebKitDOMSerializedScriptValue
+ * @srzParam: A #gchar
  * @strArg: A #gchar
  *
  * Returns: A #gboolean
@@ -81,7 +81,7 @@ webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, 
  * Stability: Unstable
 **/
 WEBKIT_API gboolean
-webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, WebKitDOMSerializedScriptValue* srzParam, const gchar* strArg);
+webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, const gchar* srzParam, const gchar* strArg);
 
 /**
  * webkit_dom_test_callback_callback_with_non_bool_return_type:

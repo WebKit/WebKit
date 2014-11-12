@@ -28,12 +28,12 @@
 #include "ExceptionCodeDescription.h"
 #include "HTMLNames.h"
 #include "JSMainThreadExecState.h"
+#include "SerializedScriptValue.h"
 #include "WebKitDOMDictionaryPrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
-#include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestEnumTypePrivate.h"
 #include "WebKitDOMTestNodePrivate.h"
 #include "WebKitDOMTestObjPrivate.h"
@@ -1140,14 +1140,13 @@ WebKitDOMTestObj* webkit_dom_test_obj_method_that_requires_all_args_and_throws(W
     return WebKit::kit(gobjectResult.get());
 }
 
-void webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerializedScriptValue* serializedArg)
+void webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, const gchar* serializedArg)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(serializedArg));
+    g_return_if_fail(serializedArg);
     WebCore::TestObj* item = WebKit::core(self);
-    WebCore::SerializedScriptValue* convertedSerializedArg = WebKit::core(serializedArg);
-    item->serializedValue(convertedSerializedArg);
+    item->serializedValue(WebCore::SerializedScriptValue::create(WTF::String::fromUTF8(serializedArg)));
 }
 
 void webkit_dom_test_obj_options_object(WebKitDOMTestObj* self, WebKitDOMDictionary* oo, WebKitDOMDictionary* ooo)

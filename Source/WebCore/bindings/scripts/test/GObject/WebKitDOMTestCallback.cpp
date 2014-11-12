@@ -27,10 +27,10 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 #include "JSMainThreadExecState.h"
+#include "SerializedScriptValue.h"
 #include "WebKitDOMDOMStringListPrivate.h"
 #include "WebKitDOMFloat32ArrayPrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestCallbackPrivate.h"
 #include "WebKitDOMTestNodePrivate.h"
 #include "gobject/ConvertToUTF8String.h"
@@ -145,17 +145,16 @@ gboolean webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallbac
 #endif /* ENABLE(SQL_DATABASE) */
 }
 
-gboolean webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, WebKitDOMSerializedScriptValue* srzParam, const gchar* strArg)
+gboolean webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, const gchar* srzParam, const gchar* strArg)
 {
 #if ENABLE(SQL_DATABASE)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
-    g_return_val_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(srzParam), FALSE);
+    g_return_val_if_fail(srzParam, FALSE);
     g_return_val_if_fail(strArg, FALSE);
     WebCore::TestCallback* item = WebKit::core(self);
-    WebCore::SerializedScriptValue* convertedSrzParam = WebKit::core(srzParam);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
-    gboolean result = item->callbackWithSerializedScriptValueParam(convertedSrzParam, convertedStrArg);
+    gboolean result = item->callbackWithSerializedScriptValueParam(WebCore::SerializedScriptValue::create(WTF::String::fromUTF8(srzParam)), convertedStrArg);
     return result;
 #else
     UNUSED_PARAM(self);

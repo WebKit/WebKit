@@ -27,9 +27,9 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 #include "JSMainThreadExecState.h"
+#include "SerializedScriptValue.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
-#include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestTypedefsPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
@@ -180,7 +180,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
         g_param_spec_object(
             "immutable-serialized-script-value",
             "TestTypedefs:immutable-serialized-script-value",
-            "read-only WebKitDOMSerializedScriptValue* TestTypedefs:immutable-serialized-script-value",
+            "read-only gchar* TestTypedefs:immutable-serialized-script-value",
             WEBKIT_DOM_TYPE_SERIALIZED_SCRIPT_VALUE,
             WEBKIT_PARAM_READABLE));
 
@@ -302,23 +302,22 @@ void webkit_dom_test_typedefs_set_unsigned_long_long_attr(WebKitDOMTestTypedefs*
     item->setUnsignedLongLongAttr(value);
 }
 
-WebKitDOMSerializedScriptValue* webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestTypedefs* self)
+gchar* webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestTypedefs* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self), 0);
     WebCore::TestTypedefs* item = WebKit::core(self);
-    RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->immutableSerializedScriptValue());
-    return WebKit::kit(gobjectResult.get());
+    gchar* result = convertToUTF8String(item->immutableSerializedScriptValue()->toString());
+    return result;
 }
 
-void webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestTypedefs* self, WebKitDOMSerializedScriptValue* value)
+void webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestTypedefs* self, const gchar* value)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_TYPEDEFS(self));
-    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(value));
+    g_return_if_fail(value);
     WebCore::TestTypedefs* item = WebKit::core(self);
-    WebCore::SerializedScriptValue* convertedValue = WebKit::core(value);
-    item->setImmutableSerializedScriptValue(convertedValue);
+    item->setImmutableSerializedScriptValue(WebCore::SerializedScriptValue::create(WTF::String::fromUTF8(value)));
 }
 
 glong webkit_dom_test_typedefs_get_attr_with_getter_exception(WebKitDOMTestTypedefs* self, GError** error)
