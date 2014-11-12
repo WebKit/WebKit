@@ -1,3 +1,27 @@
+2014-11-11  David Kilzer  <ddkilzer@apple.com>
+
+        Modernize $buildingForIPhone in CodeGeneratorObjC.pm
+        <http://webkit.org/b/138640>
+
+        Reviewed by Daniel Bates.
+
+        Mac OS X is the only platform that supports NSColor, so rename
+        $buildingForIPhone to $shouldUseCGColor (which is actually what
+        the variable represents) and define it in terms of the "macosx"
+        platform name.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        ($buildingForIPhone): Rename to $shouldUseCGColor.
+        ($shouldUseCGColor): False if PLATFORM_NAME is not defined,
+        which is the case on older Xcodes when building for Mac OS X, or
+        if PLATFORM_NAME is equal to "macosx".  True otherwise.
+        (GetClassName): Switch to use new variable name.
+        (AddIncludesForType): Ditto.
+        (GenerateHeader): Remove dead code.  The
+        $buildingForTigerOrEarlier variable was accidentally
+        re-introduced in r161638, but was originally removed in r127032!
+        (GenerateImplementation): Switch to use new variable name.
+
 2014-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Add support for mailto: link action menus
