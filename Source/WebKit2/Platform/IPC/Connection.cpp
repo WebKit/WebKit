@@ -164,13 +164,8 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection* connection
     {
         MutexLocker locker(m_mutex);
         
-        if (m_didScheduleDispatchMessagesWorkSet.add(connection).isNewEntry) {
-            RefPtr<SyncMessageState> protectedThis(this);
-            RefPtr<Connection> protectedConnection(connection);
-            m_runLoop.dispatch([protectedThis, protectedConnection] {
-                protectedThis->dispatchMessageAndResetDidScheduleDispatchMessagesForConnection(protectedConnection.get());
-            });
-        }
+        if (m_didScheduleDispatchMessagesWorkSet.add(connection).isNewEntry)
+            m_runLoop.dispatch(bind(&SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesForConnection, this, RefPtr<Connection>(connection)));
 
         m_messagesToDispatchWhileWaitingForSyncReply.append(WTF::move(connectionAndIncomingMessage));
     }
@@ -301,8 +296,10 @@ void Connection::removeWorkQueueMessageReceiver(StringReference messageReceiverN
     });
 }
 
-void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver* workQueueMessageReceiver, MessageDecoder* decoder)
+void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver* workQueueMessageReceiver, MessageDecoder* incomingMessageDecoder)
 {
+    std::unique_ptr<MessageDecoder> decoder(incomingMessageDecoder);
+
     if (!decoder->isSyncMessage()) {
         workQueueMessageReceiver->didReceiveMessage(this, *decoder);
         return;
@@ -343,12 +340,9 @@ void Connection::invalidate()
     }
     
     // Reset the client.
-    m_client = nullptr;
+    m_client = 0;
 
-    RefPtr<Connection> protectedThis(this);
-    m_connectionQueue->dispatch([protectedThis] {
-        protectedThis->platformInvalidate();
-    });
+    m_connectionQueue->dispatch(WTF::bind(&Connection::platformInvalidate, this));
 }
 
 void Connection::markCurrentlyDispatchedMessageAsInvalid()
@@ -387,10 +381,7 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
     }
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
-    RefPtr<Connection> protectedThis(this);
-    m_connectionQueue->dispatch([protectedThis] {
-        protectedThis->sendOutgoingMessages();
-    });
+    m_connectionQueue->dispatch(WTF::bind(&Connection::sendOutgoingMessages, this));
     return true;
 }
 
@@ -638,27 +629,23 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
     }
 
     if (!m_workQueueMessageReceivers.isValidKey(message->messageReceiverName())) {
-        // Something might have gone wrong when decoding the message. In that case, encode the message length
-        // so we can figure out if this happens for certain message lengths.
-        CString messageReceiverName = message->messageReceiverName().isEmpty() ? "<unknown message>" : message->messageReceiverName().toString();
-        CString messageName = message->messageName().isEmpty() ? String::format("<message length: %zu bytes>", message->length()).utf8() : message->messageReceiverName().toString();
+        if (message->messageReceiverName().isEmpty() && message->messageName().isEmpty()) {
+            // Something went wrong when decoding the message. Encode the message length so we can figure out if this
+            // happens for certain message lengths.
+            CString messageReceiverName = "<unknown message>";
+            CString messageName = String::format("<message length: %zu bytes>", message->length()).utf8();
 
-        RefPtr<Connection> protectedThis(this);
-        m_clientRunLoop.dispatch([protectedThis, messageReceiverName, messageName] {
-            protectedThis->dispatchDidReceiveInvalidMessage(messageReceiverName, messageName);
-        });
+            m_clientRunLoop.dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, messageReceiverName, messageName));
+            return;
+        }
+
+        m_clientRunLoop.dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, message->messageReceiverName().toString(), message->messageName().toString()));
         return;
     }
 
     auto it = m_workQueueMessageReceivers.find(message->messageReceiverName());
     if (it != m_workQueueMessageReceivers.end()) {
-        RefPtr<Connection> protectedThis(this);
-        RefPtr<WorkQueueMessageReceiver>& workQueueMessageReceiver = it->value.second;
-        MessageDecoder* decoderPtr = message.release();
-        it->value.first->dispatch([protectedThis, workQueueMessageReceiver, decoderPtr] {
-            std::unique_ptr<MessageDecoder> decoder(decoderPtr);
-            protectedThis->dispatchWorkQueueMessageReceiverMessage(workQueueMessageReceiver.get(), decoder.get());
-        });
+        it->value.first->dispatch(bind(&Connection::dispatchWorkQueueMessageReceiverMessage, this, it->value.second, message.release()));
         return;
     }
 
@@ -814,10 +801,7 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<MessageDecoder> incoming
         m_incomingMessages.append(WTF::move(incomingMessage));
     }
 
-    RefPtr<Connection> protectedThis(this);
-    m_clientRunLoop.dispatch([protectedThis] {
-        protectedThis->dispatchOneMessage();
-    });
+    m_clientRunLoop.dispatch(WTF::bind(&Connection::dispatchOneMessage, this));
 }
 
 void Connection::dispatchMessage(MessageDecoder& decoder)

@@ -361,11 +361,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
 void Connection::initializeDeadNameSource()
 {
     m_deadNameSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, 0, m_connectionQueue->dispatchQueue());
-
-    RefPtr<Connection> protectedThis(this);
-    dispatch_source_set_event_handler(m_deadNameSource, ^{
-        protectedThis->connectionDidClose();
-    });
+    dispatch_source_set_event_handler(m_deadNameSource, bind(&Connection::connectionDidClose, this));
 
     mach_port_t sendPort = m_sendPort;
     dispatch_source_set_cancel_handler(m_deadNameSource, ^{
@@ -508,12 +504,7 @@ void Connection::receiveSourceEventHandler()
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         if (m_isServer) {
             // Server connections aren't supposed to have their exception ports overriden. Treat this as an invalid message.
-            RefPtr<Connection> protectedThis(this);
-            CString messageReceiverNameString = decoder->messageReceiverName().toString();
-            CString messageNameString = decoder->messageName().toString();
-            m_clientRunLoop.dispatch([protectedThis, messageReceiverNameString, messageNameString] {
-                protectedThis->dispatchDidReceiveInvalidMessage(messageReceiverNameString, messageNameString);
-            });
+            m_clientRunLoop.dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, decoder->messageReceiverName().toString(), decoder->messageName().toString()));
             return;
         }
         MachPort exceptionPort;
