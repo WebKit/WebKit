@@ -129,6 +129,9 @@ messages -> PluginControllerProxy LegacyReceiver {
 
     # Gets the string representating the form value of the plug-in
     GetFormValue() -> (bool returnValue, String formValue)
+
+    # Sent when the browser wants to mute or unmute the plugin.
+    MutedStateChanged(bool muted)
 }
 
 #endif

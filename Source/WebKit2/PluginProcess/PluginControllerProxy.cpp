@@ -60,6 +60,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_pluginInstanceID(creationParameters.pluginInstanceID)
     , m_userAgent(creationParameters.userAgent)
     , m_isPrivateBrowsingEnabled(creationParameters.isPrivateBrowsingEnabled)
+    , m_isMuted(creationParameters.isMuted)
     , m_isAcceleratedCompositingEnabled(creationParameters.isAcceleratedCompositingEnabled)
     , m_isInitializing(false)
     , m_isVisible(false)
@@ -635,6 +636,15 @@ void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEn
     m_isPrivateBrowsingEnabled = isPrivateBrowsingEnabled;
 
     m_plugin->privateBrowsingStateChanged(isPrivateBrowsingEnabled);
+}
+
+void PluginControllerProxy::mutedStateChanged(bool isMuted)
+{
+    if (m_isMuted == isMuted)
+        return;
+    
+    m_isMuted = isMuted;
+    m_plugin->mutedStateChanged(isMuted);
 }
 
 void PluginControllerProxy::getFormValue(bool& returnValue, String& formValue)

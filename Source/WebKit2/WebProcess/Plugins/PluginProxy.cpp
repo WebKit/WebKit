@@ -104,6 +104,7 @@ bool PluginProxy::initialize(const Parameters& parameters)
     m_pendingPluginCreationParameters->userAgent = controller()->userAgent();
     m_pendingPluginCreationParameters->contentsScaleFactor = contentsScaleFactor();
     m_pendingPluginCreationParameters->isPrivateBrowsingEnabled = controller()->isPrivateBrowsingEnabled();
+    m_pendingPluginCreationParameters->isMuted = controller()->isMuted();
     m_pendingPluginCreationParameters->artificialPluginInitializationDelayEnabled = controller()->artificialPluginInitializationDelayEnabled();
     m_pendingPluginCreationParameters->isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
 
@@ -524,6 +525,11 @@ void PluginProxy::storageBlockingStateChanged(bool isStorageBlockingEnabled)
 void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::PrivateBrowsingStateChanged(isPrivateBrowsingEnabled), m_pluginInstanceID);
+}
+
+void PluginProxy::mutedStateChanged(bool isMuted)
+{
+    m_connection->connection()->send(Messages::PluginControllerProxy::MutedStateChanged(isMuted), m_pluginInstanceID);
 }
 
 bool PluginProxy::getFormValue(String& formValue)

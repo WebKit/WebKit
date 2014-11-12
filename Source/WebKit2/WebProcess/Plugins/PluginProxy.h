@@ -127,6 +127,7 @@ private:
     virtual void contentsScaleFactorChanged(float);
     virtual void storageBlockingStateChanged(bool);
     virtual void privateBrowsingStateChanged(bool);
+    virtual void mutedStateChanged(bool) override;
     virtual bool getFormValue(String& formValue);
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
     virtual WebCore::Scrollbar* horizontalScrollbar();

@@ -1,3 +1,16 @@
+2014-11-05  Ada Chan  <adachan@apple.com>
+
+        Implement new plug-in API for muting plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=138105
+
+        Reviewed by Anders Carlsson.
+
+        Add the new NPNVmuteAudioBool NPNVariable.
+
+        Test: platform/mac-wk2/plugins/muted-state.html
+
+        * plugins/npapi.h:
+
 2014-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Need to show the text indicator when Data Detectors shows a popover

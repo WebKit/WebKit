@@ -442,6 +442,12 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = plugin->isPrivateBrowsingEnabled();
             break;
         }
+
+        case NPNVmuteAudioBool: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            *(NPBool*)value = plugin->isMuted();
+            break;
+        }
 #if PLATFORM(COCOA)
         case NPNVsupportsCoreGraphicsBool:
             // Always claim to support the Core Graphics drawing model.

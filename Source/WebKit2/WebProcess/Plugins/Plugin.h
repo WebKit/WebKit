@@ -280,6 +280,8 @@ public:
     
     virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const { return WebCore::AudioHardwareActivityType::Unknown; }
 
+    virtual void mutedStateChanged(bool) { }
+
 protected:
     Plugin();
 

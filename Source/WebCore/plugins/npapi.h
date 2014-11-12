@@ -432,6 +432,9 @@ typedef enum {
   , NPNVsupportsCompositingCoreAnimationPluginsBool = 74656 /* TRUE if the browser supports
                                                                CA model compositing */
 #endif /* XP_MACOSX */
+
+  , NPNVmuteAudioBool = 4000
+
 } NPNVariable;
 
 typedef enum {

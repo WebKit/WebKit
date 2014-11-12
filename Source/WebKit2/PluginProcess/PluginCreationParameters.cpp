@@ -37,6 +37,7 @@ PluginCreationParameters::PluginCreationParameters()
     , windowNPObjectID(0)
     , contentsScaleFactor(1)
     , isPrivateBrowsingEnabled(false)
+    , isMuted(false)
     , asynchronousCreationIncomplete(false)
     , artificialPluginInitializationDelayEnabled(false)
     , isAcceleratedCompositingEnabled(false)
@@ -51,6 +52,7 @@ void PluginCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << userAgent;
     encoder << contentsScaleFactor;
     encoder << isPrivateBrowsingEnabled;
+    encoder << isMuted;
     encoder << asynchronousCreationIncomplete;
     encoder << artificialPluginInitializationDelayEnabled;
     encoder << isAcceleratedCompositingEnabled;
@@ -74,6 +76,9 @@ bool PluginCreationParameters::decode(IPC::ArgumentDecoder& decoder, PluginCreat
         return false;
 
     if (!decoder.decode(result.isPrivateBrowsingEnabled))
+        return false;
+
+    if (!decoder.decode(result.isMuted))
         return false;
 
     if (!decoder.decode(result.asynchronousCreationIncomplete))

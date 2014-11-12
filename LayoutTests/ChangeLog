@@ -1,3 +1,13 @@
+2014-11-05  Ada Chan  <adachan@apple.com>
+
+        Implement new plug-in API for muting plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=138105
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac-wk2/plugins/muted-state-expected.txt: Added.
+        * platform/mac-wk2/plugins/muted-state.html: Added.
+
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Some platform/mac text expectation cleanup.

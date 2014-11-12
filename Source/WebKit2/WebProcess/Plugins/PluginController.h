@@ -84,6 +84,9 @@ public:
 
     // Called by the Netscape plug-in when it starts or stops playing audio.
     virtual void setPluginIsPlayingAudio(bool) = 0;
+
+    // Returns whether the plugin should be muted.
+    virtual bool isMuted() const = 0;
 #endif
 
     // Set the statusbar text.

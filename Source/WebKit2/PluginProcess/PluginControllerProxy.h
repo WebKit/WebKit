@@ -112,6 +112,7 @@ private:
     virtual String cookiesForURL(const String&) override;
     virtual void setCookiesForURL(const String& urlString, const String& cookieString) override;
     virtual bool isPrivateBrowsingEnabled() override;
+    virtual bool isMuted() const override { return m_isMuted; }
     virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
     virtual void protectPluginFromDestruction() override;
     virtual void unprotectPluginFromDestruction() override;
@@ -164,6 +165,7 @@ private:
 
     void storageBlockingStateChanged(bool);
     void privateBrowsingStateChanged(bool);
+    void mutedStateChanged(bool);
     void getFormValue(bool& returnValue, String& formValue);
 
     void platformInitialize(const PluginCreationParameters&);
@@ -176,6 +178,7 @@ private:
     String m_userAgent;
     bool m_storageBlockingEnabled;
     bool m_isPrivateBrowsingEnabled;
+    bool m_isMuted;
     bool m_isAcceleratedCompositingEnabled;
     bool m_isInitializing;
     bool m_isVisible;

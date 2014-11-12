@@ -254,6 +254,11 @@ bool NetscapePlugin::isPrivateBrowsingEnabled()
     return controller()->isPrivateBrowsingEnabled();
 }
 
+bool NetscapePlugin::isMuted() const
+{
+    return controller()->isMuted();
+}
+
 NPObject* NetscapePlugin::windowScriptNPObject()
 {
     return controller()->windowScriptNPObject();
@@ -1080,6 +1085,12 @@ bool NetscapePlugin::convertFromRootView(const IntPoint& pointInRootViewCoordina
 
     pointInPluginCoordinates = m_pluginToRootViewTransform.inverse().mapPoint(pointInRootViewCoordinates);
     return true;
+}
+
+void NetscapePlugin::mutedStateChanged(bool muted)
+{
+    NPBool value = muted;
+    NPP_SetValue(NPNVmuteAudioBool, &value);
 }
 
 #if !PLATFORM(COCOA)

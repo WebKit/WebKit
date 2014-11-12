@@ -1,3 +1,24 @@
+2014-11-05  Ada Chan  <adachan@apple.com>
+
+        Implement new plug-in API for muting plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=138105
+
+        Reviewed by Anders Carlsson.
+
+        Add a new plug-in test for the mute API.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac/SetMuted.cpp: Added.
+        (SetMuted::SetMuted):
+        (SetMuted::isMuted):
+        (SetMuted::cachedIsMuted):
+        (SetMuted::ScriptableObject::hasProperty):
+        (SetMuted::ScriptableObject::getProperty):
+        (SetMuted::ScriptableObject::pluginTest):
+        (SetMuted::NPP_New):
+        (SetMuted::NPP_GetValue):
+        (SetMuted::NPP_SetValue):
+
 2014-11-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.

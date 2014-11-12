@@ -1331,7 +1331,11 @@ void PluginView::mediaCanStart()
 
 void PluginView::pageMutedStateDidChange()
 {
-    // FIXME: To be implemented (https://bugs.webkit.org/show_bug.cgi?id=138105).
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
+        return;
+
+    m_plugin->mutedStateChanged(isMuted());
 }
 
 bool PluginView::isPluginVisible()
@@ -1451,6 +1455,14 @@ void PluginView::setPluginIsPlayingAudio(bool pluginIsPlayingAudio)
 
     m_pluginIsPlayingAudio = pluginIsPlayingAudio;
     m_pluginElement->document().updateIsPlayingAudio();
+}
+
+bool PluginView::isMuted() const
+{
+    if (!frame() || !frame()->page())
+        return false;
+
+    return frame()->page()->isMuted();
 }
 #endif
 

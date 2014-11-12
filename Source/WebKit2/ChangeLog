@@ -1,3 +1,53 @@
+2014-11-05  Ada Chan  <adachan@apple.com>
+
+        Implement new plug-in API for muting plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=138105
+
+        Reviewed by Anders Carlsson.
+
+        Handle the setting of NPNVmuteAudioBool on the plug-in.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Initialize m_isMuted.
+        (WebKit::PluginControllerProxy::mutedStateChanged):
+        Tell the plugin about the new muted state.
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add the MutedStateChanged message.
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        Initialize isMuted.
+        (WebKit::PluginCreationParameters::encode):
+        Handle isMuted.
+        (WebKit::PluginCreationParameters::decode):
+        Ditto.
+        * PluginProcess/PluginCreationParameters.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Get the plug-in's muted state.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::isMuted):
+        Get the muted state from PluginControllerProxy.
+        (WebKit::NetscapePlugin::mutedStateChanged):
+        Call NPP_SetValue with NPNVmuteAudioBool and the updated muted state.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::mutedStateChanged):
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        Set m_pendingPluginCreationParameters->isMuted.
+        (WebKit::PluginProxy::mutedStateChanged):
+        Send the MutedStateChanged message to the plugin process.
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pageMutedStateDidChange):
+        Call Plugin::mutedStateChanged() with the page's muted state.
+        (WebKit::PluginView::isMuted):
+        Get the page's current muted state.
+        * WebProcess/Plugins/PluginView.h:
+
 2014-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Two action menu item titles are swapped

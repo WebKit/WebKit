@@ -60,6 +60,9 @@ struct PluginCreationParameters {
 
     // Whether private browsing is enabled at the time of instantiation.
     bool isPrivateBrowsingEnabled;
+
+    // Whether the plugin should be muted.
+    bool isMuted;
     
     // If requesting synchronous initialization, whether this plugin had previously been requested asynchronously
     bool asynchronousCreationIncomplete;
