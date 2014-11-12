@@ -850,12 +850,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     case kWKContextActionItemTagSaveVideoToDownloads:
         selector = @selector(_saveVideoToDownloads:);
-        title = WEB_UI_STRING_KEY("Share", "Share (video action menu item)", "video action menu item");
+        title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
     case kWKContextActionItemTagShareVideo:
-        title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
+        title = WEB_UI_STRING_KEY("Share", "Share (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuShare"];
         break;
 
