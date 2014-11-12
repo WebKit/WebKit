@@ -1,3 +1,14 @@
+2014-11-12  Jer Noble  <jer.noble@apple.com>
+
+        media/video-play-pause-exception.html is flakey.
+        https://bugs.webkit.org/show_bug.cgi?id=138670
+
+        Reviewed by Alexey Proskuryakov.
+
+        Work around race-condition behavior in HTMLMediaElement's resource selection algorithm.
+
+        * media/video-play-pause-exception.html:
+
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Make Mac media-source test expectations future compatible
