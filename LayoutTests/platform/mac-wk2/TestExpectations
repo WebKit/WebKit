@@ -720,27 +720,3 @@ plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 [ Yosemite ] fast/events/page-visibility-transition-test.html [ Failure Timeout ]
 
 webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Pass Failure Timeout ]
-
-# ======================================================================
-# Section 8
-# Unmarking WebKit1-only failures in Yosemite
-# ======================================================================
-
-# FIXME: Needs bugzilla (<rdar://problem/16731930>)
-[ Yosemite ] compositing/contents-scale/incremental-change.html [ Pass ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16732502>)
-[ Yosemite ] compositing/video/video-object-fit.html [ Pass ]
-
-# FIXME: Needs bugzilla (<rdar://problem/17748156>)
-[ Yosemite ] compositing/iframes/become-composited-nested-iframes.html [ Pass ]
-
-# FIXME: Needs bugzilla (<rdar://problem/17748276>)
-[ Yosemite ] compositing/reflections/repaint-with-reflection.html [ Pass ]
-
-# FIXME: Needs bugzilla (<rdar://problem/17748454>)
-[ Yosemite ] compositing/repaint/foreground-layer-change.html [ Pass ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16660589>)
-[ Yosemite ] css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Pass ]
-[ Yosemite ] css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html [ Pass ]

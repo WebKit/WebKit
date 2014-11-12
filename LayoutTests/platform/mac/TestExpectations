@@ -1402,9 +1402,6 @@ webkit.org/b/123498 [ Yosemite ] media/track/track-in-band-cues-added-once.html 
 # FIXME: Needs bugzilla (<rdar://problem/15992006>)
 [ Yosemite ] fast/text/international/text-combine-image-test.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16731930>)
-[ Yosemite ] compositing/contents-scale/incremental-change.html [ ImageOnlyFailure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16804845>)
 [ Yosemite ] fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
 
@@ -1445,16 +1442,6 @@ webkit.org/b/123498 [ Yosemite ] media/track/track-in-band-cues-added-once.html 
 [ Yosemite ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
 [ Yosemite ] fast/layers/wrong-clipping-semi-transparent-compositing-layer-on-subpixel-position.html [ Pass ImageOnlyFailure ]
 [ Yosemite ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-# FIXME: Needs bugzilla (<rdar://problem/17748156>)
-[ Yosemite ] compositing/iframes/become-composited-nested-iframes.html [ Pass Failure ]
-# FIXME: Needs bugzilla (<rdar://problem/17748276>)
-[ Yosemite ] compositing/reflections/repaint-with-reflection.html [ Pass ImageOnlyFailure ]
-# FIXME: Needs bugzilla (<rdar://problem/17748454>)
-[ Yosemite ] compositing/repaint/foreground-layer-change.html [ Pass ImageOnlyFailure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16660589>)
-[ Yosemite ] css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Pass Failure ]
-[ Yosemite ] css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html [ Pass Failure ]
 
 # These tests used to only fail with WK2, but on Yosemite, they also fail with WK1.
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-blur.html [ ImageOnlyFailure ]

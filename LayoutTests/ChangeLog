@@ -1,5 +1,13 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Some WebKit1-only Yosemite-only failures don't appear to exist any more.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unmark the tests.
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         A number of hidpi tests don't appear to fail on Yosemite now, let's try unmarking them.
 
         * platform/mac-wk2/TestExpectations:
