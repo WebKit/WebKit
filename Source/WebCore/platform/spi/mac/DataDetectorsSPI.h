@@ -69,7 +69,9 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 @property (copy) void (^completionHandler)(void);
 @property (assign) BOOL forActionMenuContent;
 
+#if PLATFORM(MAC)
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
+#endif
 
 @end
 
