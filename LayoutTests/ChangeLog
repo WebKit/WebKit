@@ -1,3 +1,17 @@
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: media/video-ended-event-slow-motion-playback.html
+        https://bugs.webkit.org/show_bug.cgi?id=136755
+
+        Reviewed by Jer Noble.
+
+        * media/video-ended-event-slow-motion-playback.html: The test verifies that playback
+        rate doesn't get rounded down to 0, and that is very easy to detect, no need for
+        flaky timeouts.
+
+        * platform/mac/TestExpectations: Remove the flakiness expectation. Also while at it,
+        updated media/video-playbackrate.html to match what the bots actually see.
+
 2014-11-05  Ada Chan  <adachan@apple.com>
 
         Implement new plug-in API for muting plug-ins

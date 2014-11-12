@@ -1129,8 +1129,7 @@ webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.htm
 webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Failure ]
 webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failure ]
 webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
-[ MountainLion ] media/video-playbackrate.html [ Pass Timeout ]
-[ MountainLion ] media/video-ended-event-slow-motion-playback.html [ Pass Failure ]
+[ MountainLion ] media/video-playbackrate.html [ Pass Failure Timeout ]
 
 # Mountain Lion and earlier do not support Encrypted Media Extensions.
 Bug(jernoble) [ MountainLion ] media/encrypted-media/ [ WontFix ]

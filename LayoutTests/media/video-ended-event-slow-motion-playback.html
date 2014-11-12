@@ -10,10 +10,9 @@
                 waitForEventOnce('canplaythrough',
                     function ()
                     {
-                        video.currentTime = 5;
+                        video.currentTime = video.duration - 0.1;
                         video.playbackRate = 0.5;
                         video.play();
-                        failTestIn(2500);
                     });
                 }
         </script>
