@@ -117,7 +117,7 @@ struct DictionaryPopupInfo {
 
     [actionMenu removeAllItems];
 
-    WebElementDictionary *hitTestResult = [self performHitTestAtPoint:[_webView convertPoint:event.locationInWindow fromView:nil]];
+    WebElementDictionary *hitTestResult = [self performHitTestAtPoint:event.locationInWindow];
     NSArray *menuItems = [self _defaultMenuItemsForHitTestResult:hitTestResult];
 
     // Allow clients to customize the menu items.
@@ -336,7 +336,6 @@ struct DictionaryPopupInfo {
     NSPoint textBaselineOrigin = popupInfo.origin;
 
     // Convert to screen coordinates.
-    textBaselineOrigin = [_webView convertPoint:textBaselineOrigin toView:nil];
     textBaselineOrigin = [_webView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
     WKShowWordDefinitionWindow(popupInfo.attributedString.get(), textBaselineOrigin, popupInfo.options.get());

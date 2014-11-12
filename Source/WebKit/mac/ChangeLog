@@ -1,3 +1,16 @@
+2014-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Action menu hit testing is not working properly with all WK1 apps
+        https://bugs.webkit.org/show_bug.cgi?id=138643
+        -and corresponding-
+        rdar://problem/18949376
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController prepareForMenu:withEvent:]):
+        (-[WebActionMenuController _lookupText:]):
+
 2014-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Finish moving CTFontGetVerticalGlyphsForCharacters and CTLineCreateWithUniCharProvider out from WKSI
