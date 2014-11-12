@@ -34,6 +34,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
+#include "RedirectedXCompositeWindow.h"
 #include "ViewState.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
@@ -70,10 +71,6 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-#include <WebCore/RedirectedXCompositeWindow.h>
-#endif
-
 // gtk_widget_get_scale_factor() appeared in GTK 3.10, but we also need
 // to make sure we have cairo new enough to support cairo_surface_set_device_scale
 #define HAVE_GTK_SCALE_FACTOR HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE && GTK_CHECK_VERSION(3, 10, 0)
@@ -83,10 +80,6 @@ using namespace WebCore;
 
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
 typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-void redirectedWindowDamagedCallback(void* data);
-#endif
 
 struct _WebKitWebViewBasePrivate {
     WebKitWebViewChildrenMap children;
@@ -132,7 +125,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-    OwnPtr<RedirectedXCompositeWindow> redirectedWindow;
+    std::unique_ptr<RedirectedXCompositeWindow> redirectedWindow;
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -437,11 +430,8 @@ static void webkitWebViewBaseConstructed(GObject* object)
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_X11_DISPLAY(display)) {
-        priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(1, 1), RedirectedXCompositeWindow::DoNotCreateGLContext);
-        if (priv->redirectedWindow)
-            priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, object);
-    }
+    if (GDK_IS_X11_DISPLAY(display))
+        priv->redirectedWindow = RedirectedXCompositeWindow::create(GDK_DISPLAY_XDISPLAY(display), IntSize(1, 1), [viewWidget] { gtk_widget_queue_draw(viewWidget); });
 #endif
 
     priv->authenticationDialog = 0;
@@ -460,10 +450,12 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     if (!priv->redirectedWindow)
         return false;
 
-    cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
-    cairo_surface_t* surface = priv->redirectedWindow->cairoSurfaceForWidget(GTK_WIDGET(webViewBase));
-    cairo_set_source_surface(cr, surface, 0, 0);
-    cairo_fill(cr);
+    if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
+        cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
+        cairo_set_source_surface(cr, surface, 0, 0);
+        cairo_fill(cr);
+    }
+
     return true;
 #else
     return false;
@@ -1065,7 +1057,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     if (priv->redirectedWindow)
-        priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());
+        priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowID());
 #endif
 
 #if HAVE(GTK_SCALE_FACTOR)
@@ -1181,13 +1173,6 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebView
 {
     return webkitWebViewBase->priv->contextMenuEvent.release();
 }
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-void redirectedWindowDamagedCallback(void* data)
-{
-    gtk_widget_queue_draw(GTK_WIDGET(data));
-}
-#endif
 
 void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
 {

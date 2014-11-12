@@ -233,7 +233,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PlatformMouseEventGtk.cpp
     platform/gtk/PlatformScreenGtk.cpp
     platform/gtk/PlatformWheelEventGtk.cpp
-    platform/gtk/RedirectedXCompositeWindow.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
     platform/gtk/SoundGtk.cpp
     platform/gtk/WidgetGtk.cpp

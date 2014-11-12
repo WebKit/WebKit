@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012,2014 Igalia S.L.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RedirectedXCompositeWindow.h"
 
-#if USE(OPENGL) && PLATFORM(X11)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xdamage.h>
@@ -36,35 +36,69 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-typedef HashMap<Window, RedirectedXCompositeWindow*> WindowHashMap;
-static WindowHashMap& getWindowHashMap()
+namespace WebKit {
+
+class XDamageNotifier {
+    WTF_MAKE_NONCOPYABLE(XDamageNotifier);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static int s_damageEventBase;
+
+    XDamageNotifier()
+    {
+    }
+
+    void add(Window window, std::function<void()> notifyFunction)
+    {
+        if (m_notifyFunctions.isEmpty())
+            gdk_window_add_filter(nullptr, reinterpret_cast<GdkFilterFunc>(&filterXDamageEvent), this);
+        m_notifyFunctions.add(window, WTF::move(notifyFunction));
+    }
+
+    void remove(Window window)
+    {
+        m_notifyFunctions.remove(window);
+        if (m_notifyFunctions.isEmpty())
+            gdk_window_remove_filter(nullptr, reinterpret_cast<GdkFilterFunc>(&filterXDamageEvent), this);
+    }
+
+private:
+    static GdkFilterReturn filterXDamageEvent(GdkXEvent* event, GdkEvent*, XDamageNotifier* notifier)
+    {
+        return notifier->filterXEvent(static_cast<XEvent*>(event));
+    }
+
+    GdkFilterReturn filterXEvent(XEvent* event) const
+    {
+        if (event->type != s_damageEventBase + XDamageNotify)
+            return GDK_FILTER_CONTINUE;
+
+        XDamageNotifyEvent* damageEvent = reinterpret_cast<XDamageNotifyEvent*>(event);
+        if (const auto& notifyFunction = m_notifyFunctions.get(damageEvent->drawable)) {
+            notifyFunction();
+            XDamageSubtract(event->xany.display, damageEvent->damage, None, None);
+            return GDK_FILTER_REMOVE;
+        }
+
+        return GDK_FILTER_CONTINUE;
+    }
+
+    HashMap<Window, std::function<void()>> m_notifyFunctions;
+};
+
+int XDamageNotifier::s_damageEventBase = 0;
+
+static XDamageNotifier& xDamageNotifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(WindowHashMap, windowHashMap, ());
-    return windowHashMap;
+    static NeverDestroyed<XDamageNotifier> notifier;
+    return notifier;
 }
 
-static int gDamageEventBase;
-static GdkFilterReturn filterXDamageEvent(GdkXEvent* gdkXEvent, GdkEvent*, void*)
-{
-    XEvent* xEvent = static_cast<XEvent*>(gdkXEvent);
-    if (xEvent->type != gDamageEventBase + XDamageNotify)
-        return GDK_FILTER_CONTINUE;
-
-    XDamageNotifyEvent* damageEvent = reinterpret_cast<XDamageNotifyEvent*>(xEvent);
-    WindowHashMap& windowHashMap = getWindowHashMap();
-    WindowHashMap::iterator i = windowHashMap.find(damageEvent->drawable);
-    if (i == windowHashMap.end())
-        return GDK_FILTER_CONTINUE;
-
-    i->value->callDamageNotifyCallback();
-    XDamageSubtract(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), damageEvent->damage, None, None);
-    return GDK_FILTER_REMOVE;
-}
-
-static bool supportsXDamageAndXComposite()
+static bool supportsXDamageAndXComposite(Display* display)
 {
     static bool initialized = false;
     static bool hasExtensions = false;
@@ -75,8 +109,7 @@ static bool supportsXDamageAndXComposite()
     initialized = true;
 
     int errorBase;
-    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-    if (!XDamageQueryExtension(display, &gDamageEventBase, &errorBase))
+    if (!XDamageQueryExtension(display, &XDamageNotifier::s_damageEventBase, &errorBase))
         return false;
 
     int eventBase;
@@ -93,24 +126,20 @@ static bool supportsXDamageAndXComposite()
     return true;
 }
 
-PassOwnPtr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(const IntSize& size, GLContextNeeded needsContext)
+std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(Display* display, const IntSize& size, std::function<void()> damageNotify)
 {
-    return supportsXDamageAndXComposite() ? adoptPtr(new RedirectedXCompositeWindow(size, needsContext)) : nullptr;
+    return supportsXDamageAndXComposite(display) ? std::unique_ptr<RedirectedXCompositeWindow>(new RedirectedXCompositeWindow(display, size, damageNotify)) : nullptr;
 }
 
-RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size, GLContextNeeded needsContext)
-    : m_size(size)
+RedirectedXCompositeWindow::RedirectedXCompositeWindow(Display* display, const IntSize& size, std::function<void()> damageNotify)
+    : m_display(display)
+    , m_size(size)
     , m_window(0)
     , m_parentWindow(0)
     , m_pixmap(0)
-    , m_needsContext(needsContext)
-    , m_surface(0)
-    , m_needsNewPixmapAfterResize(false)
     , m_damage(0)
-    , m_damageNotifyCallback(0)
-    , m_damageNotifyData(0)
+    , m_needsNewPixmapAfterResize(false)
 {
-    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     Screen* screen = DefaultScreenOfDisplay(display);
 
     // This is based on code from Chromium: src/content/common/gpu/image_transport_surface_linux.cc
@@ -130,19 +159,17 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size, GLCo
     windowAttributes.event_mask = StructureNotifyMask;
     windowAttributes.override_redirect = False;
     m_window = XCreateWindow(display,
-                             m_parentWindow,
-                             0, 0, size.width(), size.height(),
-                             0,
-                             CopyFromParent,
-                             InputOutput,
-                             CopyFromParent,
-                             CWEventMask,
-                             &windowAttributes);
+        m_parentWindow,
+        0, 0, size.width(), size.height(),
+        0,
+        CopyFromParent,
+        InputOutput,
+        CopyFromParent,
+        CWEventMask,
+        &windowAttributes);
     XMapWindow(display, m_window);
 
-    if (getWindowHashMap().isEmpty())
-        gdk_window_add_filter(0, reinterpret_cast<GdkFilterFunc>(filterXDamageEvent), 0);
-    getWindowHashMap().add(m_window, this);
+    xDamageNotifier().add(m_window, WTF::move(damageNotify));
 
     while (1) {
         XEvent event;
@@ -157,50 +184,26 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size, GLCo
 
 RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
 {
+    ASSERT(m_display);
     ASSERT(m_damage);
     ASSERT(m_window);
     ASSERT(m_parentWindow);
 
-    getWindowHashMap().remove(m_window);
-    if (getWindowHashMap().isEmpty())
-        gdk_window_remove_filter(0, reinterpret_cast<GdkFilterFunc>(filterXDamageEvent), 0);
+    xDamageNotifier().remove(m_window);
 
-    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-    XDamageDestroy(display, m_damage);
-    XDestroyWindow(display, m_window);
-    XDestroyWindow(display, m_parentWindow);
+    XDamageDestroy(m_display, m_damage);
+    XDestroyWindow(m_display, m_window);
+    XDestroyWindow(m_display, m_parentWindow);
     cleanupPixmapAndPixmapSurface();
 }
 
 void RedirectedXCompositeWindow::resize(const IntSize& size)
 {
-    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-    XResizeWindow(display, m_window, size.width(), size.height());
-
-    XFlush(display);
-
-    if (m_needsContext == CreateGLContext) {
-        context()->waitNative();
-        // This swap is based on code in Chromium. It tries to work-around a bug in the Intel drivers
-        // where a swap is necessary to ensure the front and back buffers are properly resized.
-        if (context() == GLContext::getCurrent())
-            context()->swapBuffers();
-    }
+    XResizeWindow(m_display, m_window, size.width(), size.height());
+    XFlush(m_display);
 
     m_size = size;
     m_needsNewPixmapAfterResize = true;
-}
-
-GLContext* RedirectedXCompositeWindow::context()
-{
-    ASSERT(m_needsContext == CreateGLContext);
-
-    if (m_context)
-        return m_context.get();
-
-    ASSERT(m_window);
-    m_context = GLContext::createContextForWindow(m_window, GLContext::sharingContext());
-    return m_context.get();
 }
 
 void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
@@ -208,37 +211,32 @@ void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
     if (!m_pixmap)
         return;
 
-    XFreePixmap(cairo_xlib_surface_get_display(m_surface.get()), m_pixmap);
+    XFreePixmap(m_display, m_pixmap);
     m_pixmap = 0;
     m_surface = nullptr;
 }
 
-cairo_surface_t* RedirectedXCompositeWindow::cairoSurfaceForWidget(GtkWidget* widget)
+cairo_surface_t* RedirectedXCompositeWindow::surface()
 {
     if (!m_needsNewPixmapAfterResize && m_surface)
         return m_surface.get();
 
     m_needsNewPixmapAfterResize = false;
 
-    // It's important that the new pixmap be created with the same Display pointer as the target
-    // widget or else drawing speed can be 100x slower.
-    Display* newPixmapDisplay = GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(widget));
-    Pixmap newPixmap = XCompositeNameWindowPixmap(newPixmapDisplay, m_window);
+    Pixmap newPixmap = XCompositeNameWindowPixmap(m_display, m_window);
     if (!newPixmap) {
         cleanupPixmapAndPixmapSurface();
-        return 0;
+        return nullptr;
     }
 
     XWindowAttributes windowAttributes;
-    if (!XGetWindowAttributes(newPixmapDisplay, m_window, &windowAttributes)) {
+    if (!XGetWindowAttributes(m_display, m_window, &windowAttributes)) {
         cleanupPixmapAndPixmapSurface();
-        XFreePixmap(newPixmapDisplay, newPixmap);
-        return 0;
+        XFreePixmap(m_display, newPixmap);
+        return nullptr;
     }
 
-    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(newPixmapDisplay, newPixmap,
-                                                                            windowAttributes.visual,
-                                                                            m_size.width(), m_size.height()));
+    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(m_display, newPixmap, windowAttributes.visual, m_size.width(), m_size.height()));
 
     // Nvidia drivers seem to prepare their redirected window pixmap asynchronously, so for a few fractions
     // of a second after each resize, while doing continuous resizing (which constantly destroys and creates
@@ -255,16 +253,9 @@ cairo_surface_t* RedirectedXCompositeWindow::cairoSurfaceForWidget(GtkWidget* wi
     cleanupPixmapAndPixmapSurface();
     m_pixmap = newPixmap;
     m_surface = newSurface;
-
     return m_surface.get();
-}
-
-void RedirectedXCompositeWindow::callDamageNotifyCallback()
-{
-    if (m_damageNotifyCallback)
-        m_damageNotifyCallback(m_damageNotifyData);
 }
 
 } // namespace WebCore
 
-#endif // USE(OPENGL) && PLATFORM(X11)
+#endif // USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,58 +27,43 @@
 #ifndef  RedirectedXCompositeWindow_h
 #define  RedirectedXCompositeWindow_h
 
-#if USE(OPENGL) && PLATFORM(X11)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 
-#include "GLContext.h"
-#include "IntSize.h"
-#include "RefPtrCairo.h"
+#include <WebCore/IntSize.h>
+#include <WebCore/RefPtrCairo.h>
 
+typedef struct _XDisplay Display;
+typedef unsigned long Damage;
 typedef unsigned long Pixmap;
 typedef unsigned long Window;
-typedef unsigned long Damage;
-typedef void (*DamageNotifyCallback)(void*);
 
-namespace WebCore {
+namespace WebKit {
 
 class RedirectedXCompositeWindow {
 public:
-    enum GLContextNeeded { CreateGLContext, DoNotCreateGLContext };
-    static PassOwnPtr<RedirectedXCompositeWindow> create(const IntSize&, GLContextNeeded = CreateGLContext);
-    virtual ~RedirectedXCompositeWindow();
-    const IntSize& size() { return m_size; }
+    static std::unique_ptr<RedirectedXCompositeWindow> create(Display*, const WebCore::IntSize&, std::function<void()> damageNotify);
+    ~RedirectedXCompositeWindow();
 
-    void resize(const IntSize& newSize);
-    GLContext* context();
-    cairo_surface_t* cairoSurfaceForWidget(GtkWidget*);
-    Window windowId() { return m_window; }
-    void callDamageNotifyCallback();
-
-    void setDamageNotifyCallback(DamageNotifyCallback callback, void* data)
-    {
-        m_damageNotifyCallback = callback;
-        m_damageNotifyData = data;
-    }
+    Window windowID() const { return m_window; }
+    void resize(const WebCore::IntSize&);
+    cairo_surface_t* surface();
 
 private:
-    RedirectedXCompositeWindow(const IntSize&, GLContextNeeded);
+    RedirectedXCompositeWindow(Display*, const WebCore::IntSize&, std::function<void()> damageNotify);
     void cleanupPixmapAndPixmapSurface();
 
-    IntSize m_size;
+    Display* m_display;
+    WebCore::IntSize m_size;
     Window m_window;
     Window m_parentWindow;
     Pixmap m_pixmap;
-    GLContextNeeded m_needsContext;
-    OwnPtr<GLContext> m_context;
+    Damage m_damage;
     RefPtr<cairo_surface_t> m_surface;
     bool m_needsNewPixmapAfterResize;
-
-    Damage m_damage;
-    DamageNotifyCallback m_damageNotifyCallback;
-    void* m_damageNotifyData;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // USE(OPENGL) && PLATFORM(X11)
+#endif // USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 
 #endif // RedirectedXCompositeWindow_h

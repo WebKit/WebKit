@@ -1,3 +1,14 @@
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move RedirectedXCompositeWindow from platform to WebKit2 layer
+        https://bugs.webkit.org/show_bug.cgi?id=138093
+
+        Reviewed by Martin Robinson.
+
+        Remove RedirectedXCompositeWindow.
+
+        * PlatformGTK.cmake:
+
 2014-09-01  Philippe Normand  <pnormand@igalia.com>
 
         [WK2] UserMediaClient support
