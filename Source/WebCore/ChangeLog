@@ -1,3 +1,11 @@
+2014-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r176001.
+
+        Export an additional symbol.
+
+        * WebCore.exp.in:
+
 2014-11-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add diagnostic logging for per-media-engine load failures
