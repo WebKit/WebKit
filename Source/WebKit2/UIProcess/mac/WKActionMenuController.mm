@@ -51,11 +51,6 @@
 #import <WebCore/SoftLinking.h>
 #import <WebCore/URL.h>
 
-enum class MenuUpdateStage {
-    PrepareForMenu,
-    MenuNeedsUpdate
-};
-
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
@@ -63,7 +58,7 @@ using namespace WebCore;
 using namespace WebKit;
 
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate>
-- (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage;
+- (void)_updateActionMenuItems;
 - (BOOL)_canAddMediaToPhotos;
 - (void)_showTextIndicator;
 - (void)_hideTextIndicator;
@@ -181,7 +176,7 @@ using namespace WebKit;
     _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
     _state = ActionMenuState::Pending;
-    [self _updateActionMenuItemsForStage:MenuUpdateStage::PrepareForMenu];
+    [self _updateActionMenuItems];
 
     _shouldKeepPreviewPopoverOpen = NO;
 }
@@ -240,6 +235,8 @@ using namespace WebKit;
     _state = ActionMenuState::Ready;
     _hitTestResult = hitTestResult;
     _userData = userData;
+
+    [self _updateActionMenuItems];
 }
 
 - (void)dismissActionMenuPopovers
@@ -685,7 +682,8 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
             connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
     }
 
-    [self _updateActionMenuItemsForStage:MenuUpdateStage::MenuNeedsUpdate];
+    if (_state != ActionMenuState::Ready)
+        [self _updateActionMenuItems];
 }
 
 - (void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
@@ -909,7 +907,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
 }
 
-- (void)_updateActionMenuItemsForStage:(MenuUpdateStage)stage
+- (void)_updateActionMenuItems
 {
     [_wkView.actionMenu removeAllItems];
 
@@ -923,6 +921,9 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     for (NSMenuItem *item in menuItems)
         [_wkView.actionMenu addItem:item];
+
+    if (_state == ActionMenuState::Ready && !_wkView.actionMenu.numberOfItems)
+        [_wkView.actionMenu cancelTracking];
 }
 
 #if WK_API_ENABLED
