@@ -50,6 +50,7 @@ class ImmutableDictionary;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
+class UserMediaPermissionRequestProxy;
 class WebColorPickerResultListenerProxy;
 class WebFrameProxy;
 class WebOpenPanelParameters;
@@ -122,6 +123,7 @@ public:
 
     virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
+    virtual bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebSecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) { return false; }
     virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebSecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
 
     // Printing.

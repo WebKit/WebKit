@@ -168,6 +168,8 @@ add_executable(TestJavaScriptCore
 )
 
 target_link_libraries(TestJavaScriptCore ${TestJavaScriptCore_LIBRARIES})
+add_dependencies(TestJavaScriptCore ${ForwardingHeadersForTestWebKitAPI_NAME})
+
 add_test(TestJavaScriptCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJavaScriptCore)
 set_tests_properties(TestJavaScriptCore PROPERTIES TIMEOUT 60)
 set_target_properties(TestJavaScriptCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore)

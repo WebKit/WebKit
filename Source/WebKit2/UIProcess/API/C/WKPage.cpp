@@ -74,7 +74,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5> Versions;
 };
 
 }
@@ -1496,6 +1496,15 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return false;
 
             m_client.decidePolicyForGeolocationPermissionRequest(toAPI(page), toAPI(frame), toAPI(origin), toAPI(permissionRequest), m_client.base.clientInfo);
+            return true;
+        }
+
+        virtual bool decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, WebSecurityOrigin& origin, UserMediaPermissionRequestProxy& permissionRequest) override
+        {
+            if (!m_client.decidePolicyForUserMediaPermissionRequest)
+                return false;
+
+            m_client.decidePolicyForUserMediaPermissionRequest(toAPI(&page), toAPI(&frame), toAPI(&origin), toAPI(&permissionRequest), m_client.base.clientInfo);
             return true;
         }
 

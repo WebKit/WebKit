@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests UserMedia error callback using the mock service.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setUserMediaPermission(false);
+else
+    debug('This test can not be run without the testRunner');
+
+var error;
+var options = {audio:false, video:true};
+navigator.webkitGetUserMedia(options, function(stream) {
+    testFailed('Success callback invoked unexpectedly');
+    finishJSTest();
+}, function(e) {
+    error = e;
+    shouldBe('error.code', 'error.PERMISSION_DENIED');
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

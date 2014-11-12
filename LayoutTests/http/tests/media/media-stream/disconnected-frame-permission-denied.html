@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that when a getUserMedia request is made, permission is denied and its Frame is disconnected before a callback is made, the error callback is invoked with PERMISSION_DENIED.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setUserMediaPermission(false);
+else
+    debug('This test can not be run without the testRunner');
+
+var error;
+var options = {audio: true, video: true};
+function onIframeLoaded() {
+    iframeNavigator = iframe.contentWindow.navigator;
+    iframeNavigator.webkitGetUserMedia(options, function(stream) {
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();
+    }, function(e) {
+        error = e;
+        shouldBe('error.code', 'error.PERMISSION_DENIED');
+        debug('');
+        iframe.src = 'data:text/html,This frame should be visible when the test completes';
+    });
+}
+
+function onIframeUnloaded() {
+    // Make another request, with permission already denied.
+    iframeNavigator.webkitGetUserMedia(options, function(stream) {
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();
+    }, function(e) {
+        testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
+    setTimeout(function() {
+        testPassed('No callbacks invoked');
+        finishJSTest();
+    }, 100);
+}
+
+var iframe = document.createElement('iframe');
+iframe.src = 'resources/disconnected-frame-inner.html';
+document.body.appendChild(iframe);
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -169,6 +169,9 @@ interface TestRunner {
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, [Default=Undefined] optional object altitude, optional object altitudeAccuracy, optional object heading, optional object speed);
     void setMockGeolocationPositionUnavailableError(DOMString errorMessage);
 
+    // MediaStream
+    void setUserMediaPermission(boolean value);
+
     // Audio testing.
     [PassContext] void setAudioResult(object data);
 

@@ -478,6 +478,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetUserMediaPermission")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef enabledWK = static_cast<WKBooleanRef>(messageBody);
+        TestController::shared().setUserMediaPermission(WKBooleanGetValue(enabledWK));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetCustomPolicyDelegate")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);

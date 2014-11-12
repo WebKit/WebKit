@@ -36,8 +36,8 @@ namespace WebCore {
 
 class UserMediaClientRequestNotifier : public MockNotifier {
 public:
-    UserMediaClientRequestNotifier(PassRefPtr<UserMediaRequest> request, bool requestSuccess)
-        : m_request(request)
+    UserMediaClientRequestNotifier(PassRef<UserMediaRequest> request, bool requestSuccess)
+        : m_request(WTF::move(request))
         , m_requestSuccess(requestSuccess)
     {
     }
@@ -51,7 +51,7 @@ public:
     }
 
 private:
-    RefPtr<UserMediaRequest> m_request;
+    Ref<UserMediaRequest> m_request;
     bool m_requestSuccess;
 };
 
@@ -60,13 +60,13 @@ public:
     public:
     virtual void pageDestroyed() override { }
 
-    virtual void requestPermission(PassRefPtr<UserMediaRequest> request) override
+    virtual void requestPermission(PassRef<UserMediaRequest> request) override
     {
-        RefPtr<UserMediaClientRequestNotifier> notifier = adoptRef(new UserMediaClientRequestNotifier(request, true));
+        RefPtr<UserMediaClientRequestNotifier> notifier = adoptRef(new UserMediaClientRequestNotifier(WTF::move(request), true));
         m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
     }
 
-    virtual void cancelRequest(UserMediaRequest* request) override
+    virtual void cancelRequest(UserMediaRequest& request) override
     {
         RefPtr<UserMediaClientRequestNotifier> notifier = adoptRef(new UserMediaClientRequestNotifier(request, false));
         m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));

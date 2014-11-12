@@ -157,6 +157,7 @@ http/tests/security/contentTypeOptions
 # Media Stream API is not yet enabled.
 fast/mediastream
 fast/events/constructors/media-stream-event-constructor.html
+http/tests/media/media-stream
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]

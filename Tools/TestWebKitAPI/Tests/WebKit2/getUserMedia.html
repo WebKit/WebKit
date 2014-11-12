@@ -1,0 +1,14 @@
+<script>
+function gotUserMedia(mediaStream)
+{
+    console.log("Got user media");
+}
+
+function userMediaError(error)
+{
+    console.log(error);
+}
+
+var options = { audio: false, video: true};
+navigator.webkitGetUserMedia(options, gotUserMedia, userMediaError);
+</script>

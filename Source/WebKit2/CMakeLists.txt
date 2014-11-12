@@ -49,6 +49,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/DOM"
     "${WEBKIT2_DIR}/WebProcess/Launching"
     "${WEBKIT2_DIR}/WebProcess/MediaCache"
+    "${WEBKIT2_DIR}/WebProcess/MediaStream"
     "${WEBKIT2_DIR}/WebProcess/Network"
     "${WEBKIT2_DIR}/WebProcess/Notifications"
     "${WEBKIT2_DIR}/WebProcess/OriginData"
@@ -300,6 +301,8 @@ set(WebKit2_SOURCES
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
+    UIProcess/UserMediaPermissionRequestManagerProxy.cpp
+    UIProcess/UserMediaPermissionRequestProxy.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
     UIProcess/WebBackForwardList.cpp
@@ -388,6 +391,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKResourceCacheManager.cpp
     UIProcess/API/C/WKSessionStateRef.cpp
     UIProcess/API/C/WKTextChecker.cpp
+    UIProcess/API/C/WKUserMediaPermissionRequest.cpp
     UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
 
@@ -484,6 +488,8 @@ set(WebKit2_SOURCES
 
     WebProcess/MediaCache/WebMediaCacheManager.cpp
 
+    WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
+
     WebProcess/Network/NetworkProcessConnection.cpp
     WebProcess/Network/WebResourceLoadScheduler.cpp
     WebProcess/Network/WebResourceLoader.cpp
@@ -535,6 +541,7 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebPopupMenu.cpp
     WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
+    WebProcess/WebCoreSupport/WebUserMediaClient.cpp
     WebProcess/WebCoreSupport/WebVibrationClient.cpp
 
     WebProcess/WebPage/DrawingArea.cpp

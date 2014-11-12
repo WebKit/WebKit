@@ -1,3 +1,48 @@
+2014-09-01  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2] UserMediaClient support
+        https://bugs.webkit.org/show_bug.cgi?id=123158
+
+        Reviewed by Benjamin Poulain.
+
+        Simple API test for the UserMedia permission request API. The
+        required test infrastructure is also added, inspired by the
+        Geolocation infrastructure.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: New API test for UserMedia
+        Permission request.
+        * TestWebKitAPI/Tests/WebKit2/UserMedia.cpp: Added.
+        (TestWebKitAPI::decidePolicyForUserMediaPermissionRequestCallBack):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/getUserMedia.html: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: new
+        helper method to set the permission request result without user interaction.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp: Ditto.
+        (WTR::InjectedBundle::setUserMediaPermission):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Ditto.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Ditto.
+        (WTR::TestRunner::setUserMediaPermission):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Ditto.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::decidePolicyForUserMediaPermissionRequest): Permission
+        request handler.
+        (WTR::TestController::createOtherPage): Enable the new UserMedia
+        permission request handler.
+        (WTR::TestController::createWebViewWithOptions): Ditto.
+        (WTR::TestController::resetPreferencesToConsistentValues): Enable
+        MediaStream support, this is needed for getUserMedia.
+        (WTR::TestController::resetStateToConsistentValues): clear
+        UserMedia permissions list and flags.
+        (WTR::TestController::setUserMediaPermission): Set permission
+        request result and distpatch it.
+        (WTR::TestController::handleUserMediaPermissionRequest): Save
+        request and dispatch it.
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible):
+        Dispatch cached permission requests.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2014-11-11  David Kilzer  <ddkilzer@apple.com>
 
         webkit-patch --suggest-reviewers is broken with newer versions of git

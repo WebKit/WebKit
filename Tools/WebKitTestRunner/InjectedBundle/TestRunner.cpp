@@ -720,6 +720,12 @@ void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
     InjectedBundle::shared().setMockGeolocationPositionUnavailableError(messageWK.get());
 }
 
+void TestRunner::setUserMediaPermission(bool enabled)
+{
+    // FIXME: this should be done by frame.
+    InjectedBundle::shared().setUserMediaPermission(enabled);
+}
+
 bool TestRunner::callShouldCloseOnWebView()
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());

@@ -1,3 +1,77 @@
+2014-09-01  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2] UserMediaClient support
+        https://bugs.webkit.org/show_bug.cgi?id=123158
+
+        Reviewed by Benjamin Poulain.
+
+        Support for UserMediaPermissionRequest in WebKit2. It's
+        implemented similarily to the GeolocationPermissionRequest
+        support. When the WebPage requires this permission it sends a
+        message to the UI process which at some point grants or denies the
+        permission and sends the result back to the WebProcess.
+
+        * CMakeLists.txt: Generic CMake support for new files.
+        * Shared/API/c/WKBase.h: New type for UserMediaPermissionRequest.
+        * Shared/APIObject.h: Ditto.
+        * UIProcess/API/C/WKAPICast.h: PermissionRequest API mapping.
+        * UIProcess/API/APIUIClient.h: New decidePolicy handler for UserMediaPermissionRequest.
+        (API::UIClient::decidePolicyForUserMediaPermissionRequest):
+        * UIProcess/API/C/WKPage.cpp: Ditto.
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h: WKPageUIClient version bump to
+        5, including the new decidePolicyForUserMediaPermissionRequest member.
+        * UIProcess/API/C/WKUserMediaPermissionRequest.cpp: Added, C API
+        implementation of the UserMediaPermissionRequest.
+        (WKUserMediaPermissionRequestGetTypeID):
+        (WKUserMediaPermissionRequestAllow):
+        (WKUserMediaPermissionRequestDeny):
+        * UIProcess/API/C/WKUserMediaPermissionRequest.h: Added.
+        * UIProcess/API/C/WebKit2_C.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h: Added.
+        * UIProcess/UserMediaPermissionRequestProxy.cpp: Added, proxy
+        object for the UserMediaPermissionRequestType.
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        (WebKit::UserMediaPermissionRequestProxy::allow):
+        (WebKit::UserMediaPermissionRequestProxy::deny):
+        (WebKit::UserMediaPermissionRequestProxy::invalidate):
+        * UIProcess/UserMediaPermissionRequestProxy.h: Added.
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::mediaParameters):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame): Defer
+        UserPermissionRequest to the UIClient.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: New message to handle UserMediaPermissionRequests.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp: Added,
+        WebProcess side of the UserRequestManager, keeping track of each
+        permission request.
+        (WebKit::generateRequestID):
+        (WebKit::UserMediaPermissionRequestManager::UserMediaPermissionRequestManager):
+        (WebKit::UserMediaPermissionRequestManager::startRequest):
+        (WebKit::UserMediaPermissionRequestManager::cancelRequest):
+        (WebKit::UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h: Added.
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp: Added,
+        WebProcess implementation of the WebCore::UserMediaClient.
+        (WebKit::WebUserMediaClient::WebUserMediaClient):
+        (WebKit::WebUserMediaClient::pageDestroyed):
+        (WebKit::WebUserMediaClient::requestPermission):
+        (WebKit::WebUserMediaClient::cancelRequest):
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Create the
+        UserMediaPermissionRequestManager and register the UserMediaClient
+        to the page.
+        (WebKit::WebPage::didReceiveUserMediaPermissionDecision): Dispatch
+        decision to manager.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userMediaPermissionRequestManager):
+        * WebProcess/WebPage/WebPage.messages.in: New Message to handle
+        permission decision result from the UI process.
+
 2014-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Add support for mailto: link action menus

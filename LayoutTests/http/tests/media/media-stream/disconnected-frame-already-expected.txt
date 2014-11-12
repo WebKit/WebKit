@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 24: NotSupportedError: DOM Exception 9: The implementation did not support the requested type of object or operation.
+Tests that when a getUserMedia request is made after its frame has been disconnected, no callbacks are made and no crash occurs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitGetUserMedia called on object with disconnected Frame.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

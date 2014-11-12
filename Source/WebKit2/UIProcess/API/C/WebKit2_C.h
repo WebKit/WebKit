@@ -57,6 +57,7 @@
 #include <WebKit/WKURL.h>
 #include <WebKit/WKURLRequest.h>
 #include <WebKit/WKURLResponse.h>
+#include <WebKit/WKUserMediaPermissionRequest.h>
 
 #if defined(__OBJC__) && __OBJC__
 #import <WebKit/WKView.h>

@@ -39,8 +39,8 @@ public:
     ~UserMediaController();
 
     UserMediaClient* client() const { return m_client; }
-    void requestPermission(PassRefPtr<UserMediaRequest>);
-    void cancelRequest(UserMediaRequest*);
+    void requestPermission(PassRef<UserMediaRequest>);
+    void cancelRequest(UserMediaRequest&);
 
     static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
@@ -49,12 +49,12 @@ private:
     UserMediaClient* m_client;
 };
 
-inline void UserMediaController::requestPermission(PassRefPtr<UserMediaRequest> request)
+inline void UserMediaController::requestPermission(PassRef<UserMediaRequest> request)
 {
-    m_client->requestPermission(request);
+    m_client->requestPermission(WTF::move(request));
 }
 
-inline void UserMediaController::cancelRequest(UserMediaRequest* request)
+inline void UserMediaController::cancelRequest(UserMediaRequest& request)
 {
     m_client->cancelRequest(request);
 }

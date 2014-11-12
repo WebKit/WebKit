@@ -91,6 +91,7 @@ add_executable(TestWebKit2
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ResizeWindowAfterCrash.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMedia.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMessage.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKPageGetScaleFactorNotZero.cpp

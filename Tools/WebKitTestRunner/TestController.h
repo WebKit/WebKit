@@ -88,6 +88,10 @@ public:
     void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
     void handleGeolocationPermissionRequest(WKGeolocationPermissionRequestRef);
 
+    // MediaStream.
+    void setUserMediaPermission(bool);
+    void handleUserMediaPermissionRequest(WKUserMediaPermissionRequestRef);
+
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
 
@@ -134,6 +138,7 @@ private:
     void updateLayoutTypeForTest(const TestInvocation&);
 
     void decidePolicyForGeolocationPermissionRequestIfPossible();
+    void decidePolicyForUserMediaPermissionRequestIfPossible();
 
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
@@ -237,6 +242,10 @@ private:
     Vector<WKRetainPtr<WKGeolocationPermissionRequestRef> > m_geolocationPermissionRequests;
     bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
+
+    Vector<WKRetainPtr<WKUserMediaPermissionRequestRef>> m_userMediaPermissionRequests;
+    bool m_isUserMediaPermissionSet;
+    bool m_isUserMediaPermissionAllowed;
 
     bool m_policyDelegateEnabled;
     bool m_policyDelegatePermissive;

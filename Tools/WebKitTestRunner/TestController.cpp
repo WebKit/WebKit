@@ -189,6 +189,11 @@ static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, W
     TestController::shared().handleGeolocationPermissionRequest(permissionRequest);
 }
 
+static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo)
+{
+    TestController::shared().handleUserMediaPermissionRequest(permissionRequest);
+}
+
 int TestController::getCustomTimeout()
 {
     return m_timeout;
@@ -203,8 +208,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
 
     view->resizeTo(800, 600);
 
-    WKPageUIClientV2 otherPageUIClient = {
-        { 2, view },
+    WKPageUIClientV5 otherPageUIClient = {
+        { 5, view },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         closeOtherPage,
@@ -251,6 +256,12 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // showColorPicker
         0, // hideColorPicker
         0, // unavailablePluginButtonClicked
+        0, // pinnedStateDidChange
+        0, // didBeginTrackingPotentialLongMousePress
+        0, // didRecognizeLongMousePress
+        0, // didCancelTrackingPotentialLongMousePress
+        0, // isPlayingAudioDidChange
+        decidePolicyForUserMediaPermissionRequest,
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
@@ -409,8 +420,8 @@ void TestController::initialize(int argc, const char* argv[])
 void TestController::createWebViewWithOptions(WKDictionaryRef options)
 {
     m_mainWebView = std::make_unique<PlatformWebView>(m_context.get(), m_pageGroup.get(), nullptr, options);
-    WKPageUIClientV2 pageUIClient = {
-        { 2, m_mainWebView.get() },
+    WKPageUIClientV5 pageUIClient = {
+        { 5, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -457,6 +468,12 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // showColorPicker
         0, // hideColorPicker
         unavailablePluginButtonClicked,
+        0, // pinnedStateDidChange
+        0, // didBeginTrackingPotentialLongMousePress
+        0, // didRecognizeLongMousePress
+        0, // didCancelTrackingPotentialLongMousePress
+        0, // isPlayingAudioDidChange
+        decidePolicyForUserMediaPermissionRequest,
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
@@ -546,6 +563,7 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
     WKPreferencesSetWebAudioEnabled(preferences, true);
+    WKPreferencesSetMediaStreamEnabled(preferences, true);
     WKPreferencesSetDeveloperExtrasEnabled(preferences, true);
     WKPreferencesSetJavaScriptExperimentsEnabled(preferences, true);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
@@ -648,6 +666,11 @@ bool TestController::resetStateToConsistentValues()
     m_geolocationPermissionRequests.clear();
     m_isGeolocationPermissionSet = false;
     m_isGeolocationPermissionAllowed = false;
+
+    // Reset UserMedia permissions.
+    m_userMediaPermissionRequests.clear();
+    m_isUserMediaPermissionSet = false;
+    m_isUserMediaPermissionAllowed = false;
 
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
@@ -1364,6 +1387,33 @@ void TestController::handleGeolocationPermissionRequest(WKGeolocationPermissionR
 {
     m_geolocationPermissionRequests.append(geolocationPermissionRequest);
     decidePolicyForGeolocationPermissionRequestIfPossible();
+}
+
+void TestController::setUserMediaPermission(bool enabled)
+{
+    m_isUserMediaPermissionSet = true;
+    m_isUserMediaPermissionAllowed = enabled;
+    decidePolicyForUserMediaPermissionRequestIfPossible();
+}
+
+void TestController::handleUserMediaPermissionRequest(WKUserMediaPermissionRequestRef userMediaPermissionRequest)
+{
+    m_userMediaPermissionRequests.append(userMediaPermissionRequest);
+    decidePolicyForUserMediaPermissionRequestIfPossible();
+}
+
+void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
+{
+    if (!m_isUserMediaPermissionSet)
+        return;
+
+    for (auto& request : m_userMediaPermissionRequests) {
+        if (m_isUserMediaPermissionAllowed)
+            WKUserMediaPermissionRequestAllow(request.get());
+        else
+            WKUserMediaPermissionRequestDeny(request.get());
+    }
+    m_userMediaPermissionRequests.clear();
 }
 
 void TestController::setCustomPolicyDelegate(bool enabled, bool permissive)

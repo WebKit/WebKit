@@ -1,3 +1,30 @@
+2014-09-01  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2] UserMediaClient support
+        https://bugs.webkit.org/show_bug.cgi?id=123158
+
+        Reviewed by Benjamin Poulain.
+
+        Added document and frame accessors, needed by the
+        UserMediaRequestManager of the WebProcess. Also added two methods
+        used by the permission request manager to know if access to audio
+        or video devices is requested.
+
+        Tests: fast/mediastream/error.html
+               fast/mediastream/success.html
+               fast/mediastream/delayed-permission-allowed.html
+               fast/mediastream/delayed-permission-denied.html
+               http/tests/media/media-stream/disconnected-frame-already.html
+               http/tests/media/media-stream/disconnected-frame-permission-denied.html
+               http/tests/media/media-stream/disconnected-frame.html
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::document):
+        (WebCore::UserMediaRequest::frame):
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::requiresAudio):
+        (WebCore::UserMediaRequest::requiresVideo):
+
 2014-11-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Clean up OwnPtr in RenderThemeEfl

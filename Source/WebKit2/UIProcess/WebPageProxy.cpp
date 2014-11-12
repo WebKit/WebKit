@@ -55,6 +55,7 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "TextIndicator.h"
+#include "UserMediaPermissionRequestProxy.h"
 #include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -279,6 +280,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
+    , m_userMediaPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
     , m_viewWasEverInWindow(false)
     , m_backForwardList(WebBackForwardList::create(*this))
@@ -4714,6 +4716,18 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
         return;
 
     request->deny();
+}
+
+void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String originIdentifier, bool audio, bool video)
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<UserMediaPermissionRequestProxy> request = m_userMediaPermissionRequestManager.createRequest(userMediaID, audio, video);
+
+    if (!m_uiClient->decidePolicyForUserMediaPermissionRequest(*this, *frame, *origin.get(), *request.get()))
+        request->deny();
 }
 
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)

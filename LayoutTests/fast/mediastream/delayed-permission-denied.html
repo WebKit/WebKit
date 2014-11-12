@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that no callbacks are invoked until permission is denied.");
+window.jsTestIsAsync = true;
+
+function denyPermission() {
+    permissionSet = true;
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(false);
+}
+
+var error;
+var options = {audio: true, video: true};
+navigator.webkitGetUserMedia(options, function(stream) {
+    testFailed('Success callback invoked unexpectedly');
+    finishJSTest();
+}, function(e) {
+    if (permissionSet) {
+        error = e;
+        shouldBe('error.code', 'error.PERMISSION_DENIED');
+        finishJSTest();
+        return;
+    }
+    testFailed('Error callback invoked unexpectedly');
+    finishJSTest();
+});
+
+window.setTimeout(denyPermission, 100);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

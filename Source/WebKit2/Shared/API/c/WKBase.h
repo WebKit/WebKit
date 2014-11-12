@@ -127,6 +127,7 @@ typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
 typedef const struct OpaqueWKTextChecker* WKTextCheckerRef;
 typedef const struct OpaqueWKSession* WKSessionRef;
 typedef const struct OpaqueWKSessionState* WKSessionStateRef;
+typedef const struct OpaqueWKUserMediaPermissionRequest* WKUserMediaPermissionRequestRef;
 typedef const struct OpaqueWKVibration* WKVibrationRef;
 typedef const struct OpaqueWKViewportAttributes* WKViewportAttributesRef;
 

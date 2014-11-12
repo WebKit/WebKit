@@ -44,6 +44,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "UserMediaPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
@@ -447,6 +448,10 @@ public:
 #if PLATFORM(IOS) || PLATFORM(EFL)
     void savePageState(WebCore::HistoryItem&);
     void restorePageState(const WebCore::HistoryItem&);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
 #endif
 
 #if PLATFORM(IOS)
@@ -1019,6 +1024,10 @@ private:
 
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
+#if ENABLE(MEDIA_STREAM)
+    void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed);
+#endif
+
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
 #if USE(APPKIT)
@@ -1184,6 +1193,10 @@ private:
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    UserMediaPermissionRequestManager m_userMediaPermissionRequestManager;
 #endif
 
     std::unique_ptr<WebCore::PrintContext> m_printContext;

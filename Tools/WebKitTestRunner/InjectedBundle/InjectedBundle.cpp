@@ -458,6 +458,13 @@ void InjectedBundle::setMockGeolocationPositionUnavailableError(WKStringRef erro
     WKBundlePostMessage(m_bundle, messageName.get(), errorMessage);
 }
 
+void InjectedBundle::setUserMediaPermission(bool enabled)
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetUserMediaPermission"));
+    auto messageBody = adoptWK(WKBooleanCreate(enabled));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
 void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetCustomPolicyDelegate"));

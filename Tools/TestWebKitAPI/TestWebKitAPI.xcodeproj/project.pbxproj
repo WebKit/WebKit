@@ -88,6 +88,7 @@
 		37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */; };
 		37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */; };
 		440A1D3914A0103A008A66F2 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* URL.cpp */; };
+		4A410F4C19AF7BD6002EBAB5 /* UserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */; };
 		4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
 		4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
@@ -446,6 +447,8 @@
 		37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidRemoveFrameFromHierarchy.mm; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
+		4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMedia.cpp; sourceTree = "<group>"; };
+		4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia.html; sourceTree = "<group>"; };
 		4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWrapperForNodeInWebFrame.mm; sourceTree = "<group>"; };
 		4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementAtPointInWebFrame.mm; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
@@ -838,6 +841,7 @@
 		BC9096411255616000083756 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
+				4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */,
 				C0C5D3BB14598B6F00A802A6 /* mac */,
 				BC90977B125571AE00083756 /* Resources */,
 				BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */,
@@ -972,6 +976,7 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */,
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
@@ -1380,6 +1385,7 @@
 				51FCF79A1534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp in Sources */,
 				1AFDE6561953B2C000C48FFA /* Optional.cpp in Sources */,
 				C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */,
+				4A410F4C19AF7BD6002EBAB5 /* UserMedia.cpp in Sources */,
 				C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */,
 				93D3D19E17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,
 				E194E1BB177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm in Sources */,

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that when a request is made on a UserMedia object and its Frame is disconnected before a callback is made, the error callback is invoked with the correct error message.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+
+function onIframeLoaded() {
+    iframeNavigator = iframe.contentWindow.navigator;
+    iframe.src = 'data:text/html,This frame should be visible when the test completes';
+}
+
+function onIframeUnloaded() {
+    var options = {audio: true, video: true};
+    iframeNavigator.webkitGetUserMedia(options, function (stream) {
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();
+    }, function(e) {
+        testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
+
+    setTimeout(function() {
+        testPassed('No callbacks invoked');
+        finishJSTest();
+    }, 100);
+}
+
+var iframe = document.createElement('iframe');
+iframe.src = 'resources/disconnected-frame-inner.html';
+document.body.appendChild(iframe);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

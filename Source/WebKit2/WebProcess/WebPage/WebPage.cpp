@@ -98,6 +98,7 @@
 #include "WebProgressTrackerClient.h"
 #include "WebUndoStep.h"
 #include "WebUserContentController.h"
+#include "WebUserMediaClient.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
@@ -281,6 +282,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(this)
 #endif
+#if ENABLE(MEDIA_STREAM)
+    , m_userMediaPermissionRequestManager(*this)
+#endif
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
@@ -385,6 +389,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if ENABLE(PROXIMITY_EVENTS)
     WebCore::provideDeviceProximityTo(m_page.get(), new WebDeviceProximityClient(this));
+#endif
+#if ENABLE(MEDIA_STREAM)
+    WebCore::provideUserMediaTo(m_page.get(), new WebUserMediaClient(*this));
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -3251,6 +3258,13 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 {
     notificationPermissionRequestManager()->didReceiveNotificationPermissionDecision(notificationID, allowed);
 }
+
+#if ENABLE(MEDIA_STREAM)
+void WebPage::didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed)
+{
+    m_userMediaPermissionRequestManager.didReceiveUserMediaPermissionDecision(userMediaID, allowed);
+}
+#endif
 
 #if !PLATFORM(IOS)
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
