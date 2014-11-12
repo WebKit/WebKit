@@ -375,8 +375,6 @@ webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
 
-webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Timeout ]
-
 webkit.org/b/112617 [ Debug ] http/tests/navigation/navigation-redirect-schedule-crash.html [ Crash Pass ]
 
 webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Pass Failure ]
@@ -794,9 +792,6 @@ webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-cra
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash3.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip ]
-
-# Only failing on WK1
-webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
@@ -1482,3 +1477,5 @@ webkit.org/b/138328 [ Mavericks MountainLion ] platform/mac/fast/text/font-cursi
 
 webkit.org/b/138075 [ Yosemite ] transforms/2d/hindi-rotated.html [ Pass Failure ]
 webkit.org/b/138075 [ Yosemite ] fast/text/international/hindi-spacing.html [ Pass Failure ]
+
+webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Timeout ]

@@ -169,17 +169,12 @@ fast/events/remove-target-with-shadow-in-drag.html
 # https://bugs.webkit.org/show_bug.cgi?id=85532
 fast/sub-pixel
 
-# fast/events/pagehide-timeout.html, pageshow-pagehide-on-back-cached-with-frames.html, and
-# pageshow-pagehide-on-back-cached.html flakey on Lion Intel Debug WebKit testers.
-# https://bugs.webkit.org/show_bug.cgi?id=81291
-fast/events/pagehide-timeout.html
-fast/events/pageshow-pagehide-on-back-cached-with-frames.html
-fast/events/pageshow-pagehide-on-back-cached.html
-fast/events/pageshow-pagehide.html
+webkit.org/b/81291 fast/events/pagehide-timeout.html [ Pass Failure ]
+webkit.org/b/81291 fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Pass Failure ]
+webkit.org/b/81291 fast/events/pageshow-pagehide-on-back-cached.html [ Pass Failure ]
+webkit.org/b/81291 fast/events/pageshow-pagehide.html [ Pass Failure ]
 
-# fast/events/drag-link.html is failing in Mac WebKit2
-# https://bugs.webkit.org/show_bug.cgi?id=81833
-fast/events/drag-link.html
+webkit.org/b/81833 fast/events/drag-link.html [ Failure ]
 
 # flaky storage tests
 # https://bugs.webkit.org/show_bug.cgi?id=82679
@@ -194,22 +189,14 @@ platform/mac/editing/input/crash-for-empty-text-alternative.html
 platform/mac/editing/input/edit-dictated-text-with-alternative.html
 platform/mac/editing/attributed-string/
 
-# https://bugs.webkit.org/show_bug.cgi?id=89199
-editing/spelling/grammar-edit-word.html
+# This test times out on Mac WK2 every time.
+webkit.org/b/89199 editing/spelling/grammar-edit-word.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=90156
-platform/mac/editing/spelling/autocorrection-blockquote-crash.html
+webkit.org/b/90156 platform/mac/editing/spelling/autocorrection-blockquote-crash.html [ Failure ]
 
-# fast/multicol/shrink-to-column-height-for-pagination.html fails on Mac WK2 bots
-# https://bugs.webkit.org/show_bug.cgi?id=94624
-fast/multicol/shrink-to-column-height-for-pagination.html
+webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=95043
-http/tests/security/local-user-CSS-from-remote.html
-
-# Flakey on both Snow Leopard and Windows 7
-# https://bugs.webkit.org/show_bug.cgi?id=58337
-fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
+webkit.org/b/58337 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html [ Pass Failure ]
 
 # All spatial navigation tests fail on Mac WK2
 webkit.org/b/96438 fast/spatial-navigation
@@ -228,10 +215,6 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 
 webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 
-webkit.org/b/105998 [ Lion Release ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
-webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/108507 printing/quirks-percentage-height-body.html [ Skip ]
 webkit.org/b/108507 printing/quirks-percentage-height.html [ Skip ]
 webkit.org/b/108507 printing/standards-percentage-heights.html [ Skip ]
@@ -243,14 +226,7 @@ webkit.org/b/97124 [ Debug ] fast/loader/dynamic-iframe-extra-back-forward-item.
 webkit.org/b/97124 [ Debug ] fast/events/pageshow-pagehide-on-back-uncached.html [ Pass Crash ]
 webkit.org/b/97124 [ Debug ] svg/animations/mozilla/animateMotion-by-1.svg [ Pass Crash ]
 
-webkit.org/b/112642 [ Debug ] editing/deleting/paste-with-transparent-background-color.html [ Crash Pass ]
-webkit.org/b/112642 [ Debug ] editing/pasteboard/5780697-1.html [ Crash Pass ]
-
-webkit.org/b/113515 compositing/iframes/remove-iframe-crash.html [ Crash Pass ]
-
-# http/tests/canvas/canvas-slow-font-loading.html pass from time to time on WebKit2 Release builds.
-webkit.org/b/104954 [ Release ] http/tests/canvas/canvas-slow-font-loading.html [ Pass ImageOnlyFailure ]
-webkit.org/b/104954 [ Debug ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
+webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 # Flaky everywhere.
 webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure ]
@@ -261,15 +237,6 @@ webkit.org/b/116478 storage/websql/open-database-creation-callback-isolated-worl
 webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html [ Pass Failure ]
 webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
 
-webkit.org/b/116684 [ Lion ] compositing/overflow/overflow-compositing-descendant.html [ Timeout Failure ]
-
-# Only fails on WK1
-webkit.org/b/82805 [ Lion Debug ] fast/canvas/webgl/object-deletion-behaviour.html [ Pass ]
-
-# Only fail in WK1
-compositing/rtl/rtl-fixed-overflow.html [ Pass ]
-compositing/rtl/rtl-fixed.html [ Pass ]
-
 # [WK2] Media elements never fail to load
 webkit.org/b/117767 media/W3C/audio/error/error_onerror_called_on_bogus_source.html [ Failure ]
 webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.html [ Failure ]
@@ -279,20 +246,6 @@ webkit.org/b/117767 media/event-attributes.html [ Failure ]
 webkit.org/b/117962 media/video-played-collapse.html [ Pass Failure ]
 webkit.org/b/81604 media/video-loop.html [ Pass Failure ]
 
-webkit.org/b/118925 compositing/background-color/background-color-alpha.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-change-to-text.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-composite.html [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-container.html [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-content-clip.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-padding-clip.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-simple.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/background-color/background-color-text-change.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/backgrounds/fixed-background-on-descendant.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/backgrounds/fixed-backgrounds.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 fast/layers/no-clipping-overflow-hidden-added-after-transition.html  [ Pass ImageOnlyFailure ]
-webkit.org/b/118925 fast/regions/positioning/fixed-pos-elem-in-region.html  [ Pass ImageOnlyFailure ]
-
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFailure ]
 
 # Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
@@ -300,17 +253,6 @@ webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
-
-# hidpi subpixel WebKitTestRunner failure. -blurry generated images.
-webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-simple-container-layer-on-device-pixel.html [ Pass ImageOnlyFailure ]
-webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ Pass ImageOnlyFailure ]
-webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html [ Pass ImageOnlyFailure ]
-webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-box-positioned-off-by-one-when-non-compositing-transform-is-present.html [ Pass ImageOnlyFailure ]
-
-# Only failing on WK1
-webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
-
-webkit.org/b/121581 [ Lion ] media/video-object-fit.html [ ImageOnlyFailure ]
 
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
@@ -327,22 +269,15 @@ webkit.org/b/122235 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailur
 
 webkit.org/b/122237 [ Debug ] fast/table/crash-section-logical-height-changed-needsCellRecalc.html [ Pass Crash ]
 
-webkit.org/b/124425 fast/dom/Geolocation/notimer-after-unload.html [ Pass Crash Failure ]
-
-webkit.org/b/124437 editing/selection/5057506.html [ Pass Timeout ]
-webkit.org/b/124437 editing/selection/5057506-2.html [ Pass Timeout ]
-
 webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html [ Pass Failure ]
 
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
 webkit.org/b/125996 platform/mac/accessibility/search-when-element-starts-in-table.html [ Failure ]
 
-webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
+webkit.org/b/134550 [ Mavericks Yosemite ] http/tests/cache/iframe-304-crash.html [ Pass Failure ]
 
-webkit.org/b/134550 [ Mavericks ] http/tests/cache/iframe-304-crash.html [ Pass Failure ]
-
+# testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
-webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass ]
 
 webkit.org/b/133692 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 
@@ -380,11 +315,11 @@ http/tests/appcache/auth.html [ Skip ]
 ### START OF (3) Unclassified failures
 
 # All tests that failed on the Lion WebKit2 Release bot in r111739
-fast/forms/range/slider-delete-while-dragging-thumb.html
-svg/W3C-SVG-1.1/fonts-elem-04-b.svg
+fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
 
 # A test that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
-fast/workers/worker-cloneport.html
+fast/workers/worker-cloneport.html [ Pass Failure ]
 
 # Intermittent crashes
 # https://bugs.webkit.org/show_bug.cgi?id=82939
@@ -395,7 +330,7 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
 
 # textInputController.hasMarkedText is implemented, but gives a wrong result for some reason.
-platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
+platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html [ Failure ]
 
 # test results in DRT don't match in browser behavior, test seems broken
 fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
@@ -406,10 +341,6 @@ webkit.org/b/127316 svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html [ 
 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
-
-webkit.org/b/128315 editing/caret/caret-color.html [ Pass Failure ]
-
-webkit.org/b/129468 [ MountainLion Debug ] css3/blending/isolation-isolate-blended-child.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/132766 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
@@ -670,7 +601,7 @@ storage/websql/private-browsing-noread-nowrite.html [ Skip ]
 [ MountainLion ] http/tests/security/cookies/third-party-cookie-blocking.html [ Pass ]
 [ MountainLion ] http/tests/security/cross-frame-access-private-browsing.html [ Pass ]
 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Pass ]
-[ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass ]
+webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 [ MountainLion ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Pass ]
 [ MountainLion ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Pass ]
 [ MountainLion ] plugins/private-browsing-mode-2.html [ Pass ]

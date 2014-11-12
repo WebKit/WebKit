@@ -1,5 +1,19 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Mac-WK2 test expectations cleanup, part 1.
+
+        Put WK1 specific expectations into mac-wk1 (they used to be put in mac, and then
+        being overridden for wk2).
+        Remove expectations for tests that are no longer flaky.
+        Add more specific expectations to encient entries that were added in old format,
+        and just skipped indiscriminately.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         Remove expectations for a couple tests that were marked as flaky on WK1 only,
         as they don't appear to be flaky any more.
 

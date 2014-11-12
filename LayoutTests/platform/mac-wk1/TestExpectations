@@ -17,6 +17,8 @@ webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.htm
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 [ MountainLion Mavericks ] fast/multicol/fixed-stack.html [ Pass ]
 
+webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
