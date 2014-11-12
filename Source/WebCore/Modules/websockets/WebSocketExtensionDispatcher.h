@@ -34,8 +34,6 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "WebSocketExtensionProcessor.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -47,7 +45,7 @@ public:
     WebSocketExtensionDispatcher() { }
 
     void reset();
-    void addProcessor(PassOwnPtr<WebSocketExtensionProcessor>);
+    void addProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
     const String createHeaderValue() const;
 
     bool processHeaderValue(const String&);
@@ -58,7 +56,7 @@ private:
     void appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters);
     void fail(const String& reason);
 
-    Vector<OwnPtr<WebSocketExtensionProcessor>> m_processors;
+    Vector<std::unique_ptr<WebSocketExtensionProcessor>> m_processors;
     StringBuilder m_acceptedExtensionsBuilder;
     String m_failureReason;
 };

@@ -47,18 +47,13 @@ namespace WebCore {
 static const int defaultMemLevel = 1;
 static const size_t bufferIncrementUnit = 4096;
 
-PassOwnPtr<WebSocketDeflater> WebSocketDeflater::create(int windowBits, ContextTakeOverMode contextTakeOverMode)
-{
-    return adoptPtr(new WebSocketDeflater(windowBits, contextTakeOverMode));
-}
-
 WebSocketDeflater::WebSocketDeflater(int windowBits, ContextTakeOverMode contextTakeOverMode)
     : m_windowBits(windowBits)
     , m_contextTakeOverMode(contextTakeOverMode)
 {
     ASSERT(m_windowBits >= 8);
     ASSERT(m_windowBits <= 15);
-    m_stream = adoptPtr(new z_stream);
+    m_stream = std::make_unique<z_stream>();
     memset(m_stream.get(), 0, sizeof(z_stream));
 }
 
@@ -127,15 +122,10 @@ void WebSocketDeflater::reset()
         deflateReset(m_stream.get());
 }
 
-PassOwnPtr<WebSocketInflater> WebSocketInflater::create(int windowBits)
-{
-    return adoptPtr(new WebSocketInflater(windowBits));
-}
-
 WebSocketInflater::WebSocketInflater(int windowBits)
     : m_windowBits(windowBits)
 {
-    m_stream = adoptPtr(new z_stream);
+    m_stream = std::make_unique<z_stream>();
     memset(m_stream.get(), 0, sizeof(z_stream));
 }
 

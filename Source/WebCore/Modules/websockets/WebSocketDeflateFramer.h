@@ -38,8 +38,6 @@
 #endif
 #include "WebSocketExtensionProcessor.h"
 #include "WebSocketFrame.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -48,11 +46,7 @@ class WebSocketDeflateFramer;
 class DeflateResultHolder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<DeflateResultHolder> create(WebSocketDeflateFramer* framer)
-    {
-        return adoptPtr(new DeflateResultHolder(framer));
-    }
-
+    explicit DeflateResultHolder(WebSocketDeflateFramer*);
     ~DeflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
@@ -61,8 +55,6 @@ public:
     void fail(const String& failureReason);
 
 private:
-    explicit DeflateResultHolder(WebSocketDeflateFramer*);
-
     WebSocketDeflateFramer* m_framer;
     bool m_succeeded;
     String m_failureReason;
@@ -71,11 +63,7 @@ private:
 class InflateResultHolder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InflateResultHolder> create(WebSocketDeflateFramer* framer)
-    {
-        return adoptPtr(new InflateResultHolder(framer));
-    }
-
+    explicit InflateResultHolder(WebSocketDeflateFramer*);
     ~InflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
@@ -84,8 +72,6 @@ public:
     void fail(const String& failureReason);
 
 private:
-    explicit InflateResultHolder(WebSocketDeflateFramer*);
-
     WebSocketDeflateFramer* m_framer;
     bool m_succeeded;
     String m_failureReason;
@@ -95,14 +81,14 @@ class WebSocketDeflateFramer {
 public:
     WebSocketDeflateFramer();
 
-    PassOwnPtr<WebSocketExtensionProcessor> createExtensionProcessor();
+    std::unique_ptr<WebSocketExtensionProcessor> createExtensionProcessor();
 
     bool canDeflate() const;
     bool enabled() const { return m_enabled; }
 
-    PassOwnPtr<DeflateResultHolder> deflate(WebSocketFrame&);
+    std::unique_ptr<DeflateResultHolder> deflate(WebSocketFrame&);
     void resetDeflateContext();
-    PassOwnPtr<InflateResultHolder> inflate(WebSocketFrame&);
+    std::unique_ptr<InflateResultHolder> inflate(WebSocketFrame&);
     void resetInflateContext();
 
     void didFail();
@@ -114,8 +100,8 @@ public:
 private:
     bool m_enabled;
 #if USE(ZLIB)
-    OwnPtr<WebSocketDeflater> m_deflater;
-    OwnPtr<WebSocketInflater> m_inflater;
+    std::unique_ptr<WebSocketDeflater> m_deflater;
+    std::unique_ptr<WebSocketInflater> m_inflater;
 #endif
 };
 

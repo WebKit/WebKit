@@ -34,8 +34,6 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 struct z_stream_s;
@@ -50,8 +48,8 @@ public:
         DoNotTakeOverContext,
         TakeOverContext
     };
-    static PassOwnPtr<WebSocketDeflater> create(int windowBits, ContextTakeOverMode = TakeOverContext);
 
+    explicit WebSocketDeflater(int windowBits, ContextTakeOverMode = TakeOverContext);
     ~WebSocketDeflater();
 
     bool initialize();
@@ -62,19 +60,16 @@ public:
     void reset();
 
 private:
-    WebSocketDeflater(int windowBits, ContextTakeOverMode);
-
     int m_windowBits;
     ContextTakeOverMode m_contextTakeOverMode;
     Vector<char> m_buffer;
-    OwnPtr<z_stream> m_stream;
+    std::unique_ptr<z_stream> m_stream;
 };
 
 class WebSocketInflater {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<WebSocketInflater> create(int windowBits = 15);
-
+    explicit WebSocketInflater(int windowBits = 15);
     ~WebSocketInflater();
 
     bool initialize();
@@ -85,11 +80,9 @@ public:
     void reset();
 
 private:
-    explicit WebSocketInflater(int windowBits);
-
     int m_windowBits;
     Vector<char> m_buffer;
-    OwnPtr<z_stream> m_stream;
+    std::unique_ptr<z_stream> m_stream;
 };
 
 }

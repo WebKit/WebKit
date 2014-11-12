@@ -1,3 +1,51 @@
+2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move Modules/websockets to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=138649
+
+        Reviewed by Chris Dumez.
+
+        Remove create() factory function and use std::make_unique<>, std::unique_ptr<>
+        instead of OwnPtr, PassOwnPtr.
+        However didReceiveBinaryData() is still using PassOwnPtr. It should be replaced
+        with std::unique_ptr<>
+
+        No new tests, no behavior.
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::enqueueTextFrame):
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        (WebCore::WebSocketChannel::enqueueBlobFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        (WebCore::WebSocketChannel::sendFrame):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketDeflateFramer.cpp:
+        (WebCore::WebSocketDeflateFramer::createExtensionProcessor):
+        (WebCore::WebSocketDeflateFramer::enableDeflate):
+        (WebCore::WebSocketDeflateFramer::deflate):
+        (WebCore::WebSocketDeflateFramer::inflate):
+        (WebCore::WebSocketExtensionDeflateFrame::create): Deleted.
+        * Modules/websockets/WebSocketDeflateFramer.h:
+        (WebCore::DeflateResultHolder::create): Deleted.
+        (WebCore::InflateResultHolder::create): Deleted.
+        * Modules/websockets/WebSocketDeflater.cpp:
+        (WebCore::WebSocketDeflater::WebSocketDeflater):
+        (WebCore::WebSocketInflater::WebSocketInflater):
+        (WebCore::WebSocketDeflater::create): Deleted.
+        (WebCore::WebSocketInflater::create): Deleted.
+        * Modules/websockets/WebSocketDeflater.h:
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::addProcessor):
+        * Modules/websockets/WebSocketExtensionDispatcher.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::addExtensionProcessor):
+        * Modules/websockets/WebSocketHandshake.h:
+
 2014-11-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r176001.

@@ -43,10 +43,7 @@ namespace WebCore {
 class WebSocketExtensionDeflateFrame : public WebSocketExtensionProcessor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<WebSocketExtensionDeflateFrame> create(WebSocketDeflateFramer* framer)
-    {
-        return adoptPtr(new WebSocketExtensionDeflateFrame(framer));
-    }
+    explicit WebSocketExtensionDeflateFrame(WebSocketDeflateFramer*);
     virtual ~WebSocketExtensionDeflateFrame() { }
 
     virtual String handshakeString() override;
@@ -54,8 +51,6 @@ public:
     virtual String failureReason() override { return m_failureReason; }
 
 private:
-    WebSocketExtensionDeflateFrame(WebSocketDeflateFramer*);
-
     WebSocketDeflateFramer* m_framer;
     bool m_responseProcessed;
     String m_failureReason;
@@ -161,9 +156,9 @@ WebSocketDeflateFramer::WebSocketDeflateFramer()
 {
 }
 
-PassOwnPtr<WebSocketExtensionProcessor> WebSocketDeflateFramer::createExtensionProcessor()
+std::unique_ptr<WebSocketExtensionProcessor> WebSocketDeflateFramer::createExtensionProcessor()
 {
-    return WebSocketExtensionDeflateFrame::create(this);
+    return std::make_unique<WebSocketExtensionDeflateFrame>(this);
 }
 
 bool WebSocketDeflateFramer::canDeflate() const
@@ -178,33 +173,33 @@ bool WebSocketDeflateFramer::canDeflate() const
 #if USE(ZLIB)
 void WebSocketDeflateFramer::enableDeflate(int windowBits, WebSocketDeflater::ContextTakeOverMode mode)
 {
-    m_deflater = WebSocketDeflater::create(windowBits, mode);
-    m_inflater = WebSocketInflater::create();
+    m_deflater = std::make_unique<WebSocketDeflater>(windowBits, mode);
+    m_inflater = std::make_unique<WebSocketInflater>();
     if (!m_deflater->initialize() || !m_inflater->initialize()) {
-        m_deflater.clear();
-        m_inflater.clear();
+        m_deflater = nullptr;
+        m_inflater = nullptr;
         return;
     }
     m_enabled = true;
 }
 #endif
 
-PassOwnPtr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFrame& frame)
+std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFrame& frame)
 {
 #if USE(ZLIB)
-    OwnPtr<DeflateResultHolder> result = DeflateResultHolder::create(this);
+    auto result = std::make_unique<DeflateResultHolder>(this);
     if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode) || !frame.payloadLength)
-        return result.release();
+        return result;
     if (!m_deflater->addBytes(frame.payload, frame.payloadLength) || !m_deflater->finish()) {
         result->fail("Failed to compress frame");
-        return result.release();
+        return result;
     }
     frame.compress = true;
     frame.payload = m_deflater->data();
     frame.payloadLength = m_deflater->size();
-    return result.release();
+    return result;
 #else
-    return DeflateResultHolder::create(this);
+    return std::make_unique<DeflateResultHolder>(this);
 #endif
 }
 
@@ -216,30 +211,30 @@ void WebSocketDeflateFramer::resetDeflateContext()
 #endif
 }
 
-PassOwnPtr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFrame& frame)
+std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFrame& frame)
 {
-    OwnPtr<InflateResultHolder> result = InflateResultHolder::create(this);
+    auto result = std::make_unique<InflateResultHolder>(this);
     if (!enabled() && frame.compress) {
         result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension");
-        return result.release();
+        return result;
     }
 #if USE(ZLIB)
     if (!frame.compress)
-        return result.release();
+        return result;
     if (!WebSocketFrame::isNonControlOpCode(frame.opCode)) {
         result->fail("Received unexpected compressed frame");
-        return result.release();
+        return result;
     }
     if (!m_inflater->addBytes(frame.payload, frame.payloadLength) || !m_inflater->finish()) {
         result->fail("Failed to decompress frame");
-        return result.release();
+        return result;
     }
     frame.compress = false;
     frame.payload = m_inflater->data();
     frame.payloadLength = m_inflater->size();
-    return result.release();
+    return result;
 #else
-    return result.release();
+    return result;
 #endif
 }
 

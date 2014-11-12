@@ -37,7 +37,6 @@
 #include "ResourceResponse.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -86,7 +85,7 @@ public:
 
     const ResourceResponse& serverHandshakeResponse() const;
 
-    void addExtensionProcessor(PassOwnPtr<WebSocketExtensionProcessor>);
+    void addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
 
     static String getExpectedWebSocketAccept(const String& secWebSocketKey);
 

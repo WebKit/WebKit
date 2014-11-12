@@ -186,7 +186,7 @@ private:
 
     Document* m_document;
     WebSocketChannelClient* m_client;
-    OwnPtr<WebSocketHandshake> m_handshake;
+    std::unique_ptr<WebSocketHandshake> m_handshake;
     RefPtr<SocketStreamHandle> m_handle;
     Vector<char> m_buffer;
 
@@ -208,11 +208,11 @@ private:
     unsigned short m_closeEventCode;
     String m_closeEventReason;
 
-    Deque<OwnPtr<QueuedFrame>> m_outgoingFrameQueue;
+    Deque<std::unique_ptr<QueuedFrame>> m_outgoingFrameQueue;
     OutgoingFrameQueueStatus m_outgoingFrameQueueStatus;
 
     // FIXME: Load two or more Blobs simultaneously for better performance.
-    OwnPtr<FileReaderLoader> m_blobLoader;
+    std::unique_ptr<FileReaderLoader> m_blobLoader;
     BlobLoaderStatus m_blobLoaderStatus;
 
     WebSocketDeflateFramer m_deflateFramer;

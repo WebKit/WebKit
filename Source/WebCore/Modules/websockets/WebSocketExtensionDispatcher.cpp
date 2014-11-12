@@ -48,7 +48,7 @@ void WebSocketExtensionDispatcher::reset()
     m_processors.clear();
 }
 
-void WebSocketExtensionDispatcher::addProcessor(PassOwnPtr<WebSocketExtensionProcessor> processor)
+void WebSocketExtensionDispatcher::addProcessor(std::unique_ptr<WebSocketExtensionProcessor> processor)
 {
     for (size_t i = 0; i < m_processors.size(); ++i) {
         if (m_processors[i]->extensionToken() == processor->extensionToken())
@@ -57,7 +57,7 @@ void WebSocketExtensionDispatcher::addProcessor(PassOwnPtr<WebSocketExtensionPro
     ASSERT(processor->handshakeString().length());
     ASSERT(!processor->handshakeString().contains('\n'));
     ASSERT(!processor->handshakeString().contains(static_cast<UChar>('\0')));
-    m_processors.append(processor);
+    m_processors.append(WTF::move(processor));
 }
 
 const String WebSocketExtensionDispatcher::createHeaderValue() const
