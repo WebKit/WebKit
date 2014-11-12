@@ -297,6 +297,7 @@ EXPORTS
         symbolWithPointer(?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setSerifFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setStandardFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setStandardFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setStorageBlockingPolicy@Settings@WebCore@@QAEXW4StorageBlockingPolicy@SecurityOrigin@2@@Z, ?setStorageBlockingPolicy@Settings@WebCore@@QEAAXW4StorageBlockingPolicy@SecurityOrigin@2@@Z)
+        symbolWithPointer(?shouldAutocomplete@HTMLInputElement@WebCore@@UBE_NXZ, ?shouldAutocomplete@HTMLInputElement@WebCore@@UBE_NXZ)
         symbolWithPointer(?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z, ?setEditingValue@HTMLInputElement@WebCore@@QEAAXAEBVString@WTF@@@Z)
         symbolWithPointer(?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z, ?setPseudo@Element@WebCore@@QEAAXAEBVAtomicString@WTF@@@Z)
         symbolWithPointer(?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z, ?setMediaTypeOverride@Settings@WebCore@@QEAAXAEBVString@WTF@@@Z)

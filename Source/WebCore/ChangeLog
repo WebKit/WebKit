@@ -1,3 +1,17 @@
+2014-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Mark more virtual functions in HTMLInputElement as final
+        https://bugs.webkit.org/show_bug.cgi?id=138644
+
+        Reviewed by Andreas Kling.
+
+        Mark more virtual functions in HTMLInputElement as final to help the
+        compiler optimize better.
+
+        No new tests, no behavior change.
+
+        * html/HTMLInputElement.h:
+
 2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove IncrementalSweeper::create()
