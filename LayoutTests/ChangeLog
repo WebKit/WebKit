@@ -1,3 +1,16 @@
+2014-11-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening. Rebaseline after r174535.
+
+        * platform/efl/css3/selectors3/html/css3-modsel-61-expected.txt:
+        * platform/efl/css3/selectors3/html/css3-modsel-83-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-61-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-83-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-61-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-83-expected.txt:
+        * platform/efl/fast/selectors/061-expected.txt:
+        * platform/efl/fast/selectors/083-expected.txt:
+
 2014-11-11  Alexey Proskuryakov  <ap@apple.com>
 
         Temporarlity turn video/video-border-radius-expected.html into a non-reftest,
