@@ -701,7 +701,7 @@ using namespace Inspector;
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
     auto alternateAgent = std::make_unique<AlternateDispatchableAgent<InspectorCommandDomainBackendDispatcher, AlternateInspectorCommandDomainBackendDispatcher>>(ASCIILiteral("CommandDomain"), WTF::move(alternateDispatcher));
-    _controller->agentRegistry().appendExtraAgent(WTF::move(alternateAgent));
+    _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
 - (id<RWIProtocolCommandDomainDomainHandler>)commandDomainHandler

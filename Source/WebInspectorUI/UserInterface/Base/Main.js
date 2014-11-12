@@ -357,7 +357,6 @@ WebInspector.contentLoaded = function()
 
 WebInspector.activateExtraDomains = function(domains)
 {
-    console.assert(!this.hasExtraDomains);
     this.hasExtraDomains = true;
 
     for (var domain of domains) {

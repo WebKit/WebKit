@@ -415,7 +415,7 @@ ${invocation}
 
     auto alternateDispatcher = std::make_unique<ObjCInspector${domainName}BackendDispatcher>(handler);
     auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Inspector${domainName}BackendDispatcher, AlternateInspector${domainName}BackendDispatcher>>(ASCIILiteral("${domainName}"), WTF::move(alternateDispatcher));
-    _controller->agentRegistry().appendExtraAgent(WTF::move(alternateAgent));
+    _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
 - (id<${objcPrefix}${domainName}DomainHandler>)${variableNamePrefix}Handler

@@ -1,3 +1,33 @@
+2014-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Handle activating extra agents properly after inspector has connected
+        https://bugs.webkit.org/show_bug.cgi?id=138639
+
+        Reviewed by Timothy Hatcher.
+
+        Instead of having the protocol configuration directly add the extra agent
+        to the inspector registry, isntead go through the augmentable controller.
+        The controller will initialize as required if we are already connected or not,
+        and will add to the registry.
+
+        The functional change here is that the frontend can be notified to activate
+        extra agents multiple times as agents eventually become available.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendExtraAgent):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::activateExtraDomain):
+        * inspector/agents/InspectorAgent.h:
+        * inspector/augmentable/AugmentableInspectorController.h:
+        * inspector/scripts/codegen/generator_templates.py:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        Rebased results.
+
 2014-11-11  Michael Saboff  <msaboff@apple.com>
 
         Use scope register when processing op_resolve_scope in LLInt and Baseline JIT

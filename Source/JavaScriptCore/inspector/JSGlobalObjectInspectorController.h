@@ -85,7 +85,6 @@ public:
     void reportAPIException(JSC::ExecState*, JSC::JSValue exception);
 
     JSC::ConsoleClient* consoleClient() const;
-    InspectorAgentRegistry& inspectorAgentRegistry() { return m_agents; }
 
     virtual bool developerExtrasEnabled() const override { return true; }
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
@@ -101,7 +100,7 @@ public:
     virtual void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient* client) override { m_augmentingClient = client; }
 
     virtual InspectorFrontendChannel* frontendChannel() const override { return m_inspectorFrontendChannel; }
-    virtual InspectorAgentRegistry& agentRegistry() override { return m_agents; }
+    virtual void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) override;
 #endif
 
 private:

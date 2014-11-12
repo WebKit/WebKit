@@ -29,10 +29,11 @@
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include <JavaScriptCore/AugmentableInspectorControllerClient.h>
-#include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 
 namespace Inspector {
+
+class InspectorAgentBase;
 
 class AugmentableInspectorController {
 public:
@@ -42,7 +43,7 @@ public:
     virtual void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient*) = 0;
 
     virtual InspectorFrontendChannel* frontendChannel() const = 0;
-    virtual InspectorAgentRegistry& agentRegistry() = 0;
+    virtual void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) = 0;
 
     bool connected() const { return !!frontendChannel(); }
 };

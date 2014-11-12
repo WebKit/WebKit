@@ -1,3 +1,13 @@
+2014-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Handle activating extra agents properly after inspector has connected
+        https://bugs.webkit.org/show_bug.cgi?id=138639
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.activateExtraDomains):
+
 2014-11-11  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: Main.js missing many trailing semicolons

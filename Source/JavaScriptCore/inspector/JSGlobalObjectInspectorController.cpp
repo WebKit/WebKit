@@ -227,6 +227,21 @@ PassRefPtr<Stopwatch> JSGlobalObjectInspectorController::executionStopwatch()
     return m_executionStopwatch;
 }
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<InspectorAgentBase> agent)
+{
+    String domainName = agent->domainName();
+
+    if (m_inspectorFrontendChannel)
+        agent->didCreateFrontendAndBackend(m_inspectorFrontendChannel, m_inspectorBackendDispatcher.get());
+
+    m_agents.appendExtraAgent(WTF::move(agent));
+
+    if (m_inspectorFrontendChannel)
+        m_inspectorAgent->activateExtraDomain(domainName);
+}
+#endif
+
 } // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

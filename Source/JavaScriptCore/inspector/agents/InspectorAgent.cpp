@@ -121,6 +121,20 @@ void InspectorAgent::evaluateForTestInFrontend(const String& script)
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+void InspectorAgent::activateExtraDomain(const String& domainName)
+{
+    if (!m_enabled) {
+        if (!m_pendingExtraDomainsData)
+            m_pendingExtraDomainsData = Inspector::Protocol::Array<String>::create();
+        m_pendingExtraDomainsData->addItem(domainName);
+        return;
+    }
+
+    RefPtr<Inspector::Protocol::Array<String>> domainNames = Inspector::Protocol::Array<String>::create();
+    domainNames->addItem(domainName);
+    m_frontendDispatcher->activateExtraDomains(domainNames.release());
+}
+
 void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)
 {
     if (extraDomains.isEmpty())

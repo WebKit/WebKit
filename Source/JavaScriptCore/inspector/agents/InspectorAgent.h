@@ -65,6 +65,7 @@ public:
     void evaluateForTestInFrontend(const String& script);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    void activateExtraDomain(const String&);
     void activateExtraDomains(const Vector<String>&);
 #endif
 
