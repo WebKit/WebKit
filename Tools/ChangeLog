@@ -1,3 +1,12 @@
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ clean build after r175930.
+
+        Partial rollout of r175930 to not build the new unit test that
+        broke clean builds in GTK+ port.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2014-09-01  Philippe Normand  <pnormand@igalia.com>
 
         [WK2] UserMediaClient support
