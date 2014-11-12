@@ -13,8 +13,6 @@
 # Asserts in WebKit1-debug due to a preexisting issue with overflow rect computation
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
-webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
-
 # Before Yosemite, the test did not actually test compositing vs. non-compositing on WebKit1, so it passed accidentally.
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 [ MountainLion Mavericks ] fast/multicol/fixed-stack.html [ Pass ]
@@ -38,7 +36,6 @@ crypto/subtle/rsa-indexeddb-non-exportable.html
 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
-css3/blending/background-blend-mode-gif-color-2.html [ ImageOnlyFailure Pass ]
 
 # Plug-in blocking callback doesn't exist in WebKit1.
 plugins/unavailable-plugin-indicator-obscurity.html

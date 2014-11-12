@@ -1,5 +1,12 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove expectations for a couple tests that were marked as flaky on WK1 only,
+        as they don't appear to be flaky any more.
+
+        * platform/mac-wk1/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         Some WebKit1-only Yosemite-only failures don't appear to exist any more.
 
         * platform/mac-wk2/TestExpectations:
