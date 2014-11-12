@@ -1,3 +1,18 @@
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        compositing/video/video-border-radius.html frequently times out on Mountain Lion only
+        https://bugs.webkit.org/show_bug.cgi?id=138662
+
+        Make the test a reftest again, and skip it, as nothing helps.
+
+        Also, updated all compositing/video expectations to match what bots see now.
+
+        * compositing/video/video-border-radius-expected.html: Copied from LayoutTests/compositing/video/video-border-radius-expected.html-disabled.
+        * compositing/video/video-border-radius-expected.html-disabled: Removed.
+        * compositing/video/video-border-radius-expected.png: Removed.
+        * compositing/video/video-border-radius-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Skip shared worker tests after r175776.

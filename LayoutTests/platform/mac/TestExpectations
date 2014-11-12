@@ -918,7 +918,9 @@ webkit.org/b/121628 fast/history/history-back-while-pdf-in-pagecache.html [ Pass
 
 webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
-webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
+webkit.org/b/122508 [ MountainLion ] compositing/video/video-reflection.html [ Pass Timeout ]
+[ MountainLion ] compositing/video/video-object-fit.html [ Pass Timeout ]
+webkit.org/b/138662 [ MountainLion ] compositing/video/video-border-radius-expected.html [ Skip ]
 
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]
@@ -1187,7 +1189,6 @@ webkit.org/b/112659 media/video-playing-and-pause.html [ Pass Failure ]
 webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
-webkit.org/b/121803 compositing/video/video-object-fit.html [ Pass ImageOnlyFailure ]
 webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/121803 media/video-object-fit.html [ Pass ImageOnlyFailure ]
 webkit.org/b/122021 media/track/track-cue-rendering-vertical.html [ Pass Failure ]
@@ -1417,9 +1418,6 @@ webkit.org/b/123498 [ Yosemite ] media/track/track-in-band-cues-added-once.html 
 
 # FIXME: Needs bugzilla (<rdar://problem/16731930>)
 [ Yosemite ] compositing/contents-scale/incremental-change.html [ ImageOnlyFailure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16732502>)
-[ Yosemite ] compositing/video/video-object-fit.html [ Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16804845>)
 [ Yosemite ] fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
