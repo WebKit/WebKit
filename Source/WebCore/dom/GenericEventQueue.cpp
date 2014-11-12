@@ -28,12 +28,15 @@
 
 #include "Event.h"
 #include "EventTarget.h"
+#include "Timer.h"
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 GenericEventQueue::GenericEventQueue(EventTarget& owner)
     : m_owner(owner)
-    , m_timer(this, &GenericEventQueue::timerFired)
+    , m_weakPtrFactory(this)
     , m_isClosed(false)
 {
 }
@@ -51,45 +54,70 @@ bool GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
         event->setTarget(0);
 
     m_pendingEvents.append(event);
-
-    if (!m_timer.isActive())
-        m_timer.startOneShot(0);
+    pendingQueues().append(m_weakPtrFactory.createWeakPtr());
+    if (!sharedTimer().isActive())
+        sharedTimer().startOneShot(0);
 
     return true;
 }
 
-void GenericEventQueue::timerFired(Timer&)
+Timer& GenericEventQueue::sharedTimer()
 {
-    ASSERT(!m_timer.isActive());
+    ASSERT(isMainThread());
+    static NeverDestroyed<Timer> timer(GenericEventQueue::sharedTimerFired);
+    return timer.get();
+}
+
+void GenericEventQueue::sharedTimerFired()
+{
+    ASSERT(!sharedTimer().isActive());
+    ASSERT(!pendingQueues().isEmpty());
+
+    while (!pendingQueues().isEmpty()) {
+        WeakPtr<GenericEventQueue> queue = pendingQueues().takeFirst();
+        if (!queue)
+            continue;
+        queue->dispatchOneEvent();
+    }
+
+    if (sharedTimer().isActive())
+        sharedTimer().stop();
+}
+
+Deque<WeakPtr<GenericEventQueue>>& GenericEventQueue::pendingQueues()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<Deque<WeakPtr<GenericEventQueue>>> queues;
+    return queues.get();
+}
+
+void GenericEventQueue::dispatchOneEvent()
+{
     ASSERT(!m_pendingEvents.isEmpty());
 
-    Vector<RefPtr<Event>> pendingEvents;
-    m_pendingEvents.swap(pendingEvents);
-
     Ref<EventTarget> protect(m_owner);
-    for (unsigned i = 0; i < pendingEvents.size(); ++i) {
-        EventTarget& target = pendingEvents[i]->target() ? *pendingEvents[i]->target() : m_owner;
-        target.dispatchEvent(pendingEvents[i].release());
-    }
+    RefPtr<Event> event = m_pendingEvents.takeFirst();
+    EventTarget& target = event->target() ? *event->target() : m_owner;
+    target.dispatchEvent(event.release());
 }
 
 void GenericEventQueue::close()
 {
     m_isClosed = true;
 
-    m_timer.stop();
+    m_weakPtrFactory.revokeAll();
     m_pendingEvents.clear();
 }
 
 void GenericEventQueue::cancelAllEvents()
 {
-    m_timer.stop();
+    m_weakPtrFactory.revokeAll();
     m_pendingEvents.clear();
 }
 
 bool GenericEventQueue::hasPendingEvents() const
 {
-    return m_pendingEvents.size();
+    return !m_pendingEvents.isEmpty();
 }
 
 }

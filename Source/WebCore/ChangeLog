@@ -1,3 +1,35 @@
+2014-11-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] media/track/audio-track.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=138394
+
+        Reviewed by Alexey Proskuryakov.
+
+        The above test fails if the HTMLMediaElement's "canplaythrough" event fires before the AudioTrackList's
+        "addtrack" event fires. This can happen because each object keeps its own GenericEventQueue, which
+        empties when that individual queue's timer fires. So events can be enqueued in the following order:
+        1, A, 2, B, 3, C; but fired in a different order: 1, 2, 3, A, B, C.
+
+        Make events enqueued in GenericEventQueues globally ordered, so that events are fired in the order
+        which they are enqueued, regardless of which object owns the queue. Use a static queue of
+        GenericEventQueues to manage which GenericEventQueue fires and in what order.
+
+        GenericEventQueues will use a WeakPtrFactory to cancel pending events. Revoking a GenericEventQueue's
+        weak pointers means those queue's entries will be skipped the next time the meta-queue is processed.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::GenericEventQueue): Create a WeakPtrFactory instead of a Timer.
+        (WebCore::GenericEventQueue::enqueueEvent): Enqueue this queue with the MetaQueue.
+        (WebCore::GenericEventQueue::sharedTimer): Lazily-initializing accessor.
+        (WebCore::GenericEventQueue::sharedTimerFired):  Ask each queue to dispatch one event.
+        (WebCore::GenericEventQueue::pendingQueues): Lazily-initializing accessor.
+        (WebCore::GenericEventQueue::dispatchOneEvent): Renamed from timerFired.
+        (WebCore::GenericEventQueue::close): Revoke all WeakPtrs.
+        (WebCore::GenericEventQueue::cancelAllEvents): Ditto.
+        (WebCore::GenericEventQueue::hasPendingEvents): Use !isEmpty().
+        (WebCore::GenericEventQueue::timerFired): Deleted.
+        * dom/GenericEventQueue.h:
+
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Expose user script messages to GObject DOM bindings
