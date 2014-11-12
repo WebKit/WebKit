@@ -920,7 +920,7 @@ webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
 webkit.org/b/122508 [ MountainLion ] compositing/video/video-reflection.html [ Pass Timeout ]
 [ MountainLion ] compositing/video/video-object-fit.html [ Pass Timeout ]
-webkit.org/b/138662 [ MountainLion ] compositing/video/video-border-radius-expected.html [ Skip ]
+webkit.org/b/138662 [ MountainLion ] compositing/video/video-border-radius.html [ Skip ]
 
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]

@@ -1,5 +1,11 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Fix a typo in the previous commit - a test should be skipped, not its expectation.
+
+        * platform/mac/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         compositing/video/video-border-radius.html frequently times out on Mountain Lion only
         https://bugs.webkit.org/show_bug.cgi?id=138662
 
