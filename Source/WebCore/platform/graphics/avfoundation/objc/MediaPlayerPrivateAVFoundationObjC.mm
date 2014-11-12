@@ -1396,6 +1396,16 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
     return MediaPlayerAVAssetStatusLoaded;
 }
 
+long MediaPlayerPrivateAVFoundationObjC::assetErrorCode() const
+{
+    if (!m_avAsset)
+        return 0;
+
+    NSError *error = nil;
+    [m_avAsset statusOfValueForKey:@"playable" error:&error];
+    return [error code];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
 {
     if (!metaDataAvailable() || context->paintingDisabled())

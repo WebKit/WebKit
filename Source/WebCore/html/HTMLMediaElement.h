@@ -592,6 +592,7 @@ private:
 #endif
 
     virtual bool mediaPlayerIsInMediaDocument() const override final;
+    virtual void mediaPlayerEngineFailedToLoad() const override final;
 
     void loadTimerFired(Timer&);
     void progressEventTimerFired(Timer&);

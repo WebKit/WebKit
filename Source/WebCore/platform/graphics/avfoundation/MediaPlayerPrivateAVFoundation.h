@@ -225,6 +225,7 @@ protected:
         MediaPlayerAVAssetStatusPlayable,
     };
     virtual AssetStatus assetStatus() const = 0;
+    virtual long assetErrorCode() const = 0;
 
     virtual void platformSetVisible(bool) = 0;
     virtual void platformPlay() = 0;
@@ -291,6 +292,7 @@ protected:
     MediaPlayer* player() { return m_player; }
 
     virtual String engineDescription() const { return "AVFoundation"; }
+    virtual long platformErrorCode() const { return assetErrorCode(); }
 
     virtual void trackModeChanged() override;
 #if ENABLE(AVF_CAPTIONS)

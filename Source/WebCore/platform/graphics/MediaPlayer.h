@@ -261,6 +261,7 @@ public:
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
 
     virtual bool mediaPlayerIsInMediaDocument() const { return false; }
+    virtual void mediaPlayerEngineFailedToLoad() const { }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -520,6 +521,7 @@ public:
     String userAgent() const;
 
     String engineDescription() const;
+    long platformErrorCode() const;
 
     CachedResourceLoader* cachedResourceLoader();
     PassRefPtr<PlatformMediaResourceLoader> createResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient>);

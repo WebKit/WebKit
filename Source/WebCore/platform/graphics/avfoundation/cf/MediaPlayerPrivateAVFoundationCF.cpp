@@ -1133,6 +1133,21 @@ std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(cons
 }
 #endif
 
+long MediaPlayerPrivateAVFoundationCF::assetErrorCode() const
+{
+    if (!avAsset(m_avfWrapper))
+        return 0;
+
+    CFErrorRef error = nullptr;
+    AVCFAssetGetStatusOfValueForProperty(avAsset(m_avfWrapper), AVCFAssetPropertyPlayable, &error);
+    if (!error)
+        return 0;
+
+    long code = CFErrorGetCode(error);
+    CFRelease(error);
+    return code;
+}
+
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
 {

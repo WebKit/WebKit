@@ -1014,10 +1014,9 @@ void MediaPlayer::networkStateChanged()
 {
     // If more than one media engine is installed and this one failed before finding metadata,
     // let the next engine try.
-    if (m_private->networkState() >= FormatError
-        && m_private->readyState() < HaveMetadata
-        && installedMediaEngines().size() > 1) {
-        if (m_contentMIMEType.isEmpty() || nextBestMediaEngine(m_currentMediaEngine)) {
+    if (m_private->networkState() >= FormatError && m_private->readyState() < HaveMetadata) {
+        m_client.mediaPlayerEngineFailedToLoad();
+        if (installedMediaEngines().size() > 1 && (m_contentMIMEType.isEmpty() || nextBestMediaEngine(m_currentMediaEngine))) {
             m_reloadTimer.startOneShot(0);
             return;
         }
@@ -1144,6 +1143,14 @@ String MediaPlayer::engineDescription() const
         return String();
 
     return m_private->engineDescription();
+}
+
+long MediaPlayer::platformErrorCode() const
+{
+    if (!m_private)
+        return 0;
+
+    return m_private->platformErrorCode();
 }
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)

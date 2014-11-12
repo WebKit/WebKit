@@ -67,6 +67,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieHasVideoAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieHasAudioAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieIsActiveAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieLoadStateErrorAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieNaturalSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieCurrentSizeAttribute, NSString *)
@@ -111,6 +112,7 @@ SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, 
 #define QTMovieHasAudioAttribute getQTMovieHasAudioAttribute()
 #define QTMovieIsActiveAttribute getQTMovieIsActiveAttribute()
 #define QTMovieLoadStateAttribute getQTMovieLoadStateAttribute()
+#define QTMovieLoadStateErrorAttribute getQTMovieLoadStateErrorAttribute()
 #define QTMovieLoadStateDidChangeNotification getQTMovieLoadStateDidChangeNotification()
 #define QTMovieNaturalSizeAttribute getQTMovieNaturalSizeAttribute()
 #define QTMovieCurrentSizeAttribute getQTMovieCurrentSizeAttribute()
@@ -1051,6 +1053,18 @@ void MediaPlayerPrivateQTKit::updateStates()
     }
 
     LOG(Media, "MediaPlayerPrivateQTKit::updateStates(%p) - exiting with networkState = %i, readyState = %i", this, static_cast<int>(m_networkState), static_cast<int>(m_readyState));
+}
+
+long MediaPlayerPrivateQTKit::platformErrorCode() const
+{
+    if (!m_qtMovie)
+        return 0;
+
+    NSError* error = (NSError*)[m_qtMovie attributeForKey:QTMovieLoadStateErrorAttribute];
+    if (!error || ![error isKindOfClass:[NSError class]])
+        return 0;
+
+    return [error code];
 }
 
 void MediaPlayerPrivateQTKit::loadStateChanged()

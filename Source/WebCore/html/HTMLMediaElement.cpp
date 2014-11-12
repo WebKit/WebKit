@@ -5762,6 +5762,20 @@ bool HTMLMediaElement::mediaPlayerIsInMediaDocument() const
     return document().isMediaDocument();
 }
 
+void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
+{
+    if (!m_player)
+        return;
+
+    Page* page = document().page();
+    if (!page || !page->settings().diagnosticLoggingEnabled())
+        return;
+
+    String engine = m_player->engineDescription();
+    String message = String::number(m_player->platformErrorCode());
+    page->chrome().client().logDiagnosticMessage(DiagnosticLoggingKeys::engineFailedToLoadKey(), engine, message);
+}
+
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForLoad);

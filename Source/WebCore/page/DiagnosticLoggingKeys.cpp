@@ -88,4 +88,10 @@ String DiagnosticLoggingKeys::pageLoadedKey()
     return WTF::ASCIILiteral("pageLoaded");
 }
 
+String DiagnosticLoggingKeys::engineFailedToLoadKey()
+{
+    return WTF::ASCIILiteral("engineFailedToLoad");
 }
+
+}
+

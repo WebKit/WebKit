@@ -63,6 +63,7 @@ public:
     virtual String accessLog() const { return emptyString(); }
     virtual String errorLog() const { return emptyString(); }
 #endif
+    virtual long platformErrorCode() const { return 0; }
 
     virtual void play() = 0;
     virtual void pause() = 0;    

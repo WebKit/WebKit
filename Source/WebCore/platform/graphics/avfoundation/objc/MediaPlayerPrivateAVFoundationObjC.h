@@ -174,6 +174,7 @@ private:
     virtual void createAVAssetForURL(const String& url);
     virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
     virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
+    virtual long assetErrorCode() const;
 
     virtual void checkPlayability();
     virtual void updateRate();

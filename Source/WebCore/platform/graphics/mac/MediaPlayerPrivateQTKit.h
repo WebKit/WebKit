@@ -173,6 +173,7 @@ private:
     NSMutableDictionary* commonMovieAttributes();
 
     virtual String engineDescription() const { return "QTKit"; }
+    virtual long platformErrorCode() const;
 
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;

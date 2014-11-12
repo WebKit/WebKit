@@ -1,3 +1,39 @@
+2014-11-11  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add diagnostic logging for per-media-engine load failures
+        https://bugs.webkit.org/show_bug.cgi?id=138647
+
+        Reviewed by Eric Carlson.
+
+        Add diagnostic logging fired whenever a media engine fails to load media,
+        even if another engine subsequentially succeeds. Add a mechanism for retrieving
+        the platform-specific error code from a given engine.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::engineFailedToLoadKey):
+        * page/DiagnosticLoggingKeys.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::MediaPlayer::platformErrorCode):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerEngineFailedToLoad):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::platformErrorCode):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::platformErrorCode):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::assetErrorCode):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetErrorCode):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::platformErrorCode):
+
 2014-11-11  Chris Dumez  <cdumez@apple.com>
 
         Mark more virtual functions in HTMLInputElement as final
