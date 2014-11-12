@@ -1,3 +1,10 @@
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Instead of blacklisting tests for OS X versions that use PPT for testing,
+        whitelist MountainLion that doesn't. That's more future compatible.
+
+        * platform/mac-wk2/TestExpectations:
+
 2014-11-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] media/track/audio-track.html is flakey
