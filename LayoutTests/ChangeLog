@@ -1,3 +1,11 @@
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Skip shared worker tests after r175776.
+
+        Shared workers are disabled with the Network Process.
+
+        * platform/gtk/TestExpectations:
+
 2014-09-01  Philippe Normand  <pnormand@igalia.com>
 
         [WK2] UserMediaClient support
