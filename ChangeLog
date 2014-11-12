@@ -1,3 +1,9 @@
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.3 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-10-29  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [GTK] Bump libsoup's minimum version to 2.42.0.

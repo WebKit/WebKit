@@ -1,4 +1,22 @@
 =================
+WebKitGTK+  2.6.3
+=================
+
+What's new in WebKitGTK+ 2.6.3?
+
+  - Fix a crash when loading flash plugins.
+  - Correctly report the memory used by the media player to the
+    garbage collector to make sure it's freed when the video element is
+    removed from the DOM.
+  - Fix a crash in TextureMapper when video resolution changes.
+  - Ensure that CSS-generated text content is exposed to assistive
+    technologies.
+  - Enable CSS_IMAGE_SET on production builds to fix some icons that
+    are not rendered in the web inspector.
+  - Fix the build on FreeBSD and GNU Hurd.
+  - Fix the build with video disabled.
+
+=================
 WebKitGTK+  2.6.2
 =================
 
