@@ -178,11 +178,13 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">jsc$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">jsc$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Production|x64'">jsc$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">jsc$(DebugSuffix)</TargetName>

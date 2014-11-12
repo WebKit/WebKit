@@ -178,11 +178,13 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">testapi$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">testapi$(DebugSuffix)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Production|x64'">testapi$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">testapi$(DebugSuffix)</TargetName>

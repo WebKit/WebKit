@@ -1,3 +1,15 @@
+2014-11-12  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Incorrect names for test executables in debug mode.
+        https://bugs.webkit.org/show_bug.cgi?id=138659
+
+        Reviewed by Alex Christensen.
+
+        In debug mode, jsc.exe, and testapi.exe are not created, causing JSC test failures.
+
+        * JavaScriptCore.vcxproj/jsc/jscLauncher.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapiLauncher.vcxproj:
+
 2014-11-11  Michael Saboff  <msaboff@apple.com>
 
         Change DFG to use scope operand for op_resolve_scope
