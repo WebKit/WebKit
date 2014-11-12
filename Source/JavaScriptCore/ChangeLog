@@ -1,3 +1,34 @@
+2014-11-11  Michael Saboff  <msaboff@apple.com>
+
+        Use scope register when processing op_resolve_scope in LLInt and Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=138637
+
+        Reviewed by Mark Lam.
+
+        Filled out op_resolve_scope processing to use the scope operand to access the current
+        scope chain.
+
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        Added scope virtual register parameter to emitResolveClosure().  Added new callOperation() to
+        support the additional argument.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitResolveClosure):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitResolveClosure):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emitSlow_op_resolve_scope):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        Added "scope" parameter to emitResolveClosure().  Passed scope register index to slow path.
+        Used scope virtual register instead of JSStack::ScopeChain.
+
 2014-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Don't require a debugger be attached for inspector auto attach

@@ -590,10 +590,10 @@ void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
     addSlowCase(branch8(Equal, AbsoluteAddress(m_codeBlock->globalObject()->varInjectionWatchpoint()->addressOfState()), TrustedImm32(IsInvalidated)));
 }
 
-void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned depth)
+void JIT::emitResolveClosure(int dst, int scope, bool needsVarInjectionChecks, unsigned depth)
 {
     emitVarInjectionCheck(needsVarInjectionChecks);
-    emitGetVirtualRegister(JSStack::ScopeChain, regT0);
+    emitGetVirtualRegister(scope, regT0);
     for (unsigned i = 0; i < depth; ++i)
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
     emitPutVirtualRegister(dst);
@@ -602,6 +602,7 @@ void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned dep
 void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
+    int scope = currentInstruction[2].u.operand;
     ResolveType resolveType = static_cast<ResolveType>(currentInstruction[4].u.operand);
     unsigned depth = currentInstruction[5].u.operand;
 
@@ -616,7 +617,7 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
         break;
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
-        emitResolveClosure(dst, needsVarInjectionChecks(resolveType), depth);
+        emitResolveClosure(dst, scope, needsVarInjectionChecks(resolveType), depth);
         break;
     case Dynamic:
         addSlowCase(jump());
@@ -635,8 +636,9 @@ void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<Slow
         return;
 
     linkSlowCase(iter);
+    int32_t scope = currentInstruction[2].u.operand;
     int32_t indentifierIndex = currentInstruction[3].u.operand;
-    callOperation(operationResolveScope, dst, indentifierIndex);
+    callOperation(operationResolveScope, dst, scope, indentifierIndex);
 }
 
 void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)

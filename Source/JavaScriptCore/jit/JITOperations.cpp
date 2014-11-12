@@ -1718,12 +1718,13 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState* exec, Enc
     return reinterpret_cast<char*>(result);
 }
 
-EncodedJSValue JIT_OPERATION operationResolveScope(ExecState* exec, int32_t identifierIndex)
+EncodedJSValue JIT_OPERATION operationResolveScope(ExecState* exec, int32_t scopeReg, int32_t identifierIndex)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     const Identifier& ident = exec->codeBlock()->identifier(identifierIndex);
-    return JSValue::encode(JSScope::resolve(exec, exec->scope(), ident));
+    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
+    return JSValue::encode(JSScope::resolve(exec, scope, ident));
 }
 
 EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction* bytecodePC)

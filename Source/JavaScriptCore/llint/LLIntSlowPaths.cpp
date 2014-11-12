@@ -1358,7 +1358,8 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
 {
     LLINT_BEGIN();
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
-    LLINT_RETURN(JSScope::resolve(exec, exec->scope(), ident));
+    JSScope* scope = LLINT_OP(2).Register::scope();
+    LLINT_RETURN(JSScope::resolve(exec, scope, ident));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
