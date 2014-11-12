@@ -54,12 +54,17 @@
         var totalCount = document.getElementsByTagName('video').length;
         var count = totalCount;
         document.addEventListener("canplaythrough", function () {
-            if (!--count) {
-                if (window.testRunner)
-                    setTimeout(function() {
-                        testRunner.notifyDone();
-                    }, totalCount * 150);
+            if (!--count && window.testRunner) {
+                setTimeout(function() {
+                    testRunner.notifyDone();
+                }, totalCount * 150);
             }
+        }, true);
+
+        document.addEventListener("error", function (event) {
+            console.log("Video " + event.target.getAttribute("name") + " failed to load, error " + event.target.error.code);
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, true);
 
         setSrcByTagName("video", findMediaFile("video", "../../media/content/counting"));
@@ -70,12 +75,12 @@
 <body onload="init();">
     
     <div class="wrapper">
-        <video></video>
+        <video name="1"></video>
         <div class="obscurer"></div>
     </div>
 
     <div class="wrapper non-uniform" style="top: 100px;">
-        <video></video>
+        <video name="2"></video>
         <div class="obscurer"></div>
     </div>
 </body>
