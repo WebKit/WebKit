@@ -1509,3 +1509,6 @@ webkit.org/b/138394 media/track/audio-track.html [ Pass Failure ]
 
 # Specific to Yosemite's font fallback
 webkit.org/b/138328 [ Mavericks MountainLion ] platform/mac/fast/text/font-cursive-italic-cjk.html [ Skip ]
+
+webkit.org/b/138075 [ Yosemite ] transforms/2d/hindi-rotated.html [ Pass Failure ]
+webkit.org/b/138075 [ Yosemite ] fast/text/international/hindi-spacing.html [ Pass Failure ]
