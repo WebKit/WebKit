@@ -726,17 +726,6 @@ webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnException
 # Unmarking WebKit1-only failures in Yosemite
 # ======================================================================
 
-# FIXME: Needs bugzilla (<rdar://problem/16715047>)
-[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html [ Pass ]
-[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ Pass ]
-[ Yosemite ] fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ Pass ]
-[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html [ Pass ]
-[ Yosemite ] fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ Pass ]
-[ Yosemite ] fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ Pass ]
-[ Yosemite ] fast/borders/hidpi-rounded-border-on-subpixel-position.html [ Pass ]
-[ Yosemite ] fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ Pass ]
-[ Yosemite ] svg/custom/hidpi-masking-clipping.svg [ Pass ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16731930>)
 [ Yosemite ] compositing/contents-scale/incremental-change.html [ Pass ]
 

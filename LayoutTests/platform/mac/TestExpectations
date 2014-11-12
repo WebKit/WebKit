@@ -1402,20 +1402,6 @@ webkit.org/b/123498 [ Yosemite ] media/track/track-in-band-cues-added-once.html 
 # FIXME: Needs bugzilla (<rdar://problem/15992006>)
 [ Yosemite ] fast/text/international/text-combine-image-test.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16715047>)
-[ Yosemite ] svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
-[ Yosemite ] css3/filters/hidpi-filter-is-on-subpixel-position.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
-[ Yosemite ] fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
-[ Yosemite ] svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16731930>)
 [ Yosemite ] compositing/contents-scale/incremental-change.html [ ImageOnlyFailure ]
 

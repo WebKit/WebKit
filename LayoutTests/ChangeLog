@@ -1,5 +1,12 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        A number of hidpi tests don't appear to fail on Yosemite now, let's try unmarking them.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         Instead of blacklisting tests for OS X versions that use PPT for testing,
         whitelist MountainLion that doesn't. That's more future compatible.
 
