@@ -1,3 +1,12 @@
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Make Mac media-source test expectations future compatible
+        https://bugs.webkit.org/show_bug.cgi?id=138674
+
+        Roll it out, it somehow broke Mountain Liona and Mavericks.
+
+        * platform/mac/TestExpectations:
+
 2014-11-12  Jer Noble  <jer.noble@apple.com>
 
         media/video-play-pause-exception.html is flakey.
