@@ -1,3 +1,15 @@
+2014-11-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Clean up OwnPtr in RenderThemeEfl
+        https://bugs.webkit.org/show_bug.cgi?id=138642
+
+        Reviewed by Zoltan Herczeg.
+
+        No new tests, no behavior change.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::applyEdjeRTLState): Clean up all remaining OwnPtr. 
+
 2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move Modules/websockets to std::unique_ptr
