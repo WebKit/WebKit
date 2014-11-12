@@ -58,8 +58,8 @@ public:
 
     virtual void reset() { }
 
-    virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
-    virtual void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
+    bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
+    void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
 
     bool wasChangedSinceLastFormControlChangeEvent() const { return m_wasChangedSinceLastFormControlChangeEvent; }
     void setChangedSinceLastFormControlChangeEvent(bool);

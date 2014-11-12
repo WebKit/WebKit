@@ -521,52 +521,53 @@ bool HTMLTextFormControlElement::lastChangeWasUserEdit() const
     return m_lastChangeWasUserEdit;
 }
 
-void HTMLTextFormControlElement::setInnerTextValue(const String& value)
-{
-    if (!isTextFormControl())
-        return;
-
-    bool textIsChanged = value != innerTextValue();
-    if (textIsChanged || !innerTextElement()->hasChildNodes()) {
-        if (textIsChanged && renderer()) {
-            if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
-        }
-        innerTextElement()->setInnerText(value, ASSERT_NO_EXCEPTION);
-
-        if (value.endsWith('\n') || value.endsWith('\r'))
-            innerTextElement()->appendChild(HTMLBRElement::create(document()), ASSERT_NO_EXCEPTION);
-    }
-
-    setFormControlValueMatchesRenderer(true);
-}
-
-static String finishText(StringBuilder& result)
+static void stripTrailingNewline(StringBuilder& result)
 {
     // Remove one trailing newline; there's always one that's collapsed out by rendering.
     size_t size = result.length();
     if (size && result[size - 1] == newlineCharacter)
-        result.resize(--size);
-    return result.toString();
+        result.resize(size - 1);
 }
 
-String HTMLTextFormControlElement::innerTextValue() const
+static String innerTextValueFrom(TextControlInnerTextElement& innerText)
 {
-    if (!isTextFormControl())
-        return emptyString();
-
-    TextControlInnerTextElement* innerText = innerTextElement();
-    if (!innerText)
-        return emptyString();
-
     StringBuilder result;
-    for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
+    for (Node* node = innerText.firstChild(); node; node = NodeTraversal::next(node, &innerText)) {
         if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
         else if (is<Text>(*node))
             result.append(downcast<Text>(*node).data());
     }
-    return finishText(result);
+    stripTrailingNewline(result);
+    return result.toString();
+}
+
+void HTMLTextFormControlElement::setInnerTextValue(const String& value)
+{
+    TextControlInnerTextElement* innerText = innerTextElement();
+    if (!innerText)
+        return;
+
+    ASSERT(isTextFormControl());
+    bool textIsChanged = value != innerTextValueFrom(*innerText);
+    if (textIsChanged || !innerText->hasChildNodes()) {
+        if (textIsChanged && renderer()) {
+            if (AXObjectCache* cache = document().existingAXObjectCache())
+                cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
+        }
+        innerText->setInnerText(value, ASSERT_NO_EXCEPTION);
+
+        if (value.endsWith('\n') || value.endsWith('\r'))
+            innerText->appendChild(HTMLBRElement::create(document()), ASSERT_NO_EXCEPTION);
+    }
+
+    setFormControlValueMatchesRenderer(true);
+}
+
+String HTMLTextFormControlElement::innerTextValue() const
+{
+    TextControlInnerTextElement* innerText = innerTextElement();
+    return innerText ? innerTextValueFrom(*innerText) : emptyString();
 }
 
 static Position positionForIndex(TextControlInnerTextElement* innerText, unsigned index)
@@ -704,7 +705,8 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
         while (breakNode == node)
             getNextSoftBreak(line, breakNode, breakOffset);
     }
-    return finishText(result);
+    stripTrailingNewline(result);
+    return result.toString();
 }
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)

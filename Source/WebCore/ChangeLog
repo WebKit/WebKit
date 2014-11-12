@@ -1,3 +1,39 @@
+2014-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Speed up HTMLTextFormControlElement::setInnerTextValue() a bit
+        https://bugs.webkit.org/show_bug.cgi?id=138619
+
+        Reviewed by Darin Adler.
+
+        Speed up HTMLTextFormControlElement::setInnerTextValue() a bit by:
+        - Not doing a virtual isTextFormControl() call. Relying on innerTextElement()
+          not returning null is sufficient.
+        - Caching the result of innerTextElement() instead of repeatedly calling that
+          virtual function.
+        - De-virtualizing setFormControlValueMatchesRenderer() /
+          formControlValueMatchesRenderer() as these are never overridden.
+        - Moving the code constructing the innerTextValue from a
+          TextControlInnerTextElement from innerTextValue() to a new
+          innerTextValueFrom(TextControlInnerTextElement&) function and call this new
+          function from setInnerTextValue() to avoid calling innerTextElement() again
+          and making sure it is non-null
+        - Do the tree traversal from innerTextElement's firstChild instead of from
+          innerTextElement. The innerTextElement is a TextControlInnerTextElement.
+          Therefore, it cannot be an HTMLBRElement or a Text node.
+
+        No new tests, no behavior change.
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::formControlValueMatchesRenderer):
+        (WebCore::HTMLFormControlElement::setFormControlValueMatchesRenderer):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::stripTrailingNewline):
+        (WebCore::innerTextValueFrom):
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        (WebCore::HTMLTextFormControlElement::innerTextValue):
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks):
+        (WebCore::finishText): Deleted.
+
 2014-11-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] media/track/audio-track.html is flakey
