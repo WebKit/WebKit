@@ -1,3 +1,14 @@
+2014-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        Need to show the text indicator when Data Detectors shows a popover
+        https://bugs.webkit.org/show_bug.cgi?id=138664
+        <rdar://problem/18869900>
+
+        Reviewed by Beth Dakin.
+
+        * platform/spi/mac/DataDetectorsSPI.h:
+        Add new DataDetectors SPI.
+
 2014-11-12  Chris Dumez  <cdumez@apple.com>
 
         Minor improvements to RenderListItem

@@ -44,6 +44,7 @@ enum class ActionMenuState {
 };
 }
 
+@class DDActionContext;
 @class WKView;
 
 #if WK_API_ENABLED
@@ -68,6 +69,8 @@ enum class ActionMenuState {
 #if WK_API_ENABLED
     RetainPtr<WKPagePreviewViewController> _previewViewController;
 #endif
+
+    RetainPtr<DDActionContext> _currentActionContext;
 }
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView;

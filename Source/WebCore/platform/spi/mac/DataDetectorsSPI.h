@@ -69,6 +69,8 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 @property (copy) void (^completionHandler)(void);
 @property (assign) BOOL forActionMenuContent;
 
+- (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
+
 @end
 
 @interface DDActionsManager : NSObject
@@ -77,5 +79,9 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 - (NSArray *)menuItemsForResult:(DDResultRef)result actionContext:(DDActionContext *)context;
 - (NSArray *)menuItemsForTargetURL:(NSString *)targetURL actionContext:(DDActionContext *)context;
 - (void)requestBubbleClosureUnanchorOnFailure:(BOOL)unanchorOnFailure;
+
++ (BOOL)shouldUseActionsWithContext:(DDActionContext *)context;
++ (void)didUseActions;
+
 
 @end
