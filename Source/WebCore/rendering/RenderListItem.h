@@ -53,8 +53,8 @@ public:
 
     void updateListMarkerNumbers();
 
-    static void updateItemValuesForOrderedList(const HTMLOListElement*);
-    static unsigned itemCountForOrderedList(const HTMLOListElement*);
+    static void updateItemValuesForOrderedList(const HTMLOListElement&);
+    static unsigned itemCountForOrderedList(const HTMLOListElement&);
 
     void didDestroyListMarker() { m_marker = nullptr; }
 

@@ -106,12 +106,12 @@ void HTMLOListElement::setStart(int start)
 
 void HTMLOListElement::updateItemValues()
 {
-    RenderListItem::updateItemValuesForOrderedList(this);
+    RenderListItem::updateItemValuesForOrderedList(*this);
 }
 
 void HTMLOListElement::recalculateItemCount()
 {
-    m_itemCount = RenderListItem::itemCountForOrderedList(this);
+    m_itemCount = RenderListItem::itemCountForOrderedList(*this);
     m_shouldRecalculateItemCount = false;
 }
 

@@ -1,5 +1,90 @@
 2014-11-12  Chris Dumez  <cdumez@apple.com>
 
+        Minor improvements to RenderListItem
+        https://bugs.webkit.org/show_bug.cgi?id=138601
+
+        Reviewed by Darin Adler.
+
+        Make several minor improvements to RenderListItem and clean up the
+        code a bit.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::isHTMLListElement):
+        - Rename isList to isHTMLListElement() for clarity as it checks
+          for HTMLOListElement and HTMLUListElement types
+        - Inline the function as it is short.
+        - Use is<HTML*Element>() for type checking
+        - Update the argument to take a Node& instead of an Element*. This
+          is because the argument is expected to the non-null. Also using
+          looser typing here allows us to use this utility function is one
+          more place, without impacting performance as
+          hasTagName(HTMLQualifiedName) is defined on Node.
+
+        (WebCore::enclosingList):
+        - Pass the argument as a reference instead of a pointer as it is
+          expected to be non-null.
+        - Initialize firstNode before the loop to avoid the if (!firstNode)
+          check for every iteration.
+
+        (WebCore::nextListItem):
+        - Take an Element as second argument instead of a RenderListItem*
+          and provide convenience overloads so that we don't need to do
+          null checks just because some calls sites call this function
+          with 2 arguments and others with 1 argument. This way, we avoid
+          unnecessary null checks as most call sites already do such
+          checks (or have references).
+        - Transform the while loop into a for loop for clarity.
+        - Don't traverse an Element's subtree if the Element does not have
+          a renderer as it is impossible of any of its descendant to have
+          a renderer (and we are looking for a specific type of renderer).
+
+        (WebCore::previousListItem):
+        - Pass the item argument as a reference instead of a pointer as it
+          is expected to be non-null.
+        - Reduce the scope of the |current| so that it is now declared
+          inside the loop.
+
+        (WebCore::RenderListItem::updateItemValuesForOrderedList):
+        (WebCore::RenderListItem::itemCountForOrderedList):
+        - Pass argument as a reference instead of a pointer as it was expected
+          to be non-null (There was an assertion in place to make sure of it).
+
+        (WebCore::RenderListItem::calcValue):
+        - Use is<HTMLOListElement>() instead of hasTagName().
+
+        (WebCore::getParentOfFirstLineBox):
+        - Rename variables to stop using abbreviations.
+        - Pass arguments as references instead of pointers as they are expected
+          to be non-null.
+        - Remove the firstChild null check before the loop as it does not
+          change behavior. The loop will abort early if firstChild is null
+          and we will end up returning nullptr as well.
+        - Use is<>() more for type checking.
+        - Reuse the isHTMLListElement() utility function instead of duplicating
+          its code inside this function.
+
+        (WebCore::firstNonMarkerChild):
+        - Pass argument as a reference as it is expected to be non-null.
+        - Rename variable from result to child for clarity, as we are traversing
+          the children.
+
+        (WebCore::RenderListItem::markerTextWithSuffix):
+        - Use String appending instead of StringBuilder as it simplifies the
+          code a lot and should not impact performance in this case.
+
+        (WebCore::RenderListItem::explicitValueChanged):
+        - Restructure the code a bit to do the |listNode| null check before the
+          loop, now that nextListItem() takes a reference in argument. This is
+          the only call site where we didn't already know that listNode is
+          non-null.
+
+        (WebCore::previousOrNextItem):
+        - Mark this function as inline as it is short and called repeatedly.
+
+2014-11-12  Chris Dumez  <cdumez@apple.com>
+
         Speed up HTMLTextFormControlElement::setInnerTextValue() a bit
         https://bugs.webkit.org/show_bug.cgi?id=138619
 
