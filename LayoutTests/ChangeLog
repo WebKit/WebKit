@@ -1,5 +1,14 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Make Mac media-source test expectations future compatible
+        https://bugs.webkit.org/show_bug.cgi?id=138674
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         Flaky Test: media/video-ended-event-slow-motion-playback.html
         https://bugs.webkit.org/show_bug.cgi?id=136755
 

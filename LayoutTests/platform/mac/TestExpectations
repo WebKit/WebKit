@@ -1140,10 +1140,6 @@ Bug(jernoble) [ MountainLion ] fast/events/constructors/media-key-event-construc
 # HTTP Auth in Media is not supported in Mavericks and Mountain Lion
 webkit.org/b/40382 [ Mavericks MountainLion ] http/tests/media/video-auth.html [ WontFix ]
 webkit.org/b/137368 [ Mavericks ] media/video-controls-no-scripting.html [ Pass Failure ]
-
-# Mavericks and prior do not support Media Source.
-[ MountainLion Mavericks ] media/media-source [ WontFix ]
-[ MountainLion Mavericks ] http/tests/media/media-source/ [ WontFix ]
 ## --- End media tests failing on Mavericks and earlier ---
 
 ## --- Start flaky media tests ---
@@ -1387,24 +1383,28 @@ platform/mac/fast/text/systemFont.html [ Pass Failure ]
 [ Yosemite ] media/media-source/media-source-tracks.html [ Skip ]
 
 # Passing Media Source tests
-[ Yosemite ] http/tests/media/media-source/ [ Skip ]
-[ Yosemite ] http/tests/media/media-source/mediasource-addsourcebuffer.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-append-buffer.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-closed.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-multiple-attach.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-play.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-remove.html [ Pass ]
-[ Yosemite ] http/tests/media/media-source/mediasource-sourcebufferlist.html [ Pass ]
+http/tests/media/media-source/ [ Skip ]
+http/tests/media/media-source/mediasource-addsourcebuffer.html [ Pass ]
+http/tests/media/media-source/mediasource-append-buffer.html [ Pass ]
+http/tests/media/media-source/mediasource-closed.html [ Pass ]
+http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
+http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass ]
+http/tests/media/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
+http/tests/media/media-source/mediasource-multiple-attach.html [ Pass ]
+http/tests/media/media-source/mediasource-play.html [ Pass ]
+http/tests/media/media-source/mediasource-remove.html [ Pass ]
+http/tests/media/media-source/mediasource-sourcebufferlist.html [ Pass ]
 
 # These two tests have "Error: InvalidStateError: DOM Exception 11" in output.
-[ Yosemite ] media/media-source/media-source-duplicate-seeked.html [ Failure ]
-[ Yosemite ] media/media-source/media-source-play.html [ Failure ]
+media/media-source/media-source-duplicate-seeked.html [ Failure ]
+media/media-source/media-source-play.html [ Failure ]
 
 # This test times out.
-[ Yosemite ] media/media-source/media-source-seek-complete.html [ Failure ]
+media/media-source/media-source-seek-complete.html [ Failure ]
+
+# Mavericks and prior do not support Media Source.
+[ MountainLion Mavericks ] media/media-source [ WontFix ]
+[ MountainLion Mavericks ] http/tests/media/media-source/ [ WontFix ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17748495>)
 # Some of these failures already have individual bugs, others are covered by this one.
