@@ -1,3 +1,16 @@
+2014-11-11  Michael Saboff  <msaboff@apple.com>
+
+        Change DFG to use scope operand for op_resolve_scope
+        https://bugs.webkit.org/show_bug.cgi?id=138651
+
+        Reviewed by Geoffrey Garen.
+
+        Changed to use the provided scope VirtualRegister.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getScope): Changed to use an argument scope register.
+        (JSC::DFG::ByteCodeParser::parseBlock): Created VirtualRegister from scope operand.
+
 2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove IncrementalSweeper::create()
