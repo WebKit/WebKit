@@ -31,63 +31,23 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [bold]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Bold 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [ font weight 100 font weight 200 font weight 300 font weight 400 font weight 500 ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [font weight 600]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Bold 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [ ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [font weight 700]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Bold 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [ ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [font weight 800]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Bold 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [ ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [font weight 900]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Bold 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [ ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 

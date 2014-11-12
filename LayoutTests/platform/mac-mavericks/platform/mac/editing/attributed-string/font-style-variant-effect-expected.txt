@@ -1,5 +1,9 @@
 Input:
-<span style="letter-spacing: 3pt">3pt</span>
+<i>italic</i>
+<span style="font-style: oblique">oblique</span>
+<span style="font-variant: small-caps">small-caps</span>
+<span style="font-effect: outline">outline</span>
+<span style="font-effect: emboss">emboss</span>
 
 Output:
 NSParagraphStyle:
@@ -21,10 +25,12 @@ Alignment 4
     HyphenationFactor: 0
     TighteningFactor: 0.05
     HeaderLevel: 0
-[3pt ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
+[italic]
+    NSFont: Times-Italic 16.00 pt.
+[ ]
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
+[oblique]
+    NSFont: Times-Italic 16.00 pt.
+[ small-caps outline emboss ]
+    NSFont: Times-Roman 16.00 pt.
 

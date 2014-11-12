@@ -1,5 +1,30 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        <rdar://problem/15864185> Syrah: platform/mac/editing/attributed-string tests are failing
+
+        Land Yosemite results, and remove the tests from TestExpectations.
+
+        * platform/mac-mavericks/platform/mac/editing/attributed-string: Added.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/anchor-element-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/anchor-element-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/basic-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/basic-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/font-size-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/font-size-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/font-weight-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/font-weight-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/letter-spacing-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/text-decorations-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/text-decorations-expected.txt.
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/vertical-align-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/vertical-align-expected.txt.
+        * platform/mac/editing/attributed-string/anchor-element-expected.txt:
+        * platform/mac/editing/attributed-string/basic-expected.txt:
+        * platform/mac/editing/attributed-string/font-size-expected.txt:
+        * platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac/editing/attributed-string/font-weight-expected.txt:
+        * platform/mac/editing/attributed-string/letter-spacing-expected.txt:
+        * platform/mac/editing/attributed-string/text-decorations-expected.txt:
+        * platform/mac/editing/attributed-string/vertical-align-expected.txt:
+        * platform/mac/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         Make Mac media-source test expectations future compatible
         https://bugs.webkit.org/show_bug.cgi?id=138674
 

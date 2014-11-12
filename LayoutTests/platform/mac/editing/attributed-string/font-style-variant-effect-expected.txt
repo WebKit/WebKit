@@ -26,11 +26,27 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [italic]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Italic 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [oblique]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Italic 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [ small-caps outline emboss ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 

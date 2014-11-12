@@ -1289,16 +1289,6 @@ webkit.org/b/137319 [ MountainLion ] fast/css/test-setting-canvas-color.html [ P
 [ Yosemite ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 [ Yosemite ] webaudio/oscillator-sawtooth.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/15864185>)
-[ Yosemite ] platform/mac/editing/attributed-string/anchor-element.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/basic.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/font-size.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/font-style-variant-effect.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/font-weight.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/letter-spacing.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/text-decorations.html [ Failure ]
-[ Yosemite ] platform/mac/editing/attributed-string/vertical-align.html [ Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/15971846>)
 [ Yosemite ] accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
 

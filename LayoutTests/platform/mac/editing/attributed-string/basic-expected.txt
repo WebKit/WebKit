@@ -23,39 +23,86 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [hello ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [world]
     NSBackgroundColor: #0000ff (NSDeviceRGBColorSpace)
     NSColor: #ffffff (NSDeviceRGBColorSpace)
     NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 1 1 1 1
+    NSStrokeWidth: 0
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [WebKit]
     NSColor: #0000ee (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
     NSLink: https://webkit.org/
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0.933333 1
+    NSStrokeWidth: 0
     NSUnderline: true
 [.\n]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [this is a ]
     NSBackgroundColor: #ffff00 (NSDeviceRGBColorSpace)
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [t]
     NSBackgroundColor: #ffff00 (NSDeviceRGBColorSpace)
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Italic 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
+    NSUnderline: true
 [est]
     NSBackgroundColor: #ffff00 (NSDeviceRGBColorSpace)
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
     NSUnderline: true
 [ of ]
     NSBackgroundColor: #ffff00 (NSDeviceRGBColorSpace)
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [attributed]
     NSBackgroundColor: #ffff00 (NSDeviceRGBColorSpace)
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Italic 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [ string.]
     NSBackgroundColor: #ffff00 (NSDeviceRGBColorSpace)
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 

@@ -24,29 +24,13 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [underline]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
     NSUnderline: true
 [ ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [strike]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
     NSStrikethrough: true
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 [ underline and strike ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
 

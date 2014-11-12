@@ -21,10 +21,9 @@ Alignment 4
     HyphenationFactor: 0
     TighteningFactor: 0.05
     HeaderLevel: 0
-[3pt ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
+[3pt]
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
+    NSKern: 4pt
+[ ]
+    NSFont: Times-Roman 16.00 pt.
 

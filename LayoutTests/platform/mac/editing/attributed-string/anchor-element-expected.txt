@@ -24,8 +24,15 @@ Alignment 4
 [webkit.org]
     NSColor: #0000ee (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
     NSLink: https://webkit.org/
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0.933333 1
+    NSStrokeWidth: 0
     NSUnderline: true
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 

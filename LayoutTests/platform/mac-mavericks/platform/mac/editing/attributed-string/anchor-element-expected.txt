@@ -1,5 +1,5 @@
 Input:
-<span style="letter-spacing: 3pt">3pt</span>
+<a href="https://webkit.org/">webkit.org</a>
 
 Output:
 NSParagraphStyle:
@@ -21,10 +21,11 @@ Alignment 4
     HyphenationFactor: 0
     TighteningFactor: 0.05
     HeaderLevel: 0
-[3pt ]
-    NSColor: #000000 (NSDeviceRGBColorSpace)
+[webkit.org]
+    NSColor: #0000ee (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
-    NSStrokeWidth: 0
+    NSLink: https://webkit.org/
+    NSUnderline: true
+[ ]
+    NSFont: Times-Roman 16.00 pt.
 
