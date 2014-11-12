@@ -91,7 +91,7 @@ namespace JSC {
             d31
         } FPRegisterID;
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     #define FOR_EACH_CPU_REGISTER(V) \
         FOR_EACH_CPU_GPREGISTER(V) \
         FOR_EACH_CPU_SPECIAL_REGISTER(V) \
@@ -136,7 +136,7 @@ namespace JSC {
         V(double, d13) \
         V(double, d14) \
         V(double, d15)
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
     } // namespace ARMRegisters
 
     class ARMAssembler {

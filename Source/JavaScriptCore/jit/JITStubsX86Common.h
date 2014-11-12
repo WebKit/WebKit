@@ -36,7 +36,7 @@ namespace JSC {
 
 #if COMPILER(GCC)
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 // The following are offsets for MacroAssembler::ProbeContext fields accessed
 // by the ctiMasmProbeTrampoline stub.
 
@@ -139,7 +139,7 @@ COMPILE_ASSERT(sizeof(MacroAssembler::ProbeContext) == PROBE_SIZE, ProbeContext_
 COMPILE_ASSERT(!(PROBE_OFFSETOF(cpu.xmm0) % 16), ProbeContext_xmm0_offset_not_aligned_properly);
 #undef PROBE_OFFSETOF
 
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 #endif // COMPILER(GCC)
 

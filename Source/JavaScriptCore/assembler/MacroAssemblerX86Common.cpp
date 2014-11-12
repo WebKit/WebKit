@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 
 void MacroAssemblerX86Common::ProbeContext::dumpCPURegisters(const char* indentation)
 {
@@ -76,7 +76,7 @@ void MacroAssemblerX86Common::ProbeContext::dump(const char* indentation)
     dataLogF("%s}\n", indentation);
 }
 
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 #if CPU(X86) && !OS(MAC_OS_X)
 MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;

@@ -35,7 +35,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 #include <xmmintrin.h>
 #endif
 
@@ -88,7 +88,7 @@ namespace X86Registers {
 #endif
     } XMMRegisterID;
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     #define FOR_EACH_CPU_REGISTER(V) \
         FOR_EACH_CPU_GPREGISTER(V) \
         FOR_EACH_CPU_SPECIAL_REGISTER(V) \
@@ -132,7 +132,7 @@ namespace X86Registers {
         V(void*, r14) \
         V(void*, r15)
 #endif // CPU(X86_64)
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 }
 
 class X86Assembler {

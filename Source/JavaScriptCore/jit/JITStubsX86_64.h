@@ -45,7 +45,7 @@ namespace JSC {
 
 #if COMPILER(GCC)
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 asm (
 ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
 HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
@@ -209,7 +209,7 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
     "popq %rbp" "\n"
     "ret" "\n"
 );
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 #endif // COMPILER(GCC)
 

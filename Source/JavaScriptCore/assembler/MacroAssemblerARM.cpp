@@ -31,7 +31,7 @@
 
 #include "MacroAssemblerARM.h"
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 #include <wtf/StdLibExtras.h>
 #endif
 
@@ -99,7 +99,7 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
 }
 #endif // CPU(ARMV5_OR_LOWER)
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 
 void MacroAssemblerARM::ProbeContext::dumpCPURegisters(const char* indentation)
 {
@@ -160,7 +160,7 @@ void MacroAssemblerARM::probe(MacroAssemblerARM::ProbeFunction function, void* a
     m_assembler.blx(RegisterID::S0);
 
 }
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

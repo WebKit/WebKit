@@ -46,7 +46,7 @@ extern "C" {
 }
 #endif
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 extern "C" void ctiMasmProbeTrampoline();
 #endif
 

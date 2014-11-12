@@ -1,3 +1,16 @@
+2014-11-12  Mark Lam  <mark.lam@apple.com>
+
+        Rename USE(MASM_PROBE) to ENABLE(MASM_PROBE).
+        <https://webkit.org/b/138661>
+
+        Reviewed by Michael Saboff.
+
+        Also move the switch for enabling the use of MASM_PROBE from JavaScriptCore's
+        config.h to WTF's Platform.h.  This ensures that the setting is consistently
+        applied even when building WebCore parts as well.
+
+        * wtf/Platform.h:
+
 2014-11-09  Antti Koivisto  <antti@apple.com>
 
         Remove BloomFilter size limit

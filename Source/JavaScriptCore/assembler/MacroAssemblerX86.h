@@ -30,7 +30,7 @@
 
 #include "MacroAssemblerX86Common.h"
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 #include <wtf/StdLibExtras.h>
 #endif
 
@@ -349,10 +349,10 @@ public:
         X86Assembler::revertJumpTo_cmpl_im_force32(instructionStart.executableAddress(), initialValue, 0, address.base);
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     // For details about probe(), see comment in MacroAssemblerX86_64.h.
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 private:
     friend class LinkBuffer;
@@ -373,7 +373,7 @@ private:
         X86Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     inline TrustedImm32 trustedImm32FromPtr(void* ptr)
     {
         return TrustedImm32(TrustedImmPtr(ptr));
@@ -391,7 +391,7 @@ private:
 #endif
 };
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 
 extern "C" void ctiMasmProbeTrampoline();
 
@@ -410,7 +410,7 @@ inline void MacroAssemblerX86::probe(MacroAssemblerX86::ProbeFunction function, 
     move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::eax);
     call(RegisterID::eax);
 }
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

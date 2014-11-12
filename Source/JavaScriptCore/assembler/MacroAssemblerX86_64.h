@@ -30,7 +30,7 @@
 
 #include "MacroAssemblerX86Common.h"
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 #include <wtf/StdLibExtras.h>
 #endif
 
@@ -840,7 +840,7 @@ public:
         X86Assembler::revertJumpTo_movq_i64r(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), scratchRegister);
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     // This function emits code to preserve the CPUState (e.g. registers),
     // call a user supplied probe function, and restore the CPUState before
     // continuing with other JIT generated code.
@@ -858,7 +858,7 @@ public:
     // of the call to the user probe function.
 
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 private:
     friend class LinkBuffer;
@@ -882,7 +882,7 @@ private:
         X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     inline TrustedImm64 trustedImm64FromPtr(void* ptr)
     {
         return TrustedImm64(TrustedImmPtr(ptr));
@@ -900,7 +900,7 @@ private:
 #endif
 };
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 
 extern "C" void ctiMasmProbeTrampoline();
 
@@ -942,7 +942,7 @@ inline void MacroAssemblerX86_64::probe(MacroAssemblerX86_64::ProbeFunction func
     move(trustedImm64FromPtr(ctiMasmProbeTrampoline), RegisterID::eax);
     call(RegisterID::eax);
 }
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

@@ -1,3 +1,33 @@
+2014-11-12  Mark Lam  <mark.lam@apple.com>
+
+        Rename USE(MASM_PROBE) to ENABLE(MASM_PROBE).
+        <https://webkit.org/b/138661>
+
+        Reviewed by Michael Saboff.
+
+        Also move the switch for enabling the use of MASM_PROBE from JavaScriptCore's
+        config.h to WTF's Platform.h.  This ensures that the setting is consistently
+        applied even when building WebCore parts as well.
+
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/MacroAssemblerARM.cpp:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/X86Assembler.h:
+        * config.h:
+        * jit/JITStubs.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86Common.h:
+        * jit/JITStubsX86_64.h:
+
 2014-11-12  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Incorrect names for test executables in debug mode.

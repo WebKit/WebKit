@@ -1901,7 +1901,7 @@ public:
         UNREACHABLE_FOR_PLATFORM();
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     struct CPUState {
         #define DECLARE_REGISTER(_type, _regName) \
             _type _regName;
@@ -1925,7 +1925,7 @@ public:
 
     // For details about probe(), see comment in MacroAssemblerX86_64.h.
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 protected:
     ALWAYS_INLINE Jump jump()
@@ -2037,7 +2037,7 @@ private:
         ARMv7Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     inline TrustedImm32 trustedImm32FromPtr(void* ptr)
     {
         return TrustedImm32(TrustedImmPtr(ptr));

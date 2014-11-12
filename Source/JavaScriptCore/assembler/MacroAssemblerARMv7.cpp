@@ -28,13 +28,13 @@
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 #include "MacroAssemblerARMv7.h"
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 #include <wtf/StdLibExtras.h>
 #endif
 
 namespace JSC {
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 
 void MacroAssemblerARMv7::ProbeContext::dumpCPURegisters(const char* indentation)
 {
@@ -96,7 +96,7 @@ void MacroAssemblerARMv7::probe(MacroAssemblerARMv7::ProbeFunction function, voi
     move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::ip);
     m_assembler.blx(RegisterID::ip);
 }
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

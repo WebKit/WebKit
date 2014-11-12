@@ -43,7 +43,7 @@ namespace JSC {
 
 #if COMPILER(GCC)
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 // The following are offsets for MacroAssembler::ProbeContext fields accessed
 // by the ctiMasmProbeTrampoline stub.
 
@@ -143,10 +143,10 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.d15) == PROBE_CPU_D15_OFFSET, ProbeContext_cpu
 COMPILE_ASSERT(sizeof(MacroAssembler::ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 #undef PROBE_OFFSETOF
 
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
 asm (
 ".text" "\n"
 ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
@@ -291,7 +291,7 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 
     "pop       { pc }" "\n"
 );
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 
 

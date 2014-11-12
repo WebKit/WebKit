@@ -839,6 +839,12 @@
 #endif
 #endif
 
+#if ENABLE(JIT)
+/* Enable the following if you want to use the MacroAssembler::probe() facility
+   to do JIT debugging. */
+#define ENABLE_MASM_PROBE 0
+#endif
+
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
    On non-Windows x86-64, iOS, and ARM64 we use a single fixed mmap, on other platforms we mmap on demand. */
 #if ENABLE(ASSEMBLER)

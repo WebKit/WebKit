@@ -1469,7 +1469,7 @@ public:
         return X86Assembler::maxJumpReplacementSize();
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     struct CPUState {
         #define DECLARE_REGISTER(_type, _regName) \
             _type _regName;
@@ -1490,7 +1490,7 @@ public:
     private:
         void dumpCPURegisters(const char* indentation);
     };
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 
 protected:
     X86Assembler::Condition x86Condition(RelationalCondition cond)

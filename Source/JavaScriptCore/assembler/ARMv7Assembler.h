@@ -174,7 +174,7 @@ namespace ARMRegisters {
         return (FPDoubleRegisterID)(reg >> 1);
     }
 
-#if USE(MASM_PROBE)
+#if ENABLE(MASM_PROBE)
     #define FOR_EACH_CPU_REGISTER(V) \
         FOR_EACH_CPU_GPREGISTER(V) \
         FOR_EACH_CPU_SPECIAL_REGISTER(V) \
@@ -243,7 +243,7 @@ namespace ARMRegisters {
     #define FOR_EACH_CPU_FPREGISTER_EXTENSION(V) // Nothing to add.
 #endif // CPU(APPLE_ARMV7S)
 
-#endif // USE(MASM_PROBE)
+#endif // ENABLE(MASM_PROBE)
 }
 
 class ARMv7Assembler;
