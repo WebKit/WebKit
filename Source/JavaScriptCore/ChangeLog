@@ -1,3 +1,13 @@
+2014-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Don't require a debugger be attached for inspector auto attach
+        https://bugs.webkit.org/show_bug.cgi?id=138638
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::updateDebuggableAutomaticInspectCandidate):
+
 2014-11-11  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Handle cases in StackVisitor::Frame::existingArguments() when lexicalEnvironment and/or unmodifiedArgumentsRegister is not set up yet

@@ -189,8 +189,8 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
         auto result = m_debuggableMap.set(identifier, std::make_pair(debuggable, debuggable->info()));
         ASSERT_UNUSED(result, !result.isNewEntry);
 
-        // Don't allow automatic inspection unless there is a debugger or we are stopped.
-        if (!WTFIsDebuggerAttached() || !m_automaticInspectionEnabled || !m_enabled) {
+        // Don't allow automatic inspection unless it is allowed or we are stopped.
+        if (!m_automaticInspectionEnabled || !m_enabled) {
             pushListingSoon();
             return;
         }
