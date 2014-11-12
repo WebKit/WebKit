@@ -1,3 +1,15 @@
+2014-11-11  David Kilzer  <ddkilzer@apple.com>
+
+        webkit-patch --suggest-reviewers is broken with newer versions of git
+        <http://webkit.org/b/138627>
+
+        Reviewed by Michael Saboff with feedback from Daniel Bates.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._changes_files_for_commit): Strip blank lines instead of
+        assuming there is always a blank line at the beginning of the
+        list.
+
 2014-11-11  Alexey Proskuryakov  <ap@apple.com>
 
         DRT and WKTR touch disk cache

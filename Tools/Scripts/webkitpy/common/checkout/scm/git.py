@@ -223,10 +223,10 @@ class Git(SCM, SVNRepository):
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ADM"))
 
     def _changes_files_for_commit(self, git_commit):
-        # --pretty="format:" makes git show not print the commit log header,
-        changed_files = self._run_git(["show", "--pretty=format:", "--name-only", git_commit]).splitlines()
-        # instead it just prints a blank line at the top, so we skip the blank line:
-        return changed_files[1:]
+        # --pretty="format:" makes git show not print the commit log header.
+        changed_files = self._run_git(["show", "--pretty=format:", "--name-only", git_commit])
+        # Strip blank lines which could appear at the top on older versions of git.
+        return changed_files.lstrip().splitlines()
 
     def changed_files_for_revision(self, revision):
         commit_id = self.git_commit_from_svn_revision(revision)
