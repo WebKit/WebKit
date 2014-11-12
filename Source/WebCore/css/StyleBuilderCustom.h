@@ -354,6 +354,110 @@ inline void applyValueTextIndent(StyleResolver& styleResolver, CSSValue& value)
 #endif
 }
 
+enum BorderImageType { BorderImage, WebkitMaskBoxImage };
+enum BorderImageModifierType { Outset, Repeat, Slice, Width };
+template <BorderImageType type, BorderImageModifierType modifier>
+class ApplyPropertyBorderImageModifier {
+public:
+    static void applyInheritValue(StyleResolver& styleResolver)
+    {
+        NinePieceImage image(getValue(styleResolver.style()));
+        switch (modifier) {
+        case Outset:
+            image.copyOutsetFrom(getValue(styleResolver.parentStyle()));
+            break;
+        case Repeat:
+            image.copyRepeatFrom(getValue(styleResolver.parentStyle()));
+            break;
+        case Slice:
+            image.copyImageSlicesFrom(getValue(styleResolver.parentStyle()));
+            break;
+        case Width:
+            image.copyBorderSlicesFrom(getValue(styleResolver.parentStyle()));
+            break;
+        }
+        setValue(styleResolver.style(), image);
+    }
+
+    static void applyInitialValue(StyleResolver& styleResolver)
+    {
+        NinePieceImage image(getValue(styleResolver.style()));
+        switch (modifier) {
+        case Outset:
+            image.setOutset(LengthBox(0));
+            break;
+        case Repeat:
+            image.setHorizontalRule(StretchImageRule);
+            image.setVerticalRule(StretchImageRule);
+            break;
+        case Slice:
+            // Masks have a different initial value for slices. Preserve the value of 0 for backwards compatibility.
+            image.setImageSlices(type == BorderImage ? LengthBox(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent)) : LengthBox());
+            image.setFill(false);
+            break;
+        case Width:
+            // Masks have a different initial value for widths. They use an 'auto' value rather than trying to fit to the border.
+            image.setBorderSlices(type == BorderImage ? LengthBox(Length(1, Relative), Length(1, Relative), Length(1, Relative), Length(1, Relative)) : LengthBox());
+            break;
+        }
+        setValue(styleResolver.style(), image);
+    }
+
+    static void applyValue(StyleResolver& styleResolver, CSSValue& value)
+    {
+        NinePieceImage image(getValue(styleResolver.style()));
+        switch (modifier) {
+        case Outset:
+            image.setOutset(styleResolver.styleMap()->mapNinePieceImageQuad(value));
+            break;
+        case Repeat:
+            styleResolver.styleMap()->mapNinePieceImageRepeat(value, image);
+            break;
+        case Slice:
+            styleResolver.styleMap()->mapNinePieceImageSlice(value, image);
+            break;
+        case Width:
+            image.setBorderSlices(styleResolver.styleMap()->mapNinePieceImageQuad(value));
+            break;
+        }
+        setValue(styleResolver.style(), image);
+    }
+
+private:
+    static inline const NinePieceImage& getValue(RenderStyle* style)
+    {
+        return type == BorderImage ? style->borderImage() : style->maskBoxImage();
+    }
+
+    static inline void setValue(RenderStyle* style, const NinePieceImage& value)
+    {
+        return type == BorderImage ? style->setBorderImage(value) : style->setMaskBoxImage(value);
+    }
+};
+
+#define DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(type, modifier) \
+inline void applyInherit##type##modifier(StyleResolver& styleResolver) \
+{ \
+    ApplyPropertyBorderImageModifier<type, modifier>::applyInheritValue(styleResolver); \
+} \
+inline void applyInitial##type##modifier(StyleResolver& styleResolver) \
+{ \
+    ApplyPropertyBorderImageModifier<type, modifier>::applyInitialValue(styleResolver); \
+} \
+inline void applyValue##type##modifier(StyleResolver& styleResolver, CSSValue& value) \
+{ \
+    ApplyPropertyBorderImageModifier<type, modifier>::applyValue(styleResolver, value); \
+}
+
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Outset)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Repeat)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Slice)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Width)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Outset)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width)
+
 } // namespace StyleBuilderFunctions
 
 } // namespace WebCore

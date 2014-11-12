@@ -1,3 +1,31 @@
+2014-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Move 'border-image-*' / '-webkit-mask-box-image-*' CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138594
+
+        Reviewed by Antti Koivisto.
+
+        Move 'border-image-*' / '-webkit-mask-box-image-*' CSS properties from
+        DeprecatedStyleBuilder to the new StyleBuilder using custom code.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyBorderImageModifier::getValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::setValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::applyValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::ApplyPropertyBorderImageModifier::applyInheritValue):
+        (WebCore::StyleBuilderFunctions::ApplyPropertyBorderImageModifier::applyInitialValue):
+        (WebCore::StyleBuilderFunctions::ApplyPropertyBorderImageModifier::applyValue):
+        (WebCore::StyleBuilderFunctions::ApplyPropertyBorderImageModifier::getValue):
+        (WebCore::StyleBuilderFunctions::ApplyPropertyBorderImageModifier::setValue):
+
 2014-11-11  David Kilzer  <ddkilzer@apple.com>
 
         Modernize $buildingForIPhone in CodeGeneratorObjC.pm
