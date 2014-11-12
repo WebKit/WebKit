@@ -19,6 +19,10 @@ webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
+webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
+
+webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
@@ -67,8 +71,9 @@ scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar
 scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html
 
-# Fails on WK1 only
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
+
+compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
 ### END OF (2) Failures without bug reports
 ########################################

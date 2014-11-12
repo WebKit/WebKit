@@ -1,5 +1,12 @@
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Some platform/mac text expectation cleanup.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-11-12  Alexey Proskuryakov  <ap@apple.com>
+
         Mac-WK2 test expectations cleanup, part 1.
 
         Put WK1 specific expectations into mac-wk1 (they used to be put in mac, and then

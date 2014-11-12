@@ -60,9 +60,6 @@ fast/events/mouseover-button.html
 
 webkit.org/b/33923 platform/mac/accessibility/change-notification-on-scroll.html [ Skip ] # times out
 
-# Accept header is handled by the browser
-http/tests/misc/image-checks-for-accept.html
-
 # eventSender needs to propagate the event to the calling window, not the main frame always.
 http/tests/plugins/plugin-document-has-focus.html
 
@@ -175,8 +172,6 @@ webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 # Still working out flakiness issues with the perf tests.
 perf
 
-# This test appears to be flakey on all platforms, especially
-# Mac-Leopard after r63862.  Skipping for now.
 webkit.org/b/42821 animations/play-state.html [ Pass Failure ]
 webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
@@ -257,8 +252,7 @@ fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
 # HTTP 204 (No Content) should be ignored
-# https://bugs.webkit.org/show_bug.cgi?id=60206
-http/tests/navigation/response204.html
+webkit.org/b/60206 http/tests/navigation/response204.html
 
 # Styled scope element is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped
@@ -375,12 +369,6 @@ webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
 
-webkit.org/b/112617 [ Debug ] http/tests/navigation/navigation-redirect-schedule-crash.html [ Crash Pass ]
-
-webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Pass Failure ]
-
-webkit.org/b/82982 fast/dom/jsDevicePixelRatio.html [ Pass Failure ]
-
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 http/tests/security/video-cross-origin-accessfailure.html
@@ -389,33 +377,25 @@ http/tests/security/video-cross-origin-accessfailure.html
 fast/forms/file/file-input-capture.html
 
 webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
+webkit.org/b/85523 [ Yosemite ] fullscreen/full-screen-iframe-legacy.html [ Pass Failure Timeout ]
 
-webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html
+webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 
-webkit.org/b/87347 fast/frames/flattening/iframe-tiny.html [ Pass Failure ]
-
-webkit.org/b/89680 fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
-
 # Implement textInputController.setComposition()
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Pass Failure ]
-
-webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure ]
-
-compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
 # <rdar://problem/11224160> Focus not transferring properly in DumpRenderTree in Mountain Lion
 fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure ]
 
-platform/mac/accessibility/form-control-value-settable.html [ Pass Failure ]
-platform/mac/fast/forms/input-appearance-spinbutton-up.html [ Pass Failure ]
-platform/mac/fast/forms/input-appearance-spinbutton.html [ Pass Failure ]
-platform/mac/fast/text/systemFont.html [ Pass Failure ]
+[ Mavericks ] platform/mac/accessibility/form-control-value-settable.html [ Failure ]
+platform/mac/fast/forms/input-appearance-spinbutton-up.html [ Failure ]
+platform/mac/fast/forms/input-appearance-spinbutton.html [ Failure ]
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
 
 fast/css/resize-corner-tracking.html [ Pass Failure ]
@@ -440,7 +420,8 @@ fast/writing-mode/japanese-rl-selection.html [ Failure ]
 fast/writing-mode/japanese-rl-text.html [ Failure ]
 
 # <rdar://problem/11358748> http/tests/multipart/multipart-wait-before-boundary.html fails on ML as of r115745
-http/tests/multipart/multipart-wait-before-boundary.html
+# FIXME: This may not be a problem any more, should check bots once they gather some data for the test.
+http/tests/multipart/multipart-wait-before-boundary.html [ Failure ]
 
 # <rdar://problem/11059031> Many, many Java tests fail on Mountain Lion
 java/
@@ -462,11 +443,6 @@ svg/custom/zero-path-square-cap-rendering.svg [ Failure ]
 svg/stroke/zero-length-arc-linecaps-rendering.svg [ Failure ]
 svg/stroke/zero-length-path-linecap-rendering.svg [ Failure ]
 svg/stroke/zero-length-subpaths-linecap-rendering.svg [ Failure ]
-
-# Blend mode result is slightly different than the applied formula.
-webkit.org/b/130582 css3/blending/background-blend-mode-data-uri-svg-image.html [ ImageOnlyFailure Pass ]
-webkit.org/b/130582 css3/blending/background-blend-mode-tiled-layers.html [ ImageOnlyFailure Pass ]
-webkit.org/b/130582 css3/blending/background-blend-mode-crossfade-image.html [ ImageOnlyFailure Pass ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=110871
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
@@ -1404,7 +1380,9 @@ webkit.org/b/123498 [ Yosemite ] media/track/track-in-band-cues-added-once.html 
 [ Yosemite ] http/tests/misc/webtiming-ssl.php [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17458211>)
-[ Yosemite ] platform/mac/fast/text/systemFont.html [ Pass Failure ]
+platform/mac/fast/text/systemFont.html [ Pass Failure ]
+[ Mavericks ] platform/mac/fast/text/systemFont.html [ Failure ]
+[ MountainLion ] platform/mac/fast/text/systemFont.html [ Pass ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17476688>)
 [ Yosemite ] media/media-source/media-source-tracks.html [ Skip ]
