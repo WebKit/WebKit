@@ -24,15 +24,19 @@
  */
 
 #import "WebUIDelegatePrivate.h"
+
+#import <AppKit/NSSharingService.h>
 #import <WebCore/HitTestResult.h>
+#import <wtf/RetainPtr.h>
 
 @class WebView;
 
-@interface WebActionMenuController : NSObject {
+@interface WebActionMenuController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
 @private
     WebView *_webView;
     WebActionMenuType _type;
     WebCore::HitTestResult _hitTestResult;
+    RetainPtr<NSSharingServicePicker> _sharingServicePicker;
 }
 
 - (id)initWithWebView:(WebView *)webView;
