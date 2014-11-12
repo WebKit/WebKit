@@ -1,5 +1,23 @@
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Expose user script messages to GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=138411
+
+        Reviewed by Philippe Normand.
+
+        Add a test case to check that user script messages sent using the
+        DOM bindings API are also received in the UI process.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        (UserScriptMessageTest::waitUntilMessageReceived):
+        (UserScriptMessageTest::postMessageAndWaitUntilReceived):
+        (testUserContentManagerScriptMessageFromDOMBindings):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ clean build after r175930.
 
         Partial rollout of r175930 to not build the new unit test that

@@ -248,7 +248,7 @@ public:
         test->m_userScriptMessage = webkit_javascript_result_ref(jsResult);
     }
 
-    WebKitJavascriptResult* postMessageAndWaitUntilReceived(const char* handlerName, const char* javascriptValueAsText)
+    WebKitJavascriptResult* waitUntilMessageReceived(const char* handlerName)
     {
         if (m_userScriptMessage) {
             webkit_javascript_result_unref(m_userScriptMessage);
@@ -258,12 +258,16 @@ public:
         GUniquePtr<char> signalName(g_strdup_printf("script-message-received::%s", handlerName));
         g_signal_connect(m_userContentManager.get(), signalName.get(), G_CALLBACK(scriptMessageReceived), this);
 
-        GUniquePtr<char> javascriptSnippet(g_strdup_printf("window.webkit.messageHandlers.%s.postMessage(%s);", handlerName, javascriptValueAsText));
-        webkit_web_view_run_javascript(m_webView, javascriptSnippet.get(), nullptr, nullptr, nullptr);
         g_main_loop_run(m_mainLoop);
-
         g_assert(m_userScriptMessage);
         return m_userScriptMessage;
+    }
+
+    WebKitJavascriptResult* postMessageAndWaitUntilReceived(const char* handlerName, const char* javascriptValueAsText)
+    {
+        GUniquePtr<char> javascriptSnippet(g_strdup_printf("window.webkit.messageHandlers.%s.postMessage(%s);", handlerName, javascriptValueAsText));
+        webkit_web_view_run_javascript(m_webView, javascriptSnippet.get(), nullptr, nullptr, nullptr);
+        return waitUntilMessageReceived(handlerName);
     }
 
 private:
@@ -341,6 +345,19 @@ static void testUserContentManagerScriptMessageReceived(UserScriptMessageTest* t
     test->unregisterHandler("anotherHandler");
 }
 
+static void testUserContentManagerScriptMessageFromDOMBindings(UserScriptMessageTest* test, gconstpointer)
+{
+    g_assert(test->registerHandler("dom"));
+
+    test->loadHtml("<html></html>", nullptr);
+    WebKitJavascriptResult* javascriptResult = test->waitUntilMessageReceived("dom");
+    g_assert(javascriptResult);
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "DocumentLoaded");
+
+    test->unregisterHandler("dom");
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     soup_message_set_status(message, SOUP_STATUS_OK);
@@ -350,6 +367,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
+    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
@@ -357,6 +375,7 @@ void beforeAll()
     UserContentManagerTest::add("WebKitUserContentManager", "injected-style-sheet", testUserContentManagerInjectedStyleSheet);
     UserContentManagerTest::add("WebKitUserContentManager", "injected-script", testUserContentManagerInjectedScript);
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-received", testUserContentManagerScriptMessageReceived);
+    UserScriptMessageTest::add("WebKitUserContentManager", "script-message-from-dom-bindings", testUserContentManagerScriptMessageFromDOMBindings);
 }
 
 void afterAll()

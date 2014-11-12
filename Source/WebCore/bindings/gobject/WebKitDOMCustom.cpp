@@ -20,18 +20,15 @@
 #include "WebKitDOMCustom.h"
 
 #include "JSMainThreadExecState.h"
+#include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMHTMLInputElement.h"
 #include "WebKitDOMHTMLInputElementPrivate.h"
-#include "WebKitDOMHTMLMediaElementPrivate.h"
 #include "WebKitDOMHTMLTextAreaElement.h"
 #include "WebKitDOMHTMLTextAreaElementPrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "gobject/ConvertToUTF8String.h"
-
-#if ENABLE(VIDEO)
-#include "TextTrack.h"
-#include "WebKitDOMTextTrackPrivate.h"
-#endif
+#include "WebKitDOMUserMessageHandlerPrivate.h"
+#include "WebKitDOMUserMessageHandlersNamespacePrivate.h"
+#include "WebKitDOMWebKitNamespacePrivate.h"
 
 using namespace WebKit;
 
@@ -49,4 +46,21 @@ gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* inpu
     return core(input)->lastChangeWasUserEdit();
 }
 
+WebKitDOMWebKitNamespace* webkit_dom_dom_window_get_webkit_namespace(WebKitDOMDOMWindow* window)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(window), nullptr);
+
+    WebCore::DOMWindow* domWindow = core(window);
+    if (!domWindow->shouldHaveWebKitNamespaceForWorld(WebCore::mainThreadNormalWorld()))
+        return nullptr;
+    return kit(domWindow->webkitNamespace());
+}
+
+WebKitDOMUserMessageHandler* webkit_dom_user_message_handlers_namespace_get_handler(WebKitDOMUserMessageHandlersNamespace* handlersNamespace, const gchar* name)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_USER_MESSAGE_HANDLERS_NAMESPACE(handlersNamespace), nullptr);
+    g_return_val_if_fail(name, nullptr);
+
+    return kit(core(handlersNamespace)->handler(String::fromUTF8(name), WebCore::mainThreadNormalWorld()));
+}
 

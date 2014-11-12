@@ -1,5 +1,24 @@
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Expose user script messages to GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=138411
+
+        Reviewed by Philippe Normand.
+
+        * PlatformGTK.cmake: Add WebKitDOMCustomUnstable.h to the list of
+        installed headers and make a symlink for it in the DerivedSources dir.
+        * bindings/gobject/WebKitDOMCustomUnstable.h: Added.
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_dom_window_get_webkit_namespace):
+        (webkit_dom_user_message_handlers_namespace_get_handler):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (HasUnstableCustomAPI): Helper function to check if the given
+        class has custom unstable API.
+        (WriteData): Include WebKitDOMCustomUnstable.h header if the class
+        has API defined there.
+
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix how SerializedScriptValue is exposed to GObject DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=138409
 

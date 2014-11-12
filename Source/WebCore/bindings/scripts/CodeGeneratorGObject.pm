@@ -1580,6 +1580,12 @@ sub Generate {
     $object->GenerateEndHeader();
 }
 
+sub HasUnstableCustomAPI {
+    my $domClassName = shift;
+
+    return scalar(grep {$_ eq $domClassName} qw(WebKitDOMDOMWindow WebKitDOMUserMessageHandlersNamespace));
+}
+
 sub WriteData {
     my $object = shift;
     my $interface = shift;
@@ -1647,6 +1653,9 @@ EOF
     if ($isStableClass) {
         print HEADER "#include <webkitdom/webkitdomdefines.h>\n\n";
     } else {
+        if (HasUnstableCustomAPI($className)) {
+            print HEADER "#include <webkitdom/WebKitDOMCustomUnstable.h>\n";
+        }
         print HEADER "#include <webkitdom/webkitdomdefines-unstable.h>\n\n";
     }
     print HEADER @hBodyPre;
@@ -1670,11 +1679,13 @@ EOF
 
 #ifdef WEBKIT_DOM_USE_UNSTABLE_API
 
-#include <webkitdom/webkitdomdefines-unstable.h>
 EOF
-
         print UNSTABLE $text;
-        print UNSTABLE "\n";
+        if (HasUnstableCustomAPI($className)) {
+            print UNSTABLE "#include <webkitdom/WebKitDOMCustomUnstable.h>\n";
+        }
+        print UNSTABLE "#include <webkitdom/webkitdomdefines-unstable.h>\n\n";
+
         print UNSTABLE "#if ${conditionalString}\n\n" if $conditionalString;
         print UNSTABLE "G_BEGIN_DECLS\n";
         print UNSTABLE "\n";
