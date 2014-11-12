@@ -1,3 +1,19 @@
+2014-11-12  Andreas Kling  <akling@apple.com>
+
+        Generate get_by_id for bracket access with constant string subscript.
+        <https://webkit.org/b/138663>
+
+        Reviewed by Michael Saboff.
+
+        Transform o["f"] into o.f when generating bytecode. This allows our JIT
+        to inline-cache those accesses instead of always dropping out to C++.
+
+        This is surprisingly common in real-web content, less so in benchmarks.
+        Interestingly, Speedometer does hit the optimization quite a bit.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode):
+
 2014-11-12  Mark Lam  <mark.lam@apple.com>
 
         Rename USE(MASM_PROBE) to ENABLE(MASM_PROBE).
