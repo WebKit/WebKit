@@ -128,7 +128,7 @@ public:
     JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
     JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
-    JS_EXPORT_PRIVATE void setIncrementalSweeper(PassOwnPtr<IncrementalSweeper>);
+    JS_EXPORT_PRIVATE void setIncrementalSweeper(std::unique_ptr<IncrementalSweeper>);
 
     // true if collection is in progress
     bool isCollecting();
@@ -378,7 +378,7 @@ private:
     
     RefPtr<GCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
-    OwnPtr<IncrementalSweeper> m_sweeper;
+    std::unique_ptr<IncrementalSweeper> m_sweeper;
     Vector<MarkedBlock*> m_blockSnapshot;
     
     unsigned m_deferralDepth;

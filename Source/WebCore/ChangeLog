@@ -1,3 +1,20 @@
+2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove IncrementalSweeper::create()
+        https://bugs.webkit.org/show_bug.cgi?id=138243
+
+        Reviewed by Filip Pizlo.
+
+        As a step to use std::unique_ptr<> and std::make_unique<>, this patch removes
+        IncrementalSweeper::create(), then set constructor of IncrementalSweeper to public.
+        Now we begins to use std::make_unique<> to create IncrementalSweeper instance.
+
+        No new tests, no behavior changes.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+        * platform/ios/WebSafeIncrementalSweeperIOS.h:
+
 2014-11-11  Chris Dumez  <cdumez@apple.com>
 
         Move 'border-image-*' / '-webkit-mask-box-image-*' CSS properties to the new StyleBuilder

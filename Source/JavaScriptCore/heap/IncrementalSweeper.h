@@ -37,18 +37,16 @@ class MarkedBlock;
 
 class IncrementalSweeper : public HeapTimer {
 public:
-    static PassOwnPtr<IncrementalSweeper> create(Heap*);
+#if USE(CF)
+    JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
+#else
+    explicit IncrementalSweeper(VM*);
+#endif
+
     void startSweeping(Vector<MarkedBlock*>&);
     JS_EXPORT_PRIVATE virtual void doWork() override;
     void sweepNextBlock();
     void willFinishSweeping();
-
-protected:
-#if USE(CF)
-    JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
-#else
-    IncrementalSweeper(VM*);
-#endif
 
 #if USE(CF)
 private:

@@ -33,18 +33,13 @@ namespace WebCore {
 
 class WebSafeIncrementalSweeper final : public JSC::IncrementalSweeper {
 public:
-    static PassOwnPtr<WebSafeIncrementalSweeper> create(JSC::Heap* heap)
+    explicit WebSafeIncrementalSweeper(JSC::Heap* heap)
+        : JSC::IncrementalSweeper(heap, WebThreadRunLoop())
     {
-        return adoptPtr(new WebSafeIncrementalSweeper(heap));
     }
 
     virtual ~WebSafeIncrementalSweeper() override { }
 
-private:
-    WebSafeIncrementalSweeper(JSC::Heap* heap)
-        : JSC::IncrementalSweeper(heap, WebThreadRunLoop())
-    {
-    }
 };
 
 } // namespace WebCore

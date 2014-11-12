@@ -1,3 +1,22 @@
+2014-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove IncrementalSweeper::create()
+        https://bugs.webkit.org/show_bug.cgi?id=138243
+
+        Reviewed by Filip Pizlo.
+
+        As a step to use std::unique_ptr<> and std::make_unique<>, this patch removes
+        IncrementalSweeper::create(), then set constructor of IncrementalSweeper to public.
+        Now we begins to use std::make_unique<> to create IncrementalSweeper instance.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::setIncrementalSweeper):
+        * heap/Heap.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::create): Deleted.
+        * heap/IncrementalSweeper.h:
+
 2014-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Handle activating extra agents properly after inspector has connected

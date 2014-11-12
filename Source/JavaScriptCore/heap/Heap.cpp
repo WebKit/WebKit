@@ -331,7 +331,11 @@ Heap::Heap(VM* vm, HeapType heapType)
 #else
     , m_edenActivityCallback(m_fullActivityCallback)
 #endif
-    , m_sweeper(IncrementalSweeper::create(this))
+#if USE(CF)
+    , m_sweeper(std::make_unique<IncrementalSweeper>(this, CFRunLoopGetCurrent()))
+#else
+    , m_sweeper(std::make_unique<IncrementalSweeper>(this->vm()))
+#endif
     , m_deferralDepth(0)
 {
     m_storageSpace.init();
@@ -1282,9 +1286,9 @@ GCActivityCallback* Heap::edenActivityCallback()
     return m_edenActivityCallback.get();
 }
 
-void Heap::setIncrementalSweeper(PassOwnPtr<IncrementalSweeper> sweeper)
+void Heap::setIncrementalSweeper(std::unique_ptr<IncrementalSweeper> sweeper)
 {
-    m_sweeper = sweeper;
+    m_sweeper = WTF::move(sweeper);
 }
 
 IncrementalSweeper* Heap::sweeper()

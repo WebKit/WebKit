@@ -51,11 +51,6 @@ IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
 {
 }
 
-PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
-{
-    return adoptPtr(new IncrementalSweeper(heap, CFRunLoopGetCurrent()));
-}
-
 void IncrementalSweeper::scheduleTimer()
 {
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + (sweepTimeSlice * sweepTimeMultiplier));
@@ -127,11 +122,6 @@ IncrementalSweeper::IncrementalSweeper(VM* vm)
 
 void IncrementalSweeper::doWork()
 {
-}
-
-PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
-{
-    return adoptPtr(new IncrementalSweeper(heap->vm()));
 }
 
 void IncrementalSweeper::startSweeping(Vector<MarkedBlock*>&)
