@@ -1,3 +1,10 @@
+2014-11-12  Ada Chan  <adachan@apple.com>
+
+        Fix the iOS build.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pageMutedStateDidChange):
+
 2014-11-05  Ada Chan  <adachan@apple.com>
 
         Implement new plug-in API for muting plug-ins

@@ -1331,11 +1331,13 @@ void PluginView::mediaCanStart()
 
 void PluginView::pageMutedStateDidChange()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // The plug-in can be null here if it failed to initialize.
     if (!m_isInitialized || !m_plugin)
         return;
 
     m_plugin->mutedStateChanged(isMuted());
+#endif
 }
 
 bool PluginView::isPluginVisible()
