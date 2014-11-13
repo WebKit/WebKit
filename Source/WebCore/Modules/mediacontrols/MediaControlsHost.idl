@@ -37,7 +37,6 @@ enum FullscreenMode {
 
 enum MediaUIPartID {
     "optimized-fullscreen-button",
-    "optimized-fullscreen-button-hilited",
     "optimized-fullscreen-placeholder"
 };
 

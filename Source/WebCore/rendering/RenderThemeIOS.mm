@@ -1251,8 +1251,12 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
 String RenderThemeIOS::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (m_mediaControlsStyleSheet.isEmpty())
-        m_mediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
+    if (m_mediaControlsStyleSheet.isEmpty()) {
+        StringBuilder builder;
+        builder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil]);
+        builder.append(wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButton));
+        m_mediaControlsStyleSheet = builder.toString();
+    }
     return m_mediaControlsStyleSheet;
 #else
     return emptyString();

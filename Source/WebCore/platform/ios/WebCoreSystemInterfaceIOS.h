@@ -77,7 +77,6 @@ extern bool (*wkIsOptimizedFullscreenSupported)(void);
 
 typedef enum {
     wkMediaUIPartOptimizedFullscreenButton = 0,
-    wkMediaUIPartOptimizedFullscreenButtonHilited,
     wkMediaUIPartOptimizedFullscreenPlaceholder
 } wkMediaUIPart;
 extern CFStringRef (*wkGetMediaUIImageData)(int wkMediaUIPart);

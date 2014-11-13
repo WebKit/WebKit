@@ -1,3 +1,29 @@
+2014-11-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] update optimized fullscreen media controls artwork
+        https://bugs.webkit.org/show_bug.cgi?id=138705
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::mediaUIImageData): Remove one button.
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.controlsAreHidden): Add parentheses to fix the logic.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.shouldHaveStartPlaybackButton): The big play button should not be
+            visible during playback.
+        (ControllerIOS.prototype.createControls): No longer necessary to insert style dynamically,
+        (ControllerIOS.prototype.setPlaying): Call the base class first so "isPlaying" is set before
+            calling updateControls, which calls shouldHaveStartPlaybackButton.
+
+        * platform/ios/WebCoreSystemInterfaceIOS.h: Update constants.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet): Add button style to the media controls sheet.
+
 2014-11-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Implement the matching for :nth-last-child(An+B of selector-list)

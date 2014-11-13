@@ -318,9 +318,6 @@ String MediaControlsHost::mediaUIImageData(const String& partID) const
     if (partID == "optimized-fullscreen-button")
         return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButton);
 
-    if (partID == "optimized-fullscreen-button-hilited")
-        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButtonHilited);
-
     if (partID == "optimized-fullscreen-placeholder")
         return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenPlaceholder);
 #else

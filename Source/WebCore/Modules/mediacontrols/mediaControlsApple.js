@@ -1048,7 +1048,7 @@ Controller.prototype = {
 
     controlsAreHidden: function()
     {
-        return !this.isAudio() && !this.controls.panel.classList.contains(this.ClassNames.show) || this.controls.panel.classList.contains(this.ClassNames.hidden);
+        return !this.isAudio() && (!this.controls.panel.classList.contains(this.ClassNames.show) || this.controls.panel.classList.contains(this.ClassNames.hidden));
     },
 
     removeControls: function()
