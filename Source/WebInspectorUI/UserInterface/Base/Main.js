@@ -365,7 +365,7 @@ WebInspector.activateExtraDomains = function(domains)
             agent.enable();
     }
 
-    this.notifications.dispatchEventToListeners(WebInspector.Notification.ExtraDomainsActivated);
+    this.notifications.dispatchEventToListeners(WebInspector.Notification.ExtraDomainsActivated, {"domains": domains});
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
 };

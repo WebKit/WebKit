@@ -308,9 +308,10 @@ WebInspector.StorageManager.prototype = {
         return null;
     },
 
-    _extraDomainsActivated: function()
+    _extraDomainsActivated: function(event)
     {
-        if (window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
+        
+        if (event.data.domains.contains("DOMStorage") && window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
             WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
     }
 };

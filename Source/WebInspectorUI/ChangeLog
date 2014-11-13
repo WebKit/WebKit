@@ -1,3 +1,17 @@
+2014-11-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce work when activating multiple agents sequentially
+        https://bugs.webkit.org/show_bug.cgi?id=138677
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.activateExtraDomains):
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype._extraDomainsActivated):
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager.prototype._extraDomainsActivated):
+
 2014-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Handle activating extra agents properly after inspector has connected

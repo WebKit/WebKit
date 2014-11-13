@@ -587,9 +587,9 @@ WebInspector.FrameResourceManager.prototype = {
         this.dispatchEventToListeners(WebInspector.FrameResourceManager.Event.MainFrameDidChange, {oldMainFrame: oldMainFrame});
     },
 
-    _extraDomainsActivated: function()
+    _extraDomainsActivated: function(event)
     {
-        if (window.PageAgent)
+        if (event.data.domains.contains("Page") && window.PageAgent)
             PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
     }
 };
