@@ -390,5 +390,8 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(MAC)
     PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location)
     SelectLastActionMenuRange()
+    DataDetectorsDidPresentUI()
+    DataDetectorsDidChangeUI()
+    DataDetectorsDidHideUI()
 #endif
 }

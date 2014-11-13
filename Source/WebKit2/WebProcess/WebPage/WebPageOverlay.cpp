@@ -118,10 +118,27 @@ void WebPageOverlay::didScrollFrame(PageOverlay&, Frame& frame)
     m_client.didScrollFrame(*this, WebFrame::fromCoreFrame(frame));
 }
 
-bool WebPageOverlay::prepareForActionMenu(RefPtr<API::Object>& userData)
+#if PLATFORM(MAC)
+DDActionContext *WebPageOverlay::actionContextForResultAtPoint(FloatPoint location, RefPtr<WebCore::Range>& rangeHandle)
 {
-    return m_client.prepareForActionMenu(*this, userData);
+    return m_client.actionContextForResultAtPoint(*this, location, rangeHandle);
 }
+
+void WebPageOverlay::dataDetectorsDidPresentUI()
+{
+    m_client.dataDetectorsDidPresentUI(*this);
+}
+
+void WebPageOverlay::dataDetectorsDidChangeUI()
+{
+    m_client.dataDetectorsDidChangeUI(*this);
+}
+
+void WebPageOverlay::dataDetectorsDidHideUI()
+{
+    m_client.dataDetectorsDidHideUI(*this);
+}
+#endif // PLATFORM(MAC)
 
 bool WebPageOverlay::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String attribute, FloatPoint parameter, String& value)
 {

@@ -1,3 +1,51 @@
+2014-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust the WKBundlePageOverlay Data Detectors SPI
+        https://bugs.webkit.org/show_bug.cgi?id=138685
+        <rdar://problem/18947156>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+        Forward DDActionContext callbacks to the Web process.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/WebPageOverlay.cpp:
+        * WebProcess/WebPage/WebPageOverlay.h:
+        Add four DataDetectors-related WebKit2-only page overlay callbacks:
+
+        (WebKit::WebPageOverlay::actionContextForResultAtPoint):
+        Called during the action menu hit test; clients can reply with a DDActionContext
+        and a DOM range, and WebKit will treat that result and range as if it had
+        detected it itself, building the action menu and showing the yellow highlight as usual.
+
+        (WebKit::WebPageOverlay::dataDetectorsPresentedUI):
+        (WebKit::WebPageOverlay::dataDetectorsChangedUI):
+        (WebKit::WebPageOverlay::dataDetectorsHidUI):
+        These correspond to the DDActionContext callbacks, and can be used by clients
+        to show/hide corresponding UI while DataDetectors in the UI process is presenting UI.
+
+        (WebKit::WebPageOverlay::prepareForActionMenu): Deleted.
+        Get rid of prepareForActionMenu, as nobody ever used it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        Add WebPageOverlay.h so that we can build, because the destructor lives here.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        Give all of the WebPageOverlays the first shot at data detection; if none of them
+        reply with a valid DDActionContext/DOM range, we'll go ahead and do our normal detection.
+
+        (WebKit::WebPage::dataDetectorsPresentedUI):
+        (WebKit::WebPage::dataDetectorsChangedUI):
+        (WebKit::WebPage::dataDetectorsHidUI):
+        Forward these along to the active WebPageOverlay.
+
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175966. <rdar://problem/18866308>

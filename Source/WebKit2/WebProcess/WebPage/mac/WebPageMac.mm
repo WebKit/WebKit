@@ -1044,6 +1044,8 @@ static PassRefPtr<TextIndicator> textIndicatorForRange(Range* range)
 
 void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
 {
+    m_lastActionMenuHitPageOverlay = nullptr;
+
     layoutIfNeeded();
 
     MainFrame& mainFrame = corePage()->mainFrame();
@@ -1083,8 +1085,37 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             actionMenuResult.image->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
     }
 
+    bool pageOverlayDidOverrideDataDetectors = false;
+    for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
+        WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay);
+        if (!webOverlay)
+            continue;
+
+        RefPtr<Range> mainResultRange;
+        DDActionContext *actionContext = webOverlay->actionContextForResultAtPoint(locationInContentCoordinates, mainResultRange);
+        if (!actionContext || !mainResultRange)
+            continue;
+
+        pageOverlayDidOverrideDataDetectors = true;
+        actionMenuResult.actionContext = actionContext;
+
+        Vector<FloatQuad> quads;
+        mainResultRange->textQuads(quads);
+        FloatRect detectedDataBoundingBox;
+        FrameView* frameView = mainResultRange->ownerDocument().view();
+        for (const auto& quad : quads)
+            detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
+
+        actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
+        actionMenuResult.detectedDataTextIndicator = textIndicatorForRange(mainResultRange.get());
+        m_lastActionMenuRangeForSelection = mainResultRange;
+        m_lastActionMenuHitPageOverlay = webOverlay;
+
+        break;
+    }
+
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
-    if (hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode()) {
+    if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode()) {
         FloatRect detectedDataBoundingBox;
         RefPtr<Range> detectedDataRange;
         actionMenuResult.actionContext = scanForDataDetectedItems(hitTestResult, detectedDataBoundingBox, detectedDataRange);
@@ -1096,22 +1127,8 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     }
 
     RefPtr<API::Object> userData;
-
-    bool handled = false;
-    for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
-        WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay);
-        if (!webOverlay)
-            continue;
-        if (webOverlay->prepareForActionMenu(userData)) {
-            handled = true;
-            break;
-        }
-    }
-
-    if (!handled) {
-        RefPtr<InjectedBundleHitTestResult> injectedBundleHitTestResult = InjectedBundleHitTestResult::create(hitTestResult);
-        injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
-    }
+    RefPtr<InjectedBundleHitTestResult> injectedBundleHitTestResult = InjectedBundleHitTestResult::create(hitTestResult);
+    injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
 
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, InjectedBundleUserMessageEncoder(userData.get())));
 }
@@ -1132,6 +1149,25 @@ void WebPage::selectLastActionMenuRange()
 {
     if (m_lastActionMenuRangeForSelection)
         corePage()->mainFrame().selection().setSelectedRange(m_lastActionMenuRangeForSelection.get(), DOWNSTREAM, true);
+}
+
+void WebPage::dataDetectorsDidPresentUI()
+{
+    if (m_lastActionMenuHitPageOverlay)
+        m_lastActionMenuHitPageOverlay->dataDetectorsDidPresentUI();
+}
+
+void WebPage::dataDetectorsDidChangeUI()
+{
+    if (m_lastActionMenuHitPageOverlay)
+        m_lastActionMenuHitPageOverlay->dataDetectorsDidChangeUI();
+}
+
+void WebPage::dataDetectorsDidHideUI()
+{
+    if (m_lastActionMenuHitPageOverlay)
+        m_lastActionMenuHitPageOverlay->dataDetectorsDidHideUI();
+    m_lastActionMenuHitPageOverlay = nil;
 }
 
 } // namespace WebKit
