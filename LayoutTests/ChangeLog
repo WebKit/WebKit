@@ -1,5 +1,12 @@
 2014-11-13  Alexey Proskuryakov  <ap@apple.com>
 
+        Simplify expectations for fullscreen/full-screen-iframe-legacy.html, as the more
+        specific variant doesn't work due to <https://bugs.webkit.org/show_bug.cgi?id=138698>.
+
+        * platform/mac/TestExpectations:
+
+2014-11-13  Alexey Proskuryakov  <ap@apple.com>
+
         fast/events/overflow-scroll-fake-mouse-move.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=138697
 

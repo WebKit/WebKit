@@ -376,8 +376,7 @@ http/tests/security/video-cross-origin-accessfailure.html
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
-webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
-webkit.org/b/85523 [ Yosemite ] fullscreen/full-screen-iframe-legacy.html [ Pass Failure Timeout ]
+webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure Timeout ]
 
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
