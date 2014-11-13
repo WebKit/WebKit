@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -670,16 +670,21 @@ void Node::derefEventTarget()
     deref();
 }
 
-static inline void markAncestorsWithChildNeedsStyleRecalc(Node& node)
+inline void Node::updateAncestorsForStyleRecalc()
 {
-    if (ContainerNode* ancestor = is<PseudoElement>(node) ? downcast<PseudoElement>(node).hostElement() : node.parentOrShadowHostNode()) {
+    if (ContainerNode* ancestor = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentOrShadowHostNode()) {
         ancestor->setDirectChildNeedsStyleRecalc();
+
+        if (is<Element>(*ancestor) && downcast<Element>(*ancestor).childrenAffectedByPropertyBasedBackwardPositionalRules()) {
+            if (ancestor->styleChangeType() < FullStyleChange)
+                ancestor->setStyleChange(FullStyleChange);
+        }
 
         for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
             ancestor->setChildNeedsStyleRecalc();
     }
 
-    Document& document = node.document();
+    Document& document = this->document();
     if (document.childNeedsStyleRecalc())
         document.scheduleStyleRecalc();
 }
@@ -695,7 +700,7 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
         setStyleChange(changeType);
 
     if (existingChangeType == NoStyleChange || changeType == ReconstructRenderTree)
-        markAncestorsWithChildNeedsStyleRecalc(*this);
+        updateAncestorsForStyleRecalc();
 }
 
 unsigned Node::computeNodeIndex() const

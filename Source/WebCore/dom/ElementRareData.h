@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith <catfish.man@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -76,6 +76,8 @@ public:
     void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
     bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
     void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
+    bool childrenAffectedByPropertyBasedBackwardPositionalRules() const { return m_childrenAffectedByPropertyBasedBackwardPositionalRules; }
+    void setChildrenAffectedByPropertyBasedBackwardPositionalRules(bool value) { m_childrenAffectedByPropertyBasedBackwardPositionalRules = value; }
 
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
@@ -130,6 +132,7 @@ private:
     // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
     unsigned m_childrenAffectedByLastChildRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
+    unsigned m_childrenAffectedByPropertyBasedBackwardPositionalRules : 1;
 
     RegionOversetState m_regionOversetState;
 
@@ -169,6 +172,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByDrag(false)
     , m_childrenAffectedByLastChildRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
+    , m_childrenAffectedByPropertyBasedBackwardPositionalRules(false)
     , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
@@ -206,6 +210,7 @@ inline void ElementRareData::resetDynamicRestyleObservations()
     setChildrenAffectedByDrag(false);
     setChildrenAffectedByLastChildRules(false);
     setChildrenAffectedByBackwardPositionalRules(false);
+    setChildrenAffectedByPropertyBasedBackwardPositionalRules(false);
 }
 
 } // namespace

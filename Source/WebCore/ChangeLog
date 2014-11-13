@@ -1,3 +1,55 @@
+2014-11-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Implement the matching for :nth-last-child(An+B of selector-list)
+        https://bugs.webkit.org/show_bug.cgi?id=138650
+
+        Reviewed by Andreas Kling.
+
+        Matching is trivial based on the existing CSS4 infrastructure.
+
+        The tricky part is style invalidation. In the cases of the old :nth-last-child()
+        and :nth-last-of-type(), we were using the flag ChildrenAffectedByBackwardPositionalRules.
+
+        The problem with ChildrenAffectedByBackwardPositionalRules is that it only invalidate
+        subtrees when nodes are being added or removed. It is a valuable optimization by itself
+        since tree updates are less common than property updates.
+
+        For the case of property updates, I have added the new flag "ChildrenAffectedByPropertyBasedBackwardPositionalRules".
+        It pretty much work the same way but invalidates subtree on style recalc.
+
+        Tests: fast/css/nth-child-and-nth-last-child.html
+               fast/css/nth-last-child-of-classname.html
+               fast/css/nth-last-child-of-complex-selector.html
+               fast/css/nth-last-child-of-compound-selector.html
+               fast/css/nth-last-child-of-style-sharing-1.html
+               fast/css/nth-last-child-of-style-sharing-2.html
+               fast/css/nth-last-child-of-style-update-optimization.html
+               fast/css/nth-last-child-of-tagname.html
+               fast/selectors/nth-last-child-of-class-style-update.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * dom/Element.cpp:
+        (WebCore::Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules):
+        (WebCore::Element::hasFlagsSetDuringStylingOfChildren):
+        (WebCore::Element::rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules):
+        * dom/Element.h:
+        (WebCore::Element::childrenAffectedByPropertyBasedBackwardPositionalRules):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::childrenAffectedByPropertyBasedBackwardPositionalRules):
+        (WebCore::ElementRareData::setChildrenAffectedByPropertyBasedBackwardPositionalRules):
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::resetDynamicRestyleObservations):
+        * dom/Node.cpp:
+        (WebCore::Node::updateAncestorsForStyleRecalc):
+        (WebCore::Node::setNeedsStyleRecalc):
+        (WebCore::markAncestorsWithChildNeedsStyleRecalc): Deleted.
+        * dom/Node.h:
+        Unlike the other marking steps, ChildrenAffectedByPropertyBasedBackwardPositionalRules can only really
+        affect one level (because we don't have a parent-selectors). It is quite easy to mark large
+        trees with ChildrenAffectedByPropertyBasedBackwardPositionalRules by using a selector list that is a bit
+        too generic. When that happen, we must be careful not invalidating everything, just the affected subtree.
+
 2014-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION (r172826): Password field placeholder text is missing if

@@ -667,6 +667,7 @@ protected:
     void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
 
     void setStyleChange(StyleChangeType changeType) { m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType; }
+    void updateAncestorsForStyleRecalc();
 
 private:
     friend class TreeShared<Node>;

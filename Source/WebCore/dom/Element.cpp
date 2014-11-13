@@ -2126,6 +2126,11 @@ void Element::setChildrenAffectedByBackwardPositionalRules()
     ensureElementRareData().setChildrenAffectedByBackwardPositionalRules(true);
 }
 
+void Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules()
+{
+    ensureElementRareData().setChildrenAffectedByPropertyBasedBackwardPositionalRules(true);
+}
+
 void Element::setChildIndex(unsigned index)
 {
     ElementRareData& rareData = ensureElementRareData();
@@ -2143,7 +2148,8 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
         return false;
     return rareDataChildrenAffectedByActive()
         || rareDataChildrenAffectedByDrag()
-        || rareDataChildrenAffectedByBackwardPositionalRules();
+        || rareDataChildrenAffectedByBackwardPositionalRules()
+        || rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules();
 }
 
 bool Element::rareDataStyleAffectedByEmpty() const
@@ -2168,6 +2174,12 @@ bool Element::rareDataChildrenAffectedByBackwardPositionalRules() const
 {
     ASSERT(hasRareData());
     return elementRareData()->childrenAffectedByBackwardPositionalRules();
+}
+
+bool Element::rareDataChildrenAffectedByPropertyBasedBackwardPositionalRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByPropertyBasedBackwardPositionalRules();
 }
 
 unsigned Element::rareDataChildIndex() const

@@ -1,3 +1,39 @@
+2014-11-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Implement the matching for :nth-last-child(An+B of selector-list)
+        https://bugs.webkit.org/show_bug.cgi?id=138650
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/nth-last-child-of-class-style-update-expected.txt: Added.
+        * fast/selectors/nth-last-child-of-class-style-update.html: Added.
+        Verify simple cases of style update.
+
+        * fast/css/nth-last-child-of-style-update-optimization-expected.txt: Added.
+        * fast/css/nth-last-child-of-style-update-optimization.html: Added.
+        Verify that style invalidation stays reasonable.
+
+        * fast/css/nth-last-child-of-style-sharing-1-expected.html: Added.
+        * fast/css/nth-last-child-of-style-sharing-1.html: Added.
+        * fast/css/nth-last-child-of-style-sharing-2-expected.html: Added.
+        * fast/css/nth-last-child-of-style-sharing-2.html: Added.
+        Check that style sharing is disabled for elements matching :nth-last-child().
+
+        * fast/css/nth-child-and-nth-last-child-expected.html: Added.
+        * fast/css/nth-child-and-nth-last-child.html: Added.
+        Test uniqueness testing by combining :nth-child() and :nth-last-child().
+
+        * fast/css/nth-last-child-of-classname-expected.html: Added.
+        * fast/css/nth-last-child-of-classname.html: Added.
+        * fast/css/nth-last-child-of-complex-selector-expected.html: Added.
+        * fast/css/nth-last-child-of-complex-selector.html: Added.
+        * fast/css/nth-last-child-of-compound-selector-expected.html: Added.
+        * fast/css/nth-last-child-of-compound-selector.html: Added.
+        * fast/css/nth-last-child-of-tagname-expected.html: Added.
+        * fast/css/nth-last-child-of-tagname.html: Added.
+        Test matching, those are the "last-child" counterpart of the existing
+        "nth-child-of" tests.
+
 2014-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION (r172826): Password field placeholder text is missing if

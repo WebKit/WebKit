@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: rgb(0, 0, 0);
+}
+:nth-last-child(n of foo, bar, *, .target) {
+    background-color: rgb(255, 255, 255);
+}
+:root {
+    background-color: rgb(255, 255, 255);
+}
+</style>
+</head>
+<body>
+    <div class="test-case">
+        <parent id="parent1">
+            <target></target>
+            <target id="target1"></target>
+        </parent>
+    </div>
+    <div class="test-case" style="display:none;">
+        <parent id="parent2">
+            <target></target>
+            <target id="target2"></target>
+        </parent>
+    </div>
+</body>
+<script>
+description('Verify that style invalidation of elements affected by :nth-last-child() no not cause an invalidation storm.');
+
+// Force a layout.
+document.documentElement.offsetTop;
+
+// Nothing should need a style recalc.
+var allContent = document.querySelectorAll("*");
+for (var i = 0; i < allContent.length; ++i) {
+    if (internals.nodeNeedsStyleRecalc(allContent[i])) {
+        testFailed("Invalid initial state, node " + i + " has dirty style.");
+        break;
+    }
+}
+
+// Change the class of target1, this could change the order of rules and need to cause a style recalc.
+var target1 = document.getElementById('target1');
+target1.className = 'target';
+
+var allContent = document.querySelectorAll("*");
+for (var i = 0; i < allContent.length; ++i) {
+    var node = allContent[i];
+    if (internals.nodeNeedsStyleRecalc(node)) {
+        if (node !== target1 && node !== target1.parentNode) {
+            testFailed("Invalidating the style of target1 should never invalidate more than target1 and its parent.");
+            break;
+        }
+    }
+}
+
+document.documentElement.offsetTop;
+
+// Change the class of target1, this could change the order of rules and need to cause a style recalc.
+var target2 = document.getElementById('target2');
+target2.className = 'target';
+
+var allContent = document.querySelectorAll("*");
+for (var i = 0; i < allContent.length; ++i) {
+    var node = allContent[i];
+    if (internals.nodeNeedsStyleRecalc(node)) {
+        if (node !== target2 && node !== target2.parentNode) {
+            testFailed("Invalidating the style of target1 should never invalidate more than target1 and its parent.");
+            break;
+        }
+    }
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -778,11 +778,36 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (!selector->parseNth())
                 break;
             if (Element* parentElement = element->parentElement()) {
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    parentElement->setChildrenAffectedByBackwardPositionalRules();
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                int count = 1 + countElementsAfter(element);
+
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                if (const CSSSelectorList* selectorList = selector->selectorList()) {
+                    if (!matchSelectorList(context, *element, *selectorList))
+                        return false;
+
+                    if (context.resolvingMode == Mode::ResolvingStyle) {
+                        parentElement->setChildrenAffectedByPropertyBasedBackwardPositionalRules();
+                        parentElement->setChildrenAffectedByBackwardPositionalRules();
+                    }
+                } else
+#endif
+                if (context.resolvingMode == Mode::ResolvingStyle)
+                    parentElement->setChildrenAffectedByBackwardPositionalRules();
+
+                int count = 1;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                if (const CSSSelectorList* selectorList = selector->selectorList()) {
+                    for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
+                        if (matchSelectorList(context, *sibling, *selectorList))
+                            ++count;
+                    }
+                } else
+#endif
+                {
+                    count += countElementsAfter(element);
+                }
+
                 if (selector->matchNth(count))
                     return true;
             }
