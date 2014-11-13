@@ -4189,6 +4189,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return nil;
 }
 
+- (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView
+{
+}
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets

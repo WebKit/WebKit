@@ -1,5 +1,35 @@
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175985. <rdar://problem/18947400>
+
+    2014-11-11  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Clients should be notified when a page preview finishes
+            https://bugs.webkit.org/show_bug.cgi?id=138635
+
+            Reviewed by Tim Horton.
+
+            Add SPI to WKView to allow clients to do any cleanup that might be necessary when the preview closes.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Declare new SPI.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _finishPreviewingURL:withPreviewView:]):
+            Stub SPI implementation.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            Add an ivar for the preview view controller.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _createPreviewPopoverForURL:originRect:]):
+            Update to use the ivar.
+            (-[WKActionMenuController _clearPreviewPopover]):
+            Send -_finishPreviewingURL:withPreviewView: and nil out the view controller ivar.
+
+
+2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175983. <rdar://problem/18871984>
 
     2014-11-11  Tim Horton  <timothy_horton@apple.com>

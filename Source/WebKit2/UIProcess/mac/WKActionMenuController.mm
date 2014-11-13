@@ -325,13 +325,13 @@ using namespace WebKit;
 {
     NSSize popoverSize = [self _preferredSizeForPopoverPresentedFromOriginRect:originRect];
     CGFloat actualPopoverToViewScale = popoverSize.width / NSWidth(_wkView.bounds);
-    RetainPtr<WKPagePreviewViewController> previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
-    previewViewController->_delegate = self;
+    _previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
+    _previewViewController->_delegate = self;
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
     [_previewPopover setBehavior:NSPopoverBehaviorTransient];
     [_previewPopover setContentSize:popoverSize];
-    [_previewPopover setContentViewController:previewViewController.get()];
+    [_previewPopover setContentViewController:_previewViewController.get()];
     [_previewPopover setDelegate:self];
 }
 
@@ -384,8 +384,11 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 - (void)_clearPreviewPopover
 {
 #if WK_API_ENABLED
-    if (WKPagePreviewViewController *pagePreviewViewController = (WKPagePreviewViewController *)[_previewPopover contentViewController])
-        pagePreviewViewController->_delegate = nil;
+    if (_previewViewController) {
+        _previewViewController->_delegate = nil;
+        [_wkView _finishPreviewingURL:_previewViewController->_url.get() withPreviewView:[_previewViewController view]];
+        _previewViewController = nil;
+    }
 #endif
 
     [_previewPopover close];
