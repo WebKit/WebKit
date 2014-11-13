@@ -43,6 +43,7 @@
 #endif
 
 typedef struct _cairo_surface cairo_surface_t;
+typedef struct _Evas_GL Evas_GL;
 
 namespace WebKit {
 class ContextMenuClientEfl;
@@ -254,7 +255,7 @@ private:
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
     RefPtr<EwkPageGroup> m_pageGroup;
-    EflUniquePtr<Evas_GL> m_evasGL;
+    Evas_GL* m_evasGL;
     std::unique_ptr<WebCore::EvasGLContext> m_evasGLContext;
     std::unique_ptr<WebCore::EvasGLSurface> m_evasGLSurface;
     bool m_pendingSurfaceResize;

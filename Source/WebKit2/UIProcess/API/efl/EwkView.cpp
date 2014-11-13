@@ -314,9 +314,11 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 
     // FIXME: Remove when possible.
     static_cast<WebViewEfl*>(webView())->setEwkView(this);
-    m_evasGL = EflUniquePtr<Evas_GL>(evas_gl_new(evas_object_evas_get(m_evasObject)));
+
+    // FIXME: Consider it to move into EvasGLContext.
+    m_evasGL = evas_gl_new(evas_object_evas_get(m_evasObject));
     if (m_evasGL)
-        m_evasGLContext = EvasGLContext::create(m_evasGL.get());
+        m_evasGLContext = EvasGLContext::create(m_evasGL);
 
     if (!m_evasGLContext) {
         WARN("Failed to create Evas_GL, falling back to software mode.");
@@ -350,6 +352,9 @@ EwkView::~EwkView()
 {
     ASSERT(wkPageToEvasObjectMap().get(wkPage()) == m_evasObject);
     wkPageToEvasObjectMap().remove(wkPage());
+
+    if (m_evasGL)
+        evas_gl_free(m_evasGL);
 }
 
 EwkView* EwkView::create(WKViewRef webView, Evas* canvas, Evas_Smart* smart)
@@ -563,7 +568,7 @@ void EwkView::displayTimerFired(Timer*)
         return;
     }
 
-    evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
+    evas_gl_make_current(m_evasGL, m_evasGLSurface->surface(), m_evasGLContext->context());
 
     WKViewPaintToCurrentGLContext(wkView());
 
@@ -824,21 +829,24 @@ bool EwkView::createGLSurface()
         EVAS_GL_DEPTH_BIT_8,
         EVAS_GL_STENCIL_NONE,
         EVAS_GL_OPTIONS_NONE,
-        EVAS_GL_MULTISAMPLE_NONE
+        EVAS_GL_MULTISAMPLE_NONE,
+#if defined(EVAS_GL_API_VERSION) && EVAS_GL_API_VERSION >= 2
+        EVAS_GL_GLES_2_X
+#endif
     };
 
     // Recreate to current size: Replaces if non-null, and frees existing surface after (OwnPtr).
-    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, deviceSize());
+    m_evasGLSurface = EvasGLSurface::create(m_evasGL, &evasGLConfig, deviceSize());
     if (!m_evasGLSurface)
         return false;
 
     Evas_Native_Surface nativeSurface;
-    evas_gl_native_surface_get(m_evasGL.get(), m_evasGLSurface->surface(), &nativeSurface);
+    evas_gl_native_surface_get(m_evasGL, m_evasGLSurface->surface(), &nativeSurface);
     evas_object_image_native_surface_set(smartData()->image, &nativeSurface);
 
-    evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
+    evas_gl_make_current(m_evasGL, m_evasGLSurface->surface(), m_evasGLContext->context());
 
-    Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
+    Evas_GL_API* gl = evas_gl_api_get(m_evasGL);
 
     WKPoint boundsEnd = WKViewUserViewportToScene(wkView(), WKPointMake(deviceSize().width(), deviceSize().height()));
     gl->glViewport(0, 0, boundsEnd.x, boundsEnd.y);
