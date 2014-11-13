@@ -1,5 +1,41 @@
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175973. <rdar://problem/18855914>
+
+    2014-11-11  Tim Horton  <timothy_horton@apple.com>
+
+            Occasional assertion failure under recommendedScrollbarStyleDidChange()
+            https://bugs.webkit.org/show_bug.cgi?id=138604
+            <rdar://problem/18855914>
+
+            Reviewed by Beth Dakin.
+
+            It is possible for AppKit to install tracking areas into our view
+            behind our back, but we have code that depends on knowing exactly
+            the set of tracking areas installed on WKView.
+
+            Make this more robust by keeping a reference to the tracking area we
+            use for many things and manipulating that instead of making assumptions
+            about the total set of tracking areas on WKView.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _primaryTrackingArea]):
+            (-[WKView _replacePrimaryTrackingArea:]):
+            Provide a 'primary' tracking area setter/getter.
+
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            Keep a reference to the original tracking area installed at initialization time.
+
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::recommendedScrollbarStyleDidChange):
+            Instead of walking the set of tracking areas, make use of the fact that
+            we know exactly which tracking area we installed, and uninstall just that
+            one, and replace it with our newly-built one.
+
+
+2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175969. <rdar://problem/18932770>
 
     2014-11-11  Timothy Horton  <timothy_horton@apple.com>

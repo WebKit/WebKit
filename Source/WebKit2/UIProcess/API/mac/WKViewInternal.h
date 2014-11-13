@@ -133,4 +133,6 @@ struct WebPageConfiguration;
 
 - (void)_dismissActionMenuPopovers;
 
+@property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;
+
 @end
