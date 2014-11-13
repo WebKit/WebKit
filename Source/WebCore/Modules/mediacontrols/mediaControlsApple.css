@@ -64,11 +64,6 @@ audio::-webkit-media-text-track-container {
     -webkit-flex: 1 1 auto;
 }
 
-video::-webkit-media-controls-panel-composited-parent {
-    -webkit-transform: translateZ(0);
-    width: 100%;
-}
-
 video::-webkit-media-controls-panel,
 audio::-webkit-media-controls-panel {
     box-sizing: border-box;
@@ -534,6 +529,11 @@ audio::-webkit-media-controls-panel .thumbnail-image {
 video::-webkit-media-controls-panel .thumbnail.show,
 audio::-webkit-media-controls-panel .thumbnail.show {
     opacity: 1;
+}
+
+video::-webkit-media-controls-panel.hidden,
+audio::-webkit-media-controls-panel.hidden {
+    display: none;
 }
 
 video::-webkit-media-controls-panel .hidden,

@@ -1,3 +1,25 @@
+2014-10-28  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r171593) [Mac] Media controls create a large (and unnecessary) backing store
+        https://bugs.webkit.org/show_bug.cgi?id=137757
+
+        Reviewed by Eric Carlson.
+
+        In r171593, a <div> was added to the media controls which is only ever used on iOS. Instead
+        of creating and adding this <div> in mediaControlsApple.js (which is used on OS X), this 
+        <div> should be created and added in mediaControlsiOS.js, which requires overloading
+        Controller.addControls.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel.hidden): Drive-by fix: allow the panel itself to be hidden.
+        (video::-webkit-media-controls-panel-composited-parent): Deleted.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls): Remove the composited parent.
+        (Controller.prototype.addControls): Ditto.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): Create the composited parent.
+        (ControllerIOS.prototype.addControls): Copied from (previous) apple.js.
+
 2014-11-12  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.
