@@ -44,96 +44,87 @@ namespace JSC {
 inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(signed char)value; }
 
 namespace X86Registers {
-    typedef enum {
-        eax,
-        ecx,
-        edx,
-        ebx,
-        esp,
-        ebp,
-        esi,
-        edi,
 
-#if CPU(X86_64)
-        r8,
-        r9,
-        r10,
-        r11,
-        r12,
-        r13,
-        r14,
-        r15,
-#endif
-    } RegisterID;
+#define FOR_EACH_CPU_REGISTER(V) \
+    FOR_EACH_CPU_GPREGISTER(V) \
+    FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+    FOR_EACH_CPU_FPREGISTER(V)
 
-    typedef enum {
-        xmm0,
-        xmm1,
-        xmm2,
-        xmm3,
-        xmm4,
-        xmm5,
-        xmm6,
-        xmm7,
+// The following are defined as pairs of the following value:
+// 1. type of the storage needed to save the register value by the JIT probe.
+// 2. name of the register.
+#define FOR_EACH_CPU_GPREGISTER(V) \
+    V(void*, eax) \
+    V(void*, ecx) \
+    V(void*, edx) \
+    V(void*, ebx) \
+    V(void*, esp) \
+    V(void*, ebp) \
+    V(void*, esi) \
+    V(void*, edi) \
+    FOR_EACH_X86_64_CPU_GPREGISTER(V)
 
-#if CPU(X86_64)
-        xmm8,
-        xmm9,
-        xmm10,
-        xmm11,
-        xmm12,
-        xmm13,
-        xmm14,
-        xmm15,
-#endif
-    } XMMRegisterID;
+#define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+    V(void*, eip) \
+    V(void*, eflags) \
 
-#if ENABLE(MASM_PROBE)
-    #define FOR_EACH_CPU_REGISTER(V) \
-        FOR_EACH_CPU_GPREGISTER(V) \
-        FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-        FOR_EACH_CPU_FPREGISTER(V)
-
-    #define FOR_EACH_CPU_GPREGISTER(V) \
-        V(void*, eax) \
-        V(void*, ebx) \
-        V(void*, ecx) \
-        V(void*, edx) \
-        V(void*, esi) \
-        V(void*, edi) \
-        V(void*, ebp) \
-        V(void*, esp) \
-        FOR_EACH_X86_64_CPU_GPREGISTER(V)
-
-    #define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-        V(void*, eip) \
-        V(void*, eflags) \
-
-    #define FOR_EACH_CPU_FPREGISTER(V) \
-        V(__m128, xmm0) \
-        V(__m128, xmm1) \
-        V(__m128, xmm2) \
-        V(__m128, xmm3) \
-        V(__m128, xmm4) \
-        V(__m128, xmm5) \
-        V(__m128, xmm6) \
-        V(__m128, xmm7)
+// Note: the JITs only stores double values in the FP registers. However, the
+// storage type here is defined as __m128 because the JIT probe code which does
+// the storing still expects a __m128 slot. This will be changed when the JIT
+// probe code is updated later to reflect the JITs' usage of these registers.
+#define FOR_EACH_CPU_FPREGISTER(V) \
+    V(__m128, xmm0) \
+    V(__m128, xmm1) \
+    V(__m128, xmm2) \
+    V(__m128, xmm3) \
+    V(__m128, xmm4) \
+    V(__m128, xmm5) \
+    V(__m128, xmm6) \
+    V(__m128, xmm7) \
+    FOR_EACH_X86_64_CPU_FPREGISTER(V)
 
 #if CPU(X86)
-    #define FOR_EACH_X86_64_CPU_GPREGISTER(V) // Nothing to add.
+
+#define FOR_EACH_X86_64_CPU_GPREGISTER(V) // Nothing to add.
+#define FOR_EACH_X86_64_CPU_FPREGISTER(V) // Nothing to add.
+
 #elif CPU(X86_64)
-    #define FOR_EACH_X86_64_CPU_GPREGISTER(V) \
-        V(void*, r8) \
-        V(void*, r9) \
-        V(void*, r10) \
-        V(void*, r11) \
-        V(void*, r12) \
-        V(void*, r13) \
-        V(void*, r14) \
-        V(void*, r15)
+
+#define FOR_EACH_X86_64_CPU_GPREGISTER(V) \
+    V(void*, r8) \
+    V(void*, r9) \
+    V(void*, r10) \
+    V(void*, r11) \
+    V(void*, r12) \
+    V(void*, r13) \
+    V(void*, r14) \
+    V(void*, r15)
+
+#define FOR_EACH_X86_64_CPU_FPREGISTER(V) \
+    V(__m128, xmm8) \
+    V(__m128, xmm9) \
+    V(__m128, xmm10) \
+    V(__m128, xmm11) \
+    V(__m128, xmm12) \
+    V(__m128, xmm13) \
+    V(__m128, xmm14) \
+    V(__m128, xmm15)
+
 #endif // CPU(X86_64)
-#endif // ENABLE(MASM_PROBE)
-}
+
+typedef enum {
+    #define DECLARE_REGISTER(_type, _regName) _regName,
+    FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
+    #undef DECLARE_REGISTER
+} RegisterID;
+
+typedef enum {
+    #define DECLARE_REGISTER(_type, _regName) _regName,
+    FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
+    #undef DECLARE_REGISTER
+} XMMRegisterID;
+
+} // namespace X86Register
 
 class X86Assembler {
 public:

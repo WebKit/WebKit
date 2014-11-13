@@ -1,3 +1,18 @@
+2014-11-12  Mark Lam  <mark.lam@apple.com>
+
+        Create canonical lists of registers used by both the Assemblers and the JIT probes.
+        <https://webkit.org/b/138681>
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/X86Assembler.h:
+        - The FP register storage type is still defined as __m128 because the JIT
+          probe code still expects that amount of storage to be available.  Will
+          change this to double when the JIT probe code is updated accordingly in a
+          later patch.
+
 2014-11-12  Andreas Kling  <akling@apple.com>
 
         Generate get_by_id for bracket access with constant string subscript.

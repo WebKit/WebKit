@@ -36,62 +36,6 @@ namespace JSC {
 
     typedef uint32_t ARMWord;
 
-    namespace ARMRegisters {
-        typedef enum {
-            r0 = 0,
-            r1,
-            r2,
-            r3,
-            r4,
-            r5,
-            r6, S0 = r6,
-            r7,
-            r8,
-            r9,
-            r10,
-            r11, fp = r11, // frame pointer
-            r12, ip = r12, S1 = r12,
-            r13, sp = r13,
-            r14, lr = r14,
-            r15, pc = r15
-        } RegisterID;
-
-        typedef enum {
-            d0,
-            d1,
-            d2,
-            d3,
-            d4,
-            d5,
-            d6,
-            d7, SD0 = d7, /* Same as thumb assembler. */
-            d8,
-            d9,
-            d10,
-            d11,
-            d12,
-            d13,
-            d14,
-            d15,
-            d16,
-            d17,
-            d18,
-            d19,
-            d20,
-            d21,
-            d22,
-            d23,
-            d24,
-            d25,
-            d26,
-            d27,
-            d28,
-            d29,
-            d30,
-            d31
-        } FPRegisterID;
-
-#if ENABLE(MASM_PROBE)
     #define FOR_EACH_CPU_REGISTER(V) \
         FOR_EACH_CPU_GPREGISTER(V) \
         FOR_EACH_CPU_SPECIAL_REGISTER(V) \
@@ -109,11 +53,11 @@ namespace JSC {
         V(void*, r8) \
         V(void*, r9) \
         V(void*, r10) \
-        V(void*, r11) \
+        V(void*, fp) \
         V(void*, ip) \
         V(void*, sp) \
         V(void*, lr) \
-        V(void*, pc)
+        V(void*, pc) \
 
     #define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
         V(void*, apsr) \
@@ -135,8 +79,49 @@ namespace JSC {
         V(double, d12) \
         V(double, d13) \
         V(double, d14) \
-        V(double, d15)
-#endif // ENABLE(MASM_PROBE)
+        V(double, d15) \
+        V(double, d16) \
+        V(double, d17) \
+        V(double, d18) \
+        V(double, d19) \
+        V(double, d20) \
+        V(double, d21) \
+        V(double, d22) \
+        V(double, d23) \
+        V(double, d24) \
+        V(double, d25) \
+        V(double, d26) \
+        V(double, d27) \
+        V(double, d28) \
+        V(double, d29) \
+        V(double, d30) \
+        V(double, d31) \
+
+    namespace ARMRegisters {
+
+        typedef enum {
+            #define DECLARE_REGISTER(_type, _regName) _regName,
+            FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
+            #undef DECLARE_REGISTER
+
+            // Pseudonyms for some of the registers.
+            S0 = r6,
+            r11 = fp, // frame pointer
+            r12 = ip, S1 = ip,
+            r13 = sp,
+            r14 = lr,
+            r15 = pc
+        } RegisterID;
+
+        typedef enum {
+            #define DECLARE_REGISTER(_type, _regName) _regName,
+            FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
+            #undef DECLARE_REGISTER
+
+            // Pseudonyms for some of the registers.
+            SD0 = d7, /* Same as thumb assembler. */
+        } FPRegisterID;
+
     } // namespace ARMRegisters
 
     class ARMAssembler {
