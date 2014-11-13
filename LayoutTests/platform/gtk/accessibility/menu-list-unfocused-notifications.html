@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<select id="combobox">
+  <option value="1">one</option>
+  <option value="2">two</option>
+  <option value="3">three</option>
+  <option value="4">four</option>
+</select>
+<button id="button">OK</button>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+description("This tests that changing the selection in a non-focused combo box doesn't result in erroneous focus claims.");
+
+if (window.testRunner && window.accessibilityController) {
+    accessibilityController.addNotificationListener(function(element, notification) {
+        debug(notification + ": " + element.role);
+    });
+
+    debug("Changing focus to button.");
+    document.getElementById('button').focus();
+    debug("Focused element is: " + accessibilityController.focusedElement.role + "\n");
+
+    // Programmatic selection changes in the non-focused combo box do not result
+    // in the button losing focus. Therefore the combo box should not claim focus.
+    debug("Changing selected item in non-focused combobox.");
+    document.getElementById('combobox').selectedIndex = 3;
+    debug("Focused element is: " + accessibilityController.focusedElement.role + "\n");
+
+    // Programmatic selection changes in the non-focused combo box do not result
+    // in the button losing focus. Therefore the combo box should not claim focus.
+    debug("Changing selected item in non-focused combobox.");
+    document.getElementById('combobox').selectedIndex = 2;
+    debug("Focused element is: " + accessibilityController.focusedElement.role + "\n");
+
+    window.setTimeout(function() {
+        accessibilityController.removeNotificationListener();
+        finishJSTest();
+    }, 0);
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
