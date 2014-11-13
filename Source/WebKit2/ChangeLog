@@ -1,5 +1,25 @@
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175983. <rdar://problem/18871984>
+
+    2014-11-11  Tim Horton  <timothy_horton@apple.com>
+
+            Update artwork for some action menu items
+            https://bugs.webkit.org/show_bug.cgi?id=138634
+            <rdar://problem/18871984>
+
+            Reviewed by Anders Carlsson.
+
+            * Resources/OpenInNewWindowTemplate.pdf: Removed.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+            (webKitBundleImageNamed): Deleted.
+            * WebKit2.xcodeproj/project.pbxproj:
+            Get rid of our custom art, and use system art for two more items.
+
+
+2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175973. <rdar://problem/18855914>
 
     2014-11-11  Tim Horton  <timothy_horton@apple.com>
