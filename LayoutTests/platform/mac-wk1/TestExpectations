@@ -23,6 +23,8 @@ webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 
+webkit.org/b/138697 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
