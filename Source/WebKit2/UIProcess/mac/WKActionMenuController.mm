@@ -585,11 +585,16 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return @[ ];
 
     if (hasDataDetectorsCompletionAPI()) {
+        // Ref our WebPageProxy for use in the blocks below.
+        RefPtr<WebPageProxy> page = _page;
         _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+            page->send(Messages::WebPage::DataDetectorsDidPresentUI());
         } interactionChangedHandler:^() {
             [self _showTextIndicator];
+            page->send(Messages::WebPage::DataDetectorsDidChangeUI());
         } interactionStoppedHandler:^() {
             [self _hideTextIndicator];
+            page->send(Messages::WebPage::DataDetectorsDidHideUI());
         }];
     } else {
         _currentActionContext = actionContext;

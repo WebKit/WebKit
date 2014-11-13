@@ -27,6 +27,7 @@
 #include "WKBundlePageOverlay.h"
 
 #include "APIClient.h"
+#include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKBundleAPICast.h"
@@ -132,20 +133,46 @@ private:
         }
     }
 
-    virtual bool prepareForActionMenu(WebPageOverlay& pageOverlay, RefPtr<API::Object>& userData) override
+#if PLATFORM(MAC)
+    virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle)
     {
-        if (!m_client.prepareForActionMenu)
-            return false;
+        if (!m_client.actionContextForResultAtPoint)
+            return nil;
 
-        WKTypeRef userDataToPass = nullptr;
-        if (m_client.prepareForActionMenu(toAPI(&pageOverlay), &userDataToPass, m_client.base.clientInfo)) {
-            userData = adoptRef(toImpl(userDataToPass));
-            return true;
-        }
+        WKBundleRangeHandleRef apiRange;
+        DDActionContext *actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
 
-        return false;
+        if (apiRange)
+            rangeHandle = toImpl(apiRange)->coreRange();
+
+        return actionContext;
     }
-    
+
+    virtual void dataDetectorsDidPresentUI(WebPageOverlay& pageOverlay)
+    {
+        if (!m_client.dataDetectorsDidPresentUI)
+            return;
+
+        m_client.dataDetectorsDidPresentUI(toAPI(&pageOverlay), m_client.base.clientInfo);
+    }
+
+    virtual void dataDetectorsDidChangeUI(WebPageOverlay& pageOverlay)
+    {
+        if (!m_client.dataDetectorsDidChangeUI)
+            return;
+
+        m_client.dataDetectorsDidChangeUI(toAPI(&pageOverlay), m_client.base.clientInfo);
+    }
+
+    virtual void dataDetectorsDidHideUI(WebPageOverlay& pageOverlay)
+    {
+        if (!m_client.dataDetectorsDidHideUI)
+            return;
+
+        m_client.dataDetectorsDidHideUI(toAPI(&pageOverlay), m_client.base.clientInfo);
+    }
+#endif // PLATFORM(MAC)
+
     virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay& pageOverlay, String attribute, WebCore::FloatPoint parameter, String& value) override
     {
         if (!m_accessibilityClient.client().copyAccessibilityAttributeValue)

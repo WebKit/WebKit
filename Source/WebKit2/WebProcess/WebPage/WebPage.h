@@ -158,6 +158,7 @@ class WebMouseEvent;
 class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
+class WebPageOverlay;
 class WebPopupMenu;
 class WebUndoStep;
 class WebUserContentController;
@@ -1041,6 +1042,10 @@ private:
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint);
     void selectLastActionMenuRange();
+
+    void dataDetectorsDidPresentUI();
+    void dataDetectorsDidChangeUI();
+    void dataDetectorsDidHideUI();
 #endif
 
     uint64_t m_pageID;
@@ -1267,6 +1272,7 @@ private:
 
 #if PLATFORM(MAC)
     RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
+    RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
 #endif
 };
 

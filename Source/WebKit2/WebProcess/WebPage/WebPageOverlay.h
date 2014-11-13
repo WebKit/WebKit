@@ -30,7 +30,11 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/Range.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS DDActionContext;
 
 namespace WebKit {
 
@@ -50,7 +54,13 @@ public:
         virtual void drawRect(WebPageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(WebPageOverlay&, const WebCore::PlatformMouseEvent&) = 0;
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
-        virtual bool prepareForActionMenu(WebPageOverlay&, RefPtr<API::Object>& userData) { return false; }
+
+#if PLATFORM(MAC)
+        virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) { return nullptr; }
+        virtual void dataDetectorsDidPresentUI(WebPageOverlay&) { }
+        virtual void dataDetectorsDidChangeUI(WebPageOverlay&) { }
+        virtual void dataDetectorsDidHideUI(WebPageOverlay&) { }
+#endif
 
         virtual bool copyAccessibilityAttributeStringValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, String& value) { return false; }
         virtual bool copyAccessibilityAttributeBoolValueForPoint(WebPageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) { return false; }
@@ -69,7 +79,12 @@ public:
     WebCore::PageOverlay* coreOverlay() const { return m_overlay.get(); }
     Client& client() const { return m_client; }
 
-    bool prepareForActionMenu(RefPtr<API::Object>& userData);
+#if PLATFORM(MAC)
+    DDActionContext *actionContextForResultAtPoint(WebCore::FloatPoint, RefPtr<WebCore::Range>&);
+    void dataDetectorsDidPresentUI();
+    void dataDetectorsDidChangeUI();
+    void dataDetectorsDidHideUI();
+#endif
 
 private:
     WebPageOverlay(Client&, WebCore::PageOverlay::OverlayType);
