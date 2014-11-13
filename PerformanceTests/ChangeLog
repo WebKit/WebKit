@@ -1,3 +1,12 @@
+2014-11-13  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add performance test case to measure line layout speed of monolithic text content.
+        https://bugs.webkit.org/show_bug.cgi?id=138699
+
+        Reviewed by Antti Koivisto.
+
+        * Layout/line-layout-long-long-text.html: Added.
+
 2014-10-22  Zalan Bujtas  <zalan@apple.com>
 
         Speed up line parsing for simple line layout (part I)
