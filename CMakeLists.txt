@@ -10,7 +10,6 @@ set(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/Source/WebCore")
 set(WEBKIT_DIR "${CMAKE_SOURCE_DIR}/Source/WebKit")
 set(WEBKIT2_DIR "${CMAKE_SOURCE_DIR}/Source/WebKit2")
 set(THIRDPARTY_DIR "${CMAKE_SOURCE_DIR}/Source/ThirdParty")
-set(PLATFORM_DIR "${CMAKE_SOURCE_DIR}/Source/Platform")
 
 set(TOOLS_DIR "${CMAKE_SOURCE_DIR}/Tools")
 
