@@ -1233,17 +1233,23 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector)
     ASSERT(!parentNode());
     ASSERT(!m_elementData);
 
-    if (attributeVector.isEmpty())
-        return;
+    if (!attributeVector.isEmpty()) {
+        if (document().sharedObjectPool())
+            m_elementData = document().sharedObjectPool()->cachedShareableElementDataWithAttributes(attributeVector);
+        else
+            m_elementData = ShareableElementData::createWithAttributes(attributeVector);
 
-    if (document().sharedObjectPool())
-        m_elementData = document().sharedObjectPool()->cachedShareableElementDataWithAttributes(attributeVector);
-    else
-        m_elementData = ShareableElementData::createWithAttributes(attributeVector);
+    }
+
+    parserDidSetAttributes();
 
     // Use attributeVector instead of m_elementData because attributeChanged might modify m_elementData.
-    for (unsigned i = 0; i < attributeVector.size(); ++i)
-        attributeChanged(attributeVector[i].name(), nullAtom, attributeVector[i].value(), ModifiedDirectly);
+    for (const auto& attribute : attributeVector)
+        attributeChanged(attribute.name(), nullAtom, attribute.value(), ModifiedDirectly);
+}
+
+void Element::parserDidSetAttributes()
+{
 }
 
 bool Element::hasAttributes() const

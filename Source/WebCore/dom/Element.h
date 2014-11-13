@@ -555,6 +555,7 @@ protected:
     virtual void removedFrom(ContainerNode&) override;
     virtual void childrenChanged(const ChildChange&) override;
     virtual void removeAllEventListeners() override final;
+    virtual void parserDidSetAttributes();
 
     void clearTabIndexExplicitlyIfNeeded();    
     void setTabIndexExplicitly(short);

@@ -1,3 +1,21 @@
+2014-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Lazily create HTMLInputElement's inputType and shadow subtree
+        https://bugs.webkit.org/show_bug.cgi?id=138524
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test case to make sure we don't crash when parsing an <input>
+        Element that has a |border| attribute as first attribute. This is what
+        was happening with the first version of this patch that landed in
+        r175852. When attributeChanged() was called for the |border| attribute
+        HTMLInputElement::isPresentationAttribute() would get called before
+        m_inputType is initialized, and "name == borderAttr && isImageButton()"
+        would crash because isImageButton() dereferences m_inputType.
+
+        * fast/dom/HTMLInputElement/border-attribute-crash-expected.txt: Added.
+        * fast/dom/HTMLInputElement/border-attribute-crash.html: Added.
+
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Skip more test failing after r175776.

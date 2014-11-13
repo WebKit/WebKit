@@ -1,3 +1,45 @@
+2014-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Lazily create HTMLInputElement's inputType and shadow subtree
+        https://bugs.webkit.org/show_bug.cgi?id=138524
+
+        Reviewed by Ryosuke Niwa.
+
+        When an HTMLInputElement was created by the parser, we would first call
+        HTMLInputElement::create(), then call Element::parserSetAttributes() on
+        the constructed input. With the previous implementation, this was a bit
+        inefficient because HTMLInputElement::create() would construct a
+        TextInputType inputType (as this is the default) as well as its
+        corresponding shadow subtree. Then, parserSetAttributes() would often
+        set the |type| attribute and would need to destroy this input type as
+        well as its subtree if the new |type| is not 'text', to create a new
+        inputType / shadow subtree of the right type. The profiler showed that
+        this was fairly expensive.
+
+        To improve this, this patch delays the inputType / shadow subtree
+        creation when the HTMLInputElement is constructed by the parser, until
+        the attributes are actually set by the parser. This way, we directly
+        create an inputType / shadow subtree of the right type.
+
+        I see a 1.4% speed up on speedometer (73.95 -> 75.0).
+
+        Test: fast/dom/HTMLInputElement/border-attribute-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::parserDidSetAttributes):
+        * dom/Element.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::create):
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::runPostTypeUpdateTasks):
+        (WebCore::HTMLInputElement::initializeInputType):
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::parserDidSetAttributes):
+        (WebCore::HTMLInputElement::finishParsingChildren):
+        * html/HTMLInputElement.h:
+
 2014-11-12  Chris Dumez  <cdumez@apple.com>
 
         Have DOMTimer deal with more ScriptExecutionContext references
