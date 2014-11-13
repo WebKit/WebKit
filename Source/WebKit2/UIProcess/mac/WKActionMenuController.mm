@@ -54,6 +54,15 @@
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
+static bool hasDataDetectorsCompletionAPI() {
+    static bool hasCompletionAPI;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        hasCompletionAPI = [getDDActionsManagerClass() respondsToSelector:@selector(shouldUseActionsWithContext:)] && [getDDActionsManagerClass() respondsToSelector:@selector(didUseActions)];
+    });
+    return hasCompletionAPI;
+}
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -156,9 +165,9 @@ using namespace WebKit;
 - (void)willDestroyView:(WKView *)view
 {
     _page = nullptr;
-    _wkView = nullptr;
+    _wkView = nil;
     _hitTestResult = ActionMenuHitTestResult();
-
+    _currentActionContext = nil;
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -192,9 +201,16 @@ using namespace WebKit;
         return;
 
     if (_type == kWKActionMenuDataDetectedItem) {
+        if (_currentActionContext && hasDataDetectorsCompletionAPI()) {
+            if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+                [menu cancelTracking];
+                return;
+            }
+        }
         if (menu.numberOfItems == 1) {
             _page->clearSelection();
-            [self _showTextIndicator];
+            if (!hasDataDetectorsCompletionAPI())
+                [self _showTextIndicator];
         } else
             _page->selectLastActionMenuRange();
         return;
@@ -217,8 +233,15 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
-    if (_type == kWKActionMenuDataDetectedItem && menu.numberOfItems > 1)
-        [self _hideTextIndicator];
+    if (_type == kWKActionMenuDataDetectedItem) {
+        if (hasDataDetectorsCompletionAPI()) {
+            if (_currentActionContext)
+                [getDDActionsManagerClass() didUseActions];
+        } else {
+            if (menu.numberOfItems > 1)
+                [self _hideTextIndicator];
+        }
+    }
 
     if (!_shouldKeepPreviewPopoverOpen)
         [self _clearPreviewPopover];
@@ -227,6 +250,7 @@ using namespace WebKit;
     _hitTestResult = ActionMenuHitTestResult();
     _type = kWKActionMenuNone;
     _sharingServicePicker = nil;
+    _currentActionContext = nil;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
@@ -560,13 +584,26 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!actionContext)
         return @[ ];
 
-    actionContext.completionHandler = ^() {
-        [self _hideTextIndicator];
-    };
+    if (hasDataDetectorsCompletionAPI()) {
+        _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+        } interactionChangedHandler:^() {
+            [self _showTextIndicator];
+        } interactionStoppedHandler:^() {
+            [self _hideTextIndicator];
+        }];
+    } else {
+        _currentActionContext = actionContext;
 
-    actionContext.forActionMenuContent = YES;
-    actionContext.highlightFrame = [_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]];
-    return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_hitTestResult.actionContext mainResult] actionContext:actionContext];
+        [_currentActionContext setCompletionHandler:^() {
+            [self _hideTextIndicator];
+        }];
+
+        [_currentActionContext setForActionMenuContent:YES];
+    }
+
+    [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];
+
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
 }
 
 - (NSArray *)_defaultMenuItemsForText
