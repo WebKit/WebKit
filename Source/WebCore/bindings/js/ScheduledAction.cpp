@@ -72,18 +72,18 @@ ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWo
         m_args.append(Strong<JSC::Unknown>(exec->vm(), exec->uncheckedArgument(i)));
 }
 
-void ScheduledAction::execute(ScriptExecutionContext* context)
+void ScheduledAction::execute(ScriptExecutionContext& context)
 {
-    if (is<Document>(*context))
+    if (is<Document>(context))
         execute(downcast<Document>(context));
     else
         execute(downcast<WorkerGlobalScope>(context));
 }
 
-void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)
+void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext& context)
 {
     ASSERT(m_function);
-    JSLockHolder lock(context->vm());
+    JSLockHolder lock(context.vm());
 
     CallData callData;
     CallType callType = getCallData(m_function.get(), callData);
@@ -97,23 +97,23 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     for (size_t i = 0; i < size; ++i)
         args.append(m_args[i].get());
 
-    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
+    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&context, callType, callData);
 
     JSValue exception;
-    if (context->isDocument())
+    if (is<Document>(context))
         JSMainThreadExecState::call(exec, m_function.get(), callType, callData, thisValue, args, &exception);
     else
         JSC::call(exec, m_function.get(), callType, callData, thisValue, args, &exception);
 
-    InspectorInstrumentation::didCallFunction(cookie, context);
+    InspectorInstrumentation::didCallFunction(cookie, &context);
 
     if (exception)
         reportException(exec, exception);
 }
 
-void ScheduledAction::execute(Document* document)
+void ScheduledAction::execute(Document& document)
 {
-    JSDOMWindow* window = toJSDOMWindow(document->frame(), *m_isolatedWorld);
+    JSDOMWindow* window = toJSDOMWindow(document.frame(), *m_isolatedWorld);
     if (!window)
         return;
 
@@ -127,18 +127,18 @@ void ScheduledAction::execute(Document* document)
         frame->script().executeScriptInWorld(*m_isolatedWorld, m_code);
 }
 
-void ScheduledAction::execute(WorkerGlobalScope* workerGlobalScope)
+void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
 {
     // In a Worker, the execution should always happen on a worker thread.
-    ASSERT(workerGlobalScope->thread().threadID() == currentThread());
+    ASSERT(workerGlobalScope.thread().threadID() == currentThread());
 
-    WorkerScriptController* scriptController = workerGlobalScope->script();
+    WorkerScriptController* scriptController = workerGlobalScope.script();
 
     if (m_function) {
         JSWorkerGlobalScope* contextWrapper = scriptController->workerGlobalScopeWrapper();
         executeFunctionInContext(contextWrapper, contextWrapper, workerGlobalScope);
     } else {
-        ScriptSourceCode code(m_code, workerGlobalScope->url());
+        ScriptSourceCode code(m_code, workerGlobalScope.url());
         scriptController->evaluate(code);
     }
 }

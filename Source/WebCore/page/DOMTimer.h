@@ -43,8 +43,8 @@ namespace WebCore {
     public:
         // Creates a new timer owned by specified ScriptExecutionContext, starts it
         // and returns its Id.
-        static int install(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int timeout, bool singleShot);
-        static void removeById(ScriptExecutionContext*, int timeoutId);
+        static int install(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int timeout, bool singleShot);
+        static void removeById(ScriptExecutionContext&, int timeoutId);
 
         // Notify that the interval may need updating (e.g. because the minimum interval
         // setting for the context has changed).
@@ -53,7 +53,7 @@ namespace WebCore {
         static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
 
     private:
-        DOMTimer(ScriptExecutionContext*, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
+        DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
         double intervalClampedToMinimum() const;
         void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 

@@ -1606,7 +1606,7 @@ int DOMWindow::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout, 
         ec = INVALID_ACCESS_ERR;
         return -1;
     }
-    return DOMTimer::install(context, WTF::move(action), timeout, true);
+    return DOMTimer::install(*context, WTF::move(action), timeout, true);
 }
 
 void DOMWindow::clearTimeout(int timeoutId)
@@ -1630,7 +1630,7 @@ void DOMWindow::clearTimeout(int timeoutId)
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context)
         return;
-    DOMTimer::removeById(context, timeoutId);
+    DOMTimer::removeById(*context, timeoutId);
 }
 
 int DOMWindow::setInterval(std::unique_ptr<ScheduledAction> action, int timeout, ExceptionCode& ec)
@@ -1640,7 +1640,7 @@ int DOMWindow::setInterval(std::unique_ptr<ScheduledAction> action, int timeout,
         ec = INVALID_ACCESS_ERR;
         return -1;
     }
-    return DOMTimer::install(context, WTF::move(action), timeout, false);
+    return DOMTimer::install(*context, WTF::move(action), timeout, false);
 }
 
 void DOMWindow::clearInterval(int timeoutId)
@@ -1648,7 +1648,7 @@ void DOMWindow::clearInterval(int timeoutId)
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context)
         return;
-    DOMTimer::removeById(context, timeoutId);
+    DOMTimer::removeById(*context, timeoutId);
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

@@ -1267,7 +1267,7 @@ public:
     static WindowCloseTimer* create(WebView*);
 
 private:
-    WindowCloseTimer(ScriptExecutionContext*, WebView*);
+    WindowCloseTimer(ScriptExecutionContext&, WebView*);
     virtual void contextDestroyed();
     virtual void fired();
 
@@ -1280,21 +1280,20 @@ WindowCloseTimer* WindowCloseTimer::create(WebView* webView)
     Frame* frame = core(webView->topLevelFrame());
     ASSERT(frame);
     if (!frame)
-        return 0;
+        return nullptr;
 
     Document* document = frame->document();
     ASSERT(document);
     if (!document)
-        return 0;
+        return nullptr;
 
-    return new WindowCloseTimer(document, webView);
+    return new WindowCloseTimer(*document, webView);
 }
 
-WindowCloseTimer::WindowCloseTimer(ScriptExecutionContext* context, WebView* webView)
+WindowCloseTimer::WindowCloseTimer(ScriptExecutionContext& context, WebView* webView)
     : SuspendableTimer(context)
     , m_webView(webView)
 {
-    ASSERT_ARG(context, context);
     ASSERT_ARG(webView, webView);
 }
 

@@ -48,7 +48,7 @@ namespace WebCore {
     public:
         static std::unique_ptr<ScheduledAction> create(JSC::ExecState*, DOMWrapperWorld& isolatedWorld, ContentSecurityPolicy*);
 
-        void execute(ScriptExecutionContext*);
+        void execute(ScriptExecutionContext&);
 
     private:
         ScheduledAction(JSC::ExecState*, JSC::JSValue function, DOMWrapperWorld& isolatedWorld);
@@ -59,9 +59,9 @@ namespace WebCore {
         {
         }
 
-        void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext*);
-        void execute(Document*);
-        void execute(WorkerGlobalScope*);
+        void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext&);
+        void execute(Document&);
+        void execute(WorkerGlobalScope&);
 
         JSC::Strong<JSC::Unknown> m_function;
         Vector<JSC::Strong<JSC::Unknown>> m_args;

@@ -154,22 +154,22 @@ void WorkerGlobalScope::postTask(Task task)
 
 int WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), WTF::move(action), timeout, true);
+    return DOMTimer::install(*this, WTF::move(action), timeout, true);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
 {
-    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
+    DOMTimer::removeById(*this, timeoutId);
 }
 
 int WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(scriptExecutionContext(), WTF::move(action), timeout, false);
+    return DOMTimer::install(*this, WTF::move(action), timeout, false);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)
 {
-    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
+    DOMTimer::removeById(*this, timeoutId);
 }
 
 void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode& ec)

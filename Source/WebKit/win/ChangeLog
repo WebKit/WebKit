@@ -1,3 +1,18 @@
+2014-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Have DOMTimer deal with more ScriptExecutionContext references
+        https://bugs.webkit.org/show_bug.cgi?id=138679
+
+        Reviewed by Andreas Kling.
+
+        Update WindowCloseTimer to deal with ScriptExecutionContext references
+        instead of pointers as it subclasses SuspendableTimer and its
+        constructor takes a ScriptExecutionContext& in argument.
+
+        * WebView.cpp:
+        (WindowCloseTimer::create):
+        (WindowCloseTimer::WindowCloseTimer):
+
 2014-11-05  Jer Noble  <jer.noble@apple.com>
 
         De-templatize Timer
