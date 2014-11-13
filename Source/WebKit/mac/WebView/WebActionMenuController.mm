@@ -35,6 +35,8 @@
 #import "WebSystemInterface.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <ImageIO/ImageIO.h>
+#import <ImageKit/ImageKit.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
@@ -43,6 +45,8 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NSSharingServicePickerSPI.h>
+#import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
@@ -56,6 +60,9 @@
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
 SOFT_LINK_CLASS(QuickLookUI, QLPreviewBubble)
+
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
+SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
 @class QLPreviewBubble;
 @interface NSObject (WKQLPreviewBubbleDetails)
@@ -156,6 +163,7 @@ struct DictionaryPopupInfo {
         return;
 
     _type = WebActionMenuNone;
+    _sharingServicePicker = nil;
 }
 
 #pragma mark Link actions
@@ -255,6 +263,127 @@ struct DictionaryPopupInfo {
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList withHitTestResult:hitTestResult];
 
     return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
+}
+
+#pragma mark Image actions
+
+- (NSArray *)_defaultMenuItemsForImage:(WebElementDictionary *)hitTestResult
+{
+    RetainPtr<NSMenuItem> copyImageItem = [self _createActionMenuItemForTag:WebActionMenuItemTagCopyImage withHitTestResult:hitTestResult];
+
+    RetainPtr<NSMenuItem> addToPhotosItem;
+    if ([self _canAddMediaToPhotos])
+        addToPhotosItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddImageToPhotos withHitTestResult:hitTestResult];
+    else
+        addToPhotosItem = [NSMenuItem separatorItem];
+
+    RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:WebActionMenuItemTagSaveImageToDownloads withHitTestResult:hitTestResult];
+    if (!_webView.downloadDelegate)
+        [saveToDownloadsItem setEnabled:NO];
+
+
+    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:WebActionMenuItemTagShareImage withHitTestResult:hitTestResult];
+    if (Image* image = _hitTestResult.image()) {
+        RetainPtr<CGImageRef> cgImage = image->getCGImageRef();
+        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSZeroSize]);
+        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
+        [_sharingServicePicker setDelegate:self];
+        [shareItem setSubmenu:[_sharingServicePicker menu]];
+    }
+
+    return @[ copyImageItem.get(), addToPhotosItem.get(), saveToDownloadsItem.get(), shareItem.get() ];
+}
+
+- (void)_copyImage:(id)sender
+{
+    Frame* frame = core([_webView _selectedOrMainFrame]);
+    if (!frame)
+        return;
+    frame->editor().copyImage(_hitTestResult);
+}
+
+static NSString *temporaryPhotosDirectoryPath()
+{
+    static NSString *temporaryPhotosDirectoryPath;
+
+    if (!temporaryPhotosDirectoryPath) {
+        NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPhotos-XXXXXX"];
+        CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
+
+        if (mkdtemp(templateRepresentation.mutableData()))
+            temporaryPhotosDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy];
+    }
+
+    return temporaryPhotosDirectoryPath;
+}
+
+static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
+{
+    NSString *photoDirectoryPath = temporaryPhotosDirectoryPath();
+    if (!photoDirectoryPath) {
+        WTFLogAlways("Cannot create temporary photo download directory.");
+        return nil;
+    }
+
+    NSString *path = [photoDirectoryPath stringByAppendingPathComponent:suggestedFilename];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:path]) {
+        NSString *pathTemplatePrefix = [photoDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
+        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:suggestedFilename];
+        CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
+
+        int fd = mkstemps(pathTemplateRepresentation.mutableData(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
+        if (fd < 0) {
+            WTFLogAlways("Cannot create photo file in the temporary directory (%@).", suggestedFilename);
+            return nil;
+        }
+
+        close(fd);
+        path = [fileManager stringWithFileSystemRepresentation:pathTemplateRepresentation.data() length:pathTemplateRepresentation.length()];
+    }
+
+    return path;
+}
+
+- (BOOL)_canAddMediaToPhotos
+{
+    return [getIKSlideshowClass() canExportToApplication:@"com.apple.Photos"];
+}
+
+- (void)_addImageToPhotos:(id)sender
+{
+    if (![self _canAddMediaToPhotos])
+        return;
+
+    Image* image = _hitTestResult.image();
+    if (!image)
+        return;
+
+    RetainPtr<CGImageRef> cgImage = image->getCGImageRef();
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString * const suggestedFilename = @"image.jpg";
+
+        NSString *filePath = pathToPhotoOnDisk(suggestedFilename);
+        if (!filePath)
+            return;
+
+        NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+        auto dest = adoptCF(CGImageDestinationCreateWithURL((CFURLRef)fileURL, kUTTypeJPEG, 1, nullptr));
+        CGImageDestinationAddImage(dest.get(), cgImage.get(), nullptr);
+        CGImageDestinationFinalize(dest.get());
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // This API provides no way to report failure, but if 18420778 is fixed so that it does, we should handle this.
+            [getIKSlideshowClass() exportSlideshowItem:filePath toApplication:@"com.apple.Photos"];
+        });
+    });
+}
+
+- (void)_saveImageToDownloads:(id)sender
+{
+    [_webView _downloadURL:_hitTestResult.absoluteImageURL()];
 }
 
 #pragma mark Text actions
@@ -432,6 +561,33 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     return @[ [NSMenuItem separatorItem], [NSMenuItem separatorItem], pasteItem.get() ];
 }
 
+#pragma mark NSSharingServicePickerDelegate implementation
+
+- (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
+{
+    RetainPtr<NSMutableArray> services = adoptNS([[NSMutableArray alloc] initWithCapacity:proposedServices.count]);
+
+    for (NSSharingService *service in proposedServices) {
+        if ([service.name isEqualToString:NSSharingServiceNameAddToIPhoto])
+            continue;
+        [services addObject:service];
+    }
+
+    return services.autorelease();
+}
+
+- (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
+{
+    return self;
+}
+
+#pragma mark NSSharingServiceDelegate implementation
+
+- (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
+{
+    return _webView.window;
+}
+
 #pragma mark Menu Items
 
 - (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag withHitTestResult:(WebElementDictionary *)hitTestResult
@@ -486,6 +642,29 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         image = [NSImage imageNamed:@"NSActionMenuSpelling"];
         break;
 
+    case WebActionMenuItemTagCopyImage:
+        selector = @selector(_copyImage:);
+        title = WEB_UI_STRING_KEY("Copy", "Copy (image action menu item)", "image action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        break;
+
+    case WebActionMenuItemTagAddImageToPhotos:
+        selector = @selector(_addImageToPhotos:);
+        title = WEB_UI_STRING_KEY("Add to Photos", "Add to Photos (action menu item)", "action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuAddToPhotos"];
+        break;
+
+    case WebActionMenuItemTagSaveImageToDownloads:
+        selector = @selector(_saveImageToDownloads:);
+        title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (image action menu item)", "image action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
+        break;
+
+    case WebActionMenuItemTagShareImage:
+        title = WEB_UI_STRING_KEY("Share (image action menu item)", "Share (image action menu item)", "image action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuShare"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -510,6 +689,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     if (url) {
         _type = WebActionMenuLink;
         return [self _defaultMenuItemsForLink:hitTestResult];
+    }
+
+    if (_hitTestResult.image() && !_hitTestResult.absoluteImageURL().isEmpty()) {
+        _type = WebActionMenuImage;
+        return [self _defaultMenuItemsForImage:hitTestResult];
     }
 
     Node* node = _hitTestResult.innerNode();
