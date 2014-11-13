@@ -125,6 +125,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 
     // Shorthand and 4-values properties
     switch (propertyID) {
+    case CSSPropertyAnimation:
+        return getLayeredShorthandValue(animationShorthand());
     case CSSPropertyBorderSpacing:
         return borderSpacingValue(borderSpacingShorthand());
     case CSSPropertyBackgroundPosition:
@@ -796,6 +798,15 @@ String StyleProperties::asText() const
         String value;
 
         switch (propertyID) {
+        case CSSPropertyAnimationName:
+        case CSSPropertyAnimationDuration:
+        case CSSPropertyAnimationTimingFunction:
+        case CSSPropertyAnimationDelay:
+        case CSSPropertyAnimationIterationCount:
+        case CSSPropertyAnimationDirection:
+        case CSSPropertyAnimationFillMode:
+            shorthandPropertyID = CSSPropertyAnimation;
+            break;
         case CSSPropertyBackgroundPositionX:
             positionXPropertyIndex = n;
             continue;

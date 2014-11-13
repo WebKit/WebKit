@@ -153,7 +153,7 @@ public:
     bool parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result);
     bool parseAnimationProperty(CSSPropertyID, RefPtr<CSSValue>&, AnimationParseContext&);
     bool parseTransitionShorthand(CSSPropertyID, bool important);
-    bool parseAnimationShorthand(bool important);
+    bool parseAnimationShorthand(CSSPropertyID, bool important);
 
 #if ENABLE(CSS_GRID_LAYOUT)
     PassRefPtr<CSSValue> parseGridPosition();

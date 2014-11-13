@@ -255,6 +255,20 @@ StylePropertyShorthand transitionShorthand()
     return StylePropertyShorthand(CSSPropertyTransition, transitionProperties, WTF_ARRAY_LENGTH(transitionProperties));
 }
 
+StylePropertyShorthand animationShorthand()
+{
+    static const CSSPropertyID animationProperties[] = {
+        CSSPropertyAnimationName,
+        CSSPropertyAnimationDuration,
+        CSSPropertyAnimationTimingFunction,
+        CSSPropertyAnimationDelay,
+        CSSPropertyAnimationIterationCount,
+        CSSPropertyAnimationDirection,
+        CSSPropertyAnimationFillMode
+    };
+    return StylePropertyShorthand(CSSPropertyAnimation, animationProperties, WTF_ARRAY_LENGTH(animationProperties));
+}
+
 StylePropertyShorthand webkitAnimationShorthand()
 {
     static const CSSPropertyID animationProperties[] = {
@@ -269,7 +283,7 @@ StylePropertyShorthand webkitAnimationShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitAnimation, animationProperties, WTF_ARRAY_LENGTH(animationProperties));
 }
 
-StylePropertyShorthand webkitAnimationShorthandForParsing()
+StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
 {
     // When we parse the animation shorthand we need to look for animation-name
     // last because otherwise it might match against the keywords for fill mode,
@@ -281,6 +295,16 @@ StylePropertyShorthand webkitAnimationShorthandForParsing()
     // And in the spec (editor's draft) at:
     // http://dev.w3.org/csswg/css3-animations/#animation-shorthand-property
     static const CSSPropertyID animationPropertiesForParsing[] = {
+        CSSPropertyAnimationDuration,
+        CSSPropertyAnimationTimingFunction,
+        CSSPropertyAnimationDelay,
+        CSSPropertyAnimationIterationCount,
+        CSSPropertyAnimationDirection,
+        CSSPropertyAnimationFillMode,
+        CSSPropertyAnimationName
+    };
+
+    static const CSSPropertyID prefixedAnimationPropertiesForParsing[] = {
         CSSPropertyWebkitAnimationDuration,
         CSSPropertyWebkitAnimationTimingFunction,
         CSSPropertyWebkitAnimationDelay,
@@ -290,7 +314,9 @@ StylePropertyShorthand webkitAnimationShorthandForParsing()
         CSSPropertyWebkitAnimationName
     };
 
-    return StylePropertyShorthand(CSSPropertyWebkitAnimation, animationPropertiesForParsing, WTF_ARRAY_LENGTH(animationPropertiesForParsing));
+    if (propId == CSSPropertyAnimation)
+        return StylePropertyShorthand(CSSPropertyAnimation, animationPropertiesForParsing, WTF_ARRAY_LENGTH(animationPropertiesForParsing));
+    return StylePropertyShorthand(CSSPropertyWebkitAnimation, prefixedAnimationPropertiesForParsing, WTF_ARRAY_LENGTH(prefixedAnimationPropertiesForParsing));
 }
 
 StylePropertyShorthand webkitBorderAfterShorthand()
@@ -515,6 +541,8 @@ StylePropertyShorthand heightShorthand()
 StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
 {
     switch (propertyID) {
+    case CSSPropertyAnimation:
+        return animationShorthand();
     case CSSPropertyBackground:
         return backgroundShorthand();
     case CSSPropertyBackgroundPosition:
@@ -655,6 +683,14 @@ static Vector<StylePropertyShorthand> makeVector(const StylePropertyShorthand& a
 Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID propertyID)
 {
     switch (propertyID) {
+    case CSSPropertyAnimationName:
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationTimingFunction:
+    case CSSPropertyAnimationDelay:
+    case CSSPropertyAnimationIterationCount:
+    case CSSPropertyAnimationDirection:
+    case CSSPropertyAnimationFillMode:
+        return makeVector(animationShorthand());
     case CSSPropertyBackgroundImage:
     case CSSPropertyBackgroundSize:
     case CSSPropertyBackgroundAttachment:

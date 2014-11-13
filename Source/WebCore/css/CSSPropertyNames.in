@@ -86,6 +86,15 @@ line-height [Inherited]
 -webkit-ruby-position [Inherited, NewStyleBuilder, TypeName=RubyPosition]
 
 // The remaining properties are listed in alphabetical order
+animation
+animation-delay
+animation-direction
+animation-duration
+animation-fill-mode
+animation-iteration-count
+animation-name
+animation-play-state
+animation-timing-function
 background
 background-attachment
 background-blend-mode

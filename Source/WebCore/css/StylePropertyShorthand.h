@@ -65,6 +65,8 @@ private:
     CSSPropertyID m_shorthandID;
 };
 
+StylePropertyShorthand animationShorthand();
+StylePropertyShorthand animationShorthandForParsing(CSSPropertyID);
 StylePropertyShorthand backgroundShorthand();
 StylePropertyShorthand backgroundPositionShorthand();
 StylePropertyShorthand backgroundRepeatShorthand();
@@ -91,7 +93,6 @@ StylePropertyShorthand overflowShorthand();
 StylePropertyShorthand paddingShorthand();
 StylePropertyShorthand transitionShorthand();
 StylePropertyShorthand webkitAnimationShorthand();
-StylePropertyShorthand webkitAnimationShorthandForParsing();
 StylePropertyShorthand webkitBorderAfterShorthand();
 StylePropertyShorthand webkitBorderBeforeShorthand();
 StylePropertyShorthand webkitBorderEndShorthand();

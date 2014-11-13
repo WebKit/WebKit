@@ -1,3 +1,20 @@
+2014-11-12  Dean Jackson  <dino@apple.com>
+
+        Support unprefixed animation property names
+        https://bugs.webkit.org/show_bug.cgi?id=138678
+        <rdar://problem/18943059>
+
+        Reviewed by Simon Fraser.
+
+        Tests for unprefixed parsing and calculation of animation
+        properties. Fun fact, this is the first test we have
+        for the computed style of all animation-direction values.
+
+        * animations/unprefixed-properties-expected.txt: Added.
+        * animations/unprefixed-properties.html: Added.
+        * animations/unprefixed-shorthand-expected.txt: Added.
+        * animations/unprefixed-shorthand.html: Added.
+
 2014-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/15864185> Syrah: platform/mac/editing/attributed-string tests are failing

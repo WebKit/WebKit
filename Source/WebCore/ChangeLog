@@ -1,3 +1,71 @@
+2014-11-12  Dean Jackson  <dino@apple.com>
+
+        Support unprefixed animation property names
+        https://bugs.webkit.org/show_bug.cgi?id=138678
+        <rdar://problem/18943059>
+
+        Reviewed by Simon Fraser.
+
+        Step 1 of 3 in unprefixing CSS animations: handling the
+        property names and values.
+
+        Unlike other unprefixing, where we use an alias that
+        effectively removes the prefixed values from the code,
+        for animations we need to keep the old values around so that
+        existing content will not break (e.g. computed style).
+
+        During testing I noticed that we didn't handle the
+        (relatively) new animation-direction values of
+        "reverse" and "alternate-reverse" when querying
+        computed style.
+
+        Tests: animations/unprefixed-properties.html
+               animations/unprefixed-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Handle the unprefixed
+        values, but also get animation direction to produce the correct
+        results when "reverse" and "alternate-reverse" is specified.
+
+        * css/CSSParser.cpp: Handle the new values. If necessary, pass a flag
+        around indicating whether it is prefixed or unprefixed.
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseAnimationShorthand): Use the flag to decide
+        which of the forms we're going to check.
+        (WebCore::CSSParser::parseAnimationProperty):
+        * css/CSSParser.h:
+
+        * css/CSSProperty.h:
+        (WebCore::prefixingVariantForPropertyId): Add prefixing/unprefixing variants for
+        all the animation values, and clean up the code a bit.
+
+        * css/CSSPropertyNames.in: Add new properties.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): We need handlers for the
+        unprefixed forms. This should move to the new StyleBuilder soon.
+
+        * css/StyleProperties.cpp: Handle new values.
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::asText):
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::animationShorthand):
+        (WebCore::animationShorthandForParsing): Decide which list of properties to use.
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        (WebCore::webkitAnimationShorthandForParsing): Deleted.
+        * css/StylePropertyShorthand.h:
+
+        * css/StyleResolver.cpp: Since the new properties come before "background" in
+        alphabetical order, they are earlier in the CSSPropertyNames.in file, and thus
+        we need to update the call sites that think CSSPropertyBackground is the first
+        property.
+        (WebCore::StyleResolver::styleForKeyframe): Replace CSSPropertyBackground with CSSPropertyAnimation.
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyProperty):
+
 2014-11-12  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.

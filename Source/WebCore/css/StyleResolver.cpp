@@ -841,7 +841,7 @@ PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementS
         applyProperty(CSSPropertyLineHeight, state.lineHeightValue());
 
     // Now do rest of the properties.
-    applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+    applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
 
     // If our font got dirtied by one of the non-essential font props,
     // go ahead and update it a second time.
@@ -858,7 +858,7 @@ PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementS
         CSSPropertyID property = keyframe->properties().propertyAt(i).id();
         // Timing-function within keyframes is special, because it is not animated; it just
         // describes the timing function between this keyframe and the next.
-        if (property != CSSPropertyWebkitAnimationTimingFunction)
+        if (property != CSSPropertyWebkitAnimationTimingFunction && property != CSSPropertyAnimationTimingFunction)
             keyframeValue.addProperty(property);
     }
 
@@ -1011,7 +1011,7 @@ PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     if (m_state.lineHeightValue())
         applyProperty(CSSPropertyLineHeight, m_state.lineHeightValue());
 
-    applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+    applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
 
     cascade.applyDeferredProperties(*this);
 
@@ -1716,7 +1716,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
     
         updateFont();
-        applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+        applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
 
         state.cacheBorderAndBackground();
     }
@@ -1754,7 +1754,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     // Apply properties that no other properties depend on.
-    applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+    applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
 
     // Finally, some properties must be applied in the order they were parsed.
     // There are some CSS properties that affect the same RenderStyle values,
@@ -2346,6 +2346,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         return;
 
+    case CSSPropertyAnimation:
     case CSSPropertyBackground:
     case CSSPropertyBackgroundPosition:
     case CSSPropertyBackgroundRepeat:
@@ -2955,6 +2956,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
     
     // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
+    case CSSPropertyAnimationDelay:
+    case CSSPropertyAnimationDirection:
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationFillMode:
+    case CSSPropertyAnimationName:
+    case CSSPropertyAnimationPlayState:
+    case CSSPropertyAnimationIterationCount:
+    case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
     case CSSPropertyTransitionProperty:

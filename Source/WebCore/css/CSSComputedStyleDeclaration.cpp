@@ -92,6 +92,14 @@ namespace WebCore {
 // List of all properties we know how to compute, omitting shorthands.
 static const CSSPropertyID computedProperties[] = {
     CSSPropertyAlt,
+    CSSPropertyAnimationDelay,
+    CSSPropertyAnimationDirection,
+    CSSPropertyAnimationDuration,
+    CSSPropertyAnimationFillMode,
+    CSSPropertyAnimationIterationCount,
+    CSSPropertyAnimationName,
+    CSSPropertyAnimationPlayState,
+    CSSPropertyAnimationTimingFunction,
     CSSPropertyBackgroundAttachment,
     CSSPropertyBackgroundBlendMode,
     CSSPropertyBackgroundClip,
@@ -224,7 +232,6 @@ static const CSSPropertyID computedProperties[] = {
 #endif
     CSSPropertyZIndex,
     CSSPropertyZoom,
-
     CSSPropertyWebkitAnimationDelay,
     CSSPropertyWebkitAnimationDirection,
     CSSPropertyWebkitAnimationDuration,
@@ -2571,24 +2578,38 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(firstRegion.release());
         }
 #endif
+        case CSSPropertyAnimationDelay:
         case CSSPropertyWebkitAnimationDelay:
             return getDelayValue(style->animations());
+        case CSSPropertyAnimationDirection:
         case CSSPropertyWebkitAnimationDirection: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
-                    if (t->animation(i).direction())
-                        list->append(cssValuePool().createIdentifierValue(CSSValueAlternate));
-                    else
+                    switch (t->animation(i).direction()) {
+                    case Animation::AnimationDirectionNormal:
                         list->append(cssValuePool().createIdentifierValue(CSSValueNormal));
+                        break;
+                    case Animation::AnimationDirectionAlternate:
+                        list->append(cssValuePool().createIdentifierValue(CSSValueAlternate));
+                        break;
+                    case Animation::AnimationDirectionReverse:
+                        list->append(cssValuePool().createIdentifierValue(CSSValueReverse));
+                        break;
+                    case Animation::AnimationDirectionAlternateReverse:
+                        list->append(cssValuePool().createIdentifierValue(CSSValueAlternateReverse));
+                        break;
+                    }
                 }
             } else
                 list->append(cssValuePool().createIdentifierValue(CSSValueNormal));
             return list.release();
         }
+        case CSSPropertyAnimationDuration:
         case CSSPropertyWebkitAnimationDuration:
             return getDurationValue(style->animations());
+        case CSSPropertyAnimationFillMode:
         case CSSPropertyWebkitAnimationFillMode: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
@@ -2613,6 +2634,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 list->append(cssValuePool().createIdentifierValue(CSSValueNone));
             return list.release();
         }
+        case CSSPropertyAnimationIterationCount:
         case CSSPropertyWebkitAnimationIterationCount: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
@@ -2628,6 +2650,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 list->append(cssValuePool().createValue(Animation::initialAnimationIterationCount(), CSSPrimitiveValue::CSS_NUMBER));
             return list.release();
         }
+        case CSSPropertyAnimationName:
         case CSSPropertyWebkitAnimationName: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
@@ -2638,6 +2661,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 list->append(cssValuePool().createIdentifierValue(CSSValueNone));
             return list.release();
         }
+        case CSSPropertyAnimationPlayState:
         case CSSPropertyWebkitAnimationPlayState: {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
@@ -2653,6 +2677,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 list->append(cssValuePool().createIdentifierValue(CSSValueRunning));
             return list.release();
         }
+        case CSSPropertyAnimationTimingFunction:
         case CSSPropertyWebkitAnimationTimingFunction:
             return getTimingFunctionValue(style->animations());
         case CSSPropertyWebkitAppearance:
@@ -2999,6 +3024,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return zoomAdjustedPixelValueForLength(style->svgStyle().y(), style.get());
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
+        case CSSPropertyAnimation:
         case CSSPropertyWebkitTextEmphasis:
         case CSSPropertyTextLineThrough:
         case CSSPropertyTextLineThroughColor:
