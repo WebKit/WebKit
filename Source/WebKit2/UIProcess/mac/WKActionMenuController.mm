@@ -44,6 +44,7 @@
 #import <ImageKit/ImageKit.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
@@ -723,88 +724,87 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     NSString *title = nil;
     NSImage *image = nil;
 
-    // FIXME: These titles need to be localized.
     switch (tag) {
     case kWKContextActionItemTagOpenLinkInDefaultBrowser:
         selector = @selector(_openURLFromActionMenu:);
-        title = @"Open";
+        title = WEB_UI_STRING_KEY("Open", "Open (action menu item)", "action menu item");
         image = webKitBundleImageNamed(@"OpenInNewWindowTemplate");
         break;
 
 #if WK_API_ENABLED
     case kWKContextActionItemTagPreviewLink:
         selector = @selector(_keepPreviewOpenFromActionMenu:);
-        title = @"Preview";
+        title = WEB_UI_STRING_KEY("Preview", "Preview (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
 #endif
 
     case kWKContextActionItemTagAddLinkToSafariReadingList:
         selector = @selector(_addToReadingListFromActionMenu:);
-        title = @"Add to Safari Reading List";
+        title = WEB_UI_STRING_KEY("Add to Reading List", "Add to Reading List (action menu item)", "action menu item");
         image = [NSImage imageNamed:NSImageNameBookmarksTemplate];
         break;
 
     case kWKContextActionItemTagCopyImage:
         selector = @selector(_copyImage:);
-        title = @"Copy";
+        title = WEB_UI_STRING_KEY("Copy", "Copy (image action menu item)", "image action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
         break;
 
     case kWKContextActionItemTagAddImageToPhotos:
         selector = @selector(_addImageToPhotos:);
-        title = @"Add to Photos";
+        title = WEB_UI_STRING_KEY("Add to Photos", "Add to Photos (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuAddToPhotos"];
         break;
 
     case kWKContextActionItemTagSaveImageToDownloads:
         selector = @selector(_saveImageToDownloads:);
-        title = @"Save to Downloads";
+        title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (image action menu item)", "image action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
     case kWKContextActionItemTagShareImage:
-        title = @"Share";
+        title = WEB_UI_STRING_KEY("Share (image action menu item)", "Share (image action menu item)", "image action menu item");
         image = [NSImage imageNamed:@"NSActionMenuShare"];
         break;
 
     case kWKContextActionItemTagCopyText:
         selector = @selector(_copySelection:);
-        title = @"Copy";
+        title = WEB_UI_STRING_KEY("Copy", "Copy (text action menu item)", "text action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
         break;
 
     case kWKContextActionItemTagLookupText:
         selector = @selector(_lookupText:);
-        title = @"Look Up";
+        title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
         break;
 
     case kWKContextActionItemTagPaste:
         selector = @selector(_paste:);
-        title = @"Paste";
+        title = WEB_UI_STRING_KEY("Paste", "Paste (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuPaste"];
         break;
 
     case kWKContextActionItemTagTextSuggestions:
-        title = @"Suggestions";
+        title = WEB_UI_STRING_KEY("Suggestions", "Suggestions (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSpelling"];
         break;
 
     case kWKContextActionItemTagCopyVideoURL:
         selector = @selector(_copyVideoURL:);
-        title = @"Copy";
+        title = WEB_UI_STRING_KEY("Copy", "Copy (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
         break;
 
     case kWKContextActionItemTagSaveVideoToDownloads:
         selector = @selector(_saveVideoToDownloads:);
-        title = @"Save to Downloads";
+        title = WEB_UI_STRING_KEY("Share", "Share (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
         break;
 
     case kWKContextActionItemTagShareVideo:
-        title = @"Share";
+        title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuShare"];
         break;
 
