@@ -60,12 +60,13 @@ def parse(string)
 end
 
 class MetaData
-    attr_reader :index, :name, :parent
-    
-    def initialize(index, name, parent)
+    attr_reader :index, :name, :parent, :val
+
+    def initialize(index, name, parent, val)
         @index = index
         @name = name
         @parent = parent
+        @val = val
     end
 end
 
@@ -120,12 +121,34 @@ while shouldContinue
             index = $1.to_i
             name = $2
             unless $metaData[name]
-                $metaData[name] = MetaData.new($metaData.size, name, nil)
+                $metaData[name] = MetaData.new($metaData.size, name, nil, nil)
             end
             metaDataMap[index] = $metaData[$2].index
         elsif line =~ /!([0-9]+) = metadata !{metadata !\"([a-zA-Z0-9_]+)\", metadata !([0-9]+)/
-            metaData = MetaData.new($1.to_i, $2, $3.to_i)
+            metaData = MetaData.new($1.to_i, $2, $3.to_i, nil)
             unresolvedMetaData << metaData
+        elsif line =~ /!([0-9]+) = metadata !{metadata !\"branch_weights\"/
+            index = $1.to_i
+            arr1 = line.split(',');
+            arr1.shift
+            arr2 = Array.new
+            name = "branch_weights"
+            arr1.each { |a|
+              a =~ /i32 ([0-9]+)/
+              name.concat($1)
+              arr2.push($1)
+            }
+            unless $metaData[name]
+                $metaData[name] = MetaData.new($metaData.size, "branch_weights", nil, arr2)
+            end
+            metaDataMap[index] = $metaData[name].index
+        elsif line =~ /!([0-9]+) = metadata !{i32 ([-+0-9]+), i32 ([-+0-9]+)}/
+            index = $1.to_i
+            name = "#$2#$3"
+            unless $metaData[name]
+                $metaData[name] = MetaData.new($metaData.size, nil, nil, [$2, $3])
+            end
+            metaDataMap[index] = $metaData[name].index
         elsif line =~ /attributes #([0-9]+) = /
             attributeNumber = $1.to_i
             attributeBody = $~.post_match
@@ -150,7 +173,7 @@ while shouldContinue
                 unresolvedMetaData.pop
             elsif metaDataMap[metaData.parent]
                 metaDataMap[metaData.index] = $metaData.size
-                $metaData[metaData.name] = MetaData.new($metaData.size, metaData.name, metaDataMap[metaData.parent])
+                $metaData[metaData.name] = MetaData.new($metaData.size, metaData.name, metaDataMap[metaData.parent], nil)
                 unresolvedMetaData[index] = unresolvedMetaData[-1]
                 unresolvedMetaData.pop
             else
@@ -160,7 +183,7 @@ while shouldContinue
     end
     
     # Output the body with all of the things remapped.
-    puts "define i64 @jsBody_#{$count += 1}(i64) {"
+    puts "define i64 @jsBody_#{$count += 1}() {"
     body.each {
         | thing |
         if thing.is_a? Reference
@@ -202,9 +225,26 @@ $attributes.each_with_index {
 
 $metaData.each_value {
     | metaData |
-    print "!#{metaData.index} = metadata !{metadata !\"#{metaData.name}\""
+    print "!#{metaData.index} = metadata !{"
+    if metaData.name
+        print "metadata !\"#{metaData.name}\""
+    end
     if metaData.parent
         print ", metadata !#{metaData.parent}"
+    end
+    if (metaData.val)
+        index = 0
+        if metaData.name
+          index = 1
+        end
+        metaData.val.each { |a|
+            if (index == 0)
+                print "i32 #{a}"
+            else
+                print ", i32 #{a}"
+            end
+            index += 1
+        }
     end
     puts "}"
 }

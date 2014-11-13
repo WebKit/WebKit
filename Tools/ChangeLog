@@ -1,3 +1,12 @@
+2014-11-13  Juergen Ributzka  <juergen@apple.com>
+
+        Update the "combineModules" script to handel more LLVM metadata.
+        https://bugs.webkit.org/show_bug.cgi?id=138514
+
+        Reviewed by Filip Pizlo.
+
+        * ReducedFTL/combineModules.rb:
+
 2014-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow constructing a base PassRef with a derived Ref
