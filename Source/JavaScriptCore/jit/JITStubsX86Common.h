@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,39 +50,35 @@ namespace JSC {
 #define PROBE_ARG1_OFFSET (1 * PTR_SIZE)
 #define PROBE_ARG2_OFFSET (2 * PTR_SIZE)
 
-#define PROBE_CPU_EAX_OFFSET (4 * PTR_SIZE)
-#define PROBE_CPU_EBX_OFFSET (5 * PTR_SIZE)
-#define PROBE_CPU_ECX_OFFSET (6 * PTR_SIZE)
-#define PROBE_CPU_EDX_OFFSET (7 * PTR_SIZE)
-#define PROBE_CPU_ESI_OFFSET (8 * PTR_SIZE)
-#define PROBE_CPU_EDI_OFFSET (9 * PTR_SIZE)
-#define PROBE_CPU_EBP_OFFSET (10 * PTR_SIZE)
-#define PROBE_CPU_ESP_OFFSET (11 * PTR_SIZE)
+#define PROBE_FIRST_GPR_OFFSET (3 * PTR_SIZE)
+#define PROBE_CPU_EAX_OFFSET (PROBE_FIRST_GPR_OFFSET + (0 * PTR_SIZE))
+#define PROBE_CPU_ECX_OFFSET (PROBE_FIRST_GPR_OFFSET + (1 * PTR_SIZE))
+#define PROBE_CPU_EDX_OFFSET (PROBE_FIRST_GPR_OFFSET + (2 * PTR_SIZE))
+#define PROBE_CPU_EBX_OFFSET (PROBE_FIRST_GPR_OFFSET + (3 * PTR_SIZE))
+#define PROBE_CPU_ESP_OFFSET (PROBE_FIRST_GPR_OFFSET + (4 * PTR_SIZE))
+#define PROBE_CPU_EBP_OFFSET (PROBE_FIRST_GPR_OFFSET + (5 * PTR_SIZE))
+#define PROBE_CPU_ESI_OFFSET (PROBE_FIRST_GPR_OFFSET + (6 * PTR_SIZE))
+#define PROBE_CPU_EDI_OFFSET (PROBE_FIRST_GPR_OFFSET + (7 * PTR_SIZE))
 
 #if CPU(X86)
-#define PROBE_FIRST_SPECIAL_OFFSET (12 * PTR_SIZE)
+#define PROBE_FIRST_SPECIAL_OFFSET (PROBE_FIRST_GPR_OFFSET + (8 * PTR_SIZE))
 #else // CPU(X86_64)
-#define PROBE_CPU_R8_OFFSET (12 * PTR_SIZE)
-#define PROBE_CPU_R9_OFFSET (13 * PTR_SIZE)
-#define PROBE_CPU_R10_OFFSET (14 * PTR_SIZE)
-#define PROBE_CPU_R11_OFFSET (15 * PTR_SIZE)
-#define PROBE_CPU_R12_OFFSET (16 * PTR_SIZE)
-#define PROBE_CPU_R13_OFFSET (17 * PTR_SIZE)
-#define PROBE_CPU_R14_OFFSET (18 * PTR_SIZE)
-#define PROBE_CPU_R15_OFFSET (19 * PTR_SIZE)
-#define PROBE_FIRST_SPECIAL_OFFSET (20 * PTR_SIZE)
+#define PROBE_CPU_R8_OFFSET (PROBE_FIRST_GPR_OFFSET + (8 * PTR_SIZE))
+#define PROBE_CPU_R9_OFFSET (PROBE_FIRST_GPR_OFFSET + (9 * PTR_SIZE))
+#define PROBE_CPU_R10_OFFSET (PROBE_FIRST_GPR_OFFSET + (10 * PTR_SIZE))
+#define PROBE_CPU_R11_OFFSET (PROBE_FIRST_GPR_OFFSET + (11 * PTR_SIZE))
+#define PROBE_CPU_R12_OFFSET (PROBE_FIRST_GPR_OFFSET + (12 * PTR_SIZE))
+#define PROBE_CPU_R13_OFFSET (PROBE_FIRST_GPR_OFFSET + (13 * PTR_SIZE))
+#define PROBE_CPU_R14_OFFSET (PROBE_FIRST_GPR_OFFSET + (14 * PTR_SIZE))
+#define PROBE_CPU_R15_OFFSET (PROBE_FIRST_GPR_OFFSET + (15 * PTR_SIZE))
+#define PROBE_FIRST_SPECIAL_OFFSET (PROBE_FIRST_GPR_OFFSET + (16 * PTR_SIZE))
 #endif // CPU(X86_64)
 
 #define PROBE_CPU_EIP_OFFSET (PROBE_FIRST_SPECIAL_OFFSET + (0 * PTR_SIZE))
 #define PROBE_CPU_EFLAGS_OFFSET (PROBE_FIRST_SPECIAL_OFFSET + (1 * PTR_SIZE))
+#define PROBE_FIRST_XMM_OFFSET (PROBE_FIRST_SPECIAL_OFFSET + (2 * PTR_SIZE))
 
-#if CPU(X86)
-#define PROBE_FIRST_XMM_OFFSET (PROBE_FIRST_SPECIAL_OFFSET + (4 * PTR_SIZE)) // After padding.
-#else // CPU(X86_64)
-#define PROBE_FIRST_XMM_OFFSET (PROBE_FIRST_SPECIAL_OFFSET + (2 * PTR_SIZE)) // After padding.
-#endif // CPU(X86_64)
-
-#define XMM_SIZE 16
+#define XMM_SIZE 8
 #define PROBE_CPU_XMM0_OFFSET (PROBE_FIRST_XMM_OFFSET + (0 * XMM_SIZE))
 #define PROBE_CPU_XMM1_OFFSET (PROBE_FIRST_XMM_OFFSET + (1 * XMM_SIZE))
 #define PROBE_CPU_XMM2_OFFSET (PROBE_FIRST_XMM_OFFSET + (2 * XMM_SIZE))
@@ -92,7 +88,19 @@ namespace JSC {
 #define PROBE_CPU_XMM6_OFFSET (PROBE_FIRST_XMM_OFFSET + (6 * XMM_SIZE))
 #define PROBE_CPU_XMM7_OFFSET (PROBE_FIRST_XMM_OFFSET + (7 * XMM_SIZE))
 
+#if CPU(X86)
 #define PROBE_SIZE (PROBE_CPU_XMM7_OFFSET + XMM_SIZE)
+#else // CPU(X86_64)
+#define PROBE_CPU_XMM8_OFFSET (PROBE_FIRST_XMM_OFFSET + (8 * XMM_SIZE))
+#define PROBE_CPU_XMM9_OFFSET (PROBE_FIRST_XMM_OFFSET + (9 * XMM_SIZE))
+#define PROBE_CPU_XMM10_OFFSET (PROBE_FIRST_XMM_OFFSET + (10 * XMM_SIZE))
+#define PROBE_CPU_XMM11_OFFSET (PROBE_FIRST_XMM_OFFSET + (11 * XMM_SIZE))
+#define PROBE_CPU_XMM12_OFFSET (PROBE_FIRST_XMM_OFFSET + (12 * XMM_SIZE))
+#define PROBE_CPU_XMM13_OFFSET (PROBE_FIRST_XMM_OFFSET + (13 * XMM_SIZE))
+#define PROBE_CPU_XMM14_OFFSET (PROBE_FIRST_XMM_OFFSET + (14 * XMM_SIZE))
+#define PROBE_CPU_XMM15_OFFSET (PROBE_FIRST_XMM_OFFSET + (15 * XMM_SIZE))
+#define PROBE_SIZE (PROBE_CPU_XMM15_OFFSET + XMM_SIZE)
+#endif // CPU(X86_64)
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
@@ -132,11 +140,19 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm5) == PROBE_CPU_XMM5_OFFSET, ProbeContext_c
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm6) == PROBE_CPU_XMM6_OFFSET, ProbeContext_cpu_xmm6_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm7) == PROBE_CPU_XMM7_OFFSET, ProbeContext_cpu_xmm7_offset_matches_ctiMasmProbeTrampoline);
 
+#if CPU(X86_64)
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm8) == PROBE_CPU_XMM8_OFFSET, ProbeContext_cpu_xmm8_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm9) == PROBE_CPU_XMM9_OFFSET, ProbeContext_cpu_xmm9_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm10) == PROBE_CPU_XMM10_OFFSET, ProbeContext_cpu_xmm10_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm11) == PROBE_CPU_XMM11_OFFSET, ProbeContext_cpu_xmm11_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm12) == PROBE_CPU_XMM12_OFFSET, ProbeContext_cpu_xmm12_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm13) == PROBE_CPU_XMM13_OFFSET, ProbeContext_cpu_xmm13_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm14) == PROBE_CPU_XMM14_OFFSET, ProbeContext_cpu_xmm14_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.xmm15) == PROBE_CPU_XMM15_OFFSET, ProbeContext_cpu_xmm15_offset_matches_ctiMasmProbeTrampoline);
+#endif // CPU(X86_64)
+
 COMPILE_ASSERT(sizeof(MacroAssembler::ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 
-// Also double check that the xmm registers are 16 byte (128-bit) aligned as
-// required by the movdqa instruction used in the trampoline.
-COMPILE_ASSERT(!(PROBE_OFFSETOF(cpu.xmm0) % 16), ProbeContext_xmm0_offset_not_aligned_properly);
 #undef PROBE_OFFSETOF
 
 #endif // ENABLE(MASM_PROBE)

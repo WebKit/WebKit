@@ -1,3 +1,23 @@
+2014-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Change X86/64 JIT probes to save/restore xmm regs as double instead of __m128.
+        <https://webkit.org/b/138708>
+
+        Reviewed by Michael Saboff.
+
+        The JIT code only uses the xmm regs as double registers.  This patch changes
+        the storage types of the FP registers in X86Assembler.h to double instead of
+        __m128, and updates the X86 and X86_64 JIT probe implementations accordingly.
+
+        Also made some minor cosmetic changes in the output of the probe dump functions.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::ProbeContext::dumpCPURegisters):
+        * assembler/X86Assembler.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86Common.h:
+        * jit/JITStubsX86_64.h:
+
 2014-11-13  Juergen Ributzka  <juergen@apple.com>
 
         Update WebKit to build with LLVM TOT

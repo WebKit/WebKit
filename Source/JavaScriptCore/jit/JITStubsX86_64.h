@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) Research In Motion Limited 2010, 2011. All rights reserved.
  *
@@ -104,14 +104,22 @@ SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
     "movq %r14, " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rbp)" "\n"
     "movq %r15, " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rbp)" "\n"
 
-    "movdqa %xmm0, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm1, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm2, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm3, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm4, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm5, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm6, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_OFFSET) "(%rbp)" "\n"
-    "movdqa %xmm7, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_OFFSET) "(%rbp)" "\n"
+    "movq %xmm0, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_OFFSET) "(%rbp)" "\n"
+    "movq %xmm1, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_OFFSET) "(%rbp)" "\n"
+    "movq %xmm2, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_OFFSET) "(%rbp)" "\n"
+    "movq %xmm3, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_OFFSET) "(%rbp)" "\n"
+    "movq %xmm4, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_OFFSET) "(%rbp)" "\n"
+    "movq %xmm5, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_OFFSET) "(%rbp)" "\n"
+    "movq %xmm6, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_OFFSET) "(%rbp)" "\n"
+    "movq %xmm7, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_OFFSET) "(%rbp)" "\n"
+    "movq %xmm8, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_OFFSET) "(%rbp)" "\n"
+    "movq %xmm9, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_OFFSET) "(%rbp)" "\n"
+    "movq %xmm10, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_OFFSET) "(%rbp)" "\n"
+    "movq %xmm11, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_OFFSET) "(%rbp)" "\n"
+    "movq %xmm12, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_OFFSET) "(%rbp)" "\n"
+    "movq %xmm13, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_OFFSET) "(%rbp)" "\n"
+    "movq %xmm14, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_OFFSET) "(%rbp)" "\n"
+    "movq %xmm15, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_OFFSET) "(%rbp)" "\n"
 
     "movq %rbp, %rdi" "\n" // the ProbeContext* arg.
     "call *" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rbp)" "\n"
@@ -133,14 +141,22 @@ SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
     "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rbp), %r14" "\n"
     "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rbp), %r15" "\n"
 
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_OFFSET) "(%rbp), %xmm0" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_OFFSET) "(%rbp), %xmm1" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_OFFSET) "(%rbp), %xmm2" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_OFFSET) "(%rbp), %xmm3" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_OFFSET) "(%rbp), %xmm4" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_OFFSET) "(%rbp), %xmm5" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_OFFSET) "(%rbp), %xmm6" "\n"
-    "movdqa " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_OFFSET) "(%rbp), %xmm7" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_OFFSET) "(%rbp), %xmm0" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_OFFSET) "(%rbp), %xmm1" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_OFFSET) "(%rbp), %xmm2" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_OFFSET) "(%rbp), %xmm3" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_OFFSET) "(%rbp), %xmm4" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_OFFSET) "(%rbp), %xmm5" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_OFFSET) "(%rbp), %xmm6" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_OFFSET) "(%rbp), %xmm7" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_OFFSET) "(%rbp), %xmm8" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_OFFSET) "(%rbp), %xmm9" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_OFFSET) "(%rbp), %xmm10" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_OFFSET) "(%rbp), %xmm11" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_OFFSET) "(%rbp), %xmm12" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_OFFSET) "(%rbp), %xmm13" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_OFFSET) "(%rbp), %xmm14" "\n"
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_OFFSET) "(%rbp), %xmm15" "\n"
 
     // There are 6 more registers left to restore:
     //     rax, rcx, rbp, rsp, rip, and rflags.

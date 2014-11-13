@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,14 +73,14 @@ namespace X86Registers {
 // the storing still expects a __m128 slot. This will be changed when the JIT
 // probe code is updated later to reflect the JITs' usage of these registers.
 #define FOR_EACH_CPU_FPREGISTER(V) \
-    V(__m128, xmm0) \
-    V(__m128, xmm1) \
-    V(__m128, xmm2) \
-    V(__m128, xmm3) \
-    V(__m128, xmm4) \
-    V(__m128, xmm5) \
-    V(__m128, xmm6) \
-    V(__m128, xmm7) \
+    V(double, xmm0) \
+    V(double, xmm1) \
+    V(double, xmm2) \
+    V(double, xmm3) \
+    V(double, xmm4) \
+    V(double, xmm5) \
+    V(double, xmm6) \
+    V(double, xmm7) \
     FOR_EACH_X86_64_CPU_FPREGISTER(V)
 
 #if CPU(X86)
@@ -101,14 +101,14 @@ namespace X86Registers {
     V(void*, r15)
 
 #define FOR_EACH_X86_64_CPU_FPREGISTER(V) \
-    V(__m128, xmm8) \
-    V(__m128, xmm9) \
-    V(__m128, xmm10) \
-    V(__m128, xmm11) \
-    V(__m128, xmm12) \
-    V(__m128, xmm13) \
-    V(__m128, xmm14) \
-    V(__m128, xmm15)
+    V(double, xmm8) \
+    V(double, xmm9) \
+    V(double, xmm10) \
+    V(double, xmm11) \
+    V(double, xmm12) \
+    V(double, xmm13) \
+    V(double, xmm14) \
+    V(double, xmm15)
 
 #endif // CPU(X86_64)
 
