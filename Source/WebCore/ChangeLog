@@ -1,3 +1,19 @@
+2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r176037. <rdar://problem/18869900>
+
+    2014-11-12  Tim Horton  <timothy_horton@apple.com>
+
+            Need to show the text indicator when Data Detectors shows a popover
+            https://bugs.webkit.org/show_bug.cgi?id=138664
+            <rdar://problem/18869900>
+
+            Reviewed by Beth Dakin.
+
+            * platform/spi/mac/DataDetectorsSPI.h:
+            Add new DataDetectors SPI.
+
+
 2014-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Add support for mailto: link action menus
