@@ -251,7 +251,7 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormT
     // requested size to avoid resizing. If there was none, reuse
     // the last item of the list.
     if (!reusableNodeIndex)
-        reusableNodeIndex = m_partCache.size();
+        reusableNodeIndex = m_partCache.size() - 1;
 
     ThemePartCacheEntry* reusedEntry = m_partCache[reusableNodeIndex].get();
     ASSERT(reusedEntry);

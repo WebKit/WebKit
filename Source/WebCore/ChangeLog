@@ -1,3 +1,18 @@
+2014-11-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Unexpected crashes in layout test after r175953
+        https://bugs.webkit.org/show_bug.cgi?id=138652
+
+        Reviewed by Csaba Osztrogonác.
+
+        In r175953, it set reusableNodeIndex value with m_partCache's size(). It causes
+        out of bound index crash because the reusableNodeIndex is Vector object.
+
+        No new test. This patch is to fix broken tests related to widgets on EFL port.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::getThemePartFromCache): Need to set reusableNodeIndex with "size() - 1".
+
 2014-11-13  Chris Dumez  <cdumez@apple.com>
 
         Lazily create HTMLInputElement's inputType and shadow subtree
