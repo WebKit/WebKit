@@ -1072,3 +1072,44 @@
 /* accessibility label for video element controller */
 "video playback" = "video playback";
 
+/* "Open Link in Default Browser" action menu item */
+"Open (action menu item)" = "Open";
+
+/* "Preview Link" action menu item */
+"Preview (action menu item)" = "Preview";
+
+/* "Add to Reading List" action menu item */
+"Add to Reading List (action menu item)" = "Add to Reading List";
+
+/* "Copy" action menu item in image menu */
+"Copy (image action menu item)" = "Copy";
+
+/* "Add to Photos" action menu item */
+"Add to Photos (action menu item)" = "Add to Photos";
+
+/* "Save to Downloads" action menu item in image menu */
+"Save to Downloads (image action menu item)" = "Save to Downloads";
+
+/* "Share" action menu item in image menu */
+"Share (image action menu item)" = "Share";
+
+/* "Copy" action menu item in text menu */
+"Copy (text action menu item)" = "Copy";
+
+/* "Look Up" action menu item */
+"Look Up (action menu item)" = "Look Up";
+
+/* "Paste" action menu item */
+"Paste (action menu item)" = "Paste";
+
+/* "Suggestions" action menu item */
+"Suggestions (action menu item)" = "Suggestions";
+
+/* "Copy" action menu item in video menu */
+"Copy (video action menu item)" = "Copy";
+
+/* "Share" action menu item in video menu */
+"Share (video action menu item)" = "Share";
+
+/* "Save to Downloads" action menu item in video menu */
+"Save to Downloads (video action menu item)" = "Save to Downloads";

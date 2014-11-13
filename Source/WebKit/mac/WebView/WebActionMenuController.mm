@@ -42,6 +42,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
@@ -440,49 +441,48 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     NSImage *image = nil;
     id representedObject = nil;
 
-    // FIXME: We should localize these strings.
     switch (tag) {
     case WebActionMenuItemTagOpenLinkInDefaultBrowser:
         selector = @selector(_openURLFromActionMenu:);
-        title = @"Open";
+        title = WEB_UI_STRING_KEY("Open", "Open (action menu item)", "action menu item");
         image = webKitBundleImageNamed(@"OpenInNewWindowTemplate");
         representedObject = [hitTestResult objectForKey:WebElementLinkURLKey];
         break;
 
     case WebActionMenuItemTagPreviewLink:
         selector = @selector(_quickLookURLFromActionMenu:);
-        title = @"Preview";
+        title = WEB_UI_STRING_KEY("Preview", "Preview (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         representedObject = hitTestResult;
         break;
 
     case WebActionMenuItemTagAddLinkToSafariReadingList:
         selector = @selector(_addToReadingListFromActionMenu:);
-        title = @"Add to Safari Reading List";
+        title = WEB_UI_STRING_KEY("Add to Reading List", "Add to Reading List (action menu item)", "action menu item");
         image = [NSImage imageNamed:NSImageNameBookmarksTemplate];
         representedObject = [hitTestResult objectForKey:WebElementLinkURLKey];
         break;
 
     case WebActionMenuItemTagCopyText:
         selector = @selector(_copySelection:);
-        title = @"Copy";
+        title = WEB_UI_STRING_KEY("Copy", "Copy (text action menu item)", "text action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
         break;
 
     case WebActionMenuItemTagLookupText:
         selector = @selector(_lookupText:);
-        title = @"Look Up";
+        title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
         break;
 
     case WebActionMenuItemTagPaste:
         selector = @selector(_paste:);
-        title = @"Paste";
+        title = WEB_UI_STRING_KEY("Paste", "Paste (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuPaste"];
         break;
 
     case WebActionMenuItemTagTextSuggestions:
-        title = @"Suggestions";
+        title = WEB_UI_STRING_KEY("Suggestions", "Suggestions (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSpelling"];
         break;
 
