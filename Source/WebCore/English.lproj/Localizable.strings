@@ -121,9 +121,6 @@
 /* menu item title for phone number */
 "Call Using iPhone:" = "Call Using iPhone:";
 
-/* menu item for making a telephone call to a telephone number */
-"Call “%@” Using iPhone" = "Call “%@” Using iPhone";
-
 /* File Upload alert sheet button string to cancel */
 "Cancel (file upload action sheet)" = "Cancel";
 

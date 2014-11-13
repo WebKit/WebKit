@@ -237,6 +237,8 @@ public:
 
     virtual ColorSpaceData colorSpace() = 0;
 
+    virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) = 0;
+
 #if USE(APPKIT)
     virtual WKView* wkView() const = 0;
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) = 0;

@@ -1,5 +1,21 @@
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175966. <rdar://problem/18866308>
+
+    2014-11-11  Tim Horton  <timothy_horton@apple.com>
+
+            DataDetectors' menu items aren't presented in the telephone number menu
+            https://bugs.webkit.org/show_bug.cgi?id=138602
+            <rdar://problem/18866308>
+
+            Reviewed by Beth Dakin.
+
+            * English.lproj/Localizable.strings:
+            Remove a now-unused localized string.
+
+
+2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r176037. <rdar://problem/18869900>
 
     2014-11-12  Tim Horton  <timothy_horton@apple.com>
