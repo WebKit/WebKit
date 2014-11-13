@@ -91,8 +91,8 @@ static Opcode16GroupInitializer opcode16BitGroupList[] = {
     OPCODE_GROUP_ENTRY(0xd, ARMv7DOpcodeLoadStoreRegisterImmediateWordAndByte),
     OPCODE_GROUP_ENTRY(0xe, ARMv7DOpcodeLoadStoreRegisterImmediateWordAndByte),
     OPCODE_GROUP_ENTRY(0xf, ARMv7DOpcodeLoadStoreRegisterImmediateWordAndByte),
-    OPCODE_GROUP_ENTRY(0x10, ARMv7DOpcodeLoadStoreRegisterImmediateHalfWord),
-    OPCODE_GROUP_ENTRY(0x11, ARMv7DOpcodeLoadStoreRegisterImmediateHalfWord),
+    OPCODE_GROUP_ENTRY(0x10, ARMv7DOpcodeStoreRegisterImmediateHalfWord),
+    OPCODE_GROUP_ENTRY(0x11, ARMv7DOpcodeLoadRegisterImmediateHalfWord),
     OPCODE_GROUP_ENTRY(0x12, ARMv7DOpcodeLoadStoreRegisterSPRelative),
     OPCODE_GROUP_ENTRY(0x13, ARMv7DOpcodeLoadStoreRegisterSPRelative),
     OPCODE_GROUP_ENTRY(0x14, ARMv7DOpcodeGeneratePCRelativeAddress),
@@ -522,6 +522,25 @@ const char* ARMv7DOpcodeLoadStoreRegisterImmediate::format()
     appendCharacter(']');
 
     return m_formatBuffer;
+}
+
+unsigned ARMv7DOpcodeLoadStoreRegisterImmediate::scale()
+{
+    switch (op()) {
+    case 0:
+    case 1:
+        return 2;
+    case 2:
+    case 3:
+        return 0;
+    case 4:
+    case 5:
+        return 1;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 const char* const ARMv7DOpcodeLoadStoreRegisterOffsetT1::s_opNames[8] = {
