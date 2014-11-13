@@ -141,6 +141,9 @@ ControllerIOS.prototype = {
     createControls: function() {
         Controller.prototype.createControls.call(this);
 
+        var panelCompositedParent = this.controls.panelCompositedParent = document.createElement('div');
+        panelCompositedParent.setAttribute('pseudo', '-webkit-media-controls-panel-composited-parent');
+
         var wirelessPlaybackStatus = this.controls.wirelessPlaybackStatus = document.createElement('div');
         wirelessPlaybackStatus.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-status');
         wirelessPlaybackStatus.classList.add(this.ClassNames.hidden);
@@ -209,6 +212,12 @@ ControllerIOS.prototype = {
 
     configureFullScreenControls: function() {
         // Do nothing
+    },
+
+    addControls: function() {
+        this.base.appendChild(this.controls.panelCompositedParent);
+        this.controls.panelCompositedParent.appendChild(this.controls.panel);
+        this.setNeedsTimelineMetricsUpdate();
     },
 
     updateControls: function() {
