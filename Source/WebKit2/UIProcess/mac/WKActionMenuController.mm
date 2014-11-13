@@ -657,6 +657,18 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return @[ [NSMenuItem separatorItem], [NSMenuItem separatorItem], pasteItem.get() ];
 }
 
+#pragma mark Mailto Link actions
+
+- (NSArray *)_defaultMenuItemsForMailtoLink
+{
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+
+    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    [actionContext setForActionMenuContent:YES];
+    [actionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil]]];
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:actionContext.get()];
+}
+
 #pragma mark NSMenuDelegate implementation
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
@@ -844,9 +856,16 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     }
 
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
-    if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
-       _type = kWKActionMenuLink;
-       return [self _defaultMenuItemsForLink];
+    if (!absoluteLinkURL.isEmpty()) {
+        if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
+            _type = kWKActionMenuLink;
+            return [self _defaultMenuItemsForLink];
+        }
+
+        if (protocolIs(absoluteLinkURL, "mailto")) {
+            _type = kWKActionMenuMailtoLink;
+            return [self _defaultMenuItemsForMailtoLink];
+        }
     }
 
     if (!hitTestResult->absoluteMediaURL().isEmpty()) {

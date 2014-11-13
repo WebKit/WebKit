@@ -75,6 +75,7 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 
 + (DDActionsManager *)sharedManager;
 - (NSArray *)menuItemsForResult:(DDResultRef)result actionContext:(DDActionContext *)context;
+- (NSArray *)menuItemsForTargetURL:(NSString *)targetURL actionContext:(DDActionContext *)context;
 - (void)requestBubbleClosureUnanchorOnFailure:(BOOL)unanchorOnFailure;
 
 @end
