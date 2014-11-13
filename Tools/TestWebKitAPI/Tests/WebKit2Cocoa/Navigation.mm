@@ -90,6 +90,7 @@ TEST(WKNavigation, LoadRequest)
     ASSERT_NOT_NULL(currentNavigation);
     ASSERT_TRUE([[currentNavigation _request] isEqual:request]);
 
+    isDone = false;
     TestWebKitAPI::Util::run(&isDone);
 }
 
@@ -135,7 +136,55 @@ TEST(WKNavigation, DidFailProvisionalNavigation)
     ASSERT_NOT_NULL(currentNavigation);
     ASSERT_TRUE([[currentNavigation _request] isEqual:request]);
 
+    isDone = false;
     TestWebKitAPI::Util::run(&isDone);
+}
+
+@interface DecidePolicyForPageCacheNavigationDelegate : NSObject <WKNavigationDelegate>
+@property (nonatomic) BOOL decidedPolicyForBackForwardNavigation;
+@end
+
+@implementation DecidePolicyForPageCacheNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    if (navigationAction.navigationType == WKNavigationTypeBackForward)
+        _decidedPolicyForBackForwardNavigation = YES;
+
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+@end
+
+TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr<DecidePolicyForPageCacheNavigationDelegate> delegate = adoptNS([[DecidePolicyForPageCacheNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]];
+
+    isDone = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,2"]];
+
+    isDone = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    isDone = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_TRUE([delegate decidedPolicyForBackForwardNavigation]);
 }
 
 #endif

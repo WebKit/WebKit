@@ -1,3 +1,14 @@
+2014-11-13  Dan Bernstein  <mitz@apple.com>
+
+        Policy client not called for navigations through the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=138703
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[DecidePolicyForPageCacheNavigationDelegate webView:didFinishNavigation:]):
+        (-[DecidePolicyForPageCacheNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+
 2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Do not return ATK_ROLE_UNKNOWN for null or otherwise invalid accessible objects
