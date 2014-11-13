@@ -1,3 +1,15 @@
+2014-11-13  Pratik Solanki  <psolanki@apple.com>
+
+        Rename ios-sim to ios-sim-deprecated.
+
+        The results here are historical and new results should go into ios-simulator
+        directory. Eventually, we should get rid of this directory completely.
+
+        Rubber-stamped by Simon Fraser.
+
+        * platform/ios-sim: Removed.
+        * platform/ios-sim-deprecated: Copied from LayoutTests/platform/ios-sim.
+
 2014-11-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Implement the matching for :nth-last-child(An+B of selector-list)
