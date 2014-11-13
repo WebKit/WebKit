@@ -1,3 +1,15 @@
+2014-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow constructing a base PassRef with a derived Ref
+        https://bugs.webkit.org/show_bug.cgi?id=138701
+
+        Reviewed by Andreas Kling
+
+        * TestWebKitAPI/Tests/WTF/Ref.cpp:
+        (TestWebKitAPI::passWithPassRef):
+        (TestWebKitAPI::passWithPassRefPtr):
+        (TestWebKitAPI::TEST):
+
 2014-11-05  Ada Chan  <adachan@apple.com>
 
         Implement new plug-in API for muting plug-ins

@@ -100,7 +100,7 @@ template<typename T> template<typename U> inline PassRef<T>::PassRef(PassRef<U> 
 }
 
 template<typename T> template<typename U> inline PassRef<T>::PassRef(const Ref<U>& other)
-    : m_reference(const_cast<T&>(other.get()))
+    : m_reference(static_cast<T&>(const_cast<U&>(other.get())))
 #ifndef NDEBUG
     , m_gaveUpReference(false)
 #endif

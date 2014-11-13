@@ -98,12 +98,12 @@ TEST(WTF_Ref, Assignment)
     ASSERT_STREQ("ref(a) | deref(a) | deref(c) ", takeLogStr().c_str());
 }
 
-PassRef<RefLogger> passWithPassRef(PassRef<RefLogger> reference)
+static PassRef<RefLogger> passWithPassRef(PassRef<RefLogger> reference)
 {
     return reference;
 }
 
-RefPtr<RefLogger> passWithPassRefPtr(PassRefPtr<RefLogger> reference)
+static RefPtr<RefLogger> passWithPassRefPtr(PassRefPtr<RefLogger> reference)
 {
     return reference;
 }
@@ -141,6 +141,22 @@ TEST(WTF_Ref, ReturnValue)
         ASSERT_EQ(&a, ptr.get());
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        RefPtr<DerivedRefLogger> ptr(&a);
+        RefPtr<RefLogger> ptr2(WTF::move(ptr));
+        ASSERT_EQ(nullptr, ptr.get());
+        ASSERT_EQ(&a, ptr2.get());
+    }
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        Ref<DerivedRefLogger> derivedReference(a);
+        Ref<RefLogger> baseReference(passWithPassRef(derivedReference));
+        ASSERT_EQ(&a, derivedReference.ptr());
+        ASSERT_EQ(&a, baseReference.ptr());
+    }
+    ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 } // namespace TestWebKitAPI
