@@ -165,10 +165,6 @@ fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-selects-image.html
 fast/events/remove-target-with-shadow-in-drag.html
 
-# Fail until SUBPIXEL_LAYOUT is enabled
-# https://bugs.webkit.org/show_bug.cgi?id=85532
-fast/sub-pixel
-
 webkit.org/b/81291 fast/events/pagehide-timeout.html [ Pass Failure ]
 webkit.org/b/81291 fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Pass Failure ]
 webkit.org/b/81291 fast/events/pageshow-pagehide-on-back-cached.html [ Pass Failure ]
