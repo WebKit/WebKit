@@ -1,3 +1,9 @@
+2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Skip more test failing after r175776.
+
+        * platform/gtk/TestExpectations:
+
 2014-11-12  Dean Jackson  <dino@apple.com>
 
         Support unprefixed animation property names

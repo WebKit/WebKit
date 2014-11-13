@@ -1480,6 +1480,12 @@ Bug(GTK) js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
 Bug(GTK) fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 Bug(GTK) js/dom/constructor-length.html [ Failure ]
 
+# testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
+webkit.org/b/138687 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
+
+# PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
+webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
