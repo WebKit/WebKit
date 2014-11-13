@@ -41,7 +41,8 @@ enum {
     kWKActionMenuEditableText,
     kWKActionMenuEditableTextWithSuggestions,
     kWKActionMenuWhitespaceInEditableArea,
-    kWKActionMenuVideo
+    kWKActionMenuVideo,
+    kWKActionMenuMailtoLink
 };
 typedef uint32_t _WKActionMenuType;
 

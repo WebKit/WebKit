@@ -1,3 +1,17 @@
+2014-11-11  Tim Horton  <timothy_horton@apple.com>
+
+        Add support for mailto: link action menus
+        https://bugs.webkit.org/show_bug.cgi?id=138641
+        <rdar://problem/18741567>
+
+        Reviewed by Beth Dakin.
+
+        * WebCore.exp.in:
+        Add an export.
+
+        * platform/spi/mac/DataDetectorsSPI.h:
+        Add some DataDetectors SPI.
+
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175964. <rdar://problem/18867627>
