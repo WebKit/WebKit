@@ -1,3 +1,15 @@
+2014-11-13  Juergen Ributzka  <juergen@apple.com>
+
+        Update WebKit to build with LLVM TOT
+        https://bugs.webkit.org/show_bug.cgi?id=138519
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/LLVMForJSC.xcconfig:
+        * llvm/LLVMAPIFunctions.h:
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+
 2014-11-13  Benjamin Poulain  <benjamin@webkit.org>
 
         ARMv7(s) Assembler: LDRH with immediate offset is loading from the wrong offset
