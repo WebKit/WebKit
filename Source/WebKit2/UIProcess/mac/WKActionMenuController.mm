@@ -244,7 +244,9 @@ using namespace WebKit;
 
 - (void)dismissActionMenuPopovers
 {
-    [[getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
+    DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
+    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
+        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
 
     [self _hideTextIndicator];
     [self _clearPreviewPopover];
