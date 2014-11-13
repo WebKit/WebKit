@@ -170,6 +170,8 @@ struct WKViewInterpretKeyEventsParameters {
     RetainPtr<WKBrowsingContextController> _browsingContextController;
 #endif
 
+    RetainPtr<NSTrackingArea> _primaryTrackingArea;
+
     // For ToolTips.
     NSToolTipTag _lastToolTipTag;
     id _trackingRectOwner;
@@ -3493,6 +3495,18 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_page->suppressVisibilityUpdates();
 }
 
+- (NSTrackingArea *)_primaryTrackingArea
+{
+    return _data->_primaryTrackingArea.get();
+}
+
+- (void)_setPrimaryTrackingArea:(NSTrackingArea *)trackingArea
+{
+    [self removeTrackingArea:_data->_primaryTrackingArea.get()];
+    _data->_primaryTrackingArea = trackingArea;
+    [self addTrackingArea:trackingArea];
+}
+
 - (instancetype)initWithFrame:(NSRect)frame context:(WebContext&)context configuration:(WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];
@@ -3510,14 +3524,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     else
         options |= NSTrackingActiveInKeyWindow;
 
-    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
-                                                                options:options
-                                                                  owner:self
-                                                               userInfo:nil];
-    [self addTrackingArea:trackingArea];
-    [trackingArea release];
-
     _data = [[WKViewData alloc] init];
+    _data->_primaryTrackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:frame options:options owner:self userInfo:nil]);
+    [self addTrackingArea:_data->_primaryTrackingArea.get()];
+
     _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
     _data->_page = context.createWebPage(*_data->_pageClient, WTF::move(webPageConfiguration));
     _data->_page->setAddsVisitedLinks(context.historyClient().addsVisitedLinks());
