@@ -67,6 +67,7 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 @property (retain) NSArray *allResults;
 @property (retain) __attribute__((NSObject)) DDResultRef mainResult;
 @property (copy) void (^completionHandler)(void);
+@property (assign) BOOL forActionMenuContent;
 
 @end
 
