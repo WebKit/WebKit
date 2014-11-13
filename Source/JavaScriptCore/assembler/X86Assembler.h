@@ -35,10 +35,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(MASM_PROBE)
-#include <xmmintrin.h>
-#endif
-
 namespace JSC {
 
 inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(signed char)value; }
@@ -68,10 +64,7 @@ namespace X86Registers {
     V(void*, eip) \
     V(void*, eflags) \
 
-// Note: the JITs only stores double values in the FP registers. However, the
-// storage type here is defined as __m128 because the JIT probe code which does
-// the storing still expects a __m128 slot. This will be changed when the JIT
-// probe code is updated later to reflect the JITs' usage of these registers.
+// Note: the JITs only stores double values in the FP registers.
 #define FOR_EACH_CPU_FPREGISTER(V) \
     V(double, xmm0) \
     V(double, xmm1) \
