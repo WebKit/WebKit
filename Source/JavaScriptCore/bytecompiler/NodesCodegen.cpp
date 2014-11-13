@@ -1644,7 +1644,12 @@ RegisterID* AssignBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* forwardResult = (dst == generator.ignoredResult()) ? result : generator.moveToDestinationIfNeeded(generator.tempDestination(result), result);
-    generator.emitPutByVal(base.get(), property.get(), forwardResult);
+
+    if (m_subscript->isString())
+        generator.emitPutById(base.get(), static_cast<StringNode*>(m_subscript)->value(), forwardResult);
+    else
+        generator.emitPutByVal(base.get(), property.get(), forwardResult);
+
     if (generator.vm()->typeProfiler()) {
         generator.emitProfileType(forwardResult, ProfileTypeBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitTypeProfilerExpressionInfo(divotStart(), divotEnd());

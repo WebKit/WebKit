@@ -1,3 +1,19 @@
+2014-11-13  Andreas Kling  <akling@apple.com>
+
+        Generate put_by_id for bracket assignment with constant string subscript.
+        <https://webkit.org/b/138702>
+
+        Reviewed by Geoffrey Garen.
+
+        Transform o["f"]=x to o.f=x when generating bytecode. This allows our JIT
+        to inline-cache those accesses instead of always dropping out to C++.
+
+        Just like the get_by_id transformations, this gets a bunch of use on
+        real-web content (and Speedometer) but little/none on raw JS benchmarks.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignBracketNode::emitBytecode):
+
 2014-11-12  Mark Lam  <mark.lam@apple.com>
 
         Create canonical lists of registers used by both the Assemblers and the JIT probes.
