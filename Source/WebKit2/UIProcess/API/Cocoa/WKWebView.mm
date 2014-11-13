@@ -1808,6 +1808,9 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     if (events & _WKRenderingProgressEventFirstPaintWithSignificantArea)
         milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
 
+    if (events & _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold)
+        milestones |= WebCore::ReachedSessionRestorationRenderTreeSizeThreshold;
+
     return milestones;
 }
 

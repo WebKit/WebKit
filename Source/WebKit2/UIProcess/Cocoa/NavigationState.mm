@@ -673,6 +673,9 @@ static _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilesto
     if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
         events |= _WKRenderingProgressEventFirstPaintWithSignificantArea;
 
+    if (milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold)
+        events |= _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold;
+
     return events;
 }
 

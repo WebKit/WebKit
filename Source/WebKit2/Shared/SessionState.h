@@ -140,6 +140,7 @@ struct BackForwardListState {
 
 struct SessionState {
     BackForwardListState backForwardListState;
+    uint64_t renderTreeSize;
     WebCore::URL provisionalURL;
 };
 

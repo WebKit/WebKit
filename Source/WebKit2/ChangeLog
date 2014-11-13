@@ -1,3 +1,39 @@
+2014-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2] Fire a layout milestone on session restore based on render tree size
+        https://bugs.webkit.org/show_bug.cgi?id=138711
+        rdar://problem/16033854
+
+        Reviewed by Anders Carlsson.
+        
+        Add a session-restore layout milestone which fires after restoring a session,
+        when the render tree size reaches 50% of the size saved in the session state.
+
+        * Shared/SessionState.h: Add renderTreeSize.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (layoutMilestones): Translate from SPI to WebCore milestones.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: New iOS-only milestone, er, event.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::renderingProgressEvents): Translate from WebCore milestone to rendering event.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Init stuff.
+        (WebKit::WebPageProxy::sessionState):
+        (WebKit::WebPageProxy::restoreFromSessionState): Zero out the target render tree size,
+        then get it out of session state and set the flag to say that we haven't reached it yet.
+        (WebKit::WebPageProxy::listenForLayoutMilestones): Set a flag to know that we should fire
+        the milestone. The other milestones get sent directly to WebCore.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::exceedsRenderTreeSizeSizeThreshold): Return true when we've reached 50%.
+        (WebKit::WebPageProxy::didCommitLayerTree): Fire the milestone when appropriate.
+        * UIProcess/mac/LegacySessionStateCoding.cpp: Rev the session state data for iOS
+        (where doing so is less disruptive). Standardize some CFString constants.
+        (WebKit::encodeSessionHistory): Wrap for legibility.
+        (WebKit::encodeLegacySessionState): Make a CFNumber for render tree size, and store
+        it in the root dictionary.
+        (WebKit::decodeBackForwardTreeNode): Move a comment to match another similar block.
+        (WebKit::decodeLegacySessionState): Decode render tree size and store it.
+
 2014-11-13  Tim Horton  <timothy_horton@apple.com>
 
         Adjust the WKBundlePageOverlay Data Detectors SPI

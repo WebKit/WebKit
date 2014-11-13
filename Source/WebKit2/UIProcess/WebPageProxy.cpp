@@ -361,6 +361,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_isShowingNavigationGestureSnapshot(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
+    , m_sessionRestorationRenderTreeSize(0)
+    , m_wantsSessionRestorationRenderTreeSizeThresholdEvent(false)
+    , m_hitRenderTreeSizeThreshold(false)
     , m_shouldSendEventsSynchronously(false)
     , m_suppressVisibilityUpdates(false)
     , m_autoSizingShouldExpandToViewHeight(false)
@@ -1931,11 +1934,15 @@ SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForward
     if (!provisionalURLString.isEmpty())
         sessionState.provisionalURL = URL(URL(), provisionalURLString);
 
+    sessionState.renderTreeSize = renderTreeSize();
     return sessionState;
 }
 
 uint64_t WebPageProxy::restoreFromSessionState(SessionState sessionState, bool navigate)
 {
+    m_sessionRestorationRenderTreeSize = 0;
+    m_hitRenderTreeSizeThreshold = false;
+
     bool hasBackForwardList = !!sessionState.backForwardListState.currentIndex;
 
     if (hasBackForwardList) {
@@ -1947,8 +1954,11 @@ uint64_t WebPageProxy::restoreFromSessionState(SessionState sessionState, bool n
         process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
     }
 
+    // FIXME: Navigating should be separate from state restoration.
     if (navigate) {
-        // FIXME: Navigating should be separate from state restoration.
+        m_sessionRestorationRenderTreeSize = sessionState.renderTreeSize;
+        if (!m_sessionRestorationRenderTreeSize)
+            m_hitRenderTreeSizeThreshold = true; // If we didn't get data on renderTreeSize, just don't fire the milestone.
 
         if (!sessionState.provisionalURL.isNull())
             return loadRequest(sessionState.provisionalURL);
@@ -2107,6 +2117,8 @@ void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestone
 {
     if (!isValid())
         return;
+    
+    m_wantsSessionRestorationRenderTreeSizeThresholdEvent = milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold;
 
     m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
 }
