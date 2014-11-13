@@ -124,7 +124,10 @@ enum {
     WebActionMenuItemTagCopyImage,
     WebActionMenuItemTagAddImageToPhotos,
     WebActionMenuItemTagSaveImageToDownloads,
-    WebActionMenuItemTagShareImage
+    WebActionMenuItemTagShareImage,
+    WebActionMenuItemTagCopyVideoURL,
+    WebActionMenuItemTagSaveVideoToDownloads,
+    WebActionMenuItemTagShareVideo
 };
 
 typedef enum {
@@ -134,7 +137,8 @@ typedef enum {
     WebActionMenuEditableText,
     WebActionMenuWhitespaceInEditableArea,
     WebActionMenuEditableTextWithSuggestions,
-    WebActionMenuImage
+    WebActionMenuImage,
+    WebActionMenuVideo
 } WebActionMenuType;
 
 // Message Sources.

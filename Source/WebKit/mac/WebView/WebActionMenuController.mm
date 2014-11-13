@@ -110,6 +110,15 @@ struct DictionaryPopupInfo {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point), hitType);
 
+    // We hit test including shadow content to get the desired result for editable text regions.
+    // But for media, we want to re-set to the shadow root.
+    if (Node* node = _hitTestResult.innerNode()) {
+        if (Element* shadowHost = node->shadowHost()) {
+            if (shadowHost->isMediaElement())
+                _hitTestResult.setToNonShadowAncestor();
+        }
+    }
+
     return [[[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult] autorelease];
 }
 
@@ -383,6 +392,44 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (void)_saveImageToDownloads:(id)sender
 {
     [_webView _downloadURL:_hitTestResult.absoluteImageURL()];
+}
+
+#pragma mark Video actions
+
+- (NSArray*)_defaultMenuItemsForVideo:(WebElementDictionary *)hitTestResult
+{
+    RetainPtr<NSMenuItem> copyVideoURLItem = [self _createActionMenuItemForTag:WebActionMenuItemTagCopyVideoURL withHitTestResult:hitTestResult];
+
+    RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:WebActionMenuItemTagSaveVideoToDownloads withHitTestResult:hitTestResult];
+    if (!_hitTestResult.isDownloadableMedia() || !_webView.downloadDelegate)
+        [saveToDownloadsItem setEnabled:NO];
+
+    RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:WebActionMenuItemTagShareVideo withHitTestResult:hitTestResult];
+    NSString *urlToShare = _hitTestResult.absoluteMediaURL();
+    if (!_hitTestResult.isDownloadableMedia()) {
+        [saveToDownloadsItem setEnabled:NO];
+        urlToShare = [_webView mainFrameURL];
+    }
+    _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ urlToShare ]]);
+    [_sharingServicePicker setDelegate:self];
+    [shareItem setSubmenu:[_sharingServicePicker menu]];
+
+    return @[ copyVideoURLItem.get(), [NSMenuItem separatorItem], saveToDownloadsItem.get(), shareItem.get() ];
+}
+
+- (void)_copyVideoURL:(id)sender
+{
+    NSString *urlToCopy = _hitTestResult.absoluteMediaURL();
+    if (!_hitTestResult.isDownloadableMedia())
+        urlToCopy = [_webView mainFrameURL];
+
+    [[NSPasteboard generalPasteboard] clearContents];
+    [[NSPasteboard generalPasteboard] writeObjects:@[ urlToCopy ]];
+}
+
+- (void)_saveVideoToDownloads:(id)sender
+{
+    [_webView _downloadURL:_hitTestResult.absoluteMediaURL()];
 }
 
 #pragma mark Text actions
@@ -664,6 +711,23 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         image = [NSImage imageNamed:@"NSActionMenuShare"];
         break;
 
+    case WebActionMenuItemTagCopyVideoURL:
+        selector = @selector(_copyVideoURL:);
+        title = WEB_UI_STRING_KEY("Copy", "Copy (video action menu item)", "video action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        break;
+
+    case WebActionMenuItemTagSaveVideoToDownloads:
+        selector = @selector(_saveVideoToDownloads:);
+        title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
+        break;
+
+    case WebActionMenuItemTagShareVideo:
+        title = WEB_UI_STRING_KEY("Share", "Share (video action menu item)", "video action menu item");
+        image = [NSImage imageNamed:@"NSActionMenuShare"];
+        break;
+
     default:
         ASSERT_NOT_REACHED();
         return nil;
@@ -688,6 +752,11 @@ static NSImage *webKitBundleImageNamed(NSString *name)
     if (url) {
         _type = WebActionMenuLink;
         return [self _defaultMenuItemsForLink:hitTestResult];
+    }
+
+    if (!_hitTestResult.absoluteMediaURL().isEmpty()) {
+        _type = WebActionMenuVideo;
+        return [self _defaultMenuItemsForVideo:hitTestResult];
     }
 
     if (_hitTestResult.image() && !_hitTestResult.absoluteImageURL().isEmpty()) {
