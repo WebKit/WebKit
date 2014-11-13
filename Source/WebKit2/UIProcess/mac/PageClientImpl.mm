@@ -753,6 +753,12 @@ void PageClientImpl::didPerformActionMenuHitTest(const ActionMenuHitTestResult& 
 #endif
 }
 
+void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
+{
+    [menu popUpMenuPositioningItem:nil atLocation:location inView:m_wkView];
+}
+
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

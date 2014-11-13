@@ -1,5 +1,48 @@
 2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175966. <rdar://problem/18866308>
+
+    2014-11-11  Tim Horton  <timothy_horton@apple.com>
+
+            DataDetectors' menu items aren't presented in the telephone number menu
+            https://bugs.webkit.org/show_bug.cgi?id=138602
+            <rdar://problem/18866308>
+
+            Reviewed by Beth Dakin.
+
+            We currently round-trip the DataDetectors telephone number NSMenuItems
+            through the very-lossy WebContextMenuItemData, for no real reason.
+            We should avoid this so that DataDetectors' actual NSMenuItems are
+            presented in the final menu, so that they can adjust their items after
+            providing them to us.
+
+            * Platform/mac/MenuUtilities.h:
+            * Platform/mac/MenuUtilities.mm:
+            (WebKit::menuItemTitleForTelephoneNumber): Deleted.
+            Stop adjusting the menu item titles, as they come correct now.
+
+            (WebKit::menuItemsForTelephoneNumber): Deleted.
+            (WebKit::menuForTelephoneNumber):
+            Return a fully-formed menu for the single telephone number case.
+
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::showTelephoneNumberMenu):
+            Present the fully-formed menu, without round-tripping through
+            WebContextMenuItemData, because we do not need to hand the items to
+            the context menu client (and indeed, were not), and because this
+            allows us to use the exact items returned by DataDetectors, so they
+            can keep ahold of the items that we actually present.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::showPlatformContextMenu):
+            Add a Mac-only PageClient function for presenting a NSMenu at a
+            WKView-relative point.
+
+
+2014-11-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r176038. <rdar://problem/18960409>
 
     2014-11-12  Tim Horton  <timothy_horton@apple.com>

@@ -188,6 +188,7 @@ private:
     virtual void removeNavigationGestureSnapshot() override;
 
     virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, API::Object*) override;
+    virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 
     WKView *m_wkView;
     WKWebView *m_webView;

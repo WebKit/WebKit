@@ -643,21 +643,8 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point)
 {
-    NSArray *menuItems = menuItemsForTelephoneNumber(telephoneNumber);
-
-    Vector<WebContextMenuItemData> items;
-    for (NSMenuItem *item in menuItems) {
-        RetainPtr<NSMenuItem> retainedItem = item;
-        std::function<void()> handler = [retainedItem]() {
-            NSMenuItem *item = retainedItem.get();
-            [[item target] performSelector:[item action] withObject:item];
-        };
-        
-        items.append(WebContextMenuItemData(ContextMenuItem(item), handler));
-    }
-    
-    ContextMenuContextData contextData(TelephoneNumberContext);
-    internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, nullptr);
+    RetainPtr<NSMenu> menu = menuForTelephoneNumber(telephoneNumber);
+    m_pageClient.showPlatformContextMenu(menu.get(), point);
 }
 #endif
 
