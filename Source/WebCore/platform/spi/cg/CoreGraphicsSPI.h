@@ -29,10 +29,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <CoreGraphics/CGContextGState.h>
 #include <CoreGraphics/CGFontCache.h>
-#include <CoreGraphics/CGFontPrivate.h>
-#include <CoreGraphics/CGFontUnicodeSupport.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 #endif
 

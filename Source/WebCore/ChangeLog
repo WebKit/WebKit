@@ -1,3 +1,10 @@
+2014-11-13  Myles C. Maxfield  <litherum@gmail.com>
+
+        Addressing post-review comment
+        https://bugs.webkit.org/show_bug.cgi?id=138633
+
+        * platform/spi/cg/CoreGraphicsSPI.h:
+
 2014-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move FontMac and FontCacheMac off of WKSI
