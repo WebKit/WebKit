@@ -2845,6 +2845,14 @@ void MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange(bool newVal
     m_cachedCanPlayFastReverse = newValue;
 }
 
+URL MediaPlayerPrivateAVFoundationObjC::resolvedURL() const
+{
+    if (!m_avAsset)
+        return MediaPlayerPrivateAVFoundation::resolvedURL();
+
+    return URL([m_avAsset resolvedURL]);
+}
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys;

@@ -1920,6 +1920,20 @@ bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
     return false;
 }
 
+bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
+{
+    if (isLiveStream())
+        return false;
+
+    if (m_url.isLocalFile())
+        return true;
+
+    if (m_url.protocolIsInHTTPFamily())
+        return true;
+    
+    return false;
+}
+
 }
 
 #endif // USE(GSTREAMER)

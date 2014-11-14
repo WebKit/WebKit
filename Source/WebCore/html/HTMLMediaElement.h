@@ -118,9 +118,10 @@ public:
     // Eventually overloaded in HTMLVideoElement
     virtual bool supportsFullscreen() const override { return false; };
 
-    virtual bool supportsSave() const;
     virtual bool supportsScanning() const override;
-    
+
+    bool canSaveMediaData() const;
+
     virtual bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const override;
 
     WEBCORE_EXPORT PlatformMedia platformMedia() const;
