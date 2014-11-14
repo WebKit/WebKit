@@ -1,3 +1,22 @@
+2014-11-14  Dean Jackson  <dino@apple.com>
+
+        [Media] Timeline scrubber not updating as the video plays
+        https://bugs.webkit.org/show_bug.cgi?id=138717
+        <rdar://problem/18957509>
+
+        Reviewed by Jer Noble.
+
+        Tests that an inline video will actually advance the
+        timeline scrubber if it plays momentarily.
+
+        Eric wrote all the hard bits here. I just changed
+        a few lines to test if the timeline had moved from 0.
+        Unfortunately we can't rely on the timeline value
+        being identical to the currentTime of the media element,
+        because we only move the timeline when we get events.
+
+        * media/media-controls-timeline-updates.html: Added.
+
 2014-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test that small caps of web fonts works regardless of where the font face is declared

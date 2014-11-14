@@ -1,3 +1,30 @@
+2014-11-14  Dean Jackson  <dino@apple.com>
+
+        [Media] Timeline scrubber not updating as the video plays
+        https://bugs.webkit.org/show_bug.cgi?id=138717
+        <rdar://problem/18957509>
+
+        Reviewed by Jer Noble.
+
+        There is some confusing logic that determines
+        whether or not the controls are hidden, and a
+        slight error caused timelines to not advance unless
+        they were explicitly showing.
+
+        The fix was to be a bit more liberal in deciding
+        when the controls are showing, but still cautious
+        enough to stop up causing repaints when things
+        are hidden.
+
+        Test: media/media-controls-timeline-updates.html
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.controlsAreHidden): We only need
+        to check if we're an audio element or explicitly
+        hidden.
+        (Controller.prototype.showControls): Explicitly call
+        updateTime.
+
 2014-11-14  Tim Horton  <timothy_horton@apple.com>
 
         Move DataDetectors scanning code to WebCore

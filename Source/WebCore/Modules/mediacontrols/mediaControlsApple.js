@@ -1035,10 +1035,13 @@ Controller.prototype = {
 
     showControls: function()
     {
+        this.setNeedsTimelineMetricsUpdate();
+
+        this.updateTime();
+        this.updateProgress(true);
+
         this.controls.panel.classList.add(this.ClassNames.show);
         this.controls.panel.classList.remove(this.ClassNames.hidden);
-
-        this.setNeedsTimelineMetricsUpdate();
     },
 
     hideControls: function()
@@ -1048,7 +1051,7 @@ Controller.prototype = {
 
     controlsAreHidden: function()
     {
-        return !this.isAudio() && (!this.controls.panel.classList.contains(this.ClassNames.show) || this.controls.panel.classList.contains(this.ClassNames.hidden));
+        return !this.isAudio() && this.controls.panel.classList.contains(this.ClassNames.hidden);
     },
 
     removeControls: function()
