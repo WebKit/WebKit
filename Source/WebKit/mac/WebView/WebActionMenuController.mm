@@ -717,11 +717,6 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     return item;
 }
 
-static NSImage *webKitBundleImageNamed(NSString *name)
-{
-    return [[NSBundle bundleForClass:NSClassFromString(@"WKView")] imageForResource:name];
-}
-
 - (NSArray *)_defaultMenuItems
 {
     NSURL *url = _hitTestResult.absoluteLinkURL();
