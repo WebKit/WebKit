@@ -4159,9 +4159,11 @@ void SpeculativeJIT::compileNewFunctionNoCheck(Node* node)
 {
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
+    SpeculateCellOperand scope(this, node->child1());
+    GPRReg scopeGPR = scope.gpr();
     flushRegisters();
     callOperation(
-        operationNewFunctionNoCheck, resultGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex()));
+        operationNewFunctionNoCheck, resultGPR, scopeGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex()));
     cellResult(resultGPR, node);
 }
 
@@ -4169,10 +4171,12 @@ void SpeculativeJIT::compileNewFunctionExpression(Node* node)
 {
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
+    SpeculateCellOperand scope(this, node->child1());
+    GPRReg scopeGPR = scope.gpr();
     flushRegisters();
     callOperation(
         operationNewFunctionNoCheck,
-        resultGPR,
+        resultGPR, scopeGPR, 
         m_jit.codeBlock()->functionExpr(node->functionExprIndex()));
     cellResult(resultGPR, node);
 }

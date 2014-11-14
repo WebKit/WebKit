@@ -1,3 +1,65 @@
+2014-11-13  Michael Saboff  <msaboff@apple.com>
+
+        Add scope operand to op_new_func* byte codes
+        https://bugs.webkit.org/show_bug.cgi?id=138707
+
+        Reviewed by Mark Lam.
+
+        Added scope operand to op_new_func and op_new_func_expr to replace the implicit use
+        of exec->scope().
+
+        * bytecode/BytecodeList.json: Increased size of op_new_func & op_new_func_expr bytecodes.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Added scope operand to dump output.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        Emit scope operand.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        Added new scope source nodes to NewFunction, NewFunctionExpression & NewFunctionNoCheck.
+        
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionNoCheck):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionExpression):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        Use scope children when making new function JIT_Operation calls.  Use JSScope* value instead of
+        exec->scope().
+
+        * dfg/DFGOperations.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_new_func_exp):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        Added new Jsc JIT_Operation parameter type for JSScope* values.  Created declarations and
+        definitions for new JIT_Operations with Jsc parameters.  Use the JSScope* parameters in lieu
+        of exec->scope() in operationNewFunction().
+        Removed comment for unused Jsa (JSLexicalEnvironment*) JIT_Operation parameter type.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        Use the scope operand instead of exec->scope().
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Changed the operand indecies for added scope operand.
+
 2014-11-13  Mark Lam  <mark.lam@apple.com>
 
         Change X86/64 JIT probes to save/restore xmm regs as double instead of __m128. [Follow up]

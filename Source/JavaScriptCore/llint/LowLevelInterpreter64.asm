@@ -1769,14 +1769,14 @@ _llint_op_switch_char:
 
 _llint_op_new_func:
     traceExecution()
-    loadisFromInstruction(3, t2)
+    loadisFromInstruction(4, t2)
     btiz t2, .opNewFuncUnchecked
     loadisFromInstruction(1, t1)
     btqnz [cfr, t1, 8], .opNewFuncDone
 .opNewFuncUnchecked:
     callSlowPath(_llint_slow_path_new_func)
 .opNewFuncDone:
-    dispatch(4)
+    dispatch(5)
 
 macro arrayProfileForCall()
     loadisFromInstruction(4, t3)

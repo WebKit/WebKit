@@ -1001,18 +1001,20 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Creating function!\n");
 #endif
-    LLINT_RETURN(JSFunction::create(vm, codeBlock->functionDecl(pc[2].u.operand), exec->scope()));
+    LLINT_RETURN(JSFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    FunctionExecutable* function = codeBlock->functionExpr(pc[2].u.operand);
-    JSFunction* func = JSFunction::create(vm, function, exec->scope());
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
+    FunctionExecutable* function = codeBlock->functionExpr(pc[3].u.operand);
+    JSFunction* func = JSFunction::create(vm, function, scope);
     
     LLINT_RETURN(func);
 }

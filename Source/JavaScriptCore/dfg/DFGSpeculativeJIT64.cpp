@@ -4546,6 +4546,8 @@ void SpeculativeJIT::compile(Node* node)
     case NewFunction: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);
+        SpeculateCellOperand scope(this, node->child2());
+        GPRReg scopeGPR = scope.gpr();
         
         GPRReg valueGPR = value.gpr();
         GPRReg resultGPR = result.gpr();
@@ -4557,7 +4559,7 @@ void SpeculativeJIT::compile(Node* node)
         addSlowPathGenerator(
             slowPathCall(
                 notCreated, this, operationNewFunction,
-                resultGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex())));
+                resultGPR, scopeGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex())));
         
         jsValueResult(resultGPR, node);
         break;

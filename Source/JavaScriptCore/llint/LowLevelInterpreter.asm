@@ -1132,7 +1132,7 @@ _llint_op_switch_string:
 _llint_op_new_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_func_exp)
-    dispatch(3)
+    dispatch(4)
 
 
 _llint_op_call:

@@ -1172,6 +1172,16 @@ private:
 
             break;
         }
+        case NewFunction: {
+            fixEdge<CellUse>(node->child2());
+            break;
+        }
+
+        case NewFunctionNoCheck:
+        case NewFunctionExpression: {
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
             
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
@@ -1213,9 +1223,6 @@ private:
         case GetMyArgumentsLength:
         case GetMyArgumentsLengthSafe:
         case CheckArgumentsNotCreated:
-        case NewFunction:
-        case NewFunctionNoCheck:
-        case NewFunctionExpression:
         case Jump:
         case Return:
         case Throw:

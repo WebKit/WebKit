@@ -3433,22 +3433,22 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_new_func: {
-            if (!currentInstruction[3].u.operand) {
+            if (!currentInstruction[4].u.operand) {
                 set(VirtualRegister(currentInstruction[1].u.operand),
-                    addToGraph(NewFunctionNoCheck, OpInfo(currentInstruction[2].u.operand)));
+                    addToGraph(NewFunctionNoCheck, OpInfo(currentInstruction[3].u.operand), get(VirtualRegister(currentInstruction[2].u.operand))));
             } else {
                 set(VirtualRegister(currentInstruction[1].u.operand),
                     addToGraph(
                         NewFunction,
-                        OpInfo(currentInstruction[2].u.operand),
-                        get(VirtualRegister(currentInstruction[1].u.operand))));
+                        OpInfo(currentInstruction[3].u.operand),
+                        get(VirtualRegister(currentInstruction[1].u.operand)), get(VirtualRegister(currentInstruction[2].u.operand))));
             }
             NEXT_OPCODE(op_new_func);
         }
 
         case op_new_func_exp: {
             set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(NewFunctionExpression, OpInfo(currentInstruction[2].u.operand)));
+                addToGraph(NewFunctionExpression, OpInfo(currentInstruction[3].u.operand), get(VirtualRegister(currentInstruction[2].u.operand))));
             NEXT_OPCODE(op_new_func_exp);
         }
 

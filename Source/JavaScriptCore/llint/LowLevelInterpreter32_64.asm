@@ -1911,13 +1911,13 @@ _llint_op_switch_char:
 
 _llint_op_new_func:
     traceExecution()
-    btiz 12[PC], .opNewFuncUnchecked
+    btiz 16[PC], .opNewFuncUnchecked
     loadi 4[PC], t1
     bineq TagOffset[cfr, t1, 8], EmptyValueTag, .opNewFuncDone
 .opNewFuncUnchecked:
     callSlowPath(_llint_slow_path_new_func)
 .opNewFuncDone:
-    dispatch(4)
+    dispatch(5)
 
 macro arrayProfileForCall()
     loadi 16[PC], t3

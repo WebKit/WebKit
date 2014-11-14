@@ -820,12 +820,12 @@ EncodedJSValue JIT_OPERATION operationGetInlinedArgumentByVal(
     return JSValue::encode(argumentsValue.get(exec, index));
 }
 
-JSCell* JIT_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSCell* functionExecutable)
+JSCell* JIT_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), exec->scope());
+    return JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope);
 }
 
 size_t JIT_OPERATION operationIsObject(ExecState* exec, EncodedJSValue value)

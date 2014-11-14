@@ -947,12 +947,12 @@ EncodedJSValue JIT_OPERATION operationNewArrayWithSizeAndProfile(ExecState* exec
     return JSValue::encode(constructArrayWithSizeQuirk(exec, profile, exec->lexicalGlobalObject(), sizeValue));
 }
 
-EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
+EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return JSValue::encode(JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), exec->scope()));
+    return JSValue::encode(JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
 }
 
 JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)

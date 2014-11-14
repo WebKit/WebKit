@@ -1715,6 +1715,7 @@ RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, unsigned
 {
     emitOpcode(op_new_func);
     instructions().append(dst->index());
+    instructions().append(scopeRegister()->index());
     instructions().append(index);
     instructions().append(doNullCheck);
     return dst;
@@ -1735,6 +1736,7 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExp
 
     emitOpcode(op_new_func_exp);
     instructions().append(r0->index());
+    instructions().append(scopeRegister()->index());
     instructions().append(index);
     return r0;
 }

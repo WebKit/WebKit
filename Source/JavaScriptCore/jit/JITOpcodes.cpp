@@ -1034,7 +1034,7 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 {
     Jump lazyJump;
     int dst = currentInstruction[1].u.operand;
-    if (currentInstruction[3].u.operand) {
+    if (currentInstruction[4].u.operand) {
 #if USE(JSVALUE32_64)
         lazyJump = branch32(NotEqual, tagFor(dst), TrustedImm32(JSValue::EmptyValueTag));
 #else
@@ -1042,18 +1042,28 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 #endif
     }
 
-    FunctionExecutable* funcExec = m_codeBlock->functionDecl(currentInstruction[2].u.operand);
-    callOperation(operationNewFunction, dst, funcExec);
+#if USE(JSVALUE64)
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
+#else
+    emitLoadPayload(currentInstruction[2].u.operand, regT0);
+#endif
+    FunctionExecutable* funcExec = m_codeBlock->functionDecl(currentInstruction[3].u.operand);
+    callOperation(operationNewFunction, dst, regT0, funcExec);
 
-    if (currentInstruction[3].u.operand)
+    if (currentInstruction[4].u.operand)
         lazyJump.link(this);
 }
 
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    FunctionExecutable* funcExpr = m_codeBlock->functionExpr(currentInstruction[2].u.operand);
-    callOperation(operationNewFunction, dst, funcExpr);
+#if USE(JSVALUE64)
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
+#else
+    emitLoadPayload(currentInstruction[2].u.operand, regT0);
+#endif
+    FunctionExecutable* funcExpr = m_codeBlock->functionExpr(currentInstruction[3].u.operand);
+    callOperation(operationNewFunction, dst, regT0, funcExpr);
 }
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)
