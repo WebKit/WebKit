@@ -1,3 +1,19 @@
+2014-11-13  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=138628
+        A patch that doesn't apply is stuck in commit queue
+
+        Rubber-stamped by David Kilzer.
+
+        This also hopefully fixes other issues:
+        - a patch that has cq+ flag set by a non-committer kills commit queue;
+        - EWS never reports failing tests, and keeps spinning instead.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.set_flag_on_attachment):
+        (Bugzilla.obsolete_attachment):
+        Apply the fix from r174797 to more places.
+
 2014-11-13  Dan Bernstein  <mitz@apple.com>
 
         Policy client not called for navigations through the page cache

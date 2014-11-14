@@ -771,7 +771,7 @@ class Bugzilla(object):
         self.browser.select_form(nr=1)
 
         if comment_text:
-            self.browser.set_value(comment_text, name='comment', nr=0)
+            self.browser.set_value(comment_text, name='comment', nr=1)
 
         self._find_select_element_for_flag(flag_name).value = (flag_value,)
         self.browser.submit()
@@ -793,7 +793,7 @@ class Bugzilla(object):
             _log.info(comment_text)
             # Bugzilla has two textareas named 'comment', one is somehow
             # hidden.  We want the first.
-            self.browser.set_value(comment_text, name='comment', nr=0)
+            self.browser.set_value(comment_text, name='comment', nr=1)
         self.browser.submit()
 
     def add_cc_to_bug(self, bug_id, email_address_list):
