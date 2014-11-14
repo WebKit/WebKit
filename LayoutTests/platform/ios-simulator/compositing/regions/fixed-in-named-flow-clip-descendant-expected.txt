@@ -8,6 +8,7 @@ On success, you should see a green rectangle with an orange rectangle in the bot
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 150.00 150.00)

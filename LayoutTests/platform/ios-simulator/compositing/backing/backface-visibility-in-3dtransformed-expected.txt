@@ -6,6 +6,7 @@ Should be several layers here.
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 52.00)

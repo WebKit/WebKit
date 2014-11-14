@@ -4,13 +4,14 @@
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
+      (contentsOpaque 1)
       (children 4
         (GraphicsLayer
           (position 8.00 13.00)
           (bounds 100.00 100.00)
           (children 1
             (GraphicsLayer
-              (bounds 100.00 100.00)
+              (bounds 85.00 100.00)
               (children 1
                 (GraphicsLayer
                   (bounds 10.00 200.00)
@@ -24,7 +25,7 @@
           (bounds 100.00 100.00)
           (children 1
             (GraphicsLayer
-              (bounds 100.00 100.00)
+              (bounds 100.00 85.00)
               (children 1
                 (GraphicsLayer
                   (bounds 200.00 10.00)
@@ -38,7 +39,7 @@
           (bounds 100.00 100.00)
           (children 1
             (GraphicsLayer
-              (bounds 100.00 100.00)
+              (bounds 85.00 85.00)
               (children 1
                 (GraphicsLayer
                   (bounds 200.00 200.00)

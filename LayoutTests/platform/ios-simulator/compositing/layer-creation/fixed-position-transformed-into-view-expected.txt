@@ -5,6 +5,7 @@ This should be visibleThis should be visible
   (children 1
     (GraphicsLayer
       (bounds 800.00 1021.00)
+      (contentsOpaque 1)
       (children 2
         (GraphicsLayer
           (position -200.00 0.00)

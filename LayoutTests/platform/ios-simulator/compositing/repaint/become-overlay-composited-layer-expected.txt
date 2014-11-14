@@ -12,6 +12,6 @@ layer at (0,0) size 800x600
 layer at (8,44) size 502x102
   RenderBlock (relative positioned) {DIV} at (0,36) size 502x102 [border: (1px solid #000000)]
 layer at (259,45) size 250x100
-  RenderBlock (positioned) {DIV} at (251,1) size 250x100 [bgcolor=#0000FF]
+  RenderBlock (positioned) {DIV} at (250,1) size 251x101 [bgcolor=#0000FF]
 layer at (9,45) size 50x50
   RenderBlock (positioned) {DIV} at (1,1) size 50x50 [bgcolor=#000000]

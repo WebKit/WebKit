@@ -7,6 +7,7 @@ First (small layer):
   (children 1
     (GraphicsLayer
       (bounds 800.00 614.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 72.00)
@@ -39,6 +40,7 @@ Second (huge layer):
   (children 1
     (GraphicsLayer
       (bounds 800.00 5114.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 72.00)
@@ -72,6 +74,7 @@ Third (small layer):
   (children 1
     (GraphicsLayer
       (bounds 800.00 614.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 8.00 72.00)

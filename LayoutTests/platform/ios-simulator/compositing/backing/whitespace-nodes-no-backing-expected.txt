@@ -13,6 +13,7 @@ inner span
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
+      (contentsOpaque 1)
       (children 9
         (GraphicsLayer
           (position 10.00 8.00)
@@ -22,10 +23,12 @@ inner span
             (GraphicsLayer
               (position 2.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
             (GraphicsLayer
               (position 60.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
           )
         )
@@ -36,10 +39,12 @@ inner span
             (GraphicsLayer
               (position 2.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
             (GraphicsLayer
               (position 60.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
           )
         )
@@ -50,6 +55,7 @@ inner span
             (GraphicsLayer
               (position 2.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
           )
         )
@@ -60,6 +66,7 @@ inner span
             (GraphicsLayer
               (position 2.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
           )
         )
@@ -71,6 +78,7 @@ inner span
             (GraphicsLayer
               (position 2.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
           )
         )
@@ -96,6 +104,7 @@ inner span
             (GraphicsLayer
               (position 2.00 2.00)
               (bounds 50.00 50.00)
+              (drawsContent 1)
             )
             (GraphicsLayer
               (position 0.00 59.00)

@@ -5,6 +5,7 @@ Element at 500, 200: composited box
   (children 1
     (GraphicsLayer
       (bounds 810.00 600.00)
+      (contentsOpaque 1)
       (children 1
         (GraphicsLayer
           (position 428.00 130.00)

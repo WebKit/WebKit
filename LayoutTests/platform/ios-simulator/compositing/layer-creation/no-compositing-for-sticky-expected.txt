@@ -7,6 +7,7 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
   (children 1
     (GraphicsLayer
       (bounds 2008.00 600.00)
+      (contentsOpaque 1)
       (children 6
         (GraphicsLayer
           (position 812.00 61.00)

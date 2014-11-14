@@ -5,6 +5,8 @@
   (children 1
     (GraphicsLayer
       (bounds 1000.00 1000.00)
+      (contentsOpaque 1)
+      (backgroundColor #FF0000)
       (children 2
         (GraphicsLayer
           (position 250.00 50.00)

@@ -5,6 +5,7 @@ Grandchild content
   (children 1
     (GraphicsLayer
       (bounds 800.00 1090.00)
+      (contentsOpaque 1)
       (children 5
         (GraphicsLayer
           (position 18.00 10.00)

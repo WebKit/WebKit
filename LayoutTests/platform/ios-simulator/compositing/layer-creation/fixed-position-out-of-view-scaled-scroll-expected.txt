@@ -5,6 +5,7 @@ Not scaled:
   (children 1
     (GraphicsLayer
       (bounds 800.00 1016.00)
+      (contentsOpaque 1)
       (children 2
         (GraphicsLayer
           (position 600.00 0.00)
@@ -26,6 +27,7 @@ Scale=0.5:
   (children 1
     (GraphicsLayer
       (bounds 800.00 1016.00)
+      (contentsOpaque 1)
       (children 2
         (GraphicsLayer
           (position 600.00 0.00)
@@ -47,6 +49,7 @@ Scale=1.5:
   (children 1
     (GraphicsLayer
       (bounds 800.00 1016.00)
+      (contentsOpaque 1)
       (children 2
         (GraphicsLayer
           (position 600.00 0.00)

@@ -12,6 +12,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
   (children 1
     (GraphicsLayer
       (bounds 807.00 600.00)
+      (contentsOpaque 1)
       (visible rect 0.00, 0.00 800.00 x 600.00)
       (contentsScale 2.00)
       (children 6
