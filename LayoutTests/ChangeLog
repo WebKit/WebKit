@@ -1,3 +1,12 @@
+2014-11-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Many (most?)  transitions tests are very flaky, frequently failing all at once
+        https://bugs.webkit.org/show_bug.cgi?id=137883
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        Add more affected tests to unbreak EWS.
+
 2014-11-11  David Hyatt  <hyatt@apple.com>
 
         Table rows repaint entire table when their background color changes.
