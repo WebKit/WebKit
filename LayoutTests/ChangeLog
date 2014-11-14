@@ -1,3 +1,13 @@
+2014-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test that small caps of web fonts works regardless of where the font face is declared
+        https://bugs.webkit.org/show_bug.cgi?id=138700
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/text/svg-small-caps-expected.html: Added.
+        * fast/text/svg-small-caps.html: Added.
+
 2014-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         Many (most?)  transitions tests are very flaky, frequently failing all at once
