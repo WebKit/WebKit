@@ -231,7 +231,6 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const Resource
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = false);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
-static gboolean requestTimeoutCallback(void*);
 #if ENABLE(WEB_TIMING)
 static int  milisecondsSinceRequest(double requestTime);
 #endif
@@ -590,10 +589,7 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         d->m_soupMessage.clear();
     }
 
-    if (d->m_timeoutSource) {
-        g_source_destroy(d->m_timeoutSource.get());
-        d->m_timeoutSource.clear();
-    }
+    d->m_timeoutSource.cancel();
 
     if (!isDestroying)
         handle->deref();
@@ -1015,10 +1011,11 @@ void ResourceHandle::sendPendingRequest()
 #endif
 
     if (d->m_firstRequest.timeoutInterval() > 0) {
-        // soup_add_timeout returns a GSource* whose only reference is owned by
-        // the context. We need to have our own reference to it, hence not using adoptRef.
-        d->m_timeoutSource = soup_add_timeout(g_main_context_get_thread_default(),
-            d->m_firstRequest.timeoutInterval() * 1000, requestTimeoutCallback, this);
+        d->m_timeoutSource.scheduleAfterDelay("[WebKit] ResourceHandle request timeout", [this] {
+            client()->didFail(this, ResourceError::timeoutError(firstRequest().url().string()));
+            cancel();
+        }, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(d->m_firstRequest.timeoutInterval())),
+        G_PRIORITY_DEFAULT, nullptr, g_main_context_get_thread_default());
     }
 
     // Balanced by a deref() in cleanupSoupRequestOperation, which should always run.
@@ -1223,10 +1220,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     // Except when canceling a possible timeout timer, we only need to take action here to UN-defer loading.
     if (defersLoading) {
-        if (d->m_timeoutSource) {
-            g_source_destroy(d->m_timeoutSource.get());
-            d->m_timeoutSource.clear();
-        }
+        d->m_timeoutSource.cancel();
         return;
     }
 
@@ -1343,15 +1337,6 @@ void ResourceHandle::continueDidReceiveResponse()
     ASSERT(client());
     ASSERT(client()->usesAsyncCallbacks());
     continueAfterDidReceiveResponse(this);
-}
-
-static gboolean requestTimeoutCallback(gpointer data)
-{
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
-    handle->client()->didFail(handle.get(), ResourceError::timeoutError(handle->getInternal()->m_firstRequest.url().string()));
-    handle->cancel();
-
-    return FALSE;
 }
 
 }
