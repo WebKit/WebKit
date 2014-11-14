@@ -172,7 +172,7 @@ image-orientation [Inherited, NewStyleBuilder, TypeName=ImageOrientationEnum]
 #endif
 image-rendering [Inherited, NewStyleBuilder]
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
-image-resolution [Inherited]
+image-resolution [Inherited, NewStyleBuilder, Custom=All]
 #endif
 left [NewStyleBuilder, Initial=initialOffset, Converter=LengthOrAuto]
 letter-spacing [Inherited, NewStyleBuilder, Converter=Spacing]

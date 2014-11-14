@@ -233,6 +233,41 @@ static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveVal
     return true;
 }
 
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+inline void applyInheritImageResolution(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setImageResolutionSource(styleResolver.parentStyle()->imageResolutionSource());
+    styleResolver.style()->setImageResolutionSnap(styleResolver.parentStyle()->imageResolutionSnap());
+    styleResolver.style()->setImageResolution(styleResolver.parentStyle()->imageResolution());
+}
+
+inline void applyInitialImageResolution(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setImageResolutionSource(RenderStyle::initialImageResolutionSource());
+    styleResolver.style()->setImageResolutionSnap(RenderStyle::initialImageResolutionSnap());
+    styleResolver.style()->setImageResolution(RenderStyle::initialImageResolution());
+}
+
+inline void applyValueImageResolution(StyleResolver& styleResolver, CSSValue& value)
+{
+    ImageResolutionSource source = RenderStyle::initialImageResolutionSource();
+    ImageResolutionSnap snap = RenderStyle::initialImageResolutionSnap();
+    double resolution = RenderStyle::initialImageResolution();
+    for (auto& item : downcast<CSSValueList>(value)) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+        if (primitiveValue.getValueID() == CSSValueFromImage)
+            source = ImageResolutionFromImage;
+        else if (primitiveValue.getValueID() == CSSValueSnap)
+            snap = ImageResolutionSnapPixels;
+        else
+            resolution = primitiveValue.getDoubleValue(CSSPrimitiveValue::CSS_DPPX);
+    }
+    styleResolver.style()->setImageResolutionSource(source);
+    styleResolver.style()->setImageResolutionSnap(snap);
+    styleResolver.style()->setImageResolution(resolution);
+}
+#endif // ENABLE(CSS_IMAGE_RESOLUTION)
+
 inline void applyInheritSize(StyleResolver&) { }
 inline void applyInitialSize(StyleResolver&) { }
 inline void applyValueSize(StyleResolver& styleResolver, CSSValue& value)
