@@ -1,3 +1,13 @@
+2014-11-14  Jeremy Jones  <jeremyj@apple.com>
+
+        Do proper teardown for optimized fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=138648
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::invalidate): must do corresponding teardown based on mode.
+
 2014-11-11  David Hyatt  <hyatt@apple.com>
 
         Table rows repaint entire table when their background color changes.

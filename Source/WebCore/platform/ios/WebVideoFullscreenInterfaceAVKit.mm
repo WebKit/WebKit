@@ -1010,7 +1010,10 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
 {
     [m_window setHidden:YES];
     [m_window setRootViewController:nil];
-    [m_playerViewController exitFullScreenAnimated:NO completionHandler:nil];
+    if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized)
+        [m_playerViewController stopOptimizedFullscreen];
+    else
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:nil];
     m_playerController = nil;
     [m_playerViewController setDelegate:nil];
     [[m_playerViewController view] removeFromSuperview];
