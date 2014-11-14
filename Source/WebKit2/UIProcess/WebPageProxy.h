@@ -1077,7 +1077,6 @@ private:
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
-    void willChangeCurrentHistoryItemForMainFrame();
 
     void reattachToWebProcess();
     uint64_t reattachToWebProcessWithItem(WebBackForwardListItem*);

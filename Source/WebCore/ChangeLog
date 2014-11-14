@@ -1,3 +1,18 @@
+2014-11-14  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/18978497> Wrong (off-by-1) navigation snapshots shown after a mix of gesture and button back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=138753
+
+        Reviewed by Tim Horton.
+
+        Removed a FrameLoaderClient function that no one overrides anymore.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::willChangeCurrentHistoryItem): Deleted.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::setCurrentItem): Removed call to willChangeCurrentHistoryItem.
+        (WebCore::HistoryController::replaceCurrentItem): Ditto.
+
 2014-11-14  Jeremy Jones  <jeremyj@apple.com>
 
         Do proper teardown for optimized fullscreen

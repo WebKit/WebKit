@@ -1630,17 +1630,6 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
     return context.release();
 }
 
-void WebFrameLoaderClient::willChangeCurrentHistoryItem()
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-    if (!m_frame->isMainFrame())
-        return;
-
-    webPage->willChangeCurrentHistoryItemForMainFrame();
-}
-
 #if ENABLE(CONTENT_FILTERING)
 void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter)
 {

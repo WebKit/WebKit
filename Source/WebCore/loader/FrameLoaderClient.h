@@ -208,8 +208,6 @@ namespace WebCore {
         virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
         virtual void updateGlobalHistoryItemForPage() { }
 
-        virtual void willChangeCurrentHistoryItem() { }
-
         // This frame has set its opener to null, disowning it for the lifetime of the frame.
         // See http://html.spec.whatwg.org/#dom-opener.
         // FIXME: JSC should allow disowning opener. - <https://bugs.webkit.org/show_bug.cgi?id=103913>.

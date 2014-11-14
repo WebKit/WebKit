@@ -5298,11 +5298,6 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_isShowingNavigationGestureSnapshot = false;
 }
 
-void WebPageProxy::willChangeCurrentHistoryItemForMainFrame()
-{
-    recordNavigationSnapshot();
-}
-
 void WebPageProxy::isPlayingAudioDidChange(bool newIsPlayingAudio)
 {
     if (m_isPlayingAudio == newIsPlayingAudio)
