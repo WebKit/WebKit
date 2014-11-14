@@ -423,17 +423,18 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 {
     RetainPtr<NSMenuItem> copyVideoURLItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyVideoURL];
 
-    RetainPtr<NSMenuItem> saveToDownloadsItem;
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    if (hitTestResult->isDownloadableMedia())
-        saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveVideoToDownloads];
-    else
-        saveToDownloadsItem = [NSMenuItem separatorItem];
-
+    RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveVideoToDownloads];
     RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareVideo];
-    String videoURL = hitTestResult->absoluteMediaURL();
-    if (!videoURL.isEmpty()) {
-        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ videoURL ]]);
+
+    String urlToShare = hitTestResult->absoluteMediaURL();
+    if (!hitTestResult->isDownloadableMedia()) {
+        [saveToDownloadsItem setEnabled:NO];
+        urlToShare = _page->mainFrame()->url();
+    }
+
+    if (!urlToShare.isEmpty()) {
+        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ urlToShare ]]);
         [_sharingServicePicker setDelegate:self];
         [shareItem setSubmenu:[_sharingServicePicker menu]];
     }
@@ -444,9 +445,12 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 - (void)_copyVideoURL:(id)sender
 {
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    String urlToCopy = hitTestResult->absoluteMediaURL();
+    if (!hitTestResult->isDownloadableMedia())
+        urlToCopy = _page->mainFrame()->url();
 
     [[NSPasteboard generalPasteboard] clearContents];
-    [[NSPasteboard generalPasteboard] writeObjects:@[ hitTestResult->absoluteMediaURL() ]];
+    [[NSPasteboard generalPasteboard] writeObjects:@[ urlToCopy ]];
 }
 
 - (void)_saveVideoToDownloads:(id)sender

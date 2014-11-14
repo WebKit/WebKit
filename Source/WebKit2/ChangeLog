@@ -1,3 +1,19 @@
+2014-11-14  Beth Dakin  <bdakin@apple.com>
+
+        URLs for some videos are not valid URLs, should not be exposed to action menu
+        https://bugs.webkit.org/show_bug.cgi?id=138746
+        -and corresponding-
+        rdar://problem/18941927
+
+        Reviewed by Tim Horton.
+
+        If the video cannot be downloaded, that is also an indication that the URL of the 
+        video will not be valid on its own. In these cases, we should share or copy the 
+        main page’s URL.
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForVideo]):
+        (-[WKActionMenuController _copyVideoURL:]):
+
 2014-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Encode/Decode allowCookies in ResourceRequest
