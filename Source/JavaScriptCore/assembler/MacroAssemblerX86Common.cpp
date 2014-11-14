@@ -32,47 +32,89 @@ namespace JSC {
 
 #if ENABLE(MASM_PROBE)
 
-void MacroAssemblerX86Common::ProbeContext::dumpCPURegisters(const char* indentation)
+#define INDENT printIndent(indentation)
+
+void MacroAssemblerX86Common::printCPURegisters(MacroAssemblerX86Common::CPUState& cpu, int indentation)
 {
 #if CPU(X86)
-    #define DUMP_GPREGISTER(_type, _regName) { \
+    #define PRINT_GPREGISTER(_type, _regName) { \
         int32_t value = reinterpret_cast<int32_t>(cpu._regName); \
-        dataLogF("%s    %6s: 0x%08x  %d\n", indentation, #_regName, value, value) ; \
+        INDENT, dataLogF("%6s: 0x%08x  %d\n", #_regName, value, value) ; \
     }
 #elif CPU(X86_64)
-    #define DUMP_GPREGISTER(_type, _regName) { \
+    #define PRINT_GPREGISTER(_type, _regName) { \
         int64_t value = reinterpret_cast<int64_t>(cpu._regName); \
-        dataLogF("%s    %6s: 0x%016llx  %lld\n", indentation, #_regName, value, value) ; \
+        INDENT, dataLogF("%6s: 0x%016llx  %lld\n", #_regName, value, value) ; \
     }
 #endif
-    FOR_EACH_CPU_GPREGISTER(DUMP_GPREGISTER)
-    FOR_EACH_CPU_SPECIAL_REGISTER(DUMP_GPREGISTER)
-    #undef DUMP_GPREGISTER
+    FOR_EACH_CPU_GPREGISTER(PRINT_GPREGISTER)
+    FOR_EACH_CPU_SPECIAL_REGISTER(PRINT_GPREGISTER)
+    #undef PRINT_GPREGISTER
 
-    #define DUMP_FPREGISTER(_type, _regName) { \
+    #define PRINT_FPREGISTER(_type, _regName) { \
         uint64_t* u = reinterpret_cast<uint64_t*>(&cpu._regName); \
         double* d = reinterpret_cast<double*>(&cpu._regName); \
-        dataLogF("%s    %6s: 0x%016llx  %.13g\n", indentation, #_regName, *u, *d); \
+        INDENT, dataLogF("%6s: 0x%016llx  %.13g\n", #_regName, *u, *d); \
     }
-    FOR_EACH_CPU_FPREGISTER(DUMP_FPREGISTER)
-    #undef DUMP_FPREGISTER
+    FOR_EACH_CPU_FPREGISTER(PRINT_FPREGISTER)
+    #undef PRINT_FPREGISTER
 }
 
-void MacroAssemblerX86Common::ProbeContext::dump(const char* indentation)
+#undef INDENT
+
+extern "C" void ctiMasmProbeTrampoline();
+
+// What code is emitted for the probe?
+// ==================================
+// We want to keep the size of the emitted probe invocation code as compact as
+// possible to minimize the perturbation to the JIT generated code. However,
+// we also need to preserve the CPU registers and set up the ProbeContext to be
+// passed to the user probe function.
+//
+// Hence, we do only the minimum here to preserve a scratch register (i.e. rax
+// in this case) and the stack pointer (i.e. rsp), and pass the probe arguments.
+// We'll let the ctiMasmProbeTrampoline handle the rest of the probe invocation
+// work i.e. saving the CPUState (and setting up the ProbeContext), calling the
+// user probe function, and restoring the CPUState before returning to JIT
+// generated code.
+//
+// What registers need to be saved?
+// ===============================
+// The registers are saved for 2 reasons:
+// 1. To preserve their state in the JITted code. This means that all registers
+//    that are not callee saved needs to be saved. We also need to save the
+//    condition code registers because the probe can be inserted between a test
+//    and a branch.
+// 2. To allow the probe to inspect the values of the registers for debugging
+//    purposes. This means all registers need to be saved.
+//
+// In summary, save everything. But for reasons stated above, we should do the
+// minimum here and let ctiMasmProbeTrampoline do the heavy lifting to save the
+// full set.
+//
+// What values are in the saved registers?
+// ======================================
+// Conceptually, the saved registers should contain values as if the probe
+// is not present in the JIT generated code. Hence, they should contain values
+// that are expected at the start of the instruction immediately following the
+// probe.
+//
+// Specifically, the saved stack pointer register will point to the stack
+// position before we push the ProbeContext frame. The saved rip will point to
+// the address of the instruction immediately following the probe. 
+
+void MacroAssemblerX86Common::probe(MacroAssemblerX86Common::ProbeFunction function, void* arg1, void* arg2)
 {
-    if (!indentation)
-        indentation = "";
-
-    dataLogF("%sProbeContext %p {\n", indentation, this);
-    dataLogF("%s  probeFunction: %p\n", indentation, probeFunction);
-    dataLogF("%s  arg1: %p %llu\n", indentation, arg1, reinterpret_cast<int64_t>(arg1));
-    dataLogF("%s  arg2: %p %llu\n", indentation, arg2, reinterpret_cast<int64_t>(arg2));
-    dataLogF("%s  cpu: {\n", indentation);
-
-    dumpCPURegisters(indentation);
-
-    dataLogF("%s  }\n", indentation);
-    dataLogF("%s}\n", indentation);
+    push(RegisterID::esp);
+    push(RegisterID::eax);
+    move(TrustedImmPtr(arg2), RegisterID::eax);
+    push(RegisterID::eax);
+    move(TrustedImmPtr(arg1), RegisterID::eax);
+    push(RegisterID::eax);
+    move(TrustedImmPtr(reinterpret_cast<void*>(function)), RegisterID::eax);
+    push(RegisterID::eax);
+    move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
+    call(RegisterID::eax);
 }
 
 #endif // ENABLE(MASM_PROBE)

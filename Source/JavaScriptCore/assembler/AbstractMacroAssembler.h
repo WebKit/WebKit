@@ -88,10 +88,11 @@ namespace DFG {
 struct OSRExit;
 }
 
-template <class AssemblerType>
+template <class AssemblerType, class MacroAssemblerType>
 class AbstractMacroAssembler {
 public:
     friend class JITWriteBarrierBase;
+    typedef AbstractMacroAssembler<AssemblerType, MacroAssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
 
     typedef MacroAssemblerCodePtr CodePtr;
@@ -355,7 +356,7 @@ public:
     // A Label records a point in the generated instruction stream, typically such that
     // it may be used as a destination for a jump.
     class Label {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
         friend struct DFG::OSRExit;
         friend class Jump;
@@ -368,7 +369,7 @@ public:
         {
         }
 
-        Label(AbstractMacroAssembler<AssemblerType>* masm)
+        Label(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
         {
             masm->invalidateAllTempRegisters();
@@ -390,7 +391,7 @@ public:
     //
     // addPtr(TrustedImmPtr(i), a, b)
     class ConvertibleLoadLabel {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
         friend class LinkBuffer;
         
@@ -399,7 +400,7 @@ public:
         {
         }
         
-        ConvertibleLoadLabel(AbstractMacroAssembler<AssemblerType>* masm)
+        ConvertibleLoadLabel(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.labelIgnoringWatchpoints())
         {
         }
@@ -414,7 +415,7 @@ public:
     // A DataLabelPtr is used to refer to a location in the code containing a pointer to be
     // patched after the code has been generated.
     class DataLabelPtr {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
         friend class LinkBuffer;
     public:
@@ -422,7 +423,7 @@ public:
         {
         }
 
-        DataLabelPtr(AbstractMacroAssembler<AssemblerType>* masm)
+        DataLabelPtr(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
         {
         }
@@ -438,7 +439,7 @@ public:
     // A DataLabel32 is used to refer to a location in the code containing a 32-bit constant to be
     // patched after the code has been generated.
     class DataLabel32 {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
         friend class LinkBuffer;
     public:
@@ -446,7 +447,7 @@ public:
         {
         }
 
-        DataLabel32(AbstractMacroAssembler<AssemblerType>* masm)
+        DataLabel32(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
         {
         }
@@ -462,7 +463,7 @@ public:
     // A DataLabelCompact is used to refer to a location in the code containing a
     // compact immediate to be patched after the code has been generated.
     class DataLabelCompact {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
         friend class LinkBuffer;
     public:
@@ -470,7 +471,7 @@ public:
         {
         }
         
-        DataLabelCompact(AbstractMacroAssembler<AssemblerType>* masm)
+        DataLabelCompact(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
         {
         }
@@ -493,7 +494,7 @@ public:
     // relative offset such that when executed it will call to the desired
     // destination.
     class Call {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
 
     public:
@@ -537,7 +538,7 @@ public:
     // relative offset such that when executed it will jump to the desired
     // destination.
     class Jump {
-        template<class TemplateAssemblerType>
+        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
         friend class AbstractMacroAssembler;
         friend class Call;
         friend struct DFG::OSRExit;
@@ -602,7 +603,7 @@ public:
             return result;
         }
 
-        void link(AbstractMacroAssembler<AssemblerType>* masm) const
+        void link(AbstractMacroAssemblerType* masm) const
         {
             masm->invalidateAllTempRegisters();
 
@@ -626,7 +627,7 @@ public:
 #endif
         }
         
-        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm) const
+        void linkTo(Label label, AbstractMacroAssemblerType* masm) const
         {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
             masm->checkRegisterAllocationAgainstBranchRange(label.m_label.m_offset, m_label.m_offset);
@@ -698,7 +699,7 @@ public:
                 append(jump);
         }
 
-        void link(AbstractMacroAssembler<AssemblerType>* masm)
+        void link(AbstractMacroAssemblerType* masm)
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
@@ -706,7 +707,7 @@ public:
             m_jumps.clear();
         }
         
-        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm)
+        void linkTo(Label label, AbstractMacroAssemblerType* masm)
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
@@ -836,6 +837,95 @@ public:
         AssemblerType::cacheFlush(code, size);
     }
 
+#if ENABLE(MASM_PROBE)
+
+    struct CPUState {
+        #define DECLARE_REGISTER(_type, _regName) \
+            _type _regName;
+        FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
+        #undef DECLARE_REGISTER
+    };
+
+    struct ProbeContext;
+    typedef void (*ProbeFunction)(struct ProbeContext*);
+
+    struct ProbeContext {
+        ProbeFunction probeFunction;
+        void* arg1;
+        void* arg2;
+        CPUState cpu;
+
+        void print(int indentation = 0)
+        {
+            #define INDENT MacroAssemblerType::printIndent(indentation)
+
+            INDENT, dataLogF("ProbeContext %p {\n", this);
+            indentation++;
+            {
+                INDENT, dataLogF("probeFunction: %p\n", probeFunction);
+                INDENT, dataLogF("arg1: %p %llu\n", arg1, reinterpret_cast<int64_t>(arg1));
+                INDENT, dataLogF("arg2: %p %llu\n", arg2, reinterpret_cast<int64_t>(arg2));
+                MacroAssemblerType::printCPU(cpu, indentation);
+            }
+            indentation--;
+            INDENT, dataLog("}\n");
+
+            #undef INDENT
+        }
+    };
+
+    static void printIndent(int indentation)
+    {
+        for (; indentation > 0; indentation--)
+            dataLog("    ");
+    }
+
+    static void printCPU(CPUState& cpu, int indentation = 0)
+    {
+        #define INDENT printIndent(indentation)
+
+        INDENT, dataLog("cpu: {\n");
+        MacroAssemblerType::printCPURegisters(cpu, indentation + 1);
+        INDENT, dataLog("}\n");
+
+        #undef INDENT
+    }
+
+
+    // This function will be called by printCPU() to print the contents of the
+    // target specific registers which are saved away in the CPUInfo struct.
+    // printCPURegisters() should make use of printIndentation() to print the
+    // registers with the appropriate amount of indentation.
+    //
+    // Note: printCPURegisters() should be implemented by the target specific
+    // MacroAssembler. This prototype is only provided here to document the
+    // interface.
+
+    static void printCPURegisters(CPUState&, int indentation = 0);
+
+    // This function emits code to preserve the CPUInfo (e.g. registers),
+    // call a user supplied probe function, and restore the CPUInfo before
+    // continuing with other JIT generated code.
+    //
+    // The user supplied probe function will be called with a single pointer to
+    // a ProbeContext struct (defined above) which contains, among other things,
+    // the preserved CPUInfo. This allows the user probe function to inspect
+    // the CPUInfo at that point in the JIT generated code.
+    //
+    // If the user probe function alters the register values in the ProbeContext,
+    // the altered values will be loaded into the CPU registers when the probe
+    // returns.
+    //
+    // The ProbeContext is stack allocated and is only valid for the duration
+    // of the call to the user probe function.
+    //
+    // Note: probe() should be implemented by the target specific MacroAssembler.
+    // This prototype is only provided here to document the interface.
+
+    void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
+
+#endif // ENABLE(MASM_PROBE)
+
     AssemblerType m_assembler;
     
 protected:
@@ -877,7 +967,7 @@ protected:
         friend class Label;
 
     public:
-        CachedTempRegister(AbstractMacroAssembler<AssemblerType>* masm, RegisterID registerID)
+        CachedTempRegister(AbstractMacroAssemblerType* masm, RegisterID registerID)
             : m_masm(masm)
             , m_registerID(registerID)
             , m_value(0)
@@ -905,7 +995,7 @@ protected:
         ALWAYS_INLINE void invalidate() { m_masm->clearTempRegisterValid(m_validBit); }
 
     private:
-        AbstractMacroAssembler<AssemblerType>* m_masm;
+        AbstractMacroAssemblerType* m_masm;
         RegisterID m_registerID;
         intptr_t m_value;
         unsigned m_validBit;

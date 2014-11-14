@@ -1,3 +1,86 @@
+2014-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Reduce amount of cut-and-paste needed for probe mechanism implementations.
+        <https://webkit.org/b/138671>
+
+        Reviewed by Geoffrey Garen.
+
+        The existing code requires that each MacroAssembler implementation provide
+        their own copy of all of the probe implementations even when most of it is
+        identical.  This patch hoists the common parts into AbstractMacroAssembler
+        (with some minor renaming).  Each target specific MacroAssembler now only
+        need to implement a few target specific methods that are expected by and
+        documented in AbstractMacroAssembler.h in the ENABLE(MASM_PROBE) section.
+
+        In this patch, I also simplified the X86 and X86_64 ports to use the same
+        port implementation.  The ARMv7 probe implementation should not conditionally
+        exclude the higher FP registers (since the JIT doesn't).  Fixed the ARMv7
+        probe code to include the higher FP registers always. 
+
+        This is all done in preparation to add printing functionality in JITted code
+        for debugging.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Label::Label):
+        (JSC::AbstractMacroAssembler::ConvertibleLoadLabel::ConvertibleLoadLabel):
+        (JSC::AbstractMacroAssembler::DataLabelPtr::DataLabelPtr):
+        (JSC::AbstractMacroAssembler::DataLabel32::DataLabel32):
+        (JSC::AbstractMacroAssembler::DataLabelCompact::DataLabelCompact):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+        (JSC::AbstractMacroAssembler::JumpList::link):
+        (JSC::AbstractMacroAssembler::JumpList::linkTo):
+        (JSC::AbstractMacroAssembler::ProbeContext::print):
+        (JSC::AbstractMacroAssembler::printIndent):
+        (JSC::AbstractMacroAssembler::printCPU):
+        (JSC::AbstractMacroAssembler::CachedTempRegister::CachedTempRegister):
+        - Except for the 3 printing methods (which are for the probe), the rest
+          are touched simply because we need to add the MacroAssemblerType to the
+          template args.
+          The MacroAssemblerType is used by the abstract probe code to call the
+          few probe methods that need to have CPU specific implementations.
+
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::printCPURegisters):
+        - This was refactored from ProbeContext::dumpCPURegisters() which no
+          longer exists.
+        (JSC::MacroAssemblerARM::ProbeContext::dumpCPURegisters): Deleted.
+        (JSC::MacroAssemblerARM::ProbeContext::dump): Deleted.
+
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARM64.h:
+
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::printCPURegisters):
+        - This was refactored from ProbeContext::dumpCPURegisters() which no
+          longer exists.
+        (JSC::MacroAssemblerARMv7::ProbeContext::dumpCPURegisters): Deleted.
+        (JSC::MacroAssemblerARMv7::ProbeContext::dump): Deleted.
+
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerSH4.h:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::trustedImm32FromPtr): Deleted.
+        (JSC::MacroAssemblerX86::probe): Deleted.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::printCPURegisters):
+        - This was refactored from ProbeContext::dumpCPURegisters() which no
+          longer exists.
+        (JSC::MacroAssemblerX86Common::probe):
+        - This implementation of probe() is based on the one originally in
+          MacroAssemblerX86_64.h.  It is generic and should work for both
+          32-bit and 64-bit.
+        (JSC::MacroAssemblerX86Common::ProbeContext::dumpCPURegisters): Deleted.
+        (JSC::MacroAssemblerX86Common::ProbeContext::dump): Deleted.
+
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::trustedImm64FromPtr): Deleted.
+        (JSC::MacroAssemblerX86_64::probe): Deleted.
+        * jit/JITStubsARMv7.h:
+
 2014-11-13  Michael Saboff  <msaboff@apple.com>
 
         Add scope operand to op_new_func* byte codes

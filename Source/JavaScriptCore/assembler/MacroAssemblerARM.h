@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc.
+ * Copyright (C) 2008, 2013, 2014 Apple Inc.
  * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
+class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler, MacroAssemblerARM> {
     static const int DoubleConditionMask = 0x0f;
     static const int DoubleConditionBitSpecial = 0x10;
     COMPILE_ASSERT(!(DoubleConditionBitSpecial & DoubleConditionMask), DoubleConditionBitSpecial_should_not_interfere_with_ARMAssembler_Condition_codes);
@@ -1433,28 +1433,9 @@ public:
     }
 
 #if ENABLE(MASM_PROBE)
-    struct CPUState {
-        #define DECLARE_REGISTER(_type, _regName) \
-            _type _regName;
-        FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
-        #undef DECLARE_REGISTER
-    };
-
-    struct ProbeContext;
-    typedef void (*ProbeFunction)(struct ProbeContext*);
-
-    struct ProbeContext {
-        ProbeFunction probeFunction;
-        void* arg1;
-        void* arg2;
-        CPUState cpu;
-
-        void dump(const char* indentation = 0);
-    private:
-        void dumpCPURegisters(const char* indentation);
-    };
-
-    // For details about probe(), see comment in MacroAssemblerX86_64.h.
+    // Methods required by the MASM_PROBE mechanism as defined in
+    // AbstractMacroAssembler.h. 
+    static void printCPURegisters(CPUState&, int indentation = 0);
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
 #endif // ENABLE(MASM_PROBE)
 

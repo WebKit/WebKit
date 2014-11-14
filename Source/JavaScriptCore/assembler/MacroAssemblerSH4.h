@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Cisco Systems, Inc. All rights reserved.
  * Copyright (C) 2009-2011 STMicroelectronics. All rights reserved.
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-class MacroAssemblerSH4 : public AbstractMacroAssembler<SH4Assembler> {
+class MacroAssemblerSH4 : public AbstractMacroAssembler<SH4Assembler, MacroAssemblerSH4> {
 public:
     typedef SH4Assembler::FPRegisterID FPRegisterID;
 

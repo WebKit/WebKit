@@ -30,10 +30,6 @@
 
 #include "MacroAssemblerX86Common.h"
 
-#if ENABLE(MASM_PROBE)
-#include <wtf/StdLibExtras.h>
-#endif
-
 #define REPTACH_OFFSET_CALL_R11 3
 
 inline bool CAN_SIGN_EXTEND_32_64(int64_t value) { return value == (int64_t)(int32_t)value; }
@@ -840,26 +836,6 @@ public:
         X86Assembler::revertJumpTo_movq_i64r(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), scratchRegister);
     }
 
-#if ENABLE(MASM_PROBE)
-    // This function emits code to preserve the CPUState (e.g. registers),
-    // call a user supplied probe function, and restore the CPUState before
-    // continuing with other JIT generated code.
-    //
-    // The user supplied probe function will be called with a single pointer to
-    // a ProbeContext struct (defined above) which contains, among other things,
-    // the preserved CPUState. This allows the user probe function to inspect
-    // the CPUState at that point in the JIT generated code.
-    //
-    // If the user probe function alters the register values in the ProbeContext,
-    // the altered values will be loaded into the CPU registers when the probe
-    // returns.
-    //
-    // The ProbeContext is stack allocated and is only valid for the duration
-    // of the call to the user probe function.
-
-    void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
-#endif // ENABLE(MASM_PROBE)
-
 private:
     friend class LinkBuffer;
     friend class RepatchBuffer;
@@ -881,68 +857,7 @@ private:
     {
         X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
     }
-
-#if ENABLE(MASM_PROBE)
-    inline TrustedImm64 trustedImm64FromPtr(void* ptr)
-    {
-        return TrustedImm64(TrustedImmPtr(ptr));
-    }
-
-    inline TrustedImm64 trustedImm64FromPtr(ProbeFunction function)
-    {
-        return TrustedImm64(TrustedImmPtr(reinterpret_cast<void*>(function)));
-    }
-
-    inline TrustedImm64 trustedImm64FromPtr(void (*function)())
-    {
-        return TrustedImm64(TrustedImmPtr(reinterpret_cast<void*>(function)));
-    }
-#endif
 };
-
-#if ENABLE(MASM_PROBE)
-
-extern "C" void ctiMasmProbeTrampoline();
-
-// What code is emitted for the probe?
-// ==================================
-// We want to keep the size of the emitted probe invocation code as compact as
-// possible to minimize the perturbation to the JIT generated code. However,
-// we also need to preserve the CPU registers and set up the ProbeContext to be
-// passed to the user probe function.
-//
-// Hence, we do only the minimum here to preserve a scratch register (i.e. rax
-// in this case) and the stack pointer (i.e. rsp), and pass the probe arguments.
-// We'll let the ctiMasmProbeTrampoline handle the rest of the probe invocation
-// work i.e. saving the CPUState (and setting up the ProbeContext), calling the
-// user probe function, and restoring the CPUState before returning to JIT
-// generated code.
-//
-// What values are in the saved registers?
-// ======================================
-// Conceptually, the saved registers should contain values as if the probe
-// is not present in the JIT generated code. Hence, they should contain values
-// that are expected at the start of the instruction immediately following the
-// probe.
-//
-// Specifcally, the saved stack pointer register will point to the stack
-// position before we push the ProbeContext frame. The saved rip will point to
-// the address of the instruction immediately following the probe. 
-
-inline void MacroAssemblerX86_64::probe(MacroAssemblerX86_64::ProbeFunction function, void* arg1, void* arg2)
-{
-    push(RegisterID::esp);
-    push(RegisterID::eax);
-    move(trustedImm64FromPtr(arg2), RegisterID::eax);
-    push(RegisterID::eax);
-    move(trustedImm64FromPtr(arg1), RegisterID::eax);
-    push(RegisterID::eax);
-    move(trustedImm64FromPtr(function), RegisterID::eax);
-    push(RegisterID::eax);
-    move(trustedImm64FromPtr(ctiMasmProbeTrampoline), RegisterID::eax);
-    call(RegisterID::eax);
-}
-#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

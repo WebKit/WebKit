@@ -28,57 +28,38 @@
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 #include "MacroAssemblerARMv7.h"
 
-#if ENABLE(MASM_PROBE)
-#include <wtf/StdLibExtras.h>
-#endif
-
 namespace JSC {
 
 #if ENABLE(MASM_PROBE)
 
-void MacroAssemblerARMv7::ProbeContext::dumpCPURegisters(const char* indentation)
+#define INDENT printIndent(indentation)
+
+void MacroAssemblerARMv7::printCPURegisters(CPUState& cpu, int indentation)
 {
     #define DUMP_GPREGISTER(_type, _regName) { \
         int32_t value = reinterpret_cast<int32_t>(cpu._regName); \
-        dataLogF("%s    %5s: 0x%08x   %d\n", indentation, #_regName, value, value) ; \
+        INDENT, dataLogF("%5s: 0x%08x  %d\n", #_regName, value, value) ; \
     }
     FOR_EACH_CPU_GPREGISTER(DUMP_GPREGISTER)
     FOR_EACH_CPU_SPECIAL_REGISTER(DUMP_GPREGISTER)
     #undef DUMP_GPREGISTER
 
     #define DUMP_FPREGISTER(_type, _regName) { \
-        uint32_t* u = reinterpret_cast<uint32_t*>(&cpu._regName); \
+        uint64_t* u = reinterpret_cast<uint64_t*>(&cpu._regName); \
         double* d = reinterpret_cast<double*>(&cpu._regName); \
-        dataLogF("%s    %5s: 0x %08x %08x   %12g\n", \
-            indentation, #_regName, u[1], u[0], d[0]); \
+        INDENT, dataLogF("%5s: 0x%016llx  %.13g\n", #_regName, *u, *d); \
     }
     FOR_EACH_CPU_FPREGISTER(DUMP_FPREGISTER)
     #undef DUMP_FPREGISTER
 }
 
-void MacroAssemblerARMv7::ProbeContext::dump(const char* indentation)
-{
-    if (!indentation)
-        indentation = "";
-
-    dataLogF("%sProbeContext %p {\n", indentation, this);
-    dataLogF("%s  probeFunction: %p\n", indentation, probeFunction);
-    dataLogF("%s  arg1: %p %llu\n", indentation, arg1, reinterpret_cast<int64_t>(arg1));
-    dataLogF("%s  arg2: %p %llu\n", indentation, arg2, reinterpret_cast<int64_t>(arg2));
-    dataLogF("%s  cpu: {\n", indentation);
-
-    dumpCPURegisters(indentation);
-
-    dataLogF("%s  }\n", indentation);
-    dataLogF("%s}\n", indentation);
-}
-
+#undef INDENT
 
 extern "C" void ctiMasmProbeTrampoline();
 
 // For details on "What code is emitted for the probe?" and "What values are in
-// the saved registers?", see comment for MacroAssemblerX86::probe() in
-// MacroAssemblerX86_64.h.
+// the saved registers?", see comment for MacroAssemblerX86Common::probe() in
+// MacroAssemblerX86Common.cpp.
 
 void MacroAssemblerARMv7::probe(MacroAssemblerARMv7::ProbeFunction function, void* arg1, void* arg2)
 {

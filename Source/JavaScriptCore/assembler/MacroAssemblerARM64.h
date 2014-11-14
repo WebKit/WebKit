@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-class MacroAssemblerARM64 : public AbstractMacroAssembler<ARM64Assembler> {
+class MacroAssemblerARM64 : public AbstractMacroAssembler<ARM64Assembler, MacroAssemblerARM64> {
     static const RegisterID dataTempRegister = ARM64Registers::ip0;
     static const RegisterID memoryTempRegister = ARM64Registers::ip1;
     static const ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;

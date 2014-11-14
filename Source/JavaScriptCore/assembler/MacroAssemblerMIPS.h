@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 MIPS Technologies, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-class MacroAssemblerMIPS : public AbstractMacroAssembler<MIPSAssembler> {
+class MacroAssemblerMIPS : public AbstractMacroAssembler<MIPSAssembler, MacroAssemblerMIPS> {
 public:
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
 
