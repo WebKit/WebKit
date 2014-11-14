@@ -1,3 +1,17 @@
+2014-11-14  Andrzej Badowski  <a.badowski@samsung.com>
+
+        AX: Improve AccessibilityTableCell isColumnHeaderCell function.
+        https://bugs.webkit.org/show_bug.cgi?id=138423
+
+        Reviewed by Chris Fleizach.
+
+        <th> cell in the zero row should be column header.
+
+        New tests are not necessary.
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::isColumnHeaderCell):
+
 2014-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use GMainLoopSource for request timeout in ResourceHandle

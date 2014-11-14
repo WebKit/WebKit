@@ -10,7 +10,7 @@ South	3333	1111	2222
 South	3333	1111	2222
 ------------------------
 [0,0]
-AXRole: AXRowHeader
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -20,7 +20,7 @@ AXDescription:
 AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -50,7 +50,7 @@ AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [1,1]
-AXRole: AXRowHeader
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -60,7 +60,7 @@ AXDescription:
 AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1

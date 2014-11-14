@@ -21,7 +21,7 @@ The table cell at (1,4) should have a role AXRole: AXCell , currently it has AXR
 The table cell at (0,2) should have a role AXRole: AXRowHeader , currently it has AXRole: AXRowHeader .
 The table cell at (0,4) should have a role AXRole: AXRowHeader , currently it has AXRole: AXRowHeader .
 
-The table2 cell at (2,0) should have a role AXRole: AXColumnHeader , currently it has AXRole: AXCell .
+The table2 cell at (2,0) should have a role AXRole: AXColumnHeader , currently it has AXRole: AXColumnHeader .
 The table2 cell at (1,2) should have a role AXRole: AXCell , currently it has AXRole: AXCell .
 The table2 cell at (2,3) should have a role AXRole: AXCell , currently it has AXRole: AXCell .
 The table2 cell at (0,2) should have a role AXRole: AXRowHeader , currently it has AXRole: AXRowHeader .

@@ -230,7 +230,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -262,7 +262,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
@@ -294,7 +294,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -701,7 +701,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -733,7 +733,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {4, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -765,7 +765,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 0>
 AXElementBusy: 0
 AXRequired: 0
@@ -797,7 +797,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -829,7 +829,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -861,7 +861,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -893,7 +893,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {4, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -925,7 +925,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -957,7 +957,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -989,7 +989,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0
@@ -1021,7 +1021,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {4, 1}
-AXColumnHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements: <array of size 1>
 AXRowHeaderUIElements: <array of size 1>
 AXElementBusy: 0
 AXRequired: 0

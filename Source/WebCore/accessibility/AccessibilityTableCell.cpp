@@ -152,13 +152,13 @@ bool AccessibilityTableCell::isColumnHeaderCell() const
 
     // We are in a situation after checking the scope attribute.
     // It is an attempt to resolve the type of th element without support in the specification.
-    // Checking tableTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
+    // Checking tableTag and tbodyTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
     for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
         if (parentNode->hasTagName(theadTag))
             return true;
-        if (parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag))
+        if (parentNode->hasTagName(tfootTag))
             return false;
-        if (parentNode->hasTagName(tableTag)) {
+        if (parentNode->hasTagName(tableTag) || parentNode->hasTagName(tbodyTag)) {
             std::pair<unsigned, unsigned> rowRange;
             rowIndexRange(rowRange);
             if (!rowRange.first)
