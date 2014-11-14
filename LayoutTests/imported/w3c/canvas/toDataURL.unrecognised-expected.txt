@@ -1,0 +1,5 @@
+toDataURL.unrecognised
+toDataURL with an unhandled type returns a PNG
+Spec references: toDataURL.unrecognised
+Actual output:
+Passed

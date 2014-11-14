@@ -1,0 +1,4 @@
+2d.shadow.attributes.shadowBlur.valid
+Spec references: 2d.shadow.blur.get 2d.shadow.blur.set
+Actual output:
+Passed

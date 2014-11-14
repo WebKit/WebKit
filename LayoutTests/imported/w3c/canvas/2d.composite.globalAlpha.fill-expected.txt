@@ -1,0 +1,6 @@
+2d.composite.globalAlpha.fill
+Spec references: 2d.composite.globalAlpha.shape
+Actual output:
+Expected output:
+
+Passed

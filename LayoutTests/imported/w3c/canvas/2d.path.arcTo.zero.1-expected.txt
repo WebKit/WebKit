@@ -1,0 +1,7 @@
+2d.path.arcTo.zero.1
+arcTo() with zero radius draws a straight line from P0 to P1
+Spec references: 2d.path.arcTo.zeroradius
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,6 @@
+2d.gradient.object.current
+Spec references: 2d.currentColor.gradient
+Actual output:
+Expected output:
+
+Passed

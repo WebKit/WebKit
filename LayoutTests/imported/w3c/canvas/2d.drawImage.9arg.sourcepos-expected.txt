@@ -1,0 +1,7 @@
+2d.drawImage.9arg.sourcepos
+Spec references: 2d.drawImage.paint
+Actual output:
+Expected output:
+
+Passed
+

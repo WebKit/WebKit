@@ -1,0 +1,5 @@
+2d.line.join.valid
+Setting lineJoin to valid values works
+Spec references: 2d.lineJoin.set 2d.lineJoin.get
+Actual output:
+Passed

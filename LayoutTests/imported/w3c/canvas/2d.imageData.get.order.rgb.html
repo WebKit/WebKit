@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.imageData.get.order.rgb</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.imageData.html">imageData</a>.<a href="index.2d.imageData.get.html">get</a>.<a href="index.2d.imageData.get.order.html">order</a>.rgb</h1>
+<p class="desc">getImageData() returns R then G then B</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.pixelarray.order">2d.pixelarray.order</a>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.pixelarray.indexes">2d.pixelarray.indexes</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#48c';
+ctx.fillRect(0, 0, 100, 50);
+var imgdata = ctx.getImageData(0, 0, 10, 10);
+_assertSame(imgdata.data[0], 0x44, "imgdata.data[\""+(0)+"\"]", "0x44");
+_assertSame(imgdata.data[1], 0x88, "imgdata.data[\""+(1)+"\"]", "0x88");
+_assertSame(imgdata.data[2], 0xCC, "imgdata.data[\""+(2)+"\"]", "0xCC");
+_assertSame(imgdata.data[3], 255, "imgdata.data[\""+(3)+"\"]", "255");
+_assertSame(imgdata.data[4], 0x44, "imgdata.data[\""+(4)+"\"]", "0x44");
+_assertSame(imgdata.data[5], 0x88, "imgdata.data[\""+(5)+"\"]", "0x88");
+_assertSame(imgdata.data[6], 0xCC, "imgdata.data[\""+(6)+"\"]", "0xCC");
+_assertSame(imgdata.data[7], 255, "imgdata.data[\""+(7)+"\"]", "255");
+
+
+});
+</script>
+

@@ -1,0 +1,6 @@
+type.replace
+HTMLCanvasElement methods can be replaced, and the replacement methods used by canvases
+Spec references: canvas.type
+Defined in "Web IDL" (draft)
+Actual output:
+Passed

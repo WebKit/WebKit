@@ -1,0 +1,7 @@
+2d.path.arc.angle.5
+arc() wraps angles mod 2pi when clockwise and start > end+2pi
+Spec references: 2d.path.arc.draw
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+2d.line.join.bevel
+lineJoin 'bevel' is rendered correctly
+Spec references: 2d.lineJoin.common 2d.lineJoin.bevel
+Actual output:
+Expected output:
+
+Passed

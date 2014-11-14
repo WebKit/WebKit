@@ -1,0 +1,5 @@
+toDataURL.arguments.3
+toDataURL ignores extra arguments
+Spec references: toDataURL.arguments
+Actual output:
+Passed

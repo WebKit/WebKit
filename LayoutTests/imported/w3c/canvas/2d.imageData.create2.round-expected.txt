@@ -1,0 +1,5 @@
+2d.imageData.create2.round
+createImageData(w, h) is rounded the same as getImageData(0, 0, w, h)
+Spec references: 2d.imageData.createround
+Actual output:
+Passed

@@ -1,0 +1,6 @@
+2d.path.rect.closed
+Spec references: 2d.path.rect.closed
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,6 @@
+2d.pattern.modify.canvas2
+Spec references: 2d.pattern.modify
+Actual output:
+Expected output:
+
+Passed

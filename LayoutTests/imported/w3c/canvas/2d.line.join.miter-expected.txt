@@ -1,0 +1,7 @@
+2d.line.join.miter
+lineJoin 'miter' is rendered correctly
+Spec references: 2d.lineJoin.miter
+Actual output:
+Expected output:
+
+Passed

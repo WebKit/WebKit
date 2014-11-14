@@ -1,0 +1,4 @@
+2d.fillStyle.get.semitransparent
+Spec references: 2d.colours.getcolour 2d.serializecolour.transparent
+Actual output:
+Passed

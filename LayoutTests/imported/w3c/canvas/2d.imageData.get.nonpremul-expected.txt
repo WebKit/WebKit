@@ -1,0 +1,5 @@
+2d.imageData.get.nonpremul
+getImageData() returns non-premultiplied colours
+Spec references: 2d.imageData.get.premul
+Actual output:
+Passed

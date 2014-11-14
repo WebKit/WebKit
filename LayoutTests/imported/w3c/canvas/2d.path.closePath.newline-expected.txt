@@ -1,0 +1,6 @@
+2d.path.closePath.newline
+Spec references: 2d.path.closePath.nonempty
+Actual output:
+Expected output:
+
+Passed

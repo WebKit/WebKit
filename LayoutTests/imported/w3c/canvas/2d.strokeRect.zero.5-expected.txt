@@ -1,0 +1,7 @@
+2d.strokeRect.zero.5
+strokeRect of Nx0 pixels draws a closed line with joins
+Spec references: 2d.strokeRect
+Actual output:
+Expected output:
+
+Passed

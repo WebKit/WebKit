@@ -1,0 +1,7 @@
+2d.composite.canvas.xor
+Spec references: 2d.composite.xor
+Actual output:
+Expected output:
+
+Passed
+

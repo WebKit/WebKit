@@ -1,0 +1,7 @@
+2d.fillStyle.parse.current.removed
+currentColor is solid black when the canvas element is not in a document
+Spec references: 2d.colours.parse 2d.currentColor.outofdoc
+Actual output:
+Expected output:
+
+Passed

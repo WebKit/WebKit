@@ -1,0 +1,4 @@
+2d.pattern.basic.zerocanvas
+Spec references: 2d.pattern.zerocanvas
+Actual output:
+Passed

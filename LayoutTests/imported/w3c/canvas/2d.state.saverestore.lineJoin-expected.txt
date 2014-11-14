@@ -1,0 +1,5 @@
+2d.state.saverestore.lineJoin
+save()/restore() works for lineJoin
+Spec references: 2d.state.lineJoin
+Actual output:
+Passed

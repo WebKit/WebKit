@@ -1,0 +1,6 @@
+2d.drawImage.self.1
+Spec references: 2d.drawImage.self
+Actual output:
+Expected output:
+
+Passed

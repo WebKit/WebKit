@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.state.saverestore.lineCap</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.state.html">state</a>.<a href="index.2d.state.saverestore.html">saverestore</a>.lineCap</h1>
+<p class="desc">save()/restore() works for lineCap</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.state.lineCap">2d.state.lineCap</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+// Test that restore() undoes any modifications
+var old = ctx.lineCap;
+ctx.save();
+ctx.lineCap = "round";
+ctx.restore();
+_assertSame(ctx.lineCap, old, "ctx.lineCap", "old");
+
+// Also test that save() doesn't modify the values
+ctx.lineCap = "round";
+old = ctx.lineCap;
+    // we're not interested in failures caused by get(set(x)) != x (e.g.
+    // from rounding), so compare against 'old' instead of against "round"
+ctx.save();
+_assertSame(ctx.lineCap, old, "ctx.lineCap", "old");
+ctx.restore();
+
+
+});
+</script>
+

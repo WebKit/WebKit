@@ -1,0 +1,6 @@
+2d.path.moveTo.basic
+Spec references: 2d.path.moveTo
+Actual output:
+Expected output:
+
+Passed

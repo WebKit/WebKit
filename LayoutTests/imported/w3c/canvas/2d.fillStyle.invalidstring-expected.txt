@@ -1,0 +1,6 @@
+2d.fillStyle.invalidstring
+Spec references: 2d.colours.invalidstring
+Actual output:
+Expected output:
+
+Passed

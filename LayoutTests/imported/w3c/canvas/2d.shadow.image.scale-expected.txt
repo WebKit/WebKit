@@ -1,0 +1,8 @@
+2d.shadow.image.scale
+Shadows are drawn correctly for scaled images
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed
+

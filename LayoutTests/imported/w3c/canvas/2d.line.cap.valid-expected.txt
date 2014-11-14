@@ -1,0 +1,5 @@
+2d.line.cap.valid
+Setting lineCap to valid values works
+Spec references: 2d.lineCap.set 2d.lineCap.get
+Actual output:
+Passed

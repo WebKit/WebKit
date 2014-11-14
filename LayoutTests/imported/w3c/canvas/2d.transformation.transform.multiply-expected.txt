@@ -1,0 +1,7 @@
+2d.transformation.transform.multiply
+transform() multiplies the CTM
+Spec references: 2d.transformation.transform.multiply
+Actual output:
+Expected output:
+
+Passed

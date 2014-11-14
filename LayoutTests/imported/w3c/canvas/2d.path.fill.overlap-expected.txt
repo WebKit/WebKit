@@ -1,0 +1,6 @@
+2d.path.fill.overlap
+Spec references: 2d.path.fill.basic
+Actual output:
+Expected output:
+
+Passed

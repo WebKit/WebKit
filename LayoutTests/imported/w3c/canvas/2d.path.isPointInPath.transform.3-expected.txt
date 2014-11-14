@@ -1,0 +1,5 @@
+2d.path.isPointInPath.transform.3
+isPointInPath() handles transformations correctly
+Spec references: 2d.path.isPointInPath
+Actual output:
+Passed

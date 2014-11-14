@@ -1,0 +1,8 @@
+2d.drawImage.nonfinite
+drawImage() with Infinity/NaN is ignored
+Spec references: 2d.nonfinite
+Actual output:
+Expected output:
+
+Passed
+

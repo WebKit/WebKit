@@ -1,0 +1,5 @@
+2d.imageData.object.nan
+ImageData.data converts NaN to 0
+Spec references: 2d.pixelarray.modify
+Actual output:
+Passed

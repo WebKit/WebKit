@@ -1,0 +1,6 @@
+2d.imageData.create1.zero
+createImageData(null) throws TypeError
+Spec references: 2d.imageData.create.null
+Actual output:
+
+Passed

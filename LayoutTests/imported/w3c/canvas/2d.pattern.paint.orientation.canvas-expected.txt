@@ -1,0 +1,7 @@
+2d.pattern.paint.orientation.canvas
+Canvas patterns do not get flipped when painted
+Spec references: 2d.pattern.painting
+Actual output:
+Expected output:
+
+Passed

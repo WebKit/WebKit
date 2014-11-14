@@ -1,0 +1,5 @@
+size.attributes.parse.hex
+Parsing of non-negative integers
+Spec references: size.nonnegativeinteger
+Actual output:
+Passed

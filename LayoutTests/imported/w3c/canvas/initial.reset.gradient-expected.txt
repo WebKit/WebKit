@@ -1,0 +1,7 @@
+initial.reset.gradient
+Resetting the canvas state does not invalidate any existing gradients
+Spec references: initial.reset
+Actual output:
+Expected output:
+
+Passed

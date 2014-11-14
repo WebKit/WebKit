@@ -1,0 +1,6 @@
+2d.path.clip.unaffected
+Spec references: 2d.path.clip.closed
+Actual output:
+Expected output:
+
+Passed

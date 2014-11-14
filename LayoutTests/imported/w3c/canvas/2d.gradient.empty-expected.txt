@@ -1,0 +1,6 @@
+2d.gradient.empty
+Spec references: 2d.gradient.empty
+Actual output:
+Expected output:
+
+Passed

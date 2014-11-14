@@ -1,0 +1,7 @@
+size.attributes.parse.trailingjunk
+Parsing of non-negative integers
+Spec references: size.nonnegativeinteger
+Actual output:
+Expected output:
+
+Passed

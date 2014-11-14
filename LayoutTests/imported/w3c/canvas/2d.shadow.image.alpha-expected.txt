@@ -1,0 +1,8 @@
+2d.shadow.image.alpha
+Shadows are drawn correctly for partially-transparent images
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed
+

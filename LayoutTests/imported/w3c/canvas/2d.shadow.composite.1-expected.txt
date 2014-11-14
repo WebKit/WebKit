@@ -1,0 +1,7 @@
+2d.shadow.composite.1
+Shadows are drawn using globalCompositeOperation
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+2d.composite.image.xor
+Spec references: 2d.composite.xor
+Actual output:
+Expected output:
+
+Passed
+

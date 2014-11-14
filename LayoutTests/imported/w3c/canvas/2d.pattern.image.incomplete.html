@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.pattern.image.incomplete</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.pattern.html">pattern</a>.<a href="index.2d.pattern.image.html">image</a>.incomplete</h1>
+<p class="desc"></p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.pattern.incomplete.image">2d.pattern.incomplete.image</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var img = new Image();
+_assertSame(img.complete, false, "img.complete", "false");
+_assertSame(ctx.createPattern(img, 'repeat'), null, "ctx.createPattern(img, 'repeat')", "null");
+
+
+});
+</script>
+

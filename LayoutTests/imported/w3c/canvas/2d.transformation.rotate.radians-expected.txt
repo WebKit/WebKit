@@ -1,0 +1,7 @@
+2d.transformation.rotate.radians
+rotate() uses radians
+Spec references: 2d.transformation.rotate.radians
+Actual output:
+Expected output:
+
+Passed

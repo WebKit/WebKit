@@ -1,0 +1,7 @@
+2d.fillStyle.parse.rgb-clamp-2
+Spec references: 2d.colours.parse
+Assumes colours are clamped to [0,255].
+Actual output:
+Expected output:
+
+Passed

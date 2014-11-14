@@ -1,0 +1,7 @@
+2d.clearRect.negative
+clearRect of negative sizes works
+Spec references: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,5 @@
+toDataURL.zerosize
+toDataURL on zero-size canvas returns 'data:,'
+Spec references: toDataURL.zerosize
+Actual output:
+Passed

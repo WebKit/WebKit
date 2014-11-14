@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<title>Canvas test: toDataURL.png.primarycolours</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.toDataURL.html">toDataURL</a>.<a href="index.toDataURL.png.html">png</a>.primarycolours</h1>
+<p class="desc">toDataURL with PNG handles simple colours correctly</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.toDataURL.png">toDataURL.png</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="resources/toDataURL.png.primarycolours.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#ff0';
+ctx.fillRect(0, 0, 25, 40);
+ctx.fillStyle = '#0ff';
+ctx.fillRect(25, 0, 50, 40);
+ctx.fillStyle = '#00f';
+ctx.fillRect(75, 0, 25, 40);
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 40, 100, 10);
+var data = canvas.toDataURL();
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+var img = new Image();
+deferTest();
+img.onload = wrapFunction(function ()
+{
+    ctx.drawImage(img, 0, 0);
+    
+    _assertPixel(canvas, 12,20, 255,255,0,255, "12,20", "255,255,0,255");
+    _assertPixel(canvas, 50,20, 0,255,255,255, "50,20", "0,255,255,255");
+    _assertPixel(canvas, 87,20, 0,0,255,255, "87,20", "0,0,255,255");
+    _assertPixel(canvas, 50,45, 255,255,255,255, "50,45", "255,255,255,255");
+});
+img.src = data;
+
+
+});
+</script>
+

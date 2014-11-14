@@ -1,0 +1,7 @@
+2d.path.arcTo.transformation
+arcTo joins up to the last subpath point correctly
+Spec references:
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,5 @@
+size.attributes.idl
+Getting/setting width/height IDL attributes
+Spec references: size.width size.height
+Actual output:
+Passed

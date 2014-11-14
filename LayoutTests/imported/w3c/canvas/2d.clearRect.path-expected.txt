@@ -1,0 +1,7 @@
+2d.clearRect.path
+clearRect does not affect the current path
+Spec references: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

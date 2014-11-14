@@ -1,0 +1,7 @@
+2d.line.cap.round
+lineCap 'round' is rendered correctly
+Spec references: 2d.lineCap.round
+Actual output:
+Expected output:
+
+Passed

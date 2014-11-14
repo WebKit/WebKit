@@ -1,0 +1,5 @@
+toDataURL.default
+toDataURL with no arguments returns a PNG
+Spec references: toDataURL.noarguments
+Actual output:
+Passed

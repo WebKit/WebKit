@@ -1,0 +1,6 @@
+2d.gradient.radial.cone.beside
+Spec references: 2d.gradient.radial.rendering
+Actual output:
+Expected output:
+
+Passed

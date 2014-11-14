@@ -1,0 +1,6 @@
+2d.gradient.radial.touch1
+Spec references: 2d.gradient.radial.rendering
+Actual output:
+Expected output:
+
+Passed

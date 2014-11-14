@@ -1,0 +1,4 @@
+2d.shadow.attributes.shadowColor.initial
+Spec references: 2d.shadow.color.initial
+Actual output:
+Passed

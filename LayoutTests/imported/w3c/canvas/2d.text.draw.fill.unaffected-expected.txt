@@ -1,0 +1,7 @@
+2d.text.draw.fill.unaffected
+fillText does not start a new path or subpath
+Spec references: 2d.text.draw.fill
+Actual output:
+Expected output:
+
+Passed

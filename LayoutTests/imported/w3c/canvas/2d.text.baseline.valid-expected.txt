@@ -1,0 +1,4 @@
+2d.text.baseline.valid
+Spec references: 2d.text.baseline.get 2d.text.baseline.set
+Actual output:
+Passed

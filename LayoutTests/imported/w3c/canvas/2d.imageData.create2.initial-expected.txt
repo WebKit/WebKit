@@ -1,0 +1,5 @@
+2d.imageData.create2.initial
+createImageData(sw, sh) returns transparent black data of the right size
+Spec references: 2d.imageData.create2.size 2d.imageData.create.initial 2d.imageData.initial
+Actual output:
+Passed

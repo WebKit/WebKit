@@ -1,0 +1,6 @@
+2d.gradient.interpolate.colouralpha
+Spec references: 2d.gradient.interpolate.alpha
+Actual output:
+Expected output:
+
+Passed

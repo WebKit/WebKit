@@ -1,0 +1,7 @@
+2d.clearRect.clip
+clearRect is affected by clipping regions
+Spec references: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,6 @@
+2d.path.initial
+Spec references: 2d.path.initial
+Actual output:
+Expected output:
+
+Passed

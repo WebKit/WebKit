@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<title>Canvas test: toDataURL.jpeg.quality.notnumber</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.toDataURL.html">toDataURL</a>.<a href="index.toDataURL.jpeg.html">jpeg</a>.<a href="index.toDataURL.jpeg.quality.html">quality</a>.notnumber</h1>
+<p class="desc">toDataURL with JPEG handles non-numeric quality parameters</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.toDataURL.jpeg.nan">toDataURL.jpeg.nan</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#00f';
+ctx.fillRect(0, 0, 100, 50);
+ctx.fillStyle = '#0ff';
+ctx.fillRect(0, 3, 100, 1);
+// Check for JPEG support first
+var data = canvas.toDataURL('image/jpeg');
+if (!data.match(/^data:image\/jpeg[;,]/)) {
+  _assert(true, "true");
+} else {
+    _assertSame(canvas.toDataURL('image/jpeg', 'bogus'), data, "canvas.toDataURL('image/jpeg', 'bogus')", "data");
+    _assertSame(canvas.toDataURL('image/jpeg', {}), data, "canvas.toDataURL('image/jpeg', {})", "data");
+    _assertSame(canvas.toDataURL('image/jpeg', null), data, "canvas.toDataURL('image/jpeg', null)", "data");
+    _assertSame(canvas.toDataURL('image/jpeg', undefined), data, "canvas.toDataURL('image/jpeg', undefined)", "data");
+    _assertSame(canvas.toDataURL('image/jpeg', true), data, "canvas.toDataURL('image/jpeg', true)", "data");
+    _assertSame(canvas.toDataURL('image/jpeg', '0.01'), data, "canvas.toDataURL('image/jpeg', '0.01')", "data");
+}
+
+
+});
+</script>
+

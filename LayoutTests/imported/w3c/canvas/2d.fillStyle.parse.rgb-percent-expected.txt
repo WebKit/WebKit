@@ -1,0 +1,7 @@
+2d.fillStyle.parse.rgb-percent
+Spec references: 2d.colours.parse
+CSS3 Color says "The integer value 255 corresponds to 100%". (In particular, it is not 254...)
+Actual output:
+Expected output:
+
+Passed

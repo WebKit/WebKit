@@ -1,0 +1,6 @@
+2d.composite.globalAlpha.canvas
+Spec references: 2d.composite.globalAlpha.image
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+size.attributes.setAttribute.onlyspace
+Parsing of non-negative integers in setAttribute
+Spec references: size.nonnegativeinteger size.error
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+2d.line.cap.square
+lineCap 'square' is rendered correctly
+Spec references: 2d.lineCap.square
+Actual output:
+Expected output:
+
+Passed

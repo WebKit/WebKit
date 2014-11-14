@@ -1,0 +1,7 @@
+2d.path.transformation.changing
+Transformations are applied while building paths, not when drawing
+Spec references: 2d.path.transformation
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,7 @@
+2d.composite.clip.destination-out
+fill() does not affect pixels outside the clip region.
+Spec references: 2d.composite.destination-out
+Actual output:
+Expected output:
+
+Passed

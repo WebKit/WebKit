@@ -1,0 +1,7 @@
+2d.shadow.canvas.basic
+Shadows are drawn for canvases
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

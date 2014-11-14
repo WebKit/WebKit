@@ -1,0 +1,6 @@
+security.reset
+Resetting the canvas state does not reset the origin-clean flag
+Spec references: initial.reset
+Actual output:
+
+Passed

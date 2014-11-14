@@ -1,0 +1,6 @@
+2d.path.lineTo.nextpoint
+Spec references: 2d.path.lineTo.nonempty
+Actual output:
+Expected output:
+
+Passed
