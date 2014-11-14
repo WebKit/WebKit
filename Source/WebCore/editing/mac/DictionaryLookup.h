@@ -26,7 +26,7 @@
 #ifndef DictionaryLookup_h
 #define DictionaryLookup_h
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #include <wtf/PassRefPtr.h>
 
@@ -50,6 +50,6 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, 
 
 } // namespace WebCore
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)
 
 #endif // DictionaryLookup_h

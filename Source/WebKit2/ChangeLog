@@ -1,3 +1,33 @@
+2014-11-14  Tim Horton  <timothy_horton@apple.com>
+
+        Move DataDetectors scanning code to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=138731
+        <rdar://problem/18877535>
+
+        Reviewed by Anders Carlsson.
+
+        Move DataDetectors scanning code to WebCore, so that both WebKits can use it.
+
+        * Shared/TextIndicator.cpp:
+        (WebKit::TextIndicator::createWithRange):
+        Move createWithRange in from WebPageMac's textIndicatorForRange.
+
+        (WebKit::TextIndicator::createWithSelectionInFrame):
+        * Shared/TextIndicator.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSelectionSnapshot):
+        * WebProcess/WebPage/WebFrame.h:
+        Constify some things.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        Avoid using the DD result if it didn't come with a non-null Range.
+        Make use of detectItemAroundHitTestResult and TextIndicator::createWithRange.
+
+        (WebKit::scanForDataDetectedItems): Deleted.
+        (WebKit::textIndicatorForRange): Deleted.
+        Moved these two to other places.
+
 2014-11-14  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/18978497> Wrong (off-by-1) navigation snapshots shown after a mix of gesture and button back/forward navigation

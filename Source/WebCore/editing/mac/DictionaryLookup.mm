@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DictionaryLookup.h"
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #import "Document.h"
 #import "FocusController.h"
@@ -166,5 +166,5 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
 
 } // namespace WebCore
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)
 
