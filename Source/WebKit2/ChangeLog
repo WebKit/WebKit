@@ -1,3 +1,10 @@
+2014-11-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK+ port using Clang.
+
+        * UIProcess/gtk/RedirectedXCompositeWindow.h: Include the <functional>
+        header for the use of std::function<>.
+
 2014-11-13  Dan Bernstein  <mitz@apple.com>
 
         Two WKWebView internal methods are implemented in a category

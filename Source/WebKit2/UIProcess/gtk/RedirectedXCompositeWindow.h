@@ -31,6 +31,7 @@
 
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
+#include <functional>
 
 typedef struct _XDisplay Display;
 typedef unsigned long Damage;
