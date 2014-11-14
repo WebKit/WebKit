@@ -1,3 +1,10 @@
+2014-11-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove some ineffective entries.
+
+        * platform/mac/TestExpectations: Remove entries that were meant to override other
+        ones, but don't.
+
 2014-11-13  Pratik Solanki  <psolanki@apple.com>
 
         Rebaseline iOS layout tests

@@ -780,9 +780,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
-fast/workers/worker-close-more.html [ Skip ] # times out
-fast/workers/worker-document-leak.html [ Skip ] # times out
-fast/workers/worker-lifecycle.html [ Skip ] # times out
 
 webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
 
