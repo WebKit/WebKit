@@ -300,9 +300,6 @@ editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-insert-html.html
 editing/spelling/spelling-marker-description.html
 
-# This test times out, likely because appcache still loads in WebProcess, not NetworkProcess
-http/tests/appcache/auth.html [ Skip ]
-
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 
@@ -539,6 +536,8 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=115274
 # PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
+[ Mavericks+ ] http/tests/security/appcache-in-private-browsing.html [ Skip ]
+[ Mavericks+ ] http/tests/security/appcache-switching-private-browsing.html [ Skip ]
 [ Mavericks+ ] http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
 [ Mavericks+ ] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Skip ]
 [ Mavericks+ ] http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
@@ -568,6 +567,9 @@ webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-s
 webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure ]
 webkit.org/b/123431 [ Mavericks+ ] http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 [ Mavericks+ ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
+
+# This test times out, likely because appcache still loads in WebProcess, not NetworkProcess
+webkit.org/b/138736 [ Mavericks+ ] http/tests/appcache/auth.html [ Skip ]
 
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################

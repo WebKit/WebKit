@@ -1,3 +1,10 @@
+2014-11-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Application test expectation gardening on WK2.
+
+        * platform/mac-wk2/TestExpectations: Skip two tests that toggle private browsing,
+        and added a bug number to http/tests/appcache/auth.html.
+
 2014-11-14  Dean Jackson  <dino@apple.com>
 
         [Media] Timeline scrubber not updating as the video plays
