@@ -1,3 +1,16 @@
+2014-11-13  Dan Bernstein  <mitz@apple.com>
+
+        Two WKWebView internal methods are implemented in a category
+        https://bugs.webkit.org/show_bug.cgi?id=138728
+
+        Reviewed by Tim HOrton.
+
+        Moved the implementations from the category to the class.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _ignoresNonWheelMouseEvents]):
+        (-[WKWebView _setIgnoresNonWheelMouseEvents:]):
+
 2014-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move FontMac and FontCacheMac off of WKSI

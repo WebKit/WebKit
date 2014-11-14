@@ -1588,6 +1588,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_wkView setMagnification:magnification centeredAtPoint:NSPointFromCGPoint(point)];
 }
 
+- (BOOL)_ignoresNonWheelMouseEvents
+{
+    return [_wkView _ignoresNonWheelMouseEvents];
+}
+
+- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
+{
+    [_wkView _setIgnoresNonWheelMouseEvents:ignoresNonWheelMouseEvents];
+}
+
 #endif
 
 @end
@@ -2479,16 +2489,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
     [_wkView _setTopContentInset:contentInset];
-}
-
-- (BOOL)_ignoresNonWheelMouseEvents
-{
-    return [_wkView _ignoresNonWheelMouseEvents];
-}
-
-- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
-{
-    [_wkView _setIgnoresNonWheelMouseEvents:ignoresNonWheelMouseEvents];
 }
 
 - (CGFloat)_topContentInset
