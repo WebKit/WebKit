@@ -46,6 +46,7 @@
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <WebCore/IOSurface.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -170,6 +171,32 @@ void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, U
     m_liveSwipeView = swipingView;
 }
 
+#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
+static void addLogEntry(Vector<String>& entries, const String& message)
+{
+    void* stack[32];
+    int size = WTF_ARRAY_LENGTH(stack);
+    WTFGetBacktrace(stack, &size);
+    StringBuilder stringBuilder;
+    stringBuilder.append(String::format("%f [ ]", CFAbsoluteTimeGetCurrent()));
+    for (int i = 2; i < size; ++i) {
+        if (i > 2)
+            stringBuilder.appendLiteral(", ");
+        stringBuilder.append(String::format("%p", stack[i]));
+    }
+    stringBuilder.appendLiteral(" ] ");
+    stringBuilder.append(message);
+    entries.append(stringBuilder.toString());
+}
+
+static void dumpLogEntries(const Vector<String>& entries, WebPageProxy* webPageProxy)
+{
+    for (const auto& entry: entries)
+        WTFLogAlways(entry.utf8().data());
+    WTFLogAlways("m_webPageProxy: %p", webPageProxy);
+}
+#endif
+
 void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransitionBase *transition, SwipeDirection direction)
 {
     if (m_activeGestureType != ViewGestureType::None)
@@ -178,6 +205,9 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_webPageProxy.recordNavigationSnapshot();
 
     m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
+#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
+    addLogEntry(m_logEntries, String::format("m_webPageProxyForBackForwardListForCurrentSwipe: %p", m_webPageProxyForBackForwardListForCurrentSwipe.get()));
+#endif
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
 
     auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
@@ -279,13 +309,26 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         // removeSwipeSnapshot will clear m_webPageProxyForBackForwardListForCurrentSwipe, so hold on to it here.
         RefPtr<WebPageProxy> webPageProxyForBackForwardListForCurrentSwipe = m_webPageProxyForBackForwardListForCurrentSwipe;
         removeSwipeSnapshot();
+#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
+        if (!webPageProxyForBackForwardListForCurrentSwipe)
+            dumpLogEntries(m_logEntries, &m_webPageProxy);
+        m_logEntries.clear();
+#endif
+
         webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(false, *targetItem);
+
         return;
     }
 
     m_snapshotRemovalTargetRenderTreeSize = 0;
     if (ViewSnapshot* snapshot = targetItem->snapshot())
         m_snapshotRemovalTargetRenderTreeSize = snapshot->renderTreeSize() * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+
+#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
+    if (!m_webPageProxyForBackForwardListForCurrentSwipe)
+        dumpLogEntries(m_logEntries, &m_webPageProxy);
+    m_logEntries.clear();
+#endif
 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
     m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
@@ -307,6 +350,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
 void ViewGestureController::willCommitPostSwipeTransitionLayerTree(bool successful)
 {
+#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
+    addLogEntry(m_logEntries, String::format("successful: %d; m_activeGestureType: %d; m_webPageProxyForBackForwardListForCurrentSwipe: %p", successful, m_activeGestureType, m_webPageProxyForBackForwardListForCurrentSwipe.get()));
+#endif
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
@@ -341,6 +387,9 @@ void ViewGestureController::removeSwipeSnapshot()
 
     m_swipeWatchdogTimer.stop();
 
+#if ENABLE(VIEW_GESTURE_CONTROLLER_TRACING)
+    addLogEntry(m_logEntries, String::format("m_activeGestureType: %d; m_webPageProxyForBackForwardListForCurrentSwipe: %p", m_activeGestureType, m_webPageProxyForBackForwardListForCurrentSwipe.get()));
+#endif
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
     
