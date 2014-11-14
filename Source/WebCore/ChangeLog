@@ -1,3 +1,17 @@
+2014-11-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r176106.
+        https://bugs.webkit.org/show_bug.cgi?id=138719
+
+        needs build love (Requested by kling on #webkit).
+
+        Reverted changeset:
+
+        "[mac] Keep around more decoded image data, since it's
+        purgeable"
+        https://bugs.webkit.org/show_bug.cgi?id=125273
+        http://trac.webkit.org/changeset/176106
+
 2014-11-13  Eric Carlson  <eric.carlson@apple.com>
 
         Context menus should not offer the "Download video" option for videos that cannot 

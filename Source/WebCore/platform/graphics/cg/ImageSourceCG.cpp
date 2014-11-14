@@ -50,16 +50,6 @@
 const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
 #endif
 
-#if __has_include(<CoreGraphics/CGImagePrivate.h>)
-#import <CoreGraphics/CGImagePrivate.h>
-#else
-enum {
-    kCGImageCachingTransient = 1,
-    kCGImageCachingTemporary __CG_DEPRECATED_ENUMERATOR = 3
-};
-typedef uint32_t CGImageCachingFlags;
-#endif
-
 namespace WebCore {
 
 const CFStringRef WebCoreCGImagePropertyAPNGUnclampedDelayTime = CFSTR("UnclampedDelayTime");
@@ -353,7 +343,7 @@ size_t ImageSource::frameCount() const
 CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
     if (!initialized())
-        return nullptr;
+        return 0;
 
     RetainPtr<CGImageRef> image = adoptCF(CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions(subsamplingLevel).get()));
 
@@ -374,18 +364,7 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
 
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
-
-    if (!imageUTI)
-        return image.leakRef();
-
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if (CFEqual(imageUTI, kUTTypeGIF)) {
-        CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
-        return image.leakRef();
-    }
-#endif
-
-    if (!CFEqual(imageUTI, xbmUTI))
+    if (!imageUTI || !CFEqual(imageUTI, xbmUTI))
         return image.leakRef();
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
