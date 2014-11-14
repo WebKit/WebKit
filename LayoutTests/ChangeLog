@@ -1,3 +1,11 @@
+2014-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Skip http/tests/appcache/auth.html after r175776.
+
+        Appcache manifest is still downloaded in the WebProcess.
+
+        * platform/gtk/TestExpectations:
+
 2014-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         Remove some ineffective entries.

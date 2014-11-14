@@ -1486,6 +1486,9 @@ webkit.org/b/138687 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [
 # PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
 webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
 
+# Appcache manifest is still downloaded in the WebProcess
+webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
