@@ -151,8 +151,8 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#import <Foundation/NSFileManager_NSURLExtras.h>
 #import <WebCore/FileSystemIOS.h>
+#import <WebCore/NSFileManagerSPI.h>
 #import <WebCore/QuickLook.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #endif

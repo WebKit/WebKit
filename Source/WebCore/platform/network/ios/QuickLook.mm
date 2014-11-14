@@ -31,6 +31,8 @@
 #import "DocumentLoader.h"
 #import "FileSystemIOS.h"
 #import "Logging.h"
+#import "NSFileManagerSPI.h"
+#import "QuickLookSPI.h"
 #import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceLoader.h"
@@ -39,9 +41,6 @@
 #import "SynchronousResourceHandleCFURLConnectionDelegate.h"
 #import "WebCoreURLResponseIOS.h"
 #import <Foundation/Foundation.h>
-#import <Foundation/NSFileManager_NSURLExtras.h>
-#import <QuickLook/QLPreviewConverter.h>
-#import <QuickLook/QuickLookPrivate.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>

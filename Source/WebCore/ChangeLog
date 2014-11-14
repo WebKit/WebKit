@@ -1,5 +1,23 @@
 2014-11-14  Daniel Bates  <dabates@apple.com>
 
+        [iOS] NSFileManager and QuickLook SPI not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138742
+
+        Reviewed by Pratik Solanki.
+
+        Add a SPI wrapper headers {NSFileManager, QuickLook}SPI.h that forward declares
+        NSFileManager and QuickLook SPI, respectively, and use these header instead of
+        including private headers of Foundation and QuickLook directly.
+
+        * WebCore.xcodeproj/project.pbxproj: Add project and private header QuickLookSPI.h
+        and NSFileManagerSPI.h, respectively.
+        * platform/network/ios/QuickLook.mm: Include headers QuickLookSPI.h and NSFileManagerSPI.h
+        instead of including headers of QuickLook and Foundation directly. 
+        * platform/spi/cocoa/NSFileManagerSPI.h: Added.
+        * platform/spi/ios/QuickLookSPI.h: Added.
+
+2014-11-14  Daniel Bates  <dabates@apple.com>
+
         [iOS] CoreGraphics SPI not available in public SDK
         https://bugs.webkit.org/show_bug.cgi?id=138709
 
