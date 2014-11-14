@@ -132,6 +132,11 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
     const unsigned largeAnimationCutoff = 5242880;
 #endif
 
+    // If decoded data is purgeable, the operating system will
+    // take care of throwing it away when the system is under pressure.
+    if (decodedDataIsPurgeable())
+        return;
+
     // If we have decoded frames but there is no encoded data, we shouldn't destroy
     // the decoded image since we won't be able to reconstruct it later.
     if (!data() && m_frames.size())
