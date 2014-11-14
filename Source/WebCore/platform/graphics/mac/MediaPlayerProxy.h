@@ -28,7 +28,7 @@
 
 #if TARGET_OS_IPHONE
 #if defined(__OBJC__)
-#import <Foundation/NSGeometry.h>
+#import <WebCore/WAKAppKitStubs.h>
 #endif
 
 // Needed since this is a WebKit private header on iOS.

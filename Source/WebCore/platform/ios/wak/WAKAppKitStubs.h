@@ -32,8 +32,6 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
-// FIXME: <rdar://problem/6669434> Switch from using NSGeometry methods to CGGeometry methods
-#import <Foundation/NSGeometry.h>
 
 #ifndef NSClipView
 #define NSClipView WAKClipView
@@ -54,13 +52,105 @@
 #define NSResponder WAKResponder
 #endif
 
-#ifdef __OBJC__
+// FIXME: <rdar://problem/6669434> Switch from using NSGeometry methods to CGGeometry methods
+//
+// We explicitly use __has_include() instead of the macro define WTF_USE_APPLE_INTERNAL_SDK as
+// the condition for including the header Foundation/NSGeometry.h to support internal Apple
+// clients that build without header wtf/Platform.h.
+#if __has_include(<Foundation/NSGeometry.h>)
+
+#import <Foundation/NSGeometry.h>
+
+#else
+
+typedef CGPoint NSPoint;
+typedef CGRect NSRect;
+typedef CGSize NSSize;
+typedef NSUInteger NSRectEdge;
+
+#ifndef NSZeroPoint
+#define NSZeroPoint CGPointZero
+#endif
+#ifndef NSZeroRect
+#define NSZeroRect CGRectZero
+#endif
+#ifndef NSZeroSize
+#define NSZeroSize CGSizeZero
+#endif
+#ifndef NSMakePoint
+#define NSMakePoint CGPointMake
+#endif
+#ifndef NSMakeRect
+#define NSMakeRect CGRectMake
+#endif
+#ifndef NSMakeSize
+#define NSMakeSize CGSizeMake
+#endif
+#ifndef NSEqualPoints
+#define NSEqualPoints CGPointEqualToPoint
+#endif
+#ifndef NSEqualRects
+#define NSEqualRects CGRectEqualToRect
+#endif
+#ifndef NSEqualSizes
+#define NSEqualSizes CGSizeEqualToSize
+#endif
+#ifndef NSInsetRect
+#define NSInsetRect CGRectInset
+#endif
+#ifndef NSIntersectionRect
+#define NSIntersectionRect CGRectIntersection
+#endif
+#ifndef NSIsEmptyRect
+#define NSIsEmptyRect CGRectIsEmpty
+#endif
+#ifndef NSContainsRect
+#define NSContainsRect CGRectContainsRect
+#endif
+#ifndef NSPointInRect
+#define NSPointInRect(x, y) CGRectContainsPoint((y), (x))
+#endif
+#ifndef NSMinX
+#define NSMinX CGRectGetMinX
+#endif
+#ifndef NSMinY
+#define NSMinY CGRectGetMinY
+#endif
+#ifndef NSMaxX
+#define NSMaxX CGRectGetMaxX
+#endif
+#ifndef NSMaxY
+#define NSMaxY CGRectGetMaxY
+#endif
+#ifndef NSMinXEdge
+#define NSMinXEdge CGRectMinXEdge
+#endif
+#ifndef NSMinYEdge
+#define NSMinYEdge CGRectMinYEdge
+#endif
+#ifndef NSMaxXEdge
+#define NSMaxXEdge CGRectMaxXEdge
+#endif
+#ifndef NSMaxYEdge
+#define NSMaxYEdge CGRectMaxYEdge
+#endif
+
+@interface NSValue (NSGeometryDetails)
++ (NSValue *)valueWithPoint:(NSPoint)point;
++ (NSValue *)valueWithRect:(NSRect)rect;
++ (NSValue *)valueWithSize:(NSSize)size;
+@property (readonly) NSPoint pointValue;
+@property (readonly) NSRect rectValue;
+@property (readonly) NSSize sizeValue;
+@end
+
+#endif // __has_include(<Foundation/NSGeometry.h>)
+
 @class WAKClipView;
 @class WAKResponder;
 @class WAKScrollView;
 @class WAKView;
 @class WAKWindow;
-#endif
 
 /* Device-independent bits found in event modifier flags */
 enum {

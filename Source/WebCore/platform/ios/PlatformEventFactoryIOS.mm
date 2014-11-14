@@ -26,11 +26,11 @@
 #import "config.h"
 #import "PlatformEventFactoryIOS.h"
 
-#import <Foundation/NSGeometry.h>
-#import <IntPoint.h>
-#import <KeyEventCocoa.h>
-#import <Logging.h>
-#import <WebEvent.h>
+#import "IntPoint.h"
+#import "KeyEventCocoa.h"
+#import "Logging.h"
+#import "WAKAppKitStubs.h"
+#import "WebEvent.h"
 
 namespace WebCore {
 

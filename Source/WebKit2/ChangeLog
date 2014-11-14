@@ -1,3 +1,15 @@
+2014-11-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] NSGeometry data types are not available in the public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=137536
+
+        Reviewed by David Kilzer.
+
+        Substitute header WAKAppKitStubs.h for NSGeometry.h as the latter is a
+        private header.
+
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+
 2014-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2] Fire a layout milestone on session restore based on render tree size

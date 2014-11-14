@@ -29,12 +29,13 @@
 #import "WebEvent.h"
 
 #import "KeyEventCocoa.h"
-#import <Foundation/NSGeometry.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
 
 #if PLATFORM(IOS)
+
+#import "WAKAppKitStubs.h"
 
 @implementation WebEvent
 

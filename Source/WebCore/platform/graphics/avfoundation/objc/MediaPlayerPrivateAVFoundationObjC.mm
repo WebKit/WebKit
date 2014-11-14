@@ -76,11 +76,12 @@
 #include "TextTrack.h"
 #endif
 
-#import <Foundation/NSGeometry.h>
 #import <AVFoundation/AVFoundation.h>
 #if PLATFORM(IOS)
+#import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
 #else
+#import <Foundation/NSGeometry.h>
 #import <QuartzCore/CoreImage.h>
 #endif
 #import <CoreMedia/CoreMedia.h>

@@ -56,7 +56,6 @@
 #import "WKGraphics.h"
 #import "WebCoreThread.h"
 #import "WebTiledLayer.h"
-#import <Foundation/NSGeometry.h>
 #import <QuartzCore/CATiledLayerPrivate.h>
 #else
 #import "ThemeMac.h"
