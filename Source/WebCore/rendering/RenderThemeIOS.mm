@@ -58,7 +58,7 @@
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import "WebCoreThreadRun.h"
-#import <CoreGraphics/CGPathPrivate.h>
+#import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CTFontDescriptorPriv.h>
 #import <objc/runtime.h>
 #import <wtf/NeverDestroyed.h>

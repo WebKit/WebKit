@@ -30,10 +30,8 @@
 #if USE(CG)
 
 #if PLATFORM(IOS)
-#import <CoreGraphics/CGContextPrivate.h>
-#import <CoreGraphics/CGContextGState.h>
-#import <CoreGraphics/CoreGraphics.h>
-#import <ImageIO/ImageIO.h>
+#include <CoreGraphics/CoreGraphics.h>
+#include <ImageIO/ImageIO.h>
 #endif
 
 #include "GraphicsContext.h"

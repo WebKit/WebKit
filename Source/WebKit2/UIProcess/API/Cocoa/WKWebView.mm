@@ -91,14 +91,13 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebPageMessages.h"
 #import "WebVideoFullscreenManagerProxy.h"
-#import <CoreGraphics/CGFloat.h>
-#import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <QuartzCore/CARenderServer.h>
 #import <QuartzCore/QuartzCorePrivate.h>
+#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/InspectorOverlay.h>
 
 @interface UIScrollView (UIScrollViewInternal)

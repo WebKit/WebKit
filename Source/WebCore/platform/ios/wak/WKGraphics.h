@@ -29,7 +29,9 @@
 #if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
-#import <CoreGraphics/CoreGraphicsPrivate.h>
+
+typedef int WKCompositeOperation;
+typedef uint32_t CGFontAntialiasingStyle;
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,7 +41,7 @@ CGContextRef WKGetCurrentGraphicsContext(void);
 void WKSetCurrentGraphicsContext(CGContextRef context);
 
 void WKRectFill(CGContextRef context, CGRect aRect);
-void WKRectFillUsingOperation(CGContextRef context, CGRect aRect, CGCompositeOperation op);
+void WKRectFillUsingOperation(CGContextRef, CGRect, WKCompositeOperation);
 
 CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file);
 CGPatternRef WKCreatePatternFromCGImage(CGImageRef imageRef);

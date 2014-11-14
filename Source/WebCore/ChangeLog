@@ -1,3 +1,67 @@
+2014-11-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] CoreGraphics SPI not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138709
+
+        Reviewed by David Kilzer.
+
+        Add a SPI wrapper header called CoreGraphicsSPI.h that forward declares
+        CoreGraphics SPI and use this header instead of including private headers
+        of CoreGraphics directly.
+
+        * WebCore.xcodeproj/project.pbxproj: Add WebCore private header CoreGraphicsSPI.h. Also remove header
+        CGFontUnicodeSupportSPI.h as its functionality has been incorporated into header CoreGraphicsSPI.h.
+        * WebCore.vcxproj/WebCore.vcxproj: Add WebCore private header CoreGraphicsSPI.h.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Add directories platform/spi and platform/spi/cg.
+        * WebCore.vcxproj/WebCoreCG.props: Add include directory platform/spi/cg.
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: Copy WebCore headers from directory platform/spi/cg. This
+        is necessary because WebCore/platform/graphics/SimpleFontData.h includes CoreGraphicsSPI.h. And
+        WebCore/platform/graphics/SimpleFontData.h is compiled for the Apple Windows port.
+        * platform/graphics/SimpleFontData.h: Move CGFontRenderingStyle declaration and associated enum
+        from this file to file CoreGraphicsSPI.h and include header CoreGraphicsSPI.h. 
+        * platform/graphics/cg/BitmapImageCG.cpp: Remove unnecessary #include of header CGContextPrivate.h.
+        * platform/graphics/cg/ColorCG.cpp: Include header CoreGraphicsSPI.h instead of including headers
+        of CoreGraphics directly.
+        * platform/graphics/cg/GraphicsContextCG.cpp: Move forward declarations of CoreGraphics functions
+        from this file to file CoreGraphicsSPI.h and include header CoreGraphicsSPI.h. Also sort the list
+        of #include directives.
+        * platform/graphics/cg/ImageSourceCG.cpp: Include header CoreGraphicsSPI.h instead of including
+        headers of CoreGraphics directly.
+        * platform/graphics/cg/PDFDocumentImage.cpp: Ditto.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm: Ditto.
+        * platform/graphics/ios/FontCacheIOS.mm: Include header CoreGraphicsSPI.h instead of including
+        header <CoreGraphics/CGFontUnicodeSupport.h> directly.
+        * platform/graphics/ios/FontServicesIOS.mm: Include header CoreGraphicsSPI.h instead of including
+        headers of CoreGraphics directly.
+        * platform/graphics/ios/SimpleFontDataIOS.mm: Ditto.
+        * platform/graphics/mac/FontMac.mm: Move forward declarations of CoreGraphics functions from this
+        file to file CoreGraphicsSPI.h and include header CoreGraphicsSPI.h.
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp: Substitute header CoreGraphicsSPI.h for CGFontUnicodeSupportSPI.h
+        and remove #include of headers CGFontUnicodeSupport.h (it will be included by CoreGraphicsSPI.h).
+        * platform/graphics/mac/SimpleFontDataMac.mm: Move forward declarations of CoreGraphics functions
+        from this file to file CoreGraphicsSPI.h and include header CoreGraphicsSPI.h.
+        * platform/ios/LegacyTileGrid.mm: Include header CoreGraphicsSPI.h instead of including headers of
+        CoreGraphics directly.
+        * platform/ios/wak/WKGraphics.h: Remove #include of header CoreGraphicsPrivate.h and forward declare
+        CGFontAntialiasingStyle Additionally, declare WKCompositeOperation as an alias of int and use this
+        data type instead of CGCompositeOperation (SPI). This approach lets us keep the definition of
+        CGCompositeOperation in file CoreGraphicsSPI.h, where all the other definitions/forward declarations
+        of CoreGraphics data types reside, as opposed to defining it in this file.
+        * platform/ios/wak/WKGraphics.mm:
+        (WKRectFillUsingOperation): Cast data type WKCompositeOperation to CGCompositeOperation and added
+        compile-time assert to ensure that the size of WKCompositeOperation is identical to the size of CGCompositeOperation.
+        * platform/graphics/cg/ImageSourceCG.cpp: Move CGImageCachingFlags declaration, associated enum, and
+        forward declaration of CGImageSetCachingFlags() from this file to file CoreGraphicsSPI.h and include
+        header CoreGraphicsSPI.h.
+        (WebCore::ImageSource::createFrameAtIndex): Fix incorrect comment.
+        * platform/spi/cocoa/CGFontUnicodeSupportSPI.h: Removed; moved its functionality into header CoreGraphicsSPI.h.
+        * platform/spi/cg/CoreGraphicsSPI.h: Added.
+        (CGFloatMin):
+        * rendering/RenderThemeIOS.mm: Substitute header CoreGraphics.h for CGPathPrivate.h as we no longer
+        make use of any functionality from CGPathPrivate.h in this file. The functionality we used from
+        CGPathPrivate.h, including CGPathAddRoundedRect(), has been moved to the public API header, CGPath.h,
+        which is included from header CoreGraphics.h.
+
 2014-11-14  Dean Jackson  <dino@apple.com>
 
         [Media] Timeline scrubber not updating as the video plays

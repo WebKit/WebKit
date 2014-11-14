@@ -37,7 +37,6 @@
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
-#include <CoreGraphics/CGFontUnicodeSupport.h>
 #include <CoreText/CTFontPriv.h>
 #include <CoreText/CoreText.h>
 #endif

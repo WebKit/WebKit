@@ -29,17 +29,17 @@
 #include "GraphicsContextCG.h"
 
 #include "AffineTransform.h"
+#include "CoreGraphicsSPI.h"
 #include "FloatConversion.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"
-#include "URL.h"
 #include "Path.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
 #include "SubimageCacheWithTimer.h"
 #include "Timer.h"
-#include <CoreGraphics/CoreGraphics.h>
+#include "URL.h"
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
@@ -52,16 +52,8 @@
 #endif
 
 #if PLATFORM(IOS)
-#include <CoreGraphics/CGContextGState.h>
 #include <wtf/HashMap.h>
 #endif
-
-#if !PLATFORM(IOS)
-extern "C" {
-    CG_EXTERN void CGContextSetCTM(CGContextRef, CGAffineTransform);
-    CG_EXTERN CGAffineTransform CGContextGetBaseCTM(CGContextRef);
-};
-#endif // !PLATFORM(IOS)
 
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;

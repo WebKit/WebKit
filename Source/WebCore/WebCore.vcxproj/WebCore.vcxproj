@@ -19914,6 +19914,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
+    <ClInclude Include="..\platform\spi\cg\CoreGraphicsSPI.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\platform\sql\SQLiteDatabase.h" />
     <ClInclude Include="..\platform\sql\SQLiteDatabaseTracker.h" />
     <ClInclude Include="..\platform\sql\SQLiteDatabaseTrackerClient.h" />

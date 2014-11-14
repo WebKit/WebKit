@@ -28,8 +28,9 @@
 
 #if PLATFORM(IOS)
 
-#import "WebCoreSystemInterface.h"
+#import "CoreGraphicsSPI.h"
 #import "Font.h"
+#import "WebCoreSystemInterface.h"
 #import "WebCoreThread.h"
 #import <ImageIO/ImageIO.h>
 #import <wtf/StdLibExtras.h>
@@ -70,11 +71,12 @@ void WKRectFill(CGContextRef context, CGRect aRect)
     }
 }
 
-void WKRectFillUsingOperation(CGContextRef context, CGRect aRect, CGCompositeOperation op)
+void WKRectFillUsingOperation(CGContextRef context, CGRect aRect, WKCompositeOperation compositeOperation)
 {
+    COMPILE_ASSERT(sizeof(WKCompositeOperation) == sizeof(CGCompositeOperation), "WKCompositeOperation must be the same size as CGCompositeOperation.");
     if (aRect.size.width > 0 && aRect.size.height > 0.0) {
         CGContextSaveGState(context);
-        _FillRectUsingOperation(context, aRect, op);
+        _FillRectUsingOperation(context, aRect, static_cast<CGCompositeOperation>(compositeOperation));
         CGContextRestoreGState(context);
     }
 }

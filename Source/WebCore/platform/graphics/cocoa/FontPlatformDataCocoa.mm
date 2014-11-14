@@ -28,8 +28,8 @@
 #if !PLATFORM(IOS)
 #import <AppKit/NSFont.h>
 #else
+#import "CoreGraphicsSPI.h"
 #import <CoreText/CoreText.h>
-#import <CoreGraphics/CGFontInfo.h>
 #endif
 
 #import <wtf/text/WTFString.h>

@@ -30,6 +30,7 @@
 
 #import "WebViewInternal.h"
 #import <WebCore/ChromeClient.h>
+#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/Frame.h>
 #import <WebCore/IntSize.h>
 #import <WebCore/ScrollingConstraints.h>
@@ -40,9 +41,8 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 
-#import <CoreGraphics/CGFloat.h>
-#import <QuartzCore/QuartzCore.h>
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 #import <algorithm>
 
 using namespace WebCore;

@@ -55,19 +55,7 @@
 #endif
 
 #if USE(CG)
-#if defined(__has_include) && __has_include(<CoreGraphics/CGFontRendering.h>)
-#include <CoreGraphics/CGFontRendering.h>
-#else
-enum {
-    kCGFontRenderingStyleAntialiasing = (1 << 0),
-    kCGFontRenderingStyleSmoothing = (1 << 1),
-    kCGFontRenderingStyleSubpixelPositioning = (1 << 2),
-    kCGFontRenderingStyleSubpixelQuantization = (1 << 3),
-    kCGFontRenderingStylePlatformNative = (1 << 9),
-    kCGFontRenderingStyleMask = 0x20F
-};
-#endif
-typedef uint32_t CGFontRenderingStyle;
+#include <WebCore/CoreGraphicsSPI.h>
 #endif
 
 namespace WebCore {

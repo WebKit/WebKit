@@ -29,7 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "WKWebViewInternal.h"
-#import <CoreGraphics/CGFloat.h>
+#import <WebCore/CoreGraphicsSPI.h>
 
 @interface UIScrollView (UIScrollViewInternalHack)
 - (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;

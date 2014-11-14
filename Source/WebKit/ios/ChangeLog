@@ -1,3 +1,14 @@
+2014-11-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] CoreGraphics SPI not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138709
+
+        Reviewed by David Kilzer.
+
+        Include header CoreGraphicsSPI.h instead of the private header CGFloat.h.
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+
 2014-10-20  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build.

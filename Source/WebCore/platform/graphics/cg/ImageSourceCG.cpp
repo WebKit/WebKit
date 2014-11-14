@@ -29,6 +29,7 @@
 #if USE(CG)
 #include "ImageSourceCG.h"
 
+#include "CoreGraphicsSPI.h"
 #include "ImageOrientation.h"
 #include "IntPoint.h"
 #include "IntSize.h"
@@ -39,7 +40,6 @@
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
-#include <CoreGraphics/CGImagePrivate.h>
 #include <ImageIO/ImageIO.h>
 #include <wtf/RetainPtr.h>
 #endif
@@ -48,17 +48,6 @@
 #import <ImageIO/CGImageSourcePrivate.h>
 #else
 const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
-#endif
-
-#if __has_include(<CoreGraphics/CGImagePrivate.h>)
-#import <CoreGraphics/CGImagePrivate.h>
-#else
-enum {
-    kCGImageCachingTransient = 1,
-    kCGImageCachingTemporary = 3
-};
-typedef uint32_t CGImageCachingFlags;
-extern "C" void CGImageSetCachingFlags(CGImageRef image, CGImageCachingFlags flags);
 #endif
 
 namespace WebCore {
@@ -371,7 +360,7 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(IOS)
 
     CFStringRef imageUTI = CGImageSourceGetType(m_decoder);
     static const CFStringRef xbmUTI = CFSTR("public.xbitmap-image");
