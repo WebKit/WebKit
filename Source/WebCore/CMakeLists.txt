@@ -2351,6 +2351,7 @@ set(WebCore_SOURCES
     rendering/ScrollBehavior.cpp
     rendering/SimpleLineLayout.cpp
     rendering/SimpleLineLayoutFunctions.cpp
+    rendering/SimpleLineLayoutResolver.cpp
     rendering/TextAutosizer.cpp
     rendering/TextPaintStyle.cpp
     rendering/TextPainter.cpp

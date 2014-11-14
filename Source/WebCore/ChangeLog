@@ -1,3 +1,45 @@
+2014-11-14  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Move simple line layout RunResolver and LineResolver implementation to SimpleLineLayoutResolver.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=138704
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/SimpleLineLayoutResolver.cpp: Added.
+        (WebCore::SimpleLineLayout::RunResolver::Run::Run):
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline):
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advance):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advanceLines):
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        (WebCore::SimpleLineLayout::RunResolver::lineIndexForHeight):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRect):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator*):
+        (WebCore::SimpleLineLayout::LineResolver::LineResolver):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::Run): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::Run::text): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::Iterator): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advance): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advanceLines): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::lineIndexForHeight): Deleted.
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRect): Deleted.
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::Iterator): Deleted.
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator*): Deleted.
+        (WebCore::SimpleLineLayout::LineResolver::LineResolver): Deleted.
+
 2014-11-14  Andrzej Badowski  <a.badowski@samsung.com>
 
         AX: Improve AccessibilityTableCell isColumnHeaderCell function.

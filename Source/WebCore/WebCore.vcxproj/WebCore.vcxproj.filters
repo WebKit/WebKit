@@ -6937,6 +6937,9 @@
     <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\SimpleLineLayoutResolver.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSGridTemplateAreasValue.cpp">
       <Filter>css</Filter>
     </ClCompile>

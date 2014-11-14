@@ -2058,6 +2058,7 @@
 		57B791A414C6A62900F202D1 /* ContentDistributor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A014C6A62900F202D1 /* ContentDistributor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57CF497414EE36D700ECFF14 /* InsertionPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */; };
 		57CF497514EE36D700ECFF14 /* InsertionPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF497314EE36D700ECFF14 /* InsertionPoint.h */; };
+		585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */; };
 		589556ED18D4A44000764B03 /* BorderEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 589556EC18D4A44000764B03 /* BorderEdge.h */; };
 		58AEE2F418D4BCCF0022E7FE /* BorderEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */; };
 		58CD35CB18EB4C3900B9F3AC /* FloatSizeHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9171,6 +9172,7 @@
 		57B791A014C6A62900F202D1 /* ContentDistributor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentDistributor.h; sourceTree = "<group>"; };
 		57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertionPoint.cpp; sourceTree = "<group>"; };
 		57CF497314EE36D700ECFF14 /* InsertionPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertionPoint.h; sourceTree = "<group>"; };
+		585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutResolver.cpp; sourceTree = "<group>"; };
 		589556EC18D4A44000764B03 /* BorderEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderEdge.h; sourceTree = "<group>"; };
 		58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BorderEdge.cpp; sourceTree = "<group>"; };
 		58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatSizeHash.h; sourceTree = "<group>"; };
@@ -22481,6 +22483,7 @@
 				E48944A1180B57D800F165D8 /* SimpleLineLayout.h */,
 				E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */,
 				E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */,
+				585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */,
 				E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */,
@@ -28413,6 +28416,7 @@
 				E1ADED470E76B8DD004A1A5E /* JSMessagePortCustom.cpp in Sources */,
 				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,
 				C6F420A216B7164E0052A9F2 /* JSMutationCallback.cpp in Sources */,
+				585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */,
 				65DF31FB09D1CC60000BE325 /* JSMutationEvent.cpp in Sources */,
 				C6F0902C14327D4F00685849 /* JSMutationObserver.cpp in Sources */,
 				C6F0917F143A2BB900685849 /* JSMutationObserverCustom.cpp in Sources */,

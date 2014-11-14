@@ -11511,6 +11511,7 @@
     <ClCompile Include="..\rendering\SelectionSubtreeRoot.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayout.cpp" />
     <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp" />
+    <ClCompile Include="..\rendering\SimpleLineLayoutResolver.cpp" />
     <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
     <ClCompile Include="..\rendering\line\LineBreaker.cpp" />
     <ClCompile Include="..\rendering\line\LineInfo.cpp" />
