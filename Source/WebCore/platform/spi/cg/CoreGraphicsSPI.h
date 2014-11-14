@@ -23,15 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CGFontUnicodeSupportSPI_h
-#define CGFontUnicodeSupportSPI_h
+#ifndef CoreGraphicsSPI_h
+#define CoreGraphicsSPI_h
 
 #include <CoreGraphics/CoreGraphics.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+#include <CoreGraphics/CGContextGState.h>
+#include <CoreGraphics/CGFontCache.h>
+#include <CoreGraphics/CGFontPrivate.h>
 #include <CoreGraphics/CGFontUnicodeSupport.h>
+#include <CoreGraphics/CoreGraphicsPrivate.h>
 #endif
 
-extern "C" void CGFontGetGlyphsForUnichars(CGFontRef font, const UniChar u[], CGGlyph glyphs[], size_t count);
+extern "C" {
 
+typedef struct CGFontCache CGFontCache;
+
+void CGFontGetGlyphsForUnichars(CGFontRef, const UniChar u[], CGGlyph glyphs[], size_t count);
+void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
+CGColorRef CGContextGetFillColorAsColor(CGContextRef);
+bool CGContextGetShouldSmoothFonts(CGContextRef);
+void CGFontSetShouldUseMulticache(bool);
+
+#if PLATFORM(WIN)
+CGFontCache *CGFontCacheGetLocalCache();
+void CGFontCacheSetShouldAutoExpire(CGFontCache*, bool);
+void CGFontCacheSetMaxSize(CGFontCache*, size_t);
+#endif
+
+}
 #endif

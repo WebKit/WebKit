@@ -130,6 +130,12 @@
     <Filter Include="platform\network\curl">
       <UniqueIdentifier>{b5903214-cbb2-4fad-9ff0-3930aaa733f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\spi">
+      <UniqueIdentifier>{247a4ea4-dcb5-4dd0-9d0d-bb13ecb08d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\spi\cg">
+      <UniqueIdentifier>{a2e9a1a3-c5c3-4331-ab01-0d12fea979e7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="platform\sql">
       <UniqueIdentifier>{f935d93c-734f-4f61-a31f-c3b960fc5aff}</UniqueIdentifier>
     </Filter>
@@ -8888,6 +8894,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\network\cf\LoaderRunLoopCF.h">
       <Filter>platform\network\cf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\spi\cg\CoreGraphicsSPI.h">
+      <Filter>platform\spi\cg</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\sql\SQLiteDatabase.h">
       <Filter>platform\sql</Filter>

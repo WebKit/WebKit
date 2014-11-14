@@ -2189,7 +2189,6 @@ _wkSetHTTPRequestPriority
 _wkSetNSURLConnectionDefersCallbacks
 _wkSetNSURLRequestShouldContentSniff
 _wkSetPatternPhaseInUserSpace
-_wkSetUpFontCache
 
 #if !defined(NDEBUG)
 __ZN7WebCore14SQLiteDatabase22disableThreadingChecksEv
@@ -2445,8 +2444,6 @@ _wkExtractWordDefinitionTokenRangeFromContextualString
 _wkGetAXTextMarkerRangeTypeID
 _wkGetAXTextMarkerTypeID
 _wkGetBytesFromAXTextMarker
-_wkGetFontInLanguageForCharacter
-_wkGetFontInLanguageForRange
 _wkGetHyphenationLocationBeforeIndex
 _wkGetNSEventKeyChar
 _wkGetNSURLResponseCalculatedExpiration

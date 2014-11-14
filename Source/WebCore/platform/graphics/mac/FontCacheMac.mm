@@ -32,9 +32,11 @@
 
 #if !PLATFORM(IOS)
 
+#import "CoreGraphicsSPI.h"
 #import "Font.h"
 #import "SimpleFontData.h"
 #import "FontPlatformData.h"
+#import "NSFontSPI.h"
 #import "WebCoreSystemInterface.h"
 #import "WebFontCache.h"
 #import <AppKit/AppKit.h>
@@ -66,7 +68,9 @@ static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCe
 
 void FontCache::platformInit()
 {
-    wkSetUpFontCache();
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
+    CGFontSetShouldUseMulticache(true);
+#endif
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
@@ -118,11 +122,11 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     NSFont *nsFont = platformData.font();
 
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters) length:length freeWhenDone:NO];
-    NSFont *substituteFont = wkGetFontInLanguageForRange(nsFont, string, NSMakeRange(0, length));
+    NSFont *substituteFont = [NSFont findFontLike:nsFont forString:string withRange:NSMakeRange(0, [string length]) inLanguage:nil];
     [string release];
 
     if (!substituteFont && length == 1)
-        substituteFont = wkGetFontInLanguageForCharacter(nsFont, characters[0]);
+        substituteFont = [NSFont findFontLike:nsFont forCharacter:characters[0] inLanguage:nil];
     if (!substituteFont)
         return 0;
 

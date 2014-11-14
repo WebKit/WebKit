@@ -43,6 +43,7 @@
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/WTFString.h>
 
@@ -81,11 +82,6 @@ static const int cMaxLayerTreeDepth = 250;
 // If we send a duration of 0 to CA, then it will use the default duration
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
-
-static inline bool isIntegral(float value)
-{
-    return static_cast<int>(value) == value;
-}
 
 static bool isTransformTypeTransformationMatrix(TransformOperation::OperationType transformType)
 {
@@ -1496,7 +1492,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     FloatSize pixelAlignmentOffset;
 
     // FIXME: figure out if we really need to pixel align the graphics layer here.
-    if (m_client.needsPixelAligment() && !isIntegral(pageScaleFactor) && m_drawsContent && !m_masksToBounds)
+    if (m_client.needsPixelAligment() && !WTF::isIntegral(pageScaleFactor) && m_drawsContent && !m_masksToBounds)
         computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledAnchorPoint, pixelAlignmentOffset);
 
     // Update position.
@@ -1623,7 +1619,7 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
     bool contentsOpaque = m_contentsOpaque;
     if (contentsOpaque) {
         float contentsScale = pageScaleFactor * deviceScaleFactor();
-        if (!isIntegral(contentsScale) && !m_client.paintsOpaquelyAtNonIntegralScales(this))
+        if (!WTF::isIntegral(contentsScale) && !m_client.paintsOpaquelyAtNonIntegralScales(this))
             contentsOpaque = false;
     }
     

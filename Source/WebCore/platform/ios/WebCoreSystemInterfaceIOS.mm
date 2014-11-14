@@ -37,7 +37,6 @@ WEBCORE_EXPORT void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 WEBCORE_EXPORT void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 WEBCORE_EXPORT CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 WEBCORE_EXPORT bool (*wkCGContextIsPDFContext)(CGContextRef);
-WEBCORE_EXPORT void (*wkSetUpFontCache)();
 WEBCORE_EXPORT NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 WEBCORE_EXPORT void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 WEBCORE_EXPORT void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);

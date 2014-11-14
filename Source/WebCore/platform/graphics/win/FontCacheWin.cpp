@@ -27,6 +27,7 @@
  */
 
 #include "config.h"
+#include "CoreGraphicsSPI.h"
 #include <winsock2.h>
 #include "FontCache.h"
 #include "Font.h"
@@ -53,7 +54,12 @@ namespace WebCore
 void FontCache::platformInit()
 {
 #if USE(CG)
-    wkSetUpFontCache(1536 * 1024 * 4); // This size matches Mac.
+    // Turn on CG's local font cache.
+    size_t size = 1536 * 1024 * 4; // This size matches Mac.
+    CGFontSetShouldUseMulticache(true);
+    CGFontCache* fontCache = CGFontCacheGetLocalCache();
+    CGFontCacheSetShouldAutoExpire(fontCache, false);
+    CGFontCacheSetMaxSize(fontCache, size);
 #endif
 }
 

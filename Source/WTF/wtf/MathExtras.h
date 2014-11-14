@@ -419,6 +419,11 @@ inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type are
     return safeFPDivision(delta, std::abs(u)) <= epsilon && safeFPDivision(delta, std::abs(v)) <= epsilon;
 }
 
+inline bool isIntegral(float value)
+{
+    return static_cast<int>(value) == value;
+}
+
 } // namespace WTF
 
 #endif // #ifndef WTF_MathExtras_h

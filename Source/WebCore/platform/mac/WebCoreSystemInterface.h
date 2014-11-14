@@ -149,9 +149,6 @@ extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
 extern bool (*wkDrawFocusRingAtTime)(CGContextRef, NSTimeInterval time);
 extern bool (*wkDrawCellFocusRingWithFrameAtTime)(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval time);
-
-extern NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
-extern NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
 #endif
 #if !PLATFORM(IOS)
 extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
@@ -215,7 +212,6 @@ extern void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 extern void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint);
 extern CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 extern bool (*wkCGContextIsPDFContext)(CGContextRef);
-extern void (*wkSetUpFontCache)();
 extern unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
 extern int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
 extern void (*wkSetHTTPRequestMaximumPriority)(int maximumPriority);

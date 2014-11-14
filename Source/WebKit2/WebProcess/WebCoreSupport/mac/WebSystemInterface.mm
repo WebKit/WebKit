@@ -57,8 +57,6 @@ void InitWebCoreSystemInterface(void)
         INIT(DrawCellFocusRingWithFrameAtTime);
         INIT(DrawMediaSliderTrack);
         INIT(DrawMediaUIPart);
-        INIT(GetFontInLanguageForCharacter);
-        INIT(GetFontInLanguageForRange);
 #endif
         INIT(GetHTTPRequestPriority);
         INIT(GetNSURLResponseLastModifiedDate);
@@ -106,7 +104,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SetNSURLConnectionDefersCallbacks);
         INIT(SetNSURLRequestShouldContentSniff);
         INIT(SetPatternPhaseInUserSpace);
-        INIT(SetUpFontCache);
         INIT(CreatePrivateStorageSession);
         INIT(CopyRequestWithStorageSession);
         INIT(CopyHTTPCookieStorage);

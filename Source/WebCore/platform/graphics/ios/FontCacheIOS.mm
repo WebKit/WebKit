@@ -42,7 +42,6 @@ namespace WebCore {
 
 void FontCache::platformInit()
 {
-    wkSetUpFontCache();
 }
 
 static inline bool isFontWeightBold(NSInteger fontWeight)

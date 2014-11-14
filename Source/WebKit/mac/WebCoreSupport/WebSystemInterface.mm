@@ -65,8 +65,6 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawCellFocusRingWithFrameAtTime);
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
-    INIT(GetFontInLanguageForCharacter);
-    INIT(GetFontInLanguageForRange);
 #endif
     INIT(GetHTTPRequestPriority);
     INIT(GetNSURLResponseLastModifiedDate);
@@ -102,7 +100,6 @@ void InitWebCoreSystemInterface(void)
     INIT(SetPatternPhaseInUserSpace);
     INIT(CGContextIsPDFContext);
     INIT(GetUserToBaseCTM);
-    INIT(SetUpFontCache);
 #if ENABLE(VIDEO) && !PLATFORM(IOS)
     INIT(QTIncludeOnlyModernMediaFileTypes);
     INIT(QTMovieDisableComponent);

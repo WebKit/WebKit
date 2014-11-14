@@ -29,8 +29,11 @@
 #include <CoreText/CoreText.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+#include <CoreText/CTFontDescriptorPriv.h>
 #include <CoreText/CTFontPriv.h>
 #include <CoreText/CTLinePriv.h>
+#include <CoreText/CTRunPriv.h>
+#include <CoreText/CTTypesetterPriv.h>
 #endif
 
 extern "C" {
@@ -53,6 +56,7 @@ CGSize CTRunGetInitialAdvance(CTRunRef run);
 CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon);
 CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon, CFDictionaryRef options);
 bool CTFontGetVerticalGlyphsForCharacters(CTFontRef, const UniChar characters[], CGGlyph glyphs[], CFIndex count);
+bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 
 }
 

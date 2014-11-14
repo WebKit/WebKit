@@ -29,7 +29,7 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
-#include "CGFontUnicodeSupportSPI.h"
+#include "CoreGraphicsSPI.h"
 #include "CoreTextSPI.h"
 #include "Font.h"
 #include "SimpleFontData.h"

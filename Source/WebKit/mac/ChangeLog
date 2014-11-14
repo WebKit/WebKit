@@ -1,3 +1,14 @@
+2014-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move FontMac and FontCacheMac off of WKSI
+        https://bugs.webkit.org/show_bug.cgi?id=138633
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebKit.order:
+
 2014-11-13  Beth Dakin  <bdakin@apple.com>
 
         WK1: Clean up WebActionMenuController to use the _hitTestResult ivar

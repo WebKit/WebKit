@@ -30543,8 +30543,6 @@ _wkDrawTextFieldCellFocusRing
 _wkDrawCapsLockIndicator
 _wkDrawBezeledTextArea
 _wkDrawFocusRing
-_wkGetFontInLanguageForRange
-_wkGetFontInLanguageForCharacter
 _wkGetGlyphTransformedAdvances
 _wkDrawMediaSliderTrack
 _wkHitTestMediaUIPart
@@ -30577,7 +30575,6 @@ _wkSetDragImage
 _wkSetBaseCTM
 _wkSetPatternPhaseInUserSpace
 _wkGetUserToBaseCTM
-_wkSetUpFontCache
 _wkSetNSURLConnectionDefersCallbacks
 _wkSetNSURLRequestShouldContentSniff
 _wkCreateNSURLConnectionDelegateProxy
