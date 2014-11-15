@@ -27,6 +27,7 @@
 
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebDocumentInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
@@ -37,6 +38,8 @@
 #import "WebViewInternal.h"
 #import <ImageIO/ImageIO.h>
 #import <ImageKit/ImageKit.h>
+#import <WebCore/DataDetection.h>
+#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
@@ -154,6 +157,19 @@ struct DictionaryPopupInfo {
     if (menu != _webView.actionMenu)
         return;
 
+    if (_type == WebActionMenuDataDetectedItem) {
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+            [menu cancelTracking];
+            return;
+        }
+
+        if (menu.numberOfItems == 1)
+            [[_webView _selectedOrMainFrame] _clearSelection];
+        else
+            [self _selectDataDetectedText];
+        return;
+    }
+
     if (![self isMenuForTextContent]) {
         [[_webView _selectedOrMainFrame] _clearSelection];
         return;
@@ -169,6 +185,9 @@ struct DictionaryPopupInfo {
 {
     if (menu != _webView.actionMenu)
         return;
+
+    if (_type == WebActionMenuDataDetectedItem && _currentActionContext)
+        [getDDActionsManagerClass() didUseActions];
 
     _type = WebActionMenuNone;
     _sharingServicePicker = nil;
@@ -241,18 +260,27 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
 - (NSArray *)_defaultMenuItemsForLink
 {
-    NSURL *url = _hitTestResult.absoluteLinkURL();
-    if (!url)
-        return @[ ];
-
-    if (!WebCore::protocolIsInHTTPFamily([url absoluteString]))
-        return @[ ];
-
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser];
     RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPreviewLink];
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList];
 
     return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
+}
+
+#pragma mark Mailto Link actions
+
+- (NSArray *)_defaultMenuItemsForMailtoLink
+{
+    Node* node = _hitTestResult.innerNode();
+    if (!node)
+        return @[ ];
+
+    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    [actionContext setForActionMenuContent:YES];
+
+    // FIXME: Should this show a yellow highlight?
+    [actionContext setHighlightFrame:elementBoundingBoxInWindowCoordinatesFromNode(node)];
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL() actionContext:actionContext.get()];
 }
 
 #pragma mark Image actions
@@ -475,6 +503,46 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get(), textSuggestionsItem.get() ];
 }
 
+- (void)_selectDataDetectedText
+{
+    [_webView _mainCoreFrame]->selection().setSelectedRange(_currentDetectedDataRange.get(), DOWNSTREAM, true);
+}
+
+- (NSArray *)_defaultMenuItemsForDataDetectedText
+{
+    RefPtr<Range> detectedDataRange;
+    FloatRect detectedDataBoundingBox;
+    RetainPtr<DDActionContext> actionContext;
+
+    if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
+        RetainPtr<WebElementDictionary> hitTestDictionary = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]);
+
+        DOMRange *customDataDetectorsRange;
+        actionContext = [[_webView UIDelegate] _webView:_webView actionContextForHitTestResult:hitTestDictionary.get() range:&customDataDetectorsRange];
+
+        if (actionContext && customDataDetectorsRange)
+            detectedDataRange = core(customDataDetectorsRange);
+    }
+
+    // If the client didn't give us an action context, try to scan around the hit point.
+    if (!actionContext || !detectedDataRange)
+        actionContext = DataDetection::detectItemAroundHitTestResult(_hitTestResult, detectedDataBoundingBox, detectedDataRange);
+
+    if (!actionContext || !detectedDataRange)
+        return @[ ];
+
+    // FIXME: We should hide/show the yellow highlight here.
+    _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
+    } interactionChangedHandler:^() {
+    } interactionStoppedHandler:^() {
+    }];
+    _currentDetectedDataRange = detectedDataRange;
+
+    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:[_webView convertRect:detectedDataBoundingBox toView:nil]]];
+
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+}
+
 - (void)_copySelection:(id)sender
 {
     [_webView _executeCoreCommandByName:@"copy" value:nil];
@@ -515,7 +583,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return;
 
     frame->selection().setSelectedRange(lookupRange.get(), DOWNSTREAM, true);
-    return;
 }
 
 - (void)_changeSelectionToSuggestion:(id)sender
@@ -720,9 +787,14 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
 - (NSArray *)_defaultMenuItems
 {
     NSURL *url = _hitTestResult.absoluteLinkURL();
-    if (url) {
+    if (url && WebCore::protocolIsInHTTPFamily([url absoluteString])) {
         _type = WebActionMenuLink;
         return [self _defaultMenuItemsForLink];
+    }
+
+    if (url && WebCore::protocolIs([url absoluteString], "mailto")) {
+        _type = WebActionMenuMailtoLink;
+        return [self _defaultMenuItemsForMailtoLink];
     }
 
     if (!_hitTestResult.absoluteMediaURL().isEmpty()) {
@@ -737,6 +809,12 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
 
     Node* node = _hitTestResult.innerNode();
     if (node && node->isTextNode()) {
+        NSArray *dataDetectorMenuItems = [self _defaultMenuItemsForDataDetectedText];
+        if (dataDetectorMenuItems.count) {
+            _type = WebActionMenuDataDetectedItem;
+            return dataDetectorMenuItems;
+        }
+
         if (_hitTestResult.isContentEditable()) {
             NSArray *editableTextWithSuggestions = [self _defaultMenuItemsForEditableTextWithSuggestions];
             if (editableTextWithSuggestions.count) {

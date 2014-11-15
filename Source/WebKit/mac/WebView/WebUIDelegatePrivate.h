@@ -138,7 +138,9 @@ typedef enum {
     WebActionMenuWhitespaceInEditableArea,
     WebActionMenuEditableTextWithSuggestions,
     WebActionMenuImage,
-    WebActionMenuVideo
+    WebActionMenuVideo,
+    WebActionMenuDataDetectedItem,
+    WebActionMenuMailtoLink
 } WebActionMenuType;
 
 // Message Sources.
@@ -159,8 +161,10 @@ extern NSString *WebConsoleMessageLogMessageLevel;
 extern NSString *WebConsoleMessageWarningMessageLevel;
 extern NSString *WebConsoleMessageErrorMessageLevel;
 
+@class DDActionContext;
 @class DOMElement;
 @class DOMNode;
+@class DOMRange;
 @class WebSecurityOrigin;
 
 #if ENABLE_FULLSCREEN_API
@@ -223,6 +227,7 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
 - (NSArray *)_webView:(WebView *)sender actionMenuItemsForHitTestResult:(NSDictionary *)hitTestResult withType:(WebActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems;
+- (DDActionContext *)_webView:(WebView *)sender actionContextForHitTestResult:(NSDictionary *)hitTestResult range:(DOMRange **)range;
 #endif
 - (BOOL)webView:(WebView *)sender didPressMissingPluginButton:(DOMElement *)element;
 /*!
