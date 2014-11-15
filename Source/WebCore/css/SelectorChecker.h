@@ -107,8 +107,8 @@ public:
     static unsigned determineLinkMatchType(const CSSSelector*);
 
 private:
-    MatchResult matchRecursively(const CheckingContextWithStatus&, PseudoIdSet&) const;
-    bool checkOne(const CheckingContextWithStatus&, PseudoIdSet&, MatchType&) const;
+    MatchResult matchRecursively(const CheckingContextWithStatus&, PseudoIdSet&, unsigned& specificity) const;
+    bool checkOne(const CheckingContextWithStatus&, PseudoIdSet&, MatchType&, unsigned& specificity) const;
     bool matchSelectorList(const CheckingContextWithStatus&, Element&, const CSSSelectorList&) const;
 
     bool checkScrollbarPseudoClass(const CheckingContextWithStatus&, const CSSSelector*) const;

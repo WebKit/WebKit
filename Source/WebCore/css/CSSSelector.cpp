@@ -64,34 +64,17 @@ unsigned CSSSelector::specificity() const
     if (isForPage())
         return specificityForPage() & maxValueMask;
 
-    unsigned total = specificityForOneSelector();
+    unsigned total = simpleSelectorSpecificity();
 
-    for (const CSSSelector* selector = this->tagHistory(); selector; selector = selector->tagHistory()) {
-        unsigned selectorSpecificity = selector->specificityForOneSelector();
-
-        unsigned newIdValue = (selectorSpecificity & idMask);
-        if (((total & idMask) + newIdValue) & ~idMask)
-            total |= idMask;
-        else
-            total += newIdValue;
-
-        unsigned newClassValue = (selectorSpecificity & classMask);
-        if (((total & classMask) + newClassValue) & ~classMask)
-            total |= classMask;
-        else
-            total += newClassValue;
-
-        unsigned newElementValue = (selectorSpecificity & elementMask);
-        if (((total & elementMask) + newElementValue) & ~elementMask)
-            total |= elementMask;
-        else
-            total += newElementValue;
-    }
+    for (const CSSSelector* selector = this->tagHistory(); selector; selector = selector->tagHistory())
+        total = addSpecificities(total, selector->simpleSelectorSpecificity());
     return total;
 }
 
-inline unsigned CSSSelector::specificityForOneSelector() const
+unsigned CSSSelector::simpleSelectorSpecificity() const
 {
+    ASSERT_WITH_MESSAGE(!isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
+
     switch (match()) {
     case Id:
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
@@ -99,9 +82,6 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case PagePseudoClass:
         break;
     case PseudoClass:
-        // FIXME: PseudoAny should base the specificity on the sub-selectors.
-        // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
-
 #if ENABLE(CSS_SELECTORS_LEVEL4)
         if (pseudoClassType() == PseudoClassNot) {
             ASSERT_WITH_MESSAGE(selectorList() && selectorList()->first(), "The parser should never generate a valid selector for an empty :not().");
@@ -114,7 +94,7 @@ inline unsigned CSSSelector::specificityForOneSelector() const
         FALLTHROUGH;
 #else
         if (pseudoClassType() == PseudoClassNot && selectorList())
-            return selectorList()->first()->specificityForOneSelector();
+            return selectorList()->first()->simpleSelectorSpecificity();
         FALLTHROUGH;
 #endif
     case Exact:
@@ -137,8 +117,35 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     return 0;
 }
 
+unsigned CSSSelector::addSpecificities(unsigned a, unsigned b)
+{
+    unsigned total = a;
+
+    unsigned newIdValue = (b & idMask);
+    if (((total & idMask) + newIdValue) & ~idMask)
+        total |= idMask;
+    else
+        total += newIdValue;
+
+    unsigned newClassValue = (b & classMask);
+    if (((total & classMask) + newClassValue) & ~classMask)
+        total |= classMask;
+    else
+        total += newClassValue;
+
+    unsigned newElementValue = (b & elementMask);
+    if (((total & elementMask) + newElementValue) & ~elementMask)
+        total |= elementMask;
+    else
+        total += newElementValue;
+
+    return total;
+}
+
 unsigned CSSSelector::specificityForPage() const
 {
+    ASSERT(isForPage());
+
     // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
     unsigned s = 0;
 

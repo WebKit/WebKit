@@ -59,6 +59,8 @@ namespace WebCore {
         static const unsigned elementMask = 0xff;
 
         unsigned specificity() const;
+        unsigned simpleSelectorSpecificity() const;
+        static unsigned addSpecificities(unsigned, unsigned);
 
         /* how the attribute value has to match.... Default is Exact */
         enum Match {
@@ -306,7 +308,7 @@ namespace WebCore {
         unsigned m_isForPage             : 1;
         unsigned m_tagIsForNamespaceRule : 1;
 
-        unsigned specificityForOneSelector() const;
+        unsigned simpleSelectorSpecificityForPage() const;
         unsigned specificityForPage() const;
 
         // Hide.

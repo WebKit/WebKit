@@ -1,3 +1,28 @@
+2014-11-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Compute the selector specificity as we match simple selectors
+        https://bugs.webkit.org/show_bug.cgi?id=138718
+
+        Reviewed by Andreas Kling.
+
+        This is an other tiny step toward dynamic specificity. Instead of computing
+        the entire specificity at the end, compute it dynamically as we are matching
+        each individual simple selector.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificity):
+        (WebCore::CSSSelector::simpleSelectorSpecificity):
+        (WebCore::CSSSelector::addSpecificities):
+        (WebCore::CSSSelector::specificityForPage):
+        (WebCore::CSSSelector::specificityForOneSelector): Deleted.
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match):
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::matchSelectorList):
+        * css/SelectorChecker.h:
+
 2014-11-14  Andreas Kling  <akling@apple.com>
 
         [mac] Only images that are actually purgeable should be advertised as such.
