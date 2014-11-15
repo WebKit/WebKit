@@ -58,8 +58,8 @@ SOFT_LINK(DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (r
 
 }
 
+#if PLATFORM(MAC)
 SOFT_LINK_CLASS(DataDetectors, DDActionContext)
-SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 
 @interface DDActionContext : NSObject <NSCopying, NSSecureCoding>
 
@@ -69,11 +69,12 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 @property (copy) void (^completionHandler)(void);
 @property (assign) BOOL forActionMenuContent;
 
-#if PLATFORM(MAC)
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
-#endif
 
 @end
+#endif
+
+SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 
 @interface DDActionsManager : NSObject
 

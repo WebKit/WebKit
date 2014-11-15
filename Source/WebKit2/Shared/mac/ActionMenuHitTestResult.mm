@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ActionMenuHitTestResult.h"
 
+#if PLATFORM(MAC)
+
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
@@ -127,3 +129,5 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
 }
     
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)
