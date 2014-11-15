@@ -1,3 +1,30 @@
+2014-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Get rid of WebFontCache
+        https://bugs.webkit.org/show_bug.cgi?id=134752
+
+        Reviewed by Dave Hyatt.
+
+        No new tests because there is no behavior change.
+
+        * Configurations/WebCore.xcconfig:
+        * PlatformMac.cmake:
+        * WebCore.exp.in:
+        * WebCore.order:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::acceptableChoice):
+        (WebCore::betterChoice):
+        (WebCore::toTraitsMask):
+        (WebCore::desiredFamilyToAvailableFamilyDictionary):
+        (WebCore::rememberDesiredFamilyToAvailableFamilyMapping):
+        (WebCore::fontWithFamily):
+        (WebCore::invalidateFontCache):
+        (WebCore::FontCache::getTraitsInFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/mac/WebFontCache.h: Removed.
+        * platform/mac/WebFontCache.mm: Removed.
+
 2014-11-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] NSFileManager and QuickLook SPI not available in public SDK

@@ -135,7 +135,6 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import "WebNSEventExtras.h"
 #import "WebNSPasteboardExtras.h"
-#import <WebCore/WebFontCache.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #endif
 

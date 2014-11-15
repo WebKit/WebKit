@@ -147,7 +147,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreObjCExtras.mm
     platform/mac/WebCoreSystemInterface.mm
     platform/mac/WebCoreView.m
-    platform/mac/WebFontCache.mm
     platform/mac/WebNSAttributedStringExtras.mm
     platform/mac/WebVideoFullscreenController.mm
     platform/mac/WebVideoFullscreenHUDWindowController.mm
