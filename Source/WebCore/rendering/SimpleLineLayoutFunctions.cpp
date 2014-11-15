@@ -67,15 +67,11 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     if (style.visibility() != VISIBLE)
         return;
 
-    RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
-    ASSERT(!textRenderer.firstTextBox());
-
     bool debugBordersEnabled = flow.frame().settings().simpleLineLayoutDebugBordersEnabled();
 
     GraphicsContext& context = *paintInfo.context;
-
     const Font& font = style.font();
-    TextPaintStyle textPaintStyle = computeTextPaintStyle(textRenderer, style, paintInfo);
+    TextPaintStyle textPaintStyle = computeTextPaintStyle(flow.frame(), style, paintInfo);
     GraphicsContextStateSaver stateSaver(context, textPaintStyle.strokeWidth > 0);
 
     updateGraphicsContext(context, textPaintStyle);

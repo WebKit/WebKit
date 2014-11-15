@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Frame;
 class GraphicsContext;
 class RenderText;
 class RenderStyle;
@@ -51,7 +52,7 @@ struct TextPaintStyle {
 #endif
 };
 
-TextPaintStyle computeTextPaintStyle(const RenderText&, const RenderStyle&, const PaintInfo&);
+TextPaintStyle computeTextPaintStyle(const Frame&, const RenderStyle&, const PaintInfo&);
 TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const RenderText&, const RenderStyle&, const PaintInfo&, bool& paintSelectedTextOnly, bool& paintSelectedTextSeparately, const ShadowData*& selectionShadow);
 
 enum FillColorType { UseNormalFillColor, UseEmphasisMarkColor };

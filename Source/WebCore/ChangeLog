@@ -1,3 +1,22 @@
+2014-11-14  Zalan Bujtas  <zalan@apple.com>
+
+        Remove computeTextPaintStyle's RenderText dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=138754
+
+        Reviewed by Simon Fraser.
+
+        So that we can compute text paint style across renderers in simple line layout.
+
+        No change in functionality.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        * rendering/TextPaintStyle.h:
+
 2014-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Get rid of WebFontCache

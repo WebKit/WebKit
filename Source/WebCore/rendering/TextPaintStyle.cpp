@@ -74,7 +74,7 @@ static Color adjustColorForVisibilityOnBackground(Color textColor, Color backgro
     return textColor.light();
 }
 
-TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
+TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     TextPaintStyle paintStyle(lineStyle.colorSpace());
 
@@ -91,9 +91,9 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     }
 
     if (lineStyle.insideDefaultButton()) {
-        Page* page = renderer.frame().page();
+        Page* page = frame.page();
         if (page && page->focusController().isActive()) {
-            paintStyle.fillColor = renderer.theme().systemColor(CSSValueActivebuttontext);
+            paintStyle.fillColor = page->theme().systemColor(CSSValueActivebuttontext);
             return paintStyle;
         }
     }
@@ -101,10 +101,10 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     paintStyle.fillColor = lineStyle.visitedDependentColor(CSSPropertyWebkitTextFillColor);
 
     bool forceBackgroundToWhite = false;
-    if (renderer.document().printing()) {
+    if (frame.document() && frame.document()->printing()) {
         if (lineStyle.printColorAdjust() == PrintColorAdjustEconomy)
             forceBackgroundToWhite = true;
-        if (renderer.frame().settings().shouldPrintBackgrounds())
+        if (frame.settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
     }
 
