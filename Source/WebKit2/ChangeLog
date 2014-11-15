@@ -1,3 +1,13 @@
+2014-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Raise an exception if -[WKWebView initWithFrame:configuration:] is passed a nil configuration
+        https://bugs.webkit.org/show_bug.cgi?id=138757
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+
 2014-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Network process crash when running http/tests/appcache/fallback.html

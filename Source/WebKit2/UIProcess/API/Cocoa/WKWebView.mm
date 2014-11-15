@@ -249,6 +249,9 @@ static int32_t deviceOrientation()
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
+    if (!configuration)
+        [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
+
     _configuration = adoptNS([configuration copy]);
 
     if (WKWebView *relatedWebView = [_configuration _relatedWebView]) {
