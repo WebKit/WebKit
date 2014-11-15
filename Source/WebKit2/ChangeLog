@@ -1,3 +1,15 @@
+2014-11-14  Tim Horton  <timothy_horton@apple.com>
+
+        Frequent crashes under actionContextForResultAtPoint
+        https://bugs.webkit.org/show_bug.cgi?id=138761
+        <rdar://problem/18990684>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (PageOverlayClientImpl::actionContextForResultAtPoint):
+        Initialize apiRange.
+
 2014-11-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] CoreGraphics SPI not available in public SDK
