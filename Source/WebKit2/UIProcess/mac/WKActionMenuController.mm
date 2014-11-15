@@ -54,15 +54,6 @@
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
-static bool hasDataDetectorsCompletionAPI() {
-    static bool hasCompletionAPI;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        hasCompletionAPI = [getDDActionsManagerClass() respondsToSelector:@selector(shouldUseActionsWithContext:)] && [getDDActionsManagerClass() respondsToSelector:@selector(didUseActions)];
-    });
-    return hasCompletionAPI;
-}
-
 using namespace WebCore;
 using namespace WebKit;
 
@@ -201,17 +192,13 @@ using namespace WebKit;
         return;
 
     if (_type == kWKActionMenuDataDetectedItem) {
-        if (_currentActionContext && hasDataDetectorsCompletionAPI()) {
-            if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
-                [menu cancelTracking];
-                return;
-            }
+        if (_currentActionContext && ![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+            [menu cancelTracking];
+            return;
         }
-        if (menu.numberOfItems == 1) {
+        if (menu.numberOfItems == 1)
             _page->clearSelection();
-            if (!hasDataDetectorsCompletionAPI())
-                [self _showTextIndicator];
-        } else
+        else
             _page->selectLastActionMenuRange();
         return;
     }
@@ -234,13 +221,8 @@ using namespace WebKit;
         return;
 
     if (_type == kWKActionMenuDataDetectedItem) {
-        if (hasDataDetectorsCompletionAPI()) {
-            if (_currentActionContext)
-                [getDDActionsManagerClass() didUseActions];
-        } else {
-            if (menu.numberOfItems > 1)
-                [self _hideTextIndicator];
-        }
+        if (_currentActionContext)
+            [getDDActionsManagerClass() didUseActions];
     }
 
     if (!_shouldKeepPreviewPopoverOpen)
@@ -588,27 +570,17 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!actionContext)
         return @[ ];
 
-    if (hasDataDetectorsCompletionAPI()) {
-        // Ref our WebPageProxy for use in the blocks below.
-        RefPtr<WebPageProxy> page = _page;
-        _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
-            page->send(Messages::WebPage::DataDetectorsDidPresentUI());
-        } interactionChangedHandler:^() {
-            [self _showTextIndicator];
-            page->send(Messages::WebPage::DataDetectorsDidChangeUI());
-        } interactionStoppedHandler:^() {
-            [self _hideTextIndicator];
-            page->send(Messages::WebPage::DataDetectorsDidHideUI());
-        }];
-    } else {
-        _currentActionContext = actionContext;
-
-        [_currentActionContext setCompletionHandler:^() {
-            [self _hideTextIndicator];
-        }];
-
-        [_currentActionContext setForActionMenuContent:YES];
-    }
+    // Ref our WebPageProxy for use in the blocks below.
+    RefPtr<WebPageProxy> page = _page;
+    _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+        page->send(Messages::WebPage::DataDetectorsDidPresentUI());
+    } interactionChangedHandler:^() {
+        [self _showTextIndicator];
+        page->send(Messages::WebPage::DataDetectorsDidChangeUI());
+    } interactionStoppedHandler:^() {
+        [self _hideTextIndicator];
+        page->send(Messages::WebPage::DataDetectorsDidHideUI());
+    }];
 
     [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];
 
