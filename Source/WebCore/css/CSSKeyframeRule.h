@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitCSSKeyframeRule_h
-#define WebKitCSSKeyframeRule_h
+#ifndef CSSKeyframeRule_h
+#define CSSKeyframeRule_h
 
 #include "CSSRule.h"
 #include "StyleProperties.h"
@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class StyleRuleCSSStyleDeclaration;
-class WebKitCSSKeyframesRule;
+class CSSKeyframesRule;
 
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,9 +65,9 @@ private:
     String m_key;
 };
 
-class WebKitCSSKeyframeRule final : public CSSRule {
+class CSSKeyframeRule final : public CSSRule {
 public:
-    virtual ~WebKitCSSKeyframeRule();
+    virtual ~CSSKeyframeRule();
 
     virtual String cssText() const override { return m_keyframe->cssText(); }
     virtual void reattach(StyleRuleBase&) override;
@@ -78,16 +78,16 @@ public:
     CSSStyleDeclaration& style();
 
 private:
-    WebKitCSSKeyframeRule(StyleKeyframe&, WebKitCSSKeyframesRule* parent);
+    CSSKeyframeRule(StyleKeyframe&, CSSKeyframesRule* parent);
 
-    virtual CSSRule::Type type() const override { return WEBKIT_KEYFRAME_RULE; }
+    virtual CSSRule::Type type() const override { return KEYFRAME_RULE; }
 
     Ref<StyleKeyframe> m_keyframe;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
     
-    friend class WebKitCSSKeyframesRule;
+    friend class CSSKeyframesRule;
 };
 
 } // namespace WebCore
 
-#endif // WebKitCSSKeyframeRule_h
+#endif // CSSKeyframeRule_h

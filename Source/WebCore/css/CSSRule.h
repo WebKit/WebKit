@@ -49,8 +49,8 @@ public:
         // 7 was VARIABLES_RULE; we now match other browsers with 7 as
         // KEYFRAMES_RULE:
         // <https://bugs.webkit.org/show_bug.cgi?id=71293>.
-        WEBKIT_KEYFRAMES_RULE,
-        WEBKIT_KEYFRAME_RULE,
+        KEYFRAMES_RULE,
+        KEYFRAME_RULE,
         SUPPORTS_RULE = 12,
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         WEBKIT_VIEWPORT_RULE = 15,
@@ -58,6 +58,11 @@ public:
 #if ENABLE(CSS_REGIONS)
         WEBKIT_REGION_RULE = 16,
 #endif
+    };
+
+    enum DeprecatedType {
+        WEBKIT_KEYFRAMES_RULE = 7,
+        WEBKIT_KEYFRAME_RULE = 8
     };
 
     virtual Type type() const = 0;

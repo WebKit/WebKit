@@ -1,3 +1,86 @@
+2014-11-14  Dean Jackson  <dino@apple.com>
+
+        Rename WebKitCSSKeyframe(s)Rule into CSSKeyframe(s)Rule
+        https://bugs.webkit.org/show_bug.cgi?id=138763
+        <rdar://problem/18991569>
+
+        Reviewed by Simon Fraser.
+
+        Globally rename WebKitCSSKeyframeRule and WebKitCSSKeyframesRule to
+        CSSKeyframeRule and CSSKeyframesRule respectively.
+
+        This *may* break some existing content, but is compatible with
+        what Blink and Firefox are doing. To minimize breakage, I kept an
+        alias for the old constant values on CSSRule: WEBKIT_KEYFRAMES_RULE
+        and WEBKIT_KEYFRAME_RULE.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * css/CSSGrammar.y.includes:
+        * css/CSSKeyframeRule.cpp: Renamed from Source/WebCore/css/WebKitCSSKeyframeRule.cpp.
+        (WebCore::StyleKeyframe::StyleKeyframe):
+        (WebCore::StyleKeyframe::~StyleKeyframe):
+        (WebCore::StyleKeyframe::mutableProperties):
+        (WebCore::StyleKeyframe::parseKeyString):
+        (WebCore::StyleKeyframe::cssText):
+        (WebCore::CSSKeyframeRule::CSSKeyframeRule):
+        (WebCore::CSSKeyframeRule::~CSSKeyframeRule):
+        (WebCore::CSSKeyframeRule::style):
+        (WebCore::CSSKeyframeRule::reattach):
+        * css/CSSKeyframeRule.h: Renamed from Source/WebCore/css/WebKitCSSKeyframeRule.h.
+        (WebCore::StyleKeyframe::create):
+        (WebCore::StyleKeyframe::keyText):
+        (WebCore::StyleKeyframe::setKeyText):
+        (WebCore::StyleKeyframe::getKeys):
+        (WebCore::StyleKeyframe::properties):
+        * css/CSSKeyframeRule.idl: Renamed from Source/WebCore/css/WebKitCSSKeyframeRule.idl.
+        * css/CSSKeyframesRule.cpp: Renamed from Source/WebCore/css/WebKitCSSKeyframesRule.cpp.
+        (WebCore::StyleRuleKeyframes::StyleRuleKeyframes):
+        (WebCore::StyleRuleKeyframes::~StyleRuleKeyframes):
+        (WebCore::StyleRuleKeyframes::parserAppendKeyframe):
+        (WebCore::StyleRuleKeyframes::wrapperAppendKeyframe):
+        (WebCore::StyleRuleKeyframes::wrapperRemoveKeyframe):
+        (WebCore::StyleRuleKeyframes::findKeyframeIndex):
+        (WebCore::CSSKeyframesRule::CSSKeyframesRule):
+        (WebCore::CSSKeyframesRule::~CSSKeyframesRule):
+        (WebCore::CSSKeyframesRule::setName):
+        (WebCore::CSSKeyframesRule::appendRule):
+        (WebCore::CSSKeyframesRule::insertRule):
+        (WebCore::CSSKeyframesRule::deleteRule):
+        (WebCore::CSSKeyframesRule::findRule):
+        (WebCore::CSSKeyframesRule::cssText):
+        (WebCore::CSSKeyframesRule::length):
+        (WebCore::CSSKeyframesRule::item):
+        (WebCore::CSSKeyframesRule::cssRules):
+        (WebCore::CSSKeyframesRule::reattach):
+        * css/CSSKeyframesRule.h: Renamed from Source/WebCore/css/WebKitCSSKeyframesRule.h.
+        (WebCore::StyleRuleKeyframes::create):
+        (WebCore::StyleRuleKeyframes::keyframes):
+        (WebCore::StyleRuleKeyframes::name):
+        (WebCore::StyleRuleKeyframes::setName):
+        (WebCore::StyleRuleKeyframes::copy):
+        * css/CSSKeyframesRule.idl: Renamed from Source/WebCore/css/WebKitCSSKeyframesRule.idl.
+        * css/CSSParser.cpp:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSStyleSheet.cpp:
+        * css/RuleSet.cpp:
+        * css/StyleResolver.cpp:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+
 2014-11-15  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r176137): iOS build broke after moving DataDetectors scanning code to WebCore

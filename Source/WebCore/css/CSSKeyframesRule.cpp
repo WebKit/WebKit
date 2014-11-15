@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +24,15 @@
  */
 
 #include "config.h"
-#include "WebKitCSSKeyframesRule.h"
+#include "CSSKeyframesRule.h"
 
+#include "CSSKeyframeRule.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "StyleProperties.h"
 #include "StyleSheet.h"
-#include "WebKitCSSKeyframeRule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -87,14 +87,14 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
     return -1;
 }
 
-WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CSSStyleSheet* parent)
+CSSKeyframesRule::CSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_keyframesRule(keyframesRule)
     , m_childRuleCSSOMWrappers(keyframesRule.keyframes().size())
 {
 }
 
-WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule()
+CSSKeyframesRule::~CSSKeyframesRule()
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
@@ -104,14 +104,14 @@ WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule()
     }
 }
 
-void WebKitCSSKeyframesRule::setName(const String& name)
+void CSSKeyframesRule::setName(const String& name)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     m_keyframesRule->setName(name);
 }
 
-void WebKitCSSKeyframesRule::appendRule(const String& ruleText)
+void CSSKeyframesRule::appendRule(const String& ruleText)
 {
     if (CSSStyleSheet* parent = parentStyleSheet()) {
         if (Document* ownerDocument = parent->ownerDocument())
@@ -120,7 +120,7 @@ void WebKitCSSKeyframesRule::appendRule(const String& ruleText)
     insertRule(ruleText);
 }
 
-void WebKitCSSKeyframesRule::insertRule(const String& ruleText)
+void CSSKeyframesRule::insertRule(const String& ruleText)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
@@ -137,7 +137,7 @@ void WebKitCSSKeyframesRule::insertRule(const String& ruleText)
     m_childRuleCSSOMWrappers.grow(length());
 }
 
-void WebKitCSSKeyframesRule::deleteRule(const String& s)
+void CSSKeyframesRule::deleteRule(const String& s)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
@@ -154,13 +154,13 @@ void WebKitCSSKeyframesRule::deleteRule(const String& s)
     m_childRuleCSSOMWrappers.remove(i);
 }
 
-WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::findRule(const String& s)
+CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
 {
     int i = m_keyframesRule->findKeyframeIndex(s);
     return (i >= 0) ? item(i) : 0;
 }
 
-String WebKitCSSKeyframesRule::cssText() const
+String CSSKeyframesRule::cssText() const
 {
     StringBuilder result;
     result.appendLiteral("@-webkit-keyframes ");
@@ -177,32 +177,32 @@ String WebKitCSSKeyframesRule::cssText() const
     return result.toString();
 }
 
-unsigned WebKitCSSKeyframesRule::length() const
+unsigned CSSKeyframesRule::length() const
 { 
     return m_keyframesRule->keyframes().size(); 
 }
 
-WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
+CSSKeyframeRule* CSSKeyframesRule::item(unsigned index) const
 { 
     if (index >= length())
         return 0;
 
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
-    RefPtr<WebKitCSSKeyframeRule>& rule = m_childRuleCSSOMWrappers[index];
+    RefPtr<CSSKeyframeRule>& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = adoptRef(new WebKitCSSKeyframeRule(*m_keyframesRule->keyframes()[index], const_cast<WebKitCSSKeyframesRule*>(this)));
+        rule = adoptRef(new CSSKeyframeRule(*m_keyframesRule->keyframes()[index], const_cast<CSSKeyframesRule*>(this)));
 
     return rule.get(); 
 }
 
-CSSRuleList& WebKitCSSKeyframesRule::cssRules()
+CSSRuleList& CSSKeyframesRule::cssRules()
 {
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<WebKitCSSKeyframesRule>>(this);
+        m_ruleListCSSOMWrapper = std::make_unique<LiveCSSRuleList<CSSKeyframesRule>>(this);
     return *m_ruleListCSSOMWrapper;
 }
 
-void WebKitCSSKeyframesRule::reattach(StyleRuleBase& rule)
+void CSSKeyframesRule::reattach(StyleRuleBase& rule)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(rule.isKeyframesRule());
     m_keyframesRule = static_cast<StyleRuleKeyframes&>(rule);

@@ -36,8 +36,8 @@
 #include "MediaQueryExp.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
-#include "WebKitCSSKeyframeRule.h"
-#include "WebKitCSSKeyframesRule.h"
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
 #include <wtf/FastMalloc.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Introduced in DOM Level ?:
-interface WebKitCSSKeyframeRule : CSSRule {
+interface CSSKeyframesRule : CSSRule {
 
-    attribute DOMString keyText;
-    readonly attribute CSSStyleDeclaration style;
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString name;
+    readonly attribute CSSRuleList cssRules;
+    
+    void insertRule([Default=Undefined] optional DOMString rule);
+    void appendRule([Default=Undefined] optional DOMString rule);
+    void deleteRule([Default=Undefined] optional DOMString key);
+    CSSKeyframeRule findRule([Default=Undefined] optional DOMString key);
 
+    getter CSSKeyframeRule (unsigned long index);
 };
 

@@ -29,6 +29,8 @@
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
@@ -36,18 +38,16 @@
 #include "JSCSSCharsetRule.h"
 #include "JSCSSFontFaceRule.h"
 #include "JSCSSImportRule.h"
+#include "JSCSSKeyframeRule.h"
+#include "JSCSSKeyframesRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSPageRule.h"
 #include "JSCSSStyleRule.h"
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
-#include "JSWebKitCSSKeyframeRule.h"
-#include "JSWebKitCSSKeyframesRule.h"
 #include "JSWebKitCSSRegionRule.h"
 #include "JSWebKitCSSViewportRule.h"
-#include "WebKitCSSKeyframeRule.h"
-#include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
 #include "WebKitCSSViewportRule.h"
 
@@ -88,11 +88,11 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSRule* rule)
         case CSSRule::CHARSET_RULE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, CSSCharsetRule, rule);
             break;
-        case CSSRule::WEBKIT_KEYFRAME_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSKeyframeRule, rule);
+        case CSSRule::KEYFRAME_RULE:
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSKeyframeRule, rule);
             break;
-        case CSSRule::WEBKIT_KEYFRAMES_RULE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSKeyframesRule, rule);
+        case CSSRule::KEYFRAMES_RULE:
+            wrapper = CREATE_DOM_WRAPPER(globalObject, CSSKeyframesRule, rule);
             break;
         case CSSRule::SUPPORTS_RULE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, CSSSupportsRule, rule);

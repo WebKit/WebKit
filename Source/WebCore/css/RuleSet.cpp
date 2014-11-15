@@ -30,6 +30,7 @@
 #include "RuleSet.h"
 
 #include "CSSFontSelector.h"
+#include "CSSKeyframesRule.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "HTMLNames.h"
@@ -41,7 +42,6 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "WebKitCSSKeyframesRule.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrackCue.h"

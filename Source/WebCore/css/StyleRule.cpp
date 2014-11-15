@@ -25,6 +25,8 @@
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
@@ -32,8 +34,6 @@
 #include "CSSUnknownRule.h"
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"
-#include "WebKitCSSKeyframeRule.h"
-#include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
 #include "WebKitCSSViewportRule.h"
 
@@ -169,7 +169,7 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
         rule = CSSImportRule::create(static_cast<StyleRuleImport&>(self), parentSheet);
         break;
     case Keyframes:
-        rule = WebKitCSSKeyframesRule::create(static_cast<StyleRuleKeyframes&>(self), parentSheet);
+        rule = CSSKeyframesRule::create(static_cast<StyleRuleKeyframes&>(self), parentSheet);
         break;
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:

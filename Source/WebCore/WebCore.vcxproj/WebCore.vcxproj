@@ -6214,7 +6214,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframeRule.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -6228,7 +6228,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframesRule.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -9873,8 +9873,8 @@
     <ClCompile Include="..\css\TransformFunctions.cpp" />
     <ClCompile Include="..\css\ViewportStyleResolver.cpp" />
     <ClCompile Include="..\css\WebKitCSSFilterValue.cpp" />
-    <ClCompile Include="..\css\WebKitCSSKeyframeRule.cpp" />
-    <ClCompile Include="..\css\WebKitCSSKeyframesRule.cpp" />
+    <ClCompile Include="..\css\CSSKeyframeRule.cpp" />
+    <ClCompile Include="..\css\CSSKeyframesRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSMatrix.cpp" />
     <ClCompile Include="..\css\WebKitCSSRegionRule.cpp" />
     <ClCompile Include="..\css\WebKitCSSTransformValue.cpp" />
@@ -18690,8 +18690,8 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSValidityState.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitAnimationEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSFilterValue.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframeRule.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframesRule.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSRegionRule.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.h" />
@@ -20150,8 +20150,8 @@
     <ClInclude Include="..\css\TransformFunctions.h" />
     <ClInclude Include="..\css\ViewportStyleResolver.h" />
     <ClInclude Include="..\css\WebKitCSSFilterValue.h" />
-    <ClInclude Include="..\css\WebKitCSSKeyframeRule.h" />
-    <ClInclude Include="..\css\WebKitCSSKeyframesRule.h" />
+    <ClInclude Include="..\css\CSSKeyframeRule.h" />
+    <ClInclude Include="..\css\CSSKeyframesRule.h" />
     <ClInclude Include="..\css\WebKitCSSMatrix.h" />
     <ClInclude Include="..\css\WebKitCSSRegionRule.h" />
     <ClInclude Include="..\css\WebKitCSSTransformValue.h" />

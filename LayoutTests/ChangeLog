@@ -1,3 +1,31 @@
+2014-11-14  Dean Jackson  <dino@apple.com>
+
+        Rename WebKitCSSKeyframe(s)Rule into CSSKeyframe(s)Rule
+        https://bugs.webkit.org/show_bug.cgi?id=138763
+        <rdar://problem/18991569>
+
+        Reviewed by Simon Fraser.
+
+        Some of the tests use the prefixed interface name. Replace that
+        with the unprefixed version.
+
+        The "keyframes-rule.html" test added a check to make sure the
+        old constant WEBKIT_KEYFRAMES_RULE is the same as the new
+        constant KEYFRAMES_RULE.
+
+        * animations/keyframes-rule-expected.txt:
+        * animations/keyframes-rule.html:
+        * fast/dom/resources/wrapper-identity-base.js:
+        * fast/dom/wrapper-classes.html:
+        * fast/dom/wrapper-identity-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/fast/dom/objc-wrapper-identity-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2014-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         Application test expectation gardening on WK2.

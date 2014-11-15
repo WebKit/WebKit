@@ -29,6 +29,7 @@
 #include "InspectorStyleSheet.h"
 
 #include "CSSImportRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -56,7 +57,6 @@
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
-#include "WebKitCSSKeyframesRule.h"
 #include <inspector/ContentSearchUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
@@ -213,8 +213,8 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (is<CSSMediaRule>(*rule))
         return &downcast<CSSMediaRule>(*rule).cssRules();
 
-    if (is<WebKitCSSKeyframesRule>(*rule))
-        return &downcast<WebKitCSSKeyframesRule>(*rule).cssRules();
+    if (is<CSSKeyframesRule>(*rule))
+        return &downcast<CSSKeyframesRule>(*rule).cssRules();
 
     if (is<CSSSupportsRule>(*rule))
         return &downcast<CSSSupportsRule>(*rule).cssRules();

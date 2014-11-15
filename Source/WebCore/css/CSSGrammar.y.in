@@ -805,7 +805,7 @@ keyframes:
         $$ = parser->createKeyframesRule($4, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>>($9)).leakRef();
     }
     ;
-  
+
 keyframe_name: IDENT | STRING ;
 
 keyframes_rule:
@@ -1854,7 +1854,7 @@ min_or_max_function:
         $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
-    } 
+    }
     | min_or_max maybe_space expr_recovery closing_parenthesis {
         $$.id = CSSValueInvalid;
         $$.unit = 0;
@@ -1897,3 +1897,4 @@ error_recovery:
     ;
 
 %%
+

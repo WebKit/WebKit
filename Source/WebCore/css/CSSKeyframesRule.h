@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitCSSKeyframesRule_h
-#define WebKitCSSKeyframesRule_h
+#ifndef CSSKeyframesRule_h
+#define CSSKeyframesRule_h
 
 #include "CSSRule.h"
 #include "StyleRule.h"
@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CSSRuleList;
 class StyleKeyframe;
-class WebKitCSSKeyframeRule;
+class CSSKeyframeRule;
 
 class StyleRuleKeyframes : public StyleRuleBase {
 public:
@@ -65,13 +65,13 @@ private:
     AtomicString m_name;
 };
 
-class WebKitCSSKeyframesRule final : public CSSRule {
+class CSSKeyframesRule final : public CSSRule {
 public:
-    static PassRefPtr<WebKitCSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSKeyframesRule(rule, sheet)); }
+    static PassRefPtr<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSKeyframesRule(rule, sheet)); }
 
-    virtual ~WebKitCSSKeyframesRule();
+    virtual ~CSSKeyframesRule();
 
-    virtual CSSRule::Type type() const override { return WEBKIT_KEYFRAMES_RULE; }
+    virtual CSSRule::Type type() const override { return KEYFRAMES_RULE; }
     virtual String cssText() const override;
     virtual void reattach(StyleRuleBase&) override;
 
@@ -83,22 +83,22 @@ public:
     void insertRule(const String& rule);
     void appendRule(const String& rule);
     void deleteRule(const String& key);
-    WebKitCSSKeyframeRule* findRule(const String& key);
+    CSSKeyframeRule* findRule(const String& key);
 
     // For IndexedGetter and CSSRuleList.
     unsigned length() const;
-    WebKitCSSKeyframeRule* item(unsigned index) const;
+    CSSKeyframeRule* item(unsigned index) const;
 
 private:
-    WebKitCSSKeyframesRule(StyleRuleKeyframes&, CSSStyleSheet* parent);
+    CSSKeyframesRule(StyleRuleKeyframes&, CSSStyleSheet* parent);
 
     Ref<StyleRuleKeyframes> m_keyframesRule;
-    mutable Vector<RefPtr<WebKitCSSKeyframeRule>> m_childRuleCSSOMWrappers;
+    mutable Vector<RefPtr<CSSKeyframeRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(WebKitCSSKeyframesRule, CSSRule::WEBKIT_KEYFRAMES_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSKeyframesRule, CSSRule::KEYFRAMES_RULE)
 
-#endif // WebKitCSSKeyframesRule_h
+#endif // CSSKeyframesRule_h

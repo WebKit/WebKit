@@ -2346,10 +2346,10 @@
     <ClCompile Include="..\css\WebKitCSSFilterValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSKeyframeRule.cpp">
+    <ClCompile Include="..\css\CSSKeyframeRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSKeyframesRule.cpp">
+    <ClCompile Include="..\css\CSSKeyframesRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\WebKitCSSMatrix.cpp">
@@ -6352,10 +6352,10 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSFilterValue.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframeRule.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframesRule.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.cpp">
@@ -9339,10 +9339,10 @@
     <ClInclude Include="..\css\WebKitCSSFilterValue.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSKeyframeRule.h">
+    <ClInclude Include="..\css\CSSKeyframeRule.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSKeyframesRule.h">
+    <ClInclude Include="..\css\CSSKeyframesRule.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSMatrix.h">
@@ -14264,10 +14264,10 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSFilterValue.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframeRule.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCSSKeyframesRule.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.h">

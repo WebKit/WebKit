@@ -89,6 +89,8 @@
 #endif
 #include "JSCSSFontFaceRule.cpp"
 #include "JSCSSImportRule.cpp"
+#include "JSCSSKeyframeRule.cpp"
+#include "JSCSSKeyframesRule.cpp"
 #include "JSCSSMediaRule.cpp"
 #include "JSCSSPageRule.cpp"
 #include "JSCSSPrimitiveValue.cpp"
@@ -495,8 +497,6 @@
 #include "JSVoidCallback.cpp"
 #include "JSWebKitAnimationEvent.cpp"
 #include "JSWebKitCSSFilterValue.cpp"
-#include "JSWebKitCSSKeyframeRule.cpp"
-#include "JSWebKitCSSKeyframesRule.cpp"
 #include "JSWebKitCSSTransformValue.cpp"
 #include "JSWebKitCSSMatrix.cpp"
 #include "JSWebKitCSSRegionRule.cpp"

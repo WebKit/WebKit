@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "WebKitCSSKeyframeRule.h"
+#include "CSSKeyframeRule.h"
 
+#include "CSSKeyframesRule.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
-#include "WebKitCSSKeyframesRule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -59,7 +59,7 @@ void StyleKeyframe::parseKeyString(const String& s, Vector<double>& keys)
     for (size_t i = 0; i < strings.size(); ++i) {
         double key = -1;
         String cur = strings[i].stripWhiteSpace();
-        
+
         // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
         if (cur == "from")
             key = 0;
@@ -68,14 +68,13 @@ void StyleKeyframe::parseKeyString(const String& s, Vector<double>& keys)
         else if (cur.endsWith('%')) {
             double k = cur.substring(0, cur.length() - 1).toDouble();
             if (k >= 0 && k <= 100)
-                key = k/100;
+                key = k / 100;
         }
         if (key < 0) {
             keys.clear();
             return;
         }
-        else
-            keys.append(key);
+        keys.append(key);
     }
 }
 
@@ -92,27 +91,27 @@ String StyleKeyframe::cssText() const
     return result.toString();
 }
 
-WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe& keyframe, WebKitCSSKeyframesRule* parent)
+CSSKeyframeRule::CSSKeyframeRule(StyleKeyframe& keyframe, CSSKeyframesRule* parent)
     : CSSRule(0)
     , m_keyframe(keyframe)
 {
     setParentRule(parent);
 }
 
-WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
+CSSKeyframeRule::~CSSKeyframeRule()
 {
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->clearParentRule();
 }
 
-CSSStyleDeclaration& WebKitCSSKeyframeRule::style()
+CSSStyleDeclaration& CSSKeyframeRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->mutableProperties(), *this);
     return *m_propertiesCSSOMWrapper;
 }
 
-void WebKitCSSKeyframeRule::reattach(StyleRuleBase&)
+void CSSKeyframeRule::reattach(StyleRuleBase&)
 {
     // No need to reattach, the underlying data is shareable on mutation.
     ASSERT_NOT_REACHED();

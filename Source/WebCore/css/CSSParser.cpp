@@ -43,6 +43,8 @@
 #include "CSSImageValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
@@ -80,8 +82,6 @@
 #include "StyleSheetContents.h"
 #include "TextEncoding.h"
 #include "WebKitCSSFilterValue.h"
-#include "WebKitCSSKeyframeRule.h"
-#include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
 #include "WebKitCSSTransformValue.h"
 #include <bitset>
