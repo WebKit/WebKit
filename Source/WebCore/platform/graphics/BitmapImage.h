@@ -283,14 +283,7 @@ protected:
 #endif
 
 private:
-    virtual bool decodedDataIsPurgeable() const override
-    {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-        return true;
-#else
-        return false;
-#endif
-    }
+    virtual bool decodedDataIsPurgeable() const override;
 
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).

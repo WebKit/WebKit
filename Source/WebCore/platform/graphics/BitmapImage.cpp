@@ -83,6 +83,13 @@ BitmapImage::~BitmapImage()
     stopAnimation();
 }
 
+#if !USE(CG)
+bool BitmapImage::decodedDataIsPurgeable() const
+{
+    return false;
+}
+#endif
+
 bool BitmapImage::haveFrameAtIndex(size_t index)
 {
     if (index >= frameCount())

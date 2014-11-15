@@ -133,6 +133,7 @@ EXTERN_C bool CGFontIsFixedPitch(CGFontRef);
 EXTERN_C void CGFontSetShouldUseMulticache(bool);
 
 EXTERN_C void CGImageSetCachingFlags(CGImageRef, CGImageCachingFlags);
+EXTERN_C CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
 
 #if PLATFORM(COCOA)
 EXTERN_C CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);

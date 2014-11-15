@@ -1,3 +1,26 @@
+2014-11-14  Andreas Kling  <akling@apple.com>
+
+        [mac] Only images that are actually purgeable should be advertised as such.
+        <https://webkit.org/b/138759>
+        <rdar://problem/13205438>
+
+        Reviewed by Tim Horton.
+
+        Instead of saying that all images on >=Yosemite are purgeable, have BitmapImage
+        forward the question to CGImage for the correct answer.
+
+        The memory may be marked non-volatile by frameworks underneath WebKit at any
+        given time, but that's not something we need to worry about.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::decodedDataIsPurgeable):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::decodedDataIsPurgeable):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/spi/cg/CoreGraphicsSPI.h:
+
 2014-11-14  Zalan Bujtas  <zalan@apple.com>
 
         Remove computeTextPaintStyle's RenderText dependency.
