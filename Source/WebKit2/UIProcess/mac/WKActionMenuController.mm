@@ -45,6 +45,7 @@
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/LookupSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
@@ -756,6 +757,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     SEL selector = nullptr;
     NSString *title = nil;
     NSImage *image = nil;
+    bool enabled = true;
 
     switch (tag) {
     case kWKContextActionItemTagOpenLinkInDefaultBrowser:
@@ -811,6 +813,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_lookupText:);
         title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
+        enabled = getLULookupDefinitionModuleClass();
         break;
 
     case kWKContextActionItemTagPaste:
@@ -850,6 +853,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     [item setImage:image];
     [item setTarget:self];
     [item setTag:tag];
+    [item setEnabled:enabled];
     return item;
 }
 

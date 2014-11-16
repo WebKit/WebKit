@@ -769,7 +769,7 @@ void WebPageProxy::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultip
     process().send(Messages::WebPage::SetAssistedNodeSelectedIndex(index, allowMultipleSelection), m_pageID);
 }
 
-void WebPageProxy::didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&)
+void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo&)
 {
     notImplemented();
 }

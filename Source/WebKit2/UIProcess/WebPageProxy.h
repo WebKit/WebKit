@@ -1174,7 +1174,7 @@ private:
     void searchTheWeb(const String&);
 
     // Dictionary.
-    void didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&);
+    void didPerformDictionaryLookup(const DictionaryPopupInfo&);
 #endif
 
     // Spelling and grammar.
