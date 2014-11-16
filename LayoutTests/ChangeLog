@@ -1,3 +1,14 @@
+2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose the footer element as ATK_ROLE_FOOTER
+        https://bugs.webkit.org/show_bug.cgi?id=138773
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/roles-exposed.html: Unskip the footer element test for GTK and EFL
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated expectations
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated expectations
+
 2014-11-14  Dean Jackson  <dino@apple.com>
 
         Rename WebKitCSSKeyframe(s)Rule into CSSKeyframe(s)Rule

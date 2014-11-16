@@ -1,3 +1,17 @@
+2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose the footer element as ATK_ROLE_FOOTER
+        https://bugs.webkit.org/show_bug.cgi?id=138773
+
+        Reviewed by Chris Fleizach.
+
+        Map FooterRole to ATK_ROLE_FOOTER.
+
+        No new tests. Unskipped a test that verifies this mapping.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2014-11-14  Dean Jackson  <dino@apple.com>
 
         Rename WebKitCSSKeyframe(s)Rule into CSSKeyframe(s)Rule

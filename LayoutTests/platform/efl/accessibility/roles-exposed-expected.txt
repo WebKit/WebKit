@@ -40,6 +40,9 @@ fieldset
 legend
       AXRole: AXLabel
       
+footer
+      AXRole: AXFooter
+      
 form
       AXRole: AXForm
       

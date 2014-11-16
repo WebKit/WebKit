@@ -701,6 +701,8 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_LABEL;
     case DivRole:
         return ATK_ROLE_SECTION;
+    case FooterRole:
+        return ATK_ROLE_FOOTER;
     case FormRole:
         return ATK_ROLE_FORM;
     case CanvasRole:
