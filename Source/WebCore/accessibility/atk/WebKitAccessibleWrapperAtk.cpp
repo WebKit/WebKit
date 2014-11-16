@@ -587,7 +587,13 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case UnknownRole:
         return ATK_ROLE_UNKNOWN;
     case AudioRole:
+#if ATK_CHECK_VERSION(2, 11, 3)
+        return ATK_ROLE_AUDIO;
+#endif
     case VideoRole:
+#if ATK_CHECK_VERSION(2, 11, 3)
+        return ATK_ROLE_VIDEO;
+#endif
         return ATK_ROLE_EMBEDDED;
     case ButtonRole:
         return ATK_ROLE_PUSH_BUTTON;

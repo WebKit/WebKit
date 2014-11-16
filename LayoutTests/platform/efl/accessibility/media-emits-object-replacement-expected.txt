@@ -4,14 +4,14 @@ a  b
 End of test
 AXRole: AXWebArea 
     AXRole: AXSection AXValue: a <obj> b
-        AXRole: AXEmbedded 
+        AXRole: AXVideo 
             AXRole: AXToolbar 
                 AXRole: AXToolbar 
                     AXRole: AXButton 
                     AXRole: AXSlider 
     AXRole: AXGroup AXValue: <\n>
     AXRole: AXSection AXValue: a <obj> b
-        AXRole: AXEmbedded 
+        AXRole: AXAudio 
             AXRole: AXToolbar 
                 AXRole: AXToolbar 
                     AXRole: AXButton 

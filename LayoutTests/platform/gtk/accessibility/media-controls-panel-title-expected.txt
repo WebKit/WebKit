@@ -6,11 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS mainBlock.role is 'AXRole: AXGroup'
 PASS mainBlock.title is 'AXTitle: '
-PASS element.role is 'AXRole: AXEmbedded'
+PASS element.role is 'AXRole: AXVideo'
 PASS element.title is 'AXTitle: '
 PASS element.role is 'AXRole: AXToolbar'
 PASS element.title is 'AXTitle: Video Playback'
-PASS element.role is 'AXRole: AXEmbedded'
+PASS element.role is 'AXRole: AXAudio'
 PASS element.title is 'AXTitle: '
 PASS element.role is 'AXRole: AXToolbar'
 PASS element.title is 'AXTitle: Audio Playback'

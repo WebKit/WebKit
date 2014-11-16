@@ -19,7 +19,7 @@ if (window.accessibilityController) {
 
     // Video element.
     var element = mainBlock.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: AXEmbedded'");
+    shouldBe("element.role", "'AXRole: AXVideo'");
     shouldBe("element.title", "'AXTitle: '");
     element = element.childAtIndex(0);
     shouldBe("element.role", "'AXRole: AXToolbar'");
@@ -27,7 +27,7 @@ if (window.accessibilityController) {
 
     // Audio element.
     element = mainBlock.childAtIndex(1);
-    shouldBe("element.role", "'AXRole: AXEmbedded'");
+    shouldBe("element.role", "'AXRole: AXAudio'");
     shouldBe("element.title", "'AXTitle: '");
     element = element.childAtIndex(0);
     shouldBe("element.role", "'AXRole: AXToolbar'");

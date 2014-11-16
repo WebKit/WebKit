@@ -1,3 +1,14 @@
+2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Video and audio elements should be exposed using ATK's video and audio roles.
+        https://bugs.webkit.org/show_bug.cgi?id=138767
+
+        Reviewed by Chris Fleizach.
+
+        Add mappings for ATK_ROLE_AUDIO and ATK_ROLE_VIDEO to roleToString().
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2014-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         Add shortcut macros to Mac TestExpectations

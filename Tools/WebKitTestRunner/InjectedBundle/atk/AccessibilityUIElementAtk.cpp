@@ -454,6 +454,8 @@ const gchar* roleToString(AtkObject* object)
 #if ATK_CHECK_VERSION(2, 11, 3)
     case ATK_ROLE_ARTICLE:
         return "AXArticle";
+    case ATK_ROLE_AUDIO:
+        return "AXAudio";
     case ATK_ROLE_DEFINITION:
         return "AXDefinition";
     case ATK_ROLE_LOG:
@@ -464,6 +466,8 @@ const gchar* roleToString(AtkObject* object)
         return "AXMath";
     case ATK_ROLE_TIMER:
         return "AXTimer";
+    case ATK_ROLE_VIDEO:
+        return "AXVideo";
 #endif
 #if ATK_CHECK_VERSION(2, 11, 4)
     case ATK_ROLE_DESCRIPTION_LIST:
