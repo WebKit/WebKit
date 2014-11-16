@@ -1,3 +1,17 @@
+2014-11-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose the blockquote element using ATK_ROLE_BLOCK_QUOTE
+        https://bugs.webkit.org/show_bug.cgi?id=138771
+
+        Reviewed by Chris Fleizach.
+
+        Updated the expectations for GTK and EFL as there is a new role
+        being used. The Mac expectations were not updated because the
+        new role on that platform continues to be to AXGroup.
+
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'alt' CSS property to inherit or initial

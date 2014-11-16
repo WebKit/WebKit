@@ -705,6 +705,10 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case LabelRole:
     case LegendRole:
         return ATK_ROLE_LABEL;
+    case BlockquoteRole:
+#if ATK_CHECK_VERSION(2, 11, 3)
+        return ATK_ROLE_BLOCK_QUOTE;
+#endif
     case DivRole:
         return ATK_ROLE_SECTION;
     case FooterRole:

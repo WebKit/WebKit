@@ -319,6 +319,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
         return TextAreaRole;
     if (headingLevel())
         return HeadingRole;
+    if (node()->hasTagName(blockquoteTag))
+        return BlockquoteRole;
     if (node()->hasTagName(divTag))
         return DivRole;
     if (node()->hasTagName(pTag))

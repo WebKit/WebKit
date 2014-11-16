@@ -1,3 +1,14 @@
+2014-11-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose the blockquote element using ATK_ROLE_BLOCK_QUOTE
+        https://bugs.webkit.org/show_bug.cgi?id=138771
+
+        Reviewed by Chris Fleizach.
+
+        Add mapping for ATK_ROLE_BLOCK_QUOTE in roleToString()
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Video and audio elements should be exposed using ATK's video and audio roles.

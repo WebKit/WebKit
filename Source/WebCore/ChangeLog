@@ -1,3 +1,29 @@
+2014-11-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Expose the blockquote element using ATK_ROLE_BLOCK_QUOTE
+        https://bugs.webkit.org/show_bug.cgi?id=138771
+
+        Reviewed by Chris Fleizach.
+
+        Add BlockquoteRole and assigns it to blockquote elements. Make
+        corresponding changes to platform role mappings: ATK_ROLE_BLOCK_QUOTE
+        for GTK and EFL; AXGroup (which was being used already) for the Mac.
+
+        No new tests are required. Instead, updated the existing expectations
+        to reflect the new mapping.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isBlockquote):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'alt' CSS property to inherit or initial

@@ -456,6 +456,8 @@ const gchar* roleToString(AtkObject* object)
         return "AXArticle";
     case ATK_ROLE_AUDIO:
         return "AXAudio";
+    case ATK_ROLE_BLOCK_QUOTE:
+        return "AXBlockquote";
     case ATK_ROLE_DEFINITION:
         return "AXDefinition";
     case ATK_ROLE_LOG:

@@ -1943,7 +1943,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { MathElementRole, NSAccessibilityGroupRole },
         { AudioRole, NSAccessibilityGroupRole },
         { VideoRole, NSAccessibilityGroupRole },
-        { HorizontalRuleRole, NSAccessibilitySplitterRole }
+        { HorizontalRuleRole, NSAccessibilitySplitterRole },
+        { BlockquoteRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

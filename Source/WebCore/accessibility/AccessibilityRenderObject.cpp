@@ -2611,6 +2611,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(addressTag))
         return LandmarkContentInfoRole;
 
+    if (node && node->hasTagName(blockquoteTag))
+        return BlockquoteRole;
+
 #if ENABLE(VIDEO)
     if (is<HTMLVideoElement>(node))
         return VideoRole;

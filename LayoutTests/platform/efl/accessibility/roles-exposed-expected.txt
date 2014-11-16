@@ -17,7 +17,7 @@ aside
       AXRole: AXLandmarkComplementary
       
 blockquote
-      AXRole: AXGroup
+      AXRole: AXBlockquote
       
 button
       AXRole: AXButton

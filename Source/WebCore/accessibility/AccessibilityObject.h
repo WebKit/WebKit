@@ -102,6 +102,7 @@ enum AccessibilityRole {
     ApplicationStatusRole,
     ApplicationTimerRole,
     AudioRole,
+    BlockquoteRole,
     BrowserRole,
     BusyIndicatorRole,
     ButtonRole,
