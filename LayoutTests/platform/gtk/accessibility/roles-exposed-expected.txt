@@ -164,7 +164,7 @@ select:not([multiple])
       AXRole: AXComboBox
       
 select[multiple]
-      AXRole: AXList
+      AXRole: AXListBox
       
 option
       AXRole: AXListItem

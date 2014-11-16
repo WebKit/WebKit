@@ -1,5 +1,17 @@
 2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] Lists with selectable children should have ATK_ROLE_LIST_BOX
+        https://bugs.webkit.org/show_bug.cgi?id=127060
+
+        Reviewed by Chris Fleizach.
+
+        Updated the expectations to reflect the corrected role.
+
+        * platform/efl/accessibility/roles-exposed-expected.txt: updated
+        * platform/gtk/accessibility/roles-exposed-expected.txt: updated
+
+2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] Video and audio elements should be exposed using ATK's video and audio roles.
         https://bugs.webkit.org/show_bug.cgi?id=138767
 

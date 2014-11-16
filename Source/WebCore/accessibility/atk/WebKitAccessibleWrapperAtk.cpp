@@ -695,7 +695,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case HeadingRole:
         return ATK_ROLE_HEADING;
     case ListBoxRole:
-        return ATK_ROLE_LIST;
+        return ATK_ROLE_LIST_BOX;
     case ListItemRole:
         return coreObject->inheritsPresentationalRole() ? ATK_ROLE_SECTION : ATK_ROLE_LIST_ITEM;
     case ListBoxOptionRole:
