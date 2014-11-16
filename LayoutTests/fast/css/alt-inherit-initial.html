@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.parent {
+  alt: "TestAlt";
+}
+</style>
+</head>
+<body>
+<div id="parentDiv" class="parent">
+<div id="testDiv"></div>
+</div>
+
+<script>
+description("Tests inherit and initial on 'alt' CSS property.");
+
+var parentDiv = document.getElementById("parentDiv");
+var testDiv = document.getElementById("testDiv");
+shouldBeEmptyString("parentDiv.style['alt']", "");
+shouldBeEqualToString("window.getComputedStyle(parentDiv).getPropertyValue('alt')", "TestAlt");
+shouldBeEmptyString("testDiv.style['alt']");
+
+// Inherit.
+evalAndLog("testDiv.style['alt'] = 'inherit'");
+shouldBeEqualToString("testDiv.style['alt']", "inherit");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')", "TestAlt");
+
+// Initial.
+evalAndLog("testDiv.style['alt'] = 'initial'");
+shouldBeEqualToString("testDiv.style['alt']", "initial");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')", "''");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -2238,6 +2238,15 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
     case CSSPropertyAlt:
         {
+            if (isInherit) {
+                state.style()->setContentAltText(state.parentStyle()->contentAltText());
+                return;
+            }
+            if (isInitial) {
+                state.style()->setContentAltText(emptyAtom);
+                return;
+            }
+            ASSERT(primitiveValue);
             bool didSet = false;
             if (primitiveValue->isString()) {
                 state.style()->setContentAltText(primitiveValue->getStringValue().impl());

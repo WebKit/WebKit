@@ -1,3 +1,17 @@
+2014-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'alt' CSS property to inherit or initial
+        https://bugs.webkit.org/show_bug.cgi?id=138774
+        <rdar://problem/18995409>
+
+        Reviewed by Chris Fleizach.
+
+        Add a layout test to verify that setting the 'alt' CSS property to
+        inherit / initial is not crashing and working as intended.
+
+        * fast/css/alt-inherit-initial-expected.txt: Added.
+        * fast/css/alt-inherit-initial.html: Added.
+
 2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Lists with selectable children should have ATK_ROLE_LIST_BOX

@@ -1,3 +1,25 @@
+2014-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'alt' CSS property to inherit or initial
+        https://bugs.webkit.org/show_bug.cgi?id=138774
+        <rdar://problem/18995409>
+
+        Reviewed by Chris Fleizach.
+
+        The StyleResolver was not handling 'inherit' or 'initial' values for
+        'alt' CSS property. As a result, the code was assuming the CSSValue
+        was a CSSPrimitiveValue (although it could be a CSSInitialValue or
+        a CSSInheritValue). In such case, the code would dereference a null
+        pointer because primitiveValue is initialized using:
+        CSSPrimitiveValue* primitiveValue = is<CSSPrimitiveValue>(*value)
+            ? downcast<CSSPrimitiveValue>(value)
+            : nullptr;
+
+        Test: fast/css/alt-inherit-initial.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2014-11-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Lists with selectable children should have ATK_ROLE_LIST_BOX
