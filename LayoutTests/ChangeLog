@@ -1,5 +1,12 @@
 2014-11-17  Alexey Proskuryakov  <ap@apple.com>
 
+        media/track/track-in-band-cues-added-once.html fails sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=138806
+
+        * platform/mac/TestExpectations: Marked as flaky.
+
+2014-11-17  Alexey Proskuryakov  <ap@apple.com>
+
         fast/multicol/newmulticol/spanner-crash.html still crashes sometimes
         https://bugs.webkit.org/show_bug.cgi?id=137316
 

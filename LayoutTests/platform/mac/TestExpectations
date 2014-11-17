@@ -1326,8 +1326,7 @@ webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html
 [ Yosemite ] fast/frames/flattening/iframe-flattening-fixed-width.html [ Pass Failure ]
 [ Yosemite ] fast/frames/flattening/iframe-flattening-simple.html [ Pass Failure ]
 
-# Passes on Yosemite.
-webkit.org/b/123498 [ Yosemite ] media/track/track-in-band-cues-added-once.html [ Pass ]
+webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16696298>)
 [ Yosemite ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
