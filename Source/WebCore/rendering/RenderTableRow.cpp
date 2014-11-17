@@ -195,18 +195,17 @@ void RenderTableRow::layout()
 LayoutRect RenderTableRow::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     ASSERT(parent());
-
-    if (repaintContainer == this)
-        return RenderBox::clippedOverflowRectForRepaint(repaintContainer);
-
-    // For now, just repaint the whole table.
-    // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
-    // might have propagated a background color into.
-    // FIXME: do repaintContainer checks here
-    if (RenderTable* parentTable = table())
-        return parentTable->clippedOverflowRectForRepaint(repaintContainer);
-
-    return LayoutRect();
+    
+    // Rows and cells are in the same coordinate space. We need to both compute our overflow rect (which
+    // will accommodate a row outline and any visual effects on the row itself), but we also need to add in
+    // the repaint rects of cells.
+    LayoutRect result = RenderBox::clippedOverflowRectForRepaint(repaintContainer);
+    for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
+        // Even if a cell is a repaint container, it's the row that paints the background behind it.
+        // So we don't care if a cell is a repaintContainer here.
+        result.uniteIfNonZero(cell->clippedOverflowRectForRepaint(repaintContainer));
+    }
+    return result;
 }
 
 // Hit Testing

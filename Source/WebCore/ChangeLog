@@ -1,3 +1,18 @@
+2014-11-11  David Hyatt  <hyatt@apple.com>
+
+        Table rows repaint entire table when their background color changes.
+        https://bugs.webkit.org/show_bug.cgi?id=26662
+
+        Reviewed by Simon Fraser.
+
+        Added fast/repaint/table-row-repaint.html
+
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        Improve table row's function to unite with the cell rects that can possibly
+        have the the row's background color painted behind them.
+
 2014-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use GMainLoopSource for request timeout in ResourceHandle

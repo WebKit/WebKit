@@ -1,3 +1,16 @@
+2014-11-11  David Hyatt  <hyatt@apple.com>
+
+        Table rows repaint entire table when their background color changes.
+        https://bugs.webkit.org/show_bug.cgi?id=26662
+
+        Reviewed by Simon Fraser.
+
+        Added fast/repaint/table-row-repaint.html
+
+        * fast/repaint/table-row-repaint-expected.txt: Added.
+        * fast/repaint/table-row-repaint.html: Added.
+        * platform/mac/accessibility/table-detection-expected.txt:
+
 2014-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION (r172826): Password field placeholder text is missing if

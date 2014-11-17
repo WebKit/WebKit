@@ -216,6 +216,9 @@ public:
         return !table()->cellAfter(this) || !table()->cellBefore(this);
     }
 #endif
+    
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void computePreferredLogicalWidths() override;
@@ -235,7 +238,6 @@ private:
     virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const override;
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
     virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const override;
 
     int borderHalfLeft(bool outer) const;

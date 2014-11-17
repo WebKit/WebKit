@@ -725,7 +725,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXRows: <array of size 24>
-AXVisibleRows: <array of size 24>
+AXVisibleRows: <array of size 13>
 AXColumns: <array of size 1>
 AXVisibleColumns: <array of size 1>
 AXVisibleCells: <array of size 24>
