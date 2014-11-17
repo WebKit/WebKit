@@ -44,6 +44,7 @@ interface HTMLAnchorElement : HTMLElement {
     readonly attribute DOMString port;
     readonly attribute DOMString protocol;
     readonly attribute DOMString search;
+    readonly attribute DOMString text;
 #else
     [TreatNullAs=NullString] attribute DOMString hash;
     [TreatNullAs=NullString] attribute DOMString host;
@@ -52,11 +53,9 @@ interface HTMLAnchorElement : HTMLElement {
     [TreatNullAs=NullString] attribute DOMString port;
     [TreatNullAs=NullString] attribute DOMString protocol;
     [TreatNullAs=NullString] attribute DOMString search;
-
     [TreatNullAs=NullString] readonly attribute DOMString origin;
+    [SetterRaisesException]  attribute DOMString text;
 #endif
-
-    readonly attribute DOMString text;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();

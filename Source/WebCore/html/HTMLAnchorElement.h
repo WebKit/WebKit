@@ -91,6 +91,7 @@ public:
     String origin() const;
 
     String text();
+    void setText(const String&, ExceptionCode&);
 
     String toString() const;
 

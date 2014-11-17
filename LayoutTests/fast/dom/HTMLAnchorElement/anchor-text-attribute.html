@@ -1,0 +1,33 @@
+<!DOCTYPE html>	
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests for HTMLAnchorElement text attribute.");
+
+var a = document.createElement("a");
+	
+shouldBeEqualToString("a.textContent", "");	
+shouldBeEqualToString("a.text", "");
+
+a.textContent = "text1";
+	
+shouldBeEqualToString("a.textContent", "text1");
+shouldBeEqualToString("a.text", "text1");
+	
+a.text = "text2";
+	
+shouldBeEqualToString("a.textContent", "text2");
+shouldBeEqualToString("a.text", "text2");
+
+var div = document.createElement('div');
+div.innerHTML = '<a>a<br>b</a>';
+var a = div.firstChild;
+shouldBeEqualToString('a.text', 'ab');
+shouldBeEqualToString('a.textContent', 'ab');
+	
+</script>	
+</body>	
+</html>
