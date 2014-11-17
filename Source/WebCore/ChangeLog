@@ -1,3 +1,21 @@
+2014-11-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] REGRESSION(r166288): Accessible values are no longer accessible via AT-SPI2
+        https://bugs.webkit.org/show_bug.cgi?id=138776
+
+        Reviewed by Chris Fleizach.
+
+        r166288 used #if...#else instead of #if...#endif, thus disabling the old
+        AtkValue support. Unfortunately AT-SPI2 doesn't yet have support for the
+        new AtkValue API. Thus r166288 broke access to value-holding elements for
+        AT-SPI2 assistive technologies. Replacing #else with #endif fixes things.
+
+        No new tests because catching this regression would require AT-SPI2.
+
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueGetMinimumIncrement):
+        (webkitAccessibleValueInterfaceInit):
+
 2014-11-11  David Hyatt  <hyatt@apple.com>
 
         Table rows repaint entire table when their background color changes.

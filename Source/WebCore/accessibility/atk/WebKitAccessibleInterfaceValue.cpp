@@ -114,7 +114,7 @@ static AtkRange* webkitAccessibleGetRange(AtkValue* value)
     gchar* valueDescription = g_strdup_printf("%s", coreObject->valueDescription().utf8().data());
     return atk_range_new(minValue, maxValue, valueDescription);
 }
-#else
+#endif
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     g_return_if_fail(ATK_VALUE(value));
@@ -184,7 +184,6 @@ static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gV
     AccessibilityObject* coreObject = core(value);
     g_value_set_float(gValue, webkitAccessibleGetIncrementValue(coreObject));
 }
-#endif
 
 void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)
 {
@@ -193,13 +192,12 @@ void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)
     iface->get_increment = webkitAccessibleGetIncrement;
     iface->set_value = webkitAccessibleSetValue;
     iface->get_range = webkitAccessibleGetRange;
-#else
+#endif
     iface->get_current_value = webkitAccessibleValueGetCurrentValue;
     iface->get_maximum_value = webkitAccessibleValueGetMaximumValue;
     iface->get_minimum_value = webkitAccessibleValueGetMinimumValue;
     iface->set_current_value = webkitAccessibleValueSetCurrentValue;
     iface->get_minimum_increment = webkitAccessibleValueGetMinimumIncrement;
-#endif
 }
 
 #endif
