@@ -29,13 +29,13 @@
 #if PLATFORM(IOS)
 
 #import "Logging.h"
+#import "MPAVRoutingControllerSPI.h"
 #import "MediaPlayer.h"
 #import "MediaSession.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
-#import <MediaPlayer/MPAVRoutingController.h>
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPNowPlayingInfoCenter.h>
 #import <MediaPlayer/MPVolumeView.h>

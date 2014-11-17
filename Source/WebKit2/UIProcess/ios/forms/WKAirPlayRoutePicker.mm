@@ -32,9 +32,9 @@
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import <MediaPlayer/MPAVItem.h>
-#import <MediaPlayer/MPAVRoutingController.h>
-#import <MediaPlayer/MPAudioVideoRoutingPopoverController.h>
 #import <MediaPlayer/MPAudioVideoRoutingActionSheet.h>
+#import <MediaPlayer/MPAudioVideoRoutingPopoverController.h>
+#import <WebCore/MPAVRoutingControllerSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIWindow_Private.h>

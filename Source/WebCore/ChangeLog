@@ -1,5 +1,23 @@
 2014-11-17  Daniel Bates  <dabates@apple.com>
 
+        [iOS] AVKit and MediaPlayer SPI are not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138756
+
+        Reviewed by Eric Carlson.
+
+        Add a SPI wrapper headers {AVKit, MPAVRoutingController}SPI.h that forward declares
+        AVKit and MPAVRoutingController SPI, respectively, and use these header instead of
+        including private headers of AVKit and MediaPlayer directly.
+
+        * WebCore.xcodeproj/project.pbxproj: Add project and private header AVKitSPI.h
+        and MPAVRoutingControllerSPI.h, respectively.
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Include header MPAVRoutingControllerSPI.h
+        instead of including the private header MPAVRoutingController.h.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Include header AVKitSPI.h
+        instead of including AVKit headers directly.
+
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the Mac build after <https://trac.webkit.org/changeset/176204>
         (https://bugs.webkit.org/show_bug.cgi?id=138751)
 
