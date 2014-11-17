@@ -142,6 +142,8 @@ CGSConnectionID CGSMainConnectionID(void);
 CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *rect);
 };
 
+SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -326,7 +328,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:NSApp];
 
-    if (canDisableLookupIndicator())
+    if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
 
     WebContext::statistics().wkViewCount--;
@@ -3574,7 +3576,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate:) name:NSApplicationWillTerminateNotification object:NSApp];
 
-    if (canDisableLookupIndicator())
+    if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
