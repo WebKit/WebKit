@@ -182,18 +182,6 @@ class PatchAnalysisTask(object):
         second_failing_tests = [] if not second else second.failing_tests()
         return first_failing_tests != second_failing_tests
 
-    def _continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(self, results, results_archive, script_error):
-        self._build_and_test_without_patch()
-
-        # If we've made it here, then many (500) tests are failing with the patch applied, but
-        # if the clean tree is also failing many tests, even if it's not quite as many (495),
-        # then we can't be certain that the discrepancy isn't due to flakiness, and hence we must
-        # defer judgement.
-        if (len(results.failing_tests()) - len(self._delegate.test_results().failing_tests())) <= 5:
-            return False
-
-        return self.report_failure(results_archive, results, script_error)
-
     def _should_defer_patch_or_throw(self, failures_with_patch, results_archive_for_failures_with_patch, script_error, failure_id):
         self._build_and_test_without_patch()
         clean_tree_results = self._delegate.test_results()
@@ -223,10 +211,7 @@ class PatchAnalysisTask(object):
         first_script_error = self._script_error
         first_failure_status_id = self.failure_status_id
 
-        if first_results.did_exceed_test_failure_limit():
-            return self._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(first_results, first_results_archive, first_script_error)
-
-        if self._test():
+        if self._test() and not first_results.did_exceed_test_failure_limit():
             # Only report flaky tests if we were successful at parsing results.json and archiving results.
             if first_results and first_results_archive:
                 self._report_flaky_tests(first_results.failing_test_results(), first_results_archive)
@@ -237,8 +222,24 @@ class PatchAnalysisTask(object):
         second_script_error = self._script_error
         second_failure_status_id = self.failure_status_id
 
+        if second_results.did_exceed_test_failure_limit() and first_results.did_exceed_test_failure_limit():
+            self._build_and_test_without_patch()
+            clean_tree_results = self._delegate.test_results()
+
+            if (len(first_results.failing_tests()) - len(clean_tree_results.failing_tests())) <= 5:
+                return False
+
+            self.failure_status_id = first_failure_status_id
+
+            return self.report_failure(first_results_archive, first_results, first_script_error)
+
         if second_results.did_exceed_test_failure_limit():
-            return self._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try(second_results, second_results_archive, second_script_error)
+            self._should_defer_patch_or_throw(first_results.failing_test_results(), first_results_archive, first_script_error, first_failure_status_id)
+            return False
+
+        if first_results.did_exceed_test_failure_limit():
+            self._should_defer_patch_or_throw(second_results.failing_test_results(), second_results_archive, second_script_error, second_failure_status_id)
+            return False
 
         if self._results_failed_different_tests(first_results, second_results):
             first_failing_results_set = frozenset(first_results.failing_test_results())

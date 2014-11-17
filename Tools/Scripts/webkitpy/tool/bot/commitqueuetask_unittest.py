@@ -159,6 +159,9 @@ class GoldenScriptError(ScriptError):
     pass
 
 
+_lots_of_failing_tests = map(lambda num: "test-%s.html" % num, range(0, 100))
+
+
 class CommitQueueTaskTest(unittest.TestCase):
     def _run_and_expect_patch_analysis_result(self, commit_queue, expected_analysis_result, expected_reported_flaky_tests=[], expect_clean_tests_to_run=False, expected_failure_status_id=0):
         tool = MockTool(log_executive=True)
@@ -398,12 +401,63 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
 
         self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.PASS, expect_clean_tests_to_run=True)
 
-    def test_very_red_tree_retry(self):
-        lots_of_failing_tests = map(lambda num: "test-%s.html" % num, range(0, 100))
+    def test_first_failure_limit(self):
         commit_queue = MockSimpleTestPlanCommitQueue(
-            first_test_failures=lots_of_failing_tests,
-            second_test_failures=lots_of_failing_tests,
-            clean_test_failures=lots_of_failing_tests)
+            first_test_failures=_lots_of_failing_tests,
+            second_test_failures=[],
+            clean_test_failures=[])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_failure_status_id=1)
+
+    def test_first_failure_limit_with_some_tree_redness(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=_lots_of_failing_tests,
+            second_test_failures=["Fail1", "Fail2", "Fail3"],
+            clean_test_failures=["Fail1", "Fail2", "Fail3"])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_failure_status_id=1)
+
+    def test_second_failure_limit(self):
+        # There need to be some failures in the first set of tests, or it won't even make it to the second test.
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1", "Fail2", "Fail3"],
+            second_test_failures=_lots_of_failing_tests,
+            clean_test_failures=["Fail1", "Fail2", "Fail3"])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True, expected_failure_status_id=2)
+
+    def test_tree_failure_limit_with_patch_that_potentially_fixes_some_redness(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=["Fail1", "Fail2", "Fail3"],
+            second_test_failures=["Fail1", "Fail2", "Fail3"],
+            clean_test_failures=_lots_of_failing_tests)
+
+        # Unfortunately there are cases where the clean build will randomly fail enough tests to hit the failure limit.
+        # With that in mind, we can't actually know that this patch is good or bad until we see a clean run that doesn't
+        # exceed the failure limit.
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True)
+
+    def test_first_and_second_failure_limit(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=_lots_of_failing_tests,
+            second_test_failures=_lots_of_failing_tests,
+            clean_test_failures=[])
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.FAIL, expect_clean_tests_to_run=True, expected_failure_status_id=1)
+
+    def test_first_and_clean_failure_limit(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=_lots_of_failing_tests,
+            second_test_failures=[],
+            clean_test_failures=_lots_of_failing_tests)
+
+        self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True)
+
+    def test_first_second_and_clean_failure_limit(self):
+        commit_queue = MockSimpleTestPlanCommitQueue(
+            first_test_failures=_lots_of_failing_tests,
+            second_test_failures=_lots_of_failing_tests,
+            clean_test_failures=_lots_of_failing_tests)
 
         self._run_and_expect_patch_analysis_result(commit_queue, PatchAnalysisResult.DEFER, expect_clean_tests_to_run=True)
 

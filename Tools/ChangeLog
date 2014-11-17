@@ -1,3 +1,29 @@
+2014-11-17  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Having 30+ flaky failures breaks EWS
+        https://bugs.webkit.org/show_bug.cgi?id=138743
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds tests to ensure that the problem has been solved.
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (test_first_failure_limit):
+        (test_first_failure_limit_with_some_tree_redness):
+        (test_second_failure_limit):
+        (test_tree_failure_limit_with_patch_that_potentially_fixes_some_redness):
+        (test_first_and_second_failure_limit):
+        (test_first_and_clean_failure_limit):
+        (test_first_second_and_clean_failure_limit):
+        (test_very_red_tree_retry): Deleted.
+        Really this was renamed to test_first_second_and_clean_failure_limit.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        Makes the appropriate changes to PatchAnalysisTask to make sure that
+        even when the first test run hits the failure limit, it will still try
+        a second run.
+        (PatchAnalysisTask._results_failed_different_tests):
+        (PatchAnalysisTask._test_patch):
+        (PatchAnalysisTask._continue_testing_patch_that_exceeded_failure_limit_on_first_or_second_try): Deleted.
+
 2014-11-17  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Add library search paths from LDFLAGS before pkg-config --libs
