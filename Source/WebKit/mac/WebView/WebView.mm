@@ -230,13 +230,12 @@
 #import "WebUIKitSupport.h"
 #import "WebVisiblePosition.h"
 #import <CFNetwork/CFURLCachePriv.h>
-#import <WebCore/DispatchSPI.h>
+#import <MobileGestalt.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/IconController.h>
 #import <WebCore/LegacyTileCache.h>
-#import <WebCore/MobileGestaltSPI.h>
 #import <WebCore/NetworkStateNotifier.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
@@ -250,6 +249,7 @@
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
+#import <dispatch/private.h>
 #import <wtf/FastMalloc.h>
 #endif // !PLATFORM(IOS)
 

@@ -1,5 +1,18 @@
 2014-11-17  Daniel Bates  <dabates@apple.com>
 
+        Unreviewed, rolling out r176232.
+
+        Broke the Mac build. Will investigate offline.
+
+        Reverted changeset:
+
+        "[iOS] Libdispatch, Dyld, IOKit, Mach, NSPointerFunctions,
+        MobileGestalt"
+        https://bugs.webkit.org/show_bug.cgi?id=138802
+        http://trac.webkit.org/changeset/176232
+
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
         [iOS] Libdispatch, Dyld, IOKit, Mach, NSPointerFunctions, MobileGestalt
         SPI are not available in public SDK
         https://bugs.webkit.org/show_bug.cgi?id=138802

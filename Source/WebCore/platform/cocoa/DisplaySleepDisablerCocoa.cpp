@@ -28,7 +28,7 @@
 
 #if PLATFORM(COCOA)
 
-#include "IOPMLibSPI.h"
+#include <IOKit/pwr_mgt/IOPMLib.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

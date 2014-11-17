@@ -26,8 +26,8 @@
 #import "FontServicesIOS.h"
 
 #import "CoreGraphicsSPI.h"
-#import "DynamicLinkerSPI.h"
 #import "FontMetrics.h"
+#import <mach-o/dyld_priv.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {

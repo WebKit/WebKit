@@ -26,7 +26,6 @@
 #import "config.h"
 #import "MemoryPressureHandler.h"
 
-#import "DispatchSPI.h"
 #import "IOSurfacePool.h"
 #import "GCController.h"
 #import "JSDOMWindowBase.h"
@@ -42,6 +41,7 @@
 #if PLATFORM(IOS)
 #import "SystemMemory.h"
 #import "WebCoreThread.h"
+#import <dispatch/private.h>
 #endif
 
 namespace WebCore {
