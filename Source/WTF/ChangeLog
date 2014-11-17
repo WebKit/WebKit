@@ -1,3 +1,13 @@
+2014-11-17  Anders Carlsson  <andersca@apple.com>
+
+        Fix WTF build with newer versions of clang.
+        <rdar://problem/18978705>
+
+        * wtf/HashTable.h:
+        (WTF::removeIterator):
+        * wtf/dtoa/utils.h:
+        (WTF::double_conversion::BitCast):
+
 2014-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow constructing a base PassRef with a derived Ref
