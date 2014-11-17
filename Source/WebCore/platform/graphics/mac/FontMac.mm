@@ -37,9 +37,8 @@
 #import <wtf/MathExtras.h>
 
 #if ENABLE(LETTERPRESS)
+#import "CoreUISPI.h"
 #import "SoftLinking.h"
-#import <CoreUI/CUICatalog.h>
-#import <CoreUI/CUIStyleEffectConfiguration.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(CoreUI)
 SOFT_LINK_CLASS(CoreUI, CUICatalog)

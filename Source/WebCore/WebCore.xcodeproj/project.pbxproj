@@ -5751,6 +5751,7 @@
 		CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12523F1A16AE1200864480 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523E1A16AE1200864480 /* AVKitSPI.h */; };
 		CE1252411A16B1B600864480 /* MPAVRoutingControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252401A16B1B600864480 /* MPAVRoutingControllerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252421A16C01A00864480 /* CoreUISPI.h */; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13237,6 +13238,7 @@
 		CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSPI.h; sourceTree = "<group>"; };
 		CE12523E1A16AE1200864480 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVKitSPI.h; path = ios/AVKitSPI.h; sourceTree = "<group>"; };
 		CE1252401A16B1B600864480 /* MPAVRoutingControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPAVRoutingControllerSPI.h; path = ios/MPAVRoutingControllerSPI.h; sourceTree = "<group>"; };
+		CE1252421A16C01A00864480 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreUISPI.h; path = ios/CoreUISPI.h; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLMencloseElement.h; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextUIController.h; sourceTree = "<group>"; };
@@ -18468,6 +18470,7 @@
 			children = (
 				A172182519DE183F00464D17 /* _UIHighlightViewSPI.h */,
 				CE12523E1A16AE1200864480 /* AVKitSPI.h */,
+				CE1252421A16C01A00864480 /* CoreUISPI.h */,
 				CE1252401A16B1B600864480 /* MPAVRoutingControllerSPI.h */,
 				CE1252381A166FA000864480 /* QuickLookSPI.h */,
 			);
@@ -23600,6 +23603,7 @@
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
 				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
+				CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */,
 				9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */,
 				CE1252371A15BDBE00864480 /* CoreGraphicsSPI.h in Headers */,
 				1C6466251A12C38E0094603C /* CoreTextSPI.h in Headers */,

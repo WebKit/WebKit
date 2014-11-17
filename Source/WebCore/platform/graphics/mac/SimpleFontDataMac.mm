@@ -49,11 +49,6 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 
-#if defined(__has_include) && __has_include(<CoreText/CTFontDescriptorPriv.h>)
-#import <CoreText/CTFontDescriptorPriv.h>
-#endif
-extern "C" bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
-
 #if !PLATFORM(IOS)
 @interface NSFont (WebAppKitSecretAPI)
 - (BOOL)_isFakeFixedPitch;

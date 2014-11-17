@@ -29,11 +29,18 @@
 #include <CoreText/CoreText.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <CoreText/CTFontDescriptorPriv.h>
-#include <CoreText/CTFontPriv.h>
-#include <CoreText/CTLinePriv.h>
-#include <CoreText/CTRunPriv.h>
-#include <CoreText/CTTypesetterPriv.h>
+
+#include <CoreText/CoreTextPriv.h>
+
+#else
+
+enum {
+    kCTFontUIFontSystemItalic = 27,
+    kCTFontUIFontSystemThin = 102,
+    kCTFontUIFontSystemLight = 103,
+    kCTFontUIFontSystemUltraLight = 104,
+};
+
 #endif
 
 extern "C" {
@@ -56,7 +63,33 @@ CGSize CTRunGetInitialAdvance(CTRunRef run);
 CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon);
 CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon, CFDictionaryRef options);
 bool CTFontGetVerticalGlyphsForCharacters(CTFontRef, const UniChar characters[], CGGlyph glyphs[], CFIndex count);
+
+CTFontDescriptorRef CTFontDescriptorCreateForUIType(CTFontUIFontType, CGFloat size, CFStringRef language);
+CTFontDescriptorRef CTFontDescriptorCreateWithTextStyle(CFStringRef style, CFStringRef size, CFStringRef language);
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
+
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+extern const CFStringRef kCTUIFontTextStyleShortHeadline;
+extern const CFStringRef kCTUIFontTextStyleShortBody;
+extern const CFStringRef kCTUIFontTextStyleShortSubhead;
+extern const CFStringRef kCTUIFontTextStyleShortFootnote;
+extern const CFStringRef kCTUIFontTextStyleShortCaption1;
+extern const CFStringRef kCTUIFontTextStyleTallBody;
+
+extern const CFStringRef kCTUIFontTextStyleHeadline;
+extern const CFStringRef kCTUIFontTextStyleBody;
+extern const CFStringRef kCTUIFontTextStyleSubhead;
+extern const CFStringRef kCTUIFontTextStyleFootnote;
+extern const CFStringRef kCTUIFontTextStyleCaption1;
+extern const CFStringRef kCTUIFontTextStyleCaption2;
+
+extern const CFStringRef kCTFontDescriptorTextStyleEmphasized;
+#endif
+
+CTFontRef CTFontCreatePhysicalFontForCharactersWithLanguage(CTFontRef, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
+bool CTFontIsAppleColorEmoji(CTFontRef);
+bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
+CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
 
 }
 

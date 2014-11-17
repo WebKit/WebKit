@@ -36,9 +36,6 @@
 #include "WebCoreSystemInterface.h"
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
-#else
-#include <CoreText/CTFontPriv.h>
-#include <CoreText/CoreText.h>
 #endif
 
 namespace WebCore {

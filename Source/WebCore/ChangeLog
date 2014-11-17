@@ -1,3 +1,32 @@
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] CoreText and CoreUI SPI are not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138760
+
+        Reviewed by David Kilzer.
+
+        Add a SPI wrapper header CoreUISPI.h that forward declares CoreUI SPI
+        and use this header instead of including private headers of CoreUI directly.
+
+        Additionally, add more forward declarations for CoreText SPI.
+
+        * WebCore.xcodeproj/project.pbxproj: Add project header CoreUISPI.h.
+        * platform/graphics/ios/FontCacheIOS.mm: Include header CoreTextSPI.h instead
+        of including CoreText headers directly.
+        * platform/graphics/mac/FontMac.mm: Include header CoreUISPI.h instead
+        of including CoreUI headers directly.
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp: Remove unnecessary
+        include of CoreText headers. These headers will be included by header
+        CoreTextSPI.h (at the top of the file).
+        * platform/graphics/mac/SimpleFontDataMac.mm: Remove forward declaration
+        of CTFontDescriptorIsSystemUIFont() and include of header CTFontDescriptorPriv.h
+        as this duplicates the logic in CoreTextSPI.h, which is included in this file.
+        * platform/spi/cocoa/CoreTextSPI.h: Added more forward declarations. Simplified
+        #include directives.
+        * platform/spi/ios/CoreUISPI.h: Added.
+        * rendering/RenderThemeIOS.mm: Move CoreUI externs from this file to file
+        CoreUISPI.h and include header CoreUISPI.h.
+
 2014-11-17  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Drop 16bit support temporarily.

@@ -30,10 +30,9 @@
 #import "FontCache.h"
 
 #import "CoreGraphicsSPI.h"
+#import "CoreTextSPI.h"
 #import "Font.h"
 #import "RenderThemeIOS.h"
-#import <CoreText/CTFontDescriptorPriv.h>
-#import <CoreText/CTFontPriv.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
