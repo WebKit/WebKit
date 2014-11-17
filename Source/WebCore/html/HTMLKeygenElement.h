@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2010, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,11 +34,10 @@ class HTMLKeygenElement final : public HTMLFormControlElementWithState {
 public:
     static PassRefPtr<HTMLKeygenElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool willValidate() const override { return false; }
-
 private:
     HTMLKeygenElement(const QualifiedName&, Document&, HTMLFormElement*);
 
+    virtual bool recalcWillValidate() const override { return false; }
     virtual bool canStartSelection() const override { return false; }
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;

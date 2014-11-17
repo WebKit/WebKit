@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        fieldset {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+        fieldset:invalid {
+            style="background-color: blue;"
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore :invalid affecting a &lt;fieldset&gt;.</p>
+
+    <!-- Empty fieldset are :valid, non-empty's :valid depend on the children. -->
+    <div>
+        <fieldset></fieldset>
+        <fieldset></fieldset>
+        <fieldset>
+            <textarea></textarea>
+        </fieldset>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required>Foobar</textarea>
+        </fieldset>
+
+        <fieldset></fieldset>
+    </div>
+
+    <!-- The style of field set varies with its required children. -->
+    <div>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required>Foobar</textarea>
+        </fieldset>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+    </div>
+    <div>
+        <fieldset>
+            <textarea required>Foobar</textarea>
+        </fieldset>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+        <fieldset style="background-color: blue;">
+            <textarea style="background-color: red;" required></textarea>
+        </fieldset>
+    </div>
+</body>
+</html>

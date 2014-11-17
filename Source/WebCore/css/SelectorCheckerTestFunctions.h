@@ -86,20 +86,17 @@ ALWAYS_INLINE bool isChecked(Element* element)
 
 ALWAYS_INLINE bool isInRange(Element* element)
 {
-    element->document().setContainsValidityStyleRules();
     return element->isInRange();
 }
 
 ALWAYS_INLINE bool isOutOfRange(Element* element)
 {
-    element->document().setContainsValidityStyleRules();
     return element->isOutOfRange();
 }
 
 ALWAYS_INLINE bool isInvalid(const Element* element)
 {
-    element->document().setContainsValidityStyleRules();
-    return element->willValidate() && !element->isValidFormControlElement();
+    return element->matchesInvalidPseudoClass();
 }
 
 ALWAYS_INLINE bool isOptionalFormControl(const Element* element)
@@ -114,8 +111,7 @@ ALWAYS_INLINE bool isRequiredFormControl(const Element* element)
 
 ALWAYS_INLINE bool isValid(const Element* element)
 {
-    element->document().setContainsValidityStyleRules();
-    return element->willValidate() && element->isValidFormControlElement();
+    return element->matchesValidPseudoClass();
 }
 
 ALWAYS_INLINE bool isWindowInactive(const Element* element)

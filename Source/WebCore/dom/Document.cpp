@@ -440,7 +440,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_closeAfterStyleRecalc(false)
     , m_gotoAnchorNeededAfterStylesheetsLoad(false)
     , m_frameElementsShouldIgnoreScrolling(false)
-    , m_containsValidityStyleRules(false)
     , m_updateFocusAppearanceRestoresSelection(false)
     , m_ignoreDestructiveWriteCount(0)
     , m_titleSetExplicitly(false)

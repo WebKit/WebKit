@@ -1,3 +1,133 @@
+2014-11-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        Implement :valid and :invalid matching for the fieldset element
+        https://bugs.webkit.org/show_bug.cgi?id=138769
+
+        Reviewed by Darin Adler.
+
+        In the latest HTML spec, the pseudo classes :valid and :invalid match
+        a fieldset element based on its descendants:
+            https://html.spec.whatwg.org/#selector-valid
+            https://html.spec.whatwg.org/#selector-invalid
+
+        This patch adds that behavior.
+
+        There are two key problems to solve with these pseudo classes on fieldset:
+        -Efficient matching.
+        -Style invalidation when any of the descendant changes.
+
+        To implement the style invalidation, I have modified HTMLFormControlElement
+        to notify its ancestor when its state changes.
+
+        The first change is making the state fully internal to HTMLFormControlElement,
+        we do not want subclass to be able to change the behavior and forget to update
+        the ancestors.
+
+        To achieve that encapsulation, the interface was changed a bit:
+        -Neither willValidate() nor isValidFormControlElement() inherit from Element.
+         Instead, willValidate() is the implementation of FormAssociatedElement's interface
+         and it is final. The method isValidFormControlElement() becomes completely internal
+         to HTMLFormControlElement.
+        -Since willValidate() should no longer be re-implemented by subclass, the elements
+         that were depending on it have been migrated to recalcWillValidate() to set
+         the initial state as needed.
+
+        With the validity state fully encapsulated in HTMLFormControlElement, all I need
+        is a way to communicate that information to HTMLFieldSetElement ancestors.
+        This is done in two cases:
+        -The validity state changes.
+        -The tree changes in a way that would make the input element not a descendant
+         of a HTMLFieldSetElement.
+
+        The invalidation is simply done by walking up the ancestors and adding the current
+        element to a "validity dependency list" on each HTMLFieldSetElement.
+
+        Tests: fast/css/pseudo-invalid-fieldset-invalidation-optimization.html
+               fast/css/pseudo-invalid-fieldset-style-sharing.html
+               fast/css/pseudo-invalid-fieldset.html
+               fast/css/pseudo-valid-fieldset-invalidation-optimization.html
+               fast/css/pseudo-valid-fieldset-style-sharing.html
+               fast/css/pseudo-valid-fieldset.html
+               fast/selectors/invalid-fieldset-style-update-1.html
+               fast/selectors/invalid-fieldset-style-update-2.html
+               fast/selectors/invalid-fieldset-style-update-3.html
+               fast/selectors/invalid-fieldset-style-update-4.html
+               fast/selectors/invalid-fieldset-style-update-5.html
+               fast/selectors/valid-fieldset-style-update-1.html
+               fast/selectors/valid-fieldset-style-update-2.html
+               fast/selectors/valid-fieldset-style-update-3.html
+               fast/selectors/valid-fieldset-style-update-4.html
+               fast/selectors/valid-fieldset-style-update-5.html
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isInRange):
+        (WebCore::isOutOfRange):
+        (WebCore::isInvalid):
+        (WebCore::isValid):
+        The hack "ContainsValidityStyleRules" is in the way of correct styling
+        of FieldSet and Form.
+        It is not the right way to get stylesheet properties anyway.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithControl):
+        Make sure style sharing does not incorrectly share style for fieldset elements.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::containsValidityStyleRules): Deleted.
+        (WebCore::Document::setContainsValidityStyleRules): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::matchesValidPseudoClass):
+        (WebCore::Element::matchesInvalidPseudoClass):
+        (WebCore::Element::willValidate): Deleted.
+        (WebCore::Element::isValidFormControlElement): Deleted.
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::customError):
+        * html/FormAssociatedElement.h:
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::matchesValidPseudoClass):
+        (WebCore::HTMLFieldSetElement::matchesInvalidPseudoClass):
+        (WebCore::HTMLFieldSetElement::addInvalidDescendant):
+        (WebCore::HTMLFieldSetElement::removeInvalidDescendant):
+        Each HTMLFormControlElement that has constraint validation adds or removes
+        itself from its HTMLFieldSetElement ancestors.
+
+        It should be possible to just keep track of a count instead of a HashSet.
+        I decided to got with the HashSet to make the code more robust and easier
+        to debug. A few assertions ensure that the HashSet is actually used as a counter.
+
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::addInvalidElementToAncestorFromInsertionPoint):
+        (WebCore::removeInvalidElementToAncestorFromInsertionPoint):
+
+        (WebCore::HTMLFormControlElement::insertedInto):
+        (WebCore::HTMLFormControlElement::removedFrom):
+        One tricky part of those two functions is that we cannot use
+        matchesValidPseudoClass() or matchesInvalidPseudoClass().
+
+        The reason is that HTMLFieldSetElement is a subclass of HTMLFormControlElement
+        and it has its own definition of what Valid and Invalid mean when matching selectors.
+
+        In HTMLFormControlElement, we must use the internal state,
+        willValidate() and isValidFormControlElement() must be used directly.
+
+        (WebCore::HTMLFormControlElement::matchesValidPseudoClass):
+        (WebCore::HTMLFormControlElement::matchesInvalidPseudoClass):
+        (WebCore::HTMLFormControlElement::willValidate):
+        (WebCore::addInvalidElementToAncestors):
+        (WebCore::removeInvalidElementFromAncestors):
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+        (WebCore::HTMLFormControlElement::setNeedsValidityCheck):
+        (WebCore::HTMLFormControlElement::isValidFormControlElement): Deleted.
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isValidFormControlElement):
+        * html/HTMLKeygenElement.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLOutputElement.h:
+
 2014-11-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Add typecasting support for GraphicsLayerTextureMapper

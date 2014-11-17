@@ -40,8 +40,6 @@ class HTMLOutputElement final : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLOutputElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool willValidate() const override { return false; }
-
     String value() const;
     void setValue(const String&);
     String defaultValue() const;
@@ -54,6 +52,7 @@ public:
 private:
     HTMLOutputElement(const QualifiedName&, Document&, HTMLFormElement*);
 
+    virtual bool recalcWillValidate() const override { return false; }
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual const AtomicString& formControlType() const override;
     virtual bool isEnumeratable() const override { return true; }

@@ -175,7 +175,7 @@ void FormAssociatedElement::formAttributeChanged()
 
 bool FormAssociatedElement::customError() const
 {
-    return asHTMLElement().willValidate() && !m_customValidationMessage.isEmpty();
+    return willValidate() && !m_customValidationMessage.isEmpty();
 }
 
 bool FormAssociatedElement::hasBadInput() const

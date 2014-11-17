@@ -1108,9 +1108,6 @@ public:
     virtual bool isContextThread() const override final;
     virtual bool isJSExecutionForbidden() const override final { return false; }
 
-    bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
-    void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
-
     void enqueueWindowEvent(PassRefPtr<Event>);
     void enqueueDocumentEvent(PassRefPtr<Event>);
     void enqueueOverflowEvent(PassRefPtr<Event>);
@@ -1478,7 +1475,6 @@ private:
     bool m_isDNSPrefetchEnabled;
     bool m_haveExplicitlyDisabledDNSPrefetch;
     bool m_frameElementsShouldIgnoreScrolling;
-    bool m_containsValidityStyleRules;
     bool m_updateFocusAppearanceRestoresSelection;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#ignore-destructive-writes-counter

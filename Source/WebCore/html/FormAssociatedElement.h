@@ -106,6 +106,7 @@ protected:
     String customValidationMessage() const;
 
 private:
+    virtual bool willValidate() const = 0;
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;
 

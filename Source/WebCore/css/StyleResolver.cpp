@@ -525,21 +525,17 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (element->isDefaultButtonForForm() != state.element()->isDefaultButtonForForm())
         return false;
 
-    if (state.document().containsValidityStyleRules()) {
-        bool willValidate = element->willValidate();
+    if (element->matchesValidPseudoClass() != state.element()->matchesValidPseudoClass())
+        return false;
 
-        if (willValidate != state.element()->willValidate())
-            return false;
+    if (element->matchesInvalidPseudoClass() != state.element()->matchesValidPseudoClass())
+        return false;
 
-        if (willValidate && (element->isValidFormControlElement() != state.element()->isValidFormControlElement()))
-            return false;
+    if (element->isInRange() != state.element()->isInRange())
+        return false;
 
-        if (element->isInRange() != state.element()->isInRange())
-            return false;
-
-        if (element->isOutOfRange() != state.element()->isOutOfRange())
-            return false;
-    }
+    if (element->isOutOfRange() != state.element()->isOutOfRange())
+        return false;
 
     return true;
 }

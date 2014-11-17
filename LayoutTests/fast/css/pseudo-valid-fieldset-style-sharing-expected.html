@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        fieldset {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore :valid affecting a &lt;fieldset&gt;.</p>
+
+    <div>
+        <fieldset style="background-color: lime;"></fieldset>
+        <fieldset style="background-color: lime;"></fieldset>
+        <fieldset style="background-color: lime;">
+            <textarea style="background-color: green;"></textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset>
+        <fieldset style="background-color: lime;">
+            <textarea style="background-color: green;" required>Foobar</textarea>
+        </fieldset>
+
+        <fieldset style="background-color: lime;"></fieldset>
+    </div>
+
+    <div>
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset style="background-color: lime;">
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset>
+        <fieldset style="background-color: lime;">
+            <textarea style="background-color: green;" required>Foobar</textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset>
+    </div>
+    <div>
+        <fieldset style="background-color: lime;">
+            <textarea style="background-color: green;" required>Foobar</textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset>
+        <fieldset>
+            <textarea required></textarea>
+        </fieldset>
+    </div>
+</body>
+</html>

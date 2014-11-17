@@ -1,3 +1,52 @@
+2014-11-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        Implement :valid and :invalid matching for the fieldset element
+        https://bugs.webkit.org/show_bug.cgi?id=138769
+
+        Reviewed by Darin Adler.
+
+        There are many ways to change the validation state of a submittable element.
+        I included a series of test trying to exercises as many combination
+        as possible.
+
+        * fast/css/pseudo-valid-unapplied-expected.txt:
+        * fast/css/pseudo-valid-unapplied.html:
+        This test was checking that :valid and :invalid are not applied
+        to fieldset. Such results are incorrect with the latest specification.
+
+        * fast/css/pseudo-invalid-fieldset-expected.html: Added.
+        * fast/css/pseudo-invalid-fieldset-invalidation-optimization-expected.txt: Added.
+        * fast/css/pseudo-invalid-fieldset-invalidation-optimization.html: Added.
+        * fast/css/pseudo-invalid-fieldset-style-sharing-expected.html: Added.
+        * fast/css/pseudo-invalid-fieldset-style-sharing.html: Added.
+        * fast/css/pseudo-invalid-fieldset.html: Added.
+        * fast/css/pseudo-valid-fieldset-expected.html: Added.
+        * fast/css/pseudo-valid-fieldset-invalidation-optimization-expected.txt: Added.
+        * fast/css/pseudo-valid-fieldset-invalidation-optimization.html: Added.
+        * fast/css/pseudo-valid-fieldset-style-sharing-expected.html: Added.
+        * fast/css/pseudo-valid-fieldset-style-sharing.html: Added.
+        * fast/css/pseudo-valid-fieldset.html: Added.
+        * fast/selectors/invalid-fieldset-style-update-1-expected.txt: Added.
+        * fast/selectors/invalid-fieldset-style-update-1.html: Added.
+        * fast/selectors/invalid-fieldset-style-update-2-expected.txt: Added.
+        * fast/selectors/invalid-fieldset-style-update-2.html: Added.
+        * fast/selectors/invalid-fieldset-style-update-3-expected.txt: Added.
+        * fast/selectors/invalid-fieldset-style-update-3.html: Added.
+        * fast/selectors/invalid-fieldset-style-update-4-expected.txt: Added.
+        * fast/selectors/invalid-fieldset-style-update-4.html: Added.
+        * fast/selectors/invalid-fieldset-style-update-5-expected.txt: Added.
+        * fast/selectors/invalid-fieldset-style-update-5.html: Added.
+        * fast/selectors/valid-fieldset-style-update-1-expected.txt: Added.
+        * fast/selectors/valid-fieldset-style-update-1.html: Added.
+        * fast/selectors/valid-fieldset-style-update-2-expected.txt: Added.
+        * fast/selectors/valid-fieldset-style-update-2.html: Added.
+        * fast/selectors/valid-fieldset-style-update-3-expected.txt: Added.
+        * fast/selectors/valid-fieldset-style-update-3.html: Added.
+        * fast/selectors/valid-fieldset-style-update-4-expected.txt: Added.
+        * fast/selectors/valid-fieldset-style-update-4.html: Added.
+        * fast/selectors/valid-fieldset-style-update-5-expected.txt: Added.
+        * fast/selectors/valid-fieldset-style-update-5.html: Added.
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'order' CSS property to a calculated value

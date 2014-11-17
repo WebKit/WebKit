@@ -9,7 +9,6 @@ PASS getBackgroundColor('input-button') is normalColor
 PASS getBackgroundColor('input-reset') is normalColor
 PASS getBackgroundColor('input-hidden') is normalColor
 PASS getBackgroundColor('input-image') is normalColor
-PASS getBackgroundColor('fieldset') is normalColor
 PASS getBackgroundColor('object') is normalColor
 PASS getBackgroundColor('button-button') is normalColor
 PASS getBackgroundColor('button-reset') is normalColor

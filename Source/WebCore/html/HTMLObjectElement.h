@@ -42,6 +42,8 @@ public:
     virtual bool useFallbackContent() const override { return m_useFallbackContent; }
     void renderFallbackContent();
 
+    virtual bool willValidate() const override { return false; }
+
     // Implementation of constraint validation API.
     // Note that the object elements are always barred from constraint validation.
     static bool checkValidity() { return true; }

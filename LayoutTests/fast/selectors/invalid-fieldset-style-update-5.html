@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+:matches(#with-renderer, #without-renderer) * {
+    background-color: rgb(1, 2, 3);
+}
+:matches(#with-renderer, #without-renderer) :invalid {
+    background-color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <template id="test-source">
+        <fieldset class="fieldset1">
+            <div class="div1">
+                <fieldset class="fieldset2">
+                    <div class="div2">
+                        <input class="input1" required value="">
+                    </div>
+                </fieldset>
+            </div>
+        </fieldset>
+        <div class="div3">
+        </div>
+    </template>
+    <div id="with-renderer"></div>
+    <div id="without-renderer" style="display:none;"></div>
+</body>
+<script>
+description('Test style update for :invalid applied on a fieldset.');
+
+var withRenderer = document.getElementById("with-renderer");
+var withoutRenderer = document.getElementById("without-renderer");
+var source = document.getElementById("test-source").content;
+
+withRenderer.appendChild(source.cloneNode(true));
+withoutRenderer.appendChild(source.cloneNode(true));
+
+function testStyleAtId(rootId, matchedClass) {
+    var allElements = document.getElementById(rootId).querySelectorAll('*');
+    for (var i = 0; i < allElements.length; ++i) {
+        var expectedStyle = matchedClass.indexOf(allElements[i].className) >= 0 ? 'rgb(4, 5, 6)' : 'rgb(1, 2, 3)';
+        shouldBeEqualToString('getComputedStyle(document.getElementById("' + rootId + '").querySelector(".' + allElements[i].className + '")).backgroundColor', expectedStyle);
+    }
+}
+
+function testStyle(matchedClass) {
+    testStyleAtId('with-renderer', matchedClass);
+    testStyleAtId('without-renderer', matchedClass);
+}
+
+function modifyTree(updateFunction) {
+    updateFunction(withRenderer);
+    updateFunction(withoutRenderer);
+}
+
+debug('');
+debug("Move fieldset2 inside div3");
+modifyTree(function(root) {
+    var fieldset2 = root.querySelector('.fieldset2');
+    var div3 = root.querySelector('.div3');
+    div3.appendChild(fieldset2);
+});
+testStyle(['fieldset2', 'input1']);
+
+
+// Remove the content otherwise it will appear in the results.
+withRenderer.style.display = 'none';
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
