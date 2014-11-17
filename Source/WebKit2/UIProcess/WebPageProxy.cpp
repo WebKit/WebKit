@@ -5323,6 +5323,11 @@ void WebPageProxy::selectLastActionMenuRange()
     m_process->send(Messages::WebPage::SelectLastActionMenuRange(), m_pageID);
 }
 
+void WebPageProxy::focusAndSelectLastActionMenuHitTestResult()
+{
+    m_process->send(Messages::WebPage::FocusAndSelectLastActionMenuHitTestResult(), m_pageID);
+}
+
 void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& result, IPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;

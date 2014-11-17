@@ -49,6 +49,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/Page.h>
@@ -1057,6 +1058,7 @@ private:
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint);
     void selectLastActionMenuRange();
+    void focusAndSelectLastActionMenuHitTestResult();
 
     void dataDetectorsDidPresentUI();
     void dataDetectorsDidChangeUI();
@@ -1292,6 +1294,7 @@ private:
 
 #if PLATFORM(MAC)
     RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
+    WebCore::HitTestResult m_lastActionMenuHitTestResult;
     RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
 #endif
 };

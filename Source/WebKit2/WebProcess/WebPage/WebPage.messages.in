@@ -400,6 +400,7 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(MAC)
     PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location)
     SelectLastActionMenuRange()
+    FocusAndSelectLastActionMenuHitTestResult()
     DataDetectorsDidPresentUI()
     DataDetectorsDidChangeUI()
     DataDetectorsDidHideUI()
