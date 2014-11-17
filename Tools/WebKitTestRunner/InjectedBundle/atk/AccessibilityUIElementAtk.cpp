@@ -369,6 +369,8 @@ const gchar* roleToString(AtkObject* object)
         return "AXImage";
     case ATK_ROLE_IMAGE_MAP:
         return "AXImageMap";
+    case ATK_ROLE_INVALID:
+        return "AXInvalid";
     case ATK_ROLE_LABEL:
         return "AXLabel";
     case ATK_ROLE_LINK:
@@ -1011,9 +1013,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
     if (!ATK_IS_OBJECT(m_element.get()))
-        return JSStringCreateWithCharacters(0, 0);
-
-    if (!atk_object_get_role(ATK_OBJECT(m_element.get())))
         return JSStringCreateWithCharacters(0, 0);
 
     GUniquePtr<char> roleStringWithPrefix(g_strdup_printf("AXRole: %s", roleToString(ATK_OBJECT(m_element.get()))));

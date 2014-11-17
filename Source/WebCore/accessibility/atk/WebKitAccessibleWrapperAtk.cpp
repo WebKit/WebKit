@@ -748,13 +748,15 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 
 static AtkRole webkitAccessibleGetRole(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), ATK_ROLE_UNKNOWN);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), ATK_ROLE_UNKNOWN);
+    // ATK_ROLE_UNKNOWN should only be applied in cases where there is a valid
+    // WebCore accessible object for which the platform role mapping is unknown.
+    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), ATK_ROLE_INVALID);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), ATK_ROLE_INVALID);
 
     AccessibilityObject* coreObject = core(object);
 
     if (!coreObject)
-        return ATK_ROLE_UNKNOWN;
+        return ATK_ROLE_INVALID;
 
     // Note: Why doesn't WebCore have a password field for this
     if (coreObject->isPasswordField())

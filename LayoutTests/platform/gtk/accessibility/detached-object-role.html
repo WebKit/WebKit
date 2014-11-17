@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<button id="button1">Button 1</button>
+<button id="button2">Button 2</button>
+<script>
+description("This tests that detached accessible objects report the correct role.");
+
+if (window.testRunner && window.accessibilityController) {
+    testRunner.dumpAsText();
+
+    var button = document.getElementById('button1');
+    button.focus();
+
+    var axButton = accessibilityController.focusedElement;
+    var role = axButton.role;
+
+    document.body.removeChild(button);
+    var detachedRole = axButton.role;
+    shouldBeTrue("role != detachedRole");
+    debug(role + " " + detachedRole);
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
