@@ -36,6 +36,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
@@ -154,7 +155,24 @@ PassRefPtr<TextIndicator> TextIndicator::create(const TextIndicator::Data& data)
     return adoptRef(new TextIndicator(data));
 }
 
-PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(WebFrame& frame)
+PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range)
+{
+    Frame* frame = range.startContainer()->document().frame();
+
+    if (!frame)
+        return nullptr;
+
+    VisibleSelection oldSelection = frame->selection().selection();
+    frame->selection().setSelection(&range);
+
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(*frame));
+
+    frame->selection().setSelection(oldSelection);
+    
+    return indicator.release();
+}
+
+PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFrame& frame)
 {
     Frame& coreFrame = *frame.coreFrame();
     IntRect selectionRect = enclosingIntRect(coreFrame.selection().selectionBounds());

@@ -34,6 +34,7 @@
 
 namespace WebCore {
 class GraphicsContext;
+class Range;
 }
 
 namespace IPC {
@@ -59,7 +60,8 @@ public:
     };
 
     static PassRefPtr<TextIndicator> create(const TextIndicator::Data&);
-    static PassRefPtr<TextIndicator> createWithSelectionInFrame(WebFrame&);
+    static PassRefPtr<TextIndicator> createWithSelectionInFrame(const WebFrame&);
+    static PassRefPtr<TextIndicator> createWithRange(const WebCore::Range&);
 
     ~TextIndicator();
 
