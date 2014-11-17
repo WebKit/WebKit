@@ -1,3 +1,10 @@
+2014-11-17  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/multicol/newmulticol/spanner-crash.html still crashes sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=137316
+
+        * TestExpectations: Skipped it.
+
 2014-11-17  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Upgrade align-self and align-items parsing to CSS 3

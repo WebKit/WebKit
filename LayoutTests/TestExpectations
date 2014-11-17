@@ -342,3 +342,5 @@ webkit.org/b/138676 imported/w3c/canvas/canvas_text_font_001.htm [ Skip ]
 webkit.org/b/138676 imported/w3c/canvas/canvas_complexshapes_arcto_001.htm [ Skip ]
 webkit.org/b/138676 imported/w3c/canvas/canvas_linestyles_linecap_001.htm [ Skip ]
 webkit.org/b/138676 imported/w3c/canvas/canvas_transformations_scale_001.htm [ Skip ]
+
+webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Skip ]
