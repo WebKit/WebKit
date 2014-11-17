@@ -1,3 +1,18 @@
+2014-11-13  Dan Bernstein  <mitz@apple.com>
+
+        Policy client not called for navigations through the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=138703
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test added to TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadDifferentDocumentItem): When using a cached page, which already
+        has a document loader, set the document loader’s triggering action (so that the policy
+        client sees that this is a back/forward navigation) and clear its last checked request (so
+        that the policy client gets called).
+
 2014-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION (r172826): Password field placeholder text is missing if
