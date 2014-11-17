@@ -1,3 +1,16 @@
+2014-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION (r172826): Password field placeholder text is missing if
+        placeholder attribute precedes type attribute
+
+        <https://bugs.webkit.org/show_bug.cgi?id=138682>
+        <rdar://problem/18574213> 
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/forms/placeholder-attribute-ordering-expected.html: Added.
+        * fast/forms/placeholder-attribute-ordering.html: Added.
+
 2014-11-11  Daniel Bates  <dabates@apple.com>
 
         [Frame Flattening] ASSERT(transaction->view == &view()) fails in RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()

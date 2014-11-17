@@ -1,3 +1,31 @@
+2014-11-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION (r172826): Password field placeholder text is missing if
+        placeholder attribute precedes type attribute
+
+        <https://bugs.webkit.org/show_bug.cgi?id=138682>
+        <rdar://problem/18574213> 
+
+        When the placeholder attribute is encountered, a shadow tree is created
+        to include the placeholder element. When the type attribute is
+        encountered, the previous shadow tree is destroyed, and a new shadow
+        tree is created. TextFieldInputType::createShadowSubtree() did not
+        handle creating the placeholder element. 
+
+        This regressed in r172826 because prior to r172826, the placeholder
+        element would be recreated when
+        HTMLTextFormControlElement::updatePlaceholderVisibility() was called.
+        In r172826, updatePlaceholderVisibility() was changed to only show or
+        hide the placeholder element if it exists.
+
+        Reviewed by Benjamin Poulain.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        Call updatePlaceholderVisibility() to insert the placeholder element
+        (after the inner text element has been inserted, as it appears before
+        it in the shadow DOM).
+
 2014-11-11  Daniel Bates  <dabates@apple.com>
 
         [Frame Flattening] ASSERT(transaction->view == &view()) fails in RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
