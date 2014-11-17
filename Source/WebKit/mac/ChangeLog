@@ -1,3 +1,15 @@
+2014-11-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Remove calls to deprecated NSMenu methods
+        https://bugs.webkit.org/show_bug.cgi?id=138808.
+
+        Reviewed by Anders Carlsson.
+
+        -[NSMenu menuChangedMessagesEnabled] and -[NSMenu setMenuChangedMessagesEnabled:] are no-ops as of 10.6.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+
 2014-11-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r176232.

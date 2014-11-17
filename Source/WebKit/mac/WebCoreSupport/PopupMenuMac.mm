@@ -61,9 +61,6 @@ void PopupMenuMac::populate()
         [m_popup setUsesItemFromMenu:NO];
         [m_popup setAutoenablesItems:NO];
     }
-
-    BOOL messagesEnabled = [[m_popup menu] menuChangedMessagesEnabled];
-    [[m_popup menu] setMenuChangedMessagesEnabled:NO];
     
     // For pullDown menus the first item is hidden.
     if (!m_client->shouldPopOver())
@@ -126,8 +123,6 @@ void PopupMenuMac::populate()
         }
 #pragma clang diagnostic pop
     }
-
-    [[m_popup menu] setMenuChangedMessagesEnabled:messagesEnabled];
 }
 
 void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
