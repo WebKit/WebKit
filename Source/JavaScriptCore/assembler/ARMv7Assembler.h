@@ -1687,8 +1687,8 @@ public:
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(imm.isUInt12());
         
-        if (!((rt | rn) & 8) && imm.isUInt7())
-            m_formatter.oneWordOp5Imm5Reg3Reg3(OP_STRH_imm_T1, imm.getUInt7() >> 2, rn, rt);
+        if (!((rt | rn) & 8) && imm.isUInt6())
+            m_formatter.oneWordOp5Imm5Reg3Reg3(OP_STRH_imm_T1, imm.getUInt6() >> 1, rn, rt);
         else
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STRH_imm_T2, rn, rt, imm.getUInt12());
     }

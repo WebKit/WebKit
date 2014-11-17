@@ -1,3 +1,18 @@
+2014-11-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        STRH can store values with the wrong offset
+        https://bugs.webkit.org/show_bug.cgi?id=138723
+
+        Reviewed by Michael Saboff.
+
+        This is the counterpart of r176083 for the str instruction.
+
+        I believe this code is currently unreachable because there is only one client of strh()
+        in the MacroAssembler and it always setup the scale explicitely.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::strh):
+
 2014-11-13  Benjamin Poulain  <benjamin@webkit.org>
 
         ARMv7(s) Assembler: LDRH with immediate offset is loading from the wrong offset
