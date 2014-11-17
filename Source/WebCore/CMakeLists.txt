@@ -2350,6 +2350,7 @@ set(WebCore_SOURCES
     rendering/SelectionSubtreeRoot.cpp
     rendering/ScrollBehavior.cpp
     rendering/SimpleLineLayout.cpp
+    rendering/SimpleLineLayoutFlowContents.cpp
     rendering/SimpleLineLayoutFunctions.cpp
     rendering/SimpleLineLayoutResolver.cpp
     rendering/TextAutosizer.cpp

@@ -1,3 +1,46 @@
+2014-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Rename FlowContentIterator and move implementation to SimpleLineLayoutFlowContents.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=138799
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to support multiple renderers.
+        The FlowContents class will be used not just when we create runs, but also when we resolve them at painting time.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::nextFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::FlowContentIterator::FlowContentIterator): Deleted.
+        (WebCore::SimpleLineLayout::FlowContentIterator::findNextBreakablePosition): Deleted.
+        (WebCore::SimpleLineLayout::FlowContentIterator::findNextNonWhitespacePosition): Deleted.
+        (WebCore::SimpleLineLayout::FlowContentIterator::textWidth): Deleted.
+        (WebCore::SimpleLineLayout::FlowContentIterator::isNewlineCharacter): Deleted.
+        (WebCore::SimpleLineLayout::FlowContentIterator::isEndOfContent): Deleted.
+        (WebCore::SimpleLineLayout::FlowContentIterator::style): Deleted.
+        (WebCore::SimpleLineLayout::computeLineLeft): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.cpp: Added.
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        (WebCore::SimpleLineLayout::FlowContents::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::FlowContents::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContents::textWidth):
+        * rendering/SimpleLineLayoutFlowContents.h: Added.
+        (WebCore::SimpleLineLayout::FlowContents::Style::Style):
+        (WebCore::SimpleLineLayout::FlowContents::style):
+        (WebCore::SimpleLineLayout::FlowContents::isNewlineCharacter):
+        (WebCore::SimpleLineLayout::FlowContents::isEndOfContent):
+
 2014-11-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r176232.

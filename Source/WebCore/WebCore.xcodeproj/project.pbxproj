@@ -2062,6 +2062,8 @@
 		57CF497414EE36D700ECFF14 /* InsertionPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */; };
 		57CF497514EE36D700ECFF14 /* InsertionPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF497314EE36D700ECFF14 /* InsertionPoint.h */; };
 		585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */; };
+		585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */; };
+		585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */; };
 		589556ED18D4A44000764B03 /* BorderEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 589556EC18D4A44000764B03 /* BorderEdge.h */; };
 		58AEE2F418D4BCCF0022E7FE /* BorderEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */; };
 		58CD35CB18EB4C3900B9F3AC /* FloatSizeHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9183,6 +9185,8 @@
 		57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertionPoint.cpp; sourceTree = "<group>"; };
 		57CF497314EE36D700ECFF14 /* InsertionPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertionPoint.h; sourceTree = "<group>"; };
 		585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutResolver.cpp; sourceTree = "<group>"; };
+		585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFlowContents.cpp; sourceTree = "<group>"; };
+		585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFlowContents.h; sourceTree = "<group>"; };
 		589556EC18D4A44000764B03 /* BorderEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderEdge.h; sourceTree = "<group>"; };
 		58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BorderEdge.cpp; sourceTree = "<group>"; };
 		58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatSizeHash.h; sourceTree = "<group>"; };
@@ -22500,6 +22504,8 @@
 				CDCFABBB18C0AE31006F8450 /* SelectionSubtreeRoot.h */,
 				E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */,
 				E48944A1180B57D800F165D8 /* SimpleLineLayout.h */,
+				585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */,
+				585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */,
 				E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */,
 				E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */,
 				585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */,
@@ -25355,6 +25361,7 @@
 				D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */,
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,
+				585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */,
 				CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */,
 				070E09191875EEFC003A1D3C /* MediaSession.h in Headers */,
 				07F944161864D046005D31CB /* MediaSessionManager.h in Headers */,
@@ -29776,6 +29783,7 @@
 				F55B3DDB1251F12D003EF269 /* TimeInputType.cpp in Sources */,
 				7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
+				585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
 				A1DE71321861322200734192 /* TouchConstructors.cpp in Sources */,
 				A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */,
