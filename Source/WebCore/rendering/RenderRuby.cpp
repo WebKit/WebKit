@@ -72,6 +72,18 @@ static inline bool isRubyAfterBlock(const RenderObject* object)
         && object->firstChildSlow()->style().styleType() == AFTER;
 }
 
+#ifndef ASSERT_DISABLED
+static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
+{
+    return object.isRubyRun()
+    || object.isBeforeContent()
+    || object.isAfterContent()
+    || object.isRenderMultiColumnFlowThread()
+    || object.isRenderMultiColumnSet()
+    || isAnonymousRubyInlineBlock(&object);
+}
+#endif
+
 static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
 {
     RenderObject* child = ruby->firstChild();
@@ -192,7 +204,9 @@ RenderObject* RenderRubyAsInline::removeChild(RenderObject& child)
     // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
     // just use the normal remove method.
     if (child.parent() == this) {
-        ASSERT(child.isRubyRun() || child.isBeforeContent() || child.isAfterContent() || isAnonymousRubyInlineBlock(&child));
+#ifndef ASSERT_DISABLED
+        ASSERT(isRubyChildForNormalRemoval(child));
+#endif
         return RenderInline::removeChild(child);
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
@@ -296,7 +310,9 @@ RenderObject* RenderRubyAsBlock::removeChild(RenderObject& child)
     // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
     // just use the normal remove method.
     if (child.parent() == this) {
-        ASSERT(child.isRubyRun() || child.isBeforeContent() || child.isAfterContent() || isAnonymousRubyInlineBlock(&child));
+#ifndef ASSERT_DISABLED
+        ASSERT(isRubyChildForNormalRemoval(child));
+#endif
         return RenderBlockFlow::removeChild(child);
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)

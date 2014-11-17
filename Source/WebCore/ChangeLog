@@ -1,3 +1,26 @@
+2014-11-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        ASSERTION FAILED: !object || !object->parent()->isRuby() || is<RenderRubyRun>(*object) || (object->isInline() && (object->isBeforeContent() || object->isAfterContent())) || (object->isAnonymous() && ... ) in WebCore::isAnonymousRubyInlineBlock
+        https://bugs.webkit.org/show_bug.cgi?id=137958
+
+        Reviewed by Chris Dumez.
+
+        When a ruby element, with block behavior, dynamically changes its style
+        from multicol to without multicol, we have to remove its special children,
+        RenderMultiColumnFlowThread and RenderMultiColumnSet, the normal way using
+        the method in RenderBlockFlow base class. This patch adds both
+        RenderMultiColumnFlowThread and RenderMultiColumnSet to the list of RenderRuby
+        children removed normally and adds a new function - isRubyChildForNormalRemove -
+        to test the condition and use it in the assertion in RenderRuby*::removeChild
+        method.
+
+        Test: fast/multicol/newmulticol/ruby-from-multicol-to-auto.html
+
+        * rendering/RenderRuby.cpp:
+        (WebCore::isRubyChildForNormalRemove):
+        (WebCore::RenderRubyAsInline::removeChild):
+        (WebCore::RenderRubyAsBlock::removeChild):
+
 2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Do not return ATK_ROLE_UNKNOWN for null or otherwise invalid accessible objects

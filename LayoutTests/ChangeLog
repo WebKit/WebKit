@@ -1,3 +1,13 @@
+2014-11-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        ASSERTION FAILED: !object || !object->parent()->isRuby() || is<RenderRubyRun>(*object) || (object->isInline() && (object->isBeforeContent() || object->isAfterContent())) || (object->isAnonymous() && ... ) in WebCore::isAnonymousRubyInlineBlock
+        https://bugs.webkit.org/show_bug.cgi?id=137958
+
+        Reviewed by Chris Dumez.
+
+        * fast/multicol/newmulticol/ruby-from-multicol-to-auto-expected.txt: Added.
+        * fast/multicol/newmulticol/ruby-from-multicol-to-auto.html: Added.
+
 2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Do not return ATK_ROLE_UNKNOWN for null or otherwise invalid accessible objects
