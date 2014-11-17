@@ -102,6 +102,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) WKSelectionGranularity selectionGranularity;
 
+/*! @abstract A Boolean value indicating whether alternate fullscreen mode is allowed.
+ @discussion The default value is YES.
+ */
+@property (nonatomic) BOOL allowsAlternateFullscreen;
+
 #endif
 
 @end

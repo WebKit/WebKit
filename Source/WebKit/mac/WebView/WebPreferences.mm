@@ -538,6 +538,7 @@ public:
 
         [NSNumber numberWithBool:YES],   WebKitShouldRespectImageOrientationKey,
 #endif // PLATFORM(IOS)
+        [NSNumber numberWithBool:YES],  WebKitAllowsAlternateFullscreenPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
         [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
@@ -2160,6 +2161,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
+}
+
+- (BOOL)allowsAlternateFullscreen
+{
+    return [self _boolValueForKey:WebKitAllowsAlternateFullscreenPreferenceKey];
+}
+
+- (void)setAllowsAlternateFullscreen:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAllowsAlternateFullscreenPreferenceKey];
 }
 
 - (BOOL)mockScrollbarsEnabled

@@ -4960,7 +4960,8 @@ void HTMLMediaElement::exitFullscreen()
 
 void HTMLMediaElement::enterFullscreenOptimized()
 {
-    enterFullscreen(VideoFullscreenModeOptimized);
+    if (m_mediaSession->allowsAlternateFullscreen(*this))
+        enterFullscreen(VideoFullscreenModeOptimized);
 }
 
 void HTMLMediaElement::didBecomeFullscreenElement()

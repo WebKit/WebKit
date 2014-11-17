@@ -198,10 +198,11 @@ void MediaControlsHost::enterFullscreenOptimized()
 bool MediaControlsHost::optimizedFullscreenSupported()
 {
 #if PLATFORM(IOS)
-    return wkIsOptimizedFullscreenSupported();
-#else
-    return false;
+    if (!wkIsOptimizedFullscreenSupported())
+        return false;
 #endif
+
+    return m_mediaElement->mediaSession().allowsAlternateFullscreen(*m_mediaElement);
 }
 
 void MediaControlsHost::updateCaptionDisplaySizes()

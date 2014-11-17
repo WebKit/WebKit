@@ -88,6 +88,7 @@ private:
 #if PLATFORM(IOS)
     _mediaPlaybackRequiresUserAction = YES;
     _mediaPlaybackAllowsAirPlay = YES;
+    _allowsAlternateFullscreen = YES;
 #endif
     
     return self;
@@ -116,6 +117,7 @@ private:
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
+    configuration->_allowsAlternateFullscreen = self->_allowsAlternateFullscreen;
     configuration->_mediaPlaybackRequiresUserAction = self->_mediaPlaybackRequiresUserAction;
     configuration->_mediaPlaybackAllowsAirPlay = self->_mediaPlaybackAllowsAirPlay;
     configuration->_selectionGranularity = self->_selectionGranularity;

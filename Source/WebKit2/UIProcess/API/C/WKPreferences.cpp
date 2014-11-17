@@ -738,6 +738,16 @@ bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mediaPlaybackAllowsInline();
 }
 
+void WKPreferencesSetAllowsAlternateFullscreen(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setAllowsAlternateFullscreen(flag);
+}
+
+bool WKPreferencesGetAllowsAlternateFullscreen(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowsAlternateFullscreen();
+}
+
 void WKPreferencesSetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setShowsToolTipOverTruncatedText(flag);

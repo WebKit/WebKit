@@ -301,6 +301,12 @@ void HTMLMediaSession::applyMediaPlayerRestrictions(const HTMLMediaElement& elem
     
 }
 
+bool HTMLMediaSession::allowsAlternateFullscreen(const HTMLMediaElement& element) const
+{
+    Settings* settings = element.document().settings();
+    return settings && settings->allowsAlternateFullscreen();
+}
+
 #if ENABLE(MEDIA_SOURCE)
 const unsigned fiveMinutesOf1080PVideo = 290 * 1024 * 1024; // 290 MB is approximately 5 minutes of 8Mbps (1080p) content.
 const unsigned fiveMinutesStereoAudio = 14 * 1024 * 1024; // 14 MB is approximately 5 minutes of 384kbps content.
