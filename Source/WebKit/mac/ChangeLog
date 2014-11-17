@@ -1,5 +1,47 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176107. <rdar://problem/18977222>
+
+    2014-11-13  Beth Dakin  <bdakin@apple.com>
+
+            WK1: Clean up WebActionMenuController to use the _hitTestResult ivar
+            https://bugs.webkit.org/show_bug.cgi?id=138716
+            -and corresponding-
+            rdar://problem/18977222
+
+            Reviewed by Tim Horton.
+
+            It’s not necessary to use the WebElementDictionary for so many things now that we 
+            are caching the HitTestResult. We should just use the HitTestResult.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController prepareForMenu:withEvent:]):
+            (-[WebActionMenuController _openURLFromActionMenu:]):
+            (-[WebActionMenuController _addToReadingListFromActionMenu:]):
+            (elementBoundingBoxFromNode):
+            (-[WebActionMenuController _quickLookURLFromActionMenu:]):
+            (-[WebActionMenuController _defaultMenuItemsForLink]):
+            (-[WebActionMenuController _defaultMenuItemsForImage]):
+            (-[WebActionMenuController _defaultMenuItemsForVideo]):
+            (-[WebActionMenuController _defaultMenuItemsForText]):
+            (-[WebActionMenuController _defaultMenuItemsForEditableText]):
+            (-[WebActionMenuController _defaultMenuItemsForEditableTextWithSuggestions]):
+            (-[WebActionMenuController _defaultMenuItemsForWhitespaceInEditableArea]):
+            (-[WebActionMenuController _createActionMenuItemForTag:]):
+            (-[WebActionMenuController _defaultMenuItems]):
+            (-[WebActionMenuController _elementBoundingBoxFromDOMElement:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForLink:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForImage:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForVideo:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForText:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForEditableText:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForEditableTextWithSuggestions:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForWhitespaceInEditableArea:]): Deleted.
+            (-[WebActionMenuController _createActionMenuItemForTag:withHitTestResult:]): Deleted.
+            (-[WebActionMenuController _defaultMenuItemsForHitTestResult:]): Deleted.
+
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176099. <rdar://problem/18877520>
 
     2014-11-13  Beth Dakin  <bdakin@apple.com>
