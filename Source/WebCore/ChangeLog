@@ -1,3 +1,42 @@
+2014-11-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move WebCore/loader to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=138646
+
+        Reviewed by Chris Dumez.
+
+        Replace OwnPtr with std::unique_ptr<> and std::make_unique<>.
+        However this patch leaves ResourceRequest::adopt() because this need
+        to be handled by different patch.
+
+        No new tests, no behavior changes.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::preflightSuccess):
+        * loader/DocumentThreadableLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::notifyDone):
+        * loader/SubresourceLoader.h:
+        * loader/TextTrackLoader.h:
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestPreload):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        (WebCore::CachedResourceLoader::printPreloadStats):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::deleteAllPreparedStatements):
+        (WebCore::readySQLiteStatement):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconRecord.h:
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'order' CSS property to a calculated value

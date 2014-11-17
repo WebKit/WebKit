@@ -33,7 +33,6 @@
 #include "Timer.h"
 #include "WebVTTParser.h"
 #include <memory>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

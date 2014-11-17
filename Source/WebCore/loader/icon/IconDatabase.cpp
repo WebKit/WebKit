@@ -1758,20 +1758,20 @@ void IconDatabase::deleteAllPreparedStatements()
 {
     ASSERT_ICON_SYNC_THREAD();
     
-    m_setIconIDForPageURLStatement.clear();
-    m_removePageURLStatement.clear();
-    m_getIconIDForIconURLStatement.clear();
-    m_getImageDataForIconURLStatement.clear();
-    m_addIconToIconInfoStatement.clear();
-    m_addIconToIconDataStatement.clear();
-    m_getImageDataStatement.clear();
-    m_deletePageURLsForIconURLStatement.clear();
-    m_deleteIconFromIconInfoStatement.clear();
-    m_deleteIconFromIconDataStatement.clear();
-    m_updateIconInfoStatement.clear();
-    m_updateIconDataStatement.clear();
-    m_setIconInfoStatement.clear();
-    m_setIconDataStatement.clear();
+    m_setIconIDForPageURLStatement = nullptr;
+    m_removePageURLStatement = nullptr;
+    m_getIconIDForIconURLStatement = nullptr;
+    m_getImageDataForIconURLStatement = nullptr;
+    m_addIconToIconInfoStatement = nullptr;
+    m_addIconToIconDataStatement = nullptr;
+    m_getImageDataStatement = nullptr;
+    m_deletePageURLsForIconURLStatement = nullptr;
+    m_deleteIconFromIconInfoStatement = nullptr;
+    m_deleteIconFromIconDataStatement = nullptr;
+    m_updateIconInfoStatement = nullptr;
+    m_updateIconDataStatement  = nullptr;
+    m_setIconInfoStatement = nullptr;
+    m_setIconDataStatement = nullptr;
 }
 
 void* IconDatabase::cleanupSyncThread()
@@ -1810,15 +1810,15 @@ void* IconDatabase::cleanupSyncThread()
 // 1 - If the SQLDatabase& argument is different, the statement must be destroyed and remade.  This happens when the user
 //     switches to and from private browsing
 // 2 - Lazy construction of the Statement in the first place, in case we've never made this query before
-inline void readySQLiteStatement(OwnPtr<SQLiteStatement>& statement, SQLiteDatabase& db, const String& str)
+inline void readySQLiteStatement(std::unique_ptr<SQLiteStatement>& statement, SQLiteDatabase& db, const String& str)
 {
     if (statement && (statement->database() != &db || statement->isExpired())) {
         if (statement->isExpired())
             LOG(IconDatabase, "SQLiteStatement associated with %s is expired", str.ascii().data());
-        statement.clear();
+        statement = nullptr;
     }
     if (!statement) {
-        statement = adoptPtr(new SQLiteStatement(db, str));
+        statement = std::make_unique<SQLiteStatement>(db, str);
         if (statement->prepare() != SQLResultOk)
             LOG_ERROR("Preparing statement %s failed", str.ascii().data());
     }

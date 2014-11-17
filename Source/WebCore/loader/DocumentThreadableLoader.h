@@ -36,7 +36,6 @@
 #include "FrameLoaderTypes.h"
 #include "ThreadableLoader.h"
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -106,7 +105,7 @@ namespace WebCore {
         bool m_sameOriginRequest;
         bool m_simpleRequest;
         bool m_async;
-        OwnPtr<ResourceRequest> m_actualRequest;  // non-null during Access Control preflight checks
+        std::unique_ptr<ResourceRequest> m_actualRequest; // non-null during Access Control preflight checks
     };
 
 } // namespace WebCore

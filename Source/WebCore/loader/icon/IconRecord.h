@@ -32,7 +32,6 @@
 #include "PageURLRecord.h"
 #include "SharedBuffer.h"
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

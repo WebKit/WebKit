@@ -98,14 +98,14 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(const ResourceReques
 {
     ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
 
-    OwnPtr<ResourceRequest> crossOriginRequest = adoptPtr(new ResourceRequest(request));
+    auto crossOriginRequest = std::make_unique<ResourceRequest>(request);
     updateRequestForAccessControl(*crossOriginRequest, securityOrigin(), m_options.allowCredentials());
 
     if ((m_options.preflightPolicy == ConsiderPreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields())) || m_options.preflightPolicy == PreventPreflight)
         makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
     else {
         m_simpleRequest = false;
-        m_actualRequest = crossOriginRequest.release();
+        m_actualRequest = WTF::move(crossOriginRequest);
 
         if (CrossOriginPreflightResultCache::shared().canSkipPreflight(securityOrigin()->toString(), m_actualRequest->url(), m_options.allowCredentials(), m_actualRequest->httpMethod(), m_actualRequest->httpHeaderFields()))
             preflightSuccess();
@@ -335,7 +335,7 @@ void DocumentThreadableLoader::didFail(unsigned long identifier, const ResourceE
 
 void DocumentThreadableLoader::preflightSuccess()
 {
-    OwnPtr<ResourceRequest> actualRequest;
+    std::unique_ptr<ResourceRequest> actualRequest;
     actualRequest.swap(m_actualRequest);
 
     actualRequest->setHTTPOrigin(securityOrigin()->toString());

@@ -1357,10 +1357,10 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
         
         cacheCopy->addResource(resourceCopy.release());
     }
-    
+
     // Now create a new cache group.
-    OwnPtr<ApplicationCacheGroup> groupCopy(adoptPtr(new ApplicationCacheGroup(cache->group()->manifestURL(), true)));
-    
+    auto groupCopy = std::make_unique<ApplicationCacheGroup>(cache->group()->manifestURL(), true);
+
     groupCopy->setNewestCache(cacheCopy);
     
     ApplicationCacheStorage copyStorage;

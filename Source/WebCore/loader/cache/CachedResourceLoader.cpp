@@ -877,7 +877,7 @@ void CachedResourceLoader::requestPreload(CachedResource::Type type, CachedResou
     resource->increasePreloadCount();
 
     if (!m_preloads)
-        m_preloads = adoptPtr(new ListHashSet<CachedResource*>);
+        m_preloads = std::make_unique<ListHashSet<CachedResource*>>();
     m_preloads->add(resource.get());
 
 #if PRELOAD_DEBUG
@@ -923,7 +923,7 @@ void CachedResourceLoader::clearPreloads()
         if (!deleted && res->preloadResult() == CachedResource::PreloadNotReferenced)
             memoryCache()->remove(res);
     }
-    m_preloads.clear();
+    m_preloads = nullptr;
 }
 
 void CachedResourceLoader::clearPendingPreloads()
@@ -969,7 +969,7 @@ void CachedResourceLoader::printPreloadStats()
         
         res->decreasePreloadCount();
     }
-    m_preloads.clear();
+    m_preloads = nullptr;
     
     if (scripts)
         printf("SCRIPTS: %d (%d hits, hit rate %d%%)\n", scripts, scripts - scriptMisses, (scripts - scriptMisses) * 100 / scripts);
