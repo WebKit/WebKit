@@ -52,6 +52,16 @@ extern "C" {
 #else
 
 #ifdef __OBJC__
+@interface CAContext : NSObject
+@end
+
+@interface CAContext (Details)
++ (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
++ (id)objectForSlot:(uint32_t)name;
+- (uint32_t)createImageSlot:(CGSize)size hasAlpha:(BOOL)flag;
+- (void)deleteSlot:(uint32_t)name;
+@end
+
 @interface CALayer (Details)
 - (CAContext *)context;
 - (CGSize)size;
@@ -87,16 +97,6 @@ typedef struct CAColorMatrix CAColorMatrix;
 @interface CAFilter (Details)
 + (CAFilter *)filterWithType:(NSString *)type;
 @property (copy) NSString *name;
-@end
-
-@interface CAContext : NSObject
-@end
-
-@interface CAContext (Details)
-+ (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
-+ (id)objectForSlot:(uint32_t)name;
-- (uint32_t)createImageSlot:(CGSize)size hasAlpha:(BOOL)flag;
-- (void)deleteSlot:(uint32_t)name;
 @end
 #endif // __OBJC__
 
