@@ -103,7 +103,7 @@ void AcceleratedCompositingContext::initialize()
     m_context->makeContextCurrent();
 
     m_textureMapper = TextureMapperGL::create(TextureMapper::OpenGLMode);
-    toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer()->setTextureMapper(m_textureMapper.get());
 
     scheduleLayerFlush();
 }
@@ -142,7 +142,7 @@ bool AcceleratedCompositingContext::startedAnimation(WebCore::GraphicsLayer* lay
     if (!layer)
         return false;
 
-    if (toGraphicsLayerTextureMapper(layer)->startedAnimation())
+    if (downcast<GraphicsLayerTextureMapper>(layer)->startedAnimation())
         return true;
 
     for (auto childLayer : layer->children()) {
@@ -171,7 +171,7 @@ void AcceleratedCompositingContext::compositeLayersToContext(CompositePurpose pu
     }
 
     m_textureMapper->beginPainting();
-    toTextureMapperLayer(m_rootLayer.get())->paint();
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer()->paint();
     m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get());
     m_textureMapper->endPainting();
 

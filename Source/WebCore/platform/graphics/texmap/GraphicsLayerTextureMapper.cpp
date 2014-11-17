@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-TextureMapperLayer* toTextureMapperLayer(GraphicsLayer* layer)
-{
-    return layer ? toGraphicsLayerTextureMapper(layer)->layer() : 0;
-}
-
 std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client)
 {
     if (!factory)
@@ -419,7 +414,7 @@ static void toTextureMapperLayerVector(const Vector<GraphicsLayer*>& layers, Vec
 {
     texmapLayers.reserveCapacity(layers.size());
     for (auto* layer : layers)
-        texmapLayers.append(toTextureMapperLayer(layer));
+        texmapLayers.append(downcast<GraphicsLayerTextureMapper>(layer)->layer());
 }
 
 void GraphicsLayerTextureMapper::commitLayerChanges()
@@ -434,10 +429,10 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     }
 
     if (m_changeMask & MaskLayerChange)
-        m_layer->setMaskLayer(toTextureMapperLayer(maskLayer()));
+        m_layer->setMaskLayer(downcast<GraphicsLayerTextureMapper>(maskLayer())->layer());
 
     if (m_changeMask & ReplicaLayerChange)
-        m_layer->setReplicaLayer(toTextureMapperLayer(replicaLayer()));
+        m_layer->setReplicaLayer(downcast<GraphicsLayerTextureMapper>(replicaLayer())->layer());
 
     if (m_changeMask & PositionChange)
         m_layer->setPosition(position());

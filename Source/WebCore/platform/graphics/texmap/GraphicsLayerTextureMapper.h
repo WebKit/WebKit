@@ -103,6 +103,8 @@ public:
     bool startedAnimation() const { return m_startedAnimation; }
 
 private:
+    // GraphicsLayer
+    virtual bool isGraphicsLayerTextureMapper() const override { return true; }
 
     // TextureMapperPlatformLayer::Client
     virtual void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
@@ -182,14 +184,10 @@ private:
     bool m_startedAnimation;
 };
 
-inline static GraphicsLayerTextureMapper* toGraphicsLayerTextureMapper(GraphicsLayer* layer)
-{
-    return static_cast<GraphicsLayerTextureMapper*>(layer);
-}
+} // namespace WebCore
 
-TextureMapperLayer* toTextureMapperLayer(GraphicsLayer*);
+SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebCore::GraphicsLayerTextureMapper, isGraphicsLayerTextureMapper())
 
-}
 #endif
 
 #endif // GraphicsLayerTextureMapper_h

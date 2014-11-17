@@ -1,3 +1,18 @@
+2014-11-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Add typecasting support for GraphicsLayerTextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=138741
+
+        Reviewed by Martin Robinson.
+
+        Replace uses of toTextureMapperLayer() with downcasting and
+        calling the GraphicsLayerTextureMapper::layer() method.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+        (WebKit::LayerTreeHostGtk::layerFlushTimerFired):
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext):
+
 2014-11-16  Tim Horton  <timothy_horton@apple.com>
 
         Use TextIndicator instead of the built in Lookup highlight

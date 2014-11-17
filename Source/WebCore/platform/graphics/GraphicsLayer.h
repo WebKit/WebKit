@@ -498,6 +498,7 @@ public:
 
     virtual bool isGraphicsLayerCA() const { return false; }
     virtual bool isGraphicsLayerCARemote() const { return false; }
+    virtual bool isGraphicsLayerTextureMapper() const { return false; }
 
 protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.

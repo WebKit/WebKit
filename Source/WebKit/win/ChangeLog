@@ -1,3 +1,19 @@
+2014-11-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Add typecasting support for GraphicsLayerTextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=138741
+
+        Reviewed by Martin Robinson.
+
+        Switch to using downcast<GraphicsLayerTextureMapper>() and replace
+        uses of toTextureMapperLayer() with downcasting and calling
+        the GraphicsLayerTextureMapper::layer() method.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+        (AcceleratedCompositingContext::startedAnimation):
+        (AcceleratedCompositingContext::compositeLayersToContext):
+
 2014-11-12  Chris Dumez  <cdumez@apple.com>
 
         Have DOMTimer deal with more ScriptExecutionContext references

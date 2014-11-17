@@ -1,3 +1,29 @@
+2014-11-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Add typecasting support for GraphicsLayerTextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=138741
+
+        Reviewed by Martin Robinson.
+
+        Add type traits for the GraphicsLayerTextureMapper class.
+        This enables using typecasting functions instead of
+        toGraphicsLayerTextureMapper().
+
+        Remove toTextureMapperLayer() casting function which actually
+        returned the TextureMapperLayer object that belonged to the
+        passed-in GraphicsLayerTextureMapper. Instead, the GraphicsLayer
+        object is now downcasted and the TextureMapperLayer is accessed
+        by calling the GraphicsLayerTextureMapper::layer() method.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::isGraphicsLayerTextureMapper):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::toTextureMapperLayerVector):
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::toTextureMapperLayer): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore::toGraphicsLayerTextureMapper): Deleted.
+
 2014-11-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move WebCore/loader to std::unique_ptr
