@@ -233,6 +233,15 @@ static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveVal
     return true;
 }
 
+inline void applyValueVerticalAlign(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID())
+        styleResolver.style()->setVerticalAlign(primitiveValue);
+    else
+        styleResolver.style()->setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
+}
+
 #if ENABLE(CSS_IMAGE_RESOLUTION)
 inline void applyInheritImageResolution(StyleResolver& styleResolver)
 {

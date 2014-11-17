@@ -255,7 +255,7 @@ transition-timing-function
 
 unicode-bidi [NewStyleBuilder]
 unicode-range
-vertical-align
+vertical-align [NewStyleBuilder, Custom=Value]
 visibility [Inherited, NewStyleBuilder]
 white-space [Inherited, NewStyleBuilder]
 widows [Inherited]

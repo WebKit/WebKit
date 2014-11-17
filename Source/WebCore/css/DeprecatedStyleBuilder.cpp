@@ -1277,28 +1277,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-class ApplyPropertyVerticalAlign {
-public:
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-
-        if (primitiveValue.getValueID())
-            return styleResolver->style()->setVerticalAlign(primitiveValue);
-
-        styleResolver->style()->setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData()));
-    }
-
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyDefaultBase<EVerticalAlign, &RenderStyle::verticalAlign, EVerticalAlign, &RenderStyle::setVerticalAlign, EVerticalAlign, &RenderStyle::initialVerticalAlign>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
 class ApplyPropertyAspectRatio {
 public:
     static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
@@ -1439,7 +1417,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitTextDecorationSkip, ApplyPropertyTextDecorationSkip::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextUnderlinePosition, ApplyPropertyTextUnderlinePosition::createHandler());
     setPropertyHandler(CSSPropertyTextRendering, ApplyPropertyFont<TextRenderingMode, &FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering>::createHandler());
-    setPropertyHandler(CSSPropertyVerticalAlign, ApplyPropertyVerticalAlign::createHandler());
 
     setPropertyHandler(CSSPropertyAnimationDelay, ApplyPropertyAnimation<double, &Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSToStyleMap::mapAnimationDelay, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyAnimationDirection, ApplyPropertyAnimation<Animation::AnimationDirection, &Animation::direction, &Animation::setDirection, &Animation::isDirectionSet, &Animation::clearDirection, &Animation::initialAnimationDirection, &CSSToStyleMap::mapAnimationDirection, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
