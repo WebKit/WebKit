@@ -1,3 +1,30 @@
+2014-11-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        App.Manifest shouldn't use App.__container__.lookup
+        https://bugs.webkit.org/show_bug.cgi?id=138768
+
+        Reviewed by Andreas Kling.
+
+        Removed the hack to find the store object via App.__container__.lookup.
+        Pass around the store object instead.
+
+        * public/v2/app.js:
+        (App.DashboardRow._createPane): Add "store" property to the pane.
+        (App.DashboardPaneProxyForPicker._platformOrMetricIdChanged): Ditto.
+        (App.IndexController.gridChanged): Ditto.
+        (App.IndexController.actions.addRow): Ditto.
+        (App.IndexController.init): Ditto.
+        (App.Pane._fetch): Ditto.
+        (App.ChartsController._parsePaneList): Ditto.
+        (App.ChartsController._updateQueryString): Ditto.
+        (App.ChartsController.actions.addPaneByMetricAndPlatform): Ditto.
+        (App.BuildPopup): Ditto.
+        (App.AnalysisTaskRoute.model): Ditto.
+        (App.AnalysisTaskViewModel._taskUpdated): Ditto.
+
+        * public/v2/manifest.js:
+        (App.Manifest.fetch): Removed the code to find the store object.
+
 2014-11-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Ember.js warnings the new perf dashboard

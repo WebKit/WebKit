@@ -33,6 +33,7 @@ App.DashboardRow = Ember.Object.extend({
             paneInfo = null;
 
         var pane = App.Pane.create({
+            store: this.get('store'),
             platformId: paneInfo ? paneInfo[0] : null,
             metricId: paneInfo ? paneInfo[1] : null,
         });
@@ -45,7 +46,7 @@ App.DashboardPaneProxyForPicker = Ember.ObjectProxy.extend({
     _platformOrMetricIdChanged: function ()
     {
         var self = this;
-        App.BuildPopup('choosePane', this)
+        App.BuildPopup(this.get('store'), 'choosePane', this)
             .then(function (platforms) { self.set('pickerData', platforms); });
     }.observes('platformId', 'metricId').on('init'),
     paneList: function () {
@@ -87,8 +88,10 @@ App.IndexController = Ember.Controller.extend({
             return {label:name, index: index};
         }));
 
+        var store = this.store;
         this.set('rows', table.slice(1).map(function (rowParam) {
             return App.DashboardRow.create({
+                store: store,
                 header: rowParam[0],
                 cellsInfo: rowParam.slice(1),
                 columnCount: columnCount,
@@ -170,6 +173,7 @@ App.IndexController = Ember.Controller.extend({
         addRow: function ()
         {
             this.get('rows').pushObject(App.DashboardRow.create({
+                store: this.store,
                 header: this.get('newRowHeader'),
                 columnCount: this.get('columnCount'),
             }));
@@ -195,7 +199,7 @@ App.IndexController = Ember.Controller.extend({
     init: function ()
     {
         this._super();
-        App.Manifest.fetch();
+        App.Manifest.fetch(this.get('store'));
     }
 });
 
@@ -340,7 +344,7 @@ App.Pane = Ember.Object.extend({
         else {
             var self = this;
 
-            App.Manifest.fetchRunsWithPlatformAndMetric(this.store, platformId, metricId).then(function (result) {
+            App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(function (result) {
                 self.set('platform', result.platform);
                 self.set('metric', result.metric);
                 self.set('chartData', result.runs);
@@ -510,6 +514,7 @@ App.ChartsController = Ember.Controller.extend({
                 }
             }
             return App.Pane.create({
+                store: self.store,
                 info: paneInfo,
                 platformId: paneInfo[0],
                 metricId: paneInfo[1],
@@ -561,6 +566,7 @@ App.ChartsController = Ember.Controller.extend({
         addPaneByMetricAndPlatform: function (param)
         {
             this.addPane(App.Pane.create({
+                store, this.store,
                 platformId: param.platform.get('id'),
                 metricId: param.metric.get('id'),
                 showingDetails: false
@@ -572,15 +578,15 @@ App.ChartsController = Ember.Controller.extend({
     {
         this._super();
         var self = this;
-        App.BuildPopup('addPaneByMetricAndPlatform').then(function (platforms) {
+        App.BuildPopup(this.store, 'addPaneByMetricAndPlatform').then(function (platforms) {
             self.set('platforms', platforms);
         });
     },
 });
 
-App.BuildPopup = function(action, position)
+App.BuildPopup = function(store, action, position)
 {
-    return App.Manifest.fetch().then(function () {
+    return App.Manifest.fetch(store).then(function () {
         return App.Manifest.get('platforms').map(function (platform) {
             return App.PlatformProxyForPopup.create({content: platform,
                 action: action, position: position});
@@ -1592,9 +1598,8 @@ App.AnalysisRoute = Ember.Route.extend({
 
 App.AnalysisTaskRoute = Ember.Route.extend({
     model: function (param) {
-        var store = this.store;
-        return this.store.find('analysisTask', param.taskId).then(function (task) {
-            return App.AnalysisTaskViewModel.create({content: task});
+        return store.find('analysisTask', param.taskId).then(function (task) {
+            return App.AnalysisTaskViewModel.create({content: task, store: store});
         });
     },
 });
@@ -1606,7 +1611,7 @@ App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
     {
         var platformId = this.get('platform').get('id');
         var metricId = this.get('metric').get('id');
-        App.Manifest.fetchRunsWithPlatformAndMetric(this.store, platformId, metricId).then(this._fetchedRuns.bind(this));
+        App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(this._fetchedRuns.bind(this));
     }.observes('platform', 'metric').on('init'),
     _fetchedRuns: function (data) {
         var runs = data.runs;

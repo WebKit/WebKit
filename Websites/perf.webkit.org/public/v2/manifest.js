@@ -160,14 +160,10 @@ App.Manifest = Ember.Controller.extend({
     _builderById: {},
     _repositoryById: {},
     _fetchPromise: null,
-    fetch: function ()
+    fetch: function (store)
     {
-        if (this._fetchPromise)
-            return this._fetchPromise;
-        // FIXME: We shouldn't use DS.Store at all.
-        var store = App.__container__.lookup('store:main');
-        var promise = store.findAll('platform');
-        this._fetchPromise = promise.then(this._fetchedManifest.bind(this, store));
+        if (!this._fetchPromise)
+            this._fetchPromise = store.findAll('platform').then(this._fetchedManifest.bind(this, store));
         return this._fetchPromise;
     },
     isFetched: function () { return !!this.get('platforms'); }.property('platforms'),
