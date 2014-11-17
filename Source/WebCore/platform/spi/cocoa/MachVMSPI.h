@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#ifndef MachVMSPI_h
+#define MachVMSPI_h
 
-#if PLATFORM(COCOA)
+#include <mach/boolean.h>
+#include <mach/kern_return.h>
+#include <mach/mach_types.h>
 
-#include "IOPMLibSPI.h"
-#include <wtf/RetainPtr.h>
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+#include <mach/mach_vm.h>
+#endif
 
-namespace WebCore {
+EXTERN_C kern_return_t mach_vm_allocate(vm_map_t target, mach_vm_address_t*, mach_vm_size_t, int flags);
+EXTERN_C kern_return_t mach_vm_deallocate(vm_map_t target, mach_vm_address_t, mach_vm_size_t);
+EXTERN_C kern_return_t mach_vm_map(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t, mach_vm_offset_t mask, int flags,
+                                   mem_entry_name_port_t, memory_object_offset_t, boolean_t copy, vm_prot_t currentProtection, vm_prot_t maximumProtection, vm_inherit_t);
+EXTERN_C kern_return_t mach_vm_protect(vm_map_t targetTask, mach_vm_address_t, mach_vm_size_t, boolean_t setMaximum, vm_prot_t newProtection);
+EXTERN_C kern_return_t mach_vm_region(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t*, vm_region_flavor_t, vm_region_info_t,
+                                      mach_msg_type_number_t* infoCount, mach_port_t* objectName);
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
-}
-
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
-}
-
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
-
-}
-
-#endif // PLATFORM(COCOA)
+#endif // MachVMSPI_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#ifndef NSPointerFunctionsSPI_h
+#define NSPointerFunctionsSPI_h
 
-#if PLATFORM(COCOA)
+#include <Foundation/NSPointerFunctions.h>
 
-#include "IOPMLibSPI.h"
-#include <wtf/RetainPtr.h>
+#if !USE(APPLE_INTERNAL_SDK)
 
-namespace WebCore {
+enum {
+    NSPointerFunctionsZeroingWeakMemory = 1UL << 0,
+};
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
-}
+#endif
 
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
-}
-
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
-
-}
-
-#endif // PLATFORM(COCOA)
+#endif // NSPointerFunctionsSPI_h

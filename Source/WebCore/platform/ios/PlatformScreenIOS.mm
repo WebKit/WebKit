@@ -30,11 +30,11 @@
 #import "FrameView.h"
 #import "HostWindow.h"
 #import "IntRect.h"
+#import "MobileGestaltSPI.h"
 #import "SoftLinking.h"
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import "Widget.h"
-#import <MobileGestalt.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK(UIKit, UIAccessibilityIsGrayscaleEnabled, bool, (void), ())

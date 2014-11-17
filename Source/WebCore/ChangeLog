@@ -1,5 +1,37 @@
 2014-11-17  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Libdispatch, Dyld, IOKit, Mach, NSPointerFunctions, MobileGestalt
+        SPI are not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138802
+
+        Reviewed by David Kilzer.
+
+        Add SPI wrapper headers {Dispatch, DynamicLinker, IOPMLib, MachVM, NSPointerFunctions, MobileGestalt}SPI.h
+        that forward declare applicable libdispatch, dyld, IOKit, mach, Foundation, MobileGestalt SPI
+        and use these headers instead of the including private headers corresponding to these libraries/frameworks.
+
+        * WebCore.xcodeproj/project.pbxproj: Add private headers MobileGestaltSPI.h and
+        MachVMSPI.h, and project headers DynamicLinkerSPI.h, NSPointerFunctionsSPI.h,
+        DispatchSPI.h and IOPMLibSPI.h. Also, sort files in Xcode project.
+        * bindings/objc/DOMInternal.mm: Include header NSPointerFunctionsSPI.h.
+        * bridge/objc/objc_instance.mm: Ditto; Also, sort #import directives.
+        * platform/cocoa/DisplaySleepDisablerCocoa.cpp: Substitute header IOPMLibSPI.h
+        for private header IOKit/pwr_mgt/IOPMLib.h.
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm: Substitute header DispatchSPI.h
+        for private header dispatch/private.h.
+        * platform/graphics/ios/FontServicesIOS.mm: Substitute header DynamicLinkerSPI.h
+        for private header mach-o/dyld_priv.h.
+        * platform/ios/PlatformScreenIOS.mm: Substitute header MobileGestaltSPI.h for
+        private header MobileGestalt.h.
+        * platform/spi/cocoa/DispatchSPI.h: Added.
+        * platform/spi/cocoa/DynamicLinkerSPI.h: Added.
+        * platform/spi/cocoa/IOPMLibSPI.h: Added.
+        * platform/spi/cocoa/MachVMSPI.h: Added.
+        * platform/spi/cocoa/NSPointerFunctionsSPI.h: Added.
+        * platform/spi/ios/MobileGestaltSPI.h: Added.
+
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
         [iOS] CoreText and CoreUI SPI are not available in public SDK
         https://bugs.webkit.org/show_bug.cgi?id=138760
 

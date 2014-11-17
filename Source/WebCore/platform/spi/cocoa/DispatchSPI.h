@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#ifndef DispatchSPI_h
+#define DispatchSPI_h
 
-#if PLATFORM(COCOA)
+#include <dispatch/dispatch.h>
 
-#include "IOPMLibSPI.h"
-#include <wtf/RetainPtr.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-namespace WebCore {
+// FIXME: As a workaround for <rdar://problem/18337182>, we conditionally enclose the header
+// <dispatch/private.h> in an extern "C" linkage block to make it suitable for C++ use.
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
+#include <dispatch/private.h>
+
+#ifdef __cplusplus
 }
+#endif
 
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
-}
+#else // USE(APPLE_INTERNAL_SDK)
 
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
+enum {
+    DISPATCH_MEMORYSTATUS_PRESSURE_NORMAL = 0x01,
+    DISPATCH_MEMORYSTATUS_PRESSURE_WARN = 0x02,
+    DISPATCH_MEMORYSTATUS_PRESSURE_CRITICAL = 0x04,
+};
+#define DISPATCH_SOURCE_TYPE_MEMORYSTATUS (&_dispatch_source_type_memorystatus)
 
-}
+#endif
 
-#endif // PLATFORM(COCOA)
+EXTERN_C const struct dispatch_source_type_s _dispatch_source_type_memorystatus;
+
+#endif // DispatchSPI_h
