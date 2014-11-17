@@ -1,5 +1,30 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176099. <rdar://problem/18877520>
+
+    2014-11-13  Beth Dakin  <bdakin@apple.com>
+
+            WK1: Support default actions for video
+            https://bugs.webkit.org/show_bug.cgi?id=138713
+            -and corresponding-
+            rdar://problem/18877520
+
+            Reviewed by Tim Horton.
+
+            Call setToNonShadowAncestor() for media HitTestResults.
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController performHitTestAtPoint:]):
+
+            Default items and actions.
+            (-[WebActionMenuController _defaultMenuItemsForVideo:]):
+            (-[WebActionMenuController _copyVideoURL:]):
+            (-[WebActionMenuController _saveVideoToDownloads:]):
+            (-[WebActionMenuController _createActionMenuItemForTag:withHitTestResult:]):
+            (-[WebActionMenuController _defaultMenuItemsForHitTestResult:]):
+            * WebView/WebUIDelegatePrivate.h:
+
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176093. <rdar://problem/18975774>
 
     2014-11-13  Tim Horton  <timothy_horton@apple.com>
