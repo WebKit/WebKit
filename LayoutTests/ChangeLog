@@ -1,3 +1,37 @@
+2014-11-06  Mark Lam  <mark.lam@apple.com>
+
+        slow_path_get_direct_pname() needs to be hardened against a constant baseValue.
+        <https://webkit.org/b/138476>
+
+        Reviewed by Michael Saboff.
+
+        * js/get-by-pname-expected.txt:
+        * js/script-tests/get-by-pname.js:
+        (getByPnameOnConstant):
+        (getByPnameOnVar):
+        - Added more test cases.
+
+2014-11-06  Mark Lam  <mark.lam@apple.com>
+
+        Refactor the get-by-pname.js test.
+        <https://webkit.org/b/138483>
+
+        Reviewed by Geoffrey Garen.
+
+        Refactored the test code to:
+        1. make it easier to add more test cases.
+        2. test each case against different tier JITs.
+        3. print only one set of results for each tier being tested.
+
+        * js/get-by-pname-expected.txt:
+        * js/script-tests/get-by-pname.js:
+        (getByPnameOnConstant):
+        (getByPnameOnVar):
+        (testExpr):
+        (testExpectedResult):
+        (isTierIteration):
+        (tierName):
+
 2014-11-05  Shivakumar JM  <shiva.jm@samsung.com>
 
         splitText API does not match DOM specification.

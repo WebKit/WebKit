@@ -1,3 +1,26 @@
+2014-11-06  Mark Lam  <mark.lam@apple.com>
+
+        slow_path_get_direct_pname() needs to be hardened against a constant baseValue.
+        <https://webkit.org/b/138476>
+
+        Reviewed by Michael Saboff.
+
+        slow_path_get_direct_pname() currently assumes that the baseValue is always a
+        non-constant virtual register.  However, this is not always the case like in the
+        following:
+
+            function foo() {
+                var o = { a:1 };
+                for (var n in o)
+                    0[n];
+            }
+            foo();
+
+        This patch fixes it to also check for constant virtual register indexes.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2014-10-31  Andreas Kling  <akling@apple.com>
 
         Make writes to RegExpObject.lastIndex cacheable.

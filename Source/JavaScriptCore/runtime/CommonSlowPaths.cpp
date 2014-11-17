@@ -589,7 +589,7 @@ SLOW_PATH_DECL(slow_path_has_generic_property)
 SLOW_PATH_DECL(slow_path_get_direct_pname)
 {
     BEGIN();
-    JSValue baseValue = OP(2).jsValue();
+    JSValue baseValue = OP_C(2).jsValue();
     JSValue property = OP(3).jsValue();
     ASSERT(property.isString());
     RETURN(baseValue.get(exec, property.toString(exec)->toIdentifier(exec)));

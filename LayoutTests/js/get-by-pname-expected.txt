@@ -3,506 +3,158 @@ This tests that op_get_by_pname is compiled correctly.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
-PASS foo(o) is 11
-PASS foo(p) is 10
-PASS foo(q) is 3467
-PASS foo(r) is 113
-PASS foo(s) is 182
+Test tier: cold
+PASS foo(o) is 11
+PASS foo(p) is 10
+PASS foo(q) is 3467
+PASS foo(r) is 113
+PASS foo(s) is 182
+PASS getByPnameOnConstant(a) is 0
+PASS getByPnameOnVar(a, 100) is 0
+PASS getByPnameOnVar(a, 'abc') is '0abc'
+PASS getByPnameOnVar(a, o) is 0
+PASS getByPnameOnVar(a, o1) is 4
+PASS getByPnameOnVar(a, a) is 6
+PASS getByPnameOnConstant(o1) is 0
+PASS getByPnameOnVar(o1, 100) is 0
+PASS getByPnameOnVar(o1, 'abc') is '0bc0'
+PASS getByPnameOnVar(o1, o) is 0
+PASS getByPnameOnVar(o1, o1) is 11
+PASS getByPnameOnVar(o1, a) is 5
+PASS getByPnameOnConstant(o) is 0
+PASS getByPnameOnVar(o, 100) is 0
+PASS getByPnameOnVar(o, 'abc') is 0
+PASS getByPnameOnVar(o, o) is 11
+PASS getByPnameOnVar(o, o1) is 0
+PASS getByPnameOnVar(o, a) is 0
+PASS getByPnameOnConstant(0) is 0
+PASS getByPnameOnVar(0, 100) is 0
+PASS getByPnameOnVar(0, 'abc') is 0
+PASS getByPnameOnVar(0, o) is 0
+PASS getByPnameOnVar(0, o1) is 0
+PASS getByPnameOnVar(0, a) is 0
+PASS getByPnameOnConstant('abc') is 0
+PASS getByPnameOnVar('abc', 100) is 0
+PASS getByPnameOnVar('abc', 'abc') is '0abc'
+PASS getByPnameOnVar('abc', o) is 0
+PASS getByPnameOnVar('abc', o1) is 4
+PASS getByPnameOnVar('abc', a) is 6
+PASS getByPnameOnVar('def', 'abc') is '0abc'
+
+Test tier: llint
+PASS foo(o) is 11
+PASS foo(p) is 10
+PASS foo(q) is 3467
+PASS foo(r) is 113
+PASS foo(s) is 182
+PASS getByPnameOnConstant(a) is 0
+PASS getByPnameOnVar(a, 100) is 0
+PASS getByPnameOnVar(a, 'abc') is '0abc'
+PASS getByPnameOnVar(a, o) is 0
+PASS getByPnameOnVar(a, o1) is 4
+PASS getByPnameOnVar(a, a) is 6
+PASS getByPnameOnConstant(o1) is 0
+PASS getByPnameOnVar(o1, 100) is 0
+PASS getByPnameOnVar(o1, 'abc') is '0bc0'
+PASS getByPnameOnVar(o1, o) is 0
+PASS getByPnameOnVar(o1, o1) is 11
+PASS getByPnameOnVar(o1, a) is 5
+PASS getByPnameOnConstant(o) is 0
+PASS getByPnameOnVar(o, 100) is 0
+PASS getByPnameOnVar(o, 'abc') is 0
+PASS getByPnameOnVar(o, o) is 11
+PASS getByPnameOnVar(o, o1) is 0
+PASS getByPnameOnVar(o, a) is 0
+PASS getByPnameOnConstant(0) is 0
+PASS getByPnameOnVar(0, 100) is 0
+PASS getByPnameOnVar(0, 'abc') is 0
+PASS getByPnameOnVar(0, o) is 0
+PASS getByPnameOnVar(0, o1) is 0
+PASS getByPnameOnVar(0, a) is 0
+PASS getByPnameOnConstant('abc') is 0
+PASS getByPnameOnVar('abc', 100) is 0
+PASS getByPnameOnVar('abc', 'abc') is '0abc'
+PASS getByPnameOnVar('abc', o) is 0
+PASS getByPnameOnVar('abc', o1) is 4
+PASS getByPnameOnVar('abc', a) is 6
+PASS getByPnameOnVar('def', 'abc') is '0abc'
+
+Test tier: baseline
+PASS foo(o) is 11
+PASS foo(p) is 10
+PASS foo(q) is 3467
+PASS foo(r) is 113
+PASS foo(s) is 182
+PASS getByPnameOnConstant(a) is 0
+PASS getByPnameOnVar(a, 100) is 0
+PASS getByPnameOnVar(a, 'abc') is '0abc'
+PASS getByPnameOnVar(a, o) is 0
+PASS getByPnameOnVar(a, o1) is 4
+PASS getByPnameOnVar(a, a) is 6
+PASS getByPnameOnConstant(o1) is 0
+PASS getByPnameOnVar(o1, 100) is 0
+PASS getByPnameOnVar(o1, 'abc') is '0bc0'
+PASS getByPnameOnVar(o1, o) is 0
+PASS getByPnameOnVar(o1, o1) is 11
+PASS getByPnameOnVar(o1, a) is 5
+PASS getByPnameOnConstant(o) is 0
+PASS getByPnameOnVar(o, 100) is 0
+PASS getByPnameOnVar(o, 'abc') is 0
+PASS getByPnameOnVar(o, o) is 11
+PASS getByPnameOnVar(o, o1) is 0
+PASS getByPnameOnVar(o, a) is 0
+PASS getByPnameOnConstant(0) is 0
+PASS getByPnameOnVar(0, 100) is 0
+PASS getByPnameOnVar(0, 'abc') is 0
+PASS getByPnameOnVar(0, o) is 0
+PASS getByPnameOnVar(0, o1) is 0
+PASS getByPnameOnVar(0, a) is 0
+PASS getByPnameOnConstant('abc') is 0
+PASS getByPnameOnVar('abc', 100) is 0
+PASS getByPnameOnVar('abc', 'abc') is '0abc'
+PASS getByPnameOnVar('abc', o) is 0
+PASS getByPnameOnVar('abc', o1) is 4
+PASS getByPnameOnVar('abc', a) is 6
+PASS getByPnameOnVar('def', 'abc') is '0abc'
+
+Test tier: dfg
+PASS foo(o) is 11
+PASS foo(p) is 10
+PASS foo(q) is 3467
+PASS foo(r) is 113
+PASS foo(s) is 182
+PASS getByPnameOnConstant(a) is 0
+PASS getByPnameOnVar(a, 100) is 0
+PASS getByPnameOnVar(a, 'abc') is '0abc'
+PASS getByPnameOnVar(a, o) is 0
+PASS getByPnameOnVar(a, o1) is 4
+PASS getByPnameOnVar(a, a) is 6
+PASS getByPnameOnConstant(o1) is 0
+PASS getByPnameOnVar(o1, 100) is 0
+PASS getByPnameOnVar(o1, 'abc') is '0bc0'
+PASS getByPnameOnVar(o1, o) is 0
+PASS getByPnameOnVar(o1, o1) is 11
+PASS getByPnameOnVar(o1, a) is 5
+PASS getByPnameOnConstant(o) is 0
+PASS getByPnameOnVar(o, 100) is 0
+PASS getByPnameOnVar(o, 'abc') is 0
+PASS getByPnameOnVar(o, o) is 11
+PASS getByPnameOnVar(o, o1) is 0
+PASS getByPnameOnVar(o, a) is 0
+PASS getByPnameOnConstant(0) is 0
+PASS getByPnameOnVar(0, 100) is 0
+PASS getByPnameOnVar(0, 'abc') is 0
+PASS getByPnameOnVar(0, o) is 0
+PASS getByPnameOnVar(0, o1) is 0
+PASS getByPnameOnVar(0, a) is 0
+PASS getByPnameOnConstant('abc') is 0
+PASS getByPnameOnVar('abc', 100) is 0
+PASS getByPnameOnVar('abc', 'abc') is '0abc'
+PASS getByPnameOnVar('abc', o) is 0
+PASS getByPnameOnVar('abc', o1) is 4
+PASS getByPnameOnVar('abc', a) is 6
+PASS getByPnameOnVar('def', 'abc') is '0abc'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
