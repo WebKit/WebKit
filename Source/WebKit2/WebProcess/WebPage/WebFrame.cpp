@@ -784,7 +784,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 }
 #endif
 
-PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot()
+PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
 {
     std::unique_ptr<ImageBuffer> snapshot = snapshotSelection(*coreFrame(), WebCore::SnapshotOptionsForceBlackText);
     if (!snapshot)

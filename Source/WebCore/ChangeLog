@@ -1,3 +1,32 @@
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176137. <rdar://problem/18877535>
+
+    2014-11-14  Tim Horton  <timothy_horton@apple.com>
+    
+            Move DataDetectors scanning code to WebCore
+            https://bugs.webkit.org/show_bug.cgi?id=138731
+            <rdar://problem/18877535>
+    
+            Reviewed by Anders Carlsson.
+    
+            * WebCore.exp.in:
+            Export our new function.
+    
+            * WebCore.xcodeproj/project.pbxproj:
+            Add DataDetection.{mm, h}
+            Adjust the project so that editing/mac actually points to editing/mac instead of editing/
+    
+            * editing/mac/DictionaryLookup.h:
+            * editing/mac/DictionaryLookup.mm:
+            Swap to PLATFORM(MAC) instead of !PLATFORM(IOS).
+            Move DictionaryLookup.{mm, h} to editing/mac, where they were in the project but not on disk.
+    
+            * editing/mac/DataDetection.h: Added.
+            * editing/mac/DataDetection.mm: Added.
+            (WebCore::DataDetection::detectItemAroundHitTestResult):
+            Moved from WebKit2.
+    
 2014-10-28  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r171593) [Mac] Media controls create a large (and unnecessary) backing store

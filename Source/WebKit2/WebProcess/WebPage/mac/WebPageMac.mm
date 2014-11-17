@@ -56,6 +56,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/BackForwardController.h>
+#import <WebCore/DataDetection.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/EventHandler.h>
@@ -962,86 +963,6 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-static RetainPtr<DDActionContext> scanForDataDetectedItems(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
-{
-    Node* node = hitTestResult.innerNonSharedNode();
-    if (!node)
-        return nullptr;
-    auto renderer = node->renderer();
-    if (!renderer)
-        return nullptr;
-    VisiblePosition position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
-    if (position.isNull())
-        position = firstPositionInOrBeforeNode(node);
-
-    RefPtr<Range> contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
-    if (!contextRange)
-        return nullptr;
-
-    String fullPlainTextString = plainText(contextRange.get());
-    int hitLocation = TextIterator::rangeLength(makeRange(contextRange->startPosition(), position).get());
-
-    RetainPtr<DDScannerRef> scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
-    RetainPtr<DDScanQueryRef> scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
-
-    if (!DDScannerScanQuery(scanner.get(), scanQuery.get()))
-        return nullptr;
-
-    RetainPtr<CFArrayRef> results = adoptCF(DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
-
-    // Find the DDResultRef that intersects the hitTestResult's VisiblePosition.
-    DDResultRef mainResult = nullptr;
-    RefPtr<Range> mainResultRange;
-    CFIndex resultCount = CFArrayGetCount(results.get());
-    for (CFIndex i = 0; i < resultCount; i++) {
-        DDResultRef result = (DDResultRef)CFArrayGetValueAtIndex(results.get(), i);
-        CFRange resultRangeInContext = DDResultGetRange(result);
-        if (hitLocation >= resultRangeInContext.location && (hitLocation - resultRangeInContext.location) < resultRangeInContext.length) {
-            mainResult = result;
-            mainResultRange = TextIterator::subrange(contextRange.get(), resultRangeInContext.location, resultRangeInContext.length);
-            break;
-        }
-    }
-
-    if (!mainResult)
-        return nullptr;
-
-    RetainPtr<DDActionContext> actionContext = adoptNS([[getDDActionContextClass() alloc] init]);
-    [actionContext setAllResults:@[ (id)mainResult ]];
-    [actionContext setMainResult:mainResult];
-
-    Vector<FloatQuad> quads;
-    mainResultRange->textQuads(quads);
-    detectedDataBoundingBox = FloatRect();
-    FrameView* frameView = mainResultRange->ownerDocument().view();
-    for (const auto& quad : quads)
-        detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
-
-    detectedDataRange = mainResultRange;
-
-    return actionContext;
-}
-
-static PassRefPtr<TextIndicator> textIndicatorForRange(Range* range)
-{
-    if (!range)
-        return nullptr;
-
-    Frame* frame = range->startContainer()->document().frame();
-
-    if (!frame)
-        return nullptr;
-
-    VisibleSelection oldSelection = frame->selection().selection();
-    frame->selection().setSelection(range);
-
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(*frame));
-
-    frame->selection().setSelection(oldSelection);
-
-    return indicator.release();
-}
-
 void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
 {
     m_lastActionMenuHitPageOverlay = nullptr;
@@ -1107,7 +1028,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
 
         actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-        actionMenuResult.detectedDataTextIndicator = textIndicatorForRange(mainResultRange.get());
+        actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange);
         m_lastActionMenuRangeForSelection = mainResultRange;
         m_lastActionMenuHitPageOverlay = webOverlay;
 
@@ -1118,10 +1039,10 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode()) {
         FloatRect detectedDataBoundingBox;
         RefPtr<Range> detectedDataRange;
-        actionMenuResult.actionContext = scanForDataDetectedItems(hitTestResult, detectedDataBoundingBox, detectedDataRange);
-        if (actionMenuResult.actionContext) {
+        actionMenuResult.actionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
+        if (actionMenuResult.actionContext && detectedDataRange) {
             actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-            actionMenuResult.detectedDataTextIndicator = textIndicatorForRange(detectedDataRange.get());
+            actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange);
             m_lastActionMenuRangeForSelection = detectedDataRange;
         }
     }

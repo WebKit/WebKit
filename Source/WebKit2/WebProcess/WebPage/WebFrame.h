@@ -150,7 +150,7 @@ public:
     RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context);
 #endif
 
-    PassRefPtr<ShareableBitmap> createSelectionSnapshot();
+    PassRefPtr<ShareableBitmap> createSelectionSnapshot() const;
 
 private:
     static PassRefPtr<WebFrame> create(std::unique_ptr<WebFrameLoaderClient>);
