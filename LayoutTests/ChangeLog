@@ -1,3 +1,11 @@
+2014-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Skip more tests failing after r175776.
+
+        There is no network load scheduling or prioritization with NetworkProcess.
+
+        * platform/gtk/TestExpectations:
+
 2014-11-16  Benjamin Poulain  <benjamin@webkit.org>
 
         Implement :valid and :invalid matching for the fieldset element

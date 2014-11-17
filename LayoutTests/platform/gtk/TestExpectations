@@ -1489,6 +1489,11 @@ webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
 # Appcache manifest is still downloaded in the WebProcess
 webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
+# There is no network load scheduling or prioritization with NetworkProcess.
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure ]
+webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
