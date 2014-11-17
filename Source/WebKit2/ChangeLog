@@ -1,3 +1,19 @@
+2014-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Missing ResourceRequest members encoded/decoded
+        https://bugs.webkit.org/show_bug.cgi?id=138694
+
+        Reviewed by Sergio Villar Senin.
+
+        At least timeoutInterval and priority should also be
+        encoded/decoded. This fixes all http/tests/xmlhttprequest/timeout/
+        tests when using the network process, since the timeout is always
+        0 for all requests that we send to the network process.
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.3 release.
