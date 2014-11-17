@@ -183,10 +183,10 @@
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.11.2.tar.gz" version="1.11.2"
+    <branch module="rel/libs/efl/efl-1.12.0.tar.gz" version="1.12.0"
             repo="download.enlightenment.org"
-            hash="sha256:f3cc1cd2a77df114a7b76a7e77bc77e88c367ec49462047fca209ee622cb7288"
-            md5sum="f1b23b9a4e2ae04a4c0f6d2f924093e9">
+            hash="sha256:a3f536cd75ca7caac8d61805a53a99ecdcb4ccf1953f081c492dbecee282ef15"
+            md5sum="3ff1488abb4cd83e3cb9a42d4eda16b2">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
     </branch>
   </autotools>
@@ -205,10 +205,10 @@
   <autotools id="elementary"
              autogen-sh="configure"
              autogenargs="--disable-emap --disable-eweather --with-elementary-web-backend=none">
-    <branch module="rel/libs/elementary/elementary-1.11.2.tar.gz" version="1.11.2"
+    <branch module="rel/libs/elementary/elementary-1.12.0.tar.gz" version="1.12.0"
             repo="download.enlightenment.org"
-            hash="sha256:18f7e8fb63fcfd0d5abd213943c0c356b1270a94e20d44b8e6047b1cd0e53010"
-            md5sum="f6939a24ffc50c2e4eac7ed38663f0f3">
+            hash="sha256:3ac56d0bf5f5d29224e59fb1ef3afec8a28435473df0bbca3783e45ee8d095ce"
+            md5sum="414539ebf6cf2b1a6ae1aac8b753f2ce">
     </branch>
     <dependencies>
         <dep package="efl"/>
