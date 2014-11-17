@@ -1,3 +1,47 @@
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176153. <rdar://problem/18877535>
+
+    2014-11-15  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement data detectors and mailto action menus for WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=138765
+            <rdar://problem/18877535>
+    
+            Reviewed by Beth Dakin.
+    
+            * WebView/WebActionMenuController.h:
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController willOpenMenu:withEvent:]):
+            Tell DataDetectors that the menu is going to open.
+            Select the text (or not) based on the number of items in the menu, just like WebKit2.
+    
+            (-[WebActionMenuController didCloseMenu:withEvent:]):
+            Tell DataDetectors that the menu closed.
+    
+            (-[WebActionMenuController _defaultMenuItemsForLink]):
+            Move these checks out of _defaultMenuItemsForLink, because we expect this
+            to always return a complete link menu.
+    
+            (-[WebActionMenuController _defaultMenuItemsForMailtoLink]):
+            Implement. More or less copied from WebKit2.
+    
+            (-[WebActionMenuController _selectDataDetectedText]):
+            Select the stashed range.
+    
+            (-[WebActionMenuController _defaultMenuItemsForDataDetectedText]):
+            Implement. More or less copied from WebKit2.
+            The yellow highlight isn't hooked up yet.
+            Give the client a chance to override via _webView:actionContextForHitTestResult:range:.
+    
+            (-[WebActionMenuController _selectLookupText]):
+            Remove an unnecessary return.
+    
+            (-[WebActionMenuController _defaultMenuItems]):
+            Call into the two new menu types.
+    
+            * WebView/WebUIDelegatePrivate.h:
+    
 2014-11-12  Beth Dakin  <bdakin@apple.com>
 
         WK1: Support default actions for images

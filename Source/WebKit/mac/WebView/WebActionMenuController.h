@@ -29,7 +29,12 @@
 #import <WebCore/HitTestResult.h>
 #import <wtf/RetainPtr.h>
 
+@class DDActionContext;
 @class WebView;
+
+namespace WebCore {
+class Range;
+}
 
 @interface WebActionMenuController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
 @private
@@ -37,6 +42,8 @@
     WebActionMenuType _type;
     WebCore::HitTestResult _hitTestResult;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
+    RetainPtr<DDActionContext> _currentActionContext;
+    RefPtr<WebCore::Range> _currentDetectedDataRange;
 }
 
 - (id)initWithWebView:(WebView *)webView;

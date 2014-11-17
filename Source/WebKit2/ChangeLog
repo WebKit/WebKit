@@ -1,5 +1,20 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176153. <rdar://problem/18877535>
+
+    2014-11-15  Tim Horton  <timothy_horton@apple.com>
+    
+            Implement data detectors and mailto action menus for WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=138765
+            <rdar://problem/18877535>
+    
+            Reviewed by Beth Dakin.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForMailtoLink]):
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176137. <rdar://problem/18877535>
 
     2014-11-14  Tim Horton  <timothy_horton@apple.com>
