@@ -662,7 +662,6 @@ void Heap::visitProtectedObjects(HeapRootVisitor& heapRootVisitor)
 void Heap::visitTempSortVectors(HeapRootVisitor& heapRootVisitor)
 {
     GCPHASE(VisitTempSortVectors);
-    typedef Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>*> VectorOfValueStringVectors;
 
     for (auto* vector : m_tempSortingVectors) {
         for (auto& valueStringPair : *vector) {

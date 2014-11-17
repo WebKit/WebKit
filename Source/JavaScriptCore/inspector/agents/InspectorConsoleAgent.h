@@ -63,8 +63,8 @@ public:
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
     virtual void clearMessages(ErrorString&) override;
-    virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) = 0;
-    virtual void addInspectedNode(ErrorString&, int nodeId) = 0;
+    virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) override = 0;
+    virtual void addInspectedNode(ErrorString&, int nodeId) override = 0;
 
     virtual bool isWorkerAgent() const = 0;
 

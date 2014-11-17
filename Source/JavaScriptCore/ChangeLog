@@ -1,3 +1,13 @@
+2014-11-17  Anders Carlsson  <andersca@apple.com>
+
+        Fix JavaScriptCore build with newer versions of clang.
+        <rdar://problem/18978716>
+
+        * heap/Heap.cpp:
+        (JSC::Heap::visitTempSortVectors):
+        (JSC::Heap::deleteAllCompiledCode): Deleted.
+        * inspector/agents/InspectorConsoleAgent.h:
+
 2014-11-17  Juergen Ributzka  <juergen@apple.com>
 
         Update WebKit to build with LLVM TOT
