@@ -1,3 +1,23 @@
+2014-11-16  Andreas Kling  <akling@apple.com>
+
+        Avoid synchronous style recalc when mutating a Node inside FrameSelection.
+        <https://webkit.org/b/138791>
+
+        Reviewed by Antti Koivisto.
+
+        We can safely clear the RenderView's selection without doing a synchronous
+        style recalc first.
+
+        This is a small progression on Speedometer locally.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::DragCaretController::nodeWillBeRemoved):
+        (WebCore::FrameSelection::respondToNodeModification):
+        (WebCore::clearRenderViewSelection): Deleted.
+
+            Merged clearRenderViewSelection() into the call sites and removed
+            the now-unnecessary protection of the Document.
+
 2014-11-17  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] allow host application to opt-out of alternate fullscreen

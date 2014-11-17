@@ -404,14 +404,6 @@ static bool removingNodeRemovesPosition(Node& node, const Position& position)
     return downcast<Element>(node).containsIncludingShadowDOM(position.anchorNode());
 }
 
-static void clearRenderViewSelection(Node& node)
-{
-    Ref<Document> document(node.document());
-    document->updateStyleIfNeeded();
-    if (RenderView* view = document->renderView())
-        view->clearSelection();
-}
-
 void DragCaretController::nodeWillBeRemoved(Node& node)
 {
     if (!hasCaret() || !node.inDocument())
@@ -420,7 +412,9 @@ void DragCaretController::nodeWillBeRemoved(Node& node)
     if (!removingNodeRemovesPosition(node, m_position.deepEquivalent()))
         return;
 
-    clearRenderViewSelection(node);
+    if (RenderView* view = node.document().renderView())
+        view->clearSelection();
+
     clear();
 }
 
@@ -479,10 +473,10 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
     }
 
     if (clearRenderTreeSelection) {
-        clearRenderViewSelection(node);
-
-        // Trigger a selection update so the selection will be set again.
         if (auto* renderView = node.document().renderView()) {
+            renderView->clearSelection();
+
+            // Trigger a selection update so the selection will be set again.
             m_pendingSelectionUpdate = true;
             renderView->setNeedsLayout();
         }

@@ -1,3 +1,20 @@
+2014-11-16  Andreas Kling  <akling@apple.com>
+
+        Avoid synchronous style recalc when mutating a Node inside FrameSelection.
+        <https://webkit.org/b/138791>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline fast/dynamic/move-node-with-selection.html.
+        This is a progression, we avoid littering the render tree with some empty
+        text renderers due to deferring the style recalc in selection clearing.
+
+        * platform/efl/fast/dynamic/move-node-with-selection-expected.txt:
+        * platform/gtk/fast/dynamic/move-node-with-selection-expected.txt:
+        * platform/ios-sim-deprecated/fast/dynamic/move-node-with-selection-expected.txt:
+        * platform/ios-simulator/fast/dynamic/move-node-with-selection-expected.txt:
+        * platform/mac/fast/dynamic/move-node-with-selection-expected.txt:
+
 2014-11-17  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         [EFL] Skip timeouting editing tests
