@@ -133,11 +133,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineClampValue i)
 
 template<> inline CSSPrimitiveValue::operator LineClampValue() const
 {
-    if (m_primitiveUnitType == CSS_NUMBER)
-        return LineClampValue(clampTo<int>(m_value.num), LineClampLineCount);
+    if (primitiveType() == CSS_NUMBER)
+        return LineClampValue(getValue<int>(), LineClampLineCount);
 
-    if (m_primitiveUnitType == CSS_PERCENTAGE)
-        return LineClampValue(clampTo<int>(m_value.num), LineClampPercentage);
+    if (primitiveType() == CSS_PERCENTAGE)
+        return LineClampValue(getValue<int>(), LineClampPercentage);
 
     ASSERT_NOT_REACHED();
     return LineClampValue();
