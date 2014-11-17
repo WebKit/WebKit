@@ -74,6 +74,9 @@ public:
 
     PageOverlayController* controller() const;
 
+    typedef uint64_t PageOverlayID;
+    virtual PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
+
     void setPage(Page*);
     void setNeedsDisplay(const IntRect& dirtyRect);
     void setNeedsDisplay();
@@ -134,6 +137,7 @@ private:
     IntRect m_overrideFrame;
 
     RGBA32 m_backgroundColor;
+    PageOverlayID m_pageOverlayID;
 };
 
 } // namespace WebKit

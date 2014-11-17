@@ -578,14 +578,15 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     // Ref our WebPageProxy for use in the blocks below.
     RefPtr<WebPageProxy> page = _page;
+    PageOverlay::PageOverlayID overlayID = _hitTestResult.detectedDataOriginatingPageOverlay;
     _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
-        page->send(Messages::WebPage::DataDetectorsDidPresentUI());
+        page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
         [self _showTextIndicator];
-        page->send(Messages::WebPage::DataDetectorsDidChangeUI());
+        page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
     } interactionStoppedHandler:^() {
         [self _hideTextIndicator];
-        page->send(Messages::WebPage::DataDetectorsDidHideUI());
+        page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));
     }];
 
     [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];

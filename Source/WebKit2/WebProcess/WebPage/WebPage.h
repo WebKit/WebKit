@@ -53,6 +53,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageOverlay.h>
 #include <WebCore/PageVisibilityState.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
@@ -1060,9 +1061,9 @@ private:
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
 
-    void dataDetectorsDidPresentUI();
-    void dataDetectorsDidChangeUI();
-    void dataDetectorsDidHideUI();
+    void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
+    void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);
+    void dataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID);
 #endif
 
     uint64_t m_pageID;

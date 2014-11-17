@@ -30,6 +30,7 @@
 #include "TextIndicator.h"
 #include "WebHitTestResult.h"
 #include <WebCore/FloatRect.h>
+#include <WebCore/PageOverlay.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS DDActionContext;
@@ -54,6 +55,7 @@ struct ActionMenuHitTestResult {
     RetainPtr<DDActionContext> actionContext;
     WebCore::FloatRect detectedDataBoundingBox;
     RefPtr<TextIndicator> detectedDataTextIndicator;
+    WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
 };
 
 } // namespace WebKit

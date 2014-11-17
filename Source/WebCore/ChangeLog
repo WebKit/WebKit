@@ -1,3 +1,17 @@
+2014-11-17  Tim Horton  <timothy_horton@apple.com>
+
+        DataDetectors PageOverlay callbacks can come in to the wrong overlay
+        https://bugs.webkit.org/show_bug.cgi?id=138801
+        <rdar://problem/18991369>
+
+        Reviewed by Anders Carlsson.
+
+        * page/PageOverlay.cpp:
+        (WebCore::generatePageOverlayID):
+        (WebCore::PageOverlay::PageOverlay):
+        * page/PageOverlay.h:
+        Give each PageOverlay a unique ID.
+
 2014-11-17  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Upgrade align-self and align-items parsing to CSS 3
