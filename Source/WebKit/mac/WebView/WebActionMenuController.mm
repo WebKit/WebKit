@@ -682,7 +682,7 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     case WebActionMenuItemTagAddLinkToSafariReadingList:
         selector = @selector(_addToReadingListFromActionMenu:);
         title = WEB_UI_STRING_KEY("Add to Reading List", "Add to Reading List (action menu item)", "action menu item");
-        image = [NSImage imageNamed:NSImageNameBookmarksTemplate];
+        image = [NSImage imageNamed:@"NSActionMenuAddToReadingList"];
         representedObject = [hitTestResult objectForKey:WebElementLinkURLKey];
         break;
 
