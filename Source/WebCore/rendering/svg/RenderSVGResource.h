@@ -23,6 +23,7 @@
 #include "RenderSVGShape.h"
 #include "RenderStyleConstants.h"
 #include "SVGDocumentExtensions.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -67,15 +68,6 @@ public:
 
     virtual RenderSVGResourceType resourceType() const = 0;
 
-    template<class Renderer>
-    Renderer* cast()
-    {
-        if (Renderer::s_resourceType == resourceType())
-            return static_cast<Renderer*>(this);
-
-        return 0;
-    }
-
     // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns & solid colors only)
     static RenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
     static RenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
@@ -85,5 +77,10 @@ public:
 };
 
 }
+
+#define SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(ToValueTypeName, ResourceType) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::RenderSVGResource& resource) { return resource.resourceType() == WebCore::ResourceType; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

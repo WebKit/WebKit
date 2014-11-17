@@ -89,8 +89,11 @@ inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(Document& d
 template<typename Renderer>
 Renderer* getRenderSVGResourceById(Document& document, const AtomicString& id)
 {
-    if (RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id))
-        return container->cast<Renderer>();
+    // Using the RenderSVGResource type here avoids ambiguous casts for types that
+    // descend from both RenderObject and RenderSVGResourceContainer.
+    RenderSVGResource* container = getRenderSVGResourceContainerById(document, id);
+    if (is<Renderer>(container))
+        return downcast<Renderer>(container);
 
     return nullptr;
 }
