@@ -1,3 +1,22 @@
+2014-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Use GMainLoopSource for request timeout in ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=138695
+
+        Reviewed by Sergio Villar Senin.
+
+        We are currently using soup_timeout_add() that simply creates a
+        GSource and attaches it to the given context. Using
+        GMainLoopSource we simplify the code and fix any potential problem
+        of converting the double value into milliseconds.
+
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::cleanupSoupRequestOperation):
+        (WebCore::ResourceHandle::sendPendingRequest):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::requestTimeoutCallback): Deleted.
+
 2014-11-13  Dan Bernstein  <mitz@apple.com>
 
         Policy client not called for navigations through the page cache
