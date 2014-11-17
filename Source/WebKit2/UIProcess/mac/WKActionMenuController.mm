@@ -702,6 +702,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 {
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
 
+    // FIXME: Should this show a yellow highlight?
     RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
     [actionContext setForActionMenuContent:YES];
     [actionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil]]];
