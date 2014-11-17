@@ -26,7 +26,7 @@
 
 WebInspector.ProbeDetailsSidebarPanel = function()
 {
-    WebInspector.DetailsSidebarPanel.call(this, "probe", WebInspector.UIString("Probes"), WebInspector.UIString("Probes"), "Images/NavigationItemProbes.pdf", "6");
+    WebInspector.DetailsSidebarPanel.call(this, "probe", WebInspector.UIString("Probes"), WebInspector.UIString("Probes"), "Images/NavigationItemProbes.svg", "6");
 
     WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
     WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);

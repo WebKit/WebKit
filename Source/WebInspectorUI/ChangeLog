@@ -1,3 +1,26 @@
+2014-11-13  Andres Gomez  <agomez@igalia.com>
+
+        Web Inspector: Replace PDF icon with SVG version
+        https://bugs.webkit.org/show_bug.cgi?id=137296
+
+        Reviewed by Timothy Hatcher.
+
+        Add another free icon for the Web Inspector in GTK+.
+
+        * UserInterface/Images/gtk/NavigationItemProbes.svg: Added.
+
+2014-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Replace PDF Probes icon with SVG version
+        https://bugs.webkit.org/show_bug.cgi?id=137296
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/NavigationItemProbes.pdf: Removed.
+        * UserInterface/Images/NavigationItemProbes.svg: Added.
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WebInspector.ProbeDetailsSidebarPanel): Use NavigationItemProbes.svg.
+
 2014-09-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Option+Click on CSS url(...) should jump to resource view
