@@ -302,12 +302,13 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
     m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest);
 #endif
 
-    m_handle->continueWillSendRequest(m_currentRequest);
-
     if (m_currentRequest.isNull()) {
         m_handle->cancel();
         didFail(m_handle.get(), cancelledError(m_currentRequest));
+        return;
     }
+
+    m_handle->continueWillSendRequest(m_currentRequest);
 }
 
 void NetworkResourceLoader::continueDidReceiveResponse()
