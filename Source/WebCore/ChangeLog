@@ -1,3 +1,28 @@
+2014-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Drop 16bit support temporarily.
+        https://bugs.webkit.org/show_bug.cgi?id=138796
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to multiple renderers support.
+        It requires code refactoring on top of the coming multiple renderers codebase.
+        (Not expecting any significant coverage shrinking.)
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::FlowContentIterator::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::FlowContentIterator::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContentIterator::textWidth):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::nextFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::create):
+
 2014-11-17  Tim Horton  <timothy_horton@apple.com>
 
         DataDetectors PageOverlay callbacks can come in to the wrong overlay
