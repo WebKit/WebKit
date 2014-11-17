@@ -1,3 +1,15 @@
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] QuartzCore SPI not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138751
+
+        Reviewed by David Kilzer.
+
+        Include header QuartzCoreSPI.h instead of including QuartzCore headers directly.
+
+        * WebInspector/WebNodeHighlight.mm:
+        * WebView/WebIndicateLayer.mm:
+
 2014-11-17  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] allow host application to opt-out of alternate fullscreen

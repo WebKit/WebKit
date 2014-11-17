@@ -37,7 +37,7 @@
 #import "WebFramePrivate.h"
 #import "WebHTMLView.h"
 #import "WebView.h"
-#import <QuartzCore/CALayerPrivate.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WAKWindow.h>
 #endif
 

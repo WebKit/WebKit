@@ -34,7 +34,7 @@
 #import "LengthFunctions.h"
 #import "PlatformCAAnimationMac.h"
 #import "PlatformCAFilters.h"
-#import "PlatformCAFiltersMac.h"
+#import "QuartzCoreSPI.h"
 #import "ScrollbarThemeMac.h"
 #import "SoftLinking.h"
 #import "TiledBacking.h"
@@ -56,7 +56,6 @@
 #import "WKGraphics.h"
 #import "WebCoreThread.h"
 #import "WebTiledLayer.h"
-#import <QuartzCore/CATiledLayerPrivate.h>
 #else
 #import "ThemeMac.h"
 #endif
@@ -171,18 +170,6 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
     m_owner = owner;
 }
 
-@end
-
-@interface CATiledLayer(GraphicsLayerCAPrivate)
-- (void)displayInRect:(CGRect)r levelOfDetail:(int)lod options:(NSDictionary *)dict;
-- (BOOL)canDrawConcurrently;
-- (void)setCanDrawConcurrently:(BOOL)flag;
-@end
-
-@interface CALayer(Private)
-- (void)setContentsChanged;
-- (void)setAcceleratesDrawing:(BOOL)flag;
-- (BOOL)acceleratesDrawing;
 @end
 
 void PlatformCALayerMac::setOwner(PlatformCALayerClient* owner)

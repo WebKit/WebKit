@@ -37,19 +37,12 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/IOSurfacePool.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebLayer.h>
 
 #if USE(IOSURFACE)
 #import <mach/mach_port.h>
 #endif
-
-#if __has_include(<QuartzCore/CALayerPrivate.h>)
-#import <QuartzCore/CALayerPrivate.h>
-#endif
-
-@interface CALayer (Details)
-@property BOOL contentsOpaque;
-@end
 
 using namespace WebCore;
 

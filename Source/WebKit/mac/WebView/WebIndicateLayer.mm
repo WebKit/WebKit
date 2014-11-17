@@ -29,8 +29,8 @@
 
 #import "WebFramePrivate.h"
 #import "WebView.h"
-#import <QuartzCore/CALayerPrivate.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WAKWindow.h>
 
 using namespace WebCore;

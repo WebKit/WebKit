@@ -33,9 +33,8 @@
 #include "LegacyTileGrid.h"
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
+#include "QuartzCoreSPI.h"
 #include "WAKWindow.h"
-#include <QuartzCore/QuartzCore.h>
-#include <QuartzCore/QuartzCorePrivate.h>
 #include <algorithm>
 #include <functional>
 

@@ -32,7 +32,7 @@
 #import <WebCore/IOSurface.h>
 
 #if PLATFORM(IOS)
-#import <QuartzCore/QuartzCorePrivate.h>
+#import <WebCore/QuartzCoreSPI.h>
 #endif
 
 using namespace WebCore;

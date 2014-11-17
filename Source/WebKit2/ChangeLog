@@ -1,3 +1,24 @@
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] QuartzCore SPI not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138751
+
+        Reviewed by David Kilzer.
+
+        * Shared/mac/RemoteLayerBackingStore.mm: Move CALayer forward declaration
+        from this file to file QuartzCoreSPI.h and include header QuartzCoreSPI.h.
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm: Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm: Include header QuartzCoreSPI.h instead
+        of including QuartzCore headers directly.
+        * UIProcess/ios/ViewGestureControllerIOS.mm: Ditto.
+        * UIProcess/ios/WKContentView.mm: Ditto.
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm: Ditto.
+        * UIProcess/mac/ViewGestureControllerMac.mm: Move CAFilter forward declarations
+        from this file to fileQuartzCoreSPI.h and include header QuartzCoreSPI.h.
+        Also sort the list of #import directives.
+        * UIProcess/mac/ViewSnapshotStore.mm: Include header QuartzCoreSPI.h
+        instead of including QuartzCore headers directly.
+
 2014-11-17  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] allow host application to opt-out of alternate fullscreen

@@ -30,32 +30,19 @@
 
 #import "FrameLoadState.h"
 #import "NativeWebWheelEvent.h"
-#import "WebPageGroup.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "ViewSnapshotStore.h"
 #import "WebBackForwardList.h"
+#import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import <Cocoa/Cocoa.h>
-#import <QuartzCore/QuartzCore.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
-
-#if defined(__has_include) && __has_include(<QuartzCore/QuartzCorePrivate.h>)
-#import <QuartzCore/QuartzCorePrivate.h>
-#else
-@interface CAFilter : NSObject <NSCopying, NSMutableCopying, NSCoding>
-@end
-#endif
-
-@interface CAFilter (Details)
-+ (CAFilter *)filterWithType:(NSString *)type;
-@end
-
-extern NSString * const kCAFilterColorInvert;
 
 using namespace WebCore;
 

@@ -1,3 +1,32 @@
+2014-11-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] QuartzCore SPI not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138751
+
+        Reviewed by David Kilzer.
+
+        Add a SPI wrapper header called QuartzCoreSPI.h that forward declares
+        QuartzCore SPI and use this header instead of including private headers
+        of QuartzCore directly.
+
+        * WebCore.xcodeproj/project.pbxproj: Added private header QuartzCoreSPI.h.
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.h: Removed; incorporated its
+        functionality into QuartzCoreSPI.h.
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm: Substitute header
+        QuartzCoreSPI.h for PlatformCAFiltersMac.h as the content of the latter
+        was incorporated into the former.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: Move CALayer and CATiledLayer
+        forward declarations from this file to file QuartzCoreSPI.h and include
+        header QuartzCoreSPI.h instead of including CATiledLayerPrivate.h directly. Also
+        remove header PlatformCAFiltersMac.h as its content is incorporated into QuartzCoreSPI.h
+        * platform/ios/LegacyTileCache.mm: Include headers CoreGraphicsSPI.h and QuartzCoreSPI.h
+        instead of including QuartzCore headers directly.
+        * platform/ios/LegacyTileGrid.mm: Include header QuartzCoreSPI.h instead
+        of including QuartzCore headers directly. Also sort the list of #include directives.
+        * platform/ios/LegacyTileGridTile.mm: Include header QuartzCoreSPI.h
+        instead of including QuartzCore headers directly.
+        * platform/spi/cocoa/QuartzCoreSPI.h: Added.
+
 2014-11-17  Chris Dumez  <cdumez@apple.com>
 
         Move more CSS properties to the new StyleBuilder

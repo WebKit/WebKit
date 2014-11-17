@@ -28,19 +28,19 @@
 
 #if PLATFORM(IOS)
 
+#include "CoreGraphicsSPI.h"
 #include "LegacyTileGrid.h"
 #include "LegacyTileGridTile.h"
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
 #include "Logging.h"
 #include "MemoryPressureHandler.h"
+#include "QuartzCoreSPI.h"
 #include "SystemMemory.h"
 #include "WAKWindow.h"
 #include "WKGraphics.h"
 #include "WebCoreSystemInterface.h"
 #include "WebCoreThreadRun.h"
-#include <QuartzCore/QuartzCore.h>
-#include <QuartzCore/QuartzCorePrivate.h>
 #include <wtf/CurrentTime.h>
 
 @interface WAKView (WebViewExtras)
