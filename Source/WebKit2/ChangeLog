@@ -1,3 +1,25 @@
+2014-11-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Start cleaning up minimal UI from WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=138725
+
+        Reviewed by Sam Weinig.
+
+        Start removing the old update path for minimumLayoutSize/maximumUnobscuredSize.
+
+        Unfortunately, I cannot remove everything yet because the clients still did not have
+        alternatives to [_overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSizeForMinimalUI:maximumUnobscuredSizeOverride]
+        and might change the minimal UI options.
+
+        This patch adds [_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride] to move
+        in the right direction. Next we'll udpate the client code and get rid of all the useless code.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSizeForMinimalUI:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _minimumLayoutSizeOverrideForMinimalUI]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-11-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Add typecasting support for GraphicsLayerTextureMapper

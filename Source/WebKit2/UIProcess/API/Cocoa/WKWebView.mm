@@ -2116,12 +2116,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(minimumLayoutSizeOverride));
 }
 
-- (CGSize)_minimumLayoutSizeOverrideForMinimalUI
-{
-    ASSERT(_overridesMinimumLayoutSizeForMinimalUI);
-    return _minimumLayoutSizeOverrideForMinimalUI;
-}
-
 - (void)_setMinimumLayoutSizeOverrideForMinimalUI:(CGSize)size
 {
     _overridesMinimumLayoutSizeForMinimalUI = YES;
@@ -2421,11 +2415,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride
 {
-    // FIXME: After Safari is updated to use this function instead of setting the parameters separately, we should remove
-    // the individual setters and send a single message to send everything at once to the WebProcess.
-    self._minimumLayoutSizeOverride = minimumLayoutSize;
-    self._minimumLayoutSizeOverrideForMinimalUI = minimumLayoutSizeForMinimalUI;
-    self._maximumUnobscuredSizeOverride = maximumUnobscuredSizeOverride;
+    [self _setMinimumLayoutSizeOverride:minimumLayoutSize];
+    [self _setMinimumLayoutSizeOverrideForMinimalUI:minimumLayoutSizeForMinimalUI];
+    [self _setMaximumUnobscuredSizeOverride:maximumUnobscuredSizeOverride];
+}
+
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride
+{
+    [self _setMinimumLayoutSizeOverride:minimumLayoutSize];
+    [self _setMinimumLayoutSizeOverrideForMinimalUI:minimumLayoutSize];
+    [self _setMaximumUnobscuredSizeOverride:maximumUnobscuredSizeOverride];
 }
 
 - (UIView *)_viewForFindUI
