@@ -214,7 +214,7 @@ struct DictionaryPopupInfo {
     [service performWithItems:@[ url ]];
 }
 
-static IntRect elementBoundingBoxFromNode(Node* node)
+static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 {
     if (!node)
         return IntRect();
@@ -243,7 +243,7 @@ static IntRect elementBoundingBoxFromNode(Node* node)
     if (!node)
         return;
 
-    NSRect itemFrame = [_webView convertRect:elementBoundingBoxFromNode(node) toView:nil];
+    NSRect itemFrame = elementBoundingBoxInWindowCoordinatesFromNode(node);
     NSSize maximumPreviewSize = NSMakeSize(_webView.bounds.size.width * 0.75, _webView.bounds.size.height * 0.75);
 
     RetainPtr<QLPreviewBubble> bubble = adoptNS([[getQLPreviewBubbleClass() alloc] init]);

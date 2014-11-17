@@ -1,5 +1,24 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176132. <rdar://problem/18979004>
+
+    2014-11-14  Beth Dakin  <bdakin@apple.com>
+
+            WK1: Webpage preview can come up in wrong location
+            https://bugs.webkit.org/show_bug.cgi?id=138747
+            -and corresponding-
+            rdar://problem/18979004
+
+            Reviewed by Tim Horton.
+
+            Converting to window twice is bad.
+            * WebView/WebActionMenuController.mm:
+            (elementBoundingBoxInWindowCoordinatesFromNode):
+            (-[WebActionMenuController _quickLookURLFromActionMenu:]):
+            (elementBoundingBoxFromNode): Deleted.
+
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176107. <rdar://problem/18977222>
 
     2014-11-13  Beth Dakin  <bdakin@apple.com>
