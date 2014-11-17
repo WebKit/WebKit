@@ -1,3 +1,13 @@
+2014-11-16  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Attribute text in HTMLAnchorElement should behave as per specification.
+        https://bugs.webkit.org/show_bug.cgi?id=138557
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLAnchorElement/anchor-text-attribute-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-text-attribute.html: Added.
+
 2014-11-11  David Hyatt  <hyatt@apple.com>
 
         Table rows repaint entire table when their background color changes.

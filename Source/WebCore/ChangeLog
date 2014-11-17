@@ -1,3 +1,22 @@
+2014-11-16  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Attribute text in HTMLAnchorElement should behave as per specification.
+        https://bugs.webkit.org/show_bug.cgi?id=138557
+
+        Reviewed by Darin Adler.
+
+        attribute text in HTMLAnchorElement should not be readonly as per specification
+        http://www.w3.org/TR/html/text-level-semantics.html#dom-a-text. It should behave as textContent attribute. 
+        Also This matches the behavior of Chrome 38 and FireFox.
+
+        Test: fast/dom/HTMLAnchorElement/anchor-text-attribute.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::text):
+        (WebCore::HTMLAnchorElement::setText):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+
 2014-11-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] REGRESSION(r166288): Accessible values are no longer accessible via AT-SPI2
