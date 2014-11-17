@@ -55,6 +55,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
         encoder << httpBody->flattenToString();
 
     encoder << resourceRequest.firstPartyForCookies().string();
+    encoder << resourceRequest.allowCookies();
     encoder.encodeEnum(resourceRequest.priority());
 
     encoder << static_cast<uint32_t>(resourceRequest.soupMessageFlags());
@@ -97,6 +98,11 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     if (!decoder.decode(firstPartyForCookies))
         return false;
     resourceRequest.setFirstPartyForCookies(URL(URL(), firstPartyForCookies));
+
+    bool allowCookies;
+    if (!decoder.decode(allowCookies))
+        return false;
+    resourceRequest.setAllowCookies(allowCookies);
 
     ResourceLoadPriority priority;
     if (!decoder.decodeEnum(priority))
