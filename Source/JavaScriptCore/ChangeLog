@@ -1,3 +1,69 @@
+2014-11-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        ARMv7(s) Assembler: LDRH with immediate offset is loading from the wrong offset
+        https://bugs.webkit.org/show_bug.cgi?id=136914
+
+        Reviewed by Michael Saboff.
+
+        TLDR: the immediate offset of half-word load was divided by 2.
+
+        Story time: So I started getting those weird reports of :nth-child() behaving bizarrely
+        on ARMv7 and ARMv7s. To make things worse, the behavior changes depending on style updates.
+
+        I started looking the disassembly on the tests cases...
+
+        The first thing I noticed was that the computation of An+B looked wrong. For example,
+        in the case of n+6, the instruction should have been:
+            subs r1, r1, #6
+        but was
+            subs r1, r1, #2
+
+        After spending a lot of time trying to find the error in the assembler, I discovered
+        the problem was not real, but just a bug in the disassembler.
+        This is the first fix: ARMv7DOpcodeAddSubtractImmediate3's immediate3() was truncating
+        the value to 2 bits instead of 3 bits.
+
+        The disassembler being fixed, I still have no lead on the weird bug. Some disassembly later,
+        I realize the LDRH instruction is not decoded at all. The reason is that both LDRH and STRH
+        were under the umbrella ARMv7DOpcodeLoadStoreRegisterImmediateHalfWord but the pattern
+        only matched SRTH.
+
+        I fix that next, ARMv7DOpcodeLoadStoreRegisterImmediateHalfWord is split into
+        ARMv7DOpcodeStoreRegisterImmediateHalfWord and ARMv7DOpcodeLoadRegisterImmediateHalfWord,
+        each with their own pattern and their instruction group.
+
+        Now that I can see the LDRHs correctly, there is something fishy about them, their offset
+        is way too small for the data I load.
+
+        This time, looking at the binary, the generated code is indeed incorrect. It turns out that
+        the ARMv7 assembler shifted the offset of half-word load as if they were byte load: divided by 4.
+        As a result, all the load of half-words with more than zero offset were loading
+        values with a smaller offset than what they should have.
+
+        That being fixed, I dump the assembly: still wrong. I am ready to throw my keyboard through
+        my screen at that point.
+
+        Looking at the disassembler, there is yet again a bug. The computation of the scale() adjustment
+        of the offset was incorrect for anything but word loads.
+        I replaced it by a switch-case to make it explicit.
+
+        STRH is likely incorrect too. I'll fix that in a follow up, I want to survey all the 16 bits cases
+        that are not directly used by the CSS JIT.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ldrh):
+        Fix the immediate scaling. Add an assertion to make sure the alignment of the input is correct.
+
+        * disassembler/ARMv7/ARMv7DOpcode.cpp:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeLoadStoreRegisterImmediate::scale):
+        Fix the scaling code. Just hardcode instruction-to-scale table.
+
+        * disassembler/ARMv7/ARMv7DOpcode.h:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeAddSubtractImmediate3::immediate3):
+        The mask for a 3 bits immediate is not 3 :)
+
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeLoadStoreRegisterImmediate::scale): Deleted.
+
 2014-11-06  Mark Lam  <mark.lam@apple.com>
 
         slow_path_get_direct_pname() needs to be hardened against a constant baseValue.
