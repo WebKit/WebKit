@@ -1333,13 +1333,21 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
     return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
 }
 
+bool RenderElement::isInsideViewport(const IntRect* visibleRect) const
+{
+    auto& frameView = view().frameView();
+    if (frameView.isOffscreen())
+        return false;
+
+    // Compute viewport rect if it was not provided.
+    const IntRect& viewportRect = visibleRect ? *visibleRect : frameView.windowToContents(frameView.windowClipRect());
+    return viewportRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
+}
+
 static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const IntRect& visibleRect)
 {
     const Document& document = renderer.document();
     if (document.inPageCache())
-        return false;
-    auto& frameView = renderer.view().frameView();
-    if (frameView.isOffscreen())
         return false;
 #if PLATFORM(IOS)
     if (document.frame()->timersPaused())
@@ -1349,7 +1357,7 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
         return false;
     if (renderer.style().visibility() != VISIBLE)
         return false;
-    if (!visibleRect.intersects(renderer.absoluteBoundingBoxRect()))
+    if (!renderer.isInsideViewport(&visibleRect))
         return false;
 
     return true;

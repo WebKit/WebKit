@@ -1,3 +1,28 @@
+2014-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Throttle timers that change the style of elements outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=138292
+
+        Reviewed by Antti Koivisto.
+
+        Throttle timers that change the style of elements outside the viewport
+        to 1 second, similarly to what was already done for timers interacting
+        with non user observable plugins. To be conservative, we don't throttle
+        timers that also cause DOM Tree modifications (e.g. adding/removing
+        nodes, modify element attributes).
+
+        On huffingtonpost.com, the CPU usage is at ~17% when the top scrolling
+        banner is inside the viewport on my machine. Without this patch, CPU
+        usage would stay ~17% when the banner is outside the viewport. Thanks
+        to timer throttling, CPU usage now goes down to ~1.5%, without user
+        observable side effects. The timers get unthrottled when they are
+        inside the viewport again (i.e. due to scrolling or layout).
+
+        On espn.com, the CPU usage goes down from ~7% at the top of the page
+        to ~1% when scrolling to the bottom of the page. On ebay.com, CPU
+        usage goes down from ~25% at the top of the page to less than 1% when
+        scrolling to the bottom of the page.
+
 2014-11-17  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error, CoreGraphics header file included.

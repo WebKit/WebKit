@@ -42,6 +42,7 @@ namespace WebCore {
     M(Archives) \
     M(BackForward) \
     M(Compositing) \
+    M(DOMTimers) \
     M(Editing) \
     M(Events) \
     M(FTP) \

@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2013, 2014 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -286,6 +286,7 @@ void FrameView::reset()
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     m_maintainScrollPositionAnchor = 0;
+    m_throttledTimers.clear();
 }
 
 void FrameView::removeFromAXObjectCache()
@@ -2101,6 +2102,7 @@ void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoin
     }
 
     resumeVisibleImageAnimationsIncludingSubframes();
+    updateThrottledDOMTimersState();
 }
 
 void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
@@ -2917,6 +2919,10 @@ void FrameView::performPostLayoutTasks()
     scrollToAnchor();
 
     sendResizeEventIfNeeded();
+
+    // Check if we should unthrottle DOMTimers after layout as the position
+    // of Elements may have changed.
+    updateThrottledDOMTimersState();
 }
 
 IntSize FrameView::sizeForResizeEvent() const
@@ -3002,6 +3008,31 @@ void FrameView::willEndLiveResize()
 void FrameView::postLayoutTimerFired(Timer&)
 {
     performPostLayoutTasks();
+}
+
+void FrameView::registerThrottledDOMTimer(DOMTimer* timer)
+{
+    m_throttledTimers.add(timer);
+}
+
+void FrameView::unregisterThrottledDOMTimer(DOMTimer* timer)
+{
+    m_throttledTimers.remove(timer);
+}
+
+void FrameView::updateThrottledDOMTimersState()
+{
+    if (m_throttledTimers.isEmpty())
+        return;
+
+    IntRect visibleRect = windowToContents(windowClipRect());
+
+    // Do not iterate over the HashSet because calling DOMTimer::updateThrottlingStateAfterViewportChange()
+    // may cause timers to remove themselves from it while we are iterating.
+    Vector<DOMTimer*> timers;
+    copyToVector(m_throttledTimers, timers);
+    for (auto* timer : timers)
+        timer->updateThrottlingStateAfterViewportChange(visibleRect);
 }
 
 void FrameView::autoSizeIfEnabled()

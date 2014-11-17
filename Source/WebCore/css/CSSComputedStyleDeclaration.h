@@ -114,7 +114,7 @@ private:
     virtual void setCssText(const String&, ExceptionCode&) override;
     virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override;
     virtual String getPropertyValueInternal(CSSPropertyID) override;
-    virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override;
+    virtual bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override;
     virtual PassRef<MutableStyleProperties> copyProperties() const override;
 
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;

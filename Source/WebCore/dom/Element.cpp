@@ -2347,6 +2347,11 @@ bool Element::shouldAppearIndeterminate() const
     return false;
 }
 
+bool Element::isInsideViewport(const IntRect* visibleRect) const
+{
+    return renderer() && renderer()->isInsideViewport(visibleRect);
+}
+
 DOMTokenList& Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
