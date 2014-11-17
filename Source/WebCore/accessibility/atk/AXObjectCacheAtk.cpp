@@ -175,8 +175,12 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     if (axItem) {
         bool isSelected = item->isSelected();
         atk_object_notify_state_change(axItem, ATK_STATE_SELECTED, isSelected);
-        g_signal_emit_by_name(axItem, "focus-event", isSelected);
-        atk_object_notify_state_change(axItem, ATK_STATE_FOCUSED, isSelected);
+        // When the selection changes in a collapsed widget such as a combo box
+        // whose child menu is not showing, that collapsed widget retains focus.
+        if (!object->isCollapsed()) {
+            g_signal_emit_by_name(axItem, "focus-event", isSelected);
+            atk_object_notify_state_change(axItem, ATK_STATE_FOCUSED, isSelected);
+        }
     }
 
     // Update pointers to the previously involved objects.
@@ -199,7 +203,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
 
     case AXSelectedChildrenChanged:
     case AXMenuListValueChanged:
-        if (notification == AXMenuListValueChanged && coreObject->isMenuList()) {
+        // Accessible focus claims should not be made if the associated widget is not focused.
+        if (notification == AXMenuListValueChanged && coreObject->isMenuList() && coreObject->isFocused()) {
             g_signal_emit_by_name(axObject, "focus-event", true);
             atk_object_notify_state_change(axObject, ATK_STATE_FOCUSED, true);
         }

@@ -1,3 +1,21 @@
+2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Accessible focus events are emitted when the selection is changed in non-focused combo boxes
+        https://bugs.webkit.org/show_bug.cgi?id=137866
+
+        Reviewed by Mario Sanchez Prada.
+
+        Check that the AccessibilityMenuList is really focused before notifying
+        the platform that it is focused. Likewise, only notify the platform of
+        an AccessibilityMenuListOption focus gain if the AccessibilityMenuList
+        containing that option is expanded.
+
+        Test: platform/gtk/accessibility/menu-list-unfocused-notifications.html
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::notifyChildrenSelectionChange):
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2014-11-11  David Kilzer  <ddkilzer@apple.com>
 
         Protect Document in ProcessingInstruction::setXSLStyleSheet()

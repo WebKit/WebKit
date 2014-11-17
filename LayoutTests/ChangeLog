@@ -1,3 +1,13 @@
+2014-11-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Accessible focus events are emitted when the selection is changed in non-focused combo boxes
+        https://bugs.webkit.org/show_bug.cgi?id=137866
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/gtk/accessibility/menu-list-unfocused-notifications-expected.txt: Added.
+        * platform/gtk/accessibility/menu-list-unfocused-notifications.html: Added.
+
 2014-11-06  Mark Lam  <mark.lam@apple.com>
 
         slow_path_get_direct_pname() needs to be hardened against a constant baseValue.
