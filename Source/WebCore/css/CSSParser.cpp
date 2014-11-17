@@ -626,6 +626,8 @@ static bool parseSimpleLengthValue(MutableStyleProperties* declaration, CSSPrope
     }
     if (number < 0 && !acceptsNegativeNumbers)
         return false;
+    if (std::isinf(number))
+        return false;
 
     RefPtr<CSSValue> value = cssValuePool().createValue(number, unit);
     declaration->addParsedProperty(CSSProperty(propertyId, value.release(), important));
@@ -1695,6 +1697,8 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
         break;
     }
     if (b && unitflags & FNonNeg && value->fValue < 0)
+        b = false;
+    if (b && std::isinf(value->fValue))
         b = false;
     return b;
 }

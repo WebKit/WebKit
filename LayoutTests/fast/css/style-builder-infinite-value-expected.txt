@@ -1,0 +1,15 @@
+Tests setting a very large value to several CSS properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDiv.style['border-width'] is "1px"
+PASS testDiv.style['border-width'] is "1px"
+PASS testDiv.style['font-size'] is "1em"
+PASS testDiv.style['font-size'] is "1em"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test passes if it does not crash.
+
+

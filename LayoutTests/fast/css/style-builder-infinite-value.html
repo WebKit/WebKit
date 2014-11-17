@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+<p>This test passes if it does not crash.</p>
+
+<div id="testDiv"></div>
+
+<script>
+description("Tests setting a very large value to several CSS properties.");
+
+var testDiv = document.getElementById("testDiv");
+testDiv.style["border-width"] = "1px";
+shouldBeEqualToString("testDiv.style['border-width']", "1px");
+testDiv.style["border-width"] = "900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000px";
+shouldBeEqualToString("testDiv.style['border-width']", "1px");
+
+testDiv.style["font-size"] = "1em";
+shouldBeEqualToString("testDiv.style['font-size']", "1em");
+testDiv.style["font-size"] = "900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000%";
+shouldBeEqualToString("testDiv.style['font-size']", "1em");
+</script>
+<script src="../../resources/js-test-post.js"></script>
