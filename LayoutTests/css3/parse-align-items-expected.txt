@@ -1,0 +1,137 @@
+Test that setting and getting align-items works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting align-items set through CSS
+PASS getComputedStyle(alignItemsBaseline, '').getPropertyValue('-webkit-align-items') is 'baseline'
+PASS getComputedStyle(alignItemsLastBaseline, '').getPropertyValue('-webkit-align-items') is 'last-baseline'
+PASS getComputedStyle(alignItemsStretch, '').getPropertyValue('-webkit-align-items') is 'stretch'
+PASS getComputedStyle(alignItemsStart, '').getPropertyValue('-webkit-align-items') is 'start'
+PASS getComputedStyle(alignItemsEnd, '').getPropertyValue('-webkit-align-items') is 'end'
+PASS getComputedStyle(alignItemsCenter, '').getPropertyValue('-webkit-align-items') is 'center'
+PASS getComputedStyle(alignItemsSelfEnd, '').getPropertyValue('-webkit-align-items') is 'self-end'
+PASS getComputedStyle(alignItemsSelfStart, '').getPropertyValue('-webkit-align-items') is 'self-start'
+PASS getComputedStyle(alignItemsLeft, '').getPropertyValue('-webkit-align-items') is 'left'
+PASS getComputedStyle(alignItemsRight, '').getPropertyValue('-webkit-align-items') is 'right'
+PASS getComputedStyle(alignItemsFlexStart, '').getPropertyValue('-webkit-align-items') is 'flex-start'
+PASS getComputedStyle(alignItemsFlexEnd, '').getPropertyValue('-webkit-align-items') is 'flex-end'
+PASS getComputedStyle(alignItemsEndTrue, '').getPropertyValue('-webkit-align-items') is 'end true'
+PASS getComputedStyle(alignItemsCenterTrue, '').getPropertyValue('-webkit-align-items') is 'center true'
+PASS getComputedStyle(alignItemsSelfEndSafe, '').getPropertyValue('-webkit-align-items') is 'self-end safe'
+PASS getComputedStyle(alignItemsSelfStartSafe, '').getPropertyValue('-webkit-align-items') is 'self-start safe'
+PASS getComputedStyle(alignItemsRightSafe, '').getPropertyValue('-webkit-align-items') is 'right safe'
+PASS getComputedStyle(alignItemsLeftTrue, '').getPropertyValue('-webkit-align-items') is 'left true'
+PASS getComputedStyle(alignItemsFlexStartTrue, '').getPropertyValue('-webkit-align-items') is 'flex-start true'
+PASS getComputedStyle(alignItemsFlexEndSafe, '').getPropertyValue('-webkit-align-items') is 'flex-end safe'
+
+Test initial value of align-items through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is 'start'
+
+Test getting and setting align-items through JS
+PASS element.style.webkitAlignItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center"
+PASS element.style.webkitAlignItems is "start true"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start true"
+PASS element.style.webkitAlignItems is "flex-end safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "flex-end safe"
+PASS element.style.webkitAlignItems is "right"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "right"
+PASS element.style.webkitAlignItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center"
+PASS element.style.webkitAlignItems is "self-start"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "self-start"
+PASS element.style.webkitAlignItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
+PASS element.style.webkitAlignItems is "auto"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
+PASS element.style.webkitAlignItems is "self-end"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "self-end"
+
+Test bad combinations of align-items
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+PASS element.style.webkitAlignItems is ""
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+
+Test the value 'initial'
+PASS element.style.webkitAlignItems is "center"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center"
+PASS element.style.webkitAlignItems is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start"
+
+Test the value 'initial' for grid containers
+PASS element.style.webkitAlignItems is "left safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "left safe"
+PASS element.style.webkitAlignItems is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
+
+Test the value 'initial' for flex containers
+PASS element.style.webkitAlignItems is "right true"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "right true"
+PASS element.style.webkitAlignItems is "initial"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
+
+Test the value 'inherit'
+PASS element.style.webkitAlignItems is "end"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "end"
+PASS element.style.webkitAlignItems is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "end"
+PASS element.style.webkitAlignItems is "left safe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "left safe"
+PASS element.style.webkitAlignItems is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "left safe"
+PASS element.style.webkitAlignItems is "center true"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center true"
+PASS element.style.webkitAlignItems is "inherit"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

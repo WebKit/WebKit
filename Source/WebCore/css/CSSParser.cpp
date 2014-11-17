@@ -865,6 +865,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
             return true;
         break;
+#if !ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignItems:
         // FIXME: Per CSS alignment, this property should accept the same arguments as 'justify-self' so we should share its parsing code.
         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
@@ -875,6 +876,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
+#endif
     case CSSPropertyFlexDirection:
         if (valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse)
             return true;
@@ -888,10 +890,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround)
             return true;
         break;
-    case CSSPropertyWebkitJustifySelf:
+#if !ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyJustifySelf:
         if (valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
+#endif
     case CSSPropertyWebkitFontKerning:
         if (valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone)
             return true;
@@ -1106,8 +1110,10 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyColumnFill:
     case CSSPropertyColumnRuleStyle:
     case CSSPropertyAlignContent:
+#if !ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:
+#endif
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyJustifyContent:
@@ -2630,9 +2636,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         return false;
     }
-    case CSSPropertyWebkitJustifySelf:
-        return parseJustifySelf(propId, important);
 #if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyJustifySelf:
+        return parseItemPositionOverflowPosition(propId, important);
     case CSSPropertyWebkitGridAutoColumns:
     case CSSPropertyWebkitGridAutoRows:
         parsedValue = parseGridTrackSize(*m_valueList);
@@ -2967,6 +2973,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseImageResolution();
         break;
 #endif
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyAlignSelf:
+        return parseItemPositionOverflowPosition(propId, important);
+
+    case CSSPropertyAlignItems:
+        return parseItemPositionOverflowPosition(propId, important);
+#endif
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:
@@ -3028,8 +3041,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyColumnFill:
     case CSSPropertyColumnRuleStyle:
     case CSSPropertyAlignContent:
+#if !ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignItems:
     case CSSPropertyAlignSelf:
+    case CSSPropertyJustifySelf:
+#endif
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyJustifyContent:
@@ -3140,6 +3156,11 @@ void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval)
     lval = WTF::move(list);
 }
 
+static inline bool isBaselinePositionKeyword(CSSValueID id)
+{
+    return id == CSSValueBaseline || id == CSSValueLastBaseline;
+}
+
 static bool isItemPositionKeyword(CSSValueID id)
 {
     return id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter
@@ -3147,7 +3168,7 @@ static bool isItemPositionKeyword(CSSValueID id)
         || id == CSSValueFlexEnd || id == CSSValueLeft || id == CSSValueRight;
 }
 
-bool CSSParser::parseJustifySelf(CSSPropertyID propId, bool important)
+bool CSSParser::parseItemPositionOverflowPosition(CSSPropertyID propId, bool important)
 {
     // auto | baseline | stretch | [<item-position> && <overflow-position>? ]
     // <item-position> = center | start | end | self-start | self-end | flex-start | flex-end | left | right;
@@ -3155,7 +3176,7 @@ bool CSSParser::parseJustifySelf(CSSPropertyID propId, bool important)
 
     CSSParserValue* value = m_valueList->current();
 
-    if (value->id == CSSValueAuto || value->id == CSSValueBaseline || value->id == CSSValueStretch) {
+    if (value->id == CSSValueAuto || value->id == CSSValueStretch || isBaselinePositionKeyword(value->id)) {
         if (m_valueList->next())
             return false;
 

@@ -65,6 +65,7 @@ var propertiesToTest = {
     "-webkit-hyphenate-limit-lines": true,
     "-webkit-hyphens": true,
     "justify-content": true,
+    "justify-self": true,
     "-webkit-line-align": true,
     "-webkit-line-box-contain": true,
     "-webkit-line-break": true,

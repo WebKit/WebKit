@@ -364,9 +364,9 @@ isolation [NewStyleBuilder, TypeName=Isolation]
 -webkit-filter
 align-content [NewStyleBuilder]
 -webkit-align-content = align-content
-align-items [NewStyleBuilder]
+align-items
 -webkit-align-items = align-items
-align-self [NewStyleBuilder, TypeName=EAlignItems]
+align-self
 -webkit-align-self = align-self
 flex
 -webkit-flex = flex
@@ -387,7 +387,8 @@ justify-content [NewStyleBuilder]
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
 -webkit-backdrop-filter
 #endif
--webkit-justify-self
+justify-self
+-webkit-justify-self = justify-self
 -webkit-font-size-delta
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid

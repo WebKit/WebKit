@@ -1113,26 +1113,6 @@ static bool doesNotInheritTextDecoration(const RenderStyle& style, Element* e)
         || style.isFloating() || style.hasOutOfFlowPosition();
 }
 
-static bool isDisplayFlexibleBox(EDisplay display)
-{
-    return display == FLEX || display == INLINE_FLEX;
-}
-
-static inline bool isDisplayGridBox(EDisplay display)
-{
-#if ENABLE(CSS_GRID_LAYOUT)
-    return display == GRID || display == INLINE_GRID;
-#else
-    UNUSED_PARAM(display);
-    return false;
-#endif
-}
-
-static bool isDisplayFlexibleOrGridBox(EDisplay display)
-{
-    return isDisplayFlexibleBox(display) || isDisplayGridBox(display);
-}
-
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 static bool isScrollableOverflow(EOverflow overflow)
 {
@@ -1235,14 +1215,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if (style.writingMode() != TopToBottomWritingMode && (style.display() == BOX || style.display() == INLINE_BOX))
             style.setWritingMode(TopToBottomWritingMode);
 
-        if (isDisplayFlexibleOrGridBox(parentStyle.display())) {
+        if (parentStyle.isDisplayFlexibleOrGridBox()) {
             style.setFloating(NoFloat);
             style.setDisplay(equivalentBlockDisplay(style.display(), style.isFloating(), !document().inQuirksMode()));
         }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style.position() == StaticPosition && !isDisplayFlexibleOrGridBox(parentStyle.display()))
+    if (style.position() == StaticPosition && !parentStyle.isDisplayFlexibleOrGridBox())
         style.setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
@@ -1370,6 +1350,30 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         // SVG text layout code expects us to be a block-level style element.
         if ((e->hasTagName(SVGNames::foreignObjectTag) || e->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
+    }
+
+    // CSS Box Alignment specification requires to resolve "auto" (inital/default) values.
+    adjustStyleForAlignment(style);
+}
+
+void StyleResolver::adjustStyleForAlignment(RenderStyle& style)
+{
+    // The 'auto' keyword computes to:
+    //  - 'stretch' for flex containers and grid containers,
+    //  - 'start' for everything else. (to be resolved later, during the layout)
+    if (style.alignItems() == ItemPositionAuto) {
+        if (style.isDisplayFlexibleOrGridBox())
+            style.setAlignItems(ItemPositionStretch);
+        else
+            style.setAlignItems(ItemPositionStart);
+    }
+
+    // The 'auto' keyword computes to 'stretch' on absolutely-positioned elements,
+    // and to the computed value of align-items on the parent (minus
+    // any 'legacy' keywords) on all other boxes (to be resolved during the layout).
+    if (style.alignSelf() == ItemPositionAuto) {
+        if ((style.position() == AbsolutePosition))
+            style.setAlignSelf(ItemPositionStretch);
     }
 }
 
@@ -2900,16 +2904,61 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
+    case CSSPropertyAlignSelf: {
+        if (isInherit) {
+            state.style()->setAlignSelf(state.parentStyle()->alignSelf());
+            state.style()->setAlignSelfOverflowAlignment(state.parentStyle()->alignSelfOverflowAlignment());
+            return;
+        }
+        if (isInitial) {
+            state.style()->setAlignSelf(RenderStyle::initialAlignSelf());
+            state.style()->setAlignSelfOverflowAlignment(RenderStyle::initialAlignSelfOverflowAlignment());
+            return;
+        }
+        if (Pair* pairValue = primitiveValue->getPairValue()) {
+            state.style()->setAlignSelf(*pairValue->first());
+            state.style()->setAlignSelfOverflowAlignment(*pairValue->second());
+        } else
+            state.style()->setAlignSelf(*primitiveValue);
+        return;
+    }
 
-    case CSSPropertyWebkitJustifySelf:
-        HANDLE_INHERIT_AND_INITIAL(justifySelf, JustifySelf);
+    case CSSPropertyAlignItems: {
+        if (isInherit) {
+            state.style()->setAlignItems(state.parentStyle()->alignItems());
+            state.style()->setAlignItemsOverflowAlignment(state.parentStyle()->alignItemsOverflowAlignment());
+            return;
+        }
+        if (isInitial) {
+            state.style()->setAlignItems(RenderStyle::initialAlignItems());
+            state.style()->setAlignItemsOverflowAlignment(RenderStyle::initialAlignItemsOverflowAlignment());
+            return;
+        }
+        if (Pair* pairValue = primitiveValue->getPairValue()) {
+            state.style()->setAlignItems(*pairValue->first());
+            state.style()->setAlignItemsOverflowAlignment(*pairValue->second());
+        } else
+            state.style()->setAlignItems(*primitiveValue);
+        return;
+    }
+    case CSSPropertyJustifySelf: {
+        if (isInherit) {
+            state.style()->setJustifySelf(state.parentStyle()->justifySelf());
+            state.style()->setJustifySelfOverflowAlignment(state.parentStyle()->justifySelfOverflowAlignment());
+            return;
+        }
+        if (isInitial) {
+            state.style()->setJustifySelf(RenderStyle::initialJustifySelf());
+            state.style()->setJustifySelfOverflowAlignment(RenderStyle::initialJustifySelfOverflowAlignment());
+            return;
+        }
         if (Pair* pairValue = primitiveValue->getPairValue()) {
             state.style()->setJustifySelf(*pairValue->first());
             state.style()->setJustifySelfOverflowAlignment(*pairValue->second());
         } else
             state.style()->setJustifySelf(*primitiveValue);
         return;
-
+    }
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
         HANDLE_INHERIT_AND_INITIAL(scrollSnapType, ScrollSnapType);
@@ -3128,8 +3177,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitCursorVisibility:
 #endif
     case CSSPropertyAlignContent:
-    case CSSPropertyAlignItems:
-    case CSSPropertyAlignSelf:
     case CSSPropertyFlexBasis:
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexGrow:
