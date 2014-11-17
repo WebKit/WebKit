@@ -1,5 +1,38 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176156. <rdar://problem/18877535>
+
+    2014-11-15  David Kilzer  <ddkilzer@apple.com>
+    
+            REGRESSION (r176137): iOS build broke after moving DataDetectors scanning code to WebCore
+    
+            This regressed with the following commit:
+    
+                Move DataDetectors scanning code to WebCore
+                https://bugs.webkit.org/show_bug.cgi?id=138731
+                <rdar://problem/18877535>
+    
+            This fixes the following build failures:
+    
+                In file included from WebCore/editing/mac/DataDetection.mm:29:
+                WebCore/platform/spi/mac/DataDetectorsSPI.h:66:11: error: unknown type name 'NSRect'
+                @property NSRect highlightFrame;
+                          ^
+                WebCore/editing/mac/DataDetection.mm:42:28: error: use of undeclared identifier 'DataDetection'
+                RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
+                                           ^
+                2 errors generated.
+    
+            * WebCore.exp.in:
+            (DataDetection::detectItemAroundHitTestResult): Move symbol from
+            shared section to Mac-only section.
+            * editing/mac/DataDetection.mm: Add PLATFORM(MAC) check around
+            the entire implementation since it it unused on iOS.
+            * platform/spi/mac/DataDetectorsSPI.h: Expand PLATFORM(MAC)
+            check around DDActionContext class declarations.
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176137. <rdar://problem/18877535>
 
     2014-11-14  Tim Horton  <timothy_horton@apple.com>
