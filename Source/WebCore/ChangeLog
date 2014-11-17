@@ -1,3 +1,14 @@
+2014-11-17  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error, CoreGraphics header file included.
+        https://bugs.webkit.org/show_bug.cgi?id=138795
+
+        Reviewed by Brent Fulgham.
+
+        CoreGraphics is not available on WinCairo.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+
 2014-11-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r176169.

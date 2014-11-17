@@ -27,7 +27,6 @@
  */
 
 #include "config.h"
-#include "CoreGraphicsSPI.h"
 #include <winsock2.h>
 #include "FontCache.h"
 #include "Font.h"
@@ -42,6 +41,7 @@
 #include <wtf/win/GDIObject.h>
 
 #if USE(CG)
+#include "CoreGraphicsSPI.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
