@@ -313,7 +313,11 @@ class GTKDoc(object):
         env = os.environ
         ldflags = self.ldflags
         if self.library_path:
-            ldflags = ' "-L%s" ' % self.library_path + ldflags
+            additional_ldflags = ''
+            for arg in env.get('LDFLAGS', '').split(' '):
+                if arg.startswith('-L'):
+                    additional_ldflags = '%s %s' % (additional_ldflags, arg)
+            ldflags = ' "-L%s" %s ' % (self.library_path, additional_ldflags) + ldflags
             current_ld_library_path = env.get('LD_LIBRARY_PATH')
             if current_ld_library_path:
                 env['RUN'] = 'LD_LIBRARY_PATH="%s:%s" ' % (self.library_path, current_ld_library_path)
