@@ -504,12 +504,7 @@ void HTMLAnchorElement::setSearch(const String& value)
 
 String HTMLAnchorElement::text()
 {
-    return textContent();
-}
-
-void HTMLAnchorElement::setText(const String& text, ExceptionCode& ec)
-{
-    setTextContent(text, ec);
+    return innerText();
 }
 
 String HTMLAnchorElement::toString() const
