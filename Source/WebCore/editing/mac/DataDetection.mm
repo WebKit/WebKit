@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DataDetection.h"
 
+#if PLATFORM(MAC)
+
 #import "DataDetectorsSPI.h"
 #import "DictionaryLookup.h"
 #import "FrameView.h"
@@ -100,3 +102,5 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)
