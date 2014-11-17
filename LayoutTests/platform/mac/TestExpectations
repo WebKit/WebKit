@@ -1307,18 +1307,13 @@ webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html
 [ Yosemite ] media/auto-play-in-sandbox-with-allow-scripts.html [ Skip ]
 [ Yosemite ] fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16200275>)
-[ Yosemite ] inspector/test-harness-trivially-works.html [ Skip ]
-[ Yosemite ] inspector/dom/content-flow-content-removal.html [ Skip ]
-[ Yosemite ] inspector/dom/content-flow-list.html [ Skip ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16663912>)
 # Seems like this should happen everywhere, but it only does on Yosemite.
-[ Yosemite ] http/tests/navigation/post-frames-goback1.html [ Failure ]
+[ Yosemite+ ] http/tests/navigation/post-frames-goback1.html [ Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16664245>)
 # We should land updated results if we can't get this bug fixed in time.
-[ Yosemite ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
+[ Yosemite+ ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16676355>)
 [ Yosemite ] webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html [ Pass Failure ]
@@ -1421,14 +1416,18 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 
 # Some inspector tests fail when run from Production builds due to missing test resources.
 # FIXME: Needs bugzilla (<rdar://problem/16200275>)
-# Also, these tests are flaky in Debug/Release builds, <https://bugs.webkit.org/show_bug.cgi?id=138636>.
+# Also, these tests are flaky in Debug/Release builds, <https://bugs.webkit.org/show_bug.cgi?id=138636>
+# and <https://bugs.webkit.org/show_bug.cgi?id=129817>.
 [ Yosemite+ ] inspector/css/matched-style-properties.html [ Pass Failure Crash ]
 [ Yosemite+ ] inspector/css/pseudo-element-matches.html [ Pass Failure Crash ]
 [ Yosemite+ ] inspector/css/selector-specificity.html [ Pass Failure Crash ]
+[ Yosemite+ ] inspector/dom/content-flow-content-removal.html [ Skip ]
+[ Yosemite+ ] inspector/dom/content-flow-list.html [ Skip ]
 [ Yosemite+ ] inspector/event-listener-set.html [ Pass Failure Crash ]
 [ Yosemite+ ] inspector/event-listener.html [ Pass Failure Crash ]
 [ Yosemite+ ] inspector/model/parse-script-syntax-tree.html [ Pass Failure Crash ]
 [ Yosemite+ ] inspector/protocol-promise-result.html [ Pass Failure Crash ]
+[ Yosemite+ ] inspector/test-harness-trivially-works.html [ Skip ]
 
 # Specific to Yosemite's font fallback
 webkit.org/b/138328 [ Mavericks MountainLion ] platform/mac/fast/text/font-cursive-italic-cjk.html [ Skip ]

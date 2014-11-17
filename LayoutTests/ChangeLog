@@ -1,3 +1,9 @@
+2014-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectation gardening.
+
+        * platform/mac/TestExpectations:
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting '-webkit-line-clamp' CSS property to a calculated value
