@@ -205,7 +205,7 @@ namespace ARMRegisters {
         return (FPDoubleRegisterID)(reg >> 1);
     }
 
-} // namespace ARMRegister
+} // namespace ARMRegisters
 
 class ARMv7Assembler;
 class ARMThumbImmediate {

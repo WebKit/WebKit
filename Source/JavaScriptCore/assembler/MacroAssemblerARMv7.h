@@ -1905,6 +1905,8 @@ public:
     // Methods required by the MASM_PROBE mechanism as defined in
     // AbstractMacroAssembler.h. 
     static void printCPURegisters(CPUState&, int indentation = 0);
+    static void printRegister(CPUState&, RegisterID);
+    static void printRegister(CPUState&, FPRegisterID);
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
 #endif // ENABLE(MASM_PROBE)
 

@@ -844,6 +844,55 @@ public:
             _type _regName;
         FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
         #undef DECLARE_REGISTER
+
+        static const char* registerName(RegisterID regID)
+        {
+            switch (regID) {
+                #define DECLARE_REGISTER(_type, _regName) \
+                case RegisterID::_regName: \
+                    return #_regName;
+                FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
+                #undef DECLARE_REGISTER
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        static const char* registerName(FPRegisterID regID)
+        {
+            switch (regID) {
+                #define DECLARE_REGISTER(_type, _regName) \
+                case FPRegisterID::_regName: \
+                    return #_regName;
+                FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
+                #undef DECLARE_REGISTER
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        void* registerValue(RegisterID regID)
+        {
+            switch (regID) {
+                #define DECLARE_REGISTER(_type, _regName) \
+                case RegisterID::_regName: \
+                    return _regName;
+                FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
+                #undef DECLARE_REGISTER
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        double registerValue(FPRegisterID regID)
+        {
+            switch (regID) {
+                #define DECLARE_REGISTER(_type, _regName) \
+                case FPRegisterID::_regName: \
+                    return _regName;
+                FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
+                #undef DECLARE_REGISTER
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
     };
 
     struct ProbeContext;
@@ -891,9 +940,42 @@ public:
         #undef INDENT
     }
 
+    // This is a marker type only used with print(). See print() below for details.
+    struct AllRegisters { };
+
+    // Emits code which will print debugging info at runtime. The type of values that
+    // can be printed is encapsulated in the PrintArg struct below. Here are some
+    // examples:
+    //
+    //      print("Hello world\n"); // Emits code to print the string.
+    //
+    //      CodeBlock* cb = ...;
+    //      print(cb);              // Emits code to print the pointer value.
+    //
+    //      RegisterID regID = ...;
+    //      print(regID);           // Emits code to print the register value (not the id).
+    //
+    //      // Emits code to print all registers.  Unlike other items, this prints
+    //      // multiple lines as follows:
+    //      //      cpu {
+    //      //          eax: 0x123456789
+    //      //          ebx: 0x000000abc
+    //      //          ...
+    //      //      }
+    //      print(AllRegisters());
+    //
+    //      // Print multiple things at once. This incurs the probe overhead only once
+    //      // to print all the items.
+    //      print("cb:", cb, " regID:", regID, " cpu:\n", AllRegisters());
+
+    template<typename... Arguments>
+    void print(Arguments... args)
+    {
+        printInternal(static_cast<MacroAssemblerType*>(this), args...);
+    }
 
     // This function will be called by printCPU() to print the contents of the
-    // target specific registers which are saved away in the CPUInfo struct.
+    // target specific registers which are saved away in the CPUState struct.
     // printCPURegisters() should make use of printIndentation() to print the
     // registers with the appropriate amount of indentation.
     //
@@ -903,14 +985,25 @@ public:
 
     static void printCPURegisters(CPUState&, int indentation = 0);
 
-    // This function emits code to preserve the CPUInfo (e.g. registers),
-    // call a user supplied probe function, and restore the CPUInfo before
+    // This function will be called by print() to print the contents of a
+    // specific register (from the CPUState) in line with other items in the
+    // print stream. Hence, no indentation is needed.
+    //
+    // Note: printRegister() should be implemented by the target specific
+    // MacroAssembler. These prototypes are only provided here to document their
+    // interface.
+
+    static void printRegister(CPUState&, RegisterID);
+    static void printRegister(CPUState&, FPRegisterID);
+
+    // This function emits code to preserve the CPUState (e.g. registers),
+    // call a user supplied probe function, and restore the CPUState before
     // continuing with other JIT generated code.
     //
     // The user supplied probe function will be called with a single pointer to
     // a ProbeContext struct (defined above) which contains, among other things,
-    // the preserved CPUInfo. This allows the user probe function to inspect
-    // the CPUInfo at that point in the JIT generated code.
+    // the preserved CPUState. This allows the user probe function to inspect
+    // the CPUState at that point in the JIT generated code.
     //
     // If the user probe function alters the register values in the ProbeContext,
     // the altered values will be loaded into the CPU registers when the probe
@@ -1085,7 +1178,143 @@ protected:
     {
         AssemblerType::replaceWithAddressComputation(label.dataLocation());
     }
-};
+
+private:
+
+#if ENABLE(MASM_PROBE)
+
+    struct PrintArg {
+    
+        enum class Type {
+            AllRegisters,
+            RegisterID,
+            FPRegisterID,
+            ConstCharPtr,
+            ConstVoidPtr,
+            IntptrValue,
+            UintptrValue,
+        };
+
+        PrintArg(AllRegisters&)
+            : type(Type::AllRegisters)
+        {
+        }
+
+        PrintArg(RegisterID regID)
+            : type(Type::RegisterID)
+        {
+            u.gpRegisterID = regID;
+        }
+
+        PrintArg(FPRegisterID regID)
+            : type(Type::FPRegisterID)
+        {
+            u.fpRegisterID = regID;
+        }
+
+        PrintArg(const char* ptr)
+            : type(Type::ConstCharPtr)
+        {
+            u.constCharPtr = ptr;
+        }
+
+        PrintArg(const void* ptr)
+            : type(Type::ConstVoidPtr)
+        {
+            u.constVoidPtr = ptr;
+        }
+
+        PrintArg(int value)
+            : type(Type::IntptrValue)
+        {
+            u.intptrValue = value;
+        }
+
+        PrintArg(unsigned value)
+            : type(Type::UintptrValue)
+        {
+            u.intptrValue = value;
+        }
+
+        PrintArg(intptr_t value)
+            : type(Type::IntptrValue)
+        {
+            u.intptrValue = value;
+        }
+
+        PrintArg(uintptr_t value)
+            : type(Type::UintptrValue)
+        {
+            u.uintptrValue = value;
+        }
+
+        Type type;
+        union {
+            RegisterID gpRegisterID;
+            FPRegisterID fpRegisterID;
+            const char* constCharPtr;
+            const void* constVoidPtr;
+            intptr_t intptrValue;
+            uintptr_t uintptrValue;
+        } u;
+    };
+
+    typedef Vector<PrintArg> PrintArgsList;
+
+    template<typename FirstArg, typename... Arguments>
+    static void appendPrintArg(PrintArgsList* argsList, FirstArg& firstArg, Arguments... otherArgs)
+    {
+        argsList->append(PrintArg(firstArg));
+        appendPrintArg(argsList, otherArgs...);
+    }
+
+    static void appendPrintArg(PrintArgsList*) { }
+
+    
+    template<typename... Arguments>
+    static void printInternal(MacroAssemblerType* masm, Arguments... args)
+    {
+        auto argsList = std::make_unique<PrintArgsList>();
+        appendPrintArg(argsList.get(), args...);
+        masm->probe(printCallback, argsList.release());
+    }
+
+    static void printCallback(ProbeContext* context)
+    {
+        typedef PrintArg Arg;
+        PrintArgsList& argsList =
+            *reinterpret_cast<PrintArgsList*>(context->arg1);
+        for (size_t i = 0; i < argsList.size(); i++) {
+            auto& arg = argsList[i];
+            switch (arg.type) {
+            case Arg::Type::AllRegisters:
+                MacroAssemblerType::printCPU(context->cpu);
+                break;
+            case Arg::Type::RegisterID:
+                MacroAssemblerType::printRegister(context->cpu, arg.u.gpRegisterID);
+                break;
+            case Arg::Type::FPRegisterID:
+                MacroAssemblerType::printRegister(context->cpu, arg.u.fpRegisterID);
+                break;
+            case Arg::Type::ConstCharPtr:
+                dataLog(arg.u.constCharPtr);
+                break;
+            case Arg::Type::ConstVoidPtr:
+                dataLogF("%p", arg.u.constVoidPtr);
+                break;
+            case Arg::Type::IntptrValue:
+                dataLog(arg.u.intptrValue);
+                break;
+            case Arg::Type::UintptrValue:
+                dataLog(arg.u.uintptrValue);
+                break;
+            }
+        }
+    }
+
+#endif // ENABLE(MASM_PROBE)
+
+}; // class AbstractMacroAssembler
 
 } // namespace JSC
 

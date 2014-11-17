@@ -1,3 +1,36 @@
+2014-11-17  Mark Lam  <mark.lam@apple.com>
+
+        Add printing functionality in JITted code for debugging purposes.
+        <https://webkit.org/b/138660>
+
+        Reviewed by Geoffrey Garen.
+
+        Sometimes, for debugging, it'd be nice to be able to just print the
+        values of constants or registers used in JITted code, or even just
+        a string to log that certain pieces of JITted code have been executed.
+        Using the JIT probe mechanism, we can make this happen.
+
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CPUState::registerName):
+        (JSC::AbstractMacroAssembler::CPUState::registerValue):
+        (JSC::AbstractMacroAssembler::print):
+        (JSC::AbstractMacroAssembler::PrintArg::PrintArg):
+        (JSC::AbstractMacroAssembler::appendPrintArg):
+        (JSC::AbstractMacroAssembler::printInternal):
+        (JSC::AbstractMacroAssembler::printCallback):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::printCPURegisters):
+        (JSC::MacroAssemblerARM::printRegister):
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::printCPURegisters):
+        (JSC::MacroAssemblerARMv7::printRegister):
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::printRegister):
+        * assembler/MacroAssemblerX86Common.h:
+
 2014-11-17  Anders Carlsson  <andersca@apple.com>
 
         Fix JavaScriptCore build with newer versions of clang.
