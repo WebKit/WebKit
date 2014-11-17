@@ -1,3 +1,46 @@
+2014-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Move more CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138766
+
+        Reviewed by Darin Adler.
+
+        Move more CSS properties from DeprecatedStyleBuilder to the new
+        StyleBuilder:
+        line-height
+        word-spacing
+        -webkit-marquee-repetition
+        -webkit-text-underline-position
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::csstoLengthConversionDataWithTextZoomFactor): Deleted.
+        (WebCore::ApplyPropertyMarqueeRepetition::applyValue): Deleted.
+        (WebCore::ApplyPropertyMarqueeRepetition::createHandler): Deleted.
+        (WebCore::ApplyPropertyTextUnderlinePosition::applyValue): Deleted.
+        (WebCore::ApplyPropertyTextUnderlinePosition::createHandler): Deleted.
+        (WebCore::ApplyPropertyLineHeight::applyValue): Deleted.
+        (WebCore::ApplyPropertyLineHeight::createHandler): Deleted.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyValue): Deleted.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::createHandler): Deleted.
+        (WebCore::ApplyPropertyWordSpacing::applyValue): Deleted.
+        (WebCore::ApplyPropertyWordSpacing::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertMarqueeRepetition):
+        (WebCore::StyleBuilderConverter::convertTextUnderlinePosition):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::csstoLengthConversionDataWithTextZoomFactor):
+        (WebCore::StyleBuilderFunctions::convertLineHeight):
+        (WebCore::StyleBuilderFunctions::applyValueWordSpacing):
+        (WebCore::StyleBuilderFunctions::applyInheritLineHeight):
+        (WebCore::StyleBuilderFunctions::applyInitialLineHeight):
+        (WebCore::StyleBuilderFunctions::applyValueLineHeight):
+
 2014-11-16  Andreas Kling  <akling@apple.com>
 
         Avoid synchronous style recalc when mutating a Node inside FrameSelection.

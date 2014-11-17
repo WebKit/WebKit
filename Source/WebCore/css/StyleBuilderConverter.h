@@ -63,7 +63,9 @@ public:
     static ETextAlign convertTextAlign(StyleResolver&, CSSValue&);
     static PassRefPtr<ClipPathOperation> convertClipPath(StyleResolver&, CSSValue&);
     static EResize convertResize(StyleResolver&, CSSValue&);
+    static int convertMarqueeRepetition(StyleResolver&, CSSValue&);
     static int convertMarqueeSpeed(StyleResolver&, CSSValue&);
+    static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -388,6 +390,16 @@ inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver
     return resize;
 }
 
+inline int StyleBuilderConverter::convertMarqueeRepetition(StyleResolver&, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueInfinite)
+        return -1; // -1 means repeat forever.
+
+    ASSERT(primitiveValue.isNumber());
+    return primitiveValue.getIntValue();
+}
+
 inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -415,6 +427,20 @@ inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& 
         speed = primitiveValue.getIntValue();
     }
     return speed;
+}
+
+inline TextUnderlinePosition StyleBuilderConverter::convertTextUnderlinePosition(StyleResolver&, CSSValue& value)
+{
+    // This is true if value is 'auto' or 'alphabetic'.
+    if (is<CSSPrimitiveValue>(value))
+        return downcast<CSSPrimitiveValue>(value);
+
+    unsigned combinedPosition = 0;
+    for (auto& currentValue : downcast<CSSValueList>(value)) {
+        TextUnderlinePosition position = downcast<CSSPrimitiveValue>(currentValue.get());
+        combinedPosition |= position;
+    }
+    return static_cast<TextUnderlinePosition>(combinedPosition);
 }
 
 } // namespace WebCore

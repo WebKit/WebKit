@@ -80,7 +80,11 @@ text-rendering [Inherited]
 zoom [NewStyleBuilder, Custom=All]
 
 // line height needs to be right after the above high-priority properties
-line-height [Inherited]
+#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
+line-height [Inherited, NewStyleBuilder, Custom=All]
+#else
+line-height [Inherited, NewStyleBuilder, Getter=specifiedLineHeight, Custom=Value]
+#endif
 
 // Keep this in between the highest priority props and the lower ones.
 -webkit-ruby-position [Inherited, NewStyleBuilder, TypeName=RubyPosition]
@@ -262,7 +266,7 @@ widows [Inherited]
 width [NewStyleBuilder, Initial=initialSize, Converter=LengthSizing]
 word-break [Inherited, NewStyleBuilder]
 -epub-word-break = word-break
-word-spacing [Inherited]
+word-spacing [Inherited, NewStyleBuilder, Custom=Value]
 word-wrap [Inherited, NewStyleBuilder=EOverflowWrap, NameForMethods=OverflowWrap]
 z-index
 alt
@@ -429,7 +433,7 @@ justify-content [NewStyleBuilder]
 -webkit-marquee
 -webkit-marquee-direction [NewStyleBuilder]
 -webkit-marquee-increment [NewStyleBuilder, Custom=Value]
--webkit-marquee-repetition
+-webkit-marquee-repetition [NewStyleBuilder, NameForMethods=MarqueeLoopCount, Converter=MarqueeRepetition]
 -webkit-marquee-speed [NewStyleBuilder, Converter=MarqueeSpeed]
 -webkit-marquee-style [NewStyleBuilder, TypeName=EMarqueeBehavior, NameForMethods=MarqueeBehavior]
 -webkit-mask
@@ -486,7 +490,7 @@ order [NewStyleBuilder, TypeName=int]
 -webkit-text-decoration-style [NewStyleBuilder, TypeName=TextDecorationStyle]
 -webkit-text-decoration-color
 -webkit-text-decoration-skip [Inherited]
--webkit-text-underline-position [Inherited]
+-webkit-text-underline-position [Inherited, NewStyleBuilder, Converter=TextUnderlinePosition]
 -webkit-text-decorations-in-effect [Inherited]
 -webkit-text-emphasis [Inherited]
 -epub-text-emphasis = -webkit-text-emphasis

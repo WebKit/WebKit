@@ -31,6 +31,7 @@
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "Frame.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -71,7 +72,7 @@ inline void applyValueDirection(StyleResolver& styleResolver, CSSValue& value)
         element->document().setDirectionSetOnDocumentElement(true);
 }
 
-static inline void resetEffectiveZoom(StyleResolver& styleResolver)
+inline void resetEffectiveZoom(StyleResolver& styleResolver)
 {
     // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
     styleResolver.setEffectiveZoom(styleResolver.parentStyle() ? styleResolver.parentStyle()->effectiveZoom() : RenderStyle::initialZoom());
@@ -149,12 +150,12 @@ inline void applyValueWebkitShapeOutside(StyleResolver& styleResolver, CSSValue&
 }
 #endif // ENABLE(CSS_SHAPES)
 
-static inline Length mmLength(double mm)
+inline Length mmLength(double mm)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM));
     return value.get().computeLength<Length>(CSSToLengthConversionData());
 }
-static inline Length inchLength(double inch)
+inline Length inchLength(double inch)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN));
     return value.get().computeLength<Length>(CSSToLengthConversionData());
@@ -501,6 +502,93 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Outset)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width)
+
+inline CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver& styleResolver)
+{
+    if (Frame* frame = styleResolver.document().frame())
+        return styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(styleResolver.style()->effectiveZoom() * frame->textZoomFactor());
+
+    return styleResolver.state().cssToLengthConversionData();
+}
+
+inline bool convertLineHeight(StyleResolver& styleResolver, const CSSValue& value, Length& length, float multiplier = 1.f)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNormal) {
+        length = RenderStyle::initialLineHeight();
+        return true;
+    }
+    if (primitiveValue.isLength()) {
+        length = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
+        return true;
+    }
+    if (primitiveValue.isPercentage()) {
+        // FIXME: percentage should not be restricted to an integer here.
+        length = Length((styleResolver.style()->computedFontSize() * primitiveValue.getIntValue()) * multiplier / 100, Fixed);
+        return true;
+    }
+    if (primitiveValue.isNumber()) {
+        // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
+        length = Length(primitiveValue.getDoubleValue() * multiplier * 100.0, Percent);
+        return true;
+    }
+    return false;
+}
+
+inline void applyValueWordSpacing(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    Length wordSpacing;
+    if (primitiveValue.getValueID() == CSSValueNormal)
+        wordSpacing = RenderStyle::initialWordSpacing();
+    else if (primitiveValue.isLength())
+        wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
+    else if (primitiveValue.isPercentage())
+        wordSpacing = Length(clampTo<float>(primitiveValue.getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
+    else if (primitiveValue.isNumber())
+        wordSpacing = Length(primitiveValue.getDoubleValue(), Fixed);
+    else
+        return;
+    styleResolver.style()->setWordSpacing(wordSpacing);
+}
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+
+inline void applyInheritLineHeight(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setLineHeight(styleResolver.parentStyle()->lineHeight());
+    styleResolver.style()->setSpecifiedLineHeight(styleResolver.parentStyle()->specifiedLineHeight());
+}
+
+inline void applyInitialLineHeight(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setLineHeight(RenderStyle::initialLineHeight());
+    styleResolver.style()->setSpecifiedLineHeight(RenderStyle::initialSpecifiedLineHeight());
+}
+
+inline void applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
+{
+    Length lineHeight;
+    if (!convertLineHeight(styleResolver, value, lineHeight, styleResolver.style()->textSizeAdjust().multiplier()))
+        return;
+
+    styleResolver.style()->setLineHeight(lineHeight);
+    styleResolver.style()->setSpecifiedLineHeight(lineHeight);
+}
+
+#else
+
+inline void applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
+{
+    Length lineHeight;
+    if (!convertLineHeight(styleResolver, value, lineHeight))
+        return;
+
+    styleResolver.style()->setLineHeight(lineHeight);
+}
+
+#endif
 
 } // namespace StyleBuilderFunctions
 
