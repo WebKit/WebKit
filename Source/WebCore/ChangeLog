@@ -1,3 +1,21 @@
+2014-11-11  Daniel Bates  <dabates@apple.com>
+
+        [Frame Flattening] ASSERT(transaction->view == &view()) fails in RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
+        https://bugs.webkit.org/show_bug.cgi?id=138615
+        <rdar://problem/18928487>
+
+        Reviewed by David Hyatt.
+
+        Fixes an issue where we always expected that the RenderView associated with the RenderBlock called in
+        RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction() is the same as the RenderView associated with
+        the top transaction in the UpdateScrollInfoAfterLayoutTransaction stack regardless of frame flattening. This
+        expectation is only true when frame flattening is disabled.
+
+        Test: fast/frames/flattening/iframe-flattening-inside-flexbox-with-delayed-scroll-update.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction):
+
 2014-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Crash in WebCore::Node::getFlag

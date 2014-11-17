@@ -1,3 +1,16 @@
+2014-11-11  Daniel Bates  <dabates@apple.com>
+
+        [Frame Flattening] ASSERT(transaction->view == &view()) fails in RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
+        https://bugs.webkit.org/show_bug.cgi?id=138615
+        <rdar://problem/18928487>
+
+        Reviewed by David Hyatt.
+
+        Add a test that causes an assertion failure in affected builds.
+
+        * fast/frames/flattening/iframe-flattening-inside-flexbox-with-delayed-scroll-update-expected.txt: Added.
+        * fast/frames/flattening/iframe-flattening-inside-flexbox-with-delayed-scroll-update.html: Added.
+
 2014-11-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Crash in WebCore::Node::getFlag
