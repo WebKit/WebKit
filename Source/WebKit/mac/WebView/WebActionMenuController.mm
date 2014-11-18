@@ -695,7 +695,7 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     case WebActionMenuItemTagOpenLinkInDefaultBrowser:
         selector = @selector(_openURLFromActionMenu:);
         title = WEB_UI_STRING_KEY("Open", "Open (action menu item)", "action menu item");
-        image = webKitBundleImageNamed(@"OpenInNewWindowTemplate");
+        image = [NSImage imageNamed:@"NSActionMenuOpenInNewWindow"];
         break;
 
     case WebActionMenuItemTagPreviewLink:
