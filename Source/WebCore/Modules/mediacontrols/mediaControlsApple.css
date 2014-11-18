@@ -68,6 +68,7 @@ video::-webkit-media-controls-panel,
 audio::-webkit-media-controls-panel {
     box-sizing: border-box;
     position: relative;
+    z-index: 0;
     bottom: 0;
     width: 100%;
     padding-top: 1px;
