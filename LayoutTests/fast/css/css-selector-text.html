@@ -375,6 +375,24 @@ shouldThrow("parseThenSerializeRule(':lang([) { }')");
 shouldThrow("parseThenSerializeRule(':lang([]) { }')");
 shouldThrow("parseThenSerializeRule(':lang(@media screen {}) { }')");
 
+debug('');
+
+testSelectorRoundTrip(":role(a)");
+testSelectorRoundTrip(":role(button)");
+testSelectorRoundTrip(":role(LiNk)");
+shouldBe("parseThenSerializeRule(':role( a    ) { }')", "':role(a) { }'");
+
+debug('');
+
+shouldThrow("parseThenSerializeRule(':role() { }')");
+shouldThrow("parseThenSerializeRule(':role(42) { }')");
+shouldThrow("parseThenSerializeRule(':role(a, b) { }')");
+shouldThrow("parseThenSerializeRule(':role(}) { }')");
+shouldThrow("parseThenSerializeRule(':role()) { }')");
+shouldThrow("parseThenSerializeRule(':role(role()) { }')");
+shouldThrow("parseThenSerializeRule(':role(:role()) { }')");
+shouldThrow("parseThenSerializeRule(':role(:role(a)) { }')");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

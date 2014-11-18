@@ -158,6 +158,9 @@ namespace WebCore {
             PseudoClassFuture,
             PseudoClassPast,
 #endif
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            PseudoClassRole,
+#endif
         };
 
         enum PseudoElementType {

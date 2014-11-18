@@ -51,6 +51,9 @@ matches(
 read-only
 read-write
 required
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+role(
+#endif
 root
 scope
 single-button

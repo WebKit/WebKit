@@ -435,6 +435,60 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
+PASS document.querySelectorAll(":role\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":role\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\").length threw exception SyntaxError: Unexpected EOF.
+PASS document.querySelectorAll(":role\\\\").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\\(").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\\ .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\\( .foo").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\\()").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\\ .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":role\\\\( .foo)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
+PASS document.styleSheets[1].cssRules.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

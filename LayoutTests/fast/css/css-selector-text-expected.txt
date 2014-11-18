@@ -297,6 +297,20 @@ PASS parseThenSerializeRule(':lang(]) { }') threw exception TypeError: undefined
 PASS parseThenSerializeRule(':lang([) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang([]) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(@media screen {}) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+
+PASS parseThenSerializeRule(':role(a) { }') is ':role(a) { }'
+PASS parseThenSerializeRule(':role(button) { }') is ':role(button) { }'
+PASS parseThenSerializeRule(':role(LiNk) { }') is ':role(LiNk) { }'
+PASS parseThenSerializeRule(':role( a    ) { }') is ':role(a) { }'
+
+PASS parseThenSerializeRule(':role() { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role(42) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role(a, b) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role(}) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role(role()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role(:role()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':role(:role(a)) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS successfullyParsed is true
 
 TEST COMPLETE

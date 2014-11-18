@@ -1020,6 +1020,12 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
         case CSSSelector::PseudoClassCornerPresent:
             return false;
 
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        // FIXME: Implement :role() selector.
+        case CSSSelector::PseudoClassRole:
+            return false;
+#endif
+
         case CSSSelector::PseudoClassUnknown:
             ASSERT_NOT_REACHED();
             break;

@@ -64,6 +64,7 @@ static inline bool isCSSTokenAString(int yytype)
 #if ENABLE_CSS_SELECTORS_LEVEL4
     case LANGFUNCTION:
     case MATCHESFUNCTION:
+    case ROLEFUNCTION:
 #endif
     case UNICODERANGE:
         return true;
@@ -232,6 +233,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 #if ENABLE_CSS_SELECTORS_LEVEL4
 %token <string> LANGFUNCTION
 %token <string> MATCHESFUNCTION
+%token <string> ROLEFUNCTION
 #endif
 
 %token <string> UNICODERANGE
@@ -1386,6 +1388,16 @@ pseudo:
                 $$ = selector.release();
         }
     }
+
+    | ':' ROLEFUNCTION maybe_space IDENT maybe_space ')' {
+        $$ = nullptr;
+        auto selector = std::make_unique<CSSParserSelector>();
+        selector->setMatch(CSSSelector::PseudoClass);
+        selector->setArgument($4);
+        selector->setPseudoClassValue($2);
+        if (selector->pseudoClassType() == CSSSelector::PseudoClassRole)
+            $$ = selector.release();
+    }
 #endif
 
     // Definition of :nth-child().
@@ -1879,7 +1891,7 @@ invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesi
 opening_parenthesis:
     '(' | FUNCTION | CALCFUNCTION | MINFUNCTION | MAXFUNCTION | ANYFUNCTION | NOTFUNCTION
 #if ENABLE_CSS_SELECTORS_LEVEL4
-    | LANGFUNCTION | MATCHESFUNCTION
+    | LANGFUNCTION | MATCHESFUNCTION | ROLEFUNCTION
 #endif
 #if ENABLE_VIDEO_TRACK
     | CUEFUNCTION

@@ -265,6 +265,9 @@ static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector*
     case CSSSelector::PseudoClassNthLastChild:
     case CSSSelector::PseudoClassNthOfType:
     case CSSSelector::PseudoClassNthLastOfType:
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+    case CSSSelector::PseudoClassRole:
+#endif
         str.append(selector->argument());
         str.append(')');
         break;
@@ -529,6 +532,12 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassRequired:
                 str.appendLiteral(":required");
                 break;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            case CSSSelector::PseudoClassRole:
+                str.appendLiteral(":role(");
+                appendPseudoClassFunctionTail(str, cs);
+                break;
+#endif
             case CSSSelector::PseudoClassRoot:
                 str.appendLiteral(":root");
                 break;

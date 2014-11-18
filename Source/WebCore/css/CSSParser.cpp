@@ -10725,6 +10725,10 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             m_token = LANGFUNCTION;
             return true;
         }
+        if (isEqualToCSSIdentifier(name, "role")) {
+            m_token = ROLEFUNCTION;
+            return true;
+        }
 #endif
         return false;
 
