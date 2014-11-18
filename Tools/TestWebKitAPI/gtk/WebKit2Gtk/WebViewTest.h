@@ -28,8 +28,7 @@
 class WebViewTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(WebViewTest);
-    WebViewTest(WebKitWebView*);
-    WebViewTest();
+    WebViewTest(WebKitUserContentManager* = nullptr);
     virtual ~WebViewTest();
 
     virtual void loadURI(const char* uri);

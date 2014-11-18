@@ -93,11 +93,14 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
         g_warning("Failed to register object: %s\n", error->message);
 }
 
-extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
+extern "C" void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
 {
+    g_assert(userData);
+    g_assert(g_variant_is_of_type(userData, G_VARIANT_TYPE_UINT32));
+    GUniquePtr<char> busName(g_strdup_printf("org.webkit.gtk.WebProcessTest%u", g_variant_get_uint32(userData)));
     g_bus_own_name(
         G_BUS_TYPE_SESSION,
-        "org.webkit.gtk.WebProcessTest",
+        busName.get(),
         G_BUS_NAME_OWNER_FLAGS_NONE,
         busAcquiredCallback,
         0, 0,

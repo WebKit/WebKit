@@ -32,7 +32,7 @@ public:
     MAKE_GLIB_TEST_FIXTURE(UserContentManagerTest);
 
     UserContentManagerTest()
-        : WebViewTest(WEBKIT_WEB_VIEW(webkit_web_view_new_with_user_content_manager(webkit_user_content_manager_new())))
+        : WebViewTest(webkit_user_content_manager_new())
     {
         // A reference is leaked when passing the result of webkit_user_content_manager_new()
         // directly to webkit_web_view_new_with_user_content_manager() above. Adopting the
@@ -367,7 +367,6 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
-    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 

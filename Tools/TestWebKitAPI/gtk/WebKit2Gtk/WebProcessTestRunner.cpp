@@ -39,8 +39,8 @@ WebProcessTestRunner::~WebProcessTestRunner()
     g_main_loop_unref(m_mainLoop);
 
     // g_test_dbus_down waits until the connection is freed, so release our refs explicitly before calling it.
-    m_connection = 0;
-    m_proxy = 0;
+    m_connection = nullptr;
+    m_proxy = nullptr;
     g_test_dbus_down(m_bus.get());
 }
 
@@ -48,20 +48,6 @@ void WebProcessTestRunner::proxyCreatedCallback(GObject*, GAsyncResult* result, 
 {
     testRunner->m_proxy = adoptGRef(g_dbus_proxy_new_finish(result, 0));
     g_main_loop_quit(testRunner->m_mainLoop);
-}
-
-GDBusProxy* WebProcessTestRunner::proxy()
-{
-    if (m_proxy)
-        return m_proxy.get();
-
-    g_dbus_proxy_new(m_connection.get(), G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START, 0,
-        "org.webkit.gtk.WebProcessTest", "/org/webkit/gtk/WebProcessTest", "org.webkit.gtk.WebProcessTest",
-        0, reinterpret_cast<GAsyncReadyCallback>(WebProcessTestRunner::proxyCreatedCallback), this);
-    g_main_loop_run(m_mainLoop);
-    g_assert(m_proxy.get());
-
-    return m_proxy.get();
 }
 
 void WebProcessTestRunner::onNameAppeared(GDBusConnection*, const char*, const char*, gpointer userData)
@@ -84,18 +70,25 @@ void WebProcessTestRunner::testFinishedCallback(GDBusProxy* proxy, GAsyncResult*
     testRunner->finishTest(testResult);
 }
 
-bool WebProcessTestRunner::runTest(const char* suiteName, const char* testName, GVariant* args)
+bool WebProcessTestRunner::runTest(const char* suiteName, const char* testName, uint32_t testID, GVariant* args)
 {
     g_assert(g_variant_is_of_type(args, G_VARIANT_TYPE_VARDICT));
 
-    unsigned watcherID = g_bus_watch_name_on_connection(m_connection.get(), "org.webkit.gtk.WebProcessTest", G_BUS_NAME_WATCHER_FLAGS_NONE,
+    GUniquePtr<char> testBusName(g_strdup_printf("org.webkit.gtk.WebProcessTest%u", testID));
+    unsigned watcherID = g_bus_watch_name_on_connection(m_connection.get(), testBusName.get(), G_BUS_NAME_WATCHER_FLAGS_NONE,
         WebProcessTestRunner::onNameAppeared, WebProcessTestRunner::onNameVanished, this, 0);
     g_main_loop_run(m_mainLoop);
+
+    g_dbus_proxy_new(m_connection.get(), G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START, nullptr,
+        testBusName.get(), "/org/webkit/gtk/WebProcessTest", "org.webkit.gtk.WebProcessTest",
+        nullptr, reinterpret_cast<GAsyncReadyCallback>(WebProcessTestRunner::proxyCreatedCallback), this);
+    g_main_loop_run(m_mainLoop);
+    g_assert(m_proxy.get());
 
     m_testResult = false;
     GUniquePtr<char> testPath(g_strdup_printf("%s/%s", suiteName, testName));
     g_dbus_proxy_call(
-        proxy(),
+        m_proxy.get(),
         "RunTest",
         g_variant_new("(s@a{sv})", testPath.get(), args),
         G_DBUS_CALL_FLAGS_NONE,

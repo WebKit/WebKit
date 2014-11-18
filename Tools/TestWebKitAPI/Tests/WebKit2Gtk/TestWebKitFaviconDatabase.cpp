@@ -26,18 +26,16 @@
 #include <wtf/gobject/GUniquePtr.h>
 
 static WebKitTestServer* kServer;
-static char* kTempDirectory;
 
 class FaviconDatabaseTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(FaviconDatabaseTest);
 
     FaviconDatabaseTest()
-        : m_webContext(webkit_web_context_get_default())
-        , m_favicon(0)
+        : m_favicon(nullptr)
         , m_faviconNotificationReceived(false)
     {
-        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext);
+        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext.get());
         g_signal_connect(database, "favicon-changed", G_CALLBACK(faviconChangedCallback), this);
     }
 
@@ -46,7 +44,7 @@ public:
         if (m_favicon)
             cairo_surface_destroy(m_favicon);
 
-        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext);
+        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext.get());
         g_signal_handlers_disconnect_matched(database, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
     }
 
@@ -67,7 +65,7 @@ public:
     static void getFaviconCallback(GObject* sourceObject, GAsyncResult* result, void* data)
     {
         FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
-        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
+        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext.get());
         test->m_favicon = webkit_favicon_database_get_favicon_finish(database, result, &test->m_error.outPtr());
         test->quitMainLoop();
     }
@@ -87,12 +85,11 @@ public:
             m_favicon = 0;
         }
 
-        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext);
+        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext.get());
         webkit_favicon_database_get_favicon(database, pageURI, 0, getFaviconCallback, this);
         g_main_loop_run(m_mainLoop);
     }
 
-    WebKitWebContext* m_webContext;
     cairo_surface_t* m_favicon;
     CString m_faviconURI;
     GUniqueOutPtr<GError> m_error;
@@ -142,13 +139,13 @@ static void testNotInitialized(FaviconDatabaseTest* test)
 
 static void testSetDirectory(FaviconDatabaseTest* test)
 {
-    webkit_web_context_set_favicon_database_directory(test->m_webContext, kTempDirectory);
-    g_assert_cmpstr(kTempDirectory, ==, webkit_web_context_get_favicon_database_directory(test->m_webContext));
+    webkit_web_context_set_favicon_database_directory(test->m_webContext.get(), Test::dataDirectory());
+    g_assert_cmpstr(Test::dataDirectory(), ==, webkit_web_context_get_favicon_database_directory(test->m_webContext.get()));
 }
 
 static void testClearDatabase(FaviconDatabaseTest* test)
 {
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext.get());
     webkit_favicon_database_clear(database);
 
     GUniquePtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, kServer->getURIForPath("/foo").data()));
@@ -198,7 +195,7 @@ static void testGetFavicon(FaviconDatabaseTest* test)
 
 static void testGetFaviconURI(FaviconDatabaseTest* test)
 {
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext.get());
 
     CString baseURI = kServer->getURIForPath("/foo");
     GUniquePtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, baseURI.data()));
@@ -243,30 +240,11 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    kTempDirectory = g_dir_make_tmp("WebKit2Tests-XXXXXX", 0);
-    g_assert(kTempDirectory);
-
     // Add tests to the suite.
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "favicon-database-test", testFaviconDatabase);
-}
-
-static void webkitFaviconDatabaseFinalizedCallback(gpointer, GObject*)
-{
-    if (!g_file_test(kTempDirectory, G_FILE_TEST_IS_DIR))
-        return;
-
-    GUniquePtr<char> filename(g_build_filename(kTempDirectory, "WebpageIcons.db", nullptr));
-    g_unlink(filename.get());
-
-    g_rmdir(kTempDirectory);
 }
 
 void afterAll()
 {
     delete kServer;
-
-    // Delete the temporary files after the IconDatabase has been
-    // closed, that is, once WebKitFaviconDatabase is being destroyed.
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webkit_web_context_get_default());
-    g_object_weak_ref(G_OBJECT(database), webkitFaviconDatabaseFinalizedCallback, 0);
 }

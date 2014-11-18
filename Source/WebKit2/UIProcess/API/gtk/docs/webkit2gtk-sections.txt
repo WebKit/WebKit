@@ -28,6 +28,7 @@ WebKitCacheModel
 WebKitProcessModel
 WebKitTLSErrorsPolicy
 webkit_web_context_get_default
+webkit_web_context_new
 webkit_web_context_get_cache_model
 webkit_web_context_set_cache_model
 webkit_web_context_clear_cache

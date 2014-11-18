@@ -51,6 +51,7 @@ static void stopUpdatingCallback(WKGeolocationManagerRef, const void* clientInfo
 WebKitGeolocationProvider::~WebKitGeolocationProvider()
 {
     m_provider.stopUpdating();
+    WKGeolocationManagerSetProvider(toAPI(m_geolocationManager.get()), nullptr);
 }
 
 PassRefPtr<WebKitGeolocationProvider> WebKitGeolocationProvider::create(WebGeolocationManagerProxy* geolocationManager)

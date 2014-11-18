@@ -29,7 +29,7 @@ public:
     WebProcessTestRunner();
     ~WebProcessTestRunner();
 
-    bool runTest(const char* suiteName, const char* testName, GVariant* args);
+    bool runTest(const char* suiteName, const char* testName, uint32_t testID, GVariant* args);
 
 private:
     static void proxyCreatedCallback(GObject*, GAsyncResult*, WebProcessTestRunner*);
@@ -37,7 +37,6 @@ private:
     static void onNameVanished(GDBusConnection*, const char*, gpointer);
     static void testFinishedCallback(GDBusProxy*, GAsyncResult*, WebProcessTestRunner*);
 
-    GDBusProxy* proxy();
     void finishTest(bool result);
 
     GMainLoop* m_mainLoop;

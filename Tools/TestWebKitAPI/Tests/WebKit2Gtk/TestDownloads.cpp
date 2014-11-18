@@ -31,8 +31,6 @@
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-static char* kTempDirectory;
-
 class DownloadTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(DownloadTest);
@@ -105,17 +103,16 @@ public:
     }
 
     DownloadTest()
-        : m_webContext(webkit_web_context_get_default())
-        , m_mainLoop(g_main_loop_new(0, TRUE))
+        : m_mainLoop(g_main_loop_new(nullptr, TRUE))
         , m_downloadSize(0)
         , m_allowOverwrite(false)
     {
-        g_signal_connect(m_webContext, "download-started", G_CALLBACK(downloadStartedCallback), this);
+        g_signal_connect(m_webContext.get(), "download-started", G_CALLBACK(downloadStartedCallback), this);
     }
 
     ~DownloadTest()
     {
-        g_signal_handlers_disconnect_matched(m_webContext, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        g_signal_handlers_disconnect_matched(m_webContext.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
         g_main_loop_unref(m_mainLoop);
     }
 
@@ -157,14 +154,14 @@ public:
 
     virtual void decideDestination(WebKitDownload* download, const gchar* suggestedFilename)
     {
-        GUniquePtr<char> destination(g_build_filename(kTempDirectory, suggestedFilename, NULL));
+        GUniquePtr<char> destination(g_build_filename(Test::dataDirectory(), suggestedFilename, nullptr));
         GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
         webkit_download_set_destination(download, destinationURI.get());
     }
 
     WebKitDownload* downloadURIAndWaitUntilFinishes(const CString& requestURI)
     {
-        WebKitDownload* download = webkit_web_context_download_uri(m_webContext, requestURI.data());
+        WebKitDownload* download = webkit_web_context_download_uri(m_webContext.get(), requestURI.data());
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download));
 
         g_assert(!webkit_download_get_allow_overwrite(download));
@@ -191,7 +188,6 @@ public:
         g_file_delete(destFile.get(), 0, 0);
     }
 
-    WebKitWebContext* m_webContext;
     GMainLoop* m_mainLoop;
     Vector<DownloadEvent> m_downloadEvents;
     guint64 m_downloadSize;
@@ -235,7 +231,7 @@ static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
 
 static void createFileAtDestination(const char* filename)
 {
-    GUniquePtr<char> path(g_build_filename(kTempDirectory, filename, nullptr));
+    GUniquePtr<char> path(g_build_filename(Test::dataDirectory(), filename, nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
     GUniqueOutPtr<GError> error;
     g_file_create(file.get(), G_FILE_CREATE_NONE, nullptr, &error.outPtr());
@@ -536,7 +532,7 @@ public:
 
     static gboolean downloadDecideDestinationCallback(WebKitDownload* download, const gchar* suggestedFilename, WebViewDownloadTest* test)
     {
-        GUniquePtr<char> destination(g_build_filename(kTempDirectory, suggestedFilename, NULL));
+        GUniquePtr<char> destination(g_build_filename(Test::dataDirectory(), suggestedFilename, nullptr));
         GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
         webkit_download_set_destination(download, destinationURI.get());
         return TRUE;
@@ -621,9 +617,6 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    kTempDirectory = g_dir_make_tmp("WebKit2Tests-XXXXXX", 0);
-    g_assert(kTempDirectory);
-
     DownloadTest::add("Downloads", "local-file", testDownloadLocalFile);
     DownloadTest::add("Downloads", "overwrite-destination-allowed", testDownloadOverwriteDestinationAllowed);
     DownloadErrorTest::add("Downloads", "overwrite-destination-disallowed", testDownloadOverwriteDestinationDisallowed);
@@ -637,5 +630,4 @@ void beforeAll()
 void afterAll()
 {
     delete kServer;
-    g_rmdir(kTempDirectory);
 }

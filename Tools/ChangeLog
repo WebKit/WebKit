@@ -1,3 +1,125 @@
+2014-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to create a WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=138826
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use a different WebKitWebContext for every test to ensure test
+        cases are independent to each other. Tests using DBus to
+        communicate with the injected bundle extension now use a unique
+        name for the well known DBus name.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAuthentication.cpp:
+        (beforeAll): Remove comment about the order of the tests and
+        move the success test before the failed one now that tests don't
+        depend on each others.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (beforeAll): Remove call to set the web extensions directory,
+        since this is now done for all test in the Test constructor.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestCookieManager.cpp:
+        (beforeAll): Do not create a temporary directory, a temporary data
+        directory is now created for all tests.
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNode.cpp:
+        (testWebKitDOMNodeHierarchyNavigation): Pass the web extension ID
+        to the web process test runner.
+        (testWebKitDOMNodeInsertion): Ditto.
+        (testWebKitDOMNodeTagNames): Ditto.
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNodeFilter.cpp:
+        (runTest): Pass the web extension ID to the web process test runner.
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMXPathNSResolver.cpp:
+        (runTest): Pass the web extension ID to the web process test runner.
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (createFileAtDestination): Use Test::dataDirectory() as base dir
+        for temporary files.
+        (beforeAll): Do not create a temporary directory.
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestFrame.cpp:
+        (webkitFrameTestRun): Pass the web extension ID to the web process
+        test runner.
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp:
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp:
+        (testProcessPerWebView): Use local member instead of global variable.
+        (testMultiprocessWebViewCreateReadyClose): Ditto.
+        (beforeAll): Do not connect to initialize-web-extensions, Test now
+        connects to the signal for all tests and calls a virtual method
+        that test can override.
+        (afterAll):
+        (initializeWebExtensions): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp:
+        (testPrintOperationPrint): Use Test::dataDirectory() as base dir
+        for temporary files.
+        (beforeAll): Do not create a temporary directory.
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (beforeAll): Remove comment about the tests order.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        (testWebExtensionGetTitle): Build the DBus service name using the
+        web extension ID.
+        (testDocumentLoadedSignal): Ditto.
+        (testWebKitWebViewProcessCrashed): Ditto.
+        (testWebExtensionIsolatedWorld): Ditto.
+        (beforeAll): Remove initialization-user-data test, since now all
+        tests are passing user data to the web extension.
+        (testWebExtensionInitializationUserData): Deleted.
+        (initializeWebExtensions): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp:
+        (testSetDirectory): Use the web context member inherited from Test.
+        (testClearDatabase): Ditto.
+        (testGetFaviconURI): Ditto.
+        (beforeAll): Do not create a temporary directory.
+        (afterAll):
+        (webkitFaviconDatabaseFinalizedCallback): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        (UserContentManagerTest::UserContentManagerTest):
+        (beforeAll): Remove call to set the web extensions directory.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextDefault): Check also that a newly create web
+        context is not the default web context.
+        (testWebContextSpellChecker): Use the web context member inherited
+        from Test.
+        (testWebContextLanguages): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (methodCallCallback): Remove GetInitializationUserData method.
+        (webkit_web_extension_initialize_with_user_data): Always create
+        the DBus name using the user data provided.
+        (makeBusName): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        (webkit_web_extension_initialize_with_user_data): Create the DBus
+        name using the user data provided.
+        (webkit_web_extension_initialize): Deleted.
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp:
+        (Test::dataDirectory): Return the temporary data directory.
+        (removeNonEmptyDirectory): Also remove directories recursively.
+        (main): Remove the disk cache directory initialization, since this
+        is now done in the Test constructor.
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        (Test::initializeWebExtensionsCallback): Call the virtual method
+        initializeWebExtensions()
+        (Test::Test): Create a new WebKitWebContext and initialize it.
+        (Test::~Test): Disconnect initialize-web-extensions signal.
+        (Test::initializeWebExtensions): Set the web extensions directory
+        and user data.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.cpp:
+        (WebProcessTestRunner::~WebProcessTestRunner): Use nullptr.
+        (WebProcessTestRunner::runTest): Build the DBus proxy using a
+        unique name created with the Test web extension ID.
+        (WebProcessTestRunner::proxy): Deleted.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::WebViewTest): Create the web view with the Test web
+        context.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h: Add optional user
+        content manager parameter to the constructor.
+
 2014-11-18  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Mesa build fails over llvm-3.5

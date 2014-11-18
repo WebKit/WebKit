@@ -127,14 +127,16 @@ struct _WebKitWebContext {
 struct _WebKitWebContextClass {
     GObjectClass parent;
 
+    void (* download_started)          (WebKitWebContext *context,
+                                        WebKitDownload   *download);
+    void (* initialize_web_extensions) (WebKitWebContext *context);
+
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
-    void (*_webkit_reserved6) (void);
-    void (*_webkit_reserved7) (void);
 };
 
 WEBKIT_API GType
@@ -142,6 +144,9 @@ webkit_web_context_get_type                         (void);
 
 WEBKIT_API WebKitWebContext *
 webkit_web_context_get_default                      (void);
+
+WEBKIT_API WebKitWebContext *
+webkit_web_context_new                              (void);
 
 WEBKIT_API void
 webkit_web_context_set_cache_model                  (WebKitWebContext              *context,

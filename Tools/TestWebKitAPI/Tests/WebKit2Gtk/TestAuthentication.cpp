@@ -272,12 +272,10 @@ void beforeAll()
     AuthenticationTest::add("WebKitWebView", "authentication-request", testWebViewAuthenticationRequest);
     AuthenticationTest::add("WebKitWebView", "authentication-cancel", testWebViewAuthenticationCancel);
     AuthenticationTest::add("WebKitWebView", "authentication-load-cancelled", testWebViewAuthenticationLoadCancelled);
+    AuthenticationTest::add("WebKitWebView", "authentication-success", testWebViewAuthenticationSuccess);
     AuthenticationTest::add("WebKitWebView", "authentication-failure", testWebViewAuthenticationFailure);
     AuthenticationTest::add("WebKitWebView", "authentication-no-credential", testWebViewAuthenticationNoCredential);
     AuthenticationTest::add("WebKitWebView", "authentication-storage", testWebViewAuthenticationStorage);
-    // Testing authentication success must be done last because libsoup will never fire
-    // the authenticate signal again once authentication is successful.
-    AuthenticationTest::add("WebKitWebView", "authentication-success", testWebViewAuthenticationSuccess);
 }
 
 void afterAll()

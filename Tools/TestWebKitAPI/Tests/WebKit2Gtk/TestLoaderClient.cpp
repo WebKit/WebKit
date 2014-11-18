@@ -315,7 +315,8 @@ public:
 
     WebPageURITest()
     {
-        GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+        GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+        GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
             "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", m_mainLoop));
         m_uriChangedSignalID = g_dbus_connection_signal_subscribe(
             g_dbus_proxy_get_connection(proxy.get()),
@@ -465,7 +466,6 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
-    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
     bus = new WebKitTestBus();
     if (!bus->run())
         return;

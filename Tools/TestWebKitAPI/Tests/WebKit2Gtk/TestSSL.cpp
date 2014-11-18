@@ -403,9 +403,6 @@ void beforeAll()
 
     SSLTest::add("WebKitWebView", "ssl", testSSL);
     InsecureContentTest::add("WebKitWebView", "insecure-content", testInsecureContent);
-    // In this case the order of the tests does matter because tls-errors-policy expects
-    // that no exception will have been added for this certificate and host pair as is
-    // done in the load-failed-with-tls-errors test.
     SSLTest::add("WebKitWebView", "tls-errors-policy", testTLSErrorsPolicy);
     SSLTest::add("WebKitWebView", "tls-errors-redirect-to-http", testTLSErrorsRedirect);
     SSLTest::add("WebKitWebView", "tls-http-auth", testTLSErrorsHTTPAuth);

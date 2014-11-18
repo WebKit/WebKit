@@ -24,7 +24,6 @@
 #include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
-static char* kTempDirectory;
 
 static const char* kFirstPartyDomain = "127.0.0.1";
 static const char* kThirdPartyDomain = "localhost";
@@ -72,12 +71,12 @@ public:
         switch (storage) {
         case WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT:
             if (!m_cookiesTextFile)
-                m_cookiesTextFile.reset(g_build_filename(kTempDirectory, "cookies.txt", NULL));
+                m_cookiesTextFile.reset(g_build_filename(Test::dataDirectory(), "cookies.txt", nullptr));
             filename = m_cookiesTextFile.get();
             break;
         case WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE:
             if (!m_cookiesSQLiteFile)
-                m_cookiesSQLiteFile.reset(g_build_filename(kTempDirectory, "cookies.db", NULL));
+                m_cookiesSQLiteFile.reset(g_build_filename(Test::dataDirectory(), "cookies.db", nullptr));
             filename = m_cookiesSQLiteFile.get();
             break;
         default:
@@ -315,9 +314,6 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    kTempDirectory = g_dir_make_tmp("WebKit2Tests-XXXXXX", 0);
-    g_assert(kTempDirectory);
-
     CookieManagerTest::add("WebKitCookieManager", "accept-policy", testCookieManagerAcceptPolicy);
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
     CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);
@@ -327,5 +323,4 @@ void beforeAll()
 void afterAll()
 {
     delete kServer;
-    g_rmdir(kTempDirectory);
 }

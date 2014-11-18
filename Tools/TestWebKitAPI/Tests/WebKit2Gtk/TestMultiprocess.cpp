@@ -26,8 +26,6 @@
 #include <wtf/Vector.h>
 
 static const unsigned numViews = 2;
-static guint32 nextInitializationId = 1;
-static unsigned initializeWebExtensionsSignalCount;
 static WebKitTestBus* bus;
 
 class MultiprocessTest: public Test {
@@ -36,8 +34,18 @@ public:
 
     MultiprocessTest()
         : m_mainLoop(g_main_loop_new(nullptr, TRUE))
+        , m_initializeWebExtensionsSignalCount(0)
         , m_webViewBusNames(numViews)
-        , m_webViews(numViews) { }
+        , m_webViews(numViews)
+    {
+        webkit_web_context_set_process_model(m_webContext.get(), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+    }
+
+    void initializeWebExtensions() override
+    {
+        Test::initializeWebExtensions();
+        m_initializeWebExtensionsSignalCount++;
+    }
 
     static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, MultiprocessTest* test)
     {
@@ -51,10 +59,10 @@ public:
     {
         g_assert_cmpuint(index, <, numViews);
 
-        m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", nextInitializationId));
-
-        m_webViews[index] = WEBKIT_WEB_VIEW(webkit_web_view_new());
+        m_webViews[index] = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(m_webContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webViews[index].get()));
+
+        m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
 
         webkit_web_view_load_html(m_webViews[index].get(), "<html></html>", nullptr);
         g_signal_connect(m_webViews[index].get(), "load-changed", G_CALLBACK(loadChanged), this);
@@ -98,6 +106,7 @@ public:
     }
 
     GMainLoop* m_mainLoop;
+    unsigned m_initializeWebExtensionsSignalCount;
     Vector<GUniquePtr<char>, numViews> m_webViewBusNames;
     Vector<GRefPtr<WebKitWebView>, numViews> m_webViews;
 };
@@ -116,7 +125,7 @@ static void testProcessPerWebView(MultiprocessTest* test, gconstpointer)
         g_assert(test->m_webViewBusNames[i]);
     }
 
-    g_assert_cmpuint(initializeWebExtensionsSignalCount, ==, numViews);
+    g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, numViews);
     g_assert_cmpstr(test->m_webViewBusNames[0].get(), !=, test->m_webViewBusNames[1].get());
     g_assert_cmpuint(test->webProcessPid(0), !=, test->webProcessPid(1));
 
@@ -128,7 +137,7 @@ static void testProcessPerWebView(MultiprocessTest* test, gconstpointer)
     }
 }
 
-class UIClientMultiprocessTest: public WebViewTest {
+class UIClientMultiprocessTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(UIClientMultiprocessTest);
 
@@ -154,14 +163,26 @@ public:
     }
 
     UIClientMultiprocessTest()
+        : m_mainLoop(g_main_loop_new(nullptr, TRUE))
+        , m_initializeWebExtensionsSignalCount(0)
     {
+        webkit_web_context_set_process_model(m_webContext.get(), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+        m_webView = WEBKIT_WEB_VIEW(g_object_ref_sink(webkit_web_view_new_with_context(m_webContext.get())));
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
+
         g_signal_connect(m_webView, "create", G_CALLBACK(viewCreateCallback), this);
     }
 
     ~UIClientMultiprocessTest()
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        gtk_widget_destroy(GTK_WIDGET(m_webView));
+    }
+
+    void initializeWebExtensions() override
+    {
+        Test::initializeWebExtensions();
+        m_initializeWebExtensionsSignalCount++;
     }
 
     GtkWidget* viewCreate(WebKitWebView* webView)
@@ -199,16 +220,15 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    WebKitWebView* m_webView;
+    GMainLoop* m_mainLoop;
+    unsigned m_initializeWebExtensionsSignalCount;
     Vector<WebViewEvents> m_webViewEvents;
 };
 
 static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* test, gconstpointer)
 {
-    // At this point the web process of the current view has already been created.
-    // We save it here to check that after window.open() the number of processes
-    // is the same.
-    guint32 processCountBefore = nextInitializationId - 1;
-    test->loadHtml("<html><body onLoad=\"window.open().close();\"></html>", nullptr);
+    webkit_web_view_load_html(test->m_webView, "<html><body onLoad=\"window.open().close();\"></html>", nullptr);
     test->waitUntilNewWebViewClose();
 
     Vector<UIClientMultiprocessTest::WebViewEvents>& events = test->m_webViewEvents;
@@ -217,23 +237,11 @@ static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* te
     g_assert_cmpint(events[1], ==, UIClientMultiprocessTest::ReadyToShow);
     g_assert_cmpint(events[2], ==, UIClientMultiprocessTest::Close);
 
-    guint32 processesCountAfter =  nextInitializationId - 1;
-    g_assert_cmpuint(processesCountAfter, ==, processCountBefore);
-}
-
-static void initializeWebExtensions(WebKitWebContext* context, gpointer)
-{
-    initializeWebExtensionsSignalCount++;
-    webkit_web_context_set_web_extensions_directory(context, WEBKIT_TEST_WEB_EXTENSIONS_DIR);
-    webkit_web_context_set_web_extensions_initialization_user_data(context,
-        g_variant_new_uint32(nextInitializationId++));
+    g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, 1);
 }
 
 void beforeAll()
 {
-    g_signal_connect(webkit_web_context_get_default(),
-        "initialize-web-extensions", G_CALLBACK(initializeWebExtensions), nullptr);
-
     // Check that default setting is the one stated in the documentation
     g_assert_cmpuint(webkit_web_context_get_process_model(webkit_web_context_get_default()),
         ==, WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
@@ -256,6 +264,4 @@ void beforeAll()
 void afterAll()
 {
     delete bus;
-    g_signal_handlers_disconnect_by_func(webkit_web_context_get_default(),
-        reinterpret_cast<void*>(initializeWebExtensions), nullptr);
 }

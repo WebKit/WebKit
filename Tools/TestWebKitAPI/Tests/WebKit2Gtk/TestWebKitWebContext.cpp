@@ -34,6 +34,7 @@ static void testWebContextDefault(Test* test, gconstpointer)
 {
     // Check there's a single instance of the default web context.
     g_assert(webkit_web_context_get_default() == webkit_web_context_get_default());
+    g_assert(webkit_web_context_get_default() != test->m_webContext.get());
 }
 
 class PluginsTest: public Test {
@@ -41,11 +42,10 @@ public:
     MAKE_GLIB_TEST_FIXTURE(PluginsTest);
 
     PluginsTest()
-        : m_context(webkit_web_context_get_default())
-        , m_mainLoop(g_main_loop_new(0, TRUE))
-        , m_plugins(0)
+        : m_mainLoop(g_main_loop_new(nullptr, TRUE))
+        , m_plugins(nullptr)
     {
-        webkit_web_context_set_additional_plugins_directory(m_context, WEBKIT_TEST_PLUGIN_DIR);
+        webkit_web_context_set_additional_plugins_directory(m_webContext.get(), WEBKIT_TEST_PLUGIN_DIR);
     }
 
     ~PluginsTest()
@@ -56,19 +56,18 @@ public:
 
     static void getPluginsAsyncReadyCallback(GObject*, GAsyncResult* result, PluginsTest* test)
     {
-        test->m_plugins = webkit_web_context_get_plugins_finish(test->m_context, result, 0);
+        test->m_plugins = webkit_web_context_get_plugins_finish(test->m_webContext.get(), result, nullptr);
         g_main_loop_quit(test->m_mainLoop);
     }
 
     GList* getPlugins()
     {
         g_list_free_full(m_plugins, g_object_unref);
-        webkit_web_context_get_plugins(m_context, 0, reinterpret_cast<GAsyncReadyCallback>(getPluginsAsyncReadyCallback), this);
+        webkit_web_context_get_plugins(m_webContext.get(), nullptr, reinterpret_cast<GAsyncReadyCallback>(getPluginsAsyncReadyCallback), this);
         g_main_loop_run(m_mainLoop);
         return m_plugins;
     }
 
-    WebKitWebContext* m_context;
     GMainLoop* m_mainLoop;
     GList* m_plugins;
 };
@@ -177,7 +176,7 @@ public:
     void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType)
     {
         m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType));
-        webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), scheme, uriSchemeRequestCallback, this, 0);
+        webkit_web_context_register_uri_scheme(m_webContext.get(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
@@ -236,7 +235,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
 
 static void testWebContextSpellChecker(Test* test, gconstpointer)
 {
-    WebKitWebContext* webContext = webkit_web_context_get_default();
+    WebKitWebContext* webContext = test->m_webContext.get();
 
     // Check what happens if no spell checking language has been set.
     const gchar* const* currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
@@ -302,7 +301,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("ES_es")));
     g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("dE")));
     g_ptr_array_add(languages.get(), 0);
-    webkit_web_context_set_preferred_languages(webkit_web_context_get_default(), reinterpret_cast<const char* const*>(languages->pdata));
+    webkit_web_context_set_preferred_languages(test->m_webContext.get(), reinterpret_cast<const char* const*>(languages->pdata));
 
     static const char* expectedLanguages = "en, es-es;q=0.90, de;q=0.80";
     test->loadURI(kServer->getURIForPath("/").data());
@@ -343,7 +342,7 @@ public:
     };
 
     SecurityPolicyTest()
-        : m_manager(webkit_web_context_get_security_manager(webkit_web_context_get_default()))
+        : m_manager(webkit_web_context_get_security_manager(m_webContext.get()))
     {
     }
 

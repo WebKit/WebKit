@@ -26,8 +26,6 @@
 #include <gtk/gtkunixprint.h>
 #endif
 
-static char* kTempDirectory;
-
 static void testPrintOperationPrintSettings(WebViewTest* test, gconstpointer)
 {
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(webkit_print_operation_new(test->m_webView));
@@ -134,7 +132,7 @@ static void testPrintOperationPrint(PrintTest* test, gconstpointer)
         return;
     }
 
-    GUniquePtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-print.pdf", NULL));
+    GUniquePtr<char> outputFilename(g_build_filename(Test::dataDirectory(), "webkit-print.pdf", nullptr));
     GRefPtr<GFile> outputFile = adoptGRef(g_file_new_for_path(outputFilename.get()));
     GUniquePtr<char> outputURI(g_file_get_uri(outputFile.get()));
 
@@ -228,7 +226,7 @@ public:
 
     GtkWidget* createWebView()
     {
-        GtkWidget* newWebView = webkit_web_view_new();
+        GtkWidget* newWebView = webkit_web_view_new_with_context(m_webContext.get());
         g_object_ref_sink(newWebView);
 
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newWebView));
@@ -247,7 +245,7 @@ public:
             return;
         }
 
-        GUniquePtr<char> outputFilename(g_build_filename(kTempDirectory, "webkit-close-after-print.pdf", NULL));
+        GUniquePtr<char> outputFilename(g_build_filename(Test::dataDirectory(), "webkit-close-after-print.pdf", nullptr));
         m_outputFile = adoptGRef(g_file_new_for_path(outputFilename.get()));
         GUniquePtr<char> outputURI(g_file_get_uri(m_outputFile.get()));
 
@@ -292,9 +290,6 @@ static void testPrintOperationCloseAfterPrint(CloseAfterPrintTest* test, gconstp
 
 void beforeAll()
 {
-    kTempDirectory = g_dir_make_tmp("WebKit2Tests-XXXXXX", 0);
-    g_assert(kTempDirectory);
-
     WebViewTest::add("WebKitPrintOperation", "printing-settings", testPrintOperationPrintSettings);
     WebViewTest::add("WebKitWebView", "print", testWebViewPrint);
 #ifdef HAVE_GTK_UNIX_PRINTING
@@ -306,5 +301,4 @@ void beforeAll()
 
 void afterAll()
 {
-    g_rmdir(kTempDirectory);
 }

@@ -24,16 +24,13 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/GUniquePtrGtk.h>
 
-WebViewTest::WebViewTest()
-    : WebViewTest(WEBKIT_WEB_VIEW(webkit_web_view_new())) { }
-
-WebViewTest::WebViewTest(WebKitWebView* webView)
-    : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(webView)))
-    , m_mainLoop(g_main_loop_new(0, TRUE))
-    , m_parentWindow(0)
-    , m_javascriptResult(0)
+WebViewTest::WebViewTest(WebKitUserContentManager* userContentManager)
+    : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", m_webContext.get(), "user-content-manager", userContentManager, nullptr))))
+    , m_mainLoop(g_main_loop_new(nullptr, TRUE))
+    , m_parentWindow(nullptr)
+    , m_javascriptResult(nullptr)
     , m_resourceDataSize(0)
-    , m_surface(0)
+    , m_surface(nullptr)
 {
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 }

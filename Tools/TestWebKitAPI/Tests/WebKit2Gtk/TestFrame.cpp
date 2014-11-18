@@ -35,7 +35,7 @@ static void webkitFrameTestRun(WebViewTest* test, const char* testName)
     GVariantBuilder builder;
     g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&builder, "{sv}", "pageID", g_variant_new_uint64(webkit_web_view_get_page_id(test->m_webView)));
-    g_assert(testRunner->runTest("WebKitFrame", testName, g_variant_builder_end(&builder)));
+    g_assert(testRunner->runTest("WebKitFrame", testName, Test::s_webExtensionID, g_variant_builder_end(&builder)));
 }
 
 static void testWebKitFrameMainFrame(WebViewTest* test, gconstpointer)
@@ -56,7 +56,6 @@ static void testWebKitFrameJavaScriptContext(WebViewTest* test, gconstpointer)
 void beforeAll()
 {
     testRunner = new WebProcessTestRunner();
-    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
 
     WebViewTest::add("WebKitFrame", "main-frame", testWebKitFrameMainFrame);
     WebViewTest::add("WebKitFrame", "uri", testWebKitFrameURI);

@@ -22,7 +22,9 @@
 
 #include <cairo.h>
 #include <glib-object.h>
+#include <webkit2/webkit2.h>
 #include <wtf/HashSet.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -56,8 +58,24 @@ class Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(Test);
 
+    static const char* dataDirectory();
+
+    static void initializeWebExtensionsCallback(WebKitWebContext* context, Test* test)
+    {
+        test->initializeWebExtensions();
+    }
+
+    Test()
+        : m_webContext(adoptGRef(webkit_web_context_new()))
+    {
+        g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebExtensionsCallback), this);
+        GUniquePtr<char> diskCacheDirectory(g_build_filename(dataDirectory(), "disk-cache", nullptr));
+        webkit_web_context_set_disk_cache_directory(m_webContext.get(), diskCacheDirectory.get());
+    }
+
     ~Test()
     {
+        g_signal_handlers_disconnect_matched(m_webContext.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         if (m_watchedObjects.isEmpty())
             return;
 
@@ -68,6 +86,12 @@ public:
         g_print("\n");
 
         g_assert(m_watchedObjects.isEmpty());
+    }
+
+    virtual void initializeWebExtensions()
+    {
+        webkit_web_context_set_web_extensions_directory(m_webContext.get(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
+        webkit_web_context_set_web_extensions_initialization_user_data(m_webContext.get(), g_variant_new_uint32(++s_webExtensionID));
     }
 
     static void objectFinalized(Test* test, GObject* finalizedObject)
@@ -113,6 +137,8 @@ public:
     }
 
     HashSet<GObject*> m_watchedObjects;
+    GRefPtr<WebKitWebContext> m_webContext;
+    static uint32_t s_webExtensionID;
 };
 
 #endif // TestMain_h

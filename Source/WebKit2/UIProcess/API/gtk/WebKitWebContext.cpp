@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "APIDownloadClient.h"
 #include "APIString.h"
 #include "WebBatteryManagerProxy.h"
 #include "WebCertificateInfo.h"
@@ -144,6 +145,7 @@ typedef HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest> > URISchemeRequestMap;
 
 struct _WebKitWebContextPrivate {
     RefPtr<WebContext> context;
+    bool clientsDetached;
 
     GRefPtr<WebKitCookieManager> cookieManager;
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
@@ -199,9 +201,72 @@ static inline WebKitProcessModel toWebKitProcessModel(WebKit::ProcessModel proce
     }
 }
 
+static const char* injectedBundleDirectory()
+{
+    const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
+    if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
+        return bundleDirectory;
+
+    static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit2gtk-" WEBKITGTK_API_VERSION_STRING
+        G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
+    return injectedBundlePath;
+}
+
+static void webkitWebContextConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
+
+    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), "libwebkit2gtkinjectedbundle.so", nullptr));
+    WebContextConfiguration webContextConfiguration;
+    webContextConfiguration.injectedBundlePath = WebCore::filenameToString(bundleFilename.get());
+    WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
+
+    WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
+    WebKitWebContextPrivate* priv = webContext->priv;
+    priv->context = WebContext::create(WTF::move(webContextConfiguration));
+
+    priv->requestManager = priv->context->supplement<WebSoupCustomProtocolRequestManager>();
+    priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
+
+    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
+    priv->context->setIgnoreTLSErrors(false);
+
+    attachInjectedBundleClientToContext(webContext);
+    attachDownloadClientToContext(webContext);
+    attachRequestManagerClientToContext(webContext);
+
+#if ENABLE(GEOLOCATION)
+    priv->geolocationProvider = WebKitGeolocationProvider::create(priv->context->supplement<WebGeolocationManagerProxy>());
+#endif
+#if ENABLE(BATTERY_STATUS)
+    priv->batteryProvider = WebKitBatteryProvider::create(priv->context->supplement<WebBatteryManagerProxy>());
+#endif
+#if ENABLE(SPELLCHECK)
+    priv->textChecker = WebKitTextChecker::create();
+#endif
+}
+
+static void webkitWebContextDispose(GObject* object)
+{
+    WebKitWebContextPrivate* priv = WEBKIT_WEB_CONTEXT(object)->priv;
+    if (!priv->clientsDetached) {
+        priv->clientsDetached = true;
+        priv->context->initializeInjectedBundleClient(nullptr);
+        priv->context->setDownloadClient(nullptr);
+    }
+
+    G_OBJECT_CLASS(webkit_web_context_parent_class)->dispose(object);
+}
+
 static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(webContextClass);
+
+    bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+
+    gObjectClass->constructed = webkitWebContextConstructed;
+    gObjectClass->dispose = webkitWebContextDispose;
 
     /**
      * WebKitWebContext::download-started:
@@ -212,12 +277,13 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      */
     signals[DOWNLOAD_STARTED] =
         g_signal_new("download-started",
-                     G_TYPE_FROM_CLASS(gObjectClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     g_cclosure_marshal_VOID__OBJECT,
-                     G_TYPE_NONE, 1,
-                     WEBKIT_TYPE_DOWNLOAD);
+            G_TYPE_FROM_CLASS(gObjectClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebContextClass, download_started),
+            nullptr, nullptr,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_DOWNLOAD);
 
     /**
      * WebKitWebContext::initialize-web-extensions:
@@ -234,60 +300,15 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
         g_signal_new("initialize-web-extensions",
             G_TYPE_FROM_CLASS(gObjectClass),
             G_SIGNAL_RUN_LAST,
-            0, nullptr, nullptr,
+            G_STRUCT_OFFSET(WebKitWebContextClass, initialize_web_extensions),
+            nullptr, nullptr,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 }
 
-static CString injectedBundleDirectory()
-{
-    const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
-    if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
-        return bundleDirectory;
-
-    static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit2gtk-" WEBKITGTK_API_VERSION_STRING
-        G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
-    return injectedBundlePath;
-}
-
-static CString injectedBundleFilename()
-{
-    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory().data(), "libwebkit2gtkinjectedbundle.so", NULL));
-    return bundleFilename.get();
-}
-
 static gpointer createDefaultWebContext(gpointer)
 {
-    bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-
-    static GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL)));
-    WebKitWebContextPrivate* priv = webContext->priv;
-
-    WebContextConfiguration webContextConfiguration;
-    webContextConfiguration.injectedBundlePath = WebCore::filenameToString(injectedBundleFilename().data());
-    WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
-    priv->context = WebContext::create(WTF::move(webContextConfiguration));
-
-    priv->requestManager = webContext->priv->context->supplement<WebSoupCustomProtocolRequestManager>();
-    priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
-
-    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
-    priv->context->setIgnoreTLSErrors(false);
-
-    attachInjectedBundleClientToContext(webContext.get());
-    attachDownloadClientToContext(webContext.get());
-    attachRequestManagerClientToContext(webContext.get());
-
-#if ENABLE(GEOLOCATION)
-    priv->geolocationProvider = WebKitGeolocationProvider::create(priv->context->supplement<WebGeolocationManagerProxy>());
-#endif
-#if ENABLE(BATTERY_STATUS)
-    priv->batteryProvider = WebKitBatteryProvider::create(priv->context->supplement<WebBatteryManagerProxy>());
-#endif
-#if ENABLE(SPELLCHECK)
-    priv->textChecker = WebKitTextChecker::create();
-#endif
+    static GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, nullptr)));
     return webContext.get();
 }
 
@@ -302,6 +323,20 @@ WebKitWebContext* webkit_web_context_get_default(void)
 {
     static GOnce onceInit = G_ONCE_INIT;
     return WEBKIT_WEB_CONTEXT(g_once(&onceInit, createDefaultWebContext, 0));
+}
+
+/**
+ * webkit_web_context_new:
+ *
+ * Create a new #WebKitWebContext
+ *
+ * Returns: (transfer full): a newly created #WebKitWebContext
+ *
+ * Since: 2.8
+ */
+WebKitWebContext* webkit_web_context_new(void)
+{
+    return WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, nullptr));
 }
 
 /**

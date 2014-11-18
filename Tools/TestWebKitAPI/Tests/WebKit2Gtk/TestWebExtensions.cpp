@@ -32,8 +32,9 @@ static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
     test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
     test->waitUntilLoadFinished();
 
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
-        "/org/webkit/gtk/WebExtensionTest" , "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
+        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
         proxy.get(),
         "GetTitle",
@@ -54,7 +55,8 @@ static void documentLoadedCallback(GDBusConnection*, const char*, const char*, c
 
 static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
 {
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
         "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
     GDBusConnection* connection = g_dbus_proxy_get_connection(proxy.get());
     guint id = g_dbus_connection_signal_subscribe(connection,
@@ -89,7 +91,8 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
     g_signal_connect(test->m_webView, "web-process-crashed",
         G_CALLBACK(webProcessCrashedCallback), test);
 
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
         "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
 
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
@@ -152,7 +155,8 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
         "document.getElementById('console').innerHTML = top.foo;\n"
         "window.open = function () { alert('Isolated World'); }\n"
         "document.open(1, 2, 3);";
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
         "/org/webkit/gtk/WebExtensionTest" , "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
     g_dbus_proxy_call(proxy.get(),
         "RunJavaScriptInIsolatedWorld",
@@ -173,44 +177,12 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     g_signal_handler_disconnect(test->m_webView, scriptDialogID);
 }
 
-static void testWebExtensionInitializationUserData(WebViewTest* test, gconstpointer)
-{
-    test->loadHtml("<html></html>", 0);
-    test->waitUntilLoadFinished();
-
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
-
-    GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
-        proxy.get(),
-        "GetInitializationUserData",
-        nullptr,
-        G_DBUS_CALL_FLAGS_NONE,
-        -1, 0, 0));
-    g_assert(result);
-
-    const gchar* userData = nullptr;
-    g_variant_get(result.get(), "(&s)", &userData);
-    g_assert_cmpstr(userData, ==, webExtensionsUserData);
-}
-
-static void initializeWebExtensions(WebKitWebContext* context, gpointer)
-{
-    webkit_web_context_set_web_extensions_directory(context, WEBKIT_TEST_WEB_EXTENSIONS_DIR);
-    webkit_web_context_set_web_extensions_initialization_user_data(context,
-        g_variant_new("&s", webExtensionsUserData));
-}
-
 void beforeAll()
 {
-    g_signal_connect(webkit_web_context_get_default(),
-        "initialize-web-extensions", G_CALLBACK(initializeWebExtensions), nullptr);
-
     bus = new WebKitTestBus();
     if (!bus->run())
         return;
 
-    WebViewTest::add("WebKitWebContext", "initialization-user-data", testWebExtensionInitializationUserData);
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
     WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);
