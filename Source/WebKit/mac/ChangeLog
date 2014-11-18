@@ -1,5 +1,19 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176145. <rdar://problem/18989840>
+
+    2014-11-14  Timothy Horton  <timothy_horton@apple.com>
+    
+            Update some artwork for the legacy WebKit action menu
+            https://bugs.webkit.org/show_bug.cgi?id=138758
+            <rdar://problem/18989840>
+    
+            * WebView/WebActionMenuController.mm:
+            (webKitBundleImageNamed): Deleted.
+            Fix the build.
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176143. <rdar://problem/18989840>
 
     2014-11-14  Tim Horton  <timothy_horton@apple.com>
