@@ -92,9 +92,6 @@ static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
     switch (resource->type()) {
     case CachedResource::CSSStyleSheet:
     case CachedResource::Script:
-#if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
-#endif
     case CachedResource::FontResource:
         return std::chrono::milliseconds::max();
     case CachedResource::ImageResource:

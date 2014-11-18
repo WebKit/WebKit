@@ -1026,9 +1026,6 @@
     <ClCompile Include="..\loader\cache\CachedCSSStyleSheet.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\cache\CachedSVGFont.cpp">
-      <Filter>loader\cache</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\cache\CachedFont.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
@@ -8053,9 +8050,6 @@
       <Filter>loader\archive</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\cache\CachedCSSStyleSheet.h">
-      <Filter>loader\cache</Filter>
-    </ClInclude>
-    <ClInclude Include="..\loader\cache\CachedSVGFont.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\cache\CachedFont.h">

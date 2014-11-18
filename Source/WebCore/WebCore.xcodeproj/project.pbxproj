@@ -927,8 +927,6 @@
 		1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */; };
 		1C010700192594DF008A4201 /* InlineTextBoxStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */; };
 		1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */; };
-		1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */; };
-		1C0939EB1A13E12900B788E5 /* CachedSVGFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0939E91A13E12900B788E5 /* CachedSVGFont.h */; };
 		1C11CCB50AA6093700DADB20 /* DOMNotation.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85CA96E80A9624E900690CCF /* DOMNotation.h */; };
 		1C11CCB60AA6093700DADB20 /* DOMComment.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85089CD10A98C42700A275AA /* DOMComment.h */; };
 		1C11CCB70AA6093700DADB20 /* DOMNamedNodeMap.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8518DD760A9CF31B0091B7A6 /* DOMNamedNodeMap.h */; };
@@ -7934,8 +7932,6 @@
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
 		1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextBoxStyle.cpp; sourceTree = "<group>"; };
 		1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineTextBoxStyle.h; sourceTree = "<group>"; };
-		1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGFont.cpp; sourceTree = "<group>"; };
-		1C0939E91A13E12900B788E5 /* CachedSVGFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGFont.h; sourceTree = "<group>"; };
 		1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextPainter.cpp; sourceTree = "<group>"; };
 		1C18DA57181AF6A500C4EF22 /* TextPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPainter.h; sourceTree = "<group>"; };
 		1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IOSurfacePool.cpp; path = ../cg/IOSurfacePool.cpp; sourceTree = "<group>"; };
@@ -19601,8 +19597,6 @@
 				E467680F1A0177F900B9E26B /* CacheValidation.h */,
 				BCB16BFE0979C3BD00467741 /* MemoryCache.cpp */,
 				BCB16BFF0979C3BD00467741 /* MemoryCache.h */,
-				1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */,
-				1C0939E91A13E12900B788E5 /* CachedSVGFont.h */,
 			);
 			path = cache;
 			sourceTree = "<group>";
@@ -26245,7 +26239,6 @@
 				B22279E90D00BF220071B782 /* SVGFEFuncRElement.h in Headers */,
 				B22279EC0D00BF220071B782 /* SVGFEGaussianBlurElement.h in Headers */,
 				B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */,
-				1C0939EB1A13E12900B788E5 /* CachedSVGFont.h in Headers */,
 				B22279EF0D00BF220071B782 /* SVGFEImageElement.h in Headers */,
 				B22279F20D00BF220071B782 /* SVGFELightElement.h in Headers */,
 				B22279F40D00BF220071B782 /* SVGFEMergeElement.h in Headers */,
@@ -29457,7 +29450,6 @@
 				51327D6111A33A2B004F9D65 /* SinkDocument.cpp in Sources */,
 				49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */,
 				4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */,
-				1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */,
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
 				E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */,
 				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,

@@ -824,9 +824,6 @@ MemoryCache::Statistics MemoryCache::getStatistics()
                     stats.xslStyleSheets.addResource(resource);
                     break;
 #endif
-#if ENABLE(SVG_FONTS)
-                case CachedResource::SVGFontResource:
-#endif
                 case CachedResource::FontResource:
                     stats.fonts.addResource(resource);
                     break;

@@ -58,7 +58,6 @@ public:
 
 #if ENABLE(SVG_FONTS)
     bool isSVGFontFaceSrc() const;
-    bool isSVGFontTarget() const;
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
     void setSVGFontFaceElement(SVGFontFaceElement* element) { m_svgFontFaceElement = element; }
@@ -70,7 +69,7 @@ public:
 
     bool hasFailedOrCanceledSubresources() const;
 
-    CachedFont* cachedFont(Document*, bool isSVG);
+    CachedFont* cachedFont(Document*);
 
     bool equals(const CSSFontFaceSrcValue&) const;
 

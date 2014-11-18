@@ -212,12 +212,12 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
             Settings* settings = m_document ? m_document->frame() ? &m_document->frame()->settings() : 0 : 0;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item.isSupportedFormat() && m_document) {
-                CachedFont* cachedFont = item.cachedFont(m_document, foundSVGFont);
+                CachedFont* cachedFont = item.cachedFont(m_document);
                 if (cachedFont) {
                     source = std::make_unique<CSSFontFaceSource>(item.resource(), cachedFont);
 #if ENABLE(SVG_FONTS)
                     if (foundSVGFont)
-                        source->setHasExternalSVGFont();
+                        source->setHasExternalSVGFont(true);
 #endif
                 }
             }
