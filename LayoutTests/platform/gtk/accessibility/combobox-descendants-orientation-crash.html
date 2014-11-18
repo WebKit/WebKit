@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<select id="combobox">
+<option value="foo">foo</option>
+<option value="bar">bar</option>
+</select>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This verifies that getting the orientation of combobox descendants won't crash if the combobox is removed from the document.");
+
+if (window.testRunner && window.accessibilityController) {
+    var combobox = document.getElementById("combobox");
+    combobox.focus();
+
+    var axCombobox = accessibilityController.focusedElement;
+    var axMenu = axCombobox.childAtIndex(0);
+    var axMenuItem = axMenu.childAtIndex(0);
+
+    debug(axCombobox.role + " has orientation: " + axCombobox.orientation);
+
+    debug("\nBefore combobox removal");
+    debug(axMenu.role + " has orientation: " + axMenu.orientation);
+    debug(axMenuItem.role + " has orientation: " + axMenuItem.orientation);
+
+    document.body.removeChild(combobox);
+    debug("\nAfter combobox removal");
+    debug(axMenu.role + " has orientation: " + axMenu.orientation);
+    debug(axMenuItem.role + " has orientation: " + axMenuItem.orientation);
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

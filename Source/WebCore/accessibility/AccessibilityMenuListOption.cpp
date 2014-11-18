@@ -104,9 +104,13 @@ bool AccessibilityMenuListOption::computeAccessibilityIsIgnored() const
 LayoutRect AccessibilityMenuListOption::elementRect() const
 {
     AccessibilityObject* parent = parentObject();
+    if (!parent)
+        return boundingBoxRect();
     ASSERT(parent->isMenuListPopup());
 
     AccessibilityObject* grandparent = parent->parentObject();
+    if (!grandparent)
+        return boundingBoxRect();
     ASSERT(grandparent->isMenuList());
 
     return grandparent->elementRect();
