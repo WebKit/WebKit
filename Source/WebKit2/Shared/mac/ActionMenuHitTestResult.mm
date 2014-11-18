@@ -42,14 +42,12 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
     encoder << hitTestLocationInViewCooordinates;
     encoder << hitTestResult;
     encoder << lookupText;
+    encoder << imageExtension;
 
-    ShareableBitmap::Handle handle;
-
-    // FIXME: We should consider sharing the raw original resource data so that metadata and whatnot are preserved.
-    if (image)
-        image->createHandle(handle, SharedMemory::ReadOnly);
-
-    encoder << handle;
+    SharedMemory::Handle imageHandle;
+    if (imageSharedMemory && imageSharedMemory->size())
+        imageSharedMemory->createHandle(imageHandle, SharedMemory::ReadOnly);
+    encoder << imageHandle;
 
     bool hasActionContext = actionContext;
     encoder << hasActionContext;
@@ -82,12 +80,15 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
     if (!decoder.decode(actionMenuHitTestResult.lookupText))
         return false;
 
-    ShareableBitmap::Handle handle;
-    if (!decoder.decode(handle))
+    if (!decoder.decode(actionMenuHitTestResult.imageExtension))
         return false;
 
-    if (!handle.isNull())
-        actionMenuHitTestResult.image = ShareableBitmap::create(handle, SharedMemory::ReadOnly);
+    SharedMemory::Handle imageHandle;
+    if (!decoder.decode(imageHandle))
+        return false;
+
+    if (!imageHandle.isNull())
+        actionMenuHitTestResult.imageSharedMemory = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
 
     bool hasActionContext;
     if (!decoder.decode(hasActionContext))
