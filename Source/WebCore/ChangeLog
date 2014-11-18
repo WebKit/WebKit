@@ -1,3 +1,22 @@
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
+        Merge r175765. rdar://problem/19005917
+
+    2014-11-07  Andreas Kling  <akling@apple.com>
+
+            [Mac] Avoid repainting scrollbar track when the scrollbar track is transparent.
+            <https://webkit.org/b/138521>
+            <rdar://problem/18892090>
+
+            Reviewed by Simon Fraser.
+
+            Don't bother invalidating the entire WebCore scrollbar when we've opted into
+            AppKit's special mode to use individual layers for scrollbar components.
+            NSScrollerImp will invalidate what's necessary below e.g setKnobAlpha.
+
+            * platform/mac/ScrollAnimatorMac.mm:
+            (-[WebScrollbarPartAnimation setCurrentProgress:]):
+
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
         Merge r175492. <rdar://problem/18978410>

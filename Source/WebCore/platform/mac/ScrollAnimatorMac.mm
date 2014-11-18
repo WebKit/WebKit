@@ -366,7 +366,8 @@ enum FeatureToAnimate {
         break;
     }
 
-    _scrollbar->invalidate();
+    if (!_scrollbar->supportsUpdateOnSecondaryThread())
+        _scrollbar->invalidate();
 }
 
 - (void)invalidate
