@@ -626,6 +626,16 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
     return element->setPseudo(id);
 }
 
+bool Internals::isTimerThrottled(int timeoutId, ExceptionCode& ec)
+{
+    DOMTimer* timer = scriptExecutionContext()->findTimeout(timeoutId);
+    if (!timer) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+    return timer->m_throttleState == DOMTimer::ShouldThrottle;
+}
+
 String Internals::visiblePlaceholder(Element* element)
 {
     if (is<HTMLTextFormControlElement>(element)) {

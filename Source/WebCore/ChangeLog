@@ -1,3 +1,24 @@
+2014-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Add initial layout testing coverage for timer throttling
+        https://bugs.webkit.org/show_bug.cgi?id=138809
+
+        Reviewed by Simon Fraser.
+
+        Add isTimerThrottled() API to Internals so that we can add layout test
+        coverage for timer throttling.
+
+        Tests: fast/dom/nested-timer-invisible-element-throttling.html
+               fast/dom/nested-timer-visible-element-throttling.html
+               fast/dom/repeating-timer-invisible-element-throttling.html
+               fast/dom/repeating-timer-visible-element-throttling.html
+
+        * page/DOMTimer.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isTimerThrottled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-11-17  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Rename FlowContentIterator and move implementation to SimpleLineLayoutFlowContents.cpp

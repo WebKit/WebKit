@@ -92,6 +92,9 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     void setShadowPseudoId(Element*, const String&, ExceptionCode&);
 
+    // DOMTimers throttling testing.
+    bool isTimerThrottled(int timeoutId, ExceptionCode&);
+
     // Spatial Navigation testing.
     unsigned lastSpatialNavigationCandidateCount(ExceptionCode&) const;
 

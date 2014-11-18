@@ -61,6 +61,8 @@ namespace WebCore {
 
     private:
         DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
+        friend class Internals;
+
         double intervalClampedToMinimum() const;
 
         bool isIntervalDependentOnViewport() const { return m_throttleState == ShouldThrottle && !m_elementsCausingThrottling.isEmpty(); }
