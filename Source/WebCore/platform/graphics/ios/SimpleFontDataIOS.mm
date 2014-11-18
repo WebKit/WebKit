@@ -105,8 +105,6 @@ void SimpleFontData::platformInit()
         lineGap = lroundf(scaleEmToUnits(CGFontGetLeading(cgFont), unitsPerEm) * pointSize);
         xHeight = scaleEmToUnits(CGFontGetXHeight(cgFont), unitsPerEm) * pointSize;
         capHeight = scaleEmToUnits(CGFontGetCapHeight(cgFont), unitsPerEm) * pointSize;
-        float decorationThickness;
-        float underlinePosition;
         populateDecorationMetrics(m_platformData.size(), decorationThickness, underlinePosition);
 
         lineSpacing = ascent + descent + lineGap;
