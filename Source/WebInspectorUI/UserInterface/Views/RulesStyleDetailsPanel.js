@@ -216,18 +216,8 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
         for (var i = 0; i < this._sections.length; ++i)
             this._sections[i].updateLayout();
 
-        if (previousFocusedSection) {
+        if (previousFocusedSection)
             previousFocusedSection.focus();
-
-            function scrollToFocusedSection()
-            {
-                previousFocusedSection.element.scrollIntoViewIfNeeded(true);
-            }
-
-            // Do the scroll on a timeout since StyleDetailsPanel restores scroll position
-            // after the refresh, and we might not need to scroll after the restore.
-            setTimeout(scrollToFocusedSection, 0);
-        }
     },
 
     // Protected

@@ -252,12 +252,41 @@
         return state;
     }
 
+    function scrollCursorIntoView(codeMirror, event)
+    {
+        // We don't want to use the default implementation since it can cause massive jumping
+        // when the editor is contained inside overflow elements.
+        event.preventDefault();
+
+        function delayedWork()
+        {
+            // Don't try to scroll unless the editor is focused.
+            if (!codeMirror.getWrapperElement().classList.contains("CodeMirror-focused"))
+                return;
+
+            // The cursor element can contain multiple cursors. The first one is the blinky cursor,
+            // which is the one we want to scroll into view. It can be missing, so check first.
+            var cursorElement = codeMirror.getScrollerElement().getElementsByClassName("CodeMirror-cursor")[0];
+            if (cursorElement)
+                cursorElement.scrollIntoViewIfNeeded(false);
+        }
+
+        // We need to delay this because CodeMirror can fire scrollCursorIntoView as a view is being blurred
+        // and another is being focused. The blurred editor still has the focused state when this event fires.
+        // We don't want to scroll the blurred editor into view, only the focused editor.
+        setTimeout(delayedWork, 0);
+    }
+
     CodeMirror.extendMode("css", {token: extendedCSSToken});
     CodeMirror.extendMode("xml", {token: extendedXMLToken});
     CodeMirror.extendMode("javascript", {token: extendedToken});
 
     CodeMirror.defineMode("css-rule", CodeMirror.modes.css);
     CodeMirror.extendMode("css-rule", {token: extendedCSSToken, startState: extendedCSSRuleStartState, alternateName: "css"});
+
+    CodeMirror.defineInitHook(function(codeMirror) {
+        codeMirror.on("scrollCursorIntoView", scrollCursorIntoView);
+    });
 
     CodeMirror.defineExtension("hasLineClass", function(line, where, className) {
         // This matches the arguments to addLineClass and removeLineClass.

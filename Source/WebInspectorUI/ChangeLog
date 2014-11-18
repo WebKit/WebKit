@@ -1,3 +1,28 @@
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
+        Merge r175763. rdar://problem/19005901
+
+    2014-11-07  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Cursor and scroll view jumps around when modifying styles
+            https://bugs.webkit.org/show_bug.cgi?id=137467
+
+            This merges commit e2962a5b0df56c8ee5a4482899d308decf3d7677 from CodeMirror.
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/External/CodeMirror/codemirror.js:
+            (maybeScrollWindow): Signal the scrollCursorIntoView event.
+            (signalDOMEvent): Support string events by transforming them to event objects.
+
+            * UserInterface/Views/CodeMirrorAdditions.js:
+            (scrollCursorIntoView): Added. Default event listener that provides our own
+            implementation using WebKit's scrollIntoViewIfNeeded.
+
+            * UserInterface/Views/RulesStyleDetailsPanel.js:
+            (WebInspector.RulesStyleDetailsPanel.prototype.refresh): Stop doing an
+            extra scrollIntoViewIfNeeded call, CodeMirror does this.
+
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173015
