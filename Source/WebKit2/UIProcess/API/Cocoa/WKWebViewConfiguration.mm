@@ -77,6 +77,7 @@ private:
     RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
     LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
+    BOOL _allowsAlternateFullscreen;
 #endif
 }
 
@@ -243,6 +244,16 @@ private:
 - (void)_setGroupIdentifier:(NSString *)groupIdentifier
 {
     _groupIdentifier = groupIdentifier;
+}
+
+- (BOOL) _allowsAlternateFullscreen
+{
+    return _allowsAlternateFullscreen;
+}
+
+- (void)_setAllowsAlternateFullscreen:(BOOL)allowed
+{
+    _allowsAlternateFullscreen = allowed;
 }
 
 @end

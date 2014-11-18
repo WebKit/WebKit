@@ -42,6 +42,10 @@
 
 @property (nonatomic, weak, setter=_setAlternateWebViewForNavigationGestures:) WKWebView *_alternateWebViewForNavigationGestures;
 
+#if PLATFORM(IOS)
+@property (nonatomic, setter=_setAllowsAlternateFullscreen:) BOOL _allowsAlternateFullscreen;
+#endif
+
 @end
 
 #endif

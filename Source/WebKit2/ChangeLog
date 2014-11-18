@@ -1,3 +1,22 @@
+2014-11-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] allow host application to opt-out of alternate fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=138787
+
+        Reviewed by Sam Weinig.
+        
+        "allowsAlternateFullscreen" doesn't need to be in the public WKWebView header.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): allowsAlternateFullscreen -> _allowsAlternateFullscreen.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h: Remove allowsAlternateFullscreen.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _allowsAlternateFullscreen]): New.
+        (-[WKWebViewConfiguration _setAllowsAlternateFullscreen:]): New.
+
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Declare _allowsAlternateFullscreen.
+
 2014-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Subclass CachedFont for SVG fonts
