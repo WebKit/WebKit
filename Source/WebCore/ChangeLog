@@ -1,5 +1,41 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173293. <rdar://problem/18978414>
+
+    2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+    
+            Improve the logic for compositing backing store avoidance
+            https://bugs.webkit.org/show_bug.cgi?id=136556
+    
+            Reviewed by Dean Jackson.
+            
+            Avoid backing store allocation in more cases by improving the logic that detects
+            whether a RenderLayer has any painted, non-layer descendent renderers.
+            
+            Rename RenderLayer::hasNonEmptyChildRenderers() to hasPaintingNonLayerDescendants(),
+            and make it recur 3 levels deep, walking child lists of up to 20 siblings looking
+            for renderers that paint anything. Any renderer with box decorations paints;
+            replaced elements paint, and non-whitespace text nodes paint. We can avoid
+            making backing store when whitespace nodes are present only when user-select is none,
+            since we have to ensure that there's backing store to paint the selection into.
+    
+            Tests: compositing/backing/inline-block-no-backing.html
+                   compositing/backing/whitespace-nodes-no-backing.html
+    
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::hasNonEmptyChildRenderers): Call the recursive hasPaintingNonLayerDescendants().
+            (WebCore::RenderLayer::hasBoxDecorationsOrBackground):
+            (WebCore::RenderLayer::isVisuallyNonEmpty): Do the cheap tests first. Use isRenderReplaced()
+            rather than isReplaced(), since the latter includes inline-blocks.
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::updateConfiguration): Don't run the isSimpleContainerCompositingLayer()
+            logic in the root layer, since it always wants backing store.
+            (WebCore::RenderLayerBacking::updateAfterDescendents): Ditto.
+            (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer): isReplaced() includes
+            inline-block, so use isRenderReplaced() instead.
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176156. <rdar://problem/18877535>
 
     2014-11-15  David Kilzer  <ddkilzer@apple.com>

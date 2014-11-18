@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            margin: 2px;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        .child {
+            position: relative;
+            margin: 2px;
+        }
+        
+        img {
+            height: 50px;
+            width: 50px;
+        }
+        .box {
+            height: 20px;
+            width: 20px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+        }
+
+        window.addEventListener('load', dumpLayers, false)
+    </script>
+</head>
+<body>
+    <div class="composited container">
+        <img class="composited child" src="../resources/apple.jpg">
+        <img class="composited child" src="../resources/apple.jpg">
+    </div>
+
+    <div class="composited container" style="-webkit-user-select: none;">
+        <img class="composited child" src="../resources/apple.jpg">
+        <img class="composited child" src="../resources/apple.jpg">
+    </div>
+
+    <div class="composited container"><img class="composited child" src="../resources/apple.jpg"></div>
+
+    <div class="composited container" style="-webkit-user-select: none;">
+        <img class="composited child" src="../resources/apple.jpg">
+    </div>
+
+    <div class="composited container">
+        <img class="composited child" src="../resources/apple.jpg"><div class="box"></div>
+    </div>
+
+    <div class="composited container">
+        <img src="../resources/apple.jpg">
+    </div>
+
+    <div class="composited container">
+        <span>span<span>
+    </div>
+
+    <div class="composited container">
+        <span><span>inner span<span></span>
+    </div>
+
+    <div class="composited container" style="-webkit-user-select: none;">
+        <span><img class="composited child" src="../resources/apple.jpg"><div class="composited box"></div><span>
+    </div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>
