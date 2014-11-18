@@ -80,7 +80,8 @@ void GMainLoopSource::cancel()
     if (!m_context.source)
         return;
 
-    Context context = WTF::move(m_context);
+    Context context;
+    context = WTF::move(m_context);
     context.destroySource();
 }
 
@@ -421,7 +422,8 @@ bool GMainLoopSource::socketCallback(GIOCondition condition)
     if (!m_context.source)
         return Stop;
 
-    Context context = WTF::move(m_context);
+    Context context;
+    context = WTF::move(m_context);
 
     ASSERT(context.socketCallback);
     ASSERT(m_status == Scheduled || m_status == Dispatching);

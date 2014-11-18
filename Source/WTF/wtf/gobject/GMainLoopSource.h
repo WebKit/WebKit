@@ -76,8 +76,17 @@ protected:
 
     struct Context {
         Context() = default;
-        Context(Context&&) = default;
-        Context& operator=(Context&&) = default;
+        Context& operator=(Context&& c)
+        {
+            source = WTF::move(c.source);
+            cancellable = WTF::move(c.cancellable);
+            socketCancellable = WTF::move(c.socketCancellable);
+            voidCallback = WTF::move(c.voidCallback);
+            boolCallback = WTF::move(c.boolCallback);
+            socketCallback = WTF::move(c.socketCallback);
+            destroyCallback = WTF::move(c.destroyCallback);
+            return *this;
+        }
 
         void destroySource();
 
