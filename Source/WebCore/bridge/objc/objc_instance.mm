@@ -26,20 +26,21 @@
 #import "config.h"
 #import "objc_instance.h"
 
-#import "runtime_method.h"
-#import <runtime/ObjectPrototype.h>
 #import "JSDOMBinding.h"
+#import "NSPointerFunctionsSPI.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
+#import "runtime/FunctionPrototype.h"
+#import "runtime_method.h"
 #import <objc/objc-auto.h>
 #import <runtime/Error.h>
 #import <runtime/JSLock.h>
-#import "runtime/FunctionPrototype.h"
+#import <runtime/ObjectPrototype.h>
 #import <wtf/Assertions.h>
 
 #if PLATFORM(IOS)
 #import <Foundation/NSMapTable.h>
-#endif // PLATFORM(IOS)
+#endif
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)

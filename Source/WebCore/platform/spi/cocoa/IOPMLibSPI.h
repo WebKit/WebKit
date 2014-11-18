@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#ifndef IOPMLibSPI_h
+#define IOPMLibSPI_h
 
-#if PLATFORM(COCOA)
+#include <CoreFoundation/CoreFoundation.h>
 
-#include "IOPMLibSPI.h"
-#include <wtf/RetainPtr.h>
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-namespace WebCore {
+#include <IOKit/pwr_mgt/IOPMLib.h>
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
-}
+#else
 
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
-}
+#include <mach/kern_return.h>
 
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
+typedef kern_return_t IOReturn;
+typedef uint32_t IOPMAssertionID;
 
-}
+EXTERN_C const CFStringRef kIOPMAssertionTypePreventUserIdleDisplaySleep = CFSTR("PreventUserIdleDisplaySleep");
 
-#endif // PLATFORM(COCOA)
+#endif
+
+EXTERN_C IOReturn IOPMAssertionCreateWithDescription(CFStringRef assertionType, CFStringRef name, CFStringRef details, CFStringRef humanReadableReason,
+                                                     CFStringRef localizationBundlePath, CFTimeInterval timeout, CFStringRef timeoutAction, IOPMAssertionID *);
+EXTERN_C IOReturn IOPMAssertionRelease(IOPMAssertionID);
+
+#endif // IOPMLibSPI_h

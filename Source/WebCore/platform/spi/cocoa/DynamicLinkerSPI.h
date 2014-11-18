@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#ifndef DynamicLinkerSPI_h
+#define DynamicLinkerSPI_h
 
-#if PLATFORM(COCOA)
+#include <mach-o/dyld.h>
 
-#include "IOPMLibSPI.h"
-#include <wtf/RetainPtr.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-namespace WebCore {
+#include <mach-o/dyld_priv.h>
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
-}
+#else
 
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
-}
+#define DYLD_IOS_VERSION_3_0 0x00030000
+#define DYLD_IOS_VERSION_6_0 0x00060000;
+#define DYLD_IOS_VERSION_7_0 0x00070000;
 
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
+#endif
 
-}
+EXTERN_C uint32_t dyld_get_program_sdk_version();
 
-#endif // PLATFORM(COCOA)
+#endif // DynamicLinkerSPI_h

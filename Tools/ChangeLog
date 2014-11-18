@@ -1,3 +1,15 @@
+2014-11-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Libdispatch, Dyld, IOKit, Mach, NSPointerFunctions, MobileGestalt
+        SPI are not available in public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=138802
+
+        Reviewed by David Kilzer.
+
+        Include header MachVMSPI.h instead of including the private header mach/mach_vm.h.
+
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+
 2014-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix after /webkit2/WebKitWebView/default-context r176256.

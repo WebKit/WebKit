@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplaySleepDisablerCocoa.h"
+#ifndef MobileGestaltSPI_h
+#define MobileGestaltSPI_h
 
-#if PLATFORM(COCOA)
+#include <CoreFoundation/CoreFoundation.h>
 
-#include "IOPMLibSPI.h"
-#include <wtf/RetainPtr.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-namespace WebCore {
+#include <MobileGestalt.h>
 
-std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
-{
-    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisablerCocoa(reason));
-}
+#else
 
-DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
-    : DisplaySleepDisabler(reason)
-    , m_disableDisplaySleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
-}
+EXTERN_C const CFStringRef kMGQAppleInternalInstallCapability = CFSTR("apple-internal-install");
+EXTERN_C const CFStringRef kMGQMainScreenPitch = CFSTR("main-screen-pitch");
+EXTERN_C const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
 
-DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
+#endif
 
-}
+EXTERN_C CFTypeRef MGCopyAnswer(CFStringRef question, CFDictionaryRef options);
 
-#endif // PLATFORM(COCOA)
+#ifndef MGGetBoolAnswer
+EXTERN_C bool MGGetBoolAnswer(CFStringRef question);
+#endif
+
+#endif // MobileGestaltSPI_h
