@@ -111,7 +111,7 @@ struct FloatingObjectHashTranslator {
     static bool equal(const std::unique_ptr<FloatingObject>& a, const FloatingObject& b) { return &a->renderer() == &b.renderer(); }
 };
 
-typedef ListHashSet<std::unique_ptr<FloatingObject>, 4, FloatingObjectHashFunctions> FloatingObjectSet;
+typedef ListHashSet<std::unique_ptr<FloatingObject>, FloatingObjectHashFunctions> FloatingObjectSet;
 
 typedef PODInterval<LayoutUnit, FloatingObject*> FloatingObjectInterval;
 typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;

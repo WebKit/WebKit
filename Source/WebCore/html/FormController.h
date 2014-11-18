@@ -95,7 +95,7 @@ public:
     WEBCORE_EXPORT static Vector<String> getReferencedFilePaths(const Vector<String>& stateVector);
 
 private:
-    typedef ListHashSet<RefPtr<HTMLFormControlElementWithState>, 64> FormElementListHashSet;
+    typedef ListHashSet<RefPtr<HTMLFormControlElementWithState>> FormElementListHashSet;
     typedef HashMap<RefPtr<AtomicStringImpl>, std::unique_ptr<SavedFormState>> SavedFormStateMap;
 
     static std::unique_ptr<SavedFormStateMap> createSavedFormStateMap(const FormElementListHashSet&);

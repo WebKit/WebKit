@@ -40,7 +40,7 @@ class RenderText;
 struct BidiRun;
 struct PaintInfo;
 
-typedef WTF::ListHashSet<RenderBox*, 16> TrackedRendererListHashSet;
+typedef WTF::ListHashSet<RenderBox*> TrackedRendererListHashSet;
 typedef WTF::HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
 typedef WTF::HashMap<const RenderBox*, std::unique_ptr<HashSet<RenderBlock*>>> TrackedContainerMap;
 

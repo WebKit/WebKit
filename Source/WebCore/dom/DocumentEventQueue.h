@@ -58,7 +58,7 @@ private:
 
     Document& m_document;
     std::unique_ptr<Timer> m_pendingEventTimer;
-    ListHashSet<RefPtr<Event>, 16> m_queuedEvents;
+    ListHashSet<RefPtr<Event>> m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
     bool m_isClosed;
 };

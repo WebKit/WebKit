@@ -152,7 +152,7 @@ private:
     bool m_hadActiveLoadingStylesheet;
     UpdateFlag m_pendingUpdateType;
 
-    typedef ListHashSet<Node*, 32> StyleSheetCandidateListHashSet;
+    typedef ListHashSet<Node*> StyleSheetCandidateListHashSet;
     StyleSheetCandidateListHashSet m_styleSheetCandidateNodes;
 
     String m_preferredStylesheetSetName;

@@ -1,3 +1,51 @@
+2014-11-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the custom allocator for ListHashSet nodes
+        https://bugs.webkit.org/show_bug.cgi?id=138841
+
+        Reviewed by Andreas Kling.
+
+        bmalloc is fast, so we don't need a custom allocator.
+
+        The MallocBench test for linked list node allocation (list_allocate) is
+        4.09X faster in bmalloc than TCMalloc. Also, I wrote a stress test to
+        add/remove link elements, which modify a ListHashSet on insertion and
+        removal, and it was 1% faster / in the noise with bmalloc enabled.
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetNode::ListHashSetNode):
+        (WTF::ListHashSetTranslator::translate):
+        (WTF::U>::ListHashSet):
+        (WTF::=):
+        (WTF::U>::swap):
+        (WTF::U>::~ListHashSet):
+        (WTF::U>::size):
+        (WTF::U>::capacity):
+        (WTF::U>::isEmpty):
+        (WTF::U>::first):
+        (WTF::U>::removeFirst):
+        (WTF::U>::takeFirst):
+        (WTF::U>::last):
+        (WTF::U>::removeLast):
+        (WTF::U>::takeLast):
+        (WTF::U>::contains):
+        (WTF::U>::remove):
+        (WTF::U>::clear):
+        (WTF::U>::unlink):
+        (WTF::U>::unlinkAndDelete):
+        (WTF::U>::appendNode):
+        (WTF::U>::prependNode):
+        (WTF::U>::insertNodeBefore):
+        (WTF::U>::deleteAllNodes):
+        (WTF::ListHashSetNodeAllocator::ListHashSetNodeAllocator): Deleted.
+        (WTF::ListHashSetNodeAllocator::allocate): Deleted.
+        (WTF::ListHashSetNodeAllocator::deallocate): Deleted.
+        (WTF::ListHashSetNodeAllocator::pool): Deleted.
+        (WTF::ListHashSetNodeAllocator::pastPool): Deleted.
+        (WTF::ListHashSetNodeAllocator::inPool): Deleted.
+        (WTF::ListHashSetNode::operator new): Deleted.
+        (WTF::ListHashSetNode::destroy): Deleted.
+
 2014-11-18  Chris Dumez  <cdumez@apple.com>
 
         Update the Vector API to deal with unsigned types instead of size_t

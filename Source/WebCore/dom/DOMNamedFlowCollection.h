@@ -57,7 +57,7 @@ private:
     struct DOMNamedFlowHashFunctions;
     struct DOMNamedFlowHashTranslator;
 
-    typedef ListHashSet<RefPtr<WebKitNamedFlow>, 1, DOMNamedFlowHashFunctions> DOMNamedFlowSet;
+    typedef ListHashSet<RefPtr<WebKitNamedFlow>, DOMNamedFlowHashFunctions> DOMNamedFlowSet;
     explicit DOMNamedFlowCollection(const Vector<WebKitNamedFlow*>&);
     DOMNamedFlowSet m_namedFlows;
 };

@@ -68,7 +68,7 @@ void PluginInfoStore::loadPluginsIfNecessary()
     if (m_pluginListIsUpToDate)
         return;
 
-    ListHashSet<String, 32> uniquePluginPaths;
+    ListHashSet<String> uniquePluginPaths;
 
     // First, load plug-ins from the additional plug-ins directories specified.
     for (size_t i = 0; i < m_additionalPluginsDirectories.size(); ++i)
