@@ -43,6 +43,8 @@ public:
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+    
+    RenderRubyRun* rubyRun() const;
 
 private:
     virtual const char* renderName() const override { return "RenderRubyText"; }
@@ -55,5 +57,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyText, isRubyText())
 
 #endif // RenderRubyText_h

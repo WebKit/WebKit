@@ -43,6 +43,8 @@ public:
     virtual ~RenderRubyBase();
     
     virtual const char* renderName() const override { return "RenderRubyBase (anonymous)"; }
+    
+    RenderRubyRun* rubyRun() const;
 
 private:
     virtual bool isRubyBase() const override { return true; }
@@ -55,12 +57,12 @@ private:
     void moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
 
-    RenderRubyRun* rubyRun() const;
-
     // Allow RenderRubyRun to manipulate the children within ruby bases.
     friend class RenderRubyRun;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyBase, isRubyBase())
 
 #endif // RenderRubyBase_h
