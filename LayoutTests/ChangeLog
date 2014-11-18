@@ -1,3 +1,15 @@
+2014-11-18  Myles C. Maxfield  <litherum@gmail.com>
+
+        Use underlining metrics from the font file
+        https://bugs.webkit.org/show_bug.cgi?id=138762
+
+        Reviewed by Dave Hyatt.
+
+        This patch makes underline placement platform-dependent.
+
+        * platform/mac/fast/css3-text/css3-text-decoration/text-decoration-thickness-expected.html: Renamed from LayoutTests/fast/css3-text/css3-text-decoration/text-decoration-thickness-expected.html.
+        * platform/mac/fast/css3-text/css3-text-decoration/text-decoration-thickness.html: Renamed from LayoutTests/fast/css3-text/css3-text-decoration/text-decoration-thickness.html.
+
 2014-11-17  David Hyatt  <hyatt@apple.com>
 
         Improve Ruby selection (getting rid of overlap and improving gap filling)

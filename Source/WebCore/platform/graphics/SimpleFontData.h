@@ -362,6 +362,14 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     return width;
 }
 
+static inline void populateDecorationMetrics(float fontSize, float& decorationThickness, float& underlinePosition)
+{
+    // Decoration underlines should be proportional to the font size
+    decorationThickness = fontSize / 16.0f;
+    // An amount to lower the underline below the baseline
+    underlinePosition = std::max(1.0f, ceilf(decorationThickness / 2.0));
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SimpleFontData)

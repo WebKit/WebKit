@@ -76,6 +76,9 @@ void SimpleFontData::platformInit()
     float descent = textMetrics.tmDescent * metricsMultiplier;
     float xHeight = ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
     float lineGap = textMetrics.tmExternalLeading * metricsMultiplier;
+    float decorationThickness;
+    float underlinePosition;
+    populateDecorationMetrics(m_platformData.size(), decorationThickness, underlinePosition);
 
     int faceLength = ::GetTextFace(dc, 0, 0);
     Vector<WCHAR> faceName(faceLength);
@@ -88,6 +91,8 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+    m_fontMetrics.setDecorationThickness(decorationThickness);
+    m_fontMetrics.setUnderlinePosition(underlinePosition);
     m_avgCharWidth = textMetrics.tmAveCharWidth * metricsMultiplier;
     m_maxCharWidth = textMetrics.tmMaxCharWidth * metricsMultiplier;
 

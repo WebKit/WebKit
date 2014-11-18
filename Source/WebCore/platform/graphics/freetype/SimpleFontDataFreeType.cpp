@@ -65,10 +65,15 @@ void SimpleFontData::platformInit()
     float descent = narrowPrecisionToFloat(fontExtents.descent);
     float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
+    float decorationThickness;
+    float underlinePosition;
+    populateDecorationMetrics(m_platformData.m_size, decorationThickness, underlinePosition);
 
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setCapHeight(capHeight);
+    m_fontMetrics.setDecorationThickness(decorationThickness);
+    m_fontMetrics.setUnderlinePosition(underlinePosition);
 
 #if PLATFORM(EFL)
     m_fontMetrics.setLineSpacing(ascent + descent + lineGap);

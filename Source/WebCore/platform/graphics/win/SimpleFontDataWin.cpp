@@ -89,10 +89,15 @@ void SimpleFontData::initGDIFont()
     float ascent = textMetrics.tmAscent;
     float descent = textMetrics.tmDescent;
     float lineGap = textMetrics.tmExternalLeading;
+    float decorationThickness;
+    float underlinePosition;
+    populateDecorationMetrics(m_platformData.size(), decorationThickness, underlinePosition);
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+    m_fontMetrics.setDecorationThickness(decorationThickness);
+    m_fontMetrics.setUnderlinePosition(underlinePosition);
     m_avgCharWidth = textMetrics.tmAveCharWidth;
     m_maxCharWidth = textMetrics.tmMaxCharWidth;
     float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.

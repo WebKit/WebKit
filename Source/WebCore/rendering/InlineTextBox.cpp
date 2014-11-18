@@ -925,7 +925,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
     // Use a special function for underlines to get the positioning exactly right.
     bool isPrinting = renderer().document().printing();
 
-    float textDecorationThickness = textDecorationStrokeThickness(renderer().style().fontSize());
+    float textDecorationThickness = renderer().style().fontMetrics().decorationThickness();
     context.setStrokeThickness(textDecorationThickness);
 
     bool linesAreOpaque = !isPrinting && (!(decoration & TextDecorationUnderline) || underline.alpha() == 255) && (!(decoration & TextDecorationOverline) || overline.alpha() == 255) && (!(decoration & TextDecorationLineThrough) || linethrough.alpha() == 255);
@@ -977,7 +977,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
         // These decorations should match the visual overflows computed in visualOverflowForDecorations()
         if (decoration & TextDecorationUnderline) {
             context.setStrokeColor(underline, colorSpace);
-            const int underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), this, textDecorationThickness);
+            const int underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), this);
 
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {

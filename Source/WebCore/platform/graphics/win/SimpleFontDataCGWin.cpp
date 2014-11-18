@@ -69,6 +69,9 @@ void SimpleFontData::platformInit()
     float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
     float fCapHeight = scaleEmToUnits(iCapHeight, unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
+    float decorationThickness;
+    float underlinePosition;
+    populateDecorationMetrics(m_platformData.size(), decorationThickness, underlinePosition);
 
     if (!isCustomFont()) {
         HWndDC dc(0);
@@ -87,6 +90,8 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setCapHeight(fCapHeight);
     m_fontMetrics.setLineGap(fLineGap);
     m_fontMetrics.setLineSpacing(lroundf(fAscent) + lroundf(fDescent) + lroundf(fLineGap));
+    m_fontMetrics.setDecorationThickness(decorationThickness);
+    m_fontMetrics.setUnderlinePosition(underlinePosition);
 
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
     Glyph xGlyph = glyphPageZero ? glyphPageZero->glyphDataForCharacter('x').glyph : 0;
