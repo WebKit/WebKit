@@ -32,11 +32,10 @@ You can use apachectl to start/stop/restart apache server from the command line:
 
      1. Change DocumentRoot to `/Volumes/Data/perf.webkit.org/public/`
      2. Uncomment `"LoadModule php5_module libexec/apache2/libphp5.so"`
-     3. Modify the directives for the document root and / to allow overriding `"All"`
-     4. Delete directives on CGI-Executables
+     3. Disable directives for CGI-Executables
 
  - In Mavericks and later, copy php.ini to load pdo_pgsql.so pgsql.so.
-    `sudo cp /Applications/Server.app/Contents/ServerRoot/php.ini /etc/`
+    `sudo cp /Applications/Server.app/Contents/ServerRoot/etc/php.ini /etc/`
 
 
 ## Common directives for the related apache config file
@@ -53,7 +52,7 @@ You can use apachectl to start/stop/restart apache server from the command line:
             AddOutputFilterByType DEFLATE text/html text/xml text/plain application/json application/xml application/xhtml+xml
         </IfModule>
 
- 3. Add the following directives to enable zlib compression and MultiViews on perf.webkit.org/public:
+ 3. Add the following directives to enable zlib compression and MultiViews on DocumentRoot (perf.webkit.org/public):
 
         Options Indexes MultiViews
         php_flag zlib.output_compression on
