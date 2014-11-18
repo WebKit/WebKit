@@ -1,5 +1,24 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176150. <rdar://problem/18982046>
+
+    2014-11-14  Tim Horton  <timothy_horton@apple.com>
+    
+            Remove pre-[DDActionContext contextForView:...] fallback path
+            https://bugs.webkit.org/show_bug.cgi?id=138735
+            <rdar://problem/18982046>
+    
+            Reviewed by Simon Fraser.
+    
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            (hasDataDetectorsCompletionAPI): Deleted.
+            Remove the now-unnecessary fallback path.
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176148. <rdar://problem/18990684>
 
     2014-11-14  Tim Horton  <timothy_horton@apple.com>
