@@ -1,3 +1,22 @@
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
+        Merge r173293. <rdar://problem/18978414>
+
+    2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+    
+            Improve the logic for compositing backing store avoidance
+            https://bugs.webkit.org/show_bug.cgi?id=136556
+    
+            Reviewed by Dean Jackson.
+            
+            Tests that dump the layer tree (showing backing store) for various combinations
+            of child renderers and whitespace.
+    
+            * compositing/backing/inline-block-no-backing-expected.txt: Added.
+            * compositing/backing/inline-block-no-backing.html: Added.
+            * compositing/backing/whitespace-nodes-no-backing-expected.txt: Added.
+            * compositing/backing/whitespace-nodes-no-backing.html: Added.
+    
 2014-11-05  Dana Burkart  <dburkart@apple.com>
 
         Merge r174740. <rdar://problem/18883801>

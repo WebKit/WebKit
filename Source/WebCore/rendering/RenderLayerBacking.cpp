@@ -571,11 +571,12 @@ bool RenderLayerBacking::updateConfiguration()
     } else
         m_graphicsLayer->setReplicatedByLayer(0);
 
-    bool isSimpleContainer = isSimpleContainerCompositingLayer();
-    bool didUpdateContentsRect = false;
-    updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
-
-    updateRootLayerConfiguration();
+    if (!m_owningLayer.isRootLayer()) {
+        bool isSimpleContainer = isSimpleContainerCompositingLayer();
+        bool didUpdateContentsRect = false;
+        updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
+    } else
+        updateRootLayerConfiguration();
     
     if (isDirectlyCompositedImage())
         updateImageContents();
@@ -966,11 +967,15 @@ void RenderLayerBacking::updateGeometry()
 
 void RenderLayerBacking::updateAfterDescendents()
 {
-    bool didUpdateContentsRect = false;
-    bool isSimpleContainer = isSimpleContainerCompositingLayer();
-    updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
-    if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
-        resetContentsRect();
+    bool isSimpleContainer = false;
+    if (!m_owningLayer.isRootLayer()) {
+        bool didUpdateContentsRect = false;
+        // FIXME: this duplicates work we did in updateConfiguration().
+        isSimpleContainer = isSimpleContainerCompositingLayer();
+        updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
+        if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
+            resetContentsRect();
+    }
 
     updateDrawsContent(isSimpleContainer);
 
@@ -1703,7 +1708,7 @@ static bool isCompositedPlugin(RenderObject* renderer)
 // This is a useful optimization, because it allows us to avoid allocating backing store.
 bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
 {
-    if (renderer().isReplaced() && (!isCompositedPlugin(&renderer()) || isRestartedPlugin(&renderer())))
+    if (renderer().isRenderReplaced() && (!isCompositedPlugin(&renderer()) || isRestartedPlugin(&renderer())))
         return false;
 
     if (paintsBoxDecorations() || paintsChildren())
