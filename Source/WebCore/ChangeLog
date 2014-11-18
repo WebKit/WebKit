@@ -1,5 +1,48 @@
 2014-11-18  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176108. rdar://problem/19005904
+
+    2014-11-13  Eric Carlson  <eric.carlson@apple.com>
+
+            Context menus should not offer the "Download video" option for videos that cannot 
+            be downloaded
+            https://bugs.webkit.org/show_bug.cgi?id=138530
+            -and corresponding-
+            rdar://problem/18919130
+
+            Reviewed by Tim Horton.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::parseAttribute):
+            * html/HTMLMediaElement.h:
+            * page/ContextMenuController.cpp:
+            (WebCore::ContextMenuController::populate):
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::canSaveMediaData):
+            (WebCore::MediaPlayer::supportsSave): Deleted.
+            * platform/graphics/MediaPlayer.h:
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::supportsFullscreen):
+            (WebCore::MediaPlayerPrivateInterface::canSaveMediaData):
+            (WebCore::MediaPlayerPrivateInterface::supportsSave): Deleted.
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::resolvedURL):
+            (WebCore::MediaPlayerPrivateAVFoundation::canSaveMediaData):
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::resolvedURL):
+            * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+            (WebCore::MediaPlayerPrivateGStreamer::canSaveMediaData):
+            * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            (WebCore::MediaPlayerPrivateQTKit::canSaveMediaData):
+            * rendering/HitTestResult.cpp:
+            (WebCore::HitTestResult::isDownloadableMedia):
+
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
         Merge r175765. rdar://problem/19005917
 
     2014-11-07  Andreas Kling  <akling@apple.com>

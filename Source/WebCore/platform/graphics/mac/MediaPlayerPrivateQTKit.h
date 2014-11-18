@@ -140,6 +140,8 @@ private:
     bool hasSingleSecurityOrigin() const;
     MediaPlayer::MovieLoadType movieLoadType() const;
 
+    virtual bool canSaveMediaData() const override;
+
     void createQTMovie(const String& url);
     void createQTMovie(NSURL *, NSDictionary *movieAttributes);
 

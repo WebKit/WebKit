@@ -303,8 +303,8 @@ public:
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
 
     bool supportsFullscreen() const;
-    bool supportsSave() const;
     bool supportsScanning() const;
+    bool canSaveMediaData() const;
     bool requiresImmediateCompositing() const;
     bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const;
     PlatformMedia platformMedia() const;

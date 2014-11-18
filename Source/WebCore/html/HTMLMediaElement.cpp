@@ -2295,11 +2295,6 @@ void HTMLMediaElement::addPlayedRange(double start, double end)
     m_playedTimeRanges->add(start, end);
 }  
 
-bool HTMLMediaElement::supportsSave() const
-{
-    return m_player ? m_player->supportsSave() : false;
-}
-
 bool HTMLMediaElement::supportsScanning() const
 {
     return m_player ? m_player->supportsScanning() : false;
@@ -6060,9 +6055,17 @@ bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicSt
 void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
 {
     if (m_player)
-        return m_player->setShouldBufferData(shouldBuffer);
+        m_player->setShouldBufferData(shouldBuffer);
 }
-    
+
+bool HTMLMediaElement::canSaveMediaData() const
+{
+    if (m_player)
+        return m_player->canSaveMediaData();
+
+    return false;
+}
+
 }
 
 #endif

@@ -1664,6 +1664,27 @@ void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)
     [m_qtMovie.get() setAttribute:[NSNumber numberWithBool:!privateBrowsing] forKey:@"QTMovieAllowPersistentCacheAttribute"];
 }
 
+bool MediaPlayerPrivateQTKit::canSaveMediaData() const
+{
+    URL url;
+
+    if (duration() >= std::numeric_limits<float>::infinity())
+        return false;
+
+    if (m_qtMovie)
+        url = URL(wkQTMovieResolvedURL(m_qtMovie.get()));
+    else
+        url = URL(ParsedURLString, m_movieURL);
+
+    if (url.isLocalFile())
+        return true;
+
+    if (url.protocolIsInHTTPFamily())
+        return true;
+    
+    return false;
+}
+
 } // namespace WebCore
 
 @implementation WebCoreMovieObserver
