@@ -1,3 +1,10 @@
+2014-11-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix a small indentation mistake in SelectorCodeGenerator::generateNthFilterTest
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateNthFilterTest):
+
 2014-11-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix two bad function names of HTMLFormControlElement

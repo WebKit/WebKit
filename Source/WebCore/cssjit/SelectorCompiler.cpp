@@ -3699,7 +3699,7 @@ void SelectorCodeGenerator::generateNthFilterTest(Assembler::JumpList& failureCa
                 failureCases.append(m_assembler.branchSub32(Assembler::Signed, Assembler::TrustedImm32(b), counterCopy));
                 moduloIsZero(failureCases, counterCopy, a);
             } else
-            moduloIsZero(failureCases, counter, a);
+                moduloIsZero(failureCases, counter, a);
         }
     } else {
         LocalRegister bRegister(m_registerAllocator);
