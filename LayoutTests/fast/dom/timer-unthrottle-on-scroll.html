@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div style="position: relative; width: 1600px; height: 2400px; background-color: green;">
+  <div style="position:absolute; left: 600px; top: 800px;"> <input id="textbox" type="text"></div>
+</div>
+<script>
+description("Tests that a repeating timer changing the style of an element outside viewport gets unthrottled when scrolling the element into view.");
+jsTestIsAsync = true;
+
+var testElement = document.getElementById('textbox');
+var iterationCount = 0;
+var wasThrottled = false;
+var wasThrottledBeforeScroll = false;
+var timeoutId;
+
+function scrollElementIntoView()
+{
+  debug("5th iteration, timer should be throttled as the element is outside the viewport.");
+  shouldBeTrue("wasThrottled");
+
+  debug("Timer should still be throttled before scrolling.");
+  shouldBeTrue("internals.isTimerThrottled(timeoutId)");
+
+  debug("Scrolling element into view.");
+  window.internals.scrollElementToRect(testElement, 0, 0, 300, 300);
+
+  debug("Timer should no longer be throttled");
+  shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+}
+
+function timerCallback()
+{
+  ++iterationCount;
+  // Change the style of the element while it is outside viewport.
+  testElement.style["opacity"] = "" + (iterationCount / 10.);
+
+  // 5 iterations should be sufficient to throttle the timer.
+  if (iterationCount == 5) {
+    // Do not use shouldBeTrue() because it would cause a DOM tree mutation
+    // and unthrottle the timer.
+    wasThrottled = internals.isTimerThrottled(timeoutId);
+    setTimeout(scrollElementIntoView, 0);
+  } else if (iterationCount == 6) {
+    debug("6th iteration, timer should still be unthrottled.");
+    shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+
+    clearInterval(timeoutId);
+    finishJSTest();
+  }
+}
+
+timeoutId = setInterval(timerCallback, 0);
+shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

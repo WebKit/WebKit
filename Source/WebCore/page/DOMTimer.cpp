@@ -254,17 +254,21 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
 void DOMTimer::updateThrottlingStateIfNecessary(const DOMTimerFireState& fireState)
 {
     if (fireState.scriptMadeUserObservableChanges()) {
+        ASSERT(m_elementsCausingThrottling.isEmpty());
         if (m_throttleState != ShouldNotThrottle) {
             m_throttleState = ShouldNotThrottle;
-            ASSERT(m_elementsCausingThrottling.isEmpty());
             updateTimerIntervalIfNecessary();
         }
     } else if (fireState.scriptMadeNonUserObservableChanges()) {
         if (m_throttleState != ShouldThrottle) {
             m_throttleState = ShouldThrottle;
-            fireState.elementsChangedOutsideViewport(m_elementsCausingThrottling);
             updateTimerIntervalIfNecessary();
         }
+        // Update our vector of Elements causing throttling and register
+        // for viewport changes if the vector is not empty.
+        fireState.elementsChangedOutsideViewport(m_elementsCausingThrottling);
+        if (isIntervalDependentOnViewport())
+            registerForViewportChanges();
     }
 }
 
@@ -428,13 +432,6 @@ void DOMTimer::updateTimerIntervalIfNecessary()
     if (WTF::areEssentiallyEqual(previousInterval, m_currentTimerInterval, oneMillisecond))
         return;
 
-    // Timer was throttled / unthrottled, make sure we register / unregister
-    // from the FrameView if the timer's interval is dependent on viewport.
-    if (isIntervalDependentOnViewport())
-        registerForViewportChanges();
-    else if (m_throttleState == ShouldNotThrottle)
-        unregisterForViewportChanges();
-
     if (repeatInterval()) {
         ASSERT(WTF::areEssentiallyEqual(repeatInterval(), previousInterval, oneMillisecond));
         LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %g ms to %g ms due to throttling.", this, previousInterval * 1000., m_currentTimerInterval * 1000.);
@@ -457,6 +454,7 @@ void DOMTimer::updateThrottlingStateAfterViewportChange(const IntRect& visibleRe
         if (element->isInsideViewport(&visibleRect)) {
             LOG(DOMTimers, "%p - Script is changing style of an element that is now inside the viewport, unthrottling the timer.", this);
             m_throttleState = ShouldNotThrottle;
+            unregisterForViewportChanges();
             updateTimerIntervalIfNecessary();
             break;
         }

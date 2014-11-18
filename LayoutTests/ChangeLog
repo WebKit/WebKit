@@ -1,3 +1,17 @@
+2014-11-18  Chris Dumez  <cdumez@apple.com>
+
+        DOMTimers sometimes don't get unthrottled on scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=138838
+
+        Reviewed by Antti Koivisto.
+
+        Add a layout test to verify that DOMTimers get unthrottled on scroll if
+        the element whose style they are changing is inside the viewport after
+        the scroll.
+
+        * fast/dom/timer-unthrottle-on-scroll-expected.txt: Added.
+        * fast/dom/timer-unthrottle-on-scroll.html: Added.
+
 2014-11-18  Myles C. Maxfield  <litherum@gmail.com>
 
         Use underlining metrics from the font file
