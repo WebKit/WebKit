@@ -34,9 +34,9 @@
     [Custom] Promise sign(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
     [Custom] Promise verify(AlgorithmIdentifier algorithm, Key key, CryptoOperationData signature, sequence<CryptoOperationData> data);
     [Custom] Promise digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
-    [Custom] Promise generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
-    [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
+    [Custom] Promise generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
+    [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
     [Custom] Promise exportKey(KeyFormat format, Key key);
     [Custom] Promise wrapKey(KeyFormat format, Key key, Key wrappingKey, AlgorithmIdentifier wrapAlgorithm);
-    [Custom] Promise unwrapKey(KeyFormat format, CryptoOperationData wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
+    [Custom] Promise unwrapKey(KeyFormat format, CryptoOperationData wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional sequence<KeyUsage> keyUsages);
 };
