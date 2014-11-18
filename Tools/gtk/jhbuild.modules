@@ -355,7 +355,9 @@
     <branch module="/pub/mesa/10.2.1/MesaLib-10.2.1.tar.bz2" version="10.2.1"
             checkoutdir="Mesa"
             repo="ftp.freedesktop.org"
-            hash="sha256:461277909207da689d8152cfbf9e182ea6f70e1e672ab64c67df83725c8d2b54"/>
+            hash="sha256:461277909207da689d8152cfbf9e182ea6f70e1e672ab64c67df83725c8d2b54">
+      <patch file="mesa-gallivm-Fix-build-after-LLVM-commit-211259.patch" strip="1"/>
+    </branch>
   </autotools>
 
 </moduleset>

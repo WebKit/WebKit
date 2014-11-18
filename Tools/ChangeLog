@@ -1,3 +1,15 @@
+2014-11-18  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Mesa build fails over llvm-3.5
+        https://bugs.webkit.org/show_bug.cgi?id=138825
+
+        Reviewed by Gustavo Noronha Silva.
+
+        OwningPtr.h have been removed in llvm-3.5. Instread we should use std::unique_ptr for mesa build.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/mesa-gallivm-Fix-build-after-LLVM-commit-211259.patch: Added.
+
 2014-11-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r176232.
