@@ -6428,7 +6428,7 @@ inline bool RenderLayer::needsCompositingLayersRebuiltForOpacity(const RenderSty
 
     if (!oldStyle->opacity() != !newStyle->opacity()) {
         RenderLayerModelObject* repaintContainer = renderer().containerForRepaint();
-        if (RenderLayerBacking* ancestorBacking = repaintContainer->layer()->backing()) {
+        if (RenderLayerBacking* ancestorBacking = repaintContainer ? repaintContainer->layer()->backing() : nullptr) {
             if (newStyle->opacity() != ancestorBacking->graphicsLayer()->drawsContent())
                 return true;
         }
