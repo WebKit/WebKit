@@ -103,7 +103,7 @@ public:
     void hideVisibleValidationMessage();
     bool checkValidity(Vector<RefPtr<FormAssociatedElement>>* unhandledInvalidControls = 0);
     // This must be called when a validation constraint or control value is changed.
-    void setNeedsValidityCheck();
+    void updateValidity();
     virtual void setCustomValidity(const String&) override;
 
     bool isReadOnly() const { return m_isReadOnly; }
@@ -142,7 +142,7 @@ protected:
 
     // This must be called any time the result of willValidate() has changed.
     void setNeedsWillValidateCheck();
-    virtual bool recalcWillValidate() const;
+    virtual bool computeWillValidate() const;
 
     bool validationMessageShadowTreeContains(const Node&) const;
 

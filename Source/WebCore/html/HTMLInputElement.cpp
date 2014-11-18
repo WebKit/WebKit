@@ -527,7 +527,7 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
 
     addToRadioButtonGroup();
 
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLInputElement::subtreeHasChanged()
@@ -665,7 +665,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             setNeedsStyleRecalc();
         }
         setFormControlValueMatchesRenderer(false);
-        setNeedsValidityCheck();
+        updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
     } else if (name == checkedAttr) {
         // Another radio button in the same group might be checked by state
@@ -702,20 +702,20 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setNeedsStyleRecalc();
     } else if (name == minAttr) {
         m_inputType->minOrMaxAttributeChanged();
-        setNeedsValidityCheck();
+        updateValidity();
     } else if (name == maxAttr) {
         m_inputType->minOrMaxAttributeChanged();
-        setNeedsValidityCheck();
+        updateValidity();
     } else if (name == multipleAttr) {
         m_inputType->multipleAttributeChanged();
-        setNeedsValidityCheck();
+        updateValidity();
     } else if (name == stepAttr) {
         m_inputType->stepAttributeChanged();
-        setNeedsValidityCheck();
+        updateValidity();
     } else if (name == patternAttr) {
-        setNeedsValidityCheck();
+        updateValidity();
     } else if (name == precisionAttr) {
-        setNeedsValidityCheck();
+        updateValidity();
     } else if (name == disabledAttr) {
         HTMLTextFormControlElement::parseAttribute(name, value);
         m_inputType->disabledAttributeChanged();
@@ -859,7 +859,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
             buttons->updateCheckedState(this);
     if (renderer() && renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::CheckedState);
-    setNeedsValidityCheck();
+    updateValidity();
 
     // Ideally we'd do this from the render tree (matching
     // RenderTextView), but it's not possible to do it at the moment
@@ -1003,7 +1003,7 @@ void HTMLInputElement::setValueInternal(const String& sanitizedValue, TextFieldE
 {
     m_valueIfDirty = sanitizedValue;
     m_wasModifiedByUser = eventBehavior != DispatchNoEvent;
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 double HTMLInputElement::valueAsDate() const
@@ -1050,7 +1050,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     if (!isTextField())
         dispatchInputEvent();
 
-    setNeedsValidityCheck();
+    updateValidity();
 
     // Clear autofill flag (and yellow background) on user edit.
     setAutofilled(false);
@@ -1509,9 +1509,9 @@ void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     addSubresourceURL(urls, src());
 }
 
-bool HTMLInputElement::recalcWillValidate() const
+bool HTMLInputElement::computeWillValidate() const
 {
-    return m_inputType->supportsValidation() && HTMLTextFormControlElement::recalcWillValidate();
+    return m_inputType->supportsValidation() && HTMLTextFormControlElement::computeWillValidate();
 }
 
 void HTMLInputElement::requiredAttributeChanged()
@@ -1732,7 +1732,7 @@ void HTMLInputElement::parseMaxLengthAttribute(const AtomicString& value)
     if (oldMaxLength != maxLength)
         updateValueIfNeeded();
     setNeedsStyleRecalc();
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLInputElement::updateValueIfNeeded()

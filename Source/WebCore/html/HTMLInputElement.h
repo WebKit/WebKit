@@ -396,7 +396,7 @@ private:
 
     virtual bool isOptionalFormControl() const override final { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const override final;
-    virtual bool recalcWillValidate() const override final;
+    virtual bool computeWillValidate() const override final;
     virtual void requiredAttributeChanged() override final;
 
     void initializeInputType();

@@ -69,7 +69,7 @@ private:
     virtual bool canStartSelection() const override { return false; }
 
     virtual bool isOptionalFormControl() const override { return true; }
-    virtual bool recalcWillValidate() const override;
+    virtual bool computeWillValidate() const override;
 
     Type m_type;
     bool m_isActivatedSubmit;

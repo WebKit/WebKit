@@ -52,7 +52,7 @@ public:
 private:
     HTMLOutputElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    virtual bool recalcWillValidate() const override { return false; }
+    virtual bool computeWillValidate() const override { return false; }
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual const AtomicString& formControlType() const override;
     virtual bool isEnumeratable() const override { return true; }

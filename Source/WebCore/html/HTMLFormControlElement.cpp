@@ -167,7 +167,7 @@ void HTMLFormControlElement::readOnlyAttributeChanged()
 
 void HTMLFormControlElement::requiredAttributeChanged()
 {
-    setNeedsValidityCheck();
+    updateValidity();
     // Style recalculation is needed because style selectors may include
     // :required and :optional pseudo-classes.
     setNeedsStyleRecalc();
@@ -373,7 +373,7 @@ short HTMLFormControlElement::tabIndex() const
     return Element::tabIndex();
 }
 
-bool HTMLFormControlElement::recalcWillValidate() const
+bool HTMLFormControlElement::computeWillValidate() const
 {
     if (m_dataListAncestorState == Unknown) {
         for (ContainerNode* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
@@ -392,14 +392,14 @@ bool HTMLFormControlElement::willValidate() const
 {
     if (!m_willValidateInitialized || m_dataListAncestorState == Unknown) {
         m_willValidateInitialized = true;
-        bool newWillValidate = recalcWillValidate();
+        bool newWillValidate = computeWillValidate();
         if (m_willValidate != newWillValidate)
             m_willValidate = newWillValidate;
     } else {
         // If the following assertion fails, setNeedsWillValidateCheck() is not
-        // called correctly when something which changes recalcWillValidate() result
+        // called correctly when something which changes computeWillValidate() result
         // is updated.
-        ASSERT(m_willValidate == recalcWillValidate());
+        ASSERT(m_willValidate == computeWillValidate());
     }
     return m_willValidate;
 }
@@ -407,7 +407,7 @@ bool HTMLFormControlElement::willValidate() const
 void HTMLFormControlElement::setNeedsWillValidateCheck()
 {
     // We need to recalculate willValidate immediately because willValidate change can causes style change.
-    bool newWillValidate = recalcWillValidate();
+    bool newWillValidate = computeWillValidate();
     if (m_willValidateInitialized && m_willValidate == newWillValidate)
         return;
 
@@ -416,7 +416,7 @@ void HTMLFormControlElement::setNeedsWillValidateCheck()
     m_willValidateInitialized = true;
     m_willValidate = newWillValidate;
 
-    setNeedsValidityCheck();
+    updateValidity();
     setNeedsStyleRecalc();
 
     if (!m_willValidate && !wasValid)
@@ -460,13 +460,13 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<FormAssociatedElement>>
 
 inline bool HTMLFormControlElement::isValidFormControlElement() const
 {
-    // If the following assertion fails, setNeedsValidityCheck() is not called
+    // If the following assertion fails, updateValidity() is not called
     // correctly when something which changes validity is updated.
     ASSERT(m_isValid == valid());
     return m_isValid;
 }
 
-void HTMLFormControlElement::setNeedsValidityCheck()
+void HTMLFormControlElement::updateValidity()
 {
     bool willValidate = this->willValidate();
     bool wasValid = m_isValid;
@@ -494,7 +494,7 @@ void HTMLFormControlElement::setNeedsValidityCheck()
 void HTMLFormControlElement::setCustomValidity(const String& error)
 {
     FormAssociatedElement::setCustomValidity(error);
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 bool HTMLFormControlElement::validationMessageShadowTreeContains(const Node& node) const

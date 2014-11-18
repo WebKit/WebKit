@@ -1,3 +1,70 @@
+2014-11-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix two bad function names of HTMLFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=138790
+
+        Reviewed by Andreas Kling.
+
+        Darin suggested some name improvements in https://bugs.webkit.org/show_bug.cgi?id=138769
+
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::RadioButtonGroup::add):
+        (WebCore::RadioButtonGroup::updateCheckedState):
+        (WebCore::RadioButtonGroup::requiredAttributeChanged):
+        (WebCore::RadioButtonGroup::remove):
+        (WebCore::RadioButtonGroup::updateValidityForAllButtons):
+        (WebCore::RadioButtonGroup::setNeedsValidityCheckForAllButtons): Deleted.
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setFiles):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::computeWillValidate):
+        (WebCore::HTMLButtonElement::recalcWillValidate): Deleted.
+        * html/HTMLButtonElement.h:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::requiredAttributeChanged):
+        (WebCore::HTMLFormControlElement::computeWillValidate):
+        (WebCore::HTMLFormControlElement::willValidate):
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+        (WebCore::HTMLFormControlElement::isValidFormControlElement):
+        (WebCore::HTMLFormControlElement::updateValidity):
+        (WebCore::HTMLFormControlElement::setCustomValidity):
+        (WebCore::HTMLFormControlElement::recalcWillValidate): Deleted.
+        (WebCore::HTMLFormControlElement::setNeedsValidityCheck): Deleted.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::runPostTypeUpdateTasks):
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setValueInternal):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::computeWillValidate):
+        (WebCore::HTMLInputElement::parseMaxLengthAttribute):
+        (WebCore::HTMLInputElement::recalcWillValidate): Deleted.
+        * html/HTMLInputElement.h:
+        * html/HTMLKeygenElement.h:
+        * html/HTMLOutputElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::deselectItems):
+        (WebCore::HTMLSelectElement::optionSelectedByUser):
+        (WebCore::HTMLSelectElement::listBoxSelectItem):
+        (WebCore::HTMLSelectElement::add):
+        (WebCore::HTMLSelectElement::parseAttribute):
+        (WebCore::HTMLSelectElement::childrenChanged):
+        (WebCore::HTMLSelectElement::optionElementChildrenChanged):
+        (WebCore::HTMLSelectElement::setLength):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::selectOption):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        (WebCore::HTMLSelectElement::reset):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseAttribute):
+        (WebCore::HTMLTextAreaElement::subtreeHasChanged):
+        (WebCore::HTMLTextAreaElement::setValue):
+        (WebCore::HTMLTextAreaElement::setNonDirtyValue):
+
 2014-11-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add parsing for :role()

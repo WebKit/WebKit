@@ -200,9 +200,9 @@ const AtomicString& HTMLButtonElement::value() const
     return fastGetAttribute(valueAttr);
 }
 
-bool HTMLButtonElement::recalcWillValidate() const
+bool HTMLButtonElement::computeWillValidate() const
 {
-    return m_type == SUBMIT && HTMLFormControlElement::recalcWillValidate();
+    return m_type == SUBMIT && HTMLFormControlElement::computeWillValidate();
 }
 
 } // namespace

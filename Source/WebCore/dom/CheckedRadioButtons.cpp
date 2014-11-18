@@ -40,7 +40,7 @@ public:
     bool contains(HTMLInputElement*) const;
 
 private:
-    void setNeedsValidityCheckForAllButtons();
+    void updateValidityForAllButtons();
     bool isValid() const;
     void setCheckedButton(HTMLInputElement*);
 
@@ -83,11 +83,11 @@ void RadioButtonGroup::add(HTMLInputElement* button)
 
     bool groupIsValid = isValid();
     if (groupWasValid != groupIsValid)
-        setNeedsValidityCheckForAllButtons();
+        updateValidityForAllButtons();
     else if (!groupIsValid) {
         // A radio button not in a group is always valid. We need to make it
         // invalid only if the group is invalid.
-        button->setNeedsValidityCheck();
+        button->updateValidity();
     }
 }
 
@@ -103,7 +103,7 @@ void RadioButtonGroup::updateCheckedState(HTMLInputElement* button)
             m_checkedButton = 0;
     }
     if (wasValid != isValid())
-        setNeedsValidityCheckForAllButtons();
+        updateValidityForAllButtons();
 }
 
 void RadioButtonGroup::requiredAttributeChanged(HTMLInputElement* button)
@@ -118,7 +118,7 @@ void RadioButtonGroup::requiredAttributeChanged(HTMLInputElement* button)
         --m_requiredCount;
     }
     if (wasValid != isValid())
-        setNeedsValidityCheckForAllButtons();
+        updateValidityForAllButtons();
 }
 
 void RadioButtonGroup::remove(HTMLInputElement* button)
@@ -140,22 +140,22 @@ void RadioButtonGroup::remove(HTMLInputElement* button)
         ASSERT(!m_requiredCount);
         ASSERT(!m_checkedButton);
     } else if (wasValid != isValid())
-        setNeedsValidityCheckForAllButtons();
+        updateValidityForAllButtons();
     if (!wasValid) {
         // A radio button not in a group is always valid. We need to make it
         // valid only if the group was invalid.
-        button->setNeedsValidityCheck();
+        button->updateValidity();
     }
 }
 
-void RadioButtonGroup::setNeedsValidityCheckForAllButtons()
+void RadioButtonGroup::updateValidityForAllButtons()
 {
     typedef HashSet<HTMLInputElement*>::const_iterator Iterator;
     Iterator end = m_members.end();
     for (Iterator it = m_members.begin(); it != end; ++it) {
         HTMLInputElement* button = *it;
         ASSERT(button->isRadioButton());
-        button->setNeedsValidityCheck();
+        button->updateValidity();
     }
 }
 

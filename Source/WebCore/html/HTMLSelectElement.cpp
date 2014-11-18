@@ -104,7 +104,7 @@ const AtomicString& HTMLSelectElement::formControlType() const
 void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)
 {
     deselectItemsWithoutValidation(excludeElement);
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeNow, bool allowMultipleSelection)
@@ -113,7 +113,7 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
     // This produces that same behavior for changes triggered by other code running on behalf of the user.
     if (!usesMenuList()) {
         updateSelectedState(optionToListIndex(optionIndex), allowMultipleSelection, false);
-        setNeedsValidityCheck();
+        updateValidity();
         if (fireOnChangeNow)
             listBoxOnChange();
         return;
@@ -184,7 +184,7 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
         optionSelectedByUser(listToOptionIndex(listIndex), fireOnChangeNow, false);
     else {
         updateSelectedState(listIndex, allowMultiplySelections, shift);
-        setNeedsValidityCheck();
+        updateValidity();
         if (fireOnChangeNow)
             listBoxOnChange();
     }
@@ -227,7 +227,7 @@ void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, Exception
     Ref<HTMLElement> protectNewChild(*element);
 
     insertBefore(element, before, ec);
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLSelectElement::removeByIndex(int optionIndex)
@@ -313,7 +313,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
             updateListItemSelectedStates();
 
         m_size = size;
-        setNeedsValidityCheck();
+        updateValidity();
         if (m_size != oldSize) {
             setNeedsStyleRecalc(ReconstructRenderTree);
             setRecalcListItems();
@@ -387,7 +387,7 @@ void HTMLSelectElement::updateListItemSelectedStates()
 void HTMLSelectElement::childrenChanged(const ChildChange& change)
 {
     setRecalcListItems();
-    setNeedsValidityCheck();
+    updateValidity();
     m_lastOnChangeSelection.clear();
 
     HTMLFormControlElementWithState::childrenChanged(change);
@@ -396,7 +396,7 @@ void HTMLSelectElement::childrenChanged(const ChildChange& change)
 void HTMLSelectElement::optionElementChildrenChanged()
 {
     setRecalcListItems();
-    setNeedsValidityCheck();
+    updateValidity();
 
     if (renderer()) {
         if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
@@ -494,7 +494,7 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
                 item->parentNode()->removeChild(item.get(), ec);
         }
     }
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 bool HTMLSelectElement::isRequiredFormControl() const
@@ -591,7 +591,7 @@ void HTMLSelectElement::selectAll()
 
     updateListBoxSelection(false);
     listBoxOnChange();
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLSelectElement::saveLastSelection()
@@ -656,7 +656,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     }
 
     scrollToSelection();
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLSelectElement::listBoxOnChange()
@@ -907,7 +907,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         }
     }
 
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 int HTMLSelectElement::optionToListIndex(int optionIndex) const
@@ -1039,14 +1039,14 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
     }
 
     setOptionsChangedOnRenderer();
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
 {
     bool oldUsesMenuList = usesMenuList();
     m_multiple = !value.isNull();
-    setNeedsValidityCheck();
+    updateValidity();
     if (oldUsesMenuList != usesMenuList())
         setNeedsStyleRecalc(ReconstructRenderTree);
 }
@@ -1103,7 +1103,7 @@ void HTMLSelectElement::reset()
 
     setOptionsChangedOnRenderer();
     setNeedsStyleRecalc();
-    setNeedsValidityCheck();
+    updateValidity();
 }
 
 #if !PLATFORM(WIN)

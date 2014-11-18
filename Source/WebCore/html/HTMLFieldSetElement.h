@@ -53,7 +53,7 @@ private:
     virtual bool supportsFocus() const override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual const AtomicString& formControlType() const override;
-    virtual bool recalcWillValidate() const override { return false; }
+    virtual bool computeWillValidate() const override { return false; }
     virtual void disabledAttributeChanged() override;
     virtual void disabledStateChanged() override;
     virtual void childrenChanged(const ChildChange&) override;
