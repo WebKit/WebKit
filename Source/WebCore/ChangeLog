@@ -1,3 +1,26 @@
+2014-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid backing store for opacity:0 descendant layers
+        https://bugs.webkit.org/show_bug.cgi?id=138448
+
+        Reviewed by Dean Jackson.
+        
+        If a composited layer has no rendered content but a painting zero-opacity descendant
+        layer, than we can avoid making backing store.
+        
+        When the opacity on such a child changes, we need to trigger a tree rebuild
+        to force the backing store to come back (this could be optimized later).
+
+        Tests: compositing/backing/no-backing-for-opacity-0-child.html
+               compositing/backing/toggle-opacity-0-child.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::styleChangeRequiresLayerRebuild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+
 2014-11-18  Dana Burkart  <dburkart@apple.com>
 
         Merge r176166. rdar://problem/18953982

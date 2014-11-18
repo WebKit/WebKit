@@ -6276,7 +6276,7 @@ bool RenderLayer::isVisuallyNonEmpty() const
 {
     ASSERT(!m_visibleDescendantStatusDirty);
 
-    if (!hasVisibleContent())
+    if (!hasVisibleContent() || !renderer().style().opacity())
         return false;
 
     if (renderer().isRenderReplaced() || hasOverflowControls())
@@ -6421,6 +6421,21 @@ inline bool RenderLayer::needsCompositingLayersRebuiltForOverflow(const RenderSt
     return !isComposited() && oldStyle && (oldStyle->overflowX() != newStyle->overflowX()) && stackingContainer()->hasCompositingDescendant();
 }
 
+inline bool RenderLayer::needsCompositingLayersRebuiltForOpacity(const RenderStyle* oldStyle, const RenderStyle* newStyle) const
+{
+    if (!oldStyle || !newStyle)
+        return false;
+
+    if (!oldStyle->opacity() != !newStyle->opacity()) {
+        RenderLayerModelObject* repaintContainer = renderer().containerForRepaint();
+        if (RenderLayerBacking* ancestorBacking = repaintContainer->layer()->backing()) {
+            if (newStyle->opacity() != ancestorBacking->graphicsLayer()->drawsContent())
+                return true;
+        }
+    }
+    return false;
+}
+
 void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)
 {
     bool isNormalFlowOnly = shouldBeNormalFlowOnly();
@@ -6480,7 +6495,8 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     const RenderStyle& newStyle = renderer().style();
     if (compositor().updateLayerCompositingState(*this)
         || needsCompositingLayersRebuiltForClip(oldStyle, &newStyle)
-        || needsCompositingLayersRebuiltForOverflow(oldStyle, &newStyle))
+        || needsCompositingLayersRebuiltForOverflow(oldStyle, &newStyle)
+        || needsCompositingLayersRebuiltForOpacity(oldStyle, &newStyle))
         compositor().setCompositingLayersNeedRebuild();
     else if (isComposited()) {
         // FIXME: updating geometry here is potentially harmful, because layout is not up-to-date.
