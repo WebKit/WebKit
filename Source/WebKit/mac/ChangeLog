@@ -1,5 +1,20 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176143. <rdar://problem/18989840>
+
+    2014-11-14  Tim Horton  <timothy_horton@apple.com>
+    
+            Update some artwork for the legacy WebKit action menu
+            https://bugs.webkit.org/show_bug.cgi?id=138758
+            <rdar://problem/18989840>
+    
+            Reviewed by Simon Fraser.
+    
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _createActionMenuItemForTag:]):
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176132. <rdar://problem/18979004>
 
     2014-11-14  Beth Dakin  <bdakin@apple.com>
