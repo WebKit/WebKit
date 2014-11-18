@@ -1,5 +1,25 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r175492. <rdar://problem/18978410>
+
+    2014-11-03  Simon Fraser  <simon.fraser@apple.com>
+    
+            Video controls have lots of compositing layers
+            https://bugs.webkit.org/show_bug.cgi?id=138294
+    
+            Reviewed by Eric Carlson.
+    
+            After r175268 we get lots of separate small layers in the video
+            controls (but they pop into a single layer when opacity animates).
+            
+            Fix this by putting an explicit z-index on -webkit-media-controls-panel
+            which is the element that animates opacity.
+    
+            * Modules/mediacontrols/mediaControlsApple.css:
+            (audio::-webkit-media-controls-panel):
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r173293. <rdar://problem/18978414>
 
     2014-09-04  Simon Fraser  <simon.fraser@apple.com>
