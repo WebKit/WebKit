@@ -1,5 +1,19 @@
 2014-11-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix crash introduced in r175656
+        https://bugs.webkit.org/show_bug.cgi?id=138453
+
+        Reviewed by Dan Bernstein.
+
+        repaintContainer can be null sometimes.
+        
+        Covered by existing tests.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::styleChangeRequiresLayerRebuild):
+
+2014-11-05  Simon Fraser  <simon.fraser@apple.com>
+
         Avoid backing store for opacity:0 descendant layers
         https://bugs.webkit.org/show_bug.cgi?id=138448
 
