@@ -146,8 +146,6 @@ int (*wkRecommendedScrollerStyle)(void);
 
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
-NSRange (*wkExtractWordDefinitionTokenRangeFromContextualString)(NSString *contextString, NSRange range, NSDictionary **options);
-
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 

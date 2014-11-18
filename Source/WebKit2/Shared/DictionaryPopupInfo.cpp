@@ -37,12 +37,15 @@ namespace WebKit {
 void DictionaryPopupInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << origin;
+    encoder << textIndicator;
 
 #if PLATFORM(COCOA)
     bool hadOptions = options;
     encoder << hadOptions;
     if (hadOptions)
         IPC::encode(encoder, options.get());
+
+    encoder << attributedString;
 #endif
 }
 
@@ -50,6 +53,10 @@ bool DictionaryPopupInfo::decode(IPC::ArgumentDecoder& decoder, DictionaryPopupI
 {
     if (!decoder.decode(result.origin))
         return false;
+
+    if (!decoder.decode(result.textIndicator))
+        return false;
+
 #if PLATFORM(COCOA)
     bool hadOptions;
     if (!decoder.decode(hadOptions))
@@ -58,6 +65,9 @@ bool DictionaryPopupInfo::decode(IPC::ArgumentDecoder& decoder, DictionaryPopupI
         if (!IPC::decode(decoder, result.options))
             return false;
     }
+
+    if (!decoder.decode(result.attributedString))
+        return false;
 #endif
     return true;
 }

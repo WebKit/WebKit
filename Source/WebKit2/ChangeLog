@@ -1,5 +1,100 @@
 2014-11-18  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176164. rdar://problem/18953982
+
+    2014-11-16  Tim Horton  <timothy_horton@apple.com>
+
+            Use TextIndicator instead of the built in Lookup highlight
+            https://bugs.webkit.org/show_bug.cgi?id=138775
+            <rdar://problem/18953982>
+
+            Reviewed by Anders Carlsson.
+
+            In order to make the yellow highlight for Lookup more accurately match the
+            painted content of the web page (in light of e.g. Web fonts, and interesting
+            text features that only WebKit implements and cannot round-trip through
+            NSAttributedString), use a TextIndicator instead of the built-in Lookup
+            highlight where possible.
+
+            * Configurations/BaseTarget.xcconfig:
+            Make it possible to include headers from private frameworks. This matches WebCore.
+
+            * Shared/DictionaryPopupInfo.cpp:
+            (WebKit::DictionaryPopupInfo::encode):
+            (WebKit::DictionaryPopupInfo::decode):
+            * Shared/DictionaryPopupInfo.h:
+            Include the attributed string inside the DictionaryPopupInfo, instead of
+            as a secondary argument to DidPerformDictionaryLookup.
+            Add a TextIndicator to DictionaryPopupInfo, which can be used to highlight
+            the text in the UI process.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView dealloc]):
+            (-[WKView viewDidMoveToWindow]):
+            (-[WKView _dictionaryLookupPopoverWillClose:]):
+            (-[WKView _setTextIndicator:fadeOut:animate:animationCompletionHandler:]):
+            (-[WKView _setTextIndicator:fadeOut:animate:]):
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            (+[WKView hideWordDefinitionWindow]):
+            * UIProcess/API/mac/WKViewInternal.h:
+            Adopt the Lookup SPI header.
+            If we have the requisite API, register the notification that Lookup sends
+            when the popover closes, and hook that up to hide the text indicator.
+            Add a version of _setTextIndicator: that takes an animation completion handler.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::didPerformDictionaryLookup):
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::didPerformDictionaryLookup):
+            Adjust to the new didPerformDictionaryLookup signature.
+
+            * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+            (InitWebCoreSystemInterface):
+            Remove a WKSI import.
+
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::didPerformDictionaryLookup):
+            If we have the requisite API, disable Lookup's built-in highlight and
+            present a TextIndicator instead.
+            We currently have to run the animations serially (first bounce the TextIndicator,
+            then animate in the Lookup popover) because the act of adding the Lookup popover
+            blocks us from getting any animation events for the TextIndicator, and breaks
+            the bounce. We could also fix this by using a threaded animation for the TextIndicator,
+            but it's not clear that it's safe to do so.
+
+            (WebKit::PageClientImpl::dismissDictionaryLookupPanel):
+            When explicitly dismissing the Lookup panel, also hide the text indicator.
+
+            * UIProcess/mac/TextIndicatorWindow.h:
+            * UIProcess/mac/TextIndicatorWindow.mm:
+            (WebKit::TextIndicatorWindow::setTextIndicator):
+            Store the completion handler.
+
+            (WebKit::TextIndicatorWindow::bounceAnimationDidEnd):
+            Call the completion handler when the animation completes.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+            Disable the Lookup item if lookup is not available.
+
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (WebKit::PDFPlugin::showDefinitionForAttributedString):
+            Adjust to the new didPerformDictionaryLookup signature.
+            Since PDFPlugin can't trivially repaint the required part of the PDF,
+            we don't build a TextIndicator. This will result in PDFPlugin continuing
+            to use Lookup's built-in highlight.
+            
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performDictionaryLookupForRange):
+            Build a TextIndicator from the Lookup range and pass it along with
+            the DictionaryPopupInfo.
+
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
         Merge r176108. rdar://problem/19005904
 
     2014-11-13  Eric Carlson  <eric.carlson@apple.com>
