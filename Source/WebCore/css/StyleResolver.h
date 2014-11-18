@@ -296,7 +296,6 @@ private:
 #endif
 
     void adjustRenderStyle(RenderStyle& styleToAdjust, const RenderStyle& parentStyle, Element*);
-    void adjustStyleForAlignment(RenderStyle& styleToAdjust);
 #if ENABLE(CSS_GRID_LAYOUT)
     std::unique_ptr<GridPosition> adjustNamedGridItemPosition(const NamedGridAreaMap&, const NamedGridLinesMap&, const GridPosition&, GridPositionSide) const;
 #endif

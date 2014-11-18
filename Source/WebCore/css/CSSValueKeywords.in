@@ -540,7 +540,6 @@ space-around
 // flex-end
 // center
 // baseline
-last-baseline
 // stretch
 
 // CSS_PROP_JUSTIFY_CONTENT
@@ -554,7 +553,6 @@ last-baseline
 // auto
 // stretch
 // baseline
-// last-baseline
 // center
 // start
 // end

@@ -903,17 +903,15 @@ public:
     float flexShrink() const { return rareNonInheritedData->m_flexibleBox->m_flexShrink; }
     const Length& flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
     EAlignContent alignContent() const { return static_cast<EAlignContent>(rareNonInheritedData->m_alignContent); }
-    ItemPosition alignItems() const { return static_cast<ItemPosition>(rareNonInheritedData->m_alignItems); }
-    OverflowAlignment alignItemsOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_alignItemsOverflowAlignment); }
-    ItemPosition alignSelf() const { return static_cast<ItemPosition>(rareNonInheritedData->m_alignSelf); }
-    OverflowAlignment alignSelfOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_alignSelfOverflowAlignment); }
+    EAlignItems alignItems() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignItems); }
+    EAlignItems alignSelf() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignSelf); }
     EFlexDirection flexDirection() const { return static_cast<EFlexDirection>(rareNonInheritedData->m_flexibleBox->m_flexDirection); }
     bool isColumnFlexDirection() const { return flexDirection() == FlowColumn || flexDirection() == FlowColumnReverse; }
     bool isReverseFlexDirection() const { return flexDirection() == FlowRowReverse || flexDirection() == FlowColumnReverse; }
     EFlexWrap flexWrap() const { return static_cast<EFlexWrap>(rareNonInheritedData->m_flexibleBox->m_flexWrap); }
     EJustifyContent justifyContent() const { return static_cast<EJustifyContent>(rareNonInheritedData->m_justifyContent); }
-    ItemPosition justifySelf() const { return static_cast<ItemPosition>(rareNonInheritedData->m_justifySelf); }
-    OverflowAlignment justifySelfOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_justifySelfOverflowAlignment); }
+    EJustifySelf justifySelf() const { return static_cast<EJustifySelf>(rareNonInheritedData->m_justifySelf); }
+    EJustifySelfOverflowAlignment justifySelfOverflowAlignment() const { return static_cast<EJustifySelfOverflowAlignment>(rareNonInheritedData->m_justifySelfOverflowAlignment); }
 
 #if ENABLE(CSS_GRID_LAYOUT)
     const Vector<GridTrackSize>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
@@ -1477,15 +1475,13 @@ public:
     void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, WTF::move(length)); }
     void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
-    void setAlignItems(ItemPosition a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
-    void setAlignItemsOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_alignItemsOverflowAlignment, overflowAlignment); }
-    void setAlignSelf(ItemPosition a) { SET_VAR(rareNonInheritedData, m_alignSelf, a); }
-    void setAlignSelfOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_alignSelfOverflowAlignment, overflowAlignment); }
+    void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
+    void setAlignSelf(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignSelf, a); }
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
     void setJustifyContent(EJustifyContent p) { SET_VAR(rareNonInheritedData, m_justifyContent, p); }
-    void setJustifySelf(ItemPosition p) { SET_VAR(rareNonInheritedData, m_justifySelf, p); }
-    void setJustifySelfOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_justifySelfOverflowAlignment, overflowAlignment); }
+    void setJustifySelf(EJustifySelf p) { SET_VAR(rareNonInheritedData, m_justifySelf, p); }
+    void setJustifySelfOverflowAlignment(EJustifySelfOverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_justifySelfOverflowAlignment, overflowAlignment); }
 #if ENABLE(CSS_GRID_LAYOUT)
     void setGridAutoColumns(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoColumns, length); }
     void setGridAutoRows(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoRows, length); }
@@ -1764,7 +1760,6 @@ public:
     bool isDisplayReplacedType() const { return isDisplayReplacedType(display()); }
     bool isDisplayInlineType() const { return isDisplayInlineType(display()); }
     bool isOriginalDisplayInlineType() const { return isDisplayInlineType(originalDisplay()); }
-    bool isDisplayFlexibleOrGridBox() const { return isDisplayFlexibleOrGridBox(display()); }
     bool isDisplayRegionType() const
     {
         return display() == BLOCK || display() == INLINE_BLOCK
@@ -1888,15 +1883,13 @@ public:
     static Length initialFlexBasis() { return Length(Auto); }
     static int initialOrder() { return 0; }
     static EAlignContent initialAlignContent() { return AlignContentStretch; }
-    static ItemPosition initialAlignItems() { return ItemPositionAuto; }
-    static OverflowAlignment initialAlignItemsOverflowAlignment() { return OverflowAlignmentDefault; }
-    static ItemPosition initialAlignSelf() { return ItemPositionAuto; }
-    static OverflowAlignment initialAlignSelfOverflowAlignment() { return OverflowAlignmentDefault; }
+    static EAlignItems initialAlignItems() { return AlignStretch; }
+    static EAlignItems initialAlignSelf() { return AlignAuto; }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
     static EJustifyContent initialJustifyContent() { return JustifyFlexStart; }
-    static ItemPosition initialJustifySelf() { return ItemPositionAuto; }
-    static OverflowAlignment initialJustifySelfOverflowAlignment() { return OverflowAlignmentDefault; }
+    static EJustifySelf initialJustifySelf() { return JustifySelfAuto; }
+    static EJustifySelfOverflowAlignment initialJustifySelfOverflowAlignment() { return JustifySelfOverflowAlignmentDefault; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }
@@ -2080,26 +2073,6 @@ private:
     bool isDisplayInlineType(EDisplay display) const
     {
         return display == INLINE || isDisplayReplacedType(display);
-    }
-
-    bool isDisplayFlexibleBox(EDisplay display) const
-    {
-        return display == FLEX || display == INLINE_FLEX;
-    }
-
-    bool isDisplayGridBox(EDisplay display) const
-    {
-#if ENABLE(CSS_GRID_LAYOUT)
-        return display == GRID || display == INLINE_GRID;
-#else
-        UNUSED_PARAM(display);
-        return false;
-#endif
-    }
-
-    bool isDisplayFlexibleOrGridBox(EDisplay display) const
-    {
-        return isDisplayFlexibleBox(display) || isDisplayGridBox(display);
     }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.

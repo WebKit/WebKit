@@ -101,7 +101,7 @@ void RenderMathMLScripts::fixAnonymousStyleForSubSupPair(RenderObject* subSupPai
     // The MathML specification does not specify vertical alignment of scripts.
     // Let's right align prescripts and left align postscripts.
     // See http://lists.w3.org/Archives/Public/www-math/2012Aug/0006.html
-    scriptsStyle.setAlignItems(isPostScript ? ItemPositionFlexStart : ItemPositionFlexEnd);
+    scriptsStyle.setAlignItems(isPostScript ? AlignFlexStart : AlignFlexEnd);
 
     // We set the order property so that the prescripts are drawn before the base.
     scriptsStyle.setOrder(isPostScript ? 0 : -1);
@@ -115,7 +115,7 @@ void RenderMathMLScripts::fixAnonymousStyles()
 {
     // We set the base wrapper's style so that baseHeight in layout() will be an unstretched height.
     ASSERT(m_baseWrapper && m_baseWrapper->style().hasOneRef());
-    m_baseWrapper->style().setAlignSelf(ItemPositionFlexStart);
+    m_baseWrapper->style().setAlignSelf(AlignFlexStart);
 
     // This sets the style for postscript pairs.
     RenderObject* subSupPair = m_baseWrapper;
@@ -135,7 +135,7 @@ void RenderMathMLScripts::fixAnonymousStyles()
             RenderStyle& scriptsStyle = subSupPair->style();
             scriptsStyle.setFlexDirection(FlowRow);
             scriptsStyle.setJustifyContent(JustifyFlexStart);
-            scriptsStyle.setAlignItems(ItemPositionCenter);
+            scriptsStyle.setAlignItems(AlignCenter);
             scriptsStyle.setOrder(0);
             scriptsStyle.setFontSize(style().fontSize());
         }

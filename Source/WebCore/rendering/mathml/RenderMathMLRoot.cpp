@@ -233,7 +233,7 @@ void RenderMathMLRoot::updateStyle()
     auto base = baseWrapper();
     auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     baseStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
-    baseStyle.get().setAlignItems(ItemPositionBaseline);
+    baseStyle.get().setAlignItems(AlignBaseline);
     base->setStyle(WTF::move(baseStyle));
     base->setNeedsLayoutAndPrefWidthsRecalc();
 
@@ -244,7 +244,7 @@ void RenderMathMLRoot::updateStyle()
         indexStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
         indexStyle.get().setMarginStart(Length(kernBeforeDegree, Fixed));
         indexStyle.get().setMarginEnd(Length(kernAfterDegree, Fixed));
-        indexStyle.get().setAlignItems(ItemPositionBaseline);
+        indexStyle.get().setAlignItems(AlignBaseline);
         index->setStyle(WTF::move(indexStyle));
         index->setNeedsLayoutAndPrefWidthsRecalc();
     }

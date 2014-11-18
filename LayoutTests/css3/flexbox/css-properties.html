@@ -78,20 +78,18 @@ flexbox.style.webkitJustifyContent = '';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
 
-flexbox.style.display = '-webkit-flex';
 
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
-// The initial value is 'auto', which will be resolved depending on parent's style (except for the 'document' element).
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'start');
-shouldBeEqualToString('window.getComputedStyle(document.documentElement, null).webkitAlignSelf', 'auto');
+// The initial value is 'stretch'.
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(document.documentElement, null).webkitAlignSelf', 'stretch');
 
 flexbox.style.webkitAlignSelf = 'foo';
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'start');
 
 flexbox.style.webkitAlignSelf = 'auto';
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'auto');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'stretch');
 
 flexbox.style.webkitAlignSelf = 'flex-start';
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'flex-start');
@@ -115,29 +113,23 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 
 
 flexbox.style.webkitAlignSelf = '';
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'stretch');
 
 shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
-// The initial value is 'auto', which will be resolved to 'stretch' in case of flexbox containers.
+// The initial value is 'stretch'.
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'stretch');
 shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'stretch');
 
 flexbox.style.webkitAlignItems = 'foo';
 shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'stretch');
 
 flexbox.style.webkitAlignItems = 'auto';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'auto');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
+shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'stretch');
 shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'stretch');
 
 flexbox.style.webkitAlignItems = 'flex-start';
 shouldBeEqualToString('flexbox.style.webkitAlignItems', 'flex-start');
-shouldBeEqualToString('flexitem.style.webkitAlignSelf', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'flex-start');
 shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'flex-start');
 
@@ -168,8 +160,8 @@ shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf',
 
 flexbox.style.display = 'none';
 shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'stretch');
 flexbox.style.display = '';
 
 

@@ -32,7 +32,6 @@
 #include "RenderFlexibleBox.h"
 
 #include "LayoutRepainter.h"
-#include "NotImplemented.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include <limits>
@@ -187,7 +186,7 @@ int RenderFlexibleBox::firstLineBaseline() const
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
         if (child->isOutOfFlowPositioned())
             continue;
-        if (alignmentForChild(*child) == ItemPositionBaseline && !hasAutoMarginsInCrossAxis(*child)) {
+        if (alignmentForChild(*child) == AlignBaseline && !hasAutoMarginsInCrossAxis(*child)) {
             baselineChild = child;
             break;
         }
@@ -228,11 +227,11 @@ int RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode direction) const
     return synthesizedBaselineFromContentBox(*this, direction) + marginAscent;
 }
 
-static ItemPosition resolveAlignment(const RenderStyle* parentStyle, const RenderStyle* childStyle)
+static EAlignItems resolveAlignment(const RenderStyle* parentStyle, const RenderStyle* childStyle)
 {
-    ItemPosition align = childStyle->alignSelf();
-    if (align == ItemPositionAuto)
-        align = (parentStyle->alignItems() == ItemPositionAuto) ? ItemPositionStretch : parentStyle->alignItems();
+    EAlignItems align = childStyle->alignSelf();
+    if (align == AlignAuto)
+        align = parentStyle->alignItems();
     return align;
 }
 
@@ -240,12 +239,12 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
-    if (oldStyle && oldStyle->alignItems() == ItemPositionStretch && diff == StyleDifferenceLayout) {
+    if (oldStyle && oldStyle->alignItems() == AlignStretch && diff == StyleDifferenceLayout) {
         // Flex items that were previously stretching need to be relayed out so we can compute new available cross axis space.
         // This is only necessary for stretching since other alignment values don't change the size of the box.
         for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            ItemPosition previousAlignment = resolveAlignment(oldStyle, &child->style());
-            if (previousAlignment == ItemPositionStretch && previousAlignment != resolveAlignment(&style(), &child->style()))
+            EAlignItems previousAlignment = resolveAlignment(oldStyle, &child->style());
+            if (previousAlignment == AlignStretch && previousAlignment != resolveAlignment(&style(), &child->style()))
                 child->setChildNeedsLayout(MarkOnlyThis);
         }
     }
@@ -1024,18 +1023,18 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox& child, Layout
     }
 }
 
-ItemPosition RenderFlexibleBox::alignmentForChild(RenderBox& child) const
+EAlignItems RenderFlexibleBox::alignmentForChild(RenderBox& child) const
 {
-    ItemPosition align = resolveAlignment(&style(), &child.style());
+    EAlignItems align = resolveAlignment(&style(), &child.style());
 
-    if (align == ItemPositionBaseline && hasOrthogonalFlow(child))
-        align = ItemPositionFlexStart;
+    if (align == AlignBaseline && hasOrthogonalFlow(child))
+        align = AlignFlexStart;
 
     if (style().flexWrap() == FlexWrapReverse) {
-        if (align == ItemPositionFlexStart)
-            align = ItemPositionFlexEnd;
-        else if (align == ItemPositionFlexEnd)
-            align = ItemPositionFlexStart;
+        if (align == AlignFlexStart)
+            align = AlignFlexEnd;
+        else if (align == AlignFlexEnd)
+            align = AlignFlexStart;
     }
 
     return align;
@@ -1054,7 +1053,7 @@ size_t RenderFlexibleBox::numberOfInFlowPositionedChildren(const OrderedFlexItem
 
 bool RenderFlexibleBox::needToStretchChild(RenderBox& child)
 {
-    if (alignmentForChild(child) != ItemPositionStretch)
+    if (alignmentForChild(child) != AlignStretch)
         return false;
 
     Length crossAxisLength = isHorizontalFlow() ? child.style().height() : child.style().width();
@@ -1105,7 +1104,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         updateAutoMarginsInMainAxis(child, autoMarginOffset);
 
         LayoutUnit childCrossAxisMarginBoxExtent;
-        if (alignmentForChild(child) == ItemPositionBaseline && !hasAutoMarginsInCrossAxis(child)) {
+        if (alignmentForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child)) {
             LayoutUnit ascent = marginBoxAscentForChild(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
 
@@ -1266,32 +1265,25 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
                 continue;
 
             switch (alignmentForChild(*child)) {
-            case ItemPositionAuto:
+            case AlignAuto:
                 ASSERT_NOT_REACHED();
                 break;
-            case ItemPositionStart:
-                // FIXME: https://webkit.org/b/135460 - The extended grammar is not supported
-                // yet for FlexibleBox.
-                // Defaulting to Stretch for now, as it what most of FlexBox based renders
-                // expect as default.
-                notImplemented();
-                FALLTHROUGH;
-            case ItemPositionStretch: {
+            case AlignStretch: {
                 applyStretchAlignmentToChild(*child, lineCrossAxisExtent);
                 // Since wrap-reverse flips cross start and cross end, strech children should be aligned with the cross end.
                 if (style().flexWrap() == FlexWrapReverse)
                     adjustAlignmentForChild(*child, availableAlignmentSpaceForChild(lineCrossAxisExtent, *child));
                 break;
             }
-            case ItemPositionFlexStart:
+            case AlignFlexStart:
                 break;
-            case ItemPositionFlexEnd:
+            case AlignFlexEnd:
                 adjustAlignmentForChild(*child, availableAlignmentSpaceForChild(lineCrossAxisExtent, *child));
                 break;
-            case ItemPositionCenter:
+            case AlignCenter:
                 adjustAlignmentForChild(*child, availableAlignmentSpaceForChild(lineCrossAxisExtent, *child) / 2);
                 break;
-            case ItemPositionBaseline: {
+            case AlignBaseline: {
                 // FIXME: If we get here in columns, we want the use the descent, except we currently can't get the ascent/descent of orthogonal children.
                 // https://bugs.webkit.org/show_bug.cgi?id=98076
                 LayoutUnit ascent = marginBoxAscentForChild(*child);
@@ -1302,19 +1294,6 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
                     minMarginAfterBaseline = std::min(minMarginAfterBaseline, availableAlignmentSpaceForChild(lineCrossAxisExtent, *child) - startOffset);
                 break;
             }
-            case ItemPositionLastBaseline:
-            case ItemPositionSelfStart:
-            case ItemPositionSelfEnd:
-            case ItemPositionEnd:
-            case ItemPositionLeft:
-            case ItemPositionRight:
-                // FIXME: https://webkit.org/b/135460 - The extended grammar is not supported
-                // yet for FlexibleBox.
-                notImplemented();
-                FALLTHROUGH;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
             }
         }
         minMarginAfterBaselines.append(minMarginAfterBaseline);
@@ -1330,7 +1309,7 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
         LayoutUnit minMarginAfterBaseline = minMarginAfterBaselines[lineNumber];
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = m_orderIterator.next()) {
             ASSERT(child);
-            if (alignmentForChild(*child) == ItemPositionBaseline && !hasAutoMarginsInCrossAxis(*child) && minMarginAfterBaseline)
+            if (alignmentForChild(*child) == AlignBaseline && !hasAutoMarginsInCrossAxis(*child) && minMarginAfterBaseline)
                 adjustAlignmentForChild(*child, minMarginAfterBaseline);
         }
     }

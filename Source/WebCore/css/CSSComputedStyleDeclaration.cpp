@@ -296,7 +296,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFlexDirection,
     CSSPropertyFlexWrap,
     CSSPropertyJustifyContent,
-    CSSPropertyJustifySelf,
+    CSSPropertyWebkitJustifySelf,
     CSSPropertyWebkitFilter,
 #if ENABLE(FILTERS_LEVEL_2)
     CSSPropertyWebkitBackdropFilter,
@@ -1713,15 +1713,6 @@ static PassRef<CSSValue> shapePropertyValue(const RenderStyle* style, const Shap
 }
 #endif
 
-static PassRefPtr<CSSValueList> valueForItemPositionWithOverflowAlignment(ItemPosition itemPosition, OverflowAlignment overflowAlignment)
-{
-    RefPtr<CSSValueList> result = CSSValueList::createSpaceSeparated();
-    result->append(cssValuePool().createValue(itemPosition));
-    if (itemPosition >= ItemPositionCenter && overflowAlignment != OverflowAlignmentDefault)
-        result->append(cssValuePool().createValue(overflowAlignment));
-    return result.release();
-}
-
 PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
@@ -2065,19 +2056,15 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyAlignContent:
             return cssValuePool().createValue(style->alignContent());
         case CSSPropertyAlignItems:
-            return valueForItemPositionWithOverflowAlignment(style->alignItems(), style->alignItemsOverflowAlignment());
-        case CSSPropertyAlignSelf: {
-            ItemPosition alignSelf = style->alignSelf();
-            OverflowAlignment overflow = style->alignSelfOverflowAlignment();
-            if (alignSelf == ItemPositionAuto) {
+            return cssValuePool().createValue(style->alignItems());
+        case CSSPropertyAlignSelf:
+            if (style->alignSelf() == AlignAuto) {
                 Node* parent = styledNode->parentNode();
-                if (parent && parent->computedStyle()) {
-                    alignSelf = parent->computedStyle()->alignItems();
-                    overflow = parent->computedStyle()->alignItemsOverflowAlignment();
-                }
+                if (parent && parent->computedStyle())
+                    return cssValuePool().createValue(parent->computedStyle()->alignItems());
+                return cssValuePool().createValue(AlignStretch);
             }
-            return valueForItemPositionWithOverflowAlignment(alignSelf, overflow);
-        }
+            return cssValuePool().createValue(style->alignSelf());
         case CSSPropertyFlex:
             return getCSSPropertyValuesForShorthandProperties(flexShorthand());
         case CSSPropertyFlexBasis:
@@ -2094,8 +2081,13 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->flexWrap());
         case CSSPropertyJustifyContent:
             return cssValuePool().createValue(style->justifyContent());
-        case CSSPropertyJustifySelf:
-            return valueForItemPositionWithOverflowAlignment(style->justifySelf(), style->justifySelfOverflowAlignment());
+        case CSSPropertyWebkitJustifySelf: {
+            RefPtr<CSSValueList> result = CSSValueList::createSpaceSeparated();
+            result->append(CSSPrimitiveValue::create(style->justifySelf()));
+            if (style->justifySelf() >= JustifySelfCenter && style->justifySelfOverflowAlignment() != JustifySelfOverflowAlignmentDefault)
+                result->append(CSSPrimitiveValue::create(style->justifySelfOverflowAlignment()));
+            return result.release();
+        }
         case CSSPropertyOrder:
             return cssValuePool().createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyFloat:
