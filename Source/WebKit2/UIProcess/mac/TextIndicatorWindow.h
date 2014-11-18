@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "WebKitSystemInterface.h"
+#import <functional>
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -48,7 +49,7 @@ public:
     explicit TextIndicatorWindow(WKView *);
     ~TextIndicatorWindow();
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, bool animate);
+    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, bool animate, std::function<void ()> animationCompletionHandler);
 
 private:
     void closeWindow();
@@ -70,6 +71,8 @@ private:
 
     RunLoop::Timer<TextIndicatorWindow> m_startFadeOutTimer;
     RetainPtr<WKTextIndicatorWindowAnimation> m_fadeOutAnimation;
+
+    std::function<void ()> m_bounceAnimationCompletionHandler;
 };
 
 } // namespace WebKit

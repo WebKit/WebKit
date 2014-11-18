@@ -1,5 +1,35 @@
 2014-11-18  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176164. rdar://problem/18953982
+
+    2014-11-16  Tim Horton  <timothy_horton@apple.com>
+
+            Use TextIndicator instead of the built in Lookup highlight
+            https://bugs.webkit.org/show_bug.cgi?id=138775
+            <rdar://problem/18953982>
+
+            Reviewed by Anders Carlsson.
+
+            * WebCore.exp.in:
+            * platform/mac/WebCoreSystemInterface.h:
+            * platform/mac/WebCoreSystemInterface.mm:
+            Remove a WKSI import/export that we don't need anymore.
+            
+            * platform/spi/mac/LookupSPI.h: Added.
+            (WebCore::canDisableLookupIndicator):
+            Add Lookup SPI header.
+            Add a 'canDisableLookupIndicator', which must be called in any translation
+            unit that wants to use either of the soft-linked constants related to
+            that functionality, before calling the get* function.
+
+            * WebCore.xcodeproj/project.pbxproj:
+            * editing/mac/DictionaryLookup.mm:
+            (WebCore::rangeForDictionaryLookupForSelection):
+            (WebCore::rangeForDictionaryLookupAtHitTestResult):
+            Adopt the Lookup SPI header.
+
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
         Merge r176108. rdar://problem/19005904
 
     2014-11-13  Eric Carlson  <eric.carlson@apple.com>
