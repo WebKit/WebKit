@@ -139,7 +139,7 @@ private:
         if (!m_client.actionContextForResultAtPoint)
             return nil;
 
-        WKBundleRangeHandleRef apiRange;
+        WKBundleRangeHandleRef apiRange = nullptr;
         DDActionContext *actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
 
         if (apiRange)

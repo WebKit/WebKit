@@ -1,5 +1,21 @@
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176148. <rdar://problem/18990684>
+
+    2014-11-14  Tim Horton  <timothy_horton@apple.com>
+    
+            Frequent crashes under actionContextForResultAtPoint
+            https://bugs.webkit.org/show_bug.cgi?id=138761
+            <rdar://problem/18990684>
+    
+            Reviewed by Dean Jackson.
+    
+            * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+            (PageOverlayClientImpl::actionContextForResultAtPoint):
+            Initialize apiRange.
+    
+2014-11-17  Dana Burkart  <dburkart@apple.com>
+
         Merge r176131. <rdar://problem/18941927>
 
     2014-11-14  Beth Dakin  <bdakin@apple.com>
