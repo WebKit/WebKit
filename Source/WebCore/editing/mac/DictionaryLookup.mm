@@ -34,7 +34,6 @@
 #import "FrameSelection.h"
 #import "HTMLConverter.h"
 #import "HitTestResult.h"
-#import "LookupSPI.h"
 #import "Page.h"
 #import "Range.h"
 #import "RenderObject.h"
@@ -116,9 +115,8 @@ PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& s
     String fullPlainTextString = plainText(makeRange(paragraphStart, paragraphEnd).get());
 
     // Since we already have the range we want, we just need to grab the returned options.
-    if (Class luLookupDefinitionModule = getLULookupDefinitionModuleClass())
-        [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
-
+    wkExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, options);
+    
     return selectedRange.release();
 }
 
@@ -157,9 +155,7 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
 
     String fullPlainTextString = plainText(fullCharacterRange.get());
 
-    NSRange extractedRange = NSMakeRange(rangeToPass.location, 0);
-    if (Class luLookupDefinitionModule = getLULookupDefinitionModuleClass())
-        extractedRange = [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
+    NSRange extractedRange = wkExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, options);
 
     // This function sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
     if (extractedRange.location == NSNotFound)

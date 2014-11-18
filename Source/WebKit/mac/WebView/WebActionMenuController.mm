@@ -48,7 +48,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/LookupSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSViewSPI.h>
@@ -565,7 +564,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     // Convert to screen coordinates.
     textBaselineOrigin = [_webView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
-    [getLULookupDefinitionModuleClass() showDefinitionForTerm:popupInfo.attributedString.get() atLocation:textBaselineOrigin options:popupInfo.options.get()];
+    WKShowWordDefinitionWindow(popupInfo.attributedString.get(), textBaselineOrigin, popupInfo.options.get());
 }
 
 - (void)_paste:(id)sender
@@ -691,7 +690,6 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     SEL selector = nullptr;
     NSString *title = nil;
     NSImage *image = nil;
-    bool enabled = true;
 
     switch (tag) {
     case WebActionMenuItemTagOpenLinkInDefaultBrowser:
@@ -722,7 +720,6 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         selector = @selector(_lookupText:);
         title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
-        enabled = getLULookupDefinitionModuleClass();
         break;
 
     case WebActionMenuItemTagPaste:
@@ -785,7 +782,6 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     [item setImage:image];
     [item setTarget:self];
     [item setTag:tag];
-    [item setEnabled:enabled];
     return item;
 }
 
