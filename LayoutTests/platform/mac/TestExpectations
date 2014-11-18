@@ -1485,3 +1485,10 @@ webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Fai
 platform/mac/accessibility/select-text.html [ Failure ]
 fast/text/systemFont.html [ Failure ]
 fast/text/vertical-no-sideways.html [ Failure ]
+
+# <rdar://problem/18989363>
+fast/regions/multicol/nested-multicol-into-region-dynamic.html [ Crash ]
+
+# <rdar://problem/19020543>
+platform/mac/fast/text/systemFont.html [ Pass Failure ]
+platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
