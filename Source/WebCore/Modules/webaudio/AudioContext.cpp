@@ -142,12 +142,6 @@ AudioContext::AudioContext(Document& document)
     constructCommon();
 
     m_destinationNode = DefaultAudioDestinationNode::create(this);
-
-    // This sets in motion an asynchronous loading mechanism on another thread.
-    // We can check m_hrtfDatabaseLoader->isLoaded() to find out whether or not it has been fully loaded.
-    // It's not that useful to have a callback function for this since the audio thread automatically starts rendering on the graph
-    // when this has finished (see AudioDestinationNode).
-    m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(sampleRate());
 }
 
 // Constructor for offline (non-realtime) rendering.
@@ -166,9 +160,6 @@ AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t
     , m_restrictions(NoRestrictions)
 {
     constructCommon();
-
-    // FIXME: the passed in sampleRate MUST match the hardware sample-rate since HRTFDatabaseLoader is a singleton.
-    m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(sampleRate);
 
     // Create a new destination for offline rendering.
     m_renderTarget = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
@@ -286,15 +277,6 @@ void AudioContext::uninitialize()
 bool AudioContext::isInitialized() const
 {
     return m_isInitialized;
-}
-
-bool AudioContext::isRunnable() const
-{
-    if (!isInitialized())
-        return false;
-    
-    // Check with the HRTF spatialization system to see if it's finished loading.
-    return m_hrtfDatabaseLoader->isLoaded();
 }
 
 void AudioContext::stopDispatch(void* userData)

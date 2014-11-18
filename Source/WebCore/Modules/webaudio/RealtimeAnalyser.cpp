@@ -30,7 +30,6 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
-#include "FFTFrame.h"
 #include "VectorMath.h"
 #include <algorithm>
 #include <complex>

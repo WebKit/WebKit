@@ -32,6 +32,7 @@
 #include "Cone.h"
 #include "Distance.h"
 #include "FloatPoint3D.h"
+#include "HRTFDatabaseLoader.h"
 #include "Panner.h"
 #include <memory>
 #include <mutex>
@@ -153,6 +154,9 @@ private:
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
     float m_lastGain;
+
+    // HRTF Database loader
+    RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
 
     unsigned m_connectionCount;
 

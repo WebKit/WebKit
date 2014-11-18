@@ -59,7 +59,7 @@ void AudioDestinationNode::render(AudioBus* sourceBus, AudioBus* destinationBus,
     
     context()->setAudioThread(currentThread());
     
-    if (!context()->isRunnable()) {
+    if (!context()->isInitialized()) {
         destinationBus->zero();
         return;
     }
