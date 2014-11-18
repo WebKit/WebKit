@@ -1,3 +1,21 @@
+2014-11-18  Daniel Bates  <dbates@webkit.org>
+
+        [iOS] Make WebCore build and link with public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        * bindings/objc/DOMInternal.mm: Include header NSMapTableSPI.h.
+        * bindings/objc/WebScriptObject.mm: Ditto; Also fix style nit, substitute
+        #import for #include when importing header WTFString.h.
+        * bridge/objc/objc_instance.mm: Include header NSMapTableSPI.h and remove
+        #import NSMapTable.h as the former will import the latter.
+        * platform/ios/PlatformEventFactoryIOS.mm: Include header wtf/CurrentTime.h
+        for the declaration of WTF::currentTime().
+        * platform/ios/wak/WebCoreThread.mm: Remove unnecessary include of header CoreFoundation/CFPriv.h.
+        * platform/spi/ios/AVKitSPI.h: Add more SPI.
+        * platform/spi/ios/MPAVRoutingControllerSPI.h: Ditto.
+
 2014-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Subclass CachedFont for SVG fonts

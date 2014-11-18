@@ -34,6 +34,7 @@
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
 #import <wtf/NeverDestroyed.h>
+#import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 #if PLATFORM(IOS)
 #define NEEDS_WRAPPER_CACHE_LOCK 1

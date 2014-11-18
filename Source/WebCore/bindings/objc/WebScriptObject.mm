@@ -50,7 +50,8 @@
 #import <runtime/Completion.h>
 #import <wtf/TCSpinLock.h>
 #import <wtf/Threading.h>
-#include <wtf/text/WTFString.h>
+#import <wtf/spi/cocoa/NSMapTableSPI.h>
+#import <wtf/text/WTFString.h>
 
 using namespace JSC::Bindings;
 using namespace WebCore;

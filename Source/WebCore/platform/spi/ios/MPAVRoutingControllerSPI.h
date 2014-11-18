@@ -32,6 +32,7 @@
 #else
 
 enum {
+    MPRouteDiscoveryModeDisabled = 0,
     MPRouteDiscoveryModePresence = 1,
     MPRouteDiscoveryModeDetailed = 2,
 };

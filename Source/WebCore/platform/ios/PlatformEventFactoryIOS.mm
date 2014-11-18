@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "WAKAppKitStubs.h"
 #import "WebEvent.h"
+#import <wtf/CurrentTime.h>
 
 namespace WebCore {
 

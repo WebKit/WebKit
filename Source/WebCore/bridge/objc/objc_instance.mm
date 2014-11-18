@@ -37,10 +37,7 @@
 #import <runtime/JSLock.h>
 #import <runtime/ObjectPrototype.h>
 #import <wtf/Assertions.h>
-
-#if PLATFORM(IOS)
-#import <Foundation/NSMapTable.h>
-#endif
+#import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
