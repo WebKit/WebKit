@@ -136,7 +136,7 @@ private:
 
     virtual void makeFirstResponder();
     
-    virtual void didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&);
+    virtual void didPerformDictionaryLookup(const DictionaryPopupInfo&);
     virtual void dismissDictionaryLookupPanel();
     virtual void dismissActionMenuPopovers();
 

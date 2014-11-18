@@ -288,8 +288,6 @@ extern int (*wkRecommendedScrollerStyle)(void);
 
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
-extern NSRange (*wkExtractWordDefinitionTokenRangeFromContextualString)(NSString *contextString, NSRange range, NSDictionary **options);
-
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 
 extern NSCursor *(*wkCursor)(const char*);

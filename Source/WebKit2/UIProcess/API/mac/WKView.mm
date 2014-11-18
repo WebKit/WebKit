@@ -88,6 +88,7 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/LookupSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
@@ -324,6 +325,9 @@ struct WKViewInterpretKeyEventsParameters {
     [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:NSApp];
+
+    if (canDisableLookupIndicator())
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
 
     WebContext::statistics().wkViewCount--;
 
@@ -2553,7 +2557,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
 
-        WKHideWordDefinitionWindow();
+        if (getLULookupDefinitionModuleClass())
+            [getLULookupDefinitionModuleClass() hideDefinition];
         [self _dismissActionMenuPopovers];
     }
 
@@ -2687,6 +2692,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
     _data->_page->process().context().applicationWillTerminate();
+}
+
+- (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
+{
+    [self _setTextIndicator:nil fadeOut:NO animate:NO];
 }
 
 - (void)_accessibilityRegisterUIProcessTokens
@@ -3057,7 +3067,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
-- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
+- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate animationCompletionHandler:(std::function<void ()>)completionHandler
 {
     if (!textIndicator) {
         _data->_textIndicatorWindow = nullptr;
@@ -3067,7 +3077,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (!_data->_textIndicatorWindow)
         _data->_textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
-    _data->_textIndicatorWindow->setTextIndicator(textIndicator, fadeOut, animate);
+    _data->_textIndicatorWindow->setTextIndicator(textIndicator, fadeOut, animate, WTF::move(completionHandler));
+}
+
+- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
+{
+    [self _setTextIndicator:textIndicator fadeOut:fadeOut animate:animate animationCompletionHandler:[] {}];
 }
 
 - (CALayer *)_rootLayer
@@ -3559,6 +3574,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate:) name:NSApplicationWillTerminateNotification object:NSApp];
 
+    if (canDisableLookupIndicator())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
@@ -3801,7 +3819,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 + (void)hideWordDefinitionWindow
 {
-    WKHideWordDefinitionWindow();
+    if (!getLULookupDefinitionModuleClass())
+        return;
+    [getLULookupDefinitionModuleClass() hideDefinition];
 }
 
 - (CGFloat)minimumLayoutWidth

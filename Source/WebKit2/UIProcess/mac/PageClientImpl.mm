@@ -58,6 +58,7 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LookupSPI.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
@@ -529,22 +530,39 @@ void PageClientImpl::setPluginComplexTextInputState(uint64_t pluginComplexTextIn
     [m_wkView _setPluginComplexTextInputState:pluginComplexTextInputState pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
 }
 
-void PageClientImpl::didPerformDictionaryLookup(const AttributedString& text, const DictionaryPopupInfo& dictionaryPopupInfo)
+void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    RetainPtr<NSAttributedString> attributedString = text.string;
+    if (!getLULookupDefinitionModuleClass())
+        return;
+
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
 
     // Convert to screen coordinates.
     textBaselineOrigin = [m_wkView convertPoint:textBaselineOrigin toView:nil];
     textBaselineOrigin = [m_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
-    WKShowWordDefinitionWindow(attributedString.get(), textBaselineOrigin, (NSDictionary *)dictionaryPopupInfo.options.get());
+    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
+
+    if (canDisableLookupIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
+        // Run the animations serially because attaching another subwindow breaks the bounce animation.
+        // We could consider making the bounce NSAnimationNonblockingThreaded instead, which seems
+        // to work, but need to consider all of the implications.
+        [m_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO animate:YES animationCompletionHandler:[dictionaryPopupInfo, textBaselineOrigin, mutableOptions] {
+            [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+            [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+        }];
+    } else
+        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 }
 
 void PageClientImpl::dismissDictionaryLookupPanel()
 {
+    if (!getLULookupDefinitionModuleClass())
+        return;
+
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
-    WKHideWordDefinitionWindow();
+    [getLULookupDefinitionModuleClass() hideDefinition];
+    setTextIndicator(nil, false, true);
 }
 
 void PageClientImpl::dismissActionMenuPopovers()
