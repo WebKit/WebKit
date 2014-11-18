@@ -1,3 +1,66 @@
+2014-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Update the Vector API to deal with unsigned types instead of size_t
+        https://bugs.webkit.org/show_bug.cgi?id=138824
+
+        Reviewed by Andreas Kling.
+
+        Update part of the Vector API to deal with unsigned types instead of
+        size_t. The Vector class is already using unsigned type for its
+        capacity and size data members. However, the Vector API was never
+        updated accordingly.
+
+        The rest of the Vector API will be ported in follow-up patches to
+        make the change smaller and more easily reviewable.
+
+        * wtf/Forward.h:
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::compare):
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::shouldReallocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (WTF::VectorBufferBase::capacity):
+        (WTF::VectorBufferBase::VectorBufferBase):
+        (WTF::VectorBuffer::VectorBuffer):
+        (WTF::VectorBuffer::allocateBuffer):
+        (WTF::VectorBuffer::tryAllocateBuffer):
+        (WTF::VectorBuffer::shouldReallocateBuffer):
+        (WTF::VectorBuffer::reallocateBuffer):
+        (WTF::VectorBuffer::swap):
+        (WTF::VectorBuffer::swapInlineBuffer):
+        (WTF::VectorBuffer::swapInlineBuffers):
+        (WTF::Vector::Vector):
+        (WTF::Vector::at):
+        (WTF::Vector::operator[]):
+        (WTF::OverflowHandler>::find):
+        (WTF::OverflowHandler>::reverseFind):
+        (WTF::OverflowHandler>::fill):
+        (WTF::OverflowHandler>::expandCapacity):
+        (WTF::OverflowHandler>::tryExpandCapacity):
+        (WTF::OverflowHandler>::resize):
+        (WTF::OverflowHandler>::resizeToFit):
+        (WTF::OverflowHandler>::shrink):
+        (WTF::OverflowHandler>::grow):
+        (WTF::OverflowHandler>::reserveCapacity):
+        (WTF::OverflowHandler>::tryReserveCapacity):
+        (WTF::OverflowHandler>::reserveInitialCapacity):
+        (WTF::OverflowHandler>::shrinkCapacity):
+        (WTF::OverflowHandler>::append):
+        (WTF::OverflowHandler>::tryAppend):
+        (WTF::OverflowHandler>::insert):
+        (WTF::OverflowHandler>::insertVector):
+        (WTF::OverflowHandler>::remove):
+        (WTF::OverflowHandler>::reverse):
+        (WTF::OverflowHandler>::checkConsistency):
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::adopt):
+        (WTF::equalIgnoringNullity):
+        * wtf/text/StringView.h:
+        (WTF::append):
+        * wtf/text/WTFString.h:
+
 2014-11-18  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile errors when GStreamer is enabled.

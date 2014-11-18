@@ -1036,7 +1036,7 @@ static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFrag
 }
 
 bool hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList);
-template <size_t inlineCapacity>
+template <unsigned inlineCapacity>
 bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList);
 
 bool hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList)
@@ -1048,7 +1048,7 @@ bool hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList)
     return false;
 }
 
-template <size_t inlineCapacity>
+template <unsigned inlineCapacity>
 bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList)
 {
     if (selectorFragmentList.isEmpty())

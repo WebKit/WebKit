@@ -113,7 +113,7 @@ static bool startsOpeningScriptTagAt(const String& string, size_t start)
 }
 
 // If other files need this, we should move this to HTMLParserIdioms.h
-template<size_t inlineCapacity>
+template<unsigned inlineCapacity>
 bool threadSafeMatch(const Vector<UChar, inlineCapacity>& vector, const QualifiedName& qname)
 {
     return equalIgnoringNullity(vector, qname.localName().impl());

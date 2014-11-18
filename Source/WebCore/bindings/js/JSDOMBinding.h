@@ -426,7 +426,7 @@ template<> struct JSValueTraits<unsigned long> {
     }
 };
 
-template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& vector)
+template<typename T, unsigned inlineCapacity> JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& vector)
 {
     JSC::MarkedArgumentBuffer list;
     for (auto& element : vector)

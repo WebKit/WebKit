@@ -143,9 +143,9 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
     }
 };
 
-template<bool fixedSizeElements, typename T, size_t inlineCapacity> struct VectorArgumentCoder;
+template<bool fixedSizeElements, typename T, unsigned inlineCapacity> struct VectorArgumentCoder;
 
-template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T, inlineCapacity> {
+template<typename T, unsigned inlineCapacity> struct VectorArgumentCoder<false, T, inlineCapacity> {
     static void encode(ArgumentEncoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
@@ -174,7 +174,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T,
     }
 };
 
-template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<true, T, inlineCapacity> {
+template<typename T, unsigned inlineCapacity> struct VectorArgumentCoder<true, T, inlineCapacity> {
     static void encode(ArgumentEncoder& encoder, const Vector<T, inlineCapacity>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
@@ -205,7 +205,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<true, T, 
     }
 };
 
-template<typename T, size_t inlineCapacity> struct ArgumentCoder<Vector<T, inlineCapacity>> : VectorArgumentCoder<std::is_arithmetic<T>::value, T, inlineCapacity> { };
+template<typename T, unsigned inlineCapacity> struct ArgumentCoder<Vector<T, inlineCapacity>> : VectorArgumentCoder<std::is_arithmetic<T>::value, T, inlineCapacity> { };
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;

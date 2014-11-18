@@ -295,7 +295,7 @@ public:
     WTF_EXPORT_STRING_API static PassRef<StringImpl> create(const UChar*, unsigned length);
     WTF_EXPORT_STRING_API static PassRef<StringImpl> create(const LChar*, unsigned length);
     WTF_EXPORT_STRING_API static PassRef<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
-    template<size_t inlineCapacity>
+    template<unsigned inlineCapacity>
     static PassRef<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>& vector)
     {
         return create8BitIfPossible(vector.data(), vector.size());
@@ -394,10 +394,10 @@ public:
     static unsigned flagIsAtomic() { return s_hashFlagIsAtomic; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
-    template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
+    template<typename CharType, unsigned inlineCapacity, typename OverflowHandler>
     static PassRef<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>& vector)
     {
-        if (size_t size = vector.size()) {
+        if (unsigned size = vector.size()) {
             ASSERT(vector.data());
             if (size > std::numeric_limits<unsigned>::max())
                 CRASH();
@@ -1252,7 +1252,7 @@ inline size_t StringImpl::find(UChar character, unsigned start)
     return WTF::find(characters16(), m_length, character, start);
 }
 
-template<size_t inlineCapacity> inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
+template<unsigned inlineCapacity> inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
 {
     return equalIgnoringNullity(a.data(), a.size(), b);
 }

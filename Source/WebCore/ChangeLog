@@ -1,3 +1,25 @@
+2014-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Update the Vector API to deal with unsigned types instead of size_t
+        https://bugs.webkit.org/show_bug.cgi?id=138824
+
+        Reviewed by Andreas Kling.
+
+        Update code base to fix build errors related to the typing changes
+        in the Vector API (size_t -> unsigned).
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsArray):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * cssjit/SelectorCompiler.cpp:
+        * html/HTMLFormElement.cpp:
+        (WebCore::removeFromVector):
+        * html/parser/HTMLParserIdioms.h:
+        * html/parser/XSSAuditor.cpp:
+
 2014-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed iOS build fix

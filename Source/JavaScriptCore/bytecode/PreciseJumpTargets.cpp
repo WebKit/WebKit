@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-template <size_t vectorSize>
+template <unsigned vectorSize>
 static void getJumpTargetsForBytecodeOffset(CodeBlock* codeBlock, Interpreter* interpreter, Instruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, vectorSize>& out)
 {
     OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode);
