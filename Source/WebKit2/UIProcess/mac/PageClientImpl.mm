@@ -80,6 +80,8 @@
 @end
 #endif
 
+SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -543,7 +545,7 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
 
-    if (canDisableLookupIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
+    if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
         // Run the animations serially because attaching another subwindow breaks the bounce animation.
         // We could consider making the bounce NSAnimationNonblockingThreaded instead, which seems
         // to work, but need to consider all of the implications.
