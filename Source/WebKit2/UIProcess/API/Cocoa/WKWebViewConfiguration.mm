@@ -246,6 +246,7 @@ private:
     _groupIdentifier = groupIdentifier;
 }
 
+#if PLATFORM(IOS)
 - (BOOL) _allowsAlternateFullscreen
 {
     return _allowsAlternateFullscreen;
@@ -255,6 +256,7 @@ private:
 {
     _allowsAlternateFullscreen = allowed;
 }
+#endif
 
 @end
 
