@@ -1,5 +1,25 @@
 2014-11-18  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176166. rdar://problem/18953982
+
+    2014-11-16  Tim Horton  <timothy_horton@apple.com>
+
+            Use TextIndicator instead of the built in Lookup highlight
+            https://bugs.webkit.org/show_bug.cgi?id=138775
+            <rdar://problem/18953982>
+
+            Follow-up to r176164.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView dealloc]):
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::didPerformDictionaryLookup):
+            Include the softlinking macros directly in the files they're used
+            in, as they're supposed to be used.
+
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
         Merge r176164. rdar://problem/18953982
 
     2014-11-16  Tim Horton  <timothy_horton@apple.com>

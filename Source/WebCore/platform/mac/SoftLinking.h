@@ -110,7 +110,6 @@
         return softLink##functionName parameterNames; \
     }
 
-#if PLATFORM(IOS)
 #define SOFT_LINK_MAY_FAIL(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     static resultType (*softLink##functionName) parameterDeclarations = 0; \
     \
@@ -132,7 +131,6 @@
         ASSERT(softLink##functionName); \
         return softLink##functionName parameterNames; \
     }
-#endif
 
 /* callingConvention is unused on Mac but is here to keep the macro prototype the same between Mac and Windows. */
 #define SOFT_LINK_OPTIONAL(framework, functionName, resultType, callingConvention, parameterDeclarations) \
@@ -238,7 +236,6 @@
         return constant##name; \
     }
 
-#if PLATFORM(IOS)
 #define SOFT_LINK_CONSTANT_MAY_FAIL(framework, name, type) \
     static bool init##name(); \
     static type (*get##name)() = 0; \
@@ -265,4 +262,3 @@
         get##name = name##Function; \
         return true; \
     }
-#endif

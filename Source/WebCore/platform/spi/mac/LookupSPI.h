@@ -31,16 +31,6 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Lookup)
 SOFT_LINK_CLASS_OPTIONAL(Lookup, LULookupDefinitionModule)
 
-SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
-
-namespace WebCore {
-inline bool canDisableLookupIndicator()
-{
-    return canLoadLUTermOptionDisableSearchTermIndicator() && canLoadLUNotificationPopoverWillClose();
-}
-};
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <Lookup/Lookup.h>
