@@ -120,7 +120,7 @@ TextIndicatorWindow::~TextIndicatorWindow()
     closeWindow();
 }
 
-void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut, bool animate, std::function<void ()> animationCompletionHandler)
+void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut, bool animate)
 {
     if (m_textIndicator == textIndicator)
         return;
@@ -154,7 +154,6 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     [m_textIndicatorWindow setReleasedWhenClosed:NO];
 
     if (animate) {
-        m_bounceAnimationCompletionHandler = WTF::move(animationCompletionHandler);
         // Start the bounce animation.
         m_bounceAnimationContext = WKWindowBounceAnimationContextCreate(m_textIndicatorWindow.get());
         m_bounceAnimation = adoptNS([[WKTextIndicatorWindowAnimation alloc] _initWithTextIndicatorWindow:this animationDuration:bounceAnimationDuration
@@ -231,7 +230,6 @@ void TextIndicatorWindow::bounceAnimationDidEnd()
 
     WKWindowBounceAnimationContextDestroy(m_bounceAnimationContext);
     m_bounceAnimationContext = 0;
-    m_bounceAnimationCompletionHandler();
 }
 
 } // namespace WebKit

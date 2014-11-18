@@ -26,17 +26,15 @@
 #ifndef DictionaryPopupInfo_h
 #define DictionaryPopupInfo_h
 
-#include "TextIndicator.h"
 #include <WebCore/FloatPoint.h>
 
 #if PLATFORM(COCOA)
-#include "AttributedString.h"
 #include <wtf/RetainPtr.h>
 #endif
 
 namespace IPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
+    class ArgumentDecoder;
+    class ArgumentEncoder;
 }
 
 namespace WebKit {
@@ -46,10 +44,8 @@ struct DictionaryPopupInfo {
     static bool decode(IPC::ArgumentDecoder&, DictionaryPopupInfo&);
 
     WebCore::FloatPoint origin;
-    TextIndicator::Data textIndicator;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> options;
-    AttributedString attributedString;
 #endif
 };
 

@@ -81,7 +81,6 @@ struct WebPageConfiguration;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 - (void)_setTextIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
-- (void)_setTextIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate animationCompletionHandler:(std::function<void ()>)completionHandler;
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 - (CALayer *)_acceleratedCompositingModeRootLayer;

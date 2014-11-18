@@ -543,14 +543,10 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDict
         [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 
-    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range);
-    if (!textIndicator)
-        return;
+    AttributedString attributedString;
+    attributedString.string = scaledNSAttributedString;
 
-    dictionaryPopupInfo.textIndicator = textIndicator->data();
-    dictionaryPopupInfo.attributedString.string = scaledNSAttributedString;
-
-    send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(attributedString, dictionaryPopupInfo));
 }
 
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
