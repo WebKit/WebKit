@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     // overwrite this priority string if it's already set by the user.
     // Keep this in sync with NetworkProcessMain.cpp.
     // https://bugzilla.gnome.org/show_bug.cgi?id=738633
-    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0", 0);
+    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:%LATEST_RECORD_VERSION:!VERS-SSL3.0", 0);
 
     return WebProcessMainUnix(argc, argv);
 }
