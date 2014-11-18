@@ -26,7 +26,7 @@
 
 static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
 {
-    g_assert(webkit_web_view_get_context(test->m_webView) == webkit_web_context_get_default());
+    g_assert(webkit_web_view_get_context(test->m_webView) == test->m_webContext.get());
 
     // Check that a web view created with g_object_new has the default context.
     GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, NULL));
