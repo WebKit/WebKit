@@ -1,3 +1,17 @@
+2014-11-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        fast/multicol/newmulticol tests use a non-existent resource
+        https://bugs.webkit.org/show_bug.cgi?id=138800
+
+        Reviewed by Andrei Bucur.
+
+        Fix path in tests.
+
+        * fast/multicol/newmulticol/compare-with-old-impl/shrink-to-column-height-for-pagination-expected.html:
+        * fast/multicol/newmulticol/compare-with-old-impl/shrink-to-column-height-for-pagination.html:
+        * fast/multicol/newmulticol/float-multicol-expected.html:
+        * fast/multicol/newmulticol/float-multicol.html:
+
 2014-11-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Crash getting the orientation of a MenuListOption after the MenuList was removed from the document
