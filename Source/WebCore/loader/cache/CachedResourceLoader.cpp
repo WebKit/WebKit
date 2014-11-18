@@ -33,6 +33,7 @@
 #include "CachedImage.h"
 #include "CachedRawResource.h"
 #include "CachedResourceRequest.h"
+#include "CachedSVGFont.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
 #include "Chrome.h"
@@ -84,6 +85,10 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
         return new CachedScript(request, charset, sessionID);
     case CachedResource::SVGDocumentResource:
         return new CachedSVGDocument(request, sessionID);
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+        return new CachedSVGFont(request, sessionID);
+#endif
     case CachedResource::FontResource:
         return new CachedFont(request, sessionID);
     case CachedResource::RawResource:
@@ -175,8 +180,10 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
     return downcast<CachedImage>(requestResource(CachedResource::ImageResource, request).get());
 }
 
-CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request)
+CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request, bool isSVG)
 {
+    if (isSVG)
+        return downcast<CachedSVGFont>(requestResource(CachedResource::SVGFontResource, request).get());
     return downcast<CachedFont>(requestResource(CachedResource::FontResource, request).get());
 }
 
@@ -274,6 +281,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #endif
     case CachedResource::RawResource:
     case CachedResource::ImageResource:
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+#endif
     case CachedResource::FontResource: {
         // These resources can corrupt only the frame's pixels.
         if (Frame* f = frame()) {
@@ -314,6 +324,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     case CachedResource::ImageResource:
     case CachedResource::CSSStyleSheet:
     case CachedResource::Script:
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+#endif
     case CachedResource::FontResource:
     case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
@@ -361,6 +374,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowImageFromSource(url))
             return false;
         break;
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+#endif
     case CachedResource::FontResource: {
         if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowFontFromSource(url))
             return false;

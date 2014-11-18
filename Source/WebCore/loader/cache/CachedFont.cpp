@@ -31,6 +31,7 @@
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
 #include "FontCustomPlatformData.h"
+#include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
 #include "SharedBuffer.h"
@@ -38,6 +39,10 @@
 #include "TypedElementDescendantIterator.h"
 #include "WOFFFileFormat.h"
 #include <wtf/Vector.h>
+
+#if ENABLE(SVG_OTF_CONVERTER)
+#include "SVGToOTFFontConversion.h"
+#endif
 
 #if ENABLE(SVG_FONTS)
 #include "NodeList.h"
@@ -50,8 +55,8 @@
 
 namespace WebCore {
 
-CachedFont::CachedFont(const ResourceRequest& resourceRequest, SessionID sessionID)
-    : CachedResource(resourceRequest, FontResource, sessionID)
+CachedFont::CachedFont(const ResourceRequest& resourceRequest, SessionID sessionID, Type type)
+    : CachedResource(resourceRequest, type, sessionID)
     , m_loadInitiated(false)
     , m_hasCreatedFontDataWrappingResource(false)
 {
@@ -91,7 +96,7 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
     }
 }
 
-bool CachedFont::ensureCustomFontData()
+bool CachedFont::ensureCustomFontData(bool)
 {
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
         RefPtr<SharedBuffer> buffer = m_data;
@@ -118,45 +123,17 @@ bool CachedFont::ensureCustomFontData()
     return m_fontData.get();
 }
 
+PassRefPtr<SimpleFontData> CachedFont::getFontData(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, bool)
+{
+    return SimpleFontData::create(platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic,
+        fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
+}
+
 FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode renderingMode)
 {
-#if ENABLE(SVG_FONTS)
-    if (m_externalSVGDocument)
-        return FontPlatformData(size, bold, italic);
-#endif
     ASSERT(m_fontData);
     return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, widthVariant, renderingMode);
 }
-
-#if ENABLE(SVG_FONTS)
-
-bool CachedFont::ensureSVGFontData()
-{
-    if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
-        m_externalSVGDocument = SVGDocument::create(nullptr, URL());
-        RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
-        m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
-        if (decoder->sawError())
-            m_externalSVGDocument = nullptr;
-    }
-    return m_externalSVGDocument;
-}
-
-SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
-{
-    auto elements = descendantsOfType<SVGFontElement>(*m_externalSVGDocument);
-
-    if (fontName.isEmpty())
-        return elements.first();
-
-    for (auto& element : elements) {
-        if (element.getIdAttribute() == fontName)
-            return &element;
-    }
-    return nullptr;
-}
-
-#endif
 
 void CachedFont::allClientsRemoved()
 {

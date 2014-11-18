@@ -1,3 +1,82 @@
+2014-11-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Subclass CachedFont for SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=138686
+
+        Reviewed by Simon Fraser.
+
+        Re-landing due to flakey bots.
+
+        CachedFont had many #if ENABLE(SVG_FONTS) scattered throughout it.
+        Splitting out this SVG-specific code into a subclass of CachedFont
+        cleans up the design.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): There are two sections
+        in this function; one for SVG fonts and one for regular fonts.
+        I've moved these two sections into CachedFont and SVGCachedFont,
+        thereby simplifying this function.
+        (WebCore::CSSFontFaceSource::ensureFontData): Ditto.
+        (WebCore::CSSFontFaceSource::svgFontFaceElement): Moved to header.
+        (WebCore::CSSFontFaceSource::setSVGFontFaceElement): Ditto.
+        (WebCore::CSSFontFaceSource::isSVGFontFaceSource): Ditto.
+        * css/CSSFontFaceSource.h: Put functions that are simple enough to
+        be inlined here.
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSVGFontTarget): Convenience
+        function.
+        (WebCore::CSSFontFaceSrcValue::cachedFont): Pass through a boolean
+        from CSSFontSelector to CachedResourceHandle regarding if we should
+        be using SVGCachedFont instead of CachedFont.
+        * css/CSSFontFaceSrcValue.h: New convenience function.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Pass through a boolean
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceType): Update for new
+        CachedResource type
+        (WebCore::cachedResourcesForFrame): Ditto.
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData): Taken from
+        CSSFontFaceSource::getFontData()
+        (WebCore::CachedFont::getFontData): Ditto.
+        (WebCore::CachedFont::platformDataFromCustomData): Ditto.
+        (WebCore::CachedFont::ensureSVGFontData): Moved to SVGCachedFont.
+        (WebCore::CachedFont::getSVGFontById): Ditto.
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType): Update for new enum
+        type.
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource): Takes new boolean.
+        (WebCore::CachedResourceLoader::requestFont): Ditto.
+        (WebCore::CachedResourceLoader::checkInsecureContent): Update for
+        new enum type
+        (WebCore::CachedResourceLoader::canRequest): Ditto.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGFont.cpp: Added.
+        (WebCore::CachedSVGFont::CachedSVGFont): Moved from
+        CSSFontFaceSource::getFontData() and CachedFont
+        (WebCore::CachedSVGFont::getFontData): Ditto.
+        (WebCore::CachedSVGFont::platformDataFromCustomData): Ditto.
+        (WebCore::CachedSVGFont::ensureCustomFontData): Ditto.
+        (WebCore::CachedSVGFont::getSVGFontById): Ditto.
+        (WebCore::CachedSVGFont::firstFontFace): Ditto.
+        * loader/cache/CachedSVGFont.h: Subclass CachedFont.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::getStatistics): Update for new enum.
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::isSVGFontTarget): Convenience function.
+        (WebCore::SVGFontFaceUriElement::loadFont): Update for new
+        boolean.
+
 2014-11-18  Chris Dumez  <cdumez@apple.com>
 
         Update the Vector API to deal with unsigned types instead of size_t
