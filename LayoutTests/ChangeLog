@@ -1,3 +1,11 @@
+2014-11-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge missing layout tests which were added to trunk in r175197.
+        rdar://problem/18976843
+
+        * css3/infinite-word-spacing-expected.txt: Added.
+        * css3/infinite-word-spacing.html: Added.
+
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
         Merge r173293. <rdar://problem/18978414>
