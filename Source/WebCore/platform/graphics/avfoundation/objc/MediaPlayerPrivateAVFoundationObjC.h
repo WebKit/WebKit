@@ -270,6 +270,8 @@ private:
     virtual double maxFastForwardRate() const override { return m_cachedCanPlayFastForward ? std::numeric_limits<double>::infinity() : 2.0; }
     virtual double minFastReverseRate() const override { return m_cachedCanPlayFastReverse ? -std::numeric_limits<double>::infinity() : 0.0; }
 
+    virtual URL resolvedURL() const override;
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;

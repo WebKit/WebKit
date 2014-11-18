@@ -103,6 +103,11 @@ bool InjectedBundleHitTestResult::mediaHasAudio() const
     return m_hitTestResult.mediaHasAudio();
 }
 
+bool InjectedBundleHitTestResult::isDownloadableMedia() const
+{
+    return m_hitTestResult.isDownloadableMedia();
+}
+
 BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
 {
 #if !ENABLE(VIDEO)

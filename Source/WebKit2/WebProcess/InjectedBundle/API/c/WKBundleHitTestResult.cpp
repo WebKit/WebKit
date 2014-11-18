@@ -84,6 +84,11 @@ bool WKBundleHitTestResultMediaHasAudio(WKBundleHitTestResultRef hitTestResultRe
     return toImpl(hitTestResultRef)->mediaHasAudio();
 }
 
+bool WKBundleHitTestResultIsDownloadableMedia(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toImpl(hitTestResultRef)->isDownloadableMedia();
+}
+
 WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toAPI(toImpl(hitTestResultRef)->mediaType());

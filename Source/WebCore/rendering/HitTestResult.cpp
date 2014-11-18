@@ -507,9 +507,12 @@ void HitTestResult::toggleMediaMuteState() const
 
 bool HitTestResult::isDownloadableMedia() const
 {
-    // FIXME: We should actually answer instead of always returning true for media elements.
-    // https://bugs.webkit.org/show_bug.cgi?id=138530
-    return mediaElement() ? true : false;
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElt = mediaElement())
+        return mediaElt->canSaveMediaData();
+#endif
+
+    return false;
 }
 
 URL HitTestResult::absoluteLinkURL() const

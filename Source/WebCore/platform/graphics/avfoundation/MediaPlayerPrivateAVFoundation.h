@@ -196,6 +196,7 @@ protected:
     virtual void acceleratedRenderingStateChanged() override;
     virtual bool shouldMaintainAspectRatio() const override { return m_shouldMaintainAspectRatio; }
     virtual void setShouldMaintainAspectRatio(bool) override;
+    virtual bool canSaveMediaData() const override;
 
     virtual MediaPlayer::MovieLoadType movieLoadType() const;
     virtual void prepareForRendering();
@@ -308,6 +309,8 @@ protected:
     void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>&);
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;
+
+virtual URL resolvedURL() const;
 
 private:
     MediaPlayer* m_player;

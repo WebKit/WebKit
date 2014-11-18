@@ -892,7 +892,7 @@ void ContextMenuController::populate()
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(CopyMediaLinkItem, m_contextMenu.get());
             appendItem(OpenMediaInNewWindowItem, m_contextMenu.get());
-            if (loader.client().canHandleRequest(ResourceRequest(mediaURL)))
+            if (m_context.hitTestResult().isDownloadableMedia() && loader.client().canHandleRequest(ResourceRequest(mediaURL)))
                 appendItem(DownloadMediaItem, m_contextMenu.get());
         }
 

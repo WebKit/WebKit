@@ -1,3 +1,25 @@
+2014-11-18  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176108. rdar://problem/19005904
+
+    2014-11-13  Eric Carlson  <eric.carlson@apple.com>
+
+            Context menus should not offer the "Download video" option for videos that cannot 
+            be downloaded
+            https://bugs.webkit.org/show_bug.cgi?id=138530
+            -and corresponding-
+            rdar://problem/18919130
+
+            Reviewed by Tim Horton.
+
+            Expose isDownloadableMedia() to the InjectedBundleHitTestResult.
+            * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+            (WKBundleHitTestResultIsDownloadableMedia):
+            * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+            * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+            (WebKit::InjectedBundleHitTestResult::isDownloadableMedia):
+            * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+            
 2014-11-17  Dana Burkart  <dburkart@apple.com>
 
         Merge r176150. <rdar://problem/18982046>
