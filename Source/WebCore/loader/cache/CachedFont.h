@@ -31,30 +31,31 @@
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
+#include "SimpleFontData.h"
 
 namespace WebCore {
 
 class CachedResourceLoader;
+class FontDescription;
 class FontPlatformData;
 class SVGDocument;
 class SVGFontElement;
 struct FontCustomPlatformData;
 
-class CachedFont final : public CachedResource {
+class CachedFont : public CachedResource {
 public:
-    CachedFont(const ResourceRequest&, SessionID);
+    CachedFont(const ResourceRequest&, SessionID, Type = FontResource);
     virtual ~CachedFont();
 
     void beginLoadIfNeeded(CachedResourceLoader* dl);
     virtual bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
-    bool ensureCustomFontData();
-    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
+    virtual bool ensureCustomFontData(bool externalSVG);
 
-#if ENABLE(SVG_FONTS)
-    bool ensureSVGFontData();
-    SVGFontElement* getSVGFontById(const String&) const;
-#endif
+    virtual PassRefPtr<SimpleFontData> getFontData(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG);
+
+protected:
+    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
 
 private:
     virtual void checkNotify() override;
@@ -70,10 +71,6 @@ private:
     std::unique_ptr<FontCustomPlatformData> m_fontData;
     bool m_loadInitiated;
     bool m_hasCreatedFontDataWrappingResource;
-
-#if ENABLE(SVG_FONTS)
-    RefPtr<SVGDocument> m_externalSVGDocument;
-#endif
 
     friend class MemoryCache;
 };

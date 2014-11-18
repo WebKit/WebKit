@@ -28,6 +28,11 @@
 
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
+#include "SharedBuffer.h"
+#if ENABLE(SVG_FONTS)
+#include "SVGFontElement.h"
+#include "SVGFontFaceElement.h"
+#endif
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
@@ -39,10 +44,6 @@ class CSSFontFace;
 class CSSFontSelector;
 class FontDescription;
 class SimpleFontData;
-#if ENABLE(SVG_FONTS)
-class SVGFontElement;
-class SVGFontFaceElement;
-#endif
 
 class CSSFontFaceSource final : public CachedFontClient {
 public:
@@ -63,10 +64,10 @@ public:
     void pruneTable();
 
 #if ENABLE(SVG_FONTS)
-    SVGFontFaceElement* svgFontFaceElement() const;
-    void setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement>);
-    bool isSVGFontFaceSource() const;
-    void setHasExternalSVGFont(bool value) { m_hasExternalSVGFont = value; }
+    SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement.get(); }
+    void setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> element) { m_svgFontFaceElement = element; }
+    bool isSVGFontFaceSource() const { return m_svgFontFaceElement || m_hasExternalSVGFont; }
+    void setHasExternalSVGFont() { m_hasExternalSVGFont = true; }
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
@@ -84,7 +85,6 @@ private:
 
 #if ENABLE(SVG_FONTS)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
-    RefPtr<SVGFontElement> m_externalSVGFontElement;
     bool m_hasExternalSVGFont;
 #endif
 };

@@ -7328,6 +7328,7 @@
     <ClCompile Include="..\loader\archive\mhtml\MHTMLParser.cpp" />
     <ClCompile Include="..\loader\cache\CachedCSSStyleSheet.cpp" />
     <ClCompile Include="..\loader\cache\CachedFont.cpp" />
+    <ClCompile Include="..\loader\cache\CachedSVGFont.cpp" />
     <ClCompile Include="..\loader\cache\CachedImage.cpp" />
     <ClCompile Include="..\loader\cache\CachedRawResource.cpp" />
     <ClCompile Include="..\loader\cache\CachedResource.cpp" />
@@ -19279,6 +19280,7 @@
     <ClInclude Include="..\loader\archive\mhtml\MHTMLParser.h" />
     <ClInclude Include="..\loader\cache\CachedCSSStyleSheet.h" />
     <ClInclude Include="..\loader\cache\CachedFont.h" />
+    <ClInclude Include="..\loader\cache\CachedSVGFont.h" />
     <ClInclude Include="..\loader\cache\CachedImage.h" />
     <ClInclude Include="..\loader\cache\CachedRawResource.h" />
     <ClInclude Include="..\loader\cache\CachedRawResourceClient.h" />
