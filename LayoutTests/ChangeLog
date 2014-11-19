@@ -1,3 +1,9 @@
+2014-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Aad failing test expectations to some tests imported in r176144.
+
+        * platform/win/TestExpectations:
+
 2014-11-18  Alexey Proskuryakov  <ap@apple.com>
 
         Use of uninitialized value in string eq in many http tests
