@@ -1,5 +1,25 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176238. rdar://problem/18990674
+
+    2014-11-17  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Page previews should be loaded sooner
+            https://bugs.webkit.org/show_bug.cgi?id=138814
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            Send -_createPreviewPopover..
+            (-[WKActionMenuController _previewURLFromActionMenu:]):
+            Relocate some logic to the new -_createPreviewPopover; gate early return on popover visibility.
+            (-[WKActionMenuController _createPreviewPopover]):
+            Renamed from -_createPreviewPopoverForURL:originRect:; explicitly send -loadView to warm up the preview view.
+            (-[WKActionMenuController _createPreviewPopoverForURL:originRect:]): Deleted.
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176237. rdar://problem/18900839
 
     2014-11-17  Beth Dakin  <bdakin@apple.com>

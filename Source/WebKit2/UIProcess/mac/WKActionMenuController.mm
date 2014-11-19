@@ -210,6 +210,9 @@ using namespace WebKit;
     }
 
     if (![self isMenuForTextContent]) {
+#if WK_API_ENABLED
+        [self _createPreviewPopover];
+#endif
         _page->clearSelection();
         return;
     }
@@ -320,23 +323,28 @@ using namespace WebKit;
 
 - (void)_previewURLFromActionMenu:(id)sender
 {
+    ASSERT(_previewPopover);
+
     // We might already have a preview showing if the menu item was highlighted earlier.
-    if (_previewPopover)
+    if ([_previewPopover isShown])
         return;
 
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
     NSRect originRect = hitTestResult->elementBoundingBox();
-    [self _createPreviewPopoverForURL:url originRect:originRect];
     [_previewPopover showRelativeToRect:originRect ofView:_wkView preferredEdge:NSMaxYEdge];
 }
 
-- (void)_createPreviewPopoverForURL:(NSURL *)url originRect:(NSRect)originRect
+- (void)_createPreviewPopover
 {
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
+    NSRect originRect = hitTestResult->elementBoundingBox();
+
     NSSize popoverSize = [self _preferredSizeForPopoverPresentedFromOriginRect:originRect];
     CGFloat actualPopoverToViewScale = popoverSize.width / NSWidth(_wkView.bounds);
     _previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
     _previewViewController->_delegate = self;
+    [_previewViewController loadView];
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
     [_previewPopover setBehavior:NSPopoverBehaviorApplicationDefined];
