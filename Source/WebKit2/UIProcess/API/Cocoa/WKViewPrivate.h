@@ -126,6 +126,8 @@
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
 #endif
 
+#if PLATFORM(MAC)
 - (void)_dismissActionMenuPopovers;
+#endif
 
 @end

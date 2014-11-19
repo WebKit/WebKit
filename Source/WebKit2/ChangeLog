@@ -1,3 +1,9 @@
+2014-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS build fix after r176299. This method is not defined in WKViewIOS.mm.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+
 2014-11-18  David Kilzer  <ddkilzer@apple.com>
 
         FeatureDefines.xcconfig: Switch from using PLATFORM_NAME to SDK selectors
