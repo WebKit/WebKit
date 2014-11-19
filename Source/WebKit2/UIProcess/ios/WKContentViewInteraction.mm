@@ -1637,6 +1637,40 @@ static inline SelectionHandlePosition toSelectionHandlePosition(UIWKHandlePositi
     }
 }
 
+static inline WebCore::TextGranularity toWKTextGranularity(UITextGranularity granularity)
+{
+    switch (granularity) {
+    case UITextGranularityCharacter:
+        return CharacterGranularity;
+    case UITextGranularityWord:
+        return WordGranularity;
+    case UITextGranularitySentence:
+        return SentenceGranularity;
+    case UITextGranularityParagraph:
+        return ParagraphGranularity;
+    case UITextGranularityLine:
+        return LineGranularity;
+    case UITextGranularityDocument:
+        return DocumentGranularity;
+    }
+}
+
+static inline WebCore::SelectionDirection toWKSelectionDirection(UITextDirection direction)
+{
+    switch (direction) {
+    case UITextLayoutDirectionDown:
+    case UITextLayoutDirectionRight:
+        return DirectionRight;
+    case UITextLayoutDirectionUp:
+    case UITextLayoutDirectionLeft:
+        return DirectionLeft;
+    default:
+        // UITextDirection is not an enum, but we only want to accept values from UITextLayoutDirection.
+        ASSERT_NOT_REACHED();
+        return DirectionRight;
+    }
+}
+
 static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackBase::Error error)
 {
     if (error != CallbackBase::Error::None) {
@@ -1746,6 +1780,56 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         _autocorrectionData.autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
         [_autocorrectionData.autocorrectionHandler release];
         _autocorrectionData.autocorrectionHandler = nil;
+    });
+}
+
+- (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
+{
+    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+    
+    _page->selectPositionAtPoint(WebCore::IntPoint(point), [selectionHandler](CallbackBase::Error error) {
+        selectionHandler();
+        [selectionHandler release];
+    });
+}
+
+- (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
+{
+    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+    
+    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), [selectionHandler](CallbackBase::Error error) {
+        selectionHandler();
+        [selectionHandler release];
+    });
+}
+
+- (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
+{
+    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+
+    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [selectionHandler](CallbackBase::Error error) {
+        selectionHandler();
+        [selectionHandler release];
+    });
+}
+
+- (void)beginSelectionInDirection:(UITextDirection)direction completionHandler:(void (^)(BOOL endIsMoving))completionHandler
+{
+    UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
+
+    _page->beginSelectionInDirection(toWKSelectionDirection(direction), [selectionHandler](bool endIsMoving, CallbackBase::Error error) {
+        selectionHandler(endIsMoving);
+        [selectionHandler release];
+    });
+}
+
+- (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
+{
+    UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
+    
+    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), [selectionHandler](bool endIsMoving, CallbackBase::Error error) {
+        selectionHandler(endIsMoving);
+        [selectionHandler release];
     });
 }
 
@@ -2575,6 +2659,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
+    [self reloadInputViews];
+    
     switch (information.elementType) {
     case InputType::Select:
     case InputType::DateTimeLocal:
@@ -2589,8 +2675,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     
     if (information.insideFixedPosition)
         [_webView _updateVisibleContentRects];
-
-    [self reloadInputViews];
+    
     [self _displayFormNodeInputView];
 
     // _inputPeripheral has been initialized in inputView called by reloadInputViews.

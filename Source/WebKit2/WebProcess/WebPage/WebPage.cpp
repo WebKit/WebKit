@@ -300,6 +300,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isShowingContextMenu(false)
 #endif
 #if PLATFORM(IOS)
+    , m_selectionAnchor(Start)
     , m_firstLayerTreeTransactionIDAfterDidCommitLoad(0)
     , m_hasReceivedVisibleContentRectsAfterDidCommitLoad(false)
     , m_scaleWasSetByUIProcess(false)

@@ -430,6 +430,62 @@ bool WebPageProxy::applyAutocorrection(const String& correction, const String& o
     return autocorrectionApplied;
 }
 
+void WebPageProxy::selectTextWithGranularityAtPoint(const WebCore::IntPoint point, WebCore::TextGranularity granularity, std::function<void (CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    m_process->send(Messages::WebPage::SelectTextWithGranularityAtPoint(point, static_cast<uint32_t>(granularity), callbackID), m_pageID);
+}
+
+void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, std::function<void (CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    m_process->send(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), callbackID), m_pageID);
+}
+
+void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, std::function<void (CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    m_process->send(Messages::WebPage::SelectPositionAtPoint(point, callbackID), m_pageID);
+}
+
+void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection direction, std::function<void (uint64_t, CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(0, CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    m_process->send(Messages::WebPage::BeginSelectionInDirection(direction, callbackID), m_pageID);
+}
+
+void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point, std::function<void (uint64_t, CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(0, CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    m_process->send(Messages::WebPage::UpdateSelectionWithExtentPoint(point, callbackID), m_pageID);
+    
+}
+
 void WebPageProxy::requestDictationContext(std::function<void (const String&, const String&, const String&, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {

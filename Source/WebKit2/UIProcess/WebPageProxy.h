@@ -69,6 +69,7 @@
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/ViewState.h>
+#include <WebCore/VisibleSelection.h>
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -423,6 +424,11 @@ public:
     void extendSelection(WebCore::TextGranularity);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, std::function<void (CallbackBase::Error)>);
+    void selectTextWithGranularityAtPoint(const WebCore::IntPoint, WebCore::TextGranularity, std::function<void (CallbackBase::Error)>);
+    void selectPositionAtPoint(const WebCore::IntPoint, std::function<void (CallbackBase::Error)>);
+    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint, WebCore::TextGranularity, WebCore::SelectionDirection, std::function<void (CallbackBase::Error)>);
+    void beginSelectionInDirection(WebCore::SelectionDirection, std::function<void (uint64_t, CallbackBase::Error)>);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint, std::function<void (uint64_t, CallbackBase::Error)>);
     void requestAutocorrectionData(const String& textForAutocorrection, std::function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>);
     void applyAutocorrection(const String& correction, const String& originalText, std::function<void (const String&, CallbackBase::Error)>);
     bool applyAutocorrection(const String& correction, const String& originalText);

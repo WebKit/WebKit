@@ -490,6 +490,12 @@ public:
     void extendSelection(uint32_t granularity);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, uint64_t callbackID);
+    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, uint64_t callbackID);
+    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, uint64_t callbackID);
+    void selectPositionAtPoint(const WebCore::IntPoint&, uint64_t callbackID);
+    void beginSelectionInDirection(uint32_t direction, uint64_t callbackID);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, uint64_t callbackID);
+
     void elementDidFocus(WebCore::Node*);
     void elementDidBlur(WebCore::Node*);
     void requestDictationContext(uint64_t callbackID);
@@ -876,6 +882,7 @@ private:
     void completeSyntheticClick(WebCore::Node* nodeRespondingToClick, const WebCore::FloatPoint& location);
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
     void resetTextAutosizingBeforeLayoutIfNeeded(const WebCore::FloatSize& oldSize, const WebCore::FloatSize& newSize);
+    WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(WebCore::Frame&, const WebCore::IntPoint&);
 #endif
 #if !PLATFORM(COCOA)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
@@ -1242,6 +1249,12 @@ private:
     RefPtr<WebCore::Range> m_currentWordRange;
     RefPtr<WebCore::Node> m_interactionNode;
     WebCore::IntPoint m_lastInteractionLocation;
+    
+    enum SelectionAnchor {
+        Start,
+        End
+    };
+    SelectionAnchor m_selectionAnchor;
 
     RefPtr<WebCore::Node> m_potentialTapNode;
     WebCore::FloatPoint m_potentialTapLocation;

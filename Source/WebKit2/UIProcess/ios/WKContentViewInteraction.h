@@ -71,6 +71,8 @@ class WebPageProxy;
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
+typedef void (^UIWKSelectionCompletionHandler)(void);
+typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsMoving);
 
 namespace WebKit {
 struct WKAutoCorrectionData {

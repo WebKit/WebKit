@@ -1,3 +1,45 @@
+2014-11-19  Enrica Casucci  <enrica@apple.com>
+
+        Refactor iOS selection gestures.
+        https://bugs.webkit.org/show_bug.cgi?id=138720
+        rdar://problem/18964359
+
+        Reviewed by Benjamin Poulain.
+
+        This is a first step towards refactoring the selection gestures code.
+        It introduces more general selection movement functions that can be used to build
+        the gestures.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toWKTextGranularity):
+        (toWKSelectionDirection):
+        (-[WKContentView selectPositionAtPoint:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView beginSelectionInDirection:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::beginSelectionInDirection):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::visiblePositionInFocusedNodeForPoint):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::beginSelectionInDirection):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+
 2014-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2 UI-side Compositing] Fix the position and scroll indicator of the UI-side tiled scrolling indicator
