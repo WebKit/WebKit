@@ -26,7 +26,9 @@
 #ifndef ActionMenuHitTestResult_h
 #define ActionMenuHitTestResult_h
 
+#include "DataReference.h"
 #include "ShareableBitmap.h"
+#include "SharedMemory.h"
 #include "TextIndicator.h"
 #include "WebHitTestResult.h"
 #include <WebCore/FloatRect.h>
@@ -50,7 +52,8 @@ struct ActionMenuHitTestResult {
     WebHitTestResult::Data hitTestResult;
 
     String lookupText;
-    RefPtr<ShareableBitmap> image;
+    RefPtr<SharedMemory> imageSharedMemory;
+    String imageExtension;
 
     RetainPtr<DDActionContext> actionContext;
     WebCore::FloatRect detectedDataBoundingBox;

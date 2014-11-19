@@ -458,6 +458,16 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 #pragma mark Image actions
 
+- (NSImage *)_hitTestResultImage
+{
+    RefPtr<SharedMemory> imageSharedMemory = _hitTestResult.imageSharedMemory;
+    if (!imageSharedMemory)
+        return nil;
+
+    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:imageSharedMemory->data() length:imageSharedMemory->size()]]);
+    return nsImage.autorelease();
+}
+
 - (NSArray *)_defaultMenuItemsForImage
 {
     RetainPtr<NSMenuItem> copyImageItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyImage];
@@ -469,10 +479,8 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     RetainPtr<NSMenuItem> saveToDownloadsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagSaveImageToDownloads];
     RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:kWKContextActionItemTagShareImage];
 
-    if (RefPtr<ShareableBitmap> bitmap = _hitTestResult.image) {
-        RetainPtr<CGImageRef> image = bitmap->makeCGImage();
-        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:image.get() size:NSZeroSize]);
-        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
+    if (RetainPtr<NSImage> image = [self _hitTestResultImage]) {
+        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ image.get() ]]);
         [_sharingServicePicker setDelegate:self];
         [shareItem setSubmenu:[_sharingServicePicker menu]];
     }
@@ -482,14 +490,12 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 - (void)_copyImage:(id)sender
 {
-    RefPtr<ShareableBitmap> bitmap = _hitTestResult.image;
-    if (!bitmap)
+    RetainPtr<NSImage> image = [self _hitTestResultImage];
+    if (!image)
         return;
 
-    RetainPtr<CGImageRef> image = bitmap->makeCGImage();
-    RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:image.get() size:NSZeroSize]);
     [[NSPasteboard generalPasteboard] clearContents];
-    [[NSPasteboard generalPasteboard] writeObjects:@[ nsImage.get() ]];
+    [[NSPasteboard generalPasteboard] writeObjects:@[ image.get() ]];
 }
 
 - (void)_saveImageToDownloads:(id)sender
@@ -553,22 +559,20 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (![self _canAddMediaToPhotos])
         return;
 
-    RefPtr<ShareableBitmap> bitmap = _hitTestResult.image;
-    if (!bitmap)
+    RefPtr<SharedMemory> imageSharedMemory = _hitTestResult.imageSharedMemory;
+    if (!imageSharedMemory->size() || _hitTestResult.imageExtension.isEmpty())
         return;
-    RetainPtr<CGImageRef> image = bitmap->makeCGImage();
+
+    RetainPtr<NSData> imageData = adoptNS([[NSData alloc] initWithBytes:imageSharedMemory->data() length:imageSharedMemory->size()]);
+    RetainPtr<NSString> suggestedFilename = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:_hitTestResult.imageExtension];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString * const suggestedFilename = @"image.jpg";
-
-        NSString *filePath = pathToPhotoOnDisk(suggestedFilename);
+        NSString *filePath = pathToPhotoOnDisk(suggestedFilename.get());
         if (!filePath)
             return;
 
         NSURL *fileURL = [NSURL fileURLWithPath:filePath];
-        auto dest = adoptCF(CGImageDestinationCreateWithURL((CFURLRef)fileURL, kUTTypeJPEG, 1, nullptr));
-        CGImageDestinationAddImage(dest.get(), image.get(), nullptr);
-        CGImageDestinationFinalize(dest.get());
+        [imageData writeToURL:fileURL atomically:NO];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             // This API provides no way to report failure, but if 18420778 is fixed so that it does, we should handle this.
@@ -909,7 +913,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return [self _defaultMenuItemsForVideo];
     }
 
-    if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.image) {
+    if (!hitTestResult->absoluteImageURL().isEmpty() && _hitTestResult.imageSharedMemory && !_hitTestResult.imageExtension.isEmpty()) {
         _type = kWKActionMenuImage;
         return [self _defaultMenuItemsForImage];
     }

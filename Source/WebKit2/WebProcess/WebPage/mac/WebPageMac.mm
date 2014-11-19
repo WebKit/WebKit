@@ -1004,9 +1004,13 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     m_lastActionMenuHitTestResult = hitTestResult;
 
     if (Image* image = hitTestResult.image()) {
-        actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
-        if (actionMenuResult.image)
-            actionMenuResult.image->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
+        RefPtr<SharedBuffer> buffer = image->data();
+        String imageExtension = image->filenameExtension();
+        if (!imageExtension.isEmpty() && buffer) {
+            actionMenuResult.imageSharedMemory = SharedMemory::create(buffer->size());
+            memcpy(actionMenuResult.imageSharedMemory->data(), buffer->data(), buffer->size());
+            actionMenuResult.imageExtension = imageExtension;
+        }
     }
 
     bool pageOverlayDidOverrideDataDetectors = false;
