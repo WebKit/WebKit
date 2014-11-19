@@ -6315,7 +6315,6 @@ bool Document::updateStyleIfNeededForNode(const Node& node)
 
 Element* Document::activeElement()
 {
-    updateStyleIfNeeded();
     if (Element* element = treeScope().focusedElement())
         return element;
     return body();

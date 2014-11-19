@@ -1,3 +1,21 @@
+2014-11-18  Andreas Kling  <akling@apple.com>
+
+        Avoid synchronous style recalc in Document.activeElement
+        <https://webkit.org/b/138850>
+
+        Reviewed by Ryosuke Niwa.
+
+        This subtly changes the behavior of <input autofocus>, which was caught by
+        a layout test. Auto-focus doesn't happen until the render tree is attached,
+        although it was possible to force it by accessing document.activeElement.
+
+        Now auto-focus is always lazy. This is consistent with other browser engines.
+
+        ~1% progression on Speedometer locally.
+
+        * dom/Document.cpp:
+        (WebCore::Document::activeElement):
+
 2014-11-18  Chris Dumez  <cdumez@apple.com>
 
         Have Vector::capacity() return an unsigned instead of a size_t
