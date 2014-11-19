@@ -31,9 +31,11 @@
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PluginViewBase.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
@@ -45,7 +47,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Frame.h"
-#include "Page.h"
 #include "WKContentObservation.h"
 #endif
 
@@ -77,6 +78,8 @@ public:
             current = m_previous;
     }
 
+    Document* contextDocument() const { return m_contextIsDocument ? &downcast<Document>(m_context) : nullptr; }
+
     void setScriptMadeUserObservableChanges() { m_scriptMadeUserObservableChanges = true; }
     void setScriptMadeNonUserObservableChanges() { m_scriptMadeNonUserObservableChanges = true; }
     void setScriptMadeNonUserObservableChangesToElementStyle(StyledElement& element)
@@ -91,8 +94,9 @@ public:
         if (m_scriptMadeUserObservableChanges)
             return true;
 
+        Document* document = contextDocument();
         // To be conservative, we also consider any DOM Tree change to be user observable.
-        return m_contextIsDocument && downcast<Document>(m_context).domTreeVersion() != m_initialDOMTreeVersion;
+        return document && document->domTreeVersion() != m_initialDOMTreeVersion;
     }
 
     void setChangedStyleOfElementOutsideViewport(StyledElement& element)
@@ -251,8 +255,31 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
     context.removeTimeout(timeoutId);
 }
 
+inline bool DOMTimer::isDOMTimersThrottlingEnabled(Document& document) const
+{
+    auto* page = document.page();
+    if (!page)
+        return true;
+    return page->settings().domTimersThrottlingEnabled();
+}
+
 void DOMTimer::updateThrottlingStateIfNecessary(const DOMTimerFireState& fireState)
 {
+    Document* contextDocument = fireState.contextDocument();
+    // We don't throttle timers in worker threads.
+    if (!contextDocument)
+        return;
+
+    if (UNLIKELY(!isDOMTimersThrottlingEnabled(*contextDocument))) {
+        if (m_throttleState == ShouldThrottle) {
+            // Unthrottle the timer in case it was throttled before the setting was updated.
+            LOG(DOMTimers, "%p - Unthrottling DOM timer because throttling was disabled via settings.", this);
+            m_throttleState = ShouldNotThrottle;
+            updateTimerIntervalIfNecessary();
+        }
+        return;
+    }
+
     if (fireState.scriptMadeUserObservableChanges()) {
         ASSERT(m_elementsCausingThrottling.isEmpty());
         if (m_throttleState != ShouldNotThrottle) {

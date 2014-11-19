@@ -1,3 +1,24 @@
+2014-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Add a setting to toggle DOMTimer throttling support
+        https://bugs.webkit.org/show_bug.cgi?id=138844
+        <rdar://problem/19020874>
+
+        Reviewed by Andreas Kling.
+
+        Add a setting to disable DOM timers throttling, in order to help
+        developers determine if a specific issue is caused by timer
+        throttling.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences domTimersThrottlingEnabled]):
+        (-[WebPreferences setDOMTimersThrottlingEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-11-18  Tim Horton  <timothy_horton@apple.com>
 
         Avoid re-encoding action menu image data

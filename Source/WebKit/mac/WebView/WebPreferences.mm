@@ -476,6 +476,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitJavaScriptExperimentsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitApplicationChromeModeEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitDOMTimersThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitLocalFileContentSniffingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
@@ -1222,6 +1223,16 @@ public:
 - (void)setApplicationChromeModeEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitApplicationChromeModeEnabledPreferenceKey];
+}
+
+- (BOOL)domTimersThrottlingEnabled
+{
+    return [self _boolValueForKey:WebKitDOMTimersThrottlingEnabledPreferenceKey];
+}
+
+- (void)setDOMTimersThrottlingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitDOMTimersThrottlingEnabledPreferenceKey];
 }
 
 - (BOOL)webArchiveDebugModeEnabled

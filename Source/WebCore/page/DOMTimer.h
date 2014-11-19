@@ -35,6 +35,7 @@
 namespace WebCore {
 
     class DOMTimerFireState;
+    class Document;
     class HTMLPlugInElement;
     class IntRect;
     class ScheduledAction;
@@ -65,6 +66,7 @@ namespace WebCore {
 
         double intervalClampedToMinimum() const;
 
+        bool isDOMTimersThrottlingEnabled(Document&) const;
         bool isIntervalDependentOnViewport() const { return m_throttleState == ShouldThrottle && !m_elementsCausingThrottling.isEmpty(); }
         void registerForViewportChanges();
         void unregisterForViewportChanges();

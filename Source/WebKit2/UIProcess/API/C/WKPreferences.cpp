@@ -579,6 +579,16 @@ bool WKPreferencesGetShouldPrintBackgrounds(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->shouldPrintBackgrounds();
 }
 
+void WKPreferencesSetDOMTimersThrottlingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setDOMTimersThrottlingEnabled(enabled);
+}
+
+bool WKPreferencesGetDOMTimersThrottlingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->domTimersThrottlingEnabled();
+}
+
 void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setWebArchiveDebugModeEnabled(enabled);
