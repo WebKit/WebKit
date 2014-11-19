@@ -1,3 +1,14 @@
+2014-11-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Screen braille input doesn't work on forms.
+        https://bugs.webkit.org/show_bug.cgi?id=138804
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/ios-sim: Copied from LayoutTests/platform/ios-sim.
+        * platform/ios-sim/accessibility/set-value-expected.txt: Added.
+        * platform/ios-sim/accessibility/set-value.html: Added.
+
 2014-11-19  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Add selector checker for :lang pseudo class in Selectors level 4

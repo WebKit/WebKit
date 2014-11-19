@@ -1343,6 +1343,13 @@ void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     END_AX_OBJC_EXCEPTIONS
 }
 
+void AccessibilityUIElement::setValue(JSStringRef valueText)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilitySetValue:[NSString stringWithJSStringRef:valueText] forAttribute:NSAccessibilityValueAttribute];
+    END_AX_OBJC_EXCEPTIONS
+}
+
 void AccessibilityUIElement::increment()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

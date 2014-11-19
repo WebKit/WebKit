@@ -1625,6 +1625,13 @@ static RenderObject* rendererForView(WAKView* view)
     return YES;
 }
 
+- (void)_accessibilitySetValue:(NSString *)string
+{
+    if (![self _prepareAccessibilityCall])
+        return;
+    m_object->setValue(string);
+}
+
 - (NSString *)stringForTextMarkers:(NSArray *)markers
 {
     if (![self _prepareAccessibilityCall])

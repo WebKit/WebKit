@@ -123,6 +123,7 @@ public:
     JSStringRef language();
     JSStringRef stringValue();
     JSStringRef accessibilityValue() const;
+    void setValue(JSStringRef);
     JSStringRef helpText() const;
     JSStringRef orientation() const;
     double x();
