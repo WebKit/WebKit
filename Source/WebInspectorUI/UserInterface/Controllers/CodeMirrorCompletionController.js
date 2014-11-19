@@ -574,11 +574,13 @@ WebInspector.CodeMirrorCompletionController.prototype = {
 
         const prefix = this._prefix;
 
-        const declaringVariable = mainToken.state.lexical.type === "vardef";
-        const insideSwitch = mainToken.state.lexical.prev ? mainToken.state.lexical.prev.info === "switch" : false;
-        const insideBlock = mainToken.state.lexical.prev ? mainToken.state.lexical.prev.type === "}" : false;
-        const insideParenthesis = mainToken.state.lexical.type === ")";
-        const insideBrackets = mainToken.state.lexical.type === "]";
+        var localState = mainToken.state.localState ? mainToken.state.localState : mainToken.state;
+
+        const declaringVariable = localState.lexical.type === "vardef";
+        const insideSwitch = localState.lexical.prev ? localState.lexical.prev.info === "switch" : false;
+        const insideBlock = localState.lexical.prev ? localState.lexical.prev.type === "}" : false;
+        const insideParenthesis = localState.lexical.type === ")";
+        const insideBrackets = localState.lexical.type === "]";
 
         const allKeywords = ["break", "case", "catch", "const", "continue", "debugger", "default", "delete", "do", "else", "false", "finally", "for", "function", "if", "in",
             "Infinity", "instanceof", "NaN", "new", "null", "return", "switch", "this", "throw", "true", "try", "typeof", "undefined", "var", "void", "while", "with"];
@@ -622,13 +624,17 @@ WebInspector.CodeMirrorCompletionController.prototype = {
                 }
             }
 
-            var context = mainToken.state.context;
+            var context = localState.context;
             while (context) {
-                filterVariables(context.vars);
+                if (context.vars)
+                    filterVariables(context.vars);
                 context = context.prev;
             }
 
-            filterVariables(mainToken.state.globalVars);
+            if (localState.localVars)
+                filterVariables(localState.localVars);
+            if (localState.globalVars)
+                filterVariables(localState.globalVars);
         }
 
         switch (suffix.substring(0, 1)) {

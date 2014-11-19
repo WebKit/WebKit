@@ -1,1 +1,13 @@
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve basic JavaScript completion in inline <script>s
+        https://bugs.webkit.org/show_bug.cgi?id=138845
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController.prototype._generateJavaScriptCompletions):
+        Fix up CodeMirror mode handling for JavaScript completion when inside of mixed mode
+        input (html). Also add completion for CodeMirror's localVars list.
+
 == Rolled over to ChangeLog-2014-11-19 ==
