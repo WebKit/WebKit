@@ -35,7 +35,8 @@
 #include <CFNetwork/CFURLProtocolPriv.h>
 #include <CFNetwork/CFURLRequest.h>
 
-#ifdef __OBJC__
+// FIXME: Remove the defined(__OBJC__)-guard onnce we fix <rdar://problem/19033610>.
+#if defined(__OBJC__) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 // FIXME: As a workaround for <rdar://problem/18337182>, we conditionally enclose the header
 // in an extern "C" linkage block to make it suitable for C++ use.
 #ifdef __cplusplus
@@ -47,7 +48,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-#endif // __OBJC__
+#endif // defined(__OBJC__) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 
 #else
 
@@ -95,7 +96,7 @@ EXTERN_C void CFURLConnectionInvalidateConnectionCache();
 // FIXME: We should only forward declare this SPI when building for iOS without the Apple Internal SDK.
 // As a workaround for <rdar://problem/19025016>, we must forward declare this SPI regardless of whether
 // we are building with the Apple Internal SDK.
-#if PLATFORM(IOS) && defined(__OBJC__)
+#if defined(__OBJC__) && PLATFORM(IOS)
 @interface NSURLCache (Details)
 -(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
 @end
