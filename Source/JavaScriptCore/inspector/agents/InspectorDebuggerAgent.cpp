@@ -65,6 +65,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InjectedScriptManager* injectedSc
     , m_continueToLocationBreakpointID(JSC::noBreakpointID)
     , m_enabled(false)
     , m_javaScriptPauseScheduled(false)
+    , m_hasExceptionValue(false)
     , m_nextProbeSampleId(1)
 {
     // FIXME: make breakReason optional so that there was no need to init it with "other".
@@ -468,7 +469,6 @@ void InspectorDebuggerAgent::resume(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().continueProgram();
 }
 
@@ -477,7 +477,6 @@ void InspectorDebuggerAgent::stepOver(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().stepOverStatement();
 }
 
@@ -486,7 +485,6 @@ void InspectorDebuggerAgent::stepInto(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().stepIntoStatement();
 
     if (m_listener)
@@ -498,7 +496,6 @@ void InspectorDebuggerAgent::stepOut(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().stepOutOfFunction();
 }
 
@@ -643,6 +640,8 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
             m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Exception;
             m_breakAuxData = injectedScript.wrapObject(exception, InspectorDebuggerAgent::backtraceObjectGroup)->openAccessors();
             // m_breakAuxData might be null after this.
+            injectedScript.setExceptionValue(exception);
+            m_hasExceptionValue = true;
         }
     }
 
@@ -687,8 +686,10 @@ void InspectorDebuggerAgent::didContinue()
 {
     m_pausedScriptState = nullptr;
     m_currentCallStack = Deprecated::ScriptValue();
+    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->start();
     clearBreakDetails();
+    clearExceptionValue();
 
     m_frontendDispatcher->resumed();
 }
@@ -724,6 +725,7 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
     m_continueToLocationBreakpointID = JSC::noBreakpointID;
     clearBreakDetails();
     m_javaScriptPauseScheduled = false;
+    m_hasExceptionValue = false;
 
     scriptDebugServer().continueProgram();
 }
@@ -752,6 +754,14 @@ void InspectorDebuggerAgent::clearBreakDetails()
 {
     m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Other;
     m_breakAuxData = nullptr;
+}
+
+void InspectorDebuggerAgent::clearExceptionValue()
+{
+    if (m_hasExceptionValue) {
+        m_injectedScriptManager->clearExceptionValue();
+        m_hasExceptionValue = false;
+    }
 }
 
 } // namespace Inspector

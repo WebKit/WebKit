@@ -1,5 +1,63 @@
 2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Provide $exception in the console for the thrown exception value
+        https://bugs.webkit.org/show_bug.cgi?id=138726
+
+        Reviewed by Timothy Hatcher.
+
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::caughtValue):
+        * debugger/DebuggerScope.h:
+        Access the caught value if this scope is a catch scope.
+
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::isFunctionNameScope):
+        (JSC::JSNameScope::isCatchScope):
+        (JSC::JSNameScope::value):
+        Provide an accessor for the single value in the JSNameScope (with / catch block).
+
+        * inspector/InjectedScriptSource.js:
+        Save the exception value and expose it via $exception. Since the command line api
+        is recreated on each evaluation, $exception is essentially readonly.
+
+        * inspector/ScriptDebugServer.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchDidPause):
+        (Inspector::ScriptDebugServer::exceptionOrCaughtValue):
+        When pausing, get the exception or caught value. The exception will be provided
+        if we are breaking on an explicit exception. When inside of a catch block, we
+        can get the caught value by walking up the scope chain.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (Inspector::InspectorDebuggerAgent::resume):
+        (Inspector::InspectorDebuggerAgent::stepOver):
+        (Inspector::InspectorDebuggerAgent::stepInto):
+        (Inspector::InspectorDebuggerAgent::stepOut):
+        Clearing state can be done in didContinue.
+
+        (Inspector::InspectorDebuggerAgent::didPause):
+        Set the exception value explicitly in the injected script when we have it.
+
+        (Inspector::InspectorDebuggerAgent::didContinue):
+        Clear state saved when we had paused, including clearly an exception value if needed.
+
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        (Inspector::InspectorDebuggerAgent::clearExceptionValue):
+        Call into the injected script only when needed.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::setExceptionValue):
+        (Inspector::InjectedScript::clearExceptionValue):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::clearExceptionValue):
+        * inspector/InjectedScriptManager.h:
+        Clear on all injected scripts.
+
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed build fixes after r176329.
 
           - export all of the codegen python files as they are included by the main generator

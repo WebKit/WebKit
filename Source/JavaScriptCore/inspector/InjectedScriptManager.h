@@ -66,6 +66,7 @@ public:
     InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
     void releaseObjectGroup(const String& objectGroup);
+    void clearExceptionValue();
 
 protected:
     virtual void didCreateInjectedScript(InjectedScript);

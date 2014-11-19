@@ -65,8 +65,10 @@ public:
 
     DECLARE_INFO;
 
-    bool isFunctionNameScope() { return m_type == FunctionNameScope; }
-    bool isCatchScope() { return m_type == CatchScope; }
+    bool isFunctionNameScope() const { return m_type == FunctionNameScope; }
+    bool isCatchScope() const { return m_type == CatchScope; }
+
+    JSValue value() const { return m_registerStore.get(); }
 
 protected:
     void finishCreation(VM& vm, const Identifier& identifier, JSValue value, unsigned attributes)

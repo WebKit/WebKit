@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script type="text/javascript" src="./resources/exceptions.js"></script>
+<script>
+var exceptionIndex = 0;
+var exceptionCausers = [
+    triggerUncaughtTypeException,
+    triggerUncaughtReferenceException,
+    triggerUncaughtSyntaxException,
+    triggerUncaughtDOMException,
+    throwString,
+    throwNumber,
+    throwNull,
+    throwObject,
+    throwNode,
+    function() { catcher(triggerUncaughtTypeException); },
+    function() { catcher(throwString); },
+    function() { catcher(throwObject); },
+];
+
+
+function triggerNextException()
+{
+    // We expect uncaught exceptions, so avoid logs for them.
+    window.onerror = function(){};
+
+    setTimeout(function() {
+        exceptionCausers[exceptionIndex++]();
+    }, 0);
+}
+
+function test()
+{
+    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+
+    function triggerNextException() {
+        InspectorTest.evaluateInPage("triggerNextException()");
+    }
+
+    function dumpCommandLineAPIValue(prefix) {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", "test", true, true, false, function(result, wasThrown) {
+            InspectorTest.log(prefix + ": $exception => " + result.description);
+        });
+    }
+
+    function checkIfExceptionValueMatchesCatchVariable() {
+        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === e", "test", true, true, false, function(result, wasThrown) {
+            InspectorTest.log("STEPPED OUT TO CATCH BLOCK: $exception === e ? " + result.description);
+        });
+    }
+
+    var pauses = 0;
+    var stepping = false;
+    var done = false;
+    const pointWhereExpectionsAreBeingCaught = 9;
+    const expectedPauses = 12;
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        if (done)
+            return;
+
+        if (!stepping) {
+            dumpCommandLineAPIValue("PAUSE #" + (++pauses));
+            if (pauses > pointWhereExpectionsAreBeingCaught) {
+                WebInspector.debuggerManager.stepOut();
+                stepping = true;
+                return;
+            }
+        } else {
+            checkIfExceptionValueMatchesCatchVariable();
+            stepping = false;
+        }
+
+        WebInspector.debuggerManager.resume();
+
+        if (pauses !== expectedPauses) {
+            triggerNextException();
+            return;
+        }
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+        done = true;
+        dumpCommandLineAPIValue("AFTER");
+        InspectorTest.completeTest();
+    });
+
+    dumpCommandLineAPIValue("BEFORE");
+    triggerNextException();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Checks that <code>$exception</code> is available and accurate in evaluations when paused on an exception.</p>
+</body>
+</html>

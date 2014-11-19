@@ -183,4 +183,10 @@ bool DebuggerScope::isFunctionOrEvalScope() const
     return m_scope->isActivationObject();
 }
 
+JSValue DebuggerScope::caughtValue() const
+{
+    ASSERT(isCatchScope());
+    return reinterpret_cast<JSNameScope*>(m_scope.get())->value();
+}
+
 } // namespace JSC

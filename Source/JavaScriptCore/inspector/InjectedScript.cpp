@@ -202,6 +202,23 @@ PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapTable
     return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
 }
 
+void InjectedScript::setExceptionValue(const Deprecated::ScriptValue& value)
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("setExceptionValue"), inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(value);
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+}
+
+void InjectedScript::clearExceptionValue()
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("clearExceptionValue"), inspectorEnvironment()->functionCallHandler());
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+}
+
 Deprecated::ScriptValue InjectedScript::findObjectById(const String& objectId) const
 {
     ASSERT(!hasNoValue());

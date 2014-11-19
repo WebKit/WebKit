@@ -1,3 +1,31 @@
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide $exception in the console for the thrown exception value
+        https://bugs.webkit.org/show_bug.cgi?id=138726
+
+        Reviewed by Timothy Hatcher.
+
+        Provide some tests to ensure $exception is the value we expect at different times,
+        such as on the exception line, when there is no exception, or when stepping through
+        catch blocks (it should always be the most recent caught exception).
+
+        * inspector/debugger/command-line-api-exception-expected.txt: Added.
+        * inspector/debugger/command-line-api-exception-nested-catch-expected.txt: Added.
+        * inspector/debugger/command-line-api-exception-nested-catch.html: Added.
+        * inspector/debugger/command-line-api-exception.html: Added.
+        * inspector/debugger/resources/exceptions.js: Added.
+        (triggerUncaughtTypeException):
+        (triggerUncaughtReferenceException):
+        (triggerUncaughtSyntaxException):
+        (triggerUncaughtDOMException):
+        (throwString):
+        (throwNumber):
+        (throwNull):
+        (throwObject):
+        (throwNode):
+        (catcher):
+        (nestedCatchBlocks):
+
 2014-11-19  David Hyatt  <hyatt@apple.com>
 
         Images/replaced elements that are as tall as a page should be on their own page

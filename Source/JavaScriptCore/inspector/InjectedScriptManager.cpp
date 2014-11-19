@@ -118,8 +118,14 @@ void InjectedScriptManager::discardInjectedScripts()
 
 void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 {
-    for (auto it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
-        it->value.releaseObjectGroup(objectGroup);
+    for (auto& injectedScript : m_idToInjectedScript.values())
+        injectedScript.releaseObjectGroup(objectGroup);
+}
+
+void InjectedScriptManager::clearExceptionValue()
+{
+    for (auto& injectedScript : m_idToInjectedScript.values())
+        injectedScript.clearExceptionValue();
 }
 
 String InjectedScriptManager::injectedScriptSource()

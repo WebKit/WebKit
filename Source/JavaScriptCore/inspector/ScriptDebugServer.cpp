@@ -138,8 +138,8 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
     JSC::ExecState* state = globalObject->globalExec();
     RefPtr<JavaScriptCallFrame> javaScriptCallFrame = JavaScriptCallFrame::create(debuggerCallFrame);
     JSValue jsCallFrame = toJS(state, globalObject, javaScriptCallFrame.get());
-    Deprecated::ScriptValue exception = reasonForPause() == PausedForException ? Deprecated::ScriptValue(state->vm(), currentException()) : Deprecated::ScriptValue();
-    listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), exception);
+
+    listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), exceptionOrCaughtValue(state));
 }
 
 void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const String& message)
@@ -325,6 +325,22 @@ const BreakpointActions& ScriptDebugServer::getActionsForBreakpoint(JSC::Breakpo
     
     static NeverDestroyed<BreakpointActions> emptyActionVector = BreakpointActions();
     return emptyActionVector;
+}
+
+Deprecated::ScriptValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState* state)
+{
+    if (reasonForPause() == PausedForException)
+        return Deprecated::ScriptValue(state->vm(), currentException());
+
+    RefPtr<DebuggerCallFrame> debuggerCallFrame = currentDebuggerCallFrame();
+    while (debuggerCallFrame) {
+        DebuggerScope* scope = debuggerCallFrame->scope();
+        if (scope->isCatchScope())
+            return Deprecated::ScriptValue(state->vm(), scope->caughtValue());
+        debuggerCallFrame = debuggerCallFrame->callerFrame();
+    }
+
+    return Deprecated::ScriptValue();
 }
 
 } // namespace Inspector

@@ -86,6 +86,16 @@ InjectedScript.prototype = {
         return this._fallbackWrapper(object);
     },
 
+    setExceptionValue: function(value)
+    {
+        this._exceptionValue = value;
+    },
+
+    clearExceptionValue: function()
+    {
+        delete this._exceptionValue;
+    },
+
     /**
      * @param {*} object
      * @return {!RuntimeAgent.RemoteObject}
@@ -1041,6 +1051,7 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
 function BasicCommandLineAPI()
 {
     this.$_ = injectedScript._lastResult;
+    this.$exception = injectedScript._exceptionValue;
 }
 
 return injectedScript;

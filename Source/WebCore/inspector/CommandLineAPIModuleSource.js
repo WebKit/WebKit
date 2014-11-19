@@ -124,6 +124,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
     }
 
     this.$_ = injectedScript._lastResult;
+    this.$exception = injectedScript._exceptionValue;
 }
 
 /**

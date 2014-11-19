@@ -56,6 +56,9 @@ WebInspector.loaded = function()
     this.probeManager = new WebInspector.ProbeManager;
     this.replayManager = new WebInspector.ReplayManager;
 
+    // Global controllers.
+    this.quickConsole = {executionContextIdentifier: undefined};
+
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
     // Enable agents.

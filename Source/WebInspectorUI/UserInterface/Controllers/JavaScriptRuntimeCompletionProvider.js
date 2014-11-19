@@ -174,7 +174,9 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
             RuntimeAgent.releaseObjectGroup("completion");
 
             if (!base) {
-                const commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$1", "$2", "$3", "$4", "$_"];
+                var commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$1", "$2", "$3", "$4", "$_"];
+                if (WebInspector.debuggerManager.paused && WebInspector.debuggerManager.pauseReason === WebInspector.DebuggerManager.PauseReason.Exception)
+                    commandLineAPI.push("$exception");
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
             }

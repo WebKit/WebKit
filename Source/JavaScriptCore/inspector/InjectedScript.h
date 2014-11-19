@@ -66,6 +66,9 @@ public:
     PassRefPtr<Protocol::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
     PassRefPtr<Protocol::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
 
+    void setExceptionValue(const Deprecated::ScriptValue&);
+    void clearExceptionValue();
+
     Deprecated::ScriptValue findObjectById(const String& objectId) const;
     void inspectObject(Deprecated::ScriptValue);
     void releaseObject(const String& objectId);

@@ -1,3 +1,16 @@
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide $exception in the console for the thrown exception value
+        https://bugs.webkit.org/show_bug.cgi?id=138726
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector/debugger/command-line-api-exception-nested-catch.html
+               inspector/debugger/command-line-api-exception.html
+
+        * inspector/CommandLineAPIModuleSource.js:
+        Expose $exception in the more complete command line API.
+
 2014-11-19  David Hyatt  <hyatt@apple.com>
 
         Images/replaced elements that are as tall as a page should be on their own page

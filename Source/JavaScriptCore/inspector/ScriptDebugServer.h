@@ -105,6 +105,8 @@ private:
     virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override final;
     virtual void notifyDoneProcessingDebuggerEvents() override final;
 
+    Deprecated::ScriptValue exceptionOrCaughtValue(JSC::ExecState*);
+
     unsigned m_hitCount;
     bool m_callingListeners;
     BreakpointIDToActionsMap m_breakpointIDToActions;

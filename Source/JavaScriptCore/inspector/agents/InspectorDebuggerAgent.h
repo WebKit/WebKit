@@ -146,6 +146,7 @@ private:
     void clearDebuggerBreakpointState();
     void clearInspectorBreakpointState();
     void clearBreakDetails();
+    void clearExceptionValue();
 
     bool breakpointActionsFromProtocol(ErrorString&, RefPtr<InspectorArray>& actions, BreakpointActions* result);
 
@@ -167,6 +168,7 @@ private:
     RefPtr<InspectorObject> m_breakAuxData;
     bool m_enabled;
     bool m_javaScriptPauseScheduled;
+    bool m_hasExceptionValue;
     RefPtr<WTF::Stopwatch> m_stopwatch;
     int m_nextProbeSampleId;
 };
