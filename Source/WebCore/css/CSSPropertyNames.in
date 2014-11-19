@@ -202,7 +202,7 @@ orphans [Inherited]
 outline
 outline-color
 outline-offset [NewStyleBuilder, Converter=ComputedLength<int>]
-outline-style
+outline-style [NewStyleBuilder, Custom=All]
 outline-width [NewStyleBuilder, Converter=LineWidth<unsigned short>]
 overflow
 overflow-wrap [NewStyleBuilder]

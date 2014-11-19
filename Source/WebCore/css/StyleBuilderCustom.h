@@ -590,6 +590,26 @@ inline void applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
 
 #endif
 
+inline void applyInheritOutlineStyle(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setOutlineStyleIsAuto(styleResolver.parentStyle()->outlineStyleIsAuto());
+    styleResolver.style()->setOutlineStyle(styleResolver.parentStyle()->outlineStyle());
+}
+
+inline void applyInitialOutlineStyle(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setOutlineStyleIsAuto(RenderStyle::initialOutlineStyleIsAuto());
+    styleResolver.style()->setOutlineStyle(RenderStyle::initialBorderStyle());
+}
+
+inline void applyValueOutlineStyle(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    styleResolver.style()->setOutlineStyleIsAuto(primitiveValue);
+    styleResolver.style()->setOutlineStyle(primitiveValue);
+}
+
 } // namespace StyleBuilderFunctions
 
 } // namespace WebCore
