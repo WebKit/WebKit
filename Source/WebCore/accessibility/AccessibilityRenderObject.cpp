@@ -248,7 +248,7 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 
 static inline RenderInline* startOfContinuations(RenderObject& renderer)
 {
-    if (renderer.isInlineElementContinuation())
+    if (renderer.isInlineElementContinuation() && is<RenderInline>(renderer.node()->renderer()))
         return downcast<RenderInline>(renderer.node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation

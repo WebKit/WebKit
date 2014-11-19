@@ -1,5 +1,15 @@
 2014-11-19  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Safari fails to load a web page with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=138849
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/inline-block-assertion-expected.txt: Added.
+        * accessibility/inline-block-assertion.html: Added.
+
+2014-11-19  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Screen braille input doesn't work on forms.
         https://bugs.webkit.org/show_bug.cgi?id=138804
 
