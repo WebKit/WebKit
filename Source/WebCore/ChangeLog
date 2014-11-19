@@ -1,3 +1,18 @@
+2014-11-19  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: RenderTreeAsText should use rangeForRenderer() when dumping simple line text.
+        https://bugs.webkit.org/show_bug.cgi?id=138847
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to support multiple renderers for simple line layout.
+        Use rangeForRenderer() to get runs for a particular renderer as opposed to for the entire flow.
+
+        Not testable.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2014-11-19  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error when CSS_SELECTORS_LEVEL4 is not enabled.

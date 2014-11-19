@@ -543,8 +543,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         if (auto layout = text.simpleLineLayout()) {
             ASSERT(!text.firstTextBox());
             auto resolver = runResolver(downcast<RenderBlockFlow>(*text.parent()), *layout);
-            for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-                auto run = *it;
+            for (const auto& run : resolver.rangeForRenderer(text)) {
                 writeIndent(ts, indent + 1);
                 writeSimpleLine(ts, text, run.rect(), run.text());
             }
