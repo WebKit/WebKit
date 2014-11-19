@@ -610,7 +610,7 @@ public:
 
     size_t size() const { return m_size; }
     static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
-    size_t capacity() const { return Base::capacity(); }
+    unsigned capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
 
     T& at(unsigned i)
@@ -875,7 +875,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendRange(Iterator start, Ite
 template<typename T, unsigned inlineCapacity, typename OverflowHandler>
 void Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(unsigned newMinCapacity)
 {
-    reserveCapacity(std::max(newMinCapacity, std::max(16u, static_cast<unsigned>(capacity() + capacity() / 4 + 1))));
+    reserveCapacity(std::max(newMinCapacity, std::max(16u, capacity() + capacity() / 4 + 1)));
 }
 
 template<typename T, unsigned inlineCapacity, typename OverflowHandler>
@@ -893,7 +893,7 @@ T* Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(unsigned newMinCap
 template<typename T, unsigned inlineCapacity, typename OverflowHandler>
 bool Vector<T, inlineCapacity, OverflowHandler>::tryExpandCapacity(unsigned newMinCapacity)
 {
-    return tryReserveCapacity(std::max(newMinCapacity, std::max(16u, static_cast<unsigned>(capacity() + capacity() / 4 + 1))));
+    return tryReserveCapacity(std::max(newMinCapacity, std::max(16u, capacity() + capacity() / 4 + 1)));
 }
 
 template<typename T, unsigned inlineCapacity, typename OverflowHandler>
