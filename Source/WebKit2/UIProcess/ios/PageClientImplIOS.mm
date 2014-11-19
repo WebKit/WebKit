@@ -252,11 +252,6 @@ void PageClientImpl::didChangeViewportMetaTagWidth(float newWidth)
     [m_webView _setViewportMetaTagWidth:newWidth];
 }
 
-void PageClientImpl::setUsesMinimalUI(bool usesMinimalUI)
-{
-    [m_webView _setUsesMinimalUI:usesMinimalUI];
-}
-
 double PageClientImpl::minimumZoomScale() const
 {
     if (UIScrollView *scroller = [m_webView scrollView])

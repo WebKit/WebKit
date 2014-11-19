@@ -128,7 +128,6 @@ private:
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
     virtual void didChangeViewportMetaTagWidth(float) override;
-    virtual void setUsesMinimalUI(bool) override;
     virtual double minimumZoomScale() const override;
     virtual WebCore::FloatSize contentsSize() const override;
 

@@ -140,13 +140,9 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
         return;
 
     float oldWidth = m_viewportConfiguration.viewportArguments().width;
-    bool wasUsingMinimalUI = m_viewportConfiguration.usesMinimalUI();
 
     m_viewportConfiguration.setViewportArguments(viewportArguments);
     viewportConfigurationChanged();
-
-    if (wasUsingMinimalUI != m_viewportConfiguration.usesMinimalUI())
-        send(Messages::WebPageProxy::SetUsesMinimalUI(m_viewportConfiguration.usesMinimalUI()));
 
     if (oldWidth != viewportArguments.width)
         send(Messages::WebPageProxy::ViewportMetaTagWidthDidChange(viewportArguments.width));
@@ -2191,13 +2187,6 @@ void WebPage::setViewportConfigurationMinimumLayoutSize(const FloatSize& size)
     viewportConfigurationChanged();
 }
 
-void WebPage::setViewportConfigurationMinimumLayoutSizeForMinimalUI(const FloatSize& size)
-{
-    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSizeForMinimalUI(), size);
-    m_viewportConfiguration.setMinimumLayoutSizeForMinimalUI(size);
-    viewportConfigurationChanged();
-}
-
 void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
 {
     m_maximumUnobscuredSize = maximumUnobscuredSize;
@@ -2232,7 +2221,7 @@ void WebPage::resetTextAutosizingBeforeLayoutIfNeeded(const FloatSize& oldSize, 
     }
 }
 
-void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const FloatSize& minimumLayoutSizeForMinimalUI, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale, int32_t deviceOrientation)
+void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, double targetScale, int32_t deviceOrientation)
 {
     TemporaryChange<bool> dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
     // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
@@ -2269,9 +2258,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
     }
 
     resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), minimumLayoutSize);
-    resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSizeForMinimalUI(), minimumLayoutSizeForMinimalUI);
     m_viewportConfiguration.setMinimumLayoutSize(minimumLayoutSize);
-    m_viewportConfiguration.setMinimumLayoutSizeForMinimalUI(minimumLayoutSizeForMinimalUI);
     IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
 
     setFixedLayoutSize(newLayoutSize);

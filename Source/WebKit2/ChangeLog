@@ -1,3 +1,49 @@
+2014-11-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Remove the minimalUI code from the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=138819
+
+        Reviewed by Sam Weinig.
+
+        It looks like the only interface we have to keep alive is
+        [WKWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSizeForMinimalUI:maximumUnobscuredSizeOverride:].
+
+        Clean up everything else, it is a pile of useless code.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _didRelaunchProcess]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSizeForMinimalUI:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _setUsesMinimalUI:]): Deleted.
+        (-[WKWebView _usesMinimalUI]): Deleted.
+        (activeMinimumLayoutSizeForMinimalUI): Deleted.
+        (-[WKWebView _setMinimumLayoutSizeOverrideForMinimalUI:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _frameOrBoundsChanged]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setUsesMinimalUI): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSizeForMinimalUI): Deleted.
+        (WebKit::WebPageProxy::setUsesMinimalUI): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportPropertiesDidChange):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSizeForMinimalUI): Deleted.
+
 2014-11-18  Conrad Shultz  <conrad_shultz@apple.com>
 
         Unreviewed. Revision to the build fix in r176304.

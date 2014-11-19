@@ -247,7 +247,6 @@ using namespace WebKit;
     WebPageProxy* webPageProxy = [_contentView page];
     WebCore::FloatSize size(bounds.size);
     webPageProxy->setViewportConfigurationMinimumLayoutSize(size);
-    webPageProxy->setViewportConfigurationMinimumLayoutSizeForMinimalUI(size);
     webPageProxy->setMaximumUnobscuredSize(size);
 
     [_scrollView setFrame:bounds];
