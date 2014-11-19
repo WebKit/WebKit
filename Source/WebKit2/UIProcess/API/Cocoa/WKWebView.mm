@@ -300,7 +300,6 @@ static int32_t deviceOrientation()
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:WTF::move(webPageConfiguration) webView:self]);
 
     _page = [_contentView page];
-    _page->setApplicationNameForUserAgent([@"Mobile/" stringByAppendingString:[UIDevice currentDevice].buildVersion]);
     _page->setDeviceOrientation(deviceOrientation());
 
     [_contentView layer].anchorPoint = CGPointZero;
@@ -336,6 +335,9 @@ static int32_t deviceOrientation()
 #endif
 
     _page->setBackgroundExtendsBeyondPage(true);
+
+    if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
+        _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
     _page->setPolicyClient(_navigationState->createPolicyClient());
@@ -589,6 +591,16 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
         completionHandler([value toObject], nil);
     });
+}
+
+- (NSString *)customUserAgent
+{
+    return _page->customUserAgent();
+}
+
+- (void)setCustomUserAgent:(NSString *)customUserAgent
+{
+    _page->setCustomUserAgent(customUserAgent);
 }
 
 #pragma mark iOS-specific methods
@@ -1659,12 +1671,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (NSString *)_customUserAgent
 {
-    return _page->customUserAgent();
+    return self.customUserAgent;
+
 }
 
-- (void)_setCustomUserAgent:(NSString *)_customUserAgent
+- (void)_setCustomUserAgent:(NSString *)customUserAgent
 {
-    _page->setCustomUserAgent(_customUserAgent);
+    self.customUserAgent = customUserAgent;
 }
 
 - (pid_t)_webProcessIdentifier

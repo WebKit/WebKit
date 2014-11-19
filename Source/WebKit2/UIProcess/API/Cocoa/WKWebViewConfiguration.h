@@ -77,6 +77,10 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL suppressesIncrementalRendering;
 
+/*! @abstract The name of the application as used in the user agent string.
+*/
+@property (nonatomic, copy) NSString *applicationNameForUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
  (YES) or use the native full-screen controller (NO).

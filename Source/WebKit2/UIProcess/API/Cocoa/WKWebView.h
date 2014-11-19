@@ -209,6 +209,10 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL allowsBackForwardNavigationGestures;
 
+/*! @abstract The custom user agent string or nil if no custom user agent string has been set.
+*/
+@property (nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 #if TARGET_OS_IPHONE
 /*! @abstract The scroll view associated with the web view.
  */

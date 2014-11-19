@@ -56,6 +56,12 @@ public:
         m_isInitialized = true;
     }
 
+    void set(RetainPtr<T>&& t)
+    {
+        m_value = WTF::move(t);
+        m_isInitialized = true;
+    }
+
     T* peek()
     {
         return m_value.get();
@@ -75,6 +81,8 @@ private:
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
+    LazyInitialized<NSString> _applicationNameForUserAgent;
+
 #if PLATFORM(IOS)
     LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
     BOOL _allowsAlternateFullscreen;
@@ -116,6 +124,8 @@ private:
 #endif
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
+    configuration.applicationNameForUserAgent = self.applicationNameForUserAgent;
+
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsAlternateFullscreen = self->_allowsAlternateFullscreen;
@@ -155,6 +165,25 @@ private:
 - (void)setUserContentController:(WKUserContentController *)userContentController
 {
     _userContentController.set(userContentController);
+}
+
+static NSString *defaultApplicationNameForUserAgent()
+{
+#if PLATFORM(IOS)
+    return [@"Mobile/" stringByAppendingString:[UIDevice currentDevice].buildVersion];
+#else
+    return nil;
+#endif
+}
+
+- (NSString *)applicationNameForUserAgent
+{
+    return _applicationNameForUserAgent.get([] { return defaultApplicationNameForUserAgent(); });
+}
+
+- (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
+{
+    _applicationNameForUserAgent.set(adoptNS([applicationNameForUserAgent copy]));
 }
 
 - (_WKVisitedLinkProvider *)_visitedLinkProvider

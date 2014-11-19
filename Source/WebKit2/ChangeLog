@@ -1,3 +1,26 @@
+2014-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Add APIs for customizing the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=138881
+        rdar://problem/17233981
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView customUserAgent]):
+        (-[WKWebView setCustomUserAgent:]):
+        (-[WKWebView _customUserAgent]):
+        (-[WKWebView _setCustomUserAgent:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (LazyInitialized::set):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (defaultApplicationNameForUserAgent):
+        (-[WKWebViewConfiguration applicationNameForUserAgent]):
+        (-[WKWebViewConfiguration setApplicationNameForUserAgent:]):
+
 2014-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2 UI-side compositing] Initialize RemoteLayerTreeTransaction properties which are unset on Mac
