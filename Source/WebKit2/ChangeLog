@@ -1,3 +1,16 @@
+2014-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2 UI-side compositing] Initialize RemoteLayerTreeTransaction properties which are unset on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=138877
+
+        Reviewed by Tim Horton.
+        
+        These data members are unused on Mac, but still encoded, so initialize them with
+        reasonable values.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::RemoteLayerTreeTransaction):
+
 2014-11-19  Enrica Casucci  <enrica@apple.com>
 
         Refactor iOS selection gestures.

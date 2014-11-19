@@ -463,6 +463,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 }
 
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
+    : m_pageScaleFactor(1)
+    , m_minimumScaleFactor(1)
+    , m_maximumScaleFactor(1)
+    , m_renderTreeSize(0)
+    , m_transactionID(0)
+    , m_scaleWasSetByUIProcess(false)
+    , m_allowsUserScaling(false)
 {
 }
 
