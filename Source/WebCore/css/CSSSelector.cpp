@@ -59,37 +59,55 @@ void CSSSelector::createRareData()
     m_hasRareData = true;
 }
 
+static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelector, bool isComputingMaximumSpecificity);
+
+static unsigned selectorSpecificity(const CSSSelector& firstSimpleSelector, bool isComputingMaximumSpecificity)
+{
+    unsigned total = simpleSelectorSpecificityInternal(firstSimpleSelector, isComputingMaximumSpecificity);
+
+    for (const CSSSelector* selector = firstSimpleSelector.tagHistory(); selector; selector = selector->tagHistory())
+        total = CSSSelector::addSpecificities(total, simpleSelectorSpecificityInternal(*selector, isComputingMaximumSpecificity));
+    return total;
+}
+
+static unsigned maxSpecificity(const CSSSelectorList& selectorList)
+{
+    unsigned maxSpecificity = 0;
+    for (const CSSSelector* subSelector = selectorList.first(); subSelector; subSelector = CSSSelectorList::next(subSelector))
+        maxSpecificity = std::max(maxSpecificity, selectorSpecificity(*subSelector, true));
+    return maxSpecificity;
+}
+
 unsigned CSSSelector::specificity() const
 {
     if (isForPage())
         return specificityForPage() & maxValueMask;
 
-    unsigned total = simpleSelectorSpecificity();
-
-    for (const CSSSelector* selector = this->tagHistory(); selector; selector = selector->tagHistory())
-        total = addSpecificities(total, selector->simpleSelectorSpecificity());
-    return total;
+    return selectorSpecificity(*this, false);
 }
 
-unsigned CSSSelector::simpleSelectorSpecificity() const
+static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelector, bool isComputingMaximumSpecificity)
 {
-    ASSERT_WITH_MESSAGE(!isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
+    ASSERT_WITH_MESSAGE(!simpleSelector.isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
 
-    switch (match()) {
-    case Id:
+    switch (simpleSelector.match()) {
+    case CSSSelector::Id:
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
 
-    case PagePseudoClass:
+    case CSSSelector::PagePseudoClass:
         break;
-    case PseudoClass:
+    case CSSSelector::PseudoClass:
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        if (pseudoClassType() == PseudoClassNot) {
-            ASSERT_WITH_MESSAGE(selectorList() && selectorList()->first(), "The parser should never generate a valid selector for an empty :not().");
+        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
+            ASSERT_WITH_MESSAGE(simpleSelector.selectorList() && simpleSelector.selectorList()->first(), "The parser should never generate a valid selector for an empty :matches().");
+            if (!isComputingMaximumSpecificity)
+                return 0;
+            return maxSpecificity(*simpleSelector.selectorList());
+        }
 
-            unsigned maxSpecificity = 0;
-            for (const CSSSelector* subSelector = selectorList()->first(); subSelector; subSelector = CSSSelectorList::next(subSelector))
-                maxSpecificity = std::max(maxSpecificity, subSelector->specificity());
-            return maxSpecificity;
+        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassNot) {
+            ASSERT_WITH_MESSAGE(simpleSelector.selectorList() && simpleSelector.selectorList()->first(), "The parser should never generate a valid selector for an empty :not().");
+            return maxSpecificity(*simpleSelector.selectorList());
         }
         FALLTHROUGH;
 #else
@@ -97,24 +115,29 @@ unsigned CSSSelector::simpleSelectorSpecificity() const
             return selectorList()->first()->simpleSelectorSpecificity();
         FALLTHROUGH;
 #endif
-    case Exact:
-    case Class:
-    case Set:
-    case List:
-    case Hyphen:
-    case Contain:
-    case Begin:
-    case End:
+    case CSSSelector::Exact:
+    case CSSSelector::Class:
+    case CSSSelector::Set:
+    case CSSSelector::List:
+    case CSSSelector::Hyphen:
+    case CSSSelector::Contain:
+    case CSSSelector::Begin:
+    case CSSSelector::End:
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
-    case Tag:
-        return (tagQName().localName() != starAtom) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
-    case PseudoElement:
+    case CSSSelector::Tag:
+        return (simpleSelector.tagQName().localName() != starAtom) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
+    case CSSSelector::PseudoElement:
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
-    case Unknown:
+    case CSSSelector::Unknown:
         return 0;
     }
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+unsigned CSSSelector::simpleSelectorSpecificity() const
+{
+    return simpleSelectorSpecificityInternal(*this, false);
 }
 
 unsigned CSSSelector::addSpecificities(unsigned a, unsigned b)

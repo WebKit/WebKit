@@ -218,6 +218,7 @@ class SelectorFragmentList : public Vector<SelectorFragment, 32> {
 public:
     unsigned registerRequirements = std::numeric_limits<unsigned>::max();
     unsigned stackRequirements = std::numeric_limits<unsigned>::max();
+    unsigned staticSpecificity = 0;
     bool clobberElementAddressRegister = true;
 };
 
@@ -357,7 +358,9 @@ private:
     StackAllocator::StackReference m_lastVisitedElement;
     StackAllocator::StackReference m_startElement;
 
+#if CSS_SELECTOR_JIT_DEBUGGING
     const CSSSelector* m_originalSelector;
+#endif
 };
 
 const Assembler::RegisterID SelectorCodeGenerator::returnRegister = JSC::GPRInfo::returnValueGPR;
@@ -462,7 +465,7 @@ static inline FunctionType addScrollbarPseudoClassType(const CSSSelector& select
     return FunctionType::CannotMatchAnything;
 }
 
-static inline FunctionType addPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
+static inline FunctionType addPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment, unsigned& internalSpecificity, SelectorContext selectorContext, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
 {
     CSSSelector::PseudoClassType type = selector.pseudoClassType();
     switch (type) {
@@ -759,6 +762,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             SelectorList matchesList;
             const CSSSelectorList* selectorList = selector.selectorList();
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
+            unsigned firstFragmentListSpecificity = 0;
+            bool firstFragmentListSpecificitySet = false;
             for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
                 SelectorFragmentList selectorFragments;
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
@@ -776,6 +781,15 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 if (selectorFragments.first().pseudoElementSelector)
                     return FunctionType::CannotCompile;
 
+                if (firstFragmentListSpecificitySet) {
+                    // The CSS JIT does not handle dynamic specificity yet.
+                    if (selectorContext == SelectorContext::RuleCollector && selectorFragments.staticSpecificity != firstFragmentListSpecificity)
+                        return FunctionType::CannotCompile;
+                } else {
+                    firstFragmentListSpecificitySet = true;
+                    firstFragmentListSpecificity = selectorFragments.staticSpecificity;
+                }
+
                 functionType = mostRestrictiveFunctionType(functionType, localFunctionType);
                 matchesList.append(selectorFragments);
             }
@@ -783,6 +797,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             // Since all selector list in :matches() cannot match anything, the whole :matches() filter cannot match anything.
             if (matchesList.isEmpty())
                 return FunctionType::CannotMatchAnything;
+
+            internalSpecificity = firstFragmentListSpecificity;
 
             fragment.matchesFilters.append(matchesList);
 
@@ -805,7 +821,9 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     , m_functionType(FunctionType::SimpleSelectorChecker)
     , m_visitedMode(VisitedMode::None)
     , m_descendantBacktrackingStartInUse(false)
+#if CSS_SELECTOR_JIT_DEBUGGING
     , m_originalSelector(rootSelector)
+#endif
 {
 #if CSS_SELECTOR_JIT_DEBUGGING
     dataLogF("Compiling \"%s\"\n", m_originalSelector->selectorText().utf8().data());
@@ -835,7 +853,10 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
     SelectorFragment fragment;
     FragmentRelation relationToPreviousFragment = FragmentRelation::Rightmost;
     FunctionType functionType = FunctionType::SimpleSelectorChecker;
+    unsigned specificity = 0;
     for (const CSSSelector* selector = rootSelector; selector; selector = selector->tagHistory()) {
+        specificity = CSSSelector::addSpecificities(specificity, selector->simpleSelectorSpecificity());
+
         CSSSelector::Relation relation = selector->relation();
 
         // A selector is invalid if something follows a pseudo-element.
@@ -874,8 +895,11 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
                 subPosition = FragmentPositionInRootFragments::NotRightmost;
             if (fragment.pseudoElementSelector && isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType()))
                 functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, fragment));
-            else
-                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, selectorContext, fragmentLevel, subPosition, visitedMatchEnabled, visitedMode, pseudoElementMatchingBehavior));
+            else {
+                unsigned internalSpecificity = 0;
+                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, internalSpecificity, selectorContext, fragmentLevel, subPosition, visitedMatchEnabled, visitedMode, pseudoElementMatchingBehavior));
+                specificity = CSSSelector::addSpecificities(specificity, internalSpecificity);
+            }
             if (!pseudoClassOnlyMatchesLinksInQuirksMode(*selector))
                 fragment.onlyMatchesLinksInQuirksMode = false;
             if (functionType == FunctionType::CannotCompile || functionType == FunctionType::CannotMatchAnything)
@@ -975,6 +999,9 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
         selectorFragments.append(fragment);
         fragment = SelectorFragment();
     }
+
+    selectorFragments.staticSpecificity = specificity;
+
     return functionType;
 }
 
@@ -1617,7 +1644,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     }
 
     if (m_selectorContext == SelectorContext::RuleCollector) {
-        unsigned specificity = m_originalSelector->specificity();
+        unsigned specificity = m_selectorFragments.staticSpecificity;
         if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext)
             m_assembler.store32(Assembler::TrustedImm32(specificity), JSC::GPRInfo::argumentGPR2);
         else

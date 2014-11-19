@@ -37,7 +37,7 @@ namespace WebCore {
 
 static inline bool comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
 {
-    return r1->selector()->specificity() < r2->selector()->specificity();
+    return r1->selector()->specificityForPage() < r2->selector()->specificityForPage();
 }
 
 bool PageRuleCollector::isLeftPage(int pageIndex) const

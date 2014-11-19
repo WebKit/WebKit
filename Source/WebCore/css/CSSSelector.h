@@ -59,6 +59,7 @@ namespace WebCore {
         static const unsigned elementMask = 0xff;
 
         unsigned specificity() const;
+        unsigned specificityForPage() const;
         unsigned simpleSelectorSpecificity() const;
         static unsigned addSpecificities(unsigned, unsigned);
 
@@ -312,7 +313,6 @@ namespace WebCore {
         unsigned m_tagIsForNamespaceRule : 1;
 
         unsigned simpleSelectorSpecificityForPage() const;
-        unsigned specificityForPage() const;
 
         // Hide.
         CSSSelector& operator=(const CSSSelector&);

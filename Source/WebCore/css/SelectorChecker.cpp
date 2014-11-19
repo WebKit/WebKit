@@ -726,6 +726,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
         case CSSSelector::PseudoClassMatches:
             {
                 bool hasMatchedAnything = false;
+                unsigned maxSpecificity = 0;
+
                 MatchType localMatchType = MatchType::VirtualPseudoElementOnly;
                 for (const CSSSelector* subselector = selector->selectorList()->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
                     CheckingContextWithStatus subcontext(context);
@@ -737,12 +739,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                     unsigned localSpecificity = 0;
                     MatchResult result = matchRecursively(subcontext, localDynamicPseudoIdSet, localSpecificity);
                     if (result.match == Match::SelectorMatches) {
-                        if (!context.pseudoElementEffective) {
-                            // When pseudo elements are not effective in this fragment (e.g. it's not righmost fragment),
-                            // it's not necessary to check all selectors to collect pseudo element ids.
-                            ASSERT(!localDynamicPseudoIdSet);
-                            return true;
-                        }
+                        maxSpecificity = std::max(maxSpecificity, localSpecificity);
 
                         if (result.matchType == MatchType::Element)
                             localMatchType = MatchType::Element;
@@ -751,8 +748,10 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                         hasMatchedAnything = true;
                     }
                 }
-                if (hasMatchedAnything)
+                if (hasMatchedAnything) {
                     matchType = localMatchType;
+                    specificity = CSSSelector::addSpecificities(specificity, maxSpecificity);
+                }
                 return hasMatchedAnything;
             }
 

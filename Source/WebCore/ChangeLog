@@ -1,3 +1,62 @@
+2014-11-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the initial implementation of dynamic specificity for :matches()
+        https://bugs.webkit.org/show_bug.cgi?id=138822
+
+        Reviewed by Andreas Kling.
+
+        Previously we completely ignored the selector list of :matches() when computing
+        the specificity of the selector.
+
+        The spec (http://dev.w3.org/csswg/selectors4/#specificity) says:
+        "The specificity of a :matches() pseudo-class, however, is the specificity
+         of the most specific complex selector that matched the given element."
+
+        This patch does just that.
+
+        In the CSS JIT, we only consider specificities that can be computed statically
+        for now, this should be extended later.
+        When the specificity is dynamic, we fall back to SelectorChecker. In that case,
+        we execute every selector of the selector list and we keep the maximum value
+        as the specificity for the whole :matches().
+
+        Tests: fast/css/matches-specificity-1.html
+               fast/css/matches-specificity-2.html
+               fast/css/matches-specificity-3.html
+               fast/css/matches-specificity-4.html
+               fast/css/matches-specificity-5.html
+               fast/css/matches-specificity-6.html
+               fast/css/matches-specificity-7.html
+               fast/css/matches-specificity-8.html
+               fast/css/matches-specificity-9.html
+               fast/css/matches-specificity-10.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::selectorSpecificity):
+        (WebCore::maxSpecificity):
+        (WebCore::CSSSelector::specificity):
+        (WebCore::simpleSelectorSpecificityInternal):
+        (WebCore::CSSSelector::simpleSelectorSpecificity):
+        :matches() itself should not have any specificity. The specificity of its components
+        is computed in SelectorChecker.
+
+        Since :matches() is no longer accounted as a class B specificity, I had to finish
+        the specificity of :not() or some test breaks.
+
+        * css/CSSSelector.h:
+        * css/PageRuleCollector.cpp:
+        (WebCore::comparePageRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        We can no longer shortcut the execution when context.pseudoElementEffective is false.
+        There is no guarantee that a following selector wouldn't match with a higher specificity.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+
 2014-11-18  David Kilzer  <ddkilzer@apple.com>
 
         FeatureDefines.xcconfig: Switch from using PLATFORM_NAME to SDK selectors

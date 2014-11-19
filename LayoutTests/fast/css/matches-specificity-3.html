@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    * {
+        background-color: blue;
+        color: blue;
+        border: 5px solid black;
+    }
+
+    /* The following :matches() gets a different class of specificity. Depending on what
+       matches, the later rules may override this or not. */
+    :matches(.classB, target, #classA, *) {
+        background-color: red;
+        color: purple;
+        border: none;
+    }
+
+    target {
+        background-color: green;
+        color: white;
+    }
+    .classB {
+        background-color: blue;
+    }
+    body > * {
+        display: block;
+    }
+    html, body, p {
+        background-color: white;
+        color: black;
+    }
+</style>
+</head>
+<body>
+    <p>This test checks the dynamic specificity of matches changing the order in which rules are applied depending on the element. Each element should have the colors described in the text and no border.</p>
+    <nottarget>Purple text on red background.</nottarget>
+    <target>White text on green background.</target>
+    <nottarget id="classA">Purple text on red background.</nottarget>
+    <target id="classA">Purple text on red background.</target>
+    <nottarget class="classB">Purple text on blue background.</nottarget>
+    <target class="classB">Purple text on blue background.</target>
+    <nottarget id="classA" class="classB">Purple text on red background.</nottarget>
+    <target id="classA" class="classB">Purple text on red background.</target>
+</body>
+</html>

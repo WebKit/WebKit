@@ -1,3 +1,31 @@
+2014-11-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the initial implementation of dynamic specificity for :matches()
+        https://bugs.webkit.org/show_bug.cgi?id=138822
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/matches-specificity-1-expected.html: Added.
+        * fast/css/matches-specificity-1.html: Added.
+        * fast/css/matches-specificity-2-expected.html: Added.
+        * fast/css/matches-specificity-2.html: Added.
+        * fast/css/matches-specificity-3-expected.html: Added.
+        * fast/css/matches-specificity-3.html: Added.
+        * fast/css/matches-specificity-4-expected.html: Added.
+        * fast/css/matches-specificity-4.html: Added.
+        * fast/css/matches-specificity-5-expected.html: Added.
+        * fast/css/matches-specificity-5.html: Added.
+        * fast/css/matches-specificity-6-expected.html: Added.
+        * fast/css/matches-specificity-6.html: Added.
+        * fast/css/matches-specificity-7-expected.html: Added.
+        * fast/css/matches-specificity-7.html: Added.
+        * fast/css/matches-specificity-8-expected.html: Added.
+        * fast/css/matches-specificity-8.html: Added.
+        * fast/css/matches-specificity-9-expected.html: Added.
+        * fast/css/matches-specificity-9.html: Added.
+        * fast/css/matches-specificity-10-expected.html: Added.
+        * fast/css/matches-specificity-10.html: Added.
+
 2014-11-18  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'z-index' / 'flex-shrink' CSS properties to a calculated value

@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    /* Specificity (2, 0, 2). */
+    #f#f > padding > target {
+        background-color: purple;
+    }
+
+    /* Specificity (1, 0, 2). */
+    #f > padding > target {
+        background-color: red;
+        color: green;
+    }
+
+    /* Specificity (0, 0, 5) */
+    padding padding foo padding target {
+        color: green;
+    }
+
+    /* Specificity (0, 0, 4) */
+    padding padding padding target {
+        border: 5px blue solid;
+    }
+
+    :matches(aBlock, #b) > :matches(#c, d) > :matches(e, #f) target {
+        background-color: green;
+        color: white;
+        border: none;
+    }
+</style>
+</head>
+<body>
+    <p>This test the dynamic specificity of :matches() with a simple descendant backtracking case. The test pass if each block has style matching its description. None of the result should have a border.</p>
+
+    <!--
+     This case should match ":matches(a, #b) > :matches(#c, d) > matches(e, #f) target"
+     like "#a > #c > e target"
+     with the specificity (2, 0, 2).
+     -->
+    <foo id="b">
+        <foo id="c">
+            <e> <!-- Success case from here. -->
+                <padding>
+                    <b> <!-- Fail here as we need <aBlock> or #b -->
+                        <d>
+                            <e>
+                                <padding>
+                                    <aBlock>
+                                        <c> <!-- Fail here as we need <d> or #c -->
+                                            <foo id="f">
+                                                <padding>
+                                                    <target>White text on green background.</target>
+                                                </padding>
+                                            </foo>
+                                        </c>
+                                    </aBlock>
+                                </padding>
+                            </e>
+                        </d>
+                    </b>
+                <padding>
+            </e>
+        </foo>
+    </foo>
+
+    <!--
+     This case should match ":matches(a, #b) > :matches(#c, d) > matches(e, #f) target"
+     like "#a > d > e target"
+     with the specificity (1, 0, 3).
+     -->
+    <foo id="b">
+        <d>
+            <e> <!-- Success case from here. -->
+                <padding>
+                    <b> <!-- Fail here as we need <aBlock> or #b -->
+                        <d>
+                            <e>
+                                <padding>
+                                    <aBlock>
+                                        <c> <!-- Fail here as we need <d> or #c -->
+                                            <foo id="f">
+                                                <padding>
+                                                    <target>White text on purple background.</target>
+                                                </padding>
+                                            </foo>
+                                        </c>
+                                    </aBlock>
+                                </padding>
+                            </e>
+                        </d>
+                    </b>
+                <padding>
+            </e>
+        </d>
+    </foo>
+
+    <!--
+     This case should match ":matches(a, #b) > :matches(#c, d) > matches(e, #f) target"
+     like "a > d > e target"
+     with the specificity (0, 0, 4).
+     -->
+    <aBlock>
+        <d>
+            <e> <!-- Success case from here. -->
+                <padding>
+                    <b> <!-- Fail here as we need <aBlock> or #b -->
+                        <d>
+                            <e>
+                                <padding>
+                                    <a>
+                                        <c> <!-- Fail here as we need <d> or #c -->
+                                            <foo id="f">
+                                                <padding>
+                                                    <target>Green text on purple background.</target>
+                                                </padding>
+                                            </foo>
+                                        </c>
+                                    </a>
+                                </padding>
+                            </e>
+                        </d>
+                    </b>
+                <padding>
+            </e>
+        </d>
+    </aBlock>
+</body>
+</html>

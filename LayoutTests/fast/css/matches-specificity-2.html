@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    * {
+        background-color: blue;
+        color: black;
+        border: 5px solid black;
+    }
+    html, body, p {
+        background-color: white;
+        color: black;
+    }
+    target {
+        background-color: green;
+    }
+
+    /* The only dynamic selector that matches is "*". Every rules except the first one (* selector) should override the style defined here.
+       Background-color is defined by the two tag selectors above.
+       Color is defined below by the star rule. It has the same specificity but a higher position.
+       Border overrides the black border defined in the first rule. */
+    :matches(#foo, .bar, target.notthere, *, foo>bar) {
+        background-color: red;
+        color: blue;
+        border: none;
+    }
+    * {
+        color: white;
+    }
+</style>
+</head>
+<body>
+    <p>This test the specificity of :matches() with a dynamic specificity of zero. The test passes if the text "target" is displayed white on green background.</p>
+    <target>Target</target>
+</body>
+</html>
