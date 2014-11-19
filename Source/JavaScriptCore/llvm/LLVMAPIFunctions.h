@@ -552,7 +552,6 @@
     macro(LLVMTargetDataRef, GetTargetMachineData, (LLVMTargetMachineRef T)) \
     macro(LLVMBool, TargetMachineEmitToFile, (LLVMTargetMachineRef T, LLVMModuleRef M, char *Filename, LLVMCodeGenFileType codegen, char **ErrorMessage)) \
     macro(void, LinkInMCJIT, (void)) \
-    macro(void, LinkInInterpreter, (void)) \
     macro(LLVMGenericValueRef, CreateGenericValueOfInt, (LLVMTypeRef Ty, unsigned long long N, LLVMBool IsSigned)) \
     macro(LLVMGenericValueRef, CreateGenericValueOfPointer, (void *P)) \
     macro(LLVMGenericValueRef, CreateGenericValueOfFloat, (LLVMTypeRef Ty, double N)) \
@@ -562,13 +561,9 @@
     macro(double, GenericValueToFloat, (LLVMTypeRef TyRef, LLVMGenericValueRef GenVal)) \
     macro(void, DisposeGenericValue, (LLVMGenericValueRef GenVal)) \
     macro(LLVMBool, CreateExecutionEngineForModule, (LLVMExecutionEngineRef *OutEE, LLVMModuleRef M, char **OutError)) \
-    macro(LLVMBool, CreateInterpreterForModule, (LLVMExecutionEngineRef *OutInterp, LLVMModuleRef M, char **OutError)) \
-    macro(LLVMBool, CreateJITCompilerForModule, (LLVMExecutionEngineRef *OutJIT, LLVMModuleRef M, unsigned OptLevel, char **OutError)) \
     macro(void, InitializeMCJITCompilerOptions, (struct LLVMMCJITCompilerOptions *Options, size_t SizeOfOptions)) \
     macro(LLVMBool, CreateMCJITCompilerForModule, (LLVMExecutionEngineRef *OutJIT, LLVMModuleRef M, struct LLVMMCJITCompilerOptions *Options, size_t SizeOfOptions, char **OutError)) \
     macro(LLVMBool, CreateExecutionEngine, (LLVMExecutionEngineRef *OutEE, LLVMModuleProviderRef MP, char **OutError)) \
-    macro(LLVMBool, CreateInterpreter, (LLVMExecutionEngineRef *OutInterp, LLVMModuleProviderRef MP, char **OutError)) \
-    macro(LLVMBool, CreateJITCompiler, (LLVMExecutionEngineRef *OutJIT, LLVMModuleProviderRef MP, unsigned OptLevel, char **OutError)) \
     macro(void, DisposeExecutionEngine, (LLVMExecutionEngineRef EE)) \
     macro(void, RunStaticConstructors, (LLVMExecutionEngineRef EE)) \
     macro(void, RunStaticDestructors, (LLVMExecutionEngineRef EE)) \

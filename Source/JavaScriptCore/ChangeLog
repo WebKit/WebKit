@@ -1,3 +1,15 @@
+2014-11-19  Juergen Ributzka  <juergen@apple.com>
+
+        Update WebKit to build with LLVM TOT
+        https://bugs.webkit.org/show_bug.cgi?id=138519
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/LLVMForJSC.xcconfig:
+        * llvm/LLVMAPIFunctions.h:
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+
 2014-11-18  David Kilzer  <ddkilzer@apple.com>
 
         FeatureDefines.xcconfig: Switch from using PLATFORM_NAME to SDK selectors
