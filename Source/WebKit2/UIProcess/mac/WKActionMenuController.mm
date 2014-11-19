@@ -184,7 +184,7 @@ using namespace WebKit;
 
 - (BOOL)isMenuForTextContent
 {
-    return _type == kWKActionMenuReadOnlyText || _type == kWKActionMenuEditableText || _type == kWKActionMenuEditableTextWithSuggestions || _type == kWKActionMenuWhitespaceInEditableArea;
+    return _type == kWKActionMenuReadOnlyText || _type == kWKActionMenuEditableText || _type == kWKActionMenuEditableTextWithSuggestions;
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -201,6 +201,11 @@ using namespace WebKit;
             _page->clearSelection();
         else
             _page->selectLastActionMenuRange();
+        return;
+    }
+
+    if (_type == kWKActionMenuWhitespaceInEditableArea) {
+        _page->focusAndSelectLastActionMenuHitTestResult();
         return;
     }
 
