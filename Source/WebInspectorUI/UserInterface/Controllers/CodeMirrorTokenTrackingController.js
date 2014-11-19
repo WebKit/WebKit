@@ -477,11 +477,20 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         var expression = this._hoveredTokenInfo.token.string;
         var expressionStartPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.start};
         while (true) {
-            var token = this._codeMirror.getTokenAt(expressionStartPosition);
-            var isDot = token && !token.type && token.string === ".";
-            var isExpression = token && token.type && token.type.indexOf("m-javascript") !== -1;
+            var token = this._codeMirror.getTokenAt(expressionStartPosition);            
+            if (!token)
+                break;
+
+            var isDot = !token.type && token.string === ".";
+            var isExpression = token.type && token.type.contains("m-javascript");
             if (!isDot && !isExpression)
                 break;
+
+            // Disallow operators. We want the hovered expression to be just a single operand.
+            // Also, some operators can modify values, such as pre-increment and assignment operators.
+            if (isExpression && token.type.contains("operator"))
+                break;
+
             expression = token.string + expression;
             expressionStartPosition.ch = token.start;
         }
