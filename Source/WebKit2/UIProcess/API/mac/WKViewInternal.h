@@ -132,8 +132,6 @@ struct WebPageConfiguration;
 - (void)_didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 #endif
 
-- (void)_dismissActionMenuPopovers;
-
 @property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;
 
 @end

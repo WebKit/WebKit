@@ -1,5 +1,23 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176299. rdar://problem/19024541
+
+    2014-11-18  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Give clients a way to cancel preview popovers
+            https://bugs.webkit.org/show_bug.cgi?id=138855
+
+            Reviewed by Tim Horton.
+
+            Promote -[WKView _dismissActionMenuPopovers] from internal to private.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _dismissActionMenuPopovers]):
+            * UIProcess/API/mac/WKViewInternal.h:
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176288. rdar://problem/18840382
 
     2014-11-18  Tim Horton  <timothy_horton@apple.com>

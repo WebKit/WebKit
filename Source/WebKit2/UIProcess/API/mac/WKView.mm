@@ -3709,13 +3709,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-- (void)_dismissActionMenuPopovers
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_actionMenuController dismissActionMenuPopovers];
-#endif
-}
-
 @end
 
 @implementation WKView (Private)
@@ -4204,6 +4197,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems userData:(WKTypeRef)userData
 {
     return [self _actionMenuItemsForHitTestResult:hitTestResult withType:type defaultActionMenuItems:defaultMenuItems];
+}
+
+- (void)_dismissActionMenuPopovers
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    [_data->_actionMenuController dismissActionMenuPopovers];
+#endif
 }
 
 - (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize
