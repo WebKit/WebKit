@@ -126,4 +126,6 @@
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
 #endif
 
+- (void)_dismissActionMenuPopovers;
+
 @end
