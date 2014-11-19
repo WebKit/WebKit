@@ -111,8 +111,8 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
         }
         FALLTHROUGH;
 #else
-        if (pseudoClassType() == PseudoClassNot && selectorList())
-            return selectorList()->first()->simpleSelectorSpecificity();
+        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassNot && simpleSelector.selectorList())
+            return simpleSelector.selectorList()->first()->simpleSelectorSpecificity();
         FALLTHROUGH;
 #endif
     case CSSSelector::Exact:
