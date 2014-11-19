@@ -47,6 +47,14 @@
 #define ENABLE_REMOTE_INSPECTOR 1
 #endif
 
+#if !defined(ENABLE_TOUCH_EVENTS)
+#if TARGET_OS_IPHONE
+#define ENABLE_TOUCH_EVENTS 1
+#else
+#define ENABLE_TOUCH_EVENTS 0
+#endif
+#endif
+
 @class NSError;
 @class WebFrame;
 @class WebDeviceOrientation;
@@ -556,7 +564,9 @@ Could be worth adding to the API.
 - (void)_viewGeometryDidChange;
 - (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)node isUserScroll:(BOOL)userScroll;
 
+#if ENABLE_TOUCH_EVENTS
 - (NSArray *)_touchEventRegions;
+#endif
 
 /*!
     @method _doNotStartObservingNetworkReachability

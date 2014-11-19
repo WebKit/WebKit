@@ -1,3 +1,26 @@
+2014-11-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebKit build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136863
+
+        Reviewed by David Kilzer.
+
+        * History/WebHistory.mm: Include header NSCalendarDateSPI.h.
+        * History/WebHistoryItemPrivate.h: Remove include of private header Foundation/NSCalendarDate.h.
+        * Misc/WebDownload.h: Forward declare NSURLDownload when building without header Foundation/NSURLDownload.h.
+        We use __has_include() instead of WTF_USE_APPLE_INTERNAL_SDK since this header
+        may be used by Apple internal clients that do not include wtf/Platform.h.
+        * Misc/WebDownload.mm: Include header NSURLDownloadSPI.h instead of including
+        private Foundation headers directly.
+        * Misc/WebNSURLExtras.mm: Remove unnecessary include of private Foundation header.
+        * WebCoreSupport/WebFrameNetworkingContext.mm: Include header CFNetworkSPI.h
+        instead of including private CFNetwork headers directly. Also fixed up style and
+        ordering of header include directives.
+        * WebView/WebView.mm: Include header CFNetworkSPI.h instead of including private
+        CFNetwork headers directly. Also sort the #import directives.
+        * WebView/WebViewPrivate.h: Define ENABLE_TOUCH_EVENTS if not otherwise defined
+        and added ENABLE_TOUCH_EVENTS-guard around -_touchEventRegions.
+
 2014-11-18  David Kilzer  <ddkilzer@apple.com>
 
         FeatureDefines.xcconfig: Switch from using PLATFORM_NAME to SDK selectors

@@ -30,12 +30,7 @@
 #import "NetworkProcessConnectionMessages.h"
 #import "NetworkResourceLoader.h"
 #import "WebCoreArgumentCoders.h"
-
-#ifdef __has_include
-#if __has_include(<CFNetwork/CFURLCachePriv.h>)
-#include <CFNetwork/CFURLCachePriv.h>
-#endif
-#endif
+#import <WebCore/CFNetworkSPI.h>
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
 

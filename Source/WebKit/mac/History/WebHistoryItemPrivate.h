@@ -29,8 +29,6 @@
 #import <WebKitLegacy/WebHistoryItem.h>
 
 #if TARGET_OS_IPHONE
-#import <Foundation/NSCalendarDate.h>
-
 extern NSString *WebViewportInitialScaleKey;
 extern NSString *WebViewportMinimumScaleKey;
 extern NSString *WebViewportMaximumScaleKey;

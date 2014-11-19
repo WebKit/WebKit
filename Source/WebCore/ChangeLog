@@ -1,3 +1,24 @@
+2014-11-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebKit build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136863
+
+        Reviewed by David Kilzer.
+
+        * WebCore.xcodeproj/project.pbxproj: Add private headers CFNetworkSPI.h and
+        NS{CalendarDate, String, URLDownload}SPI.h.
+        * loader/cocoa/DiskCacheMonitorCocoa.mm: Move forward declaration of
+        CFNetwork data types and functions from here to file CFNetworkSPI.h and
+        include header CFNetworkSPI.h.
+        * platform/network/mac/ResourceHandleMac.mm: Substitute CFNetworkSPI.h for
+        CFURLRequestSPI.h as the content of the latter was incorporated into the former.
+        * platform/spi/cf/CFNetworkSPI.h: Added.
+        * platform/spi/cf/CFURLRequestSPI.h: Removed; incorporated its functionality
+        into CFNetworkSPI.h
+        * platform/spi/cocoa/NSCalendarDateSPI.h: Added.
+        * platform/spi/cocoa/NSStringSPI.h: Added.
+        * platform/spi/cocoa/NSURLDownloadSPI.h: Added.
+
 2014-11-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of AccessibilityObject::setRoleValue()

@@ -75,7 +75,7 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 #endif
 
 #if PLATFORM(IOS)
-#import "CFURLRequestSPI.h"
+#import "CFNetworkSPI.h"
 #import "RuntimeApplicationChecksIOS.h"
 #import "WebCoreThreadRun.h"
 

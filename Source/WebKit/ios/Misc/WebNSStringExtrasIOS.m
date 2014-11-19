@@ -25,9 +25,9 @@
 
 #if PLATFORM(IOS)
 
-#import <Foundation/NSString_NSURLExtras.h>
 #import "WebNSStringExtrasIOS.h"
 #import "WebNSURLExtras.h"
+#import <WebCore/NSStringSPI.h>
 
 @implementation NSString (WebNSStringExtrasIOS)
 

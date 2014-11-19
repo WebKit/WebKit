@@ -41,20 +41,13 @@
 #import "WebProcessMessages.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKProcessPoolConfiguration.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CertificateInfo.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import "WKGeolocationProviderIOS.h"
-#endif
-
-#if __has_include(<CFNetwork/CFNSURLConnection.h>)
-#import <CFNetwork/CFNSURLConnection.h>
-#else
-enum : NSUInteger {
-    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
-};
 #endif
 
 @implementation WKProcessPool {

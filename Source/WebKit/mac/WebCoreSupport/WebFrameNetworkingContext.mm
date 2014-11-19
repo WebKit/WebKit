@@ -23,19 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebViewPrivate.h"
-#include "WebFrameInternal.h"
-#include <WebFrameNetworkingContext.h>
-#include <WebCore/FrameLoader.h>
-#include <WebCore/FrameLoaderClient.h>
-#include <WebCore/NetworkStorageSession.h>
-#include <WebCore/Page.h>
-#include <WebCore/ResourceError.h>
-#include <WebCore/Settings.h>
-#include <wtf/NeverDestroyed.h>
+#import "WebFrameNetworkingContext.h"
+
+#import "WebFrameInternal.h"
+#import "WebViewPrivate.h"
+#import <WebCore/CFNetworkSPI.h>
+#import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderClient.h>
+#import <WebCore/NetworkStorageSession.h>
+#import <WebCore/Page.h>
+#import <WebCore/ResourceError.h>
+#import <WebCore/Settings.h>
+#import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
-#import <CFNetwork/CFHTTPCookiesPriv.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebKitLegacy/WebFrameLoadDelegate.h>
 #endif

@@ -31,24 +31,10 @@
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "SandboxExtension.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
-
-typedef const struct _CFURLCache* CFURLCacheRef;
-extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
-extern "C" void _CFURLCachePurgeMemoryCache(CFURLCacheRef);
-extern "C" void CFURLConnectionInvalidateConnectionCache();
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-extern "C" void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
-#endif
-
-#if PLATFORM(IOS)
-@interface NSURLCache (WKDetails)
--(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
-@end
-#endif
 
 namespace WebKit {
 

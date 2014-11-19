@@ -38,6 +38,7 @@
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
 #import "WindowServerConnection.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/NotImplemented.h>
@@ -55,17 +56,6 @@
 #else
 #import <QuartzCore/CARemoteLayerServer.h>
 #import <WebCore/QuickLookMac.h>
-#endif
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-
-#if __has_include(<CFNetwork/CFURLProtocolPriv.h>)
-#include <CFNetwork/CFURLProtocolPriv.h>
-#else
-extern "C" Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef url, CFURLStorageSessionRef session);
-extern "C" void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef session);
-#endif
-
 #endif
 
 using namespace WebCore;

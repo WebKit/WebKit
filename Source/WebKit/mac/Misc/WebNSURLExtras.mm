@@ -43,10 +43,6 @@
 #import <unicode/uchar.h>
 #import <unicode/uscript.h>
 
-#if PLATFORM(IOS)
-#import <Foundation/NSString_NSURLExtras.h>
-#endif
-
 using namespace WebCore;
 using namespace WTF;
 

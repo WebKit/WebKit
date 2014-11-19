@@ -115,7 +115,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/BackForwardList.h>
-#import <WebCore/MemoryCache.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>
@@ -148,6 +148,7 @@
 #import <WebCore/Logging.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/NodeList.h>
@@ -188,8 +189,8 @@
 #import <runtime/ArrayPrototype.h>
 #import <runtime/DateInstance.h>
 #import <runtime/InitializeThreading.h>
-#import <runtime/JSLock.h>
 #import <runtime/JSCJSValue.h>
+#import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
@@ -229,7 +230,6 @@
 #import "WebStorageManagerPrivate.h"
 #import "WebUIKitSupport.h"
 #import "WebVisiblePosition.h"
-#import <CFNetwork/CFURLCachePriv.h>
 #import <WebCore/DispatchSPI.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FontCache.h>

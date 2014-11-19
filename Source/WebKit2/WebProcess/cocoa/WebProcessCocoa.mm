@@ -38,6 +38,7 @@
 #import "WebProcessProxyMessages.h"
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/Font.h>
 #import <WebCore/LocalizedStrings.h>
@@ -55,12 +56,6 @@
 #import <stdio.h>
 
 #define ENABLE_MANUAL_WEBPROCESS_SANDBOXING !PLATFORM(IOS)
-
-#if PLATFORM(IOS)
-@interface NSURLCache (WKDetails)
--(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
-@end
-#endif
 
 using namespace WebCore;
 

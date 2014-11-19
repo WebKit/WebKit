@@ -5762,12 +5762,15 @@
 		CE12524B1A16C79B00864480 /* DispatchSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12524A1A16C79B00864480 /* DispatchSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */; };
 		CE12524F1A1A78D200864480 /* MachVMSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12524E1A1A78D200864480 /* MachVMSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE1252511A1BEBD800864480 /* NSCalendarDateSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252501A1BEBD800864480 /* NSCalendarDateSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE1252531A1BEC0600864480 /* NSStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252521A1BEC0600864480 /* NSStringSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE1252551A1BEC0E00864480 /* NSURLDownloadSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252541A1BEC0E00864480 /* NSURLDownloadSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE12525B1A1C018200864480 /* CFNetworkSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12525A1A1C018200864480 /* CFNetworkSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */; };
 		CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CE8245F219B671D500AC0122 /* CFURLRequestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245F119B671D500AC0122 /* CFURLRequestSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE95208A1811B475007A5392 /* WebSafeIncrementalSweeperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */; };
 		CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC2153778FF00E37068 /* DictationAlternative.cpp */; };
 		CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC3153778FF00E37068 /* DictationAlternative.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13259,6 +13262,10 @@
 		CE12524A1A16C79B00864480 /* DispatchSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchSPI.h; sourceTree = "<group>"; };
 		CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPMLibSPI.h; sourceTree = "<group>"; };
 		CE12524E1A1A78D200864480 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
+		CE1252501A1BEBD800864480 /* NSCalendarDateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSCalendarDateSPI.h; sourceTree = "<group>"; };
+		CE1252521A1BEC0600864480 /* NSStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringSPI.h; sourceTree = "<group>"; };
+		CE1252541A1BEC0E00864480 /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLDownloadSPI.h; sourceTree = "<group>"; };
+		CE12525A1A1C018200864480 /* CFNetworkSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkSPI.h; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLMencloseElement.h; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextUIController.h; sourceTree = "<group>"; };
@@ -13266,7 +13273,6 @@
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAlternativeWithRange.h; sourceTree = "<group>"; };
 		CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextAlternativeWithRange.mm; sourceTree = "<group>"; };
 		CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
-		CE8245F119B671D500AC0122 /* CFURLRequestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFURLRequestSPI.h; sourceTree = "<group>"; };
 		CECADFC2153778FF00E37068 /* DictationAlternative.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationAlternative.cpp; sourceTree = "<group>"; };
 		CECADFC3153778FF00E37068 /* DictationAlternative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationAlternative.h; sourceTree = "<group>"; };
 		CECADFC4153778FF00E37068 /* DictationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommand.cpp; sourceTree = "<group>"; };
@@ -16203,7 +16209,7 @@
 			children = (
 				65086DA719AC1719009AF46B /* CFLocaleSPI.h */,
 				CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */,
-				CE8245F119B671D500AC0122 /* CFURLRequestSPI.h */,
+				CE12525A1A1C018200864480 /* CFNetworkSPI.h */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -16228,9 +16234,12 @@
 				CE1252441A16C22500864480 /* DynamicLinkerSPI.h */,
 				CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */,
 				CE12524E1A1A78D200864480 /* MachVMSPI.h */,
+				CE1252501A1BEBD800864480 /* NSCalendarDateSPI.h */,
 				2DDB97F319F9AECA002025D8 /* NSExtensionSPI.h */,
 				CE12523A1A16711000864480 /* NSFileManagerSPI.h */,
 				CE1252461A16C2C200864480 /* NSPointerFunctionsSPI.h */,
+				CE1252521A1BEC0600864480 /* NSStringSPI.h */,
+				CE1252541A1BEC0E00864480 /* NSURLDownloadSPI.h */,
 				653EF83819A043AE0052202C /* NSURLFileTypeMappingsSPI.h */,
 				CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */,
 			);
@@ -23567,8 +23576,8 @@
 				CDDD571518B57A8200A94FCB /* CDMSession.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
 				CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */,
+				CE12525B1A1C018200864480 /* CFNetworkSPI.h in Headers */,
 				E1A8E56717552B2A007488E7 /* CFURLExtras.h in Headers */,
-				CE8245F219B671D500AC0122 /* CFURLRequestSPI.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
 				97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */,
 				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
@@ -25508,6 +25517,7 @@
 				1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */,
 				1A569D110D7E2B82007C3983 /* npruntime_priv.h in Headers */,
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
+				CE1252511A1BEBD800864480 /* NSCalendarDateSPI.h in Headers */,
 				2DDB97F419F9AECA002025D8 /* NSExtensionSPI.h in Headers */,
 				CE12523B1A16711000864480 /* NSFileManagerSPI.h in Headers */,
 				1C6466281A12C4200094603C /* NSFontSPI.h in Headers */,
@@ -25515,6 +25525,8 @@
 				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
 				2DCB837919F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h in Headers */,
 				2DCB837A19F99BBA00A7FBE4 /* NSSharingServiceSPI.h in Headers */,
+				CE1252531A1BEC0600864480 /* NSStringSPI.h in Headers */,
+				CE1252551A1BEC0E00864480 /* NSURLDownloadSPI.h in Headers */,
 				658F540319A1C9240088FC92 /* NSURLFileTypeMappingsSPI.h in Headers */,
 				9348428219F1A9190009D5AE /* NSViewSPI.h in Headers */,
 				F55B3DC81251F12D003EF269 /* NumberInputType.h in Headers */,

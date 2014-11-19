@@ -30,28 +30,11 @@
 
 #import "NetworkDiskCacheMonitor.h"
 #import "ShareableResource.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/SharedBuffer.h>
 
 using namespace WebCore;
-
-#ifdef __has_include
-#if __has_include(<CFNetwork/CFURLCache.h>)
-#include <CFNetwork/CFURLCache.h>
-#endif
-#if __has_include(<CFNetwork/CFURLCachePriv.h>)
-#include <CFNetwork/CFURLCachePriv.h>
-#endif
-#endif
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-typedef const struct _CFURLCache* CFURLCacheRef;
-typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
-extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
-extern "C" CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
-extern "C" CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
-extern "C" CFBooleanRef _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFDataRef);
-#endif
 
 @interface NSCachedURLResponse (NSCachedURLResponseDetails)
 -(CFCachedURLResponseRef)_CFCachedURLResponse;

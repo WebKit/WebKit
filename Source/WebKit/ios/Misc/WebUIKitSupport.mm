@@ -27,7 +27,6 @@
 
 #import "WebUIKitSupport.h"
 
-#import <CoreFoundation/CFPriv.h>
 #import <WebCore/break_lines.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TextBreakIterator.h>

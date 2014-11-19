@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DiskCacheMonitorCocoa.h"
 
+#import "CFNetworkSPI.h"
 #import "CachedResource.h"
 #import "MemoryCache.h"
 #import "ResourceRequest.h"
@@ -36,21 +37,11 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 
-#ifdef __has_include
-#if __has_include(<CFNetwork/CFURLCachePriv.h>)
-#include <CFNetwork/CFURLCachePriv.h>
-#endif
-#endif
-
 #if USE(WEB_THREAD)
 #include "WebCoreThreadRun.h"
 #endif
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
-
-typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
-extern "C" void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
-extern "C" CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
 
 namespace WebCore {
 

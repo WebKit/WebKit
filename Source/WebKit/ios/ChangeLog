@@ -1,3 +1,14 @@
+2014-11-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebKit build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136863
+
+        Reviewed by David Kilzer.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:  Remove unnecessary include of header <CoreLocation/CoreLocationPriv.h>.
+        * Misc/WebNSStringExtrasIOS.m: Substitute header <WebCore/NSStringSPI.h> for <Foundation/NSString_NSURLExtras.h>.
+        * Misc/WebUIKitSupport.mm: Remove unnecessary include of header CoreFoundation/CFPriv.h.
+
 2014-11-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] CoreGraphics SPI not available in public SDK

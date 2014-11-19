@@ -34,6 +34,7 @@
 #import "WebNSURLExtras.h"
 #import "WebTypesInternal.h"
 #import <WebCore/HistoryItem.h>
+#import <WebCore/NSCalendarDateSPI.h>
 #import <WebCore/PageGroup.h>
 
 #if PLATFORM(IOS)
