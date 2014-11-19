@@ -38,9 +38,11 @@
 #import "WebViewInternal.h"
 #import <ImageIO/ImageIO.h>
 #import <ImageKit/ImageKit.h>
+#import <WebCore/ArchiveResource.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
@@ -57,6 +59,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextCheckerClient.h>
 #import <WebKitSystemInterface.h>
@@ -329,11 +332,15 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     RetainPtr<NSMenuItem> shareItem = [self _createActionMenuItemForTag:WebActionMenuItemTagShareImage];
     if (Image* image = _hitTestResult.image()) {
-        RetainPtr<CGImageRef> cgImage = image->getCGImageRef();
-        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSZeroSize]);
-        _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
-        [_sharingServicePicker setDelegate:self];
-        [shareItem setSubmenu:[_sharingServicePicker menu]];
+        RefPtr<SharedBuffer> buffer = image->data();
+        if (buffer) {
+            RetainPtr<NSData> nsData = [NSData dataWithBytes:buffer->data() length:buffer->size()];
+            RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithData:nsData.get()]);
+            _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ nsImage.get() ]]);
+            [_sharingServicePicker setDelegate:self];
+            [shareItem setSubmenu:[_sharingServicePicker menu]];
+        } else
+            [shareItem setEnabled:NO];
     }
 
     return @[ copyImageItem.get(), addToPhotosItem.get(), saveToDownloadsItem.get(), shareItem.get() ];
@@ -405,19 +412,23 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!image)
         return;
 
-    RetainPtr<CGImageRef> cgImage = image->getCGImageRef();
+    String imageExtension = image->filenameExtension();
+    if (imageExtension.isEmpty())
+        return;
+
+    RefPtr<SharedBuffer> buffer = image->data();
+    if (!buffer)
+        return;
+    RetainPtr<NSData> nsData = [NSData dataWithBytes:buffer->data() length:buffer->size()];
+    RetainPtr<NSString> suggestedFilename = [[[NSProcessInfo processInfo] globallyUniqueString] stringByAppendingPathExtension:imageExtension];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString * const suggestedFilename = @"image.jpg";
-
-        NSString *filePath = pathToPhotoOnDisk(suggestedFilename);
+        NSString *filePath = pathToPhotoOnDisk(suggestedFilename.get());
         if (!filePath)
             return;
 
         NSURL *fileURL = [NSURL fileURLWithPath:filePath];
-        auto dest = adoptCF(CGImageDestinationCreateWithURL((CFURLRef)fileURL, kUTTypeJPEG, 1, nullptr));
-        CGImageDestinationAddImage(dest.get(), cgImage.get(), nullptr);
-        CGImageDestinationFinalize(dest.get());
+        [nsData writeToURL:fileURL atomically:NO];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             // This API provides no way to report failure, but if 18420778 is fixed so that it does, we should handle this.
@@ -828,7 +839,8 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         return [self _defaultMenuItemsForMailtoLink];
     }
 
-    if (_hitTestResult.image() && !_hitTestResult.absoluteImageURL().isEmpty()) {
+    Image* image = _hitTestResult.image();
+    if (image && !_hitTestResult.absoluteImageURL().isEmpty() && !image->filenameExtension().isEmpty() && image->data() && !image->data()->isEmpty()) {
         _type = WebActionMenuImage;
         return [self _defaultMenuItemsForImage];
     }
