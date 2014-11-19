@@ -1575,9 +1575,9 @@
 		C5E1AFE916B20B75006CC1F2 /* WKWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329DA616ACE5A900316DE2 /* WKWebArchive.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E1AFEA16B20B7B006CC1F2 /* WKWebArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329DA916ACE5BF00316DE2 /* WKWebArchiveResource.cpp */; };
 		C5E1AFEB16B20B7E006CC1F2 /* WKWebArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329DAA16ACE5C000316DE2 /* WKWebArchiveResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C5E1AFEC16B21012006CC1F2 /* APIWebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329D9916ACCE9900316DE2 /* APIWebArchive.cpp */; };
+		C5E1AFEC16B21012006CC1F2 /* APIWebArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC329D9916ACCE9900316DE2 /* APIWebArchive.mm */; };
 		C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9A16ACCE9900316DE2 /* APIWebArchive.h */; };
-		C5E1AFEE16B21025006CC1F2 /* APIWebArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.cpp */; };
+		C5E1AFEE16B21025006CC1F2 /* APIWebArchiveResource.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.mm */; };
 		C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9F16ACD47800316DE2 /* APIWebArchiveResource.h */; };
 		C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */; };
 		C5FA1ED418E1062200B3F402 /* WKAirPlayRoutePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */; };
@@ -3326,9 +3326,9 @@
 		BC3066BD125A442100E71278 /* WebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessages.h; sourceTree = "<group>"; };
 		BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessCreationParameters.h; sourceTree = "<group>"; };
 		BC306823125A6B9400E71278 /* WebProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessCreationParameters.cpp; sourceTree = "<group>"; };
-		BC329D9916ACCE9900316DE2 /* APIWebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebArchive.cpp; sourceTree = "<group>"; };
+		BC329D9916ACCE9900316DE2 /* APIWebArchive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIWebArchive.mm; sourceTree = "<group>"; };
 		BC329D9A16ACCE9900316DE2 /* APIWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebArchive.h; sourceTree = "<group>"; };
-		BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebArchiveResource.cpp; sourceTree = "<group>"; };
+		BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIWebArchiveResource.mm; sourceTree = "<group>"; };
 		BC329D9F16ACD47800316DE2 /* APIWebArchiveResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebArchiveResource.h; sourceTree = "<group>"; };
 		BC329DA516ACE5A900316DE2 /* WKWebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebArchive.cpp; sourceTree = "<group>"; };
 		BC329DA616ACE5A900316DE2 /* WKWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebArchive.h; sourceTree = "<group>"; };
@@ -4416,10 +4416,10 @@
 				BCE2315B122C30CA00D5C35A /* APIURLRequest.h */,
 				BC90A1D1122DD55E00CC8C50 /* APIURLResponse.cpp */,
 				BC90A1D0122DD55E00CC8C50 /* APIURLResponse.h */,
-				BC329D9916ACCE9900316DE2 /* APIWebArchive.cpp */,
 				BC329D9A16ACCE9900316DE2 /* APIWebArchive.h */,
-				BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.cpp */,
+				BC329D9916ACCE9900316DE2 /* APIWebArchive.mm */,
 				BC329D9F16ACD47800316DE2 /* APIWebArchiveResource.h */,
+				BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.mm */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
 				C59C4A5618B81174007BDCB6 /* AssistedNodeInformation.cpp */,
@@ -9151,9 +9151,9 @@
 				512E356A130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp in Sources */,
 				512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */,
 				512E35F8130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp in Sources */,
-				C5E1AFEC16B21012006CC1F2 /* APIWebArchive.cpp in Sources */,
+				C5E1AFEC16B21012006CC1F2 /* APIWebArchive.mm in Sources */,
 				512A9769180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp in Sources */,
-				C5E1AFEE16B21025006CC1F2 /* APIWebArchiveResource.cpp in Sources */,
+				C5E1AFEE16B21025006CC1F2 /* APIWebArchiveResource.mm in Sources */,
 				BC72BA1D11E64907001EB4EA /* WebBackForwardList.cpp in Sources */,
 				1AC133741857C21E00F3EC05 /* APIGeometry.cpp in Sources */,
 				518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */,
