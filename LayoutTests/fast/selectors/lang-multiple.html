@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+:lang(de-DE, DE-de) {
+    color: rgb(1, 2, 3);
+}
+:lang(ab, cd, ef) {
+    color: rgb(3, 2, 1);
+}
+</style>
+</head>
+<body>
+    <div lang="de-DE" class="de"></div>
+    <div lang="de-de" class="de"></div>
+    <div lang="de-De" class="de"></div>
+    <div lang="de-dE" class="de"></div>
+    <div lang="de-DE-1996" class="de"></div>
+    <div lang="de-Latn-DE" class="de"></div>
+    <div lang="de-Latf-DE" class="de"></div>
+    <div lang="de-Latn-DE-1996" class="de"></div>
+
+    <div lang="Latn-de"></div>
+    <div lang="Latf-de"></div>
+
+    <div lang="en"></div>
+    <div lang="en-"></div>
+    <div lang="en--"></div>
+
+    <div lang="foo--bar"></div>
+    <div lang="id---Java"></div>
+
+    <div lang="tic-tac-tac-toe"></div>
+
+    <div lang="fr-x"></div>
+    <div lang="fr-xenomorph"></div>
+    <div lang="fr-x-xenomorph"></div>
+
+    <div lang="cocoa-1-bar"></div>
+    <div lang="cocoa-a-bar"></div>
+
+    <div lang="ab"></div>
+    <div lang="cd"></div>
+    <div lang="ef"></div>
+
+    <script>
+    description('Verify selector specifying multiple :lang() pseudo class using comma-separated list arguments.');
+
+    shouldBe('document.querySelectorAll(":lang(en, en)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(en-, en-)").length', '2');
+    shouldBe('document.querySelectorAll(":lang(en--, en--)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(en---, en---)").length', '0');
+
+    debug('');
+
+    shouldBe('document.querySelectorAll(":lang(de-DE, DE-de)").length', '8');
+    shouldBe('document.querySelectorAll(":lang(Latn, de-Latn)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(Latf, de-Latf)").length', '2');
+
+    shouldBe('document.querySelectorAll(":lang(de-DE--, de-DE--)").length', '0');
+
+    debug('');
+
+    for (var i = 0; i < document.querySelectorAll(":lang(de-DE, DE-de)").length; i++) {
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll(":lang(de-DE, DE-de)")[' + i + ']).color', 'rgb(1, 2, 3)');
+    }
+
+    debug('');
+
+    shouldBeEqualToString('getComputedStyle(document.querySelector(":lang(Latn, Latn-de)")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.querySelector(":lang(Latf, Latf-de)")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.querySelector(":lang(Latf, Latn)")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.querySelector(":lang(Latf, Latn)")).color', 'rgb(0, 0, 0)');
+
+    shouldBe('document.querySelectorAll(":lang(ab)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(cd)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(ef)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(ab, cd)").length', '2');
+    shouldBe('document.querySelectorAll(":lang(ab, cd, ef)").length', '3');
+
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll(":lang(ab, cd)")[1]).color', 'rgb(3, 2, 1)');
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll(":lang(ab, cd, ef)")[2]).color', 'rgb(3, 2, 1)');
+
+    debug('');
+    
+    shouldBe('document.querySelectorAll(":lang(-en, -en)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(-en-, -en-)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(-en, -en-)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(-en-, -en--)").length', '0');
+
+    debug(''); 
+
+    shouldBe('document.querySelectorAll(":lang(fr-x, fr-x)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-xenomorph, fr-xenomorph)").length', '1');
+
+    debug('');
+
+    shouldBe('document.querySelectorAll(":lang(cocoa-1, cocoa-1)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(cocoa-a, cocoa-a)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(cocoa-bar, cocoa-bar)").length', '0');
+
+    debug('');
+
+    shouldBe('document.querySelectorAll(":lang(foo, foo)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(foo-bar, foo-bar)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(foo--bar, foo--bar)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(foo-, foo-)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(foo--, foo--)").length', '0');
+
+    shouldBe('document.querySelectorAll(":lang(id, id)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(id-, id-)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(id--, id--)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(id---Java, id---Java)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(id--Java, id--Java)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(id-Java, id-Java)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(id---, id---)").length', '0');
+
+    debug(''); 
+
+    shouldBe('document.querySelectorAll(":lang(tic-tac-toe, tic-tac)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(tic-toe-tac, tic-toe-tac-tac)").length', '0');
+
+    debug('')
+
+    shouldThrow('document.querySelectorAll(":lang(--en--, --en--)").length');
+    shouldThrow('document.querySelectorAll(":lang(---en---, ---en---)").length');
+    shouldThrow('document.querySelectorAll(":lang(en us- de- fr-, en us- de- fr-).length")');
+
+    </script>
+
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

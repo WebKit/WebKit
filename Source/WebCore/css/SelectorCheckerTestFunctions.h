@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Dhi Aurrahman <diorahman@rockybars.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,8 +119,72 @@ ALWAYS_INLINE bool isWindowInactive(const Element* element)
 {
     return !element->document().page()->focusController().isActive();
 }
+
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+inline bool containslanguageSubtagMatchingRange(const Vector<String>& languageSubtags, const String& range, size_t& position)
+{
+    for (size_t languageSubtagIndex = position; languageSubtagIndex < languageSubtags.size(); ++languageSubtagIndex) {
+        const String& currentLanguageSubtag = languageSubtags[languageSubtagIndex];
+        if (currentLanguageSubtag.length() == 1)
+            return false;
+        if (equalIgnoringCase(range, currentLanguageSubtag)) {
+            position = languageSubtagIndex + 1;
+            return true;
+        }
+    }
+    return false;
+}
+
+inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicString>& ranges)
+{
+    ASSERT(element);
+
+    AtomicString language;
+#if ENABLE(VIDEO_TRACK)
+    if (is<WebVTTElement>(*element))
+        language = downcast<WebVTTElement>(*element).language();
+    else
+#endif
+        language = element->computeInheritedLanguage();
+
+    if (language.isNull())
+        return false;
+
+    // Implement basic and extended filterings of given language tags 
+    // as specified in www.ietf.org/rfc/rfc4647.txt.
+    Vector<String> rangeSubtags;
+    Vector<String> languageSubtags;
+
+    language.string().split('-', true, languageSubtags);
+
+    for (const AtomicString& range : ranges) {
+        if (equalIgnoringCase(language, range) && !language.contains('-'))
+            return true;
+
+        range.string().split('-', true, rangeSubtags);
+
+        if (rangeSubtags.size() > languageSubtags.size()) 
+            continue;
+
+        if (!equalIgnoringCase(rangeSubtags.first(), languageSubtags.first())) 
+            continue;
+
+        size_t lastMatchedLanguageSubtagIndex = 1;
+        bool matchedRange = true;
+        for (size_t rangeSubtagIndex = 1; rangeSubtagIndex < rangeSubtags.size(); ++rangeSubtagIndex) {
+            if (!containslanguageSubtagMatchingRange(languageSubtags, rangeSubtags[rangeSubtagIndex], lastMatchedLanguageSubtagIndex)) {
+                matchedRange = false;
+                break;
+            }
+        }
+        if (matchedRange)
+            return true;
+    }
+    return false;
+}
+#endif
     
-inline bool matchesLangPseudoClass(const Element* element, AtomicStringImpl* filter)
+inline bool matchesLangPseudoClassDeprecated(const Element* element, AtomicStringImpl* filter)
 {
     AtomicString value;
 #if ENABLE(VIDEO_TRACK)

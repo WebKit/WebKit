@@ -967,13 +967,13 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             {
 #if ENABLE(CSS_SELECTORS_LEVEL4)
                 ASSERT(selector->argumentList() && !selector->argumentList()->isEmpty());
-                const AtomicString& argument = selector->argumentList()->first();
+                return matchesLangPseudoClass(element, *selector->argumentList());
 #else
-                const AtomicString& argument = selector->argument();
-#endif                
+                const AtomicString& argument = selector->argument();      
                 if (argument.isNull())
                     return false;
-                return matchesLangPseudoClass(element, argument.impl());
+                return matchesLangPseudoClassDeprecated(element, argument.impl());
+#endif                          
             }
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClassFullScreen:

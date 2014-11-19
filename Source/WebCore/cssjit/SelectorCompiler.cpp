@@ -734,11 +734,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassLang:
         {
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-            ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
-            const AtomicString& argument = selector.argumentList()->first();
+            return FunctionType::CannotCompile;
 #else
             const AtomicString& argument = selector.argument();
-#endif
+
             if (argument.isEmpty())
                 return FunctionType::CannotMatchAnything;
 
@@ -754,6 +753,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                     return FunctionType::CannotMatchAnything;
             }
             return FunctionType::SimpleSelectorChecker;
+#endif
         }
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
@@ -3146,7 +3146,7 @@ void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& fai
 
     Assembler::RegisterID elementAddress = elementAddressRegister;
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-    functionCall.setFunctionAddress(matchesLangPseudoClass);
+    functionCall.setFunctionAddress(matchesLangPseudoClassDeprecated);
     functionCall.setTwoArguments(elementAddress, langFilterRegister);
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
