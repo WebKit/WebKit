@@ -1,5 +1,23 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176237. rdar://problem/18900839
+
+    2014-11-17  Beth Dakin  <bdakin@apple.com>
+
+            Preview is sometimes dismissed too early
+            https://bugs.webkit.org/show_bug.cgi?id=138811
+            -and corresponding-
+            rdar://problem/18900839
+
+            Reviewed by Tim Horton.
+
+            Don’t make the popover transient until didCloseMenu: time.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            (-[WKActionMenuController _createPreviewPopoverForURL:originRect:]):
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176221. rdar://problem/18991369
 
     2014-11-17  Tim Horton  <timothy_horton@apple.com>
