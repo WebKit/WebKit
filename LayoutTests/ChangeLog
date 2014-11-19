@@ -1,5 +1,11 @@
 2014-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        nested-multicol-into-region-dynamic.html is flaky on WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
+2014-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add test expectations.
 
         * platform/mac/TestExpectations:

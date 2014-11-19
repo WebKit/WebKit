@@ -15,6 +15,9 @@ webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.htm
 
 webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
 
+# <rdar://problem/18989363>
+fast/regions/multicol/nested-multicol-into-region-dynamic.html [ Crash Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
