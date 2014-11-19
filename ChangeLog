@@ -1,3 +1,12 @@
+2014-11-19  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Fix the detection of toolchain support for Cortex-A53 erratum 835769 workaround
+        https://bugs.webkit.org/show_bug.cgi?id=138840
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2014-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove Source/Platform cruft
