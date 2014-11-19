@@ -401,17 +401,18 @@ PassRefPtr<Inspector::Protocol::Debugger::Location> InspectorDebuggerAgent::reso
     return location;
 }
 
-void InspectorDebuggerAgent::searchInContent(ErrorString& error, const String& scriptIDStr, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
+void InspectorDebuggerAgent::searchInContent(ErrorString& error, const String& scriptIDStr, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
+    JSC::SourceID sourceID = scriptIDStr.toIntPtr();
+    auto it = m_scripts.find(sourceID);
+    if (it == m_scripts.end()) {
+        error = ASCIILiteral("No script for id: ") + scriptIDStr;
+        return;
+    }
+
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
-
-    JSC::SourceID sourceID = scriptIDStr.toIntPtr();
-    ScriptsMap::iterator it = m_scripts.find(sourceID);
-    if (it != m_scripts.end())
-        results = ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive, isRegex);
-    else
-        error = ASCIILiteral("No script for id: ") + scriptIDStr;
+    results = ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive, isRegex);
 }
 
 void InspectorDebuggerAgent::getScriptSource(ErrorString& error, const String& scriptIDStr, String* scriptSource)

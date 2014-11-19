@@ -737,7 +737,6 @@
     <None Include="..\UserInterface\ResourceContentView.js" />
     <None Include="..\UserInterface\ResourceDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\ResourceIcons.css" />
-    <None Include="..\UserInterface\ResourceSearchMatchObject.js" />
     <None Include="..\UserInterface\ResourceSidebarPanel.css" />
     <None Include="..\UserInterface\ResourceSidebarPanel.js" />
     <None Include="..\UserInterface\ResourceTimelineDataGridNode.js" />
@@ -777,6 +776,7 @@
     <None Include="..\UserInterface\SourceCodeLocation.js" />
     <None Include="..\UserInterface\SourceCodePosition.js" />
     <None Include="..\UserInterface\SourceCodeRevision.js" />
+    <None Include="..\UserInterface\SourceCodeSearchMatchObject.js" />
     <None Include="..\UserInterface\SourceCodeTextEditor.css" />
     <None Include="..\UserInterface\SourceCodeTextEditor.js" />
     <None Include="..\UserInterface\SourceCodeTextRange.js" />

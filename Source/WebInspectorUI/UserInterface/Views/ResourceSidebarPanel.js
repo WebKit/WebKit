@@ -323,6 +323,10 @@ WebInspector.ResourceSidebarPanel.prototype = {
         this.filterBar.placeholder = WebInspector.UIString("Filter Search Results");
         this.contentTreeOutline = this._searchContentTreeOutline;
 
+        // FIXME: Provide UI to toggle regex and case sensitive searches.
+        var isCaseSensitive = false;
+        var isRegex = false;
+
         var updateEmptyContentPlaceholderTimeout = null;
 
         function updateEmptyContentPlaceholderSoon()
@@ -342,6 +346,14 @@ WebInspector.ResourceSidebarPanel.prototype = {
             this.updateEmptyContentPlaceholder(WebInspector.UIString("No Search Results"));
         }
 
+        function forEachMatch(searchTerm, lineContent, callback)
+        {
+            var lineMatch;
+            var searchRegex = new RegExp(searchTerm.escapeForRegExp(), "gi");
+            while ((searchRegex.lastIndex < lineContent.length) && (lineMatch = searchRegex.exec(lineContent)))
+                callback(lineMatch, searchRegex.lastIndex);
+        }
+
         function resourcesCallback(error, result)
         {
             updateEmptyContentPlaceholderSoon.call(this);
@@ -349,45 +361,74 @@ WebInspector.ResourceSidebarPanel.prototype = {
             if (error)
                 return;
 
+            function resourceCallback(url, error, resourceMatches)
+            {
+                updateEmptyContentPlaceholderSoon.call(this);
+
+                if (error || !resourceMatches || !resourceMatches.length)
+                    return;
+
+                var frame = WebInspector.frameResourceManager.frameForIdentifier(searchResult.frameId);
+                if (!frame)
+                    return;
+
+                var resource = frame.url === url ? frame.mainResource : frame.resourceForURL(url);
+                if (!resource)
+                    return;
+
+                var resourceTreeElement = this._searchTreeElementForResource(resource);
+
+                for (var i = 0; i < resourceMatches.length; ++i) {
+                    var match = resourceMatches[i];
+                    forEachMatch(searchTerm, match.lineContent, function(lineMatch, lastIndex) {
+                        var matchObject = new WebInspector.SourceCodeSearchMatchObject(resource, match.lineContent, searchTerm, new WebInspector.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex));
+                        var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
+                        resourceTreeElement.appendChild(matchTreeElement);
+                    });
+                }
+
+                updateEmptyContentPlaceholder.call(this);
+            }
+
             for (var i = 0; i < result.length; ++i) {
                 var searchResult = result[i];
                 if (!searchResult.url || !searchResult.frameId)
                     continue;
 
-                function resourceCallback(url, error, resourceMatches)
-                {
-                    updateEmptyContentPlaceholderSoon.call(this);
+                PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchTerm, isCaseSensitive, isRegex, resourceCallback.bind(this, searchResult.url));
+            }
+        }
 
-                    if (error || !resourceMatches || !resourceMatches.length)
-                        return;
+        function searchScripts(scriptsToSearch)
+        {
+            updateEmptyContentPlaceholderSoon.call(this);
 
-                    var frame = WebInspector.frameResourceManager.frameForIdentifier(searchResult.frameId);
-                    if (!frame)
-                        return;
+            if (!scriptsToSearch.length)
+                return;
 
-                    var resource = frame.url === url ? frame.mainResource : frame.resourceForURL(url);
-                    if (!resource)
-                        return;
+            function scriptCallback(script, error, scriptMatches)
+            {
+                updateEmptyContentPlaceholderSoon.call(this);
 
-                    var resourceTreeElement = this._searchTreeElementForResource(resource);
+                if (error || !scriptMatches || !scriptMatches.length)
+                    return;
 
-                    for (var i = 0; i < resourceMatches.length; ++i) {
-                        var match = resourceMatches[i];
+                var scriptTreeElement = this._searchTreeElementForScript(script);
 
-                        var lineMatch;
-                        var searchRegex = new RegExp(searchTerm.escapeForRegExp(), "gi");
-                        while ((searchRegex.lastIndex < match.lineContent.length) && (lineMatch = searchRegex.exec(match.lineContent))) {
-                            var matchObject = new WebInspector.ResourceSearchMatchObject(resource, match.lineContent, searchTerm, new WebInspector.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, searchRegex.lastIndex));
-                            var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
-                            resourceTreeElement.appendChild(matchTreeElement);
-                        }
-                    }
-
-                    updateEmptyContentPlaceholder.call(this);
+                for (var i = 0; i < scriptMatches.length; ++i) {
+                    var match = scriptMatches[i];
+                    forEachMatch(searchTerm, match.lineContent, function(lineMatch, lastIndex) {
+                        var matchObject = new WebInspector.SourceCodeSearchMatchObject(script, match.lineContent, searchTerm, new WebInspector.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex));
+                        var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
+                        scriptTreeElement.appendChild(matchTreeElement);
+                    });
                 }
 
-                PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchTerm, false, false, resourceCallback.bind(this, searchResult.url));
+                updateEmptyContentPlaceholder.call(this);
             }
+
+            for (var script of scriptsToSearch)
+                DebuggerAgent.searchInContent(script.id, searchTerm, isCaseSensitive, isRegex, scriptCallback.bind(this, script));
         }
 
         function domCallback(error, searchId, resultsCount)
@@ -419,25 +460,22 @@ WebInspector.ResourceSidebarPanel.prototype = {
                     if (domNode.nodeType() === Node.DOCUMENT_NODE)
                         continue;
 
-                    // FIXME: Use this should use a frame to do resourceForURL, but DOMAgent does not provide a frameId.
+                    // FIXME: This should use a frame to do resourceForURL, but DOMAgent does not provide a frameId.
                     var resource = WebInspector.frameResourceManager.resourceForURL(domNode.ownerDocument.documentURL);
                     if (!resource)
                         continue;
 
                     var resourceTreeElement = this._searchTreeElementForResource(resource);
-
                     var domNodeTitle = WebInspector.DOMSearchMatchObject.titleForDOMNode(domNode);
-                    var searchRegex = new RegExp(searchTerm.escapeForRegExp(), "gi");
 
                     // Textual matches.
-                    var lineMatch;
                     var didFindTextualMatch = false;
-                    while ((searchRegex.lastIndex < domNodeTitle.length) && (lineMatch = searchRegex.exec(domNodeTitle))) {
-                        var matchObject = new WebInspector.DOMSearchMatchObject(resource, domNode, domNodeTitle, searchTerm, new WebInspector.TextRange(0, lineMatch.index, 0, searchRegex.lastIndex));
+                    forEachMatch(searchTerm, domNodeTitle, function(lineMatch, lastIndex) {
+                        var matchObject = new WebInspector.DOMSearchMatchObject(resource, domNode, domNodeTitle, searchTerm, new WebInspector.TextRange(0, lineMatch.index, 0, lastIndex));
                         var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
                         resourceTreeElement.appendChild(matchTreeElement);
                         didFindTextualMatch = true;
-                    }
+                    });
 
                     // Non-textual matches are CSS Selector or XPath matches. In such cases, display the node entirely highlighted.
                     if (!didFindTextualMatch) {
@@ -456,9 +494,10 @@ WebInspector.ResourceSidebarPanel.prototype = {
         if (window.DOMAgent)
             WebInspector.domTreeManager.requestDocument();
 
-        // FIXME: Should we be searching for regexes or just plain text?
         if (window.PageAgent)
-            PageAgent.searchInResources(searchTerm, false, false, resourcesCallback.bind(this));
+            PageAgent.searchInResources(searchTerm, isCaseSensitive, isRegex, resourcesCallback.bind(this));
+
+        setTimeout(searchScripts.bind(this, this._scriptsToSearch()), 0);
 
         if (window.DOMAgent) {
             if ("_domSearchIdentifier" in this) {
@@ -491,9 +530,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     _searchTreeElementForResource: function(resource)
     {
-        // FIXME: This should take a frame ID (if one is available) - so we can differentiate between multiple resources
-        // with the same URL.
-
         var resourceTreeElement = this._searchContentTreeOutline.getCachedTreeElement(resource);
         if (!resourceTreeElement) {
             resourceTreeElement = new WebInspector.ResourceTreeElement(resource);
@@ -504,6 +540,20 @@ WebInspector.ResourceSidebarPanel.prototype = {
         }
 
         return resourceTreeElement;
+    },
+
+    _searchTreeElementForScript: function(script)
+    {
+        var scriptTreeElement = this._searchContentTreeOutline.getCachedTreeElement(script);
+        if (!scriptTreeElement) {
+            scriptTreeElement = new WebInspector.ScriptTreeElement(script);
+            scriptTreeElement.hasChildren = true;
+            scriptTreeElement.expand();
+
+            this._searchContentTreeOutline.appendChild(scriptTreeElement);
+        }
+
+        return scriptTreeElement;
     },
 
     _focusSearchField: function(keyboardShortcut, event)
@@ -670,6 +720,33 @@ WebInspector.ResourceSidebarPanel.prototype = {
         }
     },
 
+    _scriptsToSearch: function(event)
+    {
+        var nonResourceScripts = [];
+
+        function collectFromTreeElement(folderTreeElement)
+        {
+            if (!folderTreeElement)
+                return;
+
+            var children = folderTreeElement.children;
+            for (var treeElement of children) {
+                if (treeElement instanceof WebInspector.ScriptTreeElement)
+                    nonResourceScripts.push(treeElement.script);
+            }
+        }
+
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript && !WebInspector.hasExtraDomains)
+            collectFromTreeElement(this._resourcesContentTreeOutline);
+        else {
+            collectFromTreeElement(this._extensionScriptsFolderTreeElement);
+            collectFromTreeElement(this._extraScriptsFolderTreeElement);
+            collectFromTreeElement(this._anonymousScriptsFolderTreeElement);
+        }
+
+        return nonResourceScripts;
+    },
+
     _treeElementSelected: function(treeElement, selectedByUser)
     {
         if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement ||
@@ -691,7 +768,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
         if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject)
             this.showMainFrameDOMTree(treeElement.representedObject.domNode, true);
-        else if (treeElement.representedObject instanceof WebInspector.ResourceSearchMatchObject)
+        else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
             this.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange);
     },
 

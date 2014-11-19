@@ -607,9 +607,9 @@ static PassRefPtr<Inspector::Protocol::Page::SearchResult> buildObjectForSearchR
         .release();
 }
 
-void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>& results)
+void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>& result)
 {
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>> searchResults = Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>::create();
+    result = Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -622,18 +622,16 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
             if (textContentForCachedResource(cachedResource, &content)) {
                 int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, content);
                 if (matchesCount)
-                    searchResults->addItem(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
+                    result->addItem(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
             }
         }
 
         if (mainResourceContent(frame, false, &content)) {
             int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, content);
             if (matchesCount)
-                searchResults->addItem(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
+                result->addItem(buildObjectForSearchResult(frameId(frame), frame->document()->url(), matchesCount));
         }
     }
-
-    results = searchResults;
 }
 
 void InspectorPageAgent::setDocumentContent(ErrorString& errorString, const String& frameId, const String& html)

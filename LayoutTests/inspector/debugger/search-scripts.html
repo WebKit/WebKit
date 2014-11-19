@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+// SEARCHTEST: Comment in inline <script>.
+function performEvals()
+{
+    // Find the line with the search term.
+    eval("// SEARCH" + "TEST: Eval 1\n//# sourceURL=eval1.js");
+    // If the search term shows up multiple times on a single line, the line is returned once.
+    eval("var SEARCH" + "TEST = \"SEARCH" + "TEST\";\n//# sourceURL=eval2.js");
+};
+
+function test()
+{
+    function sanitizeScriptURL(url) {
+        return url.substring(url.indexOf("LayoutTests"));
+    }
+
+    function chomp(line) {
+        return line.replace(/\n$/, "");
+    }
+
+    var scriptsCount = 0;
+    const expectedScriptsCount = 5;
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        var script = event.data.script;
+        if (!/LayoutTests/.test(script.url) && !/eval\d\.js/.test(script.url))
+            return;
+
+        DebuggerAgent.searchInContent(script.id, "SEARCHTEST", false, false, function(error, results) {
+            InspectorTest.log("");
+            InspectorTest.log("SCRIPT: " + sanitizeScriptURL(script.url));
+            InspectorTest.log("RESULTS: " + results.length);
+            for (var result of results) {
+                InspectorTest.log("  LINE: " + result.lineNumber);
+                InspectorTest.log("  CONTENT: " + chomp(result.lineContent));
+            }
+
+            if (++scriptsCount === expectedScriptsCount)
+                InspectorTest.completeTest();
+        });
+    });
+
+    InspectorTest.eventDispatcher.addEventListener(InspectorTest.EventDispatcher.Event.TestPageDidLoad, function() {
+        InspectorTest.evaluateInPage("performEvals()");
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest(); // SEARCHTEST: onload attribute string">
+    <p>Test <code>DebuggerAgent.searchInContent</code> to search script content.</p>
+</body>
+</html>

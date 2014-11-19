@@ -795,9 +795,6 @@
     <None Include="..\UserInterface\ResourceIcons.css">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\ResourceSearchMatchObject.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\ResourceSidebarPanel.css">
       <Filter>UserInterface</Filter>
     </None>
@@ -913,6 +910,9 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\SourceCodeRevision.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeSearchMatchObject.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\SourceCodeTextEditor.css">

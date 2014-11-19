@@ -1,0 +1,28 @@
+Test DebuggerAgent.searchInContent to search script content.
+
+
+SCRIPT: LayoutTests/http/tests/inspector/inspector-test.js
+RESULTS: 0
+
+SCRIPT: LayoutTests/inspector/debugger/search-scripts.html
+RESULTS: 2
+  LINE: 1
+  CONTENT: // SEARCHTEST: Comment in inline <script>.
+  LINE: 28
+  CONTENT:         DebuggerAgent.searchInContent(script.id, "SEARCHTEST", false, false, function(error, results) {
+
+SCRIPT: LayoutTests/inspector/debugger/search-scripts.html
+RESULTS: 1
+  LINE: 0
+  CONTENT: (function(event) {runTest(); // SEARCHTEST: onload attribute string
+
+SCRIPT: eval1.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: // SEARCHTEST: Eval 1
+
+SCRIPT: eval2.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: var SEARCHTEST = "SEARCHTEST";
+

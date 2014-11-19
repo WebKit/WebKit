@@ -25,7 +25,7 @@
 
 WebInspector.SearchResultTreeElement = function(representedObject)
 {
-    console.assert(representedObject instanceof WebInspector.DOMSearchMatchObject || representedObject instanceof WebInspector.ResourceSearchMatchObject);
+    console.assert(representedObject instanceof WebInspector.DOMSearchMatchObject || representedObject instanceof WebInspector.SourceCodeSearchMatchObject);
 
     var title = WebInspector.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
 

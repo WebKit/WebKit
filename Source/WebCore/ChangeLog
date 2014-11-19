@@ -1,5 +1,18 @@
 2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: JSContext inspection Resource search does not work
+        https://bugs.webkit.org/show_bug.cgi?id=131252
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/debugger/search-scripts.html
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::searchInResources):
+        A little cleanup.
+
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Provide $exception in the console for the thrown exception value
         https://bugs.webkit.org/show_bug.cgi?id=138726
 

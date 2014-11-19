@@ -23,26 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceSearchMatchObject = function(resource, lineText, searchTerm, textRange)
+WebInspector.SourceCodeSearchMatchObject = function(sourceCode, lineText, searchTerm, textRange)
 {
-    console.assert(resource instanceof WebInspector.Resource);
+    console.assert(sourceCode instanceof WebInspector.SourceCode);
 
     WebInspector.Object.call(this);
 
-    this._resource = resource;
+    this._sourceCode = sourceCode;
     this._lineText = lineText;
     this._searchTerm = searchTerm;
-    this._sourceCodeTextRange = resource.createSourceCodeTextRange(textRange);
+    this._sourceCodeTextRange = sourceCode.createSourceCodeTextRange(textRange);
 };
 
-WebInspector.ResourceSearchMatchObject.ResourceMatchIconStyleClassName = "resource-match-icon";
+WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName = "source-code-match-icon";
 
-WebInspector.ResourceSearchMatchObject.prototype = {
-    constructor: WebInspector.ResourceSearchMatchObject,
+WebInspector.SourceCodeSearchMatchObject.prototype = {
+    constructor: WebInspector.SourceCodeSearchMatchObject,
 
-    get resource()
+    get sourceCode()
     {
-        return this._resource;
+        return this._sourceCode;
     },
 
     get title()
@@ -52,7 +52,7 @@ WebInspector.ResourceSearchMatchObject.prototype = {
 
     get className()
     {
-        return WebInspector.ResourceSearchMatchObject.ResourceMatchIconStyleClassName;
+        return WebInspector.SourceCodeSearchMatchObject.SourceCodeMatchIconStyleClassName;
     },
 
     get searchTerm()
@@ -66,4 +66,4 @@ WebInspector.ResourceSearchMatchObject.prototype = {
     }
 };
 
-WebInspector.ResourceSearchMatchObject.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.SourceCodeSearchMatchObject.prototype.__proto__ = WebInspector.Object.prototype;
