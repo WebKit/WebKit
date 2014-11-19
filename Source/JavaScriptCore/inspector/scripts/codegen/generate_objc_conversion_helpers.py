@@ -29,10 +29,10 @@ import logging
 import string
 from string import Template
 
-from generate_objective_c import ObjCGenerator
 from generator import Generator
-from generator_templates import GeneratorTemplates as Templates
 from models import EnumType
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
@@ -43,7 +43,7 @@ def add_newline(lines):
     lines.append('')
 
 
-class ObjectiveCConversionHelpersGenerator(Generator):
+class ObjCConversionHelpersGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -65,10 +65,10 @@ class ObjectiveCConversionHelpersGenerator(Generator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCConversionHelpersPrelude).substitute(None, **header_args))
-        sections.append(Template(Templates.ObjCConversionHelpersStandard).substitute(None))
+        sections.append(Template(ObjCTemplates.ConversionHelpersPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ConversionHelpersStandard).substitute(None))
         sections.extend(map(self._generate_enum_conversion_functions, domains))
-        sections.append(Template(Templates.ObjCConversionHelpersPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ConversionHelpersPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_enum_conversion_functions(self, domain):

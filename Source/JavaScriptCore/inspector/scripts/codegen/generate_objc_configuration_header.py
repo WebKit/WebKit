@@ -27,65 +27,60 @@
 
 import logging
 import string
-import re
 from string import Template
 
 from generator import Generator
-from generator_templates import GeneratorTemplates as Templates
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
 
-class AlternateBackendDispatcherHeaderGenerator(Generator):
+class ObjCConfigurationHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return 'InspectorAlternateBackendDispatchers.h'
+        return '%sConfiguration.h' % ObjCGenerator.OBJC_PREFIX
 
     def generate_output(self):
         headers = [
-            '"InspectorProtocolTypes.h"',
-            '<JavaScriptCore/InspectorBackendDispatcher.h>',
+            '"%s.h"' % ObjCGenerator.OBJC_PREFIX,
         ]
 
         header_args = {
-            'headerGuardString': re.sub('\W+', '_', self.output_filename()),
-            'includes': '\n'.join(['#include ' + header for header in headers]),
+            'includes': '\n'.join(['#import ' + header for header in headers]),
         }
+
+        self._command_filter = ObjCGenerator.should_generate_domain_command_handler_filter(self.model())
+        self._event_filter = ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model())
 
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.AlternateDispatchersHeaderPrelude).substitute(None, **header_args))
-        sections.append('\n'.join(filter(None, map(self._generate_handler_declarations_for_domain, domains))))
-        sections.append(Template(Templates.AlternateDispatchersHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.GenericHeaderPrelude).substitute(None, **header_args))
+        sections.append(self._generate_configuration_interface_for_domains(domains))
+        sections.append(Template(ObjCTemplates.GenericHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
-    def _generate_handler_declarations_for_domain(self, domain):
-        if not domain.commands:
-            return ''
-
-        command_declarations = []
-        for command in domain.commands:
-            command_declarations.append(self._generate_handler_declaration_for_command(command))
-
-        handler_args = {
-            'domainName': domain.domain_name,
-            'commandDeclarations': '\n'.join(command_declarations),
-        }
-
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration).substitute(None, **handler_args))
-
-    def _generate_handler_declaration_for_command(self, command):
+    def _generate_configuration_interface_for_domains(self, domains):
         lines = []
-        parameters = ['long callId']
-        for _parameter in command.call_parameters:
-            parameters.append('%s in_%s' % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
-
-        command_args = {
-            'commandName': command.command_name,
-            'parameters': ', '.join(parameters),
-        }
-        lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
+        lines.append('@interface RWIProtocolConfiguration : NSObject')
+        for domain in domains:
+            lines.extend(self._generate_properties_for_domain(domain))
+        lines.append('@end')
         return '\n'.join(lines)
+
+    def _generate_properties_for_domain(self, domain):
+        property_args = {
+            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
+            'domainName': domain.domain_name,
+            'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
+        }
+
+        lines = []
+        if domain.commands and self._command_filter(domain):
+            lines.append(Template(ObjCTemplates.ConfigurationCommandProperty).substitute(None, **property_args))
+        if domain.events and self._event_filter(domain):
+            lines.append(Template(ObjCTemplates.ConfigurationEventProperty).substitute(None, **property_args))
+        return lines

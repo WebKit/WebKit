@@ -29,14 +29,14 @@ import logging
 import string
 from string import Template
 
-from generate_objective_c import ObjCGenerator
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
 
-class ObjectiveCTypesInternalHeaderGenerator(Generator):
+class ObjCInternalHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -60,9 +60,9 @@ class ObjectiveCTypesInternalHeaderGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCGenericHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.GenericHeaderPrelude).substitute(None, **header_args))
         sections.append('\n\n'.join(filter(None, map(self._generate_event_dispatcher_private_interfaces, event_domains))))
-        sections.append(Template(Templates.ObjCGenericHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.GenericHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_event_dispatcher_private_interfaces(self, domain):

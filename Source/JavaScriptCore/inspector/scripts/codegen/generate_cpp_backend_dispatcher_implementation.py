@@ -29,14 +29,15 @@ import logging
 import string
 from string import Template
 
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import ObjectType, ArrayType
 
 log = logging.getLogger('global')
 
 
-class BackendDispatcherImplementationGenerator(Generator):
+class CppBackendDispatcherImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -65,10 +66,10 @@ class BackendDispatcherImplementationGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.CppImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append("\n".join(map(self._generate_handler_class_destructor_for_domain, self.domains_to_generate())))
         sections.extend(map(self._generate_dispatcher_implementations_for_domain, self.domains_to_generate()))
-        sections.append(Template(Templates.CppImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.ImplementationPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
     # Private methods.
@@ -86,7 +87,7 @@ class BackendDispatcherImplementationGenerator(Generator):
         constructor_args = {
             'domainName': domain.domain_name,
         }
-        implementations.append(Template(Templates.BackendDispatcherImplementationDomainConstructor).substitute(None, **constructor_args))
+        implementations.append(Template(CppTemplates.BackendDispatcherImplementationDomainConstructor).substitute(None, **constructor_args))
 
         if len(domain.commands) <= 5:
             implementations.append(self._generate_small_dispatcher_switch_implementation_for_domain(domain))
@@ -113,7 +114,7 @@ class BackendDispatcherImplementationGenerator(Generator):
             'dispatchCases': "\n".join(cases)
         }
 
-        return Template(Templates.BackendDispatcherImplementationSmallSwitch).substitute(None, **switch_args)
+        return Template(CppTemplates.BackendDispatcherImplementationSmallSwitch).substitute(None, **switch_args)
 
     def _generate_large_dispatcher_switch_implementation_for_domain(self, domain):
         cases = []
@@ -129,7 +130,7 @@ class BackendDispatcherImplementationGenerator(Generator):
             'dispatchCases': "\n".join(cases)
         }
 
-        return Template(Templates.BackendDispatcherImplementationLargeSwitch).substitute(None, **switch_args)
+        return Template(CppTemplates.BackendDispatcherImplementationLargeSwitch).substitute(None, **switch_args)
 
     def _generate_async_dispatcher_class_for_domain(self, command, domain):
         out_parameter_assignments = []
@@ -137,15 +138,15 @@ class BackendDispatcherImplementationGenerator(Generator):
 
         for parameter in command.return_parameters:
             param_args = {
-                'keyedSetMethod': Generator.keyed_set_method_for_type(parameter.type),
+                'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(parameter.type),
                 'parameterName': parameter.parameter_name,
-                'parameterType': Generator.type_string_for_stack_in_parameter(parameter),
+                'parameterType': CppGenerator.cpp_type_for_stack_in_parameter(parameter),
             }
 
-            formal_parameters.append('%s %s' % (Generator.type_string_for_formal_async_parameter(parameter), parameter.parameter_name))
+            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_formal_async_parameter(parameter), parameter.parameter_name))
 
             if parameter.is_optional:
-                if Generator.should_use_wrapper_for_return_type(parameter.type):
+                if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
                     out_parameter_assignments.append('    if (%(parameterName)s.isAssigned())' % param_args)
                     out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterName)s.getValue());' % param_args)
                 else:
@@ -162,7 +163,7 @@ class BackendDispatcherImplementationGenerator(Generator):
             'formalParameters': ", ".join(formal_parameters),
             'outParameterAssignments': "\n".join(out_parameter_assignments)
         }
-        return Template(Templates.BackendDispatcherImplementationAsyncCommand).substitute(None, **async_args)
+        return Template(CppTemplates.BackendDispatcherImplementationAsyncCommand).substitute(None, **async_args)
 
     def _generate_dispatcher_implementation_for_command(self, command, domain):
         in_parameter_declarations = []
@@ -178,9 +179,9 @@ class BackendDispatcherImplementationGenerator(Generator):
                 in_parameter_declarations.append('    bool %s_valueFound = false;' % parameter.parameter_name)
 
             param_args = {
-                'parameterType': Generator.type_string_for_stack_in_parameter(parameter),
+                'parameterType': CppGenerator.cpp_type_for_stack_in_parameter(parameter),
                 'parameterName': parameter.parameter_name,
-                'keyedGetMethod': Generator.keyed_get_method_for_type(parameter.type),
+                'keyedGetMethod': CppGenerator.cpp_getter_method_for_type(parameter.type),
                 'successOutParam': out_success_argument
             }
 
@@ -208,15 +209,15 @@ class BackendDispatcherImplementationGenerator(Generator):
         else:
             for parameter in command.return_parameters:
                 param_args = {
-                    'parameterType': Generator.type_string_for_stack_out_parameter(parameter),
+                    'parameterType': CppGenerator.cpp_type_for_stack_out_parameter(parameter),
                     'parameterName': parameter.parameter_name,
-                    'keyedSetMethod': Generator.keyed_set_method_for_type(parameter.type),
+                    'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(parameter.type),
 
                 }
 
                 out_parameter_declarations.append('    %(parameterType)s out_%(parameterName)s;' % param_args)
                 if parameter.is_optional:
-                    if Generator.should_use_wrapper_for_return_type(parameter.type):
+                    if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
                         out_parameter_assignments.append('        if (out_%(parameterName)s.isAssigned())' % param_args)
                         out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), out_%(parameterName)s.getValue());' % param_args)
                     else:
@@ -227,7 +228,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                 else:
                     out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), out_%(parameterName)s);' % param_args)
 
-                if Generator.should_pass_by_copy_for_return_type(parameter.type):
+                if CppGenerator.should_pass_by_copy_for_return_type(parameter.type):
                     method_parameters.append('out_' + parameter.parameter_name)
                 else:
                     method_parameters.append('&out_' + parameter.parameter_name)
@@ -249,7 +250,7 @@ class BackendDispatcherImplementationGenerator(Generator):
         lines.append('{')
 
         if len(command.call_parameters) > 0:
-            lines.append(Template(Templates.BackendDispatcherImplementationPrepareCommandArguments).substitute(None, **command_args))
+            lines.append(Template(CppTemplates.BackendDispatcherImplementationPrepareCommandArguments).substitute(None, **command_args))
 
         lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         lines.append('    if (m_alternateDispatcher) {')

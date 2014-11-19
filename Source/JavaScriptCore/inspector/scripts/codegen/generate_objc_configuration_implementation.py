@@ -29,14 +29,14 @@ import logging
 import string
 from string import Template
 
-from generate_objective_c import ObjCGenerator
 from generator import Generator
-from generator_templates import GeneratorTemplates as Templates
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
 
-class ObjectiveCBackendDispatcherImplementationGenerator(Generator):
+class ObjCBackendDispatcherImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -64,9 +64,9 @@ class ObjectiveCBackendDispatcherImplementationGenerator(Generator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append(self._generate_configuration_implementation_for_domains(domains))
-        sections.append(Template(Templates.ObjCImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ImplementationPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_configuration_implementation_for_domains(self, domains):
@@ -131,7 +131,7 @@ class ObjectiveCBackendDispatcherImplementationGenerator(Generator):
             'domainName': domain.domain_name,
             'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
         }
-        return Template(Templates.ObjCConfigurationCommandPropertyImplementation).substitute(None, **setter_args)
+        return Template(ObjCTemplates.ConfigurationCommandPropertyImplementation).substitute(None, **setter_args)
 
     def _generate_event_dispatcher_getter_for_domain(self, domain):
         getter_args = {
@@ -139,7 +139,7 @@ class ObjectiveCBackendDispatcherImplementationGenerator(Generator):
             'domainName': domain.domain_name,
             'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
         }
-        return Template(Templates.ObjCConfigurationGetterImplementation).substitute(None, **getter_args)
+        return Template(ObjCTemplates.ConfigurationGetterImplementation).substitute(None, **getter_args)
 
     def _variable_name_prefix_for_domain(self, domain):
         domain_name = domain.domain_name

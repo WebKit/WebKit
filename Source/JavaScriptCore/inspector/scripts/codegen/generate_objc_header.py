@@ -29,10 +29,10 @@ import logging
 import string
 from string import Template
 
-from generate_objective_c import ObjCGenerator, join_type_and_name
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import ObjectType, EnumType
+from objc_generator import ObjCGenerator, join_type_and_name
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
@@ -43,7 +43,7 @@ def add_newline(lines):
     lines.append('')
 
 
-class ObjectiveCHeaderGenerator(Generator):
+class ObjCHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -71,13 +71,13 @@ class ObjectiveCHeaderGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.HeaderPrelude).substitute(None, **header_args))
         sections.append('\n'.join(filter(None, map(self._generate_forward_declarations, type_domains))))
         sections.append('\n'.join(filter(None, map(self._generate_enums, type_domains))))
         sections.append('\n'.join(filter(None, map(self._generate_types, type_domains))))
         sections.append('\n\n'.join(filter(None, map(self._generate_command_protocols, command_domains))))
         sections.append('\n\n'.join(filter(None, map(self._generate_event_interfaces, event_domains))))
-        sections.append(Template(Templates.ObjCHeaderPostlude).substitute(None))
+        sections.append(Template(ObjCTemplates.HeaderPostlude).substitute(None))
         return '\n\n'.join(sections)
 
     def _generate_forward_declarations(self, domain):

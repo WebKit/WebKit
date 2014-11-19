@@ -992,13 +992,15 @@ set(JavaScriptCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/script
 
 set(JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_commands.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_header.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_implementation.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_header.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_implementation.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_header.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_implementation.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/cpp_generator.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/cpp_generator_templates.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_js_backend_commands.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_header.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_implementation.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_cpp_frontend_dispatcher_header.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_cpp_frontend_dispatcher_implementation.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_header.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_implementation.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator_templates.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/__init__.py

@@ -29,10 +29,10 @@ import logging
 import string
 from string import Template
 
-from generate_objective_c import ObjCGenerator
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import ObjectType
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
@@ -43,7 +43,7 @@ def add_newline(lines):
     lines.append('')
 
 
-class ObjectiveCTypesImplementationGenerator(Generator):
+class ObjCProtocolTypesImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -69,9 +69,9 @@ class ObjectiveCTypesImplementationGenerator(Generator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.extend(map(self.generate_type_implementations, domains))
-        sections.append(Template(Templates.ObjCImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ImplementationPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def generate_type_implementations(self, domain):

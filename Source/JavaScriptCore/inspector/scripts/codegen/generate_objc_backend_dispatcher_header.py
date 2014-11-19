@@ -30,15 +30,16 @@ import string
 import re
 from string import Template
 
-from generate_objective_c import ObjCGenerator
+from cpp_generator import CppGenerator
 from generator import Generator
-from generator_templates import GeneratorTemplates as Templates
 from models import Frameworks
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
 
-class ObjectiveCBackendDispatcherHeaderGenerator(Generator):
+class ObjCBackendDispatcherHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -63,9 +64,9 @@ class ObjectiveCBackendDispatcherHeaderGenerator(Generator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCBackendDispatcherHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.BackendDispatcherHeaderPrelude).substitute(None, **header_args))
         sections.extend(map(self._generate_objc_handler_declarations_for_domain, domains))
-        sections.append(Template(Templates.ObjCBackendDispatcherHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.BackendDispatcherHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_objc_forward_declarations(self):
@@ -92,13 +93,13 @@ class ObjectiveCBackendDispatcherHeaderGenerator(Generator):
             'objcPrefix': ObjCGenerator.OBJC_PREFIX,
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.ObjCBackendDispatcherHeaderDomainHandlerObjCDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerObjCDeclaration).substitute(None, **handler_args))
 
     def _generate_objc_handler_declaration_for_command(self, command):
         lines = []
         parameters = ['long callId']
         for _parameter in command.call_parameters:
-            parameters.append('%s in_%s' % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+            parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
 
         command_args = {
             'commandName': command.command_name,

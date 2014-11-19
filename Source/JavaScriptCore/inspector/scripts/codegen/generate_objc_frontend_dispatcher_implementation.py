@@ -29,14 +29,15 @@ import logging
 import string
 from string import Template
 
-from generate_objective_c import ObjCGenerator
+from cpp_generator import CppGenerator
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
+from objc_generator import ObjCGenerator
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
 
-class ObjectiveCFrontendDispatcherImplementationGenerator(Generator):
+class ObjCFrontendDispatcherImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -61,9 +62,9 @@ class ObjectiveCFrontendDispatcherImplementationGenerator(Generator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.extend(map(self._generate_event_dispatcher_implementations, domains))
-        sections.append(Template(Templates.ObjCImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.ImplementationPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_event_dispatcher_implementations(self, domain):
@@ -137,7 +138,7 @@ class ObjectiveCFrontendDispatcherImplementationGenerator(Generator):
         lines = []
         lines.append('    RefPtr<InspectorObject> paramsObject = InspectorObject::create();')
         for parameter in event.event_parameters:
-            keyed_set_method = Generator.keyed_set_method_for_type(parameter.type)
+            keyed_set_method = CppGenerator.cpp_setter_method_for_type(parameter.type)
             var_name = parameter.parameter_name
             safe_var_name = '(*%s)' % var_name if parameter.is_optional else var_name
             export_expression = ObjCGenerator.objc_protocol_export_expression_for_variable(parameter.type, safe_var_name)

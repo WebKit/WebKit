@@ -36,7 +36,7 @@ from models import EnumType
 log = logging.getLogger('global')
 
 
-class BackendCommandsGenerator(Generator):
+class JSBackendCommandsGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 

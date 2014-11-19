@@ -30,14 +30,15 @@ import re
 import string
 from string import Template
 
-from models import EnumType
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
+from models import EnumType
 
 log = logging.getLogger('global')
 
 
-class FrontendDispatcherHeaderGenerator(Generator):
+class CppFrontendDispatcherHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -63,9 +64,9 @@ class FrontendDispatcherHeaderGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.CppHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.HeaderPrelude).substitute(None, **header_args))
         sections.extend(map(self._generate_dispatcher_declarations_for_domain, self.domains_to_generate()))
-        sections.append(Template(Templates.CppHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
     # Private methods.
@@ -102,13 +103,13 @@ class FrontendDispatcherHeaderGenerator(Generator):
             'eventDeclarations': "\n".join(event_declarations)
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.FrontendDispatcherDomainDispatcherDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.FrontendDispatcherDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_event(self, event, domain, used_enum_names):
         formal_parameters = []
         lines = []
         for parameter in event.event_parameters:
-            formal_parameters.append('%s %s' % (Generator.type_string_for_checked_formal_event_parameter(parameter), parameter.parameter_name))
+            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_checked_formal_event_parameter(parameter), parameter.parameter_name))
             if isinstance(parameter.type, EnumType) and parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(parameter, event))
                 used_enum_names.add(parameter.parameter_name)

@@ -29,14 +29,15 @@ import logging
 import string
 from string import Template
 
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import ObjectType, ArrayType
 
 log = logging.getLogger('global')
 
 
-class FrontendDispatcherImplementationGenerator(Generator):
+class CppFrontendDispatcherImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -56,9 +57,9 @@ class FrontendDispatcherImplementationGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.CppImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.extend(map(self._generate_dispatcher_implementations_for_domain, self.domains_to_generate()))
-        sections.append(Template(Templates.CppImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.ImplementationPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
     # Private methods.
@@ -78,16 +79,16 @@ class FrontendDispatcherImplementationGenerator(Generator):
         for parameter in event.event_parameters:
 
             parameter_value = parameter.parameter_name
-            if parameter.is_optional and not Generator.should_pass_by_copy_for_return_type(parameter.type):
+            if parameter.is_optional and not CppGenerator.should_pass_by_copy_for_return_type(parameter.type):
                 parameter_value = '*' + parameter_value
             if parameter.type.is_enum():
                 parameter_value = 'Inspector::Protocol::getEnumConstantValue(%s)' % parameter_value
 
             parameter_args = {
-                'parameterType': Generator.type_string_for_stack_out_parameter(parameter),
+                'parameterType': CppGenerator.cpp_type_for_stack_out_parameter(parameter),
                 'parameterName': parameter.parameter_name,
                 'parameterValue': parameter_value,
-                'keyedSetMethod': Generator.keyed_set_method_for_type(parameter.type),
+                'keyedSetMethod': CppGenerator.cpp_setter_method_for_type(parameter.type),
             }
 
             if parameter.is_optional:
@@ -96,7 +97,7 @@ class FrontendDispatcherImplementationGenerator(Generator):
             else:
                 parameter_assignments.append('    paramsObject->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterValue)s);' % parameter_args)
 
-            formal_parameters.append('%s %s' % (Generator.type_string_for_checked_formal_event_parameter(parameter), parameter.parameter_name))
+            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_checked_formal_event_parameter(parameter), parameter.parameter_name))
 
         event_args = {
             'domainName': domain.domain_name,

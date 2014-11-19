@@ -27,60 +27,66 @@
 
 import logging
 import string
+import re
 from string import Template
 
-from generate_objective_c import ObjCGenerator
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator
-from generator_templates import GeneratorTemplates as Templates
 
 log = logging.getLogger('global')
 
 
-class ObjectiveCConfigurationHeaderGenerator(Generator):
+class CppAlternateBackendDispatcherHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return '%sConfiguration.h' % ObjCGenerator.OBJC_PREFIX
+        return 'InspectorAlternateBackendDispatchers.h'
 
     def generate_output(self):
         headers = [
-            '"%s.h"' % ObjCGenerator.OBJC_PREFIX,
+            '"InspectorProtocolTypes.h"',
+            '<JavaScriptCore/InspectorBackendDispatcher.h>',
         ]
 
         header_args = {
-            'includes': '\n'.join(['#import ' + header for header in headers]),
+            'headerGuardString': re.sub('\W+', '_', self.output_filename()),
+            'includes': '\n'.join(['#include ' + header for header in headers]),
         }
-
-        self._command_filter = ObjCGenerator.should_generate_domain_command_handler_filter(self.model())
-        self._event_filter = ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model())
 
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCGenericHeaderPrelude).substitute(None, **header_args))
-        sections.append(self._generate_configuration_interface_for_domains(domains))
-        sections.append(Template(Templates.ObjCGenericHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.AlternateDispatchersHeaderPrelude).substitute(None, **header_args))
+        sections.append('\n'.join(filter(None, map(self._generate_handler_declarations_for_domain, domains))))
+        sections.append(Template(CppTemplates.AlternateDispatchersHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
-    def _generate_configuration_interface_for_domains(self, domains):
-        lines = []
-        lines.append('@interface RWIProtocolConfiguration : NSObject')
-        for domain in domains:
-            lines.extend(self._generate_properties_for_domain(domain))
-        lines.append('@end')
-        return '\n'.join(lines)
+    def _generate_handler_declarations_for_domain(self, domain):
+        if not domain.commands:
+            return ''
 
-    def _generate_properties_for_domain(self, domain):
-        property_args = {
-            'objcPrefix': ObjCGenerator.OBJC_PREFIX,
+        command_declarations = []
+        for command in domain.commands:
+            command_declarations.append(self._generate_handler_declaration_for_command(command))
+
+        handler_args = {
             'domainName': domain.domain_name,
-            'variableNamePrefix': ObjCGenerator.variable_name_prefix_for_domain(domain),
+            'commandDeclarations': '\n'.join(command_declarations),
         }
 
+        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration).substitute(None, **handler_args))
+
+    def _generate_handler_declaration_for_command(self, command):
         lines = []
-        if domain.commands and self._command_filter(domain):
-            lines.append(Template(Templates.ObjCConfigurationCommandProperty).substitute(None, **property_args))
-        if domain.events and self._event_filter(domain):
-            lines.append(Template(Templates.ObjCConfigurationEventProperty).substitute(None, **property_args))
-        return lines
+        parameters = ['long callId']
+        for _parameter in command.call_parameters:
+            parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+
+        command_args = {
+            'commandName': command.command_name,
+            'parameters': ', '.join(parameters),
+        }
+        lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
+        return '\n'.join(lines)

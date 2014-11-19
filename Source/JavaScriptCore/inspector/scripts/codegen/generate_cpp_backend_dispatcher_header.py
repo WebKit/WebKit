@@ -30,14 +30,15 @@ import re
 import string
 from string import Template
 
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import EnumType
 
 log = logging.getLogger('global')
 
 
-class BackendDispatcherHeaderGenerator(Generator):
+class CppBackendDispatcherHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -66,11 +67,11 @@ class BackendDispatcherHeaderGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.CppHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.HeaderPrelude).substitute(None, **header_args))
         sections.append(self._generate_alternate_handler_forward_declarations_for_domains(domains))
         sections.extend(map(self._generate_handler_declarations_for_domain, domains))
         sections.extend(map(self._generate_dispatcher_declarations_for_domain, domains))
-        sections.append(Template(Templates.CppHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
     # Private methods.
@@ -104,7 +105,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             'commandDeclarations': "\n".join(command_declarations)
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
 
     def _generate_anonymous_enum_for_parameter(self, parameter, command):
         enum_args = {
@@ -127,7 +128,7 @@ class BackendDispatcherHeaderGenerator(Generator):
         lines = []
         parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
-            parameters.append("%s in_%s" % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+            parameters.append("%s in_%s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
 
             if isinstance(_parameter.type, EnumType) and _parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
@@ -137,7 +138,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             parameter_name = 'out_' + _parameter.parameter_name
             if _parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
-            parameters.append("%s %s" % (Generator.type_string_for_formal_out_parameter(_parameter), parameter_name))
+            parameters.append("%s %s" % (CppGenerator.cpp_type_for_formal_out_parameter(_parameter), parameter_name))
 
             if isinstance(_parameter.type, EnumType) and _parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
@@ -155,12 +156,12 @@ class BackendDispatcherHeaderGenerator(Generator):
 
         in_parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
-            in_parameters.append("%s in_%s" % (Generator.type_string_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+            in_parameters.append("%s in_%s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
         in_parameters.append("PassRefPtr<%s> callback" % callbackName)
 
         out_parameters = []
         for _parameter in command.return_parameters:
-            out_parameters.append("%s %s" % (Generator.type_string_for_formal_async_parameter(_parameter), _parameter.parameter_name))
+            out_parameters.append("%s %s" % (CppGenerator.cpp_type_for_formal_async_parameter(_parameter), _parameter.parameter_name))
 
         class_components = ['class']
         export_macro = self.model().framework.setting('export_macro', None)
@@ -175,7 +176,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             'outParameters': ", ".join(out_parameters),
         }
 
-        return Template(Templates.BackendDispatcherHeaderAsyncCommandDeclaration).substitute(None, **command_args)
+        return Template(CppTemplates.BackendDispatcherHeaderAsyncCommandDeclaration).substitute(None, **command_args)
 
     def _generate_dispatcher_declarations_for_domain(self, domain):
         classComponents = ['class']
@@ -194,7 +195,7 @@ class BackendDispatcherHeaderGenerator(Generator):
             'commandDeclarations': "\n".join(declarations)
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_command(self, command):
         return "    void %s(long callId, const Inspector::InspectorObject& message);" % command.command_name

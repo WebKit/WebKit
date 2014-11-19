@@ -29,14 +29,15 @@ import logging
 import string
 from string import Template
 
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import AliasedType, ArrayType, EnumType, ObjectType
 
 log = logging.getLogger('global')
 
 
-class ProtocolTypesImplementationGenerator(Generator):
+class CppProtocolTypesImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -56,14 +57,14 @@ class ProtocolTypesImplementationGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.CppImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append('namespace Protocol {')
         sections.append(self._generate_enum_mapping())
         sections.append(self._generate_open_field_names())
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
         sections.append('} // namespace Protocol')
-        sections.append(Template(Templates.CppImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.ImplementationPostlude).substitute(None, **header_args))
 
         return "\n\n".join(sections)
 
@@ -108,9 +109,9 @@ class ProtocolTypesImplementationGenerator(Generator):
 
     def _generate_runtime_cast_for_object_declaration(self, object_declaration):
         args = {
-            'objectType': Generator.protocol_type_string_for_type(object_declaration.type)
+            'objectType': CppGenerator.cpp_protocol_type_for_type(object_declaration.type)
         }
-        return Template(Templates.ProtocolObjectRuntimeCast).substitute(None, **args)
+        return Template(CppTemplates.ProtocolObjectRuntimeCast).substitute(None, **args)
 
     def _generate_assertion_for_object_declaration(self, object_declaration):
         required_members = filter(lambda member: not member.is_optional, object_declaration.type_members)
@@ -119,7 +120,7 @@ class ProtocolTypesImplementationGenerator(Generator):
         lines = []
 
         lines.append('#if !ASSERT_DISABLED')
-        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (Generator.protocol_type_string_for_type(object_declaration.type)))
+        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
         lines.append("""{
     RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
@@ -127,7 +128,7 @@ class ProtocolTypesImplementationGenerator(Generator):
         for type_member in required_members:
             args = {
                 'memberName': type_member.member_name,
-                'assertMethod': Generator.assertion_method_for_type_member(type_member, object_declaration)
+                'assertMethod': CppGenerator.cpp_assertion_method_for_type_member(type_member, object_declaration)
             }
 
             lines.append("""    {
@@ -143,7 +144,7 @@ class ProtocolTypesImplementationGenerator(Generator):
         for type_member in optional_members:
             args = {
                 'memberName': type_member.member_name,
-                'assertMethod': Generator.assertion_method_for_type_member(type_member, object_declaration)
+                'assertMethod': CppGenerator.cpp_assertion_method_for_type_member(type_member, object_declaration)
             }
 
             lines.append("""    {
@@ -166,7 +167,7 @@ class ProtocolTypesImplementationGenerator(Generator):
     def _generate_assertion_for_enum(self, enum_member, object_declaration):
         lines = []
         lines.append('#if !ASSERT_DISABLED')
-        lines.append('void %s(Inspector::InspectorValue* value)' % Generator.assertion_method_for_type_member(enum_member, object_declaration))
+        lines.append('void %s(Inspector::InspectorValue* value)' % CppGenerator.cpp_assertion_method_for_type_member(enum_member, object_declaration))
         lines.append('{')
         lines.append('    String result;')
         lines.append('    bool castSucceeded = value->asString(result);')

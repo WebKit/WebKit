@@ -30,15 +30,16 @@ import string
 import re
 from string import Template
 
-from generate_objective_c import ObjCTypeCategory, ObjCGenerator, join_type_and_name
+from cpp_generator import CppGenerator
 from generator import Generator
-from generator_templates import GeneratorTemplates as Templates
 from models import Frameworks
+from objc_generator import ObjCTypeCategory, ObjCGenerator, join_type_and_name
+from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
 log = logging.getLogger('global')
 
 
-class ObjectiveCConfigurationImplementationGenerator(Generator):
+class ObjCConfigurationImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -64,9 +65,9 @@ class ObjectiveCConfigurationImplementationGenerator(Generator):
         domains = self.domains_to_generate()
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.ObjCBackendDispatcherImplementationPrelude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.BackendDispatcherImplementationPrelude).substitute(None, **header_args))
         sections.extend(map(self._generate_handler_implementation_for_domain, domains))
-        sections.append(Template(Templates.ObjCBackendDispatcherImplementationPostlude).substitute(None, **header_args))
+        sections.append(Template(ObjCTemplates.BackendDispatcherImplementationPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
     def _generate_handler_implementation_for_domain(self, domain):
@@ -83,7 +84,7 @@ class ObjectiveCConfigurationImplementationGenerator(Generator):
         lines = []
         parameters = ['long callId']
         for parameter in command.call_parameters:
-            parameters.append('%s in_%s' % (Generator.type_string_for_unchecked_formal_in_parameter(parameter), parameter.parameter_name))
+            parameters.append('%s in_%s' % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(parameter), parameter.parameter_name))
 
         command_args = {
             'domainName': domain.domain_name,
@@ -94,7 +95,7 @@ class ObjectiveCConfigurationImplementationGenerator(Generator):
             'invocation': self._generate_invocation_for_command(domain, command),
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(Templates.ObjCBackendDispatcherHeaderDomainHandlerImplementation).substitute(None, **command_args))
+        return self.wrap_with_guard_for_domain(domain, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerImplementation).substitute(None, **command_args))
 
     def _generate_success_block_for_command(self, domain, command):
         lines = []
@@ -123,7 +124,7 @@ class ObjectiveCConfigurationImplementationGenerator(Generator):
                 lines.append('        THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))
 
             for parameter in command.return_parameters:
-                keyed_set_method = Generator.keyed_set_method_for_type(parameter.type)
+                keyed_set_method = CppGenerator.cpp_setter_method_for_type(parameter.type)
                 var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
                 var_expression = '*%s' % var_name if parameter.is_optional else var_name
                 export_expression = ObjCGenerator.objc_protocol_export_expression_for_variable(parameter.type, var_expression)

@@ -30,14 +30,15 @@ import re
 import string
 from string import Template
 
+from cpp_generator import CppGenerator
+from cpp_generator_templates import CppGeneratorTemplates as CppTemplates
 from generator import Generator, ucfirst
-from generator_templates import GeneratorTemplates as Templates
 from models import EnumType, ObjectType, PrimitiveType, AliasedType, ArrayType, Frameworks
 
 log = logging.getLogger('global')
 
 
-class ProtocolTypesHeaderGenerator(Generator):
+class CppProtocolTypesHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
@@ -69,7 +70,7 @@ class ProtocolTypesHeaderGenerator(Generator):
 
         sections = []
         sections.append(self.generate_license())
-        sections.append(Template(Templates.CppHeaderPrelude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.HeaderPrelude).substitute(None, **header_args))
         sections.append('namespace Protocol {')
         sections.append(self._generate_forward_declarations(domains))
         sections.append(self._generate_typedefs(domains))
@@ -84,7 +85,7 @@ class ProtocolTypesHeaderGenerator(Generator):
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
         sections.append(self._generate_forward_declarations_for_binding_traits())
         sections.append('} // namespace Protocol')
-        sections.append(Template(Templates.CppHeaderPostlude).substitute(None, **header_args))
+        sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
     # Private methods.
@@ -139,7 +140,7 @@ class ProtocolTypesHeaderGenerator(Generator):
 
         sections = []
         for declaration in primitive_declarations:
-            primitive_name = Generator.cpp_name_for_primitive_type(declaration.type.aliased_type)
+            primitive_name = CppGenerator.cpp_name_for_primitive_type(declaration.type.aliased_type)
             typedef_lines = []
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
@@ -203,10 +204,10 @@ class ProtocolTypesHeaderGenerator(Generator):
             'constructorExample': '\n'.join(constructor_example) + ';',
         }
 
-        lines.append(Template(Templates.ProtocolObjectBuilderDeclarationPrelude).substitute(None, **builder_args))
+        lines.append(Template(CppTemplates.ProtocolObjectBuilderDeclarationPrelude).substitute(None, **builder_args))
         for type_member in required_members:
             lines.append(self._generate_builder_setter_for_member(type_member, domain))
-        lines.append(Template(Templates.ProtocolObjectBuilderDeclarationPostlude).substitute(None, **builder_args))
+        lines.append(Template(CppTemplates.ProtocolObjectBuilderDeclarationPostlude).substitute(None, **builder_args))
         for member in optional_members:
             lines.append(self._generate_unchecked_setter_for_member(member, domain))
 
@@ -268,9 +269,9 @@ class ProtocolTypesHeaderGenerator(Generator):
     def _generate_builder_setter_for_member(self, type_member, domain):
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
-            'keyedSet': Generator.keyed_set_method_for_type(type_member.type),
+            'keyedSet': CppGenerator.cpp_setter_method_for_type(type_member.type),
             'name': type_member.member_name,
-            'parameterType': Generator.type_string_for_type_member(type_member)
+            'parameterType': CppGenerator.cpp_type_for_type_member(type_member)
         }
 
         lines = []
@@ -290,9 +291,9 @@ class ProtocolTypesHeaderGenerator(Generator):
     def _generate_unchecked_setter_for_member(self, type_member, domain):
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
-            'keyedSet': Generator.keyed_set_method_for_type(type_member.type),
+            'keyedSet': CppGenerator.cpp_setter_method_for_type(type_member.type),
             'name': type_member.member_name,
-            'parameterType': Generator.type_string_for_type_member(type_member)
+            'parameterType': CppGenerator.cpp_type_for_type_member(type_member)
         }
 
         lines = []
@@ -316,10 +317,10 @@ class ProtocolTypesHeaderGenerator(Generator):
             for type_declaration in declarations_to_generate:
                 for type_member in type_declaration.type_members:
                     if isinstance(type_member.type, EnumType):
-                        type_arguments.append((Generator.protocol_type_string_for_type_member(type_member, type_declaration), False))
+                        type_arguments.append((CppGenerator.cpp_protocol_type_for_type_member(type_member, type_declaration), False))
 
                 if isinstance(type_declaration.type, ObjectType):
-                    type_arguments.append((Generator.protocol_type_string_for_type(type_declaration.type), Generator.type_needs_runtime_casts(type_declaration.type)))
+                    type_arguments.append((CppGenerator.cpp_protocol_type_for_type(type_declaration.type), Generator.type_needs_runtime_casts(type_declaration.type)))
 
         struct_keywords = ['struct']
         function_keywords = ['static void']

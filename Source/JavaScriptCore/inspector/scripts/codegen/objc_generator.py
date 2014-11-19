@@ -80,6 +80,10 @@ class ObjCTypeCategory:
         return None
 
 
+
+# This class contains extra static methods used for generation, but does
+# not participate in any inheritance hierarchy. File generators should
+# extend the generic "Generator" class instead.
 class ObjCGenerator:
     OBJC_PREFIX = 'RWIProtocol'
     OBJC_JSON_OBJECT_BASE = '%sJSONObject' % OBJC_PREFIX
@@ -164,7 +168,7 @@ class ObjCGenerator:
         return '%s%s' % (ObjCGenerator.OBJC_PREFIX, name)
 
     # Miscellaneous name handling.
-    
+
     @staticmethod
     def variable_name_prefix_for_domain(domain):
         domain_name = domain.domain_name

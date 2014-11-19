@@ -1,3 +1,46 @@
+2014-11-18  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: standardize language-specific protocol generator file, class, and method prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=138237
+
+        Reviewed by Joseph Pecoraro.
+
+        Settle on cpp/objc/js file prefixes and Cpp/ObjC/JS class prefixes for generators.
+        Move C++-specific static methods into CppGenerator and add cpp_ prefixes where relevant.
+        Split the templates file into language-specific template files.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/scripts/codegen/__init__.py:
+        * inspector/scripts/codegen/cpp_generator.py: Copied from Source/JavaScriptCore/inspector/scripts/codegen/generator.py.
+        * inspector/scripts/codegen/cpp_generator_templates.py: Copied from Source/JavaScriptCore/inspector/scripts/codegen/generator_templates.py.
+        (CppGeneratorTemplates):
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_alternate_backend_dispatcher_header.py.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_backend_dispatcher_header.py.
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_backend_dispatcher_implementation.py.
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_frontend_dispatcher_header.py.
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_frontend_dispatcher_implementation.py.
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_protocol_types_header.py.
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_protocol_types_implementation.py.
+        * inspector/scripts/codegen/generate_js_backend_commands.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_backend_commands.py.
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_backend_dispatcher_header.py.
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_backend_dispatcher_implementation.py.
+        * inspector/scripts/codegen/generate_objc_configuration_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_configuration_header.py.
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_configuration_implementation.py.
+        * inspector/scripts/codegen/generate_objc_conversion_helpers.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_conversion_helpers.py.
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_frontend_dispatcher_implementation.py.
+        * inspector/scripts/codegen/generate_objc_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_header.py.
+        * inspector/scripts/codegen/generate_objc_internal_header.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_internal_header.py.
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c_types_implementation.py.
+        * inspector/scripts/codegen/generator.py:
+        * inspector/scripts/codegen/generator_templates.py:
+        * inspector/scripts/codegen/objc_generator.py: Renamed from Source/JavaScriptCore/inspector/scripts/codegen/generate_objective_c.py.
+        * inspector/scripts/codegen/objc_generator_templates.py: Added.
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+
 2014-11-19  Juergen Ributzka  <juergen@apple.com>
 
         Update WebKit to build with LLVM TOT

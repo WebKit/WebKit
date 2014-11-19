@@ -1658,13 +1658,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bytecode\BytecodeList.json" />
-    <None Include="..\inspector\scripts\codegen\generate_backend_commands.py" />
-    <None Include="..\inspector\scripts\codegen\generate_backend_dispatcher_header.py" />
-    <None Include="..\inspector\scripts\codegen\generate_backend_dispatcher_implementation.py" />
-    <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_header.py" />
-    <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_implementation.py" />
-    <None Include="..\inspector\scripts\codegen\generate_protocol_types_header.py" />
-    <None Include="..\inspector\scripts\codegen\generate_protocol_types_implementation.py" />
+    <None Include="..\inspector\scripts\codegen\cpp_generator.py" />
+    <None Include="..\inspector\scripts\codegen\cpp_generator_templates.py" />
+    <None Include="..\inspector\scripts\codegen\generate_cpp_backend_dispatcher_header.py" />
+    <None Include="..\inspector\scripts\codegen\generate_cpp_backend_dispatcher_implementation.py" />
+    <None Include="..\inspector\scripts\codegen\generate_cpp_frontend_dispatcher_header.py" />
+    <None Include="..\inspector\scripts\codegen\generate_cpp_frontend_dispatcher_implementation.py" />
+    <None Include="..\inspector\scripts\codegen\generate_cpp_protocol_types_header.py" />
+    <None Include="..\inspector\scripts\codegen\generate_cpp_protocol_types_implementation.py" />
+    <None Include="..\inspector\scripts\codegen\generate_js_backend_commands.py" />
     <None Include="..\inspector\scripts\codegen\generator.py" />
     <None Include="..\inspector\scripts\codegen\generator_templates.py" />
     <None Include="..\inspector\scripts\codegen\models.py" />

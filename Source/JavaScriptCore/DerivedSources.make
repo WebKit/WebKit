@@ -144,13 +144,15 @@ endif
 
 INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/codegen/__init__.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_backend_commands.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_backend_dispatcher_header.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_backend_dispatcher_implementation.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_frontend_dispatcher_header.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_frontend_dispatcher_implementation.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_protocol_types_header.py \
-	$(JavaScriptCore)/inspector/scripts/codegen/generate_protocol_types_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/cpp_generator_templates.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/cpp_generator.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_cpp_protocol_types_header.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_js_backend_commands.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/generator_templates.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/generator.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/models.py \
