@@ -137,10 +137,11 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
         return nullptr;
 
     // Don't do anything if there is no character at the point.
-    if (!frame->rangeForPoint(hitTestResult.roundedPointInInnerNodeFrame()))
+    IntPoint framePoint = hitTestResult.roundedPointInInnerNodeFrame();
+    if (!frame->rangeForPoint(framePoint))
         return nullptr;
 
-    VisiblePosition position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
+    VisiblePosition position = frame->visiblePositionForPoint(framePoint);
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
