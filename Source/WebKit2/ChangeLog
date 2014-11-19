@@ -1,5 +1,11 @@
 2014-11-19  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+
+2014-11-19  Anders Carlsson  <andersca@apple.com>
+
         Rename two Cocoa-only .cpp files to .mm.
 
         Rubber-stamped by Sam Weinig.

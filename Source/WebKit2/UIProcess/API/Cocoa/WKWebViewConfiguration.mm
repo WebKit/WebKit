@@ -37,6 +37,10 @@
 #import "_WKWebsiteDataStore.h"
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS)
+#import <UIKit/UIDevice_Private.h>
+#endif
+
 template<typename T> class LazyInitialized {
 public:
     template<typename F>
