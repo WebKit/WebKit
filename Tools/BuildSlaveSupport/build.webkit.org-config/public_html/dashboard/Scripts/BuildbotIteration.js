@@ -96,12 +96,14 @@ function isMultiCodebaseGotRevisionProperty(property)
     return property[0] === "got_revision" && typeof property[1] === "object";
 }
 
-function parseRevisionProperty(property, key)
+function parseRevisionProperty(property, key, fallbackKey)
 {
     if (!property)
         return null;
     var value = property[1];
-    return parseInt(isMultiCodebaseGotRevisionProperty(property) ? value[key] : value, 10);
+    if (isMultiCodebaseGotRevisionProperty(property))
+        value = (key in value) ? value[key] : value[fallbackKey];
+    return parseInt(value);
 }
 
 BuildbotIteration.prototype = {
@@ -242,8 +244,6 @@ BuildbotIteration.prototype = {
         //
         // ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
         // OR
-        // ["got_revision","2468_1357","Source"]
-        // OR
         // ["got_revision","2468","Source"]
         //
         // When extracting the OpenSource revision from property got_revision we don't need to check whether the
@@ -252,11 +252,11 @@ BuildbotIteration.prototype = {
         // revision. Therefore, we only look at got_revision to extract the Internal revision when it's
         // a dictionary.
 
-        var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
-        this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKit");
+        var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision"; });
+        this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKit", "opensource");
 
-        var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
-        this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
+        var internalRevisionProperty = data.properties.findFirst(function(property) { return isMultiCodebaseGotRevisionProperty(property); });
+        this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal", "internal");
 
         function sourceStampChanges(sourceStamp) {
             var result = [];
