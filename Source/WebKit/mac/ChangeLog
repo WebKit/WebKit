@@ -1,3 +1,16 @@
+2014-11-19  Beth Dakin  <bdakin@apple.com>
+
+        Data detected results with no menu items should not fall through to regular text 
+        action menus
+        https://bugs.webkit.org/show_bug.cgi?id=138887
+        -and corresponding-
+        rdar://problem/18971616
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController _defaultMenuItems]):
+
 2014-11-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make WebKit build with public iOS SDK
