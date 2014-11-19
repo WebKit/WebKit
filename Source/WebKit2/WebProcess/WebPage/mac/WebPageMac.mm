@@ -1003,6 +1003,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     RefPtr<WebCore::Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates);
     actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
     m_lastActionMenuRangeForSelection = lookupRange;
+    m_lastActionMenuHitTestResult = hitTestResult;
 
     if (Image* image = hitTestResult.image()) {
         actionMenuResult.image = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
@@ -1074,6 +1075,24 @@ void WebPage::selectLastActionMenuRange()
 {
     if (m_lastActionMenuRangeForSelection)
         corePage()->mainFrame().selection().setSelectedRange(m_lastActionMenuRangeForSelection.get(), DOWNSTREAM, true);
+}
+
+void WebPage::focusAndSelectLastActionMenuHitTestResult()
+{
+    if (!m_lastActionMenuHitTestResult.isContentEditable())
+        return;
+
+    Element* element = m_lastActionMenuHitTestResult.innerElement();
+    if (!element)
+        return;
+
+    auto renderer = element->renderer();
+    if (!renderer)
+        return;
+
+    m_page->focusController().setFocusedElement(element, element->document().frame());
+    VisiblePosition position = renderer->positionForPoint(m_lastActionMenuHitTestResult.localPoint(), nullptr);
+    element->document().frame()->selection().setSelection(position);
 }
 
 void WebPage::dataDetectorsDidPresentUI()

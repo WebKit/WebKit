@@ -44,6 +44,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
@@ -151,7 +152,27 @@ struct DictionaryPopupInfo {
 
 - (BOOL)isMenuForTextContent
 {
-    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText || _type == WebActionMenuEditableTextWithSuggestions || _type == WebActionMenuWhitespaceInEditableArea;
+    return _type == WebActionMenuReadOnlyText || _type == WebActionMenuEditableText || _type == WebActionMenuEditableTextWithSuggestions;
+}
+
+- (void)focusAndSelectHitTestResult
+{
+    if (!_hitTestResult.isContentEditable())
+        return;
+
+    Element* element = _hitTestResult.innerElement();
+    if (!element)
+        return;
+
+    auto renderer = element->renderer();
+    if (!renderer)
+        return;
+
+    Frame& frame = renderer->frame();
+
+    frame.page()->focusController().setFocusedElement(element, element->document().frame());
+    VisiblePosition position = renderer->positionForPoint(_hitTestResult.localPoint(), nullptr);
+    frame.selection().setSelection(position);
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -169,6 +190,11 @@ struct DictionaryPopupInfo {
             [[_webView _selectedOrMainFrame] _clearSelection];
         else
             [self _selectDataDetectedText];
+        return;
+    }
+
+    if (_type == WebActionMenuWhitespaceInEditableArea) {
+        [self focusAndSelectHitTestResult];
         return;
     }
 

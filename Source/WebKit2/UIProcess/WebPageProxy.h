@@ -919,6 +919,7 @@ public:
     WebHitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
     void selectLastActionMenuRange();
+    void focusAndSelectLastActionMenuHitTestResult();
 #endif
 
 #if USE(UNIFIED_TEXT_CHECKING)
