@@ -37,8 +37,6 @@ public:
         , m_lineSpacing(0)
         , m_xHeight(0)
         , m_zeroWidth(0)
-        , m_decorationThickness(1)
-        , m_underlinePosition(1)
         , m_hasXHeight(false)
         , m_hasZeroWidth(false)
     {
@@ -134,12 +132,6 @@ public:
     bool hasZeroWidth() const { return m_hasZeroWidth; }
     void setHasZeroWidth(bool hasZeroWidth) { m_hasZeroWidth = hasZeroWidth; }
 
-    float decorationThickness() const { return m_decorationThickness; }
-    void setDecorationThickness(float decorationThickness) { m_decorationThickness = decorationThickness; }
-
-    float underlinePosition() const { return m_underlinePosition; }
-    void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
-
 private:
     friend class SimpleFontData;
 
@@ -162,8 +154,6 @@ private:
     float m_xHeight;
     float m_capHeight;
     float m_zeroWidth;
-    float m_decorationThickness;
-    float m_underlinePosition;
     bool m_hasXHeight;
     bool m_hasCapHeight;
     bool m_hasZeroWidth;

@@ -79,8 +79,6 @@ void SimpleFontData::platformInit()
     float lineGap;
     float lineSpacing;
     float xHeight;
-    float decorationThickness;
-    float underlinePosition;
     RetainPtr<CFStringRef> familyName;
     if (CTFontRef ctFont = m_platformData.font()) {
         FontServicesIOS fontService(ctFont);
@@ -89,8 +87,6 @@ void SimpleFontData::platformInit()
         lineSpacing = fontService.lineSpacing();
         lineGap = fontService.lineGap();
         xHeight = fontService.xHeight();
-        decorationThickness = CTFontGetUnderlineThickness(ctFont);
-        underlinePosition = -CTFontGetUnderlinePosition(ctFont);
         capHeight = fontService.capHeight();
         unitsPerEm = fontService.unitsPerEm();
         familyName = adoptCF(CTFontCopyFamilyName(ctFont));
@@ -105,7 +101,6 @@ void SimpleFontData::platformInit()
         lineGap = lroundf(scaleEmToUnits(CGFontGetLeading(cgFont), unitsPerEm) * pointSize);
         xHeight = scaleEmToUnits(CGFontGetXHeight(cgFont), unitsPerEm) * pointSize;
         capHeight = scaleEmToUnits(CGFontGetCapHeight(cgFont), unitsPerEm) * pointSize;
-        populateDecorationMetrics(m_platformData.size(), decorationThickness, underlinePosition);
 
         lineSpacing = ascent + descent + lineGap;
         familyName = adoptCF(CGFontCopyFamilyName(cgFont));
@@ -118,8 +113,6 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setLineSpacing(lineSpacing);
     m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setCapHeight(capHeight);
-    m_fontMetrics.setDecorationThickness(decorationThickness);
-    m_fontMetrics.setUnderlinePosition(underlinePosition);
     m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 
     if (platformData().orientation() == Vertical && !isTextOrientationFallback())

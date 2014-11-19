@@ -32,10 +32,10 @@
 
 namespace WebCore {
     
-int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, InlineTextBox* inlineTextBox)
+int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, InlineTextBox* inlineTextBox, int textDecorationThickness)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
-    float gap = fontMetrics.underlinePosition();
+    int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
 
     // According to the specification TextUnderlinePositionAuto should default to 'alphabetic' for horizontal text
     // and to 'under Left' for vertical text (e.g. japanese). We support only horizontal text for now.
@@ -83,7 +83,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, InlineT
     if (decoration == TextDecorationNone)
         return GlyphOverflow();
     
-    float strokeThickness = lineStyle.fontMetrics().decorationThickness();
+    float strokeThickness = textDecorationStrokeThickness(lineStyle.fontSize());
     float controlPointDistance;
     float step;
     float wavyOffset;
@@ -101,7 +101,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, InlineT
 
     // These metrics must match where underlines get drawn.
     if (decoration & TextDecorationUnderline) {
-        float underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox);
+        float underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox, strokeThickness);
         if (decorationStyle == TextDecorationStyleWavy) {
             extendIntToFloat(overflowResult.bottom, underlineOffset + wavyOffset + controlPointDistance + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -(underlineOffset + wavyOffset - controlPointDistance - strokeThickness));

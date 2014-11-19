@@ -79,9 +79,6 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
     float ascent = svgFontFaceElement->ascent() * scale;
     float descent = svgFontFaceElement->descent() * scale;
     float lineGap = 0.1f * fontSize;
-    float decorationThickness;
-    float underlinePosition;
-    populateDecorationMetrics(fontSize, decorationThickness, underlinePosition);
 
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(fontData, 0)->page();
 
@@ -98,8 +95,6 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
     fontMetrics.setLineGap(lineGap);
     fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
     fontMetrics.setXHeight(xHeight);
-    fontMetrics.setDecorationThickness(decorationThickness);
-    fontMetrics.setUnderlinePosition(underlinePosition);
 
     if (!glyphPageZero) {
         fontData->setSpaceGlyph(0);
