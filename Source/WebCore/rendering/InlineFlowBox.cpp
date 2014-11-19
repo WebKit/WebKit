@@ -1636,6 +1636,20 @@ void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<InlineBox*>& leafBoxes
     }
 }
 
+void InlineFlowBox::computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const
+{
+    for (const auto* box = firstChild(); box; box = box->nextOnLine()) {
+        if (is<InlineFlowBox>(*box))
+            downcast<InlineFlowBox>(*box).computeReplacedAndTextLineTopAndBottom(lineTop, lineBottom);
+        else {
+            if (box->logicalTop() < lineTop)
+                lineTop = box->logicalTop();
+            if (box->logicalBottom() > lineBottom)
+                lineBottom = box->logicalBottom();
+        }
+    }
+}
+
 #ifndef NDEBUG
 
 const char* InlineFlowBox::boxName() const
