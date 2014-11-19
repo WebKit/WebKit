@@ -1,0 +1,19 @@
+Tests that a repeating timer changing the style of an element outside viewport gets unthrottled if the elements is inside the viewport after layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isTimerThrottled(timeoutId) is false
+5th iteration, timer should be throttled as the element is outside the viewport.
+PASS wasThrottled is true
+Timer should still be throttled before layout.
+PASS internals.isTimerThrottled(timeoutId) is true
+Forcing layout
+Timer should no longer be throttled
+PASS internals.isTimerThrottled(timeoutId) is false
+6th iteration, timer should still be unthrottled.
+PASS internals.isTimerThrottled(timeoutId) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

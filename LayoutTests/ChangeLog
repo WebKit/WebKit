@@ -1,5 +1,19 @@
 2014-11-19  Chris Dumez  <cdumez@apple.com>
 
+        Add layout test for DOM timer throttling and element moving into view after layout
+        https://bugs.webkit.org/show_bug.cgi?id=138874
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to make sure we unthrottle a DOM timer changing the
+        style of an element outside viewport if the element ends up inside
+        the viewport after layout.
+
+        * fast/dom/timer-unthrottle-on-layout-expected.txt: Added.
+        * fast/dom/timer-unthrottle-on-layout.html: Added.
+
+2014-11-19  Chris Dumez  <cdumez@apple.com>
+
         Add layout test for DOM timers throttling and 0 height element with visible overflowing content
         https://bugs.webkit.org/show_bug.cgi?id=138873
 

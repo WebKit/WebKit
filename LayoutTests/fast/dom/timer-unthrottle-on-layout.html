@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div style="position: relative; width: 1600px; height: 2400px; background-color: green;">
+  <div id="parentDiv" style="position:absolute; left: 600px; top: 800px;"> <input id="textbox" type="text"></div>
+</div>
+<script>
+description("Tests that a repeating timer changing the style of an element outside viewport gets unthrottled if the elements is inside the viewport after layout.");
+jsTestIsAsync = true;
+
+var testElement = document.getElementById('textbox');
+var iterationCount = 0;
+var wasThrottled = false;
+var wasThrottledBeforeScroll = false;
+var timeoutId;
+
+function moveElementInsideViewport()
+{
+  debug("5th iteration, timer should be throttled as the element is outside the viewport.");
+  shouldBeTrue("wasThrottled");
+
+  var parentDiv = document.getElementById("parentDiv");
+  parentDiv.style["top"] = "100px";
+
+  debug("Timer should still be throttled before layout.");
+  shouldBeTrue("internals.isTimerThrottled(timeoutId)");
+
+  debug("Forcing layout");
+  parentDiv.offsetTop;
+
+  debug("Timer should no longer be throttled");
+  shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+}
+
+function timerCallback()
+{
+  ++iterationCount;
+  // Change the style of the element while it is outside viewport.
+  testElement.style["opacity"] = "" + (iterationCount / 10.);
+
+  // 5 iterations should be sufficient to throttle the timer.
+  if (iterationCount == 5) {
+    // Do not use shouldBeTrue() because it would cause a DOM tree mutation
+    // and unthrottle the timer.
+    wasThrottled = internals.isTimerThrottled(timeoutId);
+    setTimeout(moveElementInsideViewport, 0);
+  } else if (iterationCount == 6) {
+    debug("6th iteration, timer should still be unthrottled.");
+    shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+
+    clearInterval(timeoutId);
+    finishJSTest();
+  }
+}
+
+timeoutId = setInterval(timerCallback, 0);
+shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
