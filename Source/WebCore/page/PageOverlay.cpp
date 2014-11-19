@@ -40,6 +40,12 @@ namespace WebCore {
 static const double fadeAnimationDuration = 0.2;
 static const double fadeAnimationFrameRate = 30;
 
+static PageOverlay::PageOverlayID generatePageOverlayID()
+{
+    static PageOverlay::PageOverlayID pageOverlayID;
+    return ++pageOverlayID;
+}
+
 PassRefPtr<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayType)
 {
     return adoptRef(new PageOverlay(client, overlayType));
@@ -55,6 +61,7 @@ PageOverlay::PageOverlay(Client& client, OverlayType overlayType)
     , m_fractionFadedIn(1)
     , m_overlayType(overlayType)
     , m_backgroundColor(Color::transparent)
+    , m_pageOverlayID(generatePageOverlayID())
 {
 }
 

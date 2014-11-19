@@ -1,5 +1,43 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176221. rdar://problem/18991369
+
+    2014-11-17  Tim Horton  <timothy_horton@apple.com>
+
+            DataDetectors PageOverlay callbacks can come in to the wrong overlay
+            https://bugs.webkit.org/show_bug.cgi?id=138801
+            <rdar://problem/18991369>
+
+            Reviewed by Anders Carlsson.
+
+            We can call dataDetectorsDidHideUI on the wrong (or no) PageOverlay,
+            because it's possible to have another performActionMenuHitTestAtLocation
+            between the first one and the dataDetectorsDid*UI that correspond to it.
+
+            To make sure that the callbacks come to the right PageOverlay, plumb
+            an integer ID through all of the callbacks and find the overlay based on that.
+
+            * Shared/mac/ActionMenuHitTestResult.h:
+            Store the ID of the PageOverlay that overrode data detection.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            Send the ID back to the Web process when replying from DD callbacks.
+
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Store the ID of the PageOverlay that overrode data detection instead of
+            keeping the PageOverlay itself.
+
+            (WebKit::WebPage::dataDetectorsDidPresentUI):
+            (WebKit::WebPage::dataDetectorsDidChangeUI):
+            (WebKit::WebPage::dataDetectorsDidHideUI):
+            Find and reply to the correct page overlay.
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176220. rdar://problem/18944893
 
     2014-11-17  Beth Dakin  <bdakin@apple.com>

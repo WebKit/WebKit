@@ -969,8 +969,6 @@ String WebPage::platformUserAgent(const URL&) const
 
 void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
 {
-    m_lastActionMenuHitPageOverlay = nullptr;
-
     layoutIfNeeded();
 
     MainFrame& mainFrame = corePage()->mainFrame();
@@ -1034,8 +1032,8 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
         actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
         actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange);
+        actionMenuResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         m_lastActionMenuRangeForSelection = mainResultRange;
-        m_lastActionMenuHitPageOverlay = webOverlay;
 
         break;
     }
@@ -1095,23 +1093,40 @@ void WebPage::focusAndSelectLastActionMenuHitTestResult()
     element->document().frame()->selection().setSelection(position);
 }
 
-void WebPage::dataDetectorsDidPresentUI()
+void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)
 {
-    if (m_lastActionMenuHitPageOverlay)
-        m_lastActionMenuHitPageOverlay->dataDetectorsDidPresentUI();
+    MainFrame& mainFrame = corePage()->mainFrame();
+    for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
+        if (overlay->pageOverlayID() == overlayID) {
+            if (WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay))
+                webOverlay->dataDetectorsDidPresentUI();
+            return;
+        }
+    }
 }
 
-void WebPage::dataDetectorsDidChangeUI()
+void WebPage::dataDetectorsDidChangeUI(PageOverlay::PageOverlayID overlayID)
 {
-    if (m_lastActionMenuHitPageOverlay)
-        m_lastActionMenuHitPageOverlay->dataDetectorsDidChangeUI();
+    MainFrame& mainFrame = corePage()->mainFrame();
+    for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
+        if (overlay->pageOverlayID() == overlayID) {
+            if (WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay))
+                webOverlay->dataDetectorsDidChangeUI();
+            return;
+        }
+    }
 }
 
-void WebPage::dataDetectorsDidHideUI()
+void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
 {
-    if (m_lastActionMenuHitPageOverlay)
-        m_lastActionMenuHitPageOverlay->dataDetectorsDidHideUI();
-    m_lastActionMenuHitPageOverlay = nil;
+    MainFrame& mainFrame = corePage()->mainFrame();
+    for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
+        if (overlay->pageOverlayID() == overlayID) {
+            if (WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay))
+                webOverlay->dataDetectorsDidHideUI();
+            return;
+        }
+    }
 }
 
 } // namespace WebKit
