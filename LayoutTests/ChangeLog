@@ -1,3 +1,20 @@
+2014-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Add layout test for DOM timers throttling and 0 height element with visible overflowing content
+        https://bugs.webkit.org/show_bug.cgi?id=138873
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test for verify that a DOM timer changing the style of a 0
+        height element with visible overflowing content does not get throttled.
+        If the implementation did not properly use the overflow rect to
+        determine if the element is visible, this test would fail.
+
+        This covers the case of the top scrolling banner on huffingtonpost.com.
+
+        * fast/dom/repeating-timer-element-overflow-throttling-expected.txt: Added.
+        * fast/dom/repeating-timer-element-overflow-throttling.html: Added.
+
 2014-11-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Safari fails to load a web page with VoiceOver
