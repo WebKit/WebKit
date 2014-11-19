@@ -82,8 +82,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned short i)
 
 template<> inline CSSPrimitiveValue::operator unsigned short() const
 {
-    if (m_primitiveUnitType == CSS_NUMBER)
-        return clampTo<unsigned short>(m_value.num);
+    if (primitiveType() == CSS_NUMBER)
+        return getValue<unsigned short>();
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -91,8 +91,8 @@ template<> inline CSSPrimitiveValue::operator unsigned short() const
 
 template<> inline CSSPrimitiveValue::operator int() const
 {
-    if (m_primitiveUnitType == CSS_NUMBER)
-        return clampTo<int>(m_value.num);
+    if (primitiveType() == CSS_NUMBER)
+        return getValue<int>();
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -100,8 +100,8 @@ template<> inline CSSPrimitiveValue::operator int() const
 
 template<> inline CSSPrimitiveValue::operator unsigned() const
 {
-    if (m_primitiveUnitType == CSS_NUMBER)
-        return clampTo<unsigned>(m_value.num);
+    if (primitiveType() == CSS_NUMBER)
+        return getValue<unsigned>();
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -117,8 +117,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(float i)
 
 template<> inline CSSPrimitiveValue::operator float() const
 {
-    if (m_primitiveUnitType == CSS_NUMBER)
-        return clampTo<float>(m_value.num);
+    if (primitiveType() == CSS_NUMBER)
+        return getValue<float>();
 
     ASSERT_NOT_REACHED();
     return 0.0f;
