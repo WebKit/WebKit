@@ -678,7 +678,6 @@ public:
     // Only if isColorWell()
     virtual void colorValue(int& r, int& g, int& b) const { r = 0; g = 0; b = 0; }
 
-    void setRoleValue(AccessibilityRole role) { m_role = role; }
     virtual AccessibilityRole roleValue() const { return m_role; }
 
     virtual AXObjectCache* axObjectCache() const;

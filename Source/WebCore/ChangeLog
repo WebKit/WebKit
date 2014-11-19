@@ -1,3 +1,13 @@
+2014-11-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of AccessibilityObject::setRoleValue()
+        https://bugs.webkit.org/show_bug.cgi?id=138861
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::setRoleValue): Deleted.
+
 2014-11-19  Philippe Normand  <pnormand@igalia.com>
 
         Missing NULL-check in VideoTrack::setLanguage
