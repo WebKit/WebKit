@@ -231,6 +231,7 @@ using namespace WebKit;
             [getDDActionsManagerClass() didUseActions];
     }
 
+    [_previewPopover setBehavior:NSPopoverBehaviorTransient];
     if (!_shouldKeepPreviewPopoverOpen)
         [self _clearPreviewPopover];
 
@@ -338,7 +339,7 @@ using namespace WebKit;
     _previewViewController->_delegate = self;
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
-    [_previewPopover setBehavior:NSPopoverBehaviorTransient];
+    [_previewPopover setBehavior:NSPopoverBehaviorApplicationDefined];
     [_previewPopover setContentSize:popoverSize];
     [_previewPopover setContentViewController:_previewViewController.get()];
     [_previewPopover setDelegate:self];
