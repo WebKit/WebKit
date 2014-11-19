@@ -3,7 +3,7 @@
 <script src="../../resources/js-test-pre.js"></script>
 <div id="testElement" style="display: none">Test</div>
 <script>
-description("Tests that a nested timer changing the style of a non-visible element gets throttled.");
+description("Tests that a repeating timer changing the style of a display:none element gets throttled.");
 jsTestIsAsync = true;
 
 var iterationCount = 0;
@@ -11,8 +11,13 @@ var timeoutId;
 var testElement = document.getElementById("testElement");
 var wasThrottled = false;
 
-function checkTimerThrottleState()
+function timerCallback()
 {
+  ++iterationCount;
+  // Interact with the style of the element.
+  testElement.style["left"] = "" + iterationCount + "px";
+
+  // 5 iterations should suffice to throttle the timer.
   if (iterationCount == 5) {
     // Do not use shouldBeTrue() here because it would cause a DOM tree mutation and
     // unthrottle the DOM Timer.
@@ -22,35 +27,18 @@ function checkTimerThrottleState()
     shouldBeTrue("wasThrottled");
     debug("6th iteration, timer should still be throttled.");
     shouldBeTrue("internals.isTimerThrottled(timeoutId)");
+    debug("Timer mutated the DOM tree.");
   } else if (iterationCount >= 6) {
     // Timer should be unthrottled due to the DOM tree mutation caused by shouldBeTrue() in
     // the previous iteration.
     debug("" + iterationCount + "th iteration, timer should no longer be throttled.");
     shouldBeFalse("internals.isTimerThrottled(timeoutId)");
-    clearTimeout(timeoutId);
+    clearInterval(timeoutId);
     finishJSTest();
   }
 }
 
-function timerCallback()
-{
-  ++iterationCount;
-  // Interact with the style of the element.
-  testElement.style["left"] = "" + iterationCount + "px";
-
-  // 5 iterations should be sufficient to throttle the timer.
-  if (iterationCount >= 5) {
-    setTimeout(checkTimerThrottleState, 0);
-    if (iterationCount == 7) {
-      // The call to debug() mutates the DOM tree.
-      debug("Timer mutated the DOM tree.");
-    }
-  }
-
-  timeoutId = setTimeout(timerCallback, 0);
-}
-
-timeoutId = setTimeout(timerCallback, 0);
+timeoutId = setInterval(timerCallback, 0);
 debug("The timer should initially not be throttled.");
 shouldBeFalse("internals.isTimerThrottled(timeoutId)");
 </script>

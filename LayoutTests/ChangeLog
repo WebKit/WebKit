@@ -1,5 +1,25 @@
 2014-11-19  Chris Dumez  <cdumez@apple.com>
 
+        Add layout test for throttling of DOM timer changing the style of visible and invisible elements
+        https://bugs.webkit.org/show_bug.cgi?id=138875
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to test that a repeating DOM timer changing the style
+        of both visible and invisible elements does not get throttled.
+
+        Also rename existing tests to use "display-none" instead of "invisible"
+        for clarity.
+
+        * fast/dom/nested-timer-display-none-element-throttling-expected.txt: Renamed from LayoutTests/fast/dom/nested-timer-invisible-element-throttling-expected.txt.
+        * fast/dom/nested-timer-display-none-element-throttling.html: Renamed from LayoutTests/fast/dom/nested-timer-invisible-element-throttling.html.
+        * fast/dom/repeating-timer-display-none-element-throttling-expected.txt: Renamed from LayoutTests/fast/dom/repeating-timer-invisible-element-throttling-expected.txt.
+        * fast/dom/repeating-timer-display-none-element-throttling.html: Renamed from LayoutTests/fast/dom/repeating-timer-invisible-element-throttling.html.
+        * fast/dom/repeating-timer-mixed-visible-display-none-elements-throttling-expected.txt: Added.
+        * fast/dom/repeating-timer-mixed-visible-display-none-elements-throttling.html: Added.
+
+2014-11-19  Chris Dumez  <cdumez@apple.com>
+
         Add layout test for DOM timer throttling and element moving into view after layout
         https://bugs.webkit.org/show_bug.cgi?id=138874
 
