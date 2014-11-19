@@ -48,6 +48,9 @@ public:
     bool isNewlineCharacter(unsigned position) const;
     bool isEndOfContent(unsigned position) const;
 
+    bool resolveRendererPositions(const RenderText&, unsigned& startPosition, unsigned& endPosition) const;
+    const RenderText& renderer(unsigned position) const;
+
     class Style {
     public:
         Style(const RenderStyle& style)

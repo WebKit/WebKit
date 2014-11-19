@@ -33,6 +33,21 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
+static float baselinePosition(float lineHeight, float baseline, int lineIndex)
+{
+    return lineHeight * lineIndex + baseline;
+}
+
+static LayoutPoint linePosition(float logicalLeft, float logicalTop)
+{
+    return LayoutPoint(LayoutUnit::fromFloatFloor(logicalLeft), roundToInt(logicalTop));
+}
+
+static LayoutSize lineSize(float logicalLeft, float logicalRight, float height)
+{
+    return LayoutSize(LayoutUnit::fromFloatCeil(logicalRight) - LayoutUnit::fromFloatFloor(logicalLeft), height);
+}
+
 RunResolver::Run::Run(const Iterator& iterator)
     : m_iterator(iterator)
 {
@@ -40,13 +55,12 @@ RunResolver::Run::Run(const Iterator& iterator)
 
 LayoutRect RunResolver::Run::rect() const
 {
-    auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
-
-    float baselinePosition = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
-    LayoutPoint linePosition(LayoutUnit::fromFloatFloor(run.logicalLeft), roundToInt(baselinePosition - resolver.m_ascent + resolver.m_borderAndPaddingBefore));
-    LayoutSize lineSize(LayoutUnit::fromFloatCeil(run.logicalRight) - LayoutUnit::fromFloatFloor(run.logicalLeft), resolver.m_ascent + resolver.m_descent);
-    return LayoutRect(linePosition, lineSize);
+    auto& resolver = m_iterator.resolver();
+    float baseline = baselinePosition(resolver.m_lineHeight, resolver.m_baseline, m_iterator.lineIndex());
+    LayoutPoint position = linePosition(run.logicalLeft, baseline - resolver.m_ascent + resolver.m_borderAndPaddingBefore);
+    LayoutSize size = lineSize(run.logicalLeft, run.logicalRight, resolver.m_ascent + resolver.m_descent);
+    return LayoutRect(position, size);
 }
 
 FloatPoint RunResolver::Run::baseline() const
@@ -54,15 +68,17 @@ FloatPoint RunResolver::Run::baseline() const
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
 
-    float baselinePosition = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
-    return FloatPoint(run.logicalLeft, roundToInt(baselinePosition + resolver.m_borderAndPaddingBefore));
+    float baseline = baselinePosition(resolver.m_lineHeight, resolver.m_baseline, m_iterator.lineIndex());
+    return FloatPoint(run.logicalLeft, roundToInt(baseline + resolver.m_borderAndPaddingBefore));
 }
 
 StringView RunResolver::Run::text() const
 {
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
-    return StringView(resolver.m_string).substring(run.start, run.end - run.start);
+    const auto& renderer = resolver.m_flowContents.renderer(run.start);
+    ASSERT(renderer.is8Bit());
+    return StringView(renderer.characters8(), renderer.textLength()).substring(run.start, run.end - run.start);
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)
@@ -97,7 +113,7 @@ RunResolver::Iterator& RunResolver::Iterator::advanceLines(unsigned lineCount)
 
 RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
     : m_layout(layout)
-    , m_string(downcast<RenderText>(*flow.firstChild()).text())
+    , m_flowContents(flow)
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
     , m_borderAndPaddingBefore(flow.borderAndPaddingBefore())
@@ -133,6 +149,18 @@ Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) c
     auto rangeEnd = rangeBegin;
     ASSERT(lastLine >= firstLine);
     rangeEnd.advanceLines(lastLine - firstLine + 1);
+    return Range<Iterator>(rangeBegin, rangeEnd);
+}
+
+Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderText& renderer) const
+{
+    unsigned startPosition = 0;
+    unsigned endPosition = 0;
+    m_flowContents.resolveRendererPositions(renderer, startPosition, endPosition);
+    auto rangeBegin = begin();
+    for (;(*rangeBegin).start() < startPosition && rangeBegin != end(); ++rangeBegin) { }
+    auto rangeEnd = rangeBegin;
+    for (;(*rangeEnd).end() <= endPosition && rangeEnd != end(); ++rangeEnd) { }
     return Range<Iterator>(rangeBegin, rangeEnd);
 }
 

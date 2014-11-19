@@ -29,6 +29,7 @@
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
+#include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutFunctions.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -100,13 +101,14 @@ public:
     Iterator end() const;
 
     Range<Iterator> rangeForRect(const LayoutRect&) const;
+    Range<Iterator> rangeForRenderer(const RenderText&) const;
 
 private:
     enum class IndexType { First, Last };
     unsigned lineIndexForHeight(LayoutUnit, IndexType) const;
 
     const Layout& m_layout;
-    const String m_string;
+    const FlowContents m_flowContents;
     const LayoutUnit m_lineHeight;
     const LayoutUnit m_baseline;
     const LayoutUnit m_borderAndPaddingBefore;

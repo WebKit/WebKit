@@ -1,3 +1,38 @@
+2014-11-19  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add renderer based rect collecting to RunResolver.
+        https://bugs.webkit.org/show_bug.cgi?id=138818
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to multiple renderers support.
+        RunResolver should be able to collect rects for a particular renderer
+        that might overlap multiple runs. (or might just be a subset of a Run)
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::renderer): It operates on a single renderer currently.
+        (WebCore::SimpleLineLayout::FlowContents::resolveRendererPositions): It operates on a single renderer currently.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::computeTextBoundingBox):
+        (WebCore::SimpleLineLayout::computeTextFirstRunLocation):
+        (WebCore::SimpleLineLayout::collectTextAbsoluteRects):
+        (WebCore::SimpleLineLayout::collectTextAbsoluteQuads):
+        (WebCore::SimpleLineLayout::showLineLayoutForFlow):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::baselinePosition):
+        (WebCore::SimpleLineLayout::linePosition):
+        (WebCore::SimpleLineLayout::lineSize):
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::Run::rectForTextRenderer):
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline):
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        (WebCore::SimpleLineLayout::RunResolver::Run::computeRect):
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        * rendering/SimpleLineLayoutResolver.h:
+
 2014-11-19  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Add selector checker for :lang pseudo class in Selectors level 4

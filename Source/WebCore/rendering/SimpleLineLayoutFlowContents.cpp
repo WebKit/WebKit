@@ -77,5 +77,18 @@ float FlowContents::textWidth(unsigned from, unsigned to, float xPosition) const
     return m_style.font.width(run);
 }
 
+bool FlowContents::resolveRendererPositions(const RenderText& renderer, unsigned& startPosition, unsigned& endPosition) const
+{
+    ASSERT(&renderer == downcast<RenderText>(m_flow.firstChild()));
+    startPosition = 0;
+    endPosition = renderer.text()->length();
+    return true;
+}
+
+const RenderText& FlowContents::renderer(unsigned) const
+{
+    return downcast<RenderText>(*m_flow.firstChild());
+}
+
 }
 }
