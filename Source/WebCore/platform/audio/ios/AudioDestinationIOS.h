@@ -70,6 +70,7 @@ private:
     friend float AudioDestination::hardwareSampleRate();
 
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
+    void setIsPlaying(bool);
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;

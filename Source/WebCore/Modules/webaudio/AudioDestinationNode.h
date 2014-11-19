@@ -60,7 +60,11 @@ public:
     virtual void startRendering() = 0;
 
     AudioSourceProvider* localAudioInputProvider() { return &m_localAudioInputProvider; }
-    
+
+    virtual bool isPlaying() { return false; }
+    virtual void isPlayingDidChange() override;
+    bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
+
 protected:
     // LocalAudioInputProvider allows us to expose an AudioSourceProvider for local/live audio input.
     // If there is local/live audio input, we call set() with the audio input data every render quantum.
@@ -93,10 +97,15 @@ protected:
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }
 
+    void setIsSilent(bool);
+    void updateIsEffectivelyPlayingAudio();
+
     // Counts the number of sample-frames processed by the destination.
     size_t m_currentSampleFrame;
 
     LocalAudioInputProvider m_localAudioInputProvider;
+    bool m_isSilent;
+    bool m_isEffectivelyPlayingAudio;
 };
 
 } // namespace WebCore

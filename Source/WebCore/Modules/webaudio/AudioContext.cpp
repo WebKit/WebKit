@@ -219,6 +219,8 @@ void AudioContext::lazyInitialize()
                 m_destinationNode->initialize();
 
                 if (!isOfflineContext()) {
+                    document()->addAudioProducer(this);
+
                     // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
                     // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
                     // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
@@ -264,6 +266,8 @@ void AudioContext::uninitialize()
     m_isAudioThreadFinished = true;
 
     if (!isOfflineContext()) {
+        document()->removeAudioProducer(this);
+
         ASSERT(s_hardwareContextCount);
         --s_hardwareContextCount;
     }
@@ -296,6 +300,8 @@ void AudioContext::stop()
     if (m_isStopScheduled)
         return;
     m_isStopScheduled = true;
+
+    document()->updateIsPlayingAudio();
 
     // Don't call uninitialize() immediately here because the ScriptExecutionContext is in the middle
     // of dealing with all of its ActiveDOMObjects at this point. uninitialize() can de-reference other
@@ -960,6 +966,21 @@ void AudioContext::startRendering()
 void AudioContext::mediaCanStart()
 {
     removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
+}
+
+bool AudioContext::isPlayingAudio()
+{
+    return !m_isStopScheduled && m_destinationNode && m_destinationNode->isPlayingAudio();
+}
+
+void AudioContext::pageMutedStateDidChange()
+{
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=138104: Handle muting web audio.
+}
+
+void AudioContext::isPlayingAudioDidChange()
+{
+    document()->updateIsPlayingAudio();
 }
 
 void AudioContext::fireCompletionEvent()

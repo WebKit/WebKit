@@ -1,3 +1,17 @@
+2014-11-18  Ada Chan  <adachan@apple.com>
+
+        Take Web Audio into account for the Page::isPlayingAudio() API.
+        https://bugs.webkit.org/show_bug.cgi?id=137464
+
+        Reviewed by Jer Noble.
+
+        This test checks that Page::isPlayingAudio() returns false before an audio context is created
+        and before the oscillator node makes a sound. It then starts the oscillator node and checks
+        that Page::isPlayingAudio() later returns true.
+
+        * webaudio/web-audio-is-playing-expected.txt: Added.
+        * webaudio/web-audio-is-playing.html: Added.
+
 2014-11-19  Chris Dumez  <cdumez@apple.com>
 
         Add layout test for throttling of DOM timer changing the style of visible and invisible elements

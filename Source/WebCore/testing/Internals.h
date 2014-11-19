@@ -349,6 +349,7 @@ public:
     String pageOverlayLayerTreeAsText(ExceptionCode&) const;
 
     void setPageMuted(bool);
+    bool isPagePlayingAudio();
 
 private:
     explicit Internals(Document*);

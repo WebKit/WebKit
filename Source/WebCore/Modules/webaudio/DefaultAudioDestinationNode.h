@@ -51,7 +51,8 @@ public:
     virtual void enableInput(const String& inputDeviceId) override;
     virtual void startRendering() override;
     virtual unsigned long maxChannelCount() const override;
-    
+    virtual bool isPlaying() override;
+
 private:
     explicit DefaultAudioDestinationNode(AudioContext*);
     void createDestination();

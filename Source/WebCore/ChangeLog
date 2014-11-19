@@ -1,3 +1,80 @@
+2014-11-18  Ada Chan  <adachan@apple.com>
+
+        Take Web Audio into account for the Page::isPlayingAudio() API.
+        https://bugs.webkit.org/show_bug.cgi?id=137464
+
+        Reviewed by Jer Noble.
+
+        Make AudioContext a subclass of AudioProducer. It figures out whether there's
+        audio playing by checking whether its AudioDestinationNode is playing (and not
+        silent). It calls Document::updateIsPlayingAudio() whenever its audio playing
+        state has changed.
+
+        Test: webaudio/web-audio-is-playing.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::lazyInitialize):
+        Add itself to the Document's list of AudioProducers if it's not an offline
+        audio context.
+        (WebCore::AudioContext::uninitialize):
+        Remove itself from the Document's list of AudioProducers if it's not an offline
+        audio context.
+        (WebCore::AudioContext::stop):
+        Tell the document to update its audio playing state.
+        (WebCore::AudioContext::isPlayingAudio):
+        Return true if the audio context hasn't been stopped and its destination node is
+        playing audio.
+        (WebCore::AudioContext::pageMutedStateDidChange):
+        Add a FIXME for now.
+        (WebCore::AudioContext::isPlayingAudioDidChange):
+        Call Document::updateIsPlayingAudio().
+        * Modules/webaudio/AudioContext.h:
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        Initialize m_isSilent and m_isEffectivelyPlayingAudio.
+        (WebCore::AudioDestinationNode::render):
+        Call setIsSilent() with the appropriate value after rendering.
+        (WebCore::AudioDestinationNode::isPlayingDidChange):
+        Call updateIsEffectivelyPlayingAudio().
+        (WebCore::AudioDestinationNode::setIsSilent):
+        If m_isSilent has changed, call updateIsEffectivelyPlayingAudio().
+        (WebCore::AudioDestinationNode::updateIsEffectivelyPlayingAudio):
+        If m_isEffectivelyPlayingAudio has changed, call AudioContext::isPlayingAudioDidChange().
+        * Modules/webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::isPlaying):
+        (WebCore::AudioDestinationNode::isPlayingAudio):
+
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::isPlaying):
+        Return whether the AudioDestination is playing.
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+
+        * platform/audio/AudioIOCallback.h:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::start):
+        Call setIsPlaying() instead.
+        (WebCore::AudioDestinationIOS::stop):
+        Ditto.
+        (WebCore::AudioDestinationIOS::setIsPlaying):
+        If m_isPlaying has changed, call AudioIOCallback::isPlayingDidChange().
+        * platform/audio/ios/AudioDestinationIOS.h:
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::start):
+        Call setIsPlaying() instead.
+        (WebCore::AudioDestinationMac::stop):
+        Ditto.
+        (WebCore::AudioDestinationMac::setIsPlaying):
+        If m_isPlaying has changed, call AudioIOCallback::isPlayingDidChange().
+        * platform/audio/mac/AudioDestinationMac.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::isPagePlayingAudio):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add internals.isPagePlayingAudio() for testing.
+
 2014-11-19  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Internal Mountain Lion build after <https://trac.webkit.org/changeset/176347>

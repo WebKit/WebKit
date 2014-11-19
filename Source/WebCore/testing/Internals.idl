@@ -304,4 +304,5 @@ enum PageOverlayType {
     [RaisesException] DOMString pageOverlayLayerTreeAsText();
 
     void setPageMuted(boolean muted);
+    boolean isPagePlayingAudio();
 };

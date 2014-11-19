@@ -2410,4 +2410,13 @@ void Internals::setPageMuted(bool muted)
         page->setMuted(muted);
 }
 
+bool Internals::isPagePlayingAudio()
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return false;
+
+    return document->page()->isPlayingAudio();
+}
+
 }

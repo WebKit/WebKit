@@ -28,6 +28,7 @@
 
 #include "DefaultAudioDestinationNode.h"
 
+#include "AudioContext.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include <wtf/MainThread.h>
@@ -131,6 +132,11 @@ void DefaultAudioDestinationNode::setChannelCount(unsigned long channelCount, Ex
         createDestination();
         m_destination->start();
     }
+}
+
+bool DefaultAudioDestinationNode::isPlaying()
+{
+    return m_destination && m_destination->isPlaying();
 }
 
 } // namespace WebCore

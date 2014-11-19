@@ -39,6 +39,8 @@ namespace WebCore {
 AudioDestinationNode::AudioDestinationNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_currentSampleFrame(0)
+    , m_isSilent(true)
+    , m_isEffectivelyPlayingAudio(false)
 {
     addInput(std::make_unique<AudioNodeInput>(this));
     
@@ -61,16 +63,19 @@ void AudioDestinationNode::render(AudioBus* sourceBus, AudioBus* destinationBus,
     
     if (!context()->isInitialized()) {
         destinationBus->zero();
+        setIsSilent(true);
         return;
     }
 
     if (context()->userGestureRequiredForAudioStart()) {
         destinationBus->zero();
+        setIsSilent(true);
         return;
     }
 
     if (context()->pageConsentRequiredForAudioStart()) {
         destinationBus->zero();
+        setIsSilent(true);
         return;
     }
 
@@ -100,6 +105,33 @@ void AudioDestinationNode::render(AudioBus* sourceBus, AudioBus* destinationBus,
     
     // Advance current sample-frame.
     m_currentSampleFrame += numberOfFrames;
+
+    setIsSilent(destinationBus->isSilent());
+}
+
+void AudioDestinationNode::isPlayingDidChange()
+{
+    updateIsEffectivelyPlayingAudio();
+}
+
+void AudioDestinationNode::setIsSilent(bool isSilent)
+{
+    if (m_isSilent == isSilent)
+        return;
+
+    m_isSilent = isSilent;
+    updateIsEffectivelyPlayingAudio();
+}
+
+void AudioDestinationNode::updateIsEffectivelyPlayingAudio()
+{
+    bool isEffectivelyPlayingAudio = isPlaying() && !m_isSilent;
+    if (m_isEffectivelyPlayingAudio == isEffectivelyPlayingAudio)
+        return;
+
+    m_isEffectivelyPlayingAudio = isEffectivelyPlayingAudio;
+    if (context())
+        context()->isPlayingAudioDidChange();
 }
 
 } // namespace WebCore

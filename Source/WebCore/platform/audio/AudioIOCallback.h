@@ -40,6 +40,8 @@ public:
     // Optional audio input is given in sourceBus (if it's not 0).
     virtual void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess) = 0;
 
+    virtual void isPlayingDidChange() = 0;
+
     virtual ~AudioIOCallback() { }
 };
 

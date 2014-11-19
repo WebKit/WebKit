@@ -191,7 +191,7 @@ void AudioDestinationIOS::start()
 
     OSStatus result = AudioOutputUnitStart(m_outputUnit);
     if (!result)
-        m_isPlaying = true;
+        setIsPlaying(true);
 }
 
 void AudioDestinationIOS::stop()
@@ -204,7 +204,7 @@ void AudioDestinationIOS::stop()
 
     OSStatus result = AudioOutputUnitStop(m_outputUnit);
     if (!result)
-        m_isPlaying = false;
+        setIsPlaying(false);
 }
 
 // Pulls on our provider to get rendered audio stream.
@@ -223,6 +223,15 @@ OSStatus AudioDestinationIOS::render(UInt32 numberOfFrames, AudioBufferList* ioD
     }
 
     return noErr;
+}
+
+void AudioDestinationIOS::setIsPlaying(bool isPlaying)
+{
+    if (m_isPlaying == isPlaying)
+        return;
+
+    m_isPlaying = isPlaying;
+    m_callback.isPlayingDidChange();
 }
 
 // DefaultOutputUnit callback
