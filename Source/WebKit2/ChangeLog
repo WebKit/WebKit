@@ -1,3 +1,13 @@
+2014-11-18  David Kilzer  <ddkilzer@apple.com>
+
+        FeatureDefines.xcconfig: Switch from using PLATFORM_NAME to SDK selectors
+        <http://webkit.org/b/138813>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/FeatureDefines.xcconfig: Switch to using SDK
+        selectors.
+
 2014-11-18  Conrad Shultz  <conrad_shultz@apple.com>
 
         Give clients a way to cancel preview popovers
