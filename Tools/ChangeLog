@@ -3,6 +3,16 @@
         AX: Screen braille input doesn't work on forms.
         https://bugs.webkit.org/show_bug.cgi?id=138804
 
+        Unreviewed build fix.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::setValue):
+
+2014-11-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Screen braille input doesn't work on forms.
+        https://bugs.webkit.org/show_bug.cgi?id=138804
+
         Reviewed by Mario Sanchez Prada.
 
         Add a method to setValue through the AX API in DRT.
