@@ -1,3 +1,14 @@
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fixes after r176329.
+
+          - export all of the codegen python files as they are included by the main generator
+          - update the imports of the main generator to match __init__.py
+          - remove bundling the python scripts as framework resources, just have them PrivateHeaders
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+
 2014-11-18  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: standardize language-specific protocol generator file, class, and method prefixes
