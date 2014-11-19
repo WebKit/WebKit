@@ -1,3 +1,31 @@
+2014-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2 UI-side Compositing] Fix the position and scroll indicator of the UI-side tiled scrolling indicator
+        https://bugs.webkit.org/show_bug.cgi?id=138876
+
+        Reviewed by Beth Dakin.
+        
+        Fix the position of the tiled scrolling indicator in MiniBrowser by taking top
+        content offset into account.
+        
+        On Mac, pass the current scroll position back to the UI process via the RemoteLayerTreeTransaction
+        so that we can use it to show the correctly scroll offset in the indicator. This is temporary until
+        Mac does UI-side scrolling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::scrollPosition):
+        (WebKit::RemoteLayerTreeTransaction::setScrollPosition):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+
 2014-11-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Error in documentation of webkit_print_operation_get_page_setup()

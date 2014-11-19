@@ -71,7 +71,7 @@ private:
 
     float indicatorScale(WebCore::IntSize contentsSize) const;
     virtual void updateDebugIndicator() override;
-    void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale);
+    void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
     void updateDebugIndicatorPosition();
     void initializeDebugIndicator();
 

@@ -225,7 +225,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     if (m_debugIndicatorLayerTreeHost) {
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
         bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
-        updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale);
+        IntPoint scrollPosition;
+#if PLATFORM(MAC)
+        scrollPosition = layerTreeTransaction.scrollPosition();
+#endif
+        updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale, scrollPosition);
         asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
     }
 
@@ -272,7 +276,7 @@ FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
         return tiledMapLocation;
     }
     
-    return FloatPoint(indicatorInset, indicatorInset);
+    return FloatPoint(indicatorInset, indicatorInset + m_webPageProxy.topContentInset());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicatorPosition()
@@ -303,7 +307,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator()
     updateDebugIndicatorPosition();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale)
+void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale, const IntPoint& scrollPosition)
 {
     // Make sure we're the last sublayer.
     CALayer *rootLayer = asLayer(m_remoteLayerTreeHost.rootLayer());
@@ -333,7 +337,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
         [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
         [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), scaledExposedRect.size())];
     } else {
-        // FIXME: Get the correct scroll position.
+        [m_exposedRectIndicatorLayer setPosition:scrollPosition];
         [m_exposedRectIndicatorLayer setBounds:FloatRect(FloatPoint(), viewSize)];
     }
 }

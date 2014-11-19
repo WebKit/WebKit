@@ -2875,6 +2875,9 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setMaximumScaleFactor(m_viewportConfiguration.maximumScale());
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
 #endif
+#if PLATFORM(MAC)
+    layerTransaction.setScrollPosition(corePage()->mainFrame().view()->scrollPosition());
+#endif
 }
 
 void WebPage::didFlushLayerTreeAtTime(std::chrono::milliseconds timestamp)

@@ -487,6 +487,9 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_layerIDsWithNewlyUnreachableBackingStore;
 
     encoder << m_contentsSize;
+#if PLATFORM(MAC)
+    encoder << m_scrollPosition;
+#endif
     encoder << m_pageExtendedBackgroundColor;
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
@@ -548,6 +551,11 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
 
     if (!decoder.decode(result.m_contentsSize))
         return false;
+
+#if PLATFORM(MAC)
+    if (!decoder.decode(result.m_scrollPosition))
+        return false;
+#endif
     
     if (!decoder.decode(result.m_pageExtendedBackgroundColor))
         return false;

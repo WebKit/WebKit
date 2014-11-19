@@ -195,6 +195,11 @@ public:
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
     void setPageExtendedBackgroundColor(WebCore::Color color) { m_pageExtendedBackgroundColor = color; }
 
+#if PLATFORM(MAC)
+    WebCore::IntPoint scrollPosition() const { return m_scrollPosition; }
+    void setScrollPosition(WebCore::IntPoint p) { m_scrollPosition = p; }
+#endif
+
     double pageScaleFactor() const { return m_pageScaleFactor; }
     void setPageScaleFactor(double pageScaleFactor) { m_pageScaleFactor = pageScaleFactor; }
 
@@ -233,6 +238,9 @@ private:
     Vector<TransactionCallbackID> m_callbackIDs;
 
     WebCore::IntSize m_contentsSize;
+#if PLATFORM(MAC)
+    WebCore::IntPoint m_scrollPosition;
+#endif
     WebCore::Color m_pageExtendedBackgroundColor;
     double m_pageScaleFactor;
     double m_minimumScaleFactor;
