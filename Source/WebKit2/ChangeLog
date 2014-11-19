@@ -1,3 +1,9 @@
+2014-11-19  Mark Rowe  <mrowe@apple.com>
+
+        Remove an unused file.
+
+        * version.plist: Removed.
+
 2014-11-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Remove the minimalUI code from the UIProcess
