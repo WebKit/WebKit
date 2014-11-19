@@ -1,3 +1,11 @@
+2014-11-18  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Unreviewed. Revision to the build fix in r176304.
+
+        The guarded method should simply be in the !TARGET_OS_IPHONE block.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+
 2014-11-18  Benjamin Poulain  <bpoulain@apple.com>
 
         iOS8 new "slow tap" heuristic fires mouse compat events despite preventDefault on touchend

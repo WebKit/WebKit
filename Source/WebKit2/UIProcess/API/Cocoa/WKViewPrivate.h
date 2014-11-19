@@ -124,9 +124,7 @@
 
 - (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
-#endif
 
-#if PLATFORM(MAC)
 - (void)_dismissActionMenuPopovers;
 #endif
 
