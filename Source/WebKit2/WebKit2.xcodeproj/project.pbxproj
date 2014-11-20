@@ -169,6 +169,7 @@
 		1A1E093318861D3800D2DC49 /* WebProgressTrackerClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */; };
 		1A1E093418861D3800D2DC49 /* WebProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */; };
 		1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */; };
+		1A1EF1991A1D5B420023200A /* APIDataCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1EF1971A1D5B420023200A /* APIDataCocoa.mm */; };
 		1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FEC1A1627B45600700F6D /* WebConnectionMessageReceiver.cpp */; };
 		1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FEC1B1627B45700700F6D /* WebConnectionMessages.h */; };
 		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
@@ -2133,6 +2134,7 @@
 		1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProgressTrackerClient.cpp; sourceTree = "<group>"; };
 		1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProgressTrackerClient.h; sourceTree = "<group>"; };
 		1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportanceAssertion.h; sourceTree = "<group>"; };
+		1A1EF1971A1D5B420023200A /* APIDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIDataCocoa.mm; sourceTree = "<group>"; };
 		1A1FA251127A0E4F0050E709 /* NPRemoteObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRemoteObjectMap.h; sourceTree = "<group>"; };
 		1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRemoteObjectMap.cpp; sourceTree = "<group>"; };
 		1A1FA283127A13BC0050E709 /* NPObjectProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPObjectProxy.h; sourceTree = "<group>"; };
@@ -5133,6 +5135,7 @@
 		37C4C0901814B37B003688B9 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1A1EF1971A1D5B420023200A /* APIDataCocoa.mm */,
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
@@ -9050,6 +9053,7 @@
 				1A3CC16618906ACF001E6ED8 /* WKWebView.mm in Sources */,
 				1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */,
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
+				1A1EF1991A1D5B420023200A /* APIDataCocoa.mm in Sources */,
 				1A1B0EB518A424950038481A /* WKNavigationResponse.mm in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,

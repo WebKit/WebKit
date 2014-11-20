@@ -236,18 +236,13 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
     [self loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL userData:nil];
 }
 
-static void releaseNSData(unsigned char*, const void* data)
-{
-    [(NSData *)data release];
-}
-
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
     RefPtr<API::Data> apiData;
     if (data) {
         // FIXME: This should copy the data.
         [data retain];
-        apiData = API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], releaseNSData, data);
+        apiData = API::Data::createWithoutCopying(data);
     }
 
     RefPtr<ObjCObjectGraph> wkUserData;

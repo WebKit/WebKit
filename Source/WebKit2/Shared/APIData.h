@@ -36,6 +36,8 @@ class ArgumentDecoder;
 class ArgumentEncoder;
 }
 
+OBJC_CLASS NSData;
+
 namespace API {
 
 class Data : public ObjectImpl<API::Object::Type::Data> {
@@ -63,6 +65,10 @@ public:
     {
         return create(buffer.data(), buffer.size());
     }
+
+#if PLATFORM(COCOA)
+    static PassRefPtr<Data> createWithoutCopying(RetainPtr<NSData>);
+#endif
 
     ~Data()
     {

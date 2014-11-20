@@ -1,3 +1,20 @@
+2014-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Add a version of API::Data::createWithoutCopying that takes an NSData
+        https://bugs.webkit.org/show_bug.cgi?id=138893
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/APIData.h:
+        * Shared/Cocoa/APIDataCocoa.mm: Added.
+        (API::Data::createWithoutCopying):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        (releaseNSData): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]):
+
 2014-11-19  Beth Dakin  <bdakin@apple.com>
 
         Invoking an action menu on a selection should result in the text menu
