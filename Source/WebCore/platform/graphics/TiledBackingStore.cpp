@@ -38,12 +38,9 @@ static IntPoint innerBottomRight(const IntRect& rect)
 TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, std::unique_ptr<TiledBackingStoreBackend> backend)
     : m_client(client)
     , m_backend(WTF::move(backend))
-    , m_tileBufferUpdateTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired)
-    , m_backingStoreUpdateTimer(this, &TiledBackingStore::backingStoreUpdateTimerFired)
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_coverAreaMultiplier(2.0f)
     , m_contentsScale(1.f)
-    , m_commitTileUpdatesOnIdleEventLoop(false)
     , m_supportsAlpha(false)
     , m_pendingTileCreation(false)
 {
@@ -57,7 +54,6 @@ void TiledBackingStore::setTileSize(const IntSize& size)
 {
     m_tileSize = size;
     m_tiles.clear();
-    startBackingStoreUpdateTimer();
 }
 
 void TiledBackingStore::setTrajectoryVector(const FloatPoint& trajectoryVector)
@@ -97,8 +93,6 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
             currentTile->invalidate(dirtyRect);
         }
     }
-
-    startTileBufferUpdateTimer();
 }
 
 void TiledBackingStore::updateTileBuffers()
@@ -129,37 +123,6 @@ void TiledBackingStore::updateTileBuffers()
     }
 
     m_client->tiledBackingStorePaintEnd(paintedArea);
-}
-
-void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
-{
-    context->save();
-
-    // Assumes the backing store is painted with the scale transform applied.
-    // Since tile content is already scaled, first revert the scaling from the painter.
-    context->scale(FloatSize(1.f / m_contentsScale, 1.f / m_contentsScale));
-
-    IntRect dirtyRect = mapFromContents(rect);
-
-    Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
-
-    for (int yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
-        for (int xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
-            Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
-            RefPtr<Tile> currentTile = tileAt(currentCoordinate);
-            if (currentTile && currentTile->isReadyToPaint())
-                currentTile->paint(context, dirtyRect);
-            else {
-                IntRect tileRect = tileRectForCoordinate(currentCoordinate);
-                IntRect target = intersection(tileRect, dirtyRect);
-                if (target.isEmpty())
-                    continue;
-                m_backend->paintCheckerPattern(context, FloatRect(target));
-            }
-        }
-    }
-    context->restore();
 }
 
 IntRect TiledBackingStore::visibleRect() const
@@ -310,15 +273,8 @@ void TiledBackingStore::createTiles()
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
-    if (m_pendingTileCreation) {
-        if (!m_commitTileUpdatesOnIdleEventLoop) {
-            m_client->tiledBackingStoreHasPendingTileCreation();
-            return;
-        }
-
-        static const double tileCreationDelay = 0.01;
-        startBackingStoreUpdateTimer(tileCreationDelay);
-    }
+    if (m_pendingTileCreation)
+        m_client->tiledBackingStoreHasPendingTileCreation();
 }
 
 void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
@@ -501,38 +457,6 @@ Tile::Coordinate TiledBackingStore::tileCoordinateForPoint(const IntPoint& point
     int x = point.x() / m_tileSize.width();
     int y = point.y() / m_tileSize.height();
     return Tile::Coordinate(std::max(x, 0), std::max(y, 0));
-}
-
-void TiledBackingStore::startTileBufferUpdateTimer()
-{
-    if (!m_commitTileUpdatesOnIdleEventLoop)
-        return;
-
-    if (m_tileBufferUpdateTimer.isActive())
-        return;
-    m_tileBufferUpdateTimer.startOneShot(0);
-}
-
-void TiledBackingStore::tileBufferUpdateTimerFired(Timer*)
-{
-    ASSERT(m_commitTileUpdatesOnIdleEventLoop);
-    updateTileBuffers();
-}
-
-void TiledBackingStore::startBackingStoreUpdateTimer(double interval)
-{
-    if (!m_commitTileUpdatesOnIdleEventLoop)
-        return;
-
-    if (m_backingStoreUpdateTimer.isActive())
-        return;
-    m_backingStoreUpdateTimer.startOneShot(interval);
-}
-
-void TiledBackingStore::backingStoreUpdateTimerFired(Timer*)
-{
-    ASSERT(m_commitTileUpdatesOnIdleEventLoop);
-    createTiles();
 }
 
 void TiledBackingStore::setSupportsAlpha(bool a)

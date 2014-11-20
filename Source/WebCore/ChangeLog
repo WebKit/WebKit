@@ -1,3 +1,27 @@
+2014-11-19  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Remove dead code from TiledBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=138864
+
+        Reviewed by Andreas Kling.
+
+        Since r168151, paint() method, m_commitTileUpdatesOnIdleEventLoop and related code are not used.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::setTileSize):
+        (WebCore::TiledBackingStore::invalidate):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::paint): Deleted.
+        (WebCore::TiledBackingStore::startTileBufferUpdateTimer): Deleted.
+        (WebCore::TiledBackingStore::tileBufferUpdateTimerFired): Deleted.
+        (WebCore::TiledBackingStore::startBackingStoreUpdateTimer): Deleted.
+        (WebCore::TiledBackingStore::backingStoreUpdateTimerFired): Deleted.
+        * platform/graphics/TiledBackingStore.h:
+        (WebCore::TiledBackingStore::setCommitTileUpdatesOnIdleEventLoop): Deleted.
+
 2014-11-19  Andreas Kling  <akling@apple.com>
 
         Remove "document has no ::before and/or ::after rules" optimization.

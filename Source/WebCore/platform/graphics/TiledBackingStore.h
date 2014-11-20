@@ -46,10 +46,6 @@ public:
 
     TiledBackingStoreClient* client() { return m_client; }
 
-    // Used when class methods cannot be called asynchronously by client.
-    // Updates of tiles are committed as soon as all the events in event queue have been processed.
-    void setCommitTileUpdatesOnIdleEventLoop(bool enable) { m_commitTileUpdatesOnIdleEventLoop = enable; }
-
     void setTrajectoryVector(const FloatPoint&);
     void coverWithTilesIfNeeded();
 
@@ -59,7 +55,6 @@ public:
     void updateTileBuffers();
 
     void invalidate(const IntRect& dirtyRect);
-    void paint(GraphicsContext*, const IntRect&);
 
     IntSize tileSize() { return m_tileSize; }
     void setTileSize(const IntSize&);
@@ -78,12 +73,6 @@ public:
     void setSupportsAlpha(bool);
 
 private:
-    void startTileBufferUpdateTimer();
-    void startBackingStoreUpdateTimer(double = 0);
-
-    void tileBufferUpdateTimerFired(Timer*);
-    void backingStoreUpdateTimerFired(Timer*);
-
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
 
@@ -109,9 +98,6 @@ private:
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;
 
-    Timer m_tileBufferUpdateTimer;
-    Timer m_backingStoreUpdateTimer;
-
     IntSize m_tileSize;
     float m_coverAreaMultiplier;
 
@@ -125,7 +111,6 @@ private:
 
     float m_contentsScale;
 
-    bool m_commitTileUpdatesOnIdleEventLoop;
     bool m_supportsAlpha;
     bool m_pendingTileCreation;
 
