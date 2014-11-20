@@ -1,3 +1,15 @@
+2014-11-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update expected results for LayoutTests/animations
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/animations/3d/replace-filling-transform-expected.txt: Added.
+        * platform/ios-simulator/animations/animation-offscreen-to-onscreen-expected.txt: Added.
+        * platform/ios-simulator/animations/missing-values-first-keyframe-expected.txt: Added.
+        * platform/ios-simulator/animations/missing-values-last-keyframe-expected.txt: Added.
+        * platform/ios-simulator/animations/opacity-transform-animation-expected.txt: Added.
+        * platform/ios-simulator/animations/suspend-transform-animation-expected.txt: Added.
+
 2014-11-20  Eric Carlson  <eric.carlson@apple.com>
 
         Update media/track/track-in-band-cues-added-once.html to make failures easier to diagnose

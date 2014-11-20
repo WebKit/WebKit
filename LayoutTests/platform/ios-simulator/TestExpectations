@@ -52,11 +52,27 @@ webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
 # window.requestAnimationFrame() broken in iOS Simulator
 webkit.org/b/137588 fast/animation
 
+# <rdar://problem/19017465> ASSERTION FAILED: param >= 0 in AnimationBase::updateStateMachine()
+animations/animation-controller-drt-api.html [ Skip ]
+animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ]
+animations/change-transform-style-during-animation.html [ Skip ]
+animations/dynamic-stylesheet-loading.html [ Skip ]
+animations/fill-mode-transform.html [ Skip ]
+animations/pause-crash.html [ Skip ]
+animations/resume-after-page-cache.html [ Skip ]
+animations/stop-animation-on-suspend.html [ Skip ]
+
+# Animation tests that fail:
+animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+
+# Animation tests that are flaky:
+animations/animation-delay-changed.html [ Skip ] # Failure, Pass
+animations/cross-fade-border-image-source.html [ Skip ] # Failure, ImageOnlyFailure, Pass
+
 ###
 # Temporarily skip all others tests
 # We'll un-skip each directory as we land updated/new expected results
 ##
-animations
 canvas
 compositing
 crypto
