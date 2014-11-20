@@ -530,7 +530,7 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDict
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().ascent() * pageScaleFactor()));
     dictionaryPopupInfo.options = (CFDictionaryRef)options;
 
-    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range);
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
 
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
 

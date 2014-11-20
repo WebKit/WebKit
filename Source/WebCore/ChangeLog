@@ -1,3 +1,18 @@
+2014-11-20  Beth Dakin  <bdakin@apple.com>
+
+        Invalid message WebPageProxy.DidPerformDictionaryLookup on Google stocks result
+        https://bugs.webkit.org/show_bug.cgi?id=138568
+        -and corresponding-
+        rdar://problem/18904600
+
+        Reviewed by Tim Horton.
+
+        Add an optional parameter indicating whether or not to include images.
+        * WebCore.exp.in:
+        * editing/cocoa/HTMLConverter.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedStringFromRange):
+
 2014-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the !ENABLE(SVG_FONTS) build after r176276

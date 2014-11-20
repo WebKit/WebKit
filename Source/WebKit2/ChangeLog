@@ -1,3 +1,16 @@
+2014-11-20  Beth Dakin  <bdakin@apple.com>
+
+        Invalid message WebPageProxy.DidPerformDictionaryLookup on Google stocks result
+        https://bugs.webkit.org/show_bug.cgi?id=138568
+        -and corresponding-
+        rdar://problem/18904600
+
+        Reviewed by Tim Horton.
+
+        Skip images for lookup.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange):
+
 2014-11-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add more ENABLE({TOUCH_EVENTS, IOS_TOUCH_EVENTS})-guards in WebKit2

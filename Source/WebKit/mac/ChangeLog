@@ -1,3 +1,16 @@
+2014-11-20  Beth Dakin  <bdakin@apple.com>
+
+        Invalid message WebPageProxy.DidPerformDictionaryLookup on Google stocks result
+        https://bugs.webkit.org/show_bug.cgi?id=138568
+        -and corresponding-
+        rdar://problem/18904600
+
+        Reviewed by Tim Horton.
+
+        Skip images for lookup.
+        * WebView/WebActionMenuController.mm:
+        (performDictionaryLookupForRange):
+
 2014-11-19  Beth Dakin  <bdakin@apple.com>
 
         Invoking an action menu on a selection should result in the text menu
