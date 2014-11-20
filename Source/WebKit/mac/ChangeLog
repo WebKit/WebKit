@@ -1,5 +1,21 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176356. rdar://problem/18996776
+
+    2014-11-19  Beth Dakin  <bdakin@apple.com>
+
+            Invoking an action menu on a selection should result in the text menu
+            https://bugs.webkit.org/show_bug.cgi?id=138892
+            -and corresponding-
+            rdar://problem/18996776
+
+            Reviewed by Tim Horton.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItems]):
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176351. rdar://problem/18971616
 
     2014-11-19  Beth Dakin  <bdakin@apple.com>
