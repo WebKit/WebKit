@@ -4,6 +4,18 @@
 
     2014-11-19  Timothy Horton  <timothy_horton@apple.com>
 
+            Try to fix the iOS build
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::performDictionaryLookupForSelection):
+            (WebKit::WebPage::performDictionaryLookupForRange):
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176370. rdar://problem/18840128
+
+    2014-11-19  Timothy Horton  <timothy_horton@apple.com>
+
             Fix the 32-bit build
 
             * UIProcess/mac/TextIndicatorWindow.mm:

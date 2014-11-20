@@ -294,12 +294,12 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint&)
     notImplemented();
 }
 
-void WebPage::performDictionaryLookupForSelection(Frame*, const VisibleSelection&)
+void WebPage::performDictionaryLookupForSelection(Frame*, const VisibleSelection&, TextIndicator::PresentationTransition)
 {
     notImplemented();
 }
 
-void WebPage::performDictionaryLookupForRange(Frame*, Range&, NSDictionary *)
+void WebPage::performDictionaryLookupForRange(Frame*, Range&, NSDictionary *, TextIndicator::PresentationTransition)
 {
     notImplemented();
 }
