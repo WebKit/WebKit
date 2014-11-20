@@ -35,15 +35,17 @@
 namespace JSC { namespace DFG {
 
 enum UseKind {
-    UntypedUse,
+    // The DFG has 3 representations of values used:
+
+    // 1. The JSValue representation for a JSValue that must be stored in a GP
+    //    register (or a GP register pair), and follows rules for boxing and unboxing
+    //    that allow the JSValue to be stored as either fully boxed JSValues, or
+    //    unboxed Int32, Booleans, Cells, etc. in 32-bit as appropriate.
+    UntypedUse, // UntypedUse must come first (value 0).
     Int32Use,
     KnownInt32Use,
-    Int52RepUse,
     MachineIntUse,
     NumberUse,
-    DoubleRepUse,
-    DoubleRepRealUse,
-    DoubleRepMachineIntUse,
     BooleanUse,
     CellUse,
     KnownCellUse,
@@ -60,6 +62,17 @@ enum UseKind {
     NotCellUse,
     OtherUse,
     MiscUse,
+
+    // 2. The Double representation for an unboxed double value that must be stored
+    //    in an FP register.
+    DoubleRepUse,
+    DoubleRepRealUse,
+    DoubleRepMachineIntUse,
+
+    // 3. The Int52 representation for an unboxed integer value that must be stored
+    //    in a GP register.
+    Int52RepUse,
+
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
 };
 
