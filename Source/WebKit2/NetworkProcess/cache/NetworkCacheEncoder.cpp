@@ -39,18 +39,11 @@ NetworkCacheEncoder::~NetworkCacheEncoder()
 {
 }
 
-static inline size_t roundUpToAlignment(size_t value, unsigned alignment)
+uint8_t* NetworkCacheEncoder::grow(size_t size)
 {
-    return ((value + alignment - 1) / alignment) * alignment;
-}
-
-uint8_t* NetworkCacheEncoder::grow(unsigned alignment, size_t size)
-{
-    size_t alignedSize = roundUpToAlignment(m_buffer.size(), alignment);
-
-    m_buffer.grow(alignedSize + size);
-    
-    return m_buffer.data() + alignedSize;
+    uint8_t* position = m_buffer.data() + m_buffer.size();
+    m_buffer.grow(m_buffer.size() + size);
+    return position;
 }
 
 void NetworkCacheEncoder::updateChecksumForData(unsigned& checksum, const uint8_t* data, size_t size)
@@ -61,23 +54,20 @@ void NetworkCacheEncoder::updateChecksumForData(unsigned& checksum, const uint8_
     checksum = WTF::pairIntHash(checksum, hash);
 }
 
-void NetworkCacheEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+void NetworkCacheEncoder::encodeFixedLengthData(const uint8_t* data, size_t size)
 {
-    ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
-
     updateChecksumForData(m_checksum, data, size);
 
-    uint8_t* buffer = grow(alignment, size);
+    uint8_t* buffer = grow(size);
     memcpy(buffer, data, size);
 }
 
 template<typename Type>
 void NetworkCacheEncoder::encodeNumber(Type value)
 {
-    uint8_t* buffer = grow(sizeof(Type), sizeof(Type));
-
     NetworkCacheEncoder::updateChecksumForNumber(m_checksum, value);
 
+    uint8_t* buffer = grow(sizeof(Type));
     memcpy(buffer, &value, sizeof(Type));
 }
 

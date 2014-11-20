@@ -39,14 +39,14 @@ public:
     virtual ~NetworkCacheDecoder();
 
     size_t length() const { return m_bufferEnd - m_buffer; }
-    size_t currentOffset() const { return m_bufferPos - m_buffer; }
+    size_t currentOffset() const { return m_bufferPosition - m_buffer; }
 
-    bool isInvalid() const { return m_bufferPos > m_bufferEnd; }
-    void markInvalid() { m_bufferPos = m_bufferEnd + 1; }
+    bool isInvalid() const { return m_bufferPosition > m_bufferEnd; }
+    void markInvalid() { m_bufferPosition = m_bufferEnd + 1; }
 
     bool verifyChecksum();
 
-    bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment);
+    bool decodeFixedLengthData(uint8_t*, size_t);
 
     bool decode(bool&);
     bool decode(uint8_t&);
@@ -83,16 +83,15 @@ public:
         if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
             return false;
 
-        return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
+        return bufferIsLargeEnoughToContain(numElements * sizeof(T));
     }
 
 private:
-    bool alignBufferPosition(unsigned alignment, size_t);
-    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t) const;
+    bool bufferIsLargeEnoughToContain(size_t) const;
     template<typename Type> bool decodeNumber(Type&);
 
     const uint8_t* m_buffer;
-    const uint8_t* m_bufferPos;
+    const uint8_t* m_bufferPosition;
     const uint8_t* m_bufferEnd;
 
     unsigned m_checksum;

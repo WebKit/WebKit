@@ -1,3 +1,33 @@
+2014-11-20  Antti Koivisto  <antti@apple.com>
+
+        Remove alignment code from cache coders
+        https://bugs.webkit.org/show_bug.cgi?id=138927
+
+        Reviewed by Anders Carlsson.
+
+        Alignment code doesn't do anything useful, wastes space and produces wrong results
+        if the encoder and decoder buffers don't have the same 8-byte alignment.
+
+        * NetworkProcess/cache/NetworkCacheDecoder.cpp:
+        (WebKit::NetworkCacheDecoder::NetworkCacheDecoder):
+        (WebKit::NetworkCacheDecoder::bufferIsLargeEnoughToContain):
+        (WebKit::NetworkCacheDecoder::decodeFixedLengthData):
+        (WebKit::NetworkCacheDecoder::decodeNumber):
+        (WebKit::roundUpToAlignment): Deleted.
+        (WebKit::alignedBufferIsLargeEnoughToContain): Deleted.
+        (WebKit::NetworkCacheDecoder::alignBufferPosition): Deleted.
+        * NetworkProcess/cache/NetworkCacheDecoder.h:
+        (WebKit::NetworkCacheDecoder::currentOffset):
+        (WebKit::NetworkCacheDecoder::isInvalid):
+        (WebKit::NetworkCacheDecoder::markInvalid):
+        (WebKit::NetworkCacheDecoder::bufferIsLargeEnoughToContain):
+        * NetworkProcess/cache/NetworkCacheEncoder.cpp:
+        (WebKit::NetworkCacheEncoder::grow):
+        (WebKit::NetworkCacheEncoder::encodeFixedLengthData):
+        (WebKit::NetworkCacheEncoder::encodeNumber):
+        (WebKit::roundUpToAlignment): Deleted.
+        * NetworkProcess/cache/NetworkCacheEncoder.h:
+
 2014-11-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] URTBF after r176363.

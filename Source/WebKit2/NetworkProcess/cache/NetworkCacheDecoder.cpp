@@ -34,7 +34,7 @@ namespace WebKit {
 
 NetworkCacheDecoder::NetworkCacheDecoder(const uint8_t* buffer, size_t bufferSize)
     : m_buffer(buffer)
-    , m_bufferPos(buffer)
+    , m_bufferPosition(buffer)
     , m_bufferEnd(buffer + bufferSize)
     , m_checksum(0)
 {
@@ -44,45 +44,18 @@ NetworkCacheDecoder::~NetworkCacheDecoder()
 {
 }
 
-static inline uint8_t* roundUpToAlignment(const uint8_t* ptr, unsigned alignment)
+bool NetworkCacheDecoder::bufferIsLargeEnoughToContain(size_t size) const
 {
-    // Assert that the alignment is a power of 2.
-    ASSERT(alignment && !(alignment & (alignment - 1)));
-
-    uintptr_t alignmentMask = alignment - 1;
-    return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
+    return m_bufferPosition + size <= m_bufferEnd;
 }
 
-static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferEnd, size_t size)
+bool NetworkCacheDecoder::decodeFixedLengthData(uint8_t* data, size_t size)
 {
-    return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
-}
-
-bool NetworkCacheDecoder::alignBufferPosition(unsigned alignment, size_t size)
-{
-    uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
-    if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_bufferEnd, size)) {
-        // We've walked off the end of this buffer.
-        markInvalid();
-        return false;
-    }
-    
-    m_bufferPos = alignedPosition;
-    return true;
-}
-
-bool NetworkCacheDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
-{
-    return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_bufferEnd, size);
-}
-
-bool NetworkCacheDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
-{
-    if (!alignBufferPosition(alignment, size))
+    if (!bufferIsLargeEnoughToContain(size))
         return false;
 
-    memcpy(data, m_bufferPos, size);
-    m_bufferPos += size;
+    memcpy(data, m_bufferPosition, size);
+    m_bufferPosition += size;
 
     NetworkCacheEncoder::updateChecksumForData(m_checksum, data, size);
     return true;
@@ -91,11 +64,11 @@ bool NetworkCacheDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsi
 template<typename Type>
 bool NetworkCacheDecoder::decodeNumber(Type& value)
 {
-    if (!alignBufferPosition(sizeof(value), sizeof(value)))
+    if (!bufferIsLargeEnoughToContain(sizeof(value)))
         return false;
 
-    memcpy(&value, m_bufferPos, sizeof(value));
-    m_bufferPos += sizeof(Type);
+    memcpy(&value, m_bufferPosition, sizeof(value));
+    m_bufferPosition += sizeof(Type);
 
     NetworkCacheEncoder::updateChecksumForNumber(m_checksum, value);
     return true;

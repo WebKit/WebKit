@@ -45,7 +45,7 @@ public:
     virtual ~NetworkCacheEncoder();
 
     void encodeChecksum();
-    void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
+    void encodeFixedLengthData(const uint8_t*, size_t);
 
     template<typename T> void encodeEnum(T t)
     {
@@ -84,7 +84,7 @@ private:
 
     template<typename Type> void encodeNumber(Type);
 
-    uint8_t* grow(unsigned alignment, size_t);
+    uint8_t* grow(size_t);
 
     template <typename Type> struct Salt;
 
