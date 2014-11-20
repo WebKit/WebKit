@@ -84,7 +84,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncContains(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState*);
 
 const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, CREATE_METHOD_TABLE(StringPrototype) };
 
@@ -136,7 +136,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("trimRight", stringProtoFuncTrimRight, DontEnum, 0);
     JSC_NATIVE_FUNCTION("startsWith", stringProtoFuncStartsWith, DontEnum, 0);
     JSC_NATIVE_FUNCTION("endsWith", stringProtoFuncEndsWith, DontEnum, 0);
-    JSC_NATIVE_FUNCTION("contains", stringProtoFuncContains, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("includes", stringProtoFuncIncludes, DontEnum, 0);
 
     // The constructor will be added later, after StringConstructor has been built
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
@@ -1602,7 +1602,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
     return JSValue::encode(jsBoolean(stringToSearchIn.endsWith(matchString, end, true)));
 }
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncContains(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))

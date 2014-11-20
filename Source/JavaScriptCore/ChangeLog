@@ -1,3 +1,23 @@
+2014-11-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Rename String.prototype.contains to String.prototype.includes
+        https://bugs.webkit.org/show_bug.cgi?id=138923
+
+        As per the latest TC39 meeting[1, 2], String.prototype.contains is
+        renamed to String.prototype.includes. This is because the name
+        `contains` breaks the web since it conflicts with existing `contains`
+        implementations in major libraries.
+
+        [1]: https://github.com/mathiasbynens/String.prototype.includes
+        [2]: https://github.com/tc39/test262/pull/119
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::stringProtoFuncContains): Deleted.
+
 2014-11-19  Mark Lam  <mark.lam@apple.com>
 
         WTFCrashWithSecurityImplication under SpeculativeJIT::compile() when loading a page from theblaze.com.

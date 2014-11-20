@@ -1,36 +1,36 @@
-This test checks the ES6 string functions startsWith(), endsWith() and contains().
+This test checks the ES6 string functions startsWith(), endsWith() and includes().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'foo bar'.contains('bar') is true
-PASS 'foo bar'.contains('bar', 4) is true
-PASS 'foo bar'.contains('ar', 5) is true
-PASS 'foo bar'.contains('qux') is false
-PASS 'foo bar'.contains('foo') is true
-PASS 'foo bar'.contains('foo', 0) is true
-PASS 'foo bar'.contains('foo', -1) is true
-PASS 'foo bar'.contains('') is true
-PASS 'foo bar'.contains() is false
-PASS 'foo bar qux'.contains('qux', 7) is true
-PASS 'foo bar qux'.contains('bar', 7) is false
-PASS 'foo null bar'.contains() is false
-PASS 'foo null bar'.contains(null) is true
-PASS 'foo null bar'.contains(null) is true
-PASS 'foo undefined bar'.contains() is true
-PASS 'foo undefined bar'.contains(undefined) is true
-PASS 'foo undefined bar'.contains() is true
-PASS 'foo undefined bar'.contains() is true
-PASS 'foo true bar'.contains(true) is true
-PASS 'foo false bar'.contains(false) is true
-PASS 'foo 1 bar'.contains(1) is true
-PASS 'foo 1.1 bar'.contains(1.1) is true
-PASS 'foo NaN bar'.contains(NaN) is true
-PASS 'foo 1.0 bar'.contains(1.0) is true
-PASS 'foo 1e+100 bar'.contains(1e+100) is true
-PASS 'foo 1e100 bar'.contains(1e100) is false
-PASS 'フーバー'.contains('ーバ') is true
-PASS 'フーバー'.contains('クー') is false
+PASS 'foo bar'.includes('bar') is true
+PASS 'foo bar'.includes('bar', 4) is true
+PASS 'foo bar'.includes('ar', 5) is true
+PASS 'foo bar'.includes('qux') is false
+PASS 'foo bar'.includes('foo') is true
+PASS 'foo bar'.includes('foo', 0) is true
+PASS 'foo bar'.includes('foo', -1) is true
+PASS 'foo bar'.includes('') is true
+PASS 'foo bar'.includes() is false
+PASS 'foo bar qux'.includes('qux', 7) is true
+PASS 'foo bar qux'.includes('bar', 7) is false
+PASS 'foo null bar'.includes() is false
+PASS 'foo null bar'.includes(null) is true
+PASS 'foo null bar'.includes(null) is true
+PASS 'foo undefined bar'.includes() is true
+PASS 'foo undefined bar'.includes(undefined) is true
+PASS 'foo undefined bar'.includes() is true
+PASS 'foo undefined bar'.includes() is true
+PASS 'foo true bar'.includes(true) is true
+PASS 'foo false bar'.includes(false) is true
+PASS 'foo 1 bar'.includes(1) is true
+PASS 'foo 1.1 bar'.includes(1.1) is true
+PASS 'foo NaN bar'.includes(NaN) is true
+PASS 'foo 1.0 bar'.includes(1.0) is true
+PASS 'foo 1e+100 bar'.includes(1e+100) is true
+PASS 'foo 1e100 bar'.includes(1e100) is false
+PASS 'フーバー'.includes('ーバ') is true
+PASS 'フーバー'.includes('クー') is false
 PASS 'foo bar'.startsWith('foo') is true
 PASS 'foo bar'.startsWith('foo', 0) is true
 PASS 'foo bar'.startsWith('foo', -1) is true
@@ -82,10 +82,10 @@ PASS 'フーバー'.endsWith('バー') is true
 PASS 'フーバー'.endsWith('フー') is false
 PASS (function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
-PASS (function() { var f = String.prototype.contains; (function() { f('a'); })(); })() threw exception TypeError: Type error.
+PASS (function() { var f = String.prototype.includes; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS 'foo bar'.startsWith(/w+/) threw exception TypeError: Type error.
 PASS 'foo bar'.endsWith(/w+/) threw exception TypeError: Type error.
-PASS 'foo bar'.contains(/w+/) threw exception TypeError: Type error.
+PASS 'foo bar'.includes(/w+/) threw exception TypeError: Type error.
 PASS stringToSearchIn.startsWith(matchString, startOffset) is true
 PASS sideEffect == 'ABC' is true
 PASS stringToSearchIn.startsWith(matchString, startOffset) threw exception error.
@@ -102,13 +102,13 @@ PASS stringToSearchIn.endsWith(matchString, endOffset) threw exception error.
 PASS sideEffect == 'A' is true
 PASS stringToSearchIn.endsWith(matchString, endOffset) threw exception error.
 PASS sideEffect == 'AB' is true
-PASS stringToSearchIn.contains(matchString, startOffset) is true
+PASS stringToSearchIn.includes(matchString, startOffset) is true
 PASS sideEffect == 'ABC' is true
-PASS stringToSearchIn.contains(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.includes(matchString, startOffset) threw exception error.
 PASS sideEffect == '' is true
-PASS stringToSearchIn.contains(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.includes(matchString, startOffset) threw exception error.
 PASS sideEffect == 'A' is true
-PASS stringToSearchIn.contains(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.includes(matchString, startOffset) threw exception error.
 PASS sideEffect == 'AB' is true
 PASS successfullyParsed is true
 

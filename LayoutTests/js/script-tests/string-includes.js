@@ -1,34 +1,34 @@
-description("This test checks the ES6 string functions startsWith(), endsWith() and contains().");
+description("This test checks the ES6 string functions startsWith(), endsWith() and includes().");
 
-// Test contains
-shouldBe("'foo bar'.contains('bar')", "true");
-shouldBe("'foo bar'.contains('bar', 4)", "true");
-shouldBe("'foo bar'.contains('ar', 5)", "true");
-shouldBe("'foo bar'.contains('qux')", "false");
-shouldBe("'foo bar'.contains('foo')", "true");
-shouldBe("'foo bar'.contains('foo', 0)", "true");
-shouldBe("'foo bar'.contains('foo', -1)", "true");
-shouldBe("'foo bar'.contains('')", "true");
-shouldBe("'foo bar'.contains()", "false");
-shouldBe("'foo bar qux'.contains('qux', 7)", "true");
-shouldBe("'foo bar qux'.contains('bar', 7)", "false");
-shouldBe("'foo null bar'.contains()", "false");
-shouldBe("'foo null bar'.contains(null)", "true");
-shouldBe("'foo null bar'.contains(null)", "true");
-shouldBe("'foo undefined bar'.contains()", "true");
-shouldBe("'foo undefined bar'.contains(undefined)", "true");
-shouldBe("'foo undefined bar'.contains()", "true");
-shouldBe("'foo undefined bar'.contains()", "true");
-shouldBe("'foo true bar'.contains(true)", "true");
-shouldBe("'foo false bar'.contains(false)", "true");
-shouldBe("'foo 1 bar'.contains(1)", "true");
-shouldBe("'foo 1.1 bar'.contains(1.1)", "true");
-shouldBe("'foo NaN bar'.contains(NaN)", "true");
-shouldBe("'foo 1.0 bar'.contains(1.0)", "true");
-shouldBe("'foo 1e+100 bar'.contains(1e+100)", "true");
-shouldBe("'foo 1e100 bar'.contains(1e100)", "false");
-shouldBe("'フーバー'.contains('ーバ')", "true");
-shouldBe("'フーバー'.contains('クー')", "false");
+// Test includes
+shouldBe("'foo bar'.includes('bar')", "true");
+shouldBe("'foo bar'.includes('bar', 4)", "true");
+shouldBe("'foo bar'.includes('ar', 5)", "true");
+shouldBe("'foo bar'.includes('qux')", "false");
+shouldBe("'foo bar'.includes('foo')", "true");
+shouldBe("'foo bar'.includes('foo', 0)", "true");
+shouldBe("'foo bar'.includes('foo', -1)", "true");
+shouldBe("'foo bar'.includes('')", "true");
+shouldBe("'foo bar'.includes()", "false");
+shouldBe("'foo bar qux'.includes('qux', 7)", "true");
+shouldBe("'foo bar qux'.includes('bar', 7)", "false");
+shouldBe("'foo null bar'.includes()", "false");
+shouldBe("'foo null bar'.includes(null)", "true");
+shouldBe("'foo null bar'.includes(null)", "true");
+shouldBe("'foo undefined bar'.includes()", "true");
+shouldBe("'foo undefined bar'.includes(undefined)", "true");
+shouldBe("'foo undefined bar'.includes()", "true");
+shouldBe("'foo undefined bar'.includes()", "true");
+shouldBe("'foo true bar'.includes(true)", "true");
+shouldBe("'foo false bar'.includes(false)", "true");
+shouldBe("'foo 1 bar'.includes(1)", "true");
+shouldBe("'foo 1.1 bar'.includes(1.1)", "true");
+shouldBe("'foo NaN bar'.includes(NaN)", "true");
+shouldBe("'foo 1.0 bar'.includes(1.0)", "true");
+shouldBe("'foo 1e+100 bar'.includes(1e+100)", "true");
+shouldBe("'foo 1e100 bar'.includes(1e100)", "false");
+shouldBe("'フーバー'.includes('ーバ')", "true");
+shouldBe("'フーバー'.includes('クー')", "false");
 
 // Test startsWith
 shouldBe("'foo bar'.startsWith('foo')", "true");
@@ -86,12 +86,12 @@ shouldBe("'フーバー'.endsWith('フー')", "false");
 // Call functions with an environment record as 'this'.
 shouldThrow("(function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })()");
 shouldThrow("(function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })()");
-shouldThrow("(function() { var f = String.prototype.contains; (function() { f('a'); })(); })()");
+shouldThrow("(function() { var f = String.prototype.includes; (function() { f('a'); })(); })()");
 
 // ES6 spec says a regex as argument should throw an Exception.
 shouldThrow("'foo bar'.startsWith(/\w+/)");
 shouldThrow("'foo bar'.endsWith(/\w+/)");
-shouldThrow("'foo bar'.contains(/\w+/)");
+shouldThrow("'foo bar'.includes(/\w+/)");
 
 // Check side effects in startsWith.
 var sideEffect = "";
@@ -216,7 +216,7 @@ sideEffect = "";
 shouldThrow("stringToSearchIn.endsWith(matchString, endOffset)", "'error'");
 shouldBe("sideEffect == 'AB'", "true");
 
-// Check side effects in contains.
+// Check side effects in includes.
 var sideEffect = "";
 stringToSearchIn = new String("foo bar");
 stringToSearchIn.toString = function() {
@@ -233,9 +233,9 @@ matchString.toString = function() {
     sideEffect += "C";
     return this;
 }
-// Calling stringToSearchIn.contains implicitly calls stringToSearchIn.toString(),
+// Calling stringToSearchIn.includes implicitly calls stringToSearchIn.toString(),
 // startOffset.valueOf() and matchString.toString(), in that respective order.
-shouldBe("stringToSearchIn.contains(matchString, startOffset)", "true");
+shouldBe("stringToSearchIn.includes(matchString, startOffset)", "true");
 shouldBe("sideEffect == 'ABC'", "true");
 
 // If stringToSearchIn throws an exception startOffset.valueOf() and
@@ -244,7 +244,7 @@ stringToSearchIn.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.contains(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.includes(matchString, startOffset)", "'error'");
 shouldBe("sideEffect == ''", "true");
 
 // If startOffset throws an exception stringToSearchIn.toString() is called but
@@ -257,7 +257,7 @@ startOffset.valueOf = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.contains(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.includes(matchString, startOffset)", "'error'");
 shouldBe("sideEffect == 'A'", "true");
 
 // If matchString.toString() throws an exception stringToSearchIn.toString() and
@@ -274,5 +274,5 @@ matchString.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.contains(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.includes(matchString, startOffset)", "'error'");
 shouldBe("sideEffect == 'AB'", "true");

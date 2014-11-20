@@ -1,3 +1,20 @@
+2014-11-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Rename String.prototype.contains to String.prototype.includes
+        https://bugs.webkit.org/show_bug.cgi?id=138923
+
+        Reviewed by Geoffrey Garen.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/string-includes.js: Renamed from LayoutTests/js/script-tests/string-contains.js.
+        (stringToSearchIn.toString):
+        (startOffset.valueOf):
+        (matchString.toString):
+        (endOffset.valueOf):
+        * js/string-includes-expected.txt: Renamed from LayoutTests/js/string-contains-expected.txt.
+        * js/string-includes.html: Renamed from LayoutTests/js/string-contains.html.
+
 2014-11-20  Chris Dumez  <cdumez@apple.com>
 
         Crash when destroying a Document that has a throttled timer still running
