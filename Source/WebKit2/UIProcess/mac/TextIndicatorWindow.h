@@ -28,14 +28,13 @@
 
 #if PLATFORM(MAC)
 
-#import "WebKitSystemInterface.h"
 #import <functional>
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-@class WKTextIndicatorWindowAnimation;
+@class WKTextIndicatorView;
 @class WKView;
 
 namespace WebKit {
@@ -49,28 +48,19 @@ public:
     explicit TextIndicatorWindow(WKView *);
     ~TextIndicatorWindow();
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, bool animate, std::function<void ()> animationCompletionHandler);
+    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, std::function<void ()> animationCompletionHandler);
 
 private:
     void closeWindow();
 
     void startFadeOutTimerFired();
 
-    void fadeOutAnimationCallback(double);
-    void fadeOutAnimationDidEnd();
-
-    void bounceAnimationCallback(double);
-    void bounceAnimationDidEnd();
-
     WKView* m_wkView;
     RefPtr<TextIndicator> m_textIndicator;
     RetainPtr<NSWindow> m_textIndicatorWindow;
-
-    WKWindowBounceAnimationContextRef m_bounceAnimationContext;
-    RetainPtr<WKTextIndicatorWindowAnimation> m_bounceAnimation;
+    RetainPtr<WKTextIndicatorView> m_textIndicatorView;
 
     RunLoop::Timer<TextIndicatorWindow> m_startFadeOutTimer;
-    RetainPtr<WKTextIndicatorWindowAnimation> m_fadeOutAnimation;
 
     std::function<void ()> m_bounceAnimationCompletionHandler;
 };

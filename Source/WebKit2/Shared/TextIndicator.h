@@ -32,6 +32,12 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
+#else
+#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
+#endif
+
 namespace WebCore {
 class GraphicsContext;
 class Range;
@@ -48,20 +54,29 @@ class WebFrame;
 
 class TextIndicator : public RefCounted<TextIndicator> {
 public:
+    enum class PresentationTransition {
+        None,
+        Bounce,
+        BounceAndCrossfade
+    };
+
     struct Data {
         WebCore::FloatRect selectionRectInWindowCoordinates;
         WebCore::FloatRect textBoundingRectInWindowCoordinates;
         Vector<WebCore::FloatRect> textRectsInBoundingRectCoordinates;
         float contentImageScaleFactor;
+        RefPtr<ShareableBitmap> contentImageWithHighlight;
         RefPtr<ShareableBitmap> contentImage;
+
+        PresentationTransition presentationTransition;
 
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Data&);
     };
 
     static PassRefPtr<TextIndicator> create(const TextIndicator::Data&);
-    static PassRefPtr<TextIndicator> createWithSelectionInFrame(const WebFrame&);
-    static PassRefPtr<TextIndicator> createWithRange(const WebCore::Range&);
+    static PassRefPtr<TextIndicator> createWithSelectionInFrame(const WebFrame&, PresentationTransition);
+    static PassRefPtr<TextIndicator> createWithRange(const WebCore::Range&, PresentationTransition);
 
     ~TextIndicator();
 

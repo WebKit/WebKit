@@ -3090,6 +3090,7 @@
 		86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */; };
 		86BE340415058CB200CE0FD8 /* PerformanceEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */; };
 		86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D982F6125C154000AD9E3D /* DocumentTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8729DF6E1A1D7F710022AB6B /* QuartzCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 8729DF6D1A1D7F6C0022AB6B /* QuartzCoreSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */; };
 		898785F0122E1E87003AABDA /* JSFileException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785EE122E1E87003AABDA /* JSFileException.cpp */; };
 		898785F1122E1E87003AABDA /* JSFileException.h in Headers */ = {isa = PBXBuildFile; fileRef = 898785EF122E1E87003AABDA /* JSFileException.h */; };
@@ -10221,6 +10222,7 @@
 		86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceEntryList.h; sourceTree = "<group>"; };
 		86BE33FF15058CB200CE0FD8 /* PerformanceEntryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceEntryList.idl; sourceTree = "<group>"; };
 		86D982F6125C154000AD9E3D /* DocumentTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTiming.h; sourceTree = "<group>"; };
+		8729DF6D1A1D7F6C0022AB6B /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSPI.h; sourceTree = "<group>"; };
 		892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorStorageQuota.cpp; sourceTree = "<group>"; };
 		892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorStorageQuota.h; sourceTree = "<group>"; };
 		892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowQuota.h; sourceTree = "<group>"; };
@@ -16254,9 +16256,6 @@
 		65086DA619AC1719009AF46B /* cf */ = {
 			isa = PBXGroup;
 			children = (
-				65086DA719AC1719009AF46B /* CFLocaleSPI.h */,
-				CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */,
-				CE8245F119B671D500AC0122 /* CFURLRequestSPI.h */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -16266,7 +16265,6 @@
 			children = (
 				65086DA619AC1719009AF46B /* cf */,
 				653EF83719A043AE0052202C /* cocoa */,
-				A172182419DE182B00464D17 /* ios */,
 				9348428019F1A9190009D5AE /* mac */,
 			);
 			path = spi;
@@ -16276,8 +16274,7 @@
 			isa = PBXGroup;
 			children = (
 				2DDB97F319F9AECA002025D8 /* NSExtensionSPI.h */,
-				653EF83819A043AE0052202C /* NSURLFileTypeMappingsSPI.h */,
-				1CF7E26E19D881EF00DD8F98 /* CGFontUnicodeSupportSPI.h */,
+				8729DF6D1A1D7F6C0022AB6B /* QuartzCoreSPI.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -24955,6 +24952,7 @@
 				D6489D26166FFCF1007C031B /* JSHTMLTemplateElement.h in Headers */,
 				A80E7E9D0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h in Headers */,
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
+				8729DF6E1A1D7F710022AB6B /* QuartzCoreSPI.h in Headers */,
 				070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */,
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
 				6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */,

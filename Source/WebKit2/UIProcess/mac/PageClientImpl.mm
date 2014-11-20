@@ -470,9 +470,9 @@ PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page,
 }
 #endif
 
-void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut, bool animate)
+void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut)
 {
-    [m_wkView _setTextIndicator:textIndicator fadeOut:fadeOut animate:animate];
+    [m_wkView _setTextIndicator:textIndicator fadeOut:fadeOut];
 }
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
@@ -549,7 +549,7 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
         // Run the animations serially because attaching another subwindow breaks the bounce animation.
         // We could consider making the bounce NSAnimationNonblockingThreaded instead, which seems
         // to work, but need to consider all of the implications.
-        [m_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO animate:YES animationCompletionHandler:[dictionaryPopupInfo, textBaselineOrigin, mutableOptions] {
+        [m_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO animationCompletionHandler:[dictionaryPopupInfo, textBaselineOrigin, mutableOptions] {
             [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
             [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
         }];
@@ -564,7 +564,7 @@ void PageClientImpl::dismissDictionaryLookupPanel()
 
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
     [getLULookupDefinitionModuleClass() hideDefinition];
-    setTextIndicator(nil, false, true);
+    setTextIndicator(nil, false);
 }
 
 void PageClientImpl::dismissActionMenuPopovers()
@@ -698,6 +698,8 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::navigationGestureDidBegin()
 {
+    // Hide the text indicator and action menu popovers if they are visible.
+    setTextIndicator(nullptr, false);
     dismissActionMenuPopovers();
 
 #if WK_API_ENABLED

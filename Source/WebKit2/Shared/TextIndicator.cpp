@@ -39,91 +39,35 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
+#include <WebCore/FrameSnapshotting.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
-#include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/Path.h>
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
-#else
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
-#endif
 
 using namespace WebCore;
 
+// These should match the values in TextIndicatorWindow.
+// FIXME: Ideally these would only be in one place.
 #if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-static const float cornerRadius = 3.0;
-
-static const float shadowOffsetX = 0.0;
-static const float shadowOffsetY = 1.0;
-static const float shadowBlurRadius = 3.0;
-
-static const int shadowRed = 0;
-static const int shadowGreen = 0;
-static const int shadowBlue = 0;
-static const int shadowAlpha = 204;
-
-static const float lightBorderThickness = 1.0;
-static const float horizontalPaddingInsideLightBorder = 3.0;
-static const float verticalPaddingInsideLightBorder = 1.0;
-
-static const float horizontalBorderInsideShadow = lightBorderThickness + horizontalPaddingInsideLightBorder;
-static const float verticalBorderInsideShadow = lightBorderThickness + verticalPaddingInsideLightBorder;
-
-static const float leftBorderThickness = horizontalBorderInsideShadow + shadowOffsetX + shadowBlurRadius / 2.0;
-static const float topBorderThickness = verticalBorderInsideShadow - shadowOffsetY + shadowBlurRadius / 2.0;
-static const float rightBorderThickness = horizontalBorderInsideShadow - shadowOffsetX + shadowBlurRadius / 2.0;
-static const float bottomBorderThickness = verticalBorderInsideShadow + shadowOffsetY + shadowBlurRadius / 2.0;
-
-static const float horizontalOutsetToCenterOfLightBorder = horizontalBorderInsideShadow - lightBorderThickness / 2.0;
-static const float verticalOutsetToCenterOfLightBorder = verticalBorderInsideShadow - lightBorderThickness / 2.0;
-
-static const int lightBorderRed = 245;
-static const int lightBorderGreen = 230;
-static const int lightBorderBlue = 0;
-static const int lightBorderAlpha = 255;
-
-static const int gradientDarkRed = 237;
-static const int gradientDarkGreen = 204;
-static const int gradientDarkBlue = 0;
-static const int gradientDarkAlpha = 255;
-
-static const int gradientLightRed = 242;
-static const int gradientLightGreen = 239;
-static const int gradientLightBlue = 0;
-static const int gradientLightAlpha = 255;
+const float horizontalBorder = 3;
+const float verticalBorder = 1;
+const float dropShadowBlurRadius = 1.5;
 #else
-const float flatStyleHorizontalBorder = 2;
-const float flatStyleVerticalBorder = 1;
-const float flatShadowOffsetX = 0;
-const float flatShadowOffsetY = 5;
-const float flatShadowBlurRadius = 25;
-const float flatRimShadowBlurRadius = 2;
+const float horizontalBorder = 2;
+const float verticalBorder = 1;
+const float dropShadowBlurRadius = 12;
 #endif
 
 namespace WebKit {
 
-static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflateY)
-{
-    FloatRect inflatedRect = rect;
-    inflatedRect.inflateX(inflateX);
-    inflatedRect.inflateY(inflateY);
-    return inflatedRect;
-}
-
 static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
 {
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
     FloatRect outsetRect = rect;
-    outsetRect.move(-leftBorderThickness, -topBorderThickness);
-    outsetRect.expand(leftBorderThickness + rightBorderThickness, topBorderThickness + bottomBorderThickness);
+    outsetRect.inflateX(dropShadowBlurRadius + horizontalBorder);
+    outsetRect.inflateY(dropShadowBlurRadius + verticalBorder);
     return outsetRect;
-#else
-    return inflateRect(rect, flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder);
-#endif
 }
 
 static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
@@ -155,7 +99,7 @@ PassRefPtr<TextIndicator> TextIndicator::create(const TextIndicator::Data& data)
     return adoptRef(new TextIndicator(data));
 }
 
-PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range)
+PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, PresentationTransition presentationTransition)
 {
     Frame* frame = range.startContainer()->document().frame();
 
@@ -165,20 +109,56 @@ PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range)
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(&range);
 
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(*frame));
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(*frame), presentationTransition);
 
     frame->selection().setSelection(oldSelection);
     
     return indicator.release();
 }
 
-PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFrame& frame)
+// FIXME (138889): Ideally the FrameSnapshotting functions would be more flexible
+// and we wouldn't have to implement this here.
+static PassRefPtr<ShareableBitmap> snapshotSelectionWithHighlight(Frame& frame)
+{
+    auto& selection = frame.selection();
+
+    if (!selection.isRange())
+        return nullptr;
+
+    FloatRect selectionBounds = selection.selectionBounds();
+
+    // It is possible for the selection bounds to be empty; see https://bugs.webkit.org/show_bug.cgi?id=56645.
+    if (selectionBounds.isEmpty())
+        return nullptr;
+
+    std::unique_ptr<ImageBuffer> snapshot = snapshotFrameRect(frame, enclosingIntRect(selectionBounds), 0);
+
+    if (!snapshot)
+        return nullptr;
+
+    RefPtr<ShareableBitmap> sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
+    if (!sharedSnapshot)
+        return nullptr;
+
+    auto graphicsContext = sharedSnapshot->createGraphicsContext();
+    float deviceScaleFactor = frame.page()->deviceScaleFactor();
+    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    graphicsContext->drawImageBuffer(snapshot.get(), ColorSpaceDeviceRGB, FloatPoint());
+
+    return sharedSnapshot.release();
+}
+
+PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFrame& frame, PresentationTransition presentationTransition)
 {
     Frame& coreFrame = *frame.coreFrame();
     IntRect selectionRect = enclosingIntRect(coreFrame.selection().selectionBounds());
     RefPtr<ShareableBitmap> indicatorBitmap = frame.createSelectionSnapshot();
     if (!indicatorBitmap)
         return nullptr;
+
+    RefPtr<ShareableBitmap> indicatorBitmapWithHighlight;
+    if (presentationTransition == PresentationTransition::BounceAndCrossfade)
+        indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(coreFrame);
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
@@ -210,6 +190,8 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFra
     data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
     data.contentImageScaleFactor = frame.page()->deviceScaleFactor();
     data.contentImage = indicatorBitmap;
+    data.contentImageWithHighlight = indicatorBitmapWithHighlight;
+    data.presentationTransition = presentationTransition;
 
     return TextIndicator::create(data);
 }
@@ -231,118 +213,7 @@ TextIndicator::~TextIndicator()
 
 FloatRect TextIndicator::frameRect() const
 {
-    return outsetIndicatorRectIncludingShadow(m_data.textBoundingRectInWindowCoordinates);
-}
-
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-static inline Color lightBorderColor()
-{
-    return Color(lightBorderRed, lightBorderGreen, lightBorderBlue, lightBorderAlpha);
-}
-
-static inline Color shadowColor()
-{
-    return Color(shadowRed, shadowGreen, shadowBlue, shadowAlpha);
-}
-
-static inline Color gradientLightColor()
-{
-    return Color(gradientLightRed, gradientLightGreen, gradientLightBlue, gradientLightAlpha);
-}
-
-static inline Color gradientDarkColor()
-{
-    return Color(gradientDarkRed, gradientDarkGreen, gradientDarkBlue, gradientDarkAlpha);
-}
-
-static Path pathWithRoundedRect(const FloatRect& pathRect, float radius)
-{
-    Path path;
-    path.addRoundedRect(pathRect, FloatSize(radius, radius));
-
-    return path;
-}
-#else
-static inline Color flatHighlightColor()
-{
-    return Color(255, 255, 0, 255);
-}
-
-static inline Color flatRimShadowColor()
-{
-    return Color(0, 0, 0, 38);
-}
-
-static inline Color flatDropShadowColor()
-{
-    return Color(0, 0, 0, 51);
-}
-#endif
-
-void TextIndicator::drawContentImage(WebCore::GraphicsContext& graphicsContext, WebCore::FloatRect textRect)
-{
-    FloatRect imageRect = textRect;
-    imageRect.move(m_data.textBoundingRectInWindowCoordinates.location() - m_data.selectionRectInWindowCoordinates.location());
-    m_data.contentImage->paint(graphicsContext, m_data.contentImageScaleFactor, enclosingIntRect(textRect).location(), enclosingIntRect(imageRect));
-}
-
-void TextIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirtyRect*/)
-{
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-    for (auto& textRect : m_data.textRectsInBoundingRectCoordinates) {
-        FloatRect borderedTextRect = textRect;
-        borderedTextRect.move(leftBorderThickness, topBorderThickness);
-
-        FloatRect outerPathRect = inflateRect(borderedTextRect, horizontalOutsetToCenterOfLightBorder, verticalOutsetToCenterOfLightBorder);
-        FloatRect innerPathRect = inflateRect(borderedTextRect, horizontalPaddingInsideLightBorder, verticalPaddingInsideLightBorder);
-
-        {
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor(), ColorSpaceSRGB);
-            graphicsContext.setFillColor(lightBorderColor(), ColorSpaceDeviceRGB);
-            graphicsContext.fillPath(pathWithRoundedRect(outerPathRect, cornerRadius));
-        }
-
-        {
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.clip(pathWithRoundedRect(innerPathRect, cornerRadius));
-            RefPtr<Gradient> gradient = Gradient::create(FloatPoint(innerPathRect.x(), innerPathRect.y()), FloatPoint(innerPathRect.x(), innerPathRect.maxY()));
-            gradient->addColorStop(0, gradientLightColor());
-            gradient->addColorStop(1, gradientDarkColor());
-            graphicsContext.setFillGradient(gradient.releaseNonNull());
-            graphicsContext.fillRect(outerPathRect);
-        }
-
-        {
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
-
-            drawContentImage(graphicsContext, textRect);
-        }
-    }
-#else
-    for (auto& textRect : m_data.textRectsInBoundingRectCoordinates) {
-        FloatRect blurRect = textRect;
-        blurRect.move(flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder);
-        FloatRect outerPathRect = inflateRect(blurRect, flatStyleHorizontalBorder, flatStyleVerticalBorder);
-
-        {
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.setShadow(FloatSize(), flatRimShadowBlurRadius, flatRimShadowColor(), ColorSpaceSRGB);
-            graphicsContext.setFillColor(flatHighlightColor(), ColorSpaceSRGB);
-            graphicsContext.fillRect(outerPathRect);
-            graphicsContext.setShadow(FloatSize(flatShadowOffsetX, flatShadowOffsetY), flatShadowBlurRadius, flatDropShadowColor(), ColorSpaceSRGB);
-            graphicsContext.fillRect(outerPathRect);
-        }
-
-        {
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.translate(FloatSize(flatShadowBlurRadius + flatStyleHorizontalBorder, flatShadowBlurRadius + flatStyleVerticalBorder));
-
-            drawContentImage(graphicsContext, textRect);
-        }
-    }
-#endif
+    return m_data.textBoundingRectInWindowCoordinates;
 }
 
 void TextIndicator::Data::encode(IPC::ArgumentEncoder& encoder) const
@@ -351,11 +222,17 @@ void TextIndicator::Data::encode(IPC::ArgumentEncoder& encoder) const
     encoder << textBoundingRectInWindowCoordinates;
     encoder << textRectsInBoundingRectCoordinates;
     encoder << contentImageScaleFactor;
+    encoder.encodeEnum(presentationTransition);
 
     ShareableBitmap::Handle contentImageHandle;
     if (contentImage)
         contentImage->createHandle(contentImageHandle, SharedMemory::ReadOnly);
     encoder << contentImageHandle;
+
+    ShareableBitmap::Handle contentImageWithHighlightHandle;
+    if (contentImageWithHighlight)
+        contentImageWithHighlight->createHandle(contentImageWithHighlightHandle, SharedMemory::ReadOnly);
+    encoder << contentImageWithHighlightHandle;
 }
 
 bool TextIndicator::Data::decode(IPC::ArgumentDecoder& decoder, TextIndicator::Data& textIndicatorData)
@@ -372,12 +249,22 @@ bool TextIndicator::Data::decode(IPC::ArgumentDecoder& decoder, TextIndicator::D
     if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
         return false;
 
+    if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
+        return false;
+
     ShareableBitmap::Handle contentImageHandle;
     if (!decoder.decode(contentImageHandle))
         return false;
 
     if (!contentImageHandle.isNull())
         textIndicatorData.contentImage = ShareableBitmap::create(contentImageHandle, SharedMemory::ReadOnly);
+
+    ShareableBitmap::Handle contentImageWithHighlightHandle;
+    if (!decoder.decode(contentImageWithHighlightHandle))
+        return false;
+
+    if (!contentImageWithHighlightHandle.isNull())
+        textIndicatorData.contentImageWithHighlight = ShareableBitmap::create(contentImageWithHighlightHandle, SharedMemory::ReadOnly);
 
     return true;
 }

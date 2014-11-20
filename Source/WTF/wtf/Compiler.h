@@ -151,6 +151,14 @@
 #define CONSTEXPR
 #endif
 
+/* EXTERN_C */
+
+#ifdef __cplusplus
+#define EXTERN_C extern "C"
+#else
+#define EXTERN_C extern
+#endif
+
 /* FALLTHROUGH */
 
 #if !defined(FALLTHROUGH) && COMPILER_SUPPORTS(FALLTHROUGH_WARNINGS) && COMPILER(CLANG)
