@@ -1,5 +1,20 @@
 2014-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r163656): Remote inspector doesn't work unless preferences change after page initialization
+        https://bugs.webkit.org/show_bug.cgi?id=138246
+
+        Reviewed by Joseph Pecoraro.
+
+        The problem is that initializeWebPage() is still using
+        pageGroup().preferences() instead of m_preferences to check if
+        developer extras are enabled to enable remote inspection of the page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage): Use m_preferences
+        instead of pageGroup().preferences().
+
+2014-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(CMake): Make it possible to build without introspection
         https://bugs.webkit.org/show_bug.cgi?id=138006
 

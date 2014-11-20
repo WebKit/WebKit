@@ -639,7 +639,7 @@ void WebPageProxy::initializeWebPage()
 #endif
 
 #if ENABLE(INSPECTOR_SERVER)
-    if (pageGroup().preferences().developerExtrasEnabled())
+    if (m_preferences->developerExtrasEnabled())
         inspector()->enableRemoteInspection();
 #endif
 
