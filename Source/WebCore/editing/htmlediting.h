@@ -41,6 +41,7 @@ class HTMLTextFormControlElement;
 class Node;
 class Position;
 class Range;
+class RenderBlock;
 class VisiblePosition;
 class VisibleSelection;
 
@@ -259,9 +260,9 @@ const String& nonBreakingSpaceString();
 
 // Miscellaaneous functions that for caret rendering
 
-RenderObject* rendererForCaretPainting(Node*);
-LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition&, RenderObject*&);
-IntRect absoluteBoundsForLocalCaretRect(RenderObject* rendererForCaretPainting, const LayoutRect&);
+RenderBlock* rendererForCaretPainting(Node*);
+LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition&, RenderBlock*&);
+IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect&);
 
 }
 

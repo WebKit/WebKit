@@ -1,3 +1,30 @@
+2014-11-20  Andreas Kling  <akling@apple.com>
+
+        Caret renderer is always a RenderBlock.
+        <https://webkit.org/b/138912>
+
+        Reviewed by Chris Dumez.
+
+        Tighten typing in the code that finds and deals with the renderer
+        used to paint the caret (it's always a RenderBlock.)
+
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::updateCaretRect):
+        (WebCore::FrameSelection::caretRendererWithoutUpdatingLayout):
+        (WebCore::DragCaretController::caretRenderer):
+        (WebCore::repaintCaretForLocalRect):
+        (WebCore::CaretBase::paintCaret):
+        * editing/FrameSelection.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteCaretBounds):
+        * editing/htmlediting.cpp:
+        (WebCore::rendererForCaretPainting):
+        (WebCore::localCaretRectInRendererForCaretPainting):
+        (WebCore::absoluteBoundsForLocalCaretRect):
+        * editing/htmlediting.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+
 2014-11-20  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r172854): Web Viewer in FileMaker does not render a Base64 encoded animated-GIF

@@ -1263,7 +1263,7 @@ static inline bool caretRendersInsideNode(Node* node)
     return node && !isRenderedTable(node) && !editingIgnoresContent(node);
 }
 
-RenderObject* rendererForCaretPainting(Node* node)
+RenderBlock* rendererForCaretPainting(Node* node)
 {
     if (!node)
         return nullptr;
@@ -1273,11 +1273,11 @@ RenderObject* rendererForCaretPainting(Node* node)
         return nullptr;
 
     // If caretNode is a block and caret is inside it, then caret should be painted by that block.
-    bool paintedByBlock = renderer->isRenderBlockFlow() && caretRendersInsideNode(node);
-    return paintedByBlock ? renderer : renderer->containingBlock();
+    bool paintedByBlock = is<RenderBlockFlow>(*renderer) && caretRendersInsideNode(node);
+    return paintedByBlock ? downcast<RenderBlock>(renderer) : renderer->containingBlock();
 }
 
-LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caretPosition, RenderObject*& caretPainter)
+LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caretPosition, RenderBlock*& caretPainter)
 {
     if (caretPosition.isNull())
         return LayoutRect();
@@ -1304,14 +1304,13 @@ LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caret
     return localRect;
 }
 
-IntRect absoluteBoundsForLocalCaretRect(RenderObject* rendererForCaretPainting, const LayoutRect& rect)
+IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect& rect)
 {
     if (!rendererForCaretPainting || rect.isEmpty())
         return IntRect();
 
     LayoutRect localRect(rect);
-    if (is<RenderBox>(*rendererForCaretPainting))
-        downcast<RenderBox>(*rendererForCaretPainting).flipForWritingMode(localRect);
+    rendererForCaretPainting->flipForWritingMode(localRect);
     return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 

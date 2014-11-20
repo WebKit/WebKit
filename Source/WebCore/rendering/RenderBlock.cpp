@@ -1524,7 +1524,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 {
     // Paint the caret if the FrameSelection says so or if caret browsing is enabled
     bool caretBrowsing = frame().settings().caretBrowsingEnabled();
-    RenderObject* caretPainter;
+    RenderBlock* caretPainter;
     bool isContentEditable;
     if (type == CursorCaret) {
         caretPainter = frame().selection().caretRendererWithoutUpdatingLayout();

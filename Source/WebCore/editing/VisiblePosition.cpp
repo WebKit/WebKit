@@ -618,7 +618,7 @@ LayoutRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
 
 IntRect VisiblePosition::absoluteCaretBounds() const
 {
-    RenderObject* renderer = nullptr;
+    RenderBlock* renderer = nullptr;
     LayoutRect localRect = localCaretRectInRendererForCaretPainting(*this, renderer);
     return absoluteBoundsForLocalCaretRect(renderer, localRect);
 }

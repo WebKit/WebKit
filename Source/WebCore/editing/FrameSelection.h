@@ -46,6 +46,7 @@ class Frame;
 class GraphicsContext;
 class HTMLFormElement;
 class MutableStyleProperties;
+class RenderBlock;
 class RenderObject;
 class RenderView;
 class Settings;
@@ -92,7 +93,7 @@ class DragCaretController : private CaretBase {
 public:
     DragCaretController();
 
-    RenderObject* caretRenderer() const;
+    RenderBlock* caretRenderer() const;
     void paintDragCaret(Frame*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
@@ -169,7 +170,7 @@ public:
     void setExtent(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
     // Return the renderer that is responsible for painting the caret (in the selection start node)
-    RenderObject* caretRendererWithoutUpdatingLayout() const;
+    RenderBlock* caretRendererWithoutUpdatingLayout() const;
 
     // Bounds of (possibly transformed) caret in absolute coords
     WEBCORE_EXPORT IntRect absoluteCaretBounds();
