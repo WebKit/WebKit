@@ -15,6 +15,7 @@ set(ENABLE_CREDENTIAL_STORAGE ON CACHE BOOL "Whether or not to enable support fo
 set(ENABLE_GTKDOC OFF CACHE BOOL "Whether or not to use generate gtkdoc.")
 set(ENABLE_X11_TARGET ON CACHE BOOL "Whether to enable support for the X11 windowing target.")
 set(ENABLE_WAYLAND_TARGET OFF CACHE BOOL "Whether to enable support for the Wayland windowing target.")
+set(ENABLE_INTROSPECTION ON CACHE BOOL "Whether to enable GObject introspection.")
 
 # These are shared variables, but we special case their definition so that we can use the
 # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
@@ -346,10 +347,12 @@ endif ()
 # Add a typelib file to the list of all typelib dependencies. This makes it easy to
 # expose a 'gir' target with all gobject-introspection files.
 macro(ADD_TYPELIB typelib)
-    get_filename_component(target_name ${typelib} NAME_WE)
-    add_custom_target(${target_name}-gir ALL DEPENDS ${typelib})
-    list(APPEND GObjectIntrospectionTargets ${target_name}-gir)
-    set(GObjectIntrospectionTargets ${GObjectIntrospectionTargets} PARENT_SCOPE)
+    if (ENABLE_INTROSPECTION)
+        get_filename_component(target_name ${typelib} NAME_WE)
+        add_custom_target(${target_name}-gir ALL DEPENDS ${typelib})
+        list(APPEND GObjectIntrospectionTargets ${target_name}-gir)
+        set(GObjectIntrospectionTargets ${GObjectIntrospectionTargets} PARENT_SCOPE)
+    endif ()
 endmacro()
 
 # CMake does not automatically add --whole-archive when building shared objects from

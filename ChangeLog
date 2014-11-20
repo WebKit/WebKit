@@ -1,3 +1,17 @@
+2014-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(CMake): Make it possible to build without introspection
+        https://bugs.webkit.org/show_bug.cgi?id=138006
+
+        Reviewed by Philippe Normand.
+
+        Add ENABLE_INTROSPECTION option.
+
+        * Source/PlatformGTK.cmake: Dot not add gir global target if
+        introspection is disabled.
+        * Source/cmake/OptionsGTK.cmake: Do not add gir individual targets if
+        introspection is disabled.
+
 2014-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.3 release.
