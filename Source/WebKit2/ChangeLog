@@ -1,3 +1,10 @@
+2014-11-19  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the 32-bit build
+
+        * UIProcess/mac/TextIndicatorWindow.mm:
+        (WebKit::TextIndicatorWindow::setTextIndicator):
+
 2014-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Add an optional entry transition (from selection highlight) to TextIndicator
