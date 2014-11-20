@@ -775,7 +775,7 @@ bool WebProcess::shouldPlugInAutoStartFromOrigin(WebPage& webPage, const String&
     if (webPage.matchesPrimaryPlugIn(pageOrigin, pluginOrigin, mimeType))
         return true;
 #else
-    UNUSED_PARAM(page);
+    UNUSED_PARAM(webPage);
 #endif
 
     // Lastly check against the more explicit hash list.
