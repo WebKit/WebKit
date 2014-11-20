@@ -852,6 +852,7 @@ public:
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
 
+    void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1236,7 +1237,7 @@ private:
 
     unsigned m_cachedPageCount;
 
-    HashSet<unsigned long> m_networkResourceRequestIdentifiers;
+    HashSet<unsigned long> m_trackedNetworkResourceRequestIdentifiers;
 
     WebCore::IntSize m_minimumLayoutSize;
     bool m_autoSizingShouldExpandToViewHeight;
@@ -1311,6 +1312,8 @@ private:
     WebCore::HitTestResult m_lastActionMenuHitTestResult;
     RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
 #endif
+
+    bool m_mainFrameProgressCompleted;
 };
 
 } // namespace WebKit
