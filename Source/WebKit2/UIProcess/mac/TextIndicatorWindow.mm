@@ -296,7 +296,7 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     [m_textIndicatorWindow setOpaque:NO];
     [m_textIndicatorWindow setIgnoresMouseEvents:YES];
 
-    m_textIndicatorView = adoptNS([[WKTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:CGSizeMake(horizontalMargin, verticalMargin)]);
+    m_textIndicatorView = adoptNS([[WKTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin)]);
     [m_textIndicatorWindow setContentView:m_textIndicatorView.get()];
 
     [[m_wkView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
