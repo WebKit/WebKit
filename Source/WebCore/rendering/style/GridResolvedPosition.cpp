@@ -48,17 +48,17 @@ static inline bool isStartSide(GridPositionSide side)
     return side == ColumnStartSide || side == RowStartSide;
 }
 
-size_t GridResolvedPosition::explicitGridColumnCount(const RenderStyle& gridContainerStyle)
+unsigned GridResolvedPosition::explicitGridColumnCount(const RenderStyle& gridContainerStyle)
 {
-    return std::min(gridContainerStyle.gridColumns().size(), kGridMaxTracks);
+    return std::min<unsigned>(gridContainerStyle.gridColumns().size(), kGridMaxTracks);
 }
 
-size_t GridResolvedPosition::explicitGridRowCount(const RenderStyle& gridContainerStyle)
+unsigned GridResolvedPosition::explicitGridRowCount(const RenderStyle& gridContainerStyle)
 {
-    return std::min(gridContainerStyle.gridRows().size(), kGridMaxTracks);
+    return std::min<unsigned>(gridContainerStyle.gridRows().size(), kGridMaxTracks);
 }
 
-static size_t explicitGridSizeForSide(const RenderStyle& gridContainerStyle, GridPositionSide side)
+static unsigned explicitGridSizeForSide(const RenderStyle& gridContainerStyle, GridPositionSide side)
 {
     return isColumnSide(side) ? GridResolvedPosition::explicitGridColumnCount(gridContainerStyle) : GridResolvedPosition::explicitGridRowCount(gridContainerStyle);
 }
@@ -175,15 +175,15 @@ GridResolvedPosition GridResolvedPosition::resolveNamedGridLinePositionFromStyle
     if (it == gridLinesNames.end()) {
         if (position.isPositive())
             return 0;
-        const size_t lastLine = explicitGridSizeForSide(gridContainerStyle, side);
+        const unsigned lastLine = explicitGridSizeForSide(gridContainerStyle, side);
         return GridResolvedPosition::adjustGridPositionForSide(lastLine, side);
     }
 
-    size_t namedGridLineIndex;
+    unsigned namedGridLineIndex;
     if (position.isPositive())
-        namedGridLineIndex = std::min<size_t>(position.integerPosition(), it->value.size()) - 1;
+        namedGridLineIndex = std::min<unsigned>(position.integerPosition(), it->value.size()) - 1;
     else
-        namedGridLineIndex = std::max<int>(it->value.size() - abs(position.integerPosition()), 0);
+        namedGridLineIndex = std::max<int>(0, it->value.size() - abs(position.integerPosition()));
     return GridResolvedPosition::adjustGridPositionForSide(it->value[namedGridLineIndex], side);
 }
 
@@ -200,8 +200,8 @@ GridResolvedPosition GridResolvedPosition::resolveGridPositionFromStyle(const Re
         if (position.isPositive())
             return GridResolvedPosition::adjustGridPositionForSide(position.integerPosition() - 1, side);
 
-        size_t resolvedPosition = abs(position.integerPosition()) - 1;
-        const size_t endOfTrack = explicitGridSizeForSide(gridContainerStyle, side);
+        unsigned resolvedPosition = abs(position.integerPosition()) - 1;
+        const unsigned endOfTrack = explicitGridSizeForSide(gridContainerStyle, side);
 
         // Per http://lists.w3.org/Archives/Public/www-style/2013Mar/0589.html, we clamp negative value to the first line.
         if (endOfTrack < resolvedPosition)
@@ -259,9 +259,9 @@ std::unique_ptr<GridSpan> GridResolvedPosition::resolveGridPositionAgainstOpposi
 
     // 'span 1' is contained inside a single grid track regardless of the direction.
     // That's why the CSS span value is one more than the offset we apply.
-    size_t positionOffset = position.spanPosition() - 1;
+    unsigned positionOffset = position.spanPosition() - 1;
     if (isStartSide(side)) {
-        size_t initialResolvedPosition = std::max<int>(0, resolvedOppositePosition.toInt() - positionOffset);
+        unsigned initialResolvedPosition = std::max<int>(0, resolvedOppositePosition.toInt() - positionOffset);
         return std::make_unique<GridSpan>(initialResolvedPosition, resolvedOppositePosition);
     }
 
@@ -289,13 +289,13 @@ std::unique_ptr<GridSpan> GridResolvedPosition::resolveNamedGridLinePositionAgai
     return resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(resolvedOppositePosition, position, it->value);
 }
 
-static inline size_t firstNamedGridLineBeforePosition(size_t position, const Vector<size_t>& gridLines)
+static inline unsigned firstNamedGridLineBeforePosition(unsigned position, const Vector<unsigned>& gridLines)
 {
     // The grid line inequality needs to be strict (which doesn't match the after / end case) because |position| is
     // already converted to an index in our grid representation (ie one was removed from the grid line to account for
     // the side).
-    size_t firstLineBeforePositionIndex = 0;
-    const size_t* firstLineBeforePosition = std::lower_bound(gridLines.begin(), gridLines.end(), position);
+    unsigned firstLineBeforePositionIndex = 0;
+    const unsigned* firstLineBeforePosition = std::lower_bound(gridLines.begin(), gridLines.end(), position);
     if (firstLineBeforePosition != gridLines.end()) {
         if (*firstLineBeforePosition > position && firstLineBeforePosition != gridLines.begin())
             --firstLineBeforePosition;
@@ -305,23 +305,24 @@ static inline size_t firstNamedGridLineBeforePosition(size_t position, const Vec
     return firstLineBeforePositionIndex;
 }
 
-std::unique_ptr<GridSpan> GridResolvedPosition::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition(const GridResolvedPosition& resolvedOppositePosition, const GridPosition& position, const Vector<size_t>& gridLines)
+std::unique_ptr<GridSpan> GridResolvedPosition::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition(const GridResolvedPosition& resolvedOppositePosition, const GridPosition& position, const Vector<unsigned>& gridLines)
 {
-    size_t gridLineIndex = std::max<int>(0, firstNamedGridLineBeforePosition(resolvedOppositePosition.toInt(), gridLines) - position.spanPosition() + 1);
+    unsigned gridLineIndex = std::max<int>(0, firstNamedGridLineBeforePosition(resolvedOppositePosition.toInt(), gridLines) - position.spanPosition() + 1);
     GridResolvedPosition resolvedGridLinePosition = GridResolvedPosition(gridLines[gridLineIndex]);
     if (resolvedGridLinePosition > resolvedOppositePosition)
         resolvedGridLinePosition = resolvedOppositePosition;
     return std::make_unique<GridSpan>(resolvedGridLinePosition, resolvedOppositePosition);
 }
 
-std::unique_ptr<GridSpan> GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(const GridResolvedPosition& resolvedOppositePosition, const GridPosition& position, const Vector<size_t>& gridLines)
+std::unique_ptr<GridSpan> GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(const GridResolvedPosition& resolvedOppositePosition, const GridPosition& position, const Vector<unsigned>& gridLines)
 {
-    size_t firstLineAfterOppositePositionIndex = gridLines.size() - 1;
-    const size_t* firstLineAfterOppositePosition = std::upper_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
+    ASSERT(gridLines.size());
+    unsigned firstLineAfterOppositePositionIndex = gridLines.size() - 1;
+    const unsigned* firstLineAfterOppositePosition = std::upper_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
     if (firstLineAfterOppositePosition != gridLines.end())
         firstLineAfterOppositePositionIndex = firstLineAfterOppositePosition - gridLines.begin();
 
-    size_t gridLineIndex = std::min(gridLines.size() - 1, firstLineAfterOppositePositionIndex + position.spanPosition() - 1);
+    unsigned gridLineIndex = std::min<unsigned>(gridLines.size() - 1, firstLineAfterOppositePositionIndex + position.spanPosition() - 1);
     GridResolvedPosition resolvedGridLinePosition = GridResolvedPosition::adjustGridPositionForRowEndColumnEndSide(gridLines[gridLineIndex]);
     if (resolvedGridLinePosition < resolvedOppositePosition)
         resolvedGridLinePosition = resolvedOppositePosition;

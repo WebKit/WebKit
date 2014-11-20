@@ -41,7 +41,7 @@
 namespace WebCore {
 
 // Recommended maximum size for both explicit and implicit grids.
-const size_t kGridMaxTracks = 1000000;
+const unsigned kGridMaxTracks = 1000000;
 
 // A span in a single direction (either rows or columns). Note that |resolvedInitialPosition|
 // and |resolvedFinalPosition| are grid areas' indexes, NOT grid lines'. Iterating over the
@@ -60,7 +60,7 @@ public:
         return resolvedInitialPosition == o.resolvedInitialPosition && resolvedFinalPosition == o.resolvedFinalPosition;
     }
 
-    size_t integerSpan() const
+    unsigned integerSpan() const
     {
         return resolvedFinalPosition.toInt() - resolvedInitialPosition.toInt() + 1;
     }

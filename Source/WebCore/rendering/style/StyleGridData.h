@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-typedef HashMap<String, Vector<size_t>> NamedGridLinesMap;
-typedef HashMap<size_t, Vector<String>, WTF::IntHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> OrderedNamedGridLinesMap;
+typedef HashMap<String, Vector<unsigned>> NamedGridLinesMap;
+typedef HashMap<unsigned, Vector<String>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> OrderedNamedGridLinesMap;
 
 class StyleGridData : public RefCounted<StyleGridData> {
 public:
@@ -75,8 +75,8 @@ public:
     NamedGridAreaMap m_namedGridArea;
     // Because m_namedGridArea doesn't store the unnamed grid areas, we need to keep track
     // of the explicit grid size defined by both named and unnamed grid areas.
-    size_t m_namedGridAreaRowCount;
-    size_t m_namedGridAreaColumnCount;
+    unsigned m_namedGridAreaRowCount;
+    unsigned m_namedGridAreaColumnCount;
 
 private:
     StyleGridData();

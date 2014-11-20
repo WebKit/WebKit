@@ -1891,12 +1891,12 @@ static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& nam
     for (auto& area : namedGridAreas) {
         GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
         {
-            auto& startVector = namedGridLines.add(area.key + "-start", Vector<size_t>()).iterator->value;
+            auto& startVector = namedGridLines.add(area.key + "-start", Vector<unsigned>()).iterator->value;
             startVector.append(areaSpan.resolvedInitialPosition.toInt());
             std::sort(startVector.begin(), startVector.end());
         }
         {
-            auto& endVector = namedGridLines.add(area.key + "-end", Vector<size_t>()).iterator->value;
+            auto& endVector = namedGridLines.add(area.key + "-end", Vector<unsigned>()).iterator->value;
             endVector.append(areaSpan.resolvedFinalPosition.next().toInt());
             std::sort(endVector.begin(), endVector.end());
         }
@@ -1966,12 +1966,12 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
     if (!is<CSSValueList>(*value))
         return false;
 
-    size_t currentNamedGridLine = 0;
+    unsigned currentNamedGridLine = 0;
     for (auto& currentValue : downcast<CSSValueList>(*value)) {
         if (is<CSSGridLineNamesValue>(currentValue.get())) {
             for (auto& currentGridLineName : downcast<CSSGridLineNamesValue>(currentValue.get())) {
                 String namedGridLine = downcast<CSSPrimitiveValue>(currentGridLineName.get()).getStringValue();
-                NamedGridLinesMap::AddResult result = namedGridLines.add(namedGridLine, Vector<size_t>());
+                NamedGridLinesMap::AddResult result = namedGridLines.add(namedGridLine, Vector<unsigned>());
                 result.iterator->value.append(currentNamedGridLine);
                 OrderedNamedGridLinesMap::AddResult orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
                 orderedResult.iterator->value.append(namedGridLine);

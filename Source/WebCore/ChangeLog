@@ -1,3 +1,57 @@
+2014-11-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Replace the usage of size_t by unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=136218
+
+        Reviewed by Benjamin Poulain.
+
+        In general, size_t should be used for sizes of objects in
+        memory. We're using it to represent indexes and spans in the
+        grid. Now that the maximum number of tracks is 1 million, it
+        should be safe to replace them by unsigned integers.
+
+        No new tests as there is no change in functionality.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+        * css/StyleResolver.cpp:
+        (WebCore::createImplicitNamedGridLinesFromGridArea):
+        (WebCore::createGridTrackList):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::GridIterator):
+        (WebCore::RenderGrid::GridIterator::nextGridItem):
+        (WebCore::RenderGrid::GridIterator::isEmptyAreaEnough):
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        (WebCore::RenderGrid::GridSizingData::GridSizingData):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::gridTrackSize):
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+        (WebCore::RenderGrid::tracksAreWiderThanMinTrackBreadth):
+        (WebCore::RenderGrid::ensureGridSize):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::populateGridPositions):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridCoordinate.h:
+        (WebCore::GridSpan::integerSpan):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::explicitGridColumnCount):
+        (WebCore::GridResolvedPosition::explicitGridRowCount):
+        (WebCore::explicitGridSizeForSide):
+        (WebCore::GridResolvedPosition::resolveNamedGridLinePositionFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionFromStyle):
+        (WebCore::GridResolvedPosition::resolveGridPositionAgainstOppositePosition):
+        (WebCore::firstNamedGridLineBeforePosition):
+        (WebCore::GridResolvedPosition::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        * rendering/style/GridResolvedPosition.h:
+        (WebCore::GridResolvedPosition::adjustGridPositionForRowEndColumnEndSide):
+        (WebCore::GridResolvedPosition::adjustGridPositionForSide):
+        (WebCore::GridResolvedPosition::GridResolvedPosition):
+        (WebCore::GridResolvedPosition::toInt):
+        * rendering/style/StyleGridData.h:
+
 2014-11-20  Andreas Kling  <akling@apple.com>
 
         Remove "document has no sibling rules" optimization.

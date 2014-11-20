@@ -5294,7 +5294,7 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     ASSERT(arguments->valueAt(0)->fValue > 0);
     // If arguments->valueAt(0)->fValue > SIZE_MAX then repetitions becomes 0 during the type casting, that's why we
     // clamp it down to kGridMaxTracks before the type casting.
-    size_t repetitions = clampTo<size_t>(arguments->valueAt(0)->fValue, 0, kGridMaxTracks);
+    unsigned repetitions = clampTo<unsigned>(arguments->valueAt(0)->fValue, 0, kGridMaxTracks);
 
     RefPtr<CSSValueList> repeatedValues = CSSValueList::createSpaceSeparated();
     arguments->next(); // Skip the repetition count.
