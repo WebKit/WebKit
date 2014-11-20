@@ -69,7 +69,9 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceLoaderCl
 
     private:
         // PlatformMediaResourceLoaderClient virtual methods.
+#if USE(SOUP)
         virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
+#endif
         virtual void responseReceived(const ResourceResponse&) override;
         virtual void dataReceived(const char*, int) override;
         virtual void accessControlCheckFailed(const ResourceError&) override;
@@ -994,10 +996,12 @@ CachedResourceStreamingClient::~CachedResourceStreamingClient()
 {
 }
 
+#if USE(SOUP)
 char* CachedResourceStreamingClient::getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize)
 {
     return createReadBuffer(requestedSize, actualSize);
 }
+#endif
 
 void CachedResourceStreamingClient::responseReceived(const ResourceResponse& response)
 {

@@ -1,3 +1,14 @@
+2014-11-20  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error when GStreamer is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=138925
+
+        Reviewed by Philippe Normand.
+
+        A guard is missing for an overridden method.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+
 2014-11-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Provide convenience API in DOM bindings to post messages to user message handlers
