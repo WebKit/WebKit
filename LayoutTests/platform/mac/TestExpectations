@@ -759,9 +759,6 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Ski
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 webkit.org/b/107356 [ MountainLion Release ] fast/css/sticky/sticky-top-zoomed.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/100846 inspector-protocol/debugger/pause-dedicated-worker.html [ Skip ]
-webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]
-
 # Overflowing LayoutUnits cause RenderGeometryMap assertions
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ]
@@ -894,12 +891,8 @@ webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass 
 webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
 
-webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-nonstrict.html [ Skip ]
-webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-strict.html [ Skip ]
-webkit.org/b/136715 inspector-protocol/debugger/regress-133182.html [ Skip ]
-webkit.org/b/136715 inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html [ Skip ]
-webkit.org/b/136715 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]
-webkit.org/b/136715 inspector-protocol/debugger/setPauseOnExceptions-all.html [ Skip ]
+# webkit.org/b/100846, webkit.org/b/136715
+inspector-protocol/debugger
 
 webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Pass Failure ]
 
