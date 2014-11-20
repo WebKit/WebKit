@@ -566,7 +566,7 @@ App.ChartsController = Ember.Controller.extend({
         addPaneByMetricAndPlatform: function (param)
         {
             this.addPane(App.Pane.create({
-                store, this.store,
+                store: this.store,
                 platformId: param.platform.get('id'),
                 metricId: param.metric.get('id'),
                 showingDetails: false
@@ -1598,7 +1598,7 @@ App.AnalysisRoute = Ember.Route.extend({
 
 App.AnalysisTaskRoute = Ember.Route.extend({
     model: function (param) {
-        return store.find('analysisTask', param.taskId).then(function (task) {
+        return this.store.find('analysisTask', param.taskId).then(function (task) {
             return App.AnalysisTaskViewModel.create({content: task, store: store});
         });
     },
