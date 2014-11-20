@@ -2,104 +2,41 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+###
+# Unsupported and disabled features
+##
 # Cannot enable AX tests because there are too many differences between what is available
 # through the iPhone AX API and the OS X AX API.
 accessibility
 
-# batterystatus is not supported on iOS
-batterystatus
-
-# no plug-ins on iOS
-compositing/plugins
-
-# tests that rely on media loading
-compositing/geometry/clipped-video-controller.html [ Skip ]
-compositing/geometry/video-fixed-scrolling.html [ Skip ]
-compositing/geometry/video-opacity-overlay.html [ Skip ]
-compositing/regions/floated-region-with-transformed-child.html [ Skip ]
-compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Skip ]
-compositing/regions/transform-transparent-positioned-video-inside-region.html [ Skip ]
-compositing/regions/video-in-overflow-region.html [ Skip ]
-compositing/self-painting-layers2.html [ Skip ]
-compositing/video-page-visibility.html [ Skip ]
-compositing/video/video-background-color.html [ Skip ]
-compositing/video/video-object-fit.html [ Skip ]
-compositing/video/video-poster.html [ Skip ]
-compositing/video/video-reflection.html [ Skip ]
-compositing/visibility/visibility-simple-video-layer.html [ Skip ]
-
-# no fullscreen API on iOS
+# No fullscreen API on iOS
 fullscreen
 http/tests/fullscreen
 
-# no gamepad on iOS
-gamepad
+# Skip WebGL tests in iOS Simulator
+webgl
+fast/canvas/webgl
 
-# Java is not available on iOS
-java
-
-# iOS doesn't support Notifications.
-fast/notifications
-http/tests/notifications
-
-# Pointer Lock is not implemented in iOS.
-pointer-lock/
-http/tests/pointer-lock/
-
-# FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iPhone OS
-printing
-
-# Proximity Events not supported on iOS
-proximity
+# Encrypted Media Extensions are not enabled
+media/encrypted-media/
 fast/events/constructors/device-proximity-event-constructor.html
 
-# Encrypted Media Extensions are not enabled.
-media/encrypted-media/
-fast/events/constructors/media-key-event-constructor.html
+# FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iOS
+printing
 
-# Touch adjustment not supported on iOS
+# Not supported on iOS
+batterystatus
+gamepad
+java
+proximity
+pointer-lock
 touchadjustment
-
-# ENABLE_VIBRATION - Vibration API is not enabled.
 vibration
+webaudio
 
-# Skip webgl tests in the simulator
-fast/canvas/webgl
-webgl
-
-# canvas
-webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.missingargs.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.path.rect.winding.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.pattern.image.incomplete.omitted.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text-custom-font-load-crash.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.middle.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.top.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.end.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-
-fast/canvas/canvas-bg.html [ Failure ]
-fast/canvas/canvas-blending-global-alpha.html [ Failure ]
-fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
-fast/canvas/canvas-measureText-ideographicSpace.html [ Failure ]
-fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
-fast/canvas/canvas-toDataURL-webp.html  [ Skip ] # Webp not supported
-fast/canvas/draw-focus-if-needed-with-path.html [ Failure ]
-fast/canvas/draw-focus-if-needed.html [ Failure ]
-
+###
+# Known failures
+##
 webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
@@ -107,43 +44,58 @@ webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollevent-iframe-no-scrolling.html [ Failure ]
 
-# Quota API is not supported on iOS.
-storage/domstorage/quota.html [ Skip ]
-storage/storageinfo-missing-arguments.html [ Skip ]
-storage/storageinfo-no-callbacks.html [ Skip ]
-storage/storageinfo-query-usage.html [ Skip ]
-storage/storageinfo-request-quota.html [ Skip ]
-storage/storagequota-query-usage.html [ Skip ]
-storage/storagequota-request-quota.html [ Skip ]
-storage/websql/quota-tracking.html [ Skip ]
-
 # SVG
-webkit.org/b/137574 svg/as-image/svg-nested.html [ Crash ]
-webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Pass Crash ]
-webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Pass Crash ]
+webkit.org/b/137574 svg/as-image/svg-nested.html [ Skip ] # Times out
+webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
+webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
 
-# webaudio
-webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Skip ] # unsupported audio format
-webaudio/mediastreamaudiodestinationnode.html [ Skip ] # don't support context.createMediaStreamDestination
-webaudio/mediastreamaudiosourcenode.html [ Skip ] # don't support getUserMedia
-
-# request-animation-frame broken in the simulator.
+# window.requestAnimationFrame() broken in iOS Simulator
 webkit.org/b/137588 fast/animation
 
-# enableAutoResizeMode not implementated
-fast/autoresize
-
-# CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
-webkit.org/b/76173 fast/css3-text/css3-text-align-last
-webkit.org/b/99945 fast/css3-text/css3-text-justify [ Skip ]
-webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
-webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
-
-# ENABLE(SHADOW_DOM) is disabled.
-fast/dom/shadow
-fast/dom/HTMLTemplateElement/cycles-in-shadow.html
-editing/shadow
-accessibility/corresponding-control-deleted-crash.html
-editing/text-iterator/basic-iteration-shadowdom.html
-fast/dom/DeviceMotion/no-page-cache.html [ Skip ]
-fast/dom/DeviceOrientation
+###
+# Temporarily skip all others tests
+# We'll un-skip each directory as we land updated/new expected results
+##
+animations
+canvas
+compositing
+crypto
+css1
+css2.1
+css3
+cssom
+dom
+editing
+fast
+fonts
+html5lib
+http
+ietestcenter
+imported
+indieui
+inspector
+inspector-obsolete
+inspector-protocol
+jquery
+js
+loader
+mathml
+media
+mhtml
+pageoverlay
+perf
+platform
+plugins
+resources
+scrollbars
+scrollingcoordinator
+security
+sputnik
+storage
+svg
+tables
+transforms
+transitions
+traversal
+userscripts
+webarchive

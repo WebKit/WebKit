@@ -1,3 +1,13 @@
+2014-11-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Temporarily skip almost all DRT tests
+
+        Towards updating the expected results on iOS, temporarily skip running almost
+        all DRT tests on iOS. We'll subsequently un-skip tests as we land updated/new
+        expected results for them.
+
+        * platform/ios-simulator/TestExpectations:
+
 2014-11-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Rename String.prototype.contains to String.prototype.includes
