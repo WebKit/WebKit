@@ -1,5 +1,16 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176374. rdar://problem/18840128
+
+    2014-11-19  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the 32-bit build
+
+            * UIProcess/mac/TextIndicatorWindow.mm:
+            (WebKit::TextIndicatorWindow::setTextIndicator):
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176363. rdar://problem/18840128    
 
     2014-11-19  Tim Horton  <timothy_horton@apple.com>
