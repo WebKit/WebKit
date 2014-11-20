@@ -1,3 +1,16 @@
+2014-11-16  Sam Weinig  <sam@webkit.org>
+
+        Move the 'quotes' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138788
+
+        Reviewed by Chris Dumez.
+
+        Add a test for the behavior of non-valid primitive identifiers being
+        used with the quotes property.
+
+        * fast/css/content/content-quotes-07-expected.txt: Added.
+        * fast/css/content/content-quotes-07.html: Added.
+
 2014-11-19  Dean Jackson  <dino@apple.com>
 
         Handle unprefixed @keyframes rule

@@ -220,7 +220,7 @@ page-break-inside [NewStyleBuilder, TypeName=EPageBreak, Initial=initialPageBrea
 paint-order
 pointer-events [Inherited, NewStyleBuilder]
 position [NewStyleBuilder]
-quotes [Inherited]
+quotes [Inherited, NewStyleBuilder, Converter=Quotes]
 resize [Inherited, NewStyleBuilder, Converter=Resize]
 right [NewStyleBuilder, Initial=initialOffset, Converter=LengthOrAuto]
 size [NewStyleBuilder, Custom=All]

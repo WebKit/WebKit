@@ -2265,37 +2265,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 state.style()->setContentAltText(emptyAtom);
             return;
         }
-        
-    case CSSPropertyQuotes:
-        if (isInherit) {
-            state.style()->setQuotes(state.parentStyle()->quotes());
-            return;
-        }
-        if (isInitial) {
-            state.style()->setQuotes(nullptr);
-            return;
-        }
-        if (is<CSSValueList>(*value)) {
-            CSSValueList& list = downcast<CSSValueList>(*value);
-            Vector<std::pair<String, String>> quotes;
-            for (size_t i = 0; i < list.length(); i += 2) {
-                CSSValue* first = list.itemWithoutBoundsCheck(i);
-                // item() returns null if out of bounds so this is safe.
-                CSSValue* second = list.item(i + 1);
-                if (!second)
-                    continue;
-                String startQuote = downcast<CSSPrimitiveValue>(*first).getStringValue();
-                String endQuote = downcast<CSSPrimitiveValue>(*second).getStringValue();
-                quotes.append(std::make_pair(startQuote, endQuote));
-            }
-            state.style()->setQuotes(QuotesData::create(quotes));
-            return;
-        }
-        if (primitiveValue) {
-            if (primitiveValue->getValueID() == CSSValueNone)
-                state.style()->setQuotes(QuotesData::create(Vector<std::pair<String, String>>()));
-        }
-        return;
     // Shorthand properties.
     case CSSPropertyFont:
         if (isInherit) {
@@ -3065,6 +3034,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyPageBreakInside:
     case CSSPropertyPointerEvents:
     case CSSPropertyPosition:
+    case CSSPropertyQuotes:
     case CSSPropertyResize:
     case CSSPropertyRight:
     case CSSPropertySize:

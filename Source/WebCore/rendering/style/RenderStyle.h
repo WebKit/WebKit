@@ -1949,6 +1949,7 @@ public:
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
+    static QuotesData* initialQuotes() { return nullptr; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType() { return ScrollSnapType::None; }

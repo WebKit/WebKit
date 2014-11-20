@@ -1,3 +1,27 @@
+2014-11-16  Sam Weinig  <sam@webkit.org>
+
+        Move the 'quotes' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=138788
+
+        Reviewed by Chris Dumez.
+
+        Test: fast/css/content/content-quotes-07.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        Fix the parser to only accept none as a valid primitive identifier. Tested in 
+        the newly added content-quotes-07.html.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertQuotes):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        Move "quotes" to the new style builder.
+
+        * rendering/style/RenderStyle.h:
+        Add an initialQuotes() function for use in the auto-generated style builder.
+
 2014-11-19  Dean Jackson  <dino@apple.com>
 
         Handle unprefixed @keyframes rule

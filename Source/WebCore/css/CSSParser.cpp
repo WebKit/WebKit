@@ -1850,7 +1850,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return parseSize(propId, important);
 
     case CSSPropertyQuotes:               // [<string> <string>]+ | none | inherit
-        if (id)
+        if (id == CSSValueNone)
             validPrimitive = true;
         else
             return parseQuotes(propId, important);

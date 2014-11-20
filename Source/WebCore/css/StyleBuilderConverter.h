@@ -32,6 +32,7 @@
 #include "CSSPrimitiveValue.h"
 #include "Length.h"
 #include "Pair.h"
+#include "QuotesData.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TransformFunctions.h"
@@ -65,6 +66,7 @@ public:
     static EResize convertResize(StyleResolver&, CSSValue&);
     static int convertMarqueeRepetition(StyleResolver&, CSSValue&);
     static int convertMarqueeSpeed(StyleResolver&, CSSValue&);
+    static PassRefPtr<QuotesData> convertQuotes(StyleResolver&, CSSValue&);
     static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, CSSValue&);
 
 private:
@@ -427,6 +429,29 @@ inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& 
         speed = primitiveValue.getIntValue();
     }
     return speed;
+}
+
+inline PassRefPtr<QuotesData> StyleBuilderConverter::convertQuotes(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        return QuotesData::create(Vector<std::pair<String, String>>());
+    }
+
+    CSSValueList& list = downcast<CSSValueList>(value);
+    Vector<std::pair<String, String>> quotes;
+    quotes.reserveInitialCapacity(list.length() / 2);
+    for (unsigned i = 0; i < list.length(); i += 2) {
+        CSSValue* first = list.itemWithoutBoundsCheck(i);
+        // item() returns null if out of bounds so this is safe.
+        CSSValue* second = list.item(i + 1);
+        if (!second)
+            break;
+        String startQuote = downcast<CSSPrimitiveValue>(*first).getStringValue();
+        String endQuote = downcast<CSSPrimitiveValue>(*second).getStringValue();
+        quotes.append(std::make_pair(startQuote, endQuote));
+    }
+    return QuotesData::create(quotes);
 }
 
 inline TextUnderlinePosition StyleBuilderConverter::convertTextUnderlinePosition(StyleResolver&, CSSValue& value)
