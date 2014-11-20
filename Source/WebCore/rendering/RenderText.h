@@ -48,6 +48,11 @@ public:
 
     RenderStyle& style() const;
     RenderStyle& firstLineStyle() const;
+    RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = nullptr) const;
+
+    Color selectionBackgroundColor() const;
+    Color selectionForegroundColor() const;
+    Color selectionEmphasisMarkColor() const;
 
     virtual String originalText() const;
 
@@ -245,6 +250,26 @@ inline RenderStyle& RenderText::style() const
 inline RenderStyle& RenderText::firstLineStyle() const
 {
     return parent()->firstLineStyle();
+}
+
+inline RenderStyle* RenderText::getCachedPseudoStyle(PseudoId pseudoId, RenderStyle* parentStyle) const
+{
+    return parent()->getCachedPseudoStyle(pseudoId, parentStyle);
+}
+
+inline Color RenderText::selectionBackgroundColor() const
+{
+    return parent()->selectionBackgroundColor();
+}
+
+inline Color RenderText::selectionForegroundColor() const
+{
+    return parent()->selectionForegroundColor();
+}
+
+inline Color RenderText::selectionEmphasisMarkColor() const
+{
+    return parent()->selectionEmphasisMarkColor();
 }
 
 void applyTextTransform(const RenderStyle&, String&, UChar);

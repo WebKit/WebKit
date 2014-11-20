@@ -1,3 +1,50 @@
+2014-11-19  Andreas Kling  <akling@apple.com>
+
+        Move pseudo-style code from RenderObject to RenderElement.
+        <https://webkit.org/b/138880>
+
+        Reviewed by Antti Koivisto.
+
+        Migrate get*PseudoStyle() to RenderElement, and the selection color
+        functions along with them. This gets rid of a DOM ancestor walk in
+        pseudo style lookup.
+
+        Narrow down some argument types to keep things building.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftSelectionGap):
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+        (WebCore::styleForFirstLetter):
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderBlock.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getCachedPseudoStyle):
+        (WebCore::RenderElement::getUncachedPseudoStyle):
+        (WebCore::RenderElement::selectionColor):
+        (WebCore::RenderElement::selectionPseudoStyle):
+        (WebCore::RenderElement::selectionForegroundColor):
+        (WebCore::RenderElement::selectionEmphasisMarkColor):
+        (WebCore::RenderElement::selectionBackgroundColor):
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor): Deleted.
+        (WebCore::RenderObject::selectionColor): Deleted.
+        (WebCore::RenderObject::selectionPseudoStyle): Deleted.
+        (WebCore::RenderObject::selectionForegroundColor): Deleted.
+        (WebCore::RenderObject::selectionEmphasisMarkColor): Deleted.
+        (WebCore::RenderObject::getCachedPseudoStyle): Deleted.
+        (WebCore::RenderObject::getUncachedPseudoStyle): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderText.h:
+        (WebCore::RenderText::getCachedPseudoStyle):
+        (WebCore::RenderText::selectionBackgroundColor):
+        (WebCore::RenderText::selectionForegroundColor):
+        (WebCore::RenderText::selectionEmphasisMarkColor):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+
 2014-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Add an optional entry transition (from selection highlight) to TextIndicator

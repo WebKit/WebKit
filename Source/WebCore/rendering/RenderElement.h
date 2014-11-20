@@ -47,6 +47,11 @@ public:
     // Called to update a style that is allowed to trigger animations.
     void setAnimatableStyle(PassRef<RenderStyle>);
 
+    // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
+    // any pseudo classes (and therefore has no concept of changing state).
+    RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = 0) const;
+    PassRefPtr<RenderStyle> getUncachedPseudoStyle(const PseudoStyleRequest&, RenderStyle* parentStyle = 0, RenderStyle* ownStyle = 0) const;
+
     // This is null for anonymous renderers.
     Element* element() const { return downcast<Element>(RenderObject::node()); }
     Element* nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
@@ -58,6 +63,14 @@ public:
     virtual bool isEmpty() const override { return !firstChild(); }
 
     bool canContainFixedPositionObjects() const;
+
+    Color selectionColor(int colorProperty) const;
+    PassRefPtr<RenderStyle> selectionPseudoStyle() const;
+
+    // Obtains the selection colors that should be used when painting a selection.
+    Color selectionBackgroundColor() const;
+    Color selectionForegroundColor() const;
+    Color selectionEmphasisMarkColor() const;
 
     // FIXME: Make these standalone and move to relevant files.
     bool isRenderLayerModelObject() const;

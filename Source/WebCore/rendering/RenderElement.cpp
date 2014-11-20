@@ -58,6 +58,7 @@
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
@@ -1413,6 +1414,105 @@ void RenderElement::removeControlStatesForRenderer(const RenderObject* o)
 void RenderElement::addControlStatesForRenderer(const RenderObject* o, ControlStates* states)
 {
     controlStatesRendererMap().add(o, states);
+}
+
+RenderStyle* RenderElement::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
+{
+    if (pseudo < FIRST_INTERNAL_PSEUDOID && !style().hasPseudoStyle(pseudo))
+        return nullptr;
+
+    RenderStyle* cachedStyle = style().getCachedPseudoStyle(pseudo);
+    if (cachedStyle)
+        return cachedStyle;
+
+    RefPtr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
+    if (result)
+        return style().addCachedPseudoStyle(result.release());
+    return nullptr;
+}
+
+PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle, RenderStyle* ownStyle) const
+{
+    if (pseudoStyleRequest.pseudoId < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
+        return nullptr;
+
+    if (!parentStyle) {
+        ASSERT(!ownStyle);
+        parentStyle = &style();
+    }
+
+    if (isAnonymous())
+        return nullptr;
+
+    if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
+        RefPtr<RenderStyle> result = document().ensureStyleResolver().styleForElement(element(), parentStyle, DisallowStyleSharing);
+        result->setStyleType(FIRST_LINE_INHERITED);
+        return result.release();
+    }
+
+    return document().ensureStyleResolver().pseudoStyleForElement(element(), pseudoStyleRequest, parentStyle);
+}
+
+Color RenderElement::selectionColor(int colorProperty) const
+{
+    // If the element is unselectable, or we are only painting the selection,
+    // don't override the foreground color with the selection foreground color.
+    if (style().userSelect() == SELECT_NONE
+        || (view().frameView().paintBehavior() & PaintBehaviorSelectionOnly))
+        return Color();
+
+    if (RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
+        Color color = pseudoStyle->visitedDependentColor(colorProperty);
+        if (!color.isValid())
+            color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
+        return color;
+    }
+
+    if (frame().selection().isFocusedAndActive())
+        return theme().activeSelectionForegroundColor();
+    return theme().inactiveSelectionForegroundColor();
+}
+
+PassRefPtr<RenderStyle> RenderElement::selectionPseudoStyle() const
+{
+    if (isAnonymous())
+        return nullptr;
+
+    if (ShadowRoot* root = element()->containingShadowRoot()) {
+        if (root->type() == ShadowRoot::UserAgentShadowRoot) {
+            if (Element* shadowHost = element()->shadowHost())
+                return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
+        }
+    }
+
+    return getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
+}
+
+Color RenderElement::selectionForegroundColor() const
+{
+    return selectionColor(CSSPropertyWebkitTextFillColor);
+}
+
+Color RenderElement::selectionEmphasisMarkColor() const
+{
+    return selectionColor(CSSPropertyWebkitTextEmphasisColor);
+}
+
+Color RenderElement::selectionBackgroundColor() const
+{
+    if (style().userSelect() == SELECT_NONE)
+        return Color();
+
+    if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
+        return style().visitedDependentColor(CSSPropertyColor).blendWithWhite();
+
+    RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle();
+    if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
+        return pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
+
+    if (frame().selection().isFocusedAndActive())
+        return theme().activeSelectionBackgroundColor();
+    return theme().inactiveSelectionBackgroundColor();
 }
 
 }

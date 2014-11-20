@@ -62,7 +62,6 @@
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"
-#include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
 #include "htmlediting.h"
@@ -1562,68 +1561,6 @@ void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, in
 
 #endif // NDEBUG
 
-Color RenderObject::selectionBackgroundColor() const
-{
-    Color color;
-    if (style().userSelect() != SELECT_NONE) {
-        if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
-            color = style().visitedDependentColor(CSSPropertyColor).blendWithWhite();
-        else {
-            RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle();
-            if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
-                color = pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
-            else
-                color = frame().selection().isFocusedAndActive() ? theme().activeSelectionBackgroundColor() : theme().inactiveSelectionBackgroundColor();
-        }
-    }
-
-    return color;
-}
-
-Color RenderObject::selectionColor(int colorProperty) const
-{
-    Color color;
-    // If the element is unselectable, or we are only painting the selection,
-    // don't override the foreground color with the selection foreground color.
-    if (style().userSelect() == SELECT_NONE
-        || (view().frameView().paintBehavior() & PaintBehaviorSelectionOnly))
-        return color;
-
-    if (RefPtr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
-        color = pseudoStyle->visitedDependentColor(colorProperty);
-        if (!color.isValid())
-            color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
-    } else
-        color = frame().selection().isFocusedAndActive() ? theme().activeSelectionForegroundColor() : theme().inactiveSelectionForegroundColor();
-
-    return color;
-}
-
-PassRefPtr<RenderStyle> RenderObject::selectionPseudoStyle() const
-{
-    if (isAnonymous())
-        return nullptr;
-
-    if (ShadowRoot* root = m_node.containingShadowRoot()) {
-        if (root->type() == ShadowRoot::UserAgentShadowRoot) {
-            if (Element* shadowHost = m_node.shadowHost())
-                return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
-        }
-    }
-
-    return getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
-}
-
-Color RenderObject::selectionForegroundColor() const
-{
-    return selectionColor(CSSPropertyWebkitTextFillColor);
-}
-
-Color RenderObject::selectionEmphasisMarkColor() const
-{
-    return selectionColor(CSSPropertyWebkitTextEmphasisColor);
-}
-
 SelectionSubtreeRoot& RenderObject::selectionRoot() const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
@@ -2148,48 +2085,6 @@ bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitT
 int RenderObject::innerLineHeight() const
 {
     return style().computedLineHeight();
-}
-
-RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
-{
-    if (pseudo < FIRST_INTERNAL_PSEUDOID && !style().hasPseudoStyle(pseudo))
-        return 0;
-
-    RenderStyle* cachedStyle = style().getCachedPseudoStyle(pseudo);
-    if (cachedStyle)
-        return cachedStyle;
-    
-    RefPtr<RenderStyle> result = getUncachedPseudoStyle(PseudoStyleRequest(pseudo), parentStyle);
-    if (result)
-        return style().addCachedPseudoStyle(result.release());
-    return 0;
-}
-
-PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle, RenderStyle* ownStyle) const
-{
-    if (pseudoStyleRequest.pseudoId < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style().hasPseudoStyle(pseudoStyleRequest.pseudoId))
-        return nullptr;
-    
-    if (!parentStyle) {
-        ASSERT(!ownStyle);
-        parentStyle = &style();
-    }
-
-    // FIXME: This "find nearest element parent" should be a helper function.
-    Node* node = this->node();
-    while (node && !is<Element>(*node))
-        node = node->parentNode();
-    if (!node)
-        return nullptr;
-    Element& element = downcast<Element>(*node);
-
-    if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
-        RefPtr<RenderStyle> result = document().ensureStyleResolver().styleForElement(&element, parentStyle, DisallowStyleSharing);
-        result->setStyleType(FIRST_LINE_INHERITED);
-        return result.release();
-    }
-
-    return document().ensureStyleResolver().pseudoStyleForElement(&element, pseudoStyleRequest, parentStyle);
 }
 
 static Color decorationColor(RenderStyle* style)

@@ -554,11 +554,6 @@ public:
 
     inline bool preservesNewline() const;
 
-    // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
-    // any pseudo classes (and therefore has no concept of changing state).
-    RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = 0) const;
-    PassRefPtr<RenderStyle> getUncachedPseudoStyle(const PseudoStyleRequest&, RenderStyle* parentStyle = 0, RenderStyle* ownStyle = 0) const;
-    
     virtual void updateDragState(bool dragOn);
 
     RenderView& view() const { return *document().renderView(); };
@@ -782,11 +777,6 @@ public:
     virtual bool canBeSelectionLeaf() const { return false; }
     bool hasSelectedChildren() const { return selectionState() != SelectionNone; }
 
-    // Obtains the selection colors that should be used when painting a selection.
-    Color selectionBackgroundColor() const;
-    Color selectionForegroundColor() const;
-    Color selectionEmphasisMarkColor() const;
-
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }
 
@@ -882,9 +872,6 @@ protected:
 private:
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadIncludingDescendants(bool);
-
-    Color selectionColor(int colorProperty) const;
-    PassRefPtr<RenderStyle> selectionPseudoStyle() const;
 
     Node* generatingPseudoHostElement() const;
 

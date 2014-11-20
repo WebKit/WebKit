@@ -189,7 +189,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
     if (renderer().style().visibility() != VISIBLE)
         return;
 
-    RenderObject& parentRenderer = parent()->renderer();
+    auto& parentRenderer = parent()->renderer();
     ASSERT(!parentRenderer.document().printing());
 
     // Determine whether or not we're selected.
@@ -249,7 +249,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     // Note: We're explicitely not supporting composition & custom underlines and custom highlighters - unlike InlineTextBox.
     // If we ever need that for SVG, it's very easy to refactor and reuse the code.
 
-    RenderObject& parentRenderer = parent()->renderer();
+    auto& parentRenderer = parent()->renderer();
 
     bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
     bool hasSelection = !parentRenderer.document().printing() && selectionState() != RenderObject::SelectionNone;
