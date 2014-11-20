@@ -155,7 +155,7 @@ template<typename T, size_t inlineCapacity> struct VectorNetworkCacheCoder<true,
         Vector<T, inlineCapacity> temp;
         temp.resize(size);
 
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), alignof(T));
+        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T));
 
         vector.swap(temp);
         return true;

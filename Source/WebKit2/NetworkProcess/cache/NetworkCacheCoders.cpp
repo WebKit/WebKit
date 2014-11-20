@@ -59,7 +59,7 @@ void NetworkCacheCoder<CString>::encode(NetworkCacheEncoder& encoder, const CStr
 
     uint32_t length = string.length();
     encoder << length;
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
+    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length);
 }
 
 bool NetworkCacheCoder<CString>::decode(NetworkCacheDecoder& decoder, CString& result)
@@ -82,7 +82,7 @@ bool NetworkCacheCoder<CString>::decode(NetworkCacheDecoder& decoder, CString& r
 
     char* buffer;
     CString string = CString::newUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length, 1))
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length))
         return false;
 
     result = string;
@@ -104,9 +104,9 @@ void NetworkCacheCoder<String>::encode(NetworkCacheEncoder& encoder, const Strin
     encoder << length << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), alignof(LChar));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar));
     else
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar));
 }
 
 template <typename CharacterType>
@@ -120,7 +120,7 @@ static inline bool decodeStringText(NetworkCacheDecoder& decoder, uint32_t lengt
     
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), alignof(CharacterType)))
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType)))
         return false;
     
     result = string;
@@ -154,7 +154,7 @@ void NetworkCacheCoder<WebCore::CertificateInfo>::encode(NetworkCacheEncoder& en
     IPC::ArgumentEncoder argumentEncoder;
     argumentEncoder << certificateInfo;
     encoder << static_cast<uint64_t>(argumentEncoder.bufferSize());
-    encoder.encodeFixedLengthData(argumentEncoder.buffer(), argumentEncoder.bufferSize(), 1);
+    encoder.encodeFixedLengthData(argumentEncoder.buffer(), argumentEncoder.bufferSize());
 }
 
 bool NetworkCacheCoder<WebCore::CertificateInfo>::decode(NetworkCacheDecoder& decoder, WebCore::CertificateInfo& certificateInfo)
@@ -163,7 +163,7 @@ bool NetworkCacheCoder<WebCore::CertificateInfo>::decode(NetworkCacheDecoder& de
     if (!decoder.decode(certificateSize))
         return false;
     Vector<uint8_t> data(certificateSize);
-    if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
+    if (!decoder.decodeFixedLengthData(data.data(), data.size()))
         return false;
     IPC::ArgumentDecoder argumentDecoder(data.data(), data.size());
     if (!argumentDecoder.decode(certificateInfo)) {
