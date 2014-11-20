@@ -848,7 +848,12 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     Node* node = _hitTestResult.innerNode();
     if (node && node->isTextNode()) {
         NSArray *dataDetectorMenuItems = [self _defaultMenuItemsForDataDetectedText];
-        if (dataDetectorMenuItems.count) {
+        if (_currentActionContext) {
+            // If this is a data detected item with no menu items, we should not fall back to regular text options.
+            if (!dataDetectorMenuItems.count) {
+                _type = WebActionMenuNone;
+                return @[ ];
+            }
             _type = WebActionMenuDataDetectedItem;
             return dataDetectorMenuItems;
         }

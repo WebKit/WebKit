@@ -1,5 +1,22 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176351. rdar://problem/18971616
+
+    2014-11-19  Beth Dakin  <bdakin@apple.com>
+
+            Data detected results with no menu items should not fall through to regular text 
+            action menus
+            https://bugs.webkit.org/show_bug.cgi?id=138887
+            -and corresponding-
+            rdar://problem/18971616
+
+            Reviewed by Tim Horton.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItems]):
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176288. rdar://problem/18840382
 
     2014-11-18  Tim Horton  <timothy_horton@apple.com>

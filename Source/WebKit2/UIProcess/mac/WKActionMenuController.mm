@@ -920,7 +920,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     if (hitTestResult->isTextNode()) {
         NSArray *dataDetectorMenuItems = [self _defaultMenuItemsForDataDetectedText];
-        if (dataDetectorMenuItems.count) {
+        if (_currentActionContext) {
+            // If this is a data detected item with no menu items, we should not fall back to regular text options.
+            if (!dataDetectorMenuItems.count) {
+                _type = kWKActionMenuNone;
+                return @[ ];
+            }
             _type = kWKActionMenuDataDetectedItem;
             return dataDetectorMenuItems;
         }
