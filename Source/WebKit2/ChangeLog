@@ -1,3 +1,22 @@
+2014-11-20  Anders Carlsson  <andersca@apple.com>
+
+        Add -[WKWebView loadData:MIMEType:textEncodingName:baseURL:]
+        https://bugs.webkit.org/show_bug.cgi?id=138929
+        <rdar://problem/18683802>
+
+        Reviewed by Dan Bernstein.
+
+        Also, re-implement -[WKWebView loadHTMLString:baseURL:] in terms of this newly added function
+        and assume a UTF-8 encoding. This matches what Legacy WebKit does.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadHTMLString:baseURL:]):
+        (-[WKWebView loadData:MIMEType:textEncodingName:baseURL:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        * UIProcess/WebPageProxy.h:
+
 2014-11-20  Antti Koivisto  <antti@apple.com>
 
         Remove alignment code from cache coders

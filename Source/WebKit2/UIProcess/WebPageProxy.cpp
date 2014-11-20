@@ -784,10 +784,16 @@ uint64_t WebPageProxy::loadFile(const String& fileURLString, const String& resou
     return navigationID;
 }
 
-void WebPageProxy::loadData(API::Data* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
+uint64_t WebPageProxy::loadData(API::Data* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
 {
     if (m_isClosed)
-        return;
+        return 0;
+
+    uint64_t navigationID = generateNavigationID();
+
+    auto transaction = m_pageLoadState.transaction();
+
+    m_pageLoadState.setPendingAPIRequestURL(transaction, !baseURL.isEmpty() ? baseURL : ASCIILiteral("about:blank"));
 
     if (!isValid())
         reattachToWebProcess();
@@ -795,8 +801,11 @@ void WebPageProxy::loadData(API::Data* data, const String& MIMEType, const Strin
     m_process->assumeReadAccessToBaseURL(baseURL);
     m_process->send(Messages::WebPage::LoadData(data->dataReference(), MIMEType, encoding, baseURL, WebContextUserMessageEncoder(userData, process())), m_pageID);
     m_process->responsivenessTimer()->start();
+
+    return navigationID;
 }
 
+// FIXME: Get rid of loadHTMLString and just use loadData instead.
 uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData)
 {
     if (m_isClosed)

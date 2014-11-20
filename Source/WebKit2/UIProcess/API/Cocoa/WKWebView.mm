@@ -434,7 +434,14 @@ static int32_t deviceOrientation()
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
-    uint64_t navigationID = _page->loadHTMLString(string, baseURL.absoluteString);
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+
+    return [self loadData:data MIMEType:@"text/html" characterEncodingName:@"UTF-8" baseURL:baseURL];
+}
+
+- (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL
+{
+    uint64_t navigationID = _page->loadData(API::Data::createWithoutCopying(data).get(), MIMEType, characterEncodingName, baseURL.absoluteString);
     if (!navigationID)
         return nil;
 

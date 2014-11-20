@@ -105,6 +105,15 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL;
 
+/*! @abstract Sets the webpage contents and base URL.
+ @param data The data to use as the contents of the webpage.
+ @param MIMEType The MIME type of the data.
+ @param encodingName The data's character encoding name.
+ @param baseURL A URL that is used to resolve relative URLs within the document.
+ @result A new navigation.
+ */
+- (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 /*! @abstract Navigates to an item from the back-forward list and sets it
  as the current item.
  @param item The item to which to navigate. Must be one of the items in the
