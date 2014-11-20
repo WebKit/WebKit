@@ -48,7 +48,6 @@ struct RuleFeatureSet {
     RuleFeatureSet()
         : usesFirstLineRules(false)
         , usesFirstLetterRules(false)
-        , usesBeforeAfterRules(false)
     { }
 
     void add(const RuleFeatureSet&);
@@ -64,7 +63,6 @@ struct RuleFeatureSet {
     Vector<RuleFeature> uncommonAttributeRules;
     bool usesFirstLineRules;
     bool usesFirstLetterRules;
-    bool usesBeforeAfterRules;
 };
 
 } // namespace WebCore

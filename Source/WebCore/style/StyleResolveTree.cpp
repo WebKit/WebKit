@@ -579,8 +579,6 @@ static void resetStyleForNonRenderedDescendants(Element& current)
 
 static bool needsPseudoElement(Element& current, PseudoId pseudoId)
 {
-    if (!current.document().styleSheetCollection().usesBeforeAfterRules())
-        return false;
     if (!current.renderer() || !current.renderer()->canHaveGeneratedChildren())
         return false;
     if (current.isPseudoElement())

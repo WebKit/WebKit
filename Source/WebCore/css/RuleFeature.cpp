@@ -53,10 +53,6 @@ static void recursivelyCollectFeaturesFromSelector(RuleFeatureSet& features, con
             case CSSSelector::PseudoElementFirstLetter:
                 features.usesFirstLetterRules = true;
                 break;
-            case CSSSelector::PseudoElementBefore:
-            case CSSSelector::PseudoElementAfter:
-                features.usesBeforeAfterRules = true;
-                break;
             default:
                 break;
             }
@@ -93,7 +89,6 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
     usesFirstLetterRules = usesFirstLetterRules || other.usesFirstLetterRules;
-    usesBeforeAfterRules = usesBeforeAfterRules || other.usesBeforeAfterRules;
 }
 
 void RuleFeatureSet::clear()
@@ -106,7 +101,6 @@ void RuleFeatureSet::clear()
     uncommonAttributeRules.clear();
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
-    usesBeforeAfterRules = false;
 }
 
 } // namespace WebCore

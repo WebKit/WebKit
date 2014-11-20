@@ -60,8 +60,6 @@ DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document& document)
     , m_usesSiblingRulesOverride(false)
     , m_usesFirstLineRules(false)
     , m_usesFirstLetterRules(false)
-    , m_usesBeforeAfterRules(false)
-    , m_usesBeforeAfterRulesOverride(false)
     , m_usesRemUnits(false)
 {
 }
@@ -73,7 +71,6 @@ void DocumentStyleSheetCollection::combineCSSFeatureFlags()
     m_usesSiblingRules = m_usesSiblingRules || styleResolver.usesSiblingRules();
     m_usesFirstLineRules = m_usesFirstLineRules || styleResolver.usesFirstLineRules();
     m_usesFirstLetterRules = m_usesFirstLetterRules || styleResolver.usesFirstLetterRules();
-    m_usesBeforeAfterRules = m_usesBeforeAfterRules || styleResolver.usesBeforeAfterRules();
 }
 
 void DocumentStyleSheetCollection::resetCSSFeatureFlags()
@@ -82,7 +79,6 @@ void DocumentStyleSheetCollection::resetCSSFeatureFlags()
     m_usesSiblingRules = styleResolver.usesSiblingRules();
     m_usesFirstLineRules = styleResolver.usesFirstLineRules();
     m_usesFirstLetterRules = styleResolver.usesFirstLetterRules();
-    m_usesBeforeAfterRules = styleResolver.usesBeforeAfterRules();
 }
 
 CSSStyleSheet* DocumentStyleSheetCollection::pageUserSheet()

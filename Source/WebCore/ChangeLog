@@ -1,3 +1,34 @@
+2014-11-19  Andreas Kling  <akling@apple.com>
+
+        Remove "document has no ::before and/or ::after rules" optimization.
+        <https://webkit.org/b/138897>
+
+        Reviewed by Antti Koivisto.
+
+        This optimization has been dead for a long time, since the default UA
+        style contains both ::before and ::after rules.
+
+        * css/RuleFeature.cpp:
+        (WebCore::recursivelyCollectFeaturesFromSelector):
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        * css/RuleFeature.h:
+        (WebCore::RuleFeatureSet::RuleFeatureSet):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::usesBeforeAfterRules): Deleted.
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::combineCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::resetCSSFeatureFlags):
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::usesBeforeAfterRules): Deleted.
+        (WebCore::DocumentStyleSheetCollection::setUsesBeforeAfterRulesOverride): Deleted.
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::insertedInto): Deleted.
+        * html/HTMLQuoteElement.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::needsPseudoElement):
+
 2014-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Upright vertical text is completely broken for multi-code-unit codepoints

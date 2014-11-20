@@ -232,7 +232,6 @@ public:
     bool usesSiblingRules() const { return !m_ruleSets.features().siblingRules.isEmpty(); }
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
     bool usesFirstLetterRules() const { return m_ruleSets.features().usesFirstLetterRules; }
-    bool usesBeforeAfterRules() const { return m_ruleSets.features().usesBeforeAfterRules; }
     
     void invalidateMatchedPropertiesCache();
 
