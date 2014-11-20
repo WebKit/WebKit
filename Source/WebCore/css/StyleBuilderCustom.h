@@ -32,6 +32,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "Frame.h"
+#include "Rect.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -608,6 +609,39 @@ inline void applyValueOutlineStyle(StyleResolver& styleResolver, CSSValue& value
 
     styleResolver.style()->setOutlineStyleIsAuto(primitiveValue);
     styleResolver.style()->setOutlineStyle(primitiveValue);
+}
+
+inline void applyInitialClip(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setClip(Length(), Length(), Length(), Length());
+    styleResolver.style()->setHasClip(false);
+}
+
+inline void applyInheritClip(StyleResolver& styleResolver)
+{
+    RenderStyle* parentStyle = styleResolver.parentStyle();
+    if (!parentStyle->hasClip())
+        return applyInitialClip(styleResolver);
+    styleResolver.style()->setClip(parentStyle->clipTop(), parentStyle->clipRight(), parentStyle->clipBottom(), parentStyle->clipLeft());
+    styleResolver.style()->setHasClip(true);
+}
+
+inline void applyValueClip(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (Rect* rect = primitiveValue.getRectValue()) {
+        auto conversionData = styleResolver.state().cssToLengthConversionData();
+        Length top = rect->top()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        Length right = rect->right()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        Length bottom = rect->bottom()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        Length left = rect->left()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        styleResolver.style()->setClip(top, right, bottom, left);
+        styleResolver.style()->setHasClip(true);
+    } else {
+        ASSERT(primitiveValue.getValueID() == CSSValueAuto);
+        applyInitialClip(styleResolver);
+    }
 }
 
 } // namespace StyleBuilderFunctions

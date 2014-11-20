@@ -158,7 +158,7 @@ box-sizing [NewStyleBuilder]
 caption-side [Inherited, NewStyleBuilder]
 -epub-caption-side = caption-side
 clear [NewStyleBuilder]
-clip
+clip [NewStyleBuilder, Custom=All]
 -webkit-clip-path [NewStyleBuilder, Converter=ClipPath]
 content
 counter-increment
