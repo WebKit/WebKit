@@ -41,6 +41,18 @@ WEBKIT_API gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTex
  */
 WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input);
 
+/**
+ * webkit_dom_dom_window_post_user_message:
+ * @window: A #WebKitDOMDOMWindow
+ * @handler: Name of the user message handler.
+ * @message: JavaScript value to be sent.
+ *
+ * Returns: Whether the message was successfully sent.
+ *
+ * Since: 2.8
+ */
+gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* window, const gchar* handler, const gchar* message);
+
 G_END_DECLS
 
 #endif

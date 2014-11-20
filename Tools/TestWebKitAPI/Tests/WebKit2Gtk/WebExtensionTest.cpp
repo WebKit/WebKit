@@ -109,6 +109,7 @@ static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* e
             webkit_dom_user_message_handler_post_message(handler, "DocumentLoaded");
     }
 
+    webkit_dom_dom_window_webkit_message_handlers_post_message(window, "dom-convenience", "DocumentLoaded");
 
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
     if (data)

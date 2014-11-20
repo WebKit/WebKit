@@ -1,3 +1,19 @@
+2014-11-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Provide convenience API in DOM bindings to post messages to user message handlers
+        https://bugs.webkit.org/show_bug.cgi?id=138871
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a test case for the convenience API for posting user messages
+        added to the DOM bindings.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        (testUserContentManagerMessageFromConvenienceDOMBindings):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
         Work around the fact that different masters may have different names for their codebases.

@@ -22,6 +22,7 @@ WebKitDOMDocument* webkit_dom_dom_implementation_create_document(WebKitDOMDOMImp
 WebKitDOMCSSStyleSheet* webkit_dom_dom_implementation_create_css_style_sheet(WebKitDOMDOMImplementation*, const gchar*, const gchar*, GError**)
 WebKitDOMHTMLDocument* webkit_dom_dom_implementation_create_html_document(WebKitDOMDOMImplementation*, const gchar*)
 GType webkit_dom_dom_window_get_type(void)
+gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow*, const gchar*, const gchar*)
 GType webkit_dom_document_get_type(void)
 WebKitDOMDocumentType* webkit_dom_document_get_doctype(WebKitDOMDocument*)
 WebKitDOMHTMLCollection* webkit_dom_document_get_images(WebKitDOMDocument*)

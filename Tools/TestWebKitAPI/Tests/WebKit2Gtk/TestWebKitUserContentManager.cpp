@@ -349,13 +349,23 @@ static void testUserContentManagerScriptMessageFromDOMBindings(UserScriptMessage
 {
     g_assert(test->registerHandler("dom"));
 
-    test->loadHtml("<html></html>", nullptr);
+    test->loadHtml("<html>1</html>", nullptr);
     WebKitJavascriptResult* javascriptResult = test->waitUntilMessageReceived("dom");
     g_assert(javascriptResult);
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "DocumentLoaded");
 
     test->unregisterHandler("dom");
+
+    g_assert(test->registerHandler("dom-convenience"));
+
+    test->loadHtml("<html>2</html>", nullptr);
+    javascriptResult = test->waitUntilMessageReceived("dom-convenience");
+    g_assert(javascriptResult);
+    valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "DocumentLoaded");
+
+    test->unregisterHandler("dom-convenience");
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
