@@ -1,3 +1,11 @@
+2014-11-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] URTBF after r176363.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setTextIndicator):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
 2014-11-19  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Don't track sub-resources that are started after main frame progress has completed.
