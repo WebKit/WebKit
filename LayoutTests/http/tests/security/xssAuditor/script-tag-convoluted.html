@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<script>document.write("scri")</script>pt src="xss.js"></script>'>
+<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/script-tag-convoluted.html&q=<script>document.write("scri")</script>pt src="xss.js"></script>'>
 </iframe>
 </body>
 </html>

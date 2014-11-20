@@ -17,6 +17,6 @@
     There should be no content in the IFrame below:</p>
     <iframe id="frame"
             onload="checkIfFrameLocationMatchesSrcAndCallDone('frame')"
-            src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?csp=block&amp;q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>"></iframe>
+            src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/contentSecurityPolicy/1.1/reflected-xss-block.html&csp=block&amp;q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>"></iframe>
 </body>
 </html>

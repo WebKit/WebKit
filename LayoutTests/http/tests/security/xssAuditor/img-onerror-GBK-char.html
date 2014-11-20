@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?charset=GBK&q=<img%20src=%201%20onerror=%C7Ojavascript:alert(document.domain)>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/img-onerror-GBK-char.html&charset=GBK&q=<img%20src=%201%20onerror=%C7Ojavascript:alert(document.domain)>">
 </iframe>
 </body>
 </html>

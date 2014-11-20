@@ -19,7 +19,7 @@ function done()
 </head>
 <body>
 <p>This tests that the X-XSS-Protection reports are sent out properly</p>
-<iframe id="frame" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block-report=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message, no JavaScript alert(), and a dump of the report below, then the test PASSED.</p>" onload="done()">
+<iframe id="frame" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/report-script-tag-full-block.html&enable-full-block-report=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message, no JavaScript alert(), and a dump of the report below, then the test PASSED.</p>" onload="done()">
 </iframe>
 </body>
 </html>

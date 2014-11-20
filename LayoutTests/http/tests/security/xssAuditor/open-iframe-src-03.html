@@ -10,6 +10,6 @@
     </script>
 </head>
 <body>
-    <iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<iframe%20src="javascript:alert(1)%3B%e2%80%a8-->&clutter=xxx"></iframe>&notifyDone=1'></iframe>
+    <iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/open-iframe-src-03.html&q=<iframe%20src="javascript:alert(1)%3B%e2%80%a8-->&clutter=xxx"></iframe>&notifyDone=1'></iframe>
 </body>
 </html>

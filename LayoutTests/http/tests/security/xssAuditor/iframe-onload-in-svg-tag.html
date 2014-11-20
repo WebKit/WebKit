@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<svg><script><iframe%20onload=alert(0)></iframe></script></svg>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/iframe-onload-in-svg-tag.html&q=<svg><script><iframe%20onload=alert(0)></iframe></script></svg>">
 </iframe>
 Test that dangerous attributes are still filtered in netsted script contexts.
 </body>

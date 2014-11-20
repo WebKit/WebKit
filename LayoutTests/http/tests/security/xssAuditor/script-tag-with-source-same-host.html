@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<script src='safe-script.js'></script>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/script-tag-with-source-same-host.html&q=<script src='safe-script.js'></script>">
 </iframe>
 </body>
 </html>

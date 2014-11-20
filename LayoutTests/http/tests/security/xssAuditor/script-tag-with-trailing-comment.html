@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?clutter=%20<i><b>&q=<script>/*&q2=*/alert(String.fromCharCode(0x58,0x53,0x53))</script>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/script-tag-with-trailing-comment.html&clutter=%20<i><b>&q=<script>/*&q2=*/alert(String.fromCharCode(0x58,0x53,0x53))</script>">
 </iframe>
 </body>
 </html>

@@ -10,7 +10,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=%3Ca%3Cimg/src/onerror=alert(1)//%3C'>
+<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/malformed-HTML.html&q=%3Ca%3Cimg/src/onerror=alert(1)//%3C'>
 </iframe>
 </body>
 </html>

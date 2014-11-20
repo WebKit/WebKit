@@ -12,7 +12,7 @@ if (window.testRunner) {
 <body>
 <iframe name="tg" src="about:blank"></iframe>
 <form target="tg" method="POST" id="theForm"
-  action="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl">
+  action="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/script-tag-post.html">
 <input type="hidden" name="notifyDone" value="1">
 <input type="text" name="q" value="<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>">
 </form>

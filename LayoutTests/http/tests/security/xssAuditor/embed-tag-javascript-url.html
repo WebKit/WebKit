@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<embed src='javascript:alert(document.domain)'></embed>">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/embed-tag-javascript-url.html&q=<embed src='javascript:alert(document.domain)'></embed>">
 </iframe>
 </body>
 </html>

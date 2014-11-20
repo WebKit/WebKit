@@ -14,10 +14,10 @@ if ($cgi->param('enable-full-block')) {
     print "X-XSS-Protection: 1; mode=block\n";
 }
 if ($cgi->param('enable-report')) {
-    print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/save-report.php\n";
+    print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/save-report.php?test=" . $cgi->param('test') . "\n";
 }
 if ($cgi->param('enable-full-block-report')) {
-    print "X-XSS-Protection: 1; mode=block; report=/security/contentSecurityPolicy/resources/save-report.php\n";
+    print "X-XSS-Protection: 1; mode=block; report=/security/contentSecurityPolicy/resources/save-report.php?test=" . $cgi->param('test') . "\n";
 }
 
 if ($cgi->param('valid-header')) {
@@ -143,7 +143,7 @@ if ($cgi->param('alert-cookie')) {
     print "<script>if (/xssAuditorTestCookie/.test(document.cookie)) { alert('FAIL: ' + document.cookie); document.cookie = 'xssAuditorTestCookie=remove; max-age=-1'; } else alert('PASS');</script>\n";
 }
 if ($cgi->param('echo-report')) {
-    print "<script src=/security/contentSecurityPolicy/resources/go-to-echo-report.js></script>\n";
+    print "<script src=/security/contentSecurityPolicy/resources/go-to-echo-report.php?test=" . $cgi->param('test') . "></script>\n";
 }
 if ($cgi->param('inHead')) {
     print "</head>\n";

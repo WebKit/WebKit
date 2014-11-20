@@ -11,7 +11,7 @@ if (window.testRunner) {
 </head>
 <body>
 <p>This script should run because XSS protection is disabled.</p>
-<iframe id="frame" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?disable-protection=1&q=<script>alert(/PASS/)</script>">
+<iframe id="frame" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/no-protection-script-tag.html&disable-protection=1&q=<script>alert(/PASS/)</script>">
 </iframe>
 </body>
 </html>

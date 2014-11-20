@@ -16,7 +16,7 @@
           document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
       }
 
-      var protectedResource = "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.html";
+      var protectedResource = "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/xmlhttprequest-protected-resource-does-not-crash.html";
       var xhr = new XMLHttpRequest();
       xhr.responseType = "document";
       xhr.onreadystatechange = function () {

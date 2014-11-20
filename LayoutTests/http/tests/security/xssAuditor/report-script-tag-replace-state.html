@@ -14,7 +14,7 @@ if (window.testRunner) {
 <body>
 <p>This tests that the X-XSS-Protection reports are sent out properly with
 the original, unmodified URL even when a history.replaceState() changes it.</p>
-<iframe id="frame" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?test=report-script-tag.html&echo-report=1&enable-report=1&replaceState=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message, no JavaScript alert(), and a dump of the report below, then the test PASSED.</p>">
+<iframe id="frame" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/report-script-tag-replace-state.html&test=report-script-tag.html&echo-report=1&enable-report=1&replaceState=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message, no JavaScript alert(), and a dump of the report below, then the test PASSED.</p>">
 </iframe>
 </body>
 </html>

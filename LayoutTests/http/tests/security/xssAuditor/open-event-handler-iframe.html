@@ -9,7 +9,7 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<iframe%20onload=alert(String.fromCharCode(0x58,0x53,0x53))//">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/open-event-handler-iframe.html&q=<iframe%20onload=alert(String.fromCharCode(0x58,0x53,0x53))//">
 </iframe>
 </body>
 </html>

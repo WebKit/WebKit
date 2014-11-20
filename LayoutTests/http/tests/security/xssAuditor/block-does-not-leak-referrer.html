@@ -16,7 +16,7 @@
         window.onload = function () {
             var i = document.querySelector('iframe');
             i.onload = checkReferer;
-            i.src = 'http://localhost:8000/resources/redirect.php?url=http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1%26q=<script>alert(String.fromCharCode(0x58,0x53,0x53))<' + '/script>';
+            i.src = 'http://localhost:8000/resources/redirect.php?test=/security/xssAuditor/block-does-not-leak-referrer.html&url=http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1%26q=<script>alert(String.fromCharCode(0x58,0x53,0x53))<' + '/script>';
         };
     </script>
     <script src="/resources/js-test-post.js"></script>

@@ -20,7 +20,7 @@ function testMixedHeader(csp, xssProtection) {
     if (xssProtection == 'invalid')
         params.push('malformed-header=1');
 
-    var url = '/security/xssAuditor/resources/echo-intertag.pl?';
+    var url = '/security/xssAuditor/resources/echo-intertag.pl?test=' + location.pathname;
     url += params.join('&amp;');
 
     document.write('<p>Testing behavior when "reflected-xss" is set to ' + csp + ', and "X-XSS-Protection" is set to ' + xssProtection + '.');

@@ -10,6 +10,6 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<script>alert('%8f%5f')</script>&charset=shift_jis&notifyDone=1"></iframe>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/xss-filter-bypass-sjis.html&q=<script>alert('%8f%5f')</script>&charset=shift_jis&notifyDone=1"></iframe>
 </body>
 </html>
