@@ -1,5 +1,27 @@
 2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: LayoutTests/inspector should not have localStorage side effects
+        https://bugs.webkit.org/show_bug.cgi?id=138895
+
+        Reviewed by Brian Burg.
+
+        When running inspector tests, do not restore/save WebInspector.Settings
+        to localStorage, as that will cause side effects. Instead each Setting
+        will be initialized with its default value and can be modified during
+        the run of the test.
+
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        Name the setting to match the normal setting name now that persistence
+        is not an issue.
+
+        * UserInterface/Models/Setting.js:
+        (WebInspector.Setting.prototype.get value):
+        (WebInspector.Setting.prototype.set value):
+        Do not restore/save when in tests.
+
+2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: JSContext inspection Resource search does not work
         https://bugs.webkit.org/show_bug.cgi?id=131252
 
