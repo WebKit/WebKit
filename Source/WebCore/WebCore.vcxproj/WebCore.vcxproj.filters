@@ -3057,6 +3057,9 @@
     <ClCompile Include="..\dom\ActiveDOMObject.cpp">
       <Filter>dom</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\AnimationEvent.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
     <ClCompile Include="..\dom\Attr.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -5210,6 +5213,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAnimationEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAttr.cpp">
@@ -10113,6 +10119,9 @@
     <ClInclude Include="..\dom\ActiveDOMObject.h">
       <Filter>dom</Filter>
     </ClInclude>
+    <ClInclude Include="..\dom\AnimationEvent.h">
+      <Filter>dom</Filter>
+    </ClInclude>
     <ClInclude Include="..\dom\Attr.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -13131,6 +13140,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAnimationEvent.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAttr.h">

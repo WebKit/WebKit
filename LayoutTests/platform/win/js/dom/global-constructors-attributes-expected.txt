@@ -3,6 +3,11 @@ Test to ensure that global constructors have the right attributes
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').value is AnimationEvent
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').value is Attr
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').hasOwnProperty('set') is false

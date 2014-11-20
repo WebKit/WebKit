@@ -3,6 +3,7 @@ namespace="Event"
 Event
 Events interfaceName=Event
 HTMLEvents interfaceName=Event
+AnimationEvent
 BeforeLoadEvent
 BeforeUnloadEvent
 CloseEvent

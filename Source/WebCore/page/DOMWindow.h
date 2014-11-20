@@ -360,6 +360,9 @@ namespace WebCore {
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationstart, webkitAnimationStart);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationiteration, webkitAnimationIteration);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkitanimationend, webkitAnimationEnd);
+        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(animationstart, animationstart);
+        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(animationiteration, animationiteration);
+        DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(animationend, animationend);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(webkittransitionend, webkitTransitionEnd);
         DEFINE_MAPPED_ATTRIBUTE_EVENT_LISTENER(transitionend, transitionend);
 

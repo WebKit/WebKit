@@ -169,6 +169,9 @@ novalidate
 nowrap
 object
 onabort
+onanimationstart
+onanimationiteration
+onanimationend
 onautocomplete
 onautocompleteerror
 onbeforecopy

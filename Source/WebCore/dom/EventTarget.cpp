@@ -35,6 +35,7 @@
 #include "EventException.h"
 #include "InspectorInstrumentation.h"
 #include "ScriptController.h"
+#include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
@@ -168,6 +169,15 @@ void EventTarget::uncaughtExceptionInEventHandler()
 
 static const AtomicString& legacyType(const Event* event)
 {
+    if (event->type() == eventNames().animationendEvent)
+        return eventNames().webkitAnimationEndEvent;
+
+    if (event->type() == eventNames().animationstartEvent)
+        return eventNames().webkitAnimationStartEvent;
+
+    if (event->type() == eventNames().animationiterationEvent)
+        return eventNames().webkitAnimationIterationEvent;
+
     if (event->type() == eventNames().transitionendEvent)
         return eventNames().webkitTransitionEndEvent;
 

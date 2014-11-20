@@ -8,6 +8,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').value is AnimationEvent
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').value is Attr
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').hasOwnProperty('set') is false

@@ -357,6 +357,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/WebKitCSSTransformValue.idl
     css/WebKitCSSViewportRule.idl
 
+    dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeLoadEvent.idl
     dom/BeforeUnloadEvent.idl
@@ -1298,6 +1299,7 @@ set(WebCore_SOURCES
     cssjit/SelectorCompiler.cpp
 
     dom/ActiveDOMObject.cpp
+    dom/AnimationEvent.cpp
     dom/Attr.cpp
     dom/BeforeTextInsertedEvent.cpp
     dom/BeforeUnloadEvent.cpp

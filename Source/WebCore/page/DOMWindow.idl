@@ -272,6 +272,9 @@
     attribute EventListener onwebkitanimationend;
     attribute EventListener onwebkitanimationiteration;
     attribute EventListener onwebkitanimationstart;
+    attribute EventListener onanimationend;
+    attribute EventListener onanimationiteration;
+    attribute EventListener onanimationstart;
     attribute EventListener onwebkittransitionend;
     attribute EventListener ontransitionend;
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS

@@ -31,6 +31,7 @@
 
 #include "AnimationBase.h"
 #include "AnimationControllerPrivate.h"
+#include "AnimationEvent.h"
 #include "CSSParser.h"
 #include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
@@ -178,7 +179,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
         if (it->eventType == eventNames().transitionendEvent)
             element->dispatchEvent(TransitionEvent::create(it->eventType, it->name, it->elapsedTime, PseudoElement::pseudoElementNameForEvents(element->pseudoId())));
         else
-            element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
+            element->dispatchEvent(AnimationEvent::create(it->eventType, it->name, it->elapsedTime));
     }
 
     for (unsigned i = 0, size = m_elementChangesToDispatch.size(); i < size; ++i)

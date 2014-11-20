@@ -326,6 +326,9 @@ void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicString
     };
 
     const CustomMapping customTable[] = {
+        { onanimationendAttr, eventNames().animationendEvent },
+        { onanimationiterationAttr, eventNames().animationiterationEvent },
+        { onanimationstartAttr, eventNames().animationstartEvent },
         { ontransitionendAttr, eventNames().webkitTransitionEndEvent },
         { onwebkitanimationendAttr, eventNames().webkitAnimationEndEvent },
         { onwebkitanimationiterationAttr, eventNames().webkitAnimationIterationEvent },

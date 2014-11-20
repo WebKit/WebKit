@@ -1,3 +1,76 @@
+2014-11-20  Dean Jackson  <dino@apple.com>
+
+        Support unprefixed animation event types
+        https://bugs.webkit.org/show_bug.cgi?id=138931
+        <rdar://problem/18943167>
+
+        Reviewed by Simon Fraser.
+
+        Tests: animations/unprefixed-events-mixed-with-prefixed.html
+               animations/unprefixed-events.html
+
+        Support the unprefixed animation event names:
+        - animationstart (was webkitAnimationStart)
+        - animationiteration (was webkitAnimationIteration)
+        - animationend (was webkitAnimationEnd)
+
+        (Yes, event types are case sensitive and yes, this will
+        likely cause some head-scratching as people change content)
+
+        The approach here is to follow what transitions does:
+        - listener only for old event name -> fire old event name
+        - listener for both old and new event name -> fire new event name
+        - listener only for new event name -> fire new event name
+
+        That way pages that were trying to anticipate the new event name
+        won't get duplicate events.
+
+        * CMakeLists.txt: Add new AnimationEvent* stuff.
+        * DerivedSources.make: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/js/JSBindingsAllInOne.cpp: New files for all in one builds.
+        * dom/DOMAllInOne.cpp:
+
+        * dom/AnimationEvent.cpp: Added. Copied from WebKitAnimationEvent.cpp.
+        (WebCore::AnimationEventInit::AnimationEventInit):
+        (WebCore::AnimationEvent::AnimationEvent):
+        (WebCore::AnimationEvent::~AnimationEvent):
+        (WebCore::AnimationEvent::animationName):
+        (WebCore::AnimationEvent::elapsedTime):
+        (WebCore::AnimationEvent::eventInterface):
+        * dom/AnimationEvent.h: Added. Copied from WebKitAnimationEvent.h.
+        * dom/AnimationEvent.idl: Added. Copied from WebKitAnimationEvent.idl.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded): Handle new event types.
+
+        * dom/EventNames.h: New names.
+        * dom/EventNames.in:
+
+        * dom/EventTarget.cpp:
+        (WebCore::legacyType): Provide a mapping from the new names to the older
+        prefixed forms.
+
+        * html/HTMLAttributeNames.in: Support the on* attributes, even though I
+        hate them and wish this approach would die.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::populateEventNameForAttributeLocalNameMap):
+
+        * page/DOMWindow.h: New names, and constructors.
+        * page/DOMWindow.idl:
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle): Fire new type.
+
+        * page/animation/KeyframeAnimation.cpp: Fire the new types of events.
+        (WebCore::KeyframeAnimation::onAnimationStart):
+        (WebCore::KeyframeAnimation::onAnimationIteration):
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+
 2014-11-20  Tim Horton  <timothy_horton@apple.com>
 
         Remove a piece of DataDetectors SPI that we aren't using anymore

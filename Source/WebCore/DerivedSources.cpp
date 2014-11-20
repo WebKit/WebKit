@@ -31,6 +31,7 @@
 #include "JSANGLEInstancedArrays.cpp"
 #endif
 #include "JSAbstractWorker.cpp"
+#include "JSAnimationEvent.cpp"
 #include "JSAttr.cpp"
 #include "JSBarProp.cpp"
 #include "JSBeforeLoadEvent.cpp"

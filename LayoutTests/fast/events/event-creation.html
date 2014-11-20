@@ -17,6 +17,11 @@
     shouldBeTrue("document.createEvent('HTMLEvents') instanceof window.Event");
     shouldBeTrue("document.createEvent('HTMLEvents').constructor === window.Event");
 
+    // AnimationEvent
+    shouldBeTrue("document.createEvent('AnimationEvent') instanceof window.AnimationEvent");
+    shouldBeTrue("document.createEvent('AnimationEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('AnimationEvent').constructor === window.AnimationEvent");
+
     // BeforeLoadEvent
     shouldBeTrue("document.createEvent('BeforeLoadEvent') instanceof window.BeforeLoadEvent");
     shouldBeTrue("document.createEvent('BeforeLoadEvent') instanceof window.Event");

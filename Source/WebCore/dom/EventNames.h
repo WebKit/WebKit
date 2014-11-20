@@ -199,6 +199,9 @@ namespace WebCore {
     macro(webkitAnimationEnd) \
     macro(webkitAnimationStart) \
     macro(webkitAnimationIteration) \
+    macro(animationend) \
+    macro(animationstart) \
+    macro(animationiteration) \
     \
     macro(webkitTransitionEnd) \
     macro(transitionend) \
