@@ -67,7 +67,6 @@ public:
         float contentImageScaleFactor;
         RefPtr<ShareableBitmap> contentImageWithHighlight;
         RefPtr<ShareableBitmap> contentImage;
-
         PresentationTransition presentationTransition;
 
         void encode(IPC::ArgumentEncoder&) const;
@@ -81,19 +80,19 @@ public:
     ~TextIndicator();
 
     WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_data.selectionRectInWindowCoordinates; }
-
+    WebCore::FloatRect textBoundingRectInWindowCoordinates() const { return m_data.textBoundingRectInWindowCoordinates; }
+    const Vector<WebCore::FloatRect>& textRectsInBoundingRectCoordinates() const { return m_data.textRectsInBoundingRectCoordinates; }
+    float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
+    ShareableBitmap *contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
+    ShareableBitmap *contentImage() const { return m_data.contentImage.get(); }
     PresentationTransition presentationTransition() const { return m_data.presentationTransition; }
+
     void setPresentationTransition(PresentationTransition transition) { m_data.presentationTransition = transition; }
 
-    WebCore::FloatRect frameRect() const;
     Data data() const { return m_data; }
-
-    void draw(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
 private:
     TextIndicator(const TextIndicator::Data&);
-
-    void drawContentImage(WebCore::GraphicsContext&, WebCore::FloatRect textRect);
 
     Data m_data;
 };
