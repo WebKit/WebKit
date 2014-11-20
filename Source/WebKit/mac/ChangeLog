@@ -1,3 +1,19 @@
+2014-11-20  Tim Horton  <timothy_horton@apple.com>
+
+        Cancel DataDetectors menu earlier if we know it can't be presented
+        https://bugs.webkit.org/show_bug.cgi?id=138922
+        <rdar://problem/18950441>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController prepareForMenu:withEvent:]):
+        Move our call to shouldUseActionsWithContext earlier, to menuNeedsUpdate,
+        and use a bigger hammer (removeAllItems).
+
+        (-[WebActionMenuController willOpenMenu:withEvent:]):
+        If we end up with a menu with no items, don't change selection or anything.
+
 2014-11-20  Beth Dakin  <bdakin@apple.com>
 
         Invalid message WebPageProxy.DidPerformDictionaryLookup on Google stocks result
