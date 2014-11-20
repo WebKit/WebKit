@@ -1,3 +1,20 @@
+2014-11-20  Anders Carlsson  <andersca@apple.com>
+
+        WebPlugInClient::m_webPage can never be null, use a reference
+        https://bugs.webkit.org/show_bug.cgi?id=138937
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebCoreSupport/WebPlugInClient.cpp:
+        (WebKit::WebPlugInClient::WebPlugInClient):
+        (WebKit::WebPlugInClient::shouldAutoStartFromOrigin):
+        * WebProcess/WebCoreSupport/WebPlugInClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin):
+        * WebProcess/WebProcess.h:
+
 2014-11-20  Tim Horton  <timothy_horton@apple.com>
 
         TextIndicator should have getters for TextIndicator::Data properties

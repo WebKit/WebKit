@@ -35,14 +35,15 @@ class WebPage;
 
 class WebPlugInClient : public WebCore::PlugInClient {
 public:
-    WebPlugInClient(WebPage*);
+    explicit WebPlugInClient(WebPage&);
     virtual ~WebPlugInClient();
+
 private:
     virtual void pageDestroyed();
     virtual bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
     virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
 
-    WebPage* m_page;
+    WebPage& m_webPage;
 };
 
 } // namespace WebKit
