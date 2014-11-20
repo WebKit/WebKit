@@ -29,6 +29,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #import "DictionaryPopupInfo.h"
+#import "TextIndicator.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
@@ -43,7 +44,7 @@ namespace WebKit {
 
 void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {
-    m_page->performDictionaryLookupForSelection(frame, frame->selection().selection());
+    m_page->performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicator::PresentationTransition::BounceAndCrossfade);
 }
 
 bool WebContextMenuClient::isSpeaking()

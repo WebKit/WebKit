@@ -1,5 +1,63 @@
 2014-11-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176363. rdar://problem/18840128    
+
+    2014-11-19  Tim Horton  <timothy_horton@apple.com>
+
+            Add an optional entry transition (from selection highlight) to TextIndicator
+            https://bugs.webkit.org/show_bug.cgi?id=138856
+            <rdar://problem/18840128>
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/TextIndicator.cpp:
+            (WebKit::outsetIndicatorRectIncludingShadow):
+            (WebKit::TextIndicator::createWithRange):
+            (WebKit::snapshotSelectionWithHighlight):
+            (WebKit::TextIndicator::createWithSelectionInFrame):
+            (WebKit::TextIndicator::frameRect):
+            (WebKit::TextIndicator::Data::encode):
+            (WebKit::TextIndicator::Data::decode):
+            Remove TextIndicator::draw and related functions; drawing is handled entirely
+            by the TextIndicatorWindow now, and TextIndicator just stores the required data.
+
+            Unify outsetIndicatorRectIncludingShadow.
+
+            Add an argument to createWithRange/createWithSelectionInFrame to indicate
+            if the TextIndicator should transition from the selection highlight to
+            the yellow bubble.
+
+            If we're doing the transition, paint the selection into a second bitmap,
+            without forcing the text to black and without hiding the blue highlight.
+
+            Encode/decode the second bitmap.
+
+            * Shared/TextIndicator.h:
+            * UIProcess/mac/TextIndicatorWindow.h:
+            * UIProcess/mac/TextIndicatorWindow.mm:
+            (-[WKTextIndicatorView initWithFrame:textIndicator:margin:transitionFromSelectionColor:]):
+            (-[WKTextIndicatorView presentWithCompletionHandler:]):
+            (-[WKTextIndicatorView hideWithCompletionHandler:]):
+            (-[WKTextIndicatorView isFlipped]):
+            (WebKit::TextIndicatorWindow::TextIndicatorWindow):
+            (WebKit::TextIndicatorWindow::setTextIndicator):
+            (WebKit::TextIndicatorWindow::closeWindow):
+            (WebKit::TextIndicatorWindow::startFadeOutTimerFired):
+            Re-implement the bounce animation using CoreAnimation instead of
+            the WKSI-based WKWindowBounceAnimation*.
+
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performDictionaryLookupForSelection):
+            (WebKit::WebPage::performDictionaryLookupOfCurrentSelection):
+            (WebKit::WebPage::performDictionaryLookupForRange):
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+            Use the aforementioned transition animation for performDictionaryLookupOfCurrentSelection,
+            the context menu lookup item, and for Data Detectors.
+
+2014-11-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r176356. rdar://problem/18996776
 
     2014-11-19  Beth Dakin  <bdakin@apple.com>
