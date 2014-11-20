@@ -1,3 +1,28 @@
+2014-11-19  Dean Jackson  <dino@apple.com>
+
+        Handle unprefixed @keyframes rule
+        https://bugs.webkit.org/show_bug.cgi?id=138899
+        <rdar://problem/18943117>
+
+        Reviewed by Simon Fraser.
+
+        Support the parsing of unprefixed @keyframes. In
+        CSSParser, assign the same token identifier to
+        the prefixed and unprefixed forms. This will
+        keep compatibility with older content. If a page
+        has both forms, then whatever comes last will
+        win (as it does if you had duplicate names of the same
+        form).
+
+        Tests: animations/unprefixed-keyframes-rule.html
+               animations/unprefixed-keyframes.html
+
+        * css/CSSGrammar.y.in: Rename the WEBKIT_KEYFRAME_RULE_SYM symbol to
+        be KEYFRAME_RULE_SYM. Same with KEYFRAMES_SYM.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectAtToken): Look for the @keyframes style
+        strings and assign the new token values.
+
 2014-11-19  Andreas Kling  <akling@apple.com>
 
         Move pseudo-style code from RenderObject to RenderElement.

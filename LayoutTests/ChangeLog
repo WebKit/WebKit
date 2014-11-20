@@ -1,3 +1,18 @@
+2014-11-19  Dean Jackson  <dino@apple.com>
+
+        Handle unprefixed @keyframes rule
+        https://bugs.webkit.org/show_bug.cgi?id=138899
+        <rdar://problem/18943117>
+
+        Reviewed by Simon Fraser.
+
+        Tests for @keyframes, both the OM side and the parsing.
+
+        * animations/unprefixed-keyframes-expected.txt: Added.
+        * animations/unprefixed-keyframes-rule-expected.txt: Added.
+        * animations/unprefixed-keyframes-rule.html: Added.
+        * animations/unprefixed-keyframes.html: Added.
+
 2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection Resource search does not work
