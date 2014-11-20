@@ -1,3 +1,16 @@
+2014-11-19  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Fix build failure since r176363.
+        https://bugs.webkit.org/show_bug.cgi?id=138903
+
+        Reviewed by Gyuyoung Kim.
+
+        The parameter for animation on setTextIndicator() was removed on 'PageClient' class.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::setTextIndicator):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2014-11-19  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the iOS build
