@@ -16,13 +16,11 @@ EXPECTED (inbandTrack1.kind == 'captions') OK
 
 RUN(inbandTrack1.mode = 'showing')
 RUN(video.play())
-EXPECTED (inbandTrack1.cues.length > '0') OK
 RUN(video.pause())
 RUN(video.currentTime = 0)
 RUN(video.play())
 
 EVENT(seeked)
-EXPECTED (inbandTrack1.cues.length > '0') OK
 RUN(video.pause())
 END OF TEST
 

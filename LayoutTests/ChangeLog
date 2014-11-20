@@ -1,3 +1,15 @@
+2014-11-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Update media/track/track-in-band-cues-added-once.html to make failures easier to diagnose
+        https://bugs.webkit.org/show_bug.cgi?id=138908
+
+        Reviewed by Alexey Proskuryakov.
+
+        * media/track/track-in-band-cues-added-once.html: Update test to remove one potential
+            source of flakeyness and to do more logging in the event of a failure to make debugging 
+            failures simpler.
+        * media/track/track-in-band-cues-added-once-expected.txt:
+
 2014-11-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Temporarily skip almost all DRT tests

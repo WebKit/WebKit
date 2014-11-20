@@ -30,9 +30,7 @@
                 if (video.currentTime < 2)
                     return;
 
-                testExpected("inbandTrack1.cues.length", 0, ">");
-
-                if (!seekedCount) {
+                if (!seekedCount && inbandTrack1.cues.length >= 5) {
                     // Collect the start times of all cues, seek back to the beginning and play
                     // the same segment of the video file.
                     run("video.pause()");
@@ -44,11 +42,28 @@
                     return;
                 }
 
+                if (inbandTrack1.cues.length < cuesStarts.length)
+                    return;
+
                 run("video.pause()");
+                var failure = false;
                 for (var i = 0; i < cuesStarts.length; ++i) {
-                    if (cuesStarts[i] != inbandTrack1.cues[i].startTime)
-                        logResult(false, "Found unexpected cue starting at " + inbandTrack1.cues[i].startTime);
+                    if (cuesStarts[i] != inbandTrack1.cues[i].startTime) {
+                        failure = true;
+                        break;
+                    }
                 }
+
+                if (failure) {
+                    consoleWrite("<br><i>** FAIL<" + "/i>");
+                    for (var i = 0; i < cuesStarts.length; ++i) {
+                        var oldStart = cuesStarts[i];
+                        var newStart = inbandTrack1.cues[i].startTime;
+                        consoleWrite("Cue " + i + " start time was: " + oldStart + ", is now: " + newStart);
+                    }
+                    consoleWrite("");
+                }
+
                 endTest();
             }
 
