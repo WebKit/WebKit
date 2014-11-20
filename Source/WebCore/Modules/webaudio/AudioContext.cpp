@@ -142,6 +142,9 @@ AudioContext::AudioContext(Document& document)
     constructCommon();
 
     m_destinationNode = DefaultAudioDestinationNode::create(this);
+
+    // Initialize the destination node's muted state to match the page's current muted state.
+    pageMutedStateDidChange();
 }
 
 // Constructor for offline (non-realtime) rendering.
@@ -975,7 +978,8 @@ bool AudioContext::isPlayingAudio()
 
 void AudioContext::pageMutedStateDidChange()
 {
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=138104: Handle muting web audio.
+    if (m_destinationNode && document()->page())
+        m_destinationNode->setMuted(document()->page()->isMuted());
 }
 
 void AudioContext::isPlayingAudioDidChange()

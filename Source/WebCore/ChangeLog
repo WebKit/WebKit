@@ -1,3 +1,30 @@
+2014-11-19  Ada Chan  <adachan@apple.com>
+
+        Add a way to mute an AudioContext.
+        https://bugs.webkit.org/show_bug.cgi?id=138104
+
+        Reviewed by Eric Carlson.
+
+        Keep a muted state in AudioDestinationNode. If m_muted is true,
+        zero out the audio buffers.
+
+        No new tests, since it's difficult to test whether the audio is indeed muted.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        Call pageMutedStateDidChange() so it'll initialize the destination audio node's muted state accordingly.
+        (WebCore::AudioContext::pageMutedStateDidChange):
+        Set the destination audio node's muted state to match the page's muted state.
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        Initialize m_muted.
+        (WebCore::AudioDestinationNode::render):
+        If m_muted is true, call AudioBus::zero() to zero out the buffers.
+        * Modules/webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::setMuted):
+        Set m_muted.
+
 2014-11-20  Chris Dumez  <cdumez@apple.com>
 
         Crash when destroying a Document that has a throttled timer still running

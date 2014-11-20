@@ -41,6 +41,7 @@ AudioDestinationNode::AudioDestinationNode(AudioContext* context, float sampleRa
     , m_currentSampleFrame(0)
     , m_isSilent(true)
     , m_isEffectivelyPlayingAudio(false)
+    , m_muted(false)
 {
     addInput(std::make_unique<AudioNodeInput>(this));
     
@@ -107,6 +108,11 @@ void AudioDestinationNode::render(AudioBus* sourceBus, AudioBus* destinationBus,
     m_currentSampleFrame += numberOfFrames;
 
     setIsSilent(destinationBus->isSilent());
+
+    // The reason we are handling mute after the call to setIsSilent() is because the muted state does
+    // not affect the audio destination node's effective playing state.
+    if (m_muted)
+        destinationBus->zero();
 }
 
 void AudioDestinationNode::isPlayingDidChange()
