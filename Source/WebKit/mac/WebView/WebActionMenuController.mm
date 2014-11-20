@@ -878,6 +878,13 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         return [self _defaultMenuItemsForWhitespaceInEditableArea];
     }
 
+    if (_hitTestResult.isSelected()) {
+        // A selection should present the read-only text menu. It might make more sense to present a new
+        // type of menu with just copy, but for the time being, we should stay consistent with text.
+        _type = WebActionMenuReadOnlyText;
+        return [self _defaultMenuItemsForText];
+    }
+
     _type = WebActionMenuNone;
     return @[ ];
 }
