@@ -39,7 +39,6 @@ public:
 private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 };
     

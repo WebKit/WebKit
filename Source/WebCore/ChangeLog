@@ -1,5 +1,30 @@
 2014-11-20  Andreas Kling  <akling@apple.com>
 
+        Remove "document has no sibling rules" optimization.
+        <https://webkit.org/b/138902>
+
+        Reviewed by Antti Koivisto.
+
+        We were keeping a document-level flag to track whether there are any
+        sibling rules in any active style sheets.
+
+        This information was used to do.. nothing.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::usesSiblingRules): Deleted.
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::combineCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::resetCSSFeatureFlags):
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::usesSiblingRules): Deleted.
+        (WebCore::DocumentStyleSheetCollection::setUsesSiblingRulesOverride): Deleted.
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::insertedInto): Deleted.
+        * mathml/MathMLMathElement.h:
+
+2014-11-20  Andreas Kling  <akling@apple.com>
+
         Caret renderer is always a RenderBlock.
         <https://webkit.org/b/138912>
 
