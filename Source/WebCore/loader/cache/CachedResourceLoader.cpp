@@ -182,8 +182,12 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
 
 CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest& request, bool isSVG)
 {
+#if ENABLE(SVG_FONTS)
     if (isSVG)
         return downcast<CachedSVGFont>(requestResource(CachedResource::SVGFontResource, request).get());
+#else
+    UNUSED_PARAM(isSVG);
+#endif
     return downcast<CachedFont>(requestResource(CachedResource::FontResource, request).get());
 }
 

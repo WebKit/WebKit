@@ -1,3 +1,17 @@
+2014-11-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the !ENABLE(SVG_FONTS) build after r176276
+        https://bugs.webkit.org/show_bug.cgi?id=138924
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestFont):
+
 2014-11-19  Ada Chan  <adachan@apple.com>
 
         Add a way to mute an AudioContext.

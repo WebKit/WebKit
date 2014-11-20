@@ -124,10 +124,14 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
     if (isLoaded()) {
         if (m_font) {
             // Create new FontPlatformData from our CGFontRef, point size and ATSFontRef.
-            if (!m_font->ensureCustomFontData(m_hasExternalSVGFont))
+            bool hasExternalSVGFont = false;
+#if ENABLE(SVG_FONTS)
+            hasExternalSVGFont = m_hasExternalSVGFont;
+#endif
+            if (!m_font->ensureCustomFontData(hasExternalSVGFont))
                 return nullptr;
 
-            fontData = m_font->getFontData(fontDescription, m_string, syntheticBold, syntheticItalic, m_hasExternalSVGFont);
+            fontData = m_font->getFontData(fontDescription, m_string, syntheticBold, syntheticItalic, hasExternalSVGFont);
         } else {
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
