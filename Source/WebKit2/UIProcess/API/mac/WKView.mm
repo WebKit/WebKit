@@ -2698,7 +2698,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
-    [self _setTextIndicator:nil fadeOut:NO animate:NO];
+    [self _setTextIndicator:nil fadeOut:NO];
 }
 
 - (void)_accessibilityRegisterUIProcessTokens
@@ -3069,7 +3069,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
-- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate animationCompletionHandler:(std::function<void ()>)completionHandler
+- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler
 {
     if (!textIndicator) {
         _data->_textIndicatorWindow = nullptr;
@@ -3079,12 +3079,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (!_data->_textIndicatorWindow)
         _data->_textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
-    _data->_textIndicatorWindow->setTextIndicator(textIndicator, fadeOut, animate, WTF::move(completionHandler));
+    _data->_textIndicatorWindow->setTextIndicator(textIndicator, fadeOut, WTF::move(completionHandler));
 }
 
-- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
+- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut
 {
-    [self _setTextIndicator:textIndicator fadeOut:fadeOut animate:animate animationCompletionHandler:[] {}];
+    [self _setTextIndicator:textIndicator fadeOut:fadeOut animationCompletionHandler:[] { }];
 }
 
 - (CALayer *)_rootLayer

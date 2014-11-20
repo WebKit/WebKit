@@ -44,6 +44,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "TextIndicator.h"
 #include "UserMediaPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
@@ -670,7 +671,7 @@ public:
     void speak(const String&);
     void stopSpeaking();
 
-    void performDictionaryLookupForSelection(WebCore::Frame*, const WebCore::VisibleSelection&);
+    void performDictionaryLookupForSelection(WebCore::Frame*, const WebCore::VisibleSelection&, TextIndicator::PresentationTransition);
 #endif
 
     bool isSmartInsertDeleteEnabled();
@@ -984,7 +985,7 @@ private:
 #if PLATFORM(COCOA)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     void performDictionaryLookupOfCurrentSelection();
-    void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options);
+    void performDictionaryLookupForRange(WebCore::Frame*, WebCore::Range&, NSDictionary *options, TextIndicator::PresentationTransition);
 
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
 

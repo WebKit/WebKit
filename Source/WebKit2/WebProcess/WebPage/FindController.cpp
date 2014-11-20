@@ -314,12 +314,12 @@ void FindController::hideFindUI()
 #if !PLATFORM(IOS)
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(selectedFrame));
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(selectedFrame), shouldAnimate ? TextIndicator::PresentationTransition::Bounce : TextIndicator::PresentationTransition::None);
     if (!indicator)
         return false;
 
     m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInWindowCoordinates());
-    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), !isShowingOverlay, shouldAnimate));
+    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), !isShowingOverlay));
     m_isShowingFindIndicator = true;
 
     return true;
@@ -330,7 +330,7 @@ void FindController::hideFindIndicator()
     if (!m_isShowingFindIndicator)
         return;
 
-    m_webPage->send(Messages::WebPageProxy::ClearTextIndicator(false, true));
+    m_webPage->send(Messages::WebPageProxy::ClearTextIndicator());
     m_isShowingFindIndicator = false;
     m_foundStringMatchIndex = -1;
     didHideFindIndicator();

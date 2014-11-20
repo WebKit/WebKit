@@ -120,7 +120,7 @@ private:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&);
 #endif
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, bool animate);
+    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut);
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();

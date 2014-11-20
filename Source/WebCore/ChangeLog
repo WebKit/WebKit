@@ -1,3 +1,17 @@
+2014-11-19  Tim Horton  <timothy_horton@apple.com>
+
+        Add an optional entry transition (from selection highlight) to TextIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=138856
+        <rdar://problem/18840128>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Add an export.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        Add some SPI.
+
 2014-11-19  Chris Dumez  <cdumez@apple.com>
 
         Move 'outline-style' CSS property to the new StyleBuilder

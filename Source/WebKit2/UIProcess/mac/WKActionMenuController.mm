@@ -273,7 +273,7 @@ using namespace WebKit;
         return;
 
     if (_hitTestResult.detectedDataTextIndicator) {
-        _page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false, true);
+        _page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false);
         _isShowingTextIndicator = YES;
     }
 }
@@ -283,7 +283,7 @@ using namespace WebKit;
     if (!_isShowingTextIndicator)
         return;
 
-    _page->clearTextIndicator(false, true);
+    _page->clearTextIndicator();
     _isShowingTextIndicator = NO;
 }
 

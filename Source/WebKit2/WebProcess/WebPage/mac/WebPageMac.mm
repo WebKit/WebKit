@@ -494,24 +494,24 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!range)
         return;
 
-    performDictionaryLookupForRange(frame, *range, options);
+    performDictionaryLookupForRange(frame, *range, options, TextIndicator::PresentationTransition::Bounce);
 }
 
-void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
+void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection, TextIndicator::PresentationTransition presentationTransition)
 {
     NSDictionary *options = nil;
     RefPtr<Range> selectedRange = rangeForDictionaryLookupForSelection(selection, &options);
     if (selectedRange)
-        performDictionaryLookupForRange(frame, *selectedRange, options);
+        performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
 }
 
 void WebPage::performDictionaryLookupOfCurrentSelection()
 {
     Frame* frame = &m_page->focusController().focusedOrMainFrame();
-    performDictionaryLookupForSelection(frame, frame->selection().selection());
+    performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicator::PresentationTransition::BounceAndCrossfade);
 }
 
-void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options)
+void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicator::PresentationTransition presentationTransition)
 {
     if (range.text().stripWhiteSpace().isEmpty())
         return;
@@ -548,7 +548,7 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDict
         [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 
-    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range);
+    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, presentationTransition);
     if (!textIndicator)
         return;
 
@@ -1040,7 +1040,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
 
         actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-        actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange);
+        actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, TextIndicator::PresentationTransition::BounceAndCrossfade);
         actionMenuResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         m_lastActionMenuRangeForSelection = mainResultRange;
 
@@ -1054,7 +1054,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         actionMenuResult.actionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
         if (actionMenuResult.actionContext && detectedDataRange) {
             actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-            actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange);
+            actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicator::PresentationTransition::BounceAndCrossfade);
             m_lastActionMenuRangeForSelection = detectedDataRange;
         }
     }

@@ -72,6 +72,7 @@ extern "C" {
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
 @property BOOL needsLayoutOnGeometryChange;
+@property BOOL shadowPathIsBounds;
 @end
 
 @interface CATiledLayer (Details)
