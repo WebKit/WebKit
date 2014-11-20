@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<iframe id="testFrame" src="resources/frame-with-throttled-timer.html"></iframe>
+
+<script>
+description("Test that we don't crash if a throttled timer is still running when the document is destroyed.");
+jsTestIsAsync = true;
+
+function removeFrame()
+{
+  document.body.removeChild(document.getElementById("testFrame"));
+  gc();
+  testPassed("Did not crash.");
+  finishJSTest();
+}
+
+setTimeout(removeFrame, 300);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

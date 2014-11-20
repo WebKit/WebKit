@@ -99,11 +99,6 @@ public:
         return document && document->domTreeVersion() != m_initialDOMTreeVersion;
     }
 
-    void setChangedStyleOfElementOutsideViewport(StyledElement& element)
-    {
-        m_elementsChangedOutsideViewport.add(&element);
-    }
-
     void elementsChangedOutsideViewport(Vector<RefPtr<StyledElement>>& elements) const
     {
         copyToVector(m_elementsChangedOutsideViewport, elements);
@@ -209,7 +204,9 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAct
 
 DOMTimer::~DOMTimer()
 {
-    if (isIntervalDependentOnViewport())
+    // If the ScriptExecutionContext has already been destroyed, there is
+    // no need to stop listening for viewport changes.
+    if (scriptExecutionContext() && isIntervalDependentOnViewport())
         unregisterForViewportChanges();
 }
 
@@ -443,6 +440,7 @@ void DOMTimer::registerForViewportChanges()
 
 void DOMTimer::unregisterForViewportChanges()
 {
+    ASSERT(scriptExecutionContext());
     if (auto* frameView = downcast<Document>(*scriptExecutionContext()).view())
         frameView->unregisterThrottledDOMTimer(this);
 

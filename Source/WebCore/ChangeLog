@@ -1,3 +1,32 @@
+2014-11-20  Chris Dumez  <cdumez@apple.com>
+
+        Crash when destroying a Document that has a throttled timer still running
+        https://bugs.webkit.org/show_bug.cgi?id=138914
+
+        Reviewed by Benjamin Poulain.
+
+        Upon destruction, a throttled DOMTimer whose interval depends on
+        viewport changes will try to unregister itself from the view. It gets
+        the view pointer from its Document. However, scriptExecutionContext()
+        can return null if the Document is being destroyed (i.e. ~DOMTimer()
+        is called from ~ScriptExecutionContext(), as the ScriptExecutionContext
+        owns the DOMTimer).
+
+        This patch adds a null check for scriptExecutionContext() in the
+        DOMTimer destructor to avoid this issue.
+
+        Test: fast/dom/throttled-timer-running-on-document-destruction.html
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::~DOMTimer):
+
+        (WebCore::DOMTimer::unregisterForViewportChanges):
+        Add assertion to make sure scriptExecutionContext() does not return
+        null.
+
+        (WebCore::DOMTimerFireState::setChangedStyleOfElementOutsideViewport): Deleted.
+        Killed this function as this was dead code.
+
 2014-11-20  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Introduce text fragment continuation.
