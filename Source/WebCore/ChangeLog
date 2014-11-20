@@ -1,3 +1,22 @@
+2014-11-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Crash getting the orientation of a MenuListOption after the MenuList was removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=138727
+
+        Reviewed by Chris Fleizach.
+
+        AccessibilityMenuListOption::elementRect() returns the value of the
+        grandparent MenuList, asserting that the grandparent exists with that
+        role. But it is possible to have an existing MenuListOption and remove
+        the element which had been backing that MenuList from the document.
+        Adding null checks prior to the assertions prevents our crashing if the
+        parent or grandparent was removed.
+
+        Test: platform/gtk/accessibility/combobox-descendants-orientation-crash.html
+
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::elementRect):
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit when setting a very large value to 'border-width' / 'font-size' CSS properties

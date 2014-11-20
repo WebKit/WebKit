@@ -1,3 +1,13 @@
+2014-11-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Crash getting the orientation of a MenuListOption after the MenuList was removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=138727
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/accessibility/combobox-descendants-orientation-crash-expected.txt: Added.
+        * platform/gtk/accessibility/combobox-descendants-orientation-crash.html: Added.
+
 2014-11-16  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit when setting a very large value to 'border-width' / 'font-size' CSS properties
