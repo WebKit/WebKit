@@ -519,7 +519,10 @@ public:
     WebCore::IntRect rectForElementAtInteractionLocation();
     void updateSelectionAppearance();
 
+#if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
+#endif
+
     void contentSizeCategoryDidChange(const String&);
     void executeEditCommandWithCallback(const String&, uint64_t callbackID);
 
@@ -773,8 +776,11 @@ public:
     void applicationWillEnterForeground();
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
-    void dispatchTouchEvent(const WebTouchEvent&, bool& handled);
     void completePendingSyntheticClickForContentChangeObserver();
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void dispatchTouchEvent(const WebTouchEvent&, bool& handled);
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

@@ -509,6 +509,7 @@ void WebPage::handleTap(const IntPoint& point)
 
 void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 {
+#if ENABLE(TOUCH_EVENTS)
     if (!node)
         return;
 
@@ -536,6 +537,10 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 
         send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, roundedIntSize(borderRadii.topLeft()), roundedIntSize(borderRadii.topRight()), roundedIntSize(borderRadii.bottomLeft()), roundedIntSize(borderRadii.bottomRight())));
     }
+#else
+    UNUSED_PARAM(requestID);
+    UNUSED_PARAM(node);
+#endif
 }
 
 void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position)
@@ -2706,12 +2711,14 @@ void WebPage::zoomToRect(FloatRect rect, double minimumScale, double maximumScal
     send(Messages::WebPageProxy::ZoomToRect(rect, minimumScale, maximumScale));
 }
 
+#if ENABLE(IOS_TOUCH_EVENTS)
 void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue)
 {
     bool ignored;
     for (const WebTouchEvent& event : queue)
         dispatchTouchEvent(event, ignored);
 }
+#endif
 
 void WebPage::computePagesForPrintingAndStartDrawingToPDF(uint64_t frameID, const PrintInfo& printInfo, uint32_t firstPage, PassRefPtr<Messages::WebPage::ComputePagesForPrintingAndStartDrawingToPDF::DelayedReply> reply)
 {

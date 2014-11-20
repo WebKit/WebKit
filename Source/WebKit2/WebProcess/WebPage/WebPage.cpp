@@ -4487,7 +4487,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_userHasChangedPageScaleFactor = false;
     m_estimatedLatency = std::chrono::milliseconds(1000 / 60);
 
+#if ENABLE(IOS_TOUCH_EVENTS)
     WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);
+#endif
 
     resetViewportDefaultConfiguration(frame);
     m_viewportConfiguration.resetMinimalUI();

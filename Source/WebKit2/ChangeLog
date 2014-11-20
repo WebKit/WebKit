@@ -1,3 +1,19 @@
+2014-11-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add more ENABLE({TOUCH_EVENTS, IOS_TOUCH_EVENTS})-guards in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=138928
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+
 2014-11-20  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKWebView loadData:MIMEType:textEncodingName:baseURL:]
