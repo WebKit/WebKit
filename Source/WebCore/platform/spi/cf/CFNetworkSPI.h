@@ -61,12 +61,6 @@ typedef const struct _CFURLRequest *CFURLRequestRef;
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif
 
-#ifdef __OBJC__
-enum : NSUInteger {
-    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
-};
-#endif
-
 #endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 
 EXTERN_C void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
@@ -100,6 +94,12 @@ EXTERN_C void CFURLConnectionInvalidateConnectionCache();
 @interface NSURLCache (Details)
 -(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
 @end
+#endif
+
+#if defined(__OBJC__) && (!USE(APPLE_INTERNAL_SDK) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090)
+enum : NSUInteger {
+    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
+};
 #endif
 
 #endif // CFNetworkSPI_h

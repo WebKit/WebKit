@@ -1,3 +1,13 @@
+2014-11-19  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Apple Internal Mavericks build after <https://trac.webkit.org/changeset/176347>
+        (https://bugs.webkit.org/show_bug.cgi?id=136863)
+
+        Define enumerator NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain when building without
+        the Apple Internal SDK or with the Apple Internal SDK on OS X Mavericks or earlier.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2014-11-16  Sam Weinig  <sam@webkit.org>
 
         Move the 'quotes' CSS property to the new StyleBuilder
