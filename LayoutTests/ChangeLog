@@ -1,3 +1,19 @@
+2014-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Introduce text fragment continuation.
+        https://bugs.webkit.org/show_bug.cgi?id=138274
+
+        Rebaseline for simple line layout's multiple rendere support.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-lines-multiple-renderers-expected.html: Added.
+        * fast/text/simple-lines-multiple-renderers.html: Added.
+        * fast/tokenizer/script_extra_close-expected.txt: Multiple tab characters should collapse into a single whitespace. This
+        needs fixing in complex line layout.
+        * tables/mozilla/bugs/bug157890-expected.txt: no-op endofline run is added by complex inline layout
+        when multiple text content is injected through JS into a <pre>. This requires fixing complex line layout.
+
 2014-11-20  Mark Lam  <mark.lam@apple.com>
 
         WTFCrashWithSecurityImplication under SpeculativeJIT::compile() when loading a page from theblaze.com.

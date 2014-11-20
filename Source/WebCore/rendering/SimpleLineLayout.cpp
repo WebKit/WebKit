@@ -37,6 +37,7 @@
 #include "LineWidth.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderChildIterator.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -93,14 +94,12 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (!flow.firstChild())
         return false;
-    // This currently covers <blockflow>#text</blockflow> case.
+    // This currently covers <blockflow>#text</blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
-    if (flow.firstChild() != flow.lastChild())
-        return false;
-    if (!is<RenderText>(flow.firstChild()))
-        return false;
-    if (!downcast<RenderText>(*flow.firstChild()).text()->is8Bit())
-        return false;
+    for (const auto& renderer : childrenOfType<RenderObject>(flow)) {
+        if (!is<RenderText>(renderer) || !downcast<RenderText>(renderer).text()->is8Bit())
+            return false;
+    }
     if (!flow.isHorizontalWritingMode())
         return false;
     if (flow.flowThreadState() != RenderObject::NotInsideFlowThread)
@@ -406,10 +405,8 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& li
         lineState.removeCommittedTrailingWhitespace();
     }
 
-    if (flowContents.isEndOfContent(lineState.position))
-        return;
     // If we skipped any whitespace and now the line end is a "preserved" newline, skip the newline too as we are wrapping the line here already.
-    if (lastPosition != lineState.position && style.preserveNewline && flowContents.isNewlineCharacter(lineState.position))
+    if (lastPosition != lineState.position && style.preserveNewline && !flowContents.isEndOfContent(lineState.position) && flowContents.isNewlineCharacter(lineState.position))
         ++lineState.position;
 }
 
@@ -471,7 +468,7 @@ static TextFragment splitFragmentToFitLine(TextFragment& fragmentToSplit, float 
     return fragmentForNextLine;
 }
 
-static TextFragment nextFragment(unsigned previousFragmentEnd, FlowContents& flowContents, float xPosition)
+static TextFragment nextFragment(unsigned previousFragmentEnd, const FlowContents& flowContents, float xPosition)
 {
     // A fragment can have
     // 1. new line character when preserveNewline is on (not considered as whitespace) or
@@ -510,7 +507,7 @@ static TextFragment nextFragment(unsigned previousFragmentEnd, FlowContents& flo
     return fragment;
 }
 
-static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, FlowContents& flowContents)
+static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, const FlowContents& flowContents)
 {
     const auto& style = flowContents.style();
     bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
@@ -586,6 +583,34 @@ static void closeLineEndingAndAdjustRuns(LineState& lineState, Layout::RunVector
     ++lineCount;
 }
 
+static void splitRunsAtRendererBoundary(Layout::RunVector& lineRuns, const FlowContents& flowContents)
+{
+    if (!lineRuns.size())
+        return;
+
+    unsigned runIndex = 0;
+    do {
+        const Run& run = lineRuns.at(runIndex);
+        ASSERT(run.start != run.end);
+        const RenderText* startRenderer = flowContents.renderer(run.start);
+        const RenderText* endRenderer = flowContents.renderer(run.end - 1);
+        if (startRenderer == endRenderer)
+            continue;
+        // This run overlaps multiple renderers. Split it up.
+        unsigned rendererStartPosition = 0;
+        unsigned rendererEndPosition = 0;
+        bool found = flowContents.resolveRendererPositions(*startRenderer, rendererStartPosition, rendererEndPosition);
+        ASSERT_UNUSED(found, found);
+
+        // Split run at the renderer's boundary and create a new run for the left side, while use the current run as the right side.
+        float logicalRightOfLeftRun = run.logicalLeft + flowContents.textWidth(run.start, rendererEndPosition, run.logicalLeft);
+        lineRuns.insert(runIndex, Run(run.start, rendererEndPosition, run.logicalLeft, logicalRightOfLeftRun, false));
+        Run& rightSideRun = lineRuns.at(runIndex + 1);
+        rightSideRun.start = rendererEndPosition;
+        rightSideRun.logicalLeft = logicalRightOfLeftRun;
+    } while (++runIndex < lineRuns.size());
+}
+
 static void updateLineConstrains(const RenderBlockFlow& flow, float& availableWidth, float& logicalLeftOffset)
 {
     LayoutUnit height = flow.logicalHeight();
@@ -610,6 +635,9 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
         isEndOfContent = createLineRuns(lineState, runs, flowContents);
         closeLineEndingAndAdjustRuns(lineState, runs, lineCount, flowContents);
     } while (!isEndOfContent);
+
+    if (flow.firstChild() != flow.lastChild())
+        splitRunsAtRendererBoundary(runs, flowContents);
     ASSERT(!lineState.uncommittedWidth);
 }
 
@@ -617,11 +645,12 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
 {
     unsigned lineCount = 0;
     Layout::RunVector runs;
-    RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
-    ASSERT(!textRenderer.firstTextBox());
 
     createTextRuns(runs, flow, lineCount);
-    textRenderer.clearNeedsLayout();
+    for (auto& renderer : childrenOfType<RenderObject>(flow)) {
+        ASSERT(is<RenderText>(renderer));
+        renderer.clearNeedsLayout();
+    }
     return Layout::create(runs, lineCount);
 }
 

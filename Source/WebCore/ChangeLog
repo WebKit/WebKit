@@ -1,3 +1,49 @@
+2014-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Introduce text fragment continuation.
+        https://bugs.webkit.org/show_bug.cgi?id=138274
+
+        This patch extends simple line layout coverage to multiple text renderers.
+        When a particular render flow has multiple text renderers (but not any other type)
+        then we use simple line layout to process and paint the content. -other, existing requirements still apply
+        so that for example if the content requires decoration, we bail out of simple line layout.
+
+        FlowContent now supports multiple renderes. It continuously reads content from sibling renderers
+        so that the simple line layout parser sees it as one monolithic block of content. Run positions
+        are all relative to the block and they get resolved to renderer's positions on demand.
+        (painting, computing bounding rects etc)
+
+        Reviewed by Antti Koivisto.
+
+        Performance test already been added for the multiple rendere use case,
+        correctness is covered by existing test cases.
+        Test: fast/text/simple-lines-mutliple-renderers.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor): Check if children are all 8bit RenderTexts.
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace): Move the endofline check right before where we might overflow using end position.
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::splitRunsAtRendererBoundary): Split runs at renderers' boundary to be in sync with inline text renderering.
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::create):
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        (WebCore::SimpleLineLayout::FlowContents::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::FlowContents::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContents::textWidth): Do not measure text across renderers. It could produce different width value due to
+        ligature which later can produce unexpected line breaks and out sync rendering in general.
+        (WebCore::SimpleLineLayout::FlowContents::renderer): 
+        (WebCore::SimpleLineLayout::FlowContents::resolveRendererPositions):
+        (WebCore::SimpleLineLayout::FlowContents::appendNextRendererContentIfNeeded): Read the next renderer content if needed.
+        (WebCore::SimpleLineLayout::FlowContents::nextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContents::runWidth):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::isNewlineCharacter):
+        (WebCore::SimpleLineLayout::FlowContents::isEndOfContent):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+
 2014-11-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r176396.

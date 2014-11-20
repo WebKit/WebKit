@@ -3497,7 +3497,9 @@ void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
     ASSERT(m_lineLayoutPath == SimpleLinesPath);
     lineBoxes().deleteLineBoxes();
-    downcast<RenderText>(*firstChild()).deleteLineBoxesBeforeSimpleLineLayout();
+    ASSERT(!childrenOfType<RenderElement>(*this).first());
+    for (auto& textRenderer : childrenOfType<RenderText>(*this))
+        textRenderer.deleteLineBoxesBeforeSimpleLineLayout();
 }
 
 void RenderBlockFlow::ensureLineBoxes()

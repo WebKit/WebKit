@@ -76,9 +76,11 @@ StringView RunResolver::Run::text() const
 {
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
-    const auto& renderer = resolver.m_flowContents.renderer(run.start);
-    ASSERT(renderer.is8Bit());
-    return StringView(renderer.characters8(), renderer.textLength()).substring(run.start, run.end - run.start);
+    unsigned rendererOffset = 0;
+    const auto* renderer = resolver.m_flowContents.renderer(run.start, &rendererOffset);
+    ASSERT(renderer);
+    ASSERT(renderer->is8Bit());
+    return StringView(renderer->characters8(), renderer->textLength()).substring(run.start - rendererOffset, run.end - run.start);
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)
