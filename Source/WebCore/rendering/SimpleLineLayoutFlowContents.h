@@ -40,7 +40,7 @@ class FlowContents {
 public:
     FlowContents(const RenderBlockFlow&);
 
-    unsigned findNextBreakablePosition(unsigned position);
+    unsigned findNextBreakablePosition(unsigned position) const;
     unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
 
     float textWidth(unsigned from, unsigned to, float xPosition) const;
@@ -49,7 +49,7 @@ public:
     bool isEndOfContent(unsigned position) const;
 
     bool resolveRendererPositions(const RenderText&, unsigned& startPosition, unsigned& endPosition) const;
-    const RenderText& renderer(unsigned position) const;
+    const RenderText* renderer(unsigned position, unsigned* startPosition = nullptr) const;
 
     class Style {
     public:
@@ -77,23 +77,27 @@ public:
     const Style& style() const { return m_style; }
 
 private:
+    bool appendNextRendererContentIfNeeded(unsigned position) const;
     unsigned nextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
-    float runWidth(unsigned from, unsigned to, float xPosition) const;
+    float runWidth(const RenderText&, unsigned from, unsigned to, float xPosition) const;
 
     const RenderBlockFlow& m_flow;
-    Style m_style;
-    LazyLineBreakIterator m_lineBreakIterator;
+    const Style m_style;
+    mutable LazyLineBreakIterator m_lineBreakIterator;
+    Vector<std::pair<unsigned, const RenderText*>> m_textRanges;
+    mutable unsigned m_lastRendererIndex;
 };
 
 inline bool FlowContents::isNewlineCharacter(unsigned position) const
 {
-    ASSERT(m_lineBreakIterator.string().length() > position);
+    appendNextRendererContentIfNeeded(position);
+    ASSERT(position < m_lineBreakIterator.string().length());
     return m_lineBreakIterator.string().at(position) == '\n';
 }
 
 inline bool FlowContents::isEndOfContent(unsigned position) const
 {
-    return position >= m_lineBreakIterator.string().length();
+    return position >= m_lineBreakIterator.string().length() && !renderer(position);
 }
 
 }
