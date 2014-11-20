@@ -282,6 +282,9 @@
     <ClCompile Include="..\heap\HeapTimer.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\HeapVerifier.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\IncrementalSweeper.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -2133,6 +2136,9 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\HeapTimer.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\HeapVerifier.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\IncrementalSweeper.h">

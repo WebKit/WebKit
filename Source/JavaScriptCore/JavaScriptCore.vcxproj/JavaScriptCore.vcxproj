@@ -547,6 +547,7 @@
     <ClCompile Include="..\heap\Heap.cpp" />
     <ClCompile Include="..\heap\HeapStatistics.cpp" />
     <ClCompile Include="..\heap\HeapTimer.cpp" />
+    <ClCompile Include="..\heap\HeapVerifier.cpp" />
     <ClCompile Include="..\heap\IncrementalSweeper.cpp" />
     <ClCompile Include="..\heap\JITStubRoutineSet.cpp" />
     <ClCompile Include="..\heap\MachineStackMarker.cpp" />
@@ -1250,6 +1251,7 @@
     <ClInclude Include="..\heap\HeapRootVisitor.h" />
     <ClInclude Include="..\heap\HeapStatistics.h" />
     <ClInclude Include="..\heap\HeapTimer.h" />
+    <ClInclude Include="..\heap\HeapVerifier.h" />
     <ClInclude Include="..\heap\IncrementalSweeper.h" />
     <ClInclude Include="..\heap\JITStubRoutineSet.h" />
     <ClInclude Include="..\heap\ListableHandler.h" />

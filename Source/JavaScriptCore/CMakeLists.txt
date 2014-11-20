@@ -265,6 +265,7 @@ set(JavaScriptCore_SOURCES
     heap/Heap.cpp
     heap/HeapStatistics.cpp
     heap/HeapTimer.cpp
+    heap/HeapVerifier.cpp
     heap/IncrementalSweeper.cpp
     heap/JITStubRoutineSet.cpp
     heap/MachineStackMarker.cpp

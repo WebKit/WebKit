@@ -1,3 +1,67 @@
+2014-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Add Heap verification infrastructure.
+        <https://webkit.org/b/138851>
+
+        Reviewed by Geoffrey Garen.
+
+        The verification infrastructure code is always built in but disabled by
+        default.  When disabled, the cost is minimal:
+        1. Heap has a m_verifier field.
+        2. GC does a few "if (m_verifier)" checks that should fail.
+        3. HeapVerifier takes up code space though not used.
+
+        When enabled:
+        1. The HeapVerifier will keep N number of GC cycle data.
+           Each GC cycle will contain a "before marking" and "after marking" live
+           object list.
+           The GC cycles is a circular buffer.  Only data for the last N GC cycles
+           will be retained.
+        2. During GC, the current GC cycle's live objects lists will be populated
+           before and after marking.
+        3. The current GC cycle's live object lists will be validated before GC,
+           after marking, and after GC.
+
+        Currently, the only validation being done is to verify that object
+        butterflies are allocated from valid blocks in the Storage (aka Copied)
+        space.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        * heap/HeapVerifier.cpp: Added.
+        (JSC::LiveObjectList::findObject):
+        (JSC::HeapVerifier::HeapVerifier):
+        (JSC::HeapVerifier::collectionTypeName):
+        (JSC::HeapVerifier::phaseName):
+        (JSC::getButterflyDetails):
+        (JSC::HeapVerifier::initializeGCCycle):
+        (JSC::GatherLiveObjFunctor::GatherLiveObjFunctor):
+        (JSC::GatherLiveObjFunctor::operator()):
+        (JSC::HeapVerifier::gatherLiveObjects):
+        (JSC::HeapVerifier::liveObjectListForGathering):
+        (JSC::trimDeadObjectsFromList):
+        (JSC::HeapVerifier::trimDeadObjects):
+        (JSC::HeapVerifier::verifyButterflyIsInStorageSpace):
+        (JSC::HeapVerifier::verify):
+        (JSC::HeapVerifier::reportObject):
+        (JSC::HeapVerifier::checkIfRecorded):
+        * heap/HeapVerifier.h: Added.
+        (JSC::LiveObjectData::LiveObjectData):
+        (JSC::LiveObjectList::LiveObjectList):
+        (JSC::LiveObjectList::reset):
+        (JSC::HeapVerifier::GCCycle::GCCycle):
+        (JSC::HeapVerifier::GCCycle::collectionTypeName):
+        (JSC::HeapVerifier::incrementCycle):
+        (JSC::HeapVerifier::currentCycle):
+        (JSC::HeapVerifier::cycleForIndex):
+        * runtime/Options.h:
+
 2014-11-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Rename String.prototype.contains to String.prototype.includes

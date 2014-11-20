@@ -57,6 +57,7 @@ class GCAwareJITStubRoutine;
 class GlobalCodeBlock;
 class Heap;
 class HeapRootVisitor;
+class HeapVerifier;
 class IncrementalSweeper;
 class JITStubRoutine;
 class JSCell;
@@ -234,6 +235,7 @@ private:
     friend class GCAwareJITStubRoutine;
     friend class GCLogging;
     friend class HandleSet;
+    friend class HeapVerifier;
     friend class JITStubRoutine;
     friend class LLIntOffsetsExtractor;
     friend class MarkedSpace;
@@ -383,6 +385,8 @@ private:
     
     unsigned m_deferralDepth;
     Vector<DFG::Worklist*> m_suspendedCompilerWorklists;
+
+    std::unique_ptr<HeapVerifier> m_verifier;
 };
 
 } // namespace JSC

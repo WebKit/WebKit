@@ -1595,6 +1595,8 @@
 		FE5248F9191442D900B7FDE4 /* VariableWatchpointSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5248F8191442D900B7FDE4 /* VariableWatchpointSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */; };
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
+		FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEB58C14187B8B160098EF0B /* ErrorHandlingScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */; };
@@ -3311,6 +3313,8 @@
 		FE5248F8191442D900B7FDE4 /* VariableWatchpointSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableWatchpointSetInlines.h; sourceTree = "<group>"; };
 		FE5932A5183C5A2600A1ECCC /* VMEntryScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMEntryScope.cpp; sourceTree = "<group>"; };
 		FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMEntryScope.h; sourceTree = "<group>"; };
+		FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapVerifier.cpp; sourceTree = "<group>"; };
+		FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
 		FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPrimitives.h; sourceTree = "<group>"; };
 		FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorHandlingScope.cpp; sourceTree = "<group>"; };
@@ -3802,6 +3806,8 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */,
+				FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */,
 				C2DA778218E259990066FCB6 /* HeapInlines.h */,
 				ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */,
 				2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */,
@@ -5379,6 +5385,7 @@
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				2AABCDE718EF294200002096 /* GCLogging.h in Headers */,
 				FE5248F9191442D900B7FDE4 /* VariableWatchpointSetInlines.h in Headers */,
+				FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */,
 				A5EF9B141A1D43F600702E90 /* generate_cpp_backend_dispatcher_header.py in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */,
@@ -6986,6 +6993,7 @@
 				A513E5CA185F9624007E95AD /* InjectedScriptManager.cpp in Sources */,
 				A5840E20187B7B8600843B10 /* InjectedScriptModule.cpp in Sources */,
 				0F24E55517F0B71C00ABB217 /* InlineCallFrameSet.cpp in Sources */,
+				FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */,
 				A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */,
 				A593CF86184038CA00BFCE27 /* InspectorAgentRegistry.cpp in Sources */,
 				0F2B9CF619D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.cpp in Sources */,

@@ -287,6 +287,9 @@ typedef const char* optionString;
     v(bool, logHeapStatisticsAtExit, false) \
     v(bool, enableTypeProfiler, false) \
     \
+    v(bool, verifyHeap, true) \
+    v(unsigned, numberOfGCCyclesToRecordForVerification, 3) \
+    \
     v(bool, enableExceptionFuzz, false) \
     v(unsigned, fireExceptionFuzzAt, 0)
 
