@@ -81,6 +81,10 @@ public:
     ~TextIndicator();
 
     WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_data.selectionRectInWindowCoordinates; }
+
+    PresentationTransition presentationTransition() const { return m_data.presentationTransition; }
+    void setPresentationTransition(PresentationTransition transition) { m_data.presentationTransition = transition; }
+
     WebCore::FloatRect frameRect() const;
     Data data() const { return m_data; }
 
