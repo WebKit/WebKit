@@ -423,3 +423,10 @@ TimeSeries.prototype.previousPoint = function (point)
         return null;
     return this._series[point.seriesIndex - 1];
 }
+
+TimeSeries.prototype.nextPoint = function (point)
+{
+    if (!point.seriesIndex)
+        return null;
+    return this._series[point.seriesIndex + 1];
+}

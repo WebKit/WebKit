@@ -315,7 +315,7 @@
 }
 
 .chart .extent {
-    stroke: #9c6;
+    stroke: #f93;
     stroke-width: 1px;
     fill: #9c6;
     fill-opacity: .125;
@@ -325,4 +325,10 @@
 .chart .axis text {
     fill: #333;
     stroke: none;
+}
+
+.chart .rangeBar {
+    display: block;
+    background-color: #fc6;
+    position: absolute;
 }

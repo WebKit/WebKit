@@ -5,9 +5,17 @@ App.AnalysisTask = App.NameLabelModel.extend({
     metric: DS.belongsTo('metric'),
     startRun: DS.attr('number'),
     endRun: DS.attr('number'),
+    bugs: DS.hasMany('bugs'),
     testGroups: function () {
         return this.store.find('testGroup', {task: this.get('id')});
     }.property(),
+});
+
+App.Bug = App.NameLabelModel.extend({
+    task: DS.belongsTo('AnalysisTask'),
+    bugTracker: DS.belongsTo('BugTracker'),
+    createdAt: DS.attr('date'),
+    number: DS.attr('number'),
 });
 
 // FIXME: Use DS.RESTAdapter instead.

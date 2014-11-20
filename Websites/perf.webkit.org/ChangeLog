@@ -1,3 +1,79 @@
+2014-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard should provide UI to create a new analysis task
+        https://bugs.webkit.org/show_bug.cgi?id=138910
+
+        Reviewed by Benjamin Poulain.
+
+        This patch reverts some parts of r175006 and re-introduces bugs associated with analysis tasks.
+        I'll add UI to show and edit bug numbers associated with an analysis task in a follow up patch.
+
+        With this patch, we can create a new analysis task by selection a range of points and opening
+        "analysis pane" (renamed from "bugs pane"). Each analysis task created is represented by a yellow bar
+        in the chart hyperlinked to the analysis task.
+
+        * init-database.sql: Redefined the bugs to be associated with an analysis task instead of a test run.
+
+        * public/api/analysis-tasks.php: Added the support for querying analysis tasks for a specific metric
+        on a specific platform. Also retrieve and return all bugs associated with analysis tasks.
+        (main):
+        (fetch_and_push_bugs_to_tasks): Added. Fetches all bugs associated with an array of analysis tasks
+        and adds the associated bugs to each task in the array.
+        (format_task):
+
+        * public/api/runs.php: Reverted changes made in r175006.
+        (fetch_runs_for_config):
+        (format_run): 
+
+        * public/api/test-groups.php:
+        (fetch_test_groups_for_task): Use the newly added Database::select_rows.
+
+        * public/include/db.php:
+        (Database::select_first_or_last_row):
+        (Database::select_rows): Extracted from select_first_or_last_row.
+
+        * public/v2/analysis.js:
+        (App.AnalysisTask): Added "bugs" property.
+        (App.Bug): Added now that bugs are regular data store objects.
+
+        * public/v2/app.js:
+        (App.Pane._fetch): Calls this.fetchAnalyticRanges to fetch analysis tasks as well as test runs.
+        (App.Pane.fetchAnalyticRanges): Added. Fetches analysis tasks for the current metric on the current
+        platform that are associated with a specific range of runs.
+        (App.PaneController.actions.toggleBugsPane): Updated per showingBugsPane to showingAnalysisPane rename.
+        (App.PaneController.actions.associateBug): Deleted.
+        (App.PaneController.actions.createAnalysisTask): Replaced the pre-condition checks with assertions as
+        this action should never be triggered when the pre-condition is not met. Also re-fetch analysis tasks
+        once we've created one.
+        (App.PaneController.toggleSearchPane): Updated per showingBugsPane to showingAnalysisPane rename.
+        (App.PaneController._detailsChanged): Ditto. Removed selectedSinglePoint since it's no longer used.
+        (App.PaneController._showDetails): Call _updateCanAnalyze to update the status of "Analyze" button.
+        (App.PaneController._updateBugs): Deleted.
+        (App.PaneController._updateMarkedPoints): Deleted.
+        (App.PaneController._updateCanAnalyze): Added. Disables the button to create an analysis task when
+        the name is missing or when at most one point is selected.
+        
+        (App.InteractiveChartComponent._constructGraphIfPossible): Update the locations of range rects.
+        (App.InteractiveChartComponent._relayoutDataAndAxes): Ditto.
+        (App.InteractiveChartComponent._mousePointInGraph): Don't return a point unless the mouse cursor is
+        on our svg element to avoid locking the current item when a bar shown for an analysis task is clicked.
+        (App.InteractiveChartComponent._rangesChanged): Added. Creates an array of objects representing
+        clickable bars for analysis tasks.
+        (App.InteractiveChartComponent._updateRangeBarRects): Computes the inline style used by each clickable
+        bar for analysis tasks to place them at the right location.
+        (App.InteractiveChartComponent.actions.openRange): Added. Forwards the action to the parent controller.
+
+        * public/v2/chart-pane.css:
+        (.chart .extent): Use the same color as the vertical indicator in the highlight behind the selection.
+        (.chart .rangeBar): Added.
+
+        * public/v2/data.js:
+        (TimeSeries.prototype.nextPoint): Added. Used by _rangesChanged.
+
+        * public/v2/index.html: Renamed "bugs pane" to "analysis pane" and removed the UI to associate bugs.
+        This ability will be reinstated in a follow up patch. Also added a container div and spans for analysis
+        task bars in the interactive chart component.
+
 2014-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix typos in r176203.

@@ -358,8 +358,21 @@ App.Pane = Ember.Object.extend({
                 else
                     self.set('failure', 'An internal error');
             });
+
+            this.fetchAnalyticRanges();
         }
     }.observes('platformId', 'metricId').on('init'),
+    fetchAnalyticRanges: function ()
+    {
+        var platformId = this.get('platformId');
+        var metricId = this.get('metricId');
+        var self = this;
+        this.get('store')
+            .find('analysisTask', {platform: platformId, metric: metricId})
+            .then(function (tasks) {
+                self.set('analyticRanges', tasks.filter(function (task) { return task.get('startRun') && task.get('endRun'); }));
+            });
+    },
     _isValidId: function (id)
     {
         if (typeof(id) == "number")
@@ -657,34 +670,23 @@ App.PaneController = Ember.ObjectController.extend({
         },
         toggleBugsPane: function ()
         {
-            if (this.toggleProperty('showingBugsPane'))
+            if (this.toggleProperty('showingAnalysisPane'))
                 this.set('showingSearchPane', false);
-        },
-        associateBug: function (bugTracker, bugNumber)
-        {
-            var point = this.get('selectedSinglePoint');
-            if (!point)
-                return;
-            var self = this;
-            point.measurement.associateBug(bugTracker.get('id'), bugNumber).then(function () {
-                self._updateBugs();
-                self._updateMarkedPoints();
-            }, function (error) {
-                alert(error);
-            });
         },
         createAnalysisTask: function ()
         {
             var name = this.get('newAnalysisTaskName');
             var points = this._selectedPoints;
-            if (!name || !points || points.length < 2)
-                return;
+            Ember.assert('The analysis name should not be empty', name);
+            Ember.assert('There should be at least two points in the range', points && points.length >= 2);
 
             var newWindow = window.open();
+            var self = this;
             App.AnalysisTask.create(name, points[0].measurement, points[points.length - 1].measurement).then(function (data) {
                 // FIXME: Update the UI to show the new analysis task.
                 var url = App.Router.router.generate('analysisTask', data['taskId']);
                 newWindow.location.href = '#' + url;
+                self.get('model').fetchAnalyticRanges();
             }, function (error) {
                 newWindow.close();
                 if (error === 'DuplicateAnalysisTask') {
@@ -701,7 +703,7 @@ App.PaneController = Ember.ObjectController.extend({
             if (!model.get('commitSearchRepository'))
                 model.set('commitSearchRepository', App.Manifest.repositoriesWithReportedCommits[0]);
             if (this.toggleProperty('showingSearchPane'))
-                this.set('showingBugsPane', false);
+                this.set('showingAnalysisPane', false);
         },
         searchCommit: function () {
             var model = this.get('model');
@@ -733,8 +735,7 @@ App.PaneController = Ember.ObjectController.extend({
     },
     _detailsChanged: function ()
     {
-        this.set('showingBugsPane', false);
-        this.set('selectedSinglePoint', !this._hasRange && this._selectedPoints ? this._selectedPoints[0] : null);
+        this.set('showingAnalysisPane', false);
     }.observes('details'),
     _overviewSelectionChanged: function ()
     {
@@ -812,58 +813,13 @@ App.PaneController = Ember.ObjectController.extend({
             buildTime: currentMeasurement.formattedBuildTime(),
             revisions: revisions,
         }));
-        this._updateBugs();
+        this._updateCanAnalyze();
     },
-    _updateBugs: function ()
+    _updateCanAnalyze: function ()
     {
-        if (!this._selectedPoints)
-            return;
-
-        var bugTrackers = App.Manifest.get('bugTrackers');
-        var trackerToBugNumbers = {};
-        bugTrackers.forEach(function (tracker) { trackerToBugNumbers[tracker.get('id')] = new Array(); });
-
-        var points = this._hasRange ? this._selectedPoints : [this._selectedPoints[1]];
-        points.map(function (point) {
-            var bugs = point.measurement.bugs();
-            bugTrackers.forEach(function (tracker) {
-                var bugNumber = bugs[tracker.get('id')];
-                if (bugNumber)
-                    trackerToBugNumbers[tracker.get('id')].push(bugNumber);
-            });
-        });
-
-        this.set('details.bugTrackers', App.Manifest.get('bugTrackers').map(function (tracker) {
-            var bugNumbers = trackerToBugNumbers[tracker.get('id')];
-            return Ember.ObjectProxy.create({
-                content: tracker,
-                bugs: bugNumbers.map(function (bugNumber) {
-                    return {
-                        bugNumber: bugNumber,
-                        bugUrl: bugNumber && tracker.get('bugUrl') ? tracker.get('bugUrl').replace(/\$number/g, bugNumber) : null
-                    };
-                }),
-                editedBugNumber: this._hasRange ? null : bugNumbers[0],
-            }); // FIXME: Create urls for new bugs.
-        }));
-    },
-    _updateMarkedPoints: function ()
-    {
-        var chartData = this.get('chartData');
-        if (!chartData || !chartData.current) {
-            this.set('markedPoints', {});
-            return;
-        }
-
-        var series = chartData.current.timeSeriesByCommitTime().series();
-        var markedPoints = {};
-        for (var i = 0; i < series.length; i++) {
-            var measurement = series[i].measurement;
-            if (measurement.hasBugs())
-                markedPoints[measurement.id()] = true;
-        }
-        this.set('markedPoints', markedPoints);
-    }.observes('chartData'),
+        var points = this._selectedPoints;
+        this.set('cannotAnalyze', !this.get('newAnalysisTaskName') || !this._hasRange || !points || points.length < 2);
+    }.observes('newAnalysisTaskName'),
 });
 
 App.InteractiveChartComponent = Ember.Component.extend({
@@ -1047,6 +1003,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
         setTimeout(this._selectedItemChanged.bind(this), 0);
 
         this._needsConstruction = false;
+
+        this._rangesChanged();
     },
     _updateDomain: function ()
     {
@@ -1142,6 +1100,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
         });
         this._updateMarkedDots();
         this._updateHighlightPositions();
+        this._updateRangeBarRects();
 
         if (this._brush) {
             if (selection)
@@ -1163,7 +1122,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
             this._yAxisUnitContainer.remove();
         this._yAxisUnitContainer = this._yAxisLabels.append("text")
             .attr("x", 0.5 * this._rem)
-            .attr("y", this._rem)
+            .attr("y", 0.2 * this._rem)
             .attr("dy", 0.8 * this._rem)
             .style("text-anchor", "start")
             .style("z-index", "100")
@@ -1350,7 +1309,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
     _mousePointInGraph: function (event)
     {
         var offset = $(this.get('element')).offset();
-        if (!offset)
+        if (!offset || !$(event.target).closest('svg').length)
             return null;
 
         var point = {
@@ -1483,6 +1442,99 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._updateHighlightPositions();
 
     }.observes('highlightedItems'),
+    _rangesChanged: function ()
+    {
+        if (!this._currentTimeSeries)
+            return;
+
+        function midPoint(firstPoint, secondPoint) {
+            if (firstPoint && secondPoint)
+                return (+firstPoint.time + +secondPoint.time) / 2;
+            if (firstPoint)
+                return firstPoint.time;
+            return secondPoint.time;
+        }
+        var currentTimeSeries = this._currentTimeSeries;
+        var linkRoute = this.get('rangeRoute');
+        this.set('rangeBars', (this.get('ranges') || []).map(function (range) {
+            var start = currentTimeSeries.findPointByMeasurementId(range.get('startRun'));
+            var end = currentTimeSeries.findPointByMeasurementId(range.get('endRun'));
+            return Ember.Object.create({
+                startTime: midPoint(currentTimeSeries.previousPoint(start), start),
+                endTime: midPoint(end, currentTimeSeries.nextPoint(end)),
+                range: range,
+                left: null,
+                right: null,
+                rowIndex: null,
+                top: null,
+                bottom: null,
+                linkRoute: linkRoute,
+                linkId: range.get('id'),
+            });
+        }));
+
+        this._updateRangeBarRects();
+    }.observes('ranges'),
+    _updateRangeBarRects: function () {
+        var rangeBars = this.get('rangeBars');
+        if (!rangeBars || !rangeBars.length)
+            return;
+
+        var xScale = this._x;
+        var yScale = this._y;
+
+        // Expand the width of each range as needed and sort ranges by the left-edge of ranges.
+        var minWidth = 3;
+        var sortedBars = rangeBars.map(function (bar) {
+            var left = xScale(bar.get('startTime'));
+            var right = xScale(bar.get('endTime'));
+            if (right - left < minWidth) {
+                left -= minWidth / 2;
+                right += minWidth / 2;
+            }
+            bar.set('left', left);
+            bar.set('right', right);
+            return bar;
+        }).sort(function (first, second) { return first.get('left') - second.get('left'); });
+
+        // At this point, left edges of all ranges prior to a range R1 is on the left of R1.
+        // Place R1 into a row in which right edges of all ranges prior to R1 is on the left of R1 to avoid overlapping ranges.
+        var rows = [];
+        sortedBars.forEach(function (bar) {
+            var rowIndex = 0;
+            for (; rowIndex < rows.length; rowIndex++) {
+                var currentRow = rows[rowIndex];
+                if (currentRow[currentRow.length - 1].get('right') < bar.get('left')) {
+                    currentRow.push(bar);
+                    break;
+                }
+            }
+            if (rowIndex >= rows.length)
+                rows.push([bar]);
+            bar.set('rowIndex', rowIndex);
+        });
+        var rowHeight = 0.6 * this._rem;
+        var firstRowTop = this._contentHeight - rows.length * rowHeight;
+        var barHeight = 0.5 * this._rem;
+
+        $(this.get('element')).find('.rangeBarsContainerInlineStyle').css({
+            left: this._margin.left + 'px',
+            top: this._margin.top + firstRowTop + 'px',
+            width: this._contentWidth + 'px',
+            height: rows.length * barHeight + 'px',
+            overflow: 'hidden',
+            position: 'absolute',
+        });
+
+        var margin = this._margin;
+        sortedBars.forEach(function (bar) {
+            var top = bar.get('rowIndex') * rowHeight;
+            var height = barHeight;
+            var left = bar.get('left');
+            var width = bar.get('right') - left;
+            bar.set('inlineStyle', 'left: ' + left + 'px; top: ' + top + 'px; width: ' + width + 'px; height: ' + height + 'px;');
+        });
+    },
     _updateCurrentItemIndicators: function ()
     {
         if (!this._currentItemLine)
@@ -1547,6 +1599,10 @@ App.InteractiveChartComponent = Ember.Component.extend({
         {
             this.sendAction('zoom', this._currentSelection());
             this.set('selection', null);
+        },
+        openRange: function (range)
+        {
+            this.sendAction('openRange', range);
         },
     },
 });

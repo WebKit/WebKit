@@ -158,6 +158,13 @@ class Database
     }
 
     private function select_first_or_last_row($table, $prefix, $params, $order_by, $descending_order) {
+        $rows = $this->select_rows($table, $prefix, $params, $order_by, $descending_order, 0, 1);
+        return $rows ? $rows[0] : NULL;
+    }
+
+    function select_rows($table, $prefix, $params,
+        $order_by = NULL, $descending_order = FALSE, $offset = NULL, $limit = NULL) {
+
         $placeholders = array();
         $values = array();
         $column_names = $this->prefixed_column_names($this->prepare_params($params, $placeholders, $values), $prefix);
@@ -169,9 +176,12 @@ class Database
             if ($descending_order)
                 $query .= ' DESC';
         }
-        $rows = $this->query_and_fetch_all($query . ' LIMIT 1', $values);
+        if ($offset !== NULL)
+            $query .= ' OFFSET ' . intval($offset);
+        if ($limit !== NULL)
+            $query .= ' LIMIT ' . intval($limit);
 
-        return $rows ? $rows[0] : NULL;
+        return $this->query_and_fetch_all($query, $values);
     }
 
     function query_and_get_affected_rows($query, $params = array()) {

@@ -43,8 +43,7 @@ function main($path) {
 }
 
 function fetch_test_groups_for_task($db, $task_id) {
-    return $db->query_and_fetch_all('SELECT * FROM analysis_test_groups WHERE testgroup_task = $1
-        ORDER BY testgroup_created_at', array($task_id));
+    return $db->select_rows('analysis_test_groups', 'testgroup', array('task' => $task_id));
 }
 
 function fetch_build_requests_for_task($db, $task_id) {

@@ -132,8 +132,8 @@
                     <h1 {{action "toggleDetails"}}>{{metric.fullName}} - {{ platform.name}}</h1>
                     <a href="#" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
                     {{#if App.Manifest.bugTrackers}}
-                        <a href="#" title="Bugs and Analysis" class="bugs-button" {{action "toggleBugsPane"}}>
-                            {{partial "bugs-button"}}
+                        <a href="#" title="Analysis" class="bugs-button" {{action "toggleBugsPane"}}>
+                            {{partial "analysis-button"}}
                         </a>
                     {{/if}}
                     {{#if App.Manifest.repositoriesWithReportedCommits}}
@@ -146,6 +146,7 @@
                     {{#if chartData}}
                         {{interactive-chart
                             chartData=chartData
+                            ranges=analyticRanges
                             domain=mainPlotDomain
                             interactive=true
                             chartPointRadius=2
@@ -153,6 +154,7 @@
                             currentTime=sharedTime
                             selectedItem=selectedItem
                             highlightedItems=highlightedItems
+                            rangeRoute="analysisTask"
                             selection=timeRange
                             sharedSelection=sharedSelection
                             selectionChanged="rangeChanged"
@@ -194,25 +196,13 @@
                     {{input action="searchCommit" placeholder="Name or email" value=commitSearchKeyword}}
                 </form>
 
-                <div {{bind-attr class=":bugs-pane showingBugsPane::hidden"}}>
+                <div {{bind-attr class=":bugs-pane showingAnalysisPane::hidden"}}>
                     <table>
                         <tbody>
-                            {{#if selectedSinglePoint}}
-                                {{#each details.bugTrackers}}
-                                    <tr>
-                                        <th>{{label}}</th>
-                                        <td>
-                                            <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                                {{input type=text value=editedBugNumber}}
-                                            </form>
-                                        </td>
-                                    </tr>
-                                {{/each}}
-                            {{/if}}
                             <tr>
                                 <th>
                                     <label>Name: {{input type=text value=newAnalysisTaskName}}</label>
-                                    <button {{action "createAnalysisTask"}}>Analyze</button>
+                                    <button {{action "createAnalysisTask"}} {{bind-attr disabled=cannotAnalyze}}>Analyze</button>
                                 </th>
                             </tr>
                         </tbody>
@@ -237,6 +227,13 @@
                 </a>
             </div>
         {{/if}}
+        <div class="rangeBarsContainerInlineStyle">
+            {{#each rangeBars}}
+                {{#link-to linkRoute linkId}}
+                    <span class="rangeBar" {{bind-attr style=inlineStyle}}></span>
+                {{/link-to}}
+            {{/each}}
+        </div>
     </script>
 
     <script type="text/x-handlebars" data-template-name="chart-details">
@@ -323,8 +320,8 @@
         </svg>
     </script>
 
-    <script type="text/x-handlebars" data-template-name="bugs-button">
-        <svg class="bugs-button icon-button" viewBox="0 0 100 100">
+    <script type="text/x-handlebars" data-template-name="analysis-button">
+        <svg class="analysis-button icon-button" viewBox="0 0 100 100">
             <g stroke="black" stroke-width="15">
                 <circle cx="50" cy="50" r="40" fill="transparent"/>
                 <line x1="50" y1="25" x2="50" y2="55"/>

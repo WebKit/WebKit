@@ -130,15 +130,6 @@ CREATE TABLE reports (
     report_failure varchar(64),
     report_failure_details text);
 
-CREATE TABLE bugs (
-    bug_id serial PRIMARY KEY,
-    bug_run integer REFERENCES test_runs NOT NULL,
-    bug_tracker integer REFERENCES bug_trackers NOT NULL,
-    bug_number integer NOT NULL,
-    CONSTRAINT bug_tracker_and_run_must_be_unique UNIQUE(bug_tracker, bug_run));
-CREATE INDEX bugs_tracker_number_index ON bugs(bug_tracker, bug_number);
-CREATE INDEX bugs_run_index ON bugs(bug_run);
-
 CREATE TABLE analysis_tasks (
     task_id serial PRIMARY KEY,
     task_name varchar(256) NOT NULL,
@@ -148,7 +139,16 @@ CREATE TABLE analysis_tasks (
     task_metric integer REFERENCES test_metrics NOT NULL,
     task_start_run integer REFERENCES test_runs,
     task_end_run integer REFERENCES test_runs,
-    CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run));
+    CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run)
+    CONSTRAINT analysis_task_should_not_be_associated_with_single_run
+        CHECK ((task_start_run IS NULL AND task_end_run IS NULL) OR (task_start_run IS NOT NULL AND task_end_run IS NOT NULL)));
+
+CREATE TABLE bugs (
+    bug_id serial PRIMARY KEY,
+    bug_task integer REFERENCES analysis_tasks NOT NULL,
+    bug_tracker integer REFERENCES bug_trackers NOT NULL,
+    bug_number integer NOT NULL,
+    CONSTRAINT bug_task_and_tracker_must_be_unique UNIQUE(bug_task, bug_tracker));
 
 CREATE TABLE analysis_test_groups (
     testgroup_id serial PRIMARY KEY,
