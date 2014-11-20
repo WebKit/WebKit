@@ -1,3 +1,11 @@
+2014-11-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update TestExpectation file for LayoutTests/canvas tests
+
+        Also skip some LayoutTests/animation tests that are flaky or fail due to an assertion failure.
+
+        * platform/ios-simulator/TestExpectations:
+
 2014-11-20  Alexey Proskuryakov  <ap@apple.com>
 
         Skip flaky inspector-protocol/debugger tests.
