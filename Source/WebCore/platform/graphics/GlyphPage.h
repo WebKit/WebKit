@@ -98,6 +98,7 @@ public:
     ~GlyphPage() { }
 
     static const size_t size = 256; // Covers Latin-1 in a single page.
+    static_assert((!(0xD800 % size)) && (!(0xDC00 % size)) && (!(0xE000 % size)), "GlyphPages must never straddle code-unit length boundaries");
     static unsigned indexForCharacter(UChar32 c) { return c % GlyphPage::size; }
 
     ALWAYS_INLINE GlyphData glyphDataForCharacter(UChar32 c) const
