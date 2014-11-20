@@ -1,3 +1,18 @@
+2014-11-17  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [GTK] Add library search paths from LDFLAGS before pkg-config --libs
+        https://bugs.webkit.org/show_bug.cgi?id=136018
+
+        Reviewed by Carlos Garcia Campos.
+
+        It is possible that the order of -L arguments in the output of
+        pkg-config is wrong, which causes the linker to find the wrong
+        version (usually older version) of libraries when running
+        gtkdoc-scangobj.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_gtkdoc_scangobj):
+
 2014-11-13  Dan Bernstein  <mitz@apple.com>
 
         Policy client not called for navigations through the page cache
