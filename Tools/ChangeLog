@@ -1,3 +1,14 @@
+2014-11-20  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] The option value of fixed layout is false in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=138830
+
+        Reviewed by Gyuyoung Kim.
+
+        Changed the option value of fixed layout to EINA_TRUE in MiniBrowser.
+
+        * MiniBrowser/efl/main.c:
+
 2014-11-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Provide convenience API in DOM bindings to post messages to user message handlers

@@ -182,7 +182,7 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_STORE_DEF_BOOL
             ('T', "touch-events", "Enable/disable touch events.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('L', "fixed-layout", "Enable/disable fixed layout.", EINA_FALSE),
+            ('L', "fixed-layout", "Enable/disable fixed layout.", EINA_TRUE),
         ECORE_GETOPT_STORE_DEF_STR
             ('p', "policy-cookies", "Cookies policy:\n  always - always accept,\n  never - never accept,\n  no-third-party - don't accept third-party cookies.", "no-third-party"),
         ECORE_GETOPT_STORE_DEF_BOOL
