@@ -175,7 +175,8 @@ using namespace WebKit;
 
     [self dismissActionMenuPopovers];
 
-    _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
+    _eventLocationInView = [_wkView convertPoint:event.locationInWindow fromView:nil];
+    _page->performActionMenuHitTestAtLocation(_eventLocationInView);
 
     _state = ActionMenuState::Pending;
     [self _updateActionMenuItems];
@@ -330,17 +331,16 @@ using namespace WebKit;
         return;
 
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    NSRect originRect = hitTestResult->elementBoundingBox();
-    [_previewPopover showRelativeToRect:originRect ofView:_wkView preferredEdge:NSMaxYEdge];
+    [_previewPopover showRelativeToRect:_popoverOriginRect ofView:_wkView preferredEdge:NSMaxYEdge];
 }
 
 - (void)_createPreviewPopover
 {
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
-    NSRect originRect = hitTestResult->elementBoundingBox();
+    _popoverOriginRect = hitTestResult->elementBoundingBox();
 
-    NSSize popoverSize = [self _preferredSizeForPopoverPresentedFromOriginRect:originRect];
+    NSSize popoverSize = [self _preferredPopoverSize];
     CGFloat actualPopoverToViewScale = popoverSize.width / NSWidth(_wkView.bounds);
     _previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
     _previewViewController->_delegate = self;
@@ -358,31 +358,58 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     return targetSize.width <= availableSpace.width && targetSize.height <= availableSpace.height;
 }
 
-- (NSSize)_preferredSizeForPopoverPresentedFromOriginRect:(NSRect)originRect
+- (NSSize)largestPopoverSize
+{
+    NSSize screenSize = [[NSScreen mainScreen] frame].size;
+
+    if (screenSize.width == 1280 && screenSize.height == 800)
+        return NSMakeSize(1240, 674);
+
+    if (screenSize.width == 1366 && screenSize.height == 768)
+        return NSMakeSize(1264, 642);
+
+    if (screenSize.width == 1440 && screenSize.height == 900)
+        return NSMakeSize(1264, 760);
+
+    if (screenSize.width == 1680 && screenSize.height == 1050)
+        return NSMakeSize(1324, 910);
+
+    return NSMakeSize(1324, 940);
+}
+
+- (NSSize)_preferredPopoverSize
 {
     static const CGFloat preferredPopoverToViewScale = 0.75;
     static const CGFloat screenPadding = 40;
+    static const NSSize smallestPopoverSize = NSMakeSize(500, 300);
 
     NSWindow *window = _wkView.window;
-    NSRect originScreenRect = [window convertRectToScreen:[_wkView convertRect:originRect toView:nil]];
+    NSRect originScreenRect = [window convertRectToScreen:[_wkView convertRect:_popoverOriginRect toView:nil]];
     NSRect screenFrame = window.screen.visibleFrame;
 
     NSRect wkViewBounds = _wkView.bounds;
     NSSize targetSize = NSMakeSize(NSWidth(wkViewBounds) * preferredPopoverToViewScale, NSHeight(wkViewBounds) * preferredPopoverToViewScale);
+    NSSize largestPopoverSize = [self largestPopoverSize];
 
     CGFloat availableSpaceAbove = NSMaxY(screenFrame) - NSMaxY(originScreenRect);
     CGFloat availableSpaceBelow = NSMinY(originScreenRect) - NSMinY(screenFrame);
     CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - screenPadding;
     NSSize maxSpaceAvailableOnYEdge = NSMakeSize(screenFrame.size.width - screenPadding, maxAvailableVerticalSpace);
-    if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnYEdge))
+    if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnYEdge) && targetSizeFitsInAvailableSpace(targetSize, largestPopoverSize))
         return targetSize;
 
     CGFloat availableSpaceAtLeft = NSMinX(originScreenRect) - NSMinX(screenFrame);
     CGFloat availableSpaceAtRight = NSMaxX(screenFrame) - NSMaxX(originScreenRect);
     CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - screenPadding;
     NSSize maxSpaceAvailableOnXEdge = NSMakeSize(maxAvailableHorizontalSpace, screenFrame.size.height - screenPadding);
-    if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnXEdge))
+    if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnXEdge) && targetSizeFitsInAvailableSpace(targetSize, largestPopoverSize))
         return targetSize;
+
+    // Adjust the maximum space available if it is larger than the largest popover size.
+    if (maxSpaceAvailableOnYEdge.width > largestPopoverSize.width && maxSpaceAvailableOnYEdge.height > largestPopoverSize.height)
+        maxSpaceAvailableOnYEdge = largestPopoverSize;
+    if (maxSpaceAvailableOnXEdge.width > largestPopoverSize.width && maxSpaceAvailableOnXEdge.height > largestPopoverSize.height)
+        maxSpaceAvailableOnXEdge = largestPopoverSize;
 
     // If the target size doesn't fit anywhere, we'll find the largest rect that does fit that also maintains the original view's aspect ratio.
     CGFloat aspectRatio = wkViewBounds.size.width / wkViewBounds.size.height;
@@ -392,9 +419,26 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     NSSize maxVerticalTargetSizePreservingAspectRatio = NSMakeSize(maxVerticalTargetSizePreservingAspectRatioRect.width(), maxVerticalTargetSizePreservingAspectRatioRect.height());
     NSSize maxHortizontalTargetSizePreservingAspectRatio = NSMakeSize(maxHorizontalTargetSizePreservingAspectRatioRect.width(), maxHorizontalTargetSizePreservingAspectRatioRect.height());
 
+    NSSize computedTargetSize;
     if ((maxVerticalTargetSizePreservingAspectRatio.width * maxVerticalTargetSizePreservingAspectRatio.height) > (maxHortizontalTargetSizePreservingAspectRatio.width * maxHortizontalTargetSizePreservingAspectRatio.height))
-        return maxVerticalTargetSizePreservingAspectRatio;
-    return maxHortizontalTargetSizePreservingAspectRatio;
+        computedTargetSize = maxVerticalTargetSizePreservingAspectRatio;
+    computedTargetSize = maxHortizontalTargetSizePreservingAspectRatio;
+
+    // Now make sure what we've computed isn't too small.
+    if (computedTargetSize.width < smallestPopoverSize.width && computedTargetSize.height < smallestPopoverSize.height) {
+        float limitWidth = smallestPopoverSize.width > computedTargetSize.width ? smallestPopoverSize.width : computedTargetSize.width;
+        float limitHeight = smallestPopoverSize.height > computedTargetSize.height ? smallestPopoverSize.height : computedTargetSize.height;
+        FloatRect targetRectLargerThanMinSize = largestRectWithAspectRatioInsideRect(aspectRatio, FloatRect(0, 0, limitWidth, limitHeight));
+        computedTargetSize = NSMakeSize(targetRectLargerThanMinSize.size().width(), targetRectLargerThanMinSize.size().height());
+
+        // If our orignal computedTargetSize was so small that we had to get here and make a new computedTargetSize that is
+        // larger than the minimum, then the elementBoundingBox of the _hitTestResult is probably huge. So we should use
+        // the event origin as the popover origin in this case and not worry about obscuring the _hitTestResult.
+        _popoverOriginRect.origin = _eventLocationInView;
+        _popoverOriginRect.size = NSMakeSize(1, 1);
+    }
+
+    return computedTargetSize;
 }
 
 #endif // WK_API_ENABLED
