@@ -29,7 +29,6 @@
 #include "DrawingArea.h"
 #include "PluginView.h"
 #include "ShareableBitmap.h"
-#include "TextIndicator.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -44,6 +43,7 @@
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
+#include <WebCore/TextIndicator.h>
 
 using namespace WebCore;
 
@@ -314,7 +314,7 @@ void FindController::hideFindUI()
 #if !PLATFORM(IOS)
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(selectedFrame), shouldAnimate ? TextIndicator::PresentationTransition::Bounce : TextIndicator::PresentationTransition::None);
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(selectedFrame, shouldAnimate ? TextIndicatorPresentationTransition::Bounce : TextIndicatorPresentationTransition::None);
     if (!indicator)
         return false;
 

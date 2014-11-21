@@ -28,11 +28,10 @@
 
 #if PLATFORM(MAC)
 
+#import "GraphicsContext.h"
+#import "QuartzCoreSPI.h"
 #import "TextIndicator.h"
-#import "WKView.h"
-#import <WebCore/GraphicsContext.h>
-#import <WebCore/QuartzCoreSPI.h>
-#import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import "WebActionDisablingCALayerDelegate.h"
 
 const CFTimeInterval bounceAnimationDuration = 0.12;
 const CFTimeInterval bounceWithCrossfadeAnimationDuration = 0.3;
@@ -66,22 +65,22 @@ NSString *rimShadowLayerKey = @"RimShadowLayer";
 
 using namespace WebCore;
 
-@interface WKTextIndicatorView : NSView {
-    RefPtr<WebKit::TextIndicator> _textIndicator;
+@interface WebTextIndicatorView : NSView {
+    RefPtr<TextIndicator> _textIndicator;
     RetainPtr<NSArray> _bounceLayers;
     NSSize _margin;
 }
 
-- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator margin:(NSSize)margin;
+- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin;
 
 - (void)presentWithCompletionHandler:(void(^)(void))completionHandler;
 - (void)hideWithCompletionHandler:(void(^)(void))completionHandler;
 
 @end
 
-@implementation WKTextIndicatorView
+@implementation WebTextIndicatorView
 
-- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator margin:(NSSize)margin
+- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -92,15 +91,15 @@ using namespace WebCore;
     self.wantsLayer = YES;
     self.layer.anchorPoint = CGPointZero;
 
-    bool wantsCrossfade = _textIndicator->presentationTransition() == WebKit::TextIndicator::PresentationTransition::BounceAndCrossfade;
+    bool wantsCrossfade = _textIndicator->presentationTransition() == TextIndicatorPresentationTransition::BounceAndCrossfade;
 
     FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
     RetainPtr<CGImageRef> contentsImage;
     if (wantsCrossfade)
-        contentsImage = _textIndicator->contentImageWithHighlight()->makeCGImage();
+        contentsImage = _textIndicator->contentImageWithHighlight()->getCGImageRef();
     else
-        contentsImage = _textIndicator->contentImage()->makeCGImage();
+        contentsImage = _textIndicator->contentImage()->getCGImageRef();
 
     RetainPtr<NSMutableArray> bounceLayers = adoptNS([[NSMutableArray alloc] init]);
 
@@ -190,7 +189,7 @@ using namespace WebCore;
 
 - (void)presentWithCompletionHandler:(void(^)(void))completionHandler
 {
-    bool wantsCrossfade = _textIndicator->presentationTransition() == WebKit::TextIndicator::PresentationTransition::BounceAndCrossfade;
+    bool wantsCrossfade = _textIndicator->presentationTransition() == TextIndicatorPresentationTransition::BounceAndCrossfade;
     double animationDuration = wantsCrossfade ? bounceWithCrossfadeAnimationDuration : bounceAnimationDuration;
     RetainPtr<CAKeyframeAnimation> bounceAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
     [bounceAnimation setValues:@[
@@ -204,7 +203,7 @@ using namespace WebCore;
     RetainPtr<CABasicAnimation> fadeShadowInAnimation;
     if (wantsCrossfade) {
         crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-        RetainPtr<CGImageRef> contentsImage = _textIndicator->contentImage()->makeCGImage();
+        RetainPtr<CGImageRef> contentsImage = _textIndicator->contentImage()->getCGImageRef();
         [crossfadeAnimation setToValue:(id)contentsImage.get()];
         [crossfadeAnimation setFillMode:kCAFillModeForwards];
         [crossfadeAnimation setRemovedOnCompletion:NO];
@@ -254,10 +253,10 @@ using namespace WebCore;
 
 @end
 
-namespace WebKit {
+namespace WebCore {
 
-TextIndicatorWindow::TextIndicatorWindow(WKView *wkView)
-    : m_wkView(wkView)
+TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
+    : m_targetView(targetView)
     , m_startFadeOutTimer(RunLoop::main(), this, &TextIndicatorWindow::startFadeOutTimerFired)
 {
 }
@@ -286,8 +285,8 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
 
     contentRect = NSInsetRect(contentRect, -horizontalMargin, -verticalMargin);
-    NSRect windowFrameRect = NSIntegralRect([m_wkView convertRect:contentRect toView:nil]);
-    windowFrameRect = [[m_wkView window] convertRectToScreen:windowFrameRect];
+    NSRect windowFrameRect = NSIntegralRect([m_targetView convertRect:contentRect toView:nil]);
+    windowFrameRect = [[m_targetView window] convertRectToScreen:windowFrameRect];
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:windowFrameRect styleMask:NSBorderlessWindowMask];
 
     m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
@@ -296,13 +295,13 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     [m_textIndicatorWindow setOpaque:NO];
     [m_textIndicatorWindow setIgnoresMouseEvents:YES];
 
-    m_textIndicatorView = adoptNS([[WKTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin)]);
+    m_textIndicatorView = adoptNS([[WebTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin)]);
     [m_textIndicatorWindow setContentView:m_textIndicatorView.get()];
 
-    [[m_wkView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
+    [[m_targetView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
     [m_textIndicatorWindow setReleasedWhenClosed:NO];
 
-    if (m_textIndicator->presentationTransition() != TextIndicator::PresentationTransition::None) {
+    if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None) {
         [m_textIndicatorView presentWithCompletionHandler:[animationCompletionHandler] {
             animationCompletionHandler();
         }];
@@ -333,6 +332,6 @@ void TextIndicatorWindow::startFadeOutTimerFired()
     }];
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

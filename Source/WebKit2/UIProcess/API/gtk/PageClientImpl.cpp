@@ -233,7 +233,7 @@ PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, cons
 }
 #endif
 
-void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator>, bool /* fadeOut */)
+void PageClientImpl::setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool /* fadeOut */)
 {
     notImplemented();
 }

@@ -37,7 +37,6 @@
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
 #import "StringUtilities.h"
-#import "TextIndicator.h"
 #import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
@@ -61,6 +60,7 @@
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/CString.h>

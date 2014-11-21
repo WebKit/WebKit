@@ -41,13 +41,13 @@ class DataReference;
 namespace WebCore {
 class Image;
 class SharedBuffer;
+class TextIndicator;
 struct KeypressCommand;
 }
 
 namespace WebKit {
 class DrawingAreaProxy;
 class LayerTreeContext;
-class TextIndicator;
 class ViewSnapshot;
 class WebContext;
 struct ActionMenuHitTestResult;
@@ -80,8 +80,8 @@ struct WebPageConfiguration;
 - (void)_setIntrinsicContentSize:(NSSize)intrinsicContentSize;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
-- (void)_setTextIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut;
-- (void)_setTextIndicator:(PassRefPtr<WebKit::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler;
+- (void)_setTextIndicator:(PassRefPtr<WebCore::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut;
+- (void)_setTextIndicator:(PassRefPtr<WebCore::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler;
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 - (CALayer *)_acceleratedCompositingModeRootLayer;

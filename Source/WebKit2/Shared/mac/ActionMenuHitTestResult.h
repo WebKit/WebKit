@@ -29,10 +29,10 @@
 #include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "SharedMemory.h"
-#include "TextIndicator.h"
 #include "WebHitTestResult.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/TextIndicator.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS DDActionContext;
@@ -57,7 +57,7 @@ struct ActionMenuHitTestResult {
 
     RetainPtr<DDActionContext> actionContext;
     WebCore::FloatRect detectedDataBoundingBox;
-    RefPtr<TextIndicator> detectedDataTextIndicator;
+    RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
     WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
 };
 

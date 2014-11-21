@@ -1934,6 +1934,7 @@ set(WebCore_SOURCES
     page/Settings.cpp
     page/SpatialNavigation.cpp
     page/SuspendableTimer.cpp
+    page/TextIndicator.cpp
     page/UserContentController.cpp
     page/UserContentURLPattern.cpp
     page/VisitedLinkStore.cpp
