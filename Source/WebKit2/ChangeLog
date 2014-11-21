@@ -1,3 +1,52 @@
+2014-11-21  Antti Koivisto  <antti@apple.com>
+
+        Remove alignment code from IPC coders
+        https://bugs.webkit.org/show_bug.cgi?id=138963
+
+        Reviewed by Anders Carlsson.
+
+        Alignment code achieves nothing except making the messages somewhat bigger.
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<CString>::encode):
+        (IPC::ArgumentCoder<CString>::decode):
+        (IPC::ArgumentCoder<String>::encode):
+        (IPC::decodeStringText):
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::SimpleArgumentCoder::encode):
+        (IPC::SimpleArgumentCoder::decode):
+        * Platform/IPC/ArgumentDecoder.cpp:
+        (IPC::ArgumentDecoder::initialize):
+        (IPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+        (IPC::ArgumentDecoder::decodeFixedLengthData):
+        (IPC::ArgumentDecoder::decodeVariableLengthByteArray):
+        (IPC::ArgumentDecoder::decodeNumber):
+        (IPC::ArgumentDecoder::decode):
+        (IPC::roundUpToAlignment): Deleted.
+        (IPC::alignedBufferIsLargeEnoughToContain): Deleted.
+        (IPC::ArgumentDecoder::alignBufferPosition): Deleted.
+        (IPC::decodeValueFromBuffer): Deleted.
+        * Platform/IPC/ArgumentDecoder.h:
+        (IPC::ArgumentDecoder::isInvalid):
+        (IPC::ArgumentDecoder::markInvalid):
+        (IPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+        * Platform/IPC/ArgumentEncoder.cpp:
+        (IPC::ArgumentEncoder::ArgumentEncoder):
+        (IPC::ArgumentEncoder::grow):
+        (IPC::ArgumentEncoder::encodeFixedLengthData):
+        (IPC::ArgumentEncoder::encodeVariableLengthByteArray):
+        (IPC::ArgumentEncoder::encode):
+        * Platform/IPC/ArgumentEncoder.h:
+        (IPC::ArgumentEncoder::buffer):
+        (IPC::ArgumentEncoder::mutableBuffer):
+        * Platform/IPC/DataReference.cpp:
+        (IPC::SharedBufferDataReference::encode):
+        * Platform/IPC/MessageEncoder.cpp:
+        (IPC::MessageEncoder::setIsSyncMessage):
+        (IPC::MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply):
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendOutgoingMessage):
+
 2014-11-21  Anders Carlsson  <andersca@apple.com>
 
         Make memoryCache() return a reference

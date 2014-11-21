@@ -514,7 +514,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
     }
 
     if (!messageInfo.isMessageBodyIsOutOfLine() && encoder->bufferSize()) {
-        iov[iovLength].iov_base = reinterpret_cast<void*>(encoder->buffer());
+        iov[iovLength].iov_base = reinterpret_cast<void*>(const_cast<uint8_t*>(encoder->buffer()));
         iov[iovLength].iov_len = encoder->bufferSize();
         ++iovLength;
     }

@@ -51,7 +51,7 @@ void SharedBufferDataReference::encode(ArgumentEncoder& encoder) const
     unsigned position = 0;
     while (position < bufferSize) {
         unsigned bytesToWrite = m_buffer->getSomeData(partialData, position);
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(partialData), bytesToWrite, 1);
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(partialData), bytesToWrite);
         position += bytesToWrite;
     }
 }

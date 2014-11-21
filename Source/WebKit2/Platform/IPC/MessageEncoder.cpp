@@ -51,17 +51,17 @@ MessageEncoder::~MessageEncoder()
 void MessageEncoder::setIsSyncMessage(bool isSyncMessage)
 {
     if (isSyncMessage)
-        *buffer() |= SyncMessage;
+        *mutableBuffer() |= SyncMessage;
     else
-        *buffer() &= ~SyncMessage;
+        *mutableBuffer() &= ~SyncMessage;
 }
 
 void MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool shouldDispatchMessageWhenWaitingForSyncReply)
 {
     if (shouldDispatchMessageWhenWaitingForSyncReply)
-        *buffer() |= DispatchMessageWhenWaitingForSyncReply;
+        *mutableBuffer() |= DispatchMessageWhenWaitingForSyncReply;
     else
-        *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
+        *mutableBuffer() &= ~DispatchMessageWhenWaitingForSyncReply;
 }
 
 } // namespace IPC

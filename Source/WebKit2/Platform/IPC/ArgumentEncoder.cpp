@@ -57,7 +57,6 @@ static inline void freeBuffer(void* addr, size_t size)
 
 ArgumentEncoder::ArgumentEncoder()
     : m_buffer(m_inlineBuffer)
-    , m_bufferPointer(m_inlineBuffer)
     , m_bufferSize(0)
     , m_bufferCapacity(sizeof(m_inlineBuffer))
 {
@@ -103,89 +102,78 @@ void ArgumentEncoder::reserve(size_t size)
     m_bufferCapacity = newCapacity;
 }
 
-uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
+uint8_t* ArgumentEncoder::grow(size_t size)
 {
-    size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
-    reserve(alignedSize + size);
+    size_t position = m_bufferSize;
+    reserve(m_bufferSize + size);
 
-    m_bufferSize = alignedSize + size;
-    m_bufferPointer = m_buffer + alignedSize + size;
-    
-    return m_buffer + alignedSize;
+    m_bufferSize += size;
+
+    return m_buffer + position;
 }
 
-void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size)
 {
-    ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
-
-    uint8_t* buffer = grow(alignment, size);
+    uint8_t* buffer = grow(size);
     memcpy(buffer, data, size);
 }
 
 void ArgumentEncoder::encodeVariableLengthByteArray(const DataReference& dataReference)
 {
     encode(static_cast<uint64_t>(dataReference.size()));
-    encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
+    encodeFixedLengthData(dataReference.data(), dataReference.size());
 }
 
 template<typename Type>
-static void copyValueToBuffer(Type value, uint8_t* bufferPosition)
+void ArgumentEncoder::encodeNumber(Type value)
 {
+    uint8_t* bufferPosition = grow(sizeof(Type));
     memcpy(bufferPosition, &value, sizeof(Type));
 }
 
-void ArgumentEncoder::encode(bool n)
+void ArgumentEncoder::encode(bool value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(uint8_t n)
+void ArgumentEncoder::encode(uint8_t value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(uint16_t n)
+void ArgumentEncoder::encode(uint16_t value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(uint32_t n)
+void ArgumentEncoder::encode(uint32_t value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(uint64_t n)
+void ArgumentEncoder::encode(uint64_t value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(int32_t n)
+void ArgumentEncoder::encode(int32_t value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(int64_t n)
+void ArgumentEncoder::encode(int64_t value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(float n)
+void ArgumentEncoder::encode(float value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
-void ArgumentEncoder::encode(double n)
+void ArgumentEncoder::encode(double value)
 {
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
+    encodeNumber(value);
 }
 
 void ArgumentEncoder::addAttachment(const Attachment& attachment)

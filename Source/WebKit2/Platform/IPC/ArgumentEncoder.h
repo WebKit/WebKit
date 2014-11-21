@@ -41,7 +41,7 @@ public:
     ArgumentEncoder();
     virtual ~ArgumentEncoder();
 
-    void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
+    void encodeFixedLengthData(const uint8_t*, size_t);
     void encodeVariableLengthByteArray(const DataReference&);
 
     template<typename T> void encodeEnum(T t)
@@ -62,12 +62,15 @@ public:
         return *this;
     }
 
-    uint8_t* buffer() const { return m_buffer; }
+    const uint8_t* buffer() const { return m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
 
     void addAttachment(const Attachment&);
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
+
+protected:
+    uint8_t* mutableBuffer() { return m_buffer; }
 
 private:
     void encode(bool);
@@ -79,14 +82,13 @@ private:
     void encode(int64_t);
     void encode(float);
     void encode(double);
+    template<typename Type> void encodeNumber(Type);
 
-    uint8_t* grow(unsigned alignment, size_t size);
+    uint8_t* grow(size_t);
 
     uint8_t m_inlineBuffer[512];
-
     uint8_t* m_buffer;
-    uint8_t* m_bufferPointer;
-    
+
     size_t m_bufferSize;
     size_t m_bufferCapacity;
 
