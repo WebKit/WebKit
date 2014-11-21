@@ -70,10 +70,10 @@ public:
 
 private:
     void asyncUpdateController();
-    void controllerTimerFired(Timer*);
+    void controllerTimerFired();
 
     void asyncUpdatePermission();
-    void permissionTimerFired(Timer*);
+    void permissionTimerFired();
 
     void clearError();
 

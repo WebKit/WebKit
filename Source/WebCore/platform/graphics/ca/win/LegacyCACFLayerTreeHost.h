@@ -50,7 +50,7 @@ private:
     bool resetDevice(ResetReason);
 
     void renderSoon();
-    void renderTimerFired(Timer*);
+    void renderTimerFired();
 
     virtual void initializeContext(void* userData, PlatformCALayer*);
     virtual void resize();

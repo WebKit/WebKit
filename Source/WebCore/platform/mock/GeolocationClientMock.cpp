@@ -43,8 +43,8 @@ namespace WebCore {
 GeolocationClientMock::GeolocationClientMock()
     : m_controller(0)
     , m_hasError(false)
-    , m_controllerTimer(this, &GeolocationClientMock::controllerTimerFired)
-    , m_permissionTimer(this, &GeolocationClientMock::permissionTimerFired)
+    , m_controllerTimer(*this, &GeolocationClientMock::controllerTimerFired)
+    , m_permissionTimer(*this, &GeolocationClientMock::permissionTimerFired)
     , m_isActive(false)
     , m_permissionState(PermissionStateUnset)
 {
@@ -109,9 +109,8 @@ void GeolocationClientMock::asyncUpdatePermission()
         m_permissionTimer.startOneShot(0);
 }
 
-void GeolocationClientMock::permissionTimerFired(WebCore::Timer* timer)
+void GeolocationClientMock::permissionTimerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_permissionTimer);
     ASSERT(m_permissionState != PermissionStateUnset);
     bool allowed = m_permissionState == PermissionStateAllowed;
     GeolocationSet::iterator end = m_pendingPermission.end();
@@ -169,9 +168,8 @@ void GeolocationClientMock::asyncUpdateController()
         m_controllerTimer.startOneShot(0);
 }
 
-void GeolocationClientMock::controllerTimerFired(Timer* timer)
+void GeolocationClientMock::controllerTimerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_controllerTimer);
     ASSERT(m_controller);
 
     if (m_lastPosition.get()) {

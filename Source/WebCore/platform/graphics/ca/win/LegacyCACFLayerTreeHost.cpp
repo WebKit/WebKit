@@ -98,7 +98,7 @@ PassRefPtr<LegacyCACFLayerTreeHost> LegacyCACFLayerTreeHost::create()
 }
 
 LegacyCACFLayerTreeHost::LegacyCACFLayerTreeHost()
-    : m_renderTimer(this, &LegacyCACFLayerTreeHost::renderTimerFired)
+    : m_renderTimer(*this, &LegacyCACFLayerTreeHost::renderTimerFired)
     , m_context(wkCACFContextCreate())
     , m_mightBeAbleToCreateDeviceLater(true)
     , m_mustResetLostDeviceBeforeRendering(false)
@@ -224,7 +224,7 @@ void LegacyCACFLayerTreeHost::resize()
     }
 }
 
-void LegacyCACFLayerTreeHost::renderTimerFired(Timer*)
+void LegacyCACFLayerTreeHost::renderTimerFired()
 {
     paint();
 }

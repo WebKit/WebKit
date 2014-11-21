@@ -1,3 +1,17 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        More Windows build fixes.
+
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp:
+        (WebCore::LegacyCACFLayerTreeHost::LegacyCACFLayerTreeHost):
+        (WebCore::LegacyCACFLayerTreeHost::renderTimerFired):
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.h:
+        * platform/mock/GeolocationClientMock.cpp:
+        (WebCore::GeolocationClientMock::GeolocationClientMock):
+        (WebCore::GeolocationClientMock::permissionTimerFired):
+        (WebCore::GeolocationClientMock::controllerTimerFired):
+        * platform/mock/GeolocationClientMock.h:
+
 2014-11-21  Andreas Kling  <akling@apple.com>
 
         RenderMathMLScripts isPrescript() helper should take a reference.
