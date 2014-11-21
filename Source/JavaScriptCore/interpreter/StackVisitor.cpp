@@ -121,7 +121,6 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     m_frame.m_callerFrame = callFrame->callerFrame(m_frame.m_CallerVMEntryFrame);
     m_frame.m_callerIsVMEntryFrame = m_frame.m_CallerVMEntryFrame != m_frame.m_VMEntryFrame;
     m_frame.m_callee = callFrame->callee();
-    m_frame.m_scope = callFrame->scope();
     m_frame.m_codeBlock = callFrame->codeBlock();
     m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
         : codeOrigin ? codeOrigin->bytecodeIndex
@@ -155,9 +154,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
         m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex;
 
         JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
-        m_frame.m_scope = callee->scope();
         m_frame.m_callee = callee;
-        ASSERT(m_frame.scope());
         ASSERT(m_frame.callee());
 
         // The callerFrame just needs to be non-null to indicate that we

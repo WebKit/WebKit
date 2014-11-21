@@ -262,13 +262,11 @@ private:
                 JSFunction* callee = inlineCallFrame()->calleeConstant();
                 if (operand.offset() == JSStack::Callee)
                     return weakJSConstant(callee);
-                if (operand.offset() == JSStack::ScopeChain)
+                if (operand == m_inlineStackTop->m_codeBlock->scopeRegister())
                     return weakJSConstant(callee->scope());
             }
         } else if (operand.offset() == JSStack::Callee)
             return addToGraph(GetCallee);
-        else if (operand.offset() == JSStack::ScopeChain)
-            return addToGraph(GetMyScope);
         
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
@@ -526,10 +524,8 @@ private:
         int numArguments;
         if (InlineCallFrame* inlineCallFrame = inlineStackEntry->m_inlineCallFrame) {
             numArguments = inlineCallFrame->arguments.size();
-            if (inlineCallFrame->isClosureCall) {
+            if (inlineCallFrame->isClosureCall)
                 flushDirect(inlineStackEntry->remapOperand(VirtualRegister(JSStack::Callee)));
-                flushDirect(inlineStackEntry->remapOperand(VirtualRegister(JSStack::ScopeChain)));
-            }
         } else
             numArguments = inlineStackEntry->m_codeBlock->numParameters();
         for (unsigned argument = numArguments; argument-- > 1;)
@@ -1262,11 +1258,8 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     if (callee.isClosureCall()) {
         VariableAccessData* calleeVariable =
             set(VirtualRegister(JSStack::Callee), callTargetNode, ImmediateNakedSet)->variableAccessData();
-        VariableAccessData* scopeVariable =
-            set(VirtualRegister(JSStack::ScopeChain), addToGraph(GetScope, callTargetNode), ImmediateNakedSet)->variableAccessData();
         
         calleeVariable->mergeShouldNeverUnbox(true);
-        scopeVariable->mergeShouldNeverUnbox(true);
         
         inlineVariableData.calleeVariable = calleeVariable;
     }
@@ -3195,10 +3188,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (lexicalEnvironment
                     && lexicalEnvironment->symbolTable()->m_functionEnteredOnce.isStillValid()) {
                     addToGraph(FunctionReentryWatchpoint, OpInfo(lexicalEnvironment->symbolTable()));
+                    addToGraph(Phantom, getDirect(m_inlineStackTop->remapOperand(VirtualRegister(currentInstruction[2].u.operand))));
                     set(VirtualRegister(dst), weakJSConstant(lexicalEnvironment));
                     break;
                 }
                 set(VirtualRegister(dst), getScope(VirtualRegister(currentInstruction[2].u.operand), depth));
+                if (inlineCallFrame())
+                    addToGraph(Phantom, getDirect(m_inlineStackTop->remapOperand(VirtualRegister(currentInstruction[2].u.operand))));
                 break;
             }
             case Dynamic:
@@ -3395,11 +3391,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_create_lexical_environment: {
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CreateActivation, get(VirtualRegister(currentInstruction[1].u.operand))));
+            Node* lexicalEnvironment = addToGraph(CreateActivation, get(VirtualRegister(currentInstruction[1].u.operand)));
+            set(VirtualRegister(currentInstruction[1].u.operand), lexicalEnvironment);
+            set(VirtualRegister(currentInstruction[2].u.operand), lexicalEnvironment);
             NEXT_OPCODE(op_create_lexical_environment);
         }
             
         case op_get_scope: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetScope, get(VirtualRegister(JSStack::Callee))));
             NEXT_OPCODE(op_get_scope);
         }
             

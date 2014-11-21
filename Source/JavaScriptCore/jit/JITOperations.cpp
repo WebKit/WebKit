@@ -1313,9 +1313,14 @@ void JIT_OPERATION operationPushNameScope(ExecState* exec, int32_t dst, Identifi
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
+    // FIXME: This won't work if this operation is called from the DFG or FTL.
+    // This should be changed to pass in the new scope.
+    JSScope* currentScope = exec->uncheckedR(dst).Register::scope();
     JSNameScope::Type scopeType = static_cast<JSNameScope::Type>(type);
-    JSNameScope* scope = JSNameScope::create(exec, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
+    JSNameScope* scope = JSNameScope::create(exec, currentScope, *identifier, JSValue::decode(encodedValue), attibutes, scopeType);
 
+    // FIXME: This won't work if this operation is called from the DFG or FTL.
+    // This should be changed to return the new scope.
     exec->uncheckedR(dst) = scope;
 }
 
@@ -1340,7 +1345,10 @@ void JIT_OPERATION operationPushWithScope(ExecState* exec, int32_t dst, EncodedJ
     if (vm.exception())
         return;
 
-    exec->uncheckedR(dst) = JSWithScope::create(exec, o);
+    // FIXME: This won't work if this operation is called from the DFG or FTL.
+    // This should be changed to pass in the old scope and return the new scope.
+    JSScope* currentScope = exec->uncheckedR(dst).Register::scope();
+    exec->uncheckedR(dst) = JSWithScope::create(exec, o, currentScope);
 }
 
 void JIT_OPERATION operationPopScope(ExecState* exec, int32_t scopeReg)

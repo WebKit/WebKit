@@ -164,7 +164,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_scopeNode(programNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
-    , m_scopeRegister(JSStack::ScopeChain)
+    , m_scopeRegister(0)
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
@@ -190,7 +190,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     emitOpcode(op_enter);
 
-    emitGetScope();
+    allocateAndEmitScope();
 
     const VarStack& varStack = programNode->varStack();
     const FunctionStack& functionStack = programNode->functionStack();
@@ -212,7 +212,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(functionBody)
     , m_codeBlock(vm, codeBlock)
-    , m_scopeRegister(JSStack::ScopeChain)
+    , m_scopeRegister(0)
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
@@ -251,7 +251,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     emitOpcode(op_enter);
 
-    emitGetScope();
+    allocateAndEmitScope();
 
     if (m_codeBlock->needsFullScopeChain() || m_shouldEmitDebugHooks) {
         m_lexicalEnvironmentRegister = addVar();
@@ -452,7 +452,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
-    , m_scopeRegister(JSStack::ScopeChain)
+    , m_scopeRegister(0)
     , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
@@ -479,7 +479,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     emitOpcode(op_enter);
 
-    emitGetScope();
+    allocateAndEmitScope();
 
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
@@ -2216,6 +2216,14 @@ LabelScopePtr BytecodeGenerator::continueTarget(const Identifier& name)
             return result; // may be null.
     }
     return LabelScopePtr::null();
+}
+
+void BytecodeGenerator::allocateAndEmitScope()
+{
+    m_scopeRegister = addVar();
+    m_scopeRegister->ref();
+    m_codeBlock->setScopeRegister(scopeRegister()->virtualRegister());
+    emitGetScope();
 }
 
 void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowContext* topScope, ControlFlowContext* bottomScope)

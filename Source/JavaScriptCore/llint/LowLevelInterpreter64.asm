@@ -2000,9 +2000,9 @@ macro varInjectionCheck(slowPath)
 end
 
 macro resolveScope()
-    loadp CodeBlock[cfr], t0
     loadisFromInstruction(5, t2)
-    loadp ScopeChain[cfr], t0
+    loadisFromInstruction(2, t0)
+    loadp [cfr, t0, 8], t0
     btiz t2, .resolveScopeLoopEnd
 
 .resolveScopeLoop:

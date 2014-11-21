@@ -51,6 +51,12 @@ namespace JSC  {
             return this[JSStack::ScopeChain].Register::scope();
         }
 
+        JSScope* scope(int scopeRegisterOffset) const
+        {
+            ASSERT(this[scopeRegisterOffset].Register::scope());
+            return this[scopeRegisterOffset].Register::scope();
+        }
+
         bool hasActivation() const;
         JSLexicalEnvironment* lexicalEnvironment() const;
         JSValue uncheckedActivation() const;
@@ -186,6 +192,7 @@ namespace JSC  {
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(JSScope* scope) { static_cast<Register*>(this)[JSStack::ScopeChain] = scope; }
+        void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
         void setActivation(JSLexicalEnvironment*);
 
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,

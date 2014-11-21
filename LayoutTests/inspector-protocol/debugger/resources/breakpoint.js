@@ -91,3 +91,25 @@ function debuggerStatement(x)
     return x + 3;
 }
 
+function notInlineable3(x)
+{
+    var func = new Function("return x + 100;");
+    if (x == 1999)
+        breakpointBasic();
+    return x + 3;
+}
+
+var globalVal3 = 0;
+
+function dfgWithoutInline3()
+{
+    globalVal3 = 0;
+    var i;
+    var result = 0;
+    var localVal3 = 0;
+    for (i = 0; i < 2000; i++)
+        result += notInlineable3(i);
+    if (globalVal3)
+        result = globalVal3 + localVal3;
+    log("result: " + result);
+}

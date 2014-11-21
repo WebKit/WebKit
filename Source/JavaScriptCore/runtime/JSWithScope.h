@@ -34,13 +34,6 @@ class JSWithScope : public JSScope {
 public:
     typedef JSScope Base;
 
-    static JSWithScope* create(ExecState* exec, JSObject* object)
-    {
-        JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(*exec->heap())) JSWithScope(exec, object);
-        withScope->finishCreation(exec->vm());
-        return withScope;
-    }
-
     static JSWithScope* create(ExecState* exec, JSObject* object, JSScope* next)
     {
         JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(*exec->heap())) JSWithScope(exec, object, next);

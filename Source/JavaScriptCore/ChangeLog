@@ -1,3 +1,104 @@
+2014-11-21  Michael Saboff  <msaboff@apple.com>
+
+        Allocate local ScopeChain register
+        https://bugs.webkit.org/show_bug.cgi?id=138793
+
+        Reviewed by Geoffrey Garen.
+
+        Now we allocate the scope register as a local.  The allocated register is stored in the 
+        CodeBlock for use by other components.  Update the DFG to work with a local scope register.
+        Changed usage of JSStack::ScopeChain access to the CallFrame header to use the allocated
+        local register.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        Updated to properly represent the operand inputs and bytecode result.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setScopeRegister):
+        (JSC::CodeBlock::scopeRegister):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::setScopeRegister):
+        (JSC::UnlinkedCodeBlock::scopeRegister):
+        Added scope register member and accessors.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::allocateAndEmitScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::scopeRegister):
+        Change m_scopeRegister to an allocated register.  Added allocateAndEmitScope helper to
+        allocate the scope register, set the CodeBlock with its value and emit op_get_scope.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::scope): Changed to access the scope using the new convention.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        Changed op_create_lexical_environment to set the scope VirtualRegister operand.
+        Filled out op_get_scope processing to emit a GetScope node putting the result in
+        the scope VirtualRegister result operand.
+        Added Phantoms where appropriate to keep the Scope register alive in places where
+        it use is optimized away, but where the baseline JIT would need to use its value.
+        Eliminated uses of JSStack::ScopeChain.
+
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        Make sure that the scope register stack location is allocated using the same place
+        that the codeBlock expects. 
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        Allow strength reduction of Flush to skip of GetScope nodes looking for a prior
+        corresponding SetLocal.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::scope):
+        (JSC::ExecState::setScope):
+        Added new scope() and setScope() helpers that take a VirtualRegister offset.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        Changed eval() to get the scope from the caller's scope register instead of from the
+        temporary frame created for eval.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        Changed unwind() to manipulate the scope n the allocated register instead of from the
+        call frame slot.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::callee):
+        (JSC::StackVisitor::Frame::scope): Deleted.
+        Eliminated the scope member as it needed to change and no StackVisitor users use it.
+
+        * jit/JITOperations.cpp:
+        (JSC::operationPushNameScope):
+        (JSC::operationPushWithScope):
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::create):
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::create): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        Deleted JSNameScope::create() and JSWithScope::create() flavors tht used the ScopeChain slot
+        in the CallFrame header.  Changed the only user of these function, op_push_name_scope and
+        op_push_with_scope helpers, to use the remaining create variants that require explicit scope.  
+        Those operations get the scope from the register pointed to by their scope operands.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Changed resolveScope to use the allocated register.
+
 2014-11-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [JSC] Disable verifyHeap

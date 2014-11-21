@@ -60,7 +60,6 @@ public:
         bool callerIsVMEntryFrame() const { return m_callerIsVMEntryFrame; }
         CallFrame* callerFrame() const { return m_callerFrame; }
         JSObject* callee() const { return m_callee; }
-        JSScope* scope() const { return m_scope; }
         CodeBlock* codeBlock() const { return m_codeBlock; }
         unsigned bytecodeOffset() const { return m_bytecodeOffset; }
 #if ENABLE(DFG_JIT)
@@ -101,7 +100,6 @@ public:
         VMEntryFrame* m_CallerVMEntryFrame;
         CallFrame* m_callerFrame;
         JSObject* m_callee;
-        JSScope* m_scope;
         CodeBlock* m_codeBlock;
         unsigned m_bytecodeOffset;
         bool m_callerIsVMEntryFrame;

@@ -44,10 +44,7 @@ void computeUsesForBytecodeOffset(
     case op_new_array_buffer:
     case op_throw_static_error:
     case op_debug:
-    case op_resolve_scope:
-    case op_pop_scope:
     case op_jneq_ptr:
-    case op_new_func_exp:
     case op_loop_hint:
     case op_jmp:
     case op_new_object:
@@ -57,16 +54,15 @@ void computeUsesForBytecodeOffset(
     case op_catch:
     case op_touch_entry:
         return;
-    case op_new_func:
-    case op_create_lexical_environment: 
+    case op_create_lexical_environment:
     case op_get_scope:
     case op_create_arguments:
     case op_to_this:
+    case op_pop_scope:
     case op_profile_will_call:
     case op_profile_did_call:
     case op_profile_type:
     case op_throw:
-    case op_push_with_scope:
     case op_end:
     case op_ret:
     case op_jtrue:
@@ -78,6 +74,7 @@ void computeUsesForBytecodeOffset(
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
+    case op_new_func:
     case op_ret_object_or_this:
     case op_jlesseq:
     case op_jgreater:
@@ -117,10 +114,13 @@ void computeUsesForBytecodeOffset(
         return;
     }
     case op_get_enumerable_length:
+    case op_new_func_exp:
     case op_to_index_string:
     case op_init_global_const_nop:
     case op_init_global_const:
     case op_push_name_scope:
+    case op_push_with_scope:
+    case op_resolve_scope:
     case op_get_from_scope:
     case op_to_primitive:
     case op_get_by_id:
@@ -244,10 +244,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     // These don't define anything.
     case op_init_global_const:
     case op_init_global_const_nop:
-    case op_push_name_scope:
-    case op_push_with_scope:
     case op_put_to_scope:
-    case op_pop_scope:
     case op_end:
     case op_profile_will_call:
     case op_profile_did_call:
@@ -301,6 +298,9 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_get_direct_pname:
     case op_get_structure_property_enumerator:
     case op_next_enumerator_pname:
+    case op_pop_scope:
+    case op_push_name_scope:
+    case op_push_with_scope:
     case op_resolve_scope:
     case op_strcat:
     case op_to_primitive:
@@ -365,13 +365,17 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_to_this:
     case op_get_callee:
     case op_init_lazy_reg:
-    case op_create_lexical_environment:
     case op_get_scope:
     case op_create_arguments:
     case op_del_by_id:
     case op_del_by_val:
     case op_unsigned: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        return;
+    }
+    case op_create_lexical_environment: {
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
     }
     case op_enter: {

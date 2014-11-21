@@ -282,6 +282,7 @@ public:
 
     // Special registers
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
+    void setScopeRegister(VirtualRegister scopeRegister) { m_scopeRegister = scopeRegister; }
     void setActivationRegister(VirtualRegister activationRegister) { m_lexicalEnvironmentRegister = activationRegister; }
 
     void setArgumentsRegister(VirtualRegister argumentsRegister) { m_argumentsRegister = argumentsRegister; }
@@ -429,6 +430,7 @@ public:
     CodeType codeType() const { return m_codeType; }
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
+    VirtualRegister scopeRegister() const { return m_scopeRegister; }
     VirtualRegister activationRegister() const { return m_lexicalEnvironmentRegister; }
     bool hasActivationRegister() const { return m_lexicalEnvironmentRegister.isValid(); }
 
@@ -520,6 +522,7 @@ private:
 
     VirtualRegister m_thisRegister;
     VirtualRegister m_argumentsRegister;
+    VirtualRegister m_scopeRegister;
     VirtualRegister m_lexicalEnvironmentRegister;
     VirtualRegister m_globalObjectRegister;
 

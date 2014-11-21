@@ -290,7 +290,7 @@ namespace JSC {
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
         
-        RegisterID* scopeRegister() { return &m_scopeRegister; }
+        RegisterID* scopeRegister() { return m_scopeRegister; }
 
         // Returns the next available temporary register. Registers returned by
         // newTemporary require a modified form of reference counting: any
@@ -594,6 +594,7 @@ namespace JSC {
         ALWAYS_INLINE void rewindBinaryOp();
         ALWAYS_INLINE void rewindUnaryOp();
 
+        void allocateAndEmitScope();
         void emitComplexPopScopes(RegisterID*, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
         typedef HashMap<double, JSValue> NumberMap;
@@ -754,7 +755,7 @@ namespace JSC {
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;
-        RegisterID m_scopeRegister;
+        RegisterID* m_scopeRegister;
         RegisterID* m_lexicalEnvironmentRegister;
         RegisterID* m_emptyValueRegister;
         RegisterID* m_globalObjectRegister;

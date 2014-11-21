@@ -1,0 +1,20 @@
+Debugger.evaluateOnCallFrame in a DFG compiled function from a breakpoint in a non-DFG callee.
+
+Found breakpoint.js
+inside breakpointBasic
+result: 2005000
+dfg function warmed up
+
+Breakpoint set in breakpointBasic()
+Hit Breakpoint!
+Evaluating in DFG frame at frame[2]: 'globalVal3 = 30;'
+Response value is 30
+Evaluating in DFG frame at frame[2]: 'localVal3 = 12;'
+Response value is 12
+Evaluating in DFG frame at frame[2]: 'localVal3'
+Response value is 12
+Resumed from breakpoint
+inside breakpointBasic
+result: 42
+Test complete
+

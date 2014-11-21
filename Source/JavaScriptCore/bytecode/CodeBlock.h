@@ -323,6 +323,17 @@ public:
 
     bool usesEval() const { return m_unlinkedCode->usesEval(); }
 
+    void setScopeRegister(VirtualRegister scopeRegister)
+    {
+        m_scopeRegister = scopeRegister;
+    }
+
+    VirtualRegister scopeRegister() const
+    {
+        ASSERT(m_scopeRegister.isValid());
+        return m_scopeRegister;
+    }
+
     void setArgumentsRegister(VirtualRegister argumentsRegister)
     {
         ASSERT(argumentsRegister.isValid());
@@ -340,6 +351,7 @@ public:
             return VirtualRegister();
         return argumentsRegister();
     }
+
     void setActivationRegister(VirtualRegister activationRegister)
     {
         m_lexicalEnvironmentRegister = activationRegister;
@@ -1032,6 +1044,7 @@ private:
     RefCountedArray<Instruction> m_instructions;
     WriteBarrier<SymbolTable> m_symbolTable;
     VirtualRegister m_thisRegister;
+    VirtualRegister m_scopeRegister;
     VirtualRegister m_argumentsRegister;
     VirtualRegister m_lexicalEnvironmentRegister;
 

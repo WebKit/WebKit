@@ -255,6 +255,7 @@ private:
                     case JSConstant:
                     case DoubleConstant:
                     case Int52Constant:
+                    case GetScope:
                         break;
                 
                     default:

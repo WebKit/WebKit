@@ -168,6 +168,11 @@ public:
                 virtualRegisterForLocal(allocation[codeBlock()->activationRegister().toLocal()]));
         }
         
+        if (codeBlock()->scopeRegister().isValid()) {
+            codeBlock()->setScopeRegister(
+                virtualRegisterForLocal(allocation[codeBlock()->scopeRegister().toLocal()]));
+        }
+
         for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
             InlineVariableData data = m_graph.m_inlineVariableData[i];
             InlineCallFrame* inlineCallFrame = data.inlineCallFrame;

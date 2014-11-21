@@ -1235,7 +1235,8 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
-    execCallee->setScope(exec->scope());
+    JSScope* callerScope = exec->uncheckedR(exec->codeBlock()->scopeRegister().offset()).Register::scope();
+    execCallee->setScope(callerScope);
     execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);
@@ -1275,7 +1276,9 @@ LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)
     JSObject* o = v.toObject(exec);
     LLINT_CHECK_EXCEPTION();
 
-    exec->uncheckedR(pc[1].u.operand) = JSWithScope::create(exec, o);
+    int scopeReg = pc[1].u.operand;
+    JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
+    exec->uncheckedR(scopeReg) = JSWithScope::create(exec, o, currentScope);
     
     LLINT_END();
 }
@@ -1293,9 +1296,11 @@ LLINT_SLOW_PATH_DECL(slow_path_push_name_scope)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
+    int scopeReg = pc[1].u.operand;
+    JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
     JSNameScope::Type type = static_cast<JSNameScope::Type>(pc[5].u.operand);
-    JSNameScope* scope = JSNameScope::create(exec, codeBlock->identifier(pc[2].u.operand), LLINT_OP(3).jsValue(), pc[4].u.operand, type);
-    exec->uncheckedR(pc[1].u.operand) = scope;
+    JSNameScope* scope = JSNameScope::create(exec, currentScope, codeBlock->identifier(pc[2].u.operand), LLINT_OP(3).jsValue(), pc[4].u.operand, type);
+    exec->uncheckedR(scopeReg) = scope;
     LLINT_END();
 }
 

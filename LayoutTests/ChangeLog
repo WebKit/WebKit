@@ -1,3 +1,20 @@
+2014-11-21  Michael Saboff  <msaboff@apple.com>
+
+        Allocate local ScopeChain register
+        https://bugs.webkit.org/show_bug.cgi?id=138793
+
+        Reviewed by Geoffrey Garen.
+
+        New test that sets a breakpoint in a callee of a DFG caller.  While stopped in the
+        breakpoint, it modifies a global via the scope chain of the DFG caller as well as
+        a local of the DFG caller.
+
+        * inspector-protocol/debugger/resources/breakpoint.js:
+        (notInlineable3):
+        (dfgWithoutInline3):
+        * inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html: Added.
+
 2014-11-21  Glenn Adams  <glenn@skynav.com> and Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSS3: line-break property support
