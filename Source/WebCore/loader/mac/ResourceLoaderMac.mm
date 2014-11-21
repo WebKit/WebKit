@@ -29,19 +29,13 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
+#include "CFNetworkSPI.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "SharedBuffer.h"
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 #include "InspectorInstrumentation.h"
-#endif
-
-#if USE(CFNETWORK)
-@interface NSCachedURLResponse (Details)
--(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
--(CFCachedURLResponseRef)_CFCachedURLResponse;
-@end
 #endif
 
 namespace WebCore {

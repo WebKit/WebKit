@@ -61,6 +61,13 @@ typedef const struct _CFURLRequest *CFURLRequestRef;
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif
 
+#ifdef __OBJC__
+@interface NSCachedURLResponse (Details)
+-(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
+-(CFCachedURLResponseRef)_CFCachedURLResponse;
+@end
+#endif
+
 #endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 
 EXTERN_C void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);

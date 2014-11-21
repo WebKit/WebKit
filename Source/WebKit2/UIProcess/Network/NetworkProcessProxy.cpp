@@ -41,6 +41,10 @@
 #include "SecItemShimProxy.h"
 #endif
 
+#if PLATFORM(IOS) && USE(XPC_SERVICES)
+#include <wtf/spi/darwin/XPCSPI.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 using namespace WebCore;

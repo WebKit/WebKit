@@ -29,13 +29,6 @@
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
 
-#if __has_include(<xpc/private.h>)
-#import <xpc/private.h>
-#else
-extern "C" xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t connection, const char *entitlement);
-extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
-#endif
-
 namespace WebKit {
 
 XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()

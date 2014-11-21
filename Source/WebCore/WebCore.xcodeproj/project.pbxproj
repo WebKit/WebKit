@@ -5759,7 +5759,7 @@
 		CE12523B1A16711000864480 /* NSFileManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523A1A16711000864480 /* NSFileManagerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12523F1A16AE1200864480 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523E1A16AE1200864480 /* AVKitSPI.h */; };
-		CE1252411A16B1B600864480 /* MPAVRoutingControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252401A16B1B600864480 /* MPAVRoutingControllerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE1252411A16B1B600864480 /* MediaPlayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252401A16B1B600864480 /* MediaPlayerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252421A16C01A00864480 /* CoreUISPI.h */; };
 		CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252441A16C22500864480 /* DynamicLinkerSPI.h */; };
 		CE1252471A16C2C200864480 /* NSPointerFunctionsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252461A16C2C200864480 /* NSPointerFunctionsSPI.h */; };
@@ -13265,7 +13265,7 @@
 		CE12523A1A16711000864480 /* NSFileManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSFileManagerSPI.h; sourceTree = "<group>"; };
 		CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSPI.h; sourceTree = "<group>"; };
 		CE12523E1A16AE1200864480 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVKitSPI.h; path = ios/AVKitSPI.h; sourceTree = "<group>"; };
-		CE1252401A16B1B600864480 /* MPAVRoutingControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPAVRoutingControllerSPI.h; path = ios/MPAVRoutingControllerSPI.h; sourceTree = "<group>"; };
+		CE1252401A16B1B600864480 /* MediaPlayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlayerSPI.h; path = ios/MediaPlayerSPI.h; sourceTree = "<group>"; };
 		CE1252421A16C01A00864480 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreUISPI.h; path = ios/CoreUISPI.h; sourceTree = "<group>"; };
 		CE1252441A16C22500864480 /* DynamicLinkerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerSPI.h; sourceTree = "<group>"; };
 		CE1252461A16C2C200864480 /* NSPointerFunctionsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPointerFunctionsSPI.h; sourceTree = "<group>"; };
@@ -18519,8 +18519,8 @@
 				A172182519DE183F00464D17 /* _UIHighlightViewSPI.h */,
 				CE12523E1A16AE1200864480 /* AVKitSPI.h */,
 				CE1252421A16C01A00864480 /* CoreUISPI.h */,
-				CE1252401A16B1B600864480 /* MPAVRoutingControllerSPI.h */,
 				CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */,
+				CE1252401A16B1B600864480 /* MediaPlayerSPI.h */,
 				CE1252381A166FA000864480 /* QuickLookSPI.h */,
 			);
 			name = ios;
@@ -25482,7 +25482,7 @@
 				935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */,
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
-				CE1252411A16B1B600864480 /* MPAVRoutingControllerSPI.h in Headers */,
+				CE1252411A16B1B600864480 /* MediaPlayerSPI.h in Headers */,
 				FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */,
 				C6F0900A14327B6100685849 /* MutationCallback.h in Headers */,
 				85031B4A0A44EFC700F992E0 /* MutationEvent.h in Headers */,

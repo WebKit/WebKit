@@ -26,15 +26,12 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
+#include "CFNetworkSPI.h"
 #include "CachedResource.h"
 #include "DiskCacheMonitorCocoa.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
 #include "SharedBuffer.h"
-
-@interface NSCachedURLResponse (Details)
--(CFCachedURLResponseRef)_CFCachedURLResponse;
-@end
 
 namespace WebCore {
 

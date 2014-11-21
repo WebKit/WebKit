@@ -36,10 +36,6 @@
 
 using namespace WebCore;
 
-@interface NSCachedURLResponse (NSCachedURLResponseDetails)
--(CFCachedURLResponseRef)_CFCachedURLResponse;
-@end
-
 namespace WebKit {
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090

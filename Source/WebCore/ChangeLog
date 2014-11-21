@@ -1,3 +1,20 @@
+2014-11-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebKit2 fails to build with public SDK due to missing SPI from CFNetwork, QuartzCore, MediaPlayer, XPC
+        https://bugs.webkit.org/show_bug.cgi?id=138930
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.xcodeproj/project.pbxproj: Rename header MPAVRoutingControllerSPI.h to MediaPlayerSPI.h.
+        * loader/cocoa/SubresourceLoaderCocoa.mm: Move NSCachedURLResponse forward declarations to file
+        CFNetworkSPI.h and include header CFNetworkSPI.h.
+        * loader/mac/ResourceLoaderMac.mm: Ditto.
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Substitute MediaPlayerSPI.h for MPAVRoutingControllerSPI.h.
+        * platform/spi/cf/CFNetworkSPI.h: Add more SPI.
+        * platform/spi/cg/CoreGraphicsSPI.h: Ditto.
+        * platform/spi/cocoa/QuartzCoreSPI.h: Ditto.
+        * platform/spi/ios/MediaPlayerSPI.h: Renamed from Source/WebCore/platform/spi/ios/MPAVRoutingControllerSPI.h.
+
 2014-11-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML expressions are misread by VoiceOver

@@ -26,25 +26,8 @@
 #import "config.h"
 #import "LayerHostingContext.h"
 
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebKitSystemInterface.h>
-
-#if __has_include(<QuartzCore/CAContext.h>)
-#import <QuartzCore/CAContext.h>
-#else
-@interface CAContext : NSObject
-@end
-
-@interface CAContext (Details)
-- (void)invalidate;
-@property (readonly) uint32_t contextId;
-@property (strong) CALayer *layer;
-@property CGColorSpaceRef colorSpace;
-- (void)setFencePort:(mach_port_t)port;
-+ (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
-@end
-#endif
-
-extern NSString * const kCAContextIgnoresHitTest;
 
 namespace WebKit {
 

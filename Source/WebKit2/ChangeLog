@@ -1,3 +1,24 @@
+2014-11-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebKit2 fails to build with public SDK due to missing SPI from CFNetwork, QuartzCore, MediaPlayer, XPC
+        https://bugs.webkit.org/show_bug.cgi?id=138930
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm: Remove forward declaration for NSCachedURLResponse
+        methods as this functionality was incorporated into CFNetworkSPI.h, which is included by this file.
+        * Platform/mac/LayerHostingContext.mm: Moved QuartzCore forward declarations from this file to file
+        QuartzCoreSPI.h and included header QuartzCoreSPI.h.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h: Include header XPCSPI.h.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm: Remove forward declarations of
+        XPC SPI since these declarations are part of XCPSPI.h, which is included by header XPCServiceEntryPoint.h.
+        * UIProcess/API/Cocoa/WKWebView.mm: Remove unnecessary include of header QuartzCore/CARenderServer.h
+        as it will be included by header QuartzCoreSPI.h.
+        * UIProcess/Network/NetworkProcessProxy.cpp: Include header XPCSPI.h when building for iOS with
+        USE(XPC_SERVICES) enabled.
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm: Include header MediaPlayerSPI.h instead of including
+        MediaPlayer private headers directly. Also sort the list of #import directives.
+
 2014-11-20  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

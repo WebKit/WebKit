@@ -31,13 +31,10 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
-#import <MediaPlayer/MPAVItem.h>
-#import <MediaPlayer/MPAudioVideoRoutingActionSheet.h>
-#import <MediaPlayer/MPAudioVideoRoutingPopoverController.h>
-#import <WebCore/MPAVRoutingControllerSPI.h>
-#import <WebCore/SoftLinking.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIWindow_Private.h>
+#import <WebCore/MediaPlayerSPI.h>
+#import <WebCore/SoftLinking.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(MediaPlayer)

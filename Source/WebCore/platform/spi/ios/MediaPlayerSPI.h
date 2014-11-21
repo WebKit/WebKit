@@ -28,8 +28,17 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <MediaPlayer/MPAVRoutingController.h>
+#import <MediaPlayer/MPAudioVideoRoutingActionSheet.h>
+#import <MediaPlayer/MPAudioVideoRoutingPopoverController.h>
 
 #else
+
+enum {
+    MPAVItemTypeUnknown = 0,
+    MPAVItemTypeAudio = 1,
+    MPAVItemTypeVideo = 2,
+};
+typedef NSUInteger MPAVItemType;
 
 enum {
     MPRouteDiscoveryModeDisabled = 0,
@@ -44,6 +53,21 @@ typedef NSInteger MPRouteDiscoveryMode;
 @interface MPAVRoutingController (Details)
 - (instancetype)initWithName:(NSString *)name;
 @property (nonatomic, assign) MPRouteDiscoveryMode discoveryMode;
+@end
+
+@interface MPAudioVideoRoutingPopoverController : UIPopoverController
+@end
+
+@interface MPAudioVideoRoutingPopoverController (Details)
+- (id)initWithType:(MPAVItemType)avItemType;
+@end
+
+@interface MPAudioVideoRoutingActionSheet : UIActionSheet
+@end
+
+@interface MPAudioVideoRoutingActionSheet (Details)
+- (id)initWithType:(MPAVItemType)avItemType;
+- (void)showWithValidInterfaceOrientationMaskBlock:(UIInterfaceOrientationMask (^)(void))block completionHandler:(void (^)())completionHandler;
 @end
 
 #endif

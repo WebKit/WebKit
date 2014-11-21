@@ -29,8 +29,8 @@
 #if PLATFORM(IOS)
 
 #import "Logging.h"
-#import "MPAVRoutingControllerSPI.h"
 #import "MediaPlayer.h"
+#import "MediaPlayerSPI.h"
 #import "MediaSession.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"

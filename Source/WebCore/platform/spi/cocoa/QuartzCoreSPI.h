@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <QuartzCore/CAColorMatrix.h>
+#include <QuartzCore/CARenderServer.h>
 
 #ifdef __OBJC__
 #import <QuartzCore/CALayerPrivate.h>
@@ -60,6 +61,11 @@ extern "C" {
 + (id)objectForSlot:(uint32_t)name;
 - (uint32_t)createImageSlot:(CGSize)size hasAlpha:(BOOL)flag;
 - (void)deleteSlot:(uint32_t)name;
+- (void)invalidate;
+- (void)setFencePort:(mach_port_t)port;
+@property (readonly) uint32_t contextId;
+@property (strong) CALayer *layer;
+@property CGColorSpaceRef colorSpace;
 @end
 
 @interface CALayer (Details)
@@ -103,6 +109,9 @@ typedef struct CAColorMatrix CAColorMatrix;
 
 #endif
 
+EXTERN_C void CARenderServerCaptureLayerWithTransform(mach_port_t serverPort, uint32_t clientId, uint64_t layerId,
+                                                      uint32_t slotId, int32_t ox, int32_t oy, const CATransform3D *);
+
 EXTERN_C NSString * const kCATiledLayerRemoveImmediately;
 
 EXTERN_C NSString * const kCAFilterColorInvert;
@@ -111,6 +120,7 @@ EXTERN_C NSString * const kCAFilterColorMonochrome;
 EXTERN_C NSString * const kCAFilterColorHueRotate;
 EXTERN_C NSString * const kCAFilterColorSaturate;
 EXTERN_C NSString * const kCAFilterGaussianBlur;
+EXTERN_C NSString * const kCAFilterPlusD;
 
 
 EXTERN_C NSString * const kCAFilterNormalBlendMode;
@@ -127,3 +137,5 @@ EXTERN_C NSString * const kCAFilterDifferenceBlendMode;
 EXTERN_C NSString * const kCAFilterExclusionBlendMode;
 
 EXTERN_C NSString * const kCAContextDisplayName;
+EXTERN_C NSString * const kCAContextDisplayId;
+EXTERN_C NSString * const kCAContextIgnoresHitTest;

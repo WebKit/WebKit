@@ -29,6 +29,7 @@
 #import "ChildProcess.h"
 #import "WebKit2Initialize.h"
 #import <wtf/OSObjectPtr.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 #if HAVE(VOUCHERS)
 #if __has_include(<os/voucher_private.h>)

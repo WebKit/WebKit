@@ -135,6 +135,8 @@ EXTERN_C void CGFontSetShouldUseMulticache(bool);
 EXTERN_C void CGImageSetCachingFlags(CGImageRef, CGImageCachingFlags);
 EXTERN_C CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
 
+EXTERN_C CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
+
 #if PLATFORM(COCOA)
 EXTERN_C CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
 EXTERN_C CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
