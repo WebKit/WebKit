@@ -1,3 +1,9 @@
+2014-11-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Skip some tests that fail with stderr
+
+        * platform/ios-simulator/TestExpectations:
+
 2014-11-20  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (174986): CSS clip property is ignored when border-radius is present.

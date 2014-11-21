@@ -37,8 +37,8 @@ webaudio
 ###
 # Known failures
 ##
-webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Failure ]
-webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Failure ]
+webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
+webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Skip ] # Timeout, Fail
 webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
@@ -66,6 +66,7 @@ animations/stop-animation-on-suspend.html [ Skip ]
 
 # Animation tests that fail:
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+animations/cross-fade-webkit-mask-box-image.html [ Failure ]
 
 # Animation tests that are flaky:
 animations/3d/matrix-transform-type-animation.html [ Skip ] # Pass, Timeout, Missing
@@ -74,7 +75,11 @@ animations/3d/state-at-end-event-transform.html [ Skip ] # Pass, Timeout, Missin
 animations/animation-delay-changed.html [ Skip ] # Failure, Pass
 animations/cross-fade-border-image-source.html [ Skip ] # Failure, ImageOnlyFailure, Pass
 
-# Canvas
+# Animation tests that have stderr:
+animations/3d/transform-origin-vs-functions.html [ Skip ]
+animations/added-while-suspended.html [ Skip ]
+
+# Canvas tests that fail:
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
@@ -97,6 +102,9 @@ webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
+
+# Canvas tests that have stderr:
+canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
 
 ###
 # Temporarily skip all others tests
