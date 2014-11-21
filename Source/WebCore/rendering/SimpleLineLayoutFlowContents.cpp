@@ -180,10 +180,16 @@ float FlowContents::runWidth(const RenderText& renderer, unsigned from, unsigned
 {
     ASSERT(from < to);
     String string = renderer.text();
+    bool measureWithEndSpace = m_style.collapseWhitespace && to < string.length() && string[to] == ' ';
+    if (measureWithEndSpace)
+        ++to;
     TextRun run(string.characters8() + from, to - from);
     run.setXPos(xPosition);
     run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
-    return m_style.font.width(run);
+    float width = m_style.font.width(run);
+    if (measureWithEndSpace)
+        width -= m_style.spaceWidth;
+    return width;
 }
 
 }

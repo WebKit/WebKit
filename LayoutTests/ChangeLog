@@ -1,3 +1,25 @@
+2014-11-21  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r175259) Simple line layout text measuring behavior changed.
+        https://bugs.webkit.org/show_bug.cgi?id=138947
+        rdar://problem/19050653
+
+        Reviewed by Antti Koivisto.
+
+        In certain cases, when block flow needs to compute the preferred width of a particular text
+        renderer, we use the non-simple line layout text measuring.
+        However, the same text renderer might end up at simple line layout later.
+        Complex line layout measures text including the trailing space and it subtracts
+        (the constant value of) space width afterwards, while simple line layout measures
+        runs without the extra space.
+        In such cases, this may result different word widths and produce unexpected line breaking. (preferred width != final width)
+        In long term, any text renderer qualified for simple line layout should go through the simple
+        text measuring code path. (https://bugs.webkit.org/show_bug.cgi?id=138973)
+        For now, just copy complex line layout behaviour. This also matches the previous simple line layout line breaking implementation.
+
+        * fast/text/simple-line-text-measuring-with-trailing-space-expected.html: Added.
+        * fast/text/simple-line-text-measuring-with-trailing-space.html: Added.
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'transition-delay' CSS property to a calculated value
