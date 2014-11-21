@@ -1,3 +1,9 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Remove a symbol that's gone.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-11-11  Chris Dumez  <cdumez@apple.com>
 
         Mark more virtual functions in HTMLInputElement as final
