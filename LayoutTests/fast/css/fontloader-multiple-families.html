@@ -38,12 +38,6 @@ function runTests() {
 }
 
 function onsuccess() {
-    shouldBe("events['loading']", "1");
-    shouldBe("events['loadstart']", "2");
-    shouldBe("events['load']", "2");
-    shouldBe("events['error']", "undefined");
-    shouldBe("events['loadingdone']", "undefined");
-    shouldBe("document.fonts.checkFont('10px TestFont1, TestFont2')", "true");
 }
 
 function onerror() {
@@ -51,7 +45,12 @@ function onerror() {
 }
 
 function verify() {
+    shouldBe("events['loading']", "1");
+    shouldBe("events['loadstart']", "2");
+    shouldBe("events['load']", "2");
+    shouldBe("events['error']", "undefined");
     shouldBe("events['loadingdone']", "1");
+    shouldBe("document.fonts.checkFont('10px TestFont1, TestFont2')", "true");
     finishJSTest();
 }
 

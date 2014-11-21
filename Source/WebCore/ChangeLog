@@ -1,3 +1,29 @@
+2014-11-21  Bear Travis  <betravis@gmail.com>
+
+        [CSS Font Loading] Switch to dispatching events asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=138755
+
+        Reviewed by Simon Fraser.
+
+        Moving FontLoader to dispatch events and notify callbacks similarly
+        to EventSender or the GenericEventQueue. Several bugs have popped
+        up in the past because FontLoader has been sending events during
+        layout, and there is no need for that to be the case.
+
+        Covered by existing font loader event tests. Added an additional
+        test for the svg case, fontloader-svg-select.
+
+        * css/FontLoader.cpp:
+        (WebCore::FontLoader::didLayout):
+        (WebCore::FontLoader::timerFired): Adding asynchronous callback.
+        (WebCore::FontLoader::scheduleEvent): Add an event to the dispatch
+        queue.
+        (WebCore::FontLoader::firePendingEvents): Modified to handle the
+        loading done event and callbacks.
+        (WebCore::FontLoader::loadingDone): Modified to spin up the timer
+        rather than immediately dispatching events.
+        * css/FontLoader.h:
+
 2014-11-21  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the internal Apple Mavericks build after <https://trac.webkit.org/changeset/176448>

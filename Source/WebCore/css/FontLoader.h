@@ -31,6 +31,7 @@
 #include "ActiveDOMObject.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "Timer.h"
 #include "VoidCallback.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -94,6 +95,7 @@ private:
     virtual EventTargetData* eventTargetData() override;
     virtual EventTargetData& ensureEventTargetData() override;
 
+    void pendingEventsTimerFired(Timer&) { firePendingEvents(); }
     void scheduleEvent(PassRefPtr<Event>);
     void firePendingEvents();
     bool resolveFontStyle(const String&, Font&);
@@ -105,6 +107,7 @@ private:
     Vector<RefPtr<Event>> m_pendingEvents;
     Vector<RefPtr<VoidCallback>> m_callbacks;
     RefPtr<Event> m_loadingDoneEvent;
+    Timer m_pendingEventsTimer;
 };
 
 } // namespace WebCore

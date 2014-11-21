@@ -1,3 +1,23 @@
+2014-11-21  Bear Travis  <betravis@gmail.com>
+
+        [CSS Font Loading] Switch to dispatching events asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=138755
+
+        Reviewed by Simon Fraser.
+
+        Refactoring tests to check for all events only after the FontLoader
+        itself has completed. Tests were previously checking after a specific font
+        had loaded, at which point some of the events may have yet to fire.
+
+        * fast/css/fontloader-multiple-faces-download-error-expected.txt:
+        * fast/css/fontloader-multiple-faces-download-error.html:
+        * fast/css/fontloader-multiple-faces-expected.txt:
+        * fast/css/fontloader-multiple-faces.html:
+        * fast/css/fontloader-multiple-families-expected.txt:
+        * fast/css/fontloader-multiple-families.html:
+        * fast/css/fontloader-svg-select-expected.txt: Added
+        * fast/css/fontloader-svg-select.svg: Added
+
 2014-11-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML expressions are misread by VoiceOver

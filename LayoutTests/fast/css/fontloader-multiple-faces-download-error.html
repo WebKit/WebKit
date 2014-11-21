@@ -43,16 +43,15 @@ function onsuccess() {
 }
 
 function onerror() {
+}
+
+function verify() {
     shouldBe("events['loading']", "1");
     shouldBe("events['loadstart']", "2");
     shouldBe("events['load']", "1");
     shouldBe("events['error']", "1");
-    shouldBe("events['loadingdone']", "undefined");
-    shouldBe("document.fonts.checkFont('10px TestFont')", "false");
-}
-
-function verify() {
     shouldBe("events['loadingdone']", "1");
+    shouldBe("document.fonts.checkFont('10px TestFont')", "false");
     finishJSTest();
 }
 

@@ -122,6 +122,7 @@ FontLoader::FontLoader(Document* document)
     , m_document(document)
     , m_numLoadingFromCSS(0)
     , m_numLoadingFromJS(0)
+    , m_pendingEventsTimer(this, &FontLoader::pendingEventsTimerFired)
 {
     suspendIfNeeded();
 }
@@ -152,31 +153,39 @@ ScriptExecutionContext* FontLoader::scriptExecutionContext() const
 
 void FontLoader::didLayout()
 {
-    firePendingEvents();
     loadingDone();
 }
 
 void FontLoader::scheduleEvent(PassRefPtr<Event> event)
 {
-    if (FrameView* view = m_document->view()) {
-        if (view->isInLayout()) {
-            m_pendingEvents.append(event);
-            return;
-        }
-    }
-    firePendingEvents();
-    dispatchEvent(event);
+    m_pendingEvents.append(event);
+    if (!m_pendingEventsTimer.isActive())
+        m_pendingEventsTimer.startOneShot(0);
 }
 
 void FontLoader::firePendingEvents()
 {
-    if (m_pendingEvents.isEmpty())
+    if (m_pendingEvents.isEmpty() && !m_loadingDoneEvent && !m_callbacks.isEmpty())
         return;
 
-    Vector<RefPtr<Event> > pendingEvents;
+    Vector<RefPtr<Event>> pendingEvents;
     m_pendingEvents.swap(pendingEvents);
+
+    bool loadingDone = false;
+    if (m_loadingDoneEvent) {
+        pendingEvents.append(m_loadingDoneEvent.release());
+        loadingDone = true;
+    }
+
     for (size_t index = 0; index < pendingEvents.size(); ++index)
         dispatchEvent(pendingEvents[index].release());
+
+    if (loadingDone && !m_callbacks.isEmpty()) {
+        Vector<RefPtr<VoidCallback>> callbacks;
+        m_callbacks.swap(callbacks);
+        for (size_t index = 0; index < callbacks.size(); ++index)
+            callbacks[index]->handleEvent();
+    }
 }
 
 void FontLoader::beginFontLoading(CSSFontFaceRule* rule)
@@ -218,7 +227,7 @@ void FontLoader::loadingDone()
 {
     if (loading() || !m_document->haveStylesheetsLoaded())
         return;
-    if (!m_loadingDoneEvent && m_callbacks.isEmpty())
+    if (!m_loadingDoneEvent && m_callbacks.isEmpty() && m_pendingEvents.isEmpty())
         return;
 
     if (FrameView* view = m_document->view()) {
@@ -226,15 +235,8 @@ void FontLoader::loadingDone()
             return;
     }
 
-    if (m_loadingDoneEvent)
-        dispatchEvent(m_loadingDoneEvent.release());
-
-    if (!m_callbacks.isEmpty()) {
-        Vector<RefPtr<VoidCallback> > callbacks;
-        m_callbacks.swap(callbacks);
-        for (size_t index = 0; index < callbacks.size(); ++index)
-            callbacks[index]->handleEvent();
-    }
+    if (!m_pendingEventsTimer.isActive())
+        m_pendingEventsTimer.startOneShot(0);
 }
 
 void FontLoader::loadFont(const Dictionary& params)
