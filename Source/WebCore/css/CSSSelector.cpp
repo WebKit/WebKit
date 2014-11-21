@@ -78,14 +78,6 @@ static unsigned maxSpecificity(const CSSSelectorList& selectorList)
     return maxSpecificity;
 }
 
-unsigned CSSSelector::specificity() const
-{
-    if (isForPage())
-        return specificityForPage() & maxValueMask;
-
-    return selectorSpecificity(*this, false);
-}
-
 static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelector, bool isComputingMaximumSpecificity)
 {
     ASSERT_WITH_MESSAGE(!simpleSelector.isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
@@ -138,6 +130,58 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
 unsigned CSSSelector::simpleSelectorSpecificity() const
 {
     return simpleSelectorSpecificityInternal(*this, false);
+}
+
+static unsigned staticSpecificityInternal(const CSSSelector& firstSimpleSelector, bool& ok);
+
+static unsigned simpleSelectorFunctionalPseudoClassStaticSpecificity(const CSSSelector& simpleSelector, bool& ok)
+{
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+    if (simpleSelector.match() == CSSSelector::PseudoClass) {
+        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
+            const CSSSelectorList& selectorList = *simpleSelector.selectorList();
+            const CSSSelector& firstSubselector = *selectorList.first();
+
+            unsigned initialSpecificity = staticSpecificityInternal(firstSubselector, ok);
+            if (!ok)
+                return 0;
+
+            const CSSSelector* subselector = &firstSubselector;
+            while ((subselector = CSSSelectorList::next(subselector))) {
+                unsigned subSelectorSpecificity = staticSpecificityInternal(*subselector, ok);
+                if (initialSpecificity != subSelectorSpecificity)
+                    ok = false;
+                if (!ok)
+                    return 0;
+            }
+            return initialSpecificity;
+        }
+    }
+#endif
+    return 0;
+}
+
+static unsigned functionalPseudoClassStaticSpecificity(const CSSSelector& firstSimpleSelector, bool& ok)
+{
+    unsigned total = 0;
+    for (const CSSSelector* selector = &firstSimpleSelector; selector; selector = selector->tagHistory()) {
+        total = CSSSelector::addSpecificities(total, simpleSelectorFunctionalPseudoClassStaticSpecificity(*selector, ok));
+        if (!ok)
+            return 0;
+    }
+    return total;
+}
+
+static unsigned staticSpecificityInternal(const CSSSelector& firstSimpleSelector, bool& ok)
+{
+    unsigned staticSpecificity = selectorSpecificity(firstSimpleSelector, false);
+    return CSSSelector::addSpecificities(staticSpecificity, functionalPseudoClassStaticSpecificity(firstSimpleSelector, ok));
+}
+
+unsigned CSSSelector::staticSpecificity(bool &ok) const
+{
+    ok = true;
+    return staticSpecificityInternal(*this, ok);
 }
 
 unsigned CSSSelector::addSpecificities(unsigned a, unsigned b)

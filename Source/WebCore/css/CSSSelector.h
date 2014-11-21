@@ -58,7 +58,7 @@ namespace WebCore {
         static const unsigned classMask = 0xff00;
         static const unsigned elementMask = 0xff;
 
-        unsigned specificity() const;
+        unsigned staticSpecificity(bool& ok) const;
         unsigned specificityForPage() const;
         unsigned simpleSelectorSpecificity() const;
         static unsigned addSpecificities(unsigned, unsigned);

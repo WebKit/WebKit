@@ -1,3 +1,33 @@
+2014-11-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Web Inspector: do not show invalid specificity for dynamic cases of :matches()
+        https://bugs.webkit.org/show_bug.cgi?id=138911
+
+        Reviewed by Joseph Pecoraro.
+
+        * css/CSSSelector.cpp:
+        (WebCore::simpleSelectorFunctionalPseudoClassStaticSpecificity):
+        (WebCore::functionalPseudoClassStaticSpecificity):
+        (WebCore::staticSpecificityInternal):
+        (WebCore::CSSSelector::staticSpecificity):
+        (WebCore::CSSSelector::specificity): Deleted.
+        * css/CSSSelector.h:
+        Add an additional computation path for the inspector.
+
+        The regular path ignores everything inside function pseudo classes.
+        This new path takes the static specificity of the regular path, then evaluate
+        recursively all the selector lists inside any level of :matches().
+
+        If two complex selector of selector list do not have the same specificity,
+        we bail out and refuse to compute a static specificity representing the selector.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildObjectForSelectorHelper):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelector):
+        Do not add the complexity to the inspector's CSSSelector structure whenever
+        it is dynamic.
+
 2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove InspectorCSSAgent::buildArrayForRuleList()

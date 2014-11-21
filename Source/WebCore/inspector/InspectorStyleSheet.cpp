@@ -991,18 +991,23 @@ PassRefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::b
         .release();
 }
 
-static PassRefPtr<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, unsigned specificity)
+static PassRefPtr<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector)
 {
-    RefPtr<Inspector::Protocol::CSS::CSSSelector> selector = Inspector::Protocol::CSS::CSSSelector::create()
+    RefPtr<Inspector::Protocol::CSS::CSSSelector> inspectorSelector = Inspector::Protocol::CSS::CSSSelector::create()
         .setText(selectorText);
 
-    RefPtr<Inspector::Protocol::Array<int>> tuple = Inspector::Protocol::Array<int>::create();
-    tuple->addItem(static_cast<int>((specificity & CSSSelector::idMask) >> 16));
-    tuple->addItem(static_cast<int>((specificity & CSSSelector::classMask) >> 8));
-    tuple->addItem(static_cast<int>(specificity & CSSSelector::elementMask));
-    selector->setSpecificity(tuple.release());
+    bool ok;
+    unsigned specificity = selector.staticSpecificity(ok);
 
-    return selector.release();
+    if (ok) {
+        RefPtr<Inspector::Protocol::Array<int>> tuple = Inspector::Protocol::Array<int>::create();
+        tuple->addItem(static_cast<int>((specificity & CSSSelector::idMask) >> 16));
+        tuple->addItem(static_cast<int>((specificity & CSSSelector::classMask) >> 8));
+        tuple->addItem(static_cast<int>(specificity & CSSSelector::elementMask));
+        inspectorSelector->setSpecificity(tuple.release());
+    }
+
+    return inspectorSelector.release();
 }
 
 static PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const CSSSelectorList& selectorList)
@@ -1018,7 +1023,7 @@ static PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelect
 
         // We don't want to see any comments in the selector components, only the meaningful parts.
         replace(selectorText, comment, String());
-        result->addItem(buildObjectForSelectorHelper(selectorText.stripWhiteSpace(), selector->specificity()));
+        result->addItem(buildObjectForSelectorHelper(selectorText.stripWhiteSpace(), *selector));
 
         selector = CSSSelectorList::next(selector);
     }
@@ -1027,7 +1032,7 @@ static PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelect
 
 PassRefPtr<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSelector(const CSSSelector* selector)
 {
-    return buildObjectForSelectorHelper(selector->selectorText(), selector->specificity());
+    return buildObjectForSelectorHelper(selector->selectorText(), *selector);
 }
 
 PassRefPtr<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule)
