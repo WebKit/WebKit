@@ -1,3 +1,20 @@
+2014-11-21  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML expressions are misread by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=138948
+
+        Reviewed by Mario Sanchez Prada.
+
+        The logic for deciding what's the radicand and an index was too tied to children placement.
+        We should instead pull directly from the source.
+
+        Test: platform/mac/accessibility/mathml-root.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mathRadicandObject):
+        (WebCore::AccessibilityRenderObject::mathRootIndexObject):
+        * rendering/mathml/RenderMathMLRoot.h:
+
 2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the remaining vestiges of minimal-ui

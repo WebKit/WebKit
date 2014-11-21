@@ -1,3 +1,13 @@
+2014-11-21  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML expressions are misread by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=138948
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/mac/accessibility/mathml-root-expected.txt: Added.
+        * platform/mac/accessibility/mathml-root.html: Added.
+
 2014-11-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Skip some tests that fail with stderr
