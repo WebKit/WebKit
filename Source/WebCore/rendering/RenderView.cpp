@@ -1327,13 +1327,6 @@ void RenderView::popLayoutStateForCurrentFlowThread()
     currentFlowThread->popFlowThreadLayoutState();
 }
 
-IntervalArena* RenderView::intervalArena()
-{
-    if (!m_intervalArena)
-        m_intervalArena = IntervalArena::create();
-    return m_intervalArena.get();
-}
-
 ImageQualityController& RenderView::imageQualityController()
 {
     if (!m_imageQualityController)

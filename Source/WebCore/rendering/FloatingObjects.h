@@ -115,7 +115,6 @@ typedef ListHashSet<std::unique_ptr<FloatingObject>, FloatingObjectHashFunctions
 
 typedef PODInterval<LayoutUnit, FloatingObject*> FloatingObjectInterval;
 typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;
-typedef PODFreeListArena<PODRedBlackTree<FloatingObjectInterval>::Node> IntervalArena;
 
 // FIXME: This is really the same thing as FloatingObjectSet.
 // Change clients to use that set directly, and replace the moveAllToFloatInfoMap function with a takeSet function.
@@ -151,13 +150,13 @@ public:
 
 private:
     void computePlacedFloatsTree();
-    const FloatingObjectTree& placedFloatsTree();
+    const FloatingObjectTree* placedFloatsTree();
     void increaseObjectsCount(FloatingObject::Type);
     void decreaseObjectsCount(FloatingObject::Type);
     FloatingObjectInterval intervalForFloatingObject(FloatingObject*);
 
     FloatingObjectSet m_set;
-    FloatingObjectTree m_placedFloatsTree;
+    std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;
     unsigned m_leftObjectsCount;
     unsigned m_rightObjectsCount;
     bool m_horizontalWritingMode;

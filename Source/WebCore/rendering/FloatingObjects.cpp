@@ -236,7 +236,8 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
 LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelow(LayoutUnit logicalHeight)
 {
     FindNextFloatLogicalBottomAdapter adapter(m_renderer, logicalHeight);
-    placedFloatsTree().allOverlapsWithAdapter(adapter);
+    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
+        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     return adapter.nextShapeLogicalBottom();
 }
@@ -244,14 +245,14 @@ LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelow(LayoutUnit logicalHe
 LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight)
 {
     FindNextFloatLogicalBottomAdapter adapter(m_renderer, logicalHeight);
-    placedFloatsTree().allOverlapsWithAdapter(adapter);
+    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
+        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     return adapter.nextLogicalBottom();
 }
 
 FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
-    : m_placedFloatsTree(UninitializedTree)
-    , m_leftObjectsCount(0)
+    : m_leftObjectsCount(0)
     , m_rightObjectsCount(0)
     , m_horizontalWritingMode(renderer.isHorizontalWritingMode())
     , m_renderer(renderer)
@@ -274,7 +275,7 @@ void FloatingObjects::clearLineBoxTreePointers()
 void FloatingObjects::clear()
 {
     m_set.clear();
-    m_placedFloatsTree.clear();
+    m_placedFloatsTree = nullptr;
     m_leftObjectsCount = 0;
     m_rightObjectsCount = 0;
 }
@@ -321,8 +322,8 @@ void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
     ASSERT(!floatingObject->isInPlacedTree());
 
     floatingObject->setIsPlaced(true);
-    if (m_placedFloatsTree.isInitialized())
-        m_placedFloatsTree.add(intervalForFloatingObject(floatingObject));
+    if (m_placedFloatsTree)
+        m_placedFloatsTree->add(intervalForFloatingObject(floatingObject));
 
 #ifndef NDEBUG
     floatingObject->setIsInPlacedTree(true);
@@ -333,8 +334,8 @@ void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
 {
     ASSERT(floatingObject->isPlaced() && floatingObject->isInPlacedTree());
 
-    if (m_placedFloatsTree.isInitialized()) {
-        bool removed = m_placedFloatsTree.remove(intervalForFloatingObject(floatingObject));
+    if (m_placedFloatsTree) {
+        bool removed = m_placedFloatsTree->remove(intervalForFloatingObject(floatingObject));
         ASSERT_UNUSED(removed, removed);
     }
 
@@ -368,28 +369,30 @@ void FloatingObjects::remove(FloatingObject* floatingObject)
 
 void FloatingObjects::computePlacedFloatsTree()
 {
-    ASSERT(!m_placedFloatsTree.isInitialized());
+    ASSERT(!m_placedFloatsTree);
     if (m_set.isEmpty())
         return;
-    m_placedFloatsTree.initIfNeeded(m_renderer.view().intervalArena());
+
+    m_placedFloatsTree = std::make_unique<FloatingObjectTree>();
     for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
         FloatingObject* floatingObject = it->get();
         if (floatingObject->isPlaced())
-            m_placedFloatsTree.add(intervalForFloatingObject(floatingObject));
+            m_placedFloatsTree->add(intervalForFloatingObject(floatingObject));
     }
 }
 
-inline const FloatingObjectTree& FloatingObjects::placedFloatsTree()
+inline const FloatingObjectTree* FloatingObjects::placedFloatsTree()
 {
-    if (!m_placedFloatsTree.isInitialized())
+    if (!m_placedFloatsTree)
         computePlacedFloatsTree();
-    return m_placedFloatsTree;
+    return m_placedFloatsTree.get();
 }
 
 LayoutUnit FloatingObjects::logicalLeftOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit *heightRemaining)
 {
     ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatLeft> adapter(m_renderer, logicalTop, logicalTop, fixedOffset);
-    placedFloatsTree().allOverlapsWithAdapter(adapter);
+    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
+        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     if (heightRemaining)
         *heightRemaining = adapter.heightRemaining();
@@ -400,7 +403,8 @@ LayoutUnit FloatingObjects::logicalLeftOffsetForPositioningFloat(LayoutUnit fixe
 LayoutUnit FloatingObjects::logicalRightOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit *heightRemaining)
 {
     ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatRight> adapter(m_renderer, logicalTop, logicalTop, fixedOffset);
-    placedFloatsTree().allOverlapsWithAdapter(adapter);
+    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
+        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     if (heightRemaining)
         *heightRemaining = adapter.heightRemaining();
@@ -411,7 +415,8 @@ LayoutUnit FloatingObjects::logicalRightOffsetForPositioningFloat(LayoutUnit fix
 LayoutUnit FloatingObjects::logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight)
 {
     ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft> adapter(m_renderer, logicalTop, logicalTop + logicalHeight, fixedOffset);
-    placedFloatsTree().allOverlapsWithAdapter(adapter);
+    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
+        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     return adapter.offset();
 }
@@ -419,7 +424,8 @@ LayoutUnit FloatingObjects::logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit
 LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight)
 {
     ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight> adapter(m_renderer, logicalTop, logicalTop + logicalHeight, fixedOffset);
-    placedFloatsTree().allOverlapsWithAdapter(adapter);
+    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
+        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     return std::min(fixedOffset, adapter.offset());
 }

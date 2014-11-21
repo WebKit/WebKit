@@ -1,3 +1,73 @@
+2014-11-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the custom allocator for PODRedBlackTree
+        https://bugs.webkit.org/show_bug.cgi?id=138942
+
+        Reviewed by Sam Weinig.
+
+        bmalloc is fast enough.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PODArena.h: Removed.
+        * platform/PODFreeListArena.h: Removed. This is the point of the patch.
+
+        * platform/PODIntervalTree.h:
+        (WebCore::PODIntervalTree::PODIntervalTree): Deleted. As a side effect
+        of removing our custom allocator, we can no longer have a special
+        "I'm not initialized yet" state. Instead, the tree either exists or not,
+        like an idiomatic C++ object.
+
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::PODRedBlackTree): Ditto.
+
+        (WebCore::PODRedBlackTree::~PODRedBlackTree): We need to clear in our
+        destructor because we can no longer rely on the arena destructor
+        implicitly freeing our tree nodes.
+
+        Side note: This change basically removes the whole reason for having
+        a purpose-built tree for POD data. We should probably remove this whole
+        data structure in a follow-up patch, and just use a standard tree.
+
+        (WebCore::PODRedBlackTree::clear):
+        (WebCore::PODRedBlackTree::add):
+        (WebCore::PODRedBlackTree::remove):
+        (WebCore::PODRedBlackTree::contains):
+        (WebCore::PODRedBlackTree::visitInorder):
+        (WebCore::PODRedBlackTree::size):
+        (WebCore::PODRedBlackTree::checkInvariants):
+        (WebCore::PODRedBlackTree::dump):
+        (WebCore::PODRedBlackTree::deleteNode):
+        (WebCore::PODRedBlackTree::markFree): Use normal new/delete, and mark
+        ourselves as fast allocated so we get the bmalloc goodness.
+
+        (WebCore::PODRedBlackTree::isInitialized): Deleted.
+        (WebCore::PODRedBlackTree::initIfNeeded): Deleted.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::findNextFloatLogicalBottomBelow):
+        (WebCore::FloatingObjects::findNextFloatLogicalBottomBelowForBlock):
+        (WebCore::FloatingObjects::FloatingObjects):
+        (WebCore::FloatingObjects::clear):
+        (WebCore::FloatingObjects::addPlacedObject):
+        (WebCore::FloatingObjects::removePlacedObject):
+        (WebCore::FloatingObjects::computePlacedFloatsTree):
+        (WebCore::FloatingObjects::placedFloatsTree):
+        (WebCore::FloatingObjects::logicalLeftOffsetForPositioningFloat):
+        (WebCore::FloatingObjects::logicalRightOffsetForPositioningFloat):
+        (WebCore::FloatingObjects::logicalLeftOffset):
+        (WebCore::FloatingObjects::logicalRightOffset): POD tree had a slightly
+        weird behavior in which it was valid to use some of its APIs without
+        first initializing it, but not others. It's not really possible to model
+        that behavior with normal C++ objects that use new/delete, so instead
+        I added some explicit NULL checks.
+
+        * rendering/FloatingObjects.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::intervalArena): Deleted.
+        * rendering/RenderView.h: Removed custom-allocator-related cruft.
+
 2014-11-20  Dean Jackson  <dino@apple.com>
 
         Support unprefixed animation event types

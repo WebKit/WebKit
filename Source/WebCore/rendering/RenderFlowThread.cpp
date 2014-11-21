@@ -1017,7 +1017,6 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
     bool emptyRegionsSegment = false;
     // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
     m_regionIntervalTree.clear();
-    m_regionIntervalTree.initIfNeeded();
     for (auto& region : m_regionList) {
         // If we find an empty auto-height region, clear the computedAutoHeight value.
         if (emptyRegionsSegment && region->hasAutoLogicalHeight())

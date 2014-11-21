@@ -72,7 +72,6 @@
 #ifndef PODRedBlackTree_h
 #define PODRedBlackTree_h
 
-#include "PODFreeListArena.h"
 #include "ValueToString.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
@@ -85,12 +84,9 @@
 
 namespace WebCore {
 
-enum UninitializedTreeEnum {
-    UninitializedTree
-};
-
 template<class T>
 class PODRedBlackTree {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Node;
 
@@ -102,11 +98,7 @@ public:
         virtual ~Visitor() { }
     };
 
-    // Constructs a new red-black tree without allocating an arena.
-    // isInitialized will return false in this case. initIfNeeded can be used
-    // to init the structure. This constructor is usefull for creating
-    // lazy initialized tree.
-    explicit PODRedBlackTree(UninitializedTreeEnum)
+    PODRedBlackTree()
         : m_root(0)
         , m_needsFullOrderingComparisons(false)
 #ifndef NDEBUG
@@ -115,69 +107,28 @@ public:
     {
     }
 
-    // Constructs a new red-black tree, allocating temporary objects
-    // from a newly constructed PODFreeListArena.
-    PODRedBlackTree()
-        : m_arena(PODFreeListArena<Node>::create())
-        , m_root(0)
-        , m_needsFullOrderingComparisons(false)
-#ifndef NDEBUG
-        , m_verboseDebugging(false)
-#endif
+    virtual ~PODRedBlackTree()
     {
+        clear();
     }
-
-    // Constructs a new red-black tree, allocating temporary objects
-    // from the given PODArena.
-    explicit PODRedBlackTree(PassRefPtr<PODFreeListArena<Node>> arena)
-        : m_arena(arena)
-        , m_root(0)
-        , m_needsFullOrderingComparisons(false)
-#ifndef NDEBUG
-        , m_verboseDebugging(false)
-#endif
-    {
-    }
-
-    virtual ~PODRedBlackTree() { }
 
     // Clearing will delete the contents of the tree. After this call
     // isInitialized will return false.
     void clear()
     {
         markFree(m_root);
-        m_arena = 0;
         m_root = 0;
     }
     
-    bool isInitialized() const
-    {
-        return m_arena;
-    }
-    
-    void initIfNeeded()
-    {
-        if (!m_arena)
-            m_arena = PODFreeListArena<Node>::create();
-    }
-
-    void initIfNeeded(PODFreeListArena<Node>* arena)
-    {
-        if (!m_arena)
-            m_arena = arena;
-    }
-
     void add(const T& data)
     {
-        ASSERT(isInitialized());
-        Node* node = m_arena->template allocateObject<T>(data);
+        Node* node = new Node(data);
         insertNode(node);
     }
 
     // Returns true if the datum was found in the tree.
     bool remove(const T& data)
     {
-        ASSERT(isInitialized());
         Node* node = treeSearch(data);
         if (node) {
             deleteNode(node);
@@ -188,13 +139,11 @@ public:
 
     bool contains(const T& data) const
     {
-        ASSERT(isInitialized());
         return treeSearch(data);
     }
 
     void visitInorder(Visitor* visitor) const
     {
-        ASSERT(isInitialized());
         if (!m_root)
             return;
         visitInorderImpl(m_root, visitor);
@@ -202,7 +151,6 @@ public:
 
     int size() const
     {
-        ASSERT(isInitialized());
         Counter counter;
         visitInorder(&counter);
         return counter.count();
@@ -216,7 +164,6 @@ public:
 
     virtual bool checkInvariants() const
     {
-        ASSERT(isInitialized());
         int blackCount;
         return checkInvariantsFromNode(m_root, &blackCount);
     }
@@ -226,8 +173,7 @@ public:
     // debugging purposes.
     void dump() const
     {
-        if (m_arena)
-            dumpFromNode(m_root, 0);
+        dumpFromNode(m_root, 0);
     }
 
     // Turns on or off verbose debugging of the tree, causing many
@@ -248,6 +194,7 @@ public:
     // an internal concept; users of the tree deal only with the data
     // they store in it.
     class Node {
+        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         // Constructor. Newly-created nodes are colored red.
@@ -695,7 +642,7 @@ private:
         if (y->color() == Black)
             deleteFixup(x, xParent);
 
-        m_arena->freeObject(y);
+        delete y;
     }
 
     // Visits the subtree rooted at the given node in order.
@@ -717,7 +664,7 @@ private:
             markFree(node->left());
         if (node->right())
             markFree(node->right());
-        m_arena->freeObject(node);
+        delete node;
     }
 
     //----------------------------------------------------------------------
@@ -810,7 +757,6 @@ private:
     //----------------------------------------------------------------------
     // Data members
 
-    RefPtr<PODFreeListArena<Node>> m_arena;
     Node* m_root;
     bool m_needsFullOrderingComparisons;
 #ifndef NDEBUG

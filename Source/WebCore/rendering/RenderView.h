@@ -24,7 +24,6 @@
 
 #include "FrameView.h"
 #include "LayoutState.h"
-#include "PODFreeListArena.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
 #include "SelectionSubtreeRoot.h"
@@ -203,8 +202,6 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    IntervalArena* intervalArena();
-
     IntSize viewportSizeForCSSViewportUnits() const;
 
     void setRenderQuoteHead(RenderQuote* head) { m_renderQuoteHead = head; }
@@ -354,7 +351,6 @@ private:
     unsigned m_layoutStateDisableCount;
     std::unique_ptr<RenderLayerCompositor> m_compositor;
     std::unique_ptr<FlowThreadController> m_flowThreadController;
-    RefPtr<IntervalArena> m_intervalArena;
 
     RenderQuote* m_renderQuoteHead;
     unsigned m_renderCounterCount;

@@ -26,7 +26,6 @@
 #ifndef PODIntervalTree_h
 #define PODIntervalTree_h
 
-#include "PODArena.h"
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
 #include "ValueToString.h"
@@ -67,6 +66,7 @@ private:
 // intervals in the tree.
 template<class T, class UserData = void*>
 class PODIntervalTree : public PODRedBlackTree<PODInterval<T, UserData>> {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PODIntervalTree);
 public:
     // Typedef to reduce typing when declaring intervals to be stored in
@@ -74,20 +74,8 @@ public:
     typedef PODInterval<T, UserData> IntervalType;
     typedef PODIntervalSearchAdapter<T, UserData> IntervalSearchAdapterType;
 
-    PODIntervalTree(UninitializedTreeEnum unitializedTree)
-        : PODRedBlackTree<IntervalType>(unitializedTree)
-    {
-        init();
-    }
-    
     PODIntervalTree()
         : PODRedBlackTree<IntervalType>()
-    {
-        init();
-    }
-
-    explicit PODIntervalTree(PassRefPtr<PODArena> arena)
-        : PODRedBlackTree<IntervalType>(arena)
     {
         init();
     }
