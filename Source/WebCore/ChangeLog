@@ -1,3 +1,15 @@
+2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Delay of 1-2s after the first paint of a video frame.
+        https://bugs.webkit.org/show_bug.cgi?id=138979
+
+        Reviewed by Eric Carlson.
+
+        Only bother waiting for a signal that a new image is ready when the image isn't ready in the first place.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+
 2014-11-21  Glenn Adams  <glenn@skynav.com> and Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.
