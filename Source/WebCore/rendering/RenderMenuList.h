@@ -66,7 +66,7 @@ private:
     virtual bool isMenuList() const override { return true; }
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-    virtual RenderObject* removeChild(RenderObject&) override;
+    virtual void removeChild(RenderObject&) override;
     virtual bool createsAnonymousWrapper() const override { return true; }
 
     virtual void updateFromElement() override;

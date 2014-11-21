@@ -62,7 +62,7 @@ private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override final;
-    virtual RenderObject* removeChild(RenderObject&) override final;
+    virtual void removeChild(RenderObject&) override final;
 };
 
 } // namespace WebCore

@@ -1,3 +1,59 @@
+2014-11-21  Andreas Kling  <akling@apple.com>
+
+        RenderElement::removeChild() doesn't need a return value.
+        <https://webkit.org/b/138985>
+
+        Reviewed by Pantti Koivisto.
+
+        Nobody uses the return value from RenderElement::removeChild().
+        Change it to return void and remove all the unnecessary plumbing.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::removeChild):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::removeChild):
+        * rendering/RenderButton.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeChild):
+        (WebCore::RenderElement::removeChildInternal):
+        * rendering/RenderElement.h:
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::removeChild):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::removeChild):
+        (WebCore::RenderRubyAsBlock::removeChild):
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+        * rendering/RenderRubyRun.h:
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRootWrapper::removeChildWithoutRestructuring):
+        (WebCore::RenderMathMLRootWrapper::removeChild):
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::removeChildInternal):
+        (WebCore::RenderMathMLScripts::removeChild):
+        (WebCore::RenderMathMLScriptsWrapper::removeChildInternal):
+        (WebCore::RenderMathMLScriptsWrapper::removeChild):
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::removeChild):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::removeChild):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::removeChild):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::removeChild):
+        * rendering/svg/RenderSVGText.h:
+
 2014-11-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r176351): Parts of apple.com/contact aren't Lookup-able

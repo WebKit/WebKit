@@ -80,7 +80,7 @@ private:
     virtual void willBeDestroyed() override;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual RenderObject* removeChild(RenderObject&) override;
+    virtual void removeChild(RenderObject&) override;
 
     virtual const AffineTransform& localToParentTransform() const override;
 

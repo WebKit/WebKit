@@ -84,7 +84,7 @@ public:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
-    virtual RenderObject* removeChild(RenderObject&);
+    virtual void removeChild(RenderObject&);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed. Since containership can be implemented by any subclass, and since a hierarchy
@@ -96,7 +96,7 @@ public:
 
     enum NotifyChildrenType { NotifyChildren, DontNotifyChildren };
     void insertChildInternal(RenderObject*, RenderObject* beforeChild, NotifyChildrenType);
-    RenderObject* removeChildInternal(RenderObject&, NotifyChildrenType);
+    void removeChildInternal(RenderObject&, NotifyChildrenType);
 
     virtual RenderElement* hoverAncestor() const;
 

@@ -57,7 +57,7 @@ public:
     virtual ~RenderRubyAsInline();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual RenderObject* removeChild(RenderObject& child) override;
+    virtual void removeChild(RenderObject& child) override;
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
@@ -77,7 +77,7 @@ public:
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual RenderObject* removeChild(RenderObject& child) override;
+    virtual void removeChild(RenderObject& child) override;
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

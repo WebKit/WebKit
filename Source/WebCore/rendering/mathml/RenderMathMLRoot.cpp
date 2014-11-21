@@ -349,19 +349,17 @@ RenderPtr<RenderMathMLRootWrapper> RenderMathMLRootWrapper::createAnonymousWrapp
     return newBlock;
 }
 
-RenderObject* RenderMathMLRootWrapper::removeChildWithoutRestructuring(RenderObject& child)
+void RenderMathMLRootWrapper::removeChildWithoutRestructuring(RenderObject& child)
 {
-    return RenderMathMLBlock::removeChild(child);
+    RenderMathMLBlock::removeChild(child);
 }
 
-RenderObject* RenderMathMLRootWrapper::removeChild(RenderObject& child)
+void RenderMathMLRootWrapper::removeChild(RenderObject& child)
 {
-    RenderObject* next = RenderMathMLBlock::removeChild(child);
+    RenderMathMLBlock::removeChild(child);
 
     if (!(beingDestroyed() || documentBeingDestroyed()))
         downcast<RenderMathMLRoot>(*parent()).restructureWrappers();
-
-    return next;
 }
 
 }

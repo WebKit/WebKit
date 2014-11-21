@@ -129,19 +129,20 @@ void RenderSVGInline::addChild(RenderObject* child, RenderObject* beforeChild)
         textAncestor->subtreeChildWasAdded(child);
 }
 
-RenderObject* RenderSVGInline::removeChild(RenderObject& child)
+void RenderSVGInline::removeChild(RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this);
-    if (!textAncestor)
-        return RenderInline::removeChild(child);
+    if (!textAncestor) {
+        RenderInline::removeChild(child);
+        return;
+    }
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     textAncestor->subtreeChildWillBeRemoved(&child, affectedAttributes);
-    RenderObject* next = RenderInline::removeChild(child);
+    RenderInline::removeChild(child);
     textAncestor->subtreeChildWasRemoved(affectedAttributes);
-    return next;
 }
 
 }

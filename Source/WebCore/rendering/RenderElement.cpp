@@ -514,9 +514,9 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
     SVGRenderSupport::childAdded(*this, *newChild);
 }
 
-RenderObject* RenderElement::removeChild(RenderObject& oldChild)
+void RenderElement::removeChild(RenderObject& oldChild)
 {
-    return removeChildInternal(oldChild, NotifyChildren);
+    removeChildInternal(oldChild, NotifyChildren);
 }
 
 void RenderElement::destroyLeftoverChildren()
@@ -585,7 +585,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         cache->childrenChanged(this, newChild);
 }
 
-RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
+void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
 {
     ASSERT(canHaveChildren() || canHaveGeneratedChildren());
     ASSERT(oldChild.parent() == this);
@@ -646,8 +646,6 @@ RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyC
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
-    
-    return nextSibling;
 }
 
 static void addLayers(RenderElement& renderer, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)

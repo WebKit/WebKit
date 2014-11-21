@@ -181,14 +181,13 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
         cache->childrenChanged(this, newChild);
 }
 
-RenderObject* RenderMenuList::removeChild(RenderObject& oldChild)
+void RenderMenuList::removeChild(RenderObject& oldChild)
 {
     if (&oldChild == m_innerBlock || !m_innerBlock) {
-        RenderObject* next = RenderFlexibleBox::removeChild(oldChild);
+        RenderFlexibleBox::removeChild(oldChild);
         m_innerBlock = 0;
-        return next;
     } else
-        return m_innerBlock->removeChild(oldChild);
+        m_innerBlock->removeChild(oldChild);
 }
 
 void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

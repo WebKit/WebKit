@@ -539,16 +539,15 @@ void RenderSVGText::addChild(RenderObject* child, RenderObject* beforeChild)
     subtreeChildWasAdded(child);
 }
 
-RenderObject* RenderSVGText::removeChild(RenderObject& child)
+void RenderSVGText::removeChild(RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     FontCachePurgePreventer fontCachePurgePreventer;
     subtreeChildWillBeRemoved(&child, affectedAttributes);
-    RenderObject* next = RenderSVGBlock::removeChild(child);
+    RenderSVGBlock::removeChild(child);
     subtreeChildWasRemoved(affectedAttributes);
-    return next;
 }
 
 // Fix for <rdar://problem/8048875>. We should not render :first-line CSS Style

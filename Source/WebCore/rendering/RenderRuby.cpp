@@ -199,7 +199,7 @@ void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild
     lastRun->addChild(child);
 }
 
-RenderObject* RenderRubyAsInline::removeChild(RenderObject& child)
+void RenderRubyAsInline::removeChild(RenderObject& child)
 {
     // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
     // just use the normal remove method.
@@ -207,20 +207,20 @@ RenderObject* RenderRubyAsInline::removeChild(RenderObject& child)
 #ifndef ASSERT_DISABLED
         ASSERT(isRubyChildForNormalRemoval(child));
 #endif
-        return RenderInline::removeChild(child);
+        RenderInline::removeChild(child);
+        return;
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
     // just use the block's remove method.
     if (isAnonymousRubyInlineBlock(child.parent())) {
         ASSERT(child.isBeforeContent() || child.isAfterContent());
-        RenderObject* next = child.parent()->removeChild(child);
+        child.parent()->removeChild(child);
         removeChild(*child.parent());
-        return next;
+        return;
     }
 
     // Otherwise find the containing run and remove it from there.
-    RenderRubyRun& run = findRubyRunParent(child);
-    return run.removeChild(child);
+    findRubyRunParent(child).removeChild(child);
 }
 
 //=== ruby as block object ===
@@ -305,7 +305,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
     lastRun->addChild(child);
 }
 
-RenderObject* RenderRubyAsBlock::removeChild(RenderObject& child)
+void RenderRubyAsBlock::removeChild(RenderObject& child)
 {
     // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
     // just use the normal remove method.
@@ -313,20 +313,20 @@ RenderObject* RenderRubyAsBlock::removeChild(RenderObject& child)
 #ifndef ASSERT_DISABLED
         ASSERT(isRubyChildForNormalRemoval(child));
 #endif
-        return RenderBlockFlow::removeChild(child);
+        RenderBlockFlow::removeChild(child);
+        return;
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
     // just use the block's remove method.
     if (isAnonymousRubyInlineBlock(child.parent())) {
         ASSERT(child.isBeforeContent() || child.isAfterContent());
-        RenderObject* next = child.parent()->removeChild(child);
+        child.parent()->removeChild(child);
         removeChild(*child.parent());
-        return next;
+        return;
     }
 
     // Otherwise find the containing run and remove it from there.
-    RenderRubyRun& run = findRubyRunParent(child);
-    return run.removeChild(child);
+    findRubyRunParent(child).removeChild(child);
 }
 
 } // namespace WebCore

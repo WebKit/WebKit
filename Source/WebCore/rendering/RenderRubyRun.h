@@ -58,7 +58,7 @@ public:
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    virtual RenderObject* removeChild(RenderObject&) override;
+    virtual void removeChild(RenderObject&) override;
 
     virtual RenderBlock* firstLineBlock() const override;
     virtual void updateFirstLetter() override;
