@@ -1,3 +1,14 @@
+2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove InspectorCSSAgent::buildArrayForRuleList()
+        https://bugs.webkit.org/show_bug.cgi?id=138907
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList): Deleted.
+        * inspector/InspectorCSSAgent.h:
+
 2014-11-20  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (174986): CSS clip property is ignored when border-radius is present.
