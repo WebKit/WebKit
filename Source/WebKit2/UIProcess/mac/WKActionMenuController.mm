@@ -360,7 +360,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 - (NSSize)largestPopoverSize
 {
-    NSSize screenSize = [[NSScreen mainScreen] frame].size;
+    NSSize screenSize = _wkView.window.screen.frame.size;
 
     if (screenSize.width == 1280 && screenSize.height == 800)
         return NSMakeSize(1240, 674);
