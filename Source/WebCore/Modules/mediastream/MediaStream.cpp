@@ -86,7 +86,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, Pas
 MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)
     : ContextDestructionObserver(&context)
     , m_private(privateStream)
-    , m_scheduledEventtimer(*this, &MediaStream::scheduledEventTimerFired)
+    , m_scheduledEventTimer(*this, &MediaStream::scheduledEventTimerFired)
 {
     ASSERT(m_private);
     m_private->setClient(this);

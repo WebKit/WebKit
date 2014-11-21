@@ -1,3 +1,10 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        More build fixes.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+
 2014-11-21  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] allocate volume view on the main thread
