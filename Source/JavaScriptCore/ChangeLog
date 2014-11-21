@@ -1,3 +1,12 @@
+2014-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [JSC] Disable verifyHeap
+        https://bugs.webkit.org/show_bug.cgi?id=138962
+
+        Reviewed by Mark Lam.
+
+        * runtime/Options.h:
+
 2014-11-20  Mark Lam  <mark.lam@apple.com>
 
         Add some comments to describe the DFG UseKind representations.
