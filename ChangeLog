@@ -1,3 +1,9 @@
+2014-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.4 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(CMake): Make it possible to build without introspection

@@ -1,4 +1,22 @@
 =================
+WebKitGTK+  2.6.4
+=================
+
+What's new in WebKitGTK+ 2.6.4?
+
+  - Fix SSL connection issues with some websites after the POODLE
+    vulnerability fix.
+  - Fix several crashes in accessibility implementation.
+  - Fix XMLHttpRequest with a timeout when using the network process.
+  - Fix XMLHttpRequest with cookies disabled when using the network process.
+  - Fix a crash in the network process when a synchronous load redirects to
+    a new url in a different security origin.
+  - Fix documentation of webkit_print_operation_get_page_setup().
+  - Allow to build with GObject introspection disabled.
+  - Fix the remote inspector when settings don't change after page
+    initialization.
+
+=================
 WebKitGTK+  2.6.3
 =================
 

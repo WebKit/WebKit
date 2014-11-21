@@ -1,3 +1,9 @@
+2014-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.4 release.
+
+        * gtk/NEWS: Add release notes for 2.6.4.
+
 2014-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r163656): Remote inspector doesn't work unless preferences change after page initialization
