@@ -28,6 +28,7 @@
 #include "NativeImagePtr.h"
 #include "SecurityOriginHash.h"
 #include "SessionIDHash.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -64,7 +65,7 @@ struct SecurityOriginHash;
 class MemoryCache {
     WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_MAKE_FAST_ALLOCATED;
 public:
-    friend MemoryCache* memoryCache();
+    friend NeverDestroyed<MemoryCache>;
 
 #if ENABLE(CACHE_PARTITIONING)
     typedef HashMap<String, CachedResource*> CachedResourceItem;
@@ -233,7 +234,7 @@ private:
 };
 
 // Function to obtain the global cache.
-WEBCORE_EXPORT MemoryCache* memoryCache();
+WEBCORE_EXPORT MemoryCache& memoryCache();
 
 }
 

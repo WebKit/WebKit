@@ -1,3 +1,18 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Make memoryCache() return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=138939
+
+        Reviewed by Antti Koivisto.
+
+        * WebCache.cpp:
+        (WebCache::statistics):
+        (WebCache::empty):
+        (WebCache::setDisabled):
+        (WebCache::disabled):
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2014-11-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Add typecasting support for GraphicsLayerTextureMapper

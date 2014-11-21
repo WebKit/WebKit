@@ -1,3 +1,22 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Make memoryCache() return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=138939
+
+        Reviewed by Antti Koivisto.
+
+        * Misc/WebCache.mm:
+        (+[WebCache statistics]):
+        (+[WebCache emptyInMemoryResources]):
+        (+[WebCache sizeOfDeadResources:]):
+        (+[WebCache addImageToCache:forURL:forFrame:]):
+        (+[WebCache removeImageFromCacheForURL:forFrame:]):
+        (+[WebCache imageForURL:]):
+        (+[WebCache setDisabled:]):
+        (+[WebCache isDisabled]):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the remaining vestiges of minimal-ui

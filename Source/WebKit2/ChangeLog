@@ -1,3 +1,26 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Make memoryCache() return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=138939
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didCacheResource):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins):
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::terminate):
+        (WebKit::WebProcess::didClose):
+        (WebKit::WebProcess::clearResourceCaches):
+        (WebKit::getWebCoreMemoryCacheStatistics):
+        (WebKit::WebProcess::setMemoryCacheDisabled):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2014-11-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebKit2 fails to build with public SDK due to missing SPI from CFNetwork, QuartzCore, MediaPlayer, XPC

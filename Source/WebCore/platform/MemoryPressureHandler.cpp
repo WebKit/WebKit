@@ -103,7 +103,7 @@ void MemoryPressureHandler::releaseCriticalMemory()
 
     {
         ReliefLogger log("Prune MemoryCache");
-        memoryCache()->pruneToPercentage(0);
+        memoryCache().pruneToPercentage(0);
     }
 
     {

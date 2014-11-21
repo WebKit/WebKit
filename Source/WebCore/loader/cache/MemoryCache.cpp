@@ -55,12 +55,13 @@ static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const auto defaultDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
-MemoryCache* memoryCache()
+MemoryCache& memoryCache()
 {
-    static MemoryCache* staticCache = new MemoryCache;
     ASSERT(WTF::isMainThread());
 
-    return staticCache;
+    static NeverDestroyed<MemoryCache> memoryCache;
+
+    return memoryCache;
 }
 
 MemoryCache::MemoryCache()
@@ -766,8 +767,8 @@ void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const 
         return;
     }
 
-    if (CachedResource* resource = memoryCache()->resourceForRequest(request, sessionID))
-        memoryCache()->remove(resource);
+    if (CachedResource* resource = memoryCache().resourceForRequest(request, sessionID))
+        memoryCache().remove(resource);
 }
 
 void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext* context, const ResourceRequest& request)
@@ -782,9 +783,9 @@ void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext* context
         return;
     }
 
-    for (auto& resources : memoryCache()->m_sessionResources) {
-        if (CachedResource* resource = memoryCache()->resourceForRequestImpl(request, *resources.value))
-        memoryCache()->remove(resource);
+    for (auto& resources : memoryCache().m_sessionResources) {
+        if (CachedResource* resource = memoryCache().resourceForRequestImpl(request, *resources.value))
+        memoryCache().remove(resource);
     }
 }
 
