@@ -48,8 +48,8 @@ WebMemorySampler* WebMemorySampler::shared()
 }
 
 WebMemorySampler::WebMemorySampler() 
-    : m_sampleTimer(this, &WebMemorySampler::sampleTimerFired)
-    , m_stopTimer(this, &WebMemorySampler::stopTimerFired)
+    : m_sampleTimer(*this, &WebMemorySampler::sampleTimerFired)
+    , m_stopTimer(*this, &WebMemorySampler::stopTimerFired)
     , m_isRunning(false)
     , m_runningTime(0)
 {
@@ -154,13 +154,13 @@ void WebMemorySampler::writeHeaders()
     writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());
 }
 
-void WebMemorySampler::sampleTimerFired(Timer*)
+void WebMemorySampler::sampleTimerFired()
 {
     sendMemoryPressureEvent();
     appendCurrentMemoryUsageToFile(m_sampleLogFile);
 }
 
-void WebMemorySampler::stopTimerFired(Timer*)
+void WebMemorySampler::stopTimerFired()
 {
     if (!m_isRunning)
         return;

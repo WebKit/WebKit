@@ -148,7 +148,7 @@ private:
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
     void startBufferingTimerIfNeeded();
-    void bufferingTimerFired(WebCore::Timer&);
+    void bufferingTimerFired();
     void sendBuffer(WebCore::SharedBuffer*, int encodedDataLength);
 
     bool isSynchronous() const;

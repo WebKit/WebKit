@@ -295,7 +295,7 @@ private:
     NetscapePluginHostProxy* m_pluginHostProxy;
     WebHostedNetscapePluginView *m_pluginView;
 
-    void requestTimerFired(WebCore::Timer*);
+    void requestTimerFired();
     WebCore::Timer m_requestTimer;
     Deque<RefPtr<PluginRequest>> m_pluginRequests;
     

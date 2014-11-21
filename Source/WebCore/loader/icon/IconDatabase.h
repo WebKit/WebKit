@@ -115,7 +115,7 @@ private:
 
     void wakeSyncThread();
     void scheduleOrDeferSyncTimer();
-    void syncTimerFired(Timer&);
+    void syncTimerFired();
     
     Timer m_syncTimer;
     ThreadIdentifier m_syncThread;

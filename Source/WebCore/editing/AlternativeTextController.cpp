@@ -129,7 +129,7 @@ static bool markersHaveIdenticalDescription(const Vector<RenderedDocumentMarker*
 }
 
 AlternativeTextController::AlternativeTextController(Frame& frame)
-    : m_timer(this, &AlternativeTextController::timerFired)
+    : m_timer(*this, &AlternativeTextController::timerFired)
     , m_frame(frame)
 {
 }
@@ -327,7 +327,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     markers.addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-void AlternativeTextController::timerFired(Timer&)
+void AlternativeTextController::timerFired()
 {
     m_isDismissedByEditing = false;
     switch (m_alternativeTextInfo.type) {

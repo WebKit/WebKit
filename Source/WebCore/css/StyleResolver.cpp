@@ -251,7 +251,7 @@ void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& pro
 
 StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
     : m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
-    , m_matchedPropertiesCacheSweepTimer(this, &StyleResolver::sweepMatchedPropertiesCache)
+    , m_matchedPropertiesCacheSweepTimer(*this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
     , m_fontSelector(CSSFontSelector::create(&m_document))
@@ -349,7 +349,7 @@ StyleResolver::~StyleResolver()
 #endif
 }
 
-void StyleResolver::sweepMatchedPropertiesCache(Timer*)
+void StyleResolver::sweepMatchedPropertiesCache()
 {
     // Look for cache entries containing a style declaration with a single ref and remove them.
     // This may happen when an element attribute mutation causes it to generate a new inlineStyle()

@@ -72,7 +72,7 @@ private:
     RTCDTMFSender(ScriptExecutionContext*, PassRefPtr<MediaStreamTrack>, std::unique_ptr<RTCDTMFSenderHandler>);
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
-    void scheduledEventTimerFired(Timer*);
+    void scheduledEventTimerFired();
 
     // EventTarget
     virtual void refEventTarget() override { ref(); }

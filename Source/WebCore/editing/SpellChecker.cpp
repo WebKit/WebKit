@@ -107,7 +107,7 @@ SpellChecker::SpellChecker(Frame& frame)
     : m_frame(frame)
     , m_lastRequestSequence(0)
     , m_lastProcessedSequence(0)
-    , m_timerToProcessQueuedRequest(this, &SpellChecker::timerFiredToProcessQueuedRequest)
+    , m_timerToProcessQueuedRequest(*this, &SpellChecker::timerFiredToProcessQueuedRequest)
 {
 }
 
@@ -127,7 +127,7 @@ TextCheckerClient* SpellChecker::client() const
     return page->editorClient()->textChecker();
 }
 
-void SpellChecker::timerFiredToProcessQueuedRequest(Timer*)
+void SpellChecker::timerFiredToProcessQueuedRequest()
 {
     ASSERT(!m_requestQueue.isEmpty());
     if (m_requestQueue.isEmpty())

@@ -58,7 +58,7 @@ DNSResolveQueue& DNSResolveQueue::shared()
 }
 
 DNSResolveQueue::DNSResolveQueue()
-    : m_timer(this, &DNSResolveQueue::timerFired)
+    : m_timer(*this, &DNSResolveQueue::timerFired)
     , m_requestsInFlight(0)
     , m_cachedProxyEnabledStatus(false)
     , m_lastProxyEnabledStatusCheckTime(0)
@@ -98,7 +98,7 @@ void DNSResolveQueue::add(const String& hostname)
     }
 }
 
-void DNSResolveQueue::timerFired(Timer&)
+void DNSResolveQueue::timerFired()
 {
     if (isUsingProxy()) {
         m_names.clear();

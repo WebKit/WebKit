@@ -37,7 +37,7 @@ static const double capacityDecayTime = 5;
 LayerPool::LayerPool()
     : m_totalBytes(0)
     , m_maxBytesForPool(48 * 1024 * 1024)
-    , m_pruneTimer(this, &LayerPool::pruneTimerFired)
+    , m_pruneTimer(*this, &LayerPool::pruneTimerFired)
     , m_lastAddTime(0)
 {
     allLayerPools().add(this);
@@ -113,7 +113,7 @@ void LayerPool::schedulePrune()
     m_pruneTimer.startOneShot(1);
 }
 
-void LayerPool::pruneTimerFired(Timer&)
+void LayerPool::pruneTimerFired()
 {
     unsigned shrinkTo = decayedCapacity();
     while (m_totalBytes > shrinkTo) {

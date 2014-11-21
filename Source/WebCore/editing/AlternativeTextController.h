@@ -138,7 +138,7 @@ private:
 #if USE(AUTOCORRECTION_PANEL)
     String dismissSoon(ReasonForDismissingAlternativeText);
     void applyAlternativeTextToRange(const Range*, const String& alternative, AlternativeTextType, const Vector<DocumentMarker::MarkerType>&);
-    void timerFired(Timer&);
+    void timerFired();
     void recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString);
     void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction);
     String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::MarkerType);

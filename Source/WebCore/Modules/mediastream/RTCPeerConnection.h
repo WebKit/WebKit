@@ -139,7 +139,7 @@ private:
 
     static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
     void scheduleDispatchEvent(PassRefPtr<Event>);
-    void scheduledEventTimerFired(Timer*);
+    void scheduledEventTimerFired();
     bool hasLocalStreamWithTrackId(const String& trackId);
 
     // EventTarget implementation.

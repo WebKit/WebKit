@@ -100,7 +100,7 @@ private:
 
         void startTimerIfNeeded();
         void stopTimer();
-        void timerFired(Timer&);
+        void timerFired();
         bool hasZeroTimeout() const;
 
     private:
@@ -186,7 +186,7 @@ private:
     bool m_hasChangedPosition;
     RefPtr<PositionError> m_errorWaitingForResume;
 
-    void resumeTimerFired(Timer&);
+    void resumeTimerFired();
     Timer m_resumeTimer;
 #endif // PLATFORM(IOS)
 

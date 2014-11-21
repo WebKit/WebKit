@@ -105,7 +105,7 @@ private:
     void ensureRootStateNodeForFrameView(FrameView*);
     void updateMainFrameScrollLayerPosition();
 
-    void updateScrollPositionAfterAsyncScrollTimerFired(Timer*);
+    void updateScrollPositionAfterAsyncScrollTimerFired();
     
     FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 

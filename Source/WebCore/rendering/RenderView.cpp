@@ -102,7 +102,7 @@ RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
     , m_selectionUnsplitEndPos(-1)
     , m_rendererCount(0)
     , m_maximalOutlineSize(0)
-    , m_lazyRepaintTimer(this, &RenderView::lazyRepaintTimerFired)
+    , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
     , m_layoutState(nullptr)
@@ -155,7 +155,7 @@ void RenderView::unscheduleLazyRepaint(RenderBox& renderer)
         m_lazyRepaintTimer.stop();
 }
 
-void RenderView::lazyRepaintTimerFired(Timer&)
+void RenderView::lazyRepaintTimerFired()
 {
     bool shouldRepaint = !document().inPageCache();
 

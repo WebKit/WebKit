@@ -46,7 +46,7 @@ namespace WebCore {
 TextTrackLoader::TextTrackLoader(TextTrackLoaderClient& client, ScriptExecutionContext* context)
     : m_client(client)
     , m_scriptExecutionContext(context)
-    , m_cueLoadTimer(this, &TextTrackLoader::cueLoadTimerFired)
+    , m_cueLoadTimer(*this, &TextTrackLoader::cueLoadTimerFired)
     , m_state(Idle)
     , m_parseOffset(0)
     , m_newCuesAvailable(false)
@@ -59,10 +59,8 @@ TextTrackLoader::~TextTrackLoader()
         m_resource->removeClient(this);
 }
 
-void TextTrackLoader::cueLoadTimerFired(Timer* timer)
+void TextTrackLoader::cueLoadTimerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_cueLoadTimer);
-    
     if (m_newCuesAvailable) {
         m_newCuesAvailable = false;
         m_client.newCuesAvailable(this);

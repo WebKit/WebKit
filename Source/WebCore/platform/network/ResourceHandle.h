@@ -240,7 +240,7 @@ public:
     WEBCORE_EXPORT ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 
-    void failureTimerFired(Timer&);
+    void failureTimerFired();
 
     NetworkingContext* context() const;
 

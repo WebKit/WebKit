@@ -52,7 +52,7 @@ public:
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
     void didFlushLayers();
 
-    void volatilityTimerFired(WebCore::Timer&);
+    void volatilityTimerFired();
     bool markAllBackingStoreVolatileImmediatelyIfPossible();
 
     void scheduleVolatilityTimer();

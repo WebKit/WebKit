@@ -61,7 +61,7 @@ private:
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const override;
     virtual float decorationWidth() const override;
 
-    void searchEventTimerFired(Timer*);
+    void searchEventTimerFired();
     bool searchEventsShouldBeDispatched() const;
     void startSearchEventTimer();
 

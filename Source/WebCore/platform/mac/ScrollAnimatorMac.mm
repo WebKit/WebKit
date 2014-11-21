@@ -641,11 +641,11 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
 
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
-    , m_initialScrollbarPaintTimer(this, &ScrollAnimatorMac::initialScrollbarPaintTimerFired)
-    , m_sendContentAreaScrolledTimer(this, &ScrollAnimatorMac::sendContentAreaScrolledTimerFired)
+    , m_initialScrollbarPaintTimer(*this, &ScrollAnimatorMac::initialScrollbarPaintTimerFired)
+    , m_sendContentAreaScrolledTimer(*this, &ScrollAnimatorMac::sendContentAreaScrolledTimerFired)
 #if ENABLE(RUBBER_BANDING)
     , m_scrollElasticityController(this)
-    , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
+    , m_snapRubberBandTimer(*this, &ScrollAnimatorMac::snapRubberBandTimerFired)
 #endif
     , m_haveScrolledSincePageLoad(false)
     , m_needsScrollerStyleUpdate(false)
@@ -1258,7 +1258,7 @@ void ScrollAnimatorMac::stopSnapRubberbandTimer()
     m_snapRubberBandTimer.stop();
 }
 
-void ScrollAnimatorMac::snapRubberBandTimerFired(Timer&)
+void ScrollAnimatorMac::snapRubberBandTimerFired()
 {
     m_scrollElasticityController.snapRubberBandTimerFired();
 }
@@ -1339,7 +1339,7 @@ void ScrollAnimatorMac::stopScrollbarPaintTimer()
     m_initialScrollbarPaintTimer.stop();
 }
 
-void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer&)
+void ScrollAnimatorMac::initialScrollbarPaintTimerFired()
 {
     // To force the scrollbars to flash, we have to call hide first. Otherwise, the ScrollbarPainterController
     // might think that the scrollbars are already showing and bail early.
@@ -1363,7 +1363,7 @@ void ScrollAnimatorMac::sendContentAreaScrolled(const FloatSize& delta)
         [m_scrollbarPainterController contentAreaScrolled];
 }
 
-void ScrollAnimatorMac::sendContentAreaScrolledTimerFired(Timer&)
+void ScrollAnimatorMac::sendContentAreaScrolledTimerFired()
 {
     sendContentAreaScrolled(m_contentAreaScrolledTimerScrollDelta);
     m_contentAreaScrolledTimerScrollDelta = FloatSize();

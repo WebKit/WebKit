@@ -1076,11 +1076,11 @@ Editor::Editor(Frame& frame)
     , m_areMarkedTextMatchesHighlighted(false)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
     , m_overwriteModeEnabled(false)
-    , m_editorUIUpdateTimer(this, &Editor::editorUIUpdateTimerFired)
+    , m_editorUIUpdateTimer(*this, &Editor::editorUIUpdateTimerFired)
     , m_editorUIUpdateTimerShouldCheckSpellingAndGrammar(false)
     , m_editorUIUpdateTimerWasTriggeredByDictation(false)
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
-    , m_telephoneNumberDetectionUpdateTimer(this, &Editor::scanSelectionForTelephoneNumbers)
+    , m_telephoneNumberDetectionUpdateTimer(*this, &Editor::scanSelectionForTelephoneNumbers)
 #endif
 {
 }
@@ -3270,11 +3270,6 @@ bool Editor::shouldDetectTelephoneNumbers()
     return document().isTelephoneNumberParsingEnabled() && TelephoneNumberDetector::isSupported();
 }
 
-void Editor::scanSelectionForTelephoneNumbers(Timer&)
-{
-    scanSelectionForTelephoneNumbers();
-}
-
 void Editor::scanSelectionForTelephoneNumbers()
 {
     if (!shouldDetectTelephoneNumbers() || !client())
@@ -3374,10 +3369,10 @@ void Editor::updateEditorUINowIfScheduled()
     if (!m_editorUIUpdateTimer.isActive())
         return;
     m_editorUIUpdateTimer.stop();
-    editorUIUpdateTimerFired(m_editorUIUpdateTimer);
+    editorUIUpdateTimerFired();
 }
 
-void Editor::editorUIUpdateTimerFired(Timer&)
+void Editor::editorUIUpdateTimerFired()
 {
     VisibleSelection oldSelection = m_oldSelectionForEditorUIUpdate;
 

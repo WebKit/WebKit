@@ -37,7 +37,7 @@ RenderProgress::RenderProgress(HTMLElement& element, PassRef<RenderStyle> style)
     , m_animationRepeatInterval(0)
     , m_animationDuration(0)
     , m_animating(false)
-    , m_animationTimer(this, &RenderProgress::animationTimerFired)
+    , m_animationTimer(*this, &RenderProgress::animationTimerFired)
 {
 }
 
@@ -81,7 +81,7 @@ bool RenderProgress::isDeterminate() const
             && HTMLProgressElement::InvalidPosition != position());
 }
 
-void RenderProgress::animationTimerFired(Timer&)
+void RenderProgress::animationTimerFired()
 {
     repaint();
     if (!m_animationTimer.isActive() && m_animating)

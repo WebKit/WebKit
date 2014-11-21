@@ -87,7 +87,7 @@ private:
     void tryEvictOldestCachedSurface();
 
     void scheduleCollectionTimer();
-    void collectionTimerFired(Timer&);
+    void collectionTimerFired();
     void collectInUseSurfaces();
     bool markOlderSurfacesPurgeable();
 

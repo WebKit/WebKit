@@ -52,7 +52,7 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinatorIOS::ScrollingCoordinatorIOS(Page* page)
     : AsyncScrollingCoordinator(page)
-    , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired)
+    , m_scrollingStateTreeCommitterTimer(*this, &ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired)
 {
     setScrollingTree(ScrollingTreeIOS::create(this));
 }
@@ -91,7 +91,7 @@ void ScrollingCoordinatorIOS::scheduleTreeStateCommit()
     m_scrollingStateTreeCommitterTimer.startOneShot(0);
 }
 
-void ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired(Timer*)
+void ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired()
 {
     commitTreeState();
 }

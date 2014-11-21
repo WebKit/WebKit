@@ -265,7 +265,7 @@ static inline bool compositingLogEnabled()
 
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
-    , m_updateCompositingLayersTimer(this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
+    , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_hasAcceleratedCompositing(true)
     , m_compositingTriggers(static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers))
     , m_compositedLayerCount(0)
@@ -283,11 +283,11 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     , m_isTrackingRepaints(false)
     , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
-    , m_layerFlushTimer(this, &RenderLayerCompositor::layerFlushTimerFired)
+    , m_layerFlushTimer(*this, &RenderLayerCompositor::layerFlushTimerFired)
     , m_layerFlushThrottlingEnabled(false)
     , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
     , m_hasPendingLayerFlush(false)
-    , m_paintRelatedMilestonesTimer(this, &RenderLayerCompositor::paintRelatedMilestonesTimerFired)
+    , m_paintRelatedMilestonesTimer(*this, &RenderLayerCompositor::paintRelatedMilestonesTimerFired)
 #if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
     , m_obligateCompositedLayerCount(0)
@@ -637,7 +637,7 @@ void RenderLayerCompositor::scheduleCompositingLayerUpdate()
         m_updateCompositingLayersTimer.startOneShot(0);
 }
 
-void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer&)
+void RenderLayerCompositor::updateCompositingLayersTimerFired()
 {
     updateCompositingLayers(CompositingUpdateAfterLayout);
 }
@@ -4076,14 +4076,14 @@ void RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded()
     m_layerFlushTimer.startOneShot(throttledLayerFlushInitialDelay);
 }
 
-void RenderLayerCompositor::layerFlushTimerFired(Timer&)
+void RenderLayerCompositor::layerFlushTimerFired()
 {
     if (!m_hasPendingLayerFlush)
         return;
     scheduleLayerFlushNow();
 }
 
-void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer&)
+void RenderLayerCompositor::paintRelatedMilestonesTimerFired()
 {
     Frame& frame = m_renderView.frameView().frame();
     Page* page = frame.page();

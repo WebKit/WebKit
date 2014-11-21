@@ -472,7 +472,7 @@ private:
     enum EditorActionSpecifier { CutAction, CopyAction };
     void performCutOrCopy(EditorActionSpecifier);
 
-    void editorUIUpdateTimerFired(Timer&);
+    void editorUIUpdateTimerFired();
 
     Node* findEventTargetFromSelection() const;
 
@@ -510,7 +510,6 @@ private:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
     bool shouldDetectTelephoneNumbers();
-    void scanSelectionForTelephoneNumbers(Timer&);
     void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
 
     Timer m_telephoneNumberDetectionUpdateTimer;

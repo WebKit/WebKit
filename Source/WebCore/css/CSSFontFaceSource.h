@@ -76,7 +76,7 @@ public:
 #endif
 
 private:
-    void startLoadingTimerFired(Timer*);
+    void startLoadingTimerFired();
 
     AtomicString m_string; // URI for remote, built-in font name for local.
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.

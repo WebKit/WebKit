@@ -39,7 +39,7 @@ static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
 ImageQualityController::ImageQualityController(const RenderView& renderView)
     : m_renderView(renderView)
-    , m_timer(this, &ImageQualityController::highQualityRepaintTimerFired)
+    , m_timer(*this, &ImageQualityController::highQualityRepaintTimerFired)
     , m_animatedResizeIsActive(false)
     , m_liveResizeOptimizationIsActive(false)
 {
@@ -74,7 +74,7 @@ void ImageQualityController::removeObject(RenderBoxModelObject* object)
     }
 }
 
-void ImageQualityController::highQualityRepaintTimerFired(Timer&)
+void ImageQualityController::highQualityRepaintTimerFired()
 {
     if (m_renderView.documentBeingDestroyed())
         return;

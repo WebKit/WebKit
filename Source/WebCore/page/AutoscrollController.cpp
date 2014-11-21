@@ -56,7 +56,7 @@ static Frame* getMainFrame(Frame* frame)
 #endif
 
 AutoscrollController::AutoscrollController()
-    : m_autoscrollTimer(this, &AutoscrollController::autoscrollTimerFired)
+    : m_autoscrollTimer(*this, &AutoscrollController::autoscrollTimerFired)
     , m_autoscrollRenderer(0)
     , m_autoscrollType(NoAutoscroll)
     , m_dragAndDropAutoscrollStartTime(0)
@@ -231,7 +231,7 @@ bool AutoscrollController::panScrollInProgress() const
 }
 #endif
 
-void AutoscrollController::autoscrollTimerFired(Timer&)
+void AutoscrollController::autoscrollTimerFired()
 {
     if (!m_autoscrollRenderer) {
         stopAutoscrollTimer();

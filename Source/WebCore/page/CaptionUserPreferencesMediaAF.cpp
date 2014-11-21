@@ -141,7 +141,7 @@ static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCent
 CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
     : CaptionUserPreferences(group)
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    , m_updateStyleSheetTimer(this, &CaptionUserPreferencesMediaAF::updateTimerFired)
+    , m_updateStyleSheetTimer(*this, &CaptionUserPreferencesMediaAF::updateTimerFired)
     , m_listeningForPreferenceChanges(false)
 #endif
 {
@@ -224,7 +224,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
 }
 
-void CaptionUserPreferencesMediaAF::updateTimerFired(Timer&)
+void CaptionUserPreferencesMediaAF::updateTimerFired()
 {
     updateCaptionStyleSheetOveride();
 }

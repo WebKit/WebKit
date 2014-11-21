@@ -101,7 +101,7 @@ ResourceLoadScheduler* resourceLoadScheduler()
 
 ResourceLoadScheduler::ResourceLoadScheduler()
     : m_nonHTTPProtocolHost(new HostInformation(String(), maxRequestsInFlightForNonHTTPProtocols))
-    , m_requestTimer(this, &ResourceLoadScheduler::requestTimerFired)
+    , m_requestTimer(*this, &ResourceLoadScheduler::requestTimerFired)
     , m_suspendPendingRequestsCount(0)
     , m_isSerialLoadingEnabled(false)
 {
@@ -332,7 +332,7 @@ void ResourceLoadScheduler::scheduleServePendingRequests()
         m_requestTimer.startOneShot(0);
 }
 
-void ResourceLoadScheduler::requestTimerFired(Timer&)
+void ResourceLoadScheduler::requestTimerFired()
 {
     LOG(ResourceLoading, "ResourceLoadScheduler::requestTimerFired\n");
     servePendingRequests();

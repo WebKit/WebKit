@@ -35,7 +35,7 @@ namespace WebCore {
 
 DeviceController::DeviceController(DeviceClient* client)
     : m_client(client)
-    , m_timer(this, &DeviceController::fireDeviceEvent)
+    , m_timer(*this, &DeviceController::fireDeviceEvent)
 {
     ASSERT(m_client);
 }
@@ -84,9 +84,8 @@ void DeviceController::dispatchDeviceEvent(PassRefPtr<Event> prpEvent)
     }
 }
 
-void DeviceController::fireDeviceEvent(Timer& timer)
+void DeviceController::fireDeviceEvent()
 {
-    ASSERT_UNUSED(timer, &timer == &m_timer);
     ASSERT(hasLastData());
 
     m_timer.stop();

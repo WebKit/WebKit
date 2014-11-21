@@ -124,7 +124,7 @@ private:
     void checkInvalidRegions();
 
     bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentElements.isEmpty(); }
-    void regionOversetChangeEventTimerFired(Timer&);
+    void regionOversetChangeEventTimerFired();
     void clearContentElements();
     void updateWritingMode();
 

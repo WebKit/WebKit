@@ -115,7 +115,7 @@ protected:
     MediaSessionClient& client() const { return m_client; }
 
 private:
-    void clientDataBufferingTimerFired(Timer&);
+    void clientDataBufferingTimerFired();
     void updateClientDataBuffering();
 
     MediaSessionClient& m_client;

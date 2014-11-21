@@ -786,7 +786,7 @@ size_t IconDatabase::iconRecordCountWithData()
 }
 
 IconDatabase::IconDatabase()
-    : m_syncTimer(this, &IconDatabase::syncTimerFired)
+    : m_syncTimer(*this, &IconDatabase::syncTimerFired)
     , m_syncThreadRunning(false)
     , m_scheduleOrDeferSyncTimerRequested(false)
     , m_isEnabled(false)
@@ -855,7 +855,7 @@ void IconDatabase::scheduleOrDeferSyncTimer()
     });
 }
 
-void IconDatabase::syncTimerFired(Timer&)
+void IconDatabase::syncTimerFired()
 {
     ASSERT_NOT_SYNC_THREAD();
     wakeSyncThread();

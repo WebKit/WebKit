@@ -116,18 +116,6 @@ private:
 class Timer : public TimerBase {
 public:
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
-    Timer(TimerFiredClass* object, void (TimerFiredBaseClass::*function)(Timer&))
-        : m_function(std::bind(function, object, std::ref(*this)))
-    {
-    }
-
-    template <typename TimerFiredClass, typename TimerFiredBaseClass>
-    Timer(TimerFiredClass* object, void (TimerFiredBaseClass::*function)(Timer*))
-        : m_function(std::bind(function, object, this))
-    {
-    }
-
-    template <typename TimerFiredClass, typename TimerFiredBaseClass>
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
     {
@@ -161,8 +149,8 @@ inline bool TimerBase::isActive() const
 class DeferrableOneShotTimer : protected TimerBase {
 public:
     template<typename TimerFiredClass>
-    DeferrableOneShotTimer(TimerFiredClass* object, void (TimerFiredClass::*function)(), std::chrono::milliseconds delay)
-        : DeferrableOneShotTimer(std::bind(function, object), delay)
+    DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), std::chrono::milliseconds delay)
+        : DeferrableOneShotTimer(std::bind(function, &object), delay)
     {
     }
 

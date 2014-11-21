@@ -66,7 +66,7 @@ private:
     void reset();
     void finalProgressComplete();
 
-    void progressHeartbeatTimerFired(Timer&);
+    void progressHeartbeatTimerFired();
     
     static unsigned long s_uniqueIdentifier;
     

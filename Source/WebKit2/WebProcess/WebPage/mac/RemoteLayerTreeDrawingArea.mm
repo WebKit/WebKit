@@ -58,7 +58,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
     , m_exposedRect(FloatRect::infiniteRect())
     , m_scrolledExposedRect(FloatRect::infiniteRect())
-    , m_layerFlushTimer(this, &RemoteLayerTreeDrawingArea::layerFlushTimerFired)
+    , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::layerFlushTimerFired)
     , m_isFlushingSuspended(false)
     , m_hasDeferredFlush(false)
     , m_isThrottlingLayerFlushes(false)
@@ -313,7 +313,7 @@ bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushT
     return true;
 }
 
-void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer*)
+void RemoteLayerTreeDrawingArea::layerFlushTimerFired()
 {
     flushLayers();
 }

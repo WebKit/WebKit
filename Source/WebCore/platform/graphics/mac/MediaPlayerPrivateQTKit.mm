@@ -183,7 +183,7 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     : m_player(player)
     , m_objcObserver(adoptNS([[WebCoreMovieObserver alloc] initWithCallback:this]))
     , m_seekTo(MediaTime::invalidTime())
-    , m_seekTimer(this, &MediaPlayerPrivateQTKit::seekTimerFired)
+    , m_seekTimer(*this, &MediaPlayerPrivateQTKit::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_rect()
@@ -678,7 +678,7 @@ void MediaPlayerPrivateQTKit::cancelSeek()
     m_seekTimer.stop();
 }
 
-void MediaPlayerPrivateQTKit::seekTimerFired(Timer&)
+void MediaPlayerPrivateQTKit::seekTimerFired()
 {        
     if (!metaDataAvailable() || !seeking() || currentMediaTime() == m_seekTo) {
         cancelSeek();

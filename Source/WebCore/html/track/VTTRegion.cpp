@@ -83,7 +83,7 @@ VTTRegion::VTTRegion(ScriptExecutionContext& context)
     , m_regionDisplayTree(nullptr)
     , m_track(nullptr)
     , m_currentTop(0)
-    , m_scrollTimer(this, &VTTRegion::scrollTimerFired)
+    , m_scrollTimer(*this, &VTTRegion::scrollTimerFired)
 {
 }
 
@@ -478,7 +478,7 @@ void VTTRegion::stopTimer()
         m_scrollTimer.stop();
 }
 
-void VTTRegion::scrollTimerFired(Timer*)
+void VTTRegion::scrollTimerFired()
 {
     LOG(Media, "VTTRegion::scrollTimerFired");
 

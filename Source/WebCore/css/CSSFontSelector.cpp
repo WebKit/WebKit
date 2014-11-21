@@ -60,7 +60,7 @@ static unsigned fontSelectorId;
 
 CSSFontSelector::CSSFontSelector(Document* document)
     : m_document(document)
-    , m_beginLoadingTimer(this, &CSSFontSelector::beginLoadTimerFired)
+    , m_beginLoadingTimer(*this, &CSSFontSelector::beginLoadTimerFired)
     , m_uniqueId(++fontSelectorId)
     , m_version(0)
     
@@ -587,7 +587,7 @@ void CSSFontSelector::beginLoadingFontSoon(CachedFont* font)
     m_beginLoadingTimer.startOneShot(0);
 }
 
-void CSSFontSelector::beginLoadTimerFired(Timer&)
+void CSSFontSelector::beginLoadTimerFired()
 {
     Vector<CachedResourceHandle<CachedFont>> fontsToBeginLoading;
     fontsToBeginLoading.swap(m_fontsToBeginLoading);

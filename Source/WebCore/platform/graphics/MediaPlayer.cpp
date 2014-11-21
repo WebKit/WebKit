@@ -307,7 +307,7 @@ static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current)
 
 MediaPlayer::MediaPlayer(MediaPlayerClient& client)
     : m_client(client)
-    , m_reloadTimer(this, &MediaPlayer::reloadTimerFired)
+    , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
     , m_private(createNullMediaPlayer(this))
     , m_currentMediaEngine(0)
     , m_preload(Auto)
@@ -955,7 +955,7 @@ unsigned MediaPlayer::videoDecodedByteCount() const
     return m_private->videoDecodedByteCount();
 }
 
-void MediaPlayer::reloadTimerFired(Timer&)
+void MediaPlayer::reloadTimerFired()
 {
     m_private->cancelLoad();
     loadWithNextMediaEngine(m_currentMediaEngine);

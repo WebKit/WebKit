@@ -79,7 +79,7 @@ private:
     virtual void fileFailedToParse() override;
     
     void processNewCueData(CachedResource*);
-    void cueLoadTimerFired(Timer*);
+    void cueLoadTimerFired();
     void corsPolicyPreventedLoad();
 
     enum State { Idle, Loading, Finished, Failed };

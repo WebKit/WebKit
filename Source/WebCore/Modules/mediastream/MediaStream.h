@@ -120,7 +120,7 @@ private:
     bool haveTrackWithSource(PassRefPtr<MediaStreamSource>);
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
-    void scheduledEventTimerFired(Timer*);
+    void scheduledEventTimerFired();
 
     void cloneMediaStreamTrackVector(Vector<RefPtr<MediaStreamTrack>>&, const Vector<RefPtr<MediaStreamTrack>>&);
 

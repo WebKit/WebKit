@@ -95,7 +95,7 @@ RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, std::unique_ptr<
     , m_stopped(false)
     , m_readyState(ReadyStateConnecting)
     , m_binaryType(BinaryTypeArrayBuffer)
-    , m_scheduledEventTimer(this, &RTCDataChannel::scheduledEventTimerFired)
+    , m_scheduledEventtimer(*this, &RTCDataChannel::scheduledEventTimerFired)
 {
     m_handler->setClient(this);
 }
@@ -312,7 +312,7 @@ void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void RTCDataChannel::scheduledEventTimerFired(Timer*)
+void RTCDataChannel::scheduledEventTimerFired()
 {
     if (m_stopped)
         return;

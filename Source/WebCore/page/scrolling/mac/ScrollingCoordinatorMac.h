@@ -53,7 +53,7 @@ public:
 private:
     virtual void scheduleTreeStateCommit() override;
 
-    void scrollingStateTreeCommitterTimerFired(Timer*);
+    void scrollingStateTreeCommitterTimerFired();
     void commitTreeState();
     
     void updateTiledScrollingIndicator();

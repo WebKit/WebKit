@@ -78,7 +78,7 @@ private:
     void doStepAction(int);
     void startRepeatingTimer();
     void stopRepeatingTimer();
-    void repeatingTimerFired(Timer*);
+    void repeatingTimerFired();
     virtual void setHovered(bool = true) override;
     bool shouldRespondToMouseEvents();
     virtual bool isMouseFocusable() const override { return false; }

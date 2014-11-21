@@ -110,7 +110,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("Cac
 
 CachedResource::CachedResource(const ResourceRequest& request, Type type, SessionID sessionID)
     : m_resourceRequest(request)
-    , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired, deadDecodedDataDeletionIntervalForResourceType(type))
+    , m_decodedDataDeletionTimer(*this, &CachedResource::decodedDataDeletionTimerFired, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
@@ -726,7 +726,7 @@ void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority)
 inline CachedResource::Callback::Callback(CachedResource& resource, CachedResourceClient& client)
     : m_resource(resource)
     , m_client(client)
-    , m_timer(this, &Callback::timerFired)
+    , m_timer(*this, &Callback::timerFired)
 {
     m_timer.startOneShot(0);
 }
@@ -737,7 +737,7 @@ inline void CachedResource::Callback::cancel()
         m_timer.stop();
 }
 
-void CachedResource::Callback::timerFired(Timer&)
+void CachedResource::Callback::timerFired()
 {
     m_resource.didAddClient(&m_client);
 }

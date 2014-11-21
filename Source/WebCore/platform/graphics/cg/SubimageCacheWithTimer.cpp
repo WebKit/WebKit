@@ -61,7 +61,7 @@ struct SubimageCacheAdder {
 };
 
 SubimageCacheWithTimer::SubimageCacheWithTimer()
-    : m_timer(this, &SubimageCacheWithTimer::invalidateCacheTimerFired, subimageCacheClearDelay)
+    : m_timer(*this, &SubimageCacheWithTimer::invalidateCacheTimerFired, subimageCacheClearDelay)
 {
 }
 

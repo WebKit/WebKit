@@ -32,7 +32,7 @@ namespace WebCore {
 
 DeviceOrientationClientMock::DeviceOrientationClientMock()
     : m_controller(0)
-    , m_timer(this, &DeviceOrientationClientMock::timerFired)
+    , m_timer(*this, &DeviceOrientationClientMock::timerFired)
     , m_isUpdating(false)
 {
 }
@@ -62,9 +62,8 @@ void DeviceOrientationClientMock::setOrientation(PassRefPtr<DeviceOrientationDat
         m_timer.startOneShot(0);
 }
 
-void DeviceOrientationClientMock::timerFired(Timer& timer)
+void DeviceOrientationClientMock::timerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_timer);
     m_timer.stop();
     m_controller->didChangeDeviceOrientation(m_orientation.get());
 }

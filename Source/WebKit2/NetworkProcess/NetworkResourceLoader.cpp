@@ -88,7 +88,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_didConvertHandleToDownload(false)
     , m_didConsumeSandboxExtensions(false)
     , m_defersLoading(parameters.defersLoading)
-    , m_bufferingTimer(this, &NetworkResourceLoader::bufferingTimerFired)
+    , m_bufferingTimer(*this, &NetworkResourceLoader::bufferingTimerFired)
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -393,7 +393,7 @@ void NetworkResourceLoader::startBufferingTimerIfNeeded()
     m_bufferingTimer.startOneShot(m_parameters.maximumBufferingTime);
 }
 
-void NetworkResourceLoader::bufferingTimerFired(Timer&)
+void NetworkResourceLoader::bufferingTimerFired()
 {
     ASSERT(m_bufferedData);
     ASSERT(m_handle);

@@ -41,7 +41,7 @@ XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(EventTa
     , m_loaded(0)
     , m_total(0)
     , m_deferEvents(false)
-    , m_dispatchDeferredEventsTimer(this, &XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents)
+    , m_dispatchDeferredEventsTimer(*this, &XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents)
 {
     ASSERT(target);
 }
@@ -137,9 +137,8 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
     dispatchEvent(event);
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents(Timer* timer)
+void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents()
 {
-    ASSERT_UNUSED(timer, timer == &m_dispatchDeferredEventsTimer);
     ASSERT(m_deferEvents);
     m_deferEvents = false;
 

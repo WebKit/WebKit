@@ -97,7 +97,7 @@ class MediaControls : public HTMLDivElement {
     virtual bool willRespondToMouseMoveEvents() override { return true; }
 #endif
 
-    virtual void hideFullscreenControlsTimerFired(Timer&);
+    virtual void hideFullscreenControlsTimerFired();
     virtual void startHideFullscreenControlsTimer();
     virtual void stopHideFullscreenControlsTimer();
 

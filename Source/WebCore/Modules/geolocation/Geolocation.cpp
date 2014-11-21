@@ -80,7 +80,7 @@ Geolocation::GeoNotifier::GeoNotifier(Geolocation* geolocation, PassRefPtr<Posit
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
     , m_options(options)
-    , m_timer(this, &Geolocation::GeoNotifier::timerFired)
+    , m_timer(*this, &Geolocation::GeoNotifier::timerFired)
     , m_useCachedPosition(false)
 {
     ASSERT(m_geolocation);
@@ -142,7 +142,7 @@ void Geolocation::GeoNotifier::stopTimer()
     m_timer.stop();
 }
 
-void Geolocation::GeoNotifier::timerFired(Timer&)
+void Geolocation::GeoNotifier::timerFired()
 {
     m_timer.stop();
 
@@ -238,7 +238,7 @@ Geolocation::Geolocation(ScriptExecutionContext* context)
 #if PLATFORM(IOS)
     , m_isSuspended(false)
     , m_hasChangedPosition(false)
-    , m_resumeTimer(this, &Geolocation::resumeTimerFired)
+    , m_resumeTimer(*this, &Geolocation::resumeTimerFired)
 #endif
 {
 }
@@ -297,7 +297,7 @@ void Geolocation::resume()
         m_resumeTimer.startOneShot(0);
 }
 
-void Geolocation::resumeTimerFired(Timer&)
+void Geolocation::resumeTimerFired()
 {
     m_isSuspended = false;
 

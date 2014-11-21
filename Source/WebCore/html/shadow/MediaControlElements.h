@@ -65,7 +65,7 @@ private:
 
     void startTimer();
     void stopTimer();
-    void transitionTimerFired(Timer&);
+    void transitionTimerFired();
 
     void setPosition(const LayoutPoint&);
 
@@ -451,7 +451,7 @@ public:
     void exitedFullscreen();
 
 private:
-    void updateTimerFired(Timer&);
+    void updateTimerFired();
     void updateActiveCuesFontSize();
 
     explicit MediaControlTextTrackContainerElement(Document&);

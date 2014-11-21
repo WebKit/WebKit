@@ -43,7 +43,7 @@ namespace WebCore {
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement* track, const String& kind, const String& label, const String& language)
     : TextTrack(&track->document(), track, kind, emptyString(), label, language, TrackElement)
     , m_trackElement(track)
-    , m_loadTimer(this, &LoadableTextTrack::loadTimerFired)
+    , m_loadTimer(*this, &LoadableTextTrack::loadTimerFired)
     , m_isDefault(false)
 {
 }
@@ -85,7 +85,7 @@ void LoadableTextTrack::setTrackElement(HTMLTrackElement* element)
     m_trackElement = element;
 }
 
-void LoadableTextTrack::loadTimerFired(Timer&)
+void LoadableTextTrack::loadTimerFired()
 {
     if (m_loader)
         m_loader->cancelLoad();

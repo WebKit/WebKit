@@ -293,7 +293,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_npRuntimeObjectMap(this)
 #endif
     , m_manualStreamState(StreamStateInitial)
-    , m_pluginSnapshotTimer(this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
+    , m_pluginSnapshotTimer(*this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
     , m_countSnapshotRetries(0)
     , m_didReceiveUserInteraction(false)
     , m_pageScaleFactor(1)

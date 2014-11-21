@@ -96,7 +96,7 @@ private:
     bool isTaskQueueEmpty() const;
     bool hasPendingTasks() const;
 
-    void taskTimerFired(Timer&);
+    void taskTimerFired();
     void closeOpenCursors();
 
     const HashSet<int64_t> m_objectStoreIds;

@@ -49,7 +49,7 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
-    , m_repeatingTimer(this, &SpinButtonElement::repeatingTimerFired)
+    , m_repeatingTimer(*this, &SpinButtonElement::repeatingTimerFired)
 {
     setHasCustomStyleResolveCallbacks();
     setPseudo(AtomicString("-webkit-inner-spin-button", AtomicString::ConstructFromLiteral));
@@ -230,7 +230,7 @@ void SpinButtonElement::step(int amount)
     doStepAction(amount);
 }
     
-void SpinButtonElement::repeatingTimerFired(Timer*)
+void SpinButtonElement::repeatingTimerFired()
 {
     if (m_upDownState != Indeterminate)
         step(m_upDownState == Up ? 1 : -1);

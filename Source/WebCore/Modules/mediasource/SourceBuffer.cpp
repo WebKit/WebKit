@@ -109,7 +109,7 @@ SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, Med
     , m_private(WTF::move(sourceBufferPrivate))
     , m_source(source)
     , m_asyncEventQueue(*this)
-    , m_appendBufferTimer(this, &SourceBuffer::appendBufferTimerFired)
+    , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_highestPresentationEndTimestamp(MediaTime::invalidTime())
     , m_buffered(TimeRanges::create())
     , m_appendState(WaitingForSegment)
@@ -119,7 +119,7 @@ SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, Med
     , m_reportedExtraMemoryCost(0)
     , m_pendingRemoveStart(MediaTime::invalidTime())
     , m_pendingRemoveEnd(MediaTime::invalidTime())
-    , m_removeTimer(this, &SourceBuffer::removeTimerFired)
+    , m_removeTimer(*this, &SourceBuffer::removeTimerFired)
     , m_updating(false)
     , m_receivedFirstInitializationSegment(false)
     , m_active(false)
@@ -447,7 +447,7 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
     reportExtraMemoryCost();
 }
 
-void SourceBuffer::appendBufferTimerFired(Timer&)
+void SourceBuffer::appendBufferTimerFired()
 {
     if (isRemoved())
         return;
@@ -672,7 +672,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 }
 
-void SourceBuffer::removeTimerFired(Timer*)
+void SourceBuffer::removeTimerFired()
 {
     ASSERT(m_updating);
     ASSERT(m_pendingRemoveStart.isValid());

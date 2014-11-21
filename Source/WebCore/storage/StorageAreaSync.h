@@ -79,7 +79,7 @@ private:
       SkipIfNonExistent
     };
 
-    void syncTimerFired(Timer*);
+    void syncTimerFired();
     void openDatabase(OpenDatabaseParamType openingStrategy);
     void sync(bool clearItems, const HashMap<String, String>& items);
 

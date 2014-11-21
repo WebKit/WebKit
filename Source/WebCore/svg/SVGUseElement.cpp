@@ -88,7 +88,7 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& docu
     , m_wasInsertedByParser(wasInsertedByParser)
     , m_haveFiredLoadEvent(false)
     , m_needsShadowTreeRecreation(false)
-    , m_svgLoadEventTimer(this, &SVGElement::svgLoadEventTimerFired)
+    , m_svgLoadEventTimer(*this, &SVGElement::svgLoadEventTimerFired)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
     ASSERT(hasTagName(SVGNames::useTag));

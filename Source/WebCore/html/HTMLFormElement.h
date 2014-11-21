@@ -194,7 +194,7 @@ private:
     bool m_wasDemoted;
 
 #if ENABLE(REQUEST_AUTOCOMPLETE)
-    void requestAutocompleteTimerFired(Timer*);
+    void requestAutocompleteTimerFired();
 
     Vector<RefPtr<Event>> m_pendingAutocompleteEvents;
     Timer m_requestAutocompleteTimer;

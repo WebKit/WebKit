@@ -84,8 +84,8 @@ public:
 
 protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
-    void keyRequestTimerFired(Timer&);
-    void addKeyTimerFired(Timer&);
+    void keyRequestTimerFired();
+    void addKeyTimerFired();
 
     // CDMSessionClient
     virtual void sendMessage(Uint8Array*, String destinationURL);

@@ -152,7 +152,7 @@ private:
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
 
-    void garbageCollectDocumentResourcesTimerFired(Timer&);
+    void garbageCollectDocumentResourcesTimerFired();
     void performPostLoadActions();
 
     bool clientDefersImage(const URL&) const;

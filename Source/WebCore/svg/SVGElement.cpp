@@ -686,7 +686,7 @@ void SVGElement::sendSVGLoadEventIfPossibleAsynchronously()
     svgLoadEventTimer()->startOneShot(0);
 }
 
-void SVGElement::svgLoadEventTimerFired(Timer*)
+void SVGElement::svgLoadEventTimerFired()
 {
     sendSVGLoadEventIfPossible();
 }

@@ -77,7 +77,7 @@ private:
     explicit StorageAreaImpl(StorageAreaImpl*);
 
     void blockUntilImportComplete() const;
-    void closeDatabaseTimerFired(Timer*);
+    void closeDatabaseTimerFired();
 
     void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 

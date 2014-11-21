@@ -1,5 +1,16 @@
 2014-11-21  Anders Carlsson  <andersca@apple.com>
 
+        Remove the Timer parameters from timer callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=138974
+
+        Reviewed by Antti Koivisto.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::timerFired):
+        * FullscreenVideoController.h:
+
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
         Make memoryCache() return a reference
         https://bugs.webkit.org/show_bug.cgi?id=138939
 

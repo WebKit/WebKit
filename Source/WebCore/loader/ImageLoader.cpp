@@ -90,7 +90,7 @@ static inline bool pageIsBeingDismissed(Document& document)
 ImageLoader::ImageLoader(Element& element)
     : m_element(element)
     , m_image(0)
-    , m_derefElementTimer(this, &ImageLoader::timerFired)
+    , m_derefElementTimer(*this, &ImageLoader::timerFired)
     , m_hasPendingBeforeLoadEvent(false)
     , m_hasPendingLoadEvent(false)
     , m_hasPendingErrorEvent(false)
@@ -374,7 +374,7 @@ void ImageLoader::updatedHasPendingEvent()
     }   
 }
 
-void ImageLoader::timerFired(Timer&)
+void ImageLoader::timerFired()
 {
     element().deref();
 }

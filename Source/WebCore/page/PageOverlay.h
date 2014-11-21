@@ -115,7 +115,7 @@ private:
     explicit PageOverlay(Client&, OverlayType);
 
     void startFadeAnimation();
-    void fadeAnimationTimerFired(Timer&);
+    void fadeAnimationTimerFired();
 
     Client& m_client;
     Page* m_page;

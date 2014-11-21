@@ -45,7 +45,7 @@ namespace WebCore {
 
 AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
     : ScrollingCoordinator(page)
-    , m_updateNodeScrollPositionTimer(this, &AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired)
+    , m_updateNodeScrollPositionTimer(*this, &AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired)
     , m_scrollingStateTree(ScrollingStateTree::create(this))
 {
 }
@@ -213,7 +213,7 @@ void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(Scr
     m_updateNodeScrollPositionTimer.startOneShot(0);
 }
 
-void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired(Timer*)
+void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired()
 {
     updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.isProgrammaticScroll, m_scheduledScrollUpdate.updateLayerPositionAction);
 }

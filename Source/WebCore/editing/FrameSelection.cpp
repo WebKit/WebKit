@@ -111,7 +111,7 @@ FrameSelection::FrameSelection(Frame* frame)
     : m_frame(frame)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation())
     , m_granularity(CharacterGranularity)
-    , m_caretBlinkTimer(this, &FrameSelection::caretBlinkTimerFired)
+    , m_caretBlinkTimer(*this, &FrameSelection::caretBlinkTimerFired)
     , m_absCaretBoundsDirty(true)
     , m_caretPaint(true)
     , m_isCaretBlinkingSuspended(false)
@@ -1890,7 +1890,7 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
     updateAppearance();
 }
 
-void FrameSelection::caretBlinkTimerFired(Timer&)
+void FrameSelection::caretBlinkTimerFired()
 {
 #if ENABLE(TEXT_CARET)
     ASSERT(caretIsVisible());

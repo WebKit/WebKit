@@ -162,7 +162,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_eventHandler(std::make_unique<EventHandler>(*this))
     , m_animationController(std::make_unique<AnimationController>(*this))
 #if PLATFORM(IOS)
-    , m_overflowAutoScrollTimer(this, &Frame::overflowAutoScrollTimerFired)
+    , m_overflowAutoScrollTimer(*this, &Frame::overflowAutoScrollTimerFired)
     , m_selectionChangeCallbacksDisabled(false)
     , m_timersPausedCount(0)
 #endif
@@ -516,7 +516,7 @@ void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, 
     selection().updateAppearance();
 }
 
-void Frame::overflowAutoScrollTimerFired(Timer*)
+void Frame::overflowAutoScrollTimerFired()
 {
     if (!eventHandler().mousePressed() || checkOverflowScroll(PerformOverflowScroll) == OverflowScrollNone) {
         if (m_overflowAutoScrollTimer.isActive())

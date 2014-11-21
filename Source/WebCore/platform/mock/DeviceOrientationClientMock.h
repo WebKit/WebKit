@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT void setOrientation(PassRefPtr<DeviceOrientationData>);
 
 private:
-    void timerFired(Timer&);
+    void timerFired();
 
     RefPtr<DeviceOrientationData> m_orientation;
     DeviceOrientationController* m_controller;

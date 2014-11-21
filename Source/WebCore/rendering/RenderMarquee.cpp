@@ -59,7 +59,7 @@ using namespace HTMLNames;
 RenderMarquee::RenderMarquee(RenderLayer* l)
     : m_layer(l), m_currentLoop(0)
     , m_totalLoops(0)
-    , m_timer(this, &RenderMarquee::timerFired)
+    , m_timer(*this, &RenderMarquee::timerFired)
     , m_start(0), m_end(0), m_speed(0), m_reset(false)
     , m_suspended(false), m_stopped(false), m_direction(MAUTO)
 {
@@ -240,7 +240,7 @@ void RenderMarquee::updateMarqueeStyle()
         m_timer.stop();
 }
 
-void RenderMarquee::timerFired(Timer&)
+void RenderMarquee::timerFired()
 {
     if (m_layer->renderer().view().needsLayout())
         return;

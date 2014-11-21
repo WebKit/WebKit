@@ -79,7 +79,7 @@ class PresentationAttributeCacheCleaner {
 public:
     PresentationAttributeCacheCleaner()
         : m_hitCount(0)
-        , m_cleanTimer(this, &PresentationAttributeCacheCleaner::cleanCache)
+        , m_cleanTimer(*this, &PresentationAttributeCacheCleaner::cleanCache)
     {
     }
 
@@ -99,9 +99,8 @@ private:
     static const int minimumPresentationAttributeCacheSizeForCleaning = 100;
     static const unsigned minimumPresentationAttributeCacheHitCountPerMinute = (100 * presentationAttributeCacheCleanTimeInSeconds) / 60;
 
-    void cleanCache(Timer* timer)
+    void cleanCache()
     {
-        ASSERT_UNUSED(timer, timer == &m_cleanTimer);
         unsigned hitCount = m_hitCount;
         m_hitCount = 0;
         if (hitCount > minimumPresentationAttributeCacheHitCountPerMinute)

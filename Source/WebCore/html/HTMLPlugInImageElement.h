@@ -136,7 +136,7 @@ private:
     void simulatedMouseClickTimerFired();
 
     void restartSimilarPlugIns();
-    void removeSnapshotTimerFired(Timer&);
+    void removeSnapshotTimerFired();
     bool isTopLevelFullPagePlugin(const RenderEmbeddedObject&) const;
 
     URL m_loadedUrl;

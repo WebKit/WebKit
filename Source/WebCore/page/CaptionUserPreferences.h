@@ -97,7 +97,7 @@ protected:
     void updateCaptionStyleSheetOveride();
 
 private:
-    void timerFired(Timer&);
+    void timerFired();
     void notify();
 
     PageGroup& m_pageGroup;

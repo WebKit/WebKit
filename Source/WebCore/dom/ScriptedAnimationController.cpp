@@ -54,7 +54,7 @@ ScriptedAnimationController::ScriptedAnimationController(Document* document, Pla
     , m_nextCallbackId(0)
     , m_suspendCount(0)
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    , m_animationTimer(this, &ScriptedAnimationController::animationTimerFired)
+    , m_animationTimer(*this, &ScriptedAnimationController::animationTimerFired)
     , m_lastAnimationFrameTimeMonotonic(0)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_isUsingTimer(false)
@@ -211,7 +211,7 @@ void ScriptedAnimationController::scheduleAnimation()
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-void ScriptedAnimationController::animationTimerFired(Timer&)
+void ScriptedAnimationController::animationTimerFired()
 {
     m_lastAnimationFrameTimeMonotonic = monotonicallyIncreasingTime();
     serviceScriptedAnimations(m_lastAnimationFrameTimeMonotonic);

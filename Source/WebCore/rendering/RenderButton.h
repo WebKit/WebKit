@@ -74,7 +74,7 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
-    void timerFired(Timer&);
+    void timerFired();
 
     RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;

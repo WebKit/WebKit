@@ -81,8 +81,8 @@ HIDGamepadProvider& HIDGamepadProvider::shared()
 
 HIDGamepadProvider::HIDGamepadProvider()
     : m_shouldDispatchCallbacks(false)
-    , m_connectionDelayTimer(this, &HIDGamepadProvider::connectionDelayTimerFired)
-    , m_inputNotificationTimer(this, &HIDGamepadProvider::inputNotificationTimerFired)
+    , m_connectionDelayTimer(*this, &HIDGamepadProvider::connectionDelayTimerFired)
+    , m_inputNotificationTimer(*this, &HIDGamepadProvider::inputNotificationTimerFired)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
 
@@ -108,7 +108,7 @@ unsigned HIDGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
-void HIDGamepadProvider::connectionDelayTimerFired(Timer&)
+void HIDGamepadProvider::connectionDelayTimerFired()
 {
     m_shouldDispatchCallbacks = true;
 }
@@ -228,7 +228,7 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
         m_inputNotificationTimer.startOneShot(InputNotificationDelay);
 }
 
-void HIDGamepadProvider::inputNotificationTimerFired(Timer&)
+void HIDGamepadProvider::inputNotificationTimerFired()
 {
     if (!m_shouldDispatchCallbacks)
         return;

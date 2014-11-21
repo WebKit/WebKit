@@ -135,7 +135,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(FrameLoader* frameLoader)
     , m_newStreamSuccessful(false)
     , m_frameLoader(frameLoader)
     , m_pluginFuncs(0)
-    , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
+    , m_deliverDataTimer(*this, &WebNetscapePluginStream::deliverDataTimerFired)
 {
     memset(&m_stream, 0, sizeof(NPStream));
 }
@@ -155,7 +155,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     , m_frameLoader(0)
     , m_request(adoptNS([request mutableCopy]))
     , m_pluginFuncs(0)
-    , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
+    , m_deliverDataTimer(*this, &WebNetscapePluginStream::deliverDataTimerFired)
 {
     memset(&m_stream, 0, sizeof(NPStream));
 
@@ -552,7 +552,7 @@ void WebNetscapePluginStream::deliverData()
     }
 }
 
-void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer* timer)
+void WebNetscapePluginStream::deliverDataTimerFired()
 {
     deliverData();
 }

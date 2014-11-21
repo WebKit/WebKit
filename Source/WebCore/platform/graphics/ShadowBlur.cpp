@@ -57,7 +57,7 @@ class ScratchBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ScratchBuffer()
-        : m_purgeTimer(this, &ScratchBuffer::timerFired)
+        : m_purgeTimer(*this, &ScratchBuffer::timerFired)
         , m_lastWasInset(false)
 #if !ASSERT_DISABLED
         , m_bufferInUse(false)
@@ -130,7 +130,7 @@ public:
     static ScratchBuffer& shared();
 
 private:
-    void timerFired(Timer*)
+    void timerFired()
     {
         clearScratchBuffer();
     }

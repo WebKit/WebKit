@@ -49,7 +49,7 @@ public:
 #endif
 
 private:
-    void timerFired(Timer&) { dispatchPendingEvents(); }
+    void timerFired() { dispatchPendingEvents(); }
 
     AtomicString m_eventType;
     Timer m_timer;
@@ -59,7 +59,7 @@ private:
 
 template<typename T> EventSender<T>::EventSender(const AtomicString& eventType)
     : m_eventType(eventType)
-    , m_timer(this, &EventSender::timerFired)
+    , m_timer(*this, &EventSender::timerFired)
 {
 }
 

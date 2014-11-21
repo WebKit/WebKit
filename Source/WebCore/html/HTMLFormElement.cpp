@@ -65,7 +65,7 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& documen
     , m_isInResetFunction(false)
     , m_wasDemoted(false)
 #if ENABLE(REQUEST_AUTOCOMPLETE)
-    , m_requestAutocompleteTimer(this, &HTMLFormElement::requestAutocompleteTimerFired)
+    , m_requestAutocompletetimer(*this, &HTMLFormElement::requestAutocompleteTimerFired)
 #endif
 {
     ASSERT(hasTagName(formTag));
@@ -472,7 +472,7 @@ void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
         m_requestAutocompleteTimer.startOneShot(0);
 }
 
-void HTMLFormElement::requestAutocompleteTimerFired(Timer*)
+void HTMLFormElement::requestAutocompleteTimerFired()
 {
     Vector<RefPtr<Event>> pendingEvents;
     m_pendingAutocompleteEvents.swap(pendingEvents);

@@ -52,7 +52,7 @@ static String urlForLoggingTrack(const URL& url)
     
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_loadTimer(this, &HTMLTrackElement::loadTimerFired)
+    , m_loadTimer(*this, &HTMLTrackElement::loadTimerFired)
 {
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
     ASSERT(hasTagName(trackTag));
@@ -200,7 +200,7 @@ void HTMLTrackElement::scheduleLoad()
     m_loadTimer.startOneShot(0);
 }
 
-void HTMLTrackElement::loadTimerFired(Timer&)
+void HTMLTrackElement::loadTimerFired()
 {
     if (!fastHasAttribute(srcAttr))
         return;

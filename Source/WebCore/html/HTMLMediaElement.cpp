@@ -254,11 +254,11 @@ private:
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
-    , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
-    , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
-    , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
-    , m_scanTimer(this, &HTMLMediaElement::scanTimerFired)
-    , m_seekTimer(this, &HTMLMediaElement::seekTimerFired)
+    , m_loadTimer(*this, &HTMLMediaElement::loadTimerFired)
+    , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
+    , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
+    , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
+    , m_seekTimer(*this, &HTMLMediaElement::seekTimerFired)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
     , m_playbackRate(1.0f)
@@ -757,7 +757,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::loadTimerFired(Timer&)
+void HTMLMediaElement::loadTimerFired()
 {
     Ref<HTMLMediaElement> protect(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
@@ -2225,7 +2225,7 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
 }
 #endif
 
-void HTMLMediaElement::progressEventTimerFired(Timer&)
+void HTMLMediaElement::progressEventTimerFired()
 {
     ASSERT(m_player);
     if (m_networkState != NETWORK_LOADING)
@@ -2360,10 +2360,10 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     if (fromDOM)
         m_seekTimer.startOneShot(0);
     else
-        seekTimerFired(m_seekTimer);
+        seekTimerFired();
 }
 
-void HTMLMediaElement::seekTimerFired(Timer&)
+void HTMLMediaElement::seekTimerFired()
 {
     if (!m_player) {
         m_seeking = false;
@@ -3107,7 +3107,7 @@ double HTMLMediaElement::nextScanRate()
     return rate;
 }
 
-void HTMLMediaElement::scanTimerFired(Timer&)
+void HTMLMediaElement::scanTimerFired()
 {
     if (m_scanType == Seek) {
         double seekTime = m_scanDirection == Forward ? SeekTime : -SeekTime;
@@ -3129,7 +3129,7 @@ void HTMLMediaElement::startPlaybackProgressTimer()
     m_playbackProgressTimer.startRepeating(maxTimeupdateEventFrequency);
 }
 
-void HTMLMediaElement::playbackProgressTimerFired(Timer&)
+void HTMLMediaElement::playbackProgressTimerFired()
 {
     ASSERT(m_player);
 

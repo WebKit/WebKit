@@ -295,7 +295,7 @@ namespace WebCore {
         bool hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, HitTestResult&, IntPoint& center);
         Node* qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, NodeQualifier, bool shouldApproximate);
 
-        void overflowAutoScrollTimerFired(Timer*);
+        void overflowAutoScrollTimerFired();
         void startOverflowAutoScroll(const IntPoint&);
         int checkOverflowScroll(OverflowScrollAction);
 

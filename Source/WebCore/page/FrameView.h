@@ -106,7 +106,7 @@ public:
 
     void layout(bool allowSubtree = true);
     WEBCORE_EXPORT bool didFirstLayout() const;
-    void layoutTimerFired(Timer&);
+    void layoutTimerFired();
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(RenderElement&);
     void unscheduleRelayout();
@@ -241,7 +241,7 @@ public:
     virtual bool isRubberBandInProgress() const override;
     WEBCORE_EXPORT virtual IntPoint minimumScrollPosition() const override;
     WEBCORE_EXPORT virtual IntPoint maximumScrollPosition() const override;
-    void delayedScrollEventTimerFired(Timer&);
+    void delayedScrollEventTimerFired();
 
     void resumeVisibleImageAnimationsIncludingSubframes();
 
@@ -303,7 +303,7 @@ public:
 
     void restoreScrollbar();
 
-    void postLayoutTimerFired(Timer&);
+    void postLayoutTimerFired();
 
     void registerThrottledDOMTimer(DOMTimer*);
     void unregisterThrottledDOMTimer(DOMTimer*);
@@ -613,9 +613,9 @@ private:
     virtual void notifyPageThatContentAreaWillPaint() const override;
 
     void enableSpeculativeTilingIfNeeded();
-    void speculativeTilingEnableTimerFired(Timer&);
+    void speculativeTilingEnableTimerFired();
 
-    void updateEmbeddedObjectsTimerFired(Timer*);
+    void updateEmbeddedObjectsTimerFired();
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();

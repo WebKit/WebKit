@@ -164,7 +164,7 @@ FocusController::FocusController(Page& page, ViewState::Flags viewState)
     : m_page(page)
     , m_isChangingFocusedFrame(false)
     , m_viewState(viewState)
-    , m_focusRepaintTimer(this, &FocusController::focusRepaintTimerFired)
+    , m_focusRepaintTimer(*this, &FocusController::focusRepaintTimerFired)
 {
 }
 
@@ -912,7 +912,7 @@ void FocusController::setFocusedElementNeedsRepaint()
     m_focusRepaintTimer.startOneShot(0.033);
 }
 
-void FocusController::focusRepaintTimerFired(Timer&)
+void FocusController::focusRepaintTimerFired()
 {
     Document* focusedDocument = focusedOrMainFrame().document();
     if (!focusedDocument)

@@ -64,8 +64,8 @@ private:
     void openAndScheduleManager();
     void closeAndUnscheduleManager();
 
-    void connectionDelayTimerFired(Timer&);
-    void inputNotificationTimerFired(Timer&);
+    void connectionDelayTimerFired();
+    void inputNotificationTimerFired();
 
     unsigned indexForNewlyConnectedDevice();
 

@@ -68,7 +68,7 @@ public:
 
 private:
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    void updateTimerFired(Timer&);
+    void updateTimerFired();
 
     String captionsWindowCSS() const;
     String captionsBackgroundCSS() const;

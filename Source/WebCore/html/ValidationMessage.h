@@ -60,9 +60,9 @@ public:
 private:
     ValidationMessageClient* validationMessageClient() const;
     void setMessage(const String&);
-    void setMessageDOMAndStartTimer(Timer* = 0);
-    void buildBubbleTree(Timer*);
-    void deleteBubbleTree(Timer* = 0);
+    void setMessageDOMAndStartTimer();
+    void buildBubbleTree();
+    void deleteBubbleTree();
 
     HTMLFormControlElement* m_element;
     String m_message;

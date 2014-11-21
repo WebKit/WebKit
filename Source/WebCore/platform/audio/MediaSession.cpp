@@ -59,7 +59,7 @@ std::unique_ptr<MediaSession> MediaSession::create(MediaSessionClient& client)
 
 MediaSession::MediaSession(MediaSessionClient& client)
     : m_client(client)
-    , m_clientDataBufferingTimer(this, &MediaSession::clientDataBufferingTimerFired)
+    , m_clientDataBufferingTimer(*this, &MediaSession::clientDataBufferingTimerFired)
     , m_state(Idle)
     , m_stateToRestore(Idle)
     , m_notifyingClient(false)
@@ -180,7 +180,7 @@ void MediaSession::visibilityChanged()
         m_clientDataBufferingTimer.startOneShot(kClientDataBufferingTimerThrottleDelay);
 }
 
-void MediaSession::clientDataBufferingTimerFired(Timer &)
+void MediaSession::clientDataBufferingTimerFired()
 {
     updateClientDataBuffering();
 }

@@ -61,14 +61,15 @@ private:
 #endif
 };
 
+// FIXME: This doesn't have to be a class template.
 template <typename TimerFiredClass> class RunLoopTimer : public RunLoopTimerBase {
 public:
-    typedef void (TimerFiredClass::*TimerFiredFunction)(RunLoopTimer*);
+    typedef void (TimerFiredClass::*TimerFiredFunction)();
 
-    RunLoopTimer(TimerFiredClass* o, TimerFiredFunction f)
-        : m_object(o), m_function(f) { }
+    RunLoopTimer(TimerFiredClass& o, TimerFiredFunction f)
+        : m_object(&o), m_function(f) { }
 
-    virtual void fired() { (m_object->*m_function)(this); }
+    virtual void fired() { (m_object->*m_function)(); }
 
 private:
     TimerFiredClass* m_object;

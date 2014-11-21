@@ -225,7 +225,7 @@ ServicesOverlayController::ServicesOverlayController(MainFrame& mainFrame)
     : m_mainFrame(mainFrame)
     , m_servicesOverlay(nullptr)
     , m_isTextOnly(false)
-    , m_determineActiveHighlightTimer(this, &ServicesOverlayController::determineActiveHighlightTimerFired)
+    , m_determineActiveHighlightTimer(*this, &ServicesOverlayController::determineActiveHighlightTimerFired)
 {
 }
 
@@ -450,7 +450,7 @@ std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlight
     return std::chrono::duration_cast<std::chrono::milliseconds>(remainingDelay);
 }
 
-void ServicesOverlayController::determineActiveHighlightTimerFired(Timer&)
+void ServicesOverlayController::determineActiveHighlightTimerFired()
 {
     bool mouseIsOverButton;
     determineActiveHighlight(mouseIsOverButton);

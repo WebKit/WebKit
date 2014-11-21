@@ -169,7 +169,7 @@ private:
     void createTilesInActiveGrid(SynchronousTileCreationMode);
     void scheduleLayerFlushForPendingRepaint();
 
-    void tileCreationTimerFired(Timer*);
+    void tileCreationTimerFired();
 
     void drawReplacementImage(LegacyTileLayer*, CGContextRef, CGImageRef);
     void drawWindowContent(LegacyTileLayer*, CGContextRef, CGRect dirtyRect);

@@ -140,7 +140,7 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
     
 MediaDocument::MediaDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, MediaDocumentClass)
-    , m_replaceMediaElementTimer(this, &MediaDocument::replaceMediaElementTimerFired)
+    , m_replaceMediaElementTimer(*this, &MediaDocument::replaceMediaElementTimerFired)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
@@ -231,7 +231,7 @@ void MediaDocument::mediaElementSawUnsupportedTracks()
     m_replaceMediaElementTimer.startOneShot(0);
 }
 
-void MediaDocument::replaceMediaElementTimerFired(Timer&)
+void MediaDocument::replaceMediaElementTimerFired()
 {
     HTMLElement* htmlBody = body();
     if (!htmlBody)

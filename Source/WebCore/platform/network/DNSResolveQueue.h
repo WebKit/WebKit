@@ -55,7 +55,7 @@ private:
     bool platformProxyIsEnabledInSystemPreferences();
     void platformResolve(const String&);
 
-    void timerFired(Timer&);
+    void timerFired();
 
     Timer m_timer;
 

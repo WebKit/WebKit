@@ -88,7 +88,7 @@ HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     : m_parser(parser)
     , m_parserTimeLimit(parserTimeLimit(m_parser.document()->page()))
     , m_parserChunkSize(defaultParserChunkSize)
-    , m_continueNextChunkTimer(this, &HTMLParserScheduler::continueNextChunkTimerFired)
+    , m_continueNextChunkTimer(*this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
 #if !ASSERT_DISABLED
     , m_suspended(false)
@@ -101,10 +101,9 @@ HTMLParserScheduler::~HTMLParserScheduler()
     m_continueNextChunkTimer.stop();
 }
 
-void HTMLParserScheduler::continueNextChunkTimerFired(Timer& timer)
+void HTMLParserScheduler::continueNextChunkTimerFired()
 {
     ASSERT(!m_suspended);
-    ASSERT_UNUSED(timer, &timer == &m_continueNextChunkTimer);
 
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.

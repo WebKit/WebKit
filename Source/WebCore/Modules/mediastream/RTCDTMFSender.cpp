@@ -65,7 +65,7 @@ RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext* context, PassRefPtr<MediaSt
     , m_interToneGap(defaultInterToneGapMs)
     , m_handler(WTF::move(handler))
     , m_stopped(false)
-    , m_scheduledEventTimer(this, &RTCDTMFSender::scheduledEventTimerFired)
+    , m_scheduledEventtimer(*this, &RTCDTMFSender::scheduledEventTimerFired)
 {
     m_handler->setClient(this);
 }
@@ -142,7 +142,7 @@ void RTCDTMFSender::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void RTCDTMFSender::scheduledEventTimerFired(Timer*)
+void RTCDTMFSender::scheduledEventTimerFired()
 {
     if (m_stopped)
         return;

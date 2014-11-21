@@ -163,12 +163,12 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 FrameView::FrameView(Frame& frame)
     : m_frame(&frame)
     , m_canHaveScrollbars(true)
-    , m_layoutTimer(this, &FrameView::layoutTimerFired)
+    , m_layoutTimer(*this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
     , m_layoutPhase(OutsideLayout)
     , m_inSynchronousPostLayout(false)
-    , m_postLayoutTasksTimer(this, &FrameView::postLayoutTimerFired)
-    , m_updateEmbeddedObjectsTimer(this, &FrameView::updateEmbeddedObjectsTimerFired)
+    , m_postLayoutTasksTimer(*this, &FrameView::postLayoutTimerFired)
+    , m_updateEmbeddedObjectsTimer(*this, &FrameView::updateEmbeddedObjectsTimerFired)
     , m_isTransparent(false)
     , m_baseBackgroundColor(Color::white)
     , m_mediaType("screen")
@@ -177,14 +177,14 @@ FrameView::FrameView(Frame& frame)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
     , m_safeToPropagateScrollToParent(true)
-    , m_delayedScrollEventTimer(this, &FrameView::delayedScrollEventTimerFired)
+    , m_delayedScrollEventTimer(*this, &FrameView::delayedScrollEventTimerFired)
     , m_isTrackingRepaints(false)
     , m_shouldUpdateWhileOffscreen(true)
     , m_exposedRect(FloatRect::infiniteRect())
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
     , m_speculativeTilingEnabled(false)
-    , m_speculativeTilingEnableTimer(this, &FrameView::speculativeTilingEnableTimerFired)
+    , m_speculativeTilingEnableTimer(*this, &FrameView::speculativeTilingEnableTimerFired)
 #if PLATFORM(IOS)
     , m_useCustomFixedPositionLayoutRect(false)
     , m_useCustomSizeForResizeEvent(false)
@@ -1743,7 +1743,7 @@ IntPoint FrameView::maximumScrollPosition() const
     return maximumOffset;
 }
 
-void FrameView::delayedScrollEventTimerFired(Timer&)
+void FrameView::delayedScrollEventTimerFired()
 {
     sendScrollEvent();
 }
@@ -2406,7 +2406,7 @@ void FrameView::enableSpeculativeTilingIfNeeded()
     m_speculativeTilingEnableTimer.startOneShot(speculativeTilingEnableDelay);
 }
 
-void FrameView::speculativeTilingEnableTimerFired(Timer&)
+void FrameView::speculativeTilingEnableTimerFired()
 {
     if (m_speculativeTilingEnabled)
         return;
@@ -2414,7 +2414,7 @@ void FrameView::speculativeTilingEnableTimerFired(Timer&)
     adjustTiledBackingCoverage();
 }
 
-void FrameView::layoutTimerFired(Timer&)
+void FrameView::layoutTimerFired()
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!frame().document()->ownerElement())
@@ -2856,7 +2856,7 @@ bool FrameView::updateEmbeddedObjects()
     return m_embeddedObjectsToUpdate->isEmpty();
 }
 
-void FrameView::updateEmbeddedObjectsTimerFired(Timer*)
+void FrameView::updateEmbeddedObjectsTimerFired()
 {
     RefPtr<FrameView> protect(this);
     m_updateEmbeddedObjectsTimer.stop();
@@ -2871,7 +2871,7 @@ void FrameView::flushAnyPendingPostLayoutTasks()
     if (m_postLayoutTasksTimer.isActive())
         performPostLayoutTasks();
     if (m_updateEmbeddedObjectsTimer.isActive())
-        updateEmbeddedObjectsTimerFired(nullptr);
+        updateEmbeddedObjectsTimerFired();
 }
 
 void FrameView::performPostLayoutTasks()
@@ -3009,7 +3009,7 @@ void FrameView::willEndLiveResize()
     adjustTiledBackingCoverage();
 }
 
-void FrameView::postLayoutTimerFired(Timer&)
+void FrameView::postLayoutTimerFired()
 {
     performPostLayoutTasks();
 }

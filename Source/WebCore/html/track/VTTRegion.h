@@ -105,7 +105,7 @@ private:
     // The timer is needed to continue processing when cue scrolling ended.
     void startTimer();
     void stopTimer();
-    void scrollTimerFired(Timer*);
+    void scrollTimerFired();
 
     enum RegionSetting {
         None,

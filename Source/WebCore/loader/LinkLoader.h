@@ -59,8 +59,8 @@ public:
     bool loadLink(const LinkRelAttribute&, const String& type, const String& sizes, const URL&, Document*);
 
 private:
-    void linkLoadTimerFired(Timer&);
-    void linkLoadingErrorTimerFired(Timer&);
+    void linkLoadTimerFired();
+    void linkLoadingErrorTimerFired();
 
     LinkLoaderClient* m_client;
 

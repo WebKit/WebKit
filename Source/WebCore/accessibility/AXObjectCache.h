@@ -244,7 +244,7 @@ private:
     
     Timer m_notificationPostTimer;
     Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
-    void notificationPostTimerFired(Timer&);
+    void notificationPostTimerFired();
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);

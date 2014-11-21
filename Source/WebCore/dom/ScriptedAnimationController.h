@@ -84,7 +84,7 @@ private:
     void scheduleAnimation();
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void animationTimerFired(Timer&);
+    void animationTimerFired();
     Timer m_animationTimer;
     double m_lastAnimationFrameTimeMonotonic;
 

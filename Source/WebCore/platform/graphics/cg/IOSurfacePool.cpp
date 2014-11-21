@@ -52,7 +52,7 @@ const size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
 namespace WebCore {
 
 IOSurfacePool::IOSurfacePool()
-    : m_collectionTimer(this, &IOSurfacePool::collectionTimerFired)
+    : m_collectionTimer(*this, &IOSurfacePool::collectionTimerFired)
     , m_bytesCached(0)
     , m_inUseBytesCached(0)
     , m_maximumBytesCached(defaultMaximumBytesCached)
@@ -292,7 +292,7 @@ bool IOSurfacePool::markOlderSurfacesPurgeable()
     return markedAllSurfaces;
 }
 
-void IOSurfacePool::collectionTimerFired(Timer&)
+void IOSurfacePool::collectionTimerFired()
 {
     collectInUseSurfaces();
     bool markedAllSurfaces = markOlderSurfacesPurgeable();

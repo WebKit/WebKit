@@ -138,7 +138,7 @@ private:
     static void registerHUDWindowClass();
     static LRESULT CALLBACK hudWndProc(HWND, UINT message, WPARAM, LPARAM);
     void createHUDWindow();
-    void timerFired(WebCore::Timer*);
+    void timerFired();
 
     void togglePlay();
     void draw();

@@ -48,7 +48,7 @@ MediaControls::MediaControls(Document& document)
     , m_volumeSlider(0)
     , m_toggleClosedCaptionsButton(0)
     , m_fullScreenButton(0)
-    , m_hideFullscreenControlsTimer(this, &MediaControls::hideFullscreenControlsTimerFired)
+    , m_hideFullscreenControlsTimer(*this, &MediaControls::hideFullscreenControlsTimerFired)
     , m_isFullscreen(false)
     , m_isMouseOverControls(false)
 {
@@ -330,7 +330,7 @@ void MediaControls::defaultEventHandler(Event* event)
     }
 }
 
-void MediaControls::hideFullscreenControlsTimerFired(Timer&)
+void MediaControls::hideFullscreenControlsTimerFired()
 {
     if (m_mediaController->paused())
         return;

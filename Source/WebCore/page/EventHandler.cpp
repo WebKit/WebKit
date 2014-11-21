@@ -376,17 +376,17 @@ EventHandler::EventHandler(Frame& frame)
 #endif
     , m_mouseDownWasSingleClickInSelection(false)
     , m_selectionInitiationState(HaveNotStartedSelection)
-    , m_hoverTimer(this, &EventHandler::hoverTimerFired)
+    , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
 #if ENABLE(CURSOR_SUPPORT)
-    , m_cursorUpdateTimer(this, &EventHandler::cursorUpdateTimerFired)
+    , m_cursorUpdateTimer(*this, &EventHandler::cursorUpdateTimerFired)
 #endif
-    , m_longMousePressTimer(this, &EventHandler::recognizeLongMousePress)
+    , m_longMousePressTimer(*this, &EventHandler::recognizeLongMousePress)
     , m_didRecognizeLongMousePress(false)
     , m_autoscrollController(std::make_unique<AutoscrollController>())
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
 #if !ENABLE(IOS_TOUCH_EVENTS)
-    , m_fakeMouseMoveEventTimer(this, &EventHandler::fakeMouseMoveEventTimerFired)
+    , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
 #endif
     , m_svgPan(false)
     , m_resizeLayer(0)
@@ -420,7 +420,7 @@ EventHandler::EventHandler(Frame& frame)
     , m_didLongPressInvokeContextMenu(false)
     , m_isHandlingWheelEvent(false)
 #if ENABLE(CURSOR_VISIBILITY)
-    , m_autoHideCursorTimer(this, &EventHandler::autoHideCursorTimerFired)
+    , m_autoHideCursorTimer(*this, &EventHandler::autoHideCursorTimerFired)
 #endif
 {
 }
@@ -1310,7 +1310,7 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
     return ((isOverLink || isSubmitImage(node)) && (!editable || editableLinkEnabled));
 }
 
-void EventHandler::cursorUpdateTimerFired(Timer&)
+void EventHandler::cursorUpdateTimerFired()
 {
     ASSERT(m_frame.document());
     updateCursor();
@@ -1553,9 +1553,8 @@ void EventHandler::cancelAutoHideCursorTimer()
         m_autoHideCursorTimer.stop();
 }
 
-void EventHandler::autoHideCursorTimerFired(Timer& timer)
+void EventHandler::autoHideCursorTimerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_autoHideCursorTimer);
     m_currentMouseCursor = noneCursor();
     FrameView* view = m_frame.view();
     if (view && view->isActive())
@@ -1576,10 +1575,8 @@ void EventHandler::beginTrackingPotentialLongMousePress(const HitTestResult& hit
     page->chrome().didBeginTrackingPotentialLongMousePress(m_mouseDownPos, hitTestResult);
 }
     
-void EventHandler::recognizeLongMousePress(Timer& timer)
+void EventHandler::recognizeLongMousePress()
 {
-    ASSERT_UNUSED(timer, &timer == &m_longMousePressTimer);
-
     Page* page = m_frame.page();
     if (!page)
         return;
@@ -2944,9 +2941,8 @@ void EventHandler::cancelFakeMouseMoveEvent()
     m_fakeMouseMoveEventTimer.stop();
 }
 
-void EventHandler::fakeMouseMoveEventTimerFired(Timer& timer)
+void EventHandler::fakeMouseMoveEventTimerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_fakeMouseMoveEventTimer);
     ASSERT(!m_mousePressed);
 
     if (!m_frame.settings().deviceSupportsMouse())
@@ -2980,7 +2976,7 @@ void EventHandler::resizeLayerDestroyed()
     m_resizeLayer = 0;
 }
 
-void EventHandler::hoverTimerFired(Timer&)
+void EventHandler::hoverTimerFired()
 {
     m_hoverTimer.stop();
 

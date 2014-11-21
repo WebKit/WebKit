@@ -310,7 +310,7 @@ private:
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
-    void caretBlinkTimerFired(Timer&);
+    void caretBlinkTimerFired();
 
     void setCaretVisibility(CaretVisibility);
     bool recomputeCaretRect();

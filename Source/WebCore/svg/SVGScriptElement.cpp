@@ -45,7 +45,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
     : SVGElement(tagName, document)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
-    , m_svgLoadEventTimer(this, &SVGElement::svgLoadEventTimerFired)
+    , m_svgLoadEventTimer(*this, &SVGElement::svgLoadEventTimerFired)
 {
     ASSERT(hasTagName(SVGNames::scriptTag));
     registerAnimatedPropertiesForSVGScriptElement();

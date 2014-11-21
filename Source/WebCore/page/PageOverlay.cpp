@@ -54,7 +54,7 @@ PassRefPtr<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayT
 PageOverlay::PageOverlay(Client& client, OverlayType overlayType)
     : m_client(client)
     , m_page(nullptr)
-    , m_fadeAnimationTimer(this, &PageOverlay::fadeAnimationTimerFired)
+    , m_fadeAnimationTimer(*this, &PageOverlay::fadeAnimationTimerFired)
     , m_fadeAnimationStartTime(0)
     , m_fadeAnimationDuration(fadeAnimationDuration)
     , m_fadeAnimationType(NoAnimation)
@@ -232,7 +232,7 @@ void PageOverlay::startFadeAnimation()
     m_fadeAnimationTimer.startRepeating(1 / fadeAnimationFrameRate);
 }
 
-void PageOverlay::fadeAnimationTimerFired(Timer&)
+void PageOverlay::fadeAnimationTimerFired()
 {
     float animationProgress = (currentTime() - m_fadeAnimationStartTime) / m_fadeAnimationDuration;
 

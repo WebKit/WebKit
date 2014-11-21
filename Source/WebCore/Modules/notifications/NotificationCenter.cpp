@@ -119,7 +119,7 @@ PassRefPtr<NotificationCenter::NotificationRequestCallback> NotificationCenter::
 
 NotificationCenter::NotificationRequestCallback::NotificationRequestCallback(NotificationCenter* center, PassRefPtr<VoidCallback> callback)
     : m_notificationCenter(center)
-    , m_timer(this, &NotificationCenter::NotificationRequestCallback::timerFired)
+    , m_timer(*this, &NotificationCenter::NotificationRequestCallback::timerFired)
     , m_callback(callback)
 {
 }
@@ -129,7 +129,7 @@ void NotificationCenter::NotificationRequestCallback::startTimer()
     m_timer.startOneShot(0);
 }
 
-void NotificationCenter::NotificationRequestCallback::timerFired(Timer&)
+void NotificationCenter::NotificationRequestCallback::timerFired()
 {
     if (m_callback)
         m_callback->handleEvent();

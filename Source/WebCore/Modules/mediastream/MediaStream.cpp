@@ -86,7 +86,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, Pas
 MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)
     : ContextDestructionObserver(&context)
     , m_private(privateStream)
-    , m_scheduledEventTimer(this, &MediaStream::scheduledEventTimerFired)
+    , m_scheduledEventtimer(*this, &MediaStream::scheduledEventTimerFired)
 {
     ASSERT(m_private);
     m_private->setClient(this);
@@ -361,7 +361,7 @@ void MediaStream::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void MediaStream::scheduledEventTimerFired(Timer*)
+void MediaStream::scheduledEventTimerFired()
 {
     Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);

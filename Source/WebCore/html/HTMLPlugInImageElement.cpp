@@ -107,8 +107,8 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
-    , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
-    , m_removeSnapshotTimer(this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
+    , m_simulatedMouseClickTimer(*this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
+    , m_removeSnapshotTimer(*this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
     , m_isRestartedPlugin(false)
     , m_needsCheckForSizeChange(false)
@@ -399,7 +399,7 @@ bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
 }
 
-void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer&)
+void HTMLPlugInImageElement::removeSnapshotTimerFired()
 {
     m_snapshotImage = nullptr;
     m_isRestartedPlugin = false;

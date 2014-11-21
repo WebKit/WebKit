@@ -280,7 +280,7 @@ private:
 
 NavigationScheduler::NavigationScheduler(Frame& frame)
     : m_frame(frame)
-    , m_timer(this, &NavigationScheduler::timerFired)
+    , m_timer(*this, &NavigationScheduler::timerFired)
 {
 }
 
@@ -430,7 +430,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     schedule(std::make_unique<ScheduledHistoryNavigation>(steps));
 }
 
-void NavigationScheduler::timerFired(Timer&)
+void NavigationScheduler::timerFired()
 {
     if (!m_frame.page())
         return;

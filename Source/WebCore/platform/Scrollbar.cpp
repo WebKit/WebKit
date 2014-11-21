@@ -76,7 +76,7 @@ Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orient
     , m_draggingDocument(false)
     , m_documentDragPos(0)
     , m_enabled(true)
-    , m_scrollTimer(this, &Scrollbar::autoscrollTimerFired)
+    , m_scrollTimer(*this, &Scrollbar::autoscrollTimerFired)
     , m_overlapsResizer(false)
     , m_suppressInvalidation(false)
     , m_isAlphaLocked(false)
@@ -185,7 +185,7 @@ void Scrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
         Widget::paint(context, damageRect);
 }
 
-void Scrollbar::autoscrollTimerFired(Timer&)
+void Scrollbar::autoscrollTimerFired()
 {
     autoscrollPressedPart(theme()->autoscrollTimerDelay());
 }

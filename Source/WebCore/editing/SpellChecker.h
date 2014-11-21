@@ -98,7 +98,7 @@ private:
 
     bool canCheckAsynchronously(Range*) const;
     TextCheckerClient* client() const;
-    void timerFiredToProcessQueuedRequest(Timer*);
+    void timerFiredToProcessQueuedRequest();
     void invokeRequest(PassRefPtr<SpellCheckRequest>);
     void enqueueRequest(PassRefPtr<SpellCheckRequest>);
     void didCheckSucceed(int sequence, const Vector<TextCheckingResult>&);

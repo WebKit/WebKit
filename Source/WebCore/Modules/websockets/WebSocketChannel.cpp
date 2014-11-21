@@ -67,11 +67,11 @@ const double TCPMaximumSegmentLifetime = 2 * 60.0;
 WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* client)
     : m_document(document)
     , m_client(client)
-    , m_resumeTimer(this, &WebSocketChannel::resumeTimerFired)
+    , m_resumeTimer(*this, &WebSocketChannel::resumeTimerFired)
     , m_suspended(false)
     , m_closing(false)
     , m_receivedClosingHandshake(false)
-    , m_closingTimer(this, &WebSocketChannel::closingTimerFired)
+    , m_closingTimer(*this, &WebSocketChannel::closingTimerFired)
     , m_closed(false)
     , m_shouldDiscardReceivedData(false)
     , m_unhandledBufferedAmount(0)
@@ -447,10 +447,8 @@ bool WebSocketChannel::processBuffer()
     return processFrame();
 }
 
-void WebSocketChannel::resumeTimerFired(Timer* timer)
+void WebSocketChannel::resumeTimerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_resumeTimer);
-
     Ref<WebSocketChannel> protect(*this); // The client can close the channel, potentially removing the last reference.
     while (!m_suspended && m_client && !m_buffer.isEmpty())
         if (!processBuffer())
@@ -489,10 +487,9 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         m_client->didStartClosingHandshake();
 }
 
-void WebSocketChannel::closingTimerFired(Timer* timer)
+void WebSocketChannel::closingTimerFired()
 {
     LOG(Network, "WebSocketChannel %p closingTimerFired()", this);
-    ASSERT_UNUSED(timer, &m_closingTimer == timer);
     if (m_handle)
         m_handle->disconnect();
 }

@@ -45,7 +45,7 @@ public:
     
 private:
     virtual void initializeVoiceList();
-    void speakingFinished(Timer*);
+    void speakingFinished();
     
     Timer m_speakingFinishedTimer;
     RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;

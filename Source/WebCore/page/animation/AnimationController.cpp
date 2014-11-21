@@ -52,8 +52,8 @@ static const double cAnimationTimerDelay = 0.025;
 static const double cBeginAnimationUpdateTimeNotSet = -1;
 
 AnimationControllerPrivate::AnimationControllerPrivate(Frame& frame)
-    : m_animationTimer(this, &AnimationControllerPrivate::animationTimerFired)
-    , m_updateStyleIfNeededDispatcher(this, &AnimationControllerPrivate::updateStyleIfNeededDispatcherFired)
+    : m_animationTimer(*this, &AnimationControllerPrivate::animationTimerFired)
+    , m_updateStyleIfNeededDispatcher(*this, &AnimationControllerPrivate::updateStyleIfNeededDispatcherFired)
     , m_frame(frame)
     , m_beginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet)
     , m_animationsWaitingForStyle()
@@ -159,7 +159,7 @@ void AnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChanged/
     m_animationTimer.startOneShot(timeToNextService);
 }
 
-void AnimationControllerPrivate::updateStyleIfNeededDispatcherFired(Timer&)
+void AnimationControllerPrivate::updateStyleIfNeededDispatcherFired()
 {
     fireEventsAndUpdateStyle();
 }
@@ -226,7 +226,7 @@ void AnimationControllerPrivate::animationFrameCallbackFired()
 }
 #endif
 
-void AnimationControllerPrivate::animationTimerFired(Timer&)
+void AnimationControllerPrivate::animationTimerFired()
 {
     // Make sure animationUpdateTime is updated, so that it is current even if no
     // styleChange has happened (e.g. accelerated animations)

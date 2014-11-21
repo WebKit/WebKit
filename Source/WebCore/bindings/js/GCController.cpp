@@ -51,7 +51,7 @@ GCController& gcController()
 
 GCController::GCController()
 #if !USE(CF)
-    : m_GCTimer(this, &GCController::gcTimerFired)
+    : m_GCtimer(*this, &GCController::gcTimerFired)
 #endif
 {
 }
@@ -73,7 +73,7 @@ void GCController::garbageCollectSoon()
 }
 
 #if !USE(CF)
-void GCController::gcTimerFired(Timer*)
+void GCController::gcTimerFired()
 {
     collect(nullptr);
 }

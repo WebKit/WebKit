@@ -72,7 +72,7 @@ public:
 private:
     void dispatchInputSoon();
     void dispatchInput();
-    void timerFired(Timer*);
+    void timerFired();
 
     Page& m_page;
     EventLoopInputDispatcherClient* m_client;

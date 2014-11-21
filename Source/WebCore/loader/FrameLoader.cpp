@@ -236,7 +236,7 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     , m_pageDismissalEventBeingDispatched(NoDismissal)
     , m_isComplete(false)
     , m_needsClear(false)
-    , m_checkTimer(this, &FrameLoader::checkTimerFired)
+    , m_checkTimer(*this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
     , m_shouldCallCheckLoadComplete(false)
     , m_opener(nullptr)
@@ -850,7 +850,7 @@ void FrameLoader::checkCompleted()
         checkLoadComplete();
 }
 
-void FrameLoader::checkTimerFired(Timer&)
+void FrameLoader::checkTimerFired()
 {
     Ref<Frame> protect(m_frame);
 

@@ -339,7 +339,7 @@ private:
 
     bool shouldUsePrintingLayout() const;
 
-    void lazyRepaintTimerFired(Timer&);
+    void lazyRepaintTimerFired();
 
     Timer m_lazyRepaintTimer;
     HashSet<RenderBox*> m_renderersNeedingLazyRepaint;

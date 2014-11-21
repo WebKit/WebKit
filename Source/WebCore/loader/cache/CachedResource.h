@@ -352,7 +352,7 @@ public:
     void cancel();
 
 private:
-    void timerFired(Timer&);
+    void timerFired();
 
     CachedResource& m_resource;
     CachedResourceClient& m_client;

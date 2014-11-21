@@ -83,7 +83,7 @@ LegacyTileCache::LegacyTileCache(WAKWindow* window)
     , m_didCallWillStartScrollingOrZooming(false)
     , m_zoomedOutTileGrid(PassOwnPtr<LegacyTileGrid>())
     , m_zoomedInTileGrid(PassOwnPtr<LegacyTileGrid>())
-    , m_tileCreationTimer(this, &LegacyTileCache::tileCreationTimerFired)
+    , m_tileCreationTimer(*this, &LegacyTileCache::tileCreationTimerFired)
     , m_currentScale(1.f)
     , m_pendingScale(0)
     , m_pendingZoomedOutScale(0)
@@ -415,7 +415,7 @@ void LegacyTileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore
         m_tileCreationTimer.startOneShot(0);
 }
 
-void LegacyTileCache::tileCreationTimerFired(Timer*)
+void LegacyTileCache::tileCreationTimerFired()
 {
     if (isTileCreationSuspended())
         return;

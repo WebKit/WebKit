@@ -70,7 +70,7 @@ private:
 
     LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
 
-    void loadTimerFired(Timer&);
+    void loadTimerFired();
 
     HTMLTrackElement* m_trackElement;
     Timer m_loadTimer;

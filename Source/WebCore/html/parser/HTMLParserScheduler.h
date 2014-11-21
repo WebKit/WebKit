@@ -97,7 +97,7 @@ public:
     void resume();
 
 private:
-    void continueNextChunkTimerFired(Timer&);
+    void continueNextChunkTimerFired();
 
     HTMLDocumentParser& m_parser;
 

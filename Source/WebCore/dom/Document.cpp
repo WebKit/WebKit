@@ -408,7 +408,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #if ENABLE(IOS_TOUCH_EVENTS)
     , m_handlingTouchEvent(false)
     , m_touchEventRegionsDirty(false)
-    , m_touchEventsChangedTimer(this, &Document::touchEventsChangedTimerFired)
+    , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
 #endif
     , m_referencingNodeCount(0)
     , m_didCalculateStyleResolver(false)
@@ -433,8 +433,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_visuallyOrdered(false)
     , m_readyState(Complete)
     , m_bParsing(false)
-    , m_optimizedStyleSheetUpdateTimer(this, &Document::optimizedStyleSheetUpdateTimerFired)
-    , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
+    , m_optimizedStyleSheetUpdateTimer(*this, &Document::optimizedStyleSheetUpdateTimerFired)
+    , m_styleRecalcTimer(*this, &Document::styleRecalcTimerFired)
     , m_pendingStyleRecalcShouldForce(false)
     , m_inStyleRecalc(false)
     , m_closeAfterStyleRecalc(false)
@@ -444,7 +444,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_ignoreDestructiveWriteCount(0)
     , m_titleSetExplicitly(false)
     , m_markers(std::make_unique<DocumentMarkerController>())
-    , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
+    , m_updateFocusAppearanceTimer(*this, &Document::updateFocusAppearanceTimerFired)
     , m_cssTarget(nullptr)
     , m_processingLoadEvent(false)
     , m_loadEventFinished(false)
@@ -475,11 +475,11 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #if ENABLE(FULLSCREEN_API)
     , m_areKeysEnabledInFullScreen(0)
     , m_fullScreenRenderer(nullptr)
-    , m_fullScreenChangeDelayTimer(this, &Document::fullScreenChangeDelayTimerFired)
+    , m_fullScreenChangeDelayTimer(*this, &Document::fullScreenChangeDelayTimerFired)
     , m_isAnimatingFullScreen(false)
 #endif
     , m_loadEventDelayCount(0)
-    , m_loadEventDelayTimer(this, &Document::loadEventDelayTimerFired)
+    , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
     , m_referrerPolicy(ReferrerPolicyDefault)
     , m_directionSetOnDocumentElement(false)
     , m_writingModeSetOnDocumentElement(false)
@@ -498,11 +498,11 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     , m_isTelephoneNumberParsingAllowed(true)
 #endif
-    , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
+    , m_pendingTasksTimer(*this, &Document::pendingTasksTimerFired)
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
-    , m_visualUpdatesSuppressionTimer(this, &Document::visualUpdatesSuppressionTimerFired)
-    , m_sharedObjectPoolClearTimer(this, &Document::sharedObjectPoolClearTimerFired)
+    , m_visualUpdatesSuppressionTimer(*this, &Document::visualUpdatesSuppressionTimerFired)
+    , m_sharedObjectPoolClearTimer(*this, &Document::sharedObjectPoolClearTimerFired)
 #ifndef NDEBUG
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
@@ -512,8 +512,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #if ENABLE(WEB_REPLAY)
     , m_inputCursor(EmptyInputCursor::create())
 #endif
-    , m_didAssociateFormControlsTimer(this, &Document::didAssociateFormControlsTimerFired)
-    , m_cookieCacheExpiryTimer(this, &Document::domCookieCacheExpiryTimerFired)
+    , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
+    , m_cookieCacheExpiryTimer(*this, &Document::domCookieCacheExpiryTimerFired)
     , m_disabledFieldsetElementsCount(0)
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
@@ -1264,7 +1264,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         frame->loader().forcePageTransitionIfNeeded();
 }
 
-void Document::visualUpdatesSuppressionTimerFired(Timer&)
+void Document::visualUpdatesSuppressionTimerFired()
 {
     ASSERT(!m_visualUpdatesAllowed);
 
@@ -1745,7 +1745,7 @@ bool Document::hasPendingForcedStyleRecalc() const
     return m_styleRecalcTimer.isActive() && m_pendingStyleRecalcShouldForce;
 }
 
-void Document::styleRecalcTimerFired(Timer&)
+void Document::styleRecalcTimerFired()
 {
     updateStyleIfNeeded();
 }
@@ -3244,7 +3244,7 @@ void Document::evaluateMediaQueryList()
         m_mediaQueryMatcher->styleResolverChanged();
 }
 
-void Document::optimizedStyleSheetUpdateTimerFired(Timer&)
+void Document::optimizedStyleSheetUpdateTimerFired()
 {
     styleResolverChanged(RecalcStyleIfNeeded);
 }
@@ -4629,7 +4629,7 @@ void Document::finishedParsing()
     m_cachedResourceLoader->clearPreloads();
 }
 
-void Document::sharedObjectPoolClearTimerFired(Timer&)
+void Document::sharedObjectPoolClearTimerFired()
 {
     m_sharedObjectPool = nullptr;
 }
@@ -4868,7 +4868,7 @@ void Document::cancelFocusAppearanceUpdate()
     m_updateFocusAppearanceTimer.stop();
 }
 
-void Document::updateFocusAppearanceTimerFired(Timer&)
+void Document::updateFocusAppearanceTimerFired()
 {
     Element* element = focusedElement();
     if (!element)
@@ -5023,7 +5023,7 @@ void Document::postTask(Task task)
     });
 }
 
-void Document::pendingTasksTimerFired(Timer&)
+void Document::pendingTasksTimerFired()
 {
     Vector<Task> pendingTasks = WTF::move(m_pendingTasks);
     for (auto& task : pendingTasks)
@@ -5474,7 +5474,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     recalcStyle(Style::Force);
 
     if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
-        fullScreenChangeDelayTimerFired(m_fullScreenChangeDelayTimer);
+        fullScreenChangeDelayTimerFired();
 }
 
 void Document::webkitDidEnterFullScreenForElement(Element*)
@@ -5528,7 +5528,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     // FIXME(136605): Remove this quirk once YouTube moves to relative widths and heights for
     // fullscreen mode.
     if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
-        exitingDocument.fullScreenChangeDelayTimerFired(exitingDocument.m_fullScreenChangeDelayTimer);
+        exitingDocument.fullScreenChangeDelayTimerFired();
     else
         exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);
 
@@ -5558,7 +5558,7 @@ void Document::fullScreenRendererDestroyed()
     m_fullScreenRenderer = nullptr;
 }
 
-void Document::fullScreenChangeDelayTimerFired(Timer&)
+void Document::fullScreenChangeDelayTimerFired()
 {
     // Since we dispatch events in this function, it's possible that the
     // document will be detached and GC'd. We protect it here to make sure we
@@ -5696,7 +5696,7 @@ void Document::decrementLoadEventDelayCount()
         m_loadEventDelayTimer.startOneShot(0);
 }
 
-void Document::loadEventDelayTimerFired(Timer&)
+void Document::loadEventDelayTimerFired()
 {
     if (frame())
         frame()->loader().checkCompleted();
@@ -6212,10 +6212,8 @@ void Document::didAssociateFormControl(Element* element)
         m_didAssociateFormControlsTimer.startOneShot(0);
 }
 
-void Document::didAssociateFormControlsTimerFired(Timer& timer)
+void Document::didAssociateFormControlsTimerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_didAssociateFormControlsTimer);
-
     if (!frame() || !frame()->page())
         return;
 
@@ -6240,7 +6238,7 @@ void Document::invalidateDOMCookieCache()
     m_cachedDOMCookies = String();
 }
 
-void Document::domCookieCacheExpiryTimerFired(Timer&)
+void Document::domCookieCacheExpiryTimerFired()
 {
     invalidateDOMCookieCache();
 }

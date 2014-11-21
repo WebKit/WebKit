@@ -156,7 +156,7 @@ private:
     virtual float zoomedOutContentsScale() const override;
 
 
-    void tileRevalidationTimerFired(Timer*);
+    void tileRevalidationTimerFired();
 
     void setNeedsRevalidateTiles();
 

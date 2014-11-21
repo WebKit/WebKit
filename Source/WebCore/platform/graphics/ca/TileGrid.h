@@ -123,7 +123,7 @@ private:
     void removeTilesInCohort(TileCohort);
 
     void scheduleCohortRemoval();
-    void cohortRemovalTimerFired(Timer*);
+    void cohortRemovalTimerFired();
     TileCohort nextTileCohort() const;
     void startedNewCohort(TileCohort);
     TileCohort newestTileCohort() const;

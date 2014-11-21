@@ -43,7 +43,7 @@ TileGrid::TileGrid(TileController& controller)
     : m_controller(controller)
     , m_containerLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
     , m_scale(1)
-    , m_cohortRemovalTimer(this, &TileGrid::cohortRemovalTimerFired)
+    , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
 {
 #ifndef NDEBUG
     m_containerLayer.get().setName("TileGrid Container Layer");
@@ -476,7 +476,7 @@ double TileGrid::TileCohortInfo::timeUntilExpiration()
     return creationTime - timeThreshold;
 }
 
-void TileGrid::cohortRemovalTimerFired(Timer*)
+void TileGrid::cohortRemovalTimerFired()
 {
     if (m_cohortList.isEmpty()) {
         m_cohortRemovalTimer.stop();

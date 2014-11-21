@@ -115,7 +115,7 @@ void PingLoader::createPingLoader(Frame& frame, ResourceRequest& request)
 }
 
 PingLoader::PingLoader(Frame& frame, ResourceRequest& request)
-    : m_timeout(this, &PingLoader::timeoutTimerFired)
+    : m_timeout(*this, &PingLoader::timeoutTimerFired)
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().

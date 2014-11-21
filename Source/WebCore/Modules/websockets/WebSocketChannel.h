@@ -127,9 +127,9 @@ private:
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);
     bool processBuffer();
-    void resumeTimerFired(Timer*);
+    void resumeTimerFired();
     void startClosingHandshake(int code, const String& reason);
-    void closingTimerFired(Timer*);
+    void closingTimerFired();
 
     bool processFrame();
 

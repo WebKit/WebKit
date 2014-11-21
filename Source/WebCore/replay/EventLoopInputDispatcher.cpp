@@ -48,7 +48,7 @@ EventLoopInputDispatcher::EventLoopInputDispatcher(Page& page, ReplayingInputCur
     : m_page(page)
     , m_client(client)
     , m_cursor(cursor)
-    , m_timer(this, &EventLoopInputDispatcher::timerFired)
+    , m_timer(*this, &EventLoopInputDispatcher::timerFired)
     , m_dispatching(false)
     , m_running(false)
     , m_speed(DispatchSpeed::FastForward)
@@ -79,7 +79,7 @@ void EventLoopInputDispatcher::pause()
         m_timer.stop();
 }
 
-void EventLoopInputDispatcher::timerFired(Timer*)
+void EventLoopInputDispatcher::timerFired()
 {
     dispatchInput();
 }

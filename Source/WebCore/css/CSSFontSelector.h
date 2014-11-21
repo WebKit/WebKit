@@ -86,7 +86,7 @@ private:
 
     void dispatchInvalidationCallbacks();
 
-    void beginLoadTimerFired(Timer&);
+    void beginLoadTimerFired();
 
     Document* m_document;
     HashMap<String, std::unique_ptr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_fontFaces;

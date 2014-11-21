@@ -580,7 +580,7 @@ private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayerFactory* nextBestMediaEngine(MediaPlayerFactory*) const;
     void loadWithNextMediaEngine(MediaPlayerFactory*);
-    void reloadTimerFired(Timer&);
+    void reloadTimerFired();
 
     static void initializeMediaEngines();
 

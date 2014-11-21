@@ -123,7 +123,7 @@ private:
 
     bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
     std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown(Highlight*) const;
-    void determineActiveHighlightTimerFired(Timer&);
+    void determineActiveHighlightTimerFired();
 
     static bool highlightsAreEquivalent(const Highlight* a, const Highlight* b);
 

@@ -47,7 +47,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    void animationTimerFired(Timer&);
+    void animationTimerFired();
     void updateAnimationState();
 
     double m_position;

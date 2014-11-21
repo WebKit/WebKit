@@ -52,7 +52,7 @@ static const double StorageSyncInterval = 1.0;
 static const int MaxiumItemsToSync = 100;
 
 inline StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, const String& databaseIdentifier)
-    : m_syncTimer(this, &StorageAreaSync::syncTimerFired)
+    : m_syncTimer(*this, &StorageAreaSync::syncTimerFired)
     , m_itemsCleared(false)
     , m_finalSyncScheduled(false)
     , m_storageArea(storageArea)
@@ -108,7 +108,7 @@ void StorageAreaSync::scheduleFinalSync()
     // FIXME: This is synchronous.  We should do it on the background process, but
     // we should do it safely.
     m_finalSyncScheduled = true;
-    syncTimerFired(&m_syncTimer);
+    syncTimerFired();
 
     RefPtr<StorageAreaSync> protector(this);
     m_syncManager->dispatch([protector] {
@@ -166,7 +166,7 @@ void StorageAreaSync::scheduleCloseDatabase()
     }
 }
 
-void StorageAreaSync::syncTimerFired(Timer*)
+void StorageAreaSync::syncTimerFired()
 {
     ASSERT(isMainThread());
 
@@ -537,7 +537,7 @@ void StorageAreaSync::deleteEmptyDatabase()
 
 void StorageAreaSync::scheduleSync()
 {
-    syncTimerFired(&m_syncTimer);
+    syncTimerFired();
 }
 
 } // namespace WebCore

@@ -130,8 +130,8 @@ protected:
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     // Trivial wrappers around the actual update loop in AxisScrollSnapAnimator, since WebCore Timer requires a Timer argument.
-    void horizontalScrollSnapTimerFired(Timer&);
-    void verticalScrollSnapTimerFired(Timer&);
+    void horizontalScrollSnapTimerFired();
+    void verticalScrollSnapTimerFired();
 #endif
 
     ScrollableArea* m_scrollableArea;

@@ -44,7 +44,7 @@ SMILTimeContainer::SMILTimeContainer(SVGSVGElement* owner)
     , m_resumeTime(0)
     , m_presetStartTime(0)
     , m_documentOrderIndexesDirty(false)
-    , m_timer(this, &SMILTimeContainer::timerFired)
+    , m_timer(*this, &SMILTimeContainer::timerFired)
     , m_ownerSVGElement(owner)
 #ifndef NDEBUG
     , m_preventScheduledAnimationsChanges(false)
@@ -213,7 +213,7 @@ void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
     m_timer.startOneShot(delay.value());
 }
 
-void SMILTimeContainer::timerFired(Timer*)
+void SMILTimeContainer::timerFired()
 {
     ASSERT(m_beginTime);
     ASSERT(!m_pauseTime);

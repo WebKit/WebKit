@@ -51,8 +51,8 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* key
     , m_keySystem(keySystem)
     , m_asyncEventQueue(*this)
     , m_session(keys->cdm()->createSession())
-    , m_keyRequestTimer(this, &MediaKeySession::keyRequestTimerFired)
-    , m_addKeyTimer(this, &MediaKeySession::addKeyTimerFired)
+    , m_keyRequestTimer(*this, &MediaKeySession::keyRequestTimerFired)
+    , m_addKeyTimer(*this, &MediaKeySession::addKeyTimerFired)
 {
     m_session->setClient(this);
 }
@@ -89,7 +89,7 @@ void MediaKeySession::generateKeyRequest(const String& mimeType, Uint8Array* ini
     m_keyRequestTimer.startOneShot(0);
 }
 
-void MediaKeySession::keyRequestTimerFired(Timer&)
+void MediaKeySession::keyRequestTimerFired()
 {
     ASSERT(m_pendingKeyRequests.size());
     if (!m_session)
@@ -147,7 +147,7 @@ void MediaKeySession::update(Uint8Array* key, ExceptionCode& ec)
     m_addKeyTimer.startOneShot(0);
 }
 
-void MediaKeySession::addKeyTimerFired(Timer&)
+void MediaKeySession::addKeyTimerFired()
 {
     ASSERT(m_pendingKeys.size());
     if (!m_session)

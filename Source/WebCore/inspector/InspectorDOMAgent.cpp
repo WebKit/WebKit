@@ -162,7 +162,7 @@ public:
     RevalidateStyleAttributeTask(InspectorDOMAgent*);
     void scheduleFor(Element*);
     void reset() { m_timer.stop(); }
-    void timerFired(Timer&);
+    void timerFired();
 
 private:
     InspectorDOMAgent* m_domAgent;
@@ -172,7 +172,7 @@ private:
 
 RevalidateStyleAttributeTask::RevalidateStyleAttributeTask(InspectorDOMAgent* domAgent)
     : m_domAgent(domAgent)
-    , m_timer(this, &RevalidateStyleAttributeTask::timerFired)
+    , m_timer(*this, &RevalidateStyleAttributeTask::timerFired)
 {
 }
 
@@ -183,7 +183,7 @@ void RevalidateStyleAttributeTask::scheduleFor(Element* element)
         m_timer.startOneShot(0);
 }
 
-void RevalidateStyleAttributeTask::timerFired(Timer&)
+void RevalidateStyleAttributeTask::timerFired()
 {
     // The timer is stopped on m_domAgent destruction, so this method will never be called after m_domAgent has been destroyed.
     Vector<Element*> elements;

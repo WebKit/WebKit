@@ -258,7 +258,7 @@ protected:
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
     virtual void startAnimation(CatchUpAnimation = CatchUp) override;
-    void advanceAnimation(Timer&);
+    void advanceAnimation();
 
     // Function that does the real work of advancing the animation.  When
     // skippingFrames is true, we're in the middle of a loop trying to skip over

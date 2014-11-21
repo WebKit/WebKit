@@ -467,9 +467,9 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Gr
     , ActiveDOMObject(&passedCanvas->document())
     , m_context(0)
     , m_drawingBuffer(0)
-    , m_dispatchContextLostEventTimer(this, &WebGLRenderingContext::dispatchContextLostEvent)
+    , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContext::dispatchContextLostEvent)
     , m_restoreAllowed(false)
-    , m_restoreTimer(this, &WebGLRenderingContext::maybeRestoreContext)
+    , m_restoreTimer(*this, &WebGLRenderingContext::maybeRestoreContext)
     , m_generatedImageCache(0)
     , m_contextLost(false)
     , m_contextLostMode(SyntheticLostContext)
@@ -487,9 +487,9 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , ActiveDOMObject(&passedCanvas->document())
     , m_context(context)
     , m_drawingBuffer(0)
-    , m_dispatchContextLostEventTimer(this, &WebGLRenderingContext::dispatchContextLostEvent)
+    , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContext::dispatchContextLostEvent)
     , m_restoreAllowed(false)
-    , m_restoreTimer(this, &WebGLRenderingContext::maybeRestoreContext)
+    , m_restoreTimer(*this, &WebGLRenderingContext::maybeRestoreContext)
     , m_generatedImageCache(4)
     , m_contextLost(false)
     , m_contextLostMode(SyntheticLostContext)
@@ -5923,7 +5923,7 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
 }
 
-void WebGLRenderingContext::dispatchContextLostEvent(Timer*)
+void WebGLRenderingContext::dispatchContextLostEvent()
 {
     RefPtr<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, "");
     canvas()->dispatchEvent(event);
@@ -5932,7 +5932,7 @@ void WebGLRenderingContext::dispatchContextLostEvent(Timer*)
         m_restoreTimer.startOneShot(0);
 }
 
-void WebGLRenderingContext::maybeRestoreContext(Timer*)
+void WebGLRenderingContext::maybeRestoreContext()
 {
     ASSERT(m_contextLost);
     if (!m_contextLost)

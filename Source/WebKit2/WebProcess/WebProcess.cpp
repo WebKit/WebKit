@@ -152,7 +152,7 @@ WebProcess::WebProcess()
 #if PLATFORM(IOS)
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
 #endif
-    , m_processSuspensionCleanupTimer(this, &WebProcess::processSuspensionCleanupTimerFired)
+    , m_processSuspensionCleanupTimer(*this, &WebProcess::processSuspensionCleanupTimerFired)
     , m_inDidClose(false)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
@@ -179,7 +179,7 @@ WebProcess::WebProcess()
     , m_hasSelectionServices(false)
     , m_hasRichContentServices(false)
 #endif
-    , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
+    , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
     , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(*this, *this))
 {
     // Initialize our platform strategies.
@@ -1197,11 +1197,10 @@ bool WebProcess::markAllLayersVolatileIfPossible()
     return successfullyMarkedAllLayersVolatile;
 }
 
-void WebProcess::processSuspensionCleanupTimerFired(Timer* timer)
+void WebProcess::processSuspensionCleanupTimerFired()
 {
     if (markAllLayersVolatileIfPossible()) {
         parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
-        timer->stop();
     }
 }
 
@@ -1219,7 +1218,7 @@ void WebProcess::pageWillLeaveWindow(uint64_t pageID)
         m_nonVisibleProcessCleanupTimer.startOneShot(nonVisibleProcessCleanupDelay);
 }
     
-void WebProcess::nonVisibleProcessCleanupTimerFired(Timer*)
+void WebProcess::nonVisibleProcessCleanupTimerFired()
 {
     ASSERT(m_pagesInWindows.isEmpty());
     if (!m_pagesInWindows.isEmpty())

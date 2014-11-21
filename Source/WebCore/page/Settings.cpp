@@ -195,7 +195,7 @@ Settings::Settings(Page* page)
 #endif
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_timeWithoutMouseMovementBeforeHidingControls(3)
-    , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
+    , m_setImageLoadingSettingsTimer(*this, &Settings::imageLoadingSettingsTimerFired)
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     , m_hiddenPageDOMTimerThrottlingEnabled(false)
 #endif
@@ -396,7 +396,7 @@ void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
     m_setImageLoadingSettingsTimer.startOneShot(0);
 }
 
-void Settings::imageLoadingSettingsTimerFired(Timer*)
+void Settings::imageLoadingSettingsTimerFired()
 {
     setImageLoadingSettings(m_page);
 }

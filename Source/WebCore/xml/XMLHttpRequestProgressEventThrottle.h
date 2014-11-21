@@ -60,7 +60,7 @@ private:
     static const double minimumProgressEventDispatchingIntervalInSeconds;
 
     virtual void fired();
-    void dispatchDeferredEvents(Timer*);
+    void dispatchDeferredEvents();
     void flushProgressEvent();
     void dispatchEvent(PassRefPtr<Event>);
 

@@ -316,11 +316,11 @@ namespace WebCore {
         typedef Timer DocumentLoaderTimer;
 #endif
         void handleSubstituteDataLoadSoon();
-        void handleSubstituteDataLoadNow(DocumentLoaderTimer*);
+        void handleSubstituteDataLoadNow();
         void startDataLoadTimer();
 
         void deliverSubstituteResourcesAfterDelay();
-        void substituteResourceDeliveryTimerFired(Timer&);
+        void substituteResourceDeliveryTimerFired();
 
         void clearMainResource();
 

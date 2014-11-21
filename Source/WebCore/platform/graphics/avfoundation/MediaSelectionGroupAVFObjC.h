@@ -84,7 +84,7 @@ public:
 private:
     MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*);
 
-    void selectionTimerFired(Timer&);
+    void selectionTimerFired();
 
     RetainPtr<AVPlayerItem> m_playerItem;
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;

@@ -73,7 +73,7 @@ private:
     void updateState();
 
 #if PLATFORM(MAC)
-    void networkStateChangeTimerFired(Timer&);
+    void networkStateChangeTimerFired();
 
     static void dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef changedKeys, void *info); 
 

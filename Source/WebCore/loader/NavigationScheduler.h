@@ -83,7 +83,7 @@ private:
     bool shouldScheduleNavigation() const;
     bool shouldScheduleNavigation(const URL&) const;
 
-    void timerFired(Timer&);
+    void timerFired();
     void schedule(std::unique_ptr<ScheduledNavigation>);
 
     static LockBackForwardList mustLockBackForwardList(Frame& targetFrame);

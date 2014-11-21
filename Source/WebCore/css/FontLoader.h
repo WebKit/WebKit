@@ -95,7 +95,7 @@ private:
     virtual EventTargetData* eventTargetData() override;
     virtual EventTargetData& ensureEventTargetData() override;
 
-    void pendingEventsTimerFired(Timer&) { firePendingEvents(); }
+    void pendingEventsTimerFired() { firePendingEvents(); }
     void scheduleEvent(PassRefPtr<Event>);
     void firePendingEvents();
     bool resolveFontStyle(const String&, Font&);

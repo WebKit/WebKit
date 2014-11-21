@@ -49,8 +49,8 @@ namespace WebCore {
 
 LinkLoader::LinkLoader(LinkLoaderClient* client)
     : m_client(client)
-    , m_linkLoadTimer(this, &LinkLoader::linkLoadTimerFired)
-    , m_linkLoadingErrorTimer(this, &LinkLoader::linkLoadingErrorTimerFired)
+    , m_linkLoadTimer(*this, &LinkLoader::linkLoadTimerFired)
+    , m_linkLoadingErrorTimer(*this, &LinkLoader::linkLoadingErrorTimerFired)
 {
 }
 
@@ -60,15 +60,13 @@ LinkLoader::~LinkLoader()
         m_cachedLinkResource->removeClient(this);
 }
 
-void LinkLoader::linkLoadTimerFired(Timer& timer)
+void LinkLoader::linkLoadTimerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_linkLoadTimer);
     m_client->linkLoaded();
 }
 
-void LinkLoader::linkLoadingErrorTimerFired(Timer& timer)
+void LinkLoader::linkLoadingErrorTimerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_linkLoadingErrorTimer);
     m_client->linkLoadingErrored();
 }
 

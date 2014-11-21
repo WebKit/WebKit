@@ -45,7 +45,7 @@ public:
         : m_delegate(delegate)
         , m_hysteresisSeconds(hysteresisSeconds)
         , m_active(false)
-        , m_timer(this, &HysteresisActivity<Delegate>::hysteresisTimerFired)
+        , m_timer(*this, &HysteresisActivity<Delegate>::hysteresisTimerFired)
     {
     }
 
@@ -88,7 +88,7 @@ public:
     }
     
 private:
-    void hysteresisTimerFired(Timer&)
+    void hysteresisTimerFired()
     {
         m_delegate.stopped();
         m_timer.stop();

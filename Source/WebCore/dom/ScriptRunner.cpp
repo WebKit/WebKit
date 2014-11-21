@@ -35,7 +35,7 @@ namespace WebCore {
 
 ScriptRunner::ScriptRunner(Document& document)
     : m_document(document)
-    , m_timer(this, &ScriptRunner::timerFired)
+    , m_timer(*this, &ScriptRunner::timerFired)
 {
 }
 
@@ -96,10 +96,8 @@ void ScriptRunner::notifyScriptReady(ScriptElement* scriptElement, ExecutionType
     m_timer.startOneShot(0);
 }
 
-void ScriptRunner::timerFired(Timer& timer)
+void ScriptRunner::timerFired()
 {
-    ASSERT_UNUSED(timer, &timer == &m_timer);
-
     Ref<Document> protect(m_document);
 
     Vector<PendingScript> scripts;

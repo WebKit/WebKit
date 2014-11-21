@@ -139,7 +139,7 @@ private:
     void drawQuadHighlight();
     void drawPausedInDebuggerMessage();
     void drawPaintRects();
-    void updatePaintRectsTimerFired(Timer&);
+    void updatePaintRectsTimerFired();
 
     Page* overlayPage();
 

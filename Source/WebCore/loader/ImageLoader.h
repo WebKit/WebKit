@@ -91,7 +91,7 @@ private:
     void setImageWithoutConsideringPendingLoadEvent(CachedImage*);
     void clearFailedLoadURL();
 
-    void timerFired(Timer&);
+    void timerFired();
 
     Element& m_element;
     CachedResourceHandle<CachedImage> m_image;

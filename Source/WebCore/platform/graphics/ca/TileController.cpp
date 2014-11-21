@@ -44,7 +44,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_tileGrid(std::make_unique<TileGrid>(*this))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
-    , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
+    , m_tileRevalidationTimer(*this, &TileController::tileRevalidationTimerFired)
     , m_zoomedOutContentsScale(0)
     , m_deviceScaleFactor(owningGraphicsLayer()->platformCALayerDeviceScaleFactor())
     , m_tileCoverage(CoverageForVisibleArea)
@@ -340,7 +340,7 @@ bool TileController::shouldTemporarilyRetainTileCohorts() const
     return owningGraphicsLayer()->platformCALayerShouldTemporarilyRetainTileCohorts(m_tileCacheLayer);
 }
 
-void TileController::tileRevalidationTimerFired(Timer*)
+void TileController::tileRevalidationTimerFired()
 {
     if (!owningGraphicsLayer())
         return;

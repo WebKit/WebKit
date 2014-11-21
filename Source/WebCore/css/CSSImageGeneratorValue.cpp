@@ -94,7 +94,7 @@ CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGener
     : m_owner(owner)
     , m_size(size)
     , m_image(image)
-    , m_evictionTimer(this, &CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImages)
+    , m_evictionTimer(*this, &CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired, timeToKeepCachedGeneratedImages)
 {
     m_evictionTimer.restart();
 }

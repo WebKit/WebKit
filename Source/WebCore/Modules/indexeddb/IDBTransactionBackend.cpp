@@ -57,7 +57,7 @@ IDBTransactionBackend::IDBTransactionBackend(IDBDatabaseBackend* databaseBackend
     , m_commitPending(false)
     , m_callbacks(callbacks)
     , m_database(databaseBackend)
-    , m_taskTimer(this, &IDBTransactionBackend::taskTimerFired)
+    , m_taskTimer(*this, &IDBTransactionBackend::taskTimerFired)
     , m_pendingPreemptiveEvents(0)
     , m_id(id)
 {
@@ -270,7 +270,7 @@ void IDBTransactionBackend::commit()
     });
 }
 
-void IDBTransactionBackend::taskTimerFired(Timer&)
+void IDBTransactionBackend::taskTimerFired()
 {
     LOG(StorageAPI, "IDBTransactionBackend::taskTimerFired");
 

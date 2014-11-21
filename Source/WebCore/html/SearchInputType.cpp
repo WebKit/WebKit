@@ -48,7 +48,7 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
     : BaseTextInputType(element)
     , m_resultsButton(nullptr)
     , m_cancelButton(nullptr)
-    , m_searchEventTimer(this, &SearchInputType::searchEventTimerFired)
+    , m_searchEventTimer(*this, &SearchInputType::searchEventTimerFired)
 {
 }
 
@@ -173,7 +173,7 @@ void SearchInputType::stopSearchEventTimer()
     m_searchEventTimer.stop();
 }
 
-void SearchInputType::searchEventTimerFired(Timer*)
+void SearchInputType::searchEventTimerFired()
 {
     element().onSearch();
 }

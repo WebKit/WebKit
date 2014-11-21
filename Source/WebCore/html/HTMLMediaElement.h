@@ -595,11 +595,11 @@ private:
     virtual bool mediaPlayerIsInMediaDocument() const override final;
     virtual void mediaPlayerEngineFailedToLoad() const override final;
 
-    void loadTimerFired(Timer&);
-    void progressEventTimerFired(Timer&);
-    void playbackProgressTimerFired(Timer&);
-    void scanTimerFired(Timer&);
-    void seekTimerFired(Timer&);
+    void loadTimerFired();
+    void progressEventTimerFired();
+    void playbackProgressTimerFired();
+    void scanTimerFired();
+    void seekTimerFired();
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();

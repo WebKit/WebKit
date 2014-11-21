@@ -128,7 +128,7 @@ void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)
 
 AXObjectCache::AXObjectCache(Document& document)
     : m_document(document)
-    , m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
+    , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
 {
 }
 
@@ -700,7 +700,7 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
     obj->childrenChanged();
 }
     
-void AXObjectCache::notificationPostTimerFired(Timer&)
+void AXObjectCache::notificationPostTimerFired()
 {
     Ref<Document> protectorForCacheOwner(m_document);
     m_notificationPostTimer.stop();

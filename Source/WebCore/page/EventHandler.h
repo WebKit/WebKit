@@ -326,9 +326,9 @@ private:
 
     OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
 
-    void hoverTimerFired(Timer&);
+    void hoverTimerFired();
 #if ENABLE(CURSOR_SUPPORT)
-    void cursorUpdateTimerFired(Timer&);
+    void cursorUpdateTimerFired();
 #endif
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
@@ -341,7 +341,7 @@ private:
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
-    void fakeMouseMoveEventTimerFired(Timer&);
+    void fakeMouseMoveEventTimerFired();
     void cancelFakeMouseMoveEvent();
 #endif
 
@@ -437,11 +437,11 @@ private:
 #if ENABLE(CURSOR_VISIBILITY)
     void startAutoHideCursorTimer();
     void cancelAutoHideCursorTimer();
-    void autoHideCursorTimerFired(Timer&);
+    void autoHideCursorTimerFired();
 #endif
 
     void beginTrackingPotentialLongMousePress(const HitTestResult&);
-    void recognizeLongMousePress(Timer&);
+    void recognizeLongMousePress();
     void cancelTrackingPotentialLongMousePress();
     bool longMousePressHysteresisExceeded();
     void clearLongMousePressState();

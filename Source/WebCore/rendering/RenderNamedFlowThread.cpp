@@ -51,7 +51,7 @@ RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderS
     , m_hasRegionsWithStyling(false)
     , m_dispatchRegionOversetChangeEvent(false)
     , m_namedFlow(WTF::move(namedFlow))
-    , m_regionOversetChangeEventTimer(this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)
+    , m_regionOversetChangeEventTimer(*this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)
 {
 }
 
@@ -566,7 +566,7 @@ void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
         m_regionOversetChangeEventTimer.startOneShot(0);
 }
 
-void RenderNamedFlowThread::regionOversetChangeEventTimerFired(Timer&)
+void RenderNamedFlowThread::regionOversetChangeEventTimerFired()
 {
     namedFlow().dispatchRegionOversetChangeEvent();
 }

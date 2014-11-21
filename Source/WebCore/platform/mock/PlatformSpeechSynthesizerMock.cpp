@@ -33,7 +33,7 @@ namespace WebCore {
 
 PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient* client)
     : PlatformSpeechSynthesizer(client)
-    , m_speakingFinishedTimer(this, &PlatformSpeechSynthesizerMock::speakingFinished)
+    , m_speakingFinishedTimer(*this, &PlatformSpeechSynthesizerMock::speakingFinished)
 {
 }
     
@@ -41,7 +41,7 @@ PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 {
 }
 
-void PlatformSpeechSynthesizerMock::speakingFinished(Timer*)
+void PlatformSpeechSynthesizerMock::speakingFinished()
 {
     ASSERT(m_utterance.get());
     RefPtr<PlatformSpeechSynthesisUtterance> protect(m_utterance);

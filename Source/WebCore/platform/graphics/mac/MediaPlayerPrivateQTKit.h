@@ -158,7 +158,7 @@ private:
     void updateStates();
     void doSeek();
     void cancelSeek();
-    void seekTimerFired(Timer&);
+    void seekTimerFired();
     MediaTime maxMediaTimeLoaded() const;
     void disableUnsupportedTracks();
     

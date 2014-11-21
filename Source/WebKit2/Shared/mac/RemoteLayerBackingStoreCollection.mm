@@ -37,7 +37,7 @@ const std::chrono::milliseconds volatilityTimerInterval = 200_ms;
 namespace WebKit {
 
 RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection()
-    : m_volatilityTimer(this, &RemoteLayerBackingStoreCollection::volatilityTimerFired)
+    : m_volatilityTimer(*this, &RemoteLayerBackingStoreCollection::volatilityTimerFired)
     , m_inLayerFlush(false)
 {
 }
@@ -163,7 +163,7 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileImmediatelyIf
     return successfullyMadeBackingStoreVolatile;
 }
 
-void RemoteLayerBackingStoreCollection::volatilityTimerFired(WebCore::Timer&)
+void RemoteLayerBackingStoreCollection::volatilityTimerFired()
 {
     bool successfullyMadeBackingStoreVolatile = true;
 

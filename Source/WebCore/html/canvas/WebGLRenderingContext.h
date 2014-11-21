@@ -761,9 +761,9 @@ private:
     bool simulateVertexAttrib0(GC3Dsizei numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
-    void dispatchContextLostEvent(Timer*);
+    void dispatchContextLostEvent();
     // Helper for restoration after context lost.
-    void maybeRestoreContext(Timer*);
+    void maybeRestoreContext();
 
     // Determine if we are running privileged code in the browser, for example,
     // a Safari or Chrome extension.

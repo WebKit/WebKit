@@ -79,7 +79,7 @@ public:
     void updateMarqueePosition();
 
 private:
-    void timerFired(Timer&);
+    void timerFired();
 
     RenderLayer* m_layer;
     int m_currentLoop;

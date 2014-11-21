@@ -78,10 +78,10 @@ private:
     RetainPtr<WebScrollbarPainterDelegate> m_horizontalScrollbarPainterDelegate;
     RetainPtr<WebScrollbarPainterDelegate> m_verticalScrollbarPainterDelegate;
 
-    void initialScrollbarPaintTimerFired(Timer&);
+    void initialScrollbarPaintTimerFired();
     Timer m_initialScrollbarPaintTimer;
 
-    void sendContentAreaScrolledTimerFired(Timer&);
+    void sendContentAreaScrolledTimerFired();
     Timer m_sendContentAreaScrolledTimer;
     FloatSize m_contentAreaScrolledTimerScrollDelta;
 
@@ -155,7 +155,7 @@ private:
     virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
     bool pinnedInDirection(float deltaX, float deltaY);
-    void snapRubberBandTimerFired(Timer&);
+    void snapRubberBandTimerFired();
 
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 

@@ -203,7 +203,7 @@ static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& hig
 InspectorOverlay::InspectorOverlay(Page& page, InspectorClient* client)
     : m_page(page)
     , m_client(client)
-    , m_paintRectUpdateTimer(this, &InspectorOverlay::updatePaintRectsTimerFired)
+    , m_paintRectUpdateTimer(*this, &InspectorOverlay::updatePaintRectsTimerFired)
     , m_indicating(false)
     , m_showingPaintRects(false)
 {
@@ -505,7 +505,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     forcePaint();
 }
 
-void InspectorOverlay::updatePaintRectsTimerFired(Timer&)
+void InspectorOverlay::updatePaintRectsTimerFired()
 {
     std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
     bool rectsChanged = false;

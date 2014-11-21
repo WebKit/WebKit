@@ -122,7 +122,7 @@ FontLoader::FontLoader(Document* document)
     , m_document(document)
     , m_numLoadingFromCSS(0)
     , m_numLoadingFromJS(0)
-    , m_pendingEventsTimer(this, &FontLoader::pendingEventsTimerFired)
+    , m_pendingEventsTimer(*this, &FontLoader::pendingEventsTimerFired)
 {
     suspendIfNeeded();
 }

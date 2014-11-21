@@ -173,7 +173,7 @@ public:
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);
 
-    void nonVisibleProcessCleanupTimerFired(WebCore::Timer*);
+    void nonVisibleProcessCleanupTimerFired();
 
     void updateActivePages();
 
@@ -184,7 +184,7 @@ public:
     void processWillSuspend();
     void cancelProcessWillSuspend();
     bool markAllLayersVolatileIfPossible();
-    void processSuspensionCleanupTimerFired(WebCore::Timer*);
+    void processSuspensionCleanupTimerFired();
 
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();

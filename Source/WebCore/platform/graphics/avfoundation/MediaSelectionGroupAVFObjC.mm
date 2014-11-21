@@ -89,7 +89,7 @@ MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC(AVPlayerItem *item, AVMed
     : m_playerItem(item)
     , m_mediaSelectionGroup(group)
     , m_selectedOption(nullptr)
-    , m_selectionTimer(this, &MediaSelectionGroupAVFObjC::selectionTimerFired)
+    , m_selectionTimer(*this, &MediaSelectionGroupAVFObjC::selectionTimerFired)
 {
     updateOptions();
 }
@@ -141,7 +141,7 @@ void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* 
     m_selectionTimer.startOneShot(0);
 }
 
-void MediaSelectionGroupAVFObjC::selectionTimerFired(Timer&)
+void MediaSelectionGroupAVFObjC::selectionTimerFired()
 {
     [m_playerItem selectMediaOption:(m_selectedOption ? m_selectedOption->avMediaSelectionOption() : nil) inMediaSelectionGroup:m_mediaSelectionGroup.get()];
 }

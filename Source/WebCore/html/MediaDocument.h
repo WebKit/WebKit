@@ -50,7 +50,7 @@ private:
 
     virtual void defaultEventHandler(Event*) override;
 
-    void replaceMediaElementTimerFired(Timer&);
+    void replaceMediaElementTimerFired();
 
     Timer m_replaceMediaElementTimer;
     String m_outgoingReferrer;

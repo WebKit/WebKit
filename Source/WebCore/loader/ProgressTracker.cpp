@@ -85,7 +85,7 @@ ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
     , m_finalProgressChangedSent(false)
     , m_progressValue(0)
     , m_numProgressTrackedFrames(0)
-    , m_progressHeartbeatTimer(this, &ProgressTracker::progressHeartbeatTimerFired)
+    , m_progressHeartbeatTimer(*this, &ProgressTracker::progressHeartbeatTimerFired)
     , m_heartbeatsWithNoProgress(0)
     , m_totalBytesReceivedBeforePreviousHeartbeat(0)
     , m_isMainLoad(false)
@@ -305,7 +305,7 @@ bool ProgressTracker::isMainLoadProgressing() const
     return m_progressValue && m_progressValue < finalProgressValue && m_heartbeatsWithNoProgress < loadStalledHeartbeatCount;
 }
 
-void ProgressTracker::progressHeartbeatTimerFired(Timer&)
+void ProgressTracker::progressHeartbeatTimerFired()
 {
     if (m_totalBytesReceived < m_totalBytesReceivedBeforePreviousHeartbeat + minumumBytesPerHeartbeatForProgress)
         ++m_heartbeatsWithNoProgress;
