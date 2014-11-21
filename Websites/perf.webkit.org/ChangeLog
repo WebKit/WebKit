@@ -1,5 +1,21 @@
 2014-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix misc bugs and typos in app.js
+        https://bugs.webkit.org/show_bug.cgi?id=138946
+
+        Reviewed by Benjamin Poulain.
+
+        * public/v2/app.js:
+        (App.DashboardPaneProxyForPicker._platformOrMetricIdChanged):
+        (App.ChartsController.init):
+        (App.buildPopup): Renamed from App.BuildPopup.
+        (App.InteractiveChartComponent._constructGraphIfPossible): Fixed the bug that we were calling
+        remove() on the wrong object (an array as opposed to elements in the array).
+        (App.InteractiveChartComponent._highlightedItemsChanged): Check the length of _highlights as
+        _highlights is always an array and evalutes to true.
+
+2014-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         New perf dashboard should provide UI to create a new analysis task
         https://bugs.webkit.org/show_bug.cgi?id=138910
 

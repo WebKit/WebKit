@@ -46,7 +46,7 @@ App.DashboardPaneProxyForPicker = Ember.ObjectProxy.extend({
     _platformOrMetricIdChanged: function ()
     {
         var self = this;
-        App.BuildPopup(this.get('store'), 'choosePane', this)
+        App.buildPopup(this.get('store'), 'choosePane', this)
             .then(function (platforms) { self.set('pickerData', platforms); });
     }.observes('platformId', 'metricId').on('init'),
     paneList: function () {
@@ -591,13 +591,13 @@ App.ChartsController = Ember.Controller.extend({
     {
         this._super();
         var self = this;
-        App.BuildPopup(this.store, 'addPaneByMetricAndPlatform').then(function (platforms) {
+        App.buildPopup(this.store, 'addPaneByMetricAndPlatform').then(function (platforms) {
             self.set('platforms', platforms);
         });
     },
 });
 
-App.BuildPopup = function(store, action, position)
+App.buildPopup = function(store, action, position)
 {
     return App.Manifest.fetch(store).then(function () {
         return App.Manifest.get('platforms').map(function (platform) {
@@ -920,7 +920,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
             this._dots.forEach(function (dot) { dots.remove(); });
         this._dots = [];
         if (this._highlights)
-            this._highlights.forEach(function (highlight) { _highlights.remove(); });
+            this._highlights.forEach(function (highlight) { highlight.remove(); });
         this._highlights = [];
 
         this._currentTimeSeries = chartData.current.timeSeriesByCommitTime();
@@ -1430,7 +1430,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
 
         var data = this._currentTimeSeriesData.filter(function (item) { return highlightedItems[item.measurement.id()]; });
 
-        if (this._highlights)
+        if (this._highlights.length)
             this._highlights.forEach(function (highlight) { highlight.remove(); });
 
         this._highlights.push(this._clippedContainer
