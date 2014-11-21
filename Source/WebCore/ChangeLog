@@ -1,3 +1,13 @@
+2014-11-21  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the internal Apple Mavericks build after <https://trac.webkit.org/changeset/176448>
+        (https://bugs.webkit.org/show_bug.cgi?id=138930)
+
+        Declare NSCachedURLResponse SPI when building without the Apple Internal SDK and with the Apple
+        Internal SDK when building for OS X Mavericks or earlier.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2014-11-21  Anders Carlsson  <andersca@apple.com>
 
         Make memoryCache() return a reference
