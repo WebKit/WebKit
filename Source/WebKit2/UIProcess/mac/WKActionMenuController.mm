@@ -128,7 +128,8 @@ using namespace WebKit;
 
 - (void)_clickRecognized:(NSGestureRecognizer *)gestureRecognizer
 {
-    [_delegate pagePreviewViewControllerWasClicked:self];
+    if (gestureRecognizer.state == NSGestureRecognizerStateBegan)
+        [_delegate pagePreviewViewControllerWasClicked:self];
 }
 
 @end
