@@ -101,7 +101,7 @@ namespace WebCore {
         bool m_loadManually;
 
         Timer m_delayDeliveryTimer;
-        void delayDeliveryTimerFired(Timer*);
+        void delayDeliveryTimerFired();
 
         OwnPtr< Vector<char> > m_deliveryData;
 

@@ -120,7 +120,7 @@ namespace WebCore {
 #endif
 
         void freeLibrarySoon();
-        void freeLibraryTimerFired(Timer*);
+        void freeLibraryTimerFired();
         Timer m_freeLibraryTimer;
 
         PluginQuirkSet m_quirks;

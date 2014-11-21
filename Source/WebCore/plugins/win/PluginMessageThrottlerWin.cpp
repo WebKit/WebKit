@@ -48,7 +48,7 @@ PluginMessageThrottlerWin::PluginMessageThrottlerWin(PluginView* pluginView)
     : m_pluginView(pluginView)
     , m_back(0)
     , m_front(0)
-    , m_messageThrottleTimer(this, &PluginMessageThrottlerWin::messageThrottleTimerFired)
+    , m_messageThrottleTimer(*this, &PluginMessageThrottlerWin::messageThrottleTimerFired)
     , m_lastMessageTime(0)
 {
     // Initialize the free list with our inline messages
@@ -113,7 +113,7 @@ void PluginMessageThrottlerWin::processQueuedMessage()
     freeMessage(message);
 }
 
-void PluginMessageThrottlerWin::messageThrottleTimerFired(Timer*)
+void PluginMessageThrottlerWin::messageThrottleTimerFired()
 {
     processQueuedMessage();
 

@@ -64,7 +64,7 @@ PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const Resou
     , m_sendNotification(sendNotification)
     , m_streamState(StreamBeforeStarted)
     , m_loadManually(false)
-    , m_delayDeliveryTimer(this, &PluginStream::delayDeliveryTimerFired)
+    , m_delayDeliveryTimer(*this, &PluginStream::delayDeliveryTimerFired)
     , m_tempFileHandle(invalidPlatformFileHandle)
     , m_pluginFuncs(pluginFuncs)
     , m_instance(instance)
@@ -321,10 +321,8 @@ void PluginStream::destroyStream()
         deleteFile(m_path);
 }
 
-void PluginStream::delayDeliveryTimerFired(Timer* timer)
+void PluginStream::delayDeliveryTimerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_delayDeliveryTimer);
-
     deliverData();
 }
 

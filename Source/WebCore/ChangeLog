@@ -1,3 +1,32 @@
+2014-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Windows build fixes.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::freeLibraryTimerFired):
+        (WebCore::PluginPackage::PluginPackage):
+        * plugins/PluginPackage.h:
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::PluginStream):
+        (WebCore::PluginStream::delayDeliveryTimerFired):
+        (WebCore::PluginStream::deliverData): Deleted.
+        * plugins/PluginStream.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::popPopupsStateTimerFired):
+        (WebCore::PluginView::requestTimerFired):
+        (WebCore::PluginView::invalidateTimerFired):
+        (WebCore::PluginView::PluginView):
+        (WebCore::PluginView::lifeSupportTimerFired):
+        (WebCore::PluginView::performRequest): Deleted.
+        (WebCore::PluginView::setValue): Deleted.
+        (WebCore::PluginView::setParameters): Deleted.
+        (WebCore::PluginView::userAgent): Deleted.
+        * plugins/PluginView.h:
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin):
+        (WebCore::PluginMessageThrottlerWin::messageThrottleTimerFired):
+        * plugins/win/PluginMessageThrottlerWin.h:
+
 2014-11-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r176351): Parts of apple.com/contact aren't Lookup-able

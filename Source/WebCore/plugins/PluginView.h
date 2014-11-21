@@ -288,15 +288,15 @@ namespace WebCore {
 
         void performRequest(PluginRequest*);
         void scheduleRequest(std::unique_ptr<PluginRequest>);
-        void requestTimerFired(Timer*);
-        void invalidateTimerFired(Timer*);
+        void requestTimerFired();
+        void invalidateTimerFired();
         Timer m_requestTimer;
         Timer m_invalidateTimer;
 
-        void popPopupsStateTimerFired(Timer*);
+        void popPopupsStateTimerFired();
         Timer m_popPopupsStateTimer;
 
-        void lifeSupportTimerFired(Timer*);
+        void lifeSupportTimerFired();
         Timer m_lifeSupportTimer;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

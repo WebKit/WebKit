@@ -63,7 +63,7 @@ void PluginPackage::freeLibrarySoon()
     m_freeLibraryTimer.startOneShot(0);
 }
 
-void PluginPackage::freeLibraryTimerFired(Timer*)
+void PluginPackage::freeLibraryTimerFired()
 {
     ASSERT(m_module);
     // Do nothing if the module got loaded again meanwhile
@@ -107,7 +107,7 @@ PluginPackage::PluginPackage(const String& path, const time_t& lastModified)
     , m_moduleVersion(0)
     , m_module(0)
     , m_lastModified(lastModified)
-    , m_freeLibraryTimer(this, &PluginPackage::freeLibraryTimerFired)
+    , m_freeLibraryTimer(*this, &PluginPackage::freeLibraryTimerFired)
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
     , m_infoIsFromCache(true)
 #endif
