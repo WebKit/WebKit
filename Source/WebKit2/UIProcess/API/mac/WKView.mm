@@ -1256,6 +1256,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
+    [_data->_actionMenuController wkView:self willHandleMouseDown:event];
     [self mouseDownInternal:event];
 }
 

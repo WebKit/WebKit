@@ -68,6 +68,7 @@ enum class ActionMenuState {
 
     BOOL _isShowingTextIndicator;
     BOOL _shouldKeepPreviewPopoverOpen;
+    BOOL _hasActivatedActionContext;
 
 #if WK_API_ENABLED
     RetainPtr<WKPagePreviewViewController> _previewViewController;
@@ -82,6 +83,7 @@ enum class ActionMenuState {
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
+- (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
 
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
