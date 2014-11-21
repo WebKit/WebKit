@@ -1,3 +1,21 @@
+2014-11-21  Andreas Kling  <akling@apple.com>
+
+        RenderMathMLScripts isPrescript() helper should take a reference.
+        <https://webkit.org/b/138975>
+
+        Reviewed by Antti Koivisto.
+
+        Tidy this up a bit, since it's never called with a null pointer.
+
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::isPrescript):
+        (WebCore::RenderMathMLScripts::fixAnonymousStyles):
+        (WebCore::RenderMathMLScripts::addChildInternal):
+        (WebCore::RenderMathMLScripts::removeChildInternal):
+        (WebCore::RenderMathMLScripts::layout):
+        (WebCore::RenderMathMLScriptsWrapper::addChildInternal):
+        (WebCore::RenderMathMLScriptsWrapper::removeChildInternal):
+
 2014-11-21  Anders Carlsson  <andersca@apple.com>
 
         Windows build fixes.
