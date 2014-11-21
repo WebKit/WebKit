@@ -95,6 +95,7 @@ using namespace WebCore;
 }
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback;
+- (void)allocateVolumeView;
 - (void)clearCallback;
 - (void)interruption:(NSNotification *)notification;
 - (void)applicationWillEnterForeground:(NSNotification *)notification;
@@ -228,6 +229,23 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) co
 
 @implementation WebMediaSessionHelper
 
+- (void)allocateVolumeView
+{
+    if (!isMainThread()) {
+        // Call synchronously to the main thread so that _volumeView will be completely setup before the constructor completes
+        // because hasWirelessTargetsAvailable is synchronous and can be called on the WebThread.
+        RetainPtr<WebMediaSessionHelper> strongSelf = self;
+        dispatch_sync(dispatch_get_main_queue(), [strongSelf]() {
+            [strongSelf allocateVolumeView];
+            return;
+        });
+    }
+
+    _volumeView = adoptNS([[getMPVolumeViewClass() alloc] init]);
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
+    
+}
+
 - (id)initWithCallback:(MediaSessionManageriOS*)callback
 {
     LOG(Media, "-[WebMediaSessionHelper initWithCallback]");
@@ -236,7 +254,6 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) co
         return nil;
     
     _callback = callback;
-    _volumeView = adoptNS([[getMPVolumeViewClass() alloc] init]);
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
@@ -247,7 +264,8 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) co
     [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:WebUIApplicationDidBecomeActiveNotification object:nil];
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:WebUIApplicationWillResignActiveNotification object:nil];
-    [center addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
+
+    [self allocateVolumeView];
 
     // Now playing won't work unless we turn on the delivery of remote control events.
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];

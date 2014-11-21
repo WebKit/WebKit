@@ -1,3 +1,16 @@
+2014-11-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] allocate volume view on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=138971
+        rdar://problem/18016958
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper allocateVolumeView]): New, dispatch to the main thread if necessary before allocating
+            the volume view.
+        (-[WebMediaSessionHelper initWithCallback:]): Call allocateVolumeView.
+
 2014-11-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r175259) Simple line layout text measuring behavior changed.
