@@ -161,6 +161,8 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.borderFit() == BorderFitLines)
         return false;
+    if (style.lineBreak() != LineBreakAuto)
+        return false;
     const RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
     if (flow.containsFloats()) {
         // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.

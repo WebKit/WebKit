@@ -597,6 +597,22 @@ float RenderText::maxLogicalWidth() const
     return m_maxWidth;
 }
 
+LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
+{
+    switch (lineBreak) {
+    case LineBreakAuto:
+    case LineBreakAfterWhiteSpace:
+        return LineBreakIteratorModeUAX14;
+    case LineBreakLoose:
+        return LineBreakIteratorModeUAX14Loose;
+    case LineBreakNormal:
+        return LineBreakIteratorModeUAX14Normal;
+    case LineBreakStrict:
+        return LineBreakIteratorModeUAX14Strict;
+    }
+    return LineBreakIteratorModeUAX14;
+}
+
 void RenderText::computePreferredLogicalWidths(float leadWidth)
 {
     HashSet<const SimpleFontData*> fallbackFonts;
@@ -673,7 +689,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     const Font& font = style.font(); // FIXME: This ignores first-line.
     float wordSpacing = font.wordSpacing();
     int len = textLength();
-    LazyLineBreakIterator breakIterator(m_text, style.locale());
+    LazyLineBreakIterator breakIterator(m_text, style.locale(), mapLineBreakToIteratorMode(style.lineBreak()));
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
@@ -708,6 +724,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
     bool breakNBSP = style.autoWrap() && style.nbspMode() == SPACE;
     bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.wordBreak() == BreakWordBreak) && style.autoWrap();
+    bool isLooseCJKMode = breakIterator.isLooseCJKMode();
 
     for (int i = 0; i < len; i++) {
         UChar c = uncheckedCharacterAt(i);
@@ -755,7 +772,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             continue;
         }
 
-        bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP);
+        bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP, isLooseCJKMode);
         bool betweenWords = true;
         int j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == HyphensNone)) {
@@ -763,7 +780,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             if (j == len)
                 break;
             c = uncheckedCharacterAt(j);
-            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP) && characterAt(j - 1) != softHyphen)
+            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP, isLooseCJKMode) && characterAt(j - 1) != softHyphen)
                 break;
             if (breakAll) {
                 betweenWords = false;

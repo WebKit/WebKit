@@ -53,7 +53,7 @@ FlowContents::FlowContents(const RenderBlockFlow& flow)
 unsigned FlowContents::findNextBreakablePosition(unsigned position) const
 {
     String string = m_lineBreakIterator.string();
-    unsigned breakablePosition = nextBreakablePosition<LChar, false>(m_lineBreakIterator, string.characters8(), string.length(), position);
+    unsigned breakablePosition = nextBreakablePositionNonLoosely<LChar, NBSPBehavior::IgnoreNBSP>(m_lineBreakIterator, string.characters8(), string.length(), position);
     if (appendNextRendererContentIfNeeded(breakablePosition))
         return findNextBreakablePosition(position);
     ASSERT(breakablePosition >= position);
@@ -157,7 +157,7 @@ bool FlowContents::appendNextRendererContentIfNeeded(unsigned position) const
         return false;
 
     ++m_lastRendererIndex;
-    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(nextRenderer->text()), m_flow.style().locale());
+    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(nextRenderer->text()), m_flow.style().locale(), LineBreakIteratorModeUAX14);
     return true;
 }
 
