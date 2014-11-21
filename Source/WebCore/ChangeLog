@@ -1,5 +1,23 @@
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r175381): -webkit-mask-box-image is broken
+        https://bugs.webkit.org/show_bug.cgi?id=138969
+        <rdar://problem/19054471>
+
+        Reviewed by Simon Fraser.
+
+        After r175381, the StyleBuilder would call NinePieceImage::setMaskDefaults()
+        *after* calling CSSToStyleMap::mapNinePieceImage(), instead of *before*, for
+        -webkit-mask-box-image CSS property. This was causing the mask defaults to
+        overwrite what was set by mapNinePieceImage().
+
+        Test: fast/css/webkit-mask-box-image.html
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertBorderMask):
+
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
         Crash when setting 'font' CSS property to 'calc(2 * 3)'
         https://bugs.webkit.org/show_bug.cgi?id=138933
 

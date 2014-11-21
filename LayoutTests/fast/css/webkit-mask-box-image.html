@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.mask {
+  -webkit-mask-box-image: url('resources/mask.png') 5 5 5 5;
+  background-color: grey;
+  width: 200px;
+  height: 50px;
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  /*
+   * Clip 5px on each side to keep only the area not
+   * affected by the mask.
+   */
+  clip: rect(5px, 195px, 45px, 5px);
+}
+</style>
+</head>
+<body>
+<p>This should be a grey rectangle.</p>
+
+<div class="mask"></div>
+</body>
+</html>

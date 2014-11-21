@@ -249,8 +249,9 @@ inline NinePieceImage StyleBuilderConverter::convertBorderImage(StyleResolver& s
 template <CSSPropertyID property>
 inline NinePieceImage StyleBuilderConverter::convertBorderMask(StyleResolver& styleResolver, CSSValue& value)
 {
-    NinePieceImage image = convertBorderImage<property>(styleResolver, value);
+    NinePieceImage image;
     image.setMaskDefaults();
+    styleResolver.styleMap()->mapNinePieceImage(property, &value, image);
     return image;
 }
 

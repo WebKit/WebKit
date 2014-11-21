@@ -1,5 +1,20 @@
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r175381): -webkit-mask-box-image is broken
+        https://bugs.webkit.org/show_bug.cgi?id=138969
+        <rdar://problem/19054471>
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to add basic coverage for -webkit-mask-box-image
+        CSS property.
+
+        * fast/css/resources/mask.png: Added.
+        * fast/css/webkit-mask-box-image.html: Added.
+        * fast/css/webkit-mask-box-image-expected.html: Added
+
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
         Crash when setting 'font' CSS property to 'calc(2 * 3)'
         https://bugs.webkit.org/show_bug.cgi?id=138933
 
