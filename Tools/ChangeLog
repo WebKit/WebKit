@@ -1,3 +1,20 @@
+2014-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove http lock code from webkitperl
+        https://bugs.webkit.org/show_bug.cgi?id=138959
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitperl/httpd.pm:
+        (cleanUp):
+        (extractLockNumber): Deleted.
+        (getLockFiles): Deleted.
+        (getNextAvailableLockNumber): Deleted.
+        (getLockNumberForCurrentRunning): Deleted.
+        (waitForHTTPDLock): Deleted.
+        (scheduleHttpTesting): Deleted.
+        (getWaitTime): Deleted.
+
 2014-11-20  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] The option value of fixed layout is false in MiniBrowser
