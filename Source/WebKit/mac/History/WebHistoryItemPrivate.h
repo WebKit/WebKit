@@ -35,7 +35,6 @@ extern NSString *WebViewportMaximumScaleKey;
 extern NSString *WebViewportUserScalableKey;
 extern NSString *WebViewportWidthKey;
 extern NSString *WebViewportHeightKey;
-extern NSString *WebViewportMinimalUIKey;
 #endif
 
 @interface WebHistoryItem (WebPrivate)

@@ -1,3 +1,22 @@
+2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the remaining vestiges of minimal-ui
+        https://bugs.webkit.org/show_bug.cgi?id=138890
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::didFinishDocumentLoad): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::savePageState):
+        (WebKit::WebPage::restorePageState):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::updateViewportSizeForCSSViewportUnits):
+
 2014-11-20  Beth Dakin  <bdakin@apple.com>
 
         Preview popover needs minimum and maximum sizes

@@ -46,9 +46,6 @@ static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& c
 
 ViewportConfiguration::ViewportConfiguration()
     : m_minimumLayoutSize(1024, 768)
-    , m_minimumLayoutSizeForMinimalUI(m_minimumLayoutSize)
-    , m_usesMinimalUI(false)
-    , m_pageDidFinishDocumentLoad(false)
 {
     // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
     // Those are the original iPhone configuration.
@@ -85,22 +82,6 @@ void ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutS
     updateConfiguration();
 }
 
-void ViewportConfiguration::setMinimumLayoutSizeForMinimalUI(const FloatSize& minimumLayoutSizeForMinimalUI)
-{
-    if (m_minimumLayoutSizeForMinimalUI == minimumLayoutSizeForMinimalUI)
-        return;
-
-    m_minimumLayoutSizeForMinimalUI = minimumLayoutSizeForMinimalUI;
-    updateConfiguration();
-}
-
-const FloatSize& ViewportConfiguration::activeMinimumLayoutSizeInScrollViewCoordinates() const
-{
-    if (m_usesMinimalUI)
-        return m_minimumLayoutSizeForMinimalUI;
-    return m_minimumLayoutSize;
-}
-
 void ViewportConfiguration::setViewportArguments(const ViewportArguments& viewportArguments)
 {
     if (m_viewportArguments == viewportArguments)
@@ -108,17 +89,6 @@ void ViewportConfiguration::setViewportArguments(const ViewportArguments& viewpo
 
     m_viewportArguments = viewportArguments;
     updateConfiguration();
-}
-
-void ViewportConfiguration::resetMinimalUI()
-{
-    m_usesMinimalUI = false;
-    m_pageDidFinishDocumentLoad = false;
-}
-
-void ViewportConfiguration::didFinishDocumentLoad()
-{
-    m_pageDidFinishDocumentLoad = true;
 }
 
 IntSize ViewportConfiguration::layoutSize() const
@@ -137,7 +107,7 @@ double ViewportConfiguration::initialScale() const
 
     // If not, it is up to us to determine the initial scale.
     // We want a scale small enough to fit the document width-wise.
-    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
+    const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double width = m_contentSize.width() > 0 ? m_contentSize.width() : layoutWidth();
     double initialScale = 0;
     if (width > 0)
@@ -159,7 +129,7 @@ double ViewportConfiguration::minimumScale() const
     // If not, we still need to sanity check our value.
     double minimumScale = m_configuration.minimumScale;
 
-    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
+    const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     double contentWidth = m_contentSize.width();
     if (contentWidth > 0 && contentWidth * minimumScale < minimumLayoutSize.width())
         minimumScale = minimumLayoutSize.width() / contentWidth;
@@ -285,19 +255,14 @@ void ViewportConfiguration::updateConfiguration()
 
     if (viewportArgumentUserZoomIsSet(m_viewportArguments.userZoom))
         m_configuration.allowsUserScaling = m_viewportArguments.userZoom != 0.;
-
-#if PLATFORM(IOS)
-    if (!m_pageDidFinishDocumentLoad)
-        m_usesMinimalUI = m_usesMinimalUI || m_viewportArguments.minimalUI;
-#endif
 }
 
 double ViewportConfiguration::viewportArgumentsLength(double length) const
 {
     if (length == ViewportArguments::ValueDeviceWidth)
-        return activeMinimumLayoutSizeInScrollViewCoordinates().width();
+        return m_minimumLayoutSize.width();
     if (length == ViewportArguments::ValueDeviceHeight)
-        return activeMinimumLayoutSizeInScrollViewCoordinates().height();
+        return m_minimumLayoutSize.height();
     return length;
 }
 
@@ -305,7 +270,7 @@ int ViewportConfiguration::layoutWidth() const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
-    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
+    const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     if (m_configuration.widthIsSet) {
         // If we scale to fit, then accept the viewport width with sanity checking.
         if (!m_configuration.initialScaleIsSet) {
@@ -341,7 +306,7 @@ int ViewportConfiguration::layoutHeight() const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
-    const FloatSize& minimumLayoutSize = activeMinimumLayoutSizeInScrollViewCoordinates();
+    const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
     if (m_configuration.heightIsSet) {
         // If we scale to fit, then accept the viewport height with sanity checking.
         if (!m_configuration.initialScaleIsSet) {
@@ -456,9 +421,6 @@ ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(con
     ts << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
     ts.decreaseIndent();
 
-#if PLATFORM(IOS)
-    dumpProperty(ts, "minimalUI", viewportArguments.minimalUI);
-#endif
     return ts;
 }
 
@@ -493,8 +455,6 @@ CString ViewportConfiguration::description() const
 
     dumpProperty(ts, "contentSize", m_contentSize);
     dumpProperty(ts, "minimumLayoutSize", m_minimumLayoutSize);
-    dumpProperty(ts, "minimumLayoutSizeForMinimalUI", m_minimumLayoutSizeForMinimalUI);
-    ts << "(uses minimal UI " << m_usesMinimalUI << ")";
 
     ts << "\n";
     ts.increaseIndent();

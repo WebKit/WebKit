@@ -4492,7 +4492,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
 
     resetViewportDefaultConfiguration(frame);
-    m_viewportConfiguration.resetMinimalUI();
     const Frame* coreFrame = frame->coreFrame();
     m_viewportConfiguration.setContentsSize(coreFrame->view()->contentsSize());
     m_viewportConfiguration.setViewportArguments(coreFrame->document()->viewportArguments());
@@ -4506,18 +4505,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
     WebProcess::shared().updateActivePages();
 
     updateMainFrameScrollOffsetPinning();
-}
-
-void WebPage::didFinishDocumentLoad(WebFrame* frame)
-{
-#if PLATFORM(IOS)
-    if (!frame->isMainFrame())
-        return;
-
-    m_viewportConfiguration.didFinishDocumentLoad();
-#else
-    UNUSED_PARAM(frame);
-#endif // PLATFORM(IOS)
 }
 
 void WebPage::didFinishLoad(WebFrame* frame)

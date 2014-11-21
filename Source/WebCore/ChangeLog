@@ -1,3 +1,36 @@
+2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the remaining vestiges of minimal-ui
+        https://bugs.webkit.org/show_bug.cgi?id=138890
+
+        Reviewed by Sam Weinig.
+
+        In ViewportArguments' setViewportFeature(), I skip the warning for now.
+
+        * WebCore.exp.in:
+        * dom/ViewportArguments.cpp:
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments):
+        (WebCore::ViewportArguments::operator==):
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::ViewportConfiguration):
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::minimumScale):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::ViewportConfiguration::viewportArgumentsLength):
+        (WebCore::ViewportConfiguration::layoutWidth):
+        (WebCore::ViewportConfiguration::layoutHeight):
+        (WebCore::ViewportConfigurationTextStream::operator<<):
+        (WebCore::ViewportConfiguration::description):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSizeForMinimalUI): Deleted.
+        (WebCore::ViewportConfiguration::activeMinimumLayoutSizeInScrollViewCoordinates): Deleted.
+        (WebCore::ViewportConfiguration::resetMinimalUI): Deleted.
+        (WebCore::ViewportConfiguration::didFinishDocumentLoad): Deleted.
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::minimumLayoutSizeForMinimalUI): Deleted.
+        (WebCore::ViewportConfiguration::usesMinimalUI): Deleted.
+
 2014-11-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Web Inspector: do not show invalid specificity for dynamic cases of :matches()

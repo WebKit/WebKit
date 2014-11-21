@@ -65,7 +65,6 @@ NSString *WebViewportMaximumScaleKey = @"maximum-scale";
 NSString *WebViewportUserScalableKey = @"user-scalable";
 NSString *WebViewportWidthKey        = @"width";
 NSString *WebViewportHeightKey       = @"height";
-NSString *WebViewportMinimalUIKey    = @"minimal-ui";
 
 static NSString *scaleKey = @"scale";
 static NSString *scaleIsInitialKey = @"scaleIsInitial";
@@ -623,7 +622,6 @@ WebHistoryItem *kit(HistoryItem* item)
     [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.width] forKey:WebViewportWidthKey];
     [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.height] forKey:WebViewportHeightKey];
     [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.userZoom] forKey:WebViewportUserScalableKey];
-    [argumentsDictionary setObject:[NSNumber numberWithBool:viewportArguments.minimalUI] forKey:WebViewportMinimalUIKey];
     return argumentsDictionary;
 }
 
@@ -636,7 +634,6 @@ WebHistoryItem *kit(HistoryItem* item)
     viewportArguments.width = [[arguments objectForKey:WebViewportWidthKey] floatValue];
     viewportArguments.height = [[arguments objectForKey:WebViewportHeightKey] floatValue];
     viewportArguments.userZoom = [[arguments objectForKey:WebViewportUserScalableKey] floatValue];
-    viewportArguments.minimalUI = [[arguments objectForKey:WebViewportMinimalUIKey] boolValue];
     core(_private)->setViewportArguments(viewportArguments);
 }
 

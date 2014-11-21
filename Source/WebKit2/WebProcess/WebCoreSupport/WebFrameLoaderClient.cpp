@@ -507,8 +507,6 @@ void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
     if (!webPage)
         return;
 
-    webPage->didFinishDocumentLoad(m_frame);
-
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.

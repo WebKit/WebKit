@@ -1,3 +1,13 @@
+2014-11-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the remaining vestiges of minimal-ui
+        https://bugs.webkit.org/show_bug.cgi?id=138890
+
+        Reviewed by Sam Weinig.
+
+        * History/WebHistoryItem.mm:
+        * History/WebHistoryItemPrivate.h:
+
 2014-11-20  Tim Horton  <timothy_horton@apple.com>
 
         Cancel DataDetectors menu earlier if we know it can't be presented

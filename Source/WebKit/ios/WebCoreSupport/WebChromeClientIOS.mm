@@ -168,8 +168,7 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
               @"maximum-scale":@(arguments.maxZoom),
               @"user-scalable":@(arguments.userZoom),
               @"width":@(arguments.width),
-              @"height":@(arguments.height),
-              @"minimal-ui":@(arguments.minimalUI) };
+              @"height":@(arguments.height) };
 }
 
 FloatSize WebChromeClientIOS::screenSize() const
