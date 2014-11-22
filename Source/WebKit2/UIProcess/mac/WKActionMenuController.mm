@@ -886,7 +886,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 #if WK_API_ENABLED
     case kWKContextActionItemTagPreviewLink:
         selector = @selector(_keepPreviewOpenFromActionMenu:);
-        title = WEB_UI_STRING_KEY("Preview", "Preview (action menu item)", "action menu item");
+        title = @"";
         image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
 #endif
