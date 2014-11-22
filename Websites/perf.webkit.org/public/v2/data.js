@@ -278,23 +278,6 @@ Measurement.prototype.hasBugs = function ()
     return bugs && Object.keys(bugs).length;
 }
 
-Measurement.prototype.associateBug = function (trackerId, bugNumber)
-{
-    var bugs = this._raw['bugs'];
-    trackerId = parseInt(trackerId);
-    bugNumber = bugNumber ? parseInt(bugNumber) : null;
-    return PrivilegedAPI.sendRequest('associate-bug', {
-        run: this.id(),
-        tracker: trackerId,
-        bugNumber: bugNumber,
-    }).then(function () {
-        if (bugNumber)
-            bugs[trackerId] = bugNumber;
-        else
-            delete bugs[trackerId];
-    });
-}
-
 function RunsData(rawData)
 {
     this._measurements = rawData.map(function (run) { return new Measurement(run); });

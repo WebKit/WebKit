@@ -64,7 +64,7 @@
     top: 0.55rem;
 }
 
-.search-pane, .bugs-pane {
+.search-pane, .analysis-pane {
     position: absolute;
     top: 1.7rem;
     border: 1px solid #bbb;
@@ -74,16 +74,16 @@
     background: white;
 }
 
-.bugs-pane {
+.analysis-pane {
     right: 1.3rem;
 }
 
-.bugs-pane table {
+.analysis-pane table {
     margin: 0.2rem;
     font-size: 0.8rem;
 }
 
-.bugs-pane th {
+.analysis-pane th {
     font-weight: normal;
 }
 
@@ -91,7 +91,7 @@
     right: 0rem;
 }
 
-.bugs-pane.hidden,
+.analysis-pane.hidden,
 .search-pane.hidden {
     display: none;
 }

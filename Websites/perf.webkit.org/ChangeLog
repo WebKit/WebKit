@@ -1,3 +1,48 @@
+2014-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There should be a way to associate bugs with analysis tasks
+        https://bugs.webkit.org/show_bug.cgi?id=138977
+
+        Reviewed by Benjamin Poulain.
+
+        Updated associate-bug.php to match the new database schema.
+
+        * public/include/json-header.php:
+        (require_format): Removed the call to camel_case_words_separated_by_underscore since the name is
+        already camel-cased in require_existence_of. This makes the function usable elsewhere.
+
+        * public/privileged-api/associate-bug.php:
+        (main): Changed the API to take run, bugTracker, and number to match the new database schema.
+        Also verify that those values are integers using require_format.
+
+        * public/v2/analysis.js:
+        (App.AnalysisTask.label): Added. Concatenates the task's name with the bug numbers.
+        (App.Bug.label): Added.
+        (App.BugAdapter): Added.
+        (App.BugAdapter.createRecord): Use PrivilegedAPI instead of the builtin ajax call.
+        (App.BuildRequest): Inherit from newly added App.Model, which is set to DS.Model right now.
+
+        * public/v2/app.css: Renamed .test-groups to .analysis-group. Also added new rules for the table
+        containing the bug information.
+
+        * public/v2/app.js:
+        (App.InteractiveChartComponent._rangesChanged): Added label to range bar objects.
+        (App.AnalysisTaskRoute):
+        (App.AnalysisTaskController): Replaced the functionality of App.AnalysisTaskViewModel.
+        (App.AnalysisTaskController._fetchedManifest): Added.
+        (App.AnalysisTaskController.actions.associateBug): Added.
+
+        * public/v2/chart-pane.css: Renamed .bugs-pane to .analysis-pane.
+
+        * public/v2/data.js:
+        (Measurement.prototype.associateBug): Deleted.
+
+        * public/v2/index.html: Renamed .bugs-pane to .analysis-pane and .test-groups to .analysis-group.
+        Added a table show the bug information. Also hide the chart until chartData is available.
+
+        * public/v2/manifest.js:
+        (App.Model): Added.
+
 2014-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix misc bugs and typos in app.js

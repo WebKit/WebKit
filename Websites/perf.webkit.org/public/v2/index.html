@@ -196,7 +196,7 @@
                     {{input action="searchCommit" placeholder="Name or email" value=commitSearchKeyword}}
                 </form>
 
-                <div {{bind-attr class=":bugs-pane showingAnalysisPane::hidden"}}>
+                <div {{bind-attr class=":analysis-pane showingAnalysisPane::hidden"}}>
                     <table>
                         <tbody>
                             <tr>
@@ -229,7 +229,7 @@
         {{/if}}
         <div class="rangeBarsContainerInlineStyle">
             {{#each rangeBars}}
-                {{#link-to linkRoute linkId}}
+                {{#link-to linkRoute linkId title=label}}
                     <span class="rangeBar" {{bind-attr style=inlineStyle}}></span>
                 {{/link-to}}
             {{/each}}
@@ -447,10 +447,12 @@
             {{partial "navbar"}}
         </header>
 
-        <h2 id="analysis-task-title">{{name}}</h2>
+        <h2 id="analysis-task-title">{{label}}</h2>
         {{#if platform.label}}
             <h3 id="analysis-task-testname">{{metric.fullName}} - {{platform.label}}</h3>
+        {{/if}}
 
+        {{#if chartData}}
             <section class="analysis-chart-pane chart-pane">
                 <div class="svg-container">
                     {{interactive-chart
@@ -461,6 +463,20 @@
                         markedPoints=markedPoints}}
                 </div>
                 <div class="details">
+                    <table class="analysis-bugs">
+                        <tbody>
+                            {{#each bugTrackers}}
+                                <tr>
+                                    <th>{{label}}</th>
+                                    <td>
+                                        <form {{action "associateBug" this editedBugNumber on="submit"}}>
+                                            {{input type=text value=editedBugNumber}}
+                                        </form>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
                     <table>
                         <tbody>
                             {{#each analysisPoints}}
@@ -472,7 +488,7 @@
             </section>
 
             {{#each testGroups}}
-                <section class="test-groups">
+                <section class="analysis-group">
                     <table>
                         <caption>{{name}}</caption>
                         <thead>
@@ -497,7 +513,7 @@
                 </section>
             {{/each}}
 
-            <form class="test-groups">
+            <form class="analysis-group">
                 <table>
                     <caption><input name="name" placeholder="Test group name" required></caption>
                     <thead>

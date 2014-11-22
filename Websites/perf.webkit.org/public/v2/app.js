@@ -1470,6 +1470,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
                 bottom: null,
                 linkRoute: linkRoute,
                 linkId: range.get('id'),
+                label: range.get('label'),
             });
         }));
 
@@ -1653,22 +1654,46 @@ App.AnalysisRoute = Ember.Route.extend({
 });
 
 App.AnalysisTaskRoute = Ember.Route.extend({
-    model: function (param) {
-        return this.store.find('analysisTask', param.taskId).then(function (task) {
-            return App.AnalysisTaskViewModel.create({content: task, store: store});
-        });
+    model: function (param)
+    {
+        return this.store.find('analysisTask', param.taskId);
     },
 });
 
-App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
+App.AnalysisTaskController = Ember.Controller.extend({
+    label: Ember.computed.alias('model.name'),
+    platform: Ember.computed.alias('model.platform'),
+    metric: Ember.computed.alias('model.metric'),
     testSets: [],
     roots: [],
+    bugTrackers: [],
     _taskUpdated: function ()
     {
-        var platformId = this.get('platform').get('id');
-        var metricId = this.get('metric').get('id');
-        App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId).then(this._fetchedRuns.bind(this));
-    }.observes('platform', 'metric').on('init'),
+        var model = this.get('model');
+        if (!model)
+            return;
+
+        var platformId = model.get('platform').get('id');
+        var metricId = model.get('metric').get('id');
+        App.Manifest.fetch(this.store).then(this._fetchedManifest.bind(this));
+        App.Manifest.fetchRunsWithPlatformAndMetric(this.store, platformId, metricId).then(this._fetchedRuns.bind(this));
+    }.observes('model').on('init'),
+    _fetchedManifest: function ()
+    {
+        var trackerIdToBugNumber = {};
+        this.get('model').get('bugs').forEach(function (bug) {
+            trackerIdToBugNumber[bug.get('bugTracker').get('id')] = bug.get('number');
+        });
+
+        this.set('bugTrackers', App.Manifest.get('bugTrackers').map(function (bugTracker) {
+            var bugNumber = trackerIdToBugNumber[bugTracker.get('id')];
+            return Ember.ObjectProxy.create({
+                content: bugTracker,
+                bugNumber: bugNumber,
+                editedBugNumber: bugNumber,
+            });
+        }));
+    },
     _fetchedRuns: function (data) {
         var runs = data.runs;
 
@@ -1676,8 +1701,8 @@ App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
         if (!currentTimeSeries)
             return; // FIXME: Report an error.
 
-        var start = currentTimeSeries.findPointByMeasurementId(this.get('startRun'));
-        var end = currentTimeSeries.findPointByMeasurementId(this.get('endRun'));
+        var start = currentTimeSeries.findPointByMeasurementId(this.get('model').get('startRun'));
+        var end = currentTimeSeries.findPointByMeasurementId(this.get('model').get('endRun'));
         if (!start || !end)
             return; // FIXME: Report an error.
 
@@ -1768,4 +1793,16 @@ App.AnalysisTaskViewModel = Ember.ObjectProxy.extend({
         }
         return roots;
     }.property('analysisPoints'),
+    actions: {
+        associateBug: function (bugTracker, bugNumber)
+        {
+            var model = this.get('model');
+            this.store.createRecord('bug',
+                {task: this.get('model'), bugTracker: bugTracker.get('content'), number: bugNumber}).save().then(function () {
+                    // FIXME: Should we notify the user?
+                }, function (error) {
+                    alert('Failed to associate the bug: ' + error);
+                });
+        }
+    },
 });

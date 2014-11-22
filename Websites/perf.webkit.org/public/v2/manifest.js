@@ -1,3 +1,5 @@
+App.Model = DS.Model;
+
 App.NameLabelModel = DS.Model.extend({
     name: DS.attr('string'),
     label: function ()

@@ -413,32 +413,32 @@ table.dashboard tbody td .progress {
 }
 
 #analysis-tasks,
-.test-groups > table {
+.analysis-group > table {
     border: solid 0px #999;
     border-collapse: collapse;
 }
 
 #analysis-tasks thead,
-.test-groups > table thead {
+.analysis-group > table thead {
     color: #c93;
 }
 
 #analysis-tasks th,
-.test-groups > table th {
+.analysis-group > table th {
     font-weight: normal;
 }
 
 #analysis-tasks td,
 #analysis-tasks th,
-.test-groups > table td,
-.test-groups > table th {
+.analysis-group > table td,
+.analysis-group > table th {
     padding: 0.2rem 0.5rem;
 }
 
 #analysis-tasks tbody td,
 #analysis-tasks tbody th,
-.test-groups > table tbody td,
-.test-groups > table tbody th {
+.analysis-group > table tbody td,
+.analysis-group > table tbody th {
     border-top: solid 1px #ddd;
 }
 
@@ -457,7 +457,7 @@ table.dashboard tbody td .progress {
     color: #333;
 }
 
-.test-groups {
+.analysis-group {
     border: 1px solid #bbb;
     border-radius: 0.5rem;
     box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
@@ -466,8 +466,13 @@ table.dashboard tbody td .progress {
     margin-bottom: 1.5rem;
 }
 
-.test-groups caption {
+.analysis-group caption {
     font-size: 1.1rem;
     text-align: left;
     margin-bottom: 0.5rem;
+}
+
+.analysis-bugs th {
+    font-weight: normal;
+    text-align: right;
 }

@@ -53,9 +53,9 @@ function camel_case_words_separated_by_underscore($name) {
     return implode('', array_map('ucfirst', explode('_', $name)));
 }
 
-function require_format($key, $value, $pattern) {
+function require_format($name, $value, $pattern) {
     if (!preg_match($pattern, $value))
-        exit_with_error('Invalid' . camel_case_words_separated_by_underscore($key), array('value' => $value));
+        exit_with_error('Invalid' . $name, array('value' => $value));
 }
 
 function require_existence_of($array, $list_of_arguments, $prefix = '') {
