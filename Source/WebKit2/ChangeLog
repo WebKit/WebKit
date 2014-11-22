@@ -1,3 +1,10 @@
+2014-11-21  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseDown:]):
+
 2014-11-21  Beth Dakin  <bdakin@apple.com>
 
         The preview action menu item should not have a title
