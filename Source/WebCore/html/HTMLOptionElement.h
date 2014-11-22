@@ -34,9 +34,9 @@ class HTMLSelectElement;
 
 class HTMLOptionElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLOptionElement> create(Document&);
-    static PassRefPtr<HTMLOptionElement> create(const QualifiedName&, Document&);
-    static PassRefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
+    static RefPtr<HTMLOptionElement> create(Document&);
+    static RefPtr<HTMLOptionElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
        bool defaultSelected, bool selected, ExceptionCode&);
 
     WEBCORE_EXPORT String text() const;

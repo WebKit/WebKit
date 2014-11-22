@@ -177,7 +177,7 @@ public:
     static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }
     Node* nextSibling() const { return m_next; }
     static ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
-    PassRefPtr<NodeList> childNodes();
+    RefPtr<NodeList> childNodes();
     Node* firstChild() const;
     Node* lastChild() const;
     bool hasAttributes() const;
@@ -201,7 +201,7 @@ public:
 
     WEBCORE_EXPORT void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
-    virtual PassRefPtr<Node> cloneNode(bool deep) = 0;
+    virtual RefPtr<Node> cloneNode(bool deep) = 0;
     virtual const AtomicString& localName() const;
     virtual const AtomicString& namespaceURI() const;
     virtual const AtomicString& prefix() const;

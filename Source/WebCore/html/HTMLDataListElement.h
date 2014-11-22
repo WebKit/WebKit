@@ -40,9 +40,9 @@ namespace WebCore {
 
 class HTMLDataListElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLDataListElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLDataListElement> create(const QualifiedName&, Document&);
 
-    PassRefPtr<HTMLCollection> options();
+    RefPtr<HTMLCollection> options();
 
     void optionElementChildrenChanged();
 

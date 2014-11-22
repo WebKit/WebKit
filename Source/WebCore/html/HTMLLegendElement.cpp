@@ -40,7 +40,7 @@ inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(legendTag));
 }
 
-PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLLegendElement(tagName, document));
 }

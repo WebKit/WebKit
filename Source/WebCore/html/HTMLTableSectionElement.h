@@ -33,10 +33,10 @@ namespace WebCore {
 
 class HTMLTableSectionElement final : public HTMLTablePartElement {
 public:
-    static PassRefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
-    PassRefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
-    PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
+    RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
+    RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
     int numRows() const;
@@ -53,7 +53,7 @@ public:
     const AtomicString& vAlign() const;
     void setVAlign(const AtomicString&);
 
-    PassRefPtr<HTMLCollection> rows();
+    RefPtr<HTMLCollection> rows();
 
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document&);

@@ -42,7 +42,7 @@ inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(scriptTag));
 }
 
-PassRefPtr<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
+RefPtr<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
 {
     return adoptRef(new HTMLScriptElement(tagName, document, wasInsertedByParser, alreadyStarted));
 }
@@ -168,7 +168,7 @@ void HTMLScriptElement::dispatchLoadEvent()
     dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
 
-PassRefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren()
+RefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren()
 {
     return adoptRef(new HTMLScriptElement(tagQName(), document(), false, alreadyStarted()));
 }

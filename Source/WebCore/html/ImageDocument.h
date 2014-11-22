@@ -34,7 +34,7 @@ class HTMLImageElement;
 
 class ImageDocument final : public HTMLDocument {
 public:
-    static PassRefPtr<ImageDocument> create(Frame& frame, const URL& url)
+    static RefPtr<ImageDocument> create(Frame& frame, const URL& url)
     {
         return adoptRef(new ImageDocument(frame, url));
     }
@@ -54,7 +54,7 @@ public:
 private:
     ImageDocument(Frame&, const URL&);
 
-    virtual PassRefPtr<DocumentParser> createParser() override;
+    virtual RefPtr<DocumentParser> createParser() override;
 
     LayoutSize imageSize();
 

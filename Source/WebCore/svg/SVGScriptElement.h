@@ -65,7 +65,7 @@ private:
 
     virtual void dispatchLoadEvent() override { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
 
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     // SVGExternalResourcesRequired

@@ -136,7 +136,7 @@ enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeSh
 bool isEmptyFontTag(const Element*, ShouldStyleAttributeBeEmpty = StyleAttributeShouldBeEmpty);
 bool isLegacyAppleStyleSpan(const Node*);
 bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element*);
-PassRefPtr<HTMLElement> createStyleSpanElement(Document&);
+RefPtr<HTMLElement> createStyleSpanElement(Document&);
 
 } // namespace WebCore
 

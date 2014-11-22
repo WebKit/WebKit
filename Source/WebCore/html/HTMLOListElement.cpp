@@ -44,12 +44,12 @@ HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(olTag));
 }
 
-PassRefPtr<HTMLOListElement> HTMLOListElement::create(Document& document)
+RefPtr<HTMLOListElement> HTMLOListElement::create(Document& document)
 {
     return adoptRef(new HTMLOListElement(olTag, document));
 }
 
-PassRefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLOListElement(tagName, document));
 }

@@ -32,8 +32,8 @@ namespace WebCore {
 
 class HTMLTableRowElement final : public HTMLTablePartElement {
 public:
-    static PassRefPtr<HTMLTableRowElement> create(Document&);
-    static PassRefPtr<HTMLTableRowElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLTableRowElement> create(Document&);
+    static RefPtr<HTMLTableRowElement> create(const QualifiedName&, Document&);
 
     int rowIndex() const;
     void setRowIndex(int);
@@ -41,11 +41,11 @@ public:
     int sectionRowIndex() const;
     void setSectionRowIndex(int);
 
-    PassRefPtr<HTMLElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
-    PassRefPtr<HTMLElement> insertCell(int index, ExceptionCode&);
+    RefPtr<HTMLElement> insertCell(ExceptionCode& ec) { return insertCell(-1, ec); }
+    RefPtr<HTMLElement> insertCell(int index, ExceptionCode&);
     void deleteCell(int index, ExceptionCode&);
 
-    PassRefPtr<HTMLCollection> cells();
+    RefPtr<HTMLCollection> cells();
     void setCells(HTMLCollection *, ExceptionCode&);
 
 private:

@@ -993,7 +993,7 @@ RefPtr<NodeList> ContainerNode::querySelectorAll(const String& selectors, Except
     return nullptr;
 }
 
-PassRefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& localName)
+RefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& localName)
 {
     if (localName.isNull())
         return 0;
@@ -1003,7 +1003,7 @@ PassRefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& loc
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, localName);
 }
 
-PassRefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
+RefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     if (localName.isNull())
         return 0;
@@ -1014,17 +1014,17 @@ PassRefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& n
     return ensureRareData().ensureNodeLists().addCacheWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
-PassRefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
+RefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
 {
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
 }
 
-PassRefPtr<NodeList> ContainerNode::getElementsByClassName(const AtomicString& classNames)
+RefPtr<NodeList> ContainerNode::getElementsByClassName(const AtomicString& classNames)
 {
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<ClassNodeList>(*this, classNames);
 }
 
-PassRefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
+RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);

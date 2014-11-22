@@ -42,12 +42,12 @@ HTMLHtmlElement::HTMLHtmlElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(htmlTag));
 }
 
-PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(Document& document)
+RefPtr<HTMLHtmlElement> HTMLHtmlElement::create(Document& document)
 {
     return adoptRef(new HTMLHtmlElement(htmlTag, document));
 }
 
-PassRefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLHtmlElement(tagName, document));
 }

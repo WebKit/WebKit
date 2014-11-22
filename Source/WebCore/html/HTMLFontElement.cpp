@@ -46,7 +46,7 @@ HTMLFontElement::HTMLFontElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(fontTag));
 }
 
-PassRefPtr<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLFontElement(tagName, document));
 }

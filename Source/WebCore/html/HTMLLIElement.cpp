@@ -41,12 +41,12 @@ HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document& document)
     setHasCustomStyleResolveCallbacks();
 }
 
-PassRefPtr<HTMLLIElement> HTMLLIElement::create(Document& document)
+RefPtr<HTMLLIElement> HTMLLIElement::create(Document& document)
 {
     return adoptRef(new HTMLLIElement(liTag, document));
 }
 
-PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLLIElement(tagName, document));
 }

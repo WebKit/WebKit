@@ -27,7 +27,7 @@ namespace WebCore {
 
 class HTMLDetailsElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document& document);
+    static RefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
     void toggleOpen();
 
     const Element* findMainSummary() const;

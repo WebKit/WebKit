@@ -257,19 +257,19 @@ enum class DocumentCompatibilityMode : unsigned char {
 
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
-    static PassRefPtr<Document> create(Frame* frame, const URL& url)
+    static RefPtr<Document> create(Frame* frame, const URL& url)
     {
         return adoptRef(new Document(frame, url));
     }
-    static PassRefPtr<Document> createXHTML(Frame* frame, const URL& url)
+    static RefPtr<Document> createXHTML(Frame* frame, const URL& url)
     {
         return adoptRef(new Document(frame, url, XHTMLDocumentClass));
     }
-    static PassRefPtr<Document> createNonRenderedPlaceholder(Frame* frame, const URL& url)
+    static RefPtr<Document> createNonRenderedPlaceholder(Frame* frame, const URL& url)
     {
         return adoptRef(new Document(frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
     }
-    static PassRefPtr<Document> create(ScriptExecutionContext&);
+    static RefPtr<Document> create(ScriptExecutionContext&);
 
     virtual ~Document();
 
@@ -421,24 +421,24 @@ public:
 
     bool hasManifest() const;
     
-    virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
-    WEBCORE_EXPORT PassRefPtr<DocumentFragment> createDocumentFragment();
-    WEBCORE_EXPORT PassRefPtr<Text> createTextNode(const String& data);
-    PassRefPtr<Comment> createComment(const String& data);
-    PassRefPtr<CDATASection> createCDATASection(const String& data, ExceptionCode&);
-    PassRefPtr<ProcessingInstruction> createProcessingInstruction(const String& target, const String& data, ExceptionCode&);
-    PassRefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
-    PassRefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
-    PassRefPtr<EntityReference> createEntityReference(const String& name, ExceptionCode&);
-    PassRefPtr<Node> importNode(Node* importedNode, ExceptionCode& ec) { return importNode(importedNode, true, ec); }
-    PassRefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
-    WEBCORE_EXPORT PassRefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
-    WEBCORE_EXPORT PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
+    virtual RefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<DocumentFragment> createDocumentFragment();
+    WEBCORE_EXPORT RefPtr<Text> createTextNode(const String& data);
+    RefPtr<Comment> createComment(const String& data);
+    RefPtr<CDATASection> createCDATASection(const String& data, ExceptionCode&);
+    RefPtr<ProcessingInstruction> createProcessingInstruction(const String& target, const String& data, ExceptionCode&);
+    RefPtr<Attr> createAttribute(const String& name, ExceptionCode&);
+    RefPtr<Attr> createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&, bool shouldIgnoreNamespaceChecks = false);
+    RefPtr<EntityReference> createEntityReference(const String& name, ExceptionCode&);
+    RefPtr<Node> importNode(Node* importedNode, ExceptionCode& ec) { return importNode(importedNode, true, ec); }
+    RefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
 
     bool cssRegionsEnabled() const;
     bool cssCompositingEnabled() const;
 #if ENABLE(CSS_REGIONS)
-    PassRefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
+    RefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif
 
     NamedFlowCollection& namedFlows();
@@ -446,8 +446,8 @@ public:
     Element* elementFromPoint(int x, int y) { return elementFromPoint(LayoutPoint(x, y)); }
     Element* elementFromPoint(const LayoutPoint& clientPoint);
 
-    PassRefPtr<Range> caretRangeFromPoint(int x, int y);
-    PassRefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
+    RefPtr<Range> caretRangeFromPoint(int x, int y);
+    RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 
     String readyState() const;
 
@@ -498,20 +498,20 @@ public:
     DOMSecurityPolicy& securityPolicy();
 #endif
 
-    PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
+    RefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
 
-    PassRefPtr<HTMLCollection> images();
-    PassRefPtr<HTMLCollection> embeds();
-    PassRefPtr<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
-    PassRefPtr<HTMLCollection> applets();
-    PassRefPtr<HTMLCollection> links();
-    PassRefPtr<HTMLCollection> forms();
-    PassRefPtr<HTMLCollection> anchors();
-    PassRefPtr<HTMLCollection> scripts();
-    PassRefPtr<HTMLCollection> all();
+    RefPtr<HTMLCollection> images();
+    RefPtr<HTMLCollection> embeds();
+    RefPtr<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
+    RefPtr<HTMLCollection> applets();
+    RefPtr<HTMLCollection> links();
+    RefPtr<HTMLCollection> forms();
+    RefPtr<HTMLCollection> anchors();
+    RefPtr<HTMLCollection> scripts();
+    RefPtr<HTMLCollection> all();
 
-    PassRefPtr<HTMLCollection> windowNamedItems(const AtomicString& name);
-    PassRefPtr<HTMLCollection> documentNamedItems(const AtomicString& name);
+    RefPtr<HTMLCollection> windowNamedItems(const AtomicString& name);
+    RefPtr<HTMLCollection> documentNamedItems(const AtomicString& name);
 
     // Other methods (not part of DOM)
     bool isSynthesized() const { return m_isSynthesized; }
@@ -579,17 +579,17 @@ public:
 
     float deviceScaleFactor() const;
 
-    WEBCORE_EXPORT PassRefPtr<Range> createRange();
+    WEBCORE_EXPORT RefPtr<Range> createRange();
 
-    PassRefPtr<NodeIterator> createNodeIterator(Node* root, unsigned whatToShow,
+    RefPtr<NodeIterator> createNodeIterator(Node* root, unsigned whatToShow,
         PassRefPtr<NodeFilter>, bool expandEntityReferences, ExceptionCode&);
 
-    PassRefPtr<TreeWalker> createTreeWalker(Node* root, unsigned whatToShow,
+    RefPtr<TreeWalker> createTreeWalker(Node* root, unsigned whatToShow,
         PassRefPtr<NodeFilter>, bool expandEntityReferences, ExceptionCode&);
 
     // Special support for editing
-    PassRefPtr<CSSStyleDeclaration> createCSSStyleDeclaration();
-    PassRefPtr<Text> createEditingTextNode(const String&);
+    RefPtr<CSSStyleDeclaration> createCSSStyleDeclaration();
+    RefPtr<Text> createEditingTextNode(const String&);
 
     void recalcStyle(Style::Change = Style::NoChange);
     WEBCORE_EXPORT void updateStyleIfNeeded();
@@ -687,7 +687,7 @@ public:
 
     CSSStyleSheet& elementSheet();
     
-    virtual PassRefPtr<DocumentParser> createParser();
+    virtual RefPtr<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
     ScriptableDocumentParser* scriptableDocumentParser() const;
     
@@ -818,7 +818,7 @@ public:
     WEBCORE_EXPORT void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = 0);
     void dispatchWindowLoadEvent();
 
-    PassRefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
+    RefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 
     // keep track of what types of event listeners are registered, so we don't
     // dispatch events unnecessarily
@@ -972,7 +972,7 @@ public:
 
 #if ENABLE(XSLT)
     void applyXSLTransform(ProcessingInstruction* pi);
-    PassRefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
+    RefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
     void setTransformSourceDocument(Document* doc) { m_transformSourceDocument = doc; }
 
     void setTransformSource(std::unique_ptr<TransformSource>);
@@ -983,16 +983,9 @@ public:
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
     // XPathEvaluator methods
-    PassRefPtr<XPathExpression> createExpression(const String& expression,
-                                                 XPathNSResolver* resolver,
-                                                 ExceptionCode& ec);
-    PassRefPtr<XPathNSResolver> createNSResolver(Node *nodeResolver);
-    PassRefPtr<XPathResult> evaluate(const String& expression,
-                                     Node* contextNode,
-                                     XPathNSResolver* resolver,
-                                     unsigned short type,
-                                     XPathResult* result,
-                                     ExceptionCode& ec);
+    RefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+    RefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
+    RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode, XPathNSResolver*, unsigned short type, XPathResult*, ExceptionCode&);
 
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 
@@ -1068,7 +1061,7 @@ public:
     TextResourceDecoder* decoder() const { return m_decoder.get(); }
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
-    PassRefPtr<StringImpl> displayStringModifiedByEncoding(PassRefPtr<StringImpl>) const;
+    RefPtr<StringImpl> displayStringModifiedByEncoding(PassRefPtr<StringImpl>) const;
     void displayBufferModifiedByEncoding(LChar* buffer, unsigned len) const
     {
         displayBufferModifiedByEncodingInternal(buffer, len);
@@ -1168,7 +1161,7 @@ public:
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/DocumentIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
-    PassRefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
+    RefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
@@ -1269,7 +1262,7 @@ public:
     virtual SecurityOrigin* topOrigin() const override final;
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    PassRefPtr<FontLoader> fonts();
+    RefPtr<FontLoader> fonts();
 #endif
 
     void ensurePlugInsInjectedScript(DOMWrapperWorld&);
@@ -1297,7 +1290,7 @@ protected:
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
-    virtual PassRefPtr<Document> cloneDocumentWithoutChildren() const;
+    virtual RefPtr<Document> cloneDocumentWithoutChildren() const;
 
 private:
     friend class Node;
@@ -1321,7 +1314,7 @@ private:
     virtual String nodeName() const override final;
     virtual NodeType nodeType() const override final;
     virtual bool childTypeAllowed(NodeType) const override final;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override final;
+    virtual RefPtr<Node> cloneNode(bool deep) override final;
     void cloneDataFromDocument(const Document&);
 
     virtual void refScriptExecutionContext() override final { ref(); }
@@ -1352,7 +1345,7 @@ private:
 
     Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint = nullptr);
 
-    PassRefPtr<HTMLCollection> ensureCachedCollection(CollectionType);
+    RefPtr<HTMLCollection> ensureCachedCollection(CollectionType);
 
 #if ENABLE(FULLSCREEN_API)
     void dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);

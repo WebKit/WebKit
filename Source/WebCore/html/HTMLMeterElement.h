@@ -31,7 +31,7 @@ class RenderMeter;
 
 class HTMLMeterElement final : public LabelableElement {
 public:
-    static PassRefPtr<HTMLMeterElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLMeterElement> create(const QualifiedName&, Document&);
 
     enum GaugeRegion {
         GaugeRegionOptimum,

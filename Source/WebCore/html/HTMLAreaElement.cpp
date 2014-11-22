@@ -45,7 +45,7 @@ inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(areaTag));
 }
 
-PassRefPtr<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLAreaElement(tagName, document));
 }

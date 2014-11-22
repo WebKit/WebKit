@@ -44,12 +44,12 @@ HTMLTableRowElement::HTMLTableRowElement(const QualifiedName& tagName, Document&
     ASSERT(hasTagName(trTag));
 }
 
-PassRefPtr<HTMLTableRowElement> HTMLTableRowElement::create(Document& document)
+RefPtr<HTMLTableRowElement> HTMLTableRowElement::create(Document& document)
 {
     return adoptRef(new HTMLTableRowElement(trTag, document));
 }
 
-PassRefPtr<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTableRowElement(tagName, document));
 }
@@ -118,7 +118,7 @@ int HTMLTableRowElement::sectionRowIndex() const
     return rIndex;
 }
 
-PassRefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)
+RefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)
 {
     RefPtr<HTMLCollection> children = cells();
     int numCells = children ? children->length() : 0;
@@ -138,7 +138,7 @@ PassRefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode
             n = children->item(index);
         insertBefore(cell, n, ec);
     }
-    return cell.release();
+    return cell;
 }
 
 void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
@@ -154,7 +154,7 @@ void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
 }
 
-PassRefPtr<HTMLCollection> HTMLTableRowElement::cells()
+RefPtr<HTMLCollection> HTMLTableRowElement::cells()
 {
     return ensureCachedHTMLCollection(TRCells);
 }

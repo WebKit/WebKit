@@ -41,8 +41,8 @@ class MutableStyleProperties;
 
 class Attr final : public ContainerNode {
 public:
-    static PassRefPtr<Attr> create(Element*, const QualifiedName&);
-    static PassRefPtr<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
+    static RefPtr<Attr> create(Element*, const QualifiedName&);
+    static RefPtr<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
     virtual ~Attr();
 
     String name() const { return qualifiedName().toString(); }
@@ -80,7 +80,7 @@ private:
 
     virtual String nodeValue() const override { return value(); }
     virtual void setNodeValue(const String&, ExceptionCode&) override;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNode(bool deep) override;
 
     virtual bool isAttributeNode() const override { return true; }
     virtual bool childTypeAllowed(NodeType) const override;

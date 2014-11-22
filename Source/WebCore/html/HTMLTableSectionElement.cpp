@@ -42,7 +42,7 @@ inline HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tag
 {
 }
 
-PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTableSectionElement(tagName, document));
 }
@@ -56,7 +56,7 @@ const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeS
 
 // these functions are rather slow, since we need to get the row at
 // the index... but they aren't used during usual HTML parsing anyway
-PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionCode& ec)
+RefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionCode& ec)
 {
     RefPtr<HTMLTableRowElement> row;
     RefPtr<HTMLCollection> children = rows();
@@ -76,7 +76,7 @@ PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionC
             insertBefore(row, n, ec);
         }
     }
-    return row.release();
+    return row;
 }
 
 void HTMLTableSectionElement::deleteRow(int index, ExceptionCode& ec)
@@ -145,7 +145,7 @@ void HTMLTableSectionElement::setVAlign(const AtomicString& value)
     setAttribute(valignAttr, value);
 }
 
-PassRefPtr<HTMLCollection> HTMLTableSectionElement::rows()
+RefPtr<HTMLCollection> HTMLTableSectionElement::rows()
 {
     return ensureCachedHTMLCollection(TSectionRows);
 }

@@ -34,7 +34,7 @@ inline HTMLModElement::HTMLModElement(const QualifiedName& tagName, Document& do
 {
 }
 
-PassRefPtr<HTMLModElement> HTMLModElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLModElement> HTMLModElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLModElement(tagName, document));
 }

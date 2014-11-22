@@ -29,15 +29,15 @@ namespace WebCore {
 
 class Comment final : public CharacterData {
 public:
-    static PassRefPtr<Comment> create(Document&, const String&);
-    static PassRefPtr<Comment> create(ScriptExecutionContext&, const String&);
+    static RefPtr<Comment> create(Document&, const String&);
+    static RefPtr<Comment> create(ScriptExecutionContext&, const String&);
 
 private:
     Comment(Document&, const String&);
 
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNode(bool deep) override;
     virtual bool childTypeAllowed(NodeType) const override;
 };
 

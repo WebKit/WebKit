@@ -63,7 +63,7 @@ struct InputElementClickState {
 
 class HTMLInputElement : public HTMLTextFormControlElement {
 public:
-    static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
+    static RefPtr<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);

@@ -54,7 +54,7 @@ using namespace HTMLNames;
 #if !PLATFORM(IOS)
 class ImageEventListener final : public EventListener {
 public:
-    static PassRefPtr<ImageEventListener> create(ImageDocument& document) { return adoptRef(new ImageEventListener(document)); }
+    static RefPtr<ImageEventListener> create(ImageDocument& document) { return adoptRef(new ImageEventListener(document)); }
 
 private:
     ImageEventListener(ImageDocument& document)
@@ -72,7 +72,7 @@ private:
 
 class ImageDocumentParser final : public RawDataDocumentParser {
 public:
-    static PassRefPtr<ImageDocumentParser> create(ImageDocument& document)
+    static RefPtr<ImageDocumentParser> create(ImageDocument& document)
     {
         return adoptRef(new ImageDocumentParser(document));
     }
@@ -91,7 +91,7 @@ private:
 
 class ImageDocumentElement final : public HTMLImageElement {
 public:
-    static PassRefPtr<ImageDocumentElement> create(ImageDocument&);
+    static RefPtr<ImageDocumentElement> create(ImageDocument&);
 
 private:
     ImageDocumentElement(ImageDocument& document)
@@ -106,7 +106,7 @@ private:
     ImageDocument* m_imageDocument;
 };
 
-inline PassRefPtr<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& document)
+inline RefPtr<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& document)
 {
     return adoptRef(new ImageDocumentElement(document));
 }
@@ -202,7 +202,7 @@ ImageDocument::ImageDocument(Frame& frame, const URL& url)
     lockCompatibilityMode();
 }
     
-PassRefPtr<DocumentParser> ImageDocument::createParser()
+RefPtr<DocumentParser> ImageDocument::createParser()
 {
     return ImageDocumentParser::create(*this);
 }

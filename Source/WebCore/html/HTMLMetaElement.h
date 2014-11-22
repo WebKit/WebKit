@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLMetaElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLMetaElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLMetaElement> create(const QualifiedName&, Document&);
 
     const AtomicString& content() const;
     const AtomicString& httpEquiv() const;

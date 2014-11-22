@@ -39,12 +39,12 @@ HTMLBRElement::HTMLBRElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(brTag));
 }
 
-PassRefPtr<HTMLBRElement> HTMLBRElement::create(Document& document)
+RefPtr<HTMLBRElement> HTMLBRElement::create(Document& document)
 {
     return adoptRef(new HTMLBRElement(brTag, document));
 }
 
-PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLBRElement(tagName, document));
 }

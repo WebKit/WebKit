@@ -46,7 +46,7 @@ inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Docume
 {
 }
 
-PassRefPtr<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+RefPtr<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLOutputElement(tagName, document, form));
 }

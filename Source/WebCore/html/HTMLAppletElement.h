@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLAppletElement final : public HTMLPlugInImageElement {
 public:
-    static PassRefPtr<HTMLAppletElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static RefPtr<HTMLAppletElement> create(const QualifiedName&, Document&, bool createdByParser);
 
 private:
     HTMLAppletElement(const QualifiedName&, Document&, bool createdByParser);

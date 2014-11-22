@@ -36,8 +36,8 @@ class Document;
 
 class HTMLAudioElement final : public HTMLMediaElement {
 public:
-    static PassRefPtr<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
-    static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document&, const String& src);
+    static RefPtr<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
+    static RefPtr<HTMLAudioElement> createForJSConstructor(Document&, const String& src);
 
 private:
     HTMLAudioElement(const QualifiedName&, Document&, bool);

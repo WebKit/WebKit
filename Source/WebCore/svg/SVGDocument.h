@@ -32,7 +32,7 @@ class SVGSVGElement;
 
 class SVGDocument final : public Document {
 public:
-    static PassRefPtr<SVGDocument> create(Frame* frame, const URL& url)
+    static RefPtr<SVGDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new SVGDocument(frame, url));
     }
@@ -47,7 +47,7 @@ public:
 private:
     SVGDocument(Frame*, const URL&);
 
-    virtual PassRefPtr<Document> cloneDocumentWithoutChildren() const override;
+    virtual RefPtr<Document> cloneDocumentWithoutChildren() const override;
 
     FloatPoint m_translate;
 };

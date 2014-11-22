@@ -50,7 +50,7 @@ inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(labelTag));
 }
 
-PassRefPtr<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLLabelElement(tagName, document));
 }

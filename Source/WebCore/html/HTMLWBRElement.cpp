@@ -33,7 +33,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<HTMLWBRElement> HTMLWBRElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLWBRElement> HTMLWBRElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLWBRElement(tagName, document));
 }

@@ -38,7 +38,7 @@ using namespace HTMLNames;
 
 class SummaryContentElement final : public InsertionPoint {
 public:
-    static PassRefPtr<SummaryContentElement> create(Document&);
+    static RefPtr<SummaryContentElement> create(Document&);
 
 private:
     SummaryContentElement(Document& document)
@@ -47,16 +47,16 @@ private:
     }
 };
 
-PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document& document)
+RefPtr<SummaryContentElement> SummaryContentElement::create(Document& document)
 {
     return adoptRef(new SummaryContentElement(document));
 }
 
-PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
     RefPtr<HTMLSummaryElement> summary = adoptRef(new HTMLSummaryElement(tagName, document));
     summary->ensureUserAgentShadowRoot();
-    return summary.release();
+    return summary;
 }
 
 HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& document)

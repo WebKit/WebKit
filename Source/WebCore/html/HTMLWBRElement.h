@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLWBRElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLWBRElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLWBRElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLWBRElement(const QualifiedName&, Document&);

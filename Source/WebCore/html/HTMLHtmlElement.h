@@ -30,8 +30,8 @@ namespace WebCore {
 
 class HTMLHtmlElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLHtmlElement> create(Document&);
-    static PassRefPtr<HTMLHtmlElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLHtmlElement> create(Document&);
+    static RefPtr<HTMLHtmlElement> create(const QualifiedName&, Document&);
 
     void insertedByParser();
 

@@ -68,7 +68,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace WTF;
 
-PassRefPtr<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLElement(tagName, document));
 }
@@ -473,7 +473,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
         mergeWithNextTextNode(downcast<Text>(*prev), ec);
 }
 
-PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
+RefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
 {
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
     unsigned int i, length = text.length();
@@ -837,7 +837,7 @@ void HTMLElement::setTranslate(bool enable)
     setAttribute(translateAttr, enable ? "yes" : "no");
 }
 
-PassRefPtr<HTMLCollection> HTMLElement::children()
+RefPtr<HTMLCollection> HTMLElement::children()
 {
     return ensureCachedHTMLCollection(NodeChildren);
 }

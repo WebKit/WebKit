@@ -50,7 +50,7 @@ MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document)
 {
 }
     
-PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new MathMLElement(tagName, document));
 }

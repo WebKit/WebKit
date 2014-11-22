@@ -43,7 +43,7 @@ inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(iframeTag));
 }
 
-PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }

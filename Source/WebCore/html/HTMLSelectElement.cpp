@@ -80,7 +80,7 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     ASSERT(hasTagName(selectTag));
 }
 
-PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+RefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     ASSERT(tagName.matches(selectTag));
     return adoptRef(new HTMLSelectElement(tagName, document, form));
@@ -368,12 +368,12 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
     return validationMessageShadowTreeContains(child);
 }
 
-PassRefPtr<HTMLCollection> HTMLSelectElement::selectedOptions()
+RefPtr<HTMLCollection> HTMLSelectElement::selectedOptions()
 {
     return ensureCachedHTMLCollection(SelectedOptions);
 }
 
-PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
+RefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 {
     return downcast<HTMLOptionsCollection>(ensureCachedHTMLCollection(SelectOptions).get());
 }

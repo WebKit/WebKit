@@ -134,11 +134,11 @@ public:
     Element* querySelector(const String& selectors, ExceptionCode&);
     RefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);
 
-    PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
-    PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
-    PassRefPtr<NodeList> getElementsByName(const String& elementName);
-    PassRefPtr<NodeList> getElementsByClassName(const AtomicString& classNames);
-    PassRefPtr<RadioNodeList> radioNodeList(const AtomicString&);
+    RefPtr<NodeList> getElementsByTagName(const AtomicString&);
+    RefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    RefPtr<NodeList> getElementsByName(const String& elementName);
+    RefPtr<NodeList> getElementsByClassName(const AtomicString& classNames);
+    RefPtr<RadioNodeList> radioNodeList(const AtomicString&);
 
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
@@ -262,7 +262,7 @@ public:
     }
 
     // Returns 0 if there is no next Node.
-    PassRefPtr<Node> nextNode()
+    RefPtr<Node> nextNode()
     {
         if (LIKELY(!hasSnapshot())) {
             RefPtr<Node> node = m_currentNode.release();

@@ -44,7 +44,7 @@ using namespace HTMLNames;
 
 class KeygenSelectElement final : public HTMLSelectElement {
 public:
-    static PassRefPtr<KeygenSelectElement> create(Document& document)
+    static RefPtr<KeygenSelectElement> create(Document& document)
     {
         return adoptRef(new KeygenSelectElement(document));
     }
@@ -58,7 +58,7 @@ protected:
     }
 
 private:
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override
     {
         return create(document());
     }
@@ -83,7 +83,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     ensureUserAgentShadowRoot().appendChild(select, IGNORE_EXCEPTION);
 }
 
-PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+RefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLKeygenElement(tagName, document, form));
 }

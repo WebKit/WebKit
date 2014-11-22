@@ -50,7 +50,7 @@ inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(embedTag));
 }
 
-PassRefPtr<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+RefPtr<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     return adoptRef(new HTMLEmbedElement(tagName, document, createdByParser));
 }

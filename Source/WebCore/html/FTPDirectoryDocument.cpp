@@ -48,7 +48,7 @@ using namespace HTMLNames;
     
 class FTPDirectoryDocumentParser final : public HTMLDocumentParser {
 public:
-    static PassRefPtr<FTPDirectoryDocumentParser> create(HTMLDocument& document)
+    static RefPtr<FTPDirectoryDocumentParser> create(HTMLDocument& document)
     {
         return adoptRef(new FTPDirectoryDocumentParser(document));
     }
@@ -81,7 +81,7 @@ private:
 
     void parseAndAppendOneLine(const String&);
     void appendEntry(const String& name, const String& size, const String& date, bool isDirectory);    
-    PassRefPtr<Element> createTDForFilename(const String&);
+    RefPtr<Element> createTDForFilename(const String&);
 
     RefPtr<HTMLTableElement> m_tableElement;
 
@@ -132,7 +132,7 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 }
 
-PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
+RefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
 {
     String fullURL = document()->baseURL().string();
     if (fullURL.endsWith('/'))
@@ -273,19 +273,19 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
     appendEntry(filename, processFilesizeString(result.fileSize, result.type == FTPDirectoryEntry), processFileDateString(result.modifiedTime), result.type == FTPDirectoryEntry);
 }
 
-static inline PassRefPtr<SharedBuffer> createTemplateDocumentData(Settings* settings)
+static inline RefPtr<SharedBuffer> createTemplateDocumentData(Settings* settings)
 {
     RefPtr<SharedBuffer> buffer = 0;
     if (settings)
         buffer = SharedBuffer::createWithContentsOfFile(settings->ftpDirectoryTemplatePath());
     if (buffer)
         LOG(FTP, "Loaded FTPDirectoryTemplate of length %i\n", buffer->size());
-    return buffer.release();
+    return buffer;
 }
     
 bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 {
-    static SharedBuffer* templateDocumentData = createTemplateDocumentData(document()->settings()).leakRef();
+    static SharedBuffer* templateDocumentData = createTemplateDocumentData(document()->settings()).release().leakRef();
     // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
     // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
     // approach that make it worth putting this off.
@@ -432,7 +432,7 @@ FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const URL& url)
 #endif
 }
 
-PassRefPtr<DocumentParser> FTPDirectoryDocument::createParser()
+RefPtr<DocumentParser> FTPDirectoryDocument::createParser()
 {
     return FTPDirectoryDocumentParser::create(*this);
 }

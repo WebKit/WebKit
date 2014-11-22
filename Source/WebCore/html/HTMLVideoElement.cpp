@@ -55,11 +55,11 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
         m_defaultPosterURL = document.settings()->defaultVideoPosterURL();
 }
 
-PassRefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+RefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     RefPtr<HTMLVideoElement> videoElement(adoptRef(new HTMLVideoElement(tagName, document, createdByParser)));
     videoElement->suspendIfNeeded();
-    return videoElement.release();
+    return videoElement;
 }
 
 bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style) 

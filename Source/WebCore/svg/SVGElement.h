@@ -66,7 +66,7 @@ public:
     static bool isAnimatableCSSProperty(const QualifiedName&);
     bool isPresentationAttributeWithSVGDOM(const QualifiedName&);
     bool isKnownAttribute(const QualifiedName&);
-    PassRefPtr<CSSValue> getPresentationAttribute(const String& name);
+    RefPtr<CSSValue> getPresentationAttribute(const String& name);
     virtual bool supportsMarkers() const { return false; }
     bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.isEmpty(); }
     virtual bool needsPendingResourceHandling() const { return true; }
@@ -117,7 +117,7 @@ public:
     void synchronizeAnimatedSVGAttribute(const QualifiedName&) const;
     static void synchronizeAllAnimatedSVGAttribute(SVGElement*);
  
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
+    virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
 
     static void synchronizeRequiredFeatures(SVGElement* contextElement);
     static void synchronizeRequiredExtensions(SVGElement* contextElement);

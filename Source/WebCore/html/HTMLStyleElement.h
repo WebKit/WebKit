@@ -36,7 +36,7 @@ typedef EventSender<HTMLStyleElement> StyleEventSender;
 
 class HTMLStyleElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static RefPtr<HTMLStyleElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLStyleElement();
 
     CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }

@@ -43,12 +43,12 @@ inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Do
 {
 }
 
-PassRefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLDataListElement(tagName, document));
 }
 
-PassRefPtr<HTMLCollection> HTMLDataListElement::options()
+RefPtr<HTMLCollection> HTMLDataListElement::options()
 {
     return ensureCachedHTMLCollection(DataListOptions);
 }

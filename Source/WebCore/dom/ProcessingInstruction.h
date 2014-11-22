@@ -34,7 +34,7 @@ class CSSStyleSheet;
 
 class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
 public:
-    static PassRefPtr<ProcessingInstruction> create(Document&, const String& target, const String& data);
+    static RefPtr<ProcessingInstruction> create(Document&, const String& target, const String& data);
     virtual ~ProcessingInstruction();
 
     const String& target() const { return m_target; }
@@ -58,7 +58,7 @@ private:
 
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNode(bool deep) override;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;

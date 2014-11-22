@@ -33,8 +33,8 @@ class ScriptExecutionContext;
 
 class DocumentFragment : public ContainerNode {
 public:
-    static PassRefPtr<DocumentFragment> create(Document&);
-    static PassRefPtr<DocumentFragment> create(ScriptExecutionContext&);
+    static RefPtr<DocumentFragment> create(Document&);
+    static RefPtr<DocumentFragment> create(ScriptExecutionContext&);
 
     void parseHTML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     bool parseXML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
@@ -48,7 +48,7 @@ protected:
 
 private:
     virtual NodeType nodeType() const override final;
-    virtual PassRefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNode(bool deep) override;
     virtual bool childTypeAllowed(NodeType) const override;
 };
 

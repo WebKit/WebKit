@@ -1,3 +1,13 @@
+2014-11-22  Andreas Kling  <akling@apple.com>
+
+        Convert PassRefPtr return types to RefPtr.
+        <https://webkit.org/b/138995>
+
+        Reviewed by Anders Carlsson.
+
+        Convert an assortment of DOM and HTML related functions
+        to return RefPtr instead of PassRefPtr.
+
 2014-11-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed iOS build fix; move new symbols out of Mac-only exports.

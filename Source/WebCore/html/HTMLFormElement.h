@@ -46,11 +46,11 @@ class TextEncoding;
 
 class HTMLFormElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLFormElement> create(Document&);
-    static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLFormElement> create(Document&);
+    static RefPtr<HTMLFormElement> create(const QualifiedName&, Document&);
     virtual ~HTMLFormElement();
 
-    PassRefPtr<HTMLCollection> elements();
+    RefPtr<HTMLCollection> elements();
     bool hasNamedElement(const AtomicString&);
     Vector<Ref<Element>> namedElements(const AtomicString&);
 

@@ -32,7 +32,7 @@ class HTMLFormElement;
 
 class HTMLObjectElement final : public HTMLPlugInImageElement, public FormAssociatedElement {
 public:
-    static PassRefPtr<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
+    static RefPtr<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLObjectElement();
 
     bool isDocNamedItem() const { return m_docNamedItem; }

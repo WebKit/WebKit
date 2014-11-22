@@ -365,6 +365,11 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     return view->wrap(exec, globalObject);
 }
 
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, RefPtr<T> ptr)
+{
+    return toJS(exec, globalObject, ptr.get());
+}
+
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<T> ptr)
 {
     return toJS(exec, globalObject, ptr.get());

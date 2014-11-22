@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLBaseFontElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLBaseFontElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLBaseFontElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLBaseFontElement(const QualifiedName&, Document&);

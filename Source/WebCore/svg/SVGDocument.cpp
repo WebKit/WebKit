@@ -76,7 +76,7 @@ void SVGDocument::updatePan(const FloatPoint& pos) const
     }
 }
 
-PassRefPtr<Document> SVGDocument::cloneDocumentWithoutChildren() const
+RefPtr<Document> SVGDocument::cloneDocumentWithoutChildren() const
 {
     return create(nullptr, url());
 }

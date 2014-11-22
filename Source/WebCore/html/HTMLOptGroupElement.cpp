@@ -43,7 +43,7 @@ inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Do
     ASSERT(hasTagName(optgroupTag));
 }
 
-PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLOptGroupElement(tagName, document));
 }

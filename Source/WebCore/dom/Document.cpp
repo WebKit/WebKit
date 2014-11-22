@@ -565,7 +565,7 @@ static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, cons
 }
 #endif
 
-PassRefPtr<Document> Document::create(ScriptExecutionContext& context)
+RefPtr<Document> Document::create(ScriptExecutionContext& context)
 {
     RefPtr<Document> document = adoptRef(new Document(nullptr, URL()));
     document->setSecurityOrigin(context.securityOrigin());
@@ -848,7 +848,7 @@ void Document::childrenChanged(const ChildChange& change)
     clearStyleResolver();
 }
 
-PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)
+RefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)
 {
     if (!isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
@@ -861,22 +861,22 @@ PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionC
     return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
 
-PassRefPtr<DocumentFragment> Document::createDocumentFragment()
+RefPtr<DocumentFragment> Document::createDocumentFragment()
 {
     return DocumentFragment::create(document());
 }
 
-PassRefPtr<Text> Document::createTextNode(const String& data)
+RefPtr<Text> Document::createTextNode(const String& data)
 {
     return Text::create(*this, data);
 }
 
-PassRefPtr<Comment> Document::createComment(const String& data)
+RefPtr<Comment> Document::createComment(const String& data)
 {
     return Comment::create(*this, data);
 }
 
-PassRefPtr<CDATASection> Document::createCDATASection(const String& data, ExceptionCode& ec)
+RefPtr<CDATASection> Document::createCDATASection(const String& data, ExceptionCode& ec)
 {
     if (isHTMLDocument()) {
         ec = NOT_SUPPORTED_ERR;
@@ -885,7 +885,7 @@ PassRefPtr<CDATASection> Document::createCDATASection(const String& data, Except
     return CDATASection::create(*this, data);
 }
 
-PassRefPtr<ProcessingInstruction> Document::createProcessingInstruction(const String& target, const String& data, ExceptionCode& ec)
+RefPtr<ProcessingInstruction> Document::createProcessingInstruction(const String& target, const String& data, ExceptionCode& ec)
 {
     if (!isValidName(target)) {
         ec = INVALID_CHARACTER_ERR;
@@ -898,7 +898,7 @@ PassRefPtr<ProcessingInstruction> Document::createProcessingInstruction(const St
     return ProcessingInstruction::create(*this, target, data);
 }
 
-PassRefPtr<EntityReference> Document::createEntityReference(const String& name, ExceptionCode& ec)
+RefPtr<EntityReference> Document::createEntityReference(const String& name, ExceptionCode& ec)
 {
     if (!isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
@@ -911,18 +911,18 @@ PassRefPtr<EntityReference> Document::createEntityReference(const String& name, 
     return EntityReference::create(*this, name);
 }
 
-PassRefPtr<Text> Document::createEditingTextNode(const String& text)
+RefPtr<Text> Document::createEditingTextNode(const String& text)
 {
     return Text::createEditingText(*this, text);
 }
 
-PassRefPtr<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
+RefPtr<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
 {
     Ref<MutableStyleProperties> propertySet(MutableStyleProperties::create());
     return propertySet->ensureCSSStyleDeclaration();
 }
 
-PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& ec)
+RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& ec)
 {
     ec = 0;
     
@@ -1004,7 +1004,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
 }
 
 
-PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
+RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
 {
     if (!source) {
         ec = NOT_SUPPORTED_ERR;
@@ -1080,7 +1080,7 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
 }
 
 // FIXME: This should really be in a possible ElementFactory class.
-PassRefPtr<Element> Document::createElement(const QualifiedName& name, bool createdByParser)
+RefPtr<Element> Document::createElement(const QualifiedName& name, bool createdByParser)
 {
     RefPtr<Element> element;
 
@@ -1117,7 +1117,7 @@ bool Document::cssCompositingEnabled() const
 
 #if ENABLE(CSS_REGIONS)
 
-PassRefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
+RefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
 {
     if (!cssRegionsEnabled() || !renderView())
         return nullptr;
@@ -1137,7 +1137,7 @@ NamedFlowCollection& Document::namedFlows()
     return *m_namedFlows;
 }
 
-PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
+RefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
 {
     String prefix, localName;
     if (!parseQualifiedName(qualifiedName, prefix, localName, ec))
@@ -1425,12 +1425,12 @@ Element* Document::elementFromPoint(const LayoutPoint& clientPoint)
     return downcast<Element>(node);
 }
 
-PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
+RefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
     return caretRangeFromPoint(LayoutPoint(x, y));
 }
 
-PassRefPtr<Range> Document::caretRangeFromPoint(const LayoutPoint& clientPoint)
+RefPtr<Range> Document::caretRangeFromPoint(const LayoutPoint& clientPoint)
 {
     if (!hasLivingRenderTree())
         return nullptr;
@@ -1681,12 +1681,12 @@ Settings* Document::settings() const
     return m_frame ? &m_frame->settings() : nullptr;
 }
 
-PassRefPtr<Range> Document::createRange()
+RefPtr<Range> Document::createRange()
 {
     return Range::create(*this);
 }
 
-PassRefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned whatToShow, 
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned whatToShow, 
     PassRefPtr<NodeFilter> filter, bool expandEntityReferences, ExceptionCode& ec)
 {
     if (!root) {
@@ -1696,7 +1696,7 @@ PassRefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned whatT
     return NodeIterator::create(root, whatToShow, filter, expandEntityReferences);
 }
 
-PassRefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned whatToShow, 
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned whatToShow, 
     PassRefPtr<NodeFilter> filter, bool expandEntityReferences, ExceptionCode& ec)
 {
     if (!root) {
@@ -2243,7 +2243,7 @@ void Document::setVisuallyOrdered()
         renderView()->style().setRTLOrdering(VisualOrder);
 }
 
-PassRefPtr<DocumentParser> Document::createParser()
+RefPtr<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
     return XMLDocumentParser::create(*this, view());
@@ -3189,16 +3189,16 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     return true;
 }
 
-PassRefPtr<Node> Document::cloneNode(bool deep)
+RefPtr<Node> Document::cloneNode(bool deep)
 {
     RefPtr<Document> clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);
     if (deep)
         cloneChildNodes(clone.get());
-    return clone.release();
+    return clone;
 }
 
-PassRefPtr<Document> Document::cloneDocumentWithoutChildren() const
+RefPtr<Document> Document::cloneDocumentWithoutChildren() const
 {
     return isXHTMLDocument() ? createXHTML(nullptr, url()) : create(nullptr, url());
 }
@@ -3819,7 +3819,7 @@ void Document::enqueueOverflowEvent(PassRefPtr<Event> event)
     m_eventQueue.enqueueEvent(event);
 }
 
-PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
+RefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
 {
     RefPtr<Event> event = EventFactory::create(eventType);
     if (event)
@@ -4486,12 +4486,12 @@ Document& Document::topDocument() const
     return *document;
 }
 
-PassRefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)
+RefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)
 {
     return createAttributeNS(String(), name, ec, true);
 }
 
-PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec, bool shouldIgnoreNamespaceChecks)
+RefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec, bool shouldIgnoreNamespaceChecks)
 {
     String prefix, localName;
     if (!parseQualifiedName(qualifiedName, prefix, localName, ec))
@@ -4524,63 +4524,63 @@ bool Document::hasSVGRootNode() const
     return documentElement() && documentElement()->hasTagName(SVGNames::svgTag);
 }
 
-PassRefPtr<HTMLCollection> Document::ensureCachedCollection(CollectionType type)
+RefPtr<HTMLCollection> Document::ensureCachedCollection(CollectionType type)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLCollection>(*this, type);
 }
 
-PassRefPtr<HTMLCollection> Document::images()
+RefPtr<HTMLCollection> Document::images()
 {
     return ensureCachedCollection(DocImages);
 }
 
-PassRefPtr<HTMLCollection> Document::applets()
+RefPtr<HTMLCollection> Document::applets()
 {
     return ensureCachedCollection(DocApplets);
 }
 
-PassRefPtr<HTMLCollection> Document::embeds()
+RefPtr<HTMLCollection> Document::embeds()
 {
     return ensureCachedCollection(DocEmbeds);
 }
 
-PassRefPtr<HTMLCollection> Document::plugins()
+RefPtr<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
     return ensureCachedCollection(DocEmbeds);
 }
 
-PassRefPtr<HTMLCollection> Document::scripts()
+RefPtr<HTMLCollection> Document::scripts()
 {
     return ensureCachedCollection(DocScripts);
 }
 
-PassRefPtr<HTMLCollection> Document::links()
+RefPtr<HTMLCollection> Document::links()
 {
     return ensureCachedCollection(DocLinks);
 }
 
-PassRefPtr<HTMLCollection> Document::forms()
+RefPtr<HTMLCollection> Document::forms()
 {
     return ensureCachedCollection(DocForms);
 }
 
-PassRefPtr<HTMLCollection> Document::anchors()
+RefPtr<HTMLCollection> Document::anchors()
 {
     return ensureCachedCollection(DocAnchors);
 }
 
-PassRefPtr<HTMLCollection> Document::all()
+RefPtr<HTMLCollection> Document::all()
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllCollection>(*this, DocAll);
 }
 
-PassRefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
+RefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<WindowNameCollection>(*this, WindowNamedItems, name);
 }
 
-PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name)
+RefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name)
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<DocumentNameCollection>(*this, DocumentNamedItems, name);
 }
@@ -4653,7 +4653,7 @@ bool Document::isTelephoneNumberParsingAllowed() const
 }
 #endif
 
-PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
+RefPtr<XPathExpression> Document::createExpression(const String& expression,
                                                        XPathNSResolver* resolver,
                                                        ExceptionCode& ec)
 {
@@ -4662,14 +4662,14 @@ PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
     return m_xpathEvaluator->createExpression(expression, resolver, ec);
 }
 
-PassRefPtr<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
+RefPtr<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = XPathEvaluator::create();
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
-PassRefPtr<XPathResult> Document::evaluate(const String& expression,
+RefPtr<XPathResult> Document::evaluate(const String& expression,
                                            Node* contextNode,
                                            XPathNSResolver* resolver,
                                            unsigned short type,
@@ -5122,7 +5122,7 @@ String Document::displayStringModifiedByEncoding(const String& str) const
     return str;
 }
 
-PassRefPtr<StringImpl> Document::displayStringModifiedByEncoding(PassRefPtr<StringImpl> str) const
+RefPtr<StringImpl> Document::displayStringModifiedByEncoding(PassRefPtr<StringImpl> str) const
 {
     if (m_decoder)
         return m_decoder->encoding().displayString(str);
@@ -5817,7 +5817,7 @@ void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, con
 
 #if !PLATFORM(IOS)
 #if ENABLE(TOUCH_EVENTS)
-PassRefPtr<Touch> Document::createTouch(DOMWindow* window, EventTarget* target, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const
+RefPtr<Touch> Document::createTouch(DOMWindow* window, EventTarget* target, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const
 {
     // FIXME: It's not clear from the documentation at
     // http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/DocumentAdditionsReference/DocumentAdditions/DocumentAdditions.html
@@ -6188,7 +6188,7 @@ Document& Document::ensureTemplateDocument()
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
-PassRefPtr<FontLoader> Document::fonts()
+RefPtr<FontLoader> Document::fonts()
 {
     if (!m_fontloader)
         m_fontloader = FontLoader::create(this);

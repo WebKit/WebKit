@@ -784,7 +784,7 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
     contextElement->synchronizeSystemLanguage();
 }
 
-PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle)
+RefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
     if (!correspondingElement())
         return document().ensureStyleResolver().styleForElement(this, &parentStyle);
@@ -1101,7 +1101,7 @@ void SVGElement::childrenChanged(const ChildChange& change)
     SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
-PassRefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
+RefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
 {
     if (!hasAttributesWithoutUpdate())
         return 0;

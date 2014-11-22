@@ -50,7 +50,7 @@ HTMLFieldSetElement::~HTMLFieldSetElement()
         document().removeDisabledFieldsetElement();
 }
 
-PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+RefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLFieldSetElement(tagName, document, form));
 }
@@ -159,7 +159,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
     return const_cast<HTMLLegendElement*>(childrenOfType<HTMLLegendElement>(*this).first());
 }
 
-PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()
+RefPtr<HTMLCollection> HTMLFieldSetElement::elements()
 {
     return ensureCachedHTMLCollection(FormControls);
 }

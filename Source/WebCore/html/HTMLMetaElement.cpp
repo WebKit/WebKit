@@ -37,7 +37,7 @@ inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(metaTag));
 }
 
-PassRefPtr<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLMetaElement(tagName, document));
 }

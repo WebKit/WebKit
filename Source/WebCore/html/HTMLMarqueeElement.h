@@ -32,7 +32,7 @@ class RenderMarquee;
 
 class HTMLMarqueeElement final : public HTMLElement, private ActiveDOMObject {
 public:
-    static PassRefPtr<HTMLMarqueeElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLMarqueeElement> create(const QualifiedName&, Document&);
 
     int minimumDelay() const;
 

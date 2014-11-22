@@ -48,13 +48,13 @@ public:
     };
 
     // Used by document fragment node and context element.
-    static PassRefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, ItemType type)
+    static RefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, ItemType type)
     {
         return adoptRef(new HTMLStackItem(node, type));
     }
 
     // Used by HTMLElementStack and HTMLFormattingElementList.
-    static PassRefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, AtomicHTMLToken* token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+    static RefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, AtomicHTMLToken* token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
     {
         return adoptRef(new HTMLStackItem(node, token, namespaceURI));
     }

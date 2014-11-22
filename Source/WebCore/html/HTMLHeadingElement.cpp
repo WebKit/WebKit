@@ -30,7 +30,7 @@ inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Docu
 {
 }
 
-PassRefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLHeadingElement(tagName, document));
 }

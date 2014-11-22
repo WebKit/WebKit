@@ -53,14 +53,14 @@ Attr::Attr(Document& document, const QualifiedName& name, const AtomicString& st
 {
 }
 
-PassRefPtr<Attr> Attr::create(Element* element, const QualifiedName& name)
+RefPtr<Attr> Attr::create(Element* element, const QualifiedName& name)
 {
     RefPtr<Attr> attr = adoptRef(new Attr(element, name));
     attr->createTextChild();
     return attr.release();
 }
 
-PassRefPtr<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomicString& value)
+RefPtr<Attr> Attr::create(Document& document, const QualifiedName& name, const AtomicString& value)
 {
     RefPtr<Attr> attr = adoptRef(new Attr(document, name, value));
     attr->createTextChild();
@@ -137,7 +137,7 @@ void Attr::setNodeValue(const String& v, ExceptionCode& ec)
     setValue(v, ec);
 }
 
-PassRefPtr<Node> Attr::cloneNode(bool /*deep*/)
+RefPtr<Node> Attr::cloneNode(bool /*deep*/)
 {
     RefPtr<Attr> clone = adoptRef(new Attr(document(), qualifiedName(), value()));
     cloneChildNodes(clone.get());

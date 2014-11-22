@@ -29,8 +29,8 @@ namespace WebCore {
 
 class HTMLHRElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLHRElement> create(Document&);
-    static PassRefPtr<HTMLHRElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLHRElement> create(Document&);
+    static RefPtr<HTMLHRElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLHRElement(const QualifiedName&, Document&);

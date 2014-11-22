@@ -192,7 +192,7 @@ bool SVGScriptElement::hasSourceAttribute() const
     return hasAttribute(XLinkNames::hrefAttr);
 }
 
-PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren()
+RefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren()
 {
     return adoptRef(new SVGScriptElement(tagQName(), document(), false, alreadyStarted()));
 }

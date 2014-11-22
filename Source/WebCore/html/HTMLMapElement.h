@@ -32,8 +32,8 @@ class HTMLImageElement;
     
 class HTMLMapElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLMapElement> create(Document&);
-    static PassRefPtr<HTMLMapElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLMapElement> create(Document&);
+    static RefPtr<HTMLMapElement> create(const QualifiedName&, Document&);
     virtual ~HTMLMapElement();
 
     const AtomicString& getName() const { return m_name; }
@@ -41,7 +41,7 @@ public:
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     
     HTMLImageElement* imageElement();
-    PassRefPtr<HTMLCollection> areas();
+    RefPtr<HTMLCollection> areas();
 
 private:
     HTMLMapElement(const QualifiedName&, Document&);

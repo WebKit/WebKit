@@ -31,7 +31,7 @@ namespace WebCore {
 
 class TextDocument final : public HTMLDocument {
 public:
-    static PassRefPtr<TextDocument> create(Frame* frame, const URL& url)
+    static RefPtr<TextDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new TextDocument(frame, url));
     }
@@ -39,7 +39,7 @@ public:
 private:
     TextDocument(Frame*, const URL&);
     
-    virtual PassRefPtr<DocumentParser> createParser() override;
+    virtual RefPtr<DocumentParser> createParser() override;
 };
 
 }

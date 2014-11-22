@@ -71,12 +71,12 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(formTag));
 }
 
-PassRefPtr<HTMLFormElement> HTMLFormElement::create(Document& document)
+RefPtr<HTMLFormElement> HTMLFormElement::create(Document& document)
 {
     return adoptRef(new HTMLFormElement(formTag, document));
 }
 
-PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLFormElement(tagName, document));
 }
@@ -640,7 +640,7 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
     removeFromVector(m_imageElements, e);
 }
 
-PassRefPtr<HTMLCollection> HTMLFormElement::elements()
+RefPtr<HTMLCollection> HTMLFormElement::elements()
 {
     return ensureCachedHTMLCollection(FormControls);
 }

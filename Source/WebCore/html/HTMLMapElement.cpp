@@ -41,12 +41,12 @@ HTMLMapElement::HTMLMapElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(mapTag));
 }
 
-PassRefPtr<HTMLMapElement> HTMLMapElement::create(Document& document)
+RefPtr<HTMLMapElement> HTMLMapElement::create(Document& document)
 {
     return adoptRef(new HTMLMapElement(mapTag, document));
 }
 
-PassRefPtr<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLMapElement(tagName, document));
 }
@@ -110,7 +110,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     HTMLElement::parseAttribute(name, value);
 }
 
-PassRefPtr<HTMLCollection> HTMLMapElement::areas()
+RefPtr<HTMLCollection> HTMLMapElement::areas()
 {
     return ensureCachedHTMLCollection(MapAreas);
 }

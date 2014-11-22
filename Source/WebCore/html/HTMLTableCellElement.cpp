@@ -44,7 +44,7 @@ inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, 
 {
 }
 
-PassRefPtr<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTableCellElement(tagName, document));
 }

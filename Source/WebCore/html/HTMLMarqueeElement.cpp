@@ -42,7 +42,7 @@ inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Docu
     ASSERT(hasTagName(marqueeTag));
 }
 
-PassRefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document& document)
 {
     RefPtr<HTMLMarqueeElement> marqueeElement(adoptRef(new HTMLMarqueeElement(tagName, document)));
     marqueeElement->suspendIfNeeded();

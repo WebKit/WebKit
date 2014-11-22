@@ -70,7 +70,7 @@ PseudoElement::~PseudoElement()
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), this);
 }
 
-PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle)
+RefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
     return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
 }

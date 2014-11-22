@@ -37,7 +37,7 @@ inline HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(paramTag));
 }
 
-PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLParamElement(tagName, document));
 }

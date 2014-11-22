@@ -37,12 +37,12 @@ HTMLUListElement::HTMLUListElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(ulTag));
 }
 
-PassRefPtr<HTMLUListElement> HTMLUListElement::create(Document& document)
+RefPtr<HTMLUListElement> HTMLUListElement::create(Document& document)
 {
     return adoptRef(new HTMLUListElement(ulTag, document));
 }
 
-PassRefPtr<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLUListElement(tagName, document));
 }

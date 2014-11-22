@@ -38,7 +38,7 @@ class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState, public TypeAheadDataSource {
 public:
-    static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static RefPtr<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     WEBCORE_EXPORT int selectedIndex() const;
     void setSelectedIndex(int);
@@ -66,8 +66,8 @@ public:
     WEBCORE_EXPORT String value() const;
     void setValue(const String&);
 
-    PassRefPtr<HTMLOptionsCollection> options();
-    PassRefPtr<HTMLCollection> selectedOptions();
+    RefPtr<HTMLOptionsCollection> options();
+    RefPtr<HTMLCollection> selectedOptions();
 
     void optionElementChildrenChanged();
 

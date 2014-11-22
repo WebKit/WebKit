@@ -42,7 +42,7 @@ inline HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Do
 {
 }
 
-PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTableColElement(tagName, document));
 }

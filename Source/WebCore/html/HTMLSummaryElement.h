@@ -29,7 +29,7 @@ class HTMLDetailsElement;
 
 class HTMLSummaryElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLSummaryElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLSummaryElement> create(const QualifiedName&, Document&);
     bool isMainSummary() const;
     virtual bool willRespondToMouseClickEvents() override;
 

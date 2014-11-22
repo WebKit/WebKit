@@ -39,7 +39,7 @@ inline HTMLBaseElement::HTMLBaseElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(baseTag));
 }
 
-PassRefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLBaseElement(tagName, document));
 }

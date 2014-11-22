@@ -31,12 +31,12 @@ namespace WebCore {
 
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
-    static PassRefPtr<HTMLDocument> create(Frame* frame, const URL& url)
+    static RefPtr<HTMLDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new HTMLDocument(frame, url, HTMLDocumentClass));
     }
 
-    static PassRefPtr<HTMLDocument> createSynthesizedDocument(Frame* frame, const URL& url)
+    static RefPtr<HTMLDocument> createSynthesizedDocument(Frame* frame, const URL& url)
     {
         return adoptRef(new HTMLDocument(frame, url, HTMLDocumentClass, Synthesized));
     }
@@ -86,12 +86,11 @@ protected:
     HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
 
 private:
-    virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&) override;
+    virtual RefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&) override;
 
     virtual bool isFrameSet() const override;
-    virtual PassRefPtr<DocumentParser> createParser() override;
-
-    virtual PassRefPtr<Document> cloneDocumentWithoutChildren() const override final;
+    virtual RefPtr<DocumentParser> createParser() override;
+    virtual RefPtr<Document> cloneDocumentWithoutChildren() const override final;
 
     DocumentOrderedMap m_documentNamedItem;
     DocumentOrderedMap m_windowNamedItem;

@@ -34,10 +34,10 @@ class HTMLCollection;
 
 class HTMLFieldSetElement final : public HTMLFormControlElement {
 public:
-    static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static RefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     HTMLLegendElement* legend() const;
-    PassRefPtr<HTMLCollection> elements();
+    RefPtr<HTMLCollection> elements();
 
     const Vector<FormAssociatedElement*>& associatedElements() const;
     unsigned length() const;

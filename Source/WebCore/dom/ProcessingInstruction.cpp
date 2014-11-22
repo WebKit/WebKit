@@ -52,7 +52,7 @@ inline ProcessingInstruction::ProcessingInstruction(Document& document, const St
 {
 }
 
-PassRefPtr<ProcessingInstruction> ProcessingInstruction::create(Document& document, const String& target, const String& data)
+RefPtr<ProcessingInstruction> ProcessingInstruction::create(Document& document, const String& target, const String& data)
 {
     return adoptRef(new ProcessingInstruction(document, target, data));
 }
@@ -79,7 +79,7 @@ Node::NodeType ProcessingInstruction::nodeType() const
     return PROCESSING_INSTRUCTION_NODE;
 }
 
-PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
+RefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?

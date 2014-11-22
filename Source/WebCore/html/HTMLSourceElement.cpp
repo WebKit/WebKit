@@ -46,7 +46,7 @@ inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(sourceTag));
 }
 
-PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLSourceElement(tagName, document));
 }

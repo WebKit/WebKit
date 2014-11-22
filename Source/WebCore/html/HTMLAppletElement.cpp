@@ -48,7 +48,7 @@ HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document& doc
     m_serviceType = "application/x-java-applet";
 }
 
-PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+RefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     return adoptRef(new HTMLAppletElement(tagName, document, createdByParser));
 }

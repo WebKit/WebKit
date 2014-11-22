@@ -34,7 +34,7 @@ namespace WebCore {
 
 class HTMLSourceElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLSourceElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLSourceElement> create(const QualifiedName&, Document&);
 
     String media() const;
     String type() const;

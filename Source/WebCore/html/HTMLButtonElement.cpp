@@ -47,7 +47,7 @@ inline HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(buttonTag));
 }
 
-PassRefPtr<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+RefPtr<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLButtonElement(tagName, document, form));
 }

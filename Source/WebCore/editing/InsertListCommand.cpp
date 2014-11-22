@@ -47,7 +47,7 @@ static Node* enclosingListChild(Node* node, Node* listNode)
     return listChild;
 }
 
-PassRefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
+RefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
 {
     RefPtr<InsertListCommand> insertCommand = create(document, type);
     insertCommand->apply();
@@ -64,7 +64,7 @@ HTMLElement* InsertListCommand::fixOrphanedListChild(Node* node)
     return listElement.get();
 }
 
-PassRefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<HTMLElement> passedList)
+RefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<HTMLElement> passedList)
 {
     RefPtr<HTMLElement> list = passedList;
     Element* previousList = list->previousElementSibling();
@@ -75,14 +75,14 @@ PassRefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<
         return nullptr;
     Element* sibling = ElementTraversal::nextSibling(list.get());
     if (!is<HTMLElement>(sibling))
-        return list.release();
+        return list;
 
     RefPtr<HTMLElement> nextList = downcast<HTMLElement>(sibling);
     if (canMergeLists(list.get(), nextList.get())) {
         mergeIdenticalElements(list, nextList);
-        return nextList.release();
+        return nextList;
     }
-    return list.release();
+    return list;
 }
 
 bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection, const QualifiedName& listTag)
@@ -331,7 +331,7 @@ static Element* adjacentEnclosingList(const VisiblePosition& pos, const VisibleP
     return listNode;
 }
 
-PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag)
+RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag)
 {
     VisiblePosition start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
     VisiblePosition end = endOfParagraph(start, CanSkipOverEditingBoundary);

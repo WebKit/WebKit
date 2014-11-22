@@ -101,11 +101,11 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document&
     setFormControlValueMatchesRenderer(true);
 }
 
-PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+RefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     RefPtr<HTMLTextAreaElement> textArea = adoptRef(new HTMLTextAreaElement(tagName, document, form));
     textArea->ensureUserAgentShadowRoot();
-    return textArea.release();
+    return textArea;
 }
 
 void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot* root)

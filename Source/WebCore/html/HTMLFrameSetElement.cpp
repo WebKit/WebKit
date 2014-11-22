@@ -58,7 +58,7 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document&
     setHasCustomStyleResolveCallbacks();
 }
 
-PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLFrameSetElement(tagName, document));
 }

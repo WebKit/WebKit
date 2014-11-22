@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLFrameElement final : public HTMLFrameElementBase {
 public:
-    static PassRefPtr<HTMLFrameElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLFrameElement> create(const QualifiedName&, Document&);
 
     bool hasFrameBorder() const { return m_frameBorder; }
 

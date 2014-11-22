@@ -37,8 +37,8 @@ class HTMLTableSectionElement;
 
 class HTMLTableElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLTableElement> create(Document&);
-    static PassRefPtr<HTMLTableElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLTableElement> create(Document&);
+    static RefPtr<HTMLTableElement> create(const QualifiedName&, Document&);
 
     HTMLTableCaptionElement* caption() const;
     void setCaption(PassRefPtr<HTMLTableCaptionElement>, ExceptionCode&);
@@ -49,19 +49,19 @@ public:
     HTMLTableSectionElement* tFoot() const;
     void setTFoot(PassRefPtr<HTMLTableSectionElement>, ExceptionCode&);
 
-    PassRefPtr<HTMLElement> createTHead();
+    RefPtr<HTMLElement> createTHead();
     void deleteTHead();
-    PassRefPtr<HTMLElement> createTFoot();
+    RefPtr<HTMLElement> createTFoot();
     void deleteTFoot();
-    PassRefPtr<HTMLElement> createTBody();
-    PassRefPtr<HTMLElement> createCaption();
+    RefPtr<HTMLElement> createTBody();
+    RefPtr<HTMLElement> createCaption();
     void deleteCaption();
-    PassRefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
-    PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
+    RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
+    RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
-    PassRefPtr<HTMLCollection> rows();
-    PassRefPtr<HTMLCollection> tBodies();
+    RefPtr<HTMLCollection> rows();
+    RefPtr<HTMLCollection> tBodies();
 
     const AtomicString& rules() const;
     const AtomicString& summary() const;
@@ -87,7 +87,7 @@ private:
 
     CellBorders cellBorders() const;
 
-    PassRefPtr<StyleProperties> createSharedCellStyle();
+    RefPtr<StyleProperties> createSharedCellStyle();
 
     HTMLTableSectionElement* lastBody() const;
 

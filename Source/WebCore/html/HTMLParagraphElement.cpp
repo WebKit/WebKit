@@ -39,12 +39,12 @@ inline HTMLParagraphElement::HTMLParagraphElement(const QualifiedName& tagName, 
     ASSERT(hasTagName(pTag));
 }
 
-PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(Document& document)
+RefPtr<HTMLParagraphElement> HTMLParagraphElement::create(Document& document)
 {
     return adoptRef(new HTMLParagraphElement(pTag, document));
 }
 
-PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }

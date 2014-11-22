@@ -37,12 +37,12 @@ HTMLHeadElement::HTMLHeadElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(headTag));
 }
 
-PassRefPtr<HTMLHeadElement> HTMLHeadElement::create(Document& document)
+RefPtr<HTMLHeadElement> HTMLHeadElement::create(Document& document)
 {
     return adoptRef(new HTMLHeadElement(headTag, document));
 }
 
-PassRefPtr<HTMLHeadElement> HTMLHeadElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLHeadElement> HTMLHeadElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLHeadElement(tagName, document));
 }

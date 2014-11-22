@@ -38,12 +38,12 @@ HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(divTag));
 }
 
-PassRefPtr<HTMLDivElement> HTMLDivElement::create(Document& document)
+RefPtr<HTMLDivElement> HTMLDivElement::create(Document& document)
 {
     return adoptRef(new HTMLDivElement(divTag, document));
 }
 
-PassRefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLDivElement(tagName, document));
 }

@@ -86,12 +86,12 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     ASSERT(hasTagName(canvasTag));
 }
 
-PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(Document& document)
+RefPtr<HTMLCanvasElement> HTMLCanvasElement::create(Document& document)
 {
     return adoptRef(new HTMLCanvasElement(canvasTag, document));
 }
 
-PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLCanvasElement(tagName, document));
 }
@@ -466,7 +466,7 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
     return buffer()->toDataURL(encodingMimeType, quality);
 }
 
-PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
+RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
     if (!is3D())

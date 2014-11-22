@@ -80,7 +80,7 @@ PassRefPtr<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Documen
     return adoptRef(new WebVTTElement(nodeType, document));
 }
 
-PassRefPtr<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren()
+RefPtr<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren()
 {
     RefPtr<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), document());
     clone->setLanguage(m_language);

@@ -64,7 +64,7 @@ HTMLTrackElement::~HTMLTrackElement()
         m_track->clearClient();
 }
 
-PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTrackElement(tagName, document));
 }

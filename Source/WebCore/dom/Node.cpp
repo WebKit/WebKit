@@ -403,7 +403,7 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
     // By default, setting nodeValue has no effect.
 }
 
-PassRefPtr<NodeList> Node::childNodes()
+RefPtr<NodeList> Node::childNodes()
 {
     if (is<ContainerNode>(*this))
         return ensureRareData().ensureNodeLists().ensureChildNodeList(downcast<ContainerNode>(*this));

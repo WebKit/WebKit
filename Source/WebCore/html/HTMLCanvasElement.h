@@ -63,8 +63,8 @@ public:
 
 class HTMLCanvasElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLCanvasElement> create(Document&);
-    static PassRefPtr<HTMLCanvasElement> create(const QualifiedName&, Document&);
+    static RefPtr<HTMLCanvasElement> create(Document&);
+    static RefPtr<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
 
     void addObserver(CanvasObserver&);
@@ -115,7 +115,7 @@ public:
     ImageBuffer* buffer() const;
     Image* copiedImage() const;
     void clearCopiedImage();
-    PassRefPtr<ImageData> getImageData();
+    RefPtr<ImageData> getImageData();
     void makePresentationCopy();
     void clearPresentationCopy();
 

@@ -43,7 +43,7 @@ inline HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document
     setHasCustomStyleResolveCallbacks();
 }
 
-PassRefPtr<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLFrameElement(tagName, document));
 }

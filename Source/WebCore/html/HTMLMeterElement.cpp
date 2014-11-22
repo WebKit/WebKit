@@ -50,7 +50,7 @@ HTMLMeterElement::~HTMLMeterElement()
 {
 }
 
-PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
 {
     RefPtr<HTMLMeterElement> meter = adoptRef(new HTMLMeterElement(tagName, document));
     meter->ensureUserAgentShadowRoot();

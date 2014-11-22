@@ -31,7 +31,7 @@ inline EntityReference::EntityReference(Document& document, const String& entity
 {
 }
 
-PassRefPtr<EntityReference> EntityReference::create(Document& document, const String& entityName)
+RefPtr<EntityReference> EntityReference::create(Document& document, const String& entityName)
 {
     return adoptRef(new EntityReference(document, entityName));
 }
@@ -46,7 +46,7 @@ Node::NodeType EntityReference::nodeType() const
     return ENTITY_REFERENCE_NODE;
 }
 
-PassRefPtr<Node> EntityReference::cloneNode(bool)
+RefPtr<Node> EntityReference::cloneNode(bool)
 {
     return create(document(), m_entityName);
 }

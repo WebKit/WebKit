@@ -63,7 +63,7 @@ HTMLStyleElement::~HTMLStyleElement()
     styleLoadEventSender().cancelEvent(*this);
 }
 
-PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+RefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     return adoptRef(new HTMLStyleElement(tagName, document, createdByParser));
 }

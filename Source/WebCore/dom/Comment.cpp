@@ -31,12 +31,12 @@ inline Comment::Comment(Document& document, const String& text)
 {
 }
 
-PassRefPtr<Comment> Comment::create(Document& document, const String& text)
+RefPtr<Comment> Comment::create(Document& document, const String& text)
 {
     return adoptRef(new Comment(document, text));
 }
 
-PassRefPtr<Comment> Comment::create(ScriptExecutionContext& context, const String& text)
+RefPtr<Comment> Comment::create(ScriptExecutionContext& context, const String& text)
 {
     return adoptRef(new Comment(downcast<Document>(context), text));
 }
@@ -51,7 +51,7 @@ Node::NodeType Comment::nodeType() const
     return COMMENT_NODE;
 }
 
-PassRefPtr<Node> Comment::cloneNode(bool /*deep*/)
+RefPtr<Node> Comment::cloneNode(bool /*deep*/)
 {
     return create(document(), data());
 }

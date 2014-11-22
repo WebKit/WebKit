@@ -76,7 +76,7 @@ inline HTMLObjectElement::~HTMLObjectElement()
 {
 }
 
-PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+RefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
     return adoptRef(new HTMLObjectElement(tagName, document, form, createdByParser));
 }

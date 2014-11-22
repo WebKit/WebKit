@@ -112,12 +112,12 @@ bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldSt
     return hasNoAttributeOrOnlyStyleAttribute(downcast<HTMLFontElement>(element), shouldStyleAttributeBeEmpty);
 }
 
-static PassRefPtr<Element> createFontElement(Document& document)
+static RefPtr<Element> createFontElement(Document& document)
 {
     return createHTMLElement(document, fontTag);
 }
 
-PassRefPtr<HTMLElement> createStyleSpanElement(Document& document)
+RefPtr<HTMLElement> createStyleSpanElement(Document& document)
 {
     return createHTMLElement(document, spanTag);
 }

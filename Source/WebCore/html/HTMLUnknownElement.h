@@ -36,7 +36,7 @@ namespace WebCore {
 
 class HTMLUnknownElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLUnknownElement> create(const QualifiedName& tagName, Document& document)
+    static RefPtr<HTMLUnknownElement> create(const QualifiedName& tagName, Document& document)
     {
         return adoptRef(new HTMLUnknownElement(tagName, document));
     }

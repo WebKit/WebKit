@@ -40,9 +40,9 @@ enum TranslateAttributeMode {
 
 class HTMLElement : public StyledElement {
 public:
-    static PassRefPtr<HTMLElement> create(const QualifiedName& tagName, Document&);
+    static RefPtr<HTMLElement> create(const QualifiedName& tagName, Document&);
 
-    PassRefPtr<HTMLCollection> children();
+    RefPtr<HTMLCollection> children();
 
     WEBCORE_EXPORT virtual String title() const override final;
 
@@ -128,7 +128,7 @@ private:
     virtual HTMLFormElement* virtualForm() const;
 
     Node* insertAdjacent(const String& where, Node* newChild, ExceptionCode&);
-    PassRefPtr<DocumentFragment> textToFragment(const String&, ExceptionCode&);
+    RefPtr<DocumentFragment> textToFragment(const String&, ExceptionCode&);
 
     void dirAttributeChanged(const AtomicString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);

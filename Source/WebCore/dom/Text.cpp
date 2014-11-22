@@ -38,17 +38,17 @@
 
 namespace WebCore {
 
-PassRefPtr<Text> Text::create(Document& document, const String& data)
+RefPtr<Text> Text::create(Document& document, const String& data)
 {
     return adoptRef(new Text(document, data, CreateText));
 }
 
-PassRefPtr<Text> Text::create(ScriptExecutionContext& context, const String& data)
+RefPtr<Text> Text::create(ScriptExecutionContext& context, const String& data)
 {
     return adoptRef(new Text(downcast<Document>(context), data, CreateText));
 }
 
-PassRefPtr<Text> Text::createEditingText(Document& document, const String& data)
+RefPtr<Text> Text::createEditingText(Document& document, const String& data)
 {
     return adoptRef(new Text(document, data, CreateEditingText));
 }
@@ -58,7 +58,7 @@ Text::~Text()
     ASSERT(!renderer());
 }
 
-PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
+RefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
 {
     ec = 0;
 
@@ -124,7 +124,7 @@ String Text::wholeText() const
     return result.toString();
 }
 
-PassRefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
+RefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
 {
     // Remove all adjacent text nodes, and replace the contents of this one.
 
@@ -169,11 +169,10 @@ Node::NodeType Text::nodeType() const
     return TEXT_NODE;
 }
 
-PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
+RefPtr<Node> Text::cloneNode(bool /*deep*/)
 {
     return create(document(), data());
 }
-
 
 static bool isSVGShadowText(Text* text)
 {
@@ -204,12 +203,12 @@ bool Text::childTypeAllowed(NodeType) const
     return false;
 }
 
-PassRefPtr<Text> Text::virtualCreate(const String& data)
+RefPtr<Text> Text::virtualCreate(const String& data)
 {
     return create(document(), data);
 }
 
-PassRefPtr<Text> Text::createWithLengthLimit(Document& document, const String& data, unsigned start, unsigned lengthLimit)
+RefPtr<Text> Text::createWithLengthLimit(Document& document, const String& data, unsigned start, unsigned lengthLimit)
 {
     unsigned dataLength = data.length();
 

@@ -62,7 +62,7 @@ private:
     SliderThumbElement(Document&);
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
     virtual bool isDisabledFormControl() const override;
     virtual bool matchesReadWritePseudoClass() const override;
     virtual Element* focusDelegate() override;

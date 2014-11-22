@@ -224,7 +224,7 @@ void HTMLDocument::releaseEvents()
 {
 }
 
-PassRefPtr<DocumentParser> HTMLDocument::createParser()
+RefPtr<DocumentParser> HTMLDocument::createParser()
 {
     return HTMLDocumentParser::create(*this);
 }
@@ -233,7 +233,7 @@ PassRefPtr<DocumentParser> HTMLDocument::createParser()
 // not part of the DOM
 // --------------------------------------------------------------------------
 
-PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, ExceptionCode& ec)
+RefPtr<Element> HTMLDocument::createElement(const AtomicString& name, ExceptionCode& ec)
 {
     if (!isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
@@ -342,7 +342,7 @@ bool HTMLDocument::isFrameSet() const
     return is<HTMLFrameSetElement>(body());
 }
 
-PassRefPtr<Document> HTMLDocument::cloneDocumentWithoutChildren() const
+RefPtr<Document> HTMLDocument::cloneDocumentWithoutChildren() const
 {
     return create(nullptr, url());
 }

@@ -55,7 +55,7 @@ HTMLTemplateElement::~HTMLTemplateElement()
         m_content->clearHost();
 }
 
-PassRefPtr<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName& tagName, Document& document)
+RefPtr<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTemplateElement(tagName, document));
 }
@@ -68,7 +68,7 @@ DocumentFragment* HTMLTemplateElement::content() const
     return m_content.get();
 }
 
-PassRefPtr<Node> HTMLTemplateElement::cloneNode(bool deep)
+RefPtr<Node> HTMLTemplateElement::cloneNode(bool deep)
 {
     if (!deep)
         return cloneElementWithoutChildren();
