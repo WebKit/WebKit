@@ -45,7 +45,7 @@ public:
     BatteryStatus* batteryStatus() const;
 
 private:
-    void timerFired(Timer*);
+    void timerFired();
     static void getBatteryStatus(void* data, void* replyData, DBusError*);
     static void setBatteryClient(void* data, void* replyData, DBusError*);
 

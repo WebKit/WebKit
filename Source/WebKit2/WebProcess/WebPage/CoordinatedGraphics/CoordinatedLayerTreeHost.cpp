@@ -64,7 +64,7 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_isValid(true)
     , m_isSuspended(false)
     , m_isWaitingForRenderer(true)
-    , m_layerFlushTimer(this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
+    , m_layerFlushTimer(*this, &CoordinatedLayerTreeHost::layerFlushTimerFired)
     , m_layerFlushSchedulingEnabled(true)
     , m_forceRepaintAsyncCallbackID(0)
     , m_contentLayer(nullptr)
@@ -222,7 +222,7 @@ void CoordinatedLayerTreeHost::performScheduledLayerFlush()
     }
 }
 
-void CoordinatedLayerTreeHost::layerFlushTimerFired(Timer*)
+void CoordinatedLayerTreeHost::layerFlushTimerFired()
 {
     performScheduledLayerFlush();
 }

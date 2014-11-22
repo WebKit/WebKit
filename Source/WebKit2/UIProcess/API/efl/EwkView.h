@@ -216,7 +216,7 @@ private:
     WebCore::IntSize size() const;
     WebCore::IntSize deviceSize() const;
 
-    void displayTimerFired(WebCore::Timer*);
+    void displayTimerFired();
 
     // Evas_Smart_Class callback interface:
     static void handleEvasObjectAdd(Evas_Object*);

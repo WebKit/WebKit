@@ -201,7 +201,7 @@ private:
     void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
 
-    void animationStartedTimerFired(Timer*);
+    void animationStartedTimerFired();
 
     CoordinatedLayerID m_id;
     CoordinatedGraphicsLayerState m_layerState;

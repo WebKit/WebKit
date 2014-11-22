@@ -122,7 +122,7 @@ private:
 
     void scheduleReleaseInactiveAtlases();
 
-    void releaseInactiveAtlasesTimerFired(Timer*);
+    void releaseInactiveAtlasesTimerFired();
 
     Page* m_page;
     CompositingCoordinator::Client* m_client;

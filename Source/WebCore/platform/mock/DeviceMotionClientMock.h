@@ -55,7 +55,7 @@ public:
     void setMotion(PassRefPtr<DeviceMotionData>);
 
 private:
-    void timerFired(Timer*);
+    void timerFired();
 
     RefPtr<DeviceMotionData> m_motion;
     DeviceMotionController* m_controller;

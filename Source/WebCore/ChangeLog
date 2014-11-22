@@ -1,3 +1,55 @@
+2014-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r176459.
+
+        r176459 removed Timer parameter in timer callbacks only for Mac port.
+        So this patch applies it to remaining classes for EFL port.
+
+        No new tests, fix build break.
+
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::RTCDTMFSender):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        * Modules/vibration/Vibration.cpp:
+        (WebCore::Vibration::Vibration):
+        (WebCore::Vibration::timerFired):
+        * Modules/vibration/Vibration.h:
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::GCController):
+        * platform/efl/BatteryProviderEfl.cpp:
+        (WebCore::BatteryProviderEfl::BatteryProviderEfl):
+        (WebCore::BatteryProviderEfl::timerFired):
+        * platform/efl/BatteryProviderEfl.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::BitmapTexturePool::BitmapTexturePool):
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::CompositingCoordinator):
+        (WebCore::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::animationStartedTimerFired):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::CoordinatedImageBacking::CoordinatedImageBacking):
+        (WebCore::CoordinatedImageBacking::clearContentsTimerFired):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.h:
+        * platform/mock/DeviceMotionClientMock.cpp:
+        (WebCore::DeviceMotionClientMock::DeviceMotionClientMock):
+        (WebCore::DeviceMotionClientMock::timerFired):
+        * platform/mock/DeviceMotionClientMock.h:
+        * platform/mock/TimerEventBasedMock.h:
+        (WebCore::TimerEvent::TimerEvent):
+        (WebCore::TimerEvent::timerFired):
+
 2014-11-21  Benjamin Poulain  <bpoulain@apple.com>
 
         Start using the new :not() and :matches() in the Web Inspector

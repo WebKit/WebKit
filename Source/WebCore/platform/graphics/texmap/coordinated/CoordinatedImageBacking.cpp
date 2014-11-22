@@ -66,7 +66,7 @@ CoordinatedImageBacking::CoordinatedImageBacking(Client* client, PassRefPtr<Imag
     : m_client(client)
     , m_image(image)
     , m_id(getCoordinatedImageBackingID(m_image.get()))
-    , m_clearContentsTimer(this, &CoordinatedImageBacking::clearContentsTimerFired)
+    , m_clearContentsTimer(*this, &CoordinatedImageBacking::clearContentsTimerFired)
     , m_isDirty(false)
     , m_isVisible(false)
 {
@@ -173,7 +173,7 @@ void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
     }
 }
 
-void CoordinatedImageBacking::clearContentsTimerFired(Timer*)
+void CoordinatedImageBacking::clearContentsTimerFired()
 {
     m_client->clearImageBackingContents(id());
 }

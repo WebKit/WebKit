@@ -33,7 +33,7 @@ const unsigned MaxVibrationDuration = 10000;
 
 Vibration::Vibration(VibrationClient* client)
     : m_vibrationClient(client)
-    , m_timer(this, &Vibration::timerFired)
+    , m_timer(*this, &Vibration::timerFired)
     , m_state(State::Idle)
 {
 }
@@ -91,10 +91,8 @@ void Vibration::cancelVibration()
     }
 }
 
-void Vibration::timerFired(Timer* timer)
+void Vibration::timerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_timer);
-
     m_timer.stop();
 
     if (m_pattern.isEmpty()) {

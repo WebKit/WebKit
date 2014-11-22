@@ -59,7 +59,7 @@ CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinato
     , m_isFlushingLayerChanges(false)
     , m_shouldSyncFrame(false)
     , m_didInitializeRootCompositingLayer(false)
-    , m_releaseInactiveAtlasesTimer(this, &CompositingCoordinator::releaseInactiveAtlasesTimerFired)
+    , m_releaseInactiveAtlasesTimer(*this, &CompositingCoordinator::releaseInactiveAtlasesTimerFired)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_lastAnimationServiceTime(0)
 #endif
@@ -396,7 +396,7 @@ void CompositingCoordinator::scheduleReleaseInactiveAtlases()
         m_releaseInactiveAtlasesTimer.startRepeating(ReleaseInactiveAtlasesTimerInterval);
 }
 
-void CompositingCoordinator::releaseInactiveAtlasesTimerFired(Timer*)
+void CompositingCoordinator::releaseInactiveAtlasesTimerFired()
 {
     // We always want to keep one atlas for root contents layer.
     std::unique_ptr<UpdateAtlas> atlasToKeepAnyway;

@@ -86,7 +86,7 @@ private:
     void purgeBackingStores();
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
-    void layerFlushTimerFired(WebCore::Timer*);
+    void layerFlushTimerFired();
 
     void updateRootLayers();
 

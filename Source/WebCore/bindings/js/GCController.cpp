@@ -51,7 +51,7 @@ GCController& gcController()
 
 GCController::GCController()
 #if !USE(CF)
-    : m_GCtimer(*this, &GCController::gcTimerFired)
+    : m_GCTimer(*this, &GCController::gcTimerFired)
 #endif
 {
 }

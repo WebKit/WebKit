@@ -32,7 +32,7 @@ namespace WebCore {
 
 DeviceMotionClientMock::DeviceMotionClientMock()
     : m_controller(0)
-    , m_timer(this, &DeviceMotionClientMock::timerFired)
+    , m_timer(*this, &DeviceMotionClientMock::timerFired)
     , m_isUpdating(false)
 {
 }
@@ -62,9 +62,8 @@ void DeviceMotionClientMock::setMotion(PassRefPtr<DeviceMotionData> motion)
         m_timer.startOneShot(0);
 }
 
-void DeviceMotionClientMock::timerFired(Timer* timer)
+void DeviceMotionClientMock::timerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_timer);
     m_timer.stop();
     m_controller->didChangeDeviceMotion(m_motion.get());
 }

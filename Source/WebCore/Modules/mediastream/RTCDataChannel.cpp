@@ -95,7 +95,7 @@ RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, std::unique_ptr<
     , m_stopped(false)
     , m_readyState(ReadyStateConnecting)
     , m_binaryType(BinaryTypeArrayBuffer)
-    , m_scheduledEventtimer(*this, &RTCDataChannel::scheduledEventTimerFired)
+    , m_scheduledEventTimer(*this, &RTCDataChannel::scheduledEventTimerFired)
 {
     m_handler->setClient(this);
 }

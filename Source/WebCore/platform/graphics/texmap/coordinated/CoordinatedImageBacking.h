@@ -72,7 +72,7 @@ private:
 
     void releaseSurfaceIfNeeded();
     void updateVisibilityIfNeeded(bool& changedToVisible);
-    void clearContentsTimerFired(Timer*);
+    void clearContentsTimerFired();
 
     Client* m_client;
     RefPtr<Image> m_image;

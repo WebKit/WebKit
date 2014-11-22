@@ -200,7 +200,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_errorOccured(false)
     , m_mediaDuration(0)
     , m_downloadFinished(false)
-    , m_fillTimer(this, &MediaPlayerPrivateGStreamer::fillTimerFired)
+    , m_fillTimer(*this, &MediaPlayerPrivateGStreamer::fillTimerFired)
     , m_maxTimeLoaded(0)
     , m_bufferingPercentage(0)
     , m_preload(player->preload())
@@ -1145,7 +1145,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 }
 #endif
 
-void MediaPlayerPrivateGStreamer::fillTimerFired(Timer*)
+void MediaPlayerPrivateGStreamer::fillTimerFired()
 {
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
 

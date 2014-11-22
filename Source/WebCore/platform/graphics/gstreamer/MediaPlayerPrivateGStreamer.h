@@ -87,7 +87,7 @@ public:
     void setPreservesPitch(bool);
 
     void setPreload(MediaPlayer::Preload);
-    void fillTimerFired(Timer*);
+    void fillTimerFired();
 
     std::unique_ptr<PlatformTimeRanges> buffered() const;
     float maxTimeSeekable() const;

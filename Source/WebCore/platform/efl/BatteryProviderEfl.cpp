@@ -31,7 +31,7 @@ namespace WebCore {
 
 BatteryProviderEfl::BatteryProviderEfl(BatteryProviderEflClient* client)
     : m_client(client)
-    , m_timer(this, &BatteryProviderEfl::timerFired)
+    , m_timer(*this, &BatteryProviderEfl::timerFired)
     , m_batteryStatusRefreshInterval(1.0)
 {
 }
@@ -73,9 +73,8 @@ void BatteryProviderEfl::setBatteryStatus(const AtomicString& eventType, PassRef
     m_client->didChangeBatteryStatus(eventType, m_batteryStatus);
 }
 
-void BatteryProviderEfl::timerFired(Timer* timer)
+void BatteryProviderEfl::timerFired()
 {
-    ASSERT_UNUSED(timer, timer == &m_timer);
     E_DBus_Connection* edbusConnection = e_dbus_bus_get(DBUS_BUS_SYSTEM);
     if (edbusConnection)
         e_upower_get_all_devices(edbusConnection, getBatteryStatus, static_cast<void*>(this));

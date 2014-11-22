@@ -1,3 +1,24 @@
+2014-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r176459.
+
+        r176459 removed Timer parameter in timer callbacks only for Mac port.
+        So this patch applies it to remaining classes for EFL port.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::displayTimerFired):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/efl/TextCheckerClientEfl.cpp:
+        (TextCheckerClientEfl::TextCheckerClientEfl):
+        (TextCheckerClientEfl::languagesUpdateTimerFired):
+        (TextCheckerClientEfl::spellCheckingSettingChangeTimerFired):
+        * UIProcess/efl/TextCheckerClientEfl.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, iOS build fix after r176462.

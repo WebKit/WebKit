@@ -125,7 +125,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient& client)
     , m_coordinator(0)
     , m_compositedNativeImagePtr(0)
     , m_platformLayer(0)
-    , m_animationStartedTimer(this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
+    , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
     , m_scrollableArea(0)
 {
     static CoordinatedLayerID nextLayerID = 1;
@@ -1220,7 +1220,7 @@ void CoordinatedGraphicsLayer::resumeAnimations()
     didChangeAnimations();
 }
 
-void CoordinatedGraphicsLayer::animationStartedTimerFired(Timer*)
+void CoordinatedGraphicsLayer::animationStartedTimerFired()
 {
     client().notifyAnimationStarted(this, "", m_lastAnimationStartTime);
 }

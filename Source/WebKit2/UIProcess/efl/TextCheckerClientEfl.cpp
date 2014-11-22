@@ -50,8 +50,8 @@ static inline TextCheckerClientEfl* toTextCheckerClientEfl(const void* clientInf
 }
 
 TextCheckerClientEfl::TextCheckerClientEfl()
-    : m_languagesUpdateTimer(this, &TextCheckerClientEfl::languagesUpdateTimerFired)
-    , m_spellCheckingSettingChangeTimer(this, &TextCheckerClientEfl::spellCheckingSettingChangeTimerFired)
+    : m_languagesUpdateTimer(*this, &TextCheckerClientEfl::languagesUpdateTimerFired)
+    , m_spellCheckingSettingChangeTimer(*this, &TextCheckerClientEfl::spellCheckingSettingChangeTimerFired)
     , m_textCheckerEnchant(std::make_unique<TextCheckerEnchant>())
 {
     memset(&m_clientCallbacks, 0, sizeof(ClientCallbacks));
@@ -104,12 +104,12 @@ void TextCheckerClientEfl::updateSpellCheckingLanguages(const Vector<String>& de
     m_languagesUpdateTimer.startOneShot(0);
 }
 
-void TextCheckerClientEfl::languagesUpdateTimerFired(Timer*)
+void TextCheckerClientEfl::languagesUpdateTimerFired()
 {
     m_textCheckerEnchant->updateSpellCheckingLanguages(m_spellCheckingLanguages);
 }
 
-void TextCheckerClientEfl::spellCheckingSettingChangeTimerFired(Timer*)
+void TextCheckerClientEfl::spellCheckingSettingChangeTimerFired()
 {
     m_clientCallbacks.continuous_spell_checking_change(
         isContinuousSpellCheckingEnabledCallback(0 /* clientInfo */)

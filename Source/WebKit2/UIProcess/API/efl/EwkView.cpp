@@ -299,7 +299,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_touchEventsEnabled(false)
     , m_gestureRecognizer(std::make_unique<GestureRecognizer>(this))
 #endif
-    , m_displayTimer(this, &EwkView::displayTimerFired)
+    , m_displayTimer(*this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
 #if HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
     , m_webAccessibility(std::make_unique<WebAccessibility>(this))
@@ -544,7 +544,7 @@ inline IntSize EwkView::deviceSize() const
     return toIntSize(WKViewGetSize(wkView()));
 }
 
-void EwkView::displayTimerFired(Timer*)
+void EwkView::displayTimerFired()
 {
     Ewk_View_Smart_Data* sd = smartData();
 
