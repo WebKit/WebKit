@@ -1,3 +1,13 @@
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, iOS build fix after r176452.
+
+        dencodeFixedLengthData() now only takes 2 arguments instead of
+        3.
+
+        * Shared/ios/QuickLookDocumentData.cpp:
+        (WebKit::QuickLookDocumentData::decode):
+
 2014-11-21  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add "show simple line layout debug borders" setting to MiniBrowser.

@@ -74,7 +74,7 @@ bool QuickLookDocumentData::decode(IPC::ArgumentDecoder& decoder, QuickLookDocum
     uint8_t* const buffer = static_cast<uint8_t*>(CFAllocatorAllocate(kCFAllocatorDefault, size, 0));
     ASSERT(buffer);
 
-    if (!decoder.decodeFixedLengthData(buffer, size, 1)) {
+    if (!decoder.decodeFixedLengthData(buffer, size)) {
         CFAllocatorDeallocate(kCFAllocatorDefault, buffer);
         return false;
     }
