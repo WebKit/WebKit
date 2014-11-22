@@ -82,11 +82,60 @@ App.Repository = App.NameLabelModel.extend({
     url: DS.attr('string'),
     blameUrl: DS.attr('string'),
     hasReportedCommits: DS.attr('boolean'),
-    urlForRevision: function (currentRevision) {
+    urlForRevision: function (currentRevision)
+    {
         return (this.get('url') || '').replace(/\$1/g, currentRevision);
     },
-    urlForRevisionRange: function (from, to) {
+    urlForRevisionRange: function (from, to)
+    {
         return (this.get('blameUrl') || '').replace(/\$1/g, from).replace(/\$2/g, to);
+    },
+});
+
+App.Dashboard = App.Model.extend({
+    serialized: DS.attr('string'),
+    table: function ()
+    {
+        var json = this.get('serialized');
+        try {
+            var parsed = JSON.parse(json);
+        } catch (error) {
+            console.log("Failed to parse the grid:", error, json);
+            return [];
+        }
+        if (!parsed)
+            return [];
+        return this._normalizeTable(parsed);
+    }.property('serialized'),
+
+    rows: function ()
+    {
+        return this.get('table').slice(1);
+    }.property('table'),
+
+    headerColumns: function ()
+    {
+        var table = this.get('table');
+        if (!table || !table.length)
+            return [];
+        return table[0].map(function (name, index) {
+            return {label:name, index: index};
+        });
+    }.property('table'),
+
+    _normalizeTable: function (table)
+    {
+        var maxColumnCount = Math.max(table.map(function (column) { return column.length; }));
+        for (var i = 1; i < table.length; i++) {
+            var row = table[i];
+            for (var j = 1; j < row.length; j++) {
+                if (row[j] && !(row[j] instanceof Array)) {
+                    console.log('Unrecognized (platform, metric) pair at column ' + i + ' row ' + j + ':' + row[j]);
+                    row[j] = [];
+                }
+            }
+        }
+        return table;
     },
 });
 
@@ -103,6 +152,7 @@ App.MetricSerializer = App.PlatformSerializer = DS.RESTSerializer.extend({
             metrics: this._normalizeIdMap(payload['metrics']),
             repositories: this._normalizeIdMap(payload['repositories']),
             bugTrackers: this._normalizeIdMap(payload['bugTrackers']),
+            dashboards: [{id: 1, serialized: JSON.stringify(payload['defaultDashboard'])}],
         };
 
         for (var testId in payload['tests']) {
@@ -208,6 +258,8 @@ App.Manifest = Ember.Controller.extend({
             repositories.filter(function (repository) { return repository.get('hasReportedCommits'); }));
 
         this.set('bugTrackers', store.all('bugTracker').sortBy('name'));
+
+        this.set('defaultDashboard', store.all('dashboard').objectAt(0));
     },
     fetchRunsWithPlatformAndMetric: function (store, platformId, metricId)
     {

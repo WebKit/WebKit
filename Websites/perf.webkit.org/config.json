@@ -12,5 +12,6 @@
     "testServer": {
         "hostname": "localhost",
         "port": 80
-    }
+    },
+    "defaultDashboard": [[]]
 }

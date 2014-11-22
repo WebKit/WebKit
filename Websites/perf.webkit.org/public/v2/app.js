@@ -57,7 +57,6 @@ App.DashboardPaneProxyForPicker = Ember.ObjectProxy.extend({
 App.IndexController = Ember.Controller.extend({
     queryParams: ['grid', 'numberOfDays'],
     _previousGrid: {},
-    defaultTable: [],
     headerColumns: [],
     rows: [],
     numberOfDays: 30,
@@ -69,27 +68,24 @@ App.IndexController = Ember.Controller.extend({
         if (grid === this._previousGrid)
             return;
 
-        var table = null;
-        try {
-            if (grid)
-                table = JSON.parse(grid);
-        } catch (error) {
-            console.log("Failed to parse the grid:", error, grid);
+        var dashboard = null;
+        if (grid) {
+            dashboard = App.Dashboard.create({serialized: grid});
+            if (!dashboard.get('headerColumns').length)
+                dashboard = null;
         }
+        if (!dashboard)
+            dashboard = App.Manifest.get('defaultDashboard');
+        if (!dashboard)
+            return;
 
-        if (!table || !table.length) // FIXME: We should fetch this from the manifest.
-            table = this.get('defaultTable');
-
-        table = this._normalizeTable(table);
-        var columnCount = table[0].length;
+        var headerColumns = dashboard.get('headerColumns');
+        this.set('headerColumns', headerColumns);
+        var columnCount = headerColumns.length;
         this.set('columnCount', columnCount);
 
-        this.set('headerColumns', table[0].map(function (name, index) {
-            return {label:name, index: index};
-        }));
-
         var store = this.store;
-        this.set('rows', table.slice(1).map(function (rowParam) {
+        this.set('rows', dashboard.get('rows').map(function (rowParam) {
             return App.DashboardRow.create({
                 store: store,
                 header: rowParam[0],
@@ -99,22 +95,7 @@ App.IndexController = Ember.Controller.extend({
         }));
 
         this.set('emptyRow', new Array(columnCount));
-    }.observes('grid').on('init'),
-
-    _normalizeTable: function (table)
-    {
-        var maxColumnCount = Math.max(table.map(function (column) { return column.length; }));
-        for (var i = 1; i < table.length; i++) {
-            var row = table[i];
-            for (var j = 1; j < row.length; j++) {
-                if (row[j] && !(row[j] instanceof Array)) {
-                    console.log('Unrecognized (platform, metric) pair at column ' + i + ' row ' + j + ':' + row[j]);
-                    row[j] = [];
-                }
-            }
-        }
-        return table;
-    },
+    }.observes('grid', 'App.Manifest.defaultDashboard').on('init'),
 
     updateGrid: function()
     {

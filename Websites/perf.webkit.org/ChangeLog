@@ -1,5 +1,37 @@
 2014-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The dashboard on new perf monitor should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=138994
+
+        Reviewed by Benjamin Poulain.
+
+        For now, make it configurable via config.json. We should eventually make it configurable via
+        an administrative page but this will do for now.
+
+        * config.json: Added the empty dashboard configuration.
+
+        * public/include/manifest.php: Include the dashboard configuration in the manifest file.
+
+        * public/v2/app.js:
+        (App.IndexController): Removed defaultTable since this is now dynamically obtained via App.Manifest.
+        (App.IndexController.gridChanged): Use App.Dashboard to parse the dashboard configuration.
+        Also obtain the default configuration from App.Manifest.
+        (App.IndexController._normalizeTable): Moved to App.Dashboard.
+
+        * public/v2/manifest.js:
+        (App.Repository.urlForRevision): Fixed the position of the open curly bracket.
+        (App.Repository.urlForRevisionRange): Ditto.
+        (App.Dashboard): Added.
+        (App.Dashboard.table): Extracted from App.IndexController.gridChanged.
+        (App.Dashboard.rows): Ditto.
+        (App.Dashboard.headerColumns): Ditto.
+        (App.Dashboard._normalizeTable): Moved from App.IndexController._normalizeTable.
+        (App.MetricSerializer.normalizePayload): Synthesize a dashboard record from the configuration.
+        Since there is exactly one dashboard object per app, it's okay to hard code an id here.
+        (App.Manifest._fetchedManifest): Set defaultDashboard to the one and only one dashboard we have.
+
+2014-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         There should be a way to associate bugs with analysis tasks
         https://bugs.webkit.org/show_bug.cgi?id=138977
 
