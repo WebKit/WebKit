@@ -1,3 +1,22 @@
+2014-11-22  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Accessible names missing for imagemap images and links
+        https://bugs.webkit.org/show_bug.cgi?id=127288
+
+        Reviewed by Chris Fleizach.
+
+        Return the alt text, if present, for the accessible name for image maps
+        and image map links for ATK. Also expose the accessible element with
+        ATK_ROLE_IMAGE_MAP instead of ATK_ROLE_IMAGE.
+
+        Test: accessibility/image-with-alt-and-map.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isImageMap):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetName):
+        (atkRole):
+
 2014-11-22  Andreas Kling  <akling@apple.com>
 
         Remove unused Document::ignoreAutofocus().

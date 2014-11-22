@@ -58,6 +58,8 @@
 <!-- [ATK] Object not exposed (webkit.org/b/125491) --><img data-platform="mac" class="ex" alt="" data-note="[alt='']">
 <!-- [ATK] Object not exposed (webkit.org/b/125491) --><img data-platform="mac" class="ex" src="foo.png" data-note="[src]:not([alt])">
 <img data-platform="atk,mac" class="ex" alt="X" data-note="[alt='X']">
+<img data-platform="atk,mac" class="ex" alt="X" usemap="imagemap" data-note="[usemap][alt='X']">
+<img data-platform="atk,mac" class="ex" usemap="imagemap" data-note="[usemap]:not([alt])">
 <input data-platform="atk,mac" type="button" value="X" class="ex" data-note="[type='button']">
 <!-- skipped <menu><input type="button"></menu> -->
 <!-- [ATK] Wrong role (webkit.org/b/125493) --><!-- http://webkit.org/b/109017 --><input data-platform="mac" type="color" value="X" class="ex" data-note="[type='color']">
@@ -87,7 +89,9 @@
 <!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="week" value="X" class="ex" data-note="[type='week']">
 <!-- [ATK] Skipped: not focusable --><ins data-platform="mac" class="ex">X</ins>
 <!-- skipped <link> -->
-<!-- skipped <map> -->
+<map data-platform="atk,mac" class="ex" name="imagemap">
+  <area data-platform="atk,mac" class="ex" shape="rect" coords="0,0,10,10" href="#" title="x" />
+</map>
 <!-- [ATK] Skipped: not focusable --><!-- http://webkit.org/b/109018 --><mark data-platform="mac" class="ex">X</mark>
 <math data-platform="atk,mac" class="ex">X</math>
 <!-- skipped <menu> -->

@@ -450,6 +450,7 @@ public:
     virtual bool isHeading() const { return false; }
     virtual bool isLink() const { return false; }
     virtual bool isImage() const { return false; }
+    virtual bool isImageMap() const { return roleValue() == ImageMapRole; }
     virtual bool isNativeImage() const { return false; }
     virtual bool isImageButton() const { return false; }
     virtual bool isPasswordField() const { return false; }

@@ -199,6 +199,16 @@ img[alt='X']
       AXSubrole: 
       AXRoleDescription: image
       
+img[usemap][alt='X']
+      AXRole: AXImageMap
+      AXSubrole: 
+      AXRoleDescription: image map
+      
+img[usemap]:not([alt])
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
 input[type='button']
       AXRole: AXButton
       AXSubrole: 
@@ -315,6 +325,16 @@ input[type='week']
       AXRoleDescription: text field
       
 ins
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+map
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+area
       AXRole: 
       AXSubrole: 
       AXRoleDescription: 

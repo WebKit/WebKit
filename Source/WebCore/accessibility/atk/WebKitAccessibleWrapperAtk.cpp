@@ -109,10 +109,6 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
 
     AccessibilityObject* coreObject = core(object);
-
-    if (!coreObject->isAccessibilityRenderObject())
-        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, coreObject->stringValue());
-
     if (coreObject->isFieldset()) {
         AccessibilityObject* label = coreObject->titleUIElement();
         if (label) {
@@ -136,7 +132,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
             return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, textUnder);
     }
 
-    if (coreObject->isImage() || coreObject->isInputImage()) {
+    if (coreObject->isImage() || coreObject->isInputImage() || coreObject->isImageMap() || coreObject->isImageMapLink()) {
         Node* node = coreObject->node();
         if (is<HTMLElement>(node)) {
             // Get the attribute rather than altText String so as not to fall back on title.
@@ -680,6 +676,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case ImageMapLinkRole:
         return ATK_ROLE_LINK;
     case ImageMapRole:
+        return ATK_ROLE_IMAGE_MAP;
     case ImageRole:
         return ATK_ROLE_IMAGE;
     case ListMarkerRole:

@@ -1,3 +1,28 @@
+2014-11-22  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Accessible names missing for imagemap images and links
+        https://bugs.webkit.org/show_bug.cgi?id=127288
+
+        New and updated tests to reflect the expected role, accessible hierarchy,
+        and exposure of the alternative text for each platform.
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/image-with-alt-and-map.html: Added.
+        * accessibility/roles-exposed.html: Added some more elements to the test.
+        * platform/efl/accessibility/image-map1-expected.txt: Added.
+        * platform/efl/accessibility/image-map2-expected.txt: Updated to reflect fix.
+        * platform/efl/accessibility/image-with-alt-and-map-expected.txt: Added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/gtk/accessibility/image-map1-expected.txt: Added.
+        * platform/gtk/accessibility/image-map2-expected.txt: Updated to reflect fix.
+        * platform/gtk/accessibility/image-with-alt-and-map-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/mac/accessibility/image-with-alt-and-map-expected.txt: Added.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/mac-mountainlion/accessibility/roles-exposed-expected.txt: Updated for added elements.
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Throttled DOMTimers can prevent their document from being garbage collected

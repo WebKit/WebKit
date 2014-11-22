@@ -76,6 +76,12 @@ hr
 img[alt='X']
       AXRole: AXImage
       
+img[usemap][alt='X']
+      AXRole: AXImageMap
+      
+img[usemap]:not([alt])
+      AXRole: 
+      
 input[type='button']
       AXRole: AXButton
       
@@ -138,6 +144,12 @@ input[type='url']
       
 input[type='week']
       AXRole: AXTextField
+      
+map
+      AXRole: 
+      
+area
+      AXRole: 
       
 math
       AXRole: AXMath
