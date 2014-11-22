@@ -41,10 +41,8 @@ my @duplicates = ();
 my $numPredefinedProperties = 1;
 my @names = ();
 my %nameIsInherited;
-# FIXME: Eventually all properties should use the new style builder and the following
-# variable should go away.
-my %propertiesUsingNewStyleBuilder;
-my %newStyleBuilderOptions = (
+my %propertiesWithStyleBuilderOptions;
+my %styleBuilderOptions = (
   Converter => 1, # Defined in Source/WebCore/css/StyleBuilderConverter.h
   Custom => 1,
   Getter => 1,
@@ -79,17 +77,20 @@ foreach (@NAMES) {
     push @aliases, $_;
   } else {
     $nameIsInherited{$_} = 0;
+    my $isUsingLegacyStyleBuilder = 0;
+    $propertiesWithStyleBuilderOptions{$_} = {};
     foreach my $option (@options) {
       my ($optionName, $optionValue) = split(/=/, $option);
       if ($optionName eq "Inherited") {
         $nameIsInherited{$_} = 1;
-      } elsif ($optionName eq "NewStyleBuilder") {
+      } elsif ($optionName eq "LegacyStyleBuilder") {
         # FIXME: This is temporary. Eventually, all properties will use the new
         # style builder and this option will go away.
-        $propertiesUsingNewStyleBuilder{$_} = {};
-      } elsif ($newStyleBuilderOptions{$optionName}) {
-        die "\"" . $optionName . "\" option was used without \"NewStyleBuilder\" option for " . $_ . " property." if not exists($propertiesUsingNewStyleBuilder{$_});
-        $propertiesUsingNewStyleBuilder{$_}{$optionName} = $optionValue;
+        $isUsingLegacyStyleBuilder = 1;
+        delete $propertiesWithStyleBuilderOptions{$_};
+      } elsif ($styleBuilderOptions{$optionName}) {
+        die "\"" . $optionName . "\" option was used with \"LegacyStyleBuilder\" option for " . $_ . " property." if $isUsingLegacyStyleBuilder;
+        $propertiesWithStyleBuilderOptions{$_}{$optionName} = $optionValue;
       } else {
         die "Unrecognized \"" . $optionName . "\" option for " . $_ . " property.";
       }
@@ -330,29 +331,29 @@ close HEADER;
 #
 
 foreach my $name (@names) {
-  # Skip properties not using the new style builder yet.
-  next unless exists($propertiesUsingNewStyleBuilder{$name});
+  # Skip properties still using the legacy style builder.
+  next unless exists($propertiesWithStyleBuilderOptions{$name});
 
   my $nameForMethods = $nameToId{$name};
   $nameForMethods =~ s/Webkit//g;
-  if (exists($propertiesUsingNewStyleBuilder{$name}{"NameForMethods"})) {
-    $nameForMethods = $propertiesUsingNewStyleBuilder{$name}{"NameForMethods"};
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"NameForMethods"})) {
+    $nameForMethods = $propertiesWithStyleBuilderOptions{$name}{"NameForMethods"};
   }
 
-  if (!exists($propertiesUsingNewStyleBuilder{$name}{"TypeName"})) {
-    $propertiesUsingNewStyleBuilder{$name}{"TypeName"} = "E" . $nameForMethods;
+  if (!exists($propertiesWithStyleBuilderOptions{$name}{"TypeName"})) {
+    $propertiesWithStyleBuilderOptions{$name}{"TypeName"} = "E" . $nameForMethods;
   }
-  if (!exists($propertiesUsingNewStyleBuilder{$name}{"Getter"})) {
-    $propertiesUsingNewStyleBuilder{$name}{"Getter"} = lcfirst($nameForMethods);
+  if (!exists($propertiesWithStyleBuilderOptions{$name}{"Getter"})) {
+    $propertiesWithStyleBuilderOptions{$name}{"Getter"} = lcfirst($nameForMethods);
   }
-  if (!exists($propertiesUsingNewStyleBuilder{$name}{"Setter"})) {
-    $propertiesUsingNewStyleBuilder{$name}{"Setter"} = "set" . $nameForMethods;
+  if (!exists($propertiesWithStyleBuilderOptions{$name}{"Setter"})) {
+    $propertiesWithStyleBuilderOptions{$name}{"Setter"} = "set" . $nameForMethods;
   }
-  if (!exists($propertiesUsingNewStyleBuilder{$name}{"Initial"})) {
-    $propertiesUsingNewStyleBuilder{$name}{"Initial"} = "initial" . $nameForMethods;
+  if (!exists($propertiesWithStyleBuilderOptions{$name}{"Initial"})) {
+    $propertiesWithStyleBuilderOptions{$name}{"Initial"} = "initial" . $nameForMethods;
   }
-  if (!exists($propertiesUsingNewStyleBuilder{$name}{"Custom"})) {
-    $propertiesUsingNewStyleBuilder{$name}{"Custom"} = "None";
+  if (!exists($propertiesWithStyleBuilderOptions{$name}{"Custom"})) {
+    $propertiesWithStyleBuilderOptions{$name}{"Custom"} = "None";
   }
 }
 
@@ -376,28 +377,28 @@ namespace StyleBuilderFunctions {
 EOF
 
 foreach my $name (@names) {
-  # Skip properties not using the new style builder yet.
-  next unless exists($propertiesUsingNewStyleBuilder{$name});
+  # Skip properties still using the legacy style builder.
+  next unless exists($propertiesWithStyleBuilderOptions{$name});
 
-  next if $propertiesUsingNewStyleBuilder{$name}{"Custom"} eq "All";
+  next if $propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "All";
 
-  my $setValue = "styleResolver.style()->" . $propertiesUsingNewStyleBuilder{$name}{"Setter"};
+  my $setValue = "styleResolver.style()->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
   print STYLEBUILDER "    inline void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   print STYLEBUILDER "    {\n";
-  print STYLEBUILDER "        " . $setValue . "(RenderStyle::" . $propertiesUsingNewStyleBuilder{$name}{"Initial"} . "());\n";
+  print STYLEBUILDER "        " . $setValue . "(RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "());\n";
   print STYLEBUILDER "    }\n";
   print STYLEBUILDER "    inline void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   print STYLEBUILDER "    {\n";
-  print STYLEBUILDER "        " . $setValue . "(styleResolver.parentStyle()->" .  $propertiesUsingNewStyleBuilder{$name}{"Getter"} . "());\n";
+  print STYLEBUILDER "        " . $setValue . "(styleResolver.parentStyle()->" .  $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "());\n";
   print STYLEBUILDER "    }\n";
-  if ($propertiesUsingNewStyleBuilder{$name}{"Custom"} ne "Value") {
+  if ($propertiesWithStyleBuilderOptions{$name}{"Custom"} ne "Value") {
     print STYLEBUILDER "    inline void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
     print STYLEBUILDER "    {\n";
     my $convertedValue;
-    if (exists($propertiesUsingNewStyleBuilder{$name}{"Converter"})) {
-      $convertedValue = "StyleBuilderConverter::convert" . $propertiesUsingNewStyleBuilder{$name}{"Converter"} . "(styleResolver, value)";
+    if (exists($propertiesWithStyleBuilderOptions{$name}{"Converter"})) {
+      $convertedValue = "StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"Converter"} . "(styleResolver, value)";
     } else {
-      $convertedValue = "static_cast<" . $propertiesUsingNewStyleBuilder{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
+      $convertedValue = "static_cast<" . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
     }
     print STYLEBUILDER "        " . $setValue . "(" . $convertedValue . ");\n";
     print STYLEBUILDER "    }\n";
@@ -413,8 +414,8 @@ bool StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleRes
 EOF
 
 foreach my $name (@names) {
-  # Skip properties not using the new style builder yet.
-  next unless exists($propertiesUsingNewStyleBuilder{$name});
+  # Skip properties still using the legacy style builder.
+  next unless exists($propertiesWithStyleBuilderOptions{$name});
 
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
   print STYLEBUILDER "        if (isInitial)\n";

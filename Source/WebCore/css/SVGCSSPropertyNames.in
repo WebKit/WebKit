@@ -3,60 +3,60 @@
 //
 
 // SVG style props
-buffered-rendering
-clip-path
-clip-rule [Inherited]
-mask
+buffered-rendering [LegacyStyleBuilder]
+clip-path [LegacyStyleBuilder]
+clip-rule [Inherited, LegacyStyleBuilder]
+mask [LegacyStyleBuilder]
 // opacity
-enable-background
-filter
-flood-color
-flood-opacity
-lighting-color
-stop-color
-stop-opacity
+enable-background [LegacyStyleBuilder]
+filter [LegacyStyleBuilder]
+flood-color [LegacyStyleBuilder]
+flood-opacity [LegacyStyleBuilder]
+lighting-color [LegacyStyleBuilder]
+stop-color [LegacyStyleBuilder]
+stop-opacity [LegacyStyleBuilder]
 // pointer-events
-color-interpolation [Inherited]
-color-interpolation-filters [Inherited]
-color-profile
-color-rendering [Inherited]
-fill [Inherited]
-fill-opacity [Inherited]
-fill-rule [Inherited]
+color-interpolation [Inherited, LegacyStyleBuilder]
+color-interpolation-filters [Inherited, LegacyStyleBuilder]
+color-profile [LegacyStyleBuilder]
+color-rendering [Inherited, LegacyStyleBuilder]
+fill [Inherited, LegacyStyleBuilder]
+fill-opacity [Inherited, LegacyStyleBuilder]
+fill-rule [Inherited, LegacyStyleBuilder]
 //font-size-adjust
 //image-rendering
-marker [Inherited]
-marker-end [Inherited]
-marker-mid [Inherited]
-marker-start [Inherited]
-mask-type
-shape-rendering [Inherited]
-stroke [Inherited]
-stroke-dasharray [Inherited]
-stroke-dashoffset [Inherited, NewStyleBuilder, NameForMethods=StrokeDashOffset, Initial=initialZeroLength, Converter=Length]
-stroke-linecap [Inherited]
-stroke-linejoin [Inherited]
-stroke-miterlimit [Inherited]
-stroke-opacity [Inherited]
-stroke-width [Inherited, NewStyleBuilder, Initial=initialOneLength, Converter=Length]
+marker [Inherited, LegacyStyleBuilder]
+marker-end [Inherited, LegacyStyleBuilder]
+marker-mid [Inherited, LegacyStyleBuilder]
+marker-start [Inherited, LegacyStyleBuilder]
+mask-type [LegacyStyleBuilder]
+shape-rendering [Inherited, LegacyStyleBuilder]
+stroke [Inherited, LegacyStyleBuilder]
+stroke-dasharray [Inherited, LegacyStyleBuilder]
+stroke-dashoffset [Inherited, NameForMethods=StrokeDashOffset, Initial=initialZeroLength, Converter=Length]
+stroke-linecap [Inherited, LegacyStyleBuilder]
+stroke-linejoin [Inherited, LegacyStyleBuilder]
+stroke-miterlimit [Inherited, LegacyStyleBuilder]
+stroke-opacity [Inherited, LegacyStyleBuilder]
+stroke-width [Inherited, Initial=initialOneLength, Converter=Length]
 // text-rendering
-alignment-baseline
-baseline-shift
-dominant-baseline
-glyph-orientation-horizontal [Inherited]
-glyph-orientation-vertical [Inherited]
-kerning [Inherited]
-text-anchor [Inherited]
-vector-effect
-writing-mode [Inherited]
+alignment-baseline [LegacyStyleBuilder]
+baseline-shift [LegacyStyleBuilder]
+dominant-baseline [LegacyStyleBuilder]
+glyph-orientation-horizontal [Inherited, LegacyStyleBuilder]
+glyph-orientation-vertical [Inherited, LegacyStyleBuilder]
+kerning [Inherited, LegacyStyleBuilder]
+text-anchor [Inherited, LegacyStyleBuilder]
+vector-effect [LegacyStyleBuilder]
+writing-mode [Inherited, LegacyStyleBuilder]
 
--webkit-svg-shadow
+-webkit-svg-shadow [LegacyStyleBuilder]
 
-cx [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
-cy [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
-r [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
-rx [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
-ry [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
-x [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
-y [NewStyleBuilder, Initial=initialZeroLength, Converter=Length]
+cx [Initial=initialZeroLength, Converter=Length]
+cy [Initial=initialZeroLength, Converter=Length]
+r [Initial=initialZeroLength, Converter=Length]
+rx [Initial=initialZeroLength, Converter=Length]
+ry [Initial=initialZeroLength, Converter=Length]
+x [Initial=initialZeroLength, Converter=Length]
+y [Initial=initialZeroLength, Converter=Length]
 

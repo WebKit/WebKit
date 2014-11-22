@@ -1,5 +1,21 @@
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
+        Properties in CSSPropertyNames.in should use the new StyleBuilder by default
+        https://bugs.webkit.org/show_bug.cgi?id=138983
+
+        Reviewed by Andreas Kling.
+
+        This patch makes using the new StyleBuilder the default and drops the
+        [NewStyleBuilder] option as a result. A new [LegacyStyleBuilder] option
+        is introduced for CSS properties that are not generated in the new
+        StyleBuilder yet.
+
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSPropertyNames.in:
+        * css/makeprop.pl:
+
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Regression(r176202): line-height is wrong on marco.org
         https://bugs.webkit.org/show_bug.cgi?id=138970
 
