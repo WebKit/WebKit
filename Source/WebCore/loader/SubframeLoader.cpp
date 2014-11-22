@@ -36,6 +36,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContentSecurityPolicy.h"
+#include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -46,6 +47,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -192,14 +194,17 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
     String pluginFile = page->pluginData().pluginFileForMimeType(newMIMEType);
     String description = !pluginFile ? newMIMEType : pluginFile;
 
-    ChromeClient& chromeClient = page->chrome().client();
-    chromeClient.logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description, DiagnosticLoggingKeys::noopKey());
+    DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
+    if (!diagnosticLoggingClient)
+        return;
+
+    diagnosticLoggingClient->logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description);
 
     if (!page->hasSeenAnyPlugin())
-        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
-    
+        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString());
+
     if (!page->hasSeenPlugin(description))
-        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description, DiagnosticLoggingKeys::noopKey());
+        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description);
 
     page->sawPlugin(description);
 }

@@ -156,6 +156,7 @@
 #import <WebCore/NotificationController.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/PageConfiguration.h>
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/ProgressTracker.h>
@@ -918,23 +919,23 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         didOneTimeInitialization = true;
     }
 
-    Page::PageClients pageClients;
+    PageConfiguration pageConfiguration;
 #if !PLATFORM(IOS)
-    pageClients.chromeClient = new WebChromeClient(self);
-    pageClients.contextMenuClient = new WebContextMenuClient(self);
+    pageConfiguration.chromeClient = new WebChromeClient(self);
+    pageConfiguration.contextMenuClient = new WebContextMenuClient(self);
 #if ENABLE(DRAG_SUPPORT)
-    pageClients.dragClient = new WebDragClient(self);
+    pageConfiguration.dragClient = new WebDragClient(self);
 #endif
-    pageClients.inspectorClient = new WebInspectorClient(self);
+    pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #else
-    pageClients.chromeClient = new WebChromeClientIOS(self);
-    pageClients.inspectorClient = new WebInspectorClient(self);
+    pageConfiguration.chromeClient = new WebChromeClientIOS(self);
+    pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #endif
-    pageClients.editorClient = new WebEditorClient(self);
-    pageClients.alternativeTextClient = new WebAlternativeTextClient(self);
-    pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = new WebProgressTrackerClient(self);
-    _private->page = new Page(pageClients);
+    pageConfiguration.editorClient = new WebEditorClient(self);
+    pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(self);
+    pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
+    _private->page = new Page(pageConfiguration);
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));
 #endif
@@ -1155,16 +1156,16 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [frameView release];
 
     
-    Page::PageClients pageClients;
-    pageClients.chromeClient = new WebChromeClientIOS(self);
+    PageConfiguration pageConfiguration;
+    pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
-    pageClients.dragClient = new WebDragClient(self);
+    pageConfiguration.dragClient = new WebDragClient(self);
 #endif
-    pageClients.editorClient = new WebEditorClient(self);
-    pageClients.inspectorClient = new WebInspectorClient(self);
-    pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = new WebProgressTrackerClient(self);
-    _private->page = new Page(pageClients);
+    pageConfiguration.editorClient = new WebEditorClient(self);
+    pageConfiguration.inspectorClient = new WebInspectorClient(self);
+    pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
+    _private->page = new Page(pageConfiguration);
     
     [self setSmartInsertDeleteEnabled:YES];
     

@@ -38,6 +38,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
 #include "CookieJar.h"
+#include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DisplaySleepDisabler.h"
 #include "DocumentLoader.h"
@@ -1825,20 +1826,22 @@ static void logMediaLoadRequest(Page* page, const String& mediaEngine, const Str
     if (!page || !page->settings().diagnosticLoggingEnabled())
         return;
 
-    ChromeClient& chromeClient = page->chrome().client();
+    DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
+    if (!diagnosticLoggingClient)
+        return;
 
     if (!succeeded) {
-        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingKeys::failKey());
+        diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingClient::Fail);
         return;
     }
 
-    chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadedKey(), mediaEngine, DiagnosticLoggingKeys::noopKey());
+    diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadedKey(), mediaEngine);
 
     if (!page->hasSeenAnyMediaEngine())
-        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
+        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey(), emptyString());
 
     if (!page->hasSeenMediaEngine(mediaEngine))
-        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsMediaEngineKey(), mediaEngine, DiagnosticLoggingKeys::noopKey());
+        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsMediaEngineKey(), mediaEngine);
 
     page->sawMediaEngine(mediaEngine);
 }
@@ -5767,9 +5770,12 @@ void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
     if (!page || !page->settings().diagnosticLoggingEnabled())
         return;
 
+    DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
+    if (!diagnosticLoggingClient)
+        return;
+
     String engine = m_player->engineDescription();
-    String message = String::number(m_player->platformErrorCode());
-    page->chrome().client().logDiagnosticMessage(DiagnosticLoggingKeys::engineFailedToLoadKey(), engine, message);
+    diagnosticLoggingClient->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::engineFailedToLoadKey(), engine, String::number(m_player->platformErrorCode()));
 }
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()

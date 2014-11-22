@@ -81,6 +81,7 @@ class InspectorController;
 class MainFrame;
 class MediaCanStartListener;
 class PageActivityAssertionToken;
+class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
 class PageGroup;
@@ -119,33 +120,7 @@ public:
     WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     WEBCORE_EXPORT static void clearPreviousItemFromAllPages(HistoryItem*);
 
-    // It is up to the platform to ensure that non-null clients are provided where required.
-    // FIXME: Rename this to PageConfiguration and move it to its own class.
-    struct PageClients {
-        WTF_MAKE_NONCOPYABLE(PageClients); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        WEBCORE_EXPORT PageClients();
-        WEBCORE_EXPORT ~PageClients();
-
-        AlternativeTextClient* alternativeTextClient;
-        ChromeClient* chromeClient;
-#if ENABLE(CONTEXT_MENUS)
-        ContextMenuClient* contextMenuClient;
-#endif
-        EditorClient* editorClient;
-        DragClient* dragClient;
-        InspectorClient* inspectorClient;
-        PlugInClient* plugInClient;
-        ProgressTrackerClient* progressTrackerClient;
-        RefPtr<BackForwardClient> backForwardClient;
-        ValidationMessageClient* validationMessageClient;
-        FrameLoaderClient* loaderClientForMainFrame;
-
-        RefPtr<UserContentController> userContentController;
-        RefPtr<VisitedLinkStore> visitedLinkStore;
-    };
-
-    WEBCORE_EXPORT explicit Page(PageClients&);
+    WEBCORE_EXPORT explicit Page(PageConfiguration&);
     WEBCORE_EXPORT ~Page();
 
     WEBCORE_EXPORT uint64_t renderTreeSize() const;

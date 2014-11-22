@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MainFrame.h"
 
+#include "PageConfiguration.h"
 #include "PageOverlayController.h"
 #include "ScrollLatchingState.h"
 #include "WheelEventDeltaTracker.h"
@@ -36,8 +37,8 @@
 
 namespace WebCore {
 
-inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
-    : Frame(page, nullptr, client)
+inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
+    : Frame(page, nullptr, *configuration.loaderClientForMainFrame)
     , m_selfOnlyRefCount(0)
 #if PLATFORM(MAC)
     , m_latchingState(std::make_unique<ScrollLatchingState>())
@@ -47,6 +48,7 @@ inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
 #endif
     , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
+    , m_diagnosticLoggingClient(configuration.diagnosticLoggingClient)
 {
 }
 
@@ -54,9 +56,9 @@ MainFrame::~MainFrame()
 {
 }
 
-RefPtr<MainFrame> MainFrame::create(Page& page, FrameLoaderClient& client)
+RefPtr<MainFrame> MainFrame::create(Page& page, PageConfiguration& configuration)
 {
-    return adoptRef(new MainFrame(page, client));
+    return adoptRef(new MainFrame(page, configuration));
 }
 
 void MainFrame::selfOnlyRef()

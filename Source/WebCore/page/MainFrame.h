@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class DiagnosticLoggingClient;
+class PageConfiguration;
 class PageOverlayController;
 class ScrollLatchingState;
 class ServicesOverlayController;
@@ -37,7 +39,7 @@ class WheelEventDeltaTracker;
 
 class MainFrame final : public Frame {
 public:
-    static RefPtr<MainFrame> create(Page&, FrameLoaderClient&);
+    static RefPtr<MainFrame> create(Page&, PageConfiguration&);
 
     virtual ~MainFrame();
 
@@ -56,8 +58,10 @@ public:
     void resetLatchingState();
 #endif // PLATFORM(MAC)
 
+    DiagnosticLoggingClient* diagnosticLoggingClient() const { return m_diagnosticLoggingClient; }
+
 private:
-    MainFrame(Page&, FrameLoaderClient&);
+    MainFrame(Page&, PageConfiguration&);
 
     void dropChildren();
 
@@ -71,6 +75,7 @@ private:
 #endif
     std::unique_ptr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
+    DiagnosticLoggingClient* m_diagnosticLoggingClient;
 };
 
 inline bool Frame::isMainFrame() const

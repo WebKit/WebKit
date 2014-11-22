@@ -416,8 +416,6 @@ public:
     virtual void didRecognizeLongMousePress() { }
     virtual void didCancelTrackingPotentialLongMousePress() { }
 
-    virtual void logDiagnosticMessage(const String& message, const String& description, const String& status) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(status); }
-
     virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
 
     virtual bool isEmptyChromeClient() const { return false; }
