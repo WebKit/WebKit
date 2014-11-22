@@ -1,3 +1,15 @@
+2014-11-21  Eric Carlson  <eric.carlson@apple.com>
+
+        WebVideoFullscreenManagerProxy must clear pointers when invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=138982
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy): Call invalidate.
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate): Set WebVideoFullscreenModel and
+            WebVideoFullscreenChangeObserver to NULL.
+
 2014-11-21  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

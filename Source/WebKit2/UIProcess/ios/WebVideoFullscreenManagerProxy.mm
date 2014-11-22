@@ -67,12 +67,15 @@ WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy()
 {
     if (!m_page)
         return;
-    m_page->process().removeMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
+    invalidate();
 }
 
 void WebVideoFullscreenManagerProxy::invalidate()
 {
     WebVideoFullscreenInterfaceAVKit::invalidate();
+
+    setWebVideoFullscreenModel(nullptr);
+    setWebVideoFullscreenChangeObserver(nullptr);
 
     m_page->process().removeMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
     m_page = nullptr;
