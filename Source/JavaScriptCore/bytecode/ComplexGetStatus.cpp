@@ -46,7 +46,7 @@ ComplexGetStatus ComplexGetStatus::computeFor(
     ComplexGetStatus result;
     result.m_kind = Inlineable;
     
-    if (chain) {
+    if (chain && chainCount) {
         result.m_chain = adoptRef(new IntendedStructureChain(
             profiledBlock, headStructure, chain, chainCount));
         
