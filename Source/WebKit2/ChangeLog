@@ -1,5 +1,14 @@
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, iOS build fix after r176462.
+
+        Fix include path to TextIndicator.h to include WebCore/
+        as it was moved.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, iOS build fix after r176452.
 
         dencodeFixedLengthData() now only takes 2 arguments instead of

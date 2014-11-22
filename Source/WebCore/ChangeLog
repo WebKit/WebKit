@@ -1,5 +1,13 @@
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, iOS build fix after r176462.
+
+        Export a few extra symbols.
+
+        * WebCore.exp.in:
+
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
         Properties in CSSPropertyNames.in should use the new StyleBuilder by default
         https://bugs.webkit.org/show_bug.cgi?id=138983
 
