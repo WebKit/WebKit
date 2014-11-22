@@ -33,6 +33,7 @@ static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
 
 static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
 static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
+static NSString * const SimpleLineLayoutDebugBordersEnabledPreferenceKey = @"SimpleLineLayoutDebugBordersEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
 
 static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
@@ -100,6 +101,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Use Transparent Windows" action:@selector(toggleUseTransparentWindows:) indented:NO];
     [self _addItemWithTitle:@"Use Paginated Mode" action:@selector(toggleUsePaginatedMode:) indented:NO];
     [self _addItemWithTitle:@"Show Layer Borders" action:@selector(toggleShowLayerBorders:) indented:NO];
+    [self _addItemWithTitle:@"Show Simple Line Layout Borders" action:@selector(toggleSimpleLineLayoutDebugBordersEnabled:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
@@ -140,6 +142,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self usePaginatedMode] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowLayerBorders:))
         [menuItem setState:[self layerBordersVisible] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleSimpleLineLayoutDebugBordersEnabled:))
+        [menuItem setState:[self simpleLineLayoutDebugBordersEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUseUISideCompositing:))
@@ -208,6 +212,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)layerBordersVisible
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:LayerBordersVisiblePreferenceKey];
+}
+
+- (void)toggleSimpleLineLayoutDebugBordersEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:SimpleLineLayoutDebugBordersEnabledPreferenceKey];
+}
+
+- (BOOL)simpleLineLayoutDebugBordersEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:SimpleLineLayoutDebugBordersEnabledPreferenceKey];
 }
 
 - (void)toggleShowTiledScrollingIndicator:(id)sender
