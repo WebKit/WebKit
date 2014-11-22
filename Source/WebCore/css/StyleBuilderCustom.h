@@ -521,11 +521,13 @@ inline bool convertLineHeight(StyleResolver& styleResolver, const CSSValue& valu
     }
     if (primitiveValue.isLength()) {
         length = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
+        if (multiplier != 1.f)
+            length = Length(length.value() * multiplier, Fixed);
         return true;
     }
     if (primitiveValue.isPercentage()) {
         // FIXME: percentage should not be restricted to an integer here.
-        length = Length((styleResolver.style()->computedFontSize() * primitiveValue.getIntValue()) * multiplier / 100, Fixed);
+        length = Length((styleResolver.style()->computedFontSize() * primitiveValue.getIntValue()) / 100, Fixed);
         return true;
     }
     if (primitiveValue.isNumber()) {
@@ -571,7 +573,8 @@ inline void applyInitialLineHeight(StyleResolver& styleResolver)
 inline void applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
 {
     Length lineHeight;
-    if (!convertLineHeight(styleResolver, value, lineHeight, styleResolver.style()->textSizeAdjust().multiplier()))
+    float multiplier = styleResolver.style()->textSizeAdjust().isPercentage() ? styleResolver.style()->textSizeAdjust().multiplier() : 1.f;
+    if (!convertLineHeight(styleResolver, value, lineHeight, multiplier))
         return;
 
     styleResolver.style()->setLineHeight(lineHeight);

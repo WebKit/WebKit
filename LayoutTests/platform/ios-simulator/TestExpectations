@@ -151,3 +151,8 @@ transitions
 traversal
 userscripts
 webarchive
+
+###
+# Mark as passing specific tests in folders that were skipped temporarily above.
+##
+webkit.org/b/138970 fast/css/line-height-text-autosizing.html [ Pass ]

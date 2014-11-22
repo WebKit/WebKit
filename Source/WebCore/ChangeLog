@@ -1,3 +1,30 @@
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Regression(r176202): line-height is wrong on marco.org
+        https://bugs.webkit.org/show_bug.cgi?id=138970
+
+        Reviewed by Simon Fraser.
+
+        After r176202, on iOS with IOS_TEXT_AUTOSIZING enabled, we would
+        multiply the lineHeight by RenderStyle::textSizeAdjust()::multiplier()
+        unconditionally. However, we're only supposed to do so if
+        RenderStyle::textSizeAdjust()::isPercentage() returns true. This
+        patch reintroduces the textSizeAdjust().isPercentage() check that was
+        inadvertently dropped when refactoring the code to be shared between
+        iOS and OS X.
+
+        Additionally, the multiplier is only supposed the be applied if the
+        input CSSPrimitiveValue is a Length or a Number. However, after
+        r176202, we would apply the multiplier if the CSSPrimitiveValue is
+        a Percentage or a Number. This patch updates the code to match the
+        behavior prior to r176202.
+
+        Test: fast/css/line-height-text-autosizing.html
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::convertLineHeight):
+        (WebCore::StyleBuilderFunctions::applyValueLineHeight):
+
 2014-11-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: com.apple.WebKit.WebContent crashed at WebCore: WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const
