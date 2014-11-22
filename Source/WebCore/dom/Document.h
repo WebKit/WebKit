@@ -752,11 +752,6 @@ public:
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
     const UserActionElementSet& userActionElements() const { return m_userActionElements; }
 
-    // The m_ignoreAutofocus flag specifies whether or not the document has been changed by the user enough 
-    // for WebCore to ignore the autofocus attribute on any form controls
-    bool ignoreAutofocus() const { return m_ignoreAutofocus; };
-    void setIgnoreAutofocus(bool shouldIgnore = true) { m_ignoreAutofocus = shouldIgnore; };
-
     void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
     void hoveredElementDidDetach(Element*);
     void elementInActiveChainDidDetach(Element*);
@@ -1420,8 +1415,6 @@ private:
 
     bool m_printing;
     bool m_paginatedForScreen;
-
-    bool m_ignoreAutofocus;
 
     DocumentCompatibilityMode m_compatibilityMode;
     bool m_compatibilityModeLocked; // This is cheaper than making setCompatibilityMode virtual.

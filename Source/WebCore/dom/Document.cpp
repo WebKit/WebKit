@@ -421,7 +421,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_wellFormed(false)
     , m_printing(false)
     , m_paginatedForScreen(false)
-    , m_ignoreAutofocus(false)
     , m_compatibilityMode(DocumentCompatibilityMode::NoQuirksMode)
     , m_compatibilityModeLocked(false)
     , m_textColor(Color::black)

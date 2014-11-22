@@ -1,3 +1,20 @@
+2014-11-22  Andreas Kling  <akling@apple.com>
+
+        Remove unused Document::ignoreAutofocus().
+        <https://webkit.org/b/139002>
+
+        Reviewed by Antti Koivisto.
+
+        No one ever actually changes this flag, so let's remove it.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::ignoreAutofocus): Deleted.
+        (WebCore::Document::setIgnoreAutofocus): Deleted.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+
 2014-11-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r176459 to fix GTK build.
