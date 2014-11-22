@@ -1,3 +1,9 @@
+2014-11-21  Timothy Horton  <timothy_horton@apple.com>
+
+        Remove a file that r176499 presumably did not mean to add.
+
+        * WebCore.exp.in.orig: Removed.
+
 2014-11-21  Jer Noble  <jer.noble@apple.com>
 
         Support multiple signatures of diagnostic logging.
