@@ -1,3 +1,9 @@
+2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed iOS build fix; move new symbols out of Mac-only exports.
+
+        * WebCore.exp.in:
+
 2014-11-21  Timothy Horton  <timothy_horton@apple.com>
 
         Remove a file that r176499 presumably did not mean to add.
