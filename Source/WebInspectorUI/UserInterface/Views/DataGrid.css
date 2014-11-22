@@ -86,7 +86,7 @@
     overflow: hidden;
 }
 
-.data-grid :-webkit-any(th, td):not(:last-child) {
+.data-grid :matches(th, td):not(:last-child) {
     border-right: 1px solid rgb(179, 179, 179);
 }
 
@@ -94,7 +94,7 @@
     background-color: rgb(179, 179, 179);
 }
 
-.data-grid th:-webkit-any(.sort-ascending, .sort-descending) {
+.data-grid th:matches(.sort-ascending, .sort-descending) {
     background-color: rgb(230, 230, 230);
 }
 
@@ -150,7 +150,7 @@ body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child) {
     border-right-color: rgb(53, 109, 189);
 }
 
-.data-grid :-webkit-any(th, td) > div {
+.data-grid :matches(th, td) > div {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -168,7 +168,7 @@ body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child) {
     position: relative;
 }
 
-.data-grid th:-webkit-any(.sort-ascending, .sort-descending) > div:first-child {
+.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child {
     padding-right: 12px;
 }
 
@@ -298,7 +298,7 @@ body.mac-platform.legacy .data-grid:focus tr.selected {
     margin-left: 2px;
 }
 
-.data-grid tr:-webkit-any(.selected, :hover) .go-to-arrow {
+.data-grid tr:matches(.selected, :hover) .go-to-arrow {
     display: block;
 }
 

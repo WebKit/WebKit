@@ -1,3 +1,76 @@
+2014-11-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        Start using the new :not() and :matches() in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=138978
+
+        Reviewed by Joseph Pecoraro.
+
+        Start simpifying some definitions by using modern CSS.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section:matches(.last-in-group, :last-child)):
+        (.style-declaration-section:matches(.locked, .selector-locked) > .header > .selector):
+        (body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section:last-child): Deleted.
+        (.style-declaration-section.selector-locked > .header > .selector): Deleted.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.disabled, .invalid, .other-vendor, .not-inherited, .overridden)):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.implicit, .not-inherited)):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property:matches(.disabled, .other-vendor, .not-inherited, .overridden)):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.overridden): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property.overridden): Deleted.
+        * UserInterface/Views/ControlToolbarItem.css:
+        (.toolbar:matches(.icon-and-label-horizontal, .toolbar.icon-only) .item.control):
+        (.toolbar.icon-only .item.control): Deleted.
+        * UserInterface/Views/DOMStorageContentView.css:
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar.icon-and-label-vertical:matches(.small-size, .normal-size) .dashboard-container):
+        (.toolbar:matches(.label-only, .small-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal)) .dashboard-container):
+        (.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard-container):
+        (.toolbar.normal-size.icon-and-label-vertical .dashboard-container): Deleted.
+        (.toolbar.small-size.icon-and-label-horizontal .dashboard-container): Deleted.
+        (.toolbar.normal-size.icon-and-label-horizontal .dashboard-container): Deleted.
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid :matches(th, td):not(:last-child)):
+        (.data-grid th:matches(.sort-ascending, .sort-descending)):
+        (.data-grid :matches(th, td) > div):
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child):
+        (.data-grid tr:matches(.selected, :hover) .go-to-arrow):
+        (.data-grid :-webkit-any(th, td):not(:last-child)): Deleted.
+        (.data-grid th:-webkit-any(.sort-ascending, .sort-descending)): Deleted.
+        (.data-grid :-webkit-any(th, td) > div): Deleted.
+        (.data-grid th:-webkit-any(.sort-ascending, .sort-descending) > div:first-child): Deleted.
+        (.data-grid tr:-webkit-any(.selected, :hover) .go-to-arrow): Deleted.
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.toolbar.collapsed .dashboard.debugger > :not(.message, .navigation-bar )):
+        (.toolbar.collapsed .dashboard.debugger > :not(.message):not(.navigation-bar )): Deleted.
+        * UserInterface/Views/DefaultDashboardView.css:
+        (body.web .toolbar.collapsed .dashboard.default > :matches(.time, .resourcesSize, .logs)):
+        (body.javascript .toolbar .dashboard.default > :matches(.time, .resourcesSize, .resourcesCount)):
+        (.toolbar:matches(.label-only, .small-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal)) .dashboard.default > .item):
+        (.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard.default > .item):
+        (body.web .toolbar.collapsed .dashboard.default > .logs): Deleted.
+        (body.javascript .toolbar .dashboard.default > .resourcesCount): Deleted.
+        (.toolbar.small-size.icon-and-label-horizontal .dashboard.default > .item): Deleted.
+        (.toolbar.normal-size.icon-and-label-horizontal .dashboard.default > .item): Deleted.
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header > :matches(.node-link, .go-to-arrow)):
+        (.details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child)):
+        (body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child(even), :last-child) > .row.simple:last-child > *):
+        (.details-section > .content > .group > .row:matches(.empty, .text)):
+        (body.mac-platform.legacy .details-section > .content > .group > .row:matches(.empty, .text)):
+        (.details-section > .header > .go-to-arrow): Deleted.
+        (.details-section > .content > .group:nth-child(even) > .row.simple:first-child > *): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group:last-child > .row.simple:last-child > *): Deleted.
+        (.details-section > .content > .group > .row.text): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group > .row.text): Deleted.
+        * UserInterface/Views/FindBanner.css:
+        (:matches(.find-banner, .supports-find-banner).no-find-banner-transition):
+        (.supports-find-banner.no-find-banner-transition): Deleted.
+        * UserInterface/Views/FlexibleSpaceNavigationItem.css:
+        (:matches(.navigation-bar, .toolbar) .item.flexible-space):
+        (.toolbar .item.flexible-space): Deleted.
+
 2014-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: LayoutTests/inspector should not have localStorage side effects

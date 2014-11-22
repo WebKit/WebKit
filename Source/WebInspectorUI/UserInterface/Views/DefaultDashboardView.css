@@ -23,15 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body.web .toolbar.collapsed .dashboard.default > .time,
-body.web .toolbar.collapsed .dashboard.default > .resourcesSize,
-body.web .toolbar.collapsed .dashboard.default > .logs {
+body.web .toolbar.collapsed .dashboard.default > :matches(.time, .resourcesSize, .logs) {
     display: none;
 }
 
-body.javascript .toolbar .dashboard.default > .time,
-body.javascript .toolbar .dashboard.default > .resourcesSize,
-body.javascript .toolbar .dashboard.default > .resourcesCount {
+body.javascript .toolbar .dashboard.default > :matches(.time, .resourcesSize, .resourcesCount) {
     display: none;
 }
 
@@ -216,16 +212,12 @@ body.mac-platform.legacy .toolbar .dashboard.default > .issues.enabled > img {
 /* Styles for the extra short style, one row with quite a small y-margin */
 
 .toolbar.label-only .dashboard.default > .item,
-.toolbar.small-size.icon-only .dashboard.default > .item,
-.toolbar.small-size.icon-and-label-vertical .dashboard.default > .item,
-.toolbar.small-size.icon-and-label-horizontal .dashboard.default > .item {
+.toolbar.small-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard.default > .item {
     margin: 1px 0;
 }
 
 /* Styles for the fairly short style, one row with quite a bit of y-margin */
 
-.toolbar.normal-size.icon-only .dashboard.default > .item,
-.toolbar.normal-size.icon-and-label-vertical .dashboard.default > .item,
-.toolbar.normal-size.icon-and-label-horizontal .dashboard.default > .item {
+.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard.default > .item {
     margin: 4px 0;
 }

@@ -89,7 +89,6 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
     case CSSSelector::PagePseudoClass:
         break;
     case CSSSelector::PseudoClass:
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
             ASSERT_WITH_MESSAGE(simpleSelector.selectorList() && simpleSelector.selectorList()->first(), "The parser should never generate a valid selector for an empty :matches().");
             if (!isComputingMaximumSpecificity)
@@ -102,11 +101,6 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
             return maxSpecificity(*simpleSelector.selectorList());
         }
         FALLTHROUGH;
-#else
-        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassNot && simpleSelector.selectorList())
-            return simpleSelector.selectorList()->first()->simpleSelectorSpecificity();
-        FALLTHROUGH;
-#endif
     case CSSSelector::Exact:
     case CSSSelector::Class:
     case CSSSelector::Set:
@@ -136,7 +130,6 @@ static unsigned staticSpecificityInternal(const CSSSelector& firstSimpleSelector
 
 static unsigned simpleSelectorFunctionalPseudoClassStaticSpecificity(const CSSSelector& simpleSelector, bool& ok)
 {
-#if ENABLE(CSS_SELECTORS_LEVEL4)
     if (simpleSelector.match() == CSSSelector::PseudoClass) {
         if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
             const CSSSelectorList& selectorList = *simpleSelector.selectorList();
@@ -157,7 +150,6 @@ static unsigned simpleSelectorFunctionalPseudoClassStaticSpecificity(const CSSSe
             return initialSpecificity;
         }
     }
-#endif
     return 0;
 }
 
@@ -354,6 +346,7 @@ static void appendArgumentList(StringBuilder& str, const Vector<AtomicString>& a
             str.appendLiteral(", ");
     }
 }
+#endif
 
 static void appendSelectorList(StringBuilder& str, const CSSSelectorList* selectorList)
 {
@@ -364,7 +357,6 @@ static void appendSelectorList(StringBuilder& str, const CSSSelectorList* select
         str.append(subSelector->selectorText());
     }
 }
-#endif
 
 String CSSSelector::selectorText(const String& rightSide) const
 {
@@ -520,12 +512,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassNot:
                 str.appendLiteral(":not(");
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 appendSelectorList(str, cs->selectorList());
-#else
-                if (const CSSSelectorList* selectorList = cs->selectorList())
-                    str.append(selectorList->first()->selectorText());
-#endif
                 str.append(')');
                 break;
             case CSSSelector::PseudoClassNthChild:
@@ -571,13 +558,13 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassOptional:
                 str.appendLiteral(":optional");
                 break;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassMatches: {
                 str.appendLiteral(":matches(");
                 appendSelectorList(str, cs->selectorList());
                 str.append(')');
                 break;
             }
+#if ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassPlaceholderShown:
                 str.appendLiteral(":placeholder-shown");
                 break;

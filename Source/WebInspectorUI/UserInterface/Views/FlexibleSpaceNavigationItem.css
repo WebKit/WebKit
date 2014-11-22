@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navigation-bar .item.flexible-space,
-.toolbar .item.flexible-space {
+:matches(.navigation-bar, .toolbar) .item.flexible-space {
     flex: 1;
 }

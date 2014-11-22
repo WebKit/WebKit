@@ -57,13 +57,13 @@ static inline bool isCSSTokenAString(int yytype)
     case ANYFUNCTION:
     case NOTFUNCTION:
     case CALCFUNCTION:
-    case MINFUNCTION:
+    case MATCHESFUNCTION:
     case MAXFUNCTION:
+    case MINFUNCTION:
     case NTHCHILDFUNCTIONS:
     case NTHCHILDSELECTORSEPARATOR:
 #if ENABLE_CSS_SELECTORS_LEVEL4
     case LANGFUNCTION:
-    case MATCHESFUNCTION:
     case ROLEFUNCTION:
 #endif
     case UNICODERANGE:
@@ -226,13 +226,13 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %token <string> ANYFUNCTION
 %token <string> NOTFUNCTION
 %token <string> CALCFUNCTION
-%token <string> MINFUNCTION
+%token <string> MATCHESFUNCTION
 %token <string> MAXFUNCTION
+%token <string> MINFUNCTION
 %token <string> NTHCHILDFUNCTIONS
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
 %token <string> LANGFUNCTION
-%token <string> MATCHESFUNCTION
 %token <string> ROLEFUNCTION
 #endif
 
@@ -1363,6 +1363,17 @@ pseudo:
                 $$ = selector.release();
         }
     }
+    | ':' MATCHESFUNCTION maybe_space nested_selector_list maybe_space ')' {
+        $$ = nullptr;
+        if ($4) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
+            selector->setPseudoClassValue($2);
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassMatches)
+                $$ = selector.release();
+        }
+    }
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
     | ':' LANGFUNCTION maybe_space comma_separated_identifiers maybe_space ')' {
@@ -1374,18 +1385,6 @@ pseudo:
           selector->setPseudoClassValue($2);
           if (selector->pseudoClassType() == CSSSelector::PseudoClassLang)
               $$ = selector.release();
-        }
-    }
-
-    | ':' MATCHESFUNCTION maybe_space nested_selector_list maybe_space ')' {
-        $$ = nullptr;
-        if ($4) {
-            auto selector = std::make_unique<CSSParserSelector>();
-            selector->setMatch(CSSSelector::PseudoClass);
-            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
-            selector->setPseudoClassValue($2);
-            if (selector->pseudoClassType() == CSSSelector::PseudoClassMatches)
-                $$ = selector.release();
         }
     }
 
@@ -1483,9 +1482,7 @@ pseudo:
         }
         $$ = selector.release();
     }
-
     // Definition of :not().
-#if ENABLE_CSS_SELECTORS_LEVEL4
     | ':' NOTFUNCTION maybe_space nested_selector_list maybe_space ')' {
         $$ = nullptr;
         if ($4 && selectorListDoesNotMatchAnyPseudoElement($4)) {
@@ -1497,21 +1494,6 @@ pseudo:
                 $$ = selector.release();
         }
     }
-#else
-    | ':' NOTFUNCTION maybe_space compound_selector maybe_space ')' {
-        std::unique_ptr<CSSParserSelector> selector($4);
-        $$ = nullptr;
-        if (selector && selector->isSimple()) {
-            $$ = new CSSParserSelector;
-            $$->setMatch(CSSSelector::PseudoClass);
-
-            Vector<std::unique_ptr<CSSParserSelector>> selectorVector;
-            selectorVector.append(WTF::move(selector));
-            $$->adoptSelectorVector(selectorVector);
-            $$->setPseudoClassValue($2);
-        }
-    }
-#endif
   ;
 
 declaration_list:
@@ -1889,9 +1871,9 @@ invalid_square_brackets_block: '[' error_recovery ']' | '[' error_recovery TOKEN
 invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesis;
 
 opening_parenthesis:
-    '(' | FUNCTION | CALCFUNCTION | MINFUNCTION | MAXFUNCTION | ANYFUNCTION | NOTFUNCTION
+    '(' | FUNCTION | CALCFUNCTION | MATCHESFUNCTION | MAXFUNCTION | MINFUNCTION | ANYFUNCTION | NOTFUNCTION
 #if ENABLE_CSS_SELECTORS_LEVEL4
-    | LANGFUNCTION | MATCHESFUNCTION | ROLEFUNCTION
+    | LANGFUNCTION | ROLEFUNCTION
 #endif
 #if ENABLE_VIDEO_TRACK
     | CUEFUNCTION

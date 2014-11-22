@@ -130,7 +130,7 @@
     overflow: hidden;
 }
 
-.toolbar.collapsed .dashboard.debugger > :not(.message):not(.navigation-bar ) {
+.toolbar.collapsed .dashboard.debugger > :not(.message, .navigation-bar) {
     display: none;
 }
 

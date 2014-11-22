@@ -49,8 +49,7 @@
     transition-timing-function: ease-out;
 }
 
-.find-banner.no-find-banner-transition,
-.supports-find-banner.no-find-banner-transition {
+.no-find-banner-transition:matches(.find-banner, .supports-find-banner) {
     transition-duration: 0 !important;
 }
 

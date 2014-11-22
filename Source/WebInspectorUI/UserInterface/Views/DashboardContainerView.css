@@ -63,25 +63,20 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard-container {
     width: 175px;
 }
 
-.toolbar.small-size.icon-and-label-vertical .dashboard-container,
-.toolbar.normal-size.icon-and-label-vertical .dashboard-container {
+.toolbar.icon-and-label-vertical:matches(.small-size, .normal-size) .dashboard-container {
     margin-top: 6px;
 }
 
 /* Styles for the extra short style, one row with quite a small y-margin */
 
 .toolbar.label-only .dashboard-container,
-.toolbar.small-size.icon-only .dashboard-container,
-.toolbar.small-size.icon-and-label-vertical .dashboard-container,
-.toolbar.small-size.icon-and-label-horizontal .dashboard-container {
+.toolbar.small-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard-container {
     height: 22px;
 }
 
 /* Styles for the fairly short style, one row with quite a bit of y-margin */
 
-.toolbar.normal-size.icon-only .dashboard-container,
-.toolbar.normal-size.icon-and-label-vertical .dashboard-container,
-.toolbar.normal-size.icon-and-label-horizontal .dashboard-container {
+.toolbar.normal-size:matches(.icon-only, .icon-and-label-vertical, .icon-and-label-horizontal) .dashboard-container {
     height: 30px;
 }
 

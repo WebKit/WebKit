@@ -1,3 +1,30 @@
+2014-11-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        Start using the new :not() and :matches() in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=138978
+
+        Reviewed by Joseph Pecoraro.
+
+        There are only minor pending issues on :not() and :matches(). The feedback
+        has only been positive so far. It is time to move them out the experimental
+        flag.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSSelector.cpp:
+        (WebCore::simpleSelectorSpecificityInternal):
+        (WebCore::simpleSelectorFunctionalPseudoClassStaticSpecificity):
+        (WebCore::appendSelectorList):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, iOS build fix after r176462.

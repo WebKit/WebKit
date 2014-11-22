@@ -167,8 +167,7 @@ body.mac-platform.legacy .details-section.computed-style-properties:not(.collaps
     font-size: 10px;
 }
 
-.details-section > .header > .node-link,
-.details-section > .header > .go-to-arrow {
+.details-section > .header > :matches(.node-link, .go-to-arrow) {
     float: right;
 }
 
@@ -210,15 +209,12 @@ body.mac-platform.legacy .details-section > .content > .group:nth-child(even) {
     background-color: rgb(222, 222, 222);
 }
 
-.details-section > .content > .group:nth-child(even) > .row:not(.simple):first-child,
-.details-section > .content > .group:nth-child(even) > .row.simple:first-child > * {
+.details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
     border-top: 1px solid rgb(179, 179, 179);
 }
 
-body.mac-platform.legacy .details-section > .content > .group:nth-child(even) > .row:not(.simple):last-child,
-body.mac-platform.legacy .details-section > .content > .group:last-child > .row:not(.simple):last-child,
-body.mac-platform.legacy .details-section > .content > .group:nth-child(even) > .row.simple:last-child > *,
-body.mac-platform.legacy .details-section > .content > .group:last-child > .row.simple:last-child > * {
+body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child(even), :last-child) > .row:not(.simple):last-child,
+body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child(even), :last-child) > .row.simple:last-child > * {
     border-bottom: 1px solid rgb(179, 179, 179);
 }
 
@@ -298,15 +294,13 @@ body.mac-platform.legacy .details-section > .content > .group:first-child > .row
     word-break: break-all;
 }
 
-.details-section > .content > .group > .row.empty,
-.details-section > .content > .group > .row.text {
+.details-section > .content > .group > .row:matches(.empty, .text) {
     padding: 0 6px 7px 6px;
     text-align: center;
     color: gray;
 }
 
-body.mac-platform.legacy .details-section > .content > .group > .row.empty,
-body.mac-platform.legacy .details-section > .content > .group > .row.text {
+body.mac-platform.legacy .details-section > .content > .group > .row:matches(.empty, .text) {
     padding: 6px;
 }
 

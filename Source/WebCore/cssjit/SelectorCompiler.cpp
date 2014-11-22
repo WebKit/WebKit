@@ -756,7 +756,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 #endif
         }
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassMatches:
         {
             SelectorList matchesList;
@@ -804,7 +803,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
             return functionType;
         }
-#endif
 
     case CSSSelector::PseudoClassUnknown:
         ASSERT_NOT_REACHED();

@@ -60,35 +60,27 @@
     display: none;
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines pre > span span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.disabled,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.invalid,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.other-vendor,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.overridden {
+.css-style-text-editor > .CodeMirror .CodeMirror-lines pre > span span:not(.css-style-declaration-property, .CodeMirror-widget, .cm-comment, .cm-tab),
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.disabled, .invalid, .other-vendor, .not-inherited, .overridden) {
     text-decoration: line-through;
     -webkit-text-stroke-width: 0.000000000000001px; /* A hack to get a different line-through color. */
     -webkit-text-stroke-color: rgba(0, 0, 0, 0.6);
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines pre > span span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
+.css-style-text-editor > .CodeMirror .CodeMirror-lines pre > span span:not(.css-style-declaration-property, .CodeMirror-widget, .cm-comment, .cm-tab),
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.invalid {
     -webkit-text-stroke-color: rgba(255, 0, 0, 0.6);
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.implicit,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited {
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.implicit, .not-inherited) {
     opacity: 0.5;
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property.disabled,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property.other-vendor,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property.not-inherited,
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property.overridden {
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property:matches(.disabled, .other-vendor, .not-inherited, .overridden) {
     -webkit-text-stroke-color: rgba(0, 0, 0, 0.3);
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line span:not(.css-style-declaration-property):not(.CodeMirror-widget):not(.cm-comment):not(.cm-tab),
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line span:not(.css-style-declaration-property, .CodeMirror-widget, .cm-comment, .cm-tab),
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property.invalid {
     text-decoration: none;
 }
