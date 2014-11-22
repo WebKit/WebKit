@@ -66,8 +66,10 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
     $values = array($repository_id);
 
     if ($first && $second) {
-        $first = commit_from_revision($db, $repository_id, $first)['commit_time'];
-        $second = commit_from_revision($db, $repository_id, $second)['commit_time'];
+        $fitrt_commit = commit_from_revision($db, $repository_id, $first);
+        $second_commit = commit_from_revision($db, $repository_id, $second);
+        $first = $fitrt_commit['commit_time'];
+        $second = $second_commit['commit_time'];
         $in_order = $first < $second;
         array_push($values, $in_order ? $first : $second);
         $statements .= ' AND commit_time >= $' . count($values);
