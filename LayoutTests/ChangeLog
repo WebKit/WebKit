@@ -1,5 +1,21 @@
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
+        Throttled DOMTimers can prevent their document from being garbage collected
+        https://bugs.webkit.org/show_bug.cgi?id=138915
+
+        Reviewed by Andreas Kling.
+
+        Improve fast/dom/throttled-timer-running-on-document-destruction.html
+        layout test to cover the case where the throttled timer is changing the
+        style of an element on the *same* document when the document is
+        destroyed.
+
+        * fast/dom/resources/frame-with-throttled-timer-animating-element-other-document.html: Renamed from LayoutTests/fast/dom/resources/frame-with-throttled-timer.html.
+        * fast/dom/resources/frame-with-throttled-timer-animating-element-same-document.html: Added.
+        * fast/dom/throttled-timer-running-on-document-destruction.html:
+
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Regression(r176202): line-height is wrong on marco.org
         https://bugs.webkit.org/show_bug.cgi?id=138970
 

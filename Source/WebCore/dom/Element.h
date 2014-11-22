@@ -551,6 +551,7 @@ public:
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
     WEBCORE_EXPORT URL absoluteLinkURL() const;
+    WeakPtr<Element> createWeakPtr();
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

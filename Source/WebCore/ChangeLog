@@ -1,3 +1,37 @@
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
+        Throttled DOMTimers can prevent their document from being garbage collected
+        https://bugs.webkit.org/show_bug.cgi?id=138915
+
+        Reviewed by Andreas Kling.
+
+        Throttled DOMTimers whose interval depend on viewport changes would
+        keep a Vector of elements outside viewport causing them to be throttled
+        so that we could check later on (upon scroll or layout) if those
+        elements are still outside viewport. The issue is that these elements
+        could potentially be removed from the document (and destroyed) after
+        the timer has fired. To handle this, DOMTimer was ref'ing the
+        elements. Unfortunately, this was causing us to leak the document
+        as the elements in the Vector would keep the document alive.
+
+        To handle this issue, this patch updates the DOMTimer Vector to use
+        weak pointers. The WeakPtrFactory is stored in ElementRareData to
+        avoid wasting memory for all kinds of Elements (it is a fair assumption
+        that the number of elements whose style is animated via timers is low).
+
+        Test: fast/dom/throttled-timer-running-on-document-destruction.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::createWeakPtr):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::weakPtrFactory):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimerFireState::elementsChangedOutsideViewport):
+        (WebCore::DOMTimer::updateThrottlingStateAfterViewportChange):
+        * page/DOMTimer.h:
+
 2014-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix since r176459.

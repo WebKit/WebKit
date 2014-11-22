@@ -36,7 +36,7 @@ namespace WebCore {
 
 class ElementRareData : public NodeRareData {
 public:
-    explicit ElementRareData(RenderElement*);
+    ElementRareData(Element&, RenderElement*);
     ~ElementRareData();
 
     void setBeforePseudoElement(PassRefPtr<PseudoElement>);
@@ -114,6 +114,8 @@ public:
     bool hasPendingResources() const { return m_hasPendingResources; }
     void setHasPendingResources(bool has) { m_hasPendingResources = has; }
 
+    WeakPtrFactory<Element>& weakPtrFactory() { return m_weakPtrFactory; }
+
 private:
     short m_tabIndex;
     unsigned short m_childIndex;
@@ -147,6 +149,7 @@ private:
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
+    WeakPtrFactory<Element> m_weakPtrFactory;
 
     void releasePseudoElement(PseudoElement*);
 };
@@ -156,7 +159,7 @@ inline IntSize defaultMinimumSizeForResizing()
     return IntSize(LayoutUnit::max(), LayoutUnit::max());
 }
 
-inline ElementRareData::ElementRareData(RenderElement* renderer)
+inline ElementRareData::ElementRareData(Element& element, RenderElement* renderer)
     : NodeRareData(renderer)
     , m_tabIndex(0)
     , m_childIndex(0)
@@ -175,6 +178,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByPropertyBasedBackwardPositionalRules(false)
     , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
+    , m_weakPtrFactory(&element)
 {
 }
 

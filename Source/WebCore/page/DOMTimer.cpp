@@ -99,9 +99,12 @@ public:
         return document && document->domTreeVersion() != m_initialDOMTreeVersion;
     }
 
-    void elementsChangedOutsideViewport(Vector<RefPtr<StyledElement>>& elements) const
+    void elementsChangedOutsideViewport(Vector<WeakPtr<Element>>& elements) const
     {
-        copyToVector(m_elementsChangedOutsideViewport, elements);
+        ASSERT(elements.isEmpty());
+        elements.reserveCapacity(m_elementsChangedOutsideViewport.size());
+        for (auto& element : m_elementsChangedOutsideViewport)
+            elements.uncheckedAppend(element->createWeakPtr());
     }
 
     static DOMTimerFireState* current;
@@ -471,9 +474,10 @@ void DOMTimer::updateThrottlingStateAfterViewportChange(const IntRect& visibleRe
 {
     ASSERT(isIntervalDependentOnViewport());
     // Check if the elements that caused this timer to be throttled are still outside the viewport.
-    for (auto& element : m_elementsCausingThrottling) {
+    for (auto& weakElementPtr : m_elementsCausingThrottling) {
+        Element* element = weakElementPtr.get();
         // Skip elements that were removed from the document.
-        if (!element->inDocument())
+        if (!element || !element->inDocument())
             continue;
 
         if (element->isInsideViewport(&visibleRect)) {

@@ -350,7 +350,7 @@ void Node::materializeRareData()
 {
     NodeRareData* data;
     if (is<Element>(*this))
-        data = std::make_unique<ElementRareData>(downcast<RenderElement>(m_data.m_renderer)).release();
+        data = std::make_unique<ElementRareData>(downcast<Element>(*this), downcast<RenderElement>(m_data.m_renderer)).release();
     else
         data = std::make_unique<NodeRareData>(m_data.m_renderer).release();
     ASSERT(data);
