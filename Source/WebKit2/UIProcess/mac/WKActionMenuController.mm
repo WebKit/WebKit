@@ -71,6 +71,8 @@ using namespace WebKit;
 
 #if WK_API_ENABLED
 
+static const CGFloat previewViewInset = 3;
+
 @class WKPagePreviewViewController;
 
 @protocol WKPagePreviewViewControllerDelegate <NSObject>
@@ -82,11 +84,14 @@ using namespace WebKit;
 @public
     NSSize _mainViewSize;
     RetainPtr<NSURL> _url;
+    RetainPtr<NSView> _previewView;
     id <WKPagePreviewViewControllerDelegate> _delegate;
     CGFloat _popoverToViewScale;
 }
 
 - (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
+
++ (NSSize)previewPadding;
 
 @end
 
@@ -104,26 +109,42 @@ using namespace WebKit;
     return self;
 }
 
++ (NSSize)previewPadding
+{
+    return NSMakeSize(2 * previewViewInset, 2 * previewViewInset);
+}
+
 - (void)loadView
 {
     NSRect defaultFrame = NSMakeRect(0, 0, _mainViewSize.width, _mainViewSize.height);
-    RetainPtr<NSView> previewView = [_delegate pagePreviewViewController:self viewForPreviewingURL:_url.get() initialFrameSize:defaultFrame.size];
-    if (!previewView) {
+    _previewView = [_delegate pagePreviewViewController:self viewForPreviewingURL:_url.get() initialFrameSize:defaultFrame.size];
+    if (!_previewView) {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:defaultFrame]);
         [webView _setIgnoresNonWheelMouseEvents:YES];
         if (_url) {
             NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
             [webView loadRequest:request];
         }
-        previewView = webView;
+        _previewView = webView;
     }
 
-    // Setting the webView bounds will scale it to 75% of the _mainViewSize.
-    [previewView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
-
     RetainPtr<NSClickGestureRecognizer> clickRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(_clickRecognized:)]);
-    [previewView addGestureRecognizer:clickRecognizer.get()];
-    self.view = previewView.get();
+    [_previewView addGestureRecognizer:clickRecognizer.get()];
+
+    NSRect previewFrame = [_previewView frame];
+    NSRect containerFrame = previewFrame;
+    containerFrame.size.width += 2 * previewViewInset;
+    containerFrame.size.height += 2 * previewViewInset;
+    previewFrame = NSOffsetRect(previewFrame, previewViewInset, previewViewInset);
+
+    RetainPtr<NSView> containerView = adoptNS([[NSView alloc] initWithFrame:containerFrame]);
+    [containerView addSubview:_previewView.get()];
+    [_previewView setFrame:previewFrame];
+
+    // Setting the webView bounds will scale it to 75% of the _mainViewSize.
+    [_previewView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
+
+    self.view = containerView.get();
 }
 
 - (void)_clickRecognized:(NSGestureRecognizer *)gestureRecognizer
@@ -350,8 +371,12 @@ using namespace WebKit;
     NSURL *url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
     _popoverOriginRect = hitTestResult->elementBoundingBox();
 
-    NSSize popoverSize = [self _preferredPopoverSize];
+    NSSize previewPadding = [WKPagePreviewViewController previewPadding];
+    NSSize popoverSize = [self _preferredPopoverSizeWithPreviewPadding:previewPadding];
     CGFloat actualPopoverToViewScale = popoverSize.width / NSWidth(_wkView.bounds);
+    popoverSize.width += previewPadding.width;
+    popoverSize.height += previewPadding.height;
+
     _previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
     _previewViewController->_delegate = self;
     [_previewViewController loadView];
@@ -387,11 +412,13 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     return NSMakeSize(1324, 940);
 }
 
-- (NSSize)_preferredPopoverSize
+- (NSSize)_preferredPopoverSizeWithPreviewPadding:(NSSize)previewPadding
 {
     static const CGFloat preferredPopoverToViewScale = 0.75;
-    static const CGFloat screenPadding = 40;
+    static const NSSize screenPadding = {40, 40};
     static const NSSize smallestPopoverSize = NSMakeSize(500, 300);
+
+    const NSSize effectivePadding = NSMakeSize(screenPadding.width + previewPadding.width, screenPadding.height + previewPadding.height);
 
     NSWindow *window = _wkView.window;
     NSRect originScreenRect = [window convertRectToScreen:[_wkView convertRect:_popoverOriginRect toView:nil]];
@@ -403,15 +430,15 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
     CGFloat availableSpaceAbove = NSMaxY(screenFrame) - NSMaxY(originScreenRect);
     CGFloat availableSpaceBelow = NSMinY(originScreenRect) - NSMinY(screenFrame);
-    CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - screenPadding;
-    NSSize maxSpaceAvailableOnYEdge = NSMakeSize(screenFrame.size.width - screenPadding, maxAvailableVerticalSpace);
+    CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - effectivePadding.height;
+    NSSize maxSpaceAvailableOnYEdge = NSMakeSize(screenFrame.size.width - effectivePadding.height, maxAvailableVerticalSpace);
     if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnYEdge) && targetSizeFitsInAvailableSpace(targetSize, largestPopoverSize))
         return targetSize;
 
     CGFloat availableSpaceAtLeft = NSMinX(originScreenRect) - NSMinX(screenFrame);
     CGFloat availableSpaceAtRight = NSMaxX(screenFrame) - NSMaxX(originScreenRect);
-    CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - screenPadding;
-    NSSize maxSpaceAvailableOnXEdge = NSMakeSize(maxAvailableHorizontalSpace, screenFrame.size.height - screenPadding);
+    CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - effectivePadding.width;
+    NSSize maxSpaceAvailableOnXEdge = NSMakeSize(maxAvailableHorizontalSpace, screenFrame.size.height - effectivePadding.width);
     if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnXEdge) && targetSizeFitsInAvailableSpace(targetSize, largestPopoverSize))
         return targetSize;
 
@@ -458,7 +485,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 #if WK_API_ENABLED
     if (_previewViewController) {
         _previewViewController->_delegate = nil;
-        [_wkView _finishPreviewingURL:_previewViewController->_url.get() withPreviewView:[_previewViewController view]];
+        [_wkView _finishPreviewingURL:_previewViewController->_url.get() withPreviewView:_previewViewController->_previewView.get()];
         _previewViewController = nil;
     }
 #endif
@@ -1063,7 +1090,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController
 {
     if (NSURL *url = pagePreviewViewController->_url.get())
-        [_wkView _handleClickInPreviewView:pagePreviewViewController.view URL:url];
+        [_wkView _handleClickInPreviewView:pagePreviewViewController->_previewView.get() URL:url];
 }
 
 #endif
