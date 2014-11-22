@@ -36,6 +36,7 @@
 #import "SourceBufferPrivateAVFObjC.h"
 #import "SoftLinking.h"
 #import "UUID.h"
+#import <AVFoundation/AVError.h>
 #import <CoreMedia/CMBase.h>
 #import <cstdlib>
 #import <objc/objc-runtime.h>
@@ -262,12 +263,25 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
     return true;
 }
 
+static NSInteger systemCodeForError(NSError *error)
+{
+    NSInteger code = [error code];
+    if (code != AVErrorUnknown)
+        return code;
+
+    NSError* underlyingError = [error valueForKey:NSUnderlyingErrorKey];
+    if (!underlyingError || ![underlyingError isKindOfClass:[NSError class]])
+        return code;
+
+    return [underlyingError code];
+}
+
 void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *error)
 {
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs([error code]));
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs(systemCodeForError(error)));
 }
 
 void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error)
@@ -275,7 +289,7 @@ void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRe
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs([error code]));
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, std::abs(systemCodeForError(error)));
 }
 
 void CDMSessionMediaSourceAVFObjC::setStreamSession(AVStreamSession *streamSession)
