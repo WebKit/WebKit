@@ -1,3 +1,12 @@
+2014-11-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r176459 to fix GTK build.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::requestAnimationTimerFired):
+        * platform/ScrollAnimatorNone.h:
+
 2014-11-22  Andreas Kling  <akling@apple.com>
 
         Convert PassRefPtr return types to RefPtr.
