@@ -33,16 +33,28 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
+FlowContents::Style::Style(const RenderStyle& style)
+    : font(style.font())
+    , textAlign(style.textAlign())
+    , collapseWhitespace(style.collapseWhiteSpace())
+    , preserveNewline(style.preserveNewline())
+    , wrapLines(style.autoWrap())
+    , breakWordOnOverflow(style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline))
+    , spaceWidth(font.width(TextRun(&space, 1)))
+    , tabWidth(collapseWhitespace ? 0 : style.tabSize())
+    , locale(style.locale())
+{
+}
+
 FlowContents::FlowContents(const RenderBlockFlow& flow)
-    : m_flow(flow)
-    , m_style(flow.style())
+    : m_style(flow.style())
     , m_lineBreakIterator(downcast<RenderText>(*flow.firstChild()).text(), flow.style().locale())
     , m_lastRendererIndex(0)
 {
     unsigned startPosition = 0;
-    for (const RenderText* textRenderer = downcast<RenderText>(m_flow.firstChild()); textRenderer; textRenderer = downcast<RenderText>(textRenderer->nextSibling())) {
-        unsigned contentLength = textRenderer->text()->length();
-        m_textRanges.append(std::make_pair(startPosition, textRenderer));
+    for (auto& textChild : childrenOfType<RenderText>(flow)) {
+        unsigned contentLength = textChild.text()->length();
+        m_textRanges.append(std::make_pair(startPosition, &textChild));
         startPosition += contentLength;
     }
     // End item.
@@ -157,7 +169,7 @@ bool FlowContents::appendNextRendererContentIfNeeded(unsigned position) const
         return false;
 
     ++m_lastRendererIndex;
-    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(nextRenderer->text()), m_flow.style().locale(), LineBreakIteratorModeUAX14);
+    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(nextRenderer->text()), m_style.locale, LineBreakIteratorModeUAX14);
     return true;
 }
 

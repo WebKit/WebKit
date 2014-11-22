@@ -1,3 +1,24 @@
+2014-11-22  Antti Koivisto  <antti@apple.com>
+
+        Make locale part of the SimpleLineLayout::FlowContent::Style
+        https://bugs.webkit.org/show_bug.cgi?id=139004
+
+        Reviewed by Zalan Bujtas.
+
+        That's the only part of style not extracted out of RenderStyle in the constructor.
+
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::Style::Style):
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        (WebCore::SimpleLineLayout::FlowContents::appendNextRendererContentIfNeeded):
+        * rendering/SimpleLineLayoutFlowContents.h:
+
+            Also remove RenderBlockFlow member since it is now unused.
+
+        (WebCore::SimpleLineLayout::FlowContents::Style::Style): Deleted.
+
+            Move to cpp.
+
 2014-11-22  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Accessible names missing for imagemap images and links

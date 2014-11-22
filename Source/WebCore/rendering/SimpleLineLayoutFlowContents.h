@@ -51,19 +51,8 @@ public:
     bool resolveRendererPositions(const RenderText&, unsigned& startPosition, unsigned& endPosition) const;
     const RenderText* renderer(unsigned position, unsigned* startPosition = nullptr) const;
 
-    class Style {
-    public:
-        Style(const RenderStyle& style)
-            : font(style.font())
-            , textAlign(style.textAlign())
-            , collapseWhitespace(style.collapseWhiteSpace())
-            , preserveNewline(style.preserveNewline())
-            , wrapLines(style.autoWrap())
-            , breakWordOnOverflow(style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline))
-            , spaceWidth(font.width(TextRun(&space, 1)))
-            , tabWidth(collapseWhitespace ? 0 : style.tabSize())
-        {
-        }
+    struct Style {
+        explicit Style(const RenderStyle&);
 
         const Font& font;
         ETextAlign textAlign;
@@ -73,6 +62,7 @@ public:
         bool breakWordOnOverflow;
         float spaceWidth;
         unsigned tabWidth;
+        AtomicString locale;
     };
     const Style& style() const { return m_style; }
 
@@ -81,7 +71,6 @@ private:
     unsigned nextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
     float runWidth(const RenderText&, unsigned from, unsigned to, float xPosition) const;
 
-    const RenderBlockFlow& m_flow;
     const Style m_style;
     mutable LazyLineBreakIterator m_lineBreakIterator;
     Vector<std::pair<unsigned, const RenderText*>> m_textRanges;
