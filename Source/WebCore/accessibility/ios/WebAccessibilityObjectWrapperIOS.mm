@@ -750,6 +750,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     [result appendString:string];
 }
 
+- (BOOL)_accessibilityValueIsAutofilled
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return m_object->isValueAutofilled();
+}
+
 - (CGFloat)_accessibilityMinValue
 {
     return m_object->minValueForRange();

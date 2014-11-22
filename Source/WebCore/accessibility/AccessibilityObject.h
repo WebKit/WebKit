@@ -832,7 +832,8 @@ public:
     virtual AccessibilityRole roleValueForMSAA() const { return roleValue(); }
 
     virtual String passwordFieldValue() const { return String(); }
-
+    bool isValueAutofilled() const;
+    
     // Used by an ARIA tree to get all its rows.
     void ariaTreeRows(AccessibilityChildrenVector&);
     // Used by an ARIA tree item to get all of its direct rows that it can disclose.

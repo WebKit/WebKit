@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HitTestResult.h"
@@ -1970,6 +1971,18 @@ Element* AccessibilityObject::element() const
     if (is<Element>(node))
         return downcast<Element>(node);
     return nullptr;
+}
+    
+bool AccessibilityObject::isValueAutofilled() const
+{
+    if (!isNativeTextControl())
+        return false;
+    
+    Node* node = this->node();
+    if (!node || !is<HTMLInputElement>(*node))
+        return false;
+    
+    return downcast<HTMLInputElement>(*node).isAutofilled();
 }
 
 const AtomicString& AccessibilityObject::placeholderValue() const

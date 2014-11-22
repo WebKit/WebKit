@@ -1,3 +1,13 @@
+2014-11-21  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Unclear that user and password are autofilled, no VoiceOver version of the yellow outline.
+        https://bugs.webkit.org/show_bug.cgi?id=138904
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/auto-filled-value.html: Added.
+        * platform/mac/accessibility/auto-filled-value-expected.txt: Added.
+
 2014-11-21  Michael Saboff  <msaboff@apple.com>
 
         Allocate local ScopeChain register
