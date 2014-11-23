@@ -41,7 +41,7 @@ public:
     enum CompositingLayerType { None, Normal, Tiled, Media, Container };
 
     static PassRefPtr<WebRenderLayer> create(WebPage*);
-    static PassRefPtr<WebRenderLayer> create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList);
+    static PassRefPtr<WebRenderLayer> create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList);
 
     API::Array* negativeZOrderList() const { return m_negativeZOrderList.get(); }
     API::Array* normalFlowList() const { return m_normalFlowList.get(); }
@@ -53,10 +53,11 @@ public:
     bool isClipped() const { return m_isClipped; }
     CompositingLayerType compositingLayerType() const { return m_compositingLayerType; } 
     WebCore::IntRect absoluteBoundingBox() const { return m_absoluteBoundingBox; }
+    double backingStoreMemoryEstimate() const { return m_backingStoreMemoryEstimate; }
 
 private:
     explicit WebRenderLayer(WebCore::RenderLayer*);
-    WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList);
+    WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList);
 
     static PassRefPtr<API::Array> createArrayFromLayerList(Vector<WebCore::RenderLayer*>*);
 
@@ -66,6 +67,7 @@ private:
     bool m_isClipped;
     CompositingLayerType m_compositingLayerType;
     WebCore::IntRect m_absoluteBoundingBox;
+    double m_backingStoreMemoryEstimate;
 
     RefPtr<API::Array> m_negativeZOrderList;
     RefPtr<API::Array> m_normalFlowList;

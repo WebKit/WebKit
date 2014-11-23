@@ -36,7 +36,8 @@ extern "C" {
 WK_EXPORT WKTypeID WKRenderObjectGetTypeID();
 
 WK_EXPORT WKStringRef WKRenderObjectCopyName(WKRenderObjectRef renderObject);
-
+WK_EXPORT WKStringRef WKRenderObjectCopyTextSnippet(WKRenderObjectRef renderObject);
+WK_EXPORT unsigned WKRenderObjectGetTextLength(WKRenderObjectRef renderObject);
 WK_EXPORT WKStringRef WKRenderObjectCopyElementTagName(WKRenderObjectRef renderObject);
 WK_EXPORT WKStringRef WKRenderObjectCopyElementID(WKRenderObjectRef renderObject);
 WK_EXPORT WKArrayRef WKRenderObjectGetElementClassNames(WKRenderObjectRef renderObject);

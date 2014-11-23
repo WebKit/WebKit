@@ -62,9 +62,9 @@ PassRefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
     return adoptRef(new WebRenderLayer(rootLayer));
 }
 
-PassRefPtr<WebRenderLayer> WebRenderLayer::create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
+PassRefPtr<WebRenderLayer> WebRenderLayer::create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
 {
-    return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, negativeZOrderList, normalFlowList, positiveZOrderList));
+    return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, negativeZOrderList, normalFlowList, positiveZOrderList));
 }
 
 PassRefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
@@ -104,10 +104,13 @@ WebRenderLayer::WebRenderLayer(RenderLayer* layer)
             m_compositingLayerType = Container;
             break;
         }
+
+        m_backingStoreMemoryEstimate = backing->backingStoreMemoryEstimate();
     } else {
         m_isClipping = false;
         m_isClipped = false;
         m_compositingLayerType = None;
+        m_backingStoreMemoryEstimate = 0;
     }
 
     m_absoluteBoundingBox = layer->absoluteBoundingBox();
@@ -117,13 +120,14 @@ WebRenderLayer::WebRenderLayer(RenderLayer* layer)
     m_positiveZOrderList = createArrayFromLayerList(layer->posZOrderList());
 }
 
-WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
+WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
     : m_renderer(renderer)
     , m_isReflection(isReflection)
     , m_isClipping(isClipping)
     , m_isClipped(isClipped)
     , m_compositingLayerType(type)
     , m_absoluteBoundingBox(absoluteBoundingBox)
+    , m_backingStoreMemoryEstimate(backingStoreMemoryEstimate)
     , m_negativeZOrderList(negativeZOrderList)
     , m_normalFlowList(normalFlowList)
     , m_positiveZOrderList(positiveZOrderList)

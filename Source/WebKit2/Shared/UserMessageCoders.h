@@ -155,6 +155,7 @@ public:
             encoder << renderLayer->isClipped();
             encoder << static_cast<uint32_t>(renderLayer->compositingLayerType());
             encoder << renderLayer->absoluteBoundingBox();
+            encoder << renderLayer->backingStoreMemoryEstimate();
             encoder << Owner(coder, renderLayer->negativeZOrderList());
             encoder << Owner(coder, renderLayer->normalFlowList());
             encoder << Owner(coder, renderLayer->positiveZOrderList());
@@ -168,6 +169,8 @@ public:
             encoder << Owner(coder, renderObject->elementClassNames());
             encoder << renderObject->absolutePosition();
             encoder << renderObject->frameRect();
+            encoder << renderObject->textSnippet();
+            encoder << renderObject->textLength();
             encoder << Owner(coder, renderObject->children());
             return true;
         }
@@ -390,6 +393,7 @@ public:
             bool isClipped;
             uint32_t compositingLayerTypeAsUInt32;
             WebCore::IntRect absoluteBoundingBox;
+            double backingStoreMemoryEstimate;
             RefPtr<API::Object> negativeZOrderList;
             RefPtr<API::Object> normalFlowList;
             RefPtr<API::Object> positiveZOrderList;
@@ -409,6 +413,8 @@ public:
                 return false;
             if (!decoder.decode(absoluteBoundingBox))
                 return false;
+            if (!decoder.decode(backingStoreMemoryEstimate))
+                return false;
             Owner negativeZOrderListCoder(coder, negativeZOrderList);
             if (!decoder.decode(negativeZOrderListCoder))
                 return false;
@@ -419,14 +425,16 @@ public:
             if (!decoder.decode(positiveZOrderListCoder))
                 return false;
             coder.m_root = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
-                absoluteBoundingBox, static_pointer_cast<API::Array>(negativeZOrderList), static_pointer_cast<API::Array>(normalFlowList),
+                absoluteBoundingBox, backingStoreMemoryEstimate, static_pointer_cast<API::Array>(negativeZOrderList), static_pointer_cast<API::Array>(normalFlowList),
                 static_pointer_cast<API::Array>(positiveZOrderList));
             break;
         }
         case API::Object::Type::RenderObject: {
             String name;
+            String textSnippet;
             String elementTagName;
             String elementID;
+            unsigned textLength;
             RefPtr<API::Object> elementClassNames;
             WebCore::IntPoint absolutePosition;
             WebCore::IntRect frameRect;
@@ -445,12 +453,16 @@ public:
                 return false;
             if (!decoder.decode(frameRect))
                 return false;
+            if (!decoder.decode(textSnippet))
+                return false;
+            if (!decoder.decode(textLength))
+                return false;
             Owner messageCoder(coder, children);
             if (!decoder.decode(messageCoder))
                 return false;
             if (children && children->type() != API::Object::Type::Array)
                 return false;
-            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<API::Array>(elementClassNames), absolutePosition, frameRect, static_pointer_cast<API::Array>(children));
+            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<API::Array>(elementClassNames), absolutePosition, frameRect, textSnippet, textLength, static_pointer_cast<API::Array>(children));
             break;
         }
         case API::Object::Type::URL: {

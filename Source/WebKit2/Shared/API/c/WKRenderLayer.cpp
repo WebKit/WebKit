@@ -53,7 +53,7 @@ WKStringRef WKRenderLayerCopyElementTagName(WKRenderLayerRef renderLayerRef)
     if (!renderLayer->renderer()->elementTagName().isNull())
         return toCopiedAPI(renderLayer->renderer()->elementTagName());
 
-    return 0;
+    return nullptr;
 }
 
 WKStringRef WKRenderLayerCopyElementID(WKRenderLayerRef renderLayerRef)
@@ -62,7 +62,7 @@ WKStringRef WKRenderLayerCopyElementID(WKRenderLayerRef renderLayerRef)
     if (!renderLayer->renderer()->elementID().isNull())
         return toCopiedAPI(renderLayer->renderer()->elementID());
 
-    return 0;
+    return nullptr;
 }
 
 WKArrayRef WKRenderLayerGetElementClassNames(WKRenderLayerRef renderLayerRef)
@@ -108,6 +108,11 @@ WKCompositingLayerType WKRenderLayerGetCompositingLayerType(WKRenderLayerRef ren
 
     ASSERT_NOT_REACHED();
     return kWKCompositingLayerTypeNone;
+}
+
+WK_EXPORT double WKRenderLayerGetBackingStoreMemoryEstimate(WKRenderLayerRef renderLayerRef)
+{
+    return toImpl(renderLayerRef)->backingStoreMemoryEstimate();
 }
 
 WKArrayRef WKRenderLayerGetNegativeZOrderList(WKRenderLayerRef renderLayerRef)

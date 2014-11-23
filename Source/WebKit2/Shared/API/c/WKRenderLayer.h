@@ -62,6 +62,7 @@ enum WKCompositingLayerType {
 typedef enum WKCompositingLayerType WKCompositingLayerType;
 
 WK_EXPORT WKCompositingLayerType WKRenderLayerGetCompositingLayerType(WKRenderLayerRef renderLayer);
+WK_EXPORT double WKRenderLayerGetBackingStoreMemoryEstimate(WKRenderLayerRef renderLayer);
 
 WK_EXPORT WKArrayRef WKRenderLayerGetNegativeZOrderList(WKRenderLayerRef renderLayer);
 WK_EXPORT WKArrayRef WKRenderLayerGetNormalFlowList(WKRenderLayerRef renderLayer);

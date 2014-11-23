@@ -1,3 +1,36 @@
+2014-11-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Extend WKRenderObject and WKRenderLayer with some more useful data
+        https://bugs.webkit.org/show_bug.cgi?id=139006
+
+        Reviewed by Sam Weinig.
+        
+        Implement WKRenderLayerGetBackingStoreMemoryEstimate,
+        WKRenderObjectCopyTextSnippet and WKRenderObjectGetTextLength for improved
+        RenderLayer and RenderTree display in clients of the C SPI.        
+
+        * Shared/API/c/WKRenderLayer.cpp:
+        (WKRenderLayerGetBackingStoreMemoryEstimate):
+        * Shared/API/c/WKRenderLayer.h:
+        * Shared/API/c/WKRenderObject.cpp:
+        (WKRenderObjectCopyTextSnippet):
+        (WKRenderObjectGetTextLength):
+        * Shared/API/c/WKRenderObject.h:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/WebRenderLayer.h:
+        (WebKit::WebRenderLayer::backingStoreMemoryEstimate):
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::create):
+        (WebKit::WebRenderObject::WebRenderObject):
+        * Shared/WebRenderObject.h:
+        (WebKit::WebRenderObject::textSnippet):
+        (WebKit::WebRenderObject::textLength):
+
 2014-11-21  Jer Noble  <jer.noble@apple.com>
 
         Support multiple signatures of diagnostic logging.

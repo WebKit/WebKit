@@ -42,13 +42,27 @@ WKStringRef WKRenderObjectCopyName(WKRenderObjectRef renderObjectRef)
     return toCopiedAPI(toImpl(renderObjectRef)->name());
 }
 
+WKStringRef WKRenderObjectCopyTextSnippet(WKRenderObjectRef renderObjectRef)
+{
+    WebRenderObject* renderObject = toImpl(renderObjectRef);
+    if (!renderObject->textSnippet().isNull())
+        return toCopiedAPI(renderObject->textSnippet());
+
+    return nullptr;
+}
+
+unsigned WKRenderObjectGetTextLength(WKRenderObjectRef renderObjectRef)
+{
+    return toImpl(renderObjectRef)->textLength();
+}
+
 WKStringRef WKRenderObjectCopyElementTagName(WKRenderObjectRef renderObjectRef)
 {
     WebRenderObject* renderObject = toImpl(renderObjectRef);
     if (!renderObject->elementTagName().isNull())
         return toCopiedAPI(renderObject->elementTagName());
 
-    return 0;
+    return nullptr;
 }
 
 WKStringRef WKRenderObjectCopyElementID(WKRenderObjectRef renderObjectRef)
@@ -57,7 +71,7 @@ WKStringRef WKRenderObjectCopyElementID(WKRenderObjectRef renderObjectRef)
     if (!renderObject->elementID().isNull())
         return toCopiedAPI(renderObject->elementID());
 
-    return 0;
+    return nullptr;
 }
 
 WKArrayRef WKRenderObjectGetElementClassNames(WKRenderObjectRef renderObjectRef)

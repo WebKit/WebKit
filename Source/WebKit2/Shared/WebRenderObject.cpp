@@ -46,26 +46,27 @@ PassRefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
 {
     Frame* mainFrame = page->mainFrame();
     if (!mainFrame)
-        return 0;
+        return nullptr;
 
     if (!mainFrame->loader().client().hasHTMLView())
-        return 0;
+        return nullptr;
 
     RenderView* contentRenderer = mainFrame->contentRenderer();
     if (!contentRenderer)
-        return 0;
+        return nullptr;
 
     return adoptRef(new WebRenderObject(contentRenderer, true));
 }
 
-PassRefPtr<WebRenderObject> WebRenderObject::create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<API::Array> children)
+PassRefPtr<WebRenderObject> WebRenderObject::create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children)
 {
-    return adoptRef(new WebRenderObject(name, elementTagName, elementID, elementClassNames, absolutePosition, frameRect, children));
+    return adoptRef(new WebRenderObject(name, elementTagName, elementID, elementClassNames, absolutePosition, frameRect, textSnippet, textLength, children));
 }
 
 WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDescendants)
 {
     m_name = renderer->renderName();
+    m_textLength = 0;
 
     if (Node* node = renderer->node()) {
         if (is<Element>(*node)) {
@@ -82,6 +83,17 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
 
                 m_elementClassNames = API::Array::create(WTF::move(classNames));
             }
+        }
+
+        if (node->isTextNode()) {
+            String value = node->nodeValue();
+            m_textLength = value.length();
+
+            const int maxSnippetLength = 40;
+            if (value.length() > maxSnippetLength)
+                m_textSnippet = value.substring(0, maxSnippetLength);
+            else
+                m_textSnippet = value;
         }
     }
 
@@ -122,14 +134,16 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
     m_children = API::Array::create(WTF::move(children));
 }
 
-WebRenderObject::WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<API::Array> children)
+WebRenderObject::WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children)
     : m_children(children)
     , m_name(name)
     , m_elementTagName(elementTagName)
     , m_elementID(elementID)
+    , m_textSnippet(textSnippet)
     , m_elementClassNames(elementClassNames)
     , m_absolutePosition(absolutePosition)
     , m_frameRect(frameRect)
+    , m_textLength(textLength)
 {
 }
 

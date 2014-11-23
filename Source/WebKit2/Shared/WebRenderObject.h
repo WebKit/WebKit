@@ -51,13 +51,18 @@ public:
         return adoptRef(new WebRenderObject(renderer, false));
     }
 
-    static PassRefPtr<WebRenderObject> create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<API::Array> children);
+    static PassRefPtr<WebRenderObject> create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children);
 
     virtual ~WebRenderObject();
 
     API::Array* children() const { return m_children.get(); }
 
     const String& name() const { return m_name; }
+
+    // Only non-empty for RenderText objects.
+    const String& textSnippet() const { return m_textSnippet; }
+    unsigned textLength() const { return m_textLength; }
+
     const String& elementTagName() const { return m_elementTagName; }
     const String& elementID() const { return m_elementID; }
     API::Array* elementClassNames() const { return m_elementClassNames.get(); }
@@ -66,16 +71,18 @@ public:
 
 private:
     WebRenderObject(WebCore::RenderObject*, bool shouldIncludeDescendants);
-    WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<API::Array> children);
+    WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children);
 
     RefPtr<API::Array> m_children;
 
     String m_name;
     String m_elementTagName;
     String m_elementID;
+    String m_textSnippet;
     RefPtr<API::Array> m_elementClassNames;
     WebCore::IntPoint m_absolutePosition;
     WebCore::IntRect m_frameRect;
+    unsigned m_textLength;
 };
 
 } // namespace WebKit
