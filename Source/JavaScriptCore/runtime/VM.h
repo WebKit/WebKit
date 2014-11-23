@@ -562,9 +562,9 @@ private:
     void* m_lastStackTop;
     JSValue m_exception;
     bool m_inDefineOwnProperty;
-    OwnPtr<CodeCache> m_codeCache;
+    std::unique_ptr<CodeCache> m_codeCache;
     LegacyProfiler* m_enabledProfiler;
-    OwnPtr<BuiltinExecutables> m_builtinExecutables;
+    std::unique_ptr<BuiltinExecutables> m_builtinExecutables;
     RefCountedArray<StackFrame> m_exceptionStack;
     HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     std::unique_ptr<TypeProfiler> m_typeProfiler;

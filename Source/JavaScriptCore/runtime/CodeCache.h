@@ -237,12 +237,12 @@ private:
 class CodeCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<CodeCache> create() { return adoptPtr(new CodeCache); }
+    CodeCache();
+    ~CodeCache();
 
     UnlinkedProgramCodeBlock* getProgramCodeBlock(VM&, ProgramExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(VM&, const Identifier&, const SourceCode&, ParserError&);
-    ~CodeCache();
 
     void clear()
     {
@@ -250,8 +250,6 @@ public:
     }
 
 private:
-    CodeCache();
-
     template <class UnlinkedCodeBlockType, class ExecutableType> 
     UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
 

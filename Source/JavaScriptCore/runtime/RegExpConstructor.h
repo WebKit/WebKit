@@ -25,8 +25,6 @@
 #include "RegExp.h"
 #include "RegExpCachedResult.h"
 #include "RegExpObject.h"
-#include <wtf/OwnPtr.h>
-
 
 namespace JSC {
 

@@ -749,7 +749,7 @@ bool JSGlobalObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
 
 void JSGlobalObject::clearRareData(JSCell* cell)
 {
-    jsCast<JSGlobalObject*>(cell)->m_rareData.clear();
+    jsCast<JSGlobalObject*>(cell)->m_rareData = nullptr;
 }
 
 void slowValidateCell(JSGlobalObject* globalObject)

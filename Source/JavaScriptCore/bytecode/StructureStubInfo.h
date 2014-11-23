@@ -36,7 +36,6 @@
 #include "SpillRegistersMode.h"
 #include "Structure.h"
 #include "StructureStubClearingWatchpoint.h"
-#include <wtf/OwnPtr.h>
 
 namespace JSC {
 

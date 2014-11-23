@@ -113,7 +113,7 @@ void SmallStrings::createEmptyString(VM* vm)
 void SmallStrings::createSingleCharacterString(VM* vm, unsigned char character)
 {
     if (!m_storage)
-        m_storage = adoptPtr(new SmallStringsStorage);
+        m_storage = std::make_unique<SmallStringsStorage>();
     ASSERT(!m_singleCharacterStrings[character]);
     m_singleCharacterStrings[character] = JSString::createHasOtherOwner(*vm, PassRefPtr<StringImpl>(m_storage->rep(character)));
 }
@@ -121,7 +121,7 @@ void SmallStrings::createSingleCharacterString(VM* vm, unsigned char character)
 StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)
 {
     if (!m_storage)
-        m_storage = adoptPtr(new SmallStringsStorage);
+        m_storage = std::make_unique<SmallStringsStorage>();
     return m_storage->rep(character);
 }
 

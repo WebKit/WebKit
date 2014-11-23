@@ -954,6 +954,20 @@ public:
 
     bool isKnownToBeLiveDuringGC(); // Will only return valid results when called during GC. Assumes that you've already established that the owner executable is live.
 
+    struct RareData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        Vector<HandlerInfo> m_exceptionHandlers;
+
+        // Buffers used for large array literals
+        Vector<Vector<JSValue>> m_constantBuffers;
+
+        // Jump Tables
+        Vector<SimpleJumpTable> m_switchJumpTables;
+        Vector<StringJumpTable> m_stringSwitchJumpTables;
+
+        EvalCodeCache m_evalCodeCache;
+    };
 
 protected:
     virtual void visitWeakReferences(SlotVisitor&) override;
@@ -1021,7 +1035,7 @@ private:
     void createRareDataIfNecessary()
     {
         if (!m_rareData)
-            m_rareData = adoptPtr(new RareData);
+            m_rareData = std::make_unique<RareData>();
     }
 
 #if ENABLE(JIT)
@@ -1104,24 +1118,7 @@ private:
 
     std::unique_ptr<BytecodeLivenessAnalysis> m_livenessAnalysis;
 
-    struct RareData {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        Vector<HandlerInfo> m_exceptionHandlers;
-
-        // Buffers used for large array literals
-        Vector<Vector<JSValue>> m_constantBuffers;
-
-        // Jump Tables
-        Vector<SimpleJumpTable> m_switchJumpTables;
-        Vector<StringJumpTable> m_stringSwitchJumpTables;
-
-        EvalCodeCache m_evalCodeCache;
-    };
-#if COMPILER(MSVC)
-    friend void WTF::deleteOwnedPtr<RareData>(RareData*);
-#endif
-    OwnPtr<RareData> m_rareData;
+    std::unique_ptr<RareData> m_rareData;
 #if ENABLE(JIT)
     DFG::CapabilityLevel m_capabilityLevelState;
 #endif

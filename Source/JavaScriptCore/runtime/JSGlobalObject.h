@@ -260,7 +260,7 @@ protected:
     RefPtr<WatchpointSet> m_havingABadTimeWatchpoint;
     RefPtr<WatchpointSet> m_varInjectionWatchpoint;
 
-    OwnPtr<JSGlobalObjectRareData> m_rareData;
+    std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
     WeakRandom m_weakRandom;
 
@@ -276,7 +276,7 @@ protected:
     {
         if (m_rareData)
             return;
-        m_rareData = adoptPtr(new JSGlobalObjectRareData);
+        m_rareData = std::make_unique<JSGlobalObjectRareData>();
     }
         
 public:

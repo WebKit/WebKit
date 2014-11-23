@@ -107,7 +107,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(&vm, executable->executableInfo());
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo() - source.firstLine(), lineCount, unlinkedEndColumn);
 
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode)));
+    auto generator = std::make_unique<BytecodeGenerator>(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode);
     error = generator->generate();
     rootNode->destroyData();
     if (error.m_type != ParserError::ErrorNone) {

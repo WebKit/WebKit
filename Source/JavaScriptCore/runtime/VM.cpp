@@ -188,9 +188,9 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_largestFTLStackSize(0)
 #endif
     , m_inDefineOwnProperty(false)
-    , m_codeCache(CodeCache::create())
+    , m_codeCache(std::make_unique<CodeCache>())
     , m_enabledProfiler(nullptr)
-    , m_builtinExecutables(BuiltinExecutables::create(*this))
+    , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
 {
     interpreter = new Interpreter(*this);

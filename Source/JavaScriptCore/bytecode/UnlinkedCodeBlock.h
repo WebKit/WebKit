@@ -465,7 +465,7 @@ public:
         return m_rareData->m_constantBuffers[index];
     }
 
-    bool hasRareData() const { return m_rareData; }
+    bool hasRareData() const { return m_rareData.get(); }
 
     int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
 
@@ -510,7 +510,7 @@ private:
     void createRareDataIfNecessary()
     {
         if (!m_rareData)
-            m_rareData = adoptPtr(new RareData);
+            m_rareData = std::make_unique<RareData>();
     }
 
     void getLineAndColumn(ExpressionRangeInfo&, unsigned& line, unsigned& column);
@@ -584,7 +584,7 @@ public:
     };
 
 private:
-    OwnPtr<RareData> m_rareData;
+    std::unique_ptr<RareData> m_rareData;
     Vector<ExpressionRangeInfo> m_expressionInfo;
     struct TypeProfilerExpressionRange {
         unsigned m_startDivot;

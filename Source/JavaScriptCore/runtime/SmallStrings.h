@@ -28,7 +28,6 @@
 
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 
 #define JSC_COMMON_STRINGS_EACH_NAME(macro) \
     macro(boolean) \
@@ -104,7 +103,7 @@ private:
     JSString* m_nullObjectString;
     JSString* m_undefinedObjectString;
     JSString* m_singleCharacterStrings[singleCharacterStringCount];
-    OwnPtr<SmallStringsStorage> m_storage;
+    std::unique_ptr<SmallStringsStorage> m_storage;
 };
 
 } // namespace JSC

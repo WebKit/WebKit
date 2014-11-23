@@ -40,11 +40,8 @@ class VM;
 class BuiltinExecutables {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<BuiltinExecutables> create(VM& vm)
-    {
-        return adoptPtr(new BuiltinExecutables(vm));
-    }
-    
+    explicit BuiltinExecutables(VM&);
+
 #define EXPOSE_BUILTIN_EXECUTABLES(name, functionName, length) \
 UnlinkedFunctionExecutable* name##Executable(); \
 const SourceCode& name##Source() { return m_##name##Source; }
@@ -53,7 +50,6 @@ const SourceCode& name##Source() { return m_##name##Source; }
 #undef EXPOSE_BUILTIN_SOURCES
     
 private:
-    BuiltinExecutables(VM&);
     VM& m_vm;
     UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&);
 #define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, length)\
