@@ -408,7 +408,7 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& li
     }
 
     // If we skipped any whitespace and now the line end is a "preserved" newline, skip the newline too as we are wrapping the line here already.
-    if (lastPosition != lineState.position && style.preserveNewline && !flowContents.isEndOfContent(lineState.position) && flowContents.isNewlineCharacter(lineState.position))
+    if (lastPosition != lineState.position && style.preserveNewline && !flowContents.isEnd(lineState.position) && flowContents.isNewlineCharacter(lineState.position))
         ++lineState.position;
 }
 
@@ -513,7 +513,7 @@ static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, co
 {
     const auto& style = flowContents.style();
     bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
-    while (!flowContents.isEndOfContent(lineState.position)) {
+    while (!flowContents.isEnd(lineState.position)) {
         // Find the next text fragment. Start from the end of the previous fragment -current line end.
         TextFragment fragment = nextFragment(lineState.position, flowContents, lineState.width());
         if ((lineCanBeWrapped && !lineState.fits(fragment.width)) || fragment.mustBreak) {
@@ -562,7 +562,7 @@ static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, co
             lineState.addUncommitted(fragment);
     }
     lineState.commitAndCreateRun(lineRuns);
-    return flowContents.isEndOfContent(lineState.position) && lineState.oveflowedFragment.isEmpty();
+    return flowContents.isEnd(lineState.position) && lineState.oveflowedFragment.isEmpty();
 }
 
 static void closeLineEndingAndAdjustRuns(LineState& lineState, Layout::RunVector& lineRuns, unsigned& lineCount, const FlowContents& flowContents)
@@ -587,28 +587,25 @@ static void closeLineEndingAndAdjustRuns(LineState& lineState, Layout::RunVector
 
 static void splitRunsAtRendererBoundary(Layout::RunVector& lineRuns, const FlowContents& flowContents)
 {
-    if (!lineRuns.size())
+    // FIXME: We should probably split during run construction instead of as a separate pass.
+    if (lineRuns.isEmpty())
+        return;
+    if (flowContents.hasOneSegment())
         return;
 
     unsigned runIndex = 0;
     do {
         const Run& run = lineRuns.at(runIndex);
         ASSERT(run.start != run.end);
-        const RenderText* startRenderer = flowContents.renderer(run.start);
-        const RenderText* endRenderer = flowContents.renderer(run.end - 1);
-        if (startRenderer == endRenderer)
+        auto& startSegment = flowContents.segmentForPosition(run.start);
+        if (run.end <= startSegment.end)
             continue;
         // This run overlaps multiple renderers. Split it up.
-        unsigned rendererStartPosition = 0;
-        unsigned rendererEndPosition = 0;
-        bool found = flowContents.resolveRendererPositions(*startRenderer, rendererStartPosition, rendererEndPosition);
-        ASSERT_UNUSED(found, found);
-
         // Split run at the renderer's boundary and create a new run for the left side, while use the current run as the right side.
-        float logicalRightOfLeftRun = run.logicalLeft + flowContents.textWidth(run.start, rendererEndPosition, run.logicalLeft);
-        lineRuns.insert(runIndex, Run(run.start, rendererEndPosition, run.logicalLeft, logicalRightOfLeftRun, false));
+        float logicalRightOfLeftRun = run.logicalLeft + flowContents.textWidth(run.start, startSegment.end, run.logicalLeft);
+        lineRuns.insert(runIndex, Run(run.start, startSegment.end, run.logicalLeft, logicalRightOfLeftRun, false));
         Run& rightSideRun = lineRuns.at(runIndex + 1);
-        rightSideRun.start = rendererEndPosition;
+        rightSideRun.start = startSegment.end;
         rightSideRun.logicalLeft = logicalRightOfLeftRun;
     } while (++runIndex < lineRuns.size());
 }
@@ -638,8 +635,7 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
         closeLineEndingAndAdjustRuns(lineState, runs, lineCount, flowContents);
     } while (!isEndOfContent);
 
-    if (flow.firstChild() != flow.lastChild())
-        splitRunsAtRendererBoundary(runs, flowContents);
+    splitRunsAtRendererBoundary(runs, flowContents);
     ASSERT(!lineState.uncommittedWidth);
 }
 

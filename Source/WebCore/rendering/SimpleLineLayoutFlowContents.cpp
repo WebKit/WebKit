@@ -46,20 +46,24 @@ FlowContents::Style::Style(const RenderStyle& style)
 {
 }
 
-FlowContents::FlowContents(const RenderBlockFlow& flow)
-    : m_style(flow.style())
-    , m_lineBreakIterator(downcast<RenderText>(*flow.firstChild()).text(), flow.style().locale())
-    , m_lastRendererIndex(0)
+static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& flow)
 {
+    Vector<FlowContents::Segment, 8> segments;
     unsigned startPosition = 0;
     for (auto& textChild : childrenOfType<RenderText>(flow)) {
-        unsigned contentLength = textChild.text()->length();
-        m_textRanges.append(std::make_pair(startPosition, &textChild));
-        startPosition += contentLength;
+        unsigned textLength = textChild.text()->length();
+        segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild });
+        startPosition += textLength;
     }
-    // End item.
-    const RenderText* closingNullItem = nullptr;
-    m_textRanges.append(std::make_pair(startPosition, closingNullItem));
+    return segments;
+}
+
+FlowContents::FlowContents(const RenderBlockFlow& flow)
+    : m_style(flow.style())
+    , m_segments(initializeSegments(flow))
+    , m_lineBreakIterator(downcast<RenderText>(*flow.firstChild()).text(), flow.style().locale())
+    , m_lastSegmentIndex(0)
+{
 }
 
 unsigned FlowContents::findNextBreakablePosition(unsigned position) const
@@ -83,93 +87,59 @@ unsigned FlowContents::findNextNonWhitespacePosition(unsigned position, unsigned
 
 float FlowContents::textWidth(unsigned from, unsigned to, float xPosition) const
 {
-    unsigned rendererStart = 0;
-    const RenderText* textRenderer = renderer(from, &rendererStart);
-    ASSERT(textRenderer);
-    // Resolved positions are relative to the renderers.
-    unsigned absoluteStart = from - rendererStart;
-    unsigned absoluteEnd = to - rendererStart;
-    if ((m_style.font.isFixedPitch() && textRenderer == renderer(to)) || (!absoluteStart && absoluteEnd == textRenderer->text()->length()))
-        return textRenderer->width(absoluteStart, to - from, m_style.font, xPosition, nullptr, nullptr);
+    auto& fromSegment = segmentForPosition(from);
 
-    // We need to split up the text and measure renderers individually due to ligature.
+    if ((m_style.font.isFixedPitch() && fromSegment.end >= to) || (from == fromSegment.start && to == fromSegment.end))
+        return fromSegment.renderer.width(from - fromSegment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
+
+    auto* segment = &fromSegment;
     float textWidth = 0;
     unsigned fragmentEnd = 0;
-    do {
-        fragmentEnd = std::min(to, rendererStart + textRenderer->text()->length());
-        unsigned absoluteFragmentEnd = fragmentEnd - rendererStart;
-        absoluteStart = from - rendererStart;
-        textWidth += runWidth(*textRenderer, absoluteStart, absoluteFragmentEnd, xPosition + textWidth);
+    while (true) {
+        fragmentEnd = std::min(to, segment->end);
+        textWidth += runWidth(segment->renderer, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth);
+        if (fragmentEnd == to)
+            break;
         from = fragmentEnd;
-        if (fragmentEnd < to)
-            textRenderer = renderer(fragmentEnd, &rendererStart);
-    } while (fragmentEnd < to && textRenderer);
+        segment = &segmentForPosition(fragmentEnd);
+    };
+
     return textWidth;
 }
 
-const RenderText* FlowContents::renderer(unsigned position, unsigned* rendererStartPosition) const
+const FlowContents::Segment& FlowContents::segmentForPositionSlow(unsigned position) const
 {
-    unsigned arraySize = m_textRanges.size();
-    // Take advantage of the usage pattern.
-    if (position >= m_textRanges.at(m_lastRendererIndex).first && m_lastRendererIndex + 1 < arraySize && position < m_textRanges.at(m_lastRendererIndex + 1).first) {
-        if (rendererStartPosition)
-            *rendererStartPosition = m_textRanges.at(m_lastRendererIndex).first;
-        return m_textRanges.at(m_lastRendererIndex).second;
-    }
-    unsigned left = 0;
-    unsigned right = arraySize - 1;
-    ASSERT(arraySize);
-    ASSERT(position >= 0);
-    while (left < right) {
-        unsigned middle = (left + right) / 2;
-        unsigned endPosition = m_textRanges.at(middle + 1).first;
-        if (position > endPosition)
-            left = middle + 1;
-        else if (position < endPosition)
-            right = middle;
-        else {
-            right = middle + 1;
-            break;
-        }
-    }
-    if (rendererStartPosition)
-        *rendererStartPosition = m_textRanges.at(right).first;
-    return m_textRanges.at(right).second;
+    auto it = std::lower_bound(m_segments.begin(), m_segments.end(), position, [](const Segment& segment, unsigned position) {
+        return segment.end <= position;
+    });
+    ASSERT(it != m_segments.end());
+    m_lastSegmentIndex = it - m_segments.begin();
+    return *it;
 }
 
-bool FlowContents::resolveRendererPositions(const RenderText& renderer, unsigned& startPosition, unsigned& endPosition) const
+const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderText& renderer) const
 {
-    unsigned arraySize = m_textRanges.size();
-    if (!arraySize)
-        return false;
-
-    unsigned index = 0;
-    do {
-        auto range = m_textRanges.at(index);
-        if (range.second == &renderer) {
-            startPosition = range.first;
-            ASSERT(index + 1 < arraySize);
-            endPosition = m_textRanges.at(index + 1).first;
-            return true;
-        }
-    } while (++index < arraySize);
-    return false;
+    for (auto& segment : m_segments) {
+        if (&segment.renderer == &renderer)
+            return segment;
+    }
+    ASSERT_NOT_REACHED();
+    return m_segments.last();
 }
 
 bool FlowContents::appendNextRendererContentIfNeeded(unsigned position) const
 {
+    if (isEnd(position))
+        return false;
     String string = m_lineBreakIterator.string();
     if (position < string.length())
         return false;
 
     // Content needs to be requested sequentially.
     ASSERT(position == string.length());
-    const RenderText* nextRenderer = renderer(position);
-    if (!nextRenderer)
-        return false;
+    auto& segment = segmentForPosition(position);
 
-    ++m_lastRendererIndex;
-    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(nextRenderer->text()), m_style.locale, LineBreakIteratorModeUAX14);
+    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(segment.renderer.text()), m_style.locale, LineBreakIteratorModeUAX14);
     return true;
 }
 

@@ -46,10 +46,18 @@ public:
     float textWidth(unsigned from, unsigned to, float xPosition) const;
 
     bool isNewlineCharacter(unsigned position) const;
-    bool isEndOfContent(unsigned position) const;
+    bool isEnd(unsigned position) const;
 
-    bool resolveRendererPositions(const RenderText&, unsigned& startPosition, unsigned& endPosition) const;
-    const RenderText* renderer(unsigned position, unsigned* startPosition = nullptr) const;
+    struct Segment {
+        unsigned start;
+        unsigned end;
+        const RenderText& renderer;
+    };
+    const Segment& segmentForPosition(unsigned) const;
+    const Segment& segmentForRenderer(const RenderText&) const;
+
+    bool hasOneSegment() const { return m_segments.size() == 1; }
+    unsigned length() const { return m_segments.last().end; };
 
     struct Style {
         explicit Style(const RenderStyle&);
@@ -67,14 +75,16 @@ public:
     const Style& style() const { return m_style; }
 
 private:
+    const Segment& segmentForPositionSlow(unsigned) const;
     bool appendNextRendererContentIfNeeded(unsigned position) const;
     unsigned nextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
     float runWidth(const RenderText&, unsigned from, unsigned to, float xPosition) const;
 
     const Style m_style;
+    const Vector<Segment, 8> m_segments;
+
     mutable LazyLineBreakIterator m_lineBreakIterator;
-    Vector<std::pair<unsigned, const RenderText*>> m_textRanges;
-    mutable unsigned m_lastRendererIndex;
+    mutable unsigned m_lastSegmentIndex;
 };
 
 inline bool FlowContents::isNewlineCharacter(unsigned position) const
@@ -84,9 +94,19 @@ inline bool FlowContents::isNewlineCharacter(unsigned position) const
     return m_lineBreakIterator.string().at(position) == '\n';
 }
 
-inline bool FlowContents::isEndOfContent(unsigned position) const
+inline bool FlowContents::isEnd(unsigned position) const
 {
-    return position >= m_lineBreakIterator.string().length() && !renderer(position);
+    return position >= length();
+}
+
+inline const FlowContents::Segment& FlowContents::segmentForPosition(unsigned position) const
+{
+    ASSERT(!isEnd(position));
+
+    auto& lastSegment = m_segments[m_lastSegmentIndex];
+    if (lastSegment.start <= position && position < lastSegment.end)
+        return lastSegment;
+    return segmentForPositionSlow(position);
 }
 
 }

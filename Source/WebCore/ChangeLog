@@ -1,3 +1,55 @@
+2014-11-23  Antti Koivisto  <antti@apple.com>
+
+        Use segment vector for FlowContents
+        https://bugs.webkit.org/show_bug.cgi?id=139015
+
+        Reviewed by Zalan Bujtas.
+
+        And FlowContents::Segment struct and use it.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::splitRunsAtRendererBoundary):
+
+            Use segments.
+            If there is only one segment there is nothing to do. Bail out.
+
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::initializeSegments):
+
+            Move initialization to a function so m_segments can be const.
+            Don't add empty end segment, handle the end case in code.
+
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        (WebCore::SimpleLineLayout::FlowContents::textWidth):
+
+            Simplify and use segments.
+
+        (WebCore::SimpleLineLayout::FlowContents::segmentForPositionSlow):
+
+            Replace hand-rolled binary search with std::lower_bounds.
+
+        (WebCore::SimpleLineLayout::FlowContents::segmentForRenderer):
+        (WebCore::SimpleLineLayout::FlowContents::appendNextRendererContentIfNeeded):
+        (WebCore::SimpleLineLayout::FlowContents::renderer): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::resolveRendererPositions): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::hasOneSegment):
+        (WebCore::SimpleLineLayout::FlowContents::length):
+        (WebCore::SimpleLineLayout::FlowContents::isEnd):
+        (WebCore::SimpleLineLayout::FlowContents::isEndOfContent): Deleted.
+
+            Renamed.
+
+        (WebCore::SimpleLineLayout::FlowContents::segmentForPosition):
+
+            Inline the fast path.
+
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRenderer):
+
 2014-11-22  Simon Fraser  <simon.fraser@apple.com>
 
         Extend WKRenderObject and WKRenderLayer with some more useful data
