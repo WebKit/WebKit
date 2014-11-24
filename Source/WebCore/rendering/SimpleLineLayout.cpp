@@ -192,28 +192,6 @@ bool canUseFor(const RenderBlockFlow& flow)
     return true;
 }
 
-struct Style {
-    Style(const RenderStyle& style)
-        : font(style.font())
-        , textAlign(style.textAlign())
-        , collapseWhitespace(style.collapseWhiteSpace())
-        , preserveNewline(style.preserveNewline())
-        , wrapLines(style.autoWrap())
-        , breakWordOnOverflow(style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline))
-        , spaceWidth(font.width(TextRun(&space, 1)))
-        , tabWidth(collapseWhitespace ? 0 : style.tabSize())
-    {
-    }
-    const Font& font;
-    ETextAlign textAlign;
-    bool collapseWhitespace;
-    bool preserveNewline;
-    bool wrapLines;
-    bool breakWordOnOverflow;
-    float spaceWidth;
-    unsigned tabWidth;
-};
-
 static float computeLineLeft(ETextAlign textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)
 {
     float remainingWidth = availableWidth - committedWidth;

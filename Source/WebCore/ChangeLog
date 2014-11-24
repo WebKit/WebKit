@@ -1,3 +1,15 @@
+2014-11-24  Antti Koivisto  <antti@apple.com>
+
+        Remove unused Style struct from SimpleLineLayout.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=139027
+
+        Reviewed by Sam Weinig.
+
+        It was moved to FlowContents.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::Style::Style): Deleted.
+
 2014-11-24  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Compile error in ResourceHandleManager.cpp.
