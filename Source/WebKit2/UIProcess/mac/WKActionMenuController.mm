@@ -72,11 +72,13 @@ using namespace WebKit;
 #if WK_API_ENABLED
 
 static const CGFloat previewViewInset = 3;
+static const CGFloat previewViewTitleHeight = 34;
 
 @class WKPagePreviewViewController;
 
 @protocol WKPagePreviewViewControllerDelegate <NSObject>
 - (NSView *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
+- (NSString *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController titleForPreviewOfURL:(NSURL *)url;
 - (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController;
 @end
 
@@ -111,7 +113,7 @@ static const CGFloat previewViewInset = 3;
 
 + (NSSize)previewPadding
 {
-    return NSMakeSize(2 * previewViewInset, 2 * previewViewInset);
+    return NSMakeSize(2 * previewViewInset, previewViewTitleHeight + 2 * previewViewInset);
 }
 
 - (void)loadView
@@ -133,13 +135,43 @@ static const CGFloat previewViewInset = 3;
 
     NSRect previewFrame = [_previewView frame];
     NSRect containerFrame = previewFrame;
-    containerFrame.size.width += 2 * previewViewInset;
-    containerFrame.size.height += 2 * previewViewInset;
+    NSSize totalPadding = [[self class] previewPadding];
+    containerFrame.size.width += totalPadding.width;
+    containerFrame.size.height += totalPadding.height;
     previewFrame = NSOffsetRect(previewFrame, previewViewInset, previewViewInset);
 
     RetainPtr<NSView> containerView = adoptNS([[NSView alloc] initWithFrame:containerFrame]);
+    [containerView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [containerView addSubview:_previewView.get()];
     [_previewView setFrame:previewFrame];
+    [_previewView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+    RetainPtr<NSTextField> titleTextField = adoptNS([[NSTextField alloc] init]);
+    [titleTextField setWantsLayer:YES];
+    [titleTextField setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
+    [titleTextField setEditable:NO];
+    [titleTextField setBezeled:NO];
+    [titleTextField setDrawsBackground:NO];
+    [titleTextField setAlignment:NSCenterTextAlignment];
+    [titleTextField setUsesSingleLineMode:YES];
+    [titleTextField setLineBreakMode:NSLineBreakByTruncatingTail];
+    [titleTextField setTextColor:[NSColor labelColor]];
+
+    NSString *title = [_delegate pagePreviewViewController:self titleForPreviewOfURL:_url.get()];
+    if (!title)
+        title = [_url absoluteString];
+
+    [titleTextField setStringValue:title ? title : @""];
+
+    [titleTextField sizeToFit];
+    NSSize titleFittingSize = [titleTextField frame].size;
+    CGFloat textFieldCenteringOffset = (NSMaxY(containerFrame) - NSMaxY(previewFrame) - titleFittingSize.height) / 2;
+
+    NSRect titleFrame = previewFrame;
+    titleFrame.size.height = titleFittingSize.height;
+    titleFrame.origin.y = NSMaxY(previewFrame) + textFieldCenteringOffset;
+    [titleTextField setFrame:titleFrame];
+    [containerView addSubview:titleTextField.get()];
 
     // Setting the webView bounds will scale it to 75% of the _mainViewSize.
     [_previewView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
@@ -1085,6 +1117,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (NSView *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize
 {
     return [_wkView _viewForPreviewingURL:url initialFrameSize:initialFrameSize];
+}
+
+- (NSString *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController titleForPreviewOfURL:(NSURL *)url
+{
+    return [_wkView _titleForPreviewOfURL:url];
 }
 
 - (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController

@@ -1,3 +1,26 @@
+2014-11-23  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Page previews should have titles
+        https://bugs.webkit.org/show_bug.cgi?id=139020
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Declare -_titleForPreviewOfURL:.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _titleForPreviewOfURL:]):
+        Stub implementation.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (+[WKPagePreviewViewController previewPadding]):
+        Account for the title height.
+        (-[WKPagePreviewViewController loadView]):
+        Set correct autoresize masks on some views; create and configure a title view that is
+        horizontally and vertically centered.
+        (-[WKActionMenuController pagePreviewViewController:titleForPreviewOfURL:]):
+        WKPagePreviewViewControllerDelegate method; wrap -[WKView _titleForPreviewOfURL:].
+
 2014-11-22  Simon Fraser  <simon.fraser@apple.com>
 
         Extend WKRenderObject and WKRenderLayer with some more useful data
