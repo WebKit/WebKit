@@ -2411,29 +2411,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         return;
     }
-    case CSSPropertyWebkitBoxReflect: {
-        HANDLE_INHERIT_AND_INITIAL(boxReflect, BoxReflect)
-        if (primitiveValue) {
-            state.style()->setBoxReflect(RenderStyle::initialBoxReflect());
-            return;
-        }
-
-        if (!is<CSSReflectValue>(*value))
-            return;
-
-        CSSReflectValue& reflectValue = downcast<CSSReflectValue>(*value);
-        RefPtr<StyleReflection> reflection = StyleReflection::create();
-        reflection->setDirection(*reflectValue.direction());
-        if (reflectValue.offset())
-            reflection->setOffset(reflectValue.offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(state.cssToLengthConversionData()));
-        NinePieceImage mask;
-        mask.setMaskDefaults();
-        m_styleMap.mapNinePieceImage(id, reflectValue.mask(), mask);
-        reflection->setMask(mask);
-
-        state.style()->setBoxReflect(reflection.release());
-        return;
-    }
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
@@ -3081,6 +3058,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitBoxOrdinalGroup:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
+    case CSSPropertyWebkitBoxReflect:
     case CSSPropertyWebkitColorCorrection:
     case CSSPropertyWebkitColumnAxis:
     case CSSPropertyWebkitColumnBreakAfter:

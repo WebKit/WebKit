@@ -30,6 +30,7 @@
 #include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSReflectValue.h"
 #include "Length.h"
 #include "Pair.h"
 #include "QuotesData.h"
@@ -68,6 +69,7 @@ public:
     static int convertMarqueeSpeed(StyleResolver&, CSSValue&);
     static PassRefPtr<QuotesData> convertQuotes(StyleResolver&, CSSValue&);
     static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, CSSValue&);
+    static PassRefPtr<StyleReflection> convertReflection(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -467,6 +469,29 @@ inline TextUnderlinePosition StyleBuilderConverter::convertTextUnderlinePosition
         combinedPosition |= position;
     }
     return static_cast<TextUnderlinePosition>(combinedPosition);
+}
+
+inline PassRefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        return nullptr;
+    }
+
+    CSSReflectValue& reflectValue = downcast<CSSReflectValue>(value);
+
+    RefPtr<StyleReflection> reflection = StyleReflection::create();
+    reflection->setDirection(*reflectValue.direction());
+
+    if (reflectValue.offset())
+        reflection->setOffset(reflectValue.offset()->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
+
+    NinePieceImage mask;
+    mask.setMaskDefaults();
+    styleResolver.styleMap()->mapNinePieceImage(CSSPropertyWebkitBoxReflect, reflectValue.mask(), mask);
+    reflection->setMask(mask);
+
+    return reflection.release();
 }
 
 } // namespace WebCore
