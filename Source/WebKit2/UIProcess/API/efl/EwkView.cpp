@@ -353,6 +353,9 @@ EwkView::~EwkView()
     ASSERT(wkPageToEvasObjectMap().get(wkPage()) == m_evasObject);
     wkPageToEvasObjectMap().remove(wkPage());
 
+    m_evasGLSurface = nullptr;
+    m_evasGLContext = nullptr;
+
     if (m_evasGL)
         evas_gl_free(m_evasGL);
 }
