@@ -74,8 +74,6 @@ file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCor
 file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
 
 # Include only the resources we actually build
-file Source/WebCore/Resources/deleteButton.png
-file Source/WebCore/Resources/deleteButton@2x.png
 file Source/WebCore/Resources/missingImage.png
 file Source/WebCore/Resources/missingImage@2x.png
 file Source/WebCore/Resources/panIcon.png

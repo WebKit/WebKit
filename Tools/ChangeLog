@@ -1,3 +1,9 @@
+2014-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ make distcheck.
+
+        * gtk/manifest.txt: Remove deleted files.
+
 2014-11-24  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Utilize Eail library to support accessibility in EFL
