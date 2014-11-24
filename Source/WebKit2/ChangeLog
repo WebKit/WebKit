@@ -1,3 +1,23 @@
+2014-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView is created with the wrong web context when using webkit_web_view_new_with_related_view()
+        https://bugs.webkit.org/show_bug.cgi?id=139023
+
+        Reviewed by Sergio Villar Senin.
+
+        The WebKitWebContext is a construct only property, so it's always
+        set to the default value when not provided, during the
+        construction. When a related-view is used to create a new web view
+        we should ensure that the same web context is used for the new web
+        view, instead of the default. We should also ignore any web
+        context given as construct parameter if a related view is alos provided.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Do not set the context to the default
+        one when not given during construction.
+        (webkitWebViewSetProperty): Only use the default web context when
+        not provided as construct parameter and there isn't a related view.
+
 2014-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to override the default local storage directory

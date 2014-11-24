@@ -24,13 +24,23 @@
 #include <glib/gstdio.h>
 #include <wtf/gobject/GRefPtr.h>
 
-static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
+static void testWebViewWebContext(WebViewTest* test, gconstpointer)
 {
     g_assert(webkit_web_view_get_context(test->m_webView) == test->m_webContext.get());
+    g_assert(webkit_web_context_get_default() != test->m_webContext.get());
 
     // Check that a web view created with g_object_new has the default context.
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, NULL));
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr));
     g_assert(webkit_web_view_get_context(webView.get()) == webkit_web_context_get_default());
+
+    // Check that a web view created with a related view has the related view context.
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(test->m_webView));
+    g_assert(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
+
+    // Check that a web context given as construct parameter is ignored if a related view is also provided.
+    webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_context_get_default(), "related-view", test->m_webView, nullptr));
+    g_assert(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 }
 
 static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
@@ -573,7 +583,7 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
-    WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
+    WebViewTest::add("WebKitWebView", "web-context", testWebViewWebContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);

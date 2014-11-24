@@ -1,3 +1,18 @@
+2014-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView is created with the wrong web context when using webkit_web_view_new_with_related_view()
+        https://bugs.webkit.org/show_bug.cgi?id=139023
+
+        Reviewed by Sergio Villar Senin.
+
+        Rename WebKitWebView/default-context as WebKitWebView/web-context
+        and check we are always using the right context for new web views.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewWebContext):
+        (beforeAll):
+        (testWebViewDefaultContext): Deleted.
+
 2014-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to override the default local storage directory

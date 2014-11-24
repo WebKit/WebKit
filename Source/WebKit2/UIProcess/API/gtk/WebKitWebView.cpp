@@ -564,13 +564,17 @@ static void webkitWebViewHandleDownloadRequest(WebKitWebViewBase* webViewBase, D
 
 static void webkitWebViewConstructed(GObject* object)
 {
-    if (G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
+    G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->relatedView)
+        priv->context = webkit_web_view_get_context(priv->relatedView);
+    else if (!priv->context)
+        priv->context = webkit_web_context_get_default();
     if (!priv->settings)
         priv->settings = adoptGRef(webkit_settings_new());
+
     webkitWebContextCreatePageForWebView(priv->context, webView, priv->userContentManager.get(), priv->relatedView);
 
     priv->loadObserver = std::make_unique<PageLoadStateObserver>(webView);
@@ -603,7 +607,7 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     switch (propId) {
     case PROP_WEB_CONTEXT: {
         gpointer webContext = g_value_get_object(value);
-        webView->priv->context = webContext ? WEBKIT_WEB_CONTEXT(webContext) : webkit_web_context_get_default();
+        webView->priv->context = webContext ? WEBKIT_WEB_CONTEXT(webContext) : nullptr;
         break;
     }
     case PROP_RELATED_VIEW: {
