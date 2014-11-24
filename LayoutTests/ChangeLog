@@ -1,3 +1,13 @@
+2014-11-24  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: fast/text/simple-lines-multiple-renderers test has the wrong content.
+        https://bugs.webkit.org/show_bug.cgi?id=139036
+
+        Swap simple-lines-multiple-renderers.html and simple-lines-multiple-renderers-expected.html
+
+        * fast/text/simple-lines-multiple-renderers-expected.html:
+        * fast/text/simple-lines-multiple-renderers.html:
+
 2014-11-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Unskip the skipped ATK tests in roles-exposed.html
