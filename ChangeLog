@@ -1,3 +1,9 @@
+2014-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.1 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-11-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] Use ld.gold if it is available to speedup builds

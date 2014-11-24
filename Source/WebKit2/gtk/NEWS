@@ -1,4 +1,27 @@
 =================
+WebKitGTK+  2.7.2
+=================
+
+What's new in WebKitGTK+ 2.7.2?
+
+  - Fix SSL connection issues with some websites after the POODLE vulnerability fix.
+  - Add API to handle user script messages.
+  - Add context menu API to Web Process Extensions.
+  - Add API to create a WebKitWebContext.
+  - Add API to override the default local storage directory.
+  - Add WebKitWebResource::failed-with-tls-errors signal to notify about load failures
+    due to TLS errors also in sub-resources.
+  - Fix several crashes in accessibility implementation.
+  - Fix XMLHttpRequest with a timeout when using the network process.
+  - Fix XMLHttpRequest with cookies disabled when using the network process.
+  - Fix a crash in the network process when a synchronous load redirects to a new url
+    in a different security origin.
+  - Fix a crash in TextureMapper when video resolution changes.
+  - Correctly report the memory used by the media player to the garbage collector to
+    make sure it’s freed when the video element is removed from the DOM.
+  - Fix documentation of webkit_print_operation_get_page_setup().
+
+=================
 WebKitGTK+  2.7.1
 =================
 
