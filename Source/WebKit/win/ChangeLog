@@ -1,3 +1,23 @@
+2014-11-24  Anders Carlsson  <andersca@apple.com>
+
+        Stub out user content WebView member functions on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139033
+
+        Reviewed by Sam Weinig.
+
+        These functions aren't used by any clients and hinder getting rid of PageGroup.
+        If it turns out they're still needed we can copy the user content controller code from Mac Legacy WebKit.
+
+        * WebView.cpp:
+        (WebView::addUserScriptToGroup):
+        (WebView::addUserStyleSheetToGroup):
+        (WebView::removeUserScriptFromGroup):
+        (WebView::removeUserStyleSheetFromGroup):
+        (WebView::removeUserScriptsFromGroup):
+        (WebView::removeUserStyleSheetsFromGroup):
+        (WebView::removeAllUserContentFromGroup):
+        (toStringVector): Deleted.
+
 2014-11-21  Jer Noble  <jer.noble@apple.com>
 
         Support multiple signatures of diagnostic logging.

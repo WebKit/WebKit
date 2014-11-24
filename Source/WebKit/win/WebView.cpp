@@ -6339,157 +6339,44 @@ void WebView::exitVideoFullscreen()
 #endif
 }
 
-static Vector<String> toStringVector(unsigned patternsCount, BSTR* patterns)
-{
-    Vector<String> patternsVector;
-    if (!patternsCount)
-        return patternsVector;
-    for (unsigned i = 0; i < patternsCount; ++i)
-        patternsVector.append(toString(patterns[i]));
-    return patternsVector;
-}
-
 HRESULT WebView::addUserScriptToGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR source, BSTR url, 
                                       unsigned whitelistCount, BSTR* whitelist,
                                       unsigned blacklistCount, BSTR* blacklist,
                                       WebUserScriptInjectionTime injectionTime)
 {
-    COMPtr<WebScriptWorld> world(Query, iWorld);
-    if (!world)
-        return E_POINTER;
-
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->addUserScriptToWorld(world->world(), toString(source), toURL(url),
-                                    toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
-                                    injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
-                                    InjectInAllFrames);
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR source, BSTR url,
                                           unsigned whitelistCount, BSTR* whitelist,
                                           unsigned blacklistCount, BSTR* blacklist)
 {
-    COMPtr<WebScriptWorld> world(Query, iWorld);
-    if (!world)
-        return E_POINTER;
-
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->addUserStyleSheetToWorld(world->world(), toString(source), toURL(url),
-                                        toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
-                                        InjectInAllFrames);
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::removeUserScriptFromGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR url)
 {
-    COMPtr<WebScriptWorld> world(Query, iWorld);
-    if (!world)
-        return E_POINTER;
-
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->removeUserScriptFromWorld(world->world(), toURL(url));
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::removeUserStyleSheetFromGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR url)
 {
-    COMPtr<WebScriptWorld> world(Query, iWorld);
-    if (!world)
-        return E_POINTER;
-
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->removeUserStyleSheetFromWorld(world->world(), toURL(url));
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::removeUserScriptsFromGroup(BSTR groupName, IWebScriptWorld* iWorld)
 {
-    COMPtr<WebScriptWorld> world(Query, iWorld);
-    if (!world)
-        return E_POINTER;
-
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->removeUserScriptsFromWorld(world->world());
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::removeUserStyleSheetsFromGroup(BSTR groupName, IWebScriptWorld* iWorld)
 {
-    COMPtr<WebScriptWorld> world(Query, iWorld);
-    if (!world)
-        return E_POINTER;
-
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->removeUserStyleSheetsFromWorld(world->world());
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::removeAllUserContentFromGroup(BSTR groupName)
 {
-    String group = toString(groupName);
-    if (group.isEmpty())
-        return E_INVALIDARG;
-
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    ASSERT(pageGroup);
-    if (!pageGroup)
-        return E_FAIL;
-
-    pageGroup->removeAllUserContent();
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::invalidateBackingStore(const RECT* rect)
