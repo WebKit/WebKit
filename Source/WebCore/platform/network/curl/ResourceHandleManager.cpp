@@ -229,7 +229,7 @@ inline static bool isHttpAuthentication(int statusCode)
 }
 
 ResourceHandleManager::ResourceHandleManager()
-    : m_downloadTimer(this, &ResourceHandleManager::downloadTimerCallback)
+    : m_downloadTimer(*this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(cookieJarPath())
     , m_certificatePath (certificatePath())
     , m_runningJobs(0)
@@ -620,7 +620,7 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
     return sent;
 }
 
-void ResourceHandleManager::downloadTimerCallback(Timer* /* timer */)
+void ResourceHandleManager::downloadTimerCallback()
 {
     startScheduledJobs();
 

@@ -76,7 +76,7 @@ public:
 private:
     ResourceHandleManager();
     ~ResourceHandleManager();
-    void downloadTimerCallback(Timer*);
+    void downloadTimerCallback();
     void removeFromCurl(ResourceHandle*);
     bool removeScheduledJob(ResourceHandle*);
     void startJob(ResourceHandle*);

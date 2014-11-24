@@ -1,3 +1,17 @@
+2014-11-24  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Compile error in ResourceHandleManager.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=139026
+
+        Reviewed by Brent Fulgham.
+
+        The parameter types of the constructor of the Timer class has changed.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        * platform/network/curl/ResourceHandleManager.h:
+
 2014-11-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Unskip the skipped ATK tests in roles-exposed.html
