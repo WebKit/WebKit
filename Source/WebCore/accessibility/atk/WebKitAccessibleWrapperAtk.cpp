@@ -661,6 +661,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_TABLE;
     case ApplicationRole:
         return ATK_ROLE_APPLICATION;
+    case DocumentRegionRole:
     case GroupRole:
     case RadioGroupRole:
     case TabPanelRole:

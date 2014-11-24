@@ -7,6 +7,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 a[href]
       AXRole: AXLink
       
+a:not([href])
+      AXRole: 
+      
+abbr
+      AXRole: 
+      
 address
       AXRole: AXLandmarkContentInfo
       
@@ -16,11 +22,35 @@ article
 aside
       AXRole: AXLandmarkComplementary
       
+audio
+      AXRole: 
+      
+b
+      AXRole: 
+      
+bdo
+      AXRole: 
+      
 blockquote
       AXRole: AXBlockquote
       
 button
       AXRole: AXButton
+      
+canvas
+      AXRole: 
+      
+cite
+      AXRole: 
+      
+code
+      AXRole: 
+      
+del
+      AXRole: 
+      
+dfn
+      AXRole: AXDefinition
       
 dl
       AXRole: AXDescriptionList
@@ -33,6 +63,9 @@ dd
       
 div
       AXRole: AXSection
+      
+em
+      AXRole: 
       
 fieldset
       AXRole: AXGroup
@@ -73,6 +106,18 @@ h6
 hr
       AXRole: AXSeparator
       
+i
+      AXRole: 
+      
+img:not([src]):not([alt])
+      AXRole: 
+      
+img[alt='']
+      AXRole: 
+      
+img[src]:not([alt])
+      AXRole: 
+      
 img[alt='X']
       AXRole: AXImage
       
@@ -84,6 +129,9 @@ img[usemap]:not([alt])
       
 input[type='button']
       AXRole: AXButton
+      
+input[type='color']
+      AXRole: AXTextField
       
 input[type='checkbox']
       AXRole: AXCheckBox
@@ -102,6 +150,9 @@ input[type='email']
       
 input[type='file']
       AXRole: AXButton
+      
+input[type='hidden']
+      AXRole: 
       
 input[type='image']
       AXRole: AXButton
@@ -145,10 +196,16 @@ input[type='url']
 input[type='week']
       AXRole: AXTextField
       
+ins
+      AXRole: 
+      
 map
       AXRole: 
       
 area
+      AXRole: 
+      
+mark
       AXRole: 
       
 math
@@ -172,8 +229,26 @@ pre
 progress
       AXRole: AXProgressIndicator
       
+q
+      AXRole: 
+      
+s
+      AXRole: 
+      
+samp
+      AXRole: 
+      
+section
+      AXRole: AXGroup
+      
 select:not([multiple])
       AXRole: AXComboBox
+      
+option
+      AXRole: 
+      
+optgroup
+      AXRole: 
       
 select[multiple]
       AXRole: AXListBox
@@ -184,14 +259,53 @@ option
 optgroup
       AXRole: AXListItem
       
+small
+      AXRole: 
+      
+span
+      AXRole: 
+      
+strong
+      AXRole: 
+      
+sub
+      AXRole: 
+      
+sup
+      AXRole: 
+      
+svg
+      AXRole: 
+      
 table
       AXRole: AXTable
+      
+caption
+      AXRole: 
+      
+thead
+      AXRole: 
+      
+tr
+      AXRole: 
       
 th
       AXRole: AXColumnHeader
       
+tbody
+      AXRole: 
+      
+tr
+      AXRole: 
+      
 td
       AXRole: AXCell
+      
+tfoot
+      AXRole: 
+      
+tr
+      AXRole: 
       
 th
       AXRole: AXRowHeader
@@ -199,11 +313,20 @@ th
 textarea
       AXRole: AXTextField
       
+time
+      AXRole: 
+      
 ul
       AXRole: AXList
       
 li
       AXRole: AXListItem
+      
+var
+      AXRole: 
+      
+wbr
+      AXRole: 
       
 div[role=command]
       AXRole: AXSection
@@ -280,8 +403,20 @@ div[role=dialog]
 div[role=directory]
       AXRole: AXList
       
+div[role=document]
+      AXRole: AXDocument
+      
+div[role=form]
+      AXRole: AXForm
+      
 div[role=grid]
       AXRole: AXTable
+      
+div[role=rowgroup]
+      AXRole: 
+      
+div[role=row]
+      AXRole: 
       
 div[role=rowheader]
       AXRole: AXRowHeader
@@ -309,6 +444,9 @@ div[role=list]
       
 div[role=listitem]
       AXRole: AXListItem
+      
+div[role=listbox]
+      AXRole: AXListBox
       
 div[role=option]
       AXRole: AXListItem
@@ -355,6 +493,9 @@ div[role=navigation]
 div[role=note]
       AXRole: AXComment
       
+div[role=presentation]
+      AXRole: 
+      
 div[role=progressbar]
       AXRole: AXProgressIndicator
       
@@ -363,6 +504,9 @@ div[role=radiogroup]
       
 div[role=radio]
       AXRole: AXRadioButton
+      
+div[role=region]
+      AXRole: AXGroup
       
 div[role=scrollbar]
       AXRole: AXScrollBar
@@ -379,11 +523,17 @@ div[role=slider]
 div[role=spinbutton]
       AXRole: AXSpinButton
       
+div[role=status]
+      AXRole: AXStatusBar
+      
 div[role=tablist]
       AXRole: AXTabGroup
       
 div[role=tab]
       AXRole: AXTab
+      
+div[role=tabpanel]
+      AXRole: AXGroup
       
 div[role=textbox]
       AXRole: AXTextField
@@ -394,8 +544,29 @@ div[role=timer]
 div[role=toolbar]
       AXRole: AXToolbar
       
+div[role=tooltip]
+      AXRole: AXUserInterfaceTooltip
+      
+div[role=tree]
+      AXRole: AXTree
+      
+div[role=treeitem]
+      AXRole: AXTreeItem
+      
+div[role=group]
+      AXRole: 
+      
+div[role=treeitem]
+      AXRole: AXTreeItem
+      
 div[role=treegrid]
       AXRole: AXTable
+      
+div[role=rowgroup]
+      AXRole: 
+      
+div[role=row]
+      AXRole: 
       
 div[role=rowheader]
       AXRole: AXRowHeader

@@ -1,3 +1,20 @@
+2014-11-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Unskip the skipped ATK tests in roles-exposed.html
+        https://bugs.webkit.org/show_bug.cgi?id=139016
+
+        Reviewed by Chris Fleizach.
+
+        There was one test that could not be unskipped without making a change
+        for that one to pass: mapping DocumentRegionRole to ATK_ROLE_PANEL. The
+        rest of the "fix" is just unskipping tests for ATK and updating the test
+        expectations.
+
+        No new tests needed.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2014-11-23  Antti Koivisto  <antti@apple.com>
 
         Use segment vector for FlowContents
