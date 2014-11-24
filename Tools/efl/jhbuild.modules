@@ -26,6 +26,8 @@
     </dependencies>
   </metamodule>
 
+  <include href="jhbuild-optional.modules"/>
+
   <repository type="tarball" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="sourceware.org"

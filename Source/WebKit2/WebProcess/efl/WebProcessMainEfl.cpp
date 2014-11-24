@@ -35,6 +35,28 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 
+#if HAVE(ACCESSIBILITY)
+#include "Module.h"
+/*
+ * This should be defined and filled in elementary but to avoid undefined reference it's defined here.
+ * Setting this variable to nullptr will not cause any trouble to webkit and eail as well.
+ */
+Eina_List* _elm_win_list = nullptr;
+
+typedef int (*EailFunction)(void*);
+
+static char* eailLibraryPath()
+{
+    return getenv("ACCESSIBILITY_EAIL_LIBRARY_PATH");
+}
+
+static WebKit::Module& eail()
+{
+    static NeverDestroyed<WebKit::Module> eail(eailLibraryPath());
+    return eail;
+}
+#endif
+
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
 #include <X11/Xlib.h>
@@ -98,6 +120,14 @@ public:
         if (!ecore_main_loop_glib_integrate())
             return false;
 
+#if HAVE(ACCESSIBILITY)
+        // Initialize EAIL module (adding listeners, init atk-bridge)
+        if (eail().load()) {
+            if (EailFunction eailInit = eail().functionPointer<EailFunction>("elm_modapi_init"))
+                eailInit(nullptr);
+        }
+#endif
+
         SoupNetworkSession::defaultSession().setupHTTPProxyFromEnvironment();
         return true;
     }
@@ -116,6 +146,11 @@ public:
 #endif
         ecore_shutdown();
         eina_shutdown();
+
+#if HAVE(ACCESSIBILITY)
+        if (EailFunction eailShutdown = eail().functionPointer<EailFunction>("elm_modapi_shutdown"))
+            eailShutdown(nullptr);
+#endif
     }
 };
 

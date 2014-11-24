@@ -1,3 +1,15 @@
+2014-11-24  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Utilize Eail library to support accessibility in EFL
+        https://bugs.webkit.org/show_bug.cgi?id=137742
+
+        Reviewed by Gyuyoung Kim.
+
+        Eail, atk-bridge, at-spi2 are not mandatory modules for webkit-efl. They are rather optional.
+
+        * efl/jhbuild-optional.modules: Added.
+        * efl/jhbuild.modules:
+
 2014-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView is created with the wrong web context when using webkit_web_view_new_with_related_view()
