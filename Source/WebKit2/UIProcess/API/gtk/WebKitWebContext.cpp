@@ -48,6 +48,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Language.h>
+#include <glib/gi18n-lib.h>
 #include <libintl.h>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -93,6 +94,12 @@ using namespace WebKit;
  * not appropriate for Internet applications.
  *
  */
+
+enum {
+    PROP_0,
+
+    PROP_LOCAL_STORAGE_DIRECTORY
+};
 
 enum {
     DOWNLOAD_STARTED,
@@ -169,6 +176,8 @@ struct _WebKitWebContextPrivate {
 
     CString webExtensionsDirectory;
     GRefPtr<GVariant> webExtensionsInitializationUserData;
+
+    CString localStorageDirectory;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -212,6 +221,32 @@ static const char* injectedBundleDirectory()
     return injectedBundlePath;
 }
 
+static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
+{
+    WebKitWebContext* context = WEBKIT_WEB_CONTEXT(object);
+
+    switch (propID) {
+    case PROP_LOCAL_STORAGE_DIRECTORY:
+        g_value_set_string(value, context->priv->localStorageDirectory.data());
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
+    }
+}
+
+static void webkitWebContextSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* paramSpec)
+{
+    WebKitWebContext* context = WEBKIT_WEB_CONTEXT(object);
+
+    switch (propID) {
+    case PROP_LOCAL_STORAGE_DIRECTORY:
+        context->priv->localStorageDirectory = g_value_get_string(value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
+    }
+}
+
 static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
@@ -220,9 +255,11 @@ static void webkitWebContextConstructed(GObject* object)
     WebContextConfiguration webContextConfiguration;
     webContextConfiguration.injectedBundlePath = WebCore::filenameToString(bundleFilename.get());
     WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
-
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
+    if (!priv->localStorageDirectory.isNull())
+        webContextConfiguration.localStorageDirectory = WebCore::filenameToString(priv->localStorageDirectory.data());
+
     priv->context = WebContext::create(WTF::move(webContextConfiguration));
 
     priv->requestManager = priv->context->supplement<WebSoupCustomProtocolRequestManager>();
@@ -265,8 +302,27 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
     bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
+    gObjectClass->get_property = webkitWebContextGetProperty;
+    gObjectClass->set_property = webkitWebContextSetProperty;
     gObjectClass->constructed = webkitWebContextConstructed;
     gObjectClass->dispose = webkitWebContextDispose;
+
+    /**
+     * WebKitWebContext:local-storage-directory:
+     *
+     * The directory where local storage data will be saved.
+     *
+     * Since: 2.8
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_LOCAL_STORAGE_DIRECTORY,
+        g_param_spec_string(
+            "local-storage-directory",
+            _("Local Storage Directory"),
+            _("The directory where local storage data will be saved"),
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
      * WebKitWebContext::download-started:

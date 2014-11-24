@@ -1,3 +1,20 @@
+2014-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to override the default local storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=138828
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add test to check that the local storage directory is created at
+        the path given on construction.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextConfiguration):
+        (beforeAll):
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        (Test::Test):
+        (Test::~Test): Deleted.
+
 2014-11-21  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add "show simple line layout debug borders" setting to MiniBrowser.

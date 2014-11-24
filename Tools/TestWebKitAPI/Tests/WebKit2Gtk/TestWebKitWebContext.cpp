@@ -37,6 +37,12 @@ static void testWebContextDefault(Test* test, gconstpointer)
     g_assert(webkit_web_context_get_default() != test->m_webContext.get());
 }
 
+static void testWebContextConfiguration(WebViewTest* test, gconstpointer)
+{
+    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
+    g_assert(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
+}
+
 class PluginsTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(PluginsTest);
@@ -411,6 +417,7 @@ void beforeAll()
     kServer->run(serverCallback);
 
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
+    WebViewTest::add("WebKitWebContext", "configuration", testWebContextConfiguration);
     PluginsTest::add("WebKitWebContext", "get-plugins", testWebContextGetPlugins);
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
     Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);

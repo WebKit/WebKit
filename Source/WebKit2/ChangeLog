@@ -1,3 +1,19 @@
+2014-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to override the default local storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=138828
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebKitWebContext:local-storage-directory construct-only
+        property. If not provided the default will be used.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+
 2014-11-23  Conrad Shultz  <conrad_shultz@apple.com>
 
         Page previews should have titles
