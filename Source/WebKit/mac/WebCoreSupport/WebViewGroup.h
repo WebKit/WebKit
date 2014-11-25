@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/HashSet.h>
-#import <wtf/RefCounted.h>
-#import <wtf/PassRefPtr.h>
-#import <wtf/text/WTFString.h>
+#import <WebCore/UserContentController.h>
 
 @class WebView;
 
@@ -35,12 +32,18 @@ public:
     static PassRefPtr<WebViewGroup> getOrCreate(const String& name);
     ~WebViewGroup();
 
+    static WebViewGroup* get(const String& name);
+
     void addWebView(WebView *);
     void removeWebView(WebView *);
-    
+
+    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
+
 private:
     WebViewGroup(const String& name);
 
     String m_name;
     HashSet<WebView *> m_webViews;
+
+    Ref<WebCore::UserContentController> m_userContentController;
 };

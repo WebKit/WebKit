@@ -176,6 +176,7 @@
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/UserAgent.h>
+#import <WebCore/UserContentController.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/Widget.h>
@@ -919,6 +920,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         didOneTimeInitialization = true;
     }
 
+    _private->group = WebViewGroup::getOrCreate(groupName);
+    _private->group->addWebView(self);
+
     PageConfiguration pageConfiguration;
 #if !PLATFORM(IOS)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -935,7 +939,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
+    pageConfiguration.userContentController = &_private->group->userContentController();
     _private->page = new Page(pageConfiguration);
+
+    _private->page->setGroupName(groupName);
+
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));
 #endif
@@ -992,7 +1000,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     [self _addToAllWebViewsSet];
-    [self setGroupName:groupName];
     
     // If there's already a next key view (e.g., from a nib), wire it up to our
     // contained frame view. In any case, wire our next key view up to the our
@@ -1155,7 +1162,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [self addSubview:frameView];
     [frameView release];
 
-    
+    _private->group = WebViewGroup::getOrCreate(groupName);
+    _private->group->addWebView(self);
+
     PageConfiguration pageConfiguration;
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)
@@ -1165,6 +1174,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
+    pageConfiguration.userContentController = &_private->group->userContentController();
+
     _private->page = new Page(pageConfiguration);
     
     [self setSmartInsertDeleteEnabled:YES];
@@ -1192,7 +1203,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     // FIXME: this is a workaround for <rdar://problem/11820090> Quoted text changes in size when replying to certain email
     _private->page->settings().setMinimumFontSize([_private->preferences minimumFontSize]);
 
-    [self setGroupName:groupName];
+    _private->page->setGroupName(groupName);
 
 #if ENABLE(REMOTE_INSPECTOR)
     _private->page->setRemoteInspectionAllowed(isInternalInstall());
@@ -3995,17 +4006,16 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
 
     if (!world)
         return;
 
-    pageGroup->addUserScriptToWorld(*core(world), source, url, toStringVector(whitelist), toStringVector(blacklist),
-                                    injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
-                                    injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+    auto userScript = std::make_unique<UserScript>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd, injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+    viewGroup->userContentController().addUserScript(*core(world), WTF::move(userScript));
 }
 
 + (void)_addUserStyleSheetToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url
@@ -4021,15 +4031,16 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
 
     if (!world)
         return;
 
-    pageGroup->addUserStyleSheetToWorld(*core(world), source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+    auto styleSheet = std::make_unique<UserStyleSheet>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
+    viewGroup->userContentController().addUserStyleSheet(*core(world), WTF::move(styleSheet), InjectInExistingDocuments);
 }
 
 + (void)_removeUserScriptFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
@@ -4037,15 +4048,15 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
 
     if (!world)
         return;
 
-    pageGroup->removeUserScriptFromWorld(*core(world), url);
+    viewGroup->userContentController().removeUserScript(*core(world), url);
 }
 
 + (void)_removeUserStyleSheetFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
@@ -4053,15 +4064,15 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
 
     if (!world)
         return;
 
-    pageGroup->removeUserStyleSheetFromWorld(*core(world), url);
+    viewGroup->userContentController().removeUserStyleSheet(*core(world), url);
 }
 
 + (void)_removeUserScriptsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
@@ -4069,15 +4080,15 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
 
     if (!world)
         return;
 
-    pageGroup->removeUserScriptsFromWorld(*core(world));
+    viewGroup->userContentController().removeUserScripts(*core(world));
 }
 
 + (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
@@ -4085,15 +4096,15 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
 
     if (!world)
         return;
 
-    pageGroup->removeUserStyleSheetsFromWorld(*core(world));
+    viewGroup->userContentController().removeUserStyleSheets(*core(world));
 }
 
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName
@@ -4101,12 +4112,12 @@ static Vector<String> toStringVector(NSArray* patterns)
     String group(groupName);
     if (group.isEmpty())
         return;
-    
-    PageGroup* pageGroup = PageGroup::pageGroup(group);
-    if (!pageGroup)
+
+    auto* viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
         return;
-    
-    pageGroup->removeAllUserContent();
+
+    viewGroup->userContentController().removeAllUserContent();
 }
 
 - (BOOL)allowsNewCSSAnimationsWhileSuspended
@@ -6102,6 +6113,8 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
     if (!_private->page)
         return;
+
+    _private->page->setUserContentController(&_private->group->userContentController());
     _private->page->setGroupName(groupName);
 }
 

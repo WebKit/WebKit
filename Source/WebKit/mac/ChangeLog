@@ -1,3 +1,43 @@
+2014-11-25  Anders Carlsson  <andersca@apple.com>
+
+        Add a user content controller to WebViewGroup and use it for user content
+        https://bugs.webkit.org/show_bug.cgi?id=139043
+
+        Reviewed by Antti Koivisto.
+
+        This is another tiny step towards getting rid of user content handling inside PageGroup.
+
+        * WebCoreSupport/WebViewGroup.h:
+        (WebViewGroup::userContentController):
+        Add a UserContentController member and getter.
+
+        * WebCoreSupport/WebViewGroup.mm:
+        (WebViewGroup::get):
+        Helper function that returns a WebViewGroup by its name (or null if it doesn't exist).
+
+        (WebViewGroup::WebViewGroup):
+        Create a user content controller.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Instead of calling -[WebView setGroupName:], create a WebViewGroup before creating the page, that way we can
+        set its user content controller in the PageConfiguration.
+
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Ditto.
+
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        (+[WebView _removeUserScriptFromGroup:world:url:]):
+        (+[WebView _removeUserStyleSheetFromGroup:world:url:]):
+        (+[WebView _removeUserScriptsFromGroup:world:]):
+        (+[WebView _removeUserStyleSheetsFromGroup:world:]):
+        (+[WebView _removeAllUserContentFromGroup:]):
+        Instead of calling into the PageGroup, get the WebViewGroup's user content controller and call into that.
+
+        (-[WebView setGroupName:]):
+        Set the user content controller to the new WebViewGroup's user content controller.
+
 2014-11-21  Jer Noble  <jer.noble@apple.com>
 
         Support multiple signatures of diagnostic logging.

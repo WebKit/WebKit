@@ -26,10 +26,10 @@
 #import "WebViewGroup.h"
 
 #import "WebView.h"
-#import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/RefPtr.h>
 #import <wtf/text/StringHash.h>
+
+using namespace WebCore;
 
 // Any named groups will live for the lifetime of the process, thanks to the reference held by the RefPtr.
 static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()
@@ -51,8 +51,16 @@ PassRefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name)
     return webViewGroup;
 }
 
+WebViewGroup* WebViewGroup::get(const String& name)
+{
+    ASSERT(!name.isEmpty());
+
+    return webViewGroups().get(name);
+}
+
 WebViewGroup::WebViewGroup(const String& name)
     : m_name(name)
+    , m_userContentController(*UserContentController::create())
 {
 }
 

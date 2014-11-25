@@ -1620,6 +1620,13 @@ void Page::setUserContentController(UserContentController* userContentController
 
     if (m_userContentController)
         m_userContentController->addPage(*this);
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document *document = frame->document()) {
+            document->styleSheetCollection().invalidateInjectedStyleSheetCache();
+            document->styleResolverChanged(DeferRecalcStyle);
+        }
+    }
 }
 
 VisitedLinkStore& Page::visitedLinkStore()

@@ -1,3 +1,17 @@
+2014-11-25  Anders Carlsson  <andersca@apple.com>
+
+        Add a user content controller to WebViewGroup and use it for user content
+        https://bugs.webkit.org/show_bug.cgi?id=139043
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.exp.in:
+        Export symbols.
+
+        * page/Page.cpp:
+        (WebCore::Page::setUserContentController):
+        Invalidate the injected style cache when setting a new user content controller.
+
 2014-11-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] gstmpegts is not initialized
