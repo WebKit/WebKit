@@ -1,3 +1,10 @@
+2014-11-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r176530.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp: Replace pointer with reference.
+        (WebKit::WebView::processDidExit):
+
 2014-11-24  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Remove some bad stuff from WebPageProxy

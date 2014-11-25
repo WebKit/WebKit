@@ -347,7 +347,7 @@ bool WebView::isViewInWindow()
 
 void WebView::processDidExit()
 {
-    m_client.webProcessCrashed(this, m_page->backForwardList()->currentItem()->url());
+    m_client.webProcessCrashed(this, m_page->backForwardList().currentItem()->url());
 }
 
 void WebView::didRelaunchProcess()
