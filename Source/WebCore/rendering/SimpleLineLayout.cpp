@@ -226,7 +226,7 @@ struct TextFragment {
         , end(0)
         , isWhitespaceOnly(false)
         , isBreakable(false)
-        , mustBreak(false)
+        , isLineBreak(false)
         , width(0)
     {
     }
@@ -237,7 +237,7 @@ struct TextFragment {
         , end(textEnd)
         , isWhitespaceOnly(isWhitespaceOnly)
         , isBreakable(false)
-        , mustBreak(false)
+        , isLineBreak(false)
         , width(textWidth)
     {
     }
@@ -252,7 +252,7 @@ struct TextFragment {
     unsigned end : 31;
     bool isWhitespaceOnly : 1;
     bool isBreakable;
-    bool mustBreak;
+    bool isLineBreak;
     float width;
 };
 
@@ -389,7 +389,7 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& li
     }
 
     // If we skipped any whitespace and now the line end is a "preserved" newline, skip the newline too as we are wrapping the line here already.
-    if (lastPosition != lineState.position && style.preserveNewline && !flowContents.isEnd(lineState.position) && flowContents.isNewlineCharacter(lineState.position))
+    if (lastPosition != lineState.position && style.preserveNewline && !flowContents.isEnd(lineState.position) && flowContents.isLineBreak(lineState.position))
         ++lineState.position;
 }
 
@@ -459,16 +459,16 @@ static TextFragment nextFragment(unsigned previousFragmentEnd, const FlowContent
     // 3. non-whitespace characters.
     const auto& style = flowContents.style();
     TextFragment fragment;
-    fragment.mustBreak = style.preserveNewline && flowContents.isNewlineCharacter(previousFragmentEnd);
+    fragment.isLineBreak = flowContents.isLineBreak(previousFragmentEnd);
     unsigned spaceCount = 0;
     unsigned whitespaceEnd = previousFragmentEnd;
-    if (!fragment.mustBreak)
+    if (!fragment.isLineBreak)
         whitespaceEnd = flowContents.findNextNonWhitespacePosition(previousFragmentEnd, spaceCount);
     fragment.isWhitespaceOnly = previousFragmentEnd < whitespaceEnd;
     fragment.start = previousFragmentEnd;
     if (fragment.isWhitespaceOnly)
         fragment.end = whitespaceEnd;
-    else if (fragment.mustBreak)
+    else if (fragment.isLineBreak)
         fragment.end = fragment.start + 1;
     else
         fragment.end = flowContents.findNextBreakablePosition(previousFragmentEnd + 1);
@@ -481,7 +481,7 @@ static TextFragment nextFragment(unsigned previousFragmentEnd, const FlowContent
     unsigned fragmentLength = fragment.end - fragment.start;
     if (fragment.isCollapsedWhitespace)
         fragment.width = style.spaceWidth;
-    else if (fragment.mustBreak)
+    else if (fragment.isLineBreak)
         fragment.width = 0; // Newline character's width is 0.
     else if (fragmentLength == spaceCount) // Space only.
         fragment.width = style.spaceWidth * spaceCount;
@@ -497,7 +497,7 @@ static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, co
     while (!flowContents.isEnd(lineState.position)) {
         // Find the next text fragment. Start from the end of the previous fragment -current line end.
         TextFragment fragment = nextFragment(lineState.position, flowContents, lineState.width());
-        if ((lineCanBeWrapped && !lineState.fits(fragment.width)) || fragment.mustBreak) {
+        if ((lineCanBeWrapped && !lineState.fits(fragment.width)) || fragment.isLineBreak) {
             // Overflow wrapping behaviour:
             // 1. Newline character: wraps the line unless it's treated as whitespace.
             // 2. Whitesapce collapse on: whitespace is skipped.
@@ -505,7 +505,7 @@ static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, co
             // 4. First, non-whitespace fragment is either wrapped or kept on the line. (depends on overflow-wrap)
             // 5. Non-whitespace fragment when there's already another fragment on the line gets pushed to the next line.
             bool isFirstFragment = !lineState.width();
-            if (fragment.mustBreak) {
+            if (fragment.isLineBreak) {
                 if (isFirstFragment)
                     lineState.addUncommitted(fragment);
                 else {

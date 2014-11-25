@@ -1,3 +1,24 @@
+2014-11-24  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Rename TextFragment::mustBreak to TextFragment::isLineBreak
+        https://bugs.webkit.org/show_bug.cgi?id=139035
+
+        Reviewed by Antti Koivisto.
+
+        Move new line logic to FlowContents class.
+        This is in preparation to support <br>.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::nextFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::isNewline):
+        (WebCore::SimpleLineLayout::FlowContents::isNewlineCharacter): Deleted.
+
 2014-11-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Move :placeholder-shown out of experimental

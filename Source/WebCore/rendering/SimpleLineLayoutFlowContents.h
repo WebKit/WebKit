@@ -45,7 +45,7 @@ public:
 
     float textWidth(unsigned from, unsigned to, float xPosition) const;
 
-    bool isNewlineCharacter(unsigned position) const;
+    bool isLineBreak(unsigned position) const;
     bool isEnd(unsigned position) const;
 
     struct Segment {
@@ -95,9 +95,9 @@ inline UChar FlowContents::characterAt(unsigned position) const
     return segment.text[position - segment.start];
 }
 
-inline bool FlowContents::isNewlineCharacter(unsigned position) const
+inline bool FlowContents::isLineBreak(unsigned position) const
 {
-    return characterAt(position) == '\n';
+    return m_style.preserveNewline && characterAt(position) == '\n';
 }
 
 inline bool FlowContents::isEnd(unsigned position) const
