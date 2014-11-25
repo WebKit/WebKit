@@ -1,3 +1,10 @@
+2014-11-25  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, upload two missing test files in the commit r174677.
+
+        * mathml/presentation/mo-stretch-update-expected.html: Added.
+        * mathml/presentation/mo-stretch-update.html: Added.
+
 2014-11-24  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Fix the parsing and re-serialization of :lang pseudo class selector when it has multiple arguments with same value
