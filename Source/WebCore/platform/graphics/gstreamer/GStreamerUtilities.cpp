@@ -29,6 +29,12 @@
 #include <wtf/MathExtras.h>
 #include <wtf/gobject/GUniquePtr.h>
 
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#define GST_USE_UNSTABLE_API
+#include <gst/mpegts/mpegts.h>
+#undef GST_USE_UNSTABLE_API
+#endif
+
 namespace WebCore {
 
 const char* webkitGstMapInfoQuarkString = "webkit-gst-map-info";
@@ -132,6 +138,12 @@ bool initializeGStreamer()
     // FIXME: We should probably pass the arguments from the command line.
     bool gstInitialized = gst_init_check(0, 0, &error.outPtr());
     ASSERT_WITH_MESSAGE(gstInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
+
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+    if (gstInitialized)
+        gst_mpegts_initialize();
+#endif
+
     return gstInitialized;
 }
 

@@ -1,3 +1,13 @@
+2014-11-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gstmpegts is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=139039
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer): Initialize the gstmpegts library.
+
 2014-11-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix unused variable warning in Biquad.cpp
