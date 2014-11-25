@@ -55,6 +55,13 @@ PASS parseThenSerializeRule(':lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de
 PASS parseThenSerializeRule(':lang(de-CH, it-CH, fr-CH, rm-CH) { }') is ':lang(de-CH, it-CH, fr-CH, rm-CH) { }'
 PASS parseThenSerializeRule(':lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH) { }') is ':lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH) { }'
 
+PASS parseThenSerializeRule(':lang(a, a, a) { }') is ':lang(a, a, a) { }'
+PASS parseThenSerializeRule(':lang(en, en, en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(en-us, en-us, en-us) { }') is ':lang(en-us, en-us, en-us) { }'
+PASS parseThenSerializeRule(':lang(de-DE-1996, de-DE-1996, de-DE-1996) { }') is ':lang(de-DE-1996, de-DE-1996, de-DE-1996) { }'
+PASS parseThenSerializeRule(':lang(de-Latn-DE-1996, de-Latn-DE-1996, de-Latn-DE-1996) { }') is ':lang(de-Latn-DE-1996, de-Latn-DE-1996, de-Latn-DE-1996) { }'
+PASS parseThenSerializeRule(':lang(java, java, java) { }') is ':lang(java, java, java) { }'
+
 PASS parseThenSerializeRule(':not(a) { }') is ':not(a) { }'
 PASS parseThenSerializeRule(':-webkit-any(a,b,p) { }') is ':-webkit-any(a,b,p) { }'
 
@@ -274,6 +281,18 @@ PASS parseThenSerializeRule(':lang(    a  ,b  ,c  ) { }') is ':lang(a, b, c) { }
 PASS parseThenSerializeRule(':lang(a,b    ,c) { }') is ':lang(a, b, c) { }'
 PASS parseThenSerializeRule(':lang(a,b,    c) { }') is ':lang(a, b, c) { }'
 PASS parseThenSerializeRule(':lang(a,b,    c    ) { }') is ':lang(a, b, c) { }'
+
+PASS parseThenSerializeRule(':lang(en, en, en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(en,en,en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(en,en,    en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(en,    en,en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(en,    en,en    ) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(    en,    en,en    ) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(en,   en,   en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(    en,    en,    en) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(    en,    en,    en    ) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(    en    ,    en    ,   en    ) { }') is ':lang(en, en, en) { }'
+PASS parseThenSerializeRule(':lang(    en,en,en    ) { }') is ':lang(en, en, en) { }'
 
 PASS parseThenSerializeRule(':lang() { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(12, b, c) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').

@@ -1,3 +1,20 @@
+2014-11-24  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Fix the parsing and re-serialization of :lang pseudo class selector when it has multiple arguments with same value
+        https://bugs.webkit.org/show_bug.cgi?id=139013
+
+        Reviewed by Benjamin Poulain.
+
+        Fix the parsing and re-serialization of :lang pseudo class selector when 
+        it has multiple arguments with same value e.g. :lang(en, en, en). Previously, 
+        given :lang(en, en, en) selector, it was parsed and reserialized 
+        as :lang(enenen) instead of :lang(en, en, en)
+
+        Related test on parsing and re-serialization of css selectors is updated.
+
+        * css/CSSSelector.cpp:
+        (WebCore::appendArgumentList):
+
 2014-11-24  Zalan Bujtas  <zalan@apple.com>
 
         Fix r176527. Iterate through the text renderers.

@@ -339,10 +339,10 @@ static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector*
 #if ENABLE(CSS_SELECTORS_LEVEL4)
 static void appendArgumentList(StringBuilder& str, const Vector<AtomicString>& argumentList)
 {
-    const AtomicString& lastArgument = argumentList.last();
-    for (const AtomicString argument : argumentList) {
-        str.append(argument);
-        if (argument != lastArgument)
+    unsigned argumentListSize = argumentList.size();
+    for (unsigned i = 0; i < argumentListSize; ++i) {
+        str.append(argumentList[i]);
+        if (i != argumentListSize - 1)
             str.appendLiteral(", ");
     }
 }

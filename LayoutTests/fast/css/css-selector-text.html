@@ -88,6 +88,15 @@ testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-
 testSelectorRoundTrip(":lang(de-CH, it-CH, fr-CH, rm-CH)");
 testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH)");
 
+debug('')
+
+testSelectorRoundTrip(":lang(a, a, a)");
+testSelectorRoundTrip(":lang(en, en, en)");
+testSelectorRoundTrip(":lang(en-us, en-us, en-us)");
+testSelectorRoundTrip(":lang(de-DE-1996, de-DE-1996, de-DE-1996)");
+testSelectorRoundTrip(":lang(de-Latn-DE-1996, de-Latn-DE-1996, de-Latn-DE-1996)");
+testSelectorRoundTrip(":lang(java, java, java)");
+
 debug('');
 
 testSelectorRoundTrip(":not(a)");
@@ -349,6 +358,20 @@ shouldBe("parseThenSerializeRule(':lang(    a  ,b  ,c  ) { }')", "':lang(a, b, c
 shouldBe("parseThenSerializeRule(':lang(a,b    ,c) { }')", "':lang(a, b, c) { }'");
 shouldBe("parseThenSerializeRule(':lang(a,b,    c) { }')", "':lang(a, b, c) { }'");
 shouldBe("parseThenSerializeRule(':lang(a,b,    c    ) { }')", "':lang(a, b, c) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(en, en, en) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(en,en,en) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(en,en,    en) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(en,    en,en) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(en,    en,en    ) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(    en,    en,en    ) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(en,   en,   en) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(    en,    en,    en) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(    en,    en,    en    ) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(    en    ,    en    ,   en    ) { }')", "':lang(en, en, en) { }'");
+shouldBe("parseThenSerializeRule(':lang(    en,en,en    ) { }')", "':lang(en, en, en) { }'");
 
 debug('');
 
