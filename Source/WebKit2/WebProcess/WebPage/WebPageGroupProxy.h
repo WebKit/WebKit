@@ -37,6 +37,7 @@ class MessageDecoder;
 
 namespace WebCore {
 class PageGroup;
+class UserContentController;
 }
 
 namespace WebKit {
@@ -52,10 +53,9 @@ public:
     bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
     WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
 
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
+    WebCore::UserContentController& userContentController();
 
-private:
-    WebPageGroupProxy(const WebPageGroupData&);
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     void addUserStyleSheet(const WebCore::UserStyleSheet&);
     void addUserScript(const WebCore::UserScript&);
@@ -63,8 +63,13 @@ private:
     void removeAllUserScripts();
     void removeAllUserContent();
 
+private:
+    WebPageGroupProxy(const WebPageGroupData&);
+
     WebPageGroupData m_data;
     WebCore::PageGroup* m_pageGroup;
+
+    RefPtr<WebCore::UserContentController> m_userContentController;
 };
 
 } // namespace WebKit

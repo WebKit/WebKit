@@ -1,3 +1,40 @@
+2014-11-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove user content handling from PageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139051
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScript):
+        (WebKit::InjectedBundle::removeUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScripts):
+        (WebKit::InjectedBundle::removeUserStyleSheets):
+        (WebKit::InjectedBundle::removeAllUserContent):
+        Talk to the user content controller from the passed in WebPageGroupProxy.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Create the WebPageGroupProxy before creating the page so we can get its user content controller and
+        pass it to the page configuration if necessary.
+        
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::userContentController):
+        New function that lazily creates a user content controller. We don't want to create this eagerly since
+        it's not used with the modern API.
+
+        (WebKit::WebPageGroupProxy::addUserStyleSheet):
+        (WebKit::WebPageGroupProxy::addUserScript):
+        (WebKit::WebPageGroupProxy::removeAllUserStyleSheets):
+        (WebKit::WebPageGroupProxy::removeAllUserScripts):
+        (WebKit::WebPageGroupProxy::removeAllUserContent):
+        Call through to the user content controller.
+
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        Add an m_userContentController member.
+
 2014-11-25  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Use LD_LIBRARY_PATH to make g-ir-scanner use the newly-built

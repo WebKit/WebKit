@@ -30,6 +30,7 @@
 #include "InjectedBundle.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/UserContentController.h>
 
 namespace WebKit {
 
@@ -43,10 +44,6 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
     return pageGroup.release();
 }
 
-WebPageGroupProxy::~WebPageGroupProxy()
-{
-}
-
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifer))
@@ -57,29 +54,41 @@ WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
         addUserScript(data.userScripts[i]);
 }
 
+WebPageGroupProxy::~WebPageGroupProxy()
+{
+}
+
+WebCore::UserContentController& WebPageGroupProxy::userContentController()
+{
+    if (!m_userContentController)
+        m_userContentController = WebCore::UserContentController::create();
+
+    return *m_userContentController;
+}
+
 void WebPageGroupProxy::addUserStyleSheet(const WebCore::UserStyleSheet& userStyleSheet)
 {
-    m_pageGroup->addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), userStyleSheet.source(), userStyleSheet.url(), userStyleSheet.whitelist(), userStyleSheet.blacklist(), userStyleSheet.injectedFrames(), userStyleSheet.level());
+    userContentController().addUserStyleSheet(WebCore::mainThreadNormalWorld(), std::make_unique<WebCore::UserStyleSheet>(userStyleSheet), WebCore::InjectInExistingDocuments);
 }
 
 void WebPageGroupProxy::addUserScript(const WebCore::UserScript& userScript)
 {
-    m_pageGroup->addUserScriptToWorld(WebCore::mainThreadNormalWorld(), userScript.source(), userScript.url(), userScript.whitelist(), userScript.blacklist(), userScript.injectionTime(), userScript.injectedFrames());
+    userContentController().addUserScript(WebCore::mainThreadNormalWorld(), std::make_unique<WebCore::UserScript>(userScript));
 }
 
 void WebPageGroupProxy::removeAllUserStyleSheets()
 {
-    m_pageGroup->removeUserStyleSheetsFromWorld(WebCore::mainThreadNormalWorld());
+    userContentController().removeUserStyleSheets(WebCore::mainThreadNormalWorld());
 }
 
 void WebPageGroupProxy::removeAllUserScripts()
 {
-    m_pageGroup->removeUserScriptsFromWorld(WebCore::mainThreadNormalWorld());
+    userContentController().removeUserScripts(WebCore::mainThreadNormalWorld());
 }
 
 void WebPageGroupProxy::removeAllUserContent()
 {
-    m_pageGroup->removeAllUserContent();
+    userContentController().removeAllUserContent();
 }
 
 } // namespace WebKit

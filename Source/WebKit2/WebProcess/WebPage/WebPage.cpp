@@ -337,6 +337,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     // 4ms should be adopted project-wide now, https://bugs.webkit.org/show_bug.cgi?id=61214
     Settings::setDefaultMinDOMTimerInterval(0.004);
 
+    m_pageGroup = WebProcess::shared().webPageGroup(parameters.pageGroupData);
+
 #if PLATFORM(IOS)
     Settings::setShouldManageAudioSessionCategory(true);
 #endif
@@ -363,7 +365,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(*this);
     pageConfiguration.diagnosticLoggingClient = new WebDiagnosticLoggingClient(*this);
 
-    pageConfiguration.userContentController = m_userContentController ? &m_userContentController->userContentController() : nullptr;
+    pageConfiguration.userContentController = m_userContentController ? &m_userContentController->userContentController() : &m_pageGroup->userContentController();
     pageConfiguration.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
 
     m_page = std::make_unique<Page>(pageConfiguration);
@@ -406,7 +408,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setCanStartMedia(false);
     m_mayStartMediaWhenInWindow = parameters.mayStartMediaWhenInWindow;
 
-    m_pageGroup = WebProcess::shared().webPageGroup(parameters.pageGroupData);
     m_page->setGroupName(m_pageGroup->identifier());
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 #if PLATFORM(IOS)

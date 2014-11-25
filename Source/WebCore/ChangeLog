@@ -1,5 +1,29 @@
 2014-11-25  Anders Carlsson  <andersca@apple.com>
 
+        Remove user content handling from PageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139051
+
+        Reviewed by Antti Koivisto.
+
+        Remove m_userContentController from PageGroup and the related functions and symbol exports.
+
+        * WebCore.exp.in:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        (WebCore::PageGroup::~PageGroup):
+        (WebCore::PageGroup::addPage):
+        (WebCore::PageGroup::removePage):
+        (WebCore::PageGroup::addUserScriptToWorld): Deleted.
+        (WebCore::PageGroup::addUserStyleSheetToWorld): Deleted.
+        (WebCore::PageGroup::removeUserScriptFromWorld): Deleted.
+        (WebCore::PageGroup::removeUserStyleSheetFromWorld): Deleted.
+        (WebCore::PageGroup::removeUserScriptsFromWorld): Deleted.
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld): Deleted.
+        (WebCore::PageGroup::removeAllUserContent): Deleted.
+        * page/PageGroup.h:
+
+2014-11-25  Anders Carlsson  <andersca@apple.com>
+
         Add a user content controller to WebViewGroup and use it for user content
         https://bugs.webkit.org/show_bug.cgi?id=139043
 

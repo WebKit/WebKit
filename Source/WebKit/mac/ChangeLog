@@ -1,5 +1,17 @@
 2014-11-25  Anders Carlsson  <andersca@apple.com>
 
+        Remove user content handling from PageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139051
+
+        Reviewed by Antti Koivisto.
+
+        Use the user content controller in the web view group.
+
+        * WebView/WebView.mm:
+        (-[WebView _injectOutlookQuirksScript]):
+
+2014-11-25  Anders Carlsson  <andersca@apple.com>
+
         Add a user content controller to WebViewGroup and use it for user content
         https://bugs.webkit.org/show_bug.cgi?id=139043
 

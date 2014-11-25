@@ -43,7 +43,6 @@ namespace WebCore {
     class SecurityOrigin;
     class StorageNamespace;
     class VisitedLinkStore;
-    class UserContentController;
 
 #if ENABLE(VIDEO_TRACK)
     class CaptionPreferencesChangedListener;
@@ -93,14 +92,6 @@ namespace WebCore {
 
         StorageNamespace* transientLocalStorage(SecurityOrigin* topOrigin);
 
-        WEBCORE_EXPORT void addUserScriptToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime, UserContentInjectedFrames);
-        WEBCORE_EXPORT void addUserStyleSheetToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames, UserStyleLevel = UserStyleUserLevel, UserStyleInjectionTime = InjectInExistingDocuments);
-        WEBCORE_EXPORT void removeUserStyleSheetFromWorld(DOMWrapperWorld&, const URL&);
-        WEBCORE_EXPORT void removeUserScriptFromWorld(DOMWrapperWorld&, const URL&);
-        WEBCORE_EXPORT void removeUserScriptsFromWorld(DOMWrapperWorld&);
-        WEBCORE_EXPORT void removeUserStyleSheetsFromWorld(DOMWrapperWorld&);
-        WEBCORE_EXPORT void removeAllUserContent();
-
         GroupSettings& groupSettings() const { return *m_groupSettings; }
 
 #if ENABLE(VIDEO_TRACK)
@@ -122,8 +113,6 @@ namespace WebCore {
         unsigned m_identifier;
         RefPtr<StorageNamespace> m_localStorage;
         HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
-
-        RefPtr<UserContentController> m_userContentController;
 
         const std::unique_ptr<GroupSettings> m_groupSettings;
 

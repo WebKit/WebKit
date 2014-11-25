@@ -39,7 +39,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
-#include "UserContentController.h"
 #include "VisitedLinkStore.h"
 #include <wtf/StdLibExtras.h>
 
@@ -67,7 +66,6 @@ PageGroup::PageGroup(const String& name)
     : m_name(name)
     , m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
-    , m_userContentController(UserContentController::create())
     , m_groupSettings(std::make_unique<GroupSettings>())
 {
 }
@@ -75,7 +73,6 @@ PageGroup::PageGroup(const String& name)
 PageGroup::PageGroup(Page& page)
     : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
-    , m_userContentController(UserContentController::create())
     , m_groupSettings(std::make_unique<GroupSettings>())
 {
     addPage(page);
@@ -83,7 +80,6 @@ PageGroup::PageGroup(Page& page)
 
 PageGroup::~PageGroup()
 {
-    removeAllUserContent();
 }
 
 typedef HashMap<String, PageGroup*> PageGroupMap;
@@ -166,18 +162,12 @@ void PageGroup::addPage(Page& page)
 {
     ASSERT(!m_pages.contains(&page));
     m_pages.add(&page);
-
-    if (!page.userContentController())
-        page.setUserContentController(m_userContentController.get());
 }
 
 void PageGroup::removePage(Page& page)
 {
     ASSERT(m_pages.contains(&page));
     m_pages.remove(&page);
-
-    if (page.userContentController() == m_userContentController)
-        page.setUserContentController(nullptr);
 }
 
 VisitedLinkStore& PageGroup::visitedLinkStore()
@@ -284,44 +274,6 @@ StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
         result.iterator->value = StorageNamespace::transientLocalStorageNamespace(this, topOrigin);
 
     return result.iterator->value.get();
-}
-
-void PageGroup::addUserScriptToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
-{
-    auto userScript = std::make_unique<UserScript>(source, url, whitelist, blacklist, injectionTime, injectedFrames);
-    m_userContentController->addUserScript(world, WTF::move(userScript));
-}
-
-void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, UserStyleInjectionTime injectionTime)
-{
-    auto userStyleSheet = std::make_unique<UserStyleSheet>(source, url, whitelist, blacklist, injectedFrames, level);
-    m_userContentController->addUserStyleSheet(world, WTF::move(userStyleSheet), injectionTime);
-
-}
-
-void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld& world, const URL& url)
-{
-    m_userContentController->removeUserScript(world, url);
-}
-
-void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld& world, const URL& url)
-{
-    m_userContentController->removeUserStyleSheet(world, url);
-}
-
-void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld& world)
-{
-    m_userContentController->removeUserScripts(world);
-}
-
-void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld& world)
-{
-    m_userContentController->removeUserStyleSheets(world);
-}
-
-void PageGroup::removeAllUserContent()
-{
-    m_userContentController->removeAllUserContent();
 }
 
 #if ENABLE(VIDEO_TRACK)
