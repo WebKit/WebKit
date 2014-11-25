@@ -334,6 +334,8 @@ function installDependenciesWithYum {
 
     # These are dependencies necessary for building the jhbuild.
     yum install \
+        docbook-utils \
+        docbook-utils-pdf \
         git \
         gobject-introspection \
         icon-naming-utils \

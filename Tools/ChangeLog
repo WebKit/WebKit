@@ -1,3 +1,15 @@
+2014-11-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] update-webkitgtk-libs fails to build fontconfig
+        https://bugs.webkit.org/show_bug.cgi?id=139032
+
+        Reviewed by Martin Robinson.
+
+        On Fedora, if docbook-utils is installed but docbook-utils-pdf is not,
+        fontconfig will try to generate documentation and fail.
+
+        * gtk/install-dependencies:
+
 2014-11-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ make distcheck.
