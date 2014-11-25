@@ -184,7 +184,7 @@ static String findMagicComment(const String& content, const String& patternStrin
     JSC::Yarr::YarrPattern pattern(patternString, false, true, &error);
     ASSERT(!error);
     BumpPointerAllocator regexAllocator;
-    OwnPtr<JSC::Yarr::BytecodePattern> bytecodePattern = JSC::Yarr::byteCompile(pattern, &regexAllocator);
+    auto bytecodePattern = JSC::Yarr::byteCompile(pattern, &regexAllocator);
     ASSERT(bytecodePattern);
 
     ASSERT(pattern.m_numSubpatterns == 1);

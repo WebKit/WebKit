@@ -29,7 +29,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorRuntimeAgent.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 class JSGlobalObject;

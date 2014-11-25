@@ -40,7 +40,7 @@ bool ExitProfile::add(const ConcurrentJITLocker&, const FrequentExitSite& site)
     // If we've never seen any frequent exits then create the list and put this site
     // into it.
     if (!m_frequentExitSites) {
-        m_frequentExitSites = adoptPtr(new Vector<FrequentExitSite>());
+        m_frequentExitSites = std::make_unique<Vector<FrequentExitSite>>();
         m_frequentExitSites->append(site);
         return true;
     }

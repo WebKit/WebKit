@@ -27,7 +27,6 @@
 #define IncrementalSweeper_h
 
 #include "HeapTimer.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

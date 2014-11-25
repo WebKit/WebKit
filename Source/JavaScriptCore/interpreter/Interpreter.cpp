@@ -1239,7 +1239,7 @@ void Interpreter::enableSampler()
 {
 #if ENABLE(OPCODE_SAMPLING)
     if (!m_sampler) {
-        m_sampler = adoptPtr(new SamplingTool(this));
+        m_sampler = std::make_unique<SamplingTool>(this);
         m_sampler->setup();
     }
 #endif

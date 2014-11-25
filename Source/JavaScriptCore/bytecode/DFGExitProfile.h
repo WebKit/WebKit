@@ -183,7 +183,7 @@ public:
 private:
     friend class QueryableExitProfile;
     
-    OwnPtr<Vector<FrequentExitSite>> m_frequentExitSites;
+    std::unique_ptr<Vector<FrequentExitSite>> m_frequentExitSites;
 };
 
 class QueryableExitProfile {

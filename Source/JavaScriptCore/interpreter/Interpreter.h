@@ -281,7 +281,7 @@ namespace JSC {
 
         void enableSampler();
         int m_sampleEntryDepth;
-        OwnPtr<SamplingTool> m_sampler;
+        std::unique_ptr<SamplingTool> m_sampler;
 
         VM& m_vm;
         JSStack m_stack;

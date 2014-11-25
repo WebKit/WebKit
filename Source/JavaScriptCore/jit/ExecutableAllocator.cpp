@@ -173,7 +173,7 @@ void ExecutableAllocator::initializeAllocator()
 
 ExecutableAllocator::ExecutableAllocator(VM&)
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    : m_allocator(adoptPtr(new  DemandExecutableAllocator()))
+    : m_allocator(std::make_unique<DemandExecutableAllocator>())
 #endif
 {
     ASSERT(allocator());
