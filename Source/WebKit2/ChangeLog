@@ -1,3 +1,25 @@
+2014-11-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Remove some bad stuff from WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=138896
+
+        Reviewed by Sam Weinig.
+
+        The state loadStateAtProcessExit does not seem to be used anywhere.
+
+        The state urlAtProcessExit only exists to forward the url from
+        WebPageProxy::resetStateAfterProcessExited() to the coordinated graphics code
+        WebView::processDidExit().
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::processDidExit):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::urlAtProcessExit): Deleted.
+        (WebKit::WebPageProxy::loadStateAtProcessExit): Deleted.
+
 2014-11-24  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] REGRESSION(176066): It made all performance tests fail

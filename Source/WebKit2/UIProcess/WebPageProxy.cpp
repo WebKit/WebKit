@@ -284,7 +284,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_viewState(ViewState::NoFlags)
     , m_viewWasEverInWindow(false)
     , m_backForwardList(WebBackForwardList::create(*this))
-    , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
     , m_temporarilyClosedComposition(false)
 #endif
@@ -4544,11 +4543,6 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_isValid = false;
     m_isPageSuspended = false;
-
-    if (m_mainFrame) {
-        m_urlAtProcessExit = m_mainFrame->url();
-        m_loadStateAtProcessExit = m_mainFrame->frameLoadState().m_state;
-    }
 
     m_pageClient.processDidExit();
 

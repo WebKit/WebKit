@@ -756,9 +756,6 @@ public:
 
     bool isValid() const;
 
-    const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
-    FrameLoadState::State loadStateAtProcessExit() const { return m_loadStateAtProcessExit; }
-
 #if ENABLE(DRAG_SUPPORT)
     WebCore::DragOperation currentDragOperation() const { return m_currentDragOperation; }
     bool currentDragIsOverFileInput() const { return m_currentDragIsOverFileInput; }
@@ -1419,9 +1416,6 @@ private:
     bool m_maintainsInactiveSelection;
 
     String m_toolTip;
-
-    String m_urlAtProcessExit;
-    FrameLoadState::State m_loadStateAtProcessExit;
 
     EditorState m_editorState;
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
