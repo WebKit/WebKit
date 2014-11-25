@@ -1,3 +1,41 @@
+2014-11-24  Antti Koivisto  <antti@apple.com>
+
+        Avoid String concatenation with line break iterator
+        https://bugs.webkit.org/show_bug.cgi?id=139034
+
+        Reviewed by Zalan Bujtas.
+
+        Test: fast/text/simple-lines-multiple-renderers-break.html
+
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::initializeSegments):
+
+            Include String too so it doesn't need to be fetched from the renderer.
+
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        (WebCore::SimpleLineLayout::FlowContents::findNextBreakablePosition):
+
+            Make this iterative instead of recursive.
+            Uset setPriorContext to provide previous characters instead of concatenating
+            the string from all the previous segments.
+
+        (WebCore::SimpleLineLayout::findNextNonWhitespace):
+        (WebCore::SimpleLineLayout::FlowContents::findNextNonWhitespacePosition):
+
+            Search using segments instead of the concatenated string.
+
+        (WebCore::SimpleLineLayout::FlowContents::textWidth):
+        (WebCore::SimpleLineLayout::FlowContents::segmentIndexForPositionSlow):
+        (WebCore::SimpleLineLayout::FlowContents::runWidth):
+        (WebCore::SimpleLineLayout::FlowContents::segmentForPositionSlow): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::appendNextRendererContentIfNeeded): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::nextNonWhitespacePosition): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::characterAt):
+        (WebCore::SimpleLineLayout::FlowContents::isNewlineCharacter):
+        (WebCore::SimpleLineLayout::FlowContents::segmentIndexForPosition):
+        (WebCore::SimpleLineLayout::FlowContents::segmentForPosition):
+
 2014-11-24  Zalan Bujtas  <zalan@apple.com>
 
         SimpleLineLayout::canUseFor() should iterate through RenderTexts to check if their content is eligible for simple line layout.

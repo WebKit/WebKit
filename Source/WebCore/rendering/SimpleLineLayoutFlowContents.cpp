@@ -52,7 +52,7 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
     unsigned startPosition = 0;
     for (auto& textChild : childrenOfType<RenderText>(flow)) {
         unsigned textLength = textChild.text()->length();
-        segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild });
+        segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(), textChild });
         startPosition += textLength;
     }
     return segments;
@@ -61,28 +61,55 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
 FlowContents::FlowContents(const RenderBlockFlow& flow)
     : m_style(flow.style())
     , m_segments(initializeSegments(flow))
-    , m_lineBreakIterator(downcast<RenderText>(*flow.firstChild()).text(), flow.style().locale())
+    , m_lineBreakIterator(m_segments[0].text, flow.style().locale())
     , m_lastSegmentIndex(0)
 {
 }
 
 unsigned FlowContents::findNextBreakablePosition(unsigned position) const
 {
-    String string = m_lineBreakIterator.string();
-    unsigned breakablePosition = nextBreakablePositionNonLoosely<LChar, NBSPBehavior::IgnoreNBSP>(m_lineBreakIterator, string.characters8(), string.length(), position);
-    if (appendNextRendererContentIfNeeded(breakablePosition))
-        return findNextBreakablePosition(position);
-    ASSERT(breakablePosition >= position);
-    return breakablePosition;
+    while (!isEnd(position)) {
+        auto& segment = segmentForPosition(position);
+        if (segment.text.impl() != m_lineBreakIterator.string().impl()) {
+            UChar lastCharacter = segment.start > 0 ? characterAt(segment.start - 1) : 0;
+            UChar secondToLastCharacter = segment.start > 1 ? characterAt(segment.start - 2) : 0;
+            m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
+            m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
+        }
+
+        auto* characters = segment.text.characters8();
+        unsigned segmentLength = segment.end - segment.start;
+        unsigned segmentPosition = position - segment.start;
+        unsigned breakable = nextBreakablePositionNonLoosely<LChar, NBSPBehavior::IgnoreNBSP>(m_lineBreakIterator, characters, segmentLength, segmentPosition);
+        position = segment.start + breakable;
+        if (position < segment.end)
+            break;
+    }
+    return position;
+}
+
+static bool findNextNonWhitespace(const FlowContents::Segment& segment, const FlowContents::Style& style, unsigned& position, unsigned& spaceCount)
+{
+    const LChar* text = segment.text.characters8();
+    for (; position < segment.end; ++position) {
+        auto character = text[position - segment.start];
+        bool isSpace = character == ' ';
+        bool isWhitespace = isSpace || character == '\t' || (!style.preserveNewline && character == '\n');
+        if (!isWhitespace)
+            return true;
+        if (isSpace)
+            ++spaceCount;
+    }
+    return false;
 }
 
 unsigned FlowContents::findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const
 {
-    unsigned nonWhitespacePosition = nextNonWhitespacePosition(position, spaceCount);
-    if (appendNextRendererContentIfNeeded(nonWhitespacePosition))
-        return findNextNonWhitespacePosition(position, spaceCount);
-    ASSERT(nonWhitespacePosition >= position);
-    return nonWhitespacePosition;
+    for (unsigned i = segmentIndexForPosition(position); i < m_segments.size(); ++i) {
+        if (findNextNonWhitespace(m_segments[i], m_style, position, spaceCount))
+            break;
+    }
+    return position;
 }
 
 float FlowContents::textWidth(unsigned from, unsigned to, float xPosition) const
@@ -97,7 +124,7 @@ float FlowContents::textWidth(unsigned from, unsigned to, float xPosition) const
     unsigned fragmentEnd = 0;
     while (true) {
         fragmentEnd = std::min(to, segment->end);
-        textWidth += runWidth(segment->renderer, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth);
+        textWidth += runWidth(segment->text, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth);
         if (fragmentEnd == to)
             break;
         from = fragmentEnd;
@@ -107,14 +134,15 @@ float FlowContents::textWidth(unsigned from, unsigned to, float xPosition) const
     return textWidth;
 }
 
-const FlowContents::Segment& FlowContents::segmentForPositionSlow(unsigned position) const
+unsigned FlowContents::segmentIndexForPositionSlow(unsigned position) const
 {
     auto it = std::lower_bound(m_segments.begin(), m_segments.end(), position, [](const Segment& segment, unsigned position) {
         return segment.end <= position;
     });
     ASSERT(it != m_segments.end());
-    m_lastSegmentIndex = it - m_segments.begin();
-    return *it;
+    auto index = it - m_segments.begin();
+    m_lastSegmentIndex = index;
+    return index;
 }
 
 const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderText& renderer) const
@@ -127,45 +155,13 @@ const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderText& 
     return m_segments.last();
 }
 
-bool FlowContents::appendNextRendererContentIfNeeded(unsigned position) const
-{
-    if (isEnd(position))
-        return false;
-    String string = m_lineBreakIterator.string();
-    if (position < string.length())
-        return false;
-
-    // Content needs to be requested sequentially.
-    ASSERT(position == string.length());
-    auto& segment = segmentForPosition(position);
-
-    m_lineBreakIterator.resetStringAndReleaseIterator(string + String(segment.renderer.text()), m_style.locale, LineBreakIteratorModeUAX14);
-    return true;
-}
-
-unsigned FlowContents::nextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const
-{
-    String string = m_lineBreakIterator.string();
-    unsigned length = string.length();
-    const LChar* text = string.characters8();
-    for (; position < length; ++position) {
-        bool isSpace = text[position] == ' ';
-        if (!(isSpace || text[position] == '\t' || (!m_style.preserveNewline && text[position] == '\n')))
-            return position;
-        if (isSpace)
-            ++spaceCount;
-    }
-    return length;
-}
-
-float FlowContents::runWidth(const RenderText& renderer, unsigned from, unsigned to, float xPosition) const
+float FlowContents::runWidth(const String& text, unsigned from, unsigned to, float xPosition) const
 {
     ASSERT(from < to);
-    String string = renderer.text();
-    bool measureWithEndSpace = m_style.collapseWhitespace && to < string.length() && string[to] == ' ';
+    bool measureWithEndSpace = m_style.collapseWhitespace && to < text.length() && text[to] == ' ';
     if (measureWithEndSpace)
         ++to;
-    TextRun run(string.characters8() + from, to - from);
+    TextRun run(text.characters8() + from, to - from);
     run.setXPos(xPosition);
     run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
     float width = m_style.font.width(run);

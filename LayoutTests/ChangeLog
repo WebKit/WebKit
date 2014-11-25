@@ -1,3 +1,15 @@
+2014-11-24  Antti Koivisto  <antti@apple.com>
+
+        Avoid String concatenation with line break iterator
+        https://bugs.webkit.org/show_bug.cgi?id=139034
+
+        Reviewed by Zalan Bujtas.
+
+        Test that there is no implicit break point between Text nodes.
+
+        * fast/text/simple-lines-multiple-renderers-break-expected.html: Added.
+        * fast/text/simple-lines-multiple-renderers-break.html: Added.
+
 2014-11-24  Zalan Bujtas  <zalan@apple.com>
 
         SimpleLineLayout::canUseFor() should iterate through RenderTexts to check if their content is eligible for simple line layout.
