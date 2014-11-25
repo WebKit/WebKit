@@ -167,14 +167,15 @@ bool canUseFor(const RenderBlockFlow& flow)
     // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
     if (flow.containsFloats()) {
         float minimumWidthNeeded = std::numeric_limits<float>::max();
-        for (const auto& textRenderer : childrenOfType<RenderText>(flow))
+        for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
             minimumWidthNeeded = std::min(minimumWidthNeeded, textRenderer.minLogicalWidth());
 
-        for (auto& floatRenderer : *flow.floatingObjectSet()) {
-            ASSERT(floatRenderer);
-            float availableWidth = flow.availableLogicalWidthForLine(floatRenderer->y(), false);
-            if (availableWidth < minimumWidthNeeded)
-                return false;
+            for (auto& floatRenderer : *flow.floatingObjectSet()) {
+                ASSERT(floatRenderer);
+                float availableWidth = flow.availableLogicalWidthForLine(floatRenderer->y(), false);
+                if (availableWidth < minimumWidthNeeded)
+                    return false;
+            }
         }
     }
     if (style.font().primaryFont()->isSVGFont())
