@@ -64,6 +64,9 @@ class EflPort(Port):
         if not 'DISPLAY' in os.environ:
             del env['DISPLAY']
 
+        if 'ACCESSIBILITY_EAIL_LIBRARY_PATH' in os.environ:
+            env['ACCESSIBILITY_EAIL_LIBRARY_PATH'] = os.environ['ACCESSIBILITY_EAIL_LIBRARY_PATH']
+
         env['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         env['TEST_RUNNER_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
 

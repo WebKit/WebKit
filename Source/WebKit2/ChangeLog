@@ -1,3 +1,12 @@
+2014-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] REGRESSION(r176514): It made performance tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=139037
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebProcess/efl/WebProcessMainEfl.cpp: Don't try to load/shutdown eail if eailLibraryPath() is empty.
+
 2014-11-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove Qt cruft related to tap higlighting

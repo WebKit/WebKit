@@ -1,3 +1,15 @@
+2014-11-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] REGRESSION(r176514): It made performance tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=139037
+
+        Reviewed by Gyuyoung Kim.
+
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.setup_environ_for_server): Pass ACCESSIBILITY_EAIL_LIBRARY_PATH environment variable to WTR.
+        * efl/jhbuildrc: Set ACCESSIBILITY_EAIL_LIBRARY_PATH to point to DependenciesEFL/lib/libeail.so
+        only if ACCESSIBILITY_EAIL_LIBRARY_PATH isn't already set and DependenciesEFL/lib/libeail.so exists.
+
 2014-11-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] update-webkitgtk-libs fails to build fontconfig

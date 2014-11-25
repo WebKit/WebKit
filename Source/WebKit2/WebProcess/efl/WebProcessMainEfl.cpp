@@ -122,7 +122,7 @@ public:
 
 #if HAVE(ACCESSIBILITY)
         // Initialize EAIL module (adding listeners, init atk-bridge)
-        if (eail().load()) {
+        if (eailLibraryPath() && eail().load()) {
             if (EailFunction eailInit = eail().functionPointer<EailFunction>("elm_modapi_init"))
                 eailInit(nullptr);
         }
@@ -148,8 +148,10 @@ public:
         eina_shutdown();
 
 #if HAVE(ACCESSIBILITY)
-        if (EailFunction eailShutdown = eail().functionPointer<EailFunction>("elm_modapi_shutdown"))
-            eailShutdown(nullptr);
+        if (eailLibraryPath()) {
+            if (EailFunction eailShutdown = eail().functionPointer<EailFunction>("elm_modapi_shutdown"))
+                eailShutdown(nullptr);
+        }
 #endif
     }
 };
