@@ -445,6 +445,39 @@ static gboolean browserWindowCanZoomOut(BrowserWindow *window)
     return zoomLevel > minimumZoomLevel;
 }
 
+static gboolean browserWindowZoomIn(BrowserWindow *window)
+{
+    if (browserWindowCanZoomIn(window)) {
+        gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) * zoomStep;
+        webkit_web_view_set_zoom_level(window->webView, zoomLevel);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static gboolean browserWindowZoomOut(BrowserWindow *window)
+{
+    if (browserWindowCanZoomOut(window)) {
+        gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) / zoomStep;
+        webkit_web_view_set_zoom_level(window->webView, zoomLevel);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static gboolean scrollEventCallback(WebKitWebView *webView, const GdkEventScroll *event, BrowserWindow *window)
+{
+    GdkModifierType mod = gtk_accelerator_get_default_mod_mask();
+
+    if ((event->state & mod) != GDK_CONTROL_MASK)
+        return FALSE;
+    
+    if (event->delta_y < 0)
+        return browserWindowZoomIn(window);
+    
+    return browserWindowZoomOut(window);
+}
+
 static void browserWindowUpdateZoomActions(BrowserWindow *window)
 {
     gtk_widget_set_sensitive(window->zoomInItem, browserWindowCanZoomIn(window));
@@ -503,18 +536,12 @@ static gboolean inspectorWasClosed(WebKitWebInspector *inspectorWindow, BrowserW
 
 static void zoomInCallback(BrowserWindow *window)
 {
-    if (browserWindowCanZoomIn(window)) {
-        gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) * zoomStep;
-        webkit_web_view_set_zoom_level(window->webView, zoomLevel);
-    }
+    browserWindowZoomIn(window);
 }
 
 static void zoomOutCallback(BrowserWindow *window)
 {
-    if (browserWindowCanZoomOut(window)) {
-        gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) / zoomStep;
-        webkit_web_view_set_zoom_level(window->webView, zoomLevel);
-    }
+    browserWindowZoomOut(window);
 }
 
 static void defaultZoomCallback(BrowserWindow *window)
@@ -781,6 +808,7 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "enter-fullscreen", G_CALLBACK(webViewEnterFullScreen), window);
     g_signal_connect(window->webView, "leave-fullscreen", G_CALLBACK(webViewLeaveFullScreen), window);
     g_signal_connect(window->webView, "notify::is-loading", G_CALLBACK(webViewIsLoadingChanged), window);
+    g_signal_connect(window->webView, "scroll-event", G_CALLBACK(scrollEventCallback), window);
 
     g_signal_connect(webkit_web_view_get_context(window->webView), "download-started", G_CALLBACK(downloadStarted), window);
 

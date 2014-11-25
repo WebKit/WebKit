@@ -1,3 +1,18 @@
+2014-11-25  Tanay C  <tanay.c@samsung.com>
+
+        [GTK] Minibrowser: Add support for zoom using Control Key + Mouse scroll
+        https://bugs.webkit.org/show_bug.cgi?id=138090
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/BrowserWindow.c: Implementing zoom using Cntrl + Mouse scroll
+        (browserWindowZoomIn): Added.
+        (browserWindowZoomOut): Added.
+        (scrollEventCallback): Added.
+        (zoomInCallback): Modified.
+        (zoomOutCallback): Modified.
+        (browserWindowConstructed): Modified.
+
 2014-11-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] REGRESSION(r176514): It made performance tests fail
