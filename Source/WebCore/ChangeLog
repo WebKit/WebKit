@@ -1,3 +1,26 @@
+2014-11-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Move :placeholder-shown out of experimental
+        https://bugs.webkit.org/show_bug.cgi?id=138998
+
+        Reviewed by Andreas Kling.
+
+        The pseudo class :placeholder-shown is used by the inspector, disabling it breaks
+        the sidebar.
+
+        The implementation has been stable for a while, we can move it to stable.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPlaceholderShown):
+
 2014-11-24  Antti Koivisto  <antti@apple.com>
 
         Avoid String concatenation with line break iterator

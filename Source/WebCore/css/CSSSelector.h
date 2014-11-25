@@ -120,11 +120,9 @@ namespace WebCore {
             PseudoClassFullPageMedia,
             PseudoClassDefault,
             PseudoClassDisabled,
-            PseudoClassOptional,
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-            PseudoClassPlaceholderShown,
-#endif
             PseudoClassMatches,
+            PseudoClassOptional,
+            PseudoClassPlaceholderShown,
             PseudoClassRequired,
             PseudoClassReadOnly,
             PseudoClassReadWrite,

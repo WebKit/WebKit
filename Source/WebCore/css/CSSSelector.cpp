@@ -564,11 +564,9 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(')');
                 break;
             }
-#if ENABLE(CSS_SELECTORS_LEVEL4)
             case CSSSelector::PseudoClassPlaceholderShown:
                 str.appendLiteral(":placeholder-shown");
                 break;
-#endif
             case CSSSelector::PseudoClassOutOfRange:
                 str.appendLiteral(":out-of-range");
                 break;

@@ -729,7 +729,6 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 }
                 return hasMatchedAnything;
             }
-#if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::PseudoClassPlaceholderShown:
             if (is<HTMLTextFormControlElement>(*element)) {
                 if (context.resolvingMode == Mode::ResolvingStyle) {
@@ -739,7 +738,6 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
             }
             return false;
-#endif
         case CSSSelector::PseudoClassNthChild:
             if (!selector->parseNth())
                 break;

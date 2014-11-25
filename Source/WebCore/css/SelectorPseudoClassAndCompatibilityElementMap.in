@@ -45,9 +45,7 @@ only-child
 only-of-type
 optional
 out-of-range
-#if ENABLE(CSS_SELECTORS_LEVEL4)
 placeholder-shown
-#endif
 read-only
 read-write
 required
