@@ -163,10 +163,13 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.lineBreak() != LineBreakAuto)
         return false;
-    const RenderText& textRenderer = downcast<RenderText>(*flow.firstChild());
+
+    // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
     if (flow.containsFloats()) {
-        // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
-        float minimumWidthNeeded = textRenderer.minLogicalWidth();
+        float minimumWidthNeeded = std::numeric_limits<float>::max();
+        for (const auto& textRenderer : childrenOfType<RenderText>(flow))
+            minimumWidthNeeded = std::min(minimumWidthNeeded, textRenderer.minLogicalWidth());
+
         for (auto& floatRenderer : *flow.floatingObjectSet()) {
             ASSERT(floatRenderer);
             float availableWidth = flow.availableLogicalWidthForLine(floatRenderer->y(), false);
@@ -174,21 +177,21 @@ bool canUseFor(const RenderBlockFlow& flow)
                 return false;
         }
     }
-    if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
-        || textRenderer.isSVGInlineText())
-        return false;
-    if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
-        return false;
     if (style.font().primaryFont()->isSVGFont())
         return false;
-
     // We assume that all lines have metrics based purely on the primary font.
     auto& primaryFontData = *style.font().primaryFont();
     if (primaryFontData.isLoading())
         return false;
-    if (!canUseForText(textRenderer, primaryFontData))
-        return false;
-
+    for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
+        if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
+            || textRenderer.isSVGInlineText())
+            return false;
+        if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
+            return false;
+        if (!canUseForText(textRenderer, primaryFontData))
+            return false;
+    }
     return true;
 }
 

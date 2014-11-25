@@ -1,5 +1,17 @@
 2014-11-24  Zalan Bujtas  <zalan@apple.com>
 
+        SimpleLineLayout::canUseFor() should iterate through RenderTexts to check if their content is eligible for simple line layout.
+        https://bugs.webkit.org/show_bug.cgi?id=139007
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-multiple-renderers-non-breaking-space-expected.html: Added.
+        * fast/text/simple-line-layout-multiple-renderers-non-breaking-space.html: Added.
+        * fast/text/simple-line-layout-multiple-renderers-with-float-expected.html: Added.
+        * fast/text/simple-line-layout-multiple-renderers-with-float.html: Added.
+
+2014-11-24  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: fast/text/simple-lines-multiple-renderers test has the wrong content.
         https://bugs.webkit.org/show_bug.cgi?id=139036
 
