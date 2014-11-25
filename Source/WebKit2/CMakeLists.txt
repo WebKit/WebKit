@@ -549,7 +549,6 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/FindController.cpp
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageBanner.cpp
-    WebProcess/WebPage/TapHighlightController.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
     WebProcess/WebPage/WebDocumentLoader.cpp

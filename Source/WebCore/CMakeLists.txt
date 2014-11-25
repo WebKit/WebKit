@@ -1901,7 +1901,6 @@ set(WebCore_SOURCES
     page/FrameSnapshotting.cpp
     page/FrameTree.cpp
     page/FrameView.cpp
-    page/GestureTapHighlighter.cpp
     page/GroupSettings.cpp
     page/History.cpp
     page/Location.cpp

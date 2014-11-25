@@ -1,3 +1,14 @@
+2014-11-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove Qt cruft related to tap higlighting
+        https://bugs.webkit.org/show_bug.cgi?id=139030
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * WebProcess/WebPage/TapHighlightController.cpp: Removed.
+        * WebProcess/WebPage/TapHighlightController.h: Removed.
+
 2014-11-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix since r176530.
