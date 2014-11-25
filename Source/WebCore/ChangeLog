@@ -1,5 +1,16 @@
 2014-11-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
+        Fix unused variable warning in Biquad.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=139031
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * platform/audio/Biquad.cpp:
+
+2014-11-24  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
         Remove Qt cruft related to tap higlighting
         https://bugs.webkit.org/show_bug.cgi?id=139030
 

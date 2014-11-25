@@ -45,7 +45,9 @@
 
 namespace WebCore {
 
+#if OS(DARWIN)
 const int kBufferSize = 1024;
+#endif
 
 Biquad::Biquad()
 {
