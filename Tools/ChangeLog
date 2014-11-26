@@ -1,3 +1,17 @@
+2014-11-26  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        [EFL][GTK] Bump up FDE relocation fixing patch to version accepted to LLVM trunk.
+        https://bugs.webkit.org/show_bug.cgi?id=139047
+
+        Reviewed by Carlos Garcia Campos.
+
+        * efl/jhbuild.modules:
+        * efl/patches/llvm-elf-allow-fde-references-outside-the-2gb-range.patch: Added.
+        * efl/patches/llvm-elf-fix-x86_64-fdecfiencoding.patch: Removed.
+        * gtk/jhbuild-optional.modules:
+        * gtk/patches/llvm-elf-allow-fde-references-outside-the-2gb-range.patch: Added.
+        * gtk/patches/llvm-elf-fix-x86_64-fdecfiencoding.patch: Removed.
+
 2014-11-25  Tanay C  <tanay.c@samsung.com>
 
         [GTK] Minibrowser: Add support for zoom using Control Key + Mouse scroll
