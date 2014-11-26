@@ -416,6 +416,25 @@ shouldThrow("parseThenSerializeRule(':role(role()) { }')");
 shouldThrow("parseThenSerializeRule(':role(:role()) { }')");
 shouldThrow("parseThenSerializeRule(':role(:role(a)) { }')");
 
+debug('');
+
+testSelectorRoundTrip(":dir(ltr)");
+testSelectorRoundTrip(":dir(rtl)");
+testSelectorRoundTrip(":dir(LTR)");
+testSelectorRoundTrip(":dir(aBcD)");
+shouldBe("parseThenSerializeRule(':dir( a    ) { }')", "':dir(a) { }'");
+
+debug('');
+
+shouldThrow("parseThenSerializeRule(':dir() { }')");
+shouldThrow("parseThenSerializeRule(':dir(42) { }')");
+shouldThrow("parseThenSerializeRule(':dir(a, b) { }')");
+shouldThrow("parseThenSerializeRule(':dir(}) { }')");
+shouldThrow("parseThenSerializeRule(':dir()) { }')");
+shouldThrow("parseThenSerializeRule(':dir(dir()) { }')");
+shouldThrow("parseThenSerializeRule(':dir(:dir()) { }')");
+shouldThrow("parseThenSerializeRule(':dir(:dir(ltr)) { }')");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

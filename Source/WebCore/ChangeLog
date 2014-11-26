@@ -1,3 +1,26 @@
+2014-11-25  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Add parsing for :dir()
+        https://bugs.webkit.org/show_bug.cgi?id=138932
+
+        Reviewed by Benjamin Poulain.
+
+        Add support for parsing :dir() pseudo class. The implementation of selector
+        matching will be in a follow-up patch.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        * css/CSSSelector.cpp:
+        (WebCore::appendPseudoClassFunctionTail):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2014-11-25  Anders Carlsson  <andersca@apple.com>
 
         Remove user content handling from PageGroup

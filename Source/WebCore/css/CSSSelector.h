@@ -158,6 +158,7 @@ namespace WebCore {
             PseudoClassPast,
 #endif
 #if ENABLE(CSS_SELECTORS_LEVEL4)
+            PseudoClassDir,
             PseudoClassRole,
 #endif
         };

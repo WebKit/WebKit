@@ -57,6 +57,7 @@ PASS setThenReadSelectorText(':root') is ':root'
 PASS setThenReadSelectorText(':target') is ':target'
 PASS setThenReadSelectorText(':visited') is ':visited'
 
+PASS setThenReadSelectorText(':dir(a)') is ':dir(a)'
 PASS setThenReadSelectorText(':lang(a)') is ':lang(a)'
 PASS setThenReadSelectorText(':not(a)') is ':not(a)'
 PASS setThenReadSelectorText(':role(a)') is ':role(a)'

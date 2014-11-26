@@ -993,6 +993,10 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             return false;
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
+        // FIXME: Implement :dir() selector.
+        case CSSSelector::PseudoClassDir:
+            return false;
+
         // FIXME: Implement :role() selector.
         case CSSSelector::PseudoClassRole:
             return false;

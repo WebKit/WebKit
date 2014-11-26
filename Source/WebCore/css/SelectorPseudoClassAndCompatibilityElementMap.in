@@ -14,6 +14,9 @@ checked
 corner-present
 decrement
 default
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+dir(
+#endif
 disabled
 double-button
 empty

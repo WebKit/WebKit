@@ -63,6 +63,7 @@ static inline bool isCSSTokenAString(int yytype)
     case NTHCHILDFUNCTIONS:
     case NTHCHILDSELECTORSEPARATOR:
 #if ENABLE_CSS_SELECTORS_LEVEL4
+    case DIRFUNCTION:
     case LANGFUNCTION:
     case ROLEFUNCTION:
 #endif
@@ -232,6 +233,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %token <string> NTHCHILDFUNCTIONS
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
+%token <string> DIRFUNCTION
 %token <string> LANGFUNCTION
 %token <string> ROLEFUNCTION
 #endif
@@ -1376,6 +1378,16 @@ pseudo:
     }
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
+    | ':' DIRFUNCTION maybe_space IDENT maybe_space ')' {
+        $$ = nullptr;
+        auto selector = std::make_unique<CSSParserSelector>();
+        selector->setMatch(CSSSelector::PseudoClass);
+        selector->setArgument($4);
+        selector->setPseudoClassValue($2);
+        if (selector->pseudoClassType() == CSSSelector::PseudoClassDir)
+            $$ = selector.release();
+    }
+
     | ':' LANGFUNCTION maybe_space comma_separated_identifiers maybe_space ')' {
         $$ = nullptr;
         if ($4) {
@@ -1873,7 +1885,7 @@ invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesi
 opening_parenthesis:
     '(' | FUNCTION | CALCFUNCTION | MATCHESFUNCTION | MAXFUNCTION | MINFUNCTION | ANYFUNCTION | NOTFUNCTION
 #if ENABLE_CSS_SELECTORS_LEVEL4
-    | LANGFUNCTION | ROLEFUNCTION
+    | DIRFUNCTION | LANGFUNCTION | ROLEFUNCTION
 #endif
 #if ENABLE_VIDEO_TRACK
     | CUEFUNCTION

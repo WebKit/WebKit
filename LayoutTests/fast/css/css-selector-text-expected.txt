@@ -330,6 +330,21 @@ PASS parseThenSerializeRule(':role()) { }') threw exception TypeError: undefined
 PASS parseThenSerializeRule(':role(role()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':role(:role()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':role(:role(a)) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+
+PASS parseThenSerializeRule(':dir(ltr) { }') is ':dir(ltr) { }'
+PASS parseThenSerializeRule(':dir(rtl) { }') is ':dir(rtl) { }'
+PASS parseThenSerializeRule(':dir(LTR) { }') is ':dir(LTR) { }'
+PASS parseThenSerializeRule(':dir(aBcD) { }') is ':dir(aBcD) { }'
+PASS parseThenSerializeRule(':dir( a    ) { }') is ':dir(a) { }'
+
+PASS parseThenSerializeRule(':dir() { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir(42) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir(a, b) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir(}) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir(dir()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir(:dir()) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':dir(:dir(ltr)) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS successfullyParsed is true
 
 TEST COMPLETE

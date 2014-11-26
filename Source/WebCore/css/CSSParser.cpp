@@ -10692,6 +10692,12 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             return true;
         }
 #endif
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        if (isASCIIAlphaCaselessEqual(name[0], 'd') && isASCIIAlphaCaselessEqual(name[1], 'i') && isASCIIAlphaCaselessEqual(name[2], 'r')) {
+            m_token = DIRFUNCTION;
+            return true;
+        }
+#endif
         return false;
 
     case 4:

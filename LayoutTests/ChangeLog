@@ -1,3 +1,17 @@
+2014-11-25  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Add parsing for :dir()
+        https://bugs.webkit.org/show_bug.cgi?id=138932
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        * fast/selectors/invalid-functional-pseudo-class-expected.txt:
+        * fast/selectors/invalid-functional-pseudo-class.html:
+
 2014-11-25  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, upload two missing test files in the commit r174677.
