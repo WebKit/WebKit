@@ -1,3 +1,17 @@
+2014-11-26  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Unreviewed EFL gardening after r176354.
+        https://bugs.webkit.org/show_bug.cgi?id=139060
+
+        rebaseline after r176354.
+
+        * platform/efl/fast/multicol/tall-image-behavior-expected.png: Added.
+        * platform/efl/fast/multicol/tall-image-behavior-expected.txt: Added.
+        * platform/efl/fast/multicol/tall-image-behavior-lr-expected.png: Added.
+        * platform/efl/fast/multicol/tall-image-behavior-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/tall-image-behavior-rl-expected.png: Added.
+        * platform/efl/fast/multicol/tall-image-behavior-rl-expected.txt: Added.
+
 2014-11-25  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add parsing for :dir()
