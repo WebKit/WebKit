@@ -401,10 +401,11 @@ public:
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
-    void setUserContentController(UserContentController*);
     UserContentController* userContentController() { return m_userContentController.get(); }
+    void setUserContentController(UserContentController*);
 
     VisitedLinkStore& visitedLinkStore();
+    void setVisitedLinkStore(PassRef<VisitedLinkStore>);
 
     WEBCORE_EXPORT SessionID sessionID() const;
     WEBCORE_EXPORT void setSessionID(SessionID);

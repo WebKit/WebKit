@@ -1,3 +1,17 @@
+2014-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Add a Page::setVisitedLinkStore member function
+        https://bugs.webkit.org/show_bug.cgi?id=139065
+
+        Reviewed by Antti Koivisto.
+
+        This will be used in a subsequent commit.
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::setVisitedLinkStore):
+        * page/Page.h:
+
 2014-11-25  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add parsing for :dir()

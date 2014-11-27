@@ -1637,6 +1637,18 @@ VisitedLinkStore& Page::visitedLinkStore()
     return group().visitedLinkStore();
 }
 
+void Page::setVisitedLinkStore(PassRef<VisitedLinkStore> visitedLinkStore)
+{
+    if (m_visitedLinkStore)
+        m_visitedLinkStore->removePage(*this);
+
+    m_visitedLinkStore = WTF::move(visitedLinkStore);
+    m_visitedLinkStore->addPage(*this);
+
+    invalidateStylesForAllLinks();
+    pageCache()->markPagesForFullStyleRecalc(this);
+}
+
 SessionID Page::sessionID() const
 {
     return m_sessionID;
