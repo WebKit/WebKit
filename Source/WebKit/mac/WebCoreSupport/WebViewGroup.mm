@@ -26,6 +26,7 @@
 #import "WebViewGroup.h"
 
 #import "WebView.h"
+#import "WebVisitedLinkStore.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringHash.h>
 
@@ -61,6 +62,7 @@ WebViewGroup* WebViewGroup::get(const String& name)
 WebViewGroup::WebViewGroup(const String& name)
     : m_name(name)
     , m_userContentController(*UserContentController::create())
+    , m_visitedLinkStore(WebVisitedLinkStore::create())
 {
 }
 

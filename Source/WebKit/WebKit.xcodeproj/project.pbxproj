@@ -58,6 +58,8 @@
 		1AAF5FC00EDE3A92008D883D /* WebHostedNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5FBE0EDE3A92008D883D /* WebHostedNetscapePluginView.mm */; };
 		1AB1DAC118BC0232004B6A9F /* WebViewGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1DABF18BC0232004B6A9F /* WebViewGroup.mm */; };
 		1AB1DAC218BC0232004B6A9F /* WebViewGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1DAC018BC0232004B6A9F /* WebViewGroup.h */; };
+		1AC7176E1A26568A002E3115 /* WebVisitedLinkStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC7176C1A26568A002E3115 /* WebVisitedLinkStore.mm */; };
+		1AC7176F1A26568A002E3115 /* WebVisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC7176D1A26568A002E3115 /* WebVisitedLinkStore.h */; };
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
 		1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */; };
@@ -498,6 +500,8 @@
 		1AAF5FBE0EDE3A92008D883D /* WebHostedNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHostedNetscapePluginView.mm; sourceTree = "<group>"; };
 		1AB1DABF18BC0232004B6A9F /* WebViewGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewGroup.mm; sourceTree = "<group>"; };
 		1AB1DAC018BC0232004B6A9F /* WebViewGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewGroup.h; sourceTree = "<group>"; };
+		1AC7176C1A26568A002E3115 /* WebVisitedLinkStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVisitedLinkStore.mm; sourceTree = "<group>"; };
+		1AC7176D1A26568A002E3115 /* WebVisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVisitedLinkStore.h; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
 		1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginEventHandler.mm; sourceTree = "<group>"; };
 		1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandlerCarbon.h; sourceTree = "<group>"; };
@@ -1570,6 +1574,8 @@
 				93EB178C09F88D460091F8FF /* WebSystemInterface.mm */,
 				1AB1DAC018BC0232004B6A9F /* WebViewGroup.h */,
 				1AB1DABF18BC0232004B6A9F /* WebViewGroup.mm */,
+				1AC7176D1A26568A002E3115 /* WebVisitedLinkStore.h */,
+				1AC7176C1A26568A002E3115 /* WebVisitedLinkStore.mm */,
 			);
 			name = WebCoreSupport;
 			path = mac/WebCoreSupport;
@@ -1864,6 +1870,7 @@
 				A10C1D801820303D0036883A /* WebMailDelegate.h in Headers */,
 				939810B10824BF01008DF038 /* WebPluginContainerCheck.h in Headers */,
 				939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */,
+				1AC7176F1A26568A002E3115 /* WebVisitedLinkStore.h in Headers */,
 				939810370824BF01008DF038 /* WebPluginController.h in Headers */,
 				7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */,
 				939810380824BF01008DF038 /* WebPluginDatabase.h in Headers */,
@@ -2148,6 +2155,7 @@
 				5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */,
 				14D825300AF955090004F057 /* WebChromeClient.mm in Sources */,
 				A10C1D711820300E0036883A /* WebInspectorClientIOS.mm in Sources */,
+				1AC7176E1A26568A002E3115 /* WebVisitedLinkStore.mm in Sources */,
 				939810EB0824BF01008DF038 /* WebClipView.mm in Sources */,
 				065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */,
 				939810BF0824BF01008DF038 /* WebCoreStatistics.mm in Sources */,

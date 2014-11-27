@@ -1,3 +1,22 @@
+2014-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Add a stubbed out WebVisitedLinkStore to WebViewGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139066
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebViewGroup.h:
+        (WebViewGroup::visitedLinkStore):
+        * WebCoreSupport/WebViewGroup.mm:
+        (WebViewGroup::WebViewGroup):
+        * WebCoreSupport/WebVisitedLinkStore.h: Copied from Source/WebKit/mac/WebCoreSupport/WebViewGroup.h.
+        * WebCoreSupport/WebVisitedLinkStore.mm: Copied from Source/WebKit/mac/WebCoreSupport/WebViewGroup.h.
+        (WebVisitedLinkStore::create):
+        (WebVisitedLinkStore::WebVisitedLinkStore):
+        (WebVisitedLinkStore::~WebVisitedLinkStore):
+        (WebVisitedLinkStore::isLinkVisited):
+        (WebVisitedLinkStore::addVisitedLink):
+
 2014-11-25  Anders Carlsson  <andersca@apple.com>
 
         Remove user content handling from PageGroup

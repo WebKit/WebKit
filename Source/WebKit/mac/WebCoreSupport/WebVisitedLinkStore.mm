@@ -23,31 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/UserContentController.h>
+#import "WebVisitedLinkStore.h"
 
-class WebVisitedLinkStore;
+PassRef<WebVisitedLinkStore> WebVisitedLinkStore::create()
+{
+    return adoptRef(*new WebVisitedLinkStore);
+}
 
-@class WebView;
+WebVisitedLinkStore::WebVisitedLinkStore()
+{
+}
 
-class WebViewGroup : public RefCounted<WebViewGroup> {
-public:
-    static PassRefPtr<WebViewGroup> getOrCreate(const String& name);
-    ~WebViewGroup();
+WebVisitedLinkStore::~WebVisitedLinkStore()
+{
+}
 
-    static WebViewGroup* get(const String& name);
+bool WebVisitedLinkStore::isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL)
+{
+    // FIXME: Implement.
+    return false;
+}
 
-    void addWebView(WebView *);
-    void removeWebView(WebView *);
-
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
-    WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
-
-private:
-    WebViewGroup(const String& name);
-
-    String m_name;
-    HashSet<WebView *> m_webViews;
-
-    Ref<WebCore::UserContentController> m_userContentController;
-    Ref<WebVisitedLinkStore> m_visitedLinkStore;
-};
+void WebVisitedLinkStore::addVisitedLink(WebCore::Page&, WebCore::LinkHash)
+{
+    // FIXME: Implement.
+}

@@ -23,31 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/UserContentController.h>
+#ifndef WebVisitedLinkStore_h
+#define WebVisitedLinkStore_h
 
-class WebVisitedLinkStore;
+#import <WebCore/VisitedLinkStore.h>
+#import <wtf/PassRef.h>
 
-@class WebView;
-
-class WebViewGroup : public RefCounted<WebViewGroup> {
+class WebVisitedLinkStore final : public WebCore::VisitedLinkStore {
 public:
-    static PassRefPtr<WebViewGroup> getOrCreate(const String& name);
-    ~WebViewGroup();
-
-    static WebViewGroup* get(const String& name);
-
-    void addWebView(WebView *);
-    void removeWebView(WebView *);
-
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
-    WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
+    static PassRef<WebVisitedLinkStore> create();
+    virtual ~WebVisitedLinkStore();
 
 private:
-    WebViewGroup(const String& name);
+    WebVisitedLinkStore();
 
-    String m_name;
-    HashSet<WebView *> m_webViews;
-
-    Ref<WebCore::UserContentController> m_userContentController;
-    Ref<WebVisitedLinkStore> m_visitedLinkStore;
+    virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
+    virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
 };
+
+#endif // WebVisitedLinkStore_h
