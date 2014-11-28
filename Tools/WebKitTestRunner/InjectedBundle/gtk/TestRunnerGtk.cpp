@@ -34,33 +34,22 @@
 
 namespace WTR {
 
-static gboolean waitToDumpWatchdogTimerCallback(gpointer)
-{
-    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
-    return FALSE;
-}
-
 void TestRunner::platformInitialize()
 {
-    m_waitToDumpWatchdogTimer = 0;
 }
 
 void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
-    if (!m_waitToDumpWatchdogTimer)
-        return;
-    g_source_remove(m_waitToDumpWatchdogTimer);
-    m_waitToDumpWatchdogTimer = 0;
+    m_waitToDumpWatchdogTimer.cancel();
 }
 
 void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
-    if (m_waitToDumpWatchdogTimer)
+    if (m_waitToDumpWatchdogTimer.isScheduled())
         return;
 
-    m_waitToDumpWatchdogTimer = g_timeout_add(waitToDumpWatchdogTimerInterval * 1000,
-                                              waitToDumpWatchdogTimerCallback, 0);
-    g_source_set_name_by_id(m_waitToDumpWatchdogTimer, "[WebKit] waitToDumpWatchdogTimerCallback");
+    m_waitToDumpWatchdogTimer.scheduleAfterDelay("[WTR] waitToDumpWatchdogTimerCallback", [this] { waitToDumpWatchdogTimerFired(); },
+        std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(waitToDumpWatchdogTimerInterval)));
 }
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
