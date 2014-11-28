@@ -332,13 +332,17 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
     m_snapshotImage = image;
 
-    if (is<RenderSnapshottedPlugIn>(*renderer())) {
-        downcast<RenderSnapshottedPlugIn>(*renderer()).updateSnapshot(image);
+    if (!renderer())
+        return;
+    auto& renderer = *this->renderer();
+
+    if (is<RenderSnapshottedPlugIn>(renderer)) {
+        downcast<RenderSnapshottedPlugIn>(renderer).updateSnapshot(image);
         return;
     }
 
-    if (is<RenderEmbeddedObject>(*renderer()))
-        renderer()->repaint();
+    if (is<RenderEmbeddedObject>(renderer))
+        renderer.repaint();
 }
 
 static DOMWrapperWorld& plugInImageElementIsolatedWorld()
