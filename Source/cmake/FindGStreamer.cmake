@@ -52,16 +52,16 @@ find_package(PkgConfig)
 # Helper macro to find a GStreamer plugin (or GStreamer itself)
 #   _component_prefix is prepended to the _INCLUDE_DIRS and _LIBRARIES variables (eg. "GSTREAMER_AUDIO")
 #   _pkgconfig_name is the component's pkg-config name (eg. "gstreamer-1.0", or "gstreamer-video-1.0").
-#   _header is the component's header, relative to the gstreamer-1.0 directory (eg. "gst/gst.h").
 #   _library is the component's library name (eg. "gstreamer-1.0" or "gstvideo-1.0")
-macro(FIND_GSTREAMER_COMPONENT _component_prefix _pkgconfig_name _header _library)
-    pkg_check_modules(PC_${_component_prefix} QUIET ${_pkgconfig_name})
+macro(FIND_GSTREAMER_COMPONENT _component_prefix _pkgconfig_name _library)
 
-    find_path(${_component_prefix}_INCLUDE_DIRS
-        NAMES ${_header}
-        HINTS ${PC_${_component_prefix}_INCLUDE_DIRS} ${PC_${_component_prefix}_INCLUDEDIR}
-        PATH_SUFFIXES gstreamer-1.0
-    )
+    string(REGEX MATCH "(.*)>=(.*)" _dummy "${_pkgconfig_name}")
+    if ("${CMAKE_MATCH_2}" STREQUAL "")
+        pkg_check_modules(PC_${_component_prefix} "${_pkgconfig_name} >= ${GStreamer_FIND_VERSION}")
+    else ()
+        pkg_check_modules(PC_${_component_prefix} ${_pkgconfig_name})
+    endif ()
+    set(${_component_prefix}_INCLUDE_DIRS ${PC_${_component_prefix}_INCLUDE_DIRS})
 
     find_library(${_component_prefix}_LIBRARIES
         NAMES ${_library}
@@ -74,42 +74,20 @@ endmacro()
 # ------------------------
 
 # 1.1. Find headers and libraries
-FIND_GSTREAMER_COMPONENT(GSTREAMER gstreamer-1.0 gst/gst.h gstreamer-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_BASE gstreamer-base-1.0 gst/base/gstadapter.h gstbase-1.0)
-
-# 1.2. Check GStreamer version
-if (GSTREAMER_INCLUDE_DIRS)
-    if (EXISTS "${GSTREAMER_INCLUDE_DIRS}/gst/gstversion.h")
-        file(READ "${GSTREAMER_INCLUDE_DIRS}/gst/gstversion.h" GSTREAMER_VERSION_CONTENTS)
-
-        string(REGEX MATCH "#define +GST_VERSION_MAJOR +\\(([0-9]+)\\)" _dummy "${GSTREAMER_VERSION_CONTENTS}")
-        set(GSTREAMER_VERSION_MAJOR "${CMAKE_MATCH_1}")
-
-        string(REGEX MATCH "#define +GST_VERSION_MINOR +\\(([0-9]+)\\)" _dummy "${GSTREAMER_VERSION_CONTENTS}")
-        set(GSTREAMER_VERSION_MINOR "${CMAKE_MATCH_1}")
-
-        string(REGEX MATCH "#define +GST_VERSION_MICRO +\\(([0-9]+)\\)" _dummy "${GSTREAMER_VERSION_CONTENTS}")
-        set(GSTREAMER_VERSION_MICRO "${CMAKE_MATCH_1}")
-
-        set(GSTREAMER_VERSION "${GSTREAMER_VERSION_MAJOR}.${GSTREAMER_VERSION_MINOR}.${GSTREAMER_VERSION_MICRO}")
-    endif ()
-endif ()
-
-if ("${GStreamer_FIND_VERSION}" VERSION_GREATER "${GSTREAMER_VERSION}")
-    message(FATAL_ERROR "Required version (" ${GStreamer_FIND_VERSION} ") is higher than found version (" ${GSTREAMER_VERSION} ")")
-endif ()
+FIND_GSTREAMER_COMPONENT(GSTREAMER gstreamer-1.0 gstreamer-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_BASE gstreamer-base-1.0 gstbase-1.0)
 
 # -------------------------
 # 2. Find GStreamer plugins
 # -------------------------
 
-FIND_GSTREAMER_COMPONENT(GSTREAMER_APP gstreamer-app-1.0 gst/app/gstappsink.h gstapp-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_AUDIO gstreamer-audio-1.0 gst/audio/audio.h gstaudio-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_FFT gstreamer-fft-1.0 gst/fft/gstfft.h gstfft-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_MPEGTS gstreamer-mpegts-1.0>=1.4.0 gst/mpegts/mpegts.h gstmpegts-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_PBUTILS gstreamer-pbutils-1.0 gst/pbutils/pbutils.h gstpbutils-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_TAG gstreamer-tag-1.0 gst/tag/tag.h gsttag-1.0)
-FIND_GSTREAMER_COMPONENT(GSTREAMER_VIDEO gstreamer-video-1.0 gst/video/video.h gstvideo-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_APP gstreamer-app-1.0 gstapp-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_AUDIO gstreamer-audio-1.0 gstaudio-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_FFT gstreamer-fft-1.0 gstfft-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_MPEGTS gstreamer-mpegts-1.0>=1.4.0 gstmpegts-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_PBUTILS gstreamer-pbutils-1.0 gstpbutils-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_TAG gstreamer-tag-1.0 gsttag-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_VIDEO gstreamer-video-1.0 gstvideo-1.0)
 
 # ------------------------------------------------
 # 3. Process the COMPONENTS passed to FIND_PACKAGE
