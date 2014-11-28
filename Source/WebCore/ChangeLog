@@ -1,3 +1,24 @@
+2014-11-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Meter and Option elements do not expose their id attribute
+        https://bugs.webkit.org/show_bug.cgi?id=139017
+
+        Reviewed by Mario Sanchez Prada.
+
+        The options in a collapsed select element lack a node, so get the id
+        attribute from the associated action element. In the case of a meter,
+        the meter element itself is not exposed; its RenderMeter is instead.
+        So associate the meter element's id with the exposed RenderMeter.
+
+        No new tests. Instead, updated existing expectations to reflect the fix.
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::element):
+        * accessibility/AccessibilityProgressIndicator.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
 2014-11-27  Anders Carlsson  <andersca@apple.com>
 
         Add a Page::setVisitedLinkStore member function

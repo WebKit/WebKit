@@ -138,5 +138,18 @@ HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
 }
 #endif
 
+Element* AccessibilityProgressIndicator::element() const
+{
+    if (m_renderer->isProgress())
+        return progressElement();
+
+#if ENABLE(METER_ELEMENT)
+    if (m_renderer->isMeter())
+        return meterElement();
+#endif
+
+    return AccessibilityObject::element();
+}
+
 } // namespace WebCore
 

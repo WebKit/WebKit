@@ -556,7 +556,7 @@ public:
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
     virtual bool canSetExpandedAttribute() const { return false; }
     
-    Element* element() const;
+    virtual Element* element() const;
     virtual Node* node() const { return nullptr; }
     virtual RenderObject* renderer() const { return nullptr; }
     virtual bool accessibilityIsIgnored() const;

@@ -502,9 +502,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     // Hack needed for WebKit2 tests because obtaining an element by its ID
     // cannot be done from the UIProcess. Assistive technologies have no need
     // for this information.
-    Node* node = coreObject->node();
-    if (is<Element>(node)) {
-        String id = downcast<Element>(*node).getIdAttribute().string();
+    Element* element = coreObject->element() ? coreObject->element() : coreObject->actionElement();
+    if (element) {
+        String id = element->getIdAttribute().string();
         if (!id.isEmpty())
             attributeSet = addToAtkAttributeSet(attributeSet, "html-id", id.utf8().data());
     }

@@ -39,6 +39,7 @@ public:
 #if ENABLE(METER_ELEMENT)
     static PassRefPtr<AccessibilityProgressIndicator> create(RenderMeter*);
 #endif
+    virtual Element* element() const override;
 
 private:
     virtual AccessibilityRole roleValue() const override { return ProgressIndicatorRole; }

@@ -211,6 +211,9 @@ mark
 math
       AXRole: AXMath
       
+meter
+      AXRole: AXProgressIndicator
+      
 nav
       AXRole: AXLandmarkNavigation
       
@@ -245,7 +248,7 @@ select:not([multiple])
       AXRole: AXComboBox
       
 option
-      AXRole: 
+      AXRole: AXMenuItem
       
 optgroup
       AXRole: 
