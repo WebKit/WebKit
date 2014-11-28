@@ -129,3 +129,8 @@ WKArrayRef WKRenderLayerGetPositiveZOrderList(WKRenderLayerRef renderLayerRef)
 {
     return toAPI(toImpl(renderLayerRef)->positiveZOrderList());
 }
+
+WKRenderLayerRef WKRenderLayerGetFrameContentsLayer(WKRenderLayerRef renderLayerRef)
+{
+    return toAPI(toImpl(renderLayerRef)->frameContentsLayer());
+}

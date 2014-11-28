@@ -36,6 +36,7 @@
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/RenderWidget.h>
 #include <WebCore/StyledElement.h>
 
 using namespace WebCore;
@@ -46,25 +47,25 @@ PassRefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
 {
     Frame* mainFrame = page->mainFrame();
     if (!mainFrame)
-        return 0;
+        return nullptr;
 
     if (!mainFrame->loader().client().hasHTMLView())
-        return 0;
+        return nullptr;
 
     RenderView* contentRenderer = mainFrame->contentRenderer();
     if (!contentRenderer)
-        return 0;
+        return nullptr;
 
     RenderLayer* rootLayer = contentRenderer->layer();
     if (!rootLayer)
-        return 0;
+        return nullptr;
 
     return adoptRef(new WebRenderLayer(rootLayer));
 }
 
-PassRefPtr<WebRenderLayer> WebRenderLayer::create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
+PassRefPtr<WebRenderLayer> WebRenderLayer::create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList, PassRefPtr<WebRenderLayer> frameContentsLayer)
 {
-    return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, negativeZOrderList, normalFlowList, positiveZOrderList));
+    return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, negativeZOrderList, normalFlowList, positiveZOrderList, frameContentsLayer));
 }
 
 PassRefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
@@ -118,9 +119,16 @@ WebRenderLayer::WebRenderLayer(RenderLayer* layer)
     m_negativeZOrderList = createArrayFromLayerList(layer->negZOrderList());
     m_normalFlowList = createArrayFromLayerList(layer->normalFlowList());
     m_positiveZOrderList = createArrayFromLayerList(layer->posZOrderList());
+
+    if (is<RenderWidget>(layer->renderer())) {
+        if (Document* contentDocument = downcast<RenderWidget>(layer->renderer()).frameOwnerElement().contentDocument()) {
+            if (RenderView* view = contentDocument->renderView())
+                m_frameContentsLayer = adoptRef(new WebRenderLayer(view->layer()));
+        }
+    }
 }
 
-WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
+WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList, PassRefPtr<WebRenderLayer> frameContentsLayer)
     : m_renderer(renderer)
     , m_isReflection(isReflection)
     , m_isClipping(isClipping)
@@ -131,6 +139,7 @@ WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isRefl
     , m_negativeZOrderList(negativeZOrderList)
     , m_normalFlowList(normalFlowList)
     , m_positiveZOrderList(positiveZOrderList)
+    , m_frameContentsLayer(frameContentsLayer)
 {
 }
 

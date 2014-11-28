@@ -1,3 +1,26 @@
+2014-11-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow clients of the WKRenderLayerRef C SPI to connect layer trees across frame boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=139021
+
+        Reviewed by Dan Bernstein.
+        
+        Add WKRenderLayerGetFrameContentsLayer which returns a WKRenderLayerRef for
+        the content document of a RenderWidget, if its has one (e.g. frames, iframes
+        and <object> with document contents).
+
+        * Shared/API/c/WKRenderLayer.cpp:
+        (WKRenderLayerGetFrameContentsLayer):
+        * Shared/API/c/WKRenderLayer.h:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/WebRenderLayer.h:
+        (WebKit::WebRenderLayer::frameContentsLayer):
+
 2014-11-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] SecComp buildfix after r176452

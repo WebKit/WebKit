@@ -38,7 +38,7 @@ WK_EXPORT WKTypeID WKRenderLayerGetTypeID();
 
 WK_EXPORT WKRenderObjectRef WKRenderLayerGetRenderer(WKRenderLayerRef renderLayer);
 
-// FIXME: Remove this function once Safari does not require it.
+// FIXME: Remove this function once Safari does not require it. Clients can access this data via the renderer.
 WK_EXPORT WKStringRef WKRenderLayerCopyRendererName(WKRenderLayerRef renderLayer);
 
 // FIXME: Remove these three functions once Safari does not require them.
@@ -67,6 +67,8 @@ WK_EXPORT double WKRenderLayerGetBackingStoreMemoryEstimate(WKRenderLayerRef ren
 WK_EXPORT WKArrayRef WKRenderLayerGetNegativeZOrderList(WKRenderLayerRef renderLayer);
 WK_EXPORT WKArrayRef WKRenderLayerGetNormalFlowList(WKRenderLayerRef renderLayer);
 WK_EXPORT WKArrayRef WKRenderLayerGetPositiveZOrderList(WKRenderLayerRef renderLayer);
+
+WK_EXPORT WKRenderLayerRef WKRenderLayerGetFrameContentsLayer(WKRenderLayerRef renderLayer);
 
 #ifdef __cplusplus
 }

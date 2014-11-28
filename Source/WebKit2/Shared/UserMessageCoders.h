@@ -159,6 +159,7 @@ public:
             encoder << Owner(coder, renderLayer->negativeZOrderList());
             encoder << Owner(coder, renderLayer->normalFlowList());
             encoder << Owner(coder, renderLayer->positiveZOrderList());
+            encoder << Owner(coder, renderLayer->frameContentsLayer());
             return true;
         }
         case API::Object::Type::RenderObject: {
@@ -397,6 +398,7 @@ public:
             RefPtr<API::Object> negativeZOrderList;
             RefPtr<API::Object> normalFlowList;
             RefPtr<API::Object> positiveZOrderList;
+            RefPtr<API::Object> frameContentsLayer;
 
             Owner rendererCoder(coder, renderer);
             if (!decoder.decode(rendererCoder))
@@ -424,9 +426,14 @@ public:
             Owner positiveZOrderListCoder(coder, positiveZOrderList);
             if (!decoder.decode(positiveZOrderListCoder))
                 return false;
+
+            Owner frameContentsLayerCoder(coder, frameContentsLayer);
+            if (!decoder.decode(frameContentsLayerCoder))
+                return false;
+
             coder.m_root = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
                 absoluteBoundingBox, backingStoreMemoryEstimate, static_pointer_cast<API::Array>(negativeZOrderList), static_pointer_cast<API::Array>(normalFlowList),
-                static_pointer_cast<API::Array>(positiveZOrderList));
+                static_pointer_cast<API::Array>(positiveZOrderList), static_pointer_cast<WebRenderLayer>(frameContentsLayer));
             break;
         }
         case API::Object::Type::RenderObject: {

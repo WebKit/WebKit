@@ -41,11 +41,12 @@ public:
     enum CompositingLayerType { None, Normal, Tiled, Media, Container };
 
     static PassRefPtr<WebRenderLayer> create(WebPage*);
-    static PassRefPtr<WebRenderLayer> create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList);
+    static PassRefPtr<WebRenderLayer> create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList, PassRefPtr<WebRenderLayer> frameContentsLayer);
 
     API::Array* negativeZOrderList() const { return m_negativeZOrderList.get(); }
     API::Array* normalFlowList() const { return m_normalFlowList.get(); }
     API::Array* positiveZOrderList() const { return m_positiveZOrderList.get(); }
+    WebRenderLayer* frameContentsLayer() const { return m_frameContentsLayer.get(); }
 
     WebRenderObject* renderer() const { return m_renderer.get(); }
     bool isReflection() const { return m_isReflection; }
@@ -57,7 +58,7 @@ public:
 
 private:
     explicit WebRenderLayer(WebCore::RenderLayer*);
-    WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList);
+    WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType, WebCore::IntRect absoluteBoundingBox, double backingStoreMemoryEstimate, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList, PassRefPtr<WebRenderLayer> frameContentsLayer);
 
     static PassRefPtr<API::Array> createArrayFromLayerList(Vector<WebCore::RenderLayer*>*);
 
@@ -72,6 +73,8 @@ private:
     RefPtr<API::Array> m_negativeZOrderList;
     RefPtr<API::Array> m_normalFlowList;
     RefPtr<API::Array> m_positiveZOrderList;
+
+    RefPtr<WebRenderLayer> m_frameContentsLayer;
 };
 
 } // namespace WebKit
