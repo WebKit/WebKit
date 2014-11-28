@@ -1,3 +1,15 @@
+2014-11-27  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Remove E_Dbus dependency
+        https://bugs.webkit.org/show_bug.cgi?id=136355
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_main.cpp: Added init/shutdown for eldbus.
+        (WebKit::EwkMain::initialize):
+        (WebKit::EwkMain::finalize):
+        (WebKit::EwkMain::shutdownInitializedEFLModules):
+
 2014-11-25  Anders Carlsson  <andersca@apple.com>
 
         Remove user content handling from PageGroup

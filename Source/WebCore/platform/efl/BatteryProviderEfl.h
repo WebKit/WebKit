@@ -24,10 +24,8 @@
 
 #include "BatteryClient.h"
 #include "BatteryStatus.h"
-#include "Timer.h"
+#include <Eldbus.h>
 #include <wtf/text/AtomicString.h>
-
-typedef struct DBusError DBusError;
 
 namespace WebCore {
 
@@ -35,8 +33,8 @@ class BatteryProviderEflClient;
 
 class BatteryProviderEfl {
 public:
-    BatteryProviderEfl(BatteryProviderEflClient*);
-    ~BatteryProviderEfl() { }
+    explicit BatteryProviderEfl(BatteryProviderEflClient*);
+    ~BatteryProviderEfl();
 
     virtual void startUpdating();
     virtual void stopUpdating();
@@ -45,14 +43,19 @@ public:
     BatteryStatus* batteryStatus() const;
 
 private:
-    void timerFired();
-    static void getBatteryStatus(void* data, void* replyData, DBusError*);
-    static void setBatteryClient(void* data, void* replyData, DBusError*);
+    static void enumerateDevices(void* data, const Eldbus_Message*, Eldbus_Pending*);
+    static void deviceTypeCallback(void* data, const Eldbus_Message*, Eldbus_Pending*);
+
+    Eldbus_Connection* connection() { return m_connection; }
+    void setSignalHandler(Eldbus_Signal_Handler* signalHandler) { m_signalHandler = signalHandler; }
 
     BatteryProviderEflClient* m_client;
-    Timer m_timer;
     RefPtr<BatteryStatus> m_batteryStatus;
-    const double m_batteryStatusRefreshInterval;
+
+    Eldbus_Connection* m_connection;
+    Eldbus_Object* m_object;
+    Eldbus_Proxy* m_proxy;
+    Eldbus_Signal_Handler* m_signalHandler;
 };
 
 }

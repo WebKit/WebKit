@@ -1,3 +1,12 @@
+2014-11-27  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Remove E_Dbus dependency
+        https://bugs.webkit.org/show_bug.cgi?id=136355
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/CMakeLists.txt: Removed E_DBUS includes.
+
 2014-11-26  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         [EFL][GTK] Bump up FDE relocation fixing patch to version accepted to LLVM trunk.
