@@ -1,0 +1,20 @@
+commit 84bf49aaa3a9bf44998b9de4143307a492453239
+Author: Csaba Osztrogonác <ossy@webkit.org>
+Date:   Fri Nov 28 01:53:02 2014 -0800
+
+    Pick up CC environment variable to be conform to other jhbuild modules.
+
+diff --git a/libseccomp-2.1.0/macros.mk b/libseccomp-2.1.0/macros.mk
+index 9c62fa7..62d8eed 100644
+--- a/libseccomp-2.1.0/macros.mk
++++ b/libseccomp-2.1.0/macros.mk
+@@ -66,6 +66,9 @@ AWK ?= awk
+ PYTHON ?= /usr/bin/env python
+ 
+ # we require gcc specific functionality
++ifeq ($(origin CC), environment)
++	GCC = $(CC)
++endif
+ GCC ?= gcc
+ 
+ INSTALL ?= install

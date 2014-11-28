@@ -1,3 +1,13 @@
+2014-11-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] libseccomp should pick up CC environment variable to be conform to other jhbuild modules
+        https://bugs.webkit.org/show_bug.cgi?id=139086
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/patches/libseccomp-pick-up-CC.patch: Added.
+
 2014-11-28  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [EFL] Add warning if CMake version is too old for building with ninja.
