@@ -1,3 +1,15 @@
+2014-11-24  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Bump internal jhbuild versions to 1.4.4
+        https://bugs.webkit.org/show_bug.cgi?id=138866
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/gst-events-arent-gstobjects.patch: Removed.
+        * gtk/patches/gst-plugins-base-fix-build-gcc-4.9-x86.patch: Removed.
+        * gtk/patches/gst-prevent-neon-check-in-configure-from-passing-under-aarch64.patch: Removed.
+
 2014-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use custom JavaScript instead of DBus to implement WebProcess tests
