@@ -1,3 +1,13 @@
+2014-11-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] SecComp buildfix after r168605 and r168999
+        https://bugs.webkit.org/show_bug.cgi?id=139080
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy):
+
 2014-11-27  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Remove E_Dbus dependency

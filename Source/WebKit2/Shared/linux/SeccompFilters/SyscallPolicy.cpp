@@ -118,10 +118,8 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
     // Directories settings coming from the UIProcess.
     if (!parameters.applicationCacheDirectory.isEmpty())
         addDirectoryPermission(removeTrailingSlash(parameters.applicationCacheDirectory), ReadAndWrite);
-    if (!parameters.databaseDirectory.isEmpty())
-        addDirectoryPermission(removeTrailingSlash(parameters.databaseDirectory), ReadAndWrite);
-    if (!parameters.localStorageDirectory.isEmpty())
-        addDirectoryPermission(removeTrailingSlash(parameters.localStorageDirectory), ReadAndWrite);
+    if (!parameters.webSQLDatabaseDirectory.isEmpty())
+        addDirectoryPermission(removeTrailingSlash(parameters.webSQLDatabaseDirectory), ReadAndWrite);
     if (!parameters.diskCacheDirectory.isEmpty())
         addDirectoryPermission(removeTrailingSlash(parameters.diskCacheDirectory), ReadAndWrite);
     if (!parameters.cookieStorageDirectory.isEmpty())
