@@ -1,0 +1,48 @@
+From de61ce80e57b7df1680312eac2143bc1eb314361 Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Fri, 22 Aug 2014 10:11:19 +0000
+Subject: [PATCH] Fix build on x86 with GCC 4.9. Apply the following two
+ upstream patches:
+
+  From daa194b71ea6f9e8ee522ab02e8c56150b7e62b3 Mon Sep 17 00:00:00 2001
+  From: Antoine Jacoutot <ajacoutot@gnome.org>
+  Date: Mon, 20 Jan 2014 15:44:09 +0100
+  Subject: audioresample: Fix build on x86 if emmintrin.h is available but can't
+   be used
+
+  On i386, EMMINTRIN is defined but not usable without SSE so check for
+  __SSE__ and __SSE2__ as well.
+
+  https://bugzilla.gnome.org/show_bug.cgi?id=670690
+
+  From 4e3d101aa854cfee633a9689efeb75e5001baa5e Mon Sep 17 00:00:00 2001
+  From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian@centricular.com>
+  Date: Mon, 20 Jan 2014 16:11:04 +0100
+  Subject: audioresample: It's HAVE_EMMINTRIN_H, not HAVE_XMMINTRIN_H for SSE2
+---
+ gst/audioresample/resample.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gst/audioresample/resample.c b/gst/audioresample/resample.c
+index 98d006c..4410bdd 100644
+--- a/gst/audioresample/resample.c
++++ b/gst/audioresample/resample.c
+@@ -77,13 +77,13 @@
+ #define EXPORT G_GNUC_INTERNAL
+ 
+ #ifdef _USE_SSE
+-#ifndef HAVE_XMMINTRIN_H
++#if !defined(__SSE__) || !defined(HAVE_XMMINTRIN_H)
+ #undef _USE_SSE
+ #endif
+ #endif
+ 
+ #ifdef _USE_SSE2
+-#ifndef HAVE_EMMINTRIN_H
++#if !defined(__SSE2__) || !defined(HAVE_EMMINTRIN_H)
+ #undef _USE_SSE2
+ #endif
+ #endif
+-- 
+2.1.0
+
