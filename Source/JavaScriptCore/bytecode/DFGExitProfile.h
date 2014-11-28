@@ -32,7 +32,6 @@
 #include "ExitKind.h"
 #include "ExitingJITType.h"
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {

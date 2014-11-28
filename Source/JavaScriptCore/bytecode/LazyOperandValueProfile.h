@@ -31,7 +31,6 @@
 #include "VirtualRegister.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/SegmentedVector.h>
 
 namespace JSC {
@@ -161,7 +160,7 @@ public:
     
 private:
     friend class LazyOperandValueProfileParser;
-    OwnPtr<LazyOperandValueProfile::List> m_data;
+    std::unique_ptr<LazyOperandValueProfile::List> m_data;
 };
 
 class LazyOperandValueProfileParser {

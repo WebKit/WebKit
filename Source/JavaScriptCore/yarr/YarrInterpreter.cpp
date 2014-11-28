@@ -1472,13 +1472,13 @@ public:
         m_currentAlternativeIndex = 0;
     }
 
-    PassOwnPtr<BytecodePattern> compile(BumpPointerAllocator* allocator)
+    std::unique_ptr<BytecodePattern> compile(BumpPointerAllocator* allocator)
     {
         regexBegin(m_pattern.m_numSubpatterns, m_pattern.m_body->m_callFrameSize, m_pattern.m_body->m_alternatives[0]->onceThrough());
         emitDisjunction(m_pattern.m_body);
         regexEnd();
 
-        return adoptPtr(new BytecodePattern(m_bodyDisjunction.release(), m_allParenthesesInfo, m_pattern, allocator));
+        return std::make_unique<BytecodePattern>(WTF::move(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator);
     }
 
     void checkInput(unsigned count)
@@ -1778,7 +1778,7 @@ public:
 
     void regexBegin(unsigned numSubpatterns, unsigned callFrameSize, bool onceThrough)
     {
-        m_bodyDisjunction = adoptPtr(new ByteDisjunction(numSubpatterns, callFrameSize));
+        m_bodyDisjunction = std::make_unique<ByteDisjunction>(numSubpatterns, callFrameSize);
         m_bodyDisjunction->terms.append(ByteTerm::BodyAlternativeBegin(onceThrough));
         m_bodyDisjunction->terms[0].frameLocation = 0;
         m_currentAlternativeIndex = 0;
@@ -1920,13 +1920,13 @@ public:
 
 private:
     YarrPattern& m_pattern;
-    OwnPtr<ByteDisjunction> m_bodyDisjunction;
+    std::unique_ptr<ByteDisjunction> m_bodyDisjunction;
     unsigned m_currentAlternativeIndex;
     Vector<ParenthesesStackEntry> m_parenthesesStack;
     Vector<OwnPtr<ByteDisjunction>> m_allParenthesesInfo;
 };
 
-PassOwnPtr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)
+std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)
 {
     return ByteCompiler(pattern).compile(allocator);
 }

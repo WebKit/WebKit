@@ -130,7 +130,7 @@ private:
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock m_regExpJITCode;
 #endif
-    OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
+    std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
 } // namespace JSC

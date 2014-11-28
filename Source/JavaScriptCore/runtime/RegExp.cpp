@@ -502,7 +502,7 @@ void RegExp::invalidateCode()
 #if ENABLE(YARR_JIT)
     m_regExpJITCode.clear();
 #endif
-    m_regExpBytecode.clear();
+    m_regExpBytecode = nullptr;
 }
 
 #if ENABLE(YARR_JIT_DEBUG)

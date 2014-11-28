@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2004, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd.
@@ -44,7 +45,7 @@ public:
     int lastMatchLength;
 
     unsigned m_numSubpatterns;
-    OwnPtr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
+    std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 
 private:
     Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
@@ -54,7 +55,7 @@ private:
     {
     }
 
-    PassOwnPtr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
+    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
     {
         JSC::Yarr::YarrPattern pattern(patternString, (caseSensitivity == TextCaseInsensitive), (multilineMode == MultilineEnabled), &m_constructionError);
         if (m_constructionError) {
@@ -178,7 +179,7 @@ void replace(String& string, const RegularExpression& target, const String& repl
 
 bool RegularExpression::isValid() const
 {
-    return d->m_regExpByteCode;
+    return d->m_regExpByteCode.get();
 }
 
 } } // namespace JSC::Yarr

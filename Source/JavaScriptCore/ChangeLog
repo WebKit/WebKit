@@ -1,3 +1,39 @@
+2014-11-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr instead of OwnPtr in JSC classes
+        https://bugs.webkit.org/show_bug.cgi?id=139009
+
+        Reviewed by Filip Pizlo.
+
+        As a step of using std::unique_ptr<>, this patch replaces OwnPtr with
+        std::unique_ptr<>|std::make_unique<>.
+
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        * bytecode/DFGExitProfile.h:
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::add):
+        * bytecode/LazyOperandValueProfile.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::stopAllocating):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::clearNewlyAllocated):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::invalidateCode):
+        * runtime/RegExp.h:
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::compile):
+        (JSC::Yarr::RegularExpression::isValid):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::regexBegin):
+        (JSC::Yarr::byteCompile):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+
 2014-11-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Clean up OwnPtr and PassOwnPtr in JSC - bytecode, jit, inspector, and interpreter

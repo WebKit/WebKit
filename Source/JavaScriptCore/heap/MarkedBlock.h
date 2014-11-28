@@ -209,7 +209,7 @@ namespace JSC {
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic, uint8_t> m_marks;
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic, uint8_t> m_rememberedSet;
 #endif
-        OwnPtr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
+        std::unique_ptr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
         DestructorType m_destructorType;
         MarkedAllocator* m_allocator;
@@ -400,7 +400,7 @@ namespace JSC {
     inline bool MarkedBlock::clearNewlyAllocated()
     {
         if (m_newlyAllocated) {
-            m_newlyAllocated.clear();
+            m_newlyAllocated = nullptr;
             return true;
         }
         return false;
