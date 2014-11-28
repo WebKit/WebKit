@@ -26,9 +26,13 @@
 
         var table = accessibilityController.accessibleElementById("table");
         var colHeaders = table.columnHeaders();
-
-        shouldBeTrue("colHeaders[0].isEqual(table.rowAtIndex(0).childAtIndex(0))");
-        shouldBeTrue("colHeaders[1].isEqual(table.rowAtIndex(0).childAtIndex(1))");
+        if (accessibilityController.platformName == "atk") {
+            shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0,0))");
+            shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(1,0))");
+        } else {
+            shouldBeTrue("colHeaders[0].isEqual(table.rowAtIndex(0).childAtIndex(0))");
+            shouldBeTrue("colHeaders[1].isEqual(table.rowAtIndex(0).childAtIndex(1))");
+        }
     }
 
 </script>

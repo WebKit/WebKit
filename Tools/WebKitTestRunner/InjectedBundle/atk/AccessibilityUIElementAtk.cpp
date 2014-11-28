@@ -955,14 +955,18 @@ JSValueRef AccessibilityUIElement::rowHeaders() const
 JSValueRef AccessibilityUIElement::columnHeaders() const
 {
 #if ATK_CHECK_VERSION(2,11,90)
-    if (!ATK_IS_TABLE_CELL(m_element.get()))
+    if (!ATK_IS_TABLE_CELL(m_element.get()) && !ATK_IS_TABLE(m_element.get()))
         return nullptr;
 
-    GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_column_header_cells(ATK_TABLE_CELL(m_element.get())));
-    if (!array)
-        return nullptr;
+    Vector<RefPtr<AccessibilityUIElement>> columns;
+    if (ATK_IS_TABLE_CELL(m_element.get())) {
+        GRefPtr<GPtrArray> array = adoptGRef(atk_table_cell_get_column_header_cells(ATK_TABLE_CELL(m_element.get())));
+        if (!array)
+            return nullptr;
 
-    Vector<RefPtr<AccessibilityUIElement>> columns = convertGPtrArrayToVector(array.get());
+        columns = convertGPtrArrayToVector(array.get());
+    } else
+        columns = getColumnHeaders(ATK_TABLE(m_element.get()));
     return convertToJSObjectArray(columns);
 #else
     return nullptr;

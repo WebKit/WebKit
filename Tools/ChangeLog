@@ -1,3 +1,17 @@
+2014-11-28  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [ATK] Allowing the use of AccessibilityUIElement::columnHeaders method for table.
+        https://bugs.webkit.org/show_bug.cgi?id=139044
+
+        Reviewed by Chris Fleizach.
+
+        ATK method AccessibilityUIElement::columnHeaders currently focused only on the object table cell.
+        The proposed solution will enable the use of this method for the object table.
+        Existing test shows the result.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::columnHeaders):
+
 2014-11-27  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Remove E_Dbus dependency
