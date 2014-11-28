@@ -19,12 +19,9 @@
 
 #include "config.h"
 
-#include "WebProcessTestRunner.h"
 #include "WebViewTest.h"
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-
-static WebProcessTestRunner* testRunner;
 
 static void testWebKitDOMNodeHierarchyNavigation(WebViewTest* test, gconstpointer)
 {
@@ -32,10 +29,7 @@ static void testWebKitDOMNodeHierarchyNavigation(WebViewTest* test, gconstpointe
     test->loadHtml(testHTML, 0);
     test->waitUntilLoadFinished();
 
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&builder, "{sv}", "pageID", g_variant_new_uint64(webkit_web_view_get_page_id(test->m_webView)));
-    g_assert(testRunner->runTest("WebKitDOMNode", "hierarchy-navigation", Test::s_webExtensionID, g_variant_builder_end(&builder)));
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "hierarchy-navigation"));
 }
 
 static void testWebKitDOMNodeInsertion(WebViewTest* test, gconstpointer)
@@ -44,10 +38,7 @@ static void testWebKitDOMNodeInsertion(WebViewTest* test, gconstpointer)
     test->loadHtml(testHTML, 0);
     test->waitUntilLoadFinished();
 
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&builder, "{sv}", "pageID", g_variant_new_uint64(webkit_web_view_get_page_id(test->m_webView)));
-    g_assert(testRunner->runTest("WebKitDOMNode", "insertion", Test::s_webExtensionID, g_variant_builder_end(&builder)));
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "insertion"));
 }
 
 static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
@@ -65,16 +56,11 @@ static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
     test->loadHtml(testHTML, 0);
     test->waitUntilLoadFinished();
 
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&builder, "{sv}", "pageID", g_variant_new_uint64(webkit_web_view_get_page_id(test->m_webView)));
-    g_assert(testRunner->runTest("WebKitDOMNode", "tag-names", Test::s_webExtensionID, g_variant_builder_end(&builder)));
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names"));
 }
 
 void beforeAll()
 {
-    testRunner = new WebProcessTestRunner();
-
     WebViewTest::add("WebKitDOMNode", "hierarchy-navigation", testWebKitDOMNodeHierarchyNavigation);
     WebViewTest::add("WebKitDOMNode", "insertion", testWebKitDOMNodeInsertion);
     WebViewTest::add("WebKitDOMNode", "tag-names", testWebKitDOMNodeTagNames);
@@ -82,5 +68,4 @@ void beforeAll()
 
 void afterAll()
 {
-    delete testRunner;
 }

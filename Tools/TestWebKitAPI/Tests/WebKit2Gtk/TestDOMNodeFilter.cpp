@@ -19,12 +19,9 @@
 
 #include "config.h"
 
-#include "WebProcessTestRunner.h"
 #include "WebViewTest.h"
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-
-static WebProcessTestRunner* testRunner;
 
 static const char* testHTML = "<html id='root'><head><title>DOMNodeTreeWalker</title></head>"
     "<body><input type='button' name='push' value='push'><input type='button' name='clear' value='clear'><br></body></html>";
@@ -34,10 +31,7 @@ static void runTest(WebViewTest* test, const char* name)
     test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
 
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&builder, "{sv}", "pageID", g_variant_new_uint64(webkit_web_view_get_page_id(test->m_webView)));
-    g_assert(testRunner->runTest("WebKitDOMNodeFilter", name, Test::s_webExtensionID, g_variant_builder_end(&builder)));
+    g_assert(test->runWebProcessTest("WebKitDOMNodeFilter", name));
 }
 
 static void testWebKitDOMNodeFilterTreeWalker(WebViewTest* test, gconstpointer)
@@ -52,13 +46,10 @@ static void testWebKitDOMNodeFilterNodeIterator(WebViewTest* test, gconstpointer
 
 void beforeAll()
 {
-    testRunner = new WebProcessTestRunner();
-
     WebViewTest::add("WebKitDOMNodeFilter", "tree-walker", testWebKitDOMNodeFilterTreeWalker);
     WebViewTest::add("WebKitDOMNodeFilter", "node-iterator", testWebKitDOMNodeFilterNodeIterator);
 }
 
 void afterAll()
 {
-    delete testRunner;
 }

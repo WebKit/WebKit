@@ -59,29 +59,11 @@ static const char* expectedElementsNoInput[] = { "HTML", "HEAD", "TITLE", "BODY"
 
 class WebKitDOMNodeFilterTest : public WebProcessTest {
 public:
-    static PassOwnPtr<WebProcessTest> create() { return adoptPtr(new WebKitDOMNodeFilterTest()); }
+    static std::unique_ptr<WebProcessTest> create() { return std::unique_ptr<WebProcessTest>(new WebKitDOMNodeFilterTest()); }
 
 private:
-    guint64 webPageFromArgs(GVariant* args)
+    bool testTreeWalker(WebKitWebPage* page)
     {
-        GVariantIter iter;
-        g_variant_iter_init(&iter, args);
-
-        const char* key;
-        GVariant* value;
-        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
-            if (!strcmp(key, "pageID") && g_variant_classify(value) == G_VARIANT_CLASS_UINT64)
-                return g_variant_get_uint64(value);
-        }
-
-        g_assert_not_reached();
-        return 0;
-    }
-
-    bool testTreeWalker(WebKitWebExtension* extension, GVariant* args)
-    {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
 
@@ -131,10 +113,8 @@ private:
         return true;
     }
 
-    bool testNodeIterator(WebKitWebExtension* extension, GVariant* args)
+    bool testNodeIterator(WebKitWebPage* page)
     {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
 
@@ -187,12 +167,12 @@ private:
         return true;
     }
 
-    virtual bool runTest(const char* testName, WebKitWebExtension* extension, GVariant* args)
+    bool runTest(const char* testName, WebKitWebPage* page) override
     {
         if (!strcmp(testName, "tree-walker"))
-            return testTreeWalker(extension, args);
+            return testTreeWalker(page);
         if (!strcmp(testName, "node-iterator"))
-            return testNodeIterator(extension, args);
+            return testNodeIterator(page);
 
         g_assert_not_reached();
         return false;

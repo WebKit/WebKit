@@ -25,30 +25,11 @@
 
 class WebKitFrameTest : public WebProcessTest {
 public:
-    static PassOwnPtr<WebProcessTest> create() { return adoptPtr(new WebKitFrameTest()); }
+    static std::unique_ptr<WebProcessTest> create() { return std::unique_ptr<WebProcessTest>(new WebKitFrameTest()); }
 
 private:
-    guint64 webPageFromArgs(GVariant* args)
+    bool testMainFrame(WebKitWebPage* page)
     {
-        GVariantIter iter;
-        g_variant_iter_init(&iter, args);
-
-        const char* key;
-        GVariant* value;
-        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
-            if (!strcmp(key, "pageID") && g_variant_classify(value) == G_VARIANT_CLASS_UINT64)
-                return g_variant_get_uint64(value);
-        }
-
-        g_assert_not_reached();
-        return 0;
-    }
-
-    bool testMainFrame(WebKitWebExtension* extension, GVariant* args)
-    {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
-
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
         g_assert(webkit_frame_is_main_frame(frame));
@@ -56,11 +37,8 @@ private:
         return true;
     }
 
-    bool testURI(WebKitWebExtension* extension, GVariant* args)
+    bool testURI(WebKitWebPage* page)
     {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
-
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
         g_assert_cmpstr(webkit_web_page_get_uri(page), ==, webkit_frame_get_uri(frame));
@@ -68,11 +46,8 @@ private:
         return true;
     }
 
-    bool testJavaScriptContext(WebKitWebExtension* extension, GVariant* args)
+    bool testJavaScriptContext(WebKitWebPage* page)
     {
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, webPageFromArgs(args));
-        g_assert(WEBKIT_IS_WEB_PAGE(page));
-
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
         g_assert(webkit_frame_get_javascript_global_context(frame));
@@ -80,14 +55,14 @@ private:
         return true;
     }
 
-    virtual bool runTest(const char* testName, WebKitWebExtension* extension, GVariant* args)
+    bool runTest(const char* testName, WebKitWebPage* page) override
     {
         if (!strcmp(testName, "main-frame"))
-            return testMainFrame(extension, args);
+            return testMainFrame(page);
         if (!strcmp(testName, "uri"))
-            return testURI(extension, args);
+            return testURI(page);
         if (!strcmp(testName, "javascript-context"))
-            return testJavaScriptContext(extension, args);
+            return testJavaScriptContext(page);
 
         g_assert_not_reached();
         return false;
