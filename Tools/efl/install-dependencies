@@ -14,11 +14,34 @@ function printNotSupportedMessageAndExit() {
     exit 1
 }
 
+function checkCmakeVersion() {
+    CMAKE_VERSION=`cmake --version`
+
+    VERSION=`echo "$CMAKE_VERSION" | awk '{split($3,num,".");
+    if (!(num[1]>2 || num[2]>8 || num[3]>=10))
+        printf $3}'`
+
+    if [ -n "${VERSION}" ]; then
+        echo "Warning: CMake version detected (${VERSION}) is lower then 2.8.10."
+        echo "  This will probably cause errors, as older version didn't support CMAKE_NINJA_FORCE_RESPONSE_FILE,"
+        echo "  which is needed now for building. (look at: https://lists.webkit.org/pipermail/webkit-gtk/2014-March/001809.html )"
+        echo ""
+
+        if [ -f "/etc/issue" ]; then
+            ubuntu_version=`cat /etc/issue`
+            if [[ $ubuntu_version == *Ubuntu\ 12.04* ]]; then
+                echo "  For Ubuntu 12.04 or 12.10 You might consider adding ppa from https://launchpad.net/~kalakris/+archive/ubuntu/cmake"
+            fi
+        fi
+    fi
+}
+
 function checkInstaller {
     # apt-get - Debian based distributions
     apt-get --version &> /dev/null
     if [ $? -eq 0 ]; then
         installDependenciesWithApt
+        checkCmakeVersion;
         exit 0
     fi
 
