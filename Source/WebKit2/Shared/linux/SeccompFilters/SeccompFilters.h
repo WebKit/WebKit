@@ -54,8 +54,8 @@ public:
     void* context() { return m_context; };
 
     void addRule(const char* syscallName, Action,
-        unsigned argNum1 = 0, Operator operator1 = NotSet, long long data1 = 0,
-        unsigned argNum2 = 0, Operator operator2 = NotSet, long long data2 = 0);
+        unsigned argNum1 = 0, Operator operator1 = NotSet, uint64_t data1 = 0,
+        unsigned argNum2 = 0, Operator operator2 = NotSet, uint64_t data2 = 0);
 
     void initialize();
 

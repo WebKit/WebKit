@@ -1,5 +1,16 @@
 2014-11-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix -Wc++11-narrowing error in SeccompFilters.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=139079
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/linux/SeccompFilters/SeccompFilters.cpp:
+        (WebKit::SeccompFilters::addRule):
+        * Shared/linux/SeccompFilters/SeccompFilters.h:
+
+2014-11-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [WK2] SecComp buildfix after r168605 and r168999
         https://bugs.webkit.org/show_bug.cgi?id=139080
 

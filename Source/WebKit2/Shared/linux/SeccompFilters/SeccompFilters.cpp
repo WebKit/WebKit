@@ -42,7 +42,7 @@ COMPILE_ASSERT(SeccompFilters::NotSet == static_cast<SeccompFilters::Operator>(_
 COMPILE_ASSERT(SeccompFilters::NotEqual == static_cast<SeccompFilters::Operator>(SCMP_CMP_NE), NotEqual);
 COMPILE_ASSERT(SeccompFilters::Equal == static_cast<SeccompFilters::Operator>(SCMP_CMP_EQ), Equal);
 
-COMPILE_ASSERT(sizeof(scmp_datum_t) == sizeof(long long), scmp_datum_t);
+COMPILE_ASSERT(sizeof(scmp_datum_t) == sizeof(uint64_t), scmp_datum_t);
 
 SeccompFilters::SeccompFilters(Action defaultAction)
     : m_context(seccomp_init(defaultAction))
@@ -58,8 +58,8 @@ SeccompFilters::~SeccompFilters()
 }
 
 void SeccompFilters::addRule(const char* syscallName, Action action,
-    unsigned argNum1, Operator operator1, long long data1,
-    unsigned argNum2, Operator operator2, long long data2)
+    unsigned argNum1, Operator operator1, uint64_t data1,
+    unsigned argNum2, Operator operator2, uint64_t data2)
 {
     int syscall = seccomp_syscall_resolve_name(syscallName);
     if (syscall == __NR_SCMP_ERROR)
