@@ -205,7 +205,7 @@ void SeccompBrokerClient::dispatch(Syscall* syscall) const
 
     m_socketLock.lock();
 
-    if (sendMessage(m_socket, encoder->buffer(), encoder->bufferSize()) < 0)
+    if (sendMessage(m_socket, reinterpret_cast<void*>(const_cast<uint8_t*>(encoder->buffer())), encoder->bufferSize()) < 0)
         CRASH();
 
     while (true) {
@@ -340,7 +340,7 @@ NO_RETURN void SeccompBroker::runLoop(int socket)
         int fd = attachments.size() == 1 ? attachments[0].fileDescriptor() : -1;
 
         // The client is down, the broker should go away.
-        if (sendMessage(socket, encoder->buffer(), encoder->bufferSize(), fd) < 0)
+        if (sendMessage(socket, reinterpret_cast<void*>(const_cast<uint8_t*>(encoder->buffer())), encoder->bufferSize(), fd) < 0)
             exit(EXIT_SUCCESS);
     }
 }
