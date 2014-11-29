@@ -1,3 +1,23 @@
+2014-11-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr<>|make_unique<> in ftl, bytecode of JSC
+        https://bugs.webkit.org/show_bug.cgi?id=139063
+
+        Reviewed by Andreas Kling.
+
+        Clean up OwnPtr and PassOwnPtr in JSC.
+
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::push):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        (JSC::StructureStubClearingWatchpoint::StructureStubClearingWatchpoint):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * parser/SourceProviderCacheItem.h:
+
 2014-11-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr instead of OwnPtr in JSC classes

@@ -69,7 +69,7 @@ void link(State& state)
     // depending on whether we're doing OSR entry or not.
     CCallHelpers jit(&vm, codeBlock);
     
-    OwnPtr<LinkBuffer> linkBuffer;
+    std::unique_ptr<LinkBuffer> linkBuffer;
 
     CCallHelpers::Address frame = CCallHelpers::Address(
         CCallHelpers::stackPointerRegister, -static_cast<int32_t>(AssemblyHelpers::prologueStackPointerDelta()));
@@ -177,7 +177,7 @@ void link(State& state)
         jit.emitFunctionEpilogue();
         mainPathJumps.append(jit.jump());
 
-        linkBuffer = adoptPtr(new LinkBuffer(vm, jit, codeBlock, JITCompilationMustSucceed));
+        linkBuffer = std::make_unique<LinkBuffer>(vm, jit, codeBlock, JITCompilationMustSucceed);
         linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
         linkBuffer->link(callArityFixup, FunctionPtr((vm.getCTIStub(arityFixupGenerator)).code().executableAddress()));
         linkBuffer->link(mainPathJumps, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
@@ -195,7 +195,7 @@ void link(State& state)
         jit.emitFunctionEpilogue();
         CCallHelpers::Jump mainPathJump = jit.jump();
         
-        linkBuffer = adoptPtr(new LinkBuffer(vm, jit, codeBlock, JITCompilationMustSucceed));
+        linkBuffer = std::make_unique<LinkBuffer>(vm, jit, codeBlock, JITCompilationMustSucceed);
         linkBuffer->link(mainPathJump, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
 
         state.jitCode->initializeAddressForCall(linkBuffer->locationOf(start));
@@ -207,7 +207,7 @@ void link(State& state)
         break;
     }
     
-    state.finalizer->entrypointLinkBuffer = linkBuffer.release();
+    state.finalizer->entrypointLinkBuffer = WTF::move(linkBuffer);
     state.finalizer->function = state.generatedFunction;
     state.finalizer->jitCode = state.jitCode;
 }

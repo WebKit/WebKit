@@ -308,12 +308,12 @@ static void fixFunctionBasedOnStackMaps(
         MacroAssembler::Call callLookupExceptionHandlerFromCallerFrame = checkJIT.call();
         checkJIT.jumpToExceptionHandler();
 
-        OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
-            vm, checkJIT, codeBlock, JITCompilationMustSucceed));
+        auto linkBuffer = std::make_unique<LinkBuffer>(
+            vm, checkJIT, codeBlock, JITCompilationMustSucceed);
         linkBuffer->link(callLookupExceptionHandler, FunctionPtr(lookupExceptionHandler));
         linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
 
-        state.finalizer->handleExceptionsLinkBuffer = linkBuffer.release();
+        state.finalizer->handleExceptionsLinkBuffer = WTF::move(linkBuffer);
     }
 
     ExitThunkGenerator exitThunkGenerator(state);

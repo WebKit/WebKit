@@ -49,9 +49,9 @@ public:
     bool finalizeFunction() override;
 
     OwnPtr<LinkBuffer> exitThunksLinkBuffer;
-    OwnPtr<LinkBuffer> entrypointLinkBuffer;
+    std::unique_ptr<LinkBuffer> entrypointLinkBuffer;
     OwnPtr<LinkBuffer> sideCodeLinkBuffer;
-    OwnPtr<LinkBuffer> handleExceptionsLinkBuffer;
+    std::unique_ptr<LinkBuffer> handleExceptionsLinkBuffer;
     Vector<SlowPathCall> slowPathCalls; // Calls inside the side code.
     Vector<OSRExitCompilationInfo> osrExit;
     GeneratedFunction function;

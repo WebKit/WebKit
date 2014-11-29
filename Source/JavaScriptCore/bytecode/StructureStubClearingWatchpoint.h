@@ -32,8 +32,6 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -55,9 +53,9 @@ public:
     
     StructureStubClearingWatchpoint(
         WatchpointsOnStructureStubInfo& holder,
-        PassOwnPtr<StructureStubClearingWatchpoint> next)
+        std::unique_ptr<StructureStubClearingWatchpoint> next)
         : m_holder(holder)
-        , m_next(next)
+        , m_next(WTF::move(next))
     {
     }
     
@@ -65,14 +63,14 @@ public:
     
     static StructureStubClearingWatchpoint* push(
         WatchpointsOnStructureStubInfo& holder,
-        OwnPtr<StructureStubClearingWatchpoint>& head);
+        std::unique_ptr<StructureStubClearingWatchpoint>& head);
 
 protected:
     virtual void fireInternal(const FireDetail&) override;
 
 private:
     WatchpointsOnStructureStubInfo& m_holder;
-    OwnPtr<StructureStubClearingWatchpoint> m_next;
+    std::unique_ptr<StructureStubClearingWatchpoint> m_next;
 };
 
 class WatchpointsOnStructureStubInfo : public RefCounted<WatchpointsOnStructureStubInfo> {
@@ -97,7 +95,7 @@ public:
 private:
     CodeBlock* m_codeBlock;
     StructureStubInfo* m_stubInfo;
-    OwnPtr<StructureStubClearingWatchpoint> m_head;
+    std::unique_ptr<StructureStubClearingWatchpoint> m_head;
 };
 
 } // namespace JSC
