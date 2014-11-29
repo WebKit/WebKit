@@ -44,6 +44,11 @@
 
 namespace WebCore {
 
+class EmptyVisitedLinkStore : public VisitedLinkStore {
+    virtual bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) override { return false; }
+    virtual void addVisitedLink(Page&, LinkHash) override { }
+};
+
 void fillWithEmptyClients(PageConfiguration& pageConfiguration)
 {
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
@@ -73,6 +78,8 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
 
     static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyDiagnosticLoggingClient;
     pageConfiguration.diagnosticLoggingClient = &dummyDiagnosticLoggingClient.get();
+
+    pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);
 }
 
 class EmptyPopupMenu : public PopupMenu {

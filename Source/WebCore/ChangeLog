@@ -1,3 +1,14 @@
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Add an EmptyVisitedLinkStore implementation
+        https://bugs.webkit.org/show_bug.cgi?id=139102
+
+        Reviewed by Sam Weinig.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+        * loader/EmptyClients.h:
+
 2014-11-28  Sam Weinig  <sam@webkit.org>
 
         Move the '-webkit-initial-letter', '-webkit-line-box-contain' and '-webkit-text-stroke-width' CSS properties to the new StyleBuilder

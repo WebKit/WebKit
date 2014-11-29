@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceError.h"
+#include "VisitedLinkStore.h"
 #include <wtf/text/StringView.h>
 
 /*
