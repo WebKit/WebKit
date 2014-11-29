@@ -579,10 +579,10 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
     return m_entriesByURL.get(urlString);
 }
 
-WebHistory::addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore& visitedLinkStore)
+void WebHistory::addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore& visitedLinkStore)
 {
     for (auto& url : m_entriesByURL.keys())
-        group.addVisitedLinkHash(visitedLinkHash(url)); 
+        visitedLinkStore.addVisitedLinkHash(visitedLinkHash(url));
 }
 
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
