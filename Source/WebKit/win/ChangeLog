@@ -1,3 +1,18 @@
+2014-11-27  Anders Carlsson  <andersca@apple.com>
+
+        Add a stubbed out WebVisitedLinkStore class on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139078
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebVisitedLinkStore.cpp: Added.
+        (WebVisitedLinkStore::shared):
+        (WebVisitedLinkStore::WebVisitedLinkStore):
+        (WebVisitedLinkStore::~WebVisitedLinkStore):
+        (WebVisitedLinkStore::isLinkVisited):
+        (WebVisitedLinkStore::addVisitedLink):
+        * WebCoreSupport/WebVisitedLinkStore.h: Added.
+
 2014-11-24  Anders Carlsson  <andersca@apple.com>
 
         Stub out user content WebView member functions on Windows

@@ -336,6 +336,7 @@
     <ClCompile Include="..\..\win\WebCoreSupport\WebInspectorClient.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\WebInspectorDelegate.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\WebPlatformStrategies.cpp" />
+    <ClCompile Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.cpp" />
     <ClCompile Include="..\..\win\WebDatabaseManager.cpp" />
     <ClCompile Include="..\..\win\WebDataSource.cpp" />
     <ClCompile Include="..\..\win\WebDocumentLoader.cpp" />
@@ -474,6 +475,7 @@
     <ClInclude Include="..\..\win\WebCoreSupport\WebInspectorClient.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\WebInspectorDelegate.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\WebPlatformStrategies.h" />
+    <ClInclude Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.h" />
     <ClInclude Include="..\..\win\WebDatabaseManager.h" />
     <ClInclude Include="..\..\win\WebDataSource.h" />
     <ClInclude Include="..\..\win\WebDocumentLoader.h" />

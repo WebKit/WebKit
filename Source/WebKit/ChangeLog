@@ -1,5 +1,14 @@
 2014-11-27  Anders Carlsson  <andersca@apple.com>
 
+        Add a stubbed out WebVisitedLinkStore class on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139078
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+
+2014-11-27  Anders Carlsson  <andersca@apple.com>
+
         Add a stubbed out WebVisitedLinkStore to WebViewGroup
         https://bugs.webkit.org/show_bug.cgi?id=139066
 
