@@ -28,6 +28,8 @@
 
 #import "WebHistoryPrivate.h"
 
+class WebVisitedLinkStore;
+
 namespace WebCore {
     class PageGroup;
 }
@@ -35,4 +37,5 @@ namespace WebCore {
 @interface WebHistory (WebInternal)
 - (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure;
 - (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group;
+- (void)_addVisitedLinksToVisitedLinkStore:(WebVisitedLinkStore&)visitedLinkStore;
 @end

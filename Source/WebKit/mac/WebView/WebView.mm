@@ -106,6 +106,7 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebUserMediaClient.h"
 #import "WebViewGroup.h"
+#import "WebVisitedLinkStore.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/APICast.h>
@@ -6993,8 +6994,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
 
 - (void)addVisitedLinks:(NSArray *)visitedLinks
 {
+    WebVisitedLinkStore& visitedLinkStore = _private->group->visitedLinkStore();
+    for (NSString *urlString in visitedLinks)
+        visitedLinkStore.addVisitedLink(urlString);
+
     PageGroup& group = core(self)->group();
-    
+
     NSEnumerator *enumerator = [visitedLinks objectEnumerator];
     while (NSString *url = [enumerator nextObject]) {
         size_t length = [url length];

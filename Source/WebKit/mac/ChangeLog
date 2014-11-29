@@ -1,5 +1,37 @@
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
+        Populate visited links
+        https://bugs.webkit.org/show_bug.cgi?id=139101
+
+        Reviewed by Sam Weinig.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate addVisitedLinksToVisitedLinkStore:]):
+        Helper function that adds all visited link to the given store.
+
+        (-[WebHistory _addVisitedLinksToVisitedLinkStore:]):
+        Call the private method.
+
+        * History/WebHistoryInternal.h:
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        Add new members.
+
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::addVisitedLink):
+        Get the characters from the URL string and hash them, then call addVisitedLinkHash.
+
+        (WebVisitedLinkStore::populateVisitedLinksIfNeeded):
+        Implement this. First try the delegate, then try the shared history.
+
+        (WebVisitedLinkStore::addVisitedLinkHash):
+        Factor code that adds the link to the hash table into a separate function.
+
+        * WebView/WebView.mm:
+        (-[WebView addVisitedLinks:]):
+        Add the visited links to the store.
+
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
         More work on the legacy WebKit visited link store
         https://bugs.webkit.org/show_bug.cgi?id=139100
 

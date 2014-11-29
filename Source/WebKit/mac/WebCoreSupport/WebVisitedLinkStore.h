@@ -38,6 +38,8 @@ public:
     static void setShouldTrackVisitedLinks(bool);
     static void removeAllVisitedLinks();
 
+    void addVisitedLink(NSString *urlString);
+
 private:
     WebVisitedLinkStore();
 
@@ -45,6 +47,7 @@ private:
     virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
 
     void populateVisitedLinksIfNeeded(WebCore::Page&);
+    void addVisitedLinkHash(WebCore::LinkHash);
     void removeVisitedLinkHashes();
 
     HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_visitedLinkHashes;
