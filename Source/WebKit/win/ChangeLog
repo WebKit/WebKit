@@ -4,6 +4,13 @@
 
         * WebHistory.cpp:
         (WebHistory::addVisitedLinksToVisitedLinkStore):
+
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Another build fix.
+
+        * WebHistory.cpp:
+        (WebHistory::addVisitedLinksToVisitedLinkStore):
         (WebHistory::removeAllVisitedLinks): Deleted.
         (WebHistory::setHistoryItemLimit): Deleted.
 

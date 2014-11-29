@@ -582,7 +582,7 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
 void WebHistory::addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore& visitedLinkStore)
 {
     for (auto& url : m_entriesByURL.keys())
-        visitedLinkStore.addVisitedLinkHash(visitedLinkHash(url));
+        visitedLinkStore.addVisitedLink(url);
 }
 
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
