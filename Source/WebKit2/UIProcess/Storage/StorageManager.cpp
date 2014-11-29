@@ -581,7 +581,12 @@ void StorageManager::setAllowedSessionStorageNamespaceConnectionInternal(uint64_
 void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
     SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
-    ASSERT(sessionStorageNamespace);
+    if (!sessionStorageNamespace) {
+        // FIXME: We can get into this situation if someone closes the originating page from within a
+        // createNewPage callback. We bail for now, but we should really find a way to keep the session storage alive
+        // so we we'll clone the session storage correctly.
+        return;
+    }
 
     SessionStorageNamespace* newSessionStorageNamespace = m_sessionStorageNamespaces.get(newStorageNamespaceID);
     ASSERT(newSessionStorageNamespace);

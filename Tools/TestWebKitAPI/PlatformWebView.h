@@ -52,7 +52,8 @@ namespace TestWebKitAPI {
 
 class PlatformWebView {
 public:
-    PlatformWebView(WKContextRef, WKPageGroupRef = 0);
+    explicit PlatformWebView(WKContextRef, WKPageGroupRef = 0);
+    explicit PlatformWebView(WKPageRef relatedPage);
     ~PlatformWebView();
 
     WKPageRef page() const;
