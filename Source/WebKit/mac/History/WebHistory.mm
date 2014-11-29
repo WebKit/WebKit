@@ -33,6 +33,7 @@
 #import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
 #import "WebTypesInternal.h"
+#import "WebVisitedLinkStore.h"
 #import <WebCore/HistoryItem.h>
 #import <WebCore/NSCalendarDateSPI.h>
 #import <WebCore/PageGroup.h>
@@ -727,8 +728,11 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     // and correct synchronization of history file between applications.
     [_sharedHistory release];
     _sharedHistory = [history retain];
+
     PageGroup::setShouldTrackVisitedLinks(history);
     PageGroup::removeAllVisitedLinks();
+    WebVisitedLinkStore::setShouldTrackVisitedLinks(history);
+    WebVisitedLinkStore::removeAllVisitedLinks();
 }
 
 - (void)timeZoneChanged:(NSNotification *)notification

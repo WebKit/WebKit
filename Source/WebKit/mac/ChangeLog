@@ -1,3 +1,39 @@
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
+        More work on the legacy WebKit visited link store
+        https://bugs.webkit.org/show_bug.cgi?id=139100
+
+        Reviewed by Sam Weinig.
+
+        * History/WebHistory.mm:
+        (+[WebHistory setOptionalSharedHistory:]):
+        Call WebVisitedLinkStore::setShouldTrackVisitedLinks and WebVisitedLinkStore::removeAllVisitedLinks.
+
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (visitedLinkStores):
+        (WebVisitedLinkStore::WebVisitedLinkStore):
+        (WebVisitedLinkStore::~WebVisitedLinkStore):
+        Keep track of live visited link stores.
+
+        (WebVisitedLinkStore::setShouldTrackVisitedLinks):
+        Update s_shouldTrackVisitedLinks and call removeAllVisitedLinks if necessary.
+
+        (WebVisitedLinkStore::removeAllVisitedLinks):
+        Iterate over all live link stores and remove their links.
+
+        (WebVisitedLinkStore::isLinkVisited):
+        Populate visited links and check if our hash table contains the link.
+
+        (WebVisitedLinkStore::addVisitedLink):
+        Add the link hash to the table.
+
+        (WebVisitedLinkStore::populateVisitedLinksIfNeeded):
+        Add stub.
+
+        (WebVisitedLinkStore::removeVisitedLinkHashes):
+        Clear out the hash table.
+
 2014-11-27  Anders Carlsson  <andersca@apple.com>
 
         Add a stubbed out WebVisitedLinkStore to WebViewGroup

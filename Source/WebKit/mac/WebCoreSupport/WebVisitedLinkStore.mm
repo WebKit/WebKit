@@ -25,26 +25,84 @@
 
 #import "WebVisitedLinkStore.h"
 
+#import <WebCore/PageCache.h>
+#import <wtf/NeverDestroyed.h>
+
+using namespace WebCore;
+
+static bool s_shouldTrackVisitedLinks;
+
+static HashSet<WebVisitedLinkStore*>& visitedLinkStores()
+{
+    static NeverDestroyed<HashSet<WebVisitedLinkStore*>> visitedLinkStores;
+
+    return visitedLinkStores;
+}
+
+
 PassRef<WebVisitedLinkStore> WebVisitedLinkStore::create()
 {
     return adoptRef(*new WebVisitedLinkStore);
 }
 
 WebVisitedLinkStore::WebVisitedLinkStore()
+    : m_visitedLinksPopulated(false)
 {
+    visitedLinkStores().add(this);
 }
 
 WebVisitedLinkStore::~WebVisitedLinkStore()
 {
+    visitedLinkStores().remove(this);
 }
 
-bool WebVisitedLinkStore::isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL)
+void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 {
-    // FIXME: Implement.
-    return false;
+    if (s_shouldTrackVisitedLinks == shouldTrackVisitedLinks)
+        return;
+    s_shouldTrackVisitedLinks = shouldTrackVisitedLinks;
+    if (!s_shouldTrackVisitedLinks)
+        removeAllVisitedLinks();
 }
 
-void WebVisitedLinkStore::addVisitedLink(WebCore::Page&, WebCore::LinkHash)
+void WebVisitedLinkStore::removeAllVisitedLinks()
 {
-    // FIXME: Implement.
+    for (auto& visitedLinkStore : visitedLinkStores())
+        visitedLinkStore->removeVisitedLinkHashes();
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
+bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+{
+    return m_visitedLinkHashes.contains(linkHash);
+}
+
+void WebVisitedLinkStore::addVisitedLink(Page& sourcePage, LinkHash linkHash)
+{
+    ASSERT(s_shouldTrackVisitedLinks);
+
+    m_visitedLinkHashes.add(linkHash);
+
+    invalidateStylesForLink(linkHash);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
+void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page&)
+{
+    if (m_visitedLinksPopulated)
+        return;
+
+    m_visitedLinksPopulated = true;
+
+    // FIXME: Populate visited links.
+}
+
+void WebVisitedLinkStore::removeVisitedLinkHashes()
+{
+    m_visitedLinksPopulated = false;
+    if (m_visitedLinkHashes.isEmpty())
+        return;
+    m_visitedLinkHashes.clear();
+
+    invalidateStylesForAllLinks();
 }

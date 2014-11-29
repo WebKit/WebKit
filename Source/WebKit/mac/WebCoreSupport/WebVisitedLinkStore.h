@@ -26,6 +26,7 @@
 #ifndef WebVisitedLinkStore_h
 #define WebVisitedLinkStore_h
 
+#import <WebCore/LinkHash.h>
 #import <WebCore/VisitedLinkStore.h>
 #import <wtf/PassRef.h>
 
@@ -34,11 +35,20 @@ public:
     static PassRef<WebVisitedLinkStore> create();
     virtual ~WebVisitedLinkStore();
 
+    static void setShouldTrackVisitedLinks(bool);
+    static void removeAllVisitedLinks();
+
 private:
     WebVisitedLinkStore();
 
     virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
     virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
+
+    void populateVisitedLinksIfNeeded(WebCore::Page&);
+    void removeVisitedLinkHashes();
+
+    HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_visitedLinkHashes;
+    bool m_visitedLinksPopulated;
 };
 
 #endif // WebVisitedLinkStore_h
