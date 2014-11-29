@@ -637,17 +637,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_
 
 void WebChromeClient::populateVisitedLinks()
 {
-    COMPtr<IWebHistoryDelegate> historyDelegate;
-    m_webView->historyDelegate(&historyDelegate);
-    if (historyDelegate) {
-        historyDelegate->populateVisitedLinksForWebView(m_webView);
-        return;
-    }
-
-    WebHistory* history = WebHistory::sharedHistory();
-    if (!history)
-        return;
-    history->addVisitedLinksToPageGroup(m_webView->page()->group());
 }
 
 void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)

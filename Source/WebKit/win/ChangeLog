@@ -1,5 +1,26 @@
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
+        Switch over to using WebVisitedLinkStore on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139103
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::populateVisitedLinks):
+        * WebHistory.cpp:
+        (WebHistory::setOptionalSharedHistory):
+        (WebHistory::removeAllItems):
+        (WebHistory::setVisitedLinkTrackingEnabled):
+        (WebHistory::removeAllVisitedLinks):
+        (WebHistory::removeItemForURLString):
+        (WebHistory::addVisitedLinksToVisitedLinkStore):
+        (WebHistory::addVisitedLinksToPageGroup): Deleted.
+        * WebHistory.h:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
         Another build fix.
 
         * WebHistory.cpp:

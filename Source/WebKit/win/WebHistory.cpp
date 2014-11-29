@@ -263,8 +263,8 @@ HRESULT STDMETHODCALLTYPE WebHistory::setOptionalSharedHistory(
     if (sharedHistoryStorage() == history)
         return S_OK;
     sharedHistoryStorage().query(history);
-    PageGroup::setShouldTrackVisitedLinks(sharedHistoryStorage());
-    PageGroup::removeAllVisitedLinks();
+    WebVisitedLinkStore::setShouldTrackVisitedLinks(sharedHistoryStorage());
+    WebVisitedLinkStore::removeAllVisitedLinks();
     return S_OK;
 }
 
@@ -324,7 +324,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
 
     m_entriesByURL.clear();
 
-    PageGroup::removeAllVisitedLinks();
+    WebVisitedLinkStore::removeAllVisitedLinks();
 
     return postNotification(kWebHistoryAllItemsRemovedNotification, userInfo.get());
 }
@@ -374,13 +374,13 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
 
 HRESULT WebHistory::setVisitedLinkTrackingEnabled(BOOL visitedLinkTrackingEnabled)
 {
-    PageGroup::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
+    WebVisitedLinkStore::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
     return S_OK;
 }
 
 HRESULT WebHistory::removeAllVisitedLinks()
 {
-    PageGroup::removeAllVisitedLinks();
+    WebVisitedLinkStore::removeAllVisitedLinks();
     return S_OK;
 }
 
@@ -567,7 +567,7 @@ HRESULT WebHistory::removeItemForURLString(const WTF::String& urlString)
         return E_FAIL;
 
     if (!m_entriesByURL.size())
-        PageGroup::removeAllVisitedLinks();
+        WebVisitedLinkStore::removeAllVisitedLinks();
 
     return S_OK;
 }
@@ -583,10 +583,4 @@ void WebHistory::addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore& visitedL
 {
     for (auto& url : m_entriesByURL.keys())
         visitedLinkStore.addVisitedLink(url);
-}
-
-void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
-{
-    for (auto& url : m_entriesByURL.keys())
-        group.addVisitedLinkHash(visitedLinkHash(url));
 }
