@@ -1,3 +1,18 @@
+2014-11-28  Sam Weinig  <sam@webkit.org>
+
+        Move the '-webkit-initial-letter', '-webkit-line-box-contain' and '-webkit-text-stroke-width' CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139053
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertInitialLetter):
+        (WebCore::StyleBuilderConverter::convertTextStrokeWidth):
+        (WebCore::StyleBuilderConverter::convertLineBoxContain):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2014-11-26  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] HTTP source element lacks SCHEDULING query support

@@ -2489,29 +2489,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
-    case CSSPropertyWebkitTextStrokeWidth: {
-        HANDLE_INHERIT_AND_INITIAL(textStrokeWidth, TextStrokeWidth)
-        float width = 0;
-        switch (primitiveValue->getValueID()) {
-        case CSSValueThin:
-        case CSSValueMedium:
-        case CSSValueThick: {
-            double result = 1.0 / 48;
-            if (primitiveValue->getValueID() == CSSValueMedium)
-                result *= 3;
-            else if (primitiveValue->getValueID() == CSSValueThick)
-                result *= 5;
-            Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS));
-            width = value.get().computeLength<float>(state.cssToLengthConversionData());
-            break;
-        }
-        default:
-            width = primitiveValue->computeLength<float>(state.cssToLengthConversionData());
-            break;
-        }
-        state.style()->setTextStrokeWidth(width);
-        return;
-    }
     case CSSPropertyWebkitPerspective: {
         HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
 
@@ -2609,20 +2586,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         if (primitiveValue)
             setTextOrientation(*primitiveValue);
 
-        return;
-    }
-
-    case CSSPropertyWebkitLineBoxContain: {
-        HANDLE_INHERIT_AND_INITIAL(lineBoxContain, LineBoxContain)
-        if (primitiveValue && primitiveValue->getValueID() == CSSValueNone) {
-            state.style()->setLineBoxContain(LineBoxContainNone);
-            return;
-        }
-
-        if (!is<CSSLineBoxContainValue>(*value))
-            return;
-
-        state.style()->setLineBoxContain(downcast<CSSLineBoxContainValue>(*value).value());
         return;
     }
 
@@ -2887,24 +2850,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
-
-    case CSSPropertyWebkitInitialLetter: {
-        HANDLE_INHERIT_AND_INITIAL(initialLetter, InitialLetter)
-        if (!value->isPrimitiveValue())
-            return;
-        
-        if (primitiveValue->getValueID() == CSSValueNormal) {
-            state.style()->setInitialLetter(IntSize());
-            return;
-        }
-            
-        Pair* pair = primitiveValue->getPairValue();
-        if (!pair || !pair->first() || !pair->second())
-            return;
-
-        state.style()->setInitialLetter(IntSize(pair->first()->getIntValue(), pair->second()->getIntValue()));
-        return;
-    }
     
     // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
     case CSSPropertyAnimationDelay:
@@ -3097,7 +3042,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitHyphenateLimitBefore:
     case CSSPropertyWebkitHyphenateLimitLines:
     case CSSPropertyWebkitHyphens:
+    case CSSPropertyWebkitInitialLetter:
     case CSSPropertyWebkitLineAlign:
+    case CSSPropertyWebkitLineBoxContain:
     case CSSPropertyWebkitLineBreak:
     case CSSPropertyWebkitLineClamp:
     case CSSPropertyWebkitLineGrid:
@@ -3152,6 +3099,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyWebkitTextStrokeWidth:
     case CSSPropertyWebkitTransformOriginX:
     case CSSPropertyWebkitTransformOriginY:
     case CSSPropertyWebkitTransformOriginZ:

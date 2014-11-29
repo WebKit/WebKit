@@ -70,6 +70,9 @@ public:
     static PassRefPtr<QuotesData> convertQuotes(StyleResolver&, CSSValue&);
     static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, CSSValue&);
     static PassRefPtr<StyleReflection> convertReflection(StyleResolver&, CSSValue&);
+    static IntSize convertInitialLetter(StyleResolver&, CSSValue&);
+    static float convertTextStrokeWidth(StyleResolver&, CSSValue&);
+    static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -493,6 +496,62 @@ inline PassRefPtr<StyleReflection> StyleBuilderConverter::convertReflection(Styl
 
     return reflection.release();
 }
+
+inline IntSize StyleBuilderConverter::convertInitialLetter(StyleResolver&, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.getValueID() == CSSValueNormal)
+        return IntSize();
+
+    Pair* pair = primitiveValue.getPairValue();
+    ASSERT(pair);
+    ASSERT(pair->first());
+    ASSERT(pair->second());
+
+    return IntSize(pair->first()->getIntValue(), pair->second()->getIntValue());
+}
+
+inline float StyleBuilderConverter::convertTextStrokeWidth(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    float width = 0;
+    switch (primitiveValue.getValueID()) {
+    case CSSValueThin:
+    case CSSValueMedium:
+    case CSSValueThick: {
+        double result = 1.0 / 48;
+        if (primitiveValue.getValueID() == CSSValueMedium)
+            result *= 3;
+        else if (primitiveValue.getValueID() == CSSValueThick)
+            result *= 5;
+        Ref<CSSPrimitiveValue> emsValue(CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS));
+        width = convertComputedLength<float>(styleResolver, emsValue);
+        break;
+    }
+    case CSSValueInvalid: {
+        width = convertComputedLength<float>(styleResolver, primitiveValue);
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    return width;
+}
+
+inline LineBoxContain StyleBuilderConverter::convertLineBoxContain(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        return LineBoxContainNone;
+    }
+
+    return downcast<CSSLineBoxContainValue>(value).value();
+}
+
 
 } // namespace WebCore
 
