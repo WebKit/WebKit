@@ -30,6 +30,7 @@
 #include <WebCore/COMPtr.h>
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
     class URL;
