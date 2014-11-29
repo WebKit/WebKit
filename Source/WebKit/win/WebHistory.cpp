@@ -34,6 +34,7 @@
 #include "WebKit.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
+#include "WebVisitedLinkStore.h"
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/URL.h>
@@ -576,6 +577,12 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
     if (urlString.isEmpty())
         return nullptr;
     return m_entriesByURL.get(urlString);
+}
+
+WebHistory::addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore& visitedLinkStore)
+{
+    for (auto& url : m_entriesByURL.keys())
+        group.addVisitedLinkHash(visitedLinkHash(url)); 
 }
 
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)

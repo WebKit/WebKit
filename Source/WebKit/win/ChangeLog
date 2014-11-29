@@ -1,3 +1,49 @@
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Stub out more of WebVisitedLinkStore on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139098
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebVisitedLinkStore.cpp:
+        (WebVisitedLinkStore::WebVisitedLinkStore):
+        Initialize m_visitedLinksPopulated to false.
+
+        (WebVisitedLinkStore::setShouldTrackVisitedLinks):
+        Update s_shouldTrackVisitedLinks and remove all visited links if needed.
+
+        (WebVisitedLinkStore::removeAllVisitedLinks):
+        Remove all hashes from our shared link store.
+
+        (WebVisitedLinkStore::addVisitedLink):
+        Compute the visited link hash and add it to the store.
+
+        (WebVisitedLinkStore::isLinkVisited):
+        Populate visited links and then look up the hash in our hash map.
+
+        (WebVisitedLinkStore::populateVisitedLinksIfNeeded):
+        Call out to the history delegate or populate visited links from shared history.
+
+        (WebVisitedLinkStore::addVisitedLinkHash):
+        Add the hash if we're tracking hashes.
+
+        (WebVisitedLinkStore::removeVisitedLinkHashes):
+        Clear the map.
+
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        Add members.
+
+        * WebHistory.cpp:
+        (WebHistory::addVisitedLinksToVisitedLinkStore):
+        New function that adds visited links from the history to a given store.
+
+        * WebHistory.h:
+        Add new member.
+
+        * WebView.cpp:
+        (WebView::addVisitedLinks):
+        Add links to the visited link store as well.
+
 2014-11-27  Anders Carlsson  <andersca@apple.com>
 
         Add a stubbed out WebVisitedLinkStore class on Windows

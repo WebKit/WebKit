@@ -26,7 +26,14 @@
 #include "config.h"
 #include "WebVisitedLinkStore.h"
 
+#include "WebHistory.h"
+#include "WebView.h"
+#include <WebCore/PageCache.h>
 #include <wtf/NeverDestroyed.h>
+
+using namespace WebCore;
+
+static bool s_shouldTrackVisitedLinks;
 
 WebVisitedLinkStore& WebVisitedLinkStore::shared()
 {
@@ -36,6 +43,7 @@ WebVisitedLinkStore& WebVisitedLinkStore::shared()
 }
 
 WebVisitedLinkStore::WebVisitedLinkStore()
+    : m_visitedLinksPopulated(false)
 {
 }
 
@@ -43,13 +51,81 @@ WebVisitedLinkStore::~WebVisitedLinkStore()
 {
 }
 
-bool WebVisitedLinkStore::isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL)
+void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 {
-    // FIXME: Implement.
-    return false;
+    if (s_shouldTrackVisitedLinks == shouldTrackVisitedLinks)
+        return;
+
+    s_shouldTrackVisitedLinks = shouldTrackVisitedLinks;
+    if (!s_shouldTrackVisitedLinks)
+        removeAllVisitedLinks();
 }
 
-void WebVisitedLinkStore::addVisitedLink(WebCore::Page&, WebCore::LinkHash)
+void WebVisitedLinkStore::removeAllVisitedLinks()
 {
-    // FIXME: Implement.
+    shared().removeVisitedLinkHashes();
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
+void WebVisitedLinkStore::addVisitedLink(const String& urlString)
+{
+    addVisitedLinkHash(visitedLinkHash(urlString));
+}
+
+bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+{
+    populateVisitedLinksIfNeeded(page);
+
+    return m_visitedLinkHashes.contains(linkHash);
+}
+
+void WebVisitedLinkStore::addVisitedLink(Page&, LinkHash linkHash)
+{
+    if (!s_shouldTrackVisitedLinks)
+        return;
+
+    addVisitedLinkHash(linkHash);
+}
+
+void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& sourcePage)
+{
+    if (m_visitedLinksPopulated)
+        return;
+
+    m_visitedLinksPopulated = true;
+
+    WebView* webView = kit(&sourcePage);
+    if (!webView)
+        return;
+
+    COMPtr<IWebHistoryDelegate> historyDelegate;
+    webView->historyDelegate(&historyDelegate);
+    if (historyDelegate) {
+        historyDelegate->populateVisitedLinksForWebView(webView);
+        return;
+    }
+
+    WebHistory* history = WebHistory::sharedHistory();
+    if (!history)
+        return;
+    history->addVisitedLinksToVisitedLinkStore(*this);
+}
+
+void WebVisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
+{
+    ASSERT(s_shouldTrackVisitedLinks);
+    m_visitedLinkHashes.add(linkHash);
+
+    invalidateStylesForLink(linkHash);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
+void WebVisitedLinkStore::removeVisitedLinkHashes()
+{
+    m_visitedLinksPopulated = false;
+    if (m_visitedLinkHashes.isEmpty())
+        return;
+    m_visitedLinkHashes.clear();
+
+    invalidateStylesForAllLinks();
 }

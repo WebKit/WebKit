@@ -65,6 +65,7 @@
 #include "WebPlatformStrategies.h"
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
+#include "WebVisitedLinkStore.h"
 #include "resource.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/InitializeThreading.h>
@@ -6432,12 +6433,15 @@ HRESULT WebView::historyDelegate(IWebHistoryDelegate** historyDelegate)
 
 HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
 {
+    auto& visitedLinkStore = WebVisitedLinkStore::shared();
     PageGroup& group = core(this)->group();
     
     for (unsigned i = 0; i < visitedURLCount; ++i) {
         BSTR url = visitedURLs[i];
         unsigned length = SysStringLen(url);
         group.addVisitedLink(url, length);
+
+        visitedLinkStore.addVisitedLink(String(url, length));
     }
 
     return S_OK;

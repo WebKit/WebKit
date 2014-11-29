@@ -39,6 +39,7 @@ namespace WebCore {
 //-----------------------------------------------------------------------------
 
 class WebPreferences;
+class WebVisitedLinkStore;
 
 class WebHistory : public IWebHistory, public IWebHistoryPrivate {
 public:
@@ -111,6 +112,7 @@ public:
     static WebHistory* sharedHistory();
     void visitedURL(const WebCore::URL&, const WTF::String& title, const WTF::String& httpMethod, bool wasFailure, bool increaseVisitCount);
     void addVisitedLinksToPageGroup(WebCore::PageGroup&);
+    void addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore&);
 
     COMPtr<IWebHistoryItem> itemForURLString(const WTF::String&) const;
 
