@@ -56,7 +56,8 @@ StyleScrollSnapPoints::StyleScrollSnapPoints()
 }
 
 inline StyleScrollSnapPoints::StyleScrollSnapPoints(const StyleScrollSnapPoints& other)
-    : xPoints(other.xPoints)
+    : RefCounted()
+    , xPoints(other.xPoints)
     , yPoints(other.yPoints)
     , destination(other.destination)
     , coordinates(other.coordinates)
