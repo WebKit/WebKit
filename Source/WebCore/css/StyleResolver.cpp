@@ -2415,19 +2415,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-    case CSSPropertyWebkitLocale: {
-        HANDLE_INHERIT_AND_INITIAL(locale, Locale);
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->getValueID() == CSSValueAuto)
-            state.style()->setLocale(nullAtom);
-        else
-            state.style()->setLocale(primitiveValue->getStringValue());
-        FontDescription fontDescription = state.style()->fontDescription();
-        fontDescription.setScript(localeToScriptCodeForFontSelection(state.style()->locale()));
-        setFontDescription(fontDescription);
-        return;
-    }
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
@@ -2489,31 +2476,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
-    case CSSPropertyWebkitPerspective: {
-        HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
-
-        if (!primitiveValue)
-            return;
-
-        if (primitiveValue->getValueID() == CSSValueNone) {
-            state.style()->setPerspective(0);
-            return;
-        }
-
-        float perspectiveValue;
-        if (primitiveValue->isLength())
-            perspectiveValue = primitiveValue->computeLength<float>(state.cssToLengthConversionData());
-        else if (primitiveValue->isNumber()) {
-            // For backward compatibility, treat valueless numbers as px.
-            Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(primitiveValue->getDoubleValue(), CSSPrimitiveValue::CSS_PX));
-            perspectiveValue = value.get().computeLength<float>(state.cssToLengthConversionData());
-        } else
-            return;
-
-        if (perspectiveValue >= 0.0f)
-            state.style()->setPerspective(perspectiveValue);
-        return;
-    }
 #if PLATFORM(IOS)
     case CSSPropertyWebkitTouchCallout: {
         HANDLE_INHERIT_AND_INITIAL(touchCalloutEnabled, TouchCalloutEnabled);
@@ -2566,28 +2528,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitTextDecorationsInEffect:
         return;
-
-    // CSS Text Layout Module Level 3: Vertical writing support
-    case CSSPropertyWebkitWritingMode: {
-        HANDLE_INHERIT_AND_INITIAL(writingMode, WritingMode);
-        
-        if (primitiveValue)
-            setWritingMode(*primitiveValue);
-
-        // FIXME: It is not ok to modify document state while applying style.
-        if (state.element() && state.element() == state.document().documentElement())
-            state.document().setWritingModeSetOnDocumentElement(true);
-        return;
-    }
-
-    case CSSPropertyWebkitTextOrientation: {
-        HANDLE_INHERIT_AND_INITIAL(textOrientation, TextOrientation);
-
-        if (primitiveValue)
-            setTextOrientation(*primitiveValue);
-
-        return;
-    }
 
     // CSS Fonts Module Level 3
     case CSSPropertyWebkitFontFeatureSettings: {
@@ -2809,16 +2749,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
-
-    case CSSPropertyWebkitJustifySelf:
-        HANDLE_INHERIT_AND_INITIAL(justifySelf, JustifySelf);
-        if (Pair* pairValue = primitiveValue->getPairValue()) {
-            state.style()->setJustifySelf(*pairValue->first());
-            state.style()->setJustifySelfOverflowAlignment(*pairValue->second());
-        } else
-            state.style()->setJustifySelf(*primitiveValue);
-        return;
-
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
         HANDLE_INHERIT_AND_INITIAL(scrollSnapType, ScrollSnapType);
@@ -3009,6 +2939,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
+    case CSSPropertyWebkitJustifySelf:
+    case CSSPropertyWebkitLocale:
+    case CSSPropertyWebkitTextOrientation:
+    case CSSPropertyWebkitWritingMode:
     case CSSPropertyColumnCount:
     case CSSPropertyColumnGap:
     case CSSPropertyColumnProgression:
@@ -3071,6 +3005,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitMaskSize:
     case CSSPropertyWebkitMaskSourceType:
     case CSSPropertyWebkitNbspMode:
+    case CSSPropertyWebkitPerspective:
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:

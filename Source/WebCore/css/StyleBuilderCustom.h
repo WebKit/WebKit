@@ -32,6 +32,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "Frame.h"
+#include "LocaleToScriptMapping.h"
 #include "Rect.h"
 #include "StyleResolver.h"
 
@@ -645,6 +646,71 @@ inline void applyValueClip(StyleResolver& styleResolver, CSSValue& value)
         ASSERT(primitiveValue.getValueID() == CSSValueAuto);
         applyInitialClip(styleResolver);
     }
+}
+
+inline void applyValueWebkitLocale(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.getValueID() == CSSValueAuto)
+        styleResolver.style()->setLocale(nullAtom);
+    else
+        styleResolver.style()->setLocale(primitiveValue.getStringValue());
+    
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    fontDescription.setScript(localeToScriptCodeForFontSelection(styleResolver.style()->locale()));
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void applyValueWebkitWritingMode(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.setWritingMode(downcast<CSSPrimitiveValue>(value));
+
+    // FIXME: It is not ok to modify document state while applying style.
+    auto& state = styleResolver.state();
+    if (state.element() && state.element() == state.document().documentElement())
+        state.document().setWritingModeSetOnDocumentElement(true);
+}
+
+inline void applyValueWebkitTextOrientation(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.setTextOrientation(downcast<CSSPrimitiveValue>(value));
+}
+
+inline void applyValueWebkitJustifySelf(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (Pair* pairValue = primitiveValue.getPairValue()) {
+        styleResolver.style()->setJustifySelf(*pairValue->first());
+        styleResolver.style()->setJustifySelfOverflowAlignment(*pairValue->second());
+    } else
+        styleResolver.style()->setJustifySelf(primitiveValue);
+}
+
+inline void applyValueWebkitPerspective(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.getValueID() == CSSValueNone) {
+        styleResolver.style()->setPerspective(0);
+        return;
+    }
+
+    float perspectiveValue;
+    if (primitiveValue.isLength())
+        perspectiveValue = primitiveValue.computeLength<float>(styleResolver.state().cssToLengthConversionData());
+    else if (primitiveValue.isNumber()) {
+        // For backward compatibility, treat valueless numbers as px.
+        Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(primitiveValue.getDoubleValue(), CSSPrimitiveValue::CSS_PX));
+        perspectiveValue = value.get().computeLength<float>(styleResolver.state().cssToLengthConversionData());
+    } else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (perspectiveValue >= 0.0f)
+        styleResolver.style()->setPerspective(perspectiveValue);
 }
 
 } // namespace StyleBuilderFunctions

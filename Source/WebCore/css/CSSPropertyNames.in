@@ -69,13 +69,13 @@ text-rendering [Inherited, LegacyStyleBuilder]
 -webkit-font-kerning [Inherited, LegacyStyleBuilder]
 -webkit-font-smoothing [Inherited, LegacyStyleBuilder]
 -webkit-font-variant-ligatures [Inherited, LegacyStyleBuilder]
--webkit-locale [Inherited, LegacyStyleBuilder]
--webkit-text-orientation [Inherited, LegacyStyleBuilder]
+-webkit-locale [Inherited, Custom=Value]
+-webkit-text-orientation [Inherited, Custom=Value]
 -epub-text-orientation = -webkit-text-orientation
 #if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
 -webkit-text-size-adjust [Inherited, LegacyStyleBuilder]
 #endif
--webkit-writing-mode [Inherited, LegacyStyleBuilder]
+-webkit-writing-mode [Inherited, Custom=Value]
 -epub-writing-mode = -webkit-writing-mode
 zoom [Custom=All]
 
@@ -387,7 +387,7 @@ justify-content
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
 -webkit-backdrop-filter [LegacyStyleBuilder]
 #endif
--webkit-justify-self [LegacyStyleBuilder]
+-webkit-justify-self [Custom=Value]
 -webkit-font-size-delta [LegacyStyleBuilder]
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid [LegacyStyleBuilder]
@@ -466,7 +466,7 @@ order [TypeName=int]
 -webkit-padding-before [LegacyStyleBuilder]
 -webkit-padding-end [LegacyStyleBuilder]
 -webkit-padding-start [LegacyStyleBuilder]
--webkit-perspective [LegacyStyleBuilder]
+-webkit-perspective [Custom=Value]
 -webkit-perspective-origin [LegacyStyleBuilder]
 -webkit-perspective-origin-x [Converter=Length]
 -webkit-perspective-origin-y [Converter=Length]

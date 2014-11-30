@@ -1,3 +1,20 @@
+2014-11-29  Sam Weinig  <sam@webkit.org>
+
+        Move the '-webkit-locale', '-webkit-text-orientation', '-webkit-writing-mode', '-webkit-justify-self' and '-webkit-perspective' CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139104
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderFunctions::applyValueWebkitLocale):
+        (WebCore::StyleBuilderFunctions::applyValueWebkitWritingMode):
+        (WebCore::StyleBuilderFunctions::applyValueWebkitTextOrientation):
+        (WebCore::StyleBuilderFunctions::applyValueWebkitJustifySelf):
+        (WebCore::StyleBuilderFunctions::applyValueWebkitPerspective):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
         Add an EmptyVisitedLinkStore implementation
