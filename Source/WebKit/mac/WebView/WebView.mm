@@ -941,6 +941,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
     pageConfiguration.userContentController = &_private->group->userContentController();
+    pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     _private->page = new Page(pageConfiguration);
 
     _private->page->setGroupName(groupName);
@@ -6116,6 +6117,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
         return;
 
     _private->page->setUserContentController(&_private->group->userContentController());
+    _private->page->setVisitedLinkStore(_private->group->visitedLinkStore());
     _private->page->setGroupName(groupName);
 }
 

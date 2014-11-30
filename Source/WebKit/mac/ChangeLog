@@ -1,5 +1,16 @@
 2014-11-30  Anders Carlsson  <andersca@apple.com>
 
+        Switch over to the visited link store from the WebViewGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139112
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView setGroupName:]):
+
+2014-11-30  Anders Carlsson  <andersca@apple.com>
+
         Add WebVisitedLinkStore::removeVisitedLink and use it on iOS
         https://bugs.webkit.org/show_bug.cgi?id=139111
 
