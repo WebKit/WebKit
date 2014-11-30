@@ -53,7 +53,7 @@ public:
     Identifier(VM* vm, const String& s) : m_string(add(vm, s.impl())) { ASSERT(m_string.impl()->isAtomic()); }
 
     const String& string() const { return m_string; }
-    StringImpl* impl() const { return m_string.impl(); }
+    AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl*>(m_string.impl()); }
 
     int length() const { return m_string.length(); }
 

@@ -1440,7 +1440,7 @@ private:
     }
     
     bool isStringPrototypeMethodSane(
-        JSObject* stringPrototype, Structure* stringPrototypeStructure, StringImpl* uid)
+        JSObject* stringPrototype, Structure* stringPrototypeStructure, AtomicStringImpl* uid)
     {
         unsigned attributesUnused;
         PropertyOffset offset =

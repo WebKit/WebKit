@@ -49,7 +49,7 @@ public:
     
     bool isStillValid() const;
     bool matches(StructureChain*) const;
-    bool mayInterceptStoreTo(StringImpl* uid);
+    bool mayInterceptStoreTo(AtomicStringImpl* uid);
     bool isNormalized();
     
     bool takesSlowPathInDFGForImpureProperty();

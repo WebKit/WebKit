@@ -1,3 +1,60 @@
+2014-11-29  Andreas Kling  <akling@apple.com>
+
+        PropertyTable keys should be AtomicStringImpl.
+        <https://webkit.org/b/139096>
+
+        Reviewed by Sam Weinig.
+
+        Since PropertyTable keys are really always Identifiers, switch the key
+        type from StringImpl* to AtomicStringImpl*.
+
+        We have code in the GetByVal opcode implementations that assumes things
+        about this, so this change adds confidence to those algorithms.
+
+        * bytecode/ComplexGetStatus.cpp:
+        (JSC::ComplexGetStatus::computeFor):
+        * bytecode/ComplexGetStatus.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::addLazily):
+        (JSC::DFG::DesiredIdentifiers::at):
+        * dfg/DFGDesiredIdentifiers.h:
+        (JSC::DFG::DesiredIdentifiers::operator[]):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::isStringPrototypeMethodSane):
+        * runtime/Identifier.h:
+        (JSC::Identifier::impl):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::mayInterceptStoreTo):
+        * runtime/IntendedStructureChain.h:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains):
+        (JSC::StructureTransitionTable::get):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::Structure::getConcurrently):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        * runtime/Structure.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::getConcurrently):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::Hash::hash):
+
 2014-11-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr<>|make_unique<> in ftl, bytecode of JSC

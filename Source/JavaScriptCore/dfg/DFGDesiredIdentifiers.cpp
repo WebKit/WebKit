@@ -52,14 +52,14 @@ unsigned DesiredIdentifiers::numberOfIdentifiers()
     return m_codeBlock->numberOfIdentifiers() + m_addedIdentifiers.size();
 }
 
-void DesiredIdentifiers::addLazily(StringImpl* rep)
+void DesiredIdentifiers::addLazily(AtomicStringImpl* rep)
 {
     m_addedIdentifiers.append(rep);
 }
 
-StringImpl* DesiredIdentifiers::at(unsigned index) const
+AtomicStringImpl* DesiredIdentifiers::at(unsigned index) const
 {
-    StringImpl* result;
+    AtomicStringImpl* result;
     if (index < m_codeBlock->numberOfIdentifiers())
         result = m_codeBlock->identifier(index).impl();
     else

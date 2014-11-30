@@ -59,7 +59,7 @@ namespace JSC {
 static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
-bool StructureTransitionTable::contains(StringImpl* rep, unsigned attributes) const
+bool StructureTransitionTable::contains(AtomicStringImpl* rep, unsigned attributes) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
@@ -68,7 +68,7 @@ bool StructureTransitionTable::contains(StringImpl* rep, unsigned attributes) co
     return map()->get(std::make_pair(rep, attributes));
 }
 
-inline Structure* StructureTransitionTable::get(StringImpl* rep, unsigned attributes) const
+inline Structure* StructureTransitionTable::get(AtomicStringImpl* rep, unsigned attributes) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
@@ -315,7 +315,7 @@ void Structure::materializePropertyMap(VM& vm)
     checkOffsetConsistency();
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, StringImpl* uid, unsigned attributes, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, AtomicStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
@@ -335,7 +335,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
     return addPropertyTransitionToExistingStructureImpl(structure, propertyName.uid(), attributes, offset);
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, StringImpl* uid, unsigned attributes, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, AtomicStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
     ConcurrentJITLocker locker(structure->m_lock);
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
@@ -850,7 +850,7 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm)
     return PropertyTable::create(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
 }
 
-PropertyOffset Structure::getConcurrently(StringImpl* uid, unsigned& attributes)
+PropertyOffset Structure::getConcurrently(AtomicStringImpl* uid, unsigned& attributes)
 {
     PropertyOffset result = invalidOffset;
     
@@ -890,7 +890,7 @@ PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attrib
     if (attributes & DontEnum)
         setHasNonEnumerableProperties(true);
 
-    StringImpl* rep = propertyName.uid();
+    AtomicStringImpl* rep = propertyName.uid();
 
     if (!propertyTable())
         createPropertyMap(locker, vm);
@@ -909,7 +909,7 @@ PropertyOffset Structure::remove(PropertyName propertyName)
     
     checkConsistency();
 
-    StringImpl* rep = propertyName.uid();
+    AtomicStringImpl* rep = propertyName.uid();
 
     if (!propertyTable())
         return invalidOffset;
