@@ -39,6 +39,7 @@ public:
     static void removeAllVisitedLinks();
 
     void addVisitedLink(NSString *urlString);
+    void removeVisitedLink(NSString *urlString);
 
 private:
     WebVisitedLinkStore();

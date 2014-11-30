@@ -95,6 +95,17 @@ void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
     addVisitedLinkHash(visitedLinkHash(buffer.data(), length));
 }
 
+void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
+{
+    LinkHash linkHash = visitedLinkHash(urlString);
+
+    ASSERT(m_visitedLinkHashes.contains(linkHash));
+    m_visitedLinkHashes.remove(linkHash);
+
+    invalidateStylesForLink(linkHash);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
 bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
 {
     return m_visitedLinkHashes.contains(linkHash);

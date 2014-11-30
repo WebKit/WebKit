@@ -7017,6 +7017,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
 #if PLATFORM(IOS)
 - (void)removeVisitedLink:(NSURL *)url
 {
+    _private->group->visitedLinkStore().removeVisitedLink(URL(url).string());
     core(self)->group().removeVisitedLink(url);
 }
 #endif

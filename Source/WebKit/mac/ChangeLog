@@ -1,3 +1,16 @@
+2014-11-30  Anders Carlsson  <andersca@apple.com>
+
+        Add WebVisitedLinkStore::removeVisitedLink and use it on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=139111
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::removeVisitedLink):
+        * WebView/WebView.mm:
+        (-[WebView removeVisitedLink:]):
+
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
         Populate visited links
