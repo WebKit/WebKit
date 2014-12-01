@@ -1,5 +1,23 @@
 2014-12-01  Alexey Proskuryakov  <ap@apple.com>
 
+        http tests should not use shared temporary files, part 3
+        https://bugs.webkit.org/show_bug.cgi?id=139135
+
+        Reviewed by Tim Horton.
+
+        Fix ping tests, using the same techniques as before.
+
+        * http/tests/navigation/image-load-in-unload-handler.html:
+        * http/tests/navigation/ping-cross-origin-from-https.html:
+        * http/tests/navigation/resources/check-ping.php:
+        * http/tests/navigation/resources/delete-ping.php:
+        * http/tests/navigation/resources/image-load-in-unload-handler-2.html: Copied from LayoutTests/http/tests/navigation/resources/ping-redirect.html.
+        * http/tests/navigation/resources/ping-file-path.php: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/resources/report-file-path.php.
+        * http/tests/navigation/resources/ping-redirect.html: Removed.
+        * http/tests/navigation/resources/save-Ping.php:
+
+2014-12-01  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/11358748> http/tests/multipart/multipart-wait-before-boundary.html fails on ML as of r115745
 
         Looks like it no longer fails.
