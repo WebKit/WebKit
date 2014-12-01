@@ -2414,7 +2414,7 @@ void HTMLMediaElement::seekTimerFired()
 #if ENABLE(MEDIA_SOURCE)
     // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
     // always in a flushed state when the 'seeking' event fires.
-    if (m_mediaSource && m_mediaSource->isClosed())
+    if (m_mediaSource && !m_mediaSource->isClosed())
         noSeekRequired = false;
 #endif
 

@@ -1,3 +1,17 @@
+2014-12-01  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Fix not always calling mediaPlayer seek.
+        https://bugs.webkit.org/show_bug.cgi?id=139139
+
+        Reviewed by Jer Noble.
+
+        Original comment states that media source shall always be notified of seek if it's not closed.
+
+        No new tests needed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::seekTimerFired):
+
 2014-12-01  Tim Horton  <timothy_horton@apple.com>
 
         Implement yellow highlight for WebKit1 data detectors
