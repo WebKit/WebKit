@@ -1,3 +1,9 @@
+2014-12-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Skip some animation tests that time out in iOS WebKit2
+
+        * platform/ios-simulator-wk2/TestExpectations: Added.
+
 2014-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         http tests should not use shared temporary files, part 3

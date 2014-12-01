@@ -1,0 +1,8 @@
+# These are the layout test expectations for Apple's iOS port of WebKit2.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# Animation tests that time out:
+animations/cross-fade-list-style-image.html
+animations/cross-fade-webkit-mask-image.html
+animations/state-at-end-event.html
