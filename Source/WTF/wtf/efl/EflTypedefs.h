@@ -44,15 +44,9 @@ typedef struct _Ecore_Fd_Handler Ecore_Fd_Handler;
 typedef struct _Eina_List Eina_List;
 typedef struct _Eina_Module Eina_Module;
 typedef struct _Eina_Rectangle Eina_Rectangle;
-#if USE(EO)
 typedef struct _Eo_Opaque Evas;
 typedef struct _Eo_Opaque Evas_Object;
 typedef struct _Eo_Opaque Ecore_Timer;
-#else
-typedef struct _Evas Evas;
-typedef struct _Evas_Object Evas_Object;
-typedef struct _Ecore_Timer Ecore_Timer;
-#endif
 #endif
 
 #endif

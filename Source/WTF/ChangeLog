@@ -1,3 +1,12 @@
+2014-11-30  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Drop support for the EFL 1.7
+        https://bugs.webkit.org/show_bug.cgi?id=139114
+
+        Reviewed by Gyuyoung Kim.
+
+        * wtf/efl/EflTypedefs.h: Removed old definitions which EFL 1.7 used.
+
 2014-11-21  Anders Carlsson  <andersca@apple.com>
 
         Remove the Timer parameters from timer callbacks
