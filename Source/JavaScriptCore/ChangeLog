@@ -1,3 +1,36 @@
+2014-11-17  Oliver Hunt  <oliver@apple.com>
+
+        Make sure range based iteration of Vector<> still receives bounds checking
+        https://bugs.webkit.org/show_bug.cgi?id=138821
+
+        Reviewed by Mark Lam.
+
+        There are a few uses of begin()/end() that explicitly require pointers,
+        so we use getPtr() to extract the underlying pointer generically.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::mdNode):
+        (JSC::FTL::buildCall):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::debugPrintRecursively):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::sortCompactedVector):
+        * tools/ProfileTreeNode.h:
+        (JSC::ProfileTreeNode::dumpInternal):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+
 2014-11-29  Andreas Kling  <akling@apple.com>
 
         PropertyTable keys should be AtomicStringImpl.

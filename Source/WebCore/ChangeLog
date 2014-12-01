@@ -1,3 +1,38 @@
+2014-11-17  Oliver Hunt  <oliver@apple.com>
+
+        Make sure range based iteration of Vector<> still receives bounds checking
+        https://bugs.webkit.org/show_bug.cgi?id=138821
+
+        Reviewed by Mark Lam.
+
+        There are a few uses of begin()/end() that explicitly require pointers,
+        so we use getPtr() to extract the underlying pointer generically.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserializeString):
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::isBadMatch):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::fontDataForCharacter):
+        (WebCore::SegmentedFontData::containsCharacter):
+        (WebCore::SegmentedFontData::isLoading):
+        * platform/graphics/WOFFFileFormat.cpp:
+        (WebCore::convertWOFFToSfnt):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::firstNamedGridLineBeforePosition):
+        (WebCore::GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        * svg/SVGFontElement.cpp:
+        (WebCore::kerningForPairOfStringsAndGlyphs):
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::append):
+        * xml/XPathNodeSet.h:
+        (WebCore::XPath::NodeSet::begin):
+        (WebCore::XPath::NodeSet::end):
+
 2014-11-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix a build warning when CSS_SCROLL_SNAP is enabled

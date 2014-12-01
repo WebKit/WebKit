@@ -130,11 +130,8 @@ struct Scope {
     {
         if (rhs.m_labels) {
             m_labels = adoptPtr(new LabelStack);
-
-            typedef LabelStack::const_iterator iterator;
-            iterator end = rhs.m_labels->end();
-            for (iterator it = rhs.m_labels->begin(); it != end; ++it)
-                m_labels->append(ScopeLabelInfo(it->m_ident, it->m_isLoop));
+            for (auto label : *rhs.m_labels)
+                m_labels->append(ScopeLabelInfo(label.m_ident, label.m_isLoop));
         }
     }
 

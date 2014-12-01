@@ -2073,11 +2073,11 @@ inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) con
     // creating a new one each time.
     normalizeCharacters(match, matchLength, m_normalizedMatch);
 
-    const UChar* a = m_normalizedTarget.begin();
-    const UChar* aEnd = m_normalizedTarget.end();
+    const UChar* a = getPtr(m_normalizedTarget.begin());
+    const UChar* aEnd = getPtr(m_normalizedTarget.end());
 
-    const UChar* b = m_normalizedMatch.begin();
-    const UChar* bEnd = m_normalizedMatch.end();
+    const UChar* b = getPtr(m_normalizedMatch.begin());
+    const UChar* bEnd = getPtr(m_normalizedMatch.end());
 
     while (true) {
         // Skip runs of non-kana-letter characters. This is necessary so we can

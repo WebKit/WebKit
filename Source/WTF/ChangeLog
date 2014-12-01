@@ -1,3 +1,98 @@
+2014-11-17  Oliver Hunt  <oliver@apple.com>
+
+        Make sure range based iteration of Vector<> still receives bounds checking
+        https://bugs.webkit.org/show_bug.cgi?id=138821
+
+        Reviewed by Mark Lam.
+
+        Add a new IndexedIterator struct to WTF that wraps a
+        Vector type and index to provide pointer like semantics
+        while still performing runtime bounds checking, even in
+        release builds. We store a simple index into the vector
+        which means that this iterator allows vector resizing
+        during iteration. If the vector is resized such that the
+        iterator is out of bounds, then any attempt to dereference
+        the iterator will crash safely. Any other errors, including
+        overflows, and over extending the iterator will likewise
+        crash.
+
+        For the purpose of retaining semantically equivalent
+        behaviour, the iterator can be moved to m_index == size()
+        as that is the standard "end" terminator for these types.
+        Attempting to dereference at that point will still crash
+        rather than perform an unsafe memory operation.
+
+        In order to maintain the validity of all the bounds checking,
+        we perform full integer range checking prior to any mutation
+        of the iterator location. If we detect an arithmetic overflow
+        we will crash rather than attempting to carry on.
+
+        By necessity there are many overrides for operator + and - as
+        we otherwise hit many different type promotion ambiguities when
+        performing arithmetic with iterators. These ambiguities are also
+        different for 32- vs. 64-bit, so duplicating the functions
+        and then forwarding to the core implementations that performed
+        the bounds checking and mutation seemed like the right call.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/IndexedIterator.h: Added.
+        (WTF::IndexedIterator::IndexedIterator):
+        (WTF::IndexedIterator::operator->):
+        (WTF::IndexedIterator::operator*):
+        (WTF::IndexedIterator::get):
+        (WTF::IndexedIterator::operator++):
+        (WTF::IndexedIterator::operator--):
+        (WTF::IndexedIterator::operator UnspecifiedBoolType):
+        (WTF::IndexedIterator::operator+=):
+        (WTF::IndexedIterator::operator-=):
+        (WTF::IndexedIterator::operator+):
+        (WTF::IndexedIterator::operator-):
+        (WTF::IndexedIterator::operator=):
+        (WTF::IndexedIterator::operator==):
+        (WTF::IndexedIterator::operator!=):
+        (WTF::IndexedIterator::operator<):
+        (WTF::IndexedIterator::operator<=):
+        (WTF::IndexedIterator::operator>):
+        (WTF::IndexedIterator::operator>=):
+        (WTF::IndexedIterator::operator const_iterator):
+        (WTF::IndexedIterator::isSafeToCompare):
+        (WTF::IndexedIterator::unsafeGet):
+        (WTF::getPtr):
+        (WTF::operator-):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::operator<=):
+        (WTF::operator>=):
+        (WTF::operator<):
+        (WTF::operator>):
+        (WTF::IndexedIteratorSelector::makeIterator):
+        (WTF::IndexedIteratorSelector::makeConstIterator):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+        (WTF::Vector::begin):
+        (WTF::Vector::end):
+        (WTF::OverflowHandler>::Vector):
+        (WTF::=):
+        (WTF::OverflowHandler>::fill):
+        (WTF::OverflowHandler>::expandCapacity):
+        (WTF::OverflowHandler>::tryExpandCapacity):
+        (WTF::OverflowHandler>::resize):
+        (WTF::OverflowHandler>::shrink):
+        (WTF::OverflowHandler>::grow):
+        (WTF::OverflowHandler>::reserveCapacity):
+        (WTF::OverflowHandler>::tryReserveCapacity):
+        (WTF::OverflowHandler>::shrinkCapacity):
+        (WTF::OverflowHandler>::append):
+        (WTF::OverflowHandler>::tryAppend):
+        (WTF::OverflowHandler>::appendSlowCase):
+        (WTF::OverflowHandler>::uncheckedAppend):
+        (WTF::OverflowHandler>::appendVector):
+        (WTF::OverflowHandler>::insert):
+        (WTF::OverflowHandler>::insertVector):
+        (WTF::OverflowHandler>::remove):
+
 2014-11-30  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Drop support for the EFL 1.7

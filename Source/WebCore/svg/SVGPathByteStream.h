@@ -60,8 +60,8 @@ public:
     void append(unsigned char byte) { m_data.append(byte); }
     void append(SVGPathByteStream* other)
     {
-        for (DataIterator it = other->begin(); it != other->end(); ++it)
-            append(*it);
+        for (auto& byte : *other)
+            append(byte);
     }
     void clear() { m_data.clear(); }
     bool isEmpty() const { return !m_data.size(); }
