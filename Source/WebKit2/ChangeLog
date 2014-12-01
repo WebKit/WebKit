@@ -1,3 +1,14 @@
+2014-11-30  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Add eldbus to the library list
+        https://bugs.webkit.org/show_bug.cgi?id=139120
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix undefined reference errors for eldbus APIs.
+
+        * PlatformEfl.cmake:
+
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling WKPageClose on the originated page from within createNewPage callback
