@@ -48,11 +48,6 @@ bool RemoteNetworkingContext::isValid() const
     return true;
 }
 
-bool RemoteNetworkingContext::needsSiteSpecificQuirks() const
-{
-    return m_needsSiteSpecificQuirks;
-}
-
 bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
 {
     return m_localFileContentSniffingEnabled;

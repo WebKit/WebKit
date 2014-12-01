@@ -76,11 +76,6 @@ void WebFrameNetworkingContext::clearPrivateBrowsingSessionCookieStorage()
 }
 #endif
 
-bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
-{
-    return frame() && frame()->settings().needsSiteSpecificQuirks();
-}
-
 bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 {
     return frame() && frame()->settings().localFileContentSniffingEnabled();

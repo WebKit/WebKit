@@ -53,7 +53,6 @@ private:
     {
     }
 
-    virtual bool needsSiteSpecificQuirks() const override;
     virtual bool localFileContentSniffingEnabled() const override;
     virtual SchedulePairHashSet* scheduledRunLoopPairs() const override;
     virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const override;

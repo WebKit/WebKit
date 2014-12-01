@@ -1,3 +1,14 @@
+2014-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove old site specific quirks code that was added in 2009
+        https://bugs.webkit.org/show_bug.cgi?id=139141
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::needsSiteSpecificQuirks): Deleted.
+
 2014-11-30  Anders Carlsson  <andersca@apple.com>
 
         Fix a test failure.

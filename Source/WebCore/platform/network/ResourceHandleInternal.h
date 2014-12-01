@@ -115,7 +115,6 @@ namespace WebCore {
 #endif
 #if PLATFORM(COCOA)
             , m_startWhenScheduled(false)
-            , m_needsSiteSpecificQuirks(false)
             , m_currentMacChallenge(nil)
 #endif
             , m_scheduledFailureType(ResourceHandle::NoFailure)
@@ -157,7 +156,6 @@ namespace WebCore {
 #endif
 #if PLATFORM(COCOA)
         bool m_startWhenScheduled;
-        bool m_needsSiteSpecificQuirks;
 #endif
 #if PLATFORM(COCOA) || USE(CFNETWORK)
         RetainPtr<CFURLStorageSessionRef> m_storageSession;

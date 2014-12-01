@@ -50,7 +50,6 @@ public:
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const = 0;
 
 #if PLATFORM(COCOA)
-    virtual bool needsSiteSpecificQuirks() const = 0;
     virtual bool localFileContentSniffingEnabled() const = 0; // FIXME: Reconcile with ResourceHandle::forceContentSniffing().
     virtual SchedulePairHashSet* scheduledRunLoopPairs() const { return 0; }
     virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const = 0;
