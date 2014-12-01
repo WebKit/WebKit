@@ -1,3 +1,15 @@
+2014-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash in WebInspectorClient::hideHighlight when page is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=139136
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::hideHighlight):
+        Speculatively fix by null-checking the main frame which
+        can be null during page destruction.
+
 2014-11-30  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Add eldbus to the library list
