@@ -108,6 +108,8 @@ void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
 
 bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
 {
+    populateVisitedLinksIfNeeded(page);
+
     return m_visitedLinkHashes.contains(linkHash);
 }
 

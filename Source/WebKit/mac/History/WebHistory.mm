@@ -921,11 +921,13 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 + (void)_setVisitedLinkTrackingEnabled:(BOOL)visitedLinkTrackingEnabled
 {
     PageGroup::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
+    WebVisitedLinkStore::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
 }
 
 + (void)_removeAllVisitedLinks
 {
     PageGroup::removeAllVisitedLinks();
+    WebVisitedLinkStore::removeAllVisitedLinks();
 }
 
 @end
