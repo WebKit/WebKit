@@ -1,3 +1,22 @@
+2014-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Several JavaScriptCore date tests are flaky, because they expect time to be frozen during execution
+        https://bugs.webkit.org/show_bug.cgi?id=139138
+
+        Reviewed by Mark Lam.
+
+        Merged a fix by Bob Clary.
+
+        * tests/mozilla/ecma/Date/15.9.1.1-1.js:
+        * tests/mozilla/ecma/Date/15.9.1.1-2.js:
+        * tests/mozilla/ecma/Date/15.9.2.1.js:
+        * tests/mozilla/ecma/Date/15.9.2.2-1.js:
+        * tests/mozilla/ecma/Date/15.9.2.2-2.js:
+        * tests/mozilla/ecma/Date/15.9.2.2-3.js:
+        * tests/mozilla/ecma/Date/15.9.2.2-4.js:
+        * tests/mozilla/ecma/Date/15.9.2.2-5.js:
+        * tests/mozilla/ecma/Date/15.9.2.2-6.js:
+
 2014-11-17  Oliver Hunt  <oliver@apple.com>
 
         Make sure range based iteration of Vector<> still receives bounds checking

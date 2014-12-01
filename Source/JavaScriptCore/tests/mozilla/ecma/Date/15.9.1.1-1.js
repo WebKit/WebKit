@@ -45,7 +45,7 @@
 */
 
 function test() {
-    writeHeaderToLog("15.8.1.1 Time Range");
+    writeHeaderToLog("15.9.1.1 Time Range");
 
     for (  M_SECS = 0, CURRENT_YEAR = 1970;
                  M_SECS < 8640000000000000;
