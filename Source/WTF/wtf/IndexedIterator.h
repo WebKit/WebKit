@@ -225,7 +225,7 @@ template <typename VectorType, typename T, typename OverflowHandler = CrashOnOve
         return result -= static_cast<unsigned long long>(decrement);
     }
 
-#if __SIZEOF_SIZE_T__ != __SIZEOF_INT__
+#if __SIZEOF_SIZE_T__ != __SIZEOF_INT__ || !PLATFORM(WIN)
     IndexedIterator operator+(unsigned increment) const
     {
         IndexedIterator result(*this);
