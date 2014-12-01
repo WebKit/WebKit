@@ -1,3 +1,14 @@
+2014-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOMExceptions do not show the error message string in Pause Reason section
+        https://bugs.webkit.org/show_bug.cgi?id=138988
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::WebInjectedScriptHost::type):
+        Give all DOM Exception types the "error" RemoteObject subtype.
+
 2014-12-01  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Unset timestamps of trackbuffers during Reset Parser State algorithm.
