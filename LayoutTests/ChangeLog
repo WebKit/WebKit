@@ -1,5 +1,11 @@
 2014-12-01  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Update expected results for LayoutTests/crypto
+
+        * platform/ios-simulator/TestExpectations:
+
+2014-12-01  Daniel Bates  <dabates@apple.com>
+
         [iOS] Skip some animation tests that time out in iOS WebKit2
 
         * platform/ios-simulator-wk2/TestExpectations: Added.

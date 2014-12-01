@@ -106,12 +106,27 @@ webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failu
 # Canvas tests that have stderr:
 canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
 
+# <rdar://problem/19068790> ASSERTION FAILED: m_scriptExecutionContext->isContextThread() in ContextDestructionObserver::observeContext
+crypto/subtle/rsa-oaep-generate-non-extractable-key.html [ Skip ]
+crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html [ Skip ]
+crypto/subtle/rsa-oaep-key-manipulation.html [ Skip ]
+
+# <rdar://problem/19068796> ASSERTION FAILED: crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html fails ASSERT(m_scriptExecutionContext->isContextThread())
+crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html [ Skip ]
+
+# Crypto tests that time out:
+crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html [ Skip ]
+crypto/subtle/rsa-oaep-plaintext-length.html [ Skip ] # Timeout, Pass
+
+# Crypto tests that fail:
+crypto/subtle/rsa-indexeddb-non-exportable.html [ Failure ]
+crypto/subtle/rsa-indexeddb.html [ Failure ]
+
 ###
 # Temporarily skip all others tests
 # We'll un-skip each directory as we land updated/new expected results
 ##
 compositing
-crypto
 css1
 css2.1
 css3
