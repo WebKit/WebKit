@@ -1,3 +1,18 @@
+2014-12-01  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Unset timestamps of trackbuffers during Reset Parser State algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=139075.
+
+        Reviewed by Jer Noble.
+
+        Specification requires from us to unset timestamps for trackBuffers during abort() method.
+        Tests appendBuffer() with first sync sample, then aborts after a few more samples, and emits
+        a few more non-sync samples, so they should be dropped, as trackBuffer will have
+        needRandomAccessFlag set.
+
+        * media/media-source/media-source-append-nonsync-sample-after-abort-expected.txt: Added.
+        * media/media-source/media-source-append-nonsync-sample-after-abort.html: Added.
+
 2014-11-28  Andrzej Badowski  <a.badowski@samsung.com>
 
         [ATK] Allowing the use of AccessibilityUIElement::columnHeaders method for table.

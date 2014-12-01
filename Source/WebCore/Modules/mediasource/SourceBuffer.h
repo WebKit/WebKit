@@ -153,6 +153,7 @@ private:
 
     void appendBufferInternal(unsigned char*, unsigned, ExceptionCode&);
     void appendBufferTimerFired();
+    void resetParserState();
 
     void setActive(bool);
 

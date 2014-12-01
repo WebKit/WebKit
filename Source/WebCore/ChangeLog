@@ -1,3 +1,20 @@
+2014-12-01  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Unset timestamps of trackbuffers during Reset Parser State algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=139075.
+
+        Reviewed by Jer Noble.
+
+        Specification requires from us to unset timestamps for trackBuffers
+        during abort() method.
+
+        Test: media/media-source/media-source-append-nonsync-sample-after-abort.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::resetParserState):
+        (WebCore::SourceBuffer::abort):
+        * Modules/mediasource/SourceBuffer.h:
+
 2014-12-01  Chris Dumez  <cdumez@apple.com>
 
         Transform StyleBuilderCustom into a class and mark it as a friend of RenderStyle

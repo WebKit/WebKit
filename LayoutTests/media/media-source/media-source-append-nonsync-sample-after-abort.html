@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var quality;
+
+    var nextRequest = 0;
+    var sampleCount = 10;
+    var abortAfter  = 4;
+    var droppedAmount = sampleCount - abortAfter - 1; // 1 sample will be aborted
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+        source = new MediaSource();
+        source.addEventListener('sourceopen', startLoad);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function startLoad() {
+        sourceBuffer = source.addSourceBuffer('video/mock; codecs="mock"');
+        sourceBuffer.addEventListener('updateend', sourceUpdated);
+
+        run('quality = video.getVideoPlaybackQuality()');
+        testExpected('quality.droppedVideoFrames', 0);
+
+        // Make an init segment with 1 video track
+        var init = makeAInit(0, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(init);
+    }
+
+    function sourceUpdated() {
+        if (nextRequest == sampleCount) {
+            finishTest();
+            return;
+        }
+
+        sourceBuffer.appendBuffer(
+            makeASample(nextRequest, nextRequest, 1, 1,
+            (nextRequest == 0) ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE
+            ));
+
+        if (nextRequest == abortAfter)
+            sourceBuffer.abort();
+
+        ++nextRequest;
+    }
+
+    function finishTest() {
+        testExpected('video.duration', abortAfter);
+        run('quality = video.getVideoPlaybackQuality()');
+        testExpected('quality.droppedVideoFrames', droppedAmount);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>
