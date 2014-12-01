@@ -29,18 +29,25 @@
 
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
 
-static GMainLoopSource timeoutSource;
+static guint gTimeoutSourceId = 0;
+
+static void cancelTimeout()
+{
+    if (!gTimeoutSourceId)
+        return;
+    g_source_remove(gTimeoutSourceId);
+    gTimeoutSourceId = 0;
+}
 
 void TestController::notifyDone()
 {
     gtk_main_quit();
-    timeoutSource.cancel();
+    cancelTimeout();
 }
 
 void TestController::platformInitialize()
@@ -51,16 +58,24 @@ void TestController::platformDestroy()
 {
 }
 
+static gboolean timeoutCallback(gpointer)
+{
+    fprintf(stderr, "FAIL: TestControllerRunLoop timed out.\n");
+    gtk_main_quit();
+    return FALSE;
+}
+
 void TestController::platformWillRunTest(const TestInvocation&)
 {
 }
 
 void TestController::platformRunUntil(bool&, double timeout)
 {
-    timeoutSource.scheduleAfterDelay("[WTR] Test timeout source", [] {
-        fprintf(stderr, "FAIL: TestControllerRunLoop timed out.\n");
-        gtk_main_quit();
-    }, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(timeout)));
+    cancelTimeout();
+    if (timeout != m_noTimeout) {
+        gTimeoutSourceId = g_timeout_add(timeout * 1000, timeoutCallback, 0);
+        g_source_set_name_by_id(gTimeoutSourceId, "[WebKit] timeoutCallback");
+    }
     gtk_main();
 }
 
