@@ -1,3 +1,28 @@
+2014-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Transform StyleBuilderCustom into a class and mark it as a friend of RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=138999
+
+        Reviewed by Sam Weinig.
+
+        Transform StyleBuilderCustom into a class and mark it as a friend of
+        RenderStyle. This is needed because some of the StyleBuilderCustom
+        functions need to access RenderStyle's private API.
+
+        No new tests, no behavior change.
+
+        * css/StyleBuilderCustom.h:
+          Move functions from StyleBuilderFunctions namespace to
+          StyleBuilderCustom class.
+
+        * css/makeprop.pl:
+          Use StyleBuilderCustom scope instead of StyleBuilderFunctions for
+          custom implementation.
+
+        * rendering/style/RenderStyle.h:
+          Mark StyleBuilderCustom class as a friend, similarly to what was
+          already done for DeprecatedStyleBuilder and StyleResolver.
+
 2014-11-17  Oliver Hunt  <oliver@apple.com>
 
         Make sure range based iteration of Vector<> still receives bounds checking

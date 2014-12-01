@@ -417,13 +417,16 @@ foreach my $name (@names) {
   # Skip properties still using the legacy style builder.
   next unless exists($propertiesWithStyleBuilderOptions{$name});
 
+  my $scope = $propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "All" ? "StyleBuilderCustom" : "StyleBuilderFunctions";
+  my $valueScope = $propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "Value" ? "StyleBuilderCustom" : $scope;
+
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
   print STYLEBUILDER "        if (isInitial)\n";
-  print STYLEBUILDER "            StyleBuilderFunctions::applyInitial" . $nameToId{$name} . "(styleResolver);\n";
+  print STYLEBUILDER "            " . $scope . "::applyInitial" . $nameToId{$name} . "(styleResolver);\n";
   print STYLEBUILDER "        else if (isInherit)\n";
-  print STYLEBUILDER "            StyleBuilderFunctions::applyInherit" . $nameToId{$name} . "(styleResolver);\n";
+  print STYLEBUILDER "            " . $scope . "::applyInherit" . $nameToId{$name} . "(styleResolver);\n";
   print STYLEBUILDER "        else\n";
-  print STYLEBUILDER "            StyleBuilderFunctions::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
+  print STYLEBUILDER "            " . $valueScope . "::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
   print STYLEBUILDER "        return true;\n";
 }
 
