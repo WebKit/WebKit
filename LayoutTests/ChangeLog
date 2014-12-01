@@ -1,3 +1,16 @@
+2014-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash in Font::dashesForIntersectionsWithRect() due to underlining SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=139158
+
+        Reviewed by Simon Fraser.
+
+        Test for no crashes when the primary SimpleFontData and the first character's
+        SimpleFontData differ in their SVG-ness.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html: Added.
+
 2014-12-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] Update expected results for LayoutTests/crypto

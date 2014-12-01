@@ -548,7 +548,10 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     if (!fontData->isSVGFont())
         translator = std::make_unique<MacGlyphToPathTranslator>(run, glyphBuffer, origin);
     else {
-        translator = run.renderingContext()->createGlyphToPathTranslator(*fontData, &run, glyphBuffer, 0, glyphBuffer.size(), origin);
+        TextRun::RenderingContext* renderingContext = run.renderingContext();
+        if (!renderingContext)
+            return DashArray();
+        translator = renderingContext->createGlyphToPathTranslator(*fontData, &run, glyphBuffer, 0, glyphBuffer.size(), origin);
         isSVG = true;
     }
     DashArray result;

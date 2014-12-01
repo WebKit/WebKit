@@ -1,3 +1,21 @@
+2014-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash in Font::dashesForIntersectionsWithRect() due to underlining SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=139158
+
+        Reviewed by Simon Fraser.
+
+        RenderingContexts are only created if the primary SimpleFontData is an SVG font,
+        but dashesForIntersectionWithRect() uses the first character's SimpleFontData.
+        One might be an SVG font but the other might not be.
+
+        Note that this brittle design will be fixed with the SVG -> OTF translator.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::dashesForIntersectionsWithRect):
+
 2014-12-01  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Fix not always calling mediaPlayer seek.
