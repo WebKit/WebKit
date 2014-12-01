@@ -418,10 +418,6 @@ fast/writing-mode/japanese-lr-text.html [ Failure ]
 fast/writing-mode/japanese-rl-selection.html [ Failure ]
 fast/writing-mode/japanese-rl-text.html [ Failure ]
 
-# <rdar://problem/11358748> http/tests/multipart/multipart-wait-before-boundary.html fails on ML as of r115745
-# FIXME: This may not be a problem any more, should check bots once they gather some data for the test.
-http/tests/multipart/multipart-wait-before-boundary.html [ Failure ]
-
 # <rdar://problem/11059031> Many, many Java tests fail on Mountain Lion
 java/
 

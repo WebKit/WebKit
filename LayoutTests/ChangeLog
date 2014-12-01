@@ -1,3 +1,13 @@
+2014-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/11358748> http/tests/multipart/multipart-wait-before-boundary.html fails on ML as of r115745
+
+        Looks like it no longer fails.
+
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+        Removed it from test expectations.
+
 2014-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOMExceptions do not show the error message string in Pause Reason section
