@@ -31,7 +31,6 @@
 #include "ForEachCoClass.h"
 #include "WebArchive.h"
 #include "WebCache.h"
-#include "WebCookieManager.h"
 #include "WebCoreStatistics.h"
 #include "WebDatabaseManager.h"
 #include "WebDownload.h"

@@ -1,3 +1,21 @@
+2014-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove IWebCookieManager on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139144
+
+        Reviewed by Sam Weinig.
+
+        Remove WebCookieManager.
+
+        * ForEachCoClass.h:
+        * Interfaces/IWebCookieManager.idl: Removed.
+        * Interfaces/WebKit.idl:
+        * WebCookieManager.cpp: Removed.
+        * WebCookieManager.h: Removed.
+        * WebCookieManagerCFNet.cpp: Removed.
+        * WebCookieManagerCurl.cpp: Removed.
+        * WebKitClassFactory.cpp:
+
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
         Switch over to using WebVisitedLinkStore on Windows

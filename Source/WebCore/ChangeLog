@@ -1,3 +1,20 @@
+2014-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove IWebCookieManager on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139144
+
+        Reviewed by Sam Weinig.
+
+        Remove code that handles overriding the cookie storage.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::cookieStorageOverride): Deleted.
+        (WebCore::overrideCookieStorage): Deleted.
+        (WebCore::overridenCookieStorage): Deleted.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+
 2014-12-01  Dean Jackson  <dino@apple.com>
 
         [iOS Media] Slider knob should not have a border

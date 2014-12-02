@@ -74,7 +74,6 @@ import "AccessibleApplication.idl";
 #include "IWebBackForwardList.idl"
 #include "IWebBackForwardListPrivate.idl"
 #include "IWebCache.idl"
-#include "IWebCookieManager.idl"
 #include "IWebCoreStatistics.idl"
 #include "IWebDataSource.idl"
 #include "IWebDatabaseManager.idl"
@@ -264,11 +263,6 @@ library WebKit
     [uuid(96B93356-9D61-4b3f-A6CF-A78283AC9649)]
     coclass WebCoreStatistics{
         [default] interface IWebCoreStatistics;
-    }
-
-    [uuid(3F35F332-BB2B-49b3-AEDD-27B317687E07)]
-    coclass WebCookieManager{
-        [default] interface IWebCookieManager;
     }
 
     [uuid(0967AAFF-2FFE-4fcc-81F3-3FF2A9C6DCE2)]

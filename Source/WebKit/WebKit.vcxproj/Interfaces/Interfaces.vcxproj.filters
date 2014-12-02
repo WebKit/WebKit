@@ -46,9 +46,6 @@
     <Midl Include="..\..\win\Interfaces\IWebCache.idl">
       <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="..\..\win\Interfaces\IWebCookieManager.idl">
-      <Filter>IDL</Filter>
-    </Midl>
     <Midl Include="..\..\win\Interfaces\IWebCoreStatistics.idl">
       <Filter>IDL</Filter>
     </Midl>

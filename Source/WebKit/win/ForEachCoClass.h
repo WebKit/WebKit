@@ -60,7 +60,6 @@
     macro(WebView) \
     macro(WebArchive) \
     macro(WebCoreStatistics) \
-    macro(WebCookieManager) \
     macro(WebWorkersPrivate) \
     macro(WebScriptWorld) \
     macro(WebGeolocationPosition) \

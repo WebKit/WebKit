@@ -109,15 +109,6 @@
     <ClCompile Include="..\..\win\WebCache.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\win\WebCookieManager.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\WebCookieManagerCFNet.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\WebCookieManagerCurl.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\win\WebCoreStatistics.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -386,9 +377,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\WebCachedFramePlatformData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\win\WebCookieManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\WebCoreStatistics.h">

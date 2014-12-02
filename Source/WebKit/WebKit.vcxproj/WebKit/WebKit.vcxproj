@@ -305,23 +305,6 @@
     <ClCompile Include="..\..\win\WebArchive.cpp" />
     <ClCompile Include="..\..\win\WebBackForwardList.cpp" />
     <ClCompile Include="..\..\win\WebCache.cpp" />
-    <ClCompile Include="..\..\win\WebCookieManager.cpp" />
-    <ClCompile Include="..\..\win\WebCookieManagerCFNet.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\win\WebCookieManagerCurl.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\win\WebCoreStatistics.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.cpp" />
     <ClCompile Include="..\..\win\WebCoreSupport\EmbeddedWidget.cpp" />
@@ -460,7 +443,6 @@
     <ClInclude Include="..\..\win\WebBackForwardList.h" />
     <ClInclude Include="..\..\win\WebCache.h" />
     <ClInclude Include="..\..\win\WebCachedFramePlatformData.h" />
-    <ClInclude Include="..\..\win\WebCookieManager.h" />
     <ClInclude Include="..\..\win\WebCoreStatistics.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.h" />
     <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h" />

@@ -63,26 +63,6 @@ void NetworkStorageSession::switchToNewTestingSession()
 #endif
 }
 
-#if PLATFORM(WIN)
-static RetainPtr<CFHTTPCookieStorageRef>& cookieStorageOverride()
-{
-    static NeverDestroyed<RetainPtr<CFHTTPCookieStorageRef>> cookieStorage;
-    return cookieStorage;
-}
-
-void overrideCookieStorage(CFHTTPCookieStorageRef cookieStorage)
-{
-    ASSERT(isMainThread());
-    // FIXME: Why don't we retain it? The only caller is an API method that takes cookie storage as a raw argument.
-    cookieStorageOverride() = adoptCF(cookieStorage);
-}
-
-CFHTTPCookieStorageRef overridenCookieStorage()
-{
-    return cookieStorageOverride().get();
-}
-#endif
-
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultNetworkStorageSession())
@@ -106,11 +86,6 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 {
-#if PLATFORM(WIN)
-    if (RetainPtr<CFHTTPCookieStorageRef>& override = cookieStorageOverride())
-        return override;
-#endif
-
     if (m_platformSession)
         return adoptCF(wkCopyHTTPCookieStorage(m_platformSession.get()));
 
