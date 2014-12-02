@@ -84,6 +84,7 @@ struct PasteboardWebContent;
 struct PluginInfo;
 struct ScrollableAreaParameters;
 struct TextCheckingResult;
+struct TextIndicatorData;
 struct ViewportAttributes;
 struct WindowFeatures;
 }
@@ -450,6 +451,11 @@ template<> struct ArgumentCoder<WebCore::ContentFilter> {
     static bool decode(ArgumentDecoder&, WebCore::ContentFilter&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
+    static void encode(ArgumentEncoder&, const WebCore::TextIndicatorData&);
+    static bool decode(ArgumentDecoder&, WebCore::TextIndicatorData&);
+};
 
 } // namespace IPC
 

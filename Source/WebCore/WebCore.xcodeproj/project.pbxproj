@@ -1090,6 +1090,10 @@
 		2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */; };
 		2D481F03146B5C6500AA7834 /* GradientImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0561460CD6F00263633 /* GradientImage.cpp */; };
 		2D481F04146B5C6B00AA7834 /* GradientImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0571460CD6F00263633 /* GradientImage.h */; };
+		2D4F96F51A1ECC240098BF88 /* TextIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */; };
+		2D4F96F61A1ECC240098BF88 /* TextIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4F96F21A1ECC240098BF88 /* TextIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D4F96F71A1ECC240098BF88 /* TextIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D4F96F81A1ECC240098BF88 /* TextIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */; };
 		2D58D8551A15F65F00A5F726 /* DataDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D58D8531A15F65F00A5F726 /* DataDetection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D58D8561A15F65F00A5F726 /* DataDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D58D8541A15F65F00A5F726 /* DataDetection.mm */; };
 		2D59F1BF1A0044C6001F3D29 /* DataDetectorsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8114,6 +8118,10 @@
 		2D413F601A187A3F0041A521 /* LookupSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LookupSPI.h; sourceTree = "<group>"; };
 		2D46F04D17B96FBD005647F0 /* IntPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntPoint.cpp; sourceTree = "<group>"; };
 		2D46F04F17B96FD2005647F0 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
+		2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextIndicator.cpp; sourceTree = "<group>"; };
+		2D4F96F21A1ECC240098BF88 /* TextIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIndicator.h; sourceTree = "<group>"; };
+		2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIndicatorWindow.h; sourceTree = "<group>"; };
+		2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextIndicatorWindow.mm; sourceTree = "<group>"; };
 		2D58D8531A15F65F00A5F726 /* DataDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetection.h; sourceTree = "<group>"; };
 		2D58D8541A15F65F00A5F726 /* DataDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetection.mm; sourceTree = "<group>"; };
 		2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSPI.h; sourceTree = "<group>"; };
@@ -16758,6 +16766,8 @@
 				75415AFC12958D5E003AD669 /* SpeechInputResultList.idl */,
 				62C1217A11AB9E76003C462C /* SuspendableTimer.cpp */,
 				62C1217B11AB9E77003C462C /* SuspendableTimer.h */,
+				2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */,
+				2D4F96F21A1ECC240098BF88 /* TextIndicator.h */,
 				1AE79D40188DB61F002239C2 /* UserContentController.cpp */,
 				1AE79D41188DB61F002239C2 /* UserContentController.h */,
 				003F1FE911E6AB43008258D9 /* UserContentTypes.h */,
@@ -17667,6 +17677,8 @@
 				2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */,
 				2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */,
 				E1C2F2481533A2120083F974 /* SettingsMac.mm */,
+				2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */,
+				2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */,
 				26255F0218878E110006E1FD /* UserAgentMac.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 			);
@@ -23541,6 +23553,7 @@
 				BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */,
 				6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */,
 				BCEA4855097D93020094C9E4 /* break_lines.h in Headers */,
+				2D4F96F61A1ECC240098BF88 /* TextIndicator.h in Headers */,
 				93309DDB099E64920056E581 /* BreakBlockquoteCommand.h in Headers */,
 				599E759011055A1F00D904FA /* Bridge.h in Headers */,
 				59B5977511086579007159E8 /* BridgeJSC.h in Headers */,
@@ -26082,6 +26095,7 @@
 				B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */,
 				4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */,
 				93309E12099E64920056E581 /* SplitElementCommand.h in Headers */,
+				2D4F96F71A1ECC240098BF88 /* TextIndicatorWindow.h in Headers */,
 				93309E14099E64920056E581 /* SplitTextNodeCommand.h in Headers */,
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
 				84730D931248F0B300D3A9C9 /* SpotLightSource.h in Headers */,
@@ -27638,6 +27652,7 @@
 				85C050BB0AD84F5E005532E7 /* DOMHTMLEmbedElement.mm in Sources */,
 				7AA3A6A3194B5C22001CBD24 /* TileCoverageMap.cpp in Sources */,
 				85BA4CE00AA6861B0088052D /* DOMHTMLFieldSetElement.mm in Sources */,
+				2D4F96F81A1ECC240098BF88 /* TextIndicatorWindow.mm in Sources */,
 				85ECBEF00AA7626900544F0B /* DOMHTMLFontElement.mm in Sources */,
 				85DF2C5D0AA341F600AD64C5 /* DOMHTMLFormElement.mm in Sources */,
 				85DF81960AA77E4B00486AD7 /* DOMHTMLFrameElement.mm in Sources */,
@@ -29536,6 +29551,7 @@
 				FE8A674716CDD19E00930BF8 /* SQLStatementBackend.cpp in Sources */,
 				97BC6A4D1505F081001B74AC /* SQLStatementSync.cpp in Sources */,
 				97BC6A4F1505F081001B74AC /* SQLTransaction.cpp in Sources */,
+				2D4F96F51A1ECC240098BF88 /* TextIndicator.cpp in Sources */,
 				FEE1811316C319E800084849 /* SQLTransactionBackend.cpp in Sources */,
 				FEAD7D8716C339EE00D4670B /* SQLTransactionBackendSync.cpp in Sources */,
 				97BC6A541505F081001B74AC /* SQLTransactionClient.cpp in Sources */,

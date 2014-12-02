@@ -47,14 +47,14 @@ OBJC_CLASS NSTextAlternatives;
 
 namespace WebCore {
 class Cursor;
-struct ViewportAttributes;
+class TextIndicator;
 struct Highlight;
+struct ViewportAttributes;
 }
 
 namespace WebKit {
 
 class DrawingAreaProxy;
-class TextIndicator;
 class NativeWebKeyboardEvent;
 class RemoteLayerTreeTransaction;
 class ViewSnapshot;
@@ -214,7 +214,7 @@ public:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
 #endif
 
-    virtual void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut) = 0;
+    virtual void setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool fadeOut) = 0;
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;

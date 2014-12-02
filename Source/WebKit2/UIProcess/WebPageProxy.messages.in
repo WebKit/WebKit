@@ -223,7 +223,7 @@ messages -> WebPageProxy {
 
     # Find messages
     DidCountStringMatches(String string, uint32_t matchCount)
-    SetTextIndicator(WebKit::TextIndicator::Data indicator, bool fadeOut)
+    SetTextIndicator(WebCore::TextIndicatorData indicator, bool fadeOut)
     ClearTextIndicator()
     DidFindString(String string, uint32_t matchCount, int32_t matchIndex)
     DidFailToFindString(String string)

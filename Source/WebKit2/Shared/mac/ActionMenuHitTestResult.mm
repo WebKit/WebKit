@@ -31,9 +31,9 @@
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
-#import "TextIndicator.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/DataDetectorsSPI.h>
+#import <WebCore/TextIndicator.h>
 
 namespace WebKit {
 
@@ -122,11 +122,11 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
             return false;
 
         if (hasTextIndicator) {
-            TextIndicator::Data indicatorData;
+            WebCore::TextIndicatorData indicatorData;
             if (!decoder.decode(indicatorData))
                 return false;
 
-            actionMenuHitTestResult.detectedDataTextIndicator = TextIndicator::create(indicatorData);
+            actionMenuHitTestResult.detectedDataTextIndicator = WebCore::TextIndicator::create(indicatorData);
         }
     }
 

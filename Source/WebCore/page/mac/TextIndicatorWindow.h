@@ -34,10 +34,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-@class WKTextIndicatorView;
-@class WKView;
+@class NSView;
+@class WebTextIndicatorView;
 
-namespace WebKit {
+namespace WebCore {
 
 class TextIndicator;
 
@@ -45,7 +45,7 @@ class TextIndicatorWindow {
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
 
 public:
-    explicit TextIndicatorWindow(WKView *);
+    explicit TextIndicatorWindow(NSView *);
     ~TextIndicatorWindow();
 
     void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut, std::function<void ()> animationCompletionHandler);
@@ -55,10 +55,10 @@ private:
 
     void startFadeOutTimerFired();
 
-    WKView* m_wkView;
+    NSView *m_targetView;
     RefPtr<TextIndicator> m_textIndicator;
     RetainPtr<NSWindow> m_textIndicatorWindow;
-    RetainPtr<WKTextIndicatorView> m_textIndicatorView;
+    RetainPtr<WebTextIndicatorView> m_textIndicatorView;
 
     RunLoop::Timer<TextIndicatorWindow> m_startFadeOutTimer;
 

@@ -42,7 +42,6 @@ class AlternativeTextUIController;
 }
 
 namespace WebKit {
-class TextIndicatorWindow;
 
 class PageClientImpl final : public PageClient
 #if ENABLE(FULLSCREEN_API)
@@ -120,7 +119,7 @@ private:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&);
 #endif
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, bool fadeOut);
+    void setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool fadeOut);
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();

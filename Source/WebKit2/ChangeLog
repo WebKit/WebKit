@@ -1,3 +1,52 @@
+2014-11-21  Tim Horton  <timothy_horton@apple.com>
+
+        Move TextIndicator{Window} to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=138954
+        <rdar://problem/18992185>
+
+        Some adjustments by Csaba Osztrogonác.
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        Remove TextIndicator.cpp.
+
+        * Scripts/webkit/messages.py:
+        (struct_or_class):
+        (headers_for_type):
+        Tell messages.py that TextIndicatorData is a struct, and comes from TextIndicator.h.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextIndicatorData>::encode):
+        (IPC::ArgumentCoder<TextIndicatorData>::decode):
+        Add argument coders for TextIndicatorData.
+
+        * Shared/DictionaryPopupInfo.h:        
+        * Shared/mac/ActionMenuHitTestResult.h:
+        * Shared/mac/ActionMenuHitTestResult.mm:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        * UIProcess/mac/WKActionMenuController.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        Adjust to TextIndicator and TextIndicatorWindow's new home.
+
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
         Merge r176574. <rdar://problem/19052564>
