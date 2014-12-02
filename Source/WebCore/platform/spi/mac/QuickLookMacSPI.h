@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <QuickLookUI/QLPreviewItem.h>
+
 #if __has_include(<QuickLookUI/QLPreviewMenuItem.h>)
 
-#import <QuickLookUI/QLPreviewItem.h>
 #import <QuickLookUI/QLPreviewMenuItem.h>
 
 #else
