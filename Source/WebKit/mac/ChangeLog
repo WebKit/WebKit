@@ -1,3 +1,9 @@
+2014-12-02  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * WebView/WebViewData.h:
+
 2014-12-02  Tim Horton  <timothy_horton@apple.com>
 
         Implement Lookup transition from selection for Legacy WebKit
