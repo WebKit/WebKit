@@ -1,3 +1,19 @@
+2014-12-01  Dean Jackson  <dino@apple.com>
+
+        [iOS Media] Slider knob should not have a border
+        https://bugs.webkit.org/show_bug.cgi?id=139160
+        <rdar://problem/19075185>
+
+        Reviewed by Jer Noble.
+
+        The change in r175715 required adding !important to a bunch
+        of rules for pseudo elements. The border width of slider knobs
+        for media controls should be zero, so add an !important there.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb): Change
+        border to border-width and force it to zero.
+
 2014-12-01  Chris Dumez  <cdumez@apple.com>
 
         Take into consideration canvas drawing for throttling DOM timers
