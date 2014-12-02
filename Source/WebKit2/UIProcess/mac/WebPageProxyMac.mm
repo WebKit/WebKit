@@ -378,11 +378,10 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 #if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag)
 {
-    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(dragImageHandle);
-    if (!dragImage)
-        return;
-    
-    m_pageClient.setDragImage(clientPosition, dragImage.release(), isLinkDrag);
+    if (RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(dragImageHandle))
+        m_pageClient.setDragImage(clientPosition, dragImage.release(), isLinkDrag);
+
+    process().send(Messages::WebPage::DidStartDrag(), m_pageID);
 }
 
 void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,

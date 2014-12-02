@@ -1,3 +1,35 @@
+2014-12-02  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: Dragging selected text changes the selection
+        https://bugs.webkit.org/show_bug.cgi?id=139110
+
+        Reviewed by Simon Fraser.
+
+        After it sent the UI process the message to start dragging, the Web process handled mouse
+        move events that had already been in flight, interpreting them as a drag to start a new
+        selection. This is fixed by ignoring any mouse events received after asking the UI process
+        to start dragging.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setDragImage): Send the new DidStartDrag message back to the Web
+        process, so that it stops ignoring mouse events.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag): Call the new WebPage::willStartDrag, so that it starts
+        ignoring mouse events.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize new member variable.
+        (WebKit::WebPage::mouseEvent): Don’t handle the event if we have asked the UI process to
+        start dragging.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::willStartDrag): Added. Sets new member variable m_isStartingDrag to true.
+        (WebKit::WebPage::didStartDrag): Added. Handles the message from the UI process by setting
+        m_isStartingDrag back to false.
+
+        * WebProcess/WebPage/WebPage.messages.in: Added DidStartDrag.
+
 2014-12-02  Beth Dakin  <bdakin@apple.com>
 
         Should use standardQuickLookMenuItem for apps that don't implement customizations

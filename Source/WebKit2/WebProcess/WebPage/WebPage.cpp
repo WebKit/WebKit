@@ -290,6 +290,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
+#if ENABLE(DRAG_SUPPORT)
+    , m_isStartingDrag(false)
+#endif
     , m_cachedMainFrameIsPinnedToLeftSide(true)
     , m_cachedMainFrameIsPinnedToRightSide(true)
     , m_cachedMainFrameIsPinnedToTopSide(true)
@@ -1909,13 +1912,23 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
     m_page->pageThrottler().didReceiveUserInput();
 
+    bool shouldHandleEvent = true;
+
 #if ENABLE(CONTEXT_MENUS)
     // Don't try to handle any pending mouse events if a context menu is showing.
-    if (m_isShowingContextMenu) {
+    if (m_isShowingContextMenu)
+        shouldHandleEvent = false;
+#endif
+#if ENABLE(DRAG_SUPPORT)
+    if (m_isStartingDrag)
+        shouldHandleEvent = false;
+#endif
+
+    if (!shouldHandleEvent) {
         send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), false));
         return;
     }
-#endif
+
     bool handled = false;
 
 #if !PLATFORM(IOS)

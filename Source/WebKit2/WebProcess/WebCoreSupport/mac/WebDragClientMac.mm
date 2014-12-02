@@ -80,6 +80,8 @@ void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, c
     if (!bitmap || !bitmap->createHandle(handle))
         return;
 
+    m_page->willStartDrag();
+
     // FIXME: Seems this message should be named StartDrag, not SetDragImage.
     m_page->send(Messages::WebPageProxy::SetDragImage(frame.view()->contentsToWindow(point), handle, linkDrag));
 }

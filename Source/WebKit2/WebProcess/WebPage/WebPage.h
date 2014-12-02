@@ -695,6 +695,9 @@ public:
 
     void willPerformLoadDragDestinationAction();
     void mayPerformUploadDragDestinationAction();
+
+    void willStartDrag() { ASSERT(!m_isStartingDrag); m_isStartingDrag = true; }
+    void didStartDrag() { ASSERT(m_isStartingDrag); m_isStartingDrag = false; }
 #endif // ENABLE(DRAG_SUPPORT)
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
@@ -1232,6 +1235,10 @@ private:
 
     bool m_canRunModal;
     bool m_isRunningModal;
+
+#if ENABLE(DRAG_SUPPORT)
+    bool m_isStartingDrag;
+#endif
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
