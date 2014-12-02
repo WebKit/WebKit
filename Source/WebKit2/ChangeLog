@@ -1,3 +1,10 @@
+2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+        More build fix.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForLink]):
+
 2014-12-02  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: Dragging selected text changes the selection

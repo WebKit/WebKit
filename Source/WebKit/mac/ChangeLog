@@ -1,5 +1,12 @@
 2014-12-02  Beth Dakin  <bdakin@apple.com>
 
+        More build fixing.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController _defaultMenuItemsForLink]):
+
+2014-12-02  Beth Dakin  <bdakin@apple.com>
+
         Should use standardQuickLookMenuItem for apps that don't implement customizations
         https://bugs.webkit.org/show_bug.cgi?id=139193
         -and corresponding-
