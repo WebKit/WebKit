@@ -1,3 +1,37 @@
+2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+        Support multiple signatures of diagnostic logging.
+        https://bugs.webkit.org/show_bug.cgi?id=138690
+
+        Reviewed by Anders Carlsson.
+
+        Extend the existing WKBundlePageDiagnosticLoggingClient interface by deprecating
+        the original logDiagnosticMessage client method in V1 and adding three new,
+        explicit client methods.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageDiagnosticLoggingClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp:
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageDeprecated):
+            Renamed from logDiagnosticMessage().
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage): Pass to the client.
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageWithResult): Ditto.
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageWithValue): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::logDiagnosticMessage): Deleted.
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp: Added.
+        (WebKit::WebDiagnosticLoggingClient::WebDiagnosticLoggingClient): Simple constructor.
+        (WebKit::WebDiagnosticLoggingClient::~WebDiagnosticLoggingClient): Simple destructor.
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessage): Pass to the injected bundle.
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithResult): Ditto.
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithValue): Ditto.
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize the new client.
+
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
         Merge r176486. <rdar://problem/19056442>

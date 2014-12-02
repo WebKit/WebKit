@@ -58,6 +58,7 @@
 #include "PageActivityAssertionToken.h"
 #include "PageCache.h"
 #include "PageConsole.h"
+#include "PageConfiguration.h"
 #include "PageDebuggable.h"
 #include "PageGroup.h"
 #include "PageOverlayController.h"
@@ -124,34 +125,34 @@ static void networkStateChanged(bool isOnLine)
 
 static const ViewState::Flags PageInitialViewState = ViewState::IsVisible | ViewState::IsInWindow;
 
-Page::Page(PageClients& pageClients)
-    : m_chrome(std::make_unique<Chrome>(*this, *pageClients.chromeClient))
+Page::Page(PageConfiguration& pageConfiguration)
+    : m_chrome(std::make_unique<Chrome>(*this, *pageConfiguration.chromeClient))
     , m_dragCaretController(std::make_unique<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(std::make_unique<DragController>(*this, *pageClients.dragClient))
+    , m_dragController(std::make_unique<DragController>(*this, *pageConfiguration.dragClient))
 #endif
     , m_focusController(std::make_unique<FocusController>(*this, PageInitialViewState))
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuController(std::make_unique<ContextMenuController>(*this, *pageClients.contextMenuClient))
+    , m_contextMenuController(std::make_unique<ContextMenuController>(*this, *pageConfiguration.contextMenuClient))
 #endif
     , m_userInputBridge(std::make_unique<UserInputBridge>(*this))
 #if ENABLE(WEB_REPLAY)
     , m_replayController(std::make_unique<ReplayController>(*this))
 #endif
 #if ENABLE(INSPECTOR)
-    , m_inspectorController(std::make_unique<InspectorController>(*this, pageClients.inspectorClient))
+    , m_inspectorController(std::make_unique<InspectorController>(*this, pageConfiguration.inspectorClient))
 #endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(std::make_unique<PointerLockController>(*this))
 #endif
     , m_settings(Settings::create(this))
-    , m_progress(std::make_unique<ProgressTracker>(*pageClients.progressTrackerClient))
-    , m_backForwardController(std::make_unique<BackForwardController>(*this, pageClients.backForwardClient))
-    , m_mainFrame(MainFrame::create(*this, *pageClients.loaderClientForMainFrame))
+    , m_progress(std::make_unique<ProgressTracker>(*pageConfiguration.progressTrackerClient))
+    , m_backForwardController(std::make_unique<BackForwardController>(*this, pageConfiguration.backForwardClient))
+    , m_mainFrame(MainFrame::create(*this, pageConfiguration))
     , m_theme(RenderTheme::themeForPage(this))
-    , m_editorClient(pageClients.editorClient)
-    , m_plugInClient(pageClients.plugInClient)
-    , m_validationMessageClient(pageClients.validationMessageClient)
+    , m_editorClient(pageConfiguration.editorClient)
+    , m_plugInClient(pageConfiguration.plugInClient)
+    , m_validationMessageClient(pageConfiguration.validationMessageClient)
     , m_subframeCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
@@ -191,7 +192,7 @@ Page::Page(PageClients& pageClients)
 #ifndef NDEBUG
     , m_isPainting(false)
 #endif
-    , m_alternativeTextClient(pageClients.alternativeTextClient)
+    , m_alternativeTextClient(pageConfiguration.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
     , m_console(std::make_unique<PageConsole>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
@@ -199,8 +200,8 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
-    , m_userContentController(WTF::move(pageClients.userContentController))
-    , m_visitedLinkStore(WTF::move(pageClients.visitedLinkStore))
+    , m_userContentController(WTF::move(pageConfiguration.userContentController))
+    , m_visitedLinkStore(WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
 {
@@ -1624,26 +1625,6 @@ void Page::setSessionID(SessionID sessionID)
 
     for (auto& view : pluginViews())
         view->privateBrowsingStateChanged(sessionID.isEphemeral());
-}
-
-Page::PageClients::PageClients()
-    : alternativeTextClient(nullptr)
-    , chromeClient(nullptr)
-#if ENABLE(CONTEXT_MENUS)
-    , contextMenuClient(nullptr)
-#endif
-    , editorClient(nullptr)
-    , dragClient(nullptr)
-    , inspectorClient(nullptr)
-    , plugInClient(nullptr)
-    , progressTrackerClient(nullptr)
-    , validationMessageClient(nullptr)
-    , loaderClientForMainFrame(nullptr)
-{
-}
-
-Page::PageClients::~PageClients()
-{
 }
 
 } // namespace WebCore

@@ -956,14 +956,6 @@ void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
     m_page->numWheelEventHandlersChanged(count);
 }
 
-void WebChromeClient::logDiagnosticMessage(const String& message, const String& description, const String& success)
-{
-    if (!m_page->corePage()->settings().diagnosticLoggingEnabled())
-        return;
-
-    m_page->injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(m_page, message, description, success);
-}
-
 String WebChromeClient::plugInStartLabelTitle(const String& mimeType) const
 {
     return m_page->injectedBundleUIClient().plugInStartLabelTitle(mimeType);

@@ -282,8 +282,6 @@ private:
     
     virtual void numWheelEventHandlersChanged(unsigned) override;
 
-    virtual void logDiagnosticMessage(const String& message, const String& description, const String& success) override;
-
     virtual String plugInStartLabelTitle(const String& mimeType) const override;
     virtual String plugInStartLabelSubtitle(const String& mimeType) const override;
     virtual String plugInExtraStyleSheet() const override;

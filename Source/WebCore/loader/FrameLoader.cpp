@@ -47,6 +47,7 @@
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "DatabaseManager.h"
+#include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoadTiming.h"
@@ -2286,7 +2287,11 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (!page || !page->settings().diagnosticLoggingEnabled())
                 return;
 
-            page->chrome().client().logDiagnosticMessage(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingKeys::passKey() : DiagnosticLoggingKeys::failKey());
+            DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
+            if (!diagnosticLoggingClient)
+                return;
+
+            diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingClient::Pass : DiagnosticLoggingClient::Fail);
 
             return;
         }

@@ -1915,6 +1915,7 @@ set(WebCore_SOURCES
     page/Page.cpp
     page/PageActivityAssertionToken.cpp
     page/PageConsole.cpp
+    page/PageConfiguration.cpp
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
     page/PageOverlay.cpp

@@ -41,6 +41,7 @@
 #include "MainFrame.h"
 #include "Node.h"
 #include "Page.h"
+#include "PageConfiguration.h"
 #include "PolygonShape.h"
 #include "RectangleShape.h"
 #include "RenderBoxModelObject.h"
@@ -775,9 +776,9 @@ Page* InspectorOverlay::overlayPage()
     if (m_overlayPage)
         return m_overlayPage.get();
 
-    Page::PageClients pageClients;
-    fillWithEmptyClients(pageClients);
-    m_overlayPage = std::make_unique<Page>(pageClients);
+    PageConfiguration pageConfiguration;
+    fillWithEmptyClients(pageConfiguration);
+    m_overlayPage = std::make_unique<Page>(pageConfiguration);
 
     Settings& settings = m_page.settings();
     Settings& overlaySettings = m_overlayPage->settings();

@@ -1,3 +1,62 @@
+2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+        Support multiple signatures of diagnostic logging.
+        https://bugs.webkit.org/show_bug.cgi?id=138690
+
+        Reviewed by Anders Carlsson.
+
+        Pull logDiagnosticMessage() out of ChromeClient and make a new client interface,
+        DiagnosticLoggingClient, which supports multiple kinds of diagnostic logging,
+        namely: simple logging without a parameter, logging with a success parameter, and
+        logging with a generic string value parameter.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Use DiagnosticLoggingClient.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Ditto.
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest): Ditto.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::logDiagnosticMessage): Deleted.
+        * page/DiagnosticLoggingClient.h: 
+        (WebCore::DiagnosticLoggingClient::logDiagnosticMessage): Added.
+        (WebCore::DiagnosticLoggingClient::logDiagnosticMessageWithResult): Added.
+        (WebCore::DiagnosticLoggingClient::logDiagnosticMessageWithValue): Added.
+        (WebCore::DiagnosticLoggingClient::~DiagnosticLoggingClient): Empty destructor.
+
+        Rename Page::PageClient to PageConfiguration, and pass that configuration from
+        Page into MainFrame upon construction.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage): Use PageConfiguration instead of PageClients.
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients): Ditto.
+        * loader/EmptyClients.h:
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame): Pass loaderClientForMainFrame through to the
+            Frame constructor.
+        (WebCore::MainFrame::create): Takes a PageConfiguration.
+        * page/MainFrame.h:
+        (WebCore::MainFrame::diagnosticLoggingClient): Simple accessor.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::PageClients::PageClients): Deleted.
+        (WebCore::Page::PageClients::~PageClients): Deleted.
+        * page/Page.h:
+        * page/PageConfiguration.cpp: Added.
+        (WebCore::PageConfiguration::PageConfiguration): Renamed from PageClients().
+        (WebCore::PageConfiguration::~PageConfiguration): Renamed from ~PageClients().
+        * page/PageConfiguration.h: Added.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Use PageConfiguration instead of PageClients.
+
+        Add new files and symbols to the project.
+
+        * CMakeLists.txt:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
         Merge r176477. <rdar://problem/19056715>

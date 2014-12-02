@@ -36,6 +36,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "MainFrame.h"
+#include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "SVGDocument.h"
@@ -349,10 +350,10 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
 
     if (allDataReceived) {
-        Page::PageClients pageClients;
-        fillWithEmptyClients(pageClients);
+        PageConfiguration pageConfiguration;
+        fillWithEmptyClients(pageConfiguration);
         m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
-        pageClients.chromeClient = m_chromeClient.get();
+        pageConfiguration.chromeClient = m_chromeClient.get();
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The Cache code does not know about CachedImages holding Frames and
@@ -360,7 +361,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         // This will become an issue when SVGImage will be able to load other
         // SVGImage objects, but we're safe now, because SVGImage can only be
         // loaded by a top-level document.
-        m_page = std::make_unique<Page>(pageClients);
+        m_page = std::make_unique<Page>(pageConfiguration);
         m_page->settings().setMediaEnabled(false);
         m_page->settings().setScriptEnabled(false);
         m_page->settings().setPluginsEnabled(false);

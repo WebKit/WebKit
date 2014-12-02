@@ -31,12 +31,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
+class DiagnosticLoggingClient;
+class PageConfiguration;
 class PageOverlayController;
 class ServicesOverlayController;
 
 class MainFrame final : public Frame {
 public:
-    static RefPtr<MainFrame> create(Page&, FrameLoaderClient&);
+    static RefPtr<MainFrame> create(Page&, PageConfiguration&);
 
     void selfOnlyRef();
     void selfOnlyDeref();
@@ -47,8 +49,10 @@ public:
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 
+    DiagnosticLoggingClient* diagnosticLoggingClient() const { return m_diagnosticLoggingClient; }
+
 private:
-    MainFrame(Page&, FrameLoaderClient&);
+    MainFrame(Page&, PageConfiguration&);
 
     void dropChildren();
 
@@ -58,6 +62,7 @@ private:
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
+    DiagnosticLoggingClient* m_diagnosticLoggingClient;
 };
 
 inline bool Frame::isMainFrame() const
