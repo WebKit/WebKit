@@ -1,5 +1,19 @@
 2014-12-02  Anders Carlsson  <andersca@apple.com>
 
+        Remove more Windows cruft
+        https://bugs.webkit.org/show_bug.cgi?id=139189
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createNetworkingContext):
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+        (WebFrameNetworkingContext::userAgent): Deleted.
+
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
         Remove visited link handling from PageGroup
         https://bugs.webkit.org/show_bug.cgi?id=139185
 

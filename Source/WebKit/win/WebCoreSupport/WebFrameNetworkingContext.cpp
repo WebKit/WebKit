@@ -104,11 +104,6 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
     return frame()->loader().client().blockedError(request);
 }
 
-String WebFrameNetworkingContext::referrer() const
-{
-    return frame()->loader().referrer();
-}
-
 #if USE(CFNETWORK)
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {

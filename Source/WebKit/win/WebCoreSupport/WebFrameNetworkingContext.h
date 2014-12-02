@@ -29,9 +29,9 @@
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame, const String& useragent)
+    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame)
     {
-        return adoptRef(new WebFrameNetworkingContext(frame, useragent));
+        return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
 #if USE(CFNETWORK)
@@ -42,8 +42,8 @@ public:
     static void destroyPrivateBrowsingSession();
 
 private:
-    WebFrameNetworkingContext(WebCore::Frame* frame, const String& userAgent)
-        : WebCore::FrameNetworkingContext(frame), m_userAgent(userAgent)
+    explicit WebFrameNetworkingContext(WebCore::Frame* frame)
+        : WebCore::FrameNetworkingContext(frame)
     {
     }
 
@@ -51,10 +51,6 @@ private:
 #if USE(CFNETWORK)
     virtual WebCore::NetworkStorageSession& storageSession() const override;
 #endif
-    virtual String referrer() const override;
-    virtual String userAgent() const { return m_userAgent; }
-
-    String m_userAgent;
 };
 
 #endif

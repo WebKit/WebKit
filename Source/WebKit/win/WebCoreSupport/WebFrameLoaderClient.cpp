@@ -1271,7 +1271,7 @@ void WebFrameLoaderClient::registerForIconNotification(bool listen)
 
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
-    return WebFrameNetworkingContext::create(core(m_webFrame), userAgent(m_webFrame->url()));
+    return WebFrameNetworkingContext::create(core(m_webFrame));
 }
 
 bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& mimeType) const
