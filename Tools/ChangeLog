@@ -1,3 +1,15 @@
+2014-12-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [EFL] Remove edbus dependency from jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=139130
+
+        Reviewed by Gyuyoung Kim.
+
+        After http://trac.webkit.org/changeset/176555 we
+        don't need it anymore.
+
+        * efl/jhbuild.modules:
+
 2014-12-02  Philippe Normand  <pnormand@igalia.com>
 
         [jhbuild] wrong Dependencies path

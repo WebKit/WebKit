@@ -13,7 +13,6 @@
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="libsoup"/>
-      <dep package="e_dbus"/>
       <dep package="elementary"/>
       <dep package="libxml2"/>
       <dep package="gstreamer"/>
@@ -191,17 +190,6 @@
             md5sum="3ff1488abb4cd83e3cb9a42d4eda16b2">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
     </branch>
-  </autotools>
-
-  <autotools id="e_dbus" autogen-sh="configure">
-    <branch module="releases/e_dbus-1.7.5.tar.bz2" version="1.7.5"
-            repo="download.enlightenment.org"
-            hash="sha256:d88886c13b470f9aee84f1a95a68eca5501506417362ee8066a117feffcd9399"
-            md5sum="a197ae1c8e93debf20728e3e7693b868">
-    </branch>
-    <dependencies>
-      <dep package="efl"/>
-    </dependencies>
   </autotools>
 
   <autotools id="elementary"
