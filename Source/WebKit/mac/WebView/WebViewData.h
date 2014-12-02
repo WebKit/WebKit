@@ -47,6 +47,7 @@ namespace WebCore {
 class AlternativeTextUIController;
 class HistoryItem;
 class Page;
+class TextIndicatorWindow;
 }
 
 @class WebActionMenuController;
@@ -147,6 +148,7 @@ private:
     WebNodeHighlight *currentNodeHighlight;
 
     WebActionMenuController *actionMenuController;
+    std::unique_ptr<WebCore::TextIndicatorWindow> textIndicatorWindow;
 
     BOOL allowsUndo;
         

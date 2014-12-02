@@ -209,6 +209,8 @@
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
 #import <WebCore/NSViewSPI.h>
+#import <WebCore/TextIndicator.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/WebVideoFullscreenController.h>
 #else
 #import "MemoryMeasure.h"
@@ -8570,6 +8572,29 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
         return;
 
     [_private->actionMenuController didCloseMenu:menu withEvent:event];
+}
+
+- (void)_setTextIndicator:(TextIndicator *)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler
+{
+    if (!textIndicator) {
+        _private->textIndicatorWindow = nullptr;
+        return;
+    }
+
+    if (!_private->textIndicatorWindow)
+        _private->textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
+
+    _private->textIndicatorWindow->setTextIndicator(textIndicator, fadeOut, WTF::move(completionHandler));
+}
+
+- (void)_clearTextIndicator
+{
+    [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:^ { }];
+}
+
+- (WebActionMenuController *)_actionMenuController
+{
+    return _private->actionMenuController;
 }
 
 @end

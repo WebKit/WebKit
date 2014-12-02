@@ -34,6 +34,7 @@
 
 namespace WebCore {
 class Range;
+class TextIndicator;
 }
 
 @interface WebActionMenuController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
@@ -44,6 +45,9 @@ class Range;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
     RetainPtr<DDActionContext> _currentActionContext;
     RefPtr<WebCore::Range> _currentDetectedDataRange;
+    BOOL _isShowingTextIndicator;
+    RefPtr<WebCore::TextIndicator> _currentDetectedDataTextIndicator;
+    BOOL _hasActivatedActionContext;
 }
 
 - (id)initWithWebView:(WebView *)webView;
@@ -51,5 +55,8 @@ class Range;
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
+
+- (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event;
+- (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event;
 
 @end

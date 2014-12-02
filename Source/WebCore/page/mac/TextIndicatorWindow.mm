@@ -171,7 +171,7 @@ using namespace WebCore;
         [textLayer setContents:(id)contentsImage.get()];
 
         FloatRect imageRect = textRect;
-        imageRect.move(_textIndicator->textBoundingRectInWindowCoordinates().location() - _textIndicator->selectionRectInWindowCoordinates().location());
+        imageRect.move(_textIndicator->textBoundingRectInScreenCoordinates().location() - _textIndicator->selectionRectInScreenCoordinates().location());
         [textLayer setContentsRect:CGRectMake(imageRect.x() / contentsImageLogicalSize.width(), imageRect.y() / contentsImageLogicalSize.height(), imageRect.width() / contentsImageLogicalSize.width(), imageRect.height() / contentsImageLogicalSize.height())];
         [textLayer setContentsGravity:kCAGravityCenter];
         [textLayer setContentsScale:_textIndicator->contentImageScaleFactor()];
@@ -279,16 +279,12 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     if (!m_textIndicator)
         return;
 
-    NSRect contentRect = m_textIndicator->textBoundingRectInWindowCoordinates();
-
+    NSRect contentRect = m_textIndicator->textBoundingRectInScreenCoordinates();
     CGFloat horizontalMargin = std::max(dropShadowBlurRadius * 2 + horizontalBorder, contentRect.size.width * 2);
     CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
 
     contentRect = NSInsetRect(contentRect, -horizontalMargin, -verticalMargin);
-    NSRect windowFrameRect = NSIntegralRect([m_targetView convertRect:contentRect toView:nil]);
-    windowFrameRect = [[m_targetView window] convertRectToScreen:windowFrameRect];
-    NSRect windowContentRect = [NSWindow contentRectForFrameRect:windowFrameRect styleMask:NSBorderlessWindowMask];
-
+    NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(contentRect) styleMask:NSBorderlessWindowMask];
     m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
 
     [m_textIndicatorWindow setBackgroundColor:[NSColor clearColor]];
