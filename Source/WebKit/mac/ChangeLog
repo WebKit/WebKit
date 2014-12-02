@@ -1,71 +1,95 @@
-2014-12-01  Timothy Horton  <timothy_horton@apple.com>
+2014-12-02  Dana Burkart  <dburkart@apple.com>
 
-        Fix the iOS build.
+        Merge r176618. <rdar://problem/18992185>
 
-        * WebView/WebActionMenuController.h:
-        * WebView/WebActionMenuController.mm:
-        * WebView/WebHTMLView.mm:
-        (-[WebHTMLView scrollWheel:scrollWheel:]):
-        (-[WebHTMLView mouseDown:mouseDown:]):
-        * WebView/WebView.mm:
-        * WebView/WebViewData.h:
-        * WebView/WebViewData.mm:
-        (-[WebViewPrivate dealloc]):
-        * WebView/WebViewInternal.h:
+    2014-12-01  Timothy Horton  <timothy_horton@apple.com>
 
-2014-12-01  Tim Horton  <timothy_horton@apple.com>
+            Try to fix the Mac build.
 
-        Implement yellow highlight for WebKit1 data detectors
-        https://bugs.webkit.org/show_bug.cgi?id=138956
-        <rdar://problem/18992185>
+            * WebView/WebView.mm:
+            (-[WebView _commonInitializationWithFrameName:groupName:]):
+            (-[WebView _close]):
 
-        Reviewed by Beth Dakin.
+2014-12-02  Dana Burkart  <dburkart@apple.com>
 
-        * WebView/WebActionMenuController.h:
-        * WebView/WebActionMenuController.mm:
-        (-[WebActionMenuController webView:willHandleMouseDown:]):
-        (-[WebActionMenuController webView:didHandleScrollWheel:]):
-        (-[WebActionMenuController prepareForMenu:withEvent:]):
-        (-[WebActionMenuController didCloseMenu:withEvent:]):
-        (-[WebActionMenuController _defaultMenuItemsForDataDetectedText]):
-        (-[WebActionMenuController _showTextIndicator]):
-        (-[WebActionMenuController _hideTextIndicator]):
-        (-[WebActionMenuController _dismissActionMenuPopovers]):
-        Copy the WebKit2 WKActionMenuController TextIndicator implementation
-        into WebActionMenuController. The only significant difference is
-        that we build the TextIndicator right at menu construction time
-        instead of in the Web process.
+        Merge r176608. <rdar://problem/18992185>
 
-        * WebView/WebHTMLView.mm:
-        (-[WebHTMLView scrollWheel:]):
-        Let the WebActionMenuController know that we're handling a scroll.
+    2014-12-01  Timothy Horton  <timothy_horton@apple.com>
 
-        (-[WebHTMLView mouseDown:]):
-        Let the WebActionMenuController know that we're handling a mouseDown.
+            Fix the iOS build.
 
-        * WebView/WebView.mm:
-        (-[WebView _setTextIndicator:fadeOut:animationCompletionHandler:]):
-        (-[WebView _clearTextIndicator]):
-        (-[WebView _actionMenuController]):
-        (-[WebView _convertRectFromRootView:]): Deleted.
-        * WebView/WebViewData.h:
-        * WebView/WebViewData.mm:
-        * WebView/WebViewInternal.h:
-        Keep a TextIndicatorWindow on WebView, just like WKView does.
-        Expose the WebActionMenuController on WebView (internally).
+            * WebView/WebActionMenuController.h:
+            * WebView/WebActionMenuController.mm:
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView scrollWheel:scrollWheel:]):
+            (-[WebHTMLView mouseDown:mouseDown:]):
+            * WebView/WebView.mm:
+            * WebView/WebViewData.h:
+            * WebView/WebViewData.mm:
+            (-[WebViewPrivate dealloc]):
+            * WebView/WebViewInternal.h:
 
-2014-11-21  Jer Noble  <jer.noble@apple.com>
+2014-12-02  Dana Burkart  <dburkart@apple.com>
 
-        Support multiple signatures of diagnostic logging.
-        https://bugs.webkit.org/show_bug.cgi?id=138690
+        Merge r176599. <rdar://problem/18992185>
 
-        Reviewed by Anders Carlsson.
+    2014-12-01  Tim Horton  <timothy_horton@apple.com>
 
-        Page::PageClients has been renamed PageConfiguration.
+            Implement yellow highlight for WebKit1 data detectors
+            https://bugs.webkit.org/show_bug.cgi?id=138956
+            <rdar://problem/18992185>
 
-        * WebView/WebView.mm:
-        (-[WebView _commonInitializationWithFrameName:groupName:]):
-        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+            Reviewed by Beth Dakin.
+
+            * WebView/WebActionMenuController.h:
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController webView:willHandleMouseDown:]):
+            (-[WebActionMenuController webView:didHandleScrollWheel:]):
+            (-[WebActionMenuController prepareForMenu:withEvent:]):
+            (-[WebActionMenuController didCloseMenu:withEvent:]):
+            (-[WebActionMenuController _defaultMenuItemsForDataDetectedText]):
+            (-[WebActionMenuController _showTextIndicator]):
+            (-[WebActionMenuController _hideTextIndicator]):
+            (-[WebActionMenuController _dismissActionMenuPopovers]):
+            Copy the WebKit2 WKActionMenuController TextIndicator implementation
+            into WebActionMenuController. The only significant difference is
+            that we build the TextIndicator right at menu construction time
+            instead of in the Web process.
+
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView scrollWheel:]):
+            Let the WebActionMenuController know that we're handling a scroll.
+
+            (-[WebHTMLView mouseDown:]):
+            Let the WebActionMenuController know that we're handling a mouseDown.
+
+            * WebView/WebView.mm:
+            (-[WebView _setTextIndicator:fadeOut:animationCompletionHandler:]):
+            (-[WebView _clearTextIndicator]):
+            (-[WebView _actionMenuController]):
+            (-[WebView _convertRectFromRootView:]): Deleted.
+            * WebView/WebViewData.h:
+            * WebView/WebViewData.mm:
+            * WebView/WebViewInternal.h:
+            Keep a TextIndicatorWindow on WebView, just like WKView does.
+            Expose the WebActionMenuController on WebView (internally).
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176499. <rdar://problem/19031034>
+
+    2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+            Support multiple signatures of diagnostic logging.
+            https://bugs.webkit.org/show_bug.cgi?id=138690
+
+            Reviewed by Anders Carlsson.
+
+            Page::PageClients has been renamed PageConfiguration.
+
+            * WebView/WebView.mm:
+            (-[WebView _commonInitializationWithFrameName:groupName:]):
+            (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
 
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 

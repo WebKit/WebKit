@@ -1,67 +1,75 @@
-2014-12-01  Tim Horton  <timothy_horton@apple.com>
+2014-12-02  Dana Burkart  <dburkart@apple.com>
 
-        Implement yellow highlight for WebKit1 data detectors
-        https://bugs.webkit.org/show_bug.cgi?id=138956
-        <rdar://problem/18992185>
+        Merge r176599. <rdar://problem/18992185>
 
-        Reviewed by Beth Dakin.
+    2014-12-01  Tim Horton  <timothy_horton@apple.com>
 
-        * Shared/WebCoreArgumentCoders.cpp:
-        (IPC::ArgumentCoder<TextIndicatorData>::encode):
-        (IPC::ArgumentCoder<TextIndicatorData>::decode):
-        * WebProcess/WebPage/FindController.cpp:
-        (WebKit::FindController::updateFindIndicator):
-        (WebKit::FindController::drawRect):
-        Adjust to the fact that TextIndicator keeps screen-relative rects.
+            Implement yellow highlight for WebKit1 data detectors
+            https://bugs.webkit.org/show_bug.cgi?id=138956
+            <rdar://problem/18992185>
 
-2014-11-21  Tim Horton  <timothy_horton@apple.com>
+            Reviewed by Beth Dakin.
 
-        Move TextIndicator{Window} to WebCore
-        https://bugs.webkit.org/show_bug.cgi?id=138954
-        <rdar://problem/18992185>
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<TextIndicatorData>::encode):
+            (IPC::ArgumentCoder<TextIndicatorData>::decode):
+            * WebProcess/WebPage/FindController.cpp:
+            (WebKit::FindController::updateFindIndicator):
+            (WebKit::FindController::drawRect):
+            Adjust to the fact that TextIndicator keeps screen-relative rects.
 
-        Some adjustments by Csaba Osztrogonác.
-        Reviewed by Anders Carlsson.
+2014-12-02  Dana Burkart  <dburkart@apple.com>
 
-        * CMakeLists.txt:
-        Remove TextIndicator.cpp.
+        Merge r176462. <rdar://problem/18992185>
 
-        * Scripts/webkit/messages.py:
-        (struct_or_class):
-        (headers_for_type):
-        Tell messages.py that TextIndicatorData is a struct, and comes from TextIndicator.h.
+    2014-11-21  Tim Horton  <timothy_horton@apple.com>
 
-        * Shared/WebCoreArgumentCoders.h:
-        * Shared/WebCoreArgumentCoders.cpp:
-        (IPC::ArgumentCoder<TextIndicatorData>::encode):
-        (IPC::ArgumentCoder<TextIndicatorData>::decode):
-        Add argument coders for TextIndicatorData.
+            Move TextIndicator{Window} to WebCore
+            https://bugs.webkit.org/show_bug.cgi?id=138954
+            <rdar://problem/18992185>
 
-        * Shared/DictionaryPopupInfo.h:        
-        * Shared/mac/ActionMenuHitTestResult.h:
-        * Shared/mac/ActionMenuHitTestResult.mm:
-        * UIProcess/API/gtk/PageClientImpl.h:
-        * UIProcess/API/gtk/PageClientImpl.cpp:
-        * UIProcess/API/mac/WKView.mm:
-        * UIProcess/API/mac/WKViewInternal.h:
-        * UIProcess/CoordinatedGraphics/WebView.h:
-        * UIProcess/CoordinatedGraphics/WebView.cpp:
-        * UIProcess/PageClient.h:
-        * UIProcess/WebPageProxy.cpp:
-        * UIProcess/WebPageProxy.h:
-        * UIProcess/WebPageProxy.messages.in:
-        * UIProcess/ios/PageClientImplIOS.h:
-        * UIProcess/ios/WKContentView.h:
-        * UIProcess/mac/PageClientImpl.h:
-        * UIProcess/mac/PageClientImpl.mm:
-        * UIProcess/mac/WKActionMenuController.mm:
-        * WebKit2.xcodeproj/project.pbxproj:
-        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
-        * WebProcess/WebPage/FindController.cpp:
-        * WebProcess/WebPage/WebPage.h:
-        * WebProcess/WebPage/ios/WebPageIOS.mm:
-        * WebProcess/WebPage/mac/WebPageMac.mm:
-        Adjust to TextIndicator and TextIndicatorWindow's new home.
+            Some adjustments by Csaba Osztrogonác.
+            Reviewed by Anders Carlsson.
+
+            * CMakeLists.txt:
+            Remove TextIndicator.cpp.
+
+            * Scripts/webkit/messages.py:
+            (struct_or_class):
+            (headers_for_type):
+            Tell messages.py that TextIndicatorData is a struct, and comes from TextIndicator.h.
+
+            * Shared/WebCoreArgumentCoders.h:
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<TextIndicatorData>::encode):
+            (IPC::ArgumentCoder<TextIndicatorData>::decode):
+            Add argument coders for TextIndicatorData.
+
+            * Shared/DictionaryPopupInfo.h:        
+            * Shared/mac/ActionMenuHitTestResult.h:
+            * Shared/mac/ActionMenuHitTestResult.mm:
+            * UIProcess/API/gtk/PageClientImpl.h:
+            * UIProcess/API/gtk/PageClientImpl.cpp:
+            * UIProcess/API/mac/WKView.mm:
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/CoordinatedGraphics/WebView.h:
+            * UIProcess/CoordinatedGraphics/WebView.cpp:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/WKContentView.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            * UIProcess/mac/WKActionMenuController.mm:
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+            * WebProcess/WebPage/FindController.cpp:
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            Adjust to TextIndicator and TextIndicatorWindow's new home.
 
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
