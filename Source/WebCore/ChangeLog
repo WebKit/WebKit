@@ -1,3 +1,9 @@
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix iOS build.
+
+        * WebCore.exp.in:
+
 2014-12-02  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'flex' CSS property to 'calc(2 * 3) calc(2 * 3)'
