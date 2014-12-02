@@ -211,11 +211,6 @@ TextIndicator::~TextIndicator()
 {
 }
 
-FloatRect TextIndicator::frameRect() const
-{
-    return m_data.textBoundingRectInWindowCoordinates;
-}
-
 void TextIndicator::Data::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << selectionRectInWindowCoordinates;

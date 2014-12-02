@@ -92,15 +92,15 @@ using namespace WebCore;
     self.wantsLayer = YES;
     self.layer.anchorPoint = CGPointZero;
 
-    bool wantsCrossfade = _textIndicator->data().presentationTransition == WebKit::TextIndicator::PresentationTransition::BounceAndCrossfade;
+    bool wantsCrossfade = _textIndicator->presentationTransition() == WebKit::TextIndicator::PresentationTransition::BounceAndCrossfade;
 
-    FloatSize contentsImageLogicalSize = _textIndicator->data().contentImage->size();
-    contentsImageLogicalSize.scale(1 / _textIndicator->data().contentImageScaleFactor);
+    FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
+    contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
     RetainPtr<CGImageRef> contentsImage;
     if (wantsCrossfade)
-        contentsImage = _textIndicator->data().contentImageWithHighlight->makeCGImage();
+        contentsImage = _textIndicator->contentImageWithHighlight()->makeCGImage();
     else
-        contentsImage = _textIndicator->data().contentImage->makeCGImage();
+        contentsImage = _textIndicator->contentImage()->makeCGImage();
 
     RetainPtr<NSMutableArray> bounceLayers = adoptNS([[NSMutableArray alloc] init]);
 
@@ -112,7 +112,7 @@ using namespace WebCore;
     RetainPtr<CGColorRef> gradientDarkColor = [NSColor colorWithDeviceRed:.929 green:.8 blue:0 alpha:1].CGColor;
     RetainPtr<CGColorRef> gradientLightColor = [NSColor colorWithDeviceRed:.949 green:.937 blue:0 alpha:1].CGColor;
 
-    for (auto& textRect : _textIndicator->data().textRectsInBoundingRectCoordinates) {
+    for (auto& textRect : _textIndicator->textRectsInBoundingRectCoordinates()) {
         FloatRect bounceLayerRect = textRect;
         bounceLayerRect.move(_margin.width, _margin.height);
         bounceLayerRect.inflateX(horizontalBorder);
@@ -172,10 +172,10 @@ using namespace WebCore;
         [textLayer setContents:(id)contentsImage.get()];
 
         FloatRect imageRect = textRect;
-        imageRect.move(_textIndicator->data().textBoundingRectInWindowCoordinates.location() - _textIndicator->data().selectionRectInWindowCoordinates.location());
+        imageRect.move(_textIndicator->textBoundingRectInWindowCoordinates().location() - _textIndicator->selectionRectInWindowCoordinates().location());
         [textLayer setContentsRect:CGRectMake(imageRect.x() / contentsImageLogicalSize.width(), imageRect.y() / contentsImageLogicalSize.height(), imageRect.width() / contentsImageLogicalSize.width(), imageRect.height() / contentsImageLogicalSize.height())];
         [textLayer setContentsGravity:kCAGravityCenter];
-        [textLayer setContentsScale:_textIndicator->data().contentImageScaleFactor];
+        [textLayer setContentsScale:_textIndicator->contentImageScaleFactor()];
         [textLayer setFrame:yellowHighlightRect];
         [textLayer setCornerRadius:cornerRadius];
         [bounceLayer setValue:textLayer.get() forKey:textLayerKey];
@@ -190,7 +190,7 @@ using namespace WebCore;
 
 - (void)presentWithCompletionHandler:(void(^)(void))completionHandler
 {
-    bool wantsCrossfade = _textIndicator->data().presentationTransition == WebKit::TextIndicator::PresentationTransition::BounceAndCrossfade;
+    bool wantsCrossfade = _textIndicator->presentationTransition() == WebKit::TextIndicator::PresentationTransition::BounceAndCrossfade;
     double animationDuration = wantsCrossfade ? bounceWithCrossfadeAnimationDuration : bounceAnimationDuration;
     RetainPtr<CAKeyframeAnimation> bounceAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
     [bounceAnimation setValues:@[
@@ -204,7 +204,7 @@ using namespace WebCore;
     RetainPtr<CABasicAnimation> fadeShadowInAnimation;
     if (wantsCrossfade) {
         crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-        RetainPtr<CGImageRef> contentsImage = _textIndicator->data().contentImage->makeCGImage();
+        RetainPtr<CGImageRef> contentsImage = _textIndicator->contentImage()->makeCGImage();
         [crossfadeAnimation setToValue:(id)contentsImage.get()];
         [crossfadeAnimation setFillMode:kCAFillModeForwards];
         [crossfadeAnimation setRemovedOnCompletion:NO];
@@ -280,7 +280,7 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     if (!m_textIndicator)
         return;
 
-    NSRect contentRect = m_textIndicator->frameRect();
+    NSRect contentRect = m_textIndicator->textBoundingRectInWindowCoordinates();
 
     CGFloat horizontalMargin = std::max(dropShadowBlurRadius * 2 + horizontalBorder, contentRect.size.width * 2);
     CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
@@ -302,7 +302,7 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     [[m_wkView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
     [m_textIndicatorWindow setReleasedWhenClosed:NO];
 
-    if (m_textIndicator->data().presentationTransition != TextIndicator::PresentationTransition::None) {
+    if (m_textIndicator->presentationTransition() != TextIndicator::PresentationTransition::None) {
         [m_textIndicatorView presentWithCompletionHandler:[animationCompletionHandler] {
             animationCompletionHandler();
         }];
