@@ -2552,7 +2552,7 @@ NSAttributedString *attributedStringFromRange(Range& range)
     
 #if !PLATFORM(IOS)
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
-NSAttributedString *editingAttributedStringFromRange(Range& range)
+NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImagesInAttributedString includeOrSkipImages)
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
@@ -2565,14 +2565,16 @@ NSAttributedString *editingAttributedStringFromRange(Range& range)
         Node* endContainer = currentTextRange->endContainer();
         int startOffset = currentTextRange->startOffset();
         int endOffset = currentTextRange->endOffset();
-        
-        if (startContainer == endContainer && (startOffset == endOffset - 1)) {
-            Node* node = startContainer->childNode(startOffset);
-            if (node && node->hasTagName(imgTag)) {
-                NSFileWrapper* fileWrapper = fileWrapperForElement(toElement(node));
-                NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
-                [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
-                [attachment release];
+
+        if (includeOrSkipImages == IncludeImagesInAttributedString::Yes) {
+            if (startContainer == endContainer && (startOffset == endOffset - 1)) {
+                Node* node = startContainer->childNode(startOffset);
+                if (node && node->hasTagName(imgTag)) {
+                    NSFileWrapper* fileWrapper = fileWrapperForElement(toElement(node));
+                    NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
+                    [attachment release];
+                }
             }
         }
 

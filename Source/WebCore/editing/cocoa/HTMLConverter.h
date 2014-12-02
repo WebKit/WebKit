@@ -31,10 +31,12 @@ OBJC_CLASS NSAttributedString;
 namespace WebCore {
     
 class Range;
+
+enum class IncludeImagesInAttributedString { Yes, No };
     
 NSAttributedString *attributedStringFromRange(Range&);
 #if !PLATFORM(IOS)
-NSAttributedString *editingAttributedStringFromRange(Range&);
+NSAttributedString *editingAttributedStringFromRange(Range&, IncludeImagesInAttributedString = IncludeImagesInAttributedString::Yes);
 #endif
 
 }
