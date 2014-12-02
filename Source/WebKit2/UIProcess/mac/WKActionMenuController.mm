@@ -999,7 +999,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController
 {
     if (NSURL *url = pagePreviewViewController->_url.get())
-        [[NSWorkspace sharedWorkspace] openURL:url];
+        [_wkView _handleClickInPreviewView:pagePreviewViewController.view URL:url];
 }
 
 #endif
