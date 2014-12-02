@@ -1,3 +1,14 @@
+2014-12-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Fix class was previously declared as a struct warnings
+        https://bugs.webkit.org/show_bug.cgi?id=139131
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * platform/graphics/texmap/TextureMapperGL.h:
+
 2014-12-02  Sylvain Galineau  <galineau@adobe.com>
 
         Missing support for innerHTML on SVGElement

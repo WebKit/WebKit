@@ -36,7 +36,7 @@ namespace WebCore {
 class IntPoint;
 class IntRect;
 class IntSize;
-class ViewportAttributes;
+struct ViewportAttributes;
 }
 
 namespace API {

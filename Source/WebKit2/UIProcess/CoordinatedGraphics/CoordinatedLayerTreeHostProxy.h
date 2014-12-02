@@ -29,7 +29,7 @@
 #include <functional>
 
 namespace WebCore {
-class CoordinatedGraphicsState;
+struct CoordinatedGraphicsState;
 class IntSize;
 }
 
