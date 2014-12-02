@@ -1,5 +1,32 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176429. <rdar://problem/18904651>
+
+    2014-11-20  Beth Dakin  <bdakin@apple.com>
+
+            Preview popover needs minimum and maximum sizes
+            https://bugs.webkit.org/show_bug.cgi?id=138943
+            -and corresponding-
+            rdar://problem/18904651
+
+            Reviewed by Tim Horton.
+
+            This patch enforces minimum and maximum popover sizes. If the popover needs to be 
+            sized up to be above the minimum, it will end up covering some of the 
+            _hitTestResult, so we should compute a new origin rect based on the original 
+            event location. 
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            (-[WKActionMenuController _previewURLFromActionMenu:]):
+            (-[WKActionMenuController _createPreviewPopover]):
+            (-[WKActionMenuController largestPopoverSize]):
+            (-[WKActionMenuController _preferredPopoverSize]):
+            (-[WKActionMenuController _preferredSizeForPopoverPresentedFromOriginRect:]): Deleted.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176428. <rdar://problem/19052196>
 
     2014-11-20  Conrad Shultz  <conrad_shultz@apple.com>
