@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "LocaleToScriptMapping.h"
 #include "Rect.h"
+#include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -115,6 +116,10 @@ public:
     static void applyInitialWebkitBoxShadow(StyleResolver&);
     static void applyInheritWebkitBoxShadow(StyleResolver&);
     static void applyValueWebkitBoxShadow(StyleResolver&, CSSValue&);
+
+    static void applyInitialFontFamily(StyleResolver&);
+    static void applyInheritFontFamily(StyleResolver&);
+    static void applyValueFontFamily(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -879,6 +884,100 @@ inline void StyleBuilderCustom::applyInheritWebkitBoxShadow(StyleResolver& style
 inline void StyleBuilderCustom::applyValueWebkitBoxShadow(StyleResolver& styleResolver, CSSValue& value)
 {
     applyTextOrBoxShadowValue<CSSPropertyWebkitBoxShadow>(styleResolver, value);
+}
+
+inline void StyleBuilderCustom::applyInitialFontFamily(StyleResolver& styleResolver)
+{
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    FontDescription initialDesc = FontDescription();
+
+    // We need to adjust the size to account for the generic family change from monospace to non-monospace.
+    if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize())
+        styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, false, styleResolver.document()));
+    fontDescription.setGenericFamily(initialDesc.genericFamily());
+    if (!initialDesc.firstFamily().isEmpty())
+        fontDescription.setFamilies(initialDesc.families());
+
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritFontFamily(StyleResolver& styleResolver)
+{
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    FontDescription parentFontDescription = styleResolver.parentStyle()->fontDescription();
+
+    fontDescription.setGenericFamily(parentFontDescription.genericFamily());
+    fontDescription.setFamilies(parentFontDescription.families());
+    fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& valueList = downcast<CSSValueList>(value);
+
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    // Before mapping in a new font-family property, we should reset the generic family.
+    bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
+    fontDescription.setGenericFamily(FontDescription::NoFamily);
+
+    Vector<AtomicString> families;
+    families.reserveInitialCapacity(valueList.length());
+
+    for (auto& item : valueList) {
+        auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
+        AtomicString face;
+        if (contentValue.isString())
+            face = contentValue.getStringValue();
+        else if (Settings* settings = styleResolver.document().settings()) {
+            switch (contentValue.getValueID()) {
+            case CSSValueWebkitBody:
+                face = settings->standardFontFamily();
+                break;
+            case CSSValueSerif:
+                face = serifFamily;
+                fontDescription.setGenericFamily(FontDescription::SerifFamily);
+                break;
+            case CSSValueSansSerif:
+                face = sansSerifFamily;
+                fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
+                break;
+            case CSSValueCursive:
+                face = cursiveFamily;
+                fontDescription.setGenericFamily(FontDescription::CursiveFamily);
+                break;
+            case CSSValueFantasy:
+                face = fantasyFamily;
+                fontDescription.setGenericFamily(FontDescription::FantasyFamily);
+                break;
+            case CSSValueMonospace:
+                face = monospaceFamily;
+                fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
+                break;
+            case CSSValueWebkitPictograph:
+                face = pictographFamily;
+                fontDescription.setGenericFamily(FontDescription::PictographFamily);
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (face.isEmpty())
+            continue;
+        if (families.isEmpty())
+            fontDescription.setIsSpecifiedFont(fontDescription.genericFamily() == FontDescription::NoFamily);
+        families.uncheckedAppend(face);
+    }
+
+    if (families.isEmpty())
+        return;
+    fontDescription.setFamilies(families);
+
+    if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
+        styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize, styleResolver.document()));
+
+    styleResolver.setFontDescription(fontDescription);
 }
 
 } // namespace WebCore

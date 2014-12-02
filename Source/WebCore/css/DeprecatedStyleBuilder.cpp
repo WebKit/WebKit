@@ -372,113 +372,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-class ApplyPropertyFontFamily {
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        FontDescription fontDescription = styleResolver->style()->fontDescription();
-        FontDescription parentFontDescription = styleResolver->parentStyle()->fontDescription();
-        
-        fontDescription.setGenericFamily(parentFontDescription.genericFamily());
-        fontDescription.setFamilies(parentFontDescription.families());
-        fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
-        styleResolver->setFontDescription(fontDescription);
-        return;
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        FontDescription fontDescription = styleResolver->style()->fontDescription();
-        FontDescription initialDesc = FontDescription();
-        
-        // We need to adjust the size to account for the generic family change from monospace to non-monospace.
-        if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize())
-            styleResolver->setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, false, styleResolver->document()));
-        fontDescription.setGenericFamily(initialDesc.genericFamily());
-        if (!initialDesc.firstFamily().isEmpty())
-            fontDescription.setFamilies(initialDesc.families());
-
-        styleResolver->setFontDescription(fontDescription);
-        return;
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSValueList>(*value))
-            return;
-
-        auto& valueList = downcast<CSSValueList>(*value);
-
-        FontDescription fontDescription = styleResolver->style()->fontDescription();
-        // Before mapping in a new font-family property, we should reset the generic family.
-        bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
-        fontDescription.setGenericFamily(FontDescription::NoFamily);
-
-        Vector<AtomicString> families;
-        families.reserveInitialCapacity(valueList.length());
-
-        for (unsigned i = 0; i < valueList.length(); ++i) {
-            CSSValue* item = valueList.item(i);
-            if (!is<CSSPrimitiveValue>(*item))
-                continue;
-            CSSPrimitiveValue& contentValue = downcast<CSSPrimitiveValue>(*item);
-            AtomicString face;
-            if (contentValue.isString())
-                face = contentValue.getStringValue();
-            else if (Settings* settings = styleResolver->document().settings()) {
-                switch (contentValue.getValueID()) {
-                case CSSValueWebkitBody:
-                    face = settings->standardFontFamily();
-                    break;
-                case CSSValueSerif:
-                    face = serifFamily;
-                    fontDescription.setGenericFamily(FontDescription::SerifFamily);
-                    break;
-                case CSSValueSansSerif:
-                    face = sansSerifFamily;
-                    fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
-                    break;
-                case CSSValueCursive:
-                    face = cursiveFamily;
-                    fontDescription.setGenericFamily(FontDescription::CursiveFamily);
-                    break;
-                case CSSValueFantasy:
-                    face = fantasyFamily;
-                    fontDescription.setGenericFamily(FontDescription::FantasyFamily);
-                    break;
-                case CSSValueMonospace:
-                    face = monospaceFamily;
-                    fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
-                    break;
-                case CSSValueWebkitPictograph:
-                    face = pictographFamily;
-                    fontDescription.setGenericFamily(FontDescription::PictographFamily);
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            if (face.isEmpty())
-                continue;
-            if (families.isEmpty())
-                fontDescription.setIsSpecifiedFont(fontDescription.genericFamily() == FontDescription::NoFamily);
-            families.uncheckedAppend(face);
-        }
-
-        if (families.isEmpty())
-            return;
-        fontDescription.setFamilies(families);
-
-        if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
-            styleResolver->setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize, styleResolver->document()));
-
-        styleResolver->setFontDescription(fontDescription);
-    }
-
-    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
-};
-
 class ApplyPropertyFontSize {
 private:
     // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
@@ -1147,7 +1040,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyCounterReset, ApplyPropertyCounter<Reset>::createHandler());
     setPropertyHandler(CSSPropertyCursor, ApplyPropertyCursor::createHandler());
     setPropertyHandler(CSSPropertyDisplay, ApplyPropertyDisplay::createHandler());
-    setPropertyHandler(CSSPropertyFontFamily, ApplyPropertyFontFamily::createHandler());
     setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());

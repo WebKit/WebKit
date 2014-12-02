@@ -1,3 +1,27 @@
+2014-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Move 'font-family' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139172
+
+        Reviewed by Antti Koivisto.
+
+        Move 'font-family' CSS property to the new StyleBuilder by using
+        custom code.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyFontFamily::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyFontFamily::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyFontFamily::applyValue): Deleted.
+        (WebCore::ApplyPropertyFontFamily::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialFontFamily):
+        (WebCore::StyleBuilderCustom::applyInheritFontFamily):
+        (WebCore::StyleBuilderCustom::applyValueFontFamily):
+
 2014-12-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix class was previously declared as a struct warnings
