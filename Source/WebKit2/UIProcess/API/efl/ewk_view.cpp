@@ -210,6 +210,8 @@ Eina_Bool ewk_view_scale_set(Evas_Object* ewkView, double scaleFactor, int x, in
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
     WKPageSetScaleFactor(impl->wkPage(), scaleFactor, WKPointMake(x, y));
+    impl->updateScaleToPageViewportController(scaleFactor, x, y);
+
     return true;
 }
 

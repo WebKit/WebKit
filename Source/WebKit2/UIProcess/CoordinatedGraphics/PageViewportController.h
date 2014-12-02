@@ -66,6 +66,7 @@ public:
     float currentScale() const { return m_pageScaleFactor; }
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
+    void setInitiallyFitToViewport(bool initiallyFit) { m_initiallyFitToViewport = initiallyFit; }
 
     // Notifications from the viewport.
     void didChangeViewportSize(const WebCore::FloatSize& newSize);
@@ -80,7 +81,7 @@ public:
     void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
 private:
-    void syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
+    bool syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
     void applyScaleAfterRenderingContents(float scale);
     void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
     bool updateMinimumScaleToFit(bool userInitiatedUpdate);

@@ -135,7 +135,11 @@ void PageViewportController::didCommitLoad()
     // Do not continue to use the content size of the previous page.
     m_contentsSize = IntSize();
 
+    m_contentsPosition = FloatPoint();
+
     m_layerTreeStateIsFrozen = true;
+
+    m_initiallyFitToViewport = true;
 
     // Reset the position to the top, page/history scroll requests may override this before we re-enable rendering.
     applyPositionAfterRenderingContents(FloatPoint());
@@ -205,7 +209,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
 
 void PageViewportController::pageTransitionViewportReady()
 {
-    if (!m_rawAttributes.layoutSize.isEmpty()) {
+    if (!m_rawAttributes.layoutSize.isEmpty() && m_initiallyFitToViewport) {
         m_hadUserInteraction = false;
         float initialScale = m_initiallyFitToViewport ? m_minimumScaleToFit : m_rawAttributes.initialScale;
         applyScaleAfterRenderingContents(innerBoundedViewportScale(initialScale));
@@ -255,11 +259,11 @@ void PageViewportController::didChangeContentsVisibility(const FloatPoint& posit
     syncVisibleContents(trajectoryVector);
 }
 
-void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVector)
+bool PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVector)
 {
     CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(m_webPageProxy->drawingArea());
     if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
-        return;
+        return false;
 
     FloatRect visibleContentsRect(boundContentsPosition(m_contentsPosition), visibleContentsSize());
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
@@ -267,10 +271,15 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
 
     if (!m_layerTreeStateIsFrozen)
         m_client.didChangeVisibleContents();
+
+    return true;
 }
 
 void PageViewportController::didChangeViewportAttributes(const WebCore::ViewportAttributes& newAttributes)
 {
+    if (!m_initiallyFitToViewport)
+        return;
+
     if (newAttributes.layoutSize.isEmpty())
         return;
 
@@ -302,9 +311,13 @@ void PageViewportController::applyScaleAfterRenderingContents(float scale)
     if (m_pageScaleFactor == scale)
         return;
 
+    float oldPageScaleFactor = m_pageScaleFactor;
     m_pageScaleFactor = scale;
     m_pendingScaleChange = true;
-    syncVisibleContents();
+    if (!syncVisibleContents()) {
+        m_pageScaleFactor = oldPageScaleFactor;
+        m_webPageProxy->scalePage(m_pageScaleFactor, roundedIntPoint(m_contentsPosition));
+    }
 }
 
 void PageViewportController::applyPositionAfterRenderingContents(const FloatPoint& pos)
@@ -319,13 +332,12 @@ void PageViewportController::applyPositionAfterRenderingContents(const FloatPoin
 
 bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
 {
-    if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
+    if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty() || !m_initiallyFitToViewport || m_hadUserInteraction)
         return false;
 
     // FIXME: Why this arbitrary precision? We likely want to omit the third argument so that
     // std::numeric_limits<float>::epsilon() is used instead, similarly to Mac / iOS.
     bool currentlyScaledToFit = WTF::areEssentiallyEqual(m_pageScaleFactor, m_minimumScaleToFit, 0.0001f);
-
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize));
 
     if (minimumScale <= 0)
@@ -335,7 +347,7 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
         m_minimumScaleToFit = minimumScale;
 
         if (!m_webPageProxy->areActiveDOMObjectsAndAnimationsSuspended()) {
-            if (!m_hadUserInteraction || (userInitiatedUpdate && currentlyScaledToFit))
+            if (userInitiatedUpdate && currentlyScaledToFit)
                 applyScaleAfterRenderingContents(m_minimumScaleToFit);
             else {
                 // Ensure the effective scale stays within bounds.

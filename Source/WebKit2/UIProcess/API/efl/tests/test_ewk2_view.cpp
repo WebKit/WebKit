@@ -906,8 +906,11 @@ TEST_F(EWK2ViewTest, ewk_view_inspector)
 #endif
 }
 
-TEST_F(EWK2ViewTest, DISABLED_ewk_view_scale)
+TEST_F(EWK2ViewTest, ewk_view_scale_with_fixed_layout)
 {
+    // ewk_view_scale() can work only when fixed layout is enabled.
+    EXPECT_TRUE(ewk_view_layout_fixed_set(webView(), true));
+
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
     // Default scale value is 1.0.

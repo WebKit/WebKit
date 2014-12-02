@@ -1074,6 +1074,20 @@ void EwkView::informURLChange()
     smartCallback<URLChanged>().call(m_url);
 }
 
+/**
+ * @internal
+ * Update new scale factor to PageViewportController.
+ *
+ * ewk_view_scale_set() had only updated a scale factor of WebPageProxy. It had caused unsynchronized scale factor
+ * between WebPageProxy and PageViewportController. To be sync between WebPageProxy and PageViewportController,
+ * ewk_view_scale_set() needs to update the scale factor in PageViewportController as well.
+ */
+void EwkView::updateScaleToPageViewportController(double scaleFactor, int x, int y)
+{
+    m_pageViewportController.setInitiallyFitToViewport(false);
+    m_pageViewportController.didChangeContentsVisibility(WebCore::FloatPoint(x, y), scaleFactor);
+}
+
 EwkWindowFeatures* EwkView::windowFeatures()
 {
     if (!m_windowFeatures)

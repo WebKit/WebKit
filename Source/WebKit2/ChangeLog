@@ -1,3 +1,51 @@
+2014-12-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] ewk_view_scale_set() doesn't work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=139109
+
+        Reviewed by Csaba Osztrogonác.
+
+        When ewk_view_scale_set() is called, it has only updated a scale factor which is maintained by WebPageProxy.
+        It causes WebPageProxy unsynchronized with PageViewportController's scale factor. That's why wrong scale
+        behavior has occured through ewk_view_scale_set(). Besides zooming has similar problem as well.
+
+        Thus this patch updates m_pageScaleFactor of PageViewportController as well as prohibits to change the scale
+        factor through viewport meta tag update. Because ewk_view_scale_set() means that user wants to set a specific
+        value to scale factor of current viewport.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::updateScaleToPageViewportController):
+            Set m_initiallyFitToViewport to false. And call didChangeContentsVisibility() with new scale and scale position.
+
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_scale_set):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::didCommitLoad):
+            Set m_initiallyFitToViewport to true in order to fit content to viewport size by default.
+            Initizlize content position with (0, 0).
+
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+           Do not update scale when m_initiallyFitToViewport is false.
+
+        (WebKit::PageViewportController::syncVisibleContents):
+           Return false when syncVisibleContents is failed.
+
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+           Do not update scale when m_initiallyFitToViewport is false.
+
+        (WebKit::PageViewportController::applyScaleAfterRenderingContents):
+            If syncVisibleContents() is failed, m_pageScaleFactor should be restored with previous value.
+            If not, new scale factor isn't applied though, PageViewportController uses it as own scale factor.
+
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+           Do not update scale when m_initiallyFitToViewport is false or m_hadUserInteraction is true.
+
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        (WebKit::PageViewportController::setInitiallyFitToViewport):
+
 2014-11-20  Jeffrey Pfau  <jpfau@apple.com>
 
         Add cancelable version of willSendRequest
