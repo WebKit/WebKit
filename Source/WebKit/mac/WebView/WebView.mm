@@ -873,13 +873,15 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [self addSubview:frameView];
     [frameView release];
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
         self.actionMenu = actionMenu.get();
         _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
     }
+#endif
 
+#if !PLATFORM(IOS)
     static bool didOneTimeInitialization = false;
 #endif
     if (!didOneTimeInitialization) {
@@ -1726,6 +1728,8 @@ static bool fastDocumentTeardownEnabled()
     [self setUIDelegate:nil];
 
     [_private->inspector webViewClosed];
+#endif
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_private->actionMenuController webViewClosed];
 #endif
 
@@ -8562,7 +8566,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != self.actionMenu)
@@ -8605,13 +8609,11 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:^ { }];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (WebActionMenuController *)_actionMenuController
 {
     return _private->actionMenuController;
 }
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 @end
 

@@ -1,5 +1,13 @@
 2014-12-01  Timothy Horton  <timothy_horton@apple.com>
 
+        Try to fix the Mac build.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _close]):
+
+2014-12-01  Timothy Horton  <timothy_horton@apple.com>
+
         Fix the iOS build.
 
         * WebView/WebActionMenuController.h:
