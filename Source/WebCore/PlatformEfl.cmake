@@ -58,6 +58,8 @@ list(APPEND WebCore_SOURCES
     page/efl/DragControllerEfl.cpp
     page/efl/EventHandlerEfl.cpp
 
+    page/scrolling/AxisScrollSnapOffsets.cpp
+
     page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
     page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
     page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
