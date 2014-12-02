@@ -604,7 +604,10 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];
 
-    return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    if (menuItems.count == 1 && _hitTestResult.detectedDataTextIndicator)
+        _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicator::PresentationTransition::Bounce);
+    return menuItems;
 }
 
 - (NSArray *)_defaultMenuItemsForText
