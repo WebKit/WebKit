@@ -1,5 +1,22 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176617. <rdar://problem/19107247>
+
+    2014-12-01  Tim Horton  <timothy_horton@apple.com>
+
+            Null deref under TextIndicator::createWithSelectionInFrame using find-in-page on bugzilla
+            https://bugs.webkit.org/show_bug.cgi?id=139164
+            <rdar://problem/19107247>
+
+            Reviewed by Beth Dakin.
+
+            * page/TextIndicator.cpp:
+            (WebCore::TextIndicator::createWithSelectionInFrame):
+            Null-check the ImageBuffer in addition to the Image.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176599. <rdar://problem/18992185>
 
     2014-12-01  Tim Horton  <timothy_horton@apple.com>
