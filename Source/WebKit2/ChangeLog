@@ -1,5 +1,25 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176415. rdar://problem/18950441
+
+    2014-11-20  Tim Horton  <timothy_horton@apple.com>
+
+            Cancel DataDetectors menu earlier if we know it can't be presented
+            https://bugs.webkit.org/show_bug.cgi?id=138922
+            <rdar://problem/18950441>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            If we end up with a menu with no items, don't change selection or anything.
+
+            (-[WKActionMenuController menuNeedsUpdate:]):
+            Move our call to shouldUseActionsWithContext earlier, to menuNeedsUpdate,
+            and use a bigger hammer (removeAllItems).
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176414. rdar://problem/19042207
 
     2014-11-20  Tim Horton  <timothy_horton@apple.com>
