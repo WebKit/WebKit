@@ -122,6 +122,7 @@
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems userData:(WKTypeRef)userData;
 
 - (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
+- (NSString *)_titleForPreviewOfURL:(NSURL *)url;
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
 - (void)_handleClickInPreviewView:(NSView *)previewView URL:(NSURL *)url;
 #endif

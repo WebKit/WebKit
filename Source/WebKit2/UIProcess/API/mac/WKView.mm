@@ -4214,6 +4214,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return nil;
 }
 
+- (NSString *)_titleForPreviewOfURL:(NSURL *)url
+{
+    return nil;
+}
+
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView
 {
 }
