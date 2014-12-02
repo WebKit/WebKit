@@ -60,26 +60,23 @@ body.window-inactive .toolbar {
     height: 32px;
 }
 
-body.mac-platform:not(.legacy):not(.docked) .toolbar {
+body.mac-platform:not(.legacy, .docked) .toolbar {
     padding-top: 22px;
 }
 
-body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical {
+body.mac-platform:not(.legacy, .docked) .toolbar.icon-and-label-vertical {
     height: 78px;
 }
 
-body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical.small-size {
+body.mac-platform:not(.legacy, .docked) .toolbar.icon-and-label-vertical.small-size {
     height: 70px;
 }
 
-body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-horizontal,
-body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-only {
+body.mac-platform:not(.legacy, .docked) .toolbar:matches(.icon-and-label-horizontal, .icon-only) {
     height: 62px;
 }
 
-body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-horizontal.small-size,
-body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-only.small-size,
-body.mac-platform:not(.legacy):not(.docked) .toolbar.label-only {
+body.mac-platform:not(.legacy, .docked) .toolbar:matches(.icon-and-label-horizontal.small-size, .icon-only.small-size, .label-only) {
     height: 54px;
 }
 
@@ -121,9 +118,7 @@ body.mac-platform.legacy.window-inactive .toolbar {
     min-width: -webkit-min-content;
 }
 
-.toolbar.icon-and-label-horizontal.small-size .control-section,
-.toolbar.icon-only.small-size .control-section,
-.toolbar.label-only .control-section {
+.toolbar:matches(.icon-and-label-horizontal.small-size, .icon-only.small-size, .label-only) .control-section {
     flex-direction: row;
 }
 

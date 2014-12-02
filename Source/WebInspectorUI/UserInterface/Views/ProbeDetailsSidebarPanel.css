@@ -37,9 +37,7 @@
     display: block;
 }
 
-.details-section.probe-set .options > .probe-remove,
-.details-section.probe-set .options > .probe-clear-samples,
-.details-section.probe-set .options > .probe-add {
+.details-section.probe-set .options > :matches(.probe-remove, .probe-clear-samples, .probe-add) {
     float: right;
     height: 11px;
     margin-top: 1px;

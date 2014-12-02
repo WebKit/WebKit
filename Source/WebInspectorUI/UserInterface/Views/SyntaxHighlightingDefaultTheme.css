@@ -34,64 +34,34 @@
 }
 
 .cm-s-default .cm-comment,
-.syntax-highlighted .css-comment,
-.syntax-highlighted .javascript-comment,
-.syntax-highlighted .html-comment {
+.syntax-highlighted :matches(.css-comment, .javascript-comment, .html-comment) {
     color: rgb(0, 116, 0);
 }
 
-.cm-s-default .cm-tag,
-.cm-s-default .cm-bracket,
-.cm-s-default .cm-tag.cm-bracket,
-.cm-s-default .cm-atom,
-.cm-s-default .cm-keyword,
-.cm-s-default .cm-m-css.cm-atom,
-.cm-s-default .cm-m-css.cm-meta,
-.cm-s-default .cm-m-css.cm-variable-3,
-.cm-s-default .cm-m-css.cm-property,
-.cm-s-default .cm-m-javascript.cm-builtin,
-.syntax-highlighted .css-keyword,
-.syntax-highlighted .css-tag,
-.syntax-highlighted .css-at-rule,
-.syntax-highlighted .css-important,
-.syntax-highlighted .javascript-keyword,
-.syntax-highlighted .html-tag {
+.cm-s-default :matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property),
+.syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
     color: rgb(170, 13, 145);
 }
 
-.cm-s-default .cm-number,
-.cm-s-default .cm-atom.cm-hex-color,
-.syntax-highlighted .css-number,
-.syntax-highlighted .javascript-number {
+.cm-s-default :matches(.cm-number, .cm-atom.cm-hex-color),
+.syntax-highlighted :matches(.css-number, .javascript-number) {
     color: rgb(28, 0, 207);
 }
 
-.cm-s-default .cm-def,
-.cm-s-default .cm-bracket,
-.cm-s-default .cm-operator,
-.cm-s-default .cm-variable,
-.cm-s-default .cm-variable-2,
-.cm-s-default .cm-m-css.cm-tag,
-.cm-s-default .cm-m-css.cm-string-2,
-.cm-s-default .cm-m-css.cm-builtin,
-.cm-s-default .cm-m-css.cm-qualifier,
-.syntax-highlighted .css-property,
-.syntax-highlighted .css-selector,
-.syntax-highlighted .javascript-ident {
+.cm-s-default :matches(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
+.cm-s-default .cm-m-css:matches(.cm-tag, .cm-string-2, .cm-builtin, .cm-qualifier),
+.syntax-highlighted :matches(.css-property, .css-selector, .javascript-ident) {
     color: inherit;
 }
 
 .cm-s-default .cm-string,
-.syntax-highlighted .css-string,
-.syntax-highlighted .javascript-string,
-.syntax-highlighted .javascript-regexp,
-.syntax-highlighted .html-attribute-value {
+.syntax-highlighted :matches(.css-string, .javascript-string, .javascript-regexp, .html-attribute-value) {
     color: rgb(196, 26, 22);
 }
 
 .cm-s-default .cm-m-xml.cm-meta,
-.syntax-highlighted .html-doctype,
-.syntax-highlighted .html-processing-instruction {
+.syntax-highlighted :matches(.html-doctype, .html-processing-instruction) {
     color: rgb(192, 192, 192);
 }
 

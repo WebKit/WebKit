@@ -235,8 +235,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-cont
     top: 182px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content,
-body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .empty-content-placeholder {
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > :matches(.content, .empty-content-placeholder) {
     top: 175px;
 }
 

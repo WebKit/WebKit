@@ -54,7 +54,7 @@
     outline: none;
 }
 
-.database-user-query::before, .database-query-prompt::before, .database-query-result::before {
+:matches(.database-user-query, .database-query-prompt, .database-query-result)::before {
     position: absolute;
     display: block;
     z-index: 1;

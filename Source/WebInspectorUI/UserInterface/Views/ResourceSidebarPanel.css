@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.navigation.resource > .content,
-.sidebar > .panel.navigation.resource > .empty-content-placeholder {
+.sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder) {
     top: 28px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.resource > .content,
-body.mac-platform.legacy .sidebar > .panel.navigation.resource > .empty-content-placeholder {
+body.mac-platform.legacy .sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder) {
     top: 21px;
 }
 

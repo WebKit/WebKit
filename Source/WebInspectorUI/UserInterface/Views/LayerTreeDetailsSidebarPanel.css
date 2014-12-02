@@ -49,13 +49,11 @@ body.mac-platform.legacy .sidebar > .panel.details.layer-tree > .content {
     content: url(../Images/PseudoElement.svg);
 }
 
-.panel.details.layer-tree .name-column .pseudo-element,
-.panel.details.layer-tree .name-column .reflection {
+.panel.details.layer-tree .name-column :matches(.pseudo-element, .reflection) {
     color: rgb(128, 128, 128);
 }
 
-.panel.details.layer-tree tr.selected .name-column .pseudo-element,
-.panel.details.layer-tree tr.selected .name-column .reflection {
+.panel.details.layer-tree tr.selected .name-column :matches(.pseudo-element, .reflection) {
     color: rgba(255, 255, 255, 0.75);
 }
 

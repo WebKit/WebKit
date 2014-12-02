@@ -50,8 +50,7 @@ body.mac-platform.legacy .scope-bar > li {
     transition-property: background-color, border-color;
 }
 
-.scope-bar > li.selected,
-.scope-bar > li:active {
+.scope-bar > li:matches(.selected, :active) {
     transition-duration: 75ms;
 }
 

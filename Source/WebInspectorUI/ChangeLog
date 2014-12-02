@@ -1,3 +1,71 @@
+2014-12-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Web Inspector: add more :not() and :matches() awesomeness
+        https://bugs.webkit.org/show_bug.cgi?id=138997
+
+        Reviewed by Joseph Pecoraro.
+
+        Simplify the Inspector's CSS when possible.
+
+        * UserInterface/Views/DatabaseContentView.css:
+        (:matches(.database-user-query, .database-query-prompt, .database-query-result)::before):
+        (.database-user-query::before, .database-query-prompt::before, .database-query-result::before): Deleted.
+        * UserInterface/Views/GradientSlider.css:
+        (.gradient-slider-knob > :matches(img, div)):
+        (.gradient-slider-knob > div): Deleted.
+        * UserInterface/Views/HoverMenu.css:
+        (.hover-menu > svg > :matches(path, rect)):
+        (.hover-menu > svg > rect): Deleted.
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.panel.details.layer-tree .name-column :matches(.pseudo-element, .reflection)):
+        (.panel.details.layer-tree tr.selected .name-column :matches(.pseudo-element, .reflection)):
+        (.panel.details.layer-tree .name-column .reflection): Deleted.
+        (.panel.details.layer-tree tr.selected .name-column .reflection): Deleted.
+        * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+        (.details-section.probe-set .options > :matches(.probe-remove, .probe-clear-samples, .probe-add)):
+        (.details-section.probe-set .options > .probe-add): Deleted.
+        * UserInterface/Views/ResourceSidebarPanel.css:
+        (.sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder)):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.resource > .empty-content-placeholder): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.resource > .empty-content-placeholder): Deleted.
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li:matches(.selected, :active)):
+        (.scope-bar > li:active): Deleted.
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.syntax-highlighted :matches(.css-comment, .javascript-comment, .html-comment)):
+        (.syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag)):
+        (.syntax-highlighted :matches(.css-number, .javascript-number)):
+        (.syntax-highlighted :matches(.css-property, .css-selector, .javascript-ident)):
+        (.syntax-highlighted :matches(.css-string, .javascript-string, .javascript-regexp, .html-attribute-value)):
+        (.syntax-highlighted :matches(.html-doctype, .html-processing-instruction)):
+        (.syntax-highlighted .html-comment): Deleted.
+        (.syntax-highlighted .html-tag): Deleted.
+        (.syntax-highlighted .javascript-number): Deleted.
+        (.syntax-highlighted .javascript-ident): Deleted.
+        (.syntax-highlighted .html-attribute-value): Deleted.
+        (.syntax-highlighted .html-processing-instruction): Deleted.
+        It looks like ".cm-tag.cm-bracket" was there only to override the rule below.
+        From basic testing, it looks like "cm-tag" and "cm-bracket" always appear together. I removed the "cm-bracket" rule
+        from the second rule, and simplified the first rule.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > :matches(.content, .empty-content-placeholder)):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .empty-content-placeholder): Deleted.
+        * UserInterface/Views/Toolbar.css:
+        (body.mac-platform:not(.legacy, .docked) .toolbar):
+        (body.mac-platform:not(.legacy, .docked) .toolbar.icon-and-label-vertical):
+        (body.mac-platform:not(.legacy, .docked) .toolbar.icon-and-label-vertical.small-size):
+        (body.mac-platform:not(.legacy, .docked) .toolbar:matches(.icon-and-label-horizontal, .icon-only)):
+        (body.mac-platform:not(.legacy, .docked) .toolbar:matches(.icon-and-label-horizontal.small-size, .icon-only.small-size, .label-only)):
+        (.toolbar:matches(.icon-and-label-horizontal.small-size, .icon-only.small-size, .label-only) .control-section):
+        (body.mac-platform:not(.legacy):not(.docked) .toolbar): Deleted.
+        (body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical): Deleted.
+        (body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical.small-size): Deleted.
+        (body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-only): Deleted.
+        (body.mac-platform:not(.legacy):not(.docked) .toolbar.label-only): Deleted.
+        (.toolbar.label-only .control-section): Deleted.
+
 2014-11-27  Andres Gomez  <agomez@igalia.com>
 
         Web Inspector: Update NavigationItemProbes icon for the GTK+ port

@@ -44,8 +44,7 @@
     left: 0;
 }
 
-.hover-menu > svg > path,
-.hover-menu > svg > rect {
+.hover-menu > svg > :matches(path, rect) {
     stroke: rgba(0, 0, 0, 0.22);
     stroke-width: 2px;
     fill: none;
