@@ -177,10 +177,12 @@ static void webkit_media_src_init(WebKitMediaSrc* src)
 
     priv->sourceVideo.appsrc = gst_element_factory_make("appsrc", "videoappsrc");
     gst_app_src_set_callbacks(GST_APP_SRC(priv->sourceVideo.appsrc), &appsrcCallbacksVideo, src, 0);
+    gst_app_src_set_stream_type(GST_APP_SRC(priv->sourceVideo.appsrc), GST_APP_STREAM_TYPE_SEEKABLE);
     webKitMediaSrcAddSrc(src, priv->sourceVideo.appsrc);
 
     priv->sourceAudio.appsrc = gst_element_factory_make("appsrc", "audioappsrc");
     gst_app_src_set_callbacks(GST_APP_SRC(priv->sourceAudio.appsrc), &appsrcCallbacksAudio, src, 0);
+    gst_app_src_set_stream_type(GST_APP_SRC(priv->sourceAudio.appsrc), GST_APP_STREAM_TYPE_SEEKABLE);
     webKitMediaSrcAddSrc(src, priv->sourceAudio.appsrc);
 }
 

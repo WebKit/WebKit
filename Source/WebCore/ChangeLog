@@ -1,3 +1,18 @@
+2014-12-02  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [GStreamer] Media Source sending seek event fails.
+        https://bugs.webkit.org/show_bug.cgi?id=139181
+
+        Reviewed by Philippe Normand.
+
+        There were callbacks connected to app_src on 'seek', but if stream type is not seekable, they would never launch,
+        and seeking (as in MediaPlayerPrivateGStreamer::doSeek) fails.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp:
+        (webkit_media_src_init):
+
 2014-12-02  Chris Dumez  <cdumez@apple.com>
 
         Move 'font-family' CSS property to the new StyleBuilder
