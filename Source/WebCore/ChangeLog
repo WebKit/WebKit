@@ -1,3 +1,74 @@
+2014-12-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Generalize PageActivityAssertionToken
+        https://bugs.webkit.org/show_bug.cgi?id=139106
+
+        Reviewed by Sam Weinig.
+
+        PageActivityAssertionToken is a RAII mechanism implementing a counter, used by PageThrottler
+        to count user visible activity in progress on the page (currently page load and media playback).
+        Use of an RAII type is prevents a number of possible errors, including double counting a single
+        media element, or failing to decrement the count after a media element has been deallocated.
+
+        The current implementation has a number of drawbacks that have been addressed by this refactoring:
+         - specific to single use in PageThrottler class - not reusable.
+         - incomplete encapsulation - the counter and WeakPtrFactory that comprise the current implementation
+           are not encapsulated (are in the client type, PageThrottler).
+         - tokens are not shared - PageActivityAssertionToken instances are managed by std::unique, every
+           increment requires an object allocation.
+         - redundancy - the current implementation uses a WeakPtr to safely reference the PageThrottler, this
+           is internally implemented using a reference counted type, resulting in two counters being
+           incremented (one in the PageActivityAssertionToken, one in the PageThrottler).
+
+        In the reimplementation:
+         - a callback is provided via a lambda function, which allows for easy reuse without a lot of
+           boilerplate code.
+         - the counter, callback and ownership of the otherwise weakly-owned token is encapsulated within the
+           RefCounter type.
+         - a single count within RefCounter::Count stores the counter value, and also manage the lifetime
+           of this object.
+         - standard RefPtrs are used to manage references to the RefCounter::Count.
+
+        * WebCore.xcodeproj/project.pbxproj:
+            - removed PageActivityAssertionToken.cpp/.h
+        * html/HTMLMediaElement.cpp:
+            - removed PageActivityAssertionToken.h
+        * html/HTMLMediaElement.h:
+            - std::unique_ptr<PageActivityAssertionToken> -> RefPtr<RefCounter::Count>
+        * loader/FrameLoader.cpp:
+            - removed PageActivityAssertionToken.h
+        * loader/FrameLoader.h:
+            - std::unique_ptr<PageActivityAssertionToken> -> RefPtr<RefCounter::Count>
+        * loader/SubresourceLoader.cpp:
+            - removed PageActivityAssertionToken.h
+        * loader/SubresourceLoader.h:
+            - removed class PageActivityAssertionToken
+        * page/Page.cpp:
+            - removed PageActivityAssertionToken.h
+        (WebCore::Page::Page):
+            - removed Page* parameter to PageThrottler
+        * page/Page.h:
+            - removed class PageActivityAssertionToken
+        * page/PageActivityAssertionToken.cpp: Removed.
+        * page/PageActivityAssertionToken.h: Removed.
+            - removed PageActivityAssertionToken.cpp/.h
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - removed m_page, m_weakPtrFactory, m_activityCount; added m_pageActivityCounter.
+        (WebCore::PageThrottler::mediaActivityToken):
+            - std::unique_ptr<PageActivityAssertionToken> -> PassRefPtr<RefCounter::Count>
+        (WebCore::PageThrottler::pageLoadActivityToken):
+            - std::unique_ptr<PageActivityAssertionToken> -> PassRefPtr<RefCounter::Count>
+        (WebCore::PageThrottler::pageActivityCounterValueDidChange):
+            - merged functionality of incrementActivityCount/decrementActivityCount
+        (WebCore::PageThrottler::incrementActivityCount): Deleted.
+            - see pageActivityCounterValueDidChange
+        (WebCore::PageThrottler::decrementActivityCount): Deleted.
+            - see pageActivityCounterValueDidChange
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::weakPtr): Deleted.
+            - no longer required; this functionality is now encapsulated within RefCounter.
+
 2014-12-02  Tim Horton  <timothy_horton@apple.com>
 
         Always show the arrow for text selection services

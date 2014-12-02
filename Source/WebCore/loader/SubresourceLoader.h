@@ -39,7 +39,6 @@ namespace WebCore {
 class CachedResource;
 class CachedResourceLoader;
 class Document;
-class PageActivityAssertionToken;
 class ResourceRequest;
 
 class SubresourceLoader final : public ResourceLoader {

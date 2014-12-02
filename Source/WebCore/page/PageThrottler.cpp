@@ -26,16 +26,12 @@
 #include "config.h"
 #include "PageThrottler.h"
 
-#include "PageActivityAssertionToken.h"
-
 namespace WebCore {
 
-PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
-    : m_page(page)
-    , m_viewState(viewState)
-    , m_weakPtrFactory(this)
+PageThrottler::PageThrottler(ViewState::Flags viewState)
+    : m_viewState(viewState)
     , m_hysteresis(*this)
-    , m_activityCount(0)
+    , m_pageActivityCounter([this]() { pageActivityCounterValueDidChange(); })
 {
     updateUserActivity();
 }
@@ -47,36 +43,25 @@ void PageThrottler::createUserActivity()
     updateUserActivity();
 }
 
-std::unique_ptr<PageActivityAssertionToken> PageThrottler::mediaActivityToken()
+PageActivityAssertionToken PageThrottler::mediaActivityToken()
 {
-    return std::make_unique<PageActivityAssertionToken>(*this);
+    return m_pageActivityCounter.count();
 }
 
-std::unique_ptr<PageActivityAssertionToken> PageThrottler::pageLoadActivityToken()
+PageActivityAssertionToken PageThrottler::pageLoadActivityToken()
 {
-    return std::make_unique<PageActivityAssertionToken>(*this);
+    return m_pageActivityCounter.count();
 }
 
-void PageThrottler::incrementActivityCount()
+void PageThrottler::pageActivityCounterValueDidChange()
 {
-    // If m_activityCount is nonzero, state must be Started; if m_activityCount is zero, state may be Waiting or Stopped.
-    ASSERT(!!m_activityCount == (m_hysteresis.state() == HysteresisState::Started));
-
-    if (!m_activityCount++)
+    if (m_pageActivityCounter.value())
         m_hysteresis.start();
-
-    ASSERT(m_activityCount && m_hysteresis.state() == HysteresisState::Started);
-}
-
-void PageThrottler::decrementActivityCount()
-{
-    ASSERT(m_activityCount && m_hysteresis.state() == HysteresisState::Started);
-
-    if (!--m_activityCount)
+    else
         m_hysteresis.stop();
 
-    // If m_activityCount is nonzero, state must be Started; if m_activityCount is zero, state may be Waiting or Stopped.
-    ASSERT(!!m_activityCount == (m_hysteresis.state() == HysteresisState::Started));
+    // If the counter is nonzero, state must be Started; if the counter is zero, state may be Waiting or Stopped.
+    ASSERT(!!m_pageActivityCounter.value() == (m_hysteresis.state() == HysteresisState::Started));
 }
 
 void PageThrottler::updateUserActivity()

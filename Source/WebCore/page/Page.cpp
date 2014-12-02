@@ -55,7 +55,6 @@
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
-#include "PageActivityAssertionToken.h"
 #include "PageCache.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
@@ -195,7 +194,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_alternativeTextClient(pageConfiguration.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_pageThrottler(*this, m_viewState)
+    , m_pageThrottler(m_viewState)
     , m_consoleClient(std::make_unique<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))

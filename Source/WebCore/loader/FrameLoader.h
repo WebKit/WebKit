@@ -38,6 +38,7 @@
 #include "IconURL.h"
 #include "LayoutMilestones.h"
 #include "MixedContentChecker.h"
+#include "PageThrottler.h"
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
 #include "SecurityContext.h"
@@ -66,7 +67,6 @@ class IconController;
 class NavigationAction;
 class NetworkingContext;
 class Page;
-class PageActivityAssertionToken;
 class PolicyChecker;
 class ResourceError;
 class ResourceRequest;
@@ -443,7 +443,7 @@ private:
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
-    std::unique_ptr<PageActivityAssertionToken> m_activityAssertion;
+    PageActivityAssertionToken m_activityAssertion;
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

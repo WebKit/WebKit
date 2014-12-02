@@ -1,3 +1,17 @@
+2014-12-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Generalize PageActivityAssertionToken
+        https://bugs.webkit.org/show_bug.cgi?id=139106
+
+        Reviewed by Sam Weinig.
+
+        Add an API test for WTF::RefCounter.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/RefCounter.cpp: Added.
+        (TestWebKitAPI::TEST):
+            - added RefCounter test.
+
 2014-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac, iOS] Crash log application information contains latest main frame URL instead of test URL

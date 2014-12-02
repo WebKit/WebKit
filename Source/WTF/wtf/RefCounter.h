@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PageActivityAssertionToken.h"
+#ifndef RefCounter_h
+#define RefCounter_h
 
-#include "PageThrottler.h"
+#include <functional>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 
-namespace WebCore {
+namespace WTF {
 
-PageActivityAssertionToken::PageActivityAssertionToken(PageThrottler& throttler)
-    : m_throttler(throttler.weakPtr())
-{
-    throttler.incrementActivityCount();
-}
+class RefCounter {
+    WTF_MAKE_NONCOPYABLE(RefCounter);
+public:
+    class Count {
+        WTF_MAKE_NONCOPYABLE(Count);
+    public:
+        WTF_EXPORT_PRIVATE void ref();
+        WTF_EXPORT_PRIVATE void deref();
 
-PageActivityAssertionToken::~PageActivityAssertionToken()
-{
-    if (PageThrottler* throttler = m_throttler.get())
-        throttler->decrementActivityCount();
-}
+    private:
+        friend class RefCounter;
 
-} // namespace WebCore
+        Count(RefCounter& refCounter)
+            : m_refCounter(&refCounter)
+            , m_value(0)
+        {
+        }
 
+        RefCounter* m_refCounter;
+        unsigned m_value;
+    };
 
+    WTF_EXPORT_PRIVATE RefCounter(std::function<void()> = []() { });
+    WTF_EXPORT_PRIVATE ~RefCounter();
+
+    PassRef<Count> count() const
+    {
+        return *m_count;
+    }
+
+    unsigned value() const
+    {
+        return m_count->m_value;
+    }
+
+private:
+    std::function<void()> m_valueDidChange;
+    Count* m_count;
+};
+
+} // namespace WTF
+
+using WTF::RefCounter;
+
+#endif // RefCounter_h

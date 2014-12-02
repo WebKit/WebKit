@@ -82,6 +82,7 @@ set(WTF_HEADERS
     Ref.h
     RefCounted.h
     RefCountedLeakCounter.h
+    RefCounter.h
     RefPtr.h
     RetainPtr.h
     RunLoop.h
@@ -175,6 +176,7 @@ set(WTF_SOURCES
     RAMSize.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
+    RefCounter.cpp
     RunLoop.cpp
     SHA1.cpp
     SixCharacterHash.cpp

@@ -30,31 +30,27 @@
 
 #include "UserActivity.h"
 #include "ViewState.h"
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCounter.h>
 
 namespace WebCore {
 
-class Page;
-class PageActivityAssertionToken;
+typedef RefPtr<RefCounter::Count> PageActivityAssertionToken;
 
 class PageThrottler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageThrottler(Page&, ViewState::Flags);
+    PageThrottler(ViewState::Flags);
 
     void createUserActivity();
     void setViewState(ViewState::Flags);
 
     void didReceiveUserInput() { m_hysteresis.impulse(); }
     void pluginDidEvaluateWhileAudioIsPlaying() { m_hysteresis.impulse(); }
-    std::unique_ptr<PageActivityAssertionToken> mediaActivityToken();
-    std::unique_ptr<PageActivityAssertionToken> pageLoadActivityToken();
+    PageActivityAssertionToken mediaActivityToken();
+    PageActivityAssertionToken pageLoadActivityToken();
 
 private:
-    friend class PageActivityAssertionToken;
-    WeakPtr<PageThrottler> weakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-    void incrementActivityCount();
-    void decrementActivityCount();
+    void pageActivityCounterValueDidChange();
 
     void updateUserActivity();
 
@@ -62,12 +58,10 @@ private:
     WEBCORE_EXPORT void started();
     void stopped();
 
-    Page& m_page;
     ViewState::Flags m_viewState;
-    WeakPtrFactory<PageThrottler> m_weakPtrFactory;
     HysteresisActivity<PageThrottler> m_hysteresis;
     std::unique_ptr<UserActivity::Impl> m_activity;
-    size_t m_activityCount;
+    RefCounter m_pageActivityCounter;
 };
 
 }

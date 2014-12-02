@@ -120,6 +120,7 @@
     <ClCompile Include="..\wtf\RAMSize.cpp" />
     <ClCompile Include="..\wtf\RandomNumber.cpp" />
     <ClCompile Include="..\wtf\RefCountedLeakCounter.cpp" />
+    <ClCompile Include="..\wtf\RefCounter.cpp" />
     <ClCompile Include="..\wtf\RunLoop.cpp" />
     <ClCompile Include="..\wtf\SHA1.cpp" />
     <ClCompile Include="..\wtf\SixCharacterHash.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="..\wtf\RedBlackTree.h" />
     <ClInclude Include="..\wtf\RefCounted.h" />
     <ClInclude Include="..\wtf\RefCountedLeakCounter.h" />
+    <ClInclude Include="..\wtf\RefCounter.h" />
     <ClInclude Include="..\wtf\RefPtr.h" />
     <ClInclude Include="..\wtf\RetainPtr.h" />
     <ClInclude Include="..\wtf\RunLoop.h" />

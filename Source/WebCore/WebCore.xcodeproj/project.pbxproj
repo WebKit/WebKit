@@ -5593,7 +5593,6 @@
 		CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51015F613060048CDD6 /* DeviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC2B51115F613060048CDD6 /* DeviceController.cpp */; };
 		CCC2B51615F613060048CDD6 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51215F613060048CDD6 /* DeviceController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD08285C1757250F00EC5FB7 /* PageActivityAssertionToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD08285A1757250800EC5FB7 /* PageActivityAssertionToken.cpp */; };
 		CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */; };
 		CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */; };
 		CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13051,8 +13050,6 @@
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		CCC2B51115F613060048CDD6 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		CCC2B51215F613060048CDD6 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
-		CD08285A1757250800EC5FB7 /* PageActivityAssertionToken.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PageActivityAssertionToken.cpp; sourceTree = "<group>"; };
-		CD08285B1757250800EC5FB7 /* PageActivityAssertionToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PageActivityAssertionToken.h; sourceTree = "<group>"; };
 		CD0EEE0A14743E34003EAFA2 /* AudioDestinationIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioDestinationIOS.h; path = ios/AudioDestinationIOS.h; sourceTree = "<group>"; };
 		CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioDestinationIOS.cpp; path = ios/AudioDestinationIOS.cpp; sourceTree = "<group>"; };
 		CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFullScreenWindow.h; sourceTree = "<group>"; };
@@ -16671,8 +16668,6 @@
 				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
 				65A21467097A329100B9050A /* Page.h */,
-				CD08285A1757250800EC5FB7 /* PageActivityAssertionToken.cpp */,
-				CD08285B1757250800EC5FB7 /* PageActivityAssertionToken.h */,
 				CD5E5B601A15F156000C609E /* PageConfiguration.cpp */,
 				CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */,
 				DAACB3D916F2416400666135 /* PageConsoleClient.cpp */,
@@ -29110,7 +29105,6 @@
 				FD581FAE1520F91F003A7A75 /* OscillatorNode.cpp in Sources */,
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
 				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,
-				CD08285C1757250F00EC5FB7 /* PageActivityAssertionToken.cpp in Sources */,
 				1477E7760BF4134A00152872 /* PageCache.cpp in Sources */,
 				F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */,
 				DAED203016F2442B0070EC0F /* PageConsoleClient.cpp in Sources */,

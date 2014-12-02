@@ -7188,7 +7188,6 @@
     <ClCompile Include="..\page\NavigatorBase.cpp" />
     <ClCompile Include="..\page\OriginAccessEntry.cpp" />
     <ClCompile Include="..\page\Page.cpp" />
-    <ClCompile Include="..\page\PageActivityAssertionToken.cpp" />
     <ClCompile Include="..\page\PageConfiguration.cpp" />
     <ClCompile Include="..\page\PageConsoleClient.cpp" />
     <ClCompile Include="..\page\PageGroup.cpp" />

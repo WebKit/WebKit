@@ -1,3 +1,55 @@
+2014-12-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Generalize PageActivityAssertionToken
+        https://bugs.webkit.org/show_bug.cgi?id=139106
+
+        Reviewed by Sam Weinig.
+
+        PageActivityAssertionToken is a RAII mechanism implementing a counter, used by PageThrottler
+        to count user visible activity in progress on the page (currently page load and media playback).
+        Use of an RAII type is prevents a number of possible errors, including double counting a single
+        media element, or failing to decrement the count after a media element has been deallocated.
+
+        The current implementation has a number of drawbacks that have been addressed by this refactoring:
+         - specific to single use in PageThrottler class - not reusable.
+         - incomplete encapsulation - the counter and WeakPtrFactory that comprise the current implementation
+           are not encapsulated (are in the client type, PageThrottler).
+         - tokens are not shared - PageActivityAssertionToken instances are managed by std::unique, every
+           increment requires an object allocation.
+         - redundancy - the current implementation uses a WeakPtr to safely reference the PageThrottler, this
+           is internally implemented using a reference counted type, resulting in two counters being
+           incremented (one in the PageActivityAssertionToken, one in the PageThrottler).
+
+        In the reimplementation:
+         - a callback is provided via a lambda function, which allows for easy reuse without a lot of
+           boilerplate code.
+         - the counter, callback and ownership of the otherwise weakly-owned token is encapsulated within the
+           RefCounter type.
+         - a single count within RefCounter::Count stores the counter value, and also manage the lifetime
+           of this object.
+         - standard RefPtrs are used to manage references to the RefCounter::Count.
+
+        * WTF.xcodeproj/project.pbxproj:
+            - added RefCounter.cpp/.h
+        * wtf/RefCounter.cpp: Added.
+        (WTF::RefCounter::Count::ref):
+            - increment the counter.
+        (WTF::RefCounter::Count::deref):
+            - decrement the counter, and delete as necessary.
+        (WTF::RefCounter::RefCounter):
+            - create a RefCounter::Count.
+        (WTF::RefCounter::~RefCounter):
+            - eagerly delete the Counter if it has no references, otherwise let it be deleted on last deref.
+        * wtf/RefCounter.h: Added.
+        (WTF::RefCounter::Count::Count):
+            - initialize count to 0.
+        (WTF::RefCounter::RefCounter):
+            - takes a lambda to be called when the value changes.
+        (WTF::RefCounter::count):
+            - reference the counter (and in doing so increment the count).
+        (WTF::RefCounter::value):
+            - access the current value of the counter.
+
 2014-12-01  Andreas Kling  <akling@apple.com>
 
         Optimize constructing JSC::Identifier from AtomicString.

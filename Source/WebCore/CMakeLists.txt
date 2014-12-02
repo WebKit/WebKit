@@ -1909,7 +1909,6 @@ set(WebCore_SOURCES
     page/NavigatorBase.cpp
     page/OriginAccessEntry.cpp
     page/Page.cpp
-    page/PageActivityAssertionToken.cpp
     page/PageConfiguration.cpp
     page/PageConsoleClient.cpp
     page/PageGroup.cpp

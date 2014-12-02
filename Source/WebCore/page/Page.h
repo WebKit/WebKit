@@ -80,7 +80,6 @@ class InspectorClient;
 class InspectorController;
 class MainFrame;
 class MediaCanStartListener;
-class PageActivityAssertionToken;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;

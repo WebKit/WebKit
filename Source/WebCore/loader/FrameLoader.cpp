@@ -85,7 +85,6 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "PageActivityAssertionToken.h"
 #include "PageCache.h"
 #include "PageThrottler.h"
 #include "PageTransitionEvent.h"

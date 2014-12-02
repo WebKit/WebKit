@@ -37,7 +37,6 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "PageActivityAssertionToken.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

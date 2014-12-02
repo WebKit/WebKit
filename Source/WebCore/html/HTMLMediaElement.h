@@ -35,6 +35,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
+#include "PageThrottler.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "AudioTrack.h"
@@ -65,7 +66,6 @@ class MediaController;
 class MediaControls;
 class MediaControlsHost;
 class MediaError;
-class PageActivityAssertionToken;
 class TimeRanges;
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 class MediaKeys;
@@ -899,7 +899,7 @@ private:
 #endif
 
     std::unique_ptr<HTMLMediaSession> m_mediaSession;
-    std::unique_ptr<PageActivityAssertionToken> m_activityToken;
+    PageActivityAssertionToken m_activityToken;
     size_t m_reportedExtraMemoryCost;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

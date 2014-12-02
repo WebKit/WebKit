@@ -66,7 +66,6 @@
 #include "MediaResourceLoader.h"
 #include "MediaSessionManager.h"
 #include "NetworkingContext.h"
-#include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
 #include "PageThrottler.h"
 #include "ProgressTracker.h"
