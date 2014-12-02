@@ -665,7 +665,7 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().descent() * frame->page()->pageScaleFactor()));
     popupInfo.options = options;
 
-    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range);
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
