@@ -25,6 +25,8 @@
 
 #import "WebActionMenuController.h"
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
@@ -959,3 +961,5 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
 }
 
 @end
+
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

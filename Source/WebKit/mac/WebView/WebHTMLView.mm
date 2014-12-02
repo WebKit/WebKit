@@ -3769,10 +3769,13 @@ static void setMenuTargets(NSMenu* menu)
     if (!frame || !frame->eventHandler().wheelEvent(event))
         [super scrollWheel:event];
 
-    [[[self _webView] _actionMenuController] webView:[self _webView] didHandleScrollWheel:event];
 #else
     if (frame)
         frame->eventHandler().wheelEvent(event);
+#endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    [[[self _webView] _actionMenuController] webView:[self _webView] didHandleScrollWheel:event];
 #endif
 }
 
@@ -3882,7 +3885,7 @@ static void setMenuTargets(NSMenu* menu)
     // Record the mouse down position so we can determine drag hysteresis.
     [self _setMouseDownEvent:event];
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [[[self _webView] _actionMenuController] webView:[self _webView] willHandleMouseDown:event];
 #endif
 

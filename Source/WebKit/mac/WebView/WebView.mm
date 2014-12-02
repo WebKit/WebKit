@@ -8592,10 +8592,12 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:^ { }];
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (WebActionMenuController *)_actionMenuController
 {
     return _private->actionMenuController;
 }
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 @end
 

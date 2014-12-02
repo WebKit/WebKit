@@ -147,8 +147,10 @@ private:
     WebInspector *inspector;
     WebNodeHighlight *currentNodeHighlight;
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     WebActionMenuController *actionMenuController;
     std::unique_ptr<WebCore::TextIndicatorWindow> textIndicatorWindow;
+#endif
 
     BOOL allowsUndo;
         
