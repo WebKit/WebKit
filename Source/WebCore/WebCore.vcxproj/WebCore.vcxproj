@@ -7167,6 +7167,7 @@
     <ClCompile Include="..\page\Page.cpp" />
     <ClCompile Include="..\page\PageActivityAssertionToken.cpp" />
     <ClCompile Include="..\page\PageConsole.cpp" />
+    <ClCompile Include="..\page\PageConfiguration.cpp" />
     <ClCompile Include="..\page\PageGroup.cpp" />
     <ClCompile Include="..\page\PageGroupLoadDeferrer.cpp" />
     <ClCompile Include="..\page\PageOverlay.cpp" />

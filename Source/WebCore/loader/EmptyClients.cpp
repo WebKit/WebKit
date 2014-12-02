@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
+#include "PageConfiguration.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -43,32 +44,35 @@
 
 namespace WebCore {
 
-void fillWithEmptyClients(Page::PageClients& pageClients)
+void fillWithEmptyClients(PageConfiguration& pageConfiguration)
 {
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
-    pageClients.chromeClient = &dummyChromeClient.get();
+    pageConfiguration.chromeClient = &dummyChromeClient.get();
 
 #if ENABLE(CONTEXT_MENUS)
     static NeverDestroyed<EmptyContextMenuClient> dummyContextMenuClient;
-    pageClients.contextMenuClient = &dummyContextMenuClient.get();
+    pageConfiguration.contextMenuClient = &dummyContextMenuClient.get();
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
     static NeverDestroyed<EmptyDragClient> dummyDragClient;
-    pageClients.dragClient = &dummyDragClient.get();
+    pageConfiguration.dragClient = &dummyDragClient.get();
 #endif
 
     static NeverDestroyed<EmptyEditorClient> dummyEditorClient;
-    pageClients.editorClient = &dummyEditorClient.get();
+    pageConfiguration.editorClient = &dummyEditorClient.get();
 
     static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;
-    pageClients.inspectorClient = &dummyInspectorClient.get();
+    pageConfiguration.inspectorClient = &dummyInspectorClient.get();
 
     static NeverDestroyed<EmptyFrameLoaderClient> dummyFrameLoaderClient;
-    pageClients.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
-    
+    pageConfiguration.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
+
     static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
-    pageClients.progressTrackerClient = &dummyProgressTrackerClient.get();
+    pageConfiguration.progressTrackerClient = &dummyProgressTrackerClient.get();
+
+    static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyDiagnosticLoggingClient;
+    pageConfiguration.diagnosticLoggingClient = &dummyDiagnosticLoggingClient.get();
 }
 
 class EmptyPopupMenu : public PopupMenu {

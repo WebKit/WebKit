@@ -31,11 +31,32 @@
 
 namespace WebKit {
 
-void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage(WebPage* page, const String& message, const String& description, const String& success)
+void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageDeprecated(WebPage* page, const String& message, const String& description, const String& success)
+{
+    if (!m_client.logDiagnosticMessageDeprecated)
+        return;
+    m_client.logDiagnosticMessageDeprecated(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(success.impl()), m_client.base.clientInfo);
+}
+
+void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage(WebPage* page, const String& message, const String& description)
 {
     if (!m_client.logDiagnosticMessage)
         return;
-    m_client.logDiagnosticMessage(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(success.impl()), m_client.base.clientInfo);
+    m_client.logDiagnosticMessage(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), m_client.base.clientInfo);
+}
+
+void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPage* page, const String& message, const String& description, WKDiagnosticLoggingResultType result)
+{
+    if (!m_client.logDiagnosticMessageWithResult)
+        return;
+    m_client.logDiagnosticMessageWithResult(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), result, m_client.base.clientInfo);
+}
+
+void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPage* page, const String& message, const String& description, const String& value)
+{
+    if (!m_client.logDiagnosticMessageWithValue)
+        return;
+    m_client.logDiagnosticMessageWithValue(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(value.impl()), m_client.base.clientInfo);
 }
 
 }

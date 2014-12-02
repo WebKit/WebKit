@@ -1,3 +1,15 @@
+2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+        Support multiple signatures of diagnostic logging.
+        https://bugs.webkit.org/show_bug.cgi?id=138690
+
+        Reviewed by Anders Carlsson.
+
+        Page::PageClients has been renamed PageConfiguration.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
         Merge r174231. <rdar://problem/18640833>

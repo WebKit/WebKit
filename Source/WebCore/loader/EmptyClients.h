@@ -33,6 +33,7 @@
 #include "ContextMenuClient.h"
 #include "DeviceMotionClient.h"
 #include "DeviceOrientationClient.h"
+#include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
 #include "TextCheckerClient.h"
@@ -630,7 +631,13 @@ class EmptyProgressTrackerClient : public ProgressTrackerClient {
     virtual void progressFinished(Frame&) override { }
 };
 
-void fillWithEmptyClients(Page::PageClients&);
+class EmptyDiagnosticLoggingClient : public DiagnosticLoggingClient {
+    virtual void logDiagnosticMessage(const String&, const String&) override { }
+    virtual void logDiagnosticMessageWithResult(const String&, const String&, LogResultType) override { }
+    virtual void logDiagnosticMessageWithValue(const String&, const String&, const String&) override { }
+};
+
+void fillWithEmptyClients(PageConfiguration&);
 
 }
 

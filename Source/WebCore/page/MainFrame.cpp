@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include "MainFrame.h"
 
+#include "PageConfiguration.h"
 #include "PageOverlayController.h"
 
 #if PLATFORM(MAC)
@@ -35,19 +36,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
-inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
-    : Frame(page, nullptr, client)
+inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
+    : Frame(page, nullptr, *configuration.loaderClientForMainFrame)
     , m_selfOnlyRefCount(0)
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     , m_servicesOverlayController(std::make_unique<ServicesOverlayController>(*this))
 #endif
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
+    , m_diagnosticLoggingClient(configuration.diagnosticLoggingClient)
 {
 }
 
-RefPtr<MainFrame> MainFrame::create(Page& page, FrameLoaderClient& client)
+RefPtr<MainFrame> MainFrame::create(Page& page, PageConfiguration& configuration)
 {
-    return adoptRef(new MainFrame(page, client));
+    return adoptRef(new MainFrame(page, configuration));
 }
 
 void MainFrame::selfOnlyRef()

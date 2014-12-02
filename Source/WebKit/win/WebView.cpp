@@ -118,6 +118,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
+#include <WebCore/PageConfiguration.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
@@ -2751,18 +2752,18 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     m_inspectorClient = new WebInspectorClient(this);
 #endif // ENABLE(INSPECTOR)
 
-    Page::PageClients pageClients;
-    pageClients.chromeClient = new WebChromeClient(this);
-    pageClients.contextMenuClient = new WebContextMenuClient(this);
-    pageClients.editorClient = new WebEditorClient(this);
-    pageClients.dragClient = new WebDragClient(this);
+    PageConfiguration configuration;
+    configuration.chromeClient = new WebChromeClient(this);
+    configuration.contextMenuClient = new WebContextMenuClient(this);
+    configuration.editorClient = new WebEditorClient(this);
+    configuration.dragClient = new WebDragClient(this);
 #if ENABLE(INSPECTOR)
-    pageClients.inspectorClient = m_inspectorClient;
+    configuration.inspectorClient = m_inspectorClient;
 #endif // ENABLE(INSPECTOR)
-    pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = static_cast<WebFrameLoaderClient*>(pageClients.loaderClientForMainFrame);
+    configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
+    configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);
 
-    m_page = new Page(pageClients);
+    m_page = new Page(configuration);
     provideGeolocationTo(m_page, new WebGeolocationClient(this));
 
     unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;

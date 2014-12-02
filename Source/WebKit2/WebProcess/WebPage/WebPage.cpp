@@ -65,6 +65,7 @@
 #include "WebContextMenuClient.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDiagnosticLoggingClient.h"
 #include "WebDocumentLoader.h"
 #include "WebDragClient.h"
 #include "WebEditorClient.h"
@@ -126,6 +127,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageConfiguration.h>
 #include <WebCore/PageThrottler.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
@@ -330,31 +332,32 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     Settings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    Page::PageClients pageClients;
-    pageClients.chromeClient = new WebChromeClient(this);
+    PageConfiguration pageConfiguration;
+    pageConfiguration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)
-    pageClients.contextMenuClient = new WebContextMenuClient(this);
+    pageConfiguration.contextMenuClient = new WebContextMenuClient(this);
 #endif
-    pageClients.editorClient = new WebEditorClient(this);
+    pageConfiguration.editorClient = new WebEditorClient(this);
 #if ENABLE(DRAG_SUPPORT)
-    pageClients.dragClient = new WebDragClient(this);
+    pageConfiguration.dragClient = new WebDragClient(this);
 #endif
-    pageClients.backForwardClient = WebBackForwardListProxy::create(this);
+    pageConfiguration.backForwardClient = WebBackForwardListProxy::create(this);
 #if ENABLE(INSPECTOR)
     m_inspectorClient = new WebInspectorClient(this);
-    pageClients.inspectorClient = m_inspectorClient;
+    pageConfiguration.inspectorClient = m_inspectorClient;
 #endif
 #if USE(AUTOCORRECTION_PANEL)
-    pageClients.alternativeTextClient = new WebAlternativeTextClient(this);
+    pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif
-    pageClients.plugInClient = new WebPlugInClient(this);
-    pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
-    pageClients.progressTrackerClient = new WebProgressTrackerClient(*this);
+    pageConfiguration.plugInClient = new WebPlugInClient(this);
+    pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(*this);
+    pageConfiguration.diagnosticLoggingClient = new WebDiagnosticLoggingClient(*this);
 
-    pageClients.userContentController = m_userContentController ? &m_userContentController->userContentController() : nullptr;
-    pageClients.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
+    pageConfiguration.userContentController = m_userContentController ? &m_userContentController->userContentController() : nullptr;
+    pageConfiguration.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
 
-    m_page = std::make_unique<Page>(pageClients);
+    m_page = std::make_unique<Page>(pageConfiguration);
 
     m_drawingArea = DrawingArea::create(*this, parameters);
     m_drawingArea->setPaintingEnabled(false);
