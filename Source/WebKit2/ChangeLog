@@ -1,3 +1,19 @@
+2014-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove WKBundleRemoveAllVisitedLinks
+        https://bugs.webkit.org/show_bug.cgi?id=139163
+
+        Reviewed by Sam Weinig.
+
+        WKBundleRemoveAllVisitedLinks has been a no-op since at least Yosemite; get rid of it.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleRemoveAllVisitedLinks): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::removeAllVisitedLinks): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2014-12-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix class was previously declared as a struct warnings

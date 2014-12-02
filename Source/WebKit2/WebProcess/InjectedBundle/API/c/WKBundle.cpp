@@ -63,11 +63,6 @@ WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)
     return toAPI(toImpl(bundleRef)->webConnectionToUIProcess());
 }
 
-void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
-{
-    toImpl(bundleRef)->removeAllVisitedLinks();
-}
-
 void WKBundleSetCacheModel(WKBundleRef bundleRef, uint32_t cacheModel)
 {
     toImpl(bundleRef)->setCacheModel(cacheModel);

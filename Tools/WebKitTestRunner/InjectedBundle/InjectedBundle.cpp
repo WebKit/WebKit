@@ -243,7 +243,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_textInputController = TextInputController::create();
     m_accessibilityController = AccessibilityController::create();
 
-    WKBundleRemoveAllVisitedLinks(m_bundle);
     WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
     WKBundleSetPrivateBrowsingEnabled(m_bundle, m_pageGroup, false);

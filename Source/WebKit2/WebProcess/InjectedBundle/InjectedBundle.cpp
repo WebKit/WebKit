@@ -147,11 +147,6 @@ void InjectedBundle::setAlwaysAcceptCookies(bool accept)
     WebProcess::shared().supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
 }
 
-void InjectedBundle::removeAllVisitedLinks()
-{
-    PageGroup::removeAllVisitedLinks();
-}
-
 void InjectedBundle::setCacheModel(uint32_t cacheModel)
 {
     WebProcess::shared().setCacheModel(cacheModel);
