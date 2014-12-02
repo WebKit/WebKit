@@ -1,3 +1,9 @@
+2014-12-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Unskip LayoutTests/dom tests
+
+        * platform/ios-simulator/TestExpectations:
+
 2014-12-01  Chris Dumez  <cdumez@apple.com>
 
         Take into consideration canvas drawing for throttling DOM timers
