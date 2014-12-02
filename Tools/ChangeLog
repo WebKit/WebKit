@@ -1,3 +1,10 @@
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setAlwaysAcceptCookies):
+
 2014-12-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Remove edbus dependency from jhbuild

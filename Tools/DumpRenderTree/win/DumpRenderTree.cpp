@@ -117,23 +117,11 @@ void setPersistentUserStyleSheetLocation(CFStringRef url)
     persistentUserStyleSheetLocation = url;
 }
 
-bool setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+bool setAlwaysAcceptCookies(bool)
 {
-#if USE(CFNETWORK)
-    COMPtr<IWebCookieManager> cookieManager;
-    if (FAILED(WebKitCreateInstance(CLSID_WebCookieManager, 0, IID_IWebCookieManager, reinterpret_cast<void**>(&cookieManager))))
-        return false;
-    CFHTTPCookieStorageRef cookieStorage = 0;
-    if (FAILED(cookieManager->cookieStorage(&cookieStorage)) || !cookieStorage)
-        return false;
-
-    WebKitCookieStorageAcceptPolicy cookieAcceptPolicy = alwaysAcceptCookies ? WebKitCookieStorageAcceptPolicyAlways : WebKitCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
-    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, cookieAcceptPolicy);
-    return true;
-#else
-    // FIXME: Implement!
+    // FIXME: Implement this by making the Windows port use the testing network storage session and
+    // modify its cookie storage policy.
     return false;
-#endif
 }
 
 static RetainPtr<CFStringRef> substringFromIndex(CFStringRef string, CFIndex index)
