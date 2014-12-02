@@ -1,3 +1,53 @@
+2014-12-02  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac, iOS] Crash log application information contains latest main frame URL instead of test URL
+        https://bugs.webkit.org/show_bug.cgi?id=139174
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/TestRunner.cpp:
+        * DumpRenderTree/TestRunner.h:
+        Renamed testPathOrURL to testURL, because this variable always contains a URL.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (sizeWebViewForCurrentTest): Updated for testPathOrURL renaming.
+        (testPathFromURL): Moved from FrameLoadDelegate.mm.
+        (runTest): Set crash reporter information here, as we know the exact test URL.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]): Don't set crash
+        reporter information here.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        Updated for testPathOrURL renaming.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame): WebProcess doesn't know
+        test URL until load starts, so save it into TestRunner now. A new TestRunner object
+        is created for each test.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::testURL):
+        (WTR::TestRunner::setTestURL):
+        Make TestRunner know the test name. For now, it's good enough to have it once load
+        starts, but if we ever need it earlier, we can send it with BeginTest message.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm:
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+        Use test URL, not currently loading URL for CrashReporter.
+
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm:
+        (WTR::setCrashReportApplicationSpecificInformationToURL): Added a space after colon
+        (WebKit1 already had it right).
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (sizeWebViewForCurrentTest):
+        (runTest):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+        Changed Windows DumpRenderTree to also use URL in TestRunner.
+
 2014-12-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] run-webkit-tests records most DumpRenderTree.app crashes as time-outs

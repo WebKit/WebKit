@@ -56,6 +56,8 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     // The basics.
+    WKURLRef testURL() const { return m_testURL.get(); }
+    void setTestURL(WKURLRef url) { m_testURL = url; }
     void dumpAsText(bool dumpPixels);
     void waitForPolicyDelegate();
     void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
@@ -283,6 +285,8 @@ private:
 
     void platformInitialize();
     void initializeWaitToDumpWatchdogTimerIfNeeded();
+
+    WKRetainPtr<WKURLRef> m_testURL; // Set by InjectedBundlePage once provisional load starts.
 
     WhatToDump m_whatToDump;
     bool m_shouldDumpAllFrameScrollPositions;

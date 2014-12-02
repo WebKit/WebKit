@@ -44,7 +44,6 @@
 #import "WorkQueueItem.h"
 #import <Foundation/NSNotification.h>
 #import <JavaScriptCore/JavaScriptCore.h>
-#import <WebKitSystemInterface.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -170,36 +169,9 @@
     }
 }
 
-static NSString *testPathFromURL(NSURL* url)
-{
-    if ([url isFileURL]) {
-        NSString *filePath = [url path];
-        NSRange layoutTestsRange = [filePath rangeOfString:@"/LayoutTests/"];
-        if (layoutTestsRange.location == NSNotFound)
-            return nil;
-            
-        return [filePath substringFromIndex:NSMaxRange(layoutTestsRange)];
-    }
-    
-    // HTTP test URLs look like: http://127.0.0.1:8000/inspector/resource-tree/resource-request-content-after-loading-and-clearing-cache.html
-    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
-        return nil;
-
-    if ([[url host] isEqualToString:@"127.0.0.1"] && ([[url port] intValue] == 8000 || [[url port] intValue] == 8443))
-        return [url path];
-
-    return nil;
-}
-
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
     ASSERT([frame provisionalDataSource]);
-
-    if (!done && [[sender mainFrame] isEqual:frame]) {
-        NSURL *provisionalLoadURL = [[[frame provisionalDataSource] initialRequest] URL];
-        if (NSString *testPath = testPathFromURL(provisionalLoadURL))
-            WKSetCrashReportApplicationSpecificInformation((CFStringRef)[@"CRASHING TEST: " stringByAppendingString:testPath]);
-    }
 
     if (!done && gTestRunner->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didStartProvisionalLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];

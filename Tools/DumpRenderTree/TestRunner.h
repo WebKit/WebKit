@@ -39,7 +39,7 @@
 
 class TestRunner : public RefCounted<TestRunner> {
 public:
-    static PassRefPtr<TestRunner> create(const std::string& testPathOrURL, const std::string& expectedPixelHash);
+    static PassRefPtr<TestRunner> create(const std::string& testURL, const std::string& expectedPixelHash);
 
     static const unsigned viewWidth;
     static const unsigned viewHeight;
@@ -285,7 +285,7 @@ public:
     bool useDeferredFrameLoading() const { return m_useDeferredFrameLoading; }
     void setUseDeferredFrameLoading(bool flag) { m_useDeferredFrameLoading = flag; }
 
-    const std::string& testPathOrURL() const { return m_testPathOrURL; }
+    const std::string& testURL() const { return m_testURL; }
     const std::string& expectedPixelHash() const { return m_expectedPixelHash; }
 
     const std::vector<char>& audioResult() const { return m_audioResult; }
@@ -357,7 +357,7 @@ public:
     bool hasPendingWebNotificationClick() const { return m_hasPendingWebNotificationClick; }
 
 private:
-    TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash);
+    TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 
     void setGeolocationPermissionCommon(bool allow);
 
@@ -418,7 +418,7 @@ private:
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 
-    std::string m_testPathOrURL;
+    std::string m_testURL;
     std::string m_expectedPixelHash; // empty string if no hash
     std::string m_titleTextDirection;
 

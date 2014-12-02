@@ -887,7 +887,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
 
 static void sizeWebViewForCurrentTest()
 {
-    bool isSVGW3CTest = (gTestRunner->testPathOrURL().find("svg\\W3C-SVG-1.1") != string::npos);
+    bool isSVGW3CTest = (gTestRunner->testURL().find("svg\\W3C-SVG-1.1") != string::npos);
     unsigned width;
     unsigned height;
     if (isSVGW3CTest) {
@@ -993,6 +993,8 @@ static void runTest(const string& inputLine)
 
     str = CFURLGetString(url);
 
+    CFRelease(url);
+
     CFIndex length = CFStringGetLength(str);
     UniChar* buffer = new UniChar[length + 1];
 
@@ -1003,11 +1005,15 @@ static void runTest(const string& inputLine)
     ASSERT(urlBStr.length() == length);
     delete[] buffer;
 
-    CFRelease(url);
+    CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+    char* testURL = new char[];
+    CFStringGetCString(str, testURL, maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
 
-    ::gTestRunner = TestRunner::create(pathOrURL, command.expectedPixelHash);
+    ::gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
     topLoadingFrame = 0;
     done = false;
+
+    delete[] testURL;
 
     addFontFallbackIfPresent(fallbackPath);
 

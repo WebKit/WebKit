@@ -326,7 +326,7 @@ static inline size_t indexOfSeparatorAfterDirectoryName(const std::string& direc
     return indexOfSearchKeyStart + searchKey.length() - 1;
 }
 
-static inline std::string resourceRootAbsolutePath(const std::string& testPathOrURL, const std::string& expectedRootName)
+static inline std::string resourceRootAbsolutePath(const std::string& testURL, const std::string& expectedRootName)
 {
     char* localResourceRootEnv = getenv("LOCAL_RESOURCE_ROOT");
     if (localResourceRootEnv)
@@ -334,7 +334,7 @@ static inline std::string resourceRootAbsolutePath(const std::string& testPathOr
 
     // This fallback approach works for non-http tests and is useful
     // in the case when we're running DRT directly from the command line.
-    return testPathOrURL.substr(0, indexOfSeparatorAfterDirectoryName(expectedRootName, testPathOrURL));
+    return testURL.substr(0, indexOfSeparatorAfterDirectoryName(expectedRootName, testURL));
 }
 
 JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
@@ -349,7 +349,7 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef lo
 
     if (localResourceString.find("LayoutTests") != std::string::npos) {
         expectedRootName = "LayoutTests";
-        absolutePathToResourceRoot = resourceRootAbsolutePath(m_testPathOrURL, expectedRootName);
+        absolutePathToResourceRoot = resourceRootAbsolutePath(m_testURL, expectedRootName);
     } else if (localResourceString.find("tmp") != std::string::npos) {
         expectedRootName = "tmp";
         absolutePathToResourceRoot = getenv("DUMPRENDERTREE_TEMP");

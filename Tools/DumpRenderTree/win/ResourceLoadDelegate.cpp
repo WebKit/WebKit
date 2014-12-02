@@ -274,13 +274,13 @@ HRESULT ResourceLoadDelegate::willSendRequest(IWebView* webView, unsigned long i
 
         if (host && ((kCFCompareEqualTo == CFStringCompare(scheme.get(), CFSTR("http"), kCFCompareCaseInsensitive))
             || (kCFCompareEqualTo == CFStringCompare(scheme.get(), CFSTR("https"), kCFCompareCaseInsensitive)))) {
-            RetainPtr<CFStringRef> testPathOrURL = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, gTestRunner->testPathOrURL().c_str(), kCFStringEncodingWindowsLatin1));
-            RetainPtr<CFMutableStringRef> lowercaseTestPathOrURL = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, CFStringGetLength(testPathOrURL.get()), testPathOrURL.get()));
+            RetainPtr<CFStringRef> testURL = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, gTestRunner->testURL().c_str(), kCFStringEncodingWindowsLatin1));
+            RetainPtr<CFMutableStringRef> lowercaseTestURL = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, CFStringGetLength(testURL.get()), testURL.get()));
             RetainPtr<CFLocaleRef> locale = CFLocaleCopyCurrent();
-            CFStringLowercase(lowercaseTestPathOrURL.get(), locale.get());
+            CFStringLowercase(lowercaseTestURL.get(), locale.get());
             RetainPtr<CFStringRef> testHost;
-            if (CFStringHasPrefix(lowercaseTestPathOrURL.get(), CFSTR("http:")) || CFStringHasPrefix(lowercaseTestPathOrURL.get(), CFSTR("https:"))) {
-                RetainPtr<CFURLRef> testPathURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, lowercaseTestPathOrURL.get(), nullptr));
+            if (CFStringHasPrefix(lowercaseTestURL.get(), CFSTR("http:")) || CFStringHasPrefix(lowercaseTestURL.get(), CFSTR("https:"))) {
+                RetainPtr<CFURLRef> testPathURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, lowercaseTestURL.get(), nullptr));
                 testHost = adoptCF(CFURLCopyHostName(testPathURL.get()));
             }
             if (!isLocalhost(host.get()) && !hostIsUsedBySomeTestsToGenerateError(host.get()) && (!testHost || isLocalhost(testHost.get()))) {

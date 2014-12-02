@@ -69,7 +69,7 @@ void setCrashReportApplicationSpecificInformationToURL(WKURLRef url)
 {
     String testPath = testPathFromURL(url);
     if (!testPath.isNull()) {
-        String message("CRASHING TEST:");
+        String message("CRASHING TEST: ");
         message = message + testPath;
         WKSetCrashReportApplicationSpecificInformation(message.createCFString().get());
     }

@@ -59,7 +59,7 @@ const unsigned TestRunner::viewHeight = 600;
 const unsigned TestRunner::w3cSVGViewWidth = 480;
 const unsigned TestRunner::w3cSVGViewHeight = 360;
 
-TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash)
+TestRunner::TestRunner(const std::string& testURL, const std::string& expectedPixelHash)
     : m_disallowIncreaseForApplicationCacheQuota(false)
     , m_dumpApplicationCacheDelegateCallbacks(false)
     , m_dumpAsAudio(false)
@@ -112,15 +112,15 @@ TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expe
     , m_hasPendingWebNotificationClick(false)
     , m_databaseDefaultQuota(-1)
     , m_databaseMaxQuota(-1)
-    , m_testPathOrURL(testPathOrURL)
+    , m_testURL(testURL)
     , m_expectedPixelHash(expectedPixelHash)
     , m_titleTextDirection("ltr")
 {
 }
 
-PassRefPtr<TestRunner> TestRunner::create(const std::string& testPathOrURL, const std::string& expectedPixelHash)
+PassRefPtr<TestRunner> TestRunner::create(const std::string& testURL, const std::string& expectedPixelHash)
 {
-    return adoptRef(new TestRunner(testPathOrURL, expectedPixelHash));
+    return adoptRef(new TestRunner(testURL, expectedPixelHash));
 }
 
 // Static Functions

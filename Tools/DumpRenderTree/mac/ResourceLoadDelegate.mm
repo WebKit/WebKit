@@ -160,11 +160,11 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
     NSURL *url = [request URL];
     NSString *host = [url host];
     if (host && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])) {
-        NSString *testPathOrURL = [NSString stringWithUTF8String:gTestRunner->testPathOrURL().c_str()];
-        NSString *lowercaseTestPathOrURL = [testPathOrURL lowercaseString];
+        NSString *testURL = [NSString stringWithUTF8String:gTestRunner->testURL().c_str()];
+        NSString *lowercaseTestURL = [testURL lowercaseString];
         NSString *testHost = 0;
-        if ([lowercaseTestPathOrURL hasPrefix:@"http:"] || [lowercaseTestPathOrURL hasPrefix:@"https:"])
-            testHost = [[NSURL URLWithString:testPathOrURL] host];
+        if ([lowercaseTestURL hasPrefix:@"http:"] || [lowercaseTestURL hasPrefix:@"https:"])
+            testHost = [[NSURL URLWithString:testURL] host];
         if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && (!testHost || isLocalhost(testHost))) {
             printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
             return nil;
