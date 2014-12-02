@@ -44,7 +44,6 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "UserMediaPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
