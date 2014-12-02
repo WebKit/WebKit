@@ -4,6 +4,12 @@
 
         * platform/spi/mac/QuickLookMacSPI.h:
 
+2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * platform/spi/mac/QuickLookMacSPI.h:
+
 2014-12-02  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, fix typo introduced in r176673.
