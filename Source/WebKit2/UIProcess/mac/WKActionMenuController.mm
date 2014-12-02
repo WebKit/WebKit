@@ -88,9 +88,13 @@ static const CGFloat previewViewTitleHeight = 34;
     NSSize _mainViewSize;
     RetainPtr<NSURL> _url;
     RetainPtr<NSView> _previewView;
+    RetainPtr<NSTextField> _titleTextField;
+    RetainPtr<NSString> _previewTitle;
     id <WKPagePreviewViewControllerDelegate> _delegate;
     CGFloat _popoverToViewScale;
 }
+
+@property (nonatomic, copy) NSString *previewTitle;
 
 - (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
 
@@ -110,6 +114,21 @@ static const CGFloat previewViewTitleHeight = 34;
     _popoverToViewScale = scale;
 
     return self;
+}
+
+- (NSString *)previewTitle
+{
+    return _previewTitle.get();
+}
+
+- (void)setPreviewTitle:(NSString *)previewTitle
+{
+    if ([_previewTitle isEqualToString:previewTitle])
+        return;
+
+    // Keep a separate copy around in case this is received before the view hierarchy is created.
+    _previewTitle = adoptNS([previewTitle copy]);
+    [_titleTextField setStringValue:previewTitle ? previewTitle : @""];
 }
 
 + (NSSize)previewPadding
@@ -147,32 +166,34 @@ static const CGFloat previewViewTitleHeight = 34;
     [_previewView setFrame:previewFrame];
     [_previewView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
-    RetainPtr<NSTextField> titleTextField = adoptNS([[NSTextField alloc] init]);
-    [titleTextField setWantsLayer:YES];
-    [titleTextField setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
-    [titleTextField setEditable:NO];
-    [titleTextField setBezeled:NO];
-    [titleTextField setDrawsBackground:NO];
-    [titleTextField setAlignment:NSCenterTextAlignment];
-    [titleTextField setUsesSingleLineMode:YES];
-    [titleTextField setLineBreakMode:NSLineBreakByTruncatingTail];
-    [titleTextField setTextColor:[NSColor labelColor]];
+    _titleTextField = adoptNS([[NSTextField alloc] init]);
+    [_titleTextField setWantsLayer:YES];
+    [_titleTextField setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
+    [_titleTextField setEditable:NO];
+    [_titleTextField setBezeled:NO];
+    [_titleTextField setDrawsBackground:NO];
+    [_titleTextField setAlignment:NSCenterTextAlignment];
+    [_titleTextField setUsesSingleLineMode:YES];
+    [_titleTextField setLineBreakMode:NSLineBreakByTruncatingTail];
+    [_titleTextField setTextColor:[NSColor labelColor]];
 
-    NSString *title = [_delegate pagePreviewViewController:self titleForPreviewOfURL:_url.get()];
+    NSString *title = _previewTitle.get();
+    if (!title)
+        title = [_delegate pagePreviewViewController:self titleForPreviewOfURL:_url.get()];
     if (!title)
         title = [_url absoluteString];
 
-    [titleTextField setStringValue:title ? title : @""];
+    [_titleTextField setStringValue:title ? title : @""];
 
-    [titleTextField sizeToFit];
-    NSSize titleFittingSize = [titleTextField frame].size;
+    [_titleTextField sizeToFit];
+    NSSize titleFittingSize = [_titleTextField frame].size;
     CGFloat textFieldCenteringOffset = (NSMaxY(containerFrame) - NSMaxY(previewFrame) - titleFittingSize.height) / 2;
 
     NSRect titleFrame = previewFrame;
     titleFrame.size.height = titleFittingSize.height;
     titleFrame.origin.y = NSMaxY(previewFrame) + textFieldCenteringOffset;
-    [titleTextField setFrame:titleFrame];
-    [containerView addSubview:titleTextField.get()];
+    [_titleTextField setFrame:titleFrame];
+    [containerView addSubview:_titleTextField.get()];
 
     // Setting the webView bounds will scale it to 75% of the _mainViewSize.
     [_previewView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
@@ -331,6 +352,13 @@ static const CGFloat previewViewTitleHeight = 34;
 
     [self _hideTextIndicator];
     [self _clearPreviewPopover];
+}
+
+- (void)setPreviewTitle:(NSString *)previewTitle
+{
+#if WK_API_ENABLED
+    [_previewViewController setPreviewTitle:previewTitle];
+#endif
 }
 
 #pragma mark Text Indicator
