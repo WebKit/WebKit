@@ -63,6 +63,7 @@ using namespace WebKit;
 - (BOOL)_canAddMediaToPhotos;
 - (void)_showTextIndicator;
 - (void)_hideTextIndicator;
+- (void)_clearActionMenuState;
 @end
 
 @interface WKView (WKDeprecatedSPI)
@@ -218,10 +219,7 @@ static const CGFloat previewViewTitleHeight = 34;
 
 - (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event
 {
-    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
-        [getDDActionsManagerClass() didUseActions];
-        _hasActivatedActionContext = NO;
-    }
+    [self _clearActionMenuState];
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -293,20 +291,26 @@ static const CGFloat previewViewTitleHeight = 34;
     if (menu != _wkView.actionMenu)
         return;
 
+    [_previewPopover setBehavior:NSPopoverBehaviorTransient];
+    if (!_shouldKeepPreviewPopoverOpen)
+        [self _clearPreviewPopover];
+
+    [self _clearActionMenuState];
+}
+
+- (void)_clearActionMenuState
+{
     if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
         [getDDActionsManagerClass() didUseActions];
         _hasActivatedActionContext = NO;
     }
-
-    [_previewPopover setBehavior:NSPopoverBehaviorTransient];
-    if (!_shouldKeepPreviewPopoverOpen)
-        [self _clearPreviewPopover];
 
     _state = ActionMenuState::None;
     _hitTestResult = ActionMenuHitTestResult();
     _type = kWKActionMenuNone;
     _sharingServicePicker = nil;
     _currentActionContext = nil;
+    _userData = nil;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
