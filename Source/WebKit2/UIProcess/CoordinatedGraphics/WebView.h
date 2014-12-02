@@ -184,7 +184,7 @@ protected:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;
 #endif
 
-    virtual void setTextIndicator(PassRefPtr<TextIndicator>, bool, bool) override;
+    virtual void setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool, bool) override;
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void exitAcceleratedCompositingMode() override;

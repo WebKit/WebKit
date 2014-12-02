@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#import "TextIndicator.h"
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WKWebView.h"
@@ -50,6 +49,7 @@
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/URL.h>
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
@@ -729,7 +729,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
     if (menuItems.count == 1 && _hitTestResult.detectedDataTextIndicator)
-        _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicator::PresentationTransition::Bounce);
+        _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
     return menuItems;
 }
 

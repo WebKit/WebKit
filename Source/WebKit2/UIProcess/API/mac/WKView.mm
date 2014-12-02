@@ -51,8 +51,6 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
-#import "TextIndicator.h"
-#import "TextIndicatorWindow.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
@@ -96,6 +94,8 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextIndicator.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>

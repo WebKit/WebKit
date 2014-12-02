@@ -26,25 +26,16 @@
 #include "config.h"
 #include "TextIndicator.h"
 
-#if PLATFORM(COCOA)
-#include "ArgumentCodersCF.h"
-#endif
-
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
-#include "ShareableBitmap.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebFrame.h"
-#include "WebPage.h"
-#include <WebCore/Document.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameSelection.h>
-#include <WebCore/FrameSnapshotting.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/GeometryUtilities.h>
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/ImageBuffer.h>
-#include <WebCore/IntRect.h>
+#include "Document.h"
+#include "Frame.h"
+#include "FrameSelection.h"
+#include "FrameSnapshotting.h"
+#include "FrameView.h"
+#include "GeometryUtilities.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "IntRect.h"
+#include "Page.h"
 
 using namespace WebCore;
 
@@ -60,7 +51,7 @@ const float verticalBorder = 1;
 const float dropShadowBlurRadius = 12;
 #endif
 
-namespace WebKit {
+namespace WebCore {
 
 static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
 {
@@ -94,12 +85,12 @@ static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
     return false;
 }
 
-PassRefPtr<TextIndicator> TextIndicator::create(const TextIndicator::Data& data)
+PassRefPtr<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 {
     return adoptRef(new TextIndicator(data));
 }
 
-PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, PresentationTransition presentationTransition)
+PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorPresentationTransition presentationTransition)
 {
     Frame* frame = range.startContainer()->document().frame();
 
@@ -109,7 +100,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, Pre
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(&range);
 
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*WebFrame::fromCoreFrame(*frame), presentationTransition);
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*frame, presentationTransition);
 
     frame->selection().setSelection(oldSelection);
     
@@ -118,7 +109,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, Pre
 
 // FIXME (138889): Ideally the FrameSnapshotting functions would be more flexible
 // and we wouldn't have to implement this here.
-static PassRefPtr<ShareableBitmap> snapshotSelectionWithHighlight(Frame& frame)
+static PassRefPtr<Image> snapshotSelectionWithHighlight(Frame& frame)
 {
     auto& selection = frame.selection();
 
@@ -136,36 +127,26 @@ static PassRefPtr<ShareableBitmap> snapshotSelectionWithHighlight(Frame& frame)
     if (!snapshot)
         return nullptr;
 
-    RefPtr<ShareableBitmap> sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
-    if (!sharedSnapshot)
-        return nullptr;
-
-    auto graphicsContext = sharedSnapshot->createGraphicsContext();
-    float deviceScaleFactor = frame.page()->deviceScaleFactor();
-    graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-    graphicsContext->drawImageBuffer(snapshot.get(), ColorSpaceDeviceRGB, FloatPoint());
-
-    return sharedSnapshot.release();
+    return snapshot->copyImage(CopyBackingStore, Unscaled);
 }
 
-PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFrame& frame, PresentationTransition presentationTransition)
+PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorPresentationTransition presentationTransition)
 {
-    Frame& coreFrame = *frame.coreFrame();
-    IntRect selectionRect = enclosingIntRect(coreFrame.selection().selectionBounds());
-    RefPtr<ShareableBitmap> indicatorBitmap = frame.createSelectionSnapshot();
+    IntRect selectionRect = enclosingIntRect(frame.selection().selectionBounds());
+    RefPtr<Image> indicatorBitmap = snapshotSelection(frame, SnapshotOptionsForceBlackText)->copyImage(CopyBackingStore, Unscaled);
     if (!indicatorBitmap)
         return nullptr;
 
-    RefPtr<ShareableBitmap> indicatorBitmapWithHighlight;
-    if (presentationTransition == PresentationTransition::BounceAndCrossfade)
-        indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(coreFrame);
+    RefPtr<Image> indicatorBitmapWithHighlight;
+    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
+        indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(frame);
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
-    IntRect selectionRectInWindowCoordinates = coreFrame.view()->contentsToWindow(selectionRect);
+    IntRect selectionRectInWindowCoordinates = frame.view()->contentsToWindow(selectionRect);
 
     Vector<FloatRect> textRects;
-    coreFrame.selection().getClippedVisibleTextRectangles(textRects);
+    frame.selection().getClippedVisibleTextRectangles(textRects);
 
     // The bounding rect of all the text rects can be different than the selection
     // rect when the selection spans multiple lines; the indicator doesn't actually
@@ -173,7 +154,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFra
     FloatRect textBoundingRectInWindowCoordinates;
     Vector<FloatRect> textRectsInWindowCoordinates;
     for (const FloatRect& textRect : textRects) {
-        FloatRect textRectInWindowCoordinates = coreFrame.view()->contentsToWindow(enclosingIntRect(textRect));
+        FloatRect textRectInWindowCoordinates = frame.view()->contentsToWindow(enclosingIntRect(textRect));
         textRectsInWindowCoordinates.append(textRectInWindowCoordinates);
         textBoundingRectInWindowCoordinates.unite(textRectInWindowCoordinates);
     }
@@ -184,7 +165,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFra
         textRectsInBoundingRectCoordinates.append(rect);
     }
 
-    TextIndicator::Data data;
+    TextIndicatorData data;
     data.selectionRectInWindowCoordinates = selectionRectInWindowCoordinates;
     data.textBoundingRectInWindowCoordinates = textBoundingRectInWindowCoordinates;
     data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
@@ -196,7 +177,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(const WebFra
     return TextIndicator::create(data);
 }
 
-TextIndicator::TextIndicator(const TextIndicator::Data& data)
+TextIndicator::TextIndicator(const TextIndicatorData& data)
     : m_data(data)
 {
     ASSERT(m_data.contentImageScaleFactor != 1 || m_data.contentImage->size() == enclosingIntRect(m_data.selectionRectInWindowCoordinates).size());
@@ -211,57 +192,4 @@ TextIndicator::~TextIndicator()
 {
 }
 
-void TextIndicator::Data::encode(IPC::ArgumentEncoder& encoder) const
-{
-    encoder << selectionRectInWindowCoordinates;
-    encoder << textBoundingRectInWindowCoordinates;
-    encoder << textRectsInBoundingRectCoordinates;
-    encoder << contentImageScaleFactor;
-    encoder.encodeEnum(presentationTransition);
-
-    ShareableBitmap::Handle contentImageHandle;
-    if (contentImage)
-        contentImage->createHandle(contentImageHandle, SharedMemory::ReadOnly);
-    encoder << contentImageHandle;
-
-    ShareableBitmap::Handle contentImageWithHighlightHandle;
-    if (contentImageWithHighlight)
-        contentImageWithHighlight->createHandle(contentImageWithHighlightHandle, SharedMemory::ReadOnly);
-    encoder << contentImageWithHighlightHandle;
-}
-
-bool TextIndicator::Data::decode(IPC::ArgumentDecoder& decoder, TextIndicator::Data& textIndicatorData)
-{
-    if (!decoder.decode(textIndicatorData.selectionRectInWindowCoordinates))
-        return false;
-
-    if (!decoder.decode(textIndicatorData.textBoundingRectInWindowCoordinates))
-        return false;
-
-    if (!decoder.decode(textIndicatorData.textRectsInBoundingRectCoordinates))
-        return false;
-
-    if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
-        return false;
-
-    if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
-        return false;
-
-    ShareableBitmap::Handle contentImageHandle;
-    if (!decoder.decode(contentImageHandle))
-        return false;
-
-    if (!contentImageHandle.isNull())
-        textIndicatorData.contentImage = ShareableBitmap::create(contentImageHandle, SharedMemory::ReadOnly);
-
-    ShareableBitmap::Handle contentImageWithHighlightHandle;
-    if (!decoder.decode(contentImageWithHighlightHandle))
-        return false;
-
-    if (!contentImageWithHighlightHandle.isNull())
-        textIndicatorData.contentImageWithHighlight = ShareableBitmap::create(contentImageWithHighlightHandle, SharedMemory::ReadOnly);
-
-    return true;
-}
-
-} // namespace WebKit
+} // namespace WebCore

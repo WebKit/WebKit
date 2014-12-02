@@ -59,6 +59,7 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/URL.h>
@@ -2165,6 +2166,43 @@ bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPar
     default:
         return false;
     }
+
+    return true;
+}
+
+void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const TextIndicatorData& textIndicatorData)
+{
+    encoder << textIndicatorData.selectionRectInWindowCoordinates;
+    encoder << textIndicatorData.textBoundingRectInWindowCoordinates;
+    encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
+    encoder << textIndicatorData.contentImageScaleFactor;
+    encoder.encodeEnum(textIndicatorData.presentationTransition);
+    encodeImage(encoder, textIndicatorData.contentImage.get());
+    encodeImage(encoder, textIndicatorData.contentImageWithHighlight.get());
+}
+
+bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndicatorData& textIndicatorData)
+{
+    if (!decoder.decode(textIndicatorData.selectionRectInWindowCoordinates))
+        return false;
+
+    if (!decoder.decode(textIndicatorData.textBoundingRectInWindowCoordinates))
+        return false;
+
+    if (!decoder.decode(textIndicatorData.textRectsInBoundingRectCoordinates))
+        return false;
+
+    if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
+        return false;
+
+    if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
+        return false;
+
+    if (!decodeImage(decoder, textIndicatorData.contentImage))
+        return false;
+
+    if (!decodeImage(decoder, textIndicatorData.contentImageWithHighlight))
+        return false;
 
     return true;
 }

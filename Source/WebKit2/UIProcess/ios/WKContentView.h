@@ -41,7 +41,6 @@ namespace WebKit {
 class DrawingAreaProxy;
 class GeolocationPermissionRequestProxy;
 class RemoteLayerTreeTransaction;
-class TextIndicator;
 class WebContext;
 class WebFrameProxy;
 class WebPageProxy;

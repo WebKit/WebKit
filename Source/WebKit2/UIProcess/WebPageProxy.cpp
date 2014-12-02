@@ -54,7 +54,6 @@
 #include "PrintInfo.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
-#include "TextIndicator.h"
 #include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -96,6 +95,7 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TextIndicator.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
@@ -3550,7 +3550,7 @@ void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& conten
     m_findMatchesClient.didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
 }
 
-void WebPageProxy::setTextIndicator(const TextIndicator::Data& indicatorData, bool fadeOut)
+void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, bool fadeOut)
 {
     m_pageClient.setTextIndicator(TextIndicator::create(indicatorData), fadeOut);
 }

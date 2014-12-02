@@ -1,3 +1,37 @@
+2014-11-21  Tim Horton  <timothy_horton@apple.com>
+
+        Move TextIndicator{Window} to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=138954
+        <rdar://problem/18992185>
+
+        Some adjustments by Csaba Osztrogonác.
+        Reviewed by Anders Carlsson.
+
+        Move TextIndicator and TextIndicatorWindow to WebCore so that both
+        WebKits can share the implementation.
+
+        * CMakeLists.txt:
+        Build TextIndicator.
+
+        * WebCore.exp.in:
+        Export TextIndicator{Window} symbols for the WebKits.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/TextIndicator.cpp: Renamed from Source/WebKit2/Shared/TextIndicator.cpp.
+        * page/TextIndicator.h: Renamed from Source/WebKit2/Shared/TextIndicator.h.
+        Straighforward move of TextIndicator from WebKit2, except:
+
+        Move TextIndicator::Data and TextIndicator::PresentationTransition out directly
+        into the WebCore namespace to allow for implementation of WebKit2 argument coders.
+
+        Use Image instead of ShareableBitmap internally.
+
+        Move the TextIndicatorData encode/decode to WebCoreArgumentCoders.
+        
+        * page/mac/TextIndicatorWindow.h: Renamed from Source/WebKit2/UIProcess/mac/TextIndicatorWindow.h.
+        * page/mac/TextIndicatorWindow.mm: Renamed from Source/WebKit2/UIProcess/mac/TextIndicatorWindow.mm.
+        Straighforward move of TextIndicatorWindow from WebKit2.
+
 2014-11-21  Jer Noble  <jer.noble@apple.com>
 
         Support multiple signatures of diagnostic logging.
