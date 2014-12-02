@@ -1,3 +1,29 @@
+2014-12-02  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Use references instead of pointers in EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=137918
+
+        Reviewed by Darin Adler.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::extractPropertyValue):
+        (WebCore::identifierForStyleProperty):
+        (WebCore::textColorFromStyle):
+        (WebCore::backgroundColorFromStyle):
+        (WebCore::textAlignResolvingStartAndEnd):
+        (WebCore::EditingStyle::triStateOfStyle):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::setTextDecorationProperty):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::diffTextDecorations):
+        (WebCore::fontWeightIsBold):
+        (WebCore::extractPropertiesNotIn):
+        (WebCore::getPropertiesNotIn):
+        * editing/EditingStyle.h:
+
 2014-12-02  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [GStreamer] Media Source sending seek event fails.
