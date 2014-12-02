@@ -1,5 +1,23 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176474. <rdar://problem/19063717>
+
+    2014-11-21  Tim Horton  <timothy_horton@apple.com>
+
+            Crashes while encoding a TextIndicator with no contentImageWithHighlight
+            https://bugs.webkit.org/show_bug.cgi?id=138984
+            <rdar://problem/19063717>
+
+            Reviewed by Sam Weinig.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<TextIndicatorData>::encode):
+            (IPC::ArgumentCoder<TextIndicatorData>::decode):
+            encodeImage doesn't deal with null images, so handle that case gracefully.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176613. <rdar://problem/19108805>
 
     2014-12-01  Conrad Shultz  <conrad_shultz@apple.com>

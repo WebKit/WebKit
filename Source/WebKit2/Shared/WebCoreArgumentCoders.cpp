@@ -2177,8 +2177,16 @@ void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const Te
     encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
     encoder << textIndicatorData.contentImageScaleFactor;
     encoder.encodeEnum(textIndicatorData.presentationTransition);
-    encodeImage(encoder, textIndicatorData.contentImage.get());
-    encodeImage(encoder, textIndicatorData.contentImageWithHighlight.get());
+
+    bool hasImage = textIndicatorData.contentImage;
+    encoder << hasImage;
+    if (hasImage)
+        encodeImage(encoder, textIndicatorData.contentImage.get());
+
+    bool hasImageWithHighlight = textIndicatorData.contentImageWithHighlight;
+    encoder << hasImageWithHighlight;
+    if (hasImageWithHighlight)
+        encodeImage(encoder, textIndicatorData.contentImageWithHighlight.get());
 }
 
 bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndicatorData& textIndicatorData)
@@ -2198,10 +2206,16 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
     if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
         return false;
 
-    if (!decodeImage(decoder, textIndicatorData.contentImage))
+    bool hasImage;
+    if (!decoder.decode(hasImage))
+        return false;
+    if (hasImage && !decodeImage(decoder, textIndicatorData.contentImage))
         return false;
 
-    if (!decodeImage(decoder, textIndicatorData.contentImageWithHighlight))
+    bool hasImageWithHighlight;
+    if (!decoder.decode(hasImageWithHighlight))
+        return false;
+    if (hasImageWithHighlight && !decodeImage(decoder, textIndicatorData.contentImageWithHighlight))
         return false;
 
     return true;
