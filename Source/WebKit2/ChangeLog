@@ -1,5 +1,36 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176483. <rdar://problem/19064523>
+
+    2014-11-21  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Page previews should have a margin.
+            https://bugs.webkit.org/show_bug.cgi?id=138990
+
+            Reviewed by Beth Dakin.
+
+            Enclose the WKWebView (or client-supplied preview view) in a container slightly larger
+            than the preview view. Adjust sizing code to accommodate the margin.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (+[WKPagePreviewViewController previewPadding]):
+            Return the total amount of fixed padding surrounding the preview
+            (-[WKPagePreviewViewController loadView]):
+            Store the actual previewView in an ivar so that clients can distinguish it from the container
+            view; wrap the preview in a container view; set frames appropriately.
+            (-[WKActionMenuController _createPreviewPopover]):
+            Update to reflect method rename; supplement the popover size with the fixed padding.
+            (-[WKActionMenuController _preferredPopoverSizeWithPreviewPadding:]):
+            Renamed from -_preferredPopoverSize; account for the fixed padding when computing the preferred size.
+            (-[WKActionMenuController _clearPreviewPopover]):
+            Use the previewView ivar instead of the view controller's view.
+            (-[WKActionMenuController pagePreviewViewControllerWasClicked:]):
+            Ditto.
+            (-[WKActionMenuController _preferredPopoverSize]): Deleted.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176480. <rdar://problem/19056442>
 
     2014-11-21  Tim Horton  <timothy_horton@apple.com>
