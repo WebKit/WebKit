@@ -1,5 +1,27 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176414. rdar://problem/19042207
+
+    2014-11-20  Tim Horton  <timothy_horton@apple.com>
+
+            Don't use a TextIndicator BounceAndCrossfade transition if the selection highlight is never shown
+            https://bugs.webkit.org/show_bug.cgi?id=138919
+            <rdar://problem/19042207>
+
+            Reviewed by Beth Dakin.
+
+            * Shared/TextIndicator.h:
+            (WebKit::TextIndicator::presentationTransition):
+            (WebKit::TextIndicator::setPresentationTransition):
+            Add getter and setter pair.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            If the selection highlight will never be shown because there's only a single menu item,
+            use a normal bounce animation instead of bounce + crossfade.
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176412. rdar://problem/18904600
 
     2014-11-20  Beth Dakin  <bdakin@apple.com>
