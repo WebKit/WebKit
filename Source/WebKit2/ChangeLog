@@ -1,5 +1,22 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176485. <rdar://problem/19061959>
+
+    2014-11-21  Beth Dakin  <bdakin@apple.com>
+
+            The preview action menu item should not have a title
+            https://bugs.webkit.org/show_bug.cgi?id=138989
+            -and corresponding-
+            rdar://problem/19061959
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176483. <rdar://problem/19064523>
 
     2014-11-21  Conrad Shultz  <conrad_shultz@apple.com>
