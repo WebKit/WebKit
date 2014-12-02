@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebUIDelegatePrivate.h"
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#import "WebUIDelegatePrivate.h"
 #import <AppKit/NSSharingService.h>
 #import <WebCore/HitTestResult.h>
 #import <wtf/RetainPtr.h>
@@ -60,3 +61,5 @@ class TextIndicator;
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event;
 
 @end
+
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
