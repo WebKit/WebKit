@@ -37,9 +37,7 @@ PASS a["draggable"] is true
 PASS a["webkitdropzone"] is 
 PASS a["hidden"] is false
 PASS a["accessKey"] is 
-PASS a["innerHTML"] is nerget
 PASS a["innerText"] is nerget
-PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["outerText"] is nerget
 PASS a["children"] is [object HTMLCollection]
 PASS a["contentEditable"] is inherit
@@ -50,7 +48,7 @@ PASS a["attributes"] is [object NamedNodeMap]
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["id"] is foo
 PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 789
+PASS a["offsetTop"] is 759
 PASS a["offsetWidth"] is 39
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0
@@ -62,6 +60,8 @@ PASS a["scrollTop"] is 0
 PASS a["scrollWidth"] is 0
 PASS a["scrollHeight"] is 0
 PASS a["offsetParent"] is [object HTMLBodyElement]
+PASS a["innerHTML"] is nerget
+PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["className"] is 
 PASS a["classList"] is 
 PASS a["dataset"] is [object DOMStringMap]

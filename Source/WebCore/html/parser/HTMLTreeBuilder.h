@@ -32,6 +32,7 @@
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
 #include "HTMLParserOptions.h"
+#include "HTMLStackItem.h"
 #include "HTMLTokenizer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
@@ -170,6 +171,8 @@ private:
 
     inline bool shouldProcessTokenInForeignContent(AtomicHTMLToken*);
     void processTokenInForeignContent(AtomicHTMLToken*);
+    
+    inline HTMLStackItem* adjustedCurrentStackItem() const;
 
     Vector<Attribute> attributesForIsindexInput(AtomicHTMLToken*);
 
@@ -201,11 +204,12 @@ private:
         ~FragmentParsingContext();
 
         DocumentFragment* fragment() const { return m_fragment; }
-        Element* contextElement() const { ASSERT(m_fragment); return m_contextElement; }
+        Element* contextElement() const { ASSERT(m_fragment); return m_contextElementStackItem->element(); }
+        HTMLStackItem* contextElementStackItem() const { ASSERT(m_fragment); return m_contextElementStackItem.get(); }
 
     private:
         DocumentFragment* m_fragment;
-        Element* m_contextElement;
+        RefPtr<HTMLStackItem> m_contextElementStackItem;
     };
 
     bool m_framesetOk;

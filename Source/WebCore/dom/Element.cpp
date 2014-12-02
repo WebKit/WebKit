@@ -54,6 +54,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableRowsCollection.h"
+#include "HTMLTemplateElement.h"
 #include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "MutationObserverInterestGroup.h"
@@ -81,6 +82,7 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
+#include "markup.h"
 #include <wtf/BitVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
@@ -2022,6 +2024,67 @@ void Element::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
     EventDispatcher::dispatchEvent(this, event.release());
 }
 
+void Element::mergeWithNextTextNode(Text& node, ExceptionCode& ec)
+{
+    Node* next = node.nextSibling();
+    if (!is<Text>(next))
+        return;
+
+    Ref<Text> textNode(node);
+    Ref<Text> textNext(downcast<Text>(*next));
+    textNode->appendData(textNext->data(), ec);
+    if (ec)
+        return;
+    textNext->remove(ec);
+}
+
+String Element::innerHTML() const
+{
+    return createMarkup(*this, ChildrenOnly);
+}
+
+String Element::outerHTML() const
+{
+    return createMarkup(*this);
+}
+
+void Element::setOuterHTML(const String& html, ExceptionCode& ec)
+{
+    Element* p = parentElement();
+    if (!is<HTMLElement>(p)) {
+        ec = NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+    RefPtr<HTMLElement> parent = downcast<HTMLElement>(p);
+    RefPtr<Node> prev = previousSibling();
+    RefPtr<Node> next = nextSibling();
+
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, parent.get(), AllowScriptingContent, ec);
+    if (ec)
+        return;
+    
+    parent->replaceChild(fragment.release(), this, ec);
+    RefPtr<Node> node = next ? next->previousSibling() : nullptr;
+    if (!ec && is<Text>(node.get()))
+        mergeWithNextTextNode(downcast<Text>(*node), ec);
+    if (!ec && is<Text>(prev.get()))
+        mergeWithNextTextNode(downcast<Text>(*prev), ec);
+}
+
+
+void Element::setInnerHTML(const String& html, ExceptionCode& ec)
+{
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
+        ContainerNode* container = this;
+
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (is<HTMLTemplateElement>(*this))
+            container = downcast<HTMLTemplateElement>(*this).content();
+#endif
+
+        replaceChildrenWithFragment(*container, fragment.release(), ec);
+    }
+}
 
 String Element::innerText()
 {

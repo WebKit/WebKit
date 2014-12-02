@@ -108,6 +108,9 @@
 
     // HTML 5
     NodeList getElementsByClassName([Default=Undefined] optional DOMString name);
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerHTML;
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerHTML;
+             
 
     [Reflect=class] attribute DOMString className;
     readonly attribute DOMTokenList classList;

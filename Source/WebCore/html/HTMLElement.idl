@@ -38,11 +38,9 @@
              [Reflect] attribute DOMString accessKey;
 
     // Extensions
-             [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerHTML;
-             [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerText;
-             [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerHTML;
-             [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerText;
-
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerText;
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerText;
+             
     [RaisesException] Element insertAdjacentElement([Default=Undefined] optional DOMString where,
                                   [Default=Undefined] optional Element element);
     [RaisesException] void insertAdjacentHTML([Default=Undefined] optional DOMString where,

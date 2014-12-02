@@ -395,6 +395,10 @@ public:
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void blur();
 
+    String innerHTML() const;
+    String outerHTML() const;
+    void setInnerHTML(const String&, ExceptionCode&);
+    void setOuterHTML(const String&, ExceptionCode&);
     WEBCORE_EXPORT String innerText();
     String outerText();
  
@@ -572,6 +576,8 @@ protected:
     // parseAttribute (called via setAttribute()) and
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
+    
+    static void mergeWithNextTextNode(Text& node, ExceptionCode& ec);
 
 private:
     bool isTextNode() const;

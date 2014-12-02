@@ -48,7 +48,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "HTMLTemplateElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
 #include "RenderElement.h"
@@ -412,65 +411,6 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
         if (!eventName.isNull())
             setAttributeEventListener(eventName, name, value);
     }
-}
-
-String HTMLElement::innerHTML() const
-{
-    return createMarkup(*this, ChildrenOnly);
-}
-
-String HTMLElement::outerHTML() const
-{
-    return createMarkup(*this);
-}
-
-void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
-{
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
-        ContainerNode* container = this;
-#if ENABLE(TEMPLATE_ELEMENT)
-        if (is<HTMLTemplateElement>(*this))
-            container = downcast<HTMLTemplateElement>(*this).content();
-#endif
-        replaceChildrenWithFragment(*container, fragment.release(), ec);
-    }
-}
-
-static void mergeWithNextTextNode(Text& node, ExceptionCode& ec)
-{
-    Node* next = node.nextSibling();
-    if (!is<Text>(next))
-        return;
-
-    Ref<Text> textNode(node);
-    Ref<Text> textNext(downcast<Text>(*next));
-    textNode->appendData(textNext->data(), ec);
-    if (ec)
-        return;
-    textNext->remove(ec);
-}
-
-void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
-{
-    Element* p = parentElement();
-    if (!is<HTMLElement>(p)) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-    RefPtr<HTMLElement> parent = downcast<HTMLElement>(p);
-    RefPtr<Node> prev = previousSibling();
-    RefPtr<Node> next = nextSibling();
-
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, parent.get(), AllowScriptingContent, ec);
-    if (ec)
-        return;
-      
-    parent->replaceChild(fragment.release(), this, ec);
-    RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (!ec && is<Text>(node.get()))
-        mergeWithNextTextNode(downcast<Text>(*node), ec);
-    if (!ec && is<Text>(prev.get()))
-        mergeWithNextTextNode(downcast<Text>(*prev), ec);
 }
 
 RefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)

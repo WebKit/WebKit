@@ -1,3 +1,46 @@
+2014-12-02  Sylvain Galineau  <galineau@adobe.com>
+
+        Missing support for innerHTML on SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=136903
+
+        Reviewed by Dean Jackson.
+
+        Two parts to this patch:
+        1. Move innerHTML/outerHTML to Element so SVG elements can inherit them, per https://dvcs.w3.org/hg/innerhtml/raw-file/tip/index.html#innerhtml
+        2. Make sure fragment insertion is processed relative to the proper node, per http://www.whatwg.org/specs/web-apps/current-work/#adjusted-current-node
+
+        The latter part was ported over from Blink. 
+
+        Test: svg/in-html/svg-inner-html.html
+
+        * bindings/objc/PublicDOMInterfaces.h: Move innerHTML/outerHTML to Element.
+        * dom/Element.cpp:
+        (WebCore::Element::mergeWithNextTextNode): Helper used by Element::innerHTML/outerHTML as well as HTMLElement::innerText/outerText; moved to Element as protected static.
+        (WebCore::Element::innerHTML): Moved from HTMLElement.
+        (WebCore::Element::outerHTML): Moved from HTMLElement.
+        (WebCore::Element::setOuterHTML): Moved from HTMLElement.
+        (WebCore::Element::setInnerHTML): Moved from HTMLElement.
+        * dom/Element.h: 
+        * dom/Element.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::innerHTML): Deleted.
+        (WebCore::HTMLElement::outerHTML): Deleted.
+        (WebCore::HTMLElement::setInnerHTML): Deleted.
+        (WebCore::mergeWithNextTextNode): Deleted.
+        (WebCore::HTMLElement::setOuterHTML): Deleted.
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext): no more m_contextElement.
+        (WebCore::HTMLTreeBuilder::constructTree): read namespace from adjusted current node.
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately): use contextElementStackItem for insertion.
+        (WebCore::HTMLTreeBuilder::adjustedCurrentStackItem): compute adjusted current node.
+        (WebCore::HTMLTreeBuilder::shouldProcessTokenInForeignContent): use adjusted current node for context.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent): use adjusted current node to read namespace.
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElement): Deleted. Read from contextElementStackItem.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElementStackItem): Added.
+
 2014-11-20  Jeffrey Pfau  <jpfau@apple.com>
 
         Add cancelable version of willSendRequest

@@ -320,15 +320,14 @@ void HTMLTreeBuilder::detach()
 
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext()
     : m_fragment(0)
-    , m_contextElement(0)
 {
 }
 
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment& fragment, Element* contextElement)
     : m_fragment(&fragment)
-    , m_contextElement(contextElement)
 {
     ASSERT(!fragment.hasChildNodes());
+    m_contextElementStackItem = HTMLStackItem::create(contextElement, HTMLStackItem::ItemForContextElement);
 }
 
 HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext()
@@ -356,7 +355,7 @@ void HTMLTreeBuilder::constructTree(AtomicHTMLToken* token)
 
     if (m_parser.tokenizer()) {
         bool inForeignContent = !m_tree.isEmpty()
-            && !m_tree.currentStackItem()->isInHTMLNamespace()
+            && !adjustedCurrentStackItem()->isInHTMLNamespace()
             && !HTMLElementStack::isHTMLIntegrationPoint(m_tree.currentStackItem())
             && !HTMLElementStack::isMathMLTextIntegrationPoint(m_tree.currentStackItem());
 
@@ -1617,7 +1616,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
             bool shouldCreateItem = true;
 #endif
             if (shouldCreateItem)
-                item = HTMLStackItem::create(m_fragmentContext.contextElement(), HTMLStackItem::ItemForContextElement);
+                item = m_fragmentContext.contextElementStackItem();
         }
 #if ENABLE(TEMPLATE_ELEMENT)
         if (item->hasTagName(templateTag))
@@ -2840,16 +2839,27 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken* token)
 
     setInsertionMode(InsertionMode::Text);
 }
+    
+// http://www.whatwg.org/specs/web-apps/current-work/#adjusted-current-node
+HTMLStackItem* HTMLTreeBuilder::adjustedCurrentStackItem() const
+{
+    ASSERT(!m_tree.isEmpty());
+    if (isParsingFragment() && m_tree.openElements()->hasOnlyOneElement())
+        return m_fragmentContext.contextElementStackItem();
+        
+    return m_tree.currentStackItem();
+}
+
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#tree-construction
 bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(AtomicHTMLToken* token)
 {
     if (m_tree.isEmpty())
         return false;
-    HTMLStackItem* item = m_tree.currentStackItem();
-    if (item->isInHTMLNamespace())
+    HTMLStackItem* adjustedCurrentNode = adjustedCurrentStackItem();
+    if (adjustedCurrentNode->isInHTMLNamespace())
         return false;
-    if (HTMLElementStack::isMathMLTextIntegrationPoint(item)) {
+    if (HTMLElementStack::isMathMLTextIntegrationPoint(adjustedCurrentNode)) {
         if (token->type() == HTMLToken::StartTag
             && token->name() != MathMLNames::mglyphTag
             && token->name() != MathMLNames::malignmarkTag)
@@ -2857,11 +2867,11 @@ bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(AtomicHTMLToken* token)
         if (token->type() == HTMLToken::Character)
             return false;
     }
-    if (item->hasTagName(MathMLNames::annotation_xmlTag)
+    if (adjustedCurrentNode->hasTagName(MathMLNames::annotation_xmlTag)
         && token->type() == HTMLToken::StartTag
         && token->name() == SVGNames::svgTag)
         return false;
-    if (HTMLElementStack::isHTMLIntegrationPoint(item)) {
+    if (HTMLElementStack::isHTMLIntegrationPoint(adjustedCurrentNode)) {
         if (token->type() == HTMLToken::StartTag)
             return false;
         if (token->type() == HTMLToken::Character)
@@ -2874,6 +2884,8 @@ bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(AtomicHTMLToken* token)
 
 void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken* token)
 {
+    HTMLStackItem* adjustedCurrentNode = adjustedCurrentStackItem();
+    
     switch (token->type()) {
     case HTMLToken::Uninitialized:
         ASSERT_NOT_REACHED();
@@ -2927,7 +2939,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken* token)
             processStartTag(token);
             return;
         }
-        const AtomicString& currentNamespace = m_tree.currentStackItem()->namespaceURI();
+        const AtomicString& currentNamespace = adjustedCurrentNode->namespaceURI();
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(*token);
         if (currentNamespace == SVGNames::svgNamespaceURI) {
@@ -2939,7 +2951,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken* token)
         break;
     }
     case HTMLToken::EndTag: {
-        if (m_tree.currentStackItem()->namespaceURI() == SVGNames::svgNamespaceURI)
+        if (adjustedCurrentNode->namespaceURI() == SVGNames::svgNamespaceURI)
             adjustSVGTagNameCase(*token);
 
         if (token->name() == SVGNames::scriptTag && m_tree.currentStackItem()->hasTagName(SVGNames::scriptTag)) {

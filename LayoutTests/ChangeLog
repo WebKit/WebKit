@@ -1,3 +1,17 @@
+2014-12-02  Sylvain Galineau  <galineau@adobe.com>
+
+    Missing support for innerHTML on SVGElement
+    https://bugs.webkit.org/show_bug.cgi?id=136903
+
+        Reviewed by Dean Jackson.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: The property enumeration order is different now that inner/outerHTML are inherited from Element
+        * platform/mac/svg/in-html/svg-inner-html-expected.png: Added.
+        * svg/css/svg-attribute-length-parsing-expected.txt:
+        Now that innerHTML works, the output should start with 'Test'
+        * svg/in-html/svg-inner-html-expected.txt: Added.
+        * svg/in-html/svg-inner-html.html: Added.
+
 2014-12-02  Andrzej Badowski  <a.badowski@samsung.com>
 
         REGRESSION(r176122): [GTK] Layout Test platform/gtk/accessibility/table-hierarchy.html fails.
