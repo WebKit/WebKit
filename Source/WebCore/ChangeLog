@@ -1,5 +1,18 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176417. rdar://problem/19021183
+
+    2014-11-20  Tim Horton  <timothy_horton@apple.com>
+
+            Remove a piece of DataDetectors SPI that we aren't using anymore
+            https://bugs.webkit.org/show_bug.cgi?id=138917
+
+            Reviewed by Beth Dakin.
+
+            * platform/spi/mac/DataDetectorsSPI.h:
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176412. rdar://problem/18904600
 
     2014-11-20  Beth Dakin  <bdakin@apple.com>
