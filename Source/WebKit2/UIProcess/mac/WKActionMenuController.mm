@@ -163,6 +163,14 @@ using namespace WebKit;
     _currentActionContext = nil;
 }
 
+- (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event
+{
+    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
+        [getDDActionsManagerClass() didUseActions];
+        _hasActivatedActionContext = NO;
+    }
+}
+
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != _wkView.actionMenu)
@@ -232,9 +240,9 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
-    if (_type == kWKActionMenuDataDetectedItem) {
-        if (_currentActionContext)
-            [getDDActionsManagerClass() didUseActions];
+    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
+        [getDDActionsManagerClass() didUseActions];
+        _hasActivatedActionContext = NO;
     }
 
     [_previewPopover setBehavior:NSPopoverBehaviorTransient];
@@ -779,9 +787,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (_state != ActionMenuState::Ready)
         [self _updateActionMenuItems];
 
-    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && ![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
-        [menu cancelTracking];
-        [menu removeAllItems];
+    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+            [menu cancelTracking];
+            [menu removeAllItems];
+        }
     }
 }
 

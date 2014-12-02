@@ -1,5 +1,30 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176480. <rdar://problem/19056442>
+
+    2014-11-21  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r176415): Can get stuck, unable to invoke any DataDetectors popovers
+            https://bugs.webkit.org/show_bug.cgi?id=138955
+            <rdar://problem/19056442>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView mouseDown:]):
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController wkView:willHandleMouseDown:]):
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            (-[WKActionMenuController menuNeedsUpdate:]):
+            Keep track of whether we have called shouldUseActionsWithContext: on a
+            DDActionContext; if we get a mouseDown without having seen didCloseMenu:
+            (and thus don't properly pair the shouldUseActionsWithContext: with a didUseActions),
+            tear down the old DDActionContext before proceeding.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176477. <rdar://problem/19056715>
 
     2014-11-21  Tim Horton  <timothy_horton@apple.com>
