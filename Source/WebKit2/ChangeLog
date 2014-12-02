@@ -1,5 +1,12 @@
 2014-12-02  Beth Dakin  <bdakin@apple.com>
 
+        Build fix.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForLink]):
+
+2014-12-02  Beth Dakin  <bdakin@apple.com>
+
         More build fix.
 
         * UIProcess/mac/WKActionMenuController.mm:
