@@ -83,18 +83,21 @@ void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, 
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());
 
-    Ref<WebResourceLoader> protect(*this);
+    RefPtr<WebResourceLoader> protect(this);
 
     ResourceRequest newRequest = proposedRequest;
     if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(m_coreLoader.get(), newRequest, redirectResponse))
         return;
     // FIXME: Do we need to update NetworkResourceLoader clientCredentialPolicy in case loader policy is DoNotAskClientForCrossOriginCredentials?
-    m_coreLoader->willSendRequest(newRequest, redirectResponse);
-    
-    if (!m_coreLoader)
-        return;
-    
-    send(Messages::NetworkResourceLoader::ContinueWillSendRequest(newRequest));
+    m_coreLoader->willSendRequest(WTF::move(newRequest), redirectResponse, [protect](ResourceRequest& request) {
+        if (!protect->m_coreLoader)
+            return;
+
+        if (!request.isNull())
+            protect->send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request));
+        else
+            protect->m_coreLoader->cancel();
+    });
 }
 
 void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)

@@ -1,3 +1,13 @@
+2014-11-20  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add cancelable version of willSendRequest
+        https://bugs.webkit.org/show_bug.cgi?id=138987
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+
 2014-12-01  Conrad Shultz  <conrad_shultz@apple.com>
 
         Clients need a way to explicitly set the title of a page preview

@@ -286,6 +286,12 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 
+void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&)> callback)
+{
+    willSendRequest(request, redirectResponse);
+    callback(request);
+}
+
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
 }
