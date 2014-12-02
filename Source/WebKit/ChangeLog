@@ -1,3 +1,14 @@
+2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        Implement Lookup transition from selection for Legacy WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=139180
+        <rdar://problem/19067172>
+
+        Reviewed by Beth Dakin.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add mac/WebView/DictionaryPopupInfo.h.
+
 2014-12-01  Anders Carlsson  <andersca@apple.com>
 
         Remove IWebCookieManager on Windows

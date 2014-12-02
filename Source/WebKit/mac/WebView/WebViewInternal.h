@@ -59,6 +59,7 @@ class URL;
 struct DictationAlternative;
 }
 
+struct DictionaryPopupInfo;
 class WebSelectionServiceController;
 #endif
 
@@ -259,6 +260,7 @@ OBJC_CLASS NSTextAlternatives;
 #if PLATFORM(MAC) && defined(__cplusplus)
 - (void)_setTextIndicator:(WebCore::TextIndicator*)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler;
 - (void)_clearTextIndicator;
+- (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (WebActionMenuController *)_actionMenuController;
 #endif

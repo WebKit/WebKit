@@ -35,6 +35,7 @@
 #import "DOMDocumentInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "DictionaryPopupInfo.h"
 #import "WebAlternativeTextClient.h"
 #import "WebApplicationCache.h"
 #import "WebBackForwardListInternal.h"
@@ -212,7 +213,9 @@
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
+#import <WebCore/LookupSPI.h>
 #import <WebCore/NSViewSPI.h>
+#import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/WebVideoFullscreenController.h>
@@ -283,6 +286,11 @@
 
 #if ENABLE(GAMEPAD)
 #import <WebCore/HIDGamepadProvider.h>
+#endif
+
+#if PLATFORM(MAC)
+SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
 #endif
 
 #if !PLATFORM(IOS)
@@ -1021,6 +1029,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 #if !PLATFORM(IOS)
     [self _registerDraggedTypes];
+
+    if (canLoadLUNotificationPopoverWillClose())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 #endif
 
     [self _setIsVisible:[self _isViewVisible]];
@@ -8550,7 +8561,8 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (menu != self.actionMenu)
@@ -8575,6 +8587,12 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     [_private->actionMenuController didCloseMenu:menu withEvent:event];
 }
 
+- (WebActionMenuController *)_actionMenuController
+{
+    return _private->actionMenuController;
+}
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 - (void)_setTextIndicator:(TextIndicator *)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler
 {
     if (!textIndicator) {
@@ -8593,11 +8611,33 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:^ { }];
 }
 
-- (WebActionMenuController *)_actionMenuController
+- (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    return _private->actionMenuController;
+    if (!dictionaryPopupInfo.attributedString)
+        return;
+
+    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+
+    // Convert to screen coordinates.
+    textBaselineOrigin = [self.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    if (canLoadLUTermOptionDisableSearchTermIndicator()) {
+        RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([dictionaryPopupInfo.options mutableCopy]);
+        if (!mutableOptions)
+            mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
+        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+        [self _setTextIndicator:dictionaryPopupInfo.textIndicator.get() fadeOut:NO animationCompletionHandler:[dictionaryPopupInfo, textBaselineOrigin, mutableOptions] {
+            [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+        }];
+    } else
+        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:dictionaryPopupInfo.options.get()];
 }
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+- (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
+{
+    [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:[] { }];
+}
+#endif // PLATFORM(MAC)
 
 @end
 

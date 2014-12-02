@@ -34,6 +34,7 @@
 #import "DOMDocumentInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "DictionaryPopupInfo.h"
 #import "WebActionMenuController.h"
 #import "WebArchive.h"
 #import "WebClipView.h"
@@ -115,6 +116,7 @@
 #import <WebCore/StyleProperties.h>
 #import <WebCore/Text.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
@@ -5634,12 +5636,22 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     NSRect rect = coreFrame->selection().selectionBounds();
 
-    NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
+    NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0, 1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
     if (font)
-        rect.origin.y += [font ascender];
+        rect.origin.y += [font descender];
 
-    [self showDefinitionForAttributedString:attrString atPoint:rect.origin];
+    DictionaryPopupInfo info;
+    info.attributedString = attrString;
+    info.origin = coreFrame->view()->contentsToWindow(enclosingIntRect(rect)).location();
+    info.textIndicator = TextIndicator::createWithSelectionInFrame(*coreFrame, TextIndicatorPresentationTransition::BounceAndCrossfade);
+    [[self _webView] _showDictionaryLookupPopup:info];
+}
+
+- (void)quickLookWithEvent:(NSEvent *)event
+{
+    [[self _webView] _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:[] { }];
+    [super quickLookWithEvent:event];
 }
 #endif // !PLATFORM(IOS)
 
