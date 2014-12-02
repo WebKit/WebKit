@@ -36,6 +36,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StyleProperties.h"
+#include "StyledElement.h"
 #include <runtime/IdentifierInlines.h>
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
@@ -344,7 +345,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyNa
 
     // Choke point for interaction with style of element; notify DOMTimer of the event.
     if (auto* element = impl().parentElement())
-        DOMTimer::scriptDidUpdateStyleOfElement(*element, changed);
+        DOMTimer::scriptDidCauseElementRepaint(*element, changed);
 
     return true;
 }

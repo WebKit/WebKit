@@ -279,6 +279,9 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
 
 void HTMLCanvasElement::notifyObserversCanvasChanged(const FloatRect& rect)
 {
+    // Choke point for canvas drawing; notify DOMTimer of the event.
+    DOMTimer::scriptDidCauseElementRepaint(*this);
+
     for (auto it = m_observers.begin(), end = m_observers.end(); it != end; ++it)
         (*it)->canvasChanged(*this, rect);
 }

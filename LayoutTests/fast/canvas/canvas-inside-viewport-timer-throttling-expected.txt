@@ -1,0 +1,13 @@
+Test that a DOM timer drawing on a canvas inside viewport does not get throttled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Timer should initially not be throttled.
+PASS internals.isTimerThrottled(timeoutId) is false
+Timer should still not be throttled because it is drawing on a canvas inside viewport.
+PASS internals.isTimerThrottled(timeoutId) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

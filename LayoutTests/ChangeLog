@@ -1,3 +1,19 @@
+2014-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Take into consideration canvas drawing for throttling DOM timers
+        https://bugs.webkit.org/show_bug.cgi?id=139140
+        <rdar://problem/19102218>
+
+        Reviewed by Andreas Kling.
+
+        Add layout tests to test that we take into consideration canvas drawing
+        when considering if we should throttle DOM timers.
+
+        * fast/canvas/canvas-inside-viewport-timer-throttling-expected.txt: Added.
+        * fast/canvas/canvas-inside-viewport-timer-throttling.html: Added.
+        * fast/canvas/canvas-outside-viewport-timer-throttling-expected.txt: Added.
+        * fast/canvas/canvas-outside-viewport-timer-throttling.html: Added.
+
 2014-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Crash in Font::dashesForIntersectionsWithRect() due to underlining SVG fonts

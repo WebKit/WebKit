@@ -41,7 +41,6 @@ namespace WebCore {
     class HTMLPlugInElement;
     class IntRect;
     class ScheduledAction;
-    class StyledElement;
 
     class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimer {
         WTF_MAKE_NONCOPYABLE(DOMTimer);
@@ -60,7 +59,7 @@ namespace WebCore {
         void updateThrottlingStateAfterViewportChange(const IntRect& visibleRect);
 
         static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
-        static void scriptDidUpdateStyleOfElement(StyledElement&, bool changed);
+        static void scriptDidCauseElementRepaint(Element&, bool changed = true);
 
     private:
         DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
