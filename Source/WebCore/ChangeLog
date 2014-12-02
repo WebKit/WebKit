@@ -1,5 +1,11 @@
 2014-12-02  Beth Dakin  <bdakin@apple.com>
 
+        Another build fix.
+
+        * platform/spi/mac/NSMenuSPI.h:
+
+2014-12-02  Beth Dakin  <bdakin@apple.com>
+
         Speculative build fix.
 
         * platform/spi/mac/QuickLookMacSPI.h:
