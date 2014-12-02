@@ -1,3 +1,21 @@
+2014-11-20  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Clients should be able to customize preview click behavior
+        https://bugs.webkit.org/show_bug.cgi?id=138940
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Declare -_handleClickInPreviewView:URL:.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _handleClickInPreviewView:URL:]):
+        Extracted from -[WKActionMenuController pagePreviewViewControllerWasClicked:].
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController pagePreviewViewControllerWasClicked:]):
+        Extract code to -[WKView _handleClickInPreviewView:URL:].
+
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
         Merge r176418. <rdar://problem/19042323>
