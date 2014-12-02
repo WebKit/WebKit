@@ -192,11 +192,10 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
+    if (!menu.numberOfItems)
+        return;
+
     if (_type == kWKActionMenuDataDetectedItem) {
-        if (_currentActionContext && ![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
-            [menu cancelTracking];
-            return;
-        }
         if (menu.numberOfItems == 1)
             _page->clearSelection();
         else
@@ -726,6 +725,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     if (_state != ActionMenuState::Ready)
         [self _updateActionMenuItems];
+
+    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && ![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+        [menu cancelTracking];
+        [menu removeAllItems];
+    }
 }
 
 - (void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item

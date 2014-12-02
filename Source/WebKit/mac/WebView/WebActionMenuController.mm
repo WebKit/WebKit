@@ -151,6 +151,11 @@ struct DictionaryPopupInfo {
 
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
+
+    if (_type == WebActionMenuDataDetectedItem && _currentActionContext && ![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+        [menu cancelTracking];
+        [menu removeAllItems];
+    }
 }
 
 - (BOOL)isMenuForTextContent
@@ -183,12 +188,10 @@ struct DictionaryPopupInfo {
     if (menu != _webView.actionMenu)
         return;
 
-    if (_type == WebActionMenuDataDetectedItem) {
-        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
-            [menu cancelTracking];
-            return;
-        }
+    if (!menu.numberOfItems)
+        return;
 
+    if (_type == WebActionMenuDataDetectedItem) {
         if (menu.numberOfItems == 1)
             [[_webView _selectedOrMainFrame] _clearSelection];
         else
