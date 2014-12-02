@@ -53,17 +53,18 @@
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
+#import <objc/objc-auto.h>
 
 namespace API {
 
 void Object::ref()
 {
-    [wrapper() retain];
+    CFRetain(wrapper());
 }
 
 void Object::deref()
 {
-    [wrapper() release];
+    CFRelease(wrapper());
 }
 
 void* Object::newObject(size_t size, Type type)
@@ -178,6 +179,11 @@ void* Object::newObject(size_t size, Type type)
 
     Object& object = wrapper._apiObject;
     object.m_wrapper = wrapper;
+
+#if PLATFORM(MAC)
+    if (objc_collectingEnabled())
+        object.ref();
+#endif
 
     return &object;
 }

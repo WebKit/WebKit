@@ -1,3 +1,19 @@
+2014-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Make WebKit2 work slightly better with garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=139159
+        <rdar://problem/19108390>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::ref):
+        (API::Object::deref):
+        Call CFRetain/CFRelease to prevent the memory from being collected.
+
+        (API::Object::newObject):
+        Call CFRetain under GC so we'll prevent memory from being collected prematurely.
+
 2014-12-01  Tim Horton  <timothy_horton@apple.com>
 
         Implement yellow highlight for WebKit1 data detectors
