@@ -1624,7 +1624,7 @@ bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags, Rel
         break;
     }
     if (!b || releaseCalc == ReleaseParsedCalcValue)
-        m_parsedCalculation.release();
+        m_parsedCalculation = nullptr;
     return b;    
 }
 
@@ -2504,7 +2504,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyOrder:
         if (validUnit(value, FInteger, CSSStrictMode)) {
             // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
-            double result = std::max<double>(std::numeric_limits<int>::min() + 2, parsedDouble(value, ReleaseParsedCalcValue));
+            double result = std::max<double>(std::numeric_limits<int>::min() + 2, parsedDouble(*value, ReleaseParsedCalcValue));
             parsedValue = cssValuePool().createValue(result, CSSPrimitiveValue::CSS_NUMBER);
             m_valueList->next();
         }
@@ -2720,7 +2720,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyColumnSpan: // none | all | 1 (will be dropped in the unprefixed property)
         if (id == CSSValueAll || id == CSSValueNone)
             validPrimitive = true;
-        else if (validUnit(value, FNumber | FNonNeg) && parsedDouble(value, ReleaseParsedCalcValue) == 1) {
+        else if (validUnit(value, FNumber | FNonNeg) && parsedDouble(*value, ReleaseParsedCalcValue) == 1) {
             addProperty(CSSPropertyColumnSpan, cssValuePool().createValue(1, CSSPrimitiveValue::CSS_NUMBER), important);
             return true;
         }
@@ -2730,7 +2730,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         else {
             // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
-            validPrimitive = validUnit(value, FLength | FNonNeg, CSSStrictMode) && parsedDouble(value);
+            validPrimitive = validUnit(value, FLength | FNonNeg, CSSStrictMode) && parsedDouble(*value);
             if (!validPrimitive)
                 m_parsedCalculation.clear();
         }
@@ -4002,7 +4002,7 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseFillPositionComponent(CSSParserVal
         int percent = 0;
         if (id == CSSValueLeft || id == CSSValueRight) {
             if (cumulativeFlags & XFillPosition)
-                return 0;
+                return nullptr;
             cumulativeFlags |= XFillPosition;
             individualFlag = XFillPosition;
             if (id == CSSValueRight)
@@ -4010,7 +4010,7 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseFillPositionComponent(CSSParserVal
         }
         else if (id == CSSValueTop || id == CSSValueBottom) {
             if (cumulativeFlags & YFillPosition)
-                return 0;
+                return nullptr;
             cumulativeFlags |= YFillPosition;
             individualFlag = YFillPosition;
             if (id == CSSValueBottom)
@@ -4036,12 +4036,12 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseFillPositionComponent(CSSParserVal
             individualFlag = YFillPosition;
         } else {
             if (m_parsedCalculation)
-                m_parsedCalculation.release();
-            return 0;
+                m_parsedCalculation = nullptr;
+            return nullptr;
         }
         return createPrimitiveNumericValue(valueList->current());
     }
-    return 0;
+    return nullptr;
 }
 
 static bool isValueConflictingWithCurrentEdge(int value1, int value2)
@@ -4682,15 +4682,16 @@ bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<C
 
 bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result)
 {
-    CSSParserValue* v = args->current();
-    if (!validUnit(v, FNumber))
+    CSSParserValue* value = args->current();
+    if (!validUnit(value, FNumber))
         return false;
-    result = parsedDouble(v, ReleaseParsedCalcValue);
-    v = args->next();
-    if (!v)
+    result = parsedDouble(*value, ReleaseParsedCalcValue);
+    value = args->next();
+    if (!value) {
         // The last number in the function has no comma after it, so we're done.
         return true;
-    if (!isComma(v))
+    }
+    if (!isComma(value))
         return false;
     args->next();
     return true;
@@ -6448,12 +6449,12 @@ static CSSValueID createFontWeightValueKeyword(int weight)
 
 bool CSSParser::parseFontWeight(bool important)
 {
-    CSSParserValue* value = m_valueList->current();
-    if ((value->id >= CSSValueNormal) && (value->id <= CSSValue900)) {
-        addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(value->id), important);
+    CSSParserValue& value = *m_valueList->current();
+    if ((value.id >= CSSValueNormal) && (value.id <= CSSValue900)) {
+        addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(value.id), important);
         return true;
     }
-    if (validUnit(value, FInteger | FNonNeg, CSSQuirksMode)) {
+    if (validUnit(&value, FInteger | FNonNeg, CSSQuirksMode)) {
         int weight = static_cast<int>(parsedDouble(value, ReleaseParsedCalcValue));
         if (!(weight % 100) && weight >= 100 && weight <= 900) {
             addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(createFontWeightValueKeyword(weight)), important);
@@ -6949,11 +6950,11 @@ bool CSSParser::fastParseColor(RGBA32& rgb, const StringType& name, bool strict)
     return false;
 }
     
-inline double CSSParser::parsedDouble(CSSParserValue *v, ReleaseParsedCalcValueCondition releaseCalc)
+inline double CSSParser::parsedDouble(CSSParserValue& value, ReleaseParsedCalcValueCondition releaseCalc)
 {
-    const double result = m_parsedCalculation ? m_parsedCalculation->doubleValue() : v->fValue;
+    double result = m_parsedCalculation ? m_parsedCalculation->doubleValue() : value.fValue;
     if (releaseCalc == ReleaseParsedCalcValue)
-        m_parsedCalculation.release();
+        m_parsedCalculation = nullptr;
     return result;
 }
 
@@ -6966,66 +6967,66 @@ bool CSSParser::isCalculation(CSSParserValue* value)
             || equalIgnoringCase(value->function->name, "-webkit-max("));
 }
 
-inline int CSSParser::colorIntFromValue(CSSParserValue* v)
+inline int CSSParser::colorIntFromValue(CSSParserValue& value)
 {
     bool isPercent;
     
     if (m_parsedCalculation)
         isPercent = m_parsedCalculation->category() == CalcPercent;
     else
-        isPercent = v->unit == CSSPrimitiveValue::CSS_PERCENTAGE;
+        isPercent = value.unit == CSSPrimitiveValue::CSS_PERCENTAGE;
 
-    const double value = parsedDouble(v, ReleaseParsedCalcValue);
+    const double doubleValue = parsedDouble(value, ReleaseParsedCalcValue);
     
-    if (value <= 0.0)
+    if (doubleValue <= 0.0)
         return 0;
 
     if (isPercent) {
-        if (value >= 100.0)
+        if (doubleValue >= 100.0)
             return 255;
-        return static_cast<int>(value * 256.0 / 100.0);
+        return static_cast<int>(doubleValue * 256.0 / 100.0);
     }
 
-    if (value >= 255.0)
+    if (doubleValue >= 255.0)
         return 255;
 
-    return static_cast<int>(value);
+    return static_cast<int>(doubleValue);
 }
 
 bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, bool parseAlpha)
 {
     CSSParserValueList* args = value->function->args.get();
-    CSSParserValue* v = args->current();
+    CSSParserValue* currentValue = args->current();
     Units unitType = FUnknown;
     // Get the first value and its type
-    if (validUnit(v, FInteger, CSSStrictMode))
+    if (validUnit(currentValue, FInteger, CSSStrictMode))
         unitType = FInteger;
-    else if (validUnit(v, FPercent, CSSStrictMode))
+    else if (validUnit(currentValue, FPercent, CSSStrictMode))
         unitType = FPercent;
     else
         return false;
     
-    colorArray[0] = colorIntFromValue(v);
+    colorArray[0] = colorIntFromValue(*currentValue);
     for (int i = 1; i < 3; i++) {
-        v = args->next();
-        if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+        currentValue = args->next();
+        if (currentValue->unit != CSSParserValue::Operator && currentValue->iValue != ',')
             return false;
-        v = args->next();
-        if (!validUnit(v, unitType, CSSStrictMode))
+        currentValue = args->next();
+        if (!validUnit(currentValue, unitType, CSSStrictMode))
             return false;
-        colorArray[i] = colorIntFromValue(v);
+        colorArray[i] = colorIntFromValue(*currentValue);
     }
     if (parseAlpha) {
-        v = args->next();
-        if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+        currentValue = args->next();
+        if (currentValue->unit != CSSParserValue::Operator && currentValue->iValue != ',')
             return false;
-        v = args->next();
-        if (!validUnit(v, FNumber, CSSStrictMode))
+        currentValue = args->next();
+        if (!validUnit(currentValue, FNumber, CSSStrictMode))
             return false;
-        const double value = parsedDouble(v, ReleaseParsedCalcValue);
+        double doubleValue = parsedDouble(*currentValue, ReleaseParsedCalcValue);
         // Convert the floating pointer number of alpha to an integer in the range [0, 256),
         // with an equal distribution across all 256 values.
-        colorArray[3] = static_cast<int>(std::max<double>(0, std::min<double>(1, value)) * nextafter(256.0, 0.0));
+        colorArray[3] = static_cast<int>(std::max<double>(0, std::min<double>(1, doubleValue)) * nextafter(256.0, 0.0));
     }
     return true;
 }
@@ -7038,29 +7039,29 @@ bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, boo
 bool CSSParser::parseHSLParameters(CSSParserValue* value, double* colorArray, bool parseAlpha)
 {
     CSSParserValueList* args = value->function->args.get();
-    CSSParserValue* v = args->current();
+    CSSParserValue* currentValue = args->current();
     // Get the first value
-    if (!validUnit(v, FNumber, CSSStrictMode))
+    if (!validUnit(currentValue, FNumber, CSSStrictMode))
         return false;
     // normalize the Hue value and change it to be between 0 and 1.0
-    colorArray[0] = (((static_cast<int>(parsedDouble(v, ReleaseParsedCalcValue)) % 360) + 360) % 360) / 360.0;
-    for (int i = 1; i < 3; i++) {
-        v = args->next();
-        if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+    colorArray[0] = (((static_cast<int>(parsedDouble(*currentValue, ReleaseParsedCalcValue)) % 360) + 360) % 360) / 360.0;
+    for (int i = 1; i < 3; ++i) {
+        currentValue = args->next();
+        if (currentValue->unit != CSSParserValue::Operator && currentValue->iValue != ',')
             return false;
-        v = args->next();
-        if (!validUnit(v, FPercent, CSSStrictMode))
+        currentValue = args->next();
+        if (!validUnit(currentValue, FPercent, CSSStrictMode))
             return false;
-        colorArray[i] = std::max<double>(0, std::min<double>(100, parsedDouble(v, ReleaseParsedCalcValue))) / 100.0; // needs to be value between 0 and 1.0
+        colorArray[i] = std::max<double>(0, std::min<double>(100, parsedDouble(*currentValue, ReleaseParsedCalcValue))) / 100.0; // needs to be value between 0 and 1.0
     }
     if (parseAlpha) {
-        v = args->next();
-        if (v->unit != CSSParserValue::Operator && v->iValue != ',')
+        currentValue = args->next();
+        if (currentValue->unit != CSSParserValue::Operator && currentValue->iValue != ',')
             return false;
-        v = args->next();
-        if (!validUnit(v, FNumber, CSSStrictMode))
+        currentValue = args->next();
+        if (!validUnit(currentValue, FNumber, CSSStrictMode))
             return false;
-        colorArray[3] = std::max<double>(0, std::min<double>(1, parsedDouble(v, ReleaseParsedCalcValue)));
+        colorArray[3] = std::max<double>(0, std::min<double>(1, parsedDouble(*currentValue, ReleaseParsedCalcValue)));
     }
     return true;
 }
@@ -7368,10 +7369,10 @@ bool CSSParser::parseFlex(CSSParserValueList* args, bool important)
     while (CSSParserValue* arg = args->current()) {
         if (validUnit(arg, FNumber | FNonNeg)) {
             if (flexGrow == unsetValue)
-                flexGrow = arg->fValue;
+                flexGrow = parsedDouble(*arg, ReleaseParsedCalcValue);
             else if (flexShrink == unsetValue)
-                flexShrink = arg->fValue;
-            else if (!arg->fValue) {
+                flexShrink = parsedDouble(*arg, ReleaseParsedCalcValue);
+            else if (!parsedDouble(*arg, ReleaseParsedCalcValue)) {
                 // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
                 flexBasis = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX);
             } else {

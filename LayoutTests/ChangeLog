@@ -1,5 +1,17 @@
 2014-12-02  Chris Dumez  <cdumez@apple.com>
 
+        Crash when setting 'flex' CSS property to 'calc(2 * 3) calc(2 * 3)'
+        https://bugs.webkit.org/show_bug.cgi?id=139162
+
+        Reviewed by Darin Adler.
+
+        Add layout test for calculated value support for 'flex' CSS property.
+
+        * fast/css/flex-calculated-value-expected.txt: Added.
+        * fast/css/flex-calculated-value.html: Added.
+
+2014-12-02  Chris Dumez  <cdumez@apple.com>
+
         Crash when setting 'column-span' CSS property to 'calc(2 * 3)'
         https://bugs.webkit.org/show_bug.cgi?id=139170
 

@@ -623,8 +623,8 @@ private:
     bool validUnit(CSSParserValue*, Units, CSSParserMode, ReleaseParsedCalcValueCondition releaseCalc = DoNotReleaseParsedCalcValue);
 
     bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);
-    int colorIntFromValue(CSSParserValue*);
-    double parsedDouble(CSSParserValue*, ReleaseParsedCalcValueCondition releaseCalc = DoNotReleaseParsedCalcValue);
+    int colorIntFromValue(CSSParserValue&);
+    double parsedDouble(CSSParserValue&, ReleaseParsedCalcValueCondition releaseCalc = DoNotReleaseParsedCalcValue);
     
     friend class TransformOperationInfo;
     friend class FilterOperationInfo;
