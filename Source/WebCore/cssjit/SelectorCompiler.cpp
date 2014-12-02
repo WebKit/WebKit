@@ -636,6 +636,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 if (selectorContext != SelectorContext::QuerySelector)
                     globalFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
 
+                unsigned firstFragmentListSpecificity = 0;
+                bool firstFragmentListSpecificitySet = false;
+
                 for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
                     SelectorFragmentList selectorFragments;
                     VisitedMode ignoreVisitedMode = VisitedMode::None;
@@ -651,8 +654,19 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                     case FunctionType::CannotCompile:
                         return FunctionType::CannotCompile;
                     }
+
+                    if (firstFragmentListSpecificitySet) {
+                        // The CSS JIT does not handle dynamic specificity yet.
+                        if (selectorContext == SelectorContext::RuleCollector && selectorFragments.staticSpecificity != firstFragmentListSpecificity)
+                            return FunctionType::CannotCompile;
+                    } else {
+                        firstFragmentListSpecificitySet = true;
+                        firstFragmentListSpecificity = selectorFragments.staticSpecificity;
+                    }
+
                     globalFunctionType = mostRestrictiveFunctionType(globalFunctionType, functionType);
                 }
+                internalSpecificity = firstFragmentListSpecificity;
                 fragment.nthChildOfFilters.append(nthChildOfSelectorInfo);
                 return globalFunctionType;
             }

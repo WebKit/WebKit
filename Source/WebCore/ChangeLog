@@ -1,3 +1,35 @@
+2014-12-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the dynamic specificity of the selector list argument when matching :nth-child() and :nth-last-child()
+        https://bugs.webkit.org/show_bug.cgi?id=139001
+
+        Reviewed by Andreas Kling.
+
+        When matching :nth-child(An+B of selector list) or :nth-last-child(An+B of selector list),
+        we were previously ignoring the arguments.
+
+        That behavior seems to be confusing for users. We made the proposal to include the selector list
+        like when using :matches():
+            http://lists.w3.org/Archives/Public/www-style/2014Oct/0533.html
+        David Baron also agrees with this behavior:
+            http://lists.w3.org/Archives/Public/www-style/2014Oct/0534.html
+
+        This patch adds the specificity computation.
+
+        Tests: fast/css/nth-child-specificity-1.html
+               fast/css/nth-child-specificity-2.html
+               fast/css/nth-last-child-specificity-1.html
+               fast/css/nth-last-child-specificity-2.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::simpleSelectorFunctionalPseudoClassStaticSpecificity):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::matchSelectorList):
+        * css/SelectorChecker.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2014-12-01  Chris Dumez  <cdumez@apple.com>
 
         Move 'text-shadow' / 'box-shadow' / '-webkit-box-shadow' to the new StyleBuilder

@@ -131,9 +131,15 @@ static unsigned staticSpecificityInternal(const CSSSelector& firstSimpleSelector
 static unsigned simpleSelectorFunctionalPseudoClassStaticSpecificity(const CSSSelector& simpleSelector, bool& ok)
 {
     if (simpleSelector.match() == CSSSelector::PseudoClass) {
-        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
-            const CSSSelectorList& selectorList = *simpleSelector.selectorList();
-            const CSSSelector& firstSubselector = *selectorList.first();
+        CSSSelector::PseudoClassType pseudoClassType = simpleSelector.pseudoClassType();
+        if (pseudoClassType == CSSSelector::PseudoClassMatches || pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild) {
+            const CSSSelectorList* selectorList = simpleSelector.selectorList();
+            if (!selectorList) {
+                ASSERT_WITH_MESSAGE(pseudoClassType != CSSSelector::PseudoClassMatches, ":matches() should never be created without a valid selector list.");
+                return 0;
+            }
+
+            const CSSSelector& firstSubselector = *selectorList->first();
 
             unsigned initialSpecificity = staticSpecificityInternal(firstSubselector, ok);
             if (!ok)

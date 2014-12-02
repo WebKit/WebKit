@@ -744,7 +744,10 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (element->parentElement()) {
 #if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
-                    if (!matchSelectorList(context, *element, *selectorList))
+                    unsigned selectorListSpecificity;
+                    if (matchSelectorList(context, *element, *selectorList, selectorListSpecificity))
+                        specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
+                    else
                         return false;
                 }
 #endif
@@ -759,7 +762,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                         if (context.resolvingMode == Mode::ResolvingStyle)
                             sibling->setAffectsNextSiblingElementStyle();
 
-                        if (matchSelectorList(context, *sibling, *selectorList))
+                        unsigned ignoredSpecificity;
+                        if (matchSelectorList(context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
                 } else
@@ -796,7 +800,10 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
-                    if (!matchSelectorList(context, *element, *selectorList))
+                    unsigned selectorListSpecificity;
+                    if (matchSelectorList(context, *element, *selectorList, selectorListSpecificity))
+                        specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
+                    else
                         return false;
 
                     if (context.resolvingMode == Mode::ResolvingStyle) {
@@ -812,7 +819,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
 #if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
-                        if (matchSelectorList(context, *sibling, *selectorList))
+                        unsigned ignoredSpecificity;
+                        if (matchSelectorList(context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
                 } else
@@ -1029,8 +1037,11 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
     return true;
 }
 
-bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseContext, Element& element, const CSSSelectorList& selectorList) const
+bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseContext, Element& element, const CSSSelectorList& selectorList, unsigned& specificity) const
 {
+    specificity = 0;
+    bool hasMatchedAnything = false;
+
     for (const CSSSelector* subselector = selectorList.first(); subselector; subselector = CSSSelectorList::next(subselector)) {
         CheckingContextWithStatus subcontext(baseContext);
         subcontext.element = &element;
@@ -1042,10 +1053,12 @@ bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseCon
         unsigned localSpecificity = 0;
         if (matchRecursively(subcontext, ignoreDynamicPseudo, localSpecificity).match == Match::SelectorMatches) {
             ASSERT(!ignoreDynamicPseudo);
-            return true;
+
+            hasMatchedAnything = true;
+            specificity = std::max(specificity, localSpecificity);
         }
     }
-    return false;
+    return hasMatchedAnything;
 }
 
 bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContextWithStatus& context, const CSSSelector* selector) const
