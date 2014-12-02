@@ -745,14 +745,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
     }
         
-    case GetMyScope:
-        if (graph.m_codeBlock->needsActivation()) {
-            read(AbstractHeap(Variables, JSStack::ScopeChain));
-            def(HeapLocation(VariableLoc, AbstractHeap(Variables, JSStack::ScopeChain)), node);
-        } else
-            def(PureValue(node));
-        return;
-        
     case GetClosureRegisters:
         read(JSEnvironmentRecord_registers);
         def(HeapLocation(ClosureRegistersLoc, JSEnvironmentRecord_registers, node->child1()), node);

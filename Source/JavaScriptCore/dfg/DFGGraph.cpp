@@ -887,8 +887,6 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
                 
                 if (reg.offset() == JSStack::Callee)
                     return true;
-                if (reg.offset() == JSStack::ScopeChain)
-                    return true;
                 
                 return false;
             }

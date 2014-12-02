@@ -1192,7 +1192,6 @@ private:
         case Flush:
         case PhantomLocal:
         case GetLocalUnlinked:
-        case GetMyScope:
         case GetClosureVar:
         case GetGlobalVar:
         case NotifyWrite:

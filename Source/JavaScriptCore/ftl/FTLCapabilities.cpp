@@ -99,7 +99,6 @@ inline CapabilityLevel canCompile(Node* node)
     case Upsilon:
     case ExtractOSREntryLocal:
     case LoopHint:
-    case GetMyScope:
     case SkipScope:
     case GetClosureRegisters:
     case GetClosureVar:

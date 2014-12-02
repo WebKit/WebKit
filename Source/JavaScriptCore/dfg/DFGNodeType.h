@@ -177,7 +177,6 @@ namespace JSC { namespace DFG {
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
     macro(GetScope, NodeResultJS) \
-    macro(GetMyScope, NodeResultJS) \
     macro(SkipScope, NodeResultJS) \
     macro(GetClosureRegisters, NodeResultStorage) \
     macro(GetClosureVar, NodeResultJS) \
