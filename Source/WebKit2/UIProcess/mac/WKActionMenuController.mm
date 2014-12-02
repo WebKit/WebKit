@@ -210,10 +210,12 @@ using namespace WebKit;
         return;
     }
 
-    if (![self isMenuForTextContent]) {
 #if WK_API_ENABLED
+    if (_type == kWKActionMenuLink)
         [self _createPreviewPopover];
 #endif
+
+    if (![self isMenuForTextContent]) {
         _page->clearSelection();
         return;
     }

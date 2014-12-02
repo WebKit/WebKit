@@ -1,5 +1,21 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176460. <rdar://problem/19059946>
+
+    2014-11-21  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r176238): Mailto links are getting preloaded, which results in a compose window
+            https://bugs.webkit.org/show_bug.cgi?id=138972
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController willOpenMenu:withEvent:]):
+            Only preload links.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176430. <rdar://problem/18904651>
 
     2014-11-20  Beth Dakin  <bdakin@apple.com>
