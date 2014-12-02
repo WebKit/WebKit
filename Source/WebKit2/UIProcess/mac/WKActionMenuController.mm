@@ -635,11 +635,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!actionContext)
         return @[ ];
 
-    // Blacklist contact results, because they don't have useful menus. If we
-    // bail here, before setting up _currentActionContext, we'll still allow fallthrough
-    // to ordinary text actions, avoiding mysterious failure when a contact is detected.
-    if (CFEqual(DDResultGetType(actionContext.mainResult), CFSTR("Contact")))
-        return @[ ];
+    actionContext.altMode = YES;
+    if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
+        if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
+            return @[ ];
+    }
 
     // Ref our WebPageProxy for use in the blocks below.
     RefPtr<WebPageProxy> page = _page;
@@ -755,7 +755,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
     // FIXME: Should this show a yellow highlight?
     RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
-    [actionContext setForActionMenuContent:YES];
+    [actionContext setAltMode:YES];
     [actionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil]]];
     return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:actionContext.get()];
 }
