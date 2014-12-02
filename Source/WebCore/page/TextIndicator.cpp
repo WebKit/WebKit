@@ -133,7 +133,10 @@ static PassRefPtr<Image> snapshotSelectionWithHighlight(Frame& frame)
 PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorPresentationTransition presentationTransition)
 {
     IntRect selectionRect = enclosingIntRect(frame.selection().selectionBounds());
-    RefPtr<Image> indicatorBitmap = snapshotSelection(frame, SnapshotOptionsForceBlackText)->copyImage(CopyBackingStore, Unscaled);
+    std::unique_ptr<ImageBuffer> indicatorBuffer = snapshotSelection(frame, SnapshotOptionsForceBlackText);
+    if (!indicatorBuffer)
+        return nullptr;
+    RefPtr<Image> indicatorBitmap = indicatorBuffer->copyImage(CopyBackingStore, Unscaled);
     if (!indicatorBitmap)
         return nullptr;
 
