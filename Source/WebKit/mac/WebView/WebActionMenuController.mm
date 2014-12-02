@@ -62,6 +62,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextCheckerClient.h>
+#import <WebCore/TextIndicator.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
@@ -131,6 +132,19 @@ struct DictionaryPopupInfo {
     return [[[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult] autorelease];
 }
 
+- (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event
+{
+    if (_type == WebActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
+        [getDDActionsManagerClass() didUseActions];
+        _hasActivatedActionContext = NO;
+    }
+}
+
+- (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event
+{
+    [self _dismissActionMenuPopovers];
+}
+
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     if (!_webView)
@@ -140,6 +154,7 @@ struct DictionaryPopupInfo {
     if (menu != actionMenu)
         return;
 
+    [self _dismissActionMenuPopovers];
     [actionMenu removeAllItems];
 
     WebElementDictionary *hitTestResult = [self performHitTestAtPoint:event.locationInWindow];
@@ -152,9 +167,12 @@ struct DictionaryPopupInfo {
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
 
-    if (_type == WebActionMenuDataDetectedItem && _currentActionContext && ![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
-        [menu cancelTracking];
-        [menu removeAllItems];
+    if (_type == WebActionMenuDataDetectedItem && _currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
+            [menu cancelTracking];
+            [menu removeAllItems];
+        }
     }
 }
 
@@ -220,11 +238,16 @@ struct DictionaryPopupInfo {
     if (menu != _webView.actionMenu)
         return;
 
-    if (_type == WebActionMenuDataDetectedItem && _currentActionContext)
+    if (_type == WebActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
         [getDDActionsManagerClass() didUseActions];
+        _hasActivatedActionContext = NO;
+    }
 
     _type = WebActionMenuNone;
     _sharingServicePicker = nil;
+    _currentDetectedDataTextIndicator = nil;
+    _currentDetectedDataRange = nil;
+    _currentActionContext = nil;
 }
 
 #pragma mark Link actions
@@ -579,16 +602,22 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
             return @[ ];
     }
 
-    // FIXME: We should hide/show the yellow highlight here.
+    _currentDetectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::BounceAndCrossfade);
+
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
+        [self _showTextIndicator];
     } interactionStoppedHandler:^() {
+        [self _hideTextIndicator];
     }];
     _currentDetectedDataRange = detectedDataRange;
 
-    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:[_webView convertRect:detectedDataBoundingBox toView:nil]]];
+    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedDataBoundingBox]];
 
-    return [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    if (menuItems.count == 1 && _currentDetectedDataTextIndicator)
+        _currentDetectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
+    return menuItems;
 }
 
 - (void)_copySelection:(id)sender
@@ -896,6 +925,37 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
 
     _type = WebActionMenuNone;
     return @[ ];
+}
+
+#pragma mark Text Indicator
+
+- (void)_showTextIndicator
+{
+    if (_isShowingTextIndicator)
+        return;
+
+    if (_type == WebActionMenuDataDetectedItem && _currentDetectedDataTextIndicator) {
+        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO animationCompletionHandler:^ { }];
+        _isShowingTextIndicator = YES;
+    }
+}
+
+- (void)_hideTextIndicator
+{
+    if (!_isShowingTextIndicator)
+        return;
+
+    [_webView _clearTextIndicator];
+    _isShowingTextIndicator = NO;
+}
+
+- (void)_dismissActionMenuPopovers
+{
+    DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
+    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
+        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+
+    [self _hideTextIndicator];
 }
 
 @end

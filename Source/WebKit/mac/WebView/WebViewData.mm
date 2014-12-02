@@ -36,6 +36,7 @@
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/HistoryItem.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>

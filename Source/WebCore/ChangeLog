@@ -1,3 +1,27 @@
+2014-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        Implement yellow highlight for WebKit1 data detectors
+        https://bugs.webkit.org/show_bug.cgi?id=138956
+        <rdar://problem/18992185>
+
+        Reviewed by Beth Dakin.
+
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithSelectionInFrame):
+        (WebCore::TextIndicator::TextIndicator):
+        * page/TextIndicator.h:
+        (WebCore::TextIndicator::selectionRectInScreenCoordinates):
+        (WebCore::TextIndicator::textBoundingRectInScreenCoordinates):
+        (WebCore::TextIndicator::selectionRectInWindowCoordinates): Deleted.
+        (WebCore::TextIndicator::textBoundingRectInWindowCoordinates): Deleted.
+        Store TextIndicator rects in screen coordinates, since that's what we
+        want anyway, and this makes it easier to share this code between the WebKits.
+
+        * page/mac/TextIndicatorWindow.mm:
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:]):
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+        Avoid some rect conversion because the TextIndicator rects are already in screen coordinates.
+
 2014-11-21  Tim Horton  <timothy_horton@apple.com>
 
         Move TextIndicator{Window} to WebCore
