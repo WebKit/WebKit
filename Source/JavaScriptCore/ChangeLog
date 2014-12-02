@@ -1,3 +1,27 @@
+2014-12-01  Andreas Kling  <akling@apple.com>
+
+        Optimize constructing JSC::Identifier from AtomicString.
+        <https://webkit.org/b/139157>
+
+        Reviewed by Michael Saboff.
+
+        Add constructors for Identifier taking AtomicString and AtomicStringImpl.
+        This avoids branching on the string's isAtomic flag, which is obviously
+        always true for AtomicString & AtomicStringImpl.
+
+        Had to add a Identifier(const char*) constructor to resolve implicit
+        ambiguity between String / AtomicString.
+
+        Also made PrivateName::uid() return AtomicStringImpl* to take advantage
+        of the new constructor in a few places.
+
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::Identifier):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::uid):
+
 2014-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         Several JavaScriptCore date tests are flaky, because they expect time to be frozen during execution

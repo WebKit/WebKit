@@ -204,6 +204,10 @@ public:
         return addSlowCase(*stringTableProvider.atomicStringTable(), *string);
     }
 
+#if !ASSERT_DISABLED
+    WTF_EXPORT_STRING_API static bool isInAtomicStringTable(StringImpl*);
+#endif
+
 private:
     // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
     AtomicString(ASCIILiteral);
@@ -215,10 +219,6 @@ private:
 
     WTF_EXPORT_STRING_API static AtomicStringImpl* findSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
-
-#if !ASSERT_DISABLED
-    WTF_EXPORT_STRING_API static bool isInAtomicStringTable(StringImpl*);
-#endif
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

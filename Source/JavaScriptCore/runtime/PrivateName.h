@@ -42,7 +42,7 @@ public:
         ASSERT(m_impl->isEmptyUnique());
     }
 
-    StringImpl* uid() const { return m_impl.get(); }
+    AtomicStringImpl* uid() const { return static_cast<AtomicStringImpl*>(m_impl.get()); }
 
 private:
     RefPtr<StringImpl> m_impl;

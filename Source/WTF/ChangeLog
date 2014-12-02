@@ -1,3 +1,15 @@
+2014-12-01  Andreas Kling  <akling@apple.com>
+
+        Optimize constructing JSC::Identifier from AtomicString.
+        <https://webkit.org/b/139157>
+
+        Reviewed by Michael Saboff.
+
+        Make AtomicString::isInAtomicStringTable() public so it can be used
+        in some Identifier assertions.
+
+        * wtf/text/AtomicString.h:
+
 2014-12-01  Oliver Hunt  <oliver@apple.com>
 
         Fix non-mac builds.

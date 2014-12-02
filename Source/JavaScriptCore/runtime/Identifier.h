@@ -44,8 +44,11 @@ public:
     template<unsigned charactersCount>
     Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtomic()); }
 
+    Identifier(ExecState*, AtomicStringImpl*);
+    Identifier(ExecState*, const AtomicString&);
     Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { ASSERT(m_string.impl()->isAtomic()); }
     Identifier(ExecState* exec, const String& s) : m_string(add(exec, s.impl())) { ASSERT(m_string.impl()->isAtomic()); }
+    Identifier(ExecState* exec, const char* s) : Identifier(exec, AtomicString(s)) { }
 
     Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
     Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }

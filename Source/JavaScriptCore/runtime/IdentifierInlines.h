@@ -31,6 +31,30 @@
 
 namespace JSC  {
 
+inline Identifier::Identifier(ExecState* exec, AtomicStringImpl* string)
+    : m_string(string)
+{
+#ifndef NDEBUG
+    checkCurrentAtomicStringTable(exec);
+    if (string)
+        ASSERT_WITH_MESSAGE(!string->length() || AtomicString::isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+#else
+    UNUSED_PARAM(exec);
+#endif
+}
+
+inline Identifier::Identifier(ExecState* exec, const AtomicString& string)
+    : m_string(string.string())
+{
+#ifndef NDEBUG
+    checkCurrentAtomicStringTable(exec);
+    if (!string.isNull())
+        ASSERT_WITH_MESSAGE(!string.length() || AtomicString::isInAtomicStringTable(string.impl()), "The atomic string comes from an other thread!");
+#else
+    UNUSED_PARAM(exec);
+#endif
+}
+
 inline PassRef<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 {
 #ifndef NDEBUG
