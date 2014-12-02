@@ -262,6 +262,9 @@ public:
     JSValue get(ExecState*, PropertyName, PropertySlot&) const;
     JSValue get(ExecState*, unsigned propertyName) const;
     JSValue get(ExecState*, unsigned propertyName, PropertySlot&) const;
+
+    bool getPropertySlot(ExecState*, PropertyName, PropertySlot&) const;
+
     void put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE void putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE void putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
