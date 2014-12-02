@@ -44,7 +44,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
 
     openedWebView = std::make_unique<PlatformWebView>(page);
 
-    WKPageUIClientV5 uiClient;
+    WKPageUIClientV1 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
     uiClient.base.version = 5;
@@ -63,7 +63,7 @@ TEST(WebKit2, CloseFromWithinCreatePage)
 
     PlatformWebView webView(context.get());
 
-    WKPageUIClientV5 uiClient;
+    WKPageUIClientV1 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
     uiClient.base.version = 5;
