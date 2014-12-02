@@ -1,3 +1,19 @@
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176428. <rdar://problem/19052196>
+
+    2014-11-20  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Clicks on previews can be recognized multiple times
+            https://bugs.webkit.org/show_bug.cgi?id=138944
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKPagePreviewViewController _clickRecognized:]):
+            Only dispatch the delegate message on the appropriate gesture recognizer state transition.
+
+
 2014-11-20  Conrad Shultz  <conrad_shultz@apple.com>
 
         Clients should be able to customize preview click behavior
