@@ -88,6 +88,7 @@ enum class ActionMenuState {
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
 - (void)dismissActionMenuPopovers;
+- (void)setPreviewTitle:(NSString *)previewTitle;
 
 @end
 
