@@ -4219,6 +4219,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return nil;
 }
 
+- (void)_setPreviewTitle:(NSString *)previewTitle
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    [_data->_actionMenuController setPreviewTitle:previewTitle];
+#endif
+}
+
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView
 {
 }

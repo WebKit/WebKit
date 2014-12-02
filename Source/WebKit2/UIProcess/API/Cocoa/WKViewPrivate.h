@@ -123,6 +123,7 @@
 
 - (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
 - (NSString *)_titleForPreviewOfURL:(NSURL *)url;
+- (void)_setPreviewTitle:(NSString *)previewTitle;
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
 - (void)_handleClickInPreviewView:(NSView *)previewView URL:(NSURL *)url;
 #endif

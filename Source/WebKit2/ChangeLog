@@ -1,5 +1,37 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176613. <rdar://problem/19108805>
+
+    2014-12-01  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Clients need a way to explicitly set the title of a page preview
+            https://bugs.webkit.org/show_bug.cgi?id=139161
+
+            Reviewed by Beth Dakin.
+
+            This implicitly assumes that only one page preview can be associate with a given WKView at a time.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setPreviewTitle:]):
+            Wrap -[WKActionMenuController setPreviewTitle:]
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            Add ivars for the title and the title text field (previously not independently exposed).
+            (-[WKPagePreviewViewController previewTitle]):
+            Accessor.
+            (-[WKPagePreviewViewController setPreviewTitle:]):
+            Accessor; set the text field's string value.
+            (-[WKPagePreviewViewController loadView]):
+            Adopt the _titleTextField ivar; assume that if a client has explicitly set the previewTitle then we don't
+            need to ask for it again.
+            (-[WKActionMenuController setPreviewTitle:]):
+            Wrap -[WKPagePreviewViewController setPreviewTitle:].
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176599. <rdar://problem/18992185>
 
     2014-12-01  Tim Horton  <timothy_horton@apple.com>
