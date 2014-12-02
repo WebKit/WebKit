@@ -1,3 +1,15 @@
+2014-12-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix logging typo
+        https://bugs.webkit.org/show_bug.cgi?id=139182
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, only logging code is changed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration): Don't use %f to log a string.
+
 2014-12-02  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the WinINet based network implementation

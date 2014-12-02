@@ -1191,7 +1191,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformDuration() const
     if (CMTIME_IS_INDEFINITE(cmDuration))
         return MediaTime::positiveInfiniteTime();
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, toString(MediaTime::invalidTime()).utf8().data());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.s", this, toString(MediaTime::invalidTime()).utf8().data());
     return MediaTime::invalidTime();
 }
 
