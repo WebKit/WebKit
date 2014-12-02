@@ -18,6 +18,8 @@
 		14F3B11315E45EAB00210069 /* SaturatedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */; };
 		1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A02C84E125D4A8400E3F4BD /* Find.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
+		1A50AA1E1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */; };
+		1A50AA201A2A51FC00F4C345 /* close-from-within-create-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */; };
 		1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */; };
 		1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */; };
 		1A7BFC0C171A0BDB00BC5F64 /* WillSendSubmitEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */; };
@@ -141,9 +143,7 @@
 		93A7EB3D18FA63A4009E7670 /* URLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A7EB3C18FA63A4009E7670 /* URLExtras.mm */; };
 		93ABA80916DDAB91002DB2FA /* StringHasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABA80816DDAB91002DB2FA /* StringHasher.cpp */; };
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
-		93AF4ED01506F123007FD57E /* lots-of-images.html in Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
-		93D3D19C17B1A7B000C7C415 /* all-content-in-one-iframe.html in Resources */ = {isa = PBXBuildFile; fileRef = 93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */; };
 		93D3D19E17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D3D19D17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp */; };
 		93F1DB3114DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3014DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp */; };
 		93F1DB3414DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3314DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp */; };
@@ -291,6 +291,7 @@
 				51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */,
 				51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */,
 				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
+				1A50AA201A2A51FC00F4C345 /* close-from-within-create-page.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
 				C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */,
 				C2CF975A16CEC7140054E99D /* JSContextBackForwardCache2.html in Copy Resources */,
@@ -358,6 +359,8 @@
 		14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaturatedArithmeticOperations.cpp; sourceTree = "<group>"; };
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
 		1A02C84E125D4A8400E3F4BD /* Find.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Find.cpp; sourceTree = "<group>"; };
+		1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloseFromWithinCreatePage.cpp; sourceTree = "<group>"; };
+		1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "close-from-within-create-page.html"; sourceTree = "<group>"; };
 		1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJavaScript.cpp; sourceTree = "<group>"; };
 		1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WillSendSubmitEvent.mm; sourceTree = "<group>"; };
 		1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FragmentNavigation.mm; sourceTree = "<group>"; };
@@ -799,6 +802,7 @@
 				BC90977B125571AE00083756 /* Resources */,
 				BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */,
 				7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */,
+				1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */,
 				BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */,
 				BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */,
 				F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */,
@@ -868,6 +872,7 @@
 				51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
 				1AE72F47173EB214006362F0 /* TerminateTwice.cpp */,
+				4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */,
 				BC22D31314DC689800FFB1DD /* UserMessage.cpp */,
 				BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */,
 				520BCF4B141EB09E00937EA8 /* WebArchive.cpp */,
@@ -929,6 +934,7 @@
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
+				1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */,
 				290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
@@ -1192,8 +1198,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93D3D19C17B1A7B000C7C415 /* all-content-in-one-iframe.html in Resources */,
-				93AF4ED01506F123007FD57E /* lots-of-images.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1350,6 +1354,7 @@
 				0F17BBD615AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */,
 				290F4278172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm in Sources */,
 				C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */,
+				1A50AA1E1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp in Sources */,
 				51FBBB4D1513D4E900822738 /* WebViewCanPasteURL.mm in Sources */,
 				37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
 				76E182DA1547550100F1FADD /* WillSendSubmitEvent.cpp in Sources */,
