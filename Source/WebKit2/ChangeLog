@@ -1,5 +1,28 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176570. <rdar://problem/19075587>
+
+    2014-11-28  Tim Horton  <timothy_horton@apple.com>
+
+            Stale userData is handed to WKView _actionMenuItemsForHitTestResult under prepareForMenu
+            https://bugs.webkit.org/show_bug.cgi?id=139069
+            <rdar://problem/19075587>
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController wkView:willHandleMouseDown:]):
+            (-[WKActionMenuController didCloseMenu:withEvent:]):
+            (-[WKActionMenuController _clearActionMenuState]):
+            Previously, _userData was not being cleared in didCloseMenu, so a subsequent
+            action menu invocation would end up sending stale userData to _actionMenuItemsForHitTestResult.
+
+            Additionally, factor all of the cleanup code out into _clearActionMenuState,
+            and call it from both wkView:willHandleMouseDown: and didCloseMenu:withEvent:.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176569. <rdar://problem/19086676>
 
     2014-11-26  Timothy Horton  <timothy_horton@apple.com>
