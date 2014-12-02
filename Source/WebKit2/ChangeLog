@@ -1,5 +1,27 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176463. <rdar://problem/19056715>
+
+    2014-11-21  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r176351): Parts of apple.com/contact aren't Lookup-able
+            https://bugs.webkit.org/show_bug.cgi?id=138960
+            <rdar://problem/19056715>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            Blacklist contact results, because they don't have useful menus. If we
+            bail before setting up _currentActionContext, we'll still allow fallthrough
+            to ordinary text actions, avoiding mysterious failure when a contact is detected.
+
+            This doesn't break the case that r176351 was intended to fix,
+            because in that case we were detecting e.g. addresses.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176460. <rdar://problem/19059946>
 
     2014-11-21  Tim Horton  <timothy_horton@apple.com>
