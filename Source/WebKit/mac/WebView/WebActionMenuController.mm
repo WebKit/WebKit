@@ -573,6 +573,13 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!actionContext || !detectedDataRange)
         return @[ ];
 
+    // Blacklist contact results, because they don't have useful menus. If we
+    // bail here, before setting up _currentActionContext, we'll still allow fallthrough
+    // to ordinary text actions, avoiding mysterious failure when a contact is detected.
+    if (CFEqual(DDResultGetType([actionContext mainResult]), CFSTR("Contact")))
+        return @[ ];
+
+
     // FIXME: We should hide/show the yellow highlight here.
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {

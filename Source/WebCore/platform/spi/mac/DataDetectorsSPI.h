@@ -55,6 +55,7 @@ SOFT_LINK(DataDetectorsCore, DDScanQueryCreateFromString, DDScanQueryRef, (CFAll
 SOFT_LINK(DataDetectorsCore, DDScannerScanQuery, DDScanQueryRef, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
 SOFT_LINK(DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
 SOFT_LINK(DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
+SOFT_LINK(DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
 
 }
 
