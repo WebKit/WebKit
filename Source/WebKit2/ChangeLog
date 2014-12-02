@@ -1,5 +1,23 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176430. <rdar://problem/18904651>
+
+    2014-11-20  Beth Dakin  <bdakin@apple.com>
+
+            Preview popover needs minimum and maximum sizes
+            https://bugs.webkit.org/show_bug.cgi?id=138943
+            -and corresponding-
+            rdar://problem/18904651
+
+            Reviewed by Tim Horton.
+
+            Quick follow-up to get the right screen.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController largestPopoverSize]):
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176429. <rdar://problem/18904651>
 
     2014-11-20  Beth Dakin  <bdakin@apple.com>
