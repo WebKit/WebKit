@@ -1267,7 +1267,10 @@ class Port(object):
         return True
 
     def _should_use_jhbuild(self):
-        return os.path.exists(self.path_from_webkit_base('WebKitBuild', 'Dependencies'))
+        suffix = ""
+        if self.port_name:
+            suffix = self.port_name.upper()
+        return os.path.exists(self.path_from_webkit_base('WebKitBuild', 'Dependencies%s' % suffix))
 
     # FIXME: Eventually we should standarize port naming, and make this method smart enough
     # to use for all port configurations (including architectures, graphics types, etc).
