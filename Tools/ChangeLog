@@ -1,3 +1,48 @@
+2014-12-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests records most DumpRenderTree.app crashes as time-outs
+        https://bugs.webkit.org/show_bug.cgi?id=139143
+
+        Reviewed by David Kilzer.
+
+        Similar to the Windows-specific fix in <https://bugs.webkit.org/show_bug.cgi?id=37859>,
+        teach DumpRenderTree for iOS to write "#CRASHED" to the standard error stream when it
+        crashes. Run-webkit-tests will record as crashing the test associated with the
+        DumpRenderTree instance that wrote that string.
+
+        Currently almost all of the DumpRenderTree.app crashes are recorded by run-
+        webkit-tests as a time-out because ReportCrash(8) delays delivery of the
+        process exit notification for DumpRenderTree.app to LayoutTestRelay, which
+        launched DumpRenderTree.app, past the time-out time limit. Notice LayoutTestRelay
+        was launched by run-webkit-tests. So, run-webkit-tests kills LayoutTestRelay
+        (since it exceeded the time-out time limit) before it can inform rub-webkit-tests
+        about a crash.
+
+        Additionally, update the crash message format written to standard error when LayoutTestRelay
+        detects that {WebKitTestRunner, DumpRenderTree}.app crashed so as to be similar to the
+        crash message format used by WebKitTestRunner when it detects that the WebProcess crashed.
+        Then run-webkit-tests will collect the crash logs for {WebKitTestRunner, DumpRenderTree}.app
+        when they crash in their test machinery logic/UI process code.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (writeCrashedMessageOnFatalError): Added.
+        (dumpRenderTree): Register signal handler, writeCrashedMessageOnFatalError(), for signals:
+        SIGILL, SIGFPE, SIGBUS and SIGSEGV.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController didCrashWithMessage:]): Emit a crash message with a format
+        similar to the format used by WebKitTestRunner so that run-webkit-tests will collect
+        the crash logs for WebKitTestRunner/DumpRenderTree.app.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__): Update comment.
+        (Driver._check_for_driver_crash): Ditto.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort): Add class constant SUBPROCESS_CRASH_REGEX, which represents a compiled
+        regular expression. This constant is used as an optimization to avoid compiling the same
+        regular expression across invocations of _get_crash_log().
+        (IOSSimulatorPort._get_crash_log): Modified to parse the WebKitTestRunner-like crash message
+        for the subprocess name and pid. Also, moved variables crash_log, crash_logs, and now to be
+        closer to where they are used.
+
 2014-12-01  Anders Carlsson  <andersca@apple.com>
 
         Remove WKBundleRemoveAllVisitedLinks

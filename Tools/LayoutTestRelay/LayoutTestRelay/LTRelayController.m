@@ -140,7 +140,7 @@
 - (void)didCrashWithMessage:(NSString *)message
 {
     [[self relay] disconnect];
-    NSString *crashMessage = [NSString stringWithFormat:@"\nCRASH: %@ %d\n", [self processName], [self pid]];
+    NSString *crashMessage = [NSString stringWithFormat:@"\n#CRASHED - %@ (pid %d)\n", [self processName], [self pid]];
 
     if (message)
         crashMessage = [crashMessage stringByAppendingFormat:@"%@\n", message];

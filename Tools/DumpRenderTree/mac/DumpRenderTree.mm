@@ -1118,6 +1118,21 @@ static void prepareConsistentTestingEnvironment()
 #endif
 }
 
+#if PLATFORM(IOS)
+const char crashedMessage[] = "#CRASHED\n";
+
+void writeCrashedMessageOnFatalError(int signalCode)
+{
+    // Reset the default action for the signal so that we run ReportCrash(8) on pending and
+    // subsequent instances of the signal.
+    signal(signalCode, SIG_DFL);
+
+    // WRITE(2) and FSYNC(2) are considered safe to call from a signal handler by SIGACTION(2).
+    write(STDERR_FILENO, &crashedMessage[0], sizeof(crashedMessage) - 1);
+    fsync(STDERR_FILENO);
+}
+#endif
+
 void dumpRenderTree(int argc, const char *argv[])
 {
 #if PLATFORM(IOS)
@@ -1132,6 +1147,11 @@ void dumpRenderTree(int argc, const char *argv[])
     dup2(outfd, STDOUT_FILENO);
     int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
     dup2(errfd, STDERR_FILENO);
+
+    signal(SIGILL, &writeCrashedMessageOnFatalError);
+    signal(SIGFPE, &writeCrashedMessageOnFatalError);
+    signal(SIGBUS, &writeCrashedMessageOnFatalError);
+    signal(SIGSEGV, &writeCrashedMessageOnFatalError);
 #endif
 
     initializeGlobalsFromCommandLineOptions(argc, argv);

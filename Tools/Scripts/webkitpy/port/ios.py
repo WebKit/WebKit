@@ -219,24 +219,33 @@ class IOSSimulatorPort(Port):
     def sample_file_path(self, name, pid):
         return self._filesystem.join(self.results_directory(), "{0}-{1}-sample.txt".format(name, pid))
 
+    SUBPROCESS_CRASH_REGEX = re.compile('#CRASHED - (?P<subprocess_name>\S+) \(pid (?P<subprocess_pid>\d+)\)')
+
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=time.time, sleep_fn=time.sleep, wait_for_log=True):
         time_fn = time_fn or time.time
         sleep_fn = sleep_fn or time.sleep
+
+        # FIXME: We should collect the actual crash log for DumpRenderTree.app because it includes more
+        # information (e.g. exception codes) than is available in the stack trace written to standard error.
+        stderr_lines = []
+        crashed_subprocess_name_and_pid = None  # e.g. ('DumpRenderTree.app', 1234)
+        for line in (stderr or '').splitlines():
+            if not crashed_subprocess_name_and_pid:
+                match = self.SUBPROCESS_CRASH_REGEX.match(line)
+                if match:
+                    crashed_subprocess_name_and_pid = (match.group('subprocess_name'), int(match.group('subprocess_pid')))
+                    continue
+            stderr_lines.append(line)
+
+        if crashed_subprocess_name_and_pid:
+            return self._get_crash_log(crashed_subprocess_name_and_pid[0], crashed_subprocess_name_and_pid[1], stdout,
+                '\n'.join(stderr_lines), newer_than, time_fn, sleep_fn, wait_for_log)
+
+        # LayoutTestRelay crashed
+        _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
         crash_log = ''
         crash_logs = CrashLogs(self.host)
         now = time_fn()
-
-        crash_prefix = 'CRASH: '
-        stderr_lines = []
-        crash_lines = []
-        for line in (stderr or '').splitlines():
-            crash_lines.append(line) if line.startswith(crash_prefix) else stderr_lines.append(line)
-
-        for crash_line in crash_lines:
-            identifier, pid = crash_line[len(crash_prefix):].split(' ')
-            return self._get_crash_log(identifier, int(pid), stdout, '\n'.join(stderr_lines), newer_than, time_fn, sleep_fn, wait_for_log)
-
-        _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
         deadline = now + 5 * int(self.get_option('child_processes', 1))
         while not crash_log and now <= deadline:
             crash_log = crash_logs.find_newest_log(name, pid, include_errors=True, newer_than=newer_than)
