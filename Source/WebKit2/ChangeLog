@@ -1,5 +1,23 @@
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176569. <rdar://problem/19086676>
+
+    2014-11-26  Timothy Horton  <timothy_horton@apple.com>
+
+            DataDetectors PageOverlay callbacks are never called
+            https://bugs.webkit.org/show_bug.cgi?id=139067
+            <rdar://problem/19086676>
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/mac/ActionMenuHitTestResult.mm:
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+            Encode/decode the PageOverlay ID.
+
+
+2014-12-02  Dana Burkart  <dburkart@apple.com>
+
         Merge r176511. <rdar://problem/19070840>
 
     2014-11-23  Conrad Shultz  <conrad_shultz@apple.com>

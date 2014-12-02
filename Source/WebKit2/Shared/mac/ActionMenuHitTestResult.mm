@@ -61,6 +61,7 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
         IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
 
         encoder << detectedDataBoundingBox;
+        encoder << detectedDataOriginatingPageOverlay;
 
         bool hasTextIndicator = detectedDataTextIndicator;
         encoder << hasTextIndicator;
@@ -111,6 +112,9 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
         [unarchiver finishDecoding];
 
         if (!decoder.decode(actionMenuHitTestResult.detectedDataBoundingBox))
+            return false;
+
+        if (!decoder.decode(actionMenuHitTestResult.detectedDataOriginatingPageOverlay))
             return false;
 
         bool hasTextIndicator;
