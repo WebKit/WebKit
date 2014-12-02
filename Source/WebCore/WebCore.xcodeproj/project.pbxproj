@@ -910,8 +910,6 @@
 		1AEF4E67170E160300AB2799 /* CachedFontClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E66170E160300AB2799 /* CachedFontClient.h */; };
 		1AEF4E69170E174800AB2799 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1AF4CEE918BC350100BC2D34 /* DefaultVisitedLinkStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4CEE718BC350100BC2D34 /* DefaultVisitedLinkStore.cpp */; };
-		1AF4CEEA18BC350100BC2D34 /* DefaultVisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF4CEE818BC350100BC2D34 /* DefaultVisitedLinkStore.h */; };
 		1AF4CEEC18BC3C1B00BC2D34 /* VisitedLinkStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */; };
 		1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */; };
 		1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */; };
@@ -7932,8 +7930,6 @@
 		1AEF4E66170E160300AB2799 /* CachedFontClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFontClient.h; sourceTree = "<group>"; };
 		1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentClient.h; sourceTree = "<group>"; };
 		1AF326770D78B9440068F0C4 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
-		1AF4CEE718BC350100BC2D34 /* DefaultVisitedLinkStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultVisitedLinkStore.cpp; sourceTree = "<group>"; };
-		1AF4CEE818BC350100BC2D34 /* DefaultVisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultVisitedLinkStore.h; sourceTree = "<group>"; };
 		1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStore.cpp; sourceTree = "<group>"; };
 		1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorMac.mm; sourceTree = "<group>"; };
 		1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingCoordinator.cpp; sourceTree = "<group>"; };
@@ -16607,8 +16603,6 @@
 				975CA289130365F800E99AD9 /* Crypto.idl */,
 				0F6A12BB1A00923700C6DE72 /* DebugPageOverlays.cpp */,
 				0F6A12BC1A00923700C6DE72 /* DebugPageOverlays.h */,
-				1AF4CEE718BC350100BC2D34 /* DefaultVisitedLinkStore.cpp */,
-				1AF4CEE818BC350100BC2D34 /* DefaultVisitedLinkStore.h */,
 				CCC2B51015F613060048CDD6 /* DeviceClient.h */,
 				CCC2B51115F613060048CDD6 /* DeviceController.cpp */,
 				CCC2B51215F613060048CDD6 /* DeviceController.h */,
@@ -23853,7 +23847,6 @@
 				41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */,
 				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 				4167EBF6102962BA003D252A /* DefaultSharedWorkerRepository.h in Headers */,
-				1AF4CEEA18BC350100BC2D34 /* DefaultVisitedLinkStore.h in Headers */,
 				FD31602C12B0267600C1A359 /* DelayDSPKernel.h in Headers */,
 				FD31602E12B0267600C1A359 /* DelayNode.h in Headers */,
 				FD31603112B0267600C1A359 /* DelayProcessor.h in Headers */,
@@ -27531,7 +27524,6 @@
 				41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */,
 				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
 				4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */,
-				1AF4CEE918BC350100BC2D34 /* DefaultVisitedLinkStore.cpp in Sources */,
 				FD31602B12B0267600C1A359 /* DelayDSPKernel.cpp in Sources */,
 				FD31602D12B0267600C1A359 /* DelayNode.cpp in Sources */,
 				FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */,

@@ -1,3 +1,14 @@
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove visited link handling from PageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139185
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::populateVisitedLinks): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2014-12-01  Anders Carlsson  <andersca@apple.com>
 
         Remove WKBundleRemoveAllVisitedLinks

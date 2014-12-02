@@ -572,10 +572,6 @@ void ChromeClient::annotatedRegionsChanged()
 }
 #endif
 
-void ChromeClient::populateVisitedLinks()
-{
-}
-
 bool ChromeClient::shouldReplaceWithGeneratedFileForUpload(const String&, String&)
 {
     return false;

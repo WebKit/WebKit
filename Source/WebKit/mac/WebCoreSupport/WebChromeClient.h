@@ -124,7 +124,6 @@ public:
 #endif
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) override;
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded) override;
-    virtual void populateVisitedLinks() override;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void annotatedRegionsChanged() override;

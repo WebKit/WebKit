@@ -203,7 +203,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
     , m_userContentController(WTF::move(pageConfiguration.userContentController))
-    , m_visitedLinkStore(WTF::move(pageConfiguration.visitedLinkStore))
+    , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
     , m_isPlayingAudio(false)
@@ -215,8 +215,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     if (m_userContentController)
         m_userContentController->addPage(*this);
 
-    if (m_visitedLinkStore)
-        m_visitedLinkStore->addPage(*this);
+    m_visitedLinkStore->addPage(*this);
 
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -270,8 +269,7 @@ Page::~Page()
 
     if (m_userContentController)
         m_userContentController->removePage(*this);
-    if (m_visitedLinkStore)
-        m_visitedLinkStore->removePage(*this);
+    m_visitedLinkStore->removePage(*this);
 }
 
 void Page::clearPreviousItemFromAllPages(HistoryItem* item)
@@ -1034,21 +1032,6 @@ const String& Page::userStyleSheet() const
     return m_userStyleSheet;
 }
 
-void Page::removeAllVisitedLinks()
-{
-    if (!allPages)
-        return;
-    HashSet<PageGroup*> groups;
-    HashSet<Page*>::iterator pagesEnd = allPages->end();
-    for (HashSet<Page*>::iterator it = allPages->begin(); it != pagesEnd; ++it) {
-        if (PageGroup* group = (*it)->groupPtr())
-            groups.add(group);
-    }
-    HashSet<PageGroup*>::iterator groupsEnd = groups.end();
-    for (HashSet<PageGroup*>::iterator it = groups.begin(); it != groupsEnd; ++it)
-        (*it)->removeVisitedLinks();
-}
-
 void Page::invalidateStylesForAllLinks()
 {
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
@@ -1631,17 +1614,12 @@ void Page::setUserContentController(UserContentController* userContentController
 
 VisitedLinkStore& Page::visitedLinkStore()
 {
-    if (m_visitedLinkStore)
-        return *m_visitedLinkStore;
-
-    return group().visitedLinkStore();
+    return m_visitedLinkStore;
 }
 
 void Page::setVisitedLinkStore(PassRef<VisitedLinkStore> visitedLinkStore)
 {
-    if (m_visitedLinkStore)
-        m_visitedLinkStore->removePage(*this);
-
+    m_visitedLinkStore->removePage(*this);
     m_visitedLinkStore = WTF::move(visitedLinkStore);
     m_visitedLinkStore->addPage(*this);
 

@@ -635,10 +635,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_
     notImplemented();
 }
 
-void WebChromeClient::populateVisitedLinks()
-{
-}
-
 void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 {
     RefPtr<FileChooser> fileChooser = prpFileChooser;

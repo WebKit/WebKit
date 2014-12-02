@@ -7005,28 +7005,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     WebVisitedLinkStore& visitedLinkStore = _private->group->visitedLinkStore();
     for (NSString *urlString in visitedLinks)
         visitedLinkStore.addVisitedLink(urlString);
-
-    PageGroup& group = core(self)->group();
-
-    NSEnumerator *enumerator = [visitedLinks objectEnumerator];
-    while (NSString *url = [enumerator nextObject]) {
-        size_t length = [url length];
-        const UChar* characters = CFStringGetCharactersPtr(reinterpret_cast<CFStringRef>(url));
-        if (characters)
-            group.addVisitedLink(characters, length);
-        else {
-            Vector<UChar, 512> buffer(length);
-            [url getCharacters:buffer.data()];
-            group.addVisitedLink(buffer.data(), length);
-        }
-    }
 }
 
 #if PLATFORM(IOS)
 - (void)removeVisitedLink:(NSURL *)url
 {
     _private->group->visitedLinkStore().removeVisitedLink(URL(url).string());
-    core(self)->group().removeVisitedLink(url);
 }
 #endif
 

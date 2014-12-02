@@ -111,8 +111,6 @@ private:
 - (void)setHistoryAgeInDaysLimit:(int)limit;
 - (int)historyAgeInDaysLimit;
 
-- (void)addVisitedLinksToPageGroup:(PageGroup&)group;
-
 @end
 
 @implementation WebHistoryPrivate
@@ -281,7 +279,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 #endif
 
     if (![_entriesByURL count])
-        PageGroup::removeAllVisitedLinks();
+        WebVisitedLinkStore::removeAllVisitedLinks();
 
     return YES;
 }
@@ -447,7 +445,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     [_orderedLastVisitedDays release];
     _orderedLastVisitedDays = nil;
 
-    PageGroup::removeAllVisitedLinks();
+    WebVisitedLinkStore::removeAllVisitedLinks();
 
     return YES;
 }
@@ -695,22 +693,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     return result;
 }
 
-- (void)addVisitedLinksToPageGroup:(PageGroup&)group
-{
-    NSEnumerator *enumerator = [_entriesByURL keyEnumerator];
-    while (NSString *url = [enumerator nextObject]) {
-        size_t length = [url length];
-        const UChar* characters = CFStringGetCharactersPtr(reinterpret_cast<CFStringRef>(url));
-        if (characters)
-            group.addVisitedLink(characters, length);
-        else {
-            Vector<UChar, 512> buffer(length);
-            [url getCharacters:buffer.data()];
-            group.addVisitedLink(buffer.data(), length);
-        }
-    }
-}
-
 - (void)addVisitedLinksToVisitedLinkStore:(WebVisitedLinkStore&)visitedLinkStore
 {
     for (NSString *urlString in _entriesByURL)
@@ -735,8 +717,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     [_sharedHistory release];
     _sharedHistory = [history retain];
 
-    PageGroup::setShouldTrackVisitedLinks(history);
-    PageGroup::removeAllVisitedLinks();
     WebVisitedLinkStore::setShouldTrackVisitedLinks(history);
     WebVisitedLinkStore::removeAllVisitedLinks();
 }
@@ -920,13 +900,11 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
 + (void)_setVisitedLinkTrackingEnabled:(BOOL)visitedLinkTrackingEnabled
 {
-    PageGroup::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
     WebVisitedLinkStore::setShouldTrackVisitedLinks(visitedLinkTrackingEnabled);
 }
 
 + (void)_removeAllVisitedLinks
 {
-    PageGroup::removeAllVisitedLinks();
     WebVisitedLinkStore::removeAllVisitedLinks();
 }
 
@@ -946,11 +924,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];
     [entries release];
-}
-
-- (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group
-{
-    [_historyPrivate addVisitedLinksToPageGroup:group];
 }
 
 - (void)_addVisitedLinksToVisitedLinkStore:(WebVisitedLinkStore &)visitedLinkStore

@@ -26,7 +26,6 @@
 #ifndef PageGroup_h
 #define PageGroup_h
 
-#include "LinkHash.h"
 #include "SecurityOriginHash.h"
 #include "Supplementable.h"
 #include "UserScript.h"
@@ -42,7 +41,6 @@ namespace WebCore {
     class Page;
     class SecurityOrigin;
     class StorageNamespace;
-    class VisitedLinkStore;
 
 #if ENABLE(VIDEO_TRACK)
     class CaptionPreferencesChangedListener;
@@ -71,19 +69,6 @@ namespace WebCore {
         void addPage(Page&);
         void removePage(Page&);
 
-        VisitedLinkStore& visitedLinkStore();
-
-        WEBCORE_EXPORT bool isLinkVisited(LinkHash);
-
-        void addVisitedLink(const URL&);
-        WEBCORE_EXPORT void addVisitedLink(const UChar*, size_t);
-        WEBCORE_EXPORT void addVisitedLinkHash(LinkHash);
-        WEBCORE_EXPORT void removeVisitedLink(const URL&);
-        void removeVisitedLinks();
-
-        WEBCORE_EXPORT static void setShouldTrackVisitedLinks(bool);
-        WEBCORE_EXPORT static void removeAllVisitedLinks();
-
         const String& name() { return m_name; }
         unsigned identifier() { return m_identifier; }
 
@@ -100,15 +85,8 @@ namespace WebCore {
 #endif
 
     private:
-        WEBCORE_EXPORT void addVisitedLink(LinkHash);
-
         String m_name;
         HashSet<Page*> m_pages;
-
-        RefPtr<VisitedLinkStore> m_visitedLinkStore;
-
-        HashSet<LinkHash, LinkHashHash> m_visitedLinkHashes;
-        bool m_visitedLinksPopulated;
 
         unsigned m_identifier;
         RefPtr<StorageNamespace> m_localStorage;

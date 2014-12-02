@@ -6440,7 +6440,6 @@ HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
     for (unsigned i = 0; i < visitedURLCount; ++i) {
         BSTR url = visitedURLs[i];
         unsigned length = SysStringLen(url);
-        group.addVisitedLink(url, length);
 
         visitedLinkStore.addVisitedLink(String(url, length));
     }

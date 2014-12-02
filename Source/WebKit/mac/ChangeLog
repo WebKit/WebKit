@@ -1,3 +1,26 @@
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove visited link handling from PageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=139185
+
+        Reviewed by Sam Weinig.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate removeItemForURLString:]):
+        (-[WebHistoryPrivate removeAllItems]):
+        (+[WebHistory setOptionalSharedHistory:]):
+        (+[WebHistory _setVisitedLinkTrackingEnabled:]):
+        (+[WebHistory _removeAllVisitedLinks]):
+        (-[WebHistoryPrivate addVisitedLinksToPageGroup:]): Deleted.
+        (-[WebHistory _addVisitedLinksToPageGroup:]): Deleted.
+        * History/WebHistoryInternal.h:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::populateVisitedLinks): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView addVisitedLinks:]):
+        (-[WebView removeVisitedLink:]):
+
 2014-12-01  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the Mac build.

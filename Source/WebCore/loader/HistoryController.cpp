@@ -41,6 +41,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HistoryItem.h"
+#include "LinkHash.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"

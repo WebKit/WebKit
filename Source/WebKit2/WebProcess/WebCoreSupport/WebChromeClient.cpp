@@ -733,10 +733,6 @@ void WebChromeClient::annotatedRegionsChanged()
 }
 #endif
 
-void WebChromeClient::populateVisitedLinks()
-{
-}
-
 bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
 {
     generatedFilename = m_page->injectedBundleUIClient().shouldGenerateFileForUpload(m_page, path);

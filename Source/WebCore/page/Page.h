@@ -315,8 +315,6 @@ public:
     void setDebugger(JSC::Debugger*);
     JSC::Debugger* debugger() const { return m_debugger; }
 
-    static void removeAllVisitedLinks();
-
     WEBCORE_EXPORT void invalidateStylesForAllLinks();
     WEBCORE_EXPORT void invalidateStylesForLink(LinkHash);
 
@@ -570,7 +568,7 @@ private:
     unsigned m_framesHandlingBeforeUnloadEvent;
 
     RefPtr<UserContentController> m_userContentController;
-    RefPtr<VisitedLinkStore> m_visitedLinkStore;
+    Ref<VisitedLinkStore> m_visitedLinkStore;
 
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
 

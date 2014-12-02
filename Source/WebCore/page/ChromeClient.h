@@ -228,8 +228,6 @@ public:
     virtual void annotatedRegionsChanged();
 #endif
 
-    virtual void populateVisitedLinks();
-
     virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename);
     virtual String generateReplacementFile(const String& path);
 

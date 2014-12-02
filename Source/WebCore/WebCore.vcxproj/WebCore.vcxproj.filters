@@ -738,9 +738,6 @@
     <ClCompile Include="..\page\DebugPageOverlays.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\DefaultVisitedLinkStore.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\DragController.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -15135,9 +15132,6 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\page\DebugPageOverlays.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\DefaultVisitedLinkStore.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\BorderEdge.h">

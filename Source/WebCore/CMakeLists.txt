@@ -1889,7 +1889,6 @@ set(WebCore_SOURCES
     page/DOMWindowExtension.cpp
     page/DOMWindowProperty.cpp
     page/DebugPageOverlays.cpp
-    page/DefaultVisitedLinkStore.cpp
     page/DeviceController.cpp
     page/DiagnosticLoggingKeys.cpp
     page/DragController.cpp
