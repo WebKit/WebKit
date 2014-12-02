@@ -1,3 +1,27 @@
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the WinINet based network implementation
+        https://bugs.webkit.org/show_bug.cgi?id=139187
+
+        Reviewed by Andreas Kling.
+
+        This code was only used by the Windows CE port. Now it's unused.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/win/AuthenticationChallenge.h: Removed.
+        * platform/network/win/CookieJarWin.cpp: Removed.
+        * platform/network/win/CredentialStorageWin.cpp: Removed.
+        * platform/network/win/ProxyServerWin.cpp: Removed.
+        * platform/network/win/ResourceError.h: Removed.
+        * platform/network/win/ResourceHandleWin.cpp: Removed.
+        * platform/network/win/ResourceRequest.h: Removed.
+        * platform/network/win/ResourceResponse.h: Removed.
+        * platform/network/win/SocketStreamError.h: Removed.
+        * platform/network/win/SocketStreamHandle.h: Removed.
+        * platform/network/win/SocketStreamHandleWin.cpp: Removed.
+
 2014-12-02  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'column-span' CSS property to 'calc(2 * 3)'
