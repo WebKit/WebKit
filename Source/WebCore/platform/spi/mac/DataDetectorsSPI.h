@@ -67,7 +67,7 @@ SOFT_LINK_CLASS(DataDetectors, DDActionContext)
 @property NSRect highlightFrame;
 @property (retain) NSArray *allResults;
 @property (retain) __attribute__((NSObject)) DDResultRef mainResult;
-@property (assign) BOOL forActionMenuContent;
+@property (assign) BOOL altMode;
 
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
 
@@ -86,5 +86,6 @@ SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
 + (BOOL)shouldUseActionsWithContext:(DDActionContext *)context;
 + (void)didUseActions;
 
+- (BOOL)hasActionsForResult:(DDResultRef)result actionContext:(DDActionContext *)actionContext;
 
 @end

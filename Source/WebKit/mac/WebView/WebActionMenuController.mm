@@ -310,7 +310,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
         return @[ ];
 
     RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
-    [actionContext setForActionMenuContent:YES];
+    [actionContext setAltMode:YES];
 
     // FIXME: Should this show a yellow highlight?
     [actionContext setHighlightFrame:elementBoundingBoxInWindowCoordinatesFromNode(node)];
@@ -573,12 +573,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (!actionContext || !detectedDataRange)
         return @[ ];
 
-    // Blacklist contact results, because they don't have useful menus. If we
-    // bail here, before setting up _currentActionContext, we'll still allow fallthrough
-    // to ordinary text actions, avoiding mysterious failure when a contact is detected.
-    if (CFEqual(DDResultGetType([actionContext mainResult]), CFSTR("Contact")))
-        return @[ ];
-
+    [actionContext setAltMode:YES];
+    if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
+        if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
+            return @[ ];
+    }
 
     // FIXME: We should hide/show the yellow highlight here.
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
