@@ -1,3 +1,18 @@
+2014-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'column-span' CSS property to 'calc(2 * 3)'
+        https://bugs.webkit.org/show_bug.cgi?id=139170
+
+        Reviewed by Darin Adler.
+
+        Add layout tests to test calculated values for 'column-span'
+        and 'column-width' CSS properties.
+
+        * fast/css/column-width-calculated-value-expected.txt: Added.
+        * fast/css/column-width-calculated-value.html: Added.
+        * fast/css/webkit-column-span-calculated-value-expected.txt: Added.
+        * fast/css/webkit-column-span-calculated-value.html: Added.
+
 2014-12-02  Sylvain Galineau  <galineau@adobe.com>
 
     Missing support for innerHTML on SVGElement

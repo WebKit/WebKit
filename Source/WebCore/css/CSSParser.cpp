@@ -2720,14 +2720,20 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyColumnSpan: // none | all | 1 (will be dropped in the unprefixed property)
         if (id == CSSValueAll || id == CSSValueNone)
             validPrimitive = true;
-        else
-            validPrimitive = validUnit(value, FNumber | FNonNeg) && value->fValue == 1;
+        else if (validUnit(value, FNumber | FNonNeg) && parsedDouble(value, ReleaseParsedCalcValue) == 1) {
+            addProperty(CSSPropertyColumnSpan, cssValuePool().createValue(1, CSSPrimitiveValue::CSS_NUMBER), important);
+            return true;
+        }
         break;
     case CSSPropertyColumnWidth: // auto | <length>
         if (id == CSSValueAuto)
             validPrimitive = true;
-        else // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
-            validPrimitive = validUnit(value, FLength | FNonNeg, CSSStrictMode) && value->fValue;
+        else {
+            // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
+            validPrimitive = validUnit(value, FLength | FNonNeg, CSSStrictMode) && parsedDouble(value);
+            if (!validPrimitive)
+                m_parsedCalculation.clear();
+        }
         break;
     // End of CSS3 properties
 

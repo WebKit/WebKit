@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDiv"></div>
+<script>
+description("Tests assigning a calculated value to 'column-width' CSS property.");
+
+var testDiv = document.getElementById("testDiv");
+
+shouldBeEmptyString("testDiv.style['column-width']");
+evalAndLog("testDiv.style['column-width'] = 'calc(100px * 2)'");
+shouldBeEqualToString("testDiv.style['column-width']", "calc(200px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('column-width')", "200px");
+
+debug("0px is not a valid value");
+evalAndLog("testDiv.style['column-width'] = 'calc(0px * 2)'");
+shouldBeEqualToString("testDiv.style['column-width']", "calc(200px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('column-width')", "200px");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

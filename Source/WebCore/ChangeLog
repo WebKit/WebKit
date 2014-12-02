@@ -1,3 +1,20 @@
+2014-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'column-span' CSS property to 'calc(2 * 3)'
+        https://bugs.webkit.org/show_bug.cgi?id=139170
+
+        Reviewed by Darin Adler.
+
+        Add support for calculated values for 'column-span' and 'column-width'
+        CSS properties. Previously, these were not working in release builds
+        and hitting assertions in debug builds.
+
+        Tests: fast/css/column-width-calculated-value.html
+               fast/css/webkit-column-span-calculated-value.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
 2014-12-02  Anders Carlsson  <andersca@apple.com>
 
         Remove visited link handling from PageGroup
