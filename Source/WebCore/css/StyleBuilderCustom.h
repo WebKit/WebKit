@@ -31,6 +31,7 @@
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
+#include "CSSShadowValue.h"
 #include "Frame.h"
 #include "LocaleToScriptMapping.h"
 #include "Rect.h"
@@ -105,6 +106,16 @@ public:
     static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
     static void applyValueWebkitPerspective(StyleResolver&, CSSValue&);
 
+    static void applyInitialTextShadow(StyleResolver&);
+    static void applyInheritTextShadow(StyleResolver&);
+    static void applyValueTextShadow(StyleResolver&, CSSValue&);
+    static void applyInitialBoxShadow(StyleResolver&);
+    static void applyInheritBoxShadow(StyleResolver&);
+    static void applyValueBoxShadow(StyleResolver&, CSSValue&);
+    static void applyInitialWebkitBoxShadow(StyleResolver&);
+    static void applyInheritWebkitBoxShadow(StyleResolver&);
+    static void applyValueWebkitBoxShadow(StyleResolver&, CSSValue&);
+
 private:
     static void resetEffectiveZoom(StyleResolver&);
     static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
@@ -113,6 +124,9 @@ private:
     static Length mmLength(double mm);
     static Length inchLength(double inch);
     static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height);
+
+    template <CSSPropertyID id>
+    static void applyTextOrBoxShadowValue(StyleResolver&, CSSValue&);
 };
 
 inline void StyleBuilderCustom::applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
@@ -785,6 +799,86 @@ inline void StyleBuilderCustom::applyValueWebkitPerspective(StyleResolver& style
 
     if (perspectiveValue >= 0.0f)
         styleResolver.style()->setPerspective(perspectiveValue);
+}
+
+template <CSSPropertyID id>
+inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        if (id == CSSPropertyTextShadow)
+            styleResolver.style()->setTextShadow(nullptr);
+        else
+            styleResolver.style()->setBoxShadow(nullptr);
+        return;
+    }
+
+    bool isFirstEntry = true;
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& shadowValue = downcast<CSSShadowValue>(item.get());
+        auto conversionData = styleResolver.state().cssToLengthConversionData();
+        int x = shadowValue.x->computeLength<int>(conversionData);
+        int y = shadowValue.y->computeLength<int>(conversionData);
+        int blur = shadowValue.blur ? shadowValue.blur->computeLength<int>(conversionData) : 0;
+        int spread = shadowValue.spread ? shadowValue.spread->computeLength<int>(conversionData) : 0;
+        ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->getValueID() == CSSValueInset ? Inset : Normal;
+        Color color;
+        if (shadowValue.color)
+            color = styleResolver.colorFromPrimitiveValue(shadowValue.color.get());
+        else
+            color = styleResolver.style()->color();
+        auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
+        if (id == CSSPropertyTextShadow)
+            styleResolver.style()->setTextShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
+        else
+            styleResolver.style()->setBoxShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
+        isFirstEntry = false;
+    }
+}
+
+inline void StyleBuilderCustom::applyInitialTextShadow(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setTextShadow(nullptr);
+}
+
+inline void StyleBuilderCustom::applyInheritTextShadow(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setTextShadow(styleResolver.parentStyle()->textShadow() ? std::make_unique<ShadowData>(*styleResolver.parentStyle()->textShadow()) : nullptr);
+}
+
+inline void StyleBuilderCustom::applyValueTextShadow(StyleResolver& styleResolver, CSSValue& value)
+{
+    applyTextOrBoxShadowValue<CSSPropertyTextShadow>(styleResolver, value);
+}
+
+inline void StyleBuilderCustom::applyInitialBoxShadow(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setBoxShadow(nullptr);
+}
+
+inline void StyleBuilderCustom::applyInheritBoxShadow(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setBoxShadow(styleResolver.parentStyle()->boxShadow() ? std::make_unique<ShadowData>(*styleResolver.parentStyle()->boxShadow()) : nullptr);
+}
+
+inline void StyleBuilderCustom::applyValueBoxShadow(StyleResolver& styleResolver, CSSValue& value)
+{
+    applyTextOrBoxShadowValue<CSSPropertyBoxShadow>(styleResolver, value);
+}
+
+inline void StyleBuilderCustom::applyInitialWebkitBoxShadow(StyleResolver& styleResolver)
+{
+    applyInitialBoxShadow(styleResolver);
+}
+
+inline void StyleBuilderCustom::applyInheritWebkitBoxShadow(StyleResolver& styleResolver)
+{
+    applyInheritBoxShadow(styleResolver);
+}
+
+inline void StyleBuilderCustom::applyValueWebkitBoxShadow(StyleResolver& styleResolver, CSSValue& value)
+{
+    applyTextOrBoxShadowValue<CSSPropertyWebkitBoxShadow>(styleResolver, value);
 }
 
 } // namespace WebCore

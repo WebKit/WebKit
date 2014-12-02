@@ -2371,46 +2371,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         break;
 
     // CSS3 Properties
-    case CSSPropertyTextShadow:
-    case CSSPropertyBoxShadow:
-    case CSSPropertyWebkitBoxShadow: {
-        if (isInherit) {
-            if (id == CSSPropertyTextShadow)
-                return state.style()->setTextShadow(state.parentStyle()->textShadow() ? std::make_unique<ShadowData>(*state.parentStyle()->textShadow()) : nullptr);
-            return state.style()->setBoxShadow(state.parentStyle()->boxShadow() ? std::make_unique<ShadowData>(*state.parentStyle()->boxShadow()) : nullptr);
-        }
-        if (isInitial || primitiveValue) // initial | none
-            return id == CSSPropertyTextShadow ? state.style()->setTextShadow(nullptr) : state.style()->setBoxShadow(nullptr);
-
-        if (!is<CSSValueList>(*value))
-            return;
-
-        bool isFirstEntry = true;
-        for (auto& currentValue : downcast<CSSValueList>(*value)) {
-            if (!is<CSSShadowValue>(currentValue.get()))
-                continue;
-            auto& item = downcast<CSSShadowValue>(currentValue.get());
-            int x = item.x->computeLength<int>(state.cssToLengthConversionData());
-            int y = item.y->computeLength<int>(state.cssToLengthConversionData());
-            int blur = item.blur ? item.blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
-            int spread = item.spread ? item.spread->computeLength<int>(state.cssToLengthConversionData()) : 0;
-            ShadowStyle shadowStyle = item.style && item.style->getValueID() == CSSValueInset ? Inset : Normal;
-            Color color;
-            if (item.color)
-                color = colorFromPrimitiveValue(item.color.get());
-            else if (state.style())
-                color = state.style()->color();
-
-            auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
-            if (id == CSSPropertyTextShadow)
-                state.style()->setTextShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
-            else
-                state.style()->setBoxShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
-
-            isFirstEntry = false;
-        }
-        return;
-    }
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
@@ -2829,6 +2789,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyBorderTopStyle:
     case CSSPropertyBorderTopWidth:
     case CSSPropertyBottom:
+    case CSSPropertyBoxShadow:
     case CSSPropertyBoxSizing:
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
@@ -2898,6 +2859,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyTextIndent:
     case CSSPropertyTextOverflow:
     case CSSPropertyTextRendering:
+    case CSSPropertyTextShadow:
     case CSSPropertyTextTransform:
     case CSSPropertyTop:
     case CSSPropertyUnicodeBidi:
@@ -2933,6 +2895,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitBoxOrdinalGroup:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
+    case CSSPropertyWebkitBoxShadow:
     case CSSPropertyWebkitBoxReflect:
     case CSSPropertyWebkitColorCorrection:
     case CSSPropertyWebkitColumnAxis:

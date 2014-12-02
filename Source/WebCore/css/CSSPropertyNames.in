@@ -151,7 +151,7 @@ border-top-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
 border-top-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-width [LegacyStyleBuilder]
 bottom [Initial=initialOffset, Converter=LengthOrAuto]
-box-shadow [LegacyStyleBuilder]
+box-shadow [Custom=All]
 box-sizing
 // -webkit-box-sizing worked in Safari 4 and earlier.
 -webkit-box-sizing = box-sizing
@@ -242,7 +242,7 @@ text-overline-color [LegacyStyleBuilder]
 text-overline-mode [LegacyStyleBuilder]
 text-overline-style [LegacyStyleBuilder]
 text-overline-width [LegacyStyleBuilder]
-text-shadow [Inherited, LegacyStyleBuilder]
+text-shadow [Inherited, Custom=All]
 text-transform [Inherited]
 -epub-text-transform = text-transform
 text-underline [LegacyStyleBuilder]
@@ -326,7 +326,7 @@ alt [LegacyStyleBuilder]
 // -webkit-box-shadow differs from box-shadow in its treatement of blur radii > 8px.
 // Let -webkit-box-shadow blur radius be w_r and box-shadow blur radius be b_r. For
 // w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2).
--webkit-box-shadow [LegacyStyleBuilder]
+-webkit-box-shadow [Custom=All]
 -webkit-color-correction [Inherited, TypeName=ColorSpace, NameForMethods=ColorSpace]
 -webkit-column-axis [TypeName=ColumnAxis]
 -webkit-column-break-after [TypeName=EPageBreak, Initial=initialPageBreak]
