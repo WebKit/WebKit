@@ -566,7 +566,7 @@ protected:
     virtual void removeAllEventListeners() override final;
     virtual void parserDidSetAttributes();
 
-    void clearTabIndexExplicitlyIfNeeded();    
+    void clearTabIndexExplicitlyIfNeeded();
     void setTabIndexExplicitly(short);
 
     RefPtr<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
@@ -576,8 +576,8 @@ protected:
     // parseAttribute (called via setAttribute()) and
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
-    
-    static void mergeWithNextTextNode(Text& node, ExceptionCode& ec);
+
+    static void mergeWithNextTextNode(Text& node, ExceptionCode&);
 
 private:
     bool isTextNode() const;

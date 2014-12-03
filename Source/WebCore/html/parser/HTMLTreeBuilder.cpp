@@ -2839,17 +2839,16 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken* token)
 
     setInsertionMode(InsertionMode::Text);
 }
-    
+
 // http://www.whatwg.org/specs/web-apps/current-work/#adjusted-current-node
 HTMLStackItem* HTMLTreeBuilder::adjustedCurrentStackItem() const
 {
     ASSERT(!m_tree.isEmpty());
     if (isParsingFragment() && m_tree.openElements()->hasOnlyOneElement())
         return m_fragmentContext.contextElementStackItem();
-        
+
     return m_tree.currentStackItem();
 }
-
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#tree-construction
 bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(AtomicHTMLToken* token)
