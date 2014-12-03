@@ -1,3 +1,36 @@
+2014-12-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Table captions and table rows are missing from the accessible hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=139005
+
+        Reviewed by Chris Fleizach.
+
+        Expose table captions and rows via ATK. Accomplishing the former is done
+        by role mapping and inclusion of the object as a child of the table for
+        ATK. Accomplishing the latter was mostly a matter of deleting all the ATK
+        platform code that had been forcing rows to be ignored. Because captions
+        are not being exposed on the Mac, they are now explicitly being ignored
+        for that platform.
+
+        Tests: accessibility/aria-table-hierarchy.html
+               accessibility/table-hierarchy.html
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): Added CaptionRole.
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren): Include non-ignored captions as table children.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetNChildren): Removed special handling for tables.
+        (webkitAccessibleRefChild): Removed special handling for tables.
+        (webkitAccessibleGetIndexInParent): Removed special handling for table cells.
+        (atkRole): Corrected broken mapping for RowRole.
+        (getNChildrenForTable): Deleted.
+        (getChildForTable): Deleted.
+        (getIndexInParentForCellInRow): Deleted.
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject): Ignore captions as table children.
+
 2014-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/appcache/main-resource-fallback-for-network-error-crash.html can break subsequent tests

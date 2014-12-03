@@ -107,6 +107,7 @@ enum AccessibilityRole {
     BusyIndicatorRole,
     ButtonRole,
     CanvasRole,
+    CaptionRole,
     CellRole, 
     CheckBoxRole,
     ColorWellRole,

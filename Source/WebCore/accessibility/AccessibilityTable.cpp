@@ -362,6 +362,14 @@ void AccessibilityTable::addChildren()
     // Go through all the available sections to pull out the rows and add them as children.
     table.recalcSectionsIfNeeded();
     
+    if (HTMLTableElement* tableElement = this->tableElement()) {
+        if (HTMLTableCaptionElement* caption = tableElement->caption()) {
+            AccessibilityObject& axCaption = *axObjectCache()->getOrCreate(caption);
+            if (!axCaption.accessibilityIsIgnored())
+                m_children.append(&axCaption);
+        }
+    }
+
     unsigned maxColumnCount = 0;
     RenderTableSection* footer = table.footer();
     

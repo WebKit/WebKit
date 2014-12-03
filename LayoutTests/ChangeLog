@@ -1,3 +1,33 @@
+2014-12-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Table captions and table rows are missing from the accessible hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=139005
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-table-hierarchy.html: Added.
+        * accessibility/roles-exposed.html: Removed comment pointing to this bug.
+        * accessibility/table-hierarchy.html: Added.
+        * platform/efl/accessibility/aria-table-hierarchy-expected.txt: Added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated to reflect new behavior.
+        * platform/efl/accessibility/table-detection-expected.txt: Updated to reflect new behavior.
+        * platform/efl/accessibility/table-hierarchy-expected.txt: Added.
+        * platform/efl/accessibility/table-roles-hierarchy-expected.txt: Added.
+        * platform/efl/accessibility/table-with-rules-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/aria-table-hierarchy-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/aria-table-hierarchy.html: Removed (made into a shared test).
+        * platform/gtk/accessibility/caret-offsets-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/caret-offsets.html: Modified to handle inclusion of rows.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/table-detection-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/table-hierarchy-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/table-hierarchy.html: Removed (made into a shared test).
+        * platform/gtk/accessibility/table-roles-hierarchy-expected.txt: Added.
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/text-for-range-table-cells.html: Updated to reflect new behavior.
+        * platform/mac/accessibility/aria-table-hierarchy-expected.txt: Added.
+        * platform/mac/accessibility/table-hierarchy-expected.txt: Added.
+
 2014-12-02  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'flex' CSS property to 'calc(2 * 3) calc(2 * 3)'

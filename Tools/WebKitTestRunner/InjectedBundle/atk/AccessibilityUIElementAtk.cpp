@@ -339,6 +339,8 @@ const gchar* roleToString(AtkObject* object)
         return "AXDialog";
     case ATK_ROLE_CANVAS:
         return "AXCanvas";
+    case ATK_ROLE_CAPTION:
+        return "AXCaption";
     case ATK_ROLE_CHECK_BOX:
         return "AXCheckBox";
     case ATK_ROLE_COLOR_CHOOSER:

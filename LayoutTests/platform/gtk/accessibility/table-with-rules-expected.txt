@@ -7,7 +7,7 @@ asdf	asdf
 ------------------------------------
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 8.000000, 27.000000 }
 AXSize: { 57.000000, 19.000000 }
 AXTitle: 
@@ -25,7 +25,7 @@ AXPlatformAttributes: html-id:testTable2, toolkit:WebKitGtk
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 8.000000, 46.000000 }
 AXSize: { 62.000000, 23.000000 }
 AXTitle: 
@@ -43,7 +43,7 @@ AXPlatformAttributes: html-id:testTable3, toolkit:WebKitGtk
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 8.000000, 69.000000 }
 AXSize: { 56.000000, 19.000000 }
 AXTitle: 
@@ -61,7 +61,7 @@ AXPlatformAttributes: html-id:testTable4, toolkit:WebKitGtk
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 8.000000, 88.000000 }
 AXSize: { 62.000000, 23.000000 }
 AXTitle: 

@@ -77,6 +77,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (isMenuListPopup() || isMenuListOption())
         return IgnoreObject;
 
+    if (roleValue() == CaptionRole)
+        return IgnoreObject;
+
     // Never expose an unknown object on the Mac. Clients of the AX API will not know what to do with it.
     // Special case is when the unknown object is actually an attachment.
     if (roleValue() == UnknownRole && !isAttachment())

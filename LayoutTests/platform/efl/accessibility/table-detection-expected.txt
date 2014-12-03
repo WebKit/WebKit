@@ -3,7 +3,7 @@ This should be a table because it has a thead.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 4
+AXChildren: 2
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 62.000000, 47.000000 }
 AXTitle: 
@@ -26,7 +26,7 @@ This should be a table because cells have borders.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 68.000000, 29.000000 }
 AXTitle: 
@@ -48,7 +48,7 @@ This should not be a table because its cells do not have borders.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 64.000000, 27.000000 }
 AXTitle: 
@@ -70,7 +70,29 @@ This should be a table because a cell has a special attribute
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 58.000000, 23.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 58.000000, 23.000000 }
 AXTitle: 
@@ -93,28 +115,6 @@ This should be a table because a cell has a special attribute.
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 2
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 58.000000, 23.000000 }
-AXTitle: 
-AXDescription: 
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-
-asdf	asdf
-
-This should be a table because a cell has a special attribute.
-
-AXRole: AXTable
-AXParent: AXWebArea
-AXChildren: 4
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 58.000000, 43.000000 }
 AXTitle: 
@@ -137,7 +137,7 @@ This should be a table because cells have different colors.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 58.000000, 23.000000 }
 AXTitle: 
@@ -159,7 +159,7 @@ This should not be a table because cells have different but no spacing.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 52.000000, 19.000000 }
 AXTitle: 
@@ -181,7 +181,7 @@ This should not be a table because cells have the same colors even though there 
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 61.000000, 25.000000 }
 AXTitle: 
@@ -203,7 +203,7 @@ This should be a table because it has the "rules" attr.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 53.000000, 19.000000 }
 AXTitle: 
@@ -225,7 +225,7 @@ This should not be a table because it only has one valid cell (need more than on
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 769.000000, 27.000000 }
 AXTitle: 
@@ -275,7 +275,7 @@ This should be a table because it's editable.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 64.000000, 27.000000 }
 AXTitle: 
@@ -297,7 +297,7 @@ This should be a table because most cells have a top border.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 4
+AXChildren: 2
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 62.000000, 49.000000 }
 AXTitle: 
@@ -320,7 +320,7 @@ This should not be a table because cells have different borders.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 4
+AXChildren: 2
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 62.000000, 47.000000 }
 AXTitle: 
@@ -343,7 +343,7 @@ This should be a table because it sets empty-cells: hide on the table.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 6
+AXChildren: 3
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 64.000000, 70.000000 }
 AXTitle: 
@@ -367,7 +367,7 @@ This should be a table because it sets empty-cells: hide on a cell.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 6
+AXChildren: 3
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 64.000000, 71.000000 }
 AXTitle: 
@@ -391,7 +391,7 @@ This should be a table because it has a col.
 
 AXRole: AXTable
 AXParent: AXWebArea
-AXChildren: 4
+AXChildren: 2
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 62.000000, 47.000000 }
 AXTitle: 

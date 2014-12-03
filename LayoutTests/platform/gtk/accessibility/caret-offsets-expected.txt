@@ -38,7 +38,8 @@ PASS setCaretOffset(comboBoxOption, 1) is false
 PASS textEntry.role is "AXRole: AXTextField"
 PASS caretMovedData is "TextField|5"
 PASS table.role is "AXRole: AXTable"
-PASS table.childrenCount is 4
+PASS table.childrenCount is 1
+PASS row.role is "AXRole: AXRow"
 PASS tableCell.role is "AXRole: AXCell"
 PASS caretMovedData is "Cell|2"
 PASS successfullyParsed is true
