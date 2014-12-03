@@ -1,5 +1,25 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176695. <rdar://problem/19120929>
+
+    2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+            Loading Lookup causes http/tests/cache/post-redirect-get.php to fail
+            https://bugs.webkit.org/show_bug.cgi?id=139204
+
+            Reviewed by Anders Carlsson.
+
+            * WebView/WebView.mm:
+            (-[WebView _commonInitializationWithFrameName:groupName:]):
+            (-[WebView _showDictionaryLookupPopup:]):
+            * WebView/WebViewData.h:
+            Work around this by delaying the softlinking (and setting up the notification
+            observer) until we actually need it. There's still an underlying bug, but
+            this will fix the test.
+
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176693. <rdar://problem/18944696>
 
     2014-12-02  Beth Dakin  <bdakin@apple.com>

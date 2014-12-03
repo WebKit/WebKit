@@ -152,6 +152,7 @@ private:
     WebActionMenuController *actionMenuController;
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     std::unique_ptr<WebCore::TextIndicatorWindow> textIndicatorWindow;
+    BOOL hasInitializedLookupObserver;
 #endif // PLATFORM(MAC)
 
     BOOL allowsUndo;
