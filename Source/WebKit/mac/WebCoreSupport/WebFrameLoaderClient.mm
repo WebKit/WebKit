@@ -146,8 +146,6 @@
 #import "WebKitVersionChecks.h"
 #import "WebMailDelegate.h"
 #import "WebUIKitDelegate.h"
-#else
-#import <WebCore/QuickLookMac.h>
 #endif
 
 #if USE(QUICK_LOOK)

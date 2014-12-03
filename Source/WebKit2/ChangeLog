@@ -1,3 +1,9 @@
+2014-12-02  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/mac/WebContextMac.mm:
+
 2014-12-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/18441138> [iOS] Text selection in WKWebView with WKSelectionGranularityCharacter only works in the most recent WKWebView to load

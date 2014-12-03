@@ -55,7 +55,6 @@
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #else
 #import <QuartzCore/CARemoteLayerServer.h>
-#import <WebCore/QuickLookMac.h>
 #endif
 
 using namespace WebCore;

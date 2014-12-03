@@ -1,3 +1,9 @@
+2014-12-02  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2014-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/appcache/main-resource-fallback-for-network-error-crash.html can break subsequent tests
