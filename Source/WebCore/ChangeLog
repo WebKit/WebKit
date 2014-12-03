@@ -1,3 +1,63 @@
+2014-12-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Little cleanup of the default stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=139168
+
+        Reviewed by Antti Koivisto.
+
+        The default stylesheet has a lot of historical junk that need cleaning. This patch addresses
+        only the bits that do not change behaviors and have positive perf and readability impact.
+
+        I have limited :matches() to attributes for now. The idea is to only target
+        simple selectors that are not used for filtering by the collectors.
+        We should eventually clean up more cases, one thing at a time.
+
+        Tests: fast/css/map-tag-default-display.html
+               fast/selectors/map-tag-default-display.html
+
+        * css/html.css:
+        (map): Deleted.
+        map was explicitely setting its display to inline. Remove that since it is the default.
+
+        (head): Deleted.
+        (meta): Deleted.
+        (title): Deleted.
+        (link): Deleted.
+        (style): Deleted.
+        (script): Deleted.
+        (div): Deleted.
+        (layer): Deleted.
+        (article, aside, footer, header, hgroup, main, nav, section): Deleted.
+        (address): Deleted.
+        (head, link, meta, script, style, title):
+        (address, article, aside, div, footer, header, hgroup, layer, main, nav, section):
+        Group the standard blocks in a single rule.
+
+        (input:matches([type="hidden"], [type="image"], [type="file"])):
+        (input:matches([type="radio"], [type="checkbox"])):
+        (input:matches([type="button"], [type="submit"], [type="reset"])):
+        (input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button):
+        (input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::-webkit-file-upload-button:active, button:active):
+        (input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::-webkit-file-upload-button, button:active):
+        (input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled):
+        (input:matches([type="checkbox"], [type="radio"]):checked):
+        (input:matches([type="checkbox"], [type="radio"]):checked:disabled):
+        (select:matches([size], [multiple], [size][multiple])):
+        (select:matches([size="0"], [size="1"])):
+        (input[type="hidden"], input[type="image"], input[type="file"]): Deleted.
+        (input[type="radio"], input[type="checkbox"]): Deleted.
+        (input[type="button"], input[type="submit"], input[type="reset"]): Deleted.
+        (input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button): Deleted.
+        (input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]::-webkit-file-upload-button:active, button:active): Deleted.
+        (input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]:active::-webkit-file-upload-button, button:active): Deleted.
+        (input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled): Deleted.
+        (input[type="checkbox"]:checked, input[type="radio"]:checked): Deleted.
+        (input[type="checkbox"]:checked:disabled, input[type="radio"]:checked:disabled): Deleted.
+        (select[size][multiple]): Deleted.
+        (select[size="1"]): Deleted.
+        Group every selector lists that only differentiates complex selectors through attributes
+        into a simple complex selector with :matches().
+
 2014-12-02  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r176592, r176603, r176616, and r176705 until build and perf issues are resolved.

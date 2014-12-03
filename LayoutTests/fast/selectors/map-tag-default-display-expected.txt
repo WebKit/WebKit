@@ -1,0 +1,10 @@
+Verify default display of <map>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.getElementById('target')).display is "inline"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

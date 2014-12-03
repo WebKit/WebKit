@@ -28,27 +28,7 @@ html {
 }
 
 /* children of the <head> element all have display:none */
-head {
-    display: none
-}
-
-meta {
-    display: none
-}
-
-title {
-    display: none
-}
-
-link {
-    display: none
-}
-
-style {
-    display: none
-}
-
-script {
+head, link, meta, script, style, title {
     display: none
 }
 
@@ -67,25 +47,13 @@ p {
     -webkit-margin-end: 0;
 }
 
-div {
-    display: block
-}
-
-layer {
-    display: block
-}
-
-article, aside, footer, header, hgroup, main, nav, section {
+address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
     display: block
 }
 
 marquee {
     display: inline-block;
     overflow: -webkit-marquee
-}
-
-address {
-    display: block
 }
 
 blockquote {
@@ -134,10 +102,6 @@ hr {
     -webkit-margin-end: auto;
     border-style: inset;
     border-width: 1px
-}
-
-map {
-    display: inline
 }
 
 video {
@@ -412,8 +376,7 @@ input[type="hidden"] {
 }
 
 input,
-input[type="password"],
-input[type="search"],
+input:matches([type="password"], [type="search"]),
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 textarea,
 input[type="range"],
@@ -624,7 +587,7 @@ input[type="password"] {
     -webkit-text-security: disc !important;
 }
 
-input[type="hidden"], input[type="image"], input[type="file"] {
+input:matches([type="hidden"], [type="image"], [type="file"]) {
     -webkit-appearance: initial;
     padding: initial;
     background-color: initial;
@@ -647,7 +610,7 @@ input:-webkit-autofill {
     color: #000000 !important;
 }
 
-input[type="radio"], input[type="checkbox"] {
+input:matches([type="radio"], [type="checkbox"]) {
     margin: 3px 2px;
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     border: 1px solid #4c4c4c;
@@ -659,7 +622,7 @@ input[type="radio"], input[type="checkbox"] {
 #endif
 }
 
-input[type="button"], input[type="submit"], input[type="reset"] {
+input:matches([type="button"], [type="submit"], [type="reset"]) {
     -webkit-appearance: push-button;
     white-space: pre
 }
@@ -671,7 +634,7 @@ input[type="file"]::-webkit-file-upload-button {
     font-size: inherit;
 }
 
-input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
+input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button {
     -webkit-align-items: flex-start;
     text-align: center;
     cursor: default;
@@ -690,7 +653,7 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
     box-sizing: border-box
 }
 
-input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]::-webkit-file-upload-button:active, button:active {
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::-webkit-file-upload-button:active, button:active {
     color: ActiveButtonText;
 }
 
@@ -746,7 +709,7 @@ textarea::-webkit-input-placeholder {
 }
 #endif
 
-input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled,
+input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::-webkit-file-upload-button, button:disabled,
 select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
 select[disabled]>option {
@@ -754,11 +717,12 @@ select[disabled]>option {
 }
 
 #if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
-input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]:active::-webkit-file-upload-button, button:active {
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::-webkit-file-upload-button, button:active {
     border-style: inset
 }
 
-input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
+input:matches([type="button"], [type="submit"], [type="reset"]):active:disabled,
+input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
     border-style: outset
 }
 #endif
@@ -792,12 +756,12 @@ input[type="radio"] {
     background-color: rgba(255, 255, 255, 0.01);
 }
 
-input[type="checkbox"]:checked, input[type="radio"]:checked {
+input:matches([type="checkbox"], [type="radio"]):checked {
     background:rgba(0, 0, 0, 0.8);
     border-color:rgba(255, 255, 255, 0.0);
 }
 
-input[type="checkbox"]:checked:disabled, input[type="radio"]:checked:disabled {
+input:matches([type="checkbox"], [type="radio"]):checked:disabled {
     opacity:0.4;
     background:rgba(0, 0, 0, 0.8);
 }
@@ -884,9 +848,7 @@ select {
 }
 
 #if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
-select[size],
-select[multiple],
-select[size][multiple] {
+select:matches([size], [multiple], [size][multiple]) {
     -webkit-appearance: listbox;
     -webkit-align-items: flex-start;
     border: 1px inset gray;
@@ -894,8 +856,7 @@ select[size][multiple] {
     white-space: initial;
 }
 
-select[size="0"],
-select[size="1"] {
+select:matches([size="0"], [size="1"]) {
     -webkit-appearance: menulist;
     -webkit-align-items: center;
     border: 1px solid;
@@ -1131,15 +1092,7 @@ input:focus, textarea:focus, isindex:focus, keygen:focus, select:focus {
     outline-offset: -2px
 }
 
-input[type="button"]:focus,
-input[type="checkbox"]:focus,
-input[type="file"]:focus,
-input[type="hidden"]:focus,
-input[type="image"]:focus,
-input[type="radio"]:focus,
-input[type="reset"]:focus,
-input[type="search"]:focus,
-input[type="submit"]:focus,
+input:matches([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
 input[type="file"]:focus::-webkit-file-upload-button {
     outline-offset: 0
 }
