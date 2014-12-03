@@ -1,3 +1,18 @@
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176295. <rdar://problem/19122588>
+
+    2014-11-18  David Hyatt  <hyatt@apple.com>
+
+            REGRESSION (r167210): Invalid cast in WebCore::RenderBlock::blockSelectionGaps
+            https://bugs.webkit.org/show_bug.cgi?id=137590
+
+            Reviewed by Dean Jackson.
+
+            * fast/block/selection-block-gap-crash-expected.txt: Added.
+            * fast/block/selection-block-gap-crash.html: Added.
+
+
 2014-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store for opacity:0 descendant layers
