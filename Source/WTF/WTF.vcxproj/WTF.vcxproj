@@ -219,7 +219,6 @@
     <ClInclude Include="..\wtf\HashTable.h" />
     <ClInclude Include="..\wtf\HashTraits.h" />
     <ClInclude Include="..\wtf\HexNumber.h" />
-    <ClInclude Include="..\wtf\IndexedIterator.h" />
     <ClInclude Include="..\wtf\IteratorAdaptors.h" />
     <ClInclude Include="..\wtf\IteratorRange.h" />
     <ClInclude Include="..\wtf\ListHashSet.h" />

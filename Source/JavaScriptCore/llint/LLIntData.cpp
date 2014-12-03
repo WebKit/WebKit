@@ -161,7 +161,7 @@ void Data::performAssertions(VM& vm)
     Vector<int> testVector;
     testVector.resize(42);
     ASSERT(bitwise_cast<uint32_t*>(&testVector)[sizeof(void*)/sizeof(uint32_t) + 1] == 42);
-    ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.data());
+    ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.begin());
 #endif
 
     ASSERT(StringImpl::s_hashFlag8BitBuffer == 32);

@@ -1,3 +1,39 @@
+2014-12-02  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out r176592, r176603, r176616, and r176705 until build and perf issues are resolved.
+        https://bugs.webkit.org/show_bug.cgi?id=138821
+
+        Not reviewed.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserializeString):
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::isBadMatch):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::fontDataForCharacter):
+        (WebCore::SegmentedFontData::containsCharacter):
+        (WebCore::SegmentedFontData::isLoading):
+        * platform/graphics/WOFFFileFormat.cpp:
+        (WebCore::convertWOFFToSfnt):
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformGradient):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::firstNamedGridLineBeforePosition):
+        (WebCore::GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        * svg/SVGFontElement.cpp:
+        (WebCore::kerningForPairOfStringsAndGlyphs):
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::append):
+        * xml/XPathNodeSet.h:
+        (WebCore::XPath::NodeSet::begin):
+        (WebCore::XPath::NodeSet::end):
+
 2014-12-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build break EFL port since r176696

@@ -200,7 +200,7 @@ bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt)
             uLongf destLen = tableOrigLength;
             if (!sfnt.tryReserveCapacity(sfnt.size() + tableOrigLength))
                 return false;
-            Bytef* dest = reinterpret_cast<Bytef*>(getPtr(sfnt.end()));
+            Bytef* dest = reinterpret_cast<Bytef*>(sfnt.end());
             sfnt.grow(sfnt.size() + tableOrigLength);
             if (uncompress(dest, &destLen, reinterpret_cast<const Bytef*>(woff->data() + tableOffset), tableCompLength) != Z_OK)
                 return false;

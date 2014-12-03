@@ -1,3 +1,31 @@
+2014-12-02  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out r176592, r176603, r176616, and r176705 until build and perf issues are resolved.
+        https://bugs.webkit.org/show_bug.cgi?id=138821
+
+        Not reviewed.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::mdNode):
+        (JSC::FTL::buildCall):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::sortCompactedVector):
+        * tools/ProfileTreeNode.h:
+        (JSC::ProfileTreeNode::dumpInternal):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+
 2014-12-02  Michael Saboff  <msaboff@apple.com>
 
         Change CallFrame::globalThisValue() to not use CallFrame::scope()

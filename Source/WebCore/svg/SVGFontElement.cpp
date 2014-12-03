@@ -252,31 +252,31 @@ static inline float kerningForPairOfStringsAndGlyphs(const SVGKerningMap& kernin
 {
     if (!g1.isEmpty() && kerningMap.glyphMap.contains(g1)) {
         SVGKerningVector* kerningVector = kerningMap.glyphMap.get(g1);
-        size_t it = kerningVector->size();
-        while (it-- > 0) {
-            auto& value = kerningVector->at(it);
-            if (matches(u2, g2, value))
-                return value.kerning;
+        SVGKerningVector::const_iterator it = kerningVector->end() - 1;
+        const SVGKerningVector::const_iterator begin = kerningVector->begin() - 1;
+        for (; it != begin; --it) {
+            if (matches(u2, g2, *it))
+                return it->kerning;
         }
     }
 
     if (!u1.isEmpty()) {
         if (kerningMap.unicodeMap.contains(u1)) {
             SVGKerningVector* kerningVector = kerningMap.unicodeMap.get(u1);
-            size_t it = kerningVector->size();
-            while (it-- > 0) {
-                auto& value = kerningVector->at(it);
-                if (matches(u2, g2, value))
-                    return value.kerning;
+            SVGKerningVector::const_iterator it = kerningVector->end() - 1;
+            const SVGKerningVector::const_iterator begin = kerningVector->begin() - 1;
+            for (; it != begin; --it) {
+                if (matches(u2, g2, *it))
+                    return it->kerning;
             }
         }
 
         if (!kerningMap.kerningUnicodeRangeMap.isEmpty()) {
-            size_t it = kerningMap.kerningUnicodeRangeMap.size();
-            while (it-- > 0) {
-                auto& value = kerningMap.kerningUnicodeRangeMap[it];
-                if (matches(u1, u2, g2, value))
-                    return value.kerning;
+            Vector<SVGKerningPair>::const_iterator it = kerningMap.kerningUnicodeRangeMap.end() - 1;
+            const Vector<SVGKerningPair>::const_iterator begin = kerningMap.kerningUnicodeRangeMap.begin() - 1;
+            for (; it != begin; --it) {
+                if (matches(u1, u2, g2, *it))
+                    return it->kerning;
             }
         }
     }

@@ -2271,8 +2271,8 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             int topScopeIndex = -1;
             int bottomScopeIndex = -1;
             if (flipScopes) {
-                topScopeIndex = topScope - m_scopeContextStack.data();
-                bottomScopeIndex = bottomScope - m_scopeContextStack.data();
+                topScopeIndex = topScope - m_scopeContextStack.begin();
+                bottomScopeIndex = bottomScope - m_scopeContextStack.begin();
                 savedScopeContextStack = m_scopeContextStack;
                 m_scopeContextStack.shrink(finallyContext.scopeContextStackSize);
             }
@@ -2316,7 +2316,7 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             if (flipScopes) {
                 m_scopeContextStack = savedScopeContextStack;
                 topScope = &m_scopeContextStack[topScopeIndex]; // assert it's within bounds
-                bottomScope = m_scopeContextStack.data() + bottomScopeIndex; // don't assert, since it the index might be -1.
+                bottomScope = m_scopeContextStack.begin() + bottomScopeIndex; // don't assert, since it the index might be -1.
             }
             if (flipSwitches)
                 m_switchContextStack = savedSwitchContextStack;
