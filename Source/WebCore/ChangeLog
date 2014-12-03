@@ -1,3 +1,17 @@
+2014-12-03  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] REGRESSION (r176622): WebCore fails to link
+
+        Speculative fix for the following build failure:
+
+            Ld WebCore
+            Undefined symbols for architecture armv7s:
+              "__ZN3JSC10IdentifierC1EPNS_9ExecStateERKN3WTF12AtomicStringE", referenced from:
+                  __ZN7WebCoreL24createAccelerationObjectEPKNS_16DeviceMotionData12AccelerationEPN3JSC9ExecStateE in JSDeviceMotionEventCustom.o
+
+        * bindings/js/JSDeviceMotionEventCustom.cpp: Include
+        <runtime/IdentifierInlines.h> to define missing symbol.
+
 2014-12-02  Dean Jackson  <dino@apple.com>
 
         [Media] Audio content shouldn't have fullscreen buttons, even if in a video element
