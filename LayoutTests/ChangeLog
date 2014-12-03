@@ -1,3 +1,12 @@
+2014-12-03  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: marking some tests as crashes.
+        <https://webkit.org/b/139224>
+
+        Not reviewed.
+
+        * platform/wk2/TestExpectations:
+
 2014-12-02  Dean Jackson  <dino@apple.com>
 
         [Media] Audio content shouldn't have fullscreen buttons, even if in a video element
