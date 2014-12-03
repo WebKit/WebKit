@@ -450,6 +450,15 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     return YES;
 }
 
+- (BOOL)becomeFirstResponder
+{
+    BOOL didBecomeFirstResponder = [super becomeFirstResponder];
+    if (didBecomeFirstResponder)
+        [_textSelectionAssistant activateSelection];
+
+    return didBecomeFirstResponder;
+}
+
 - (BOOL)resignFirstResponder
 {
     // FIXME: Maybe we should call resignFirstResponder on the superclass
@@ -459,6 +468,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _page->blurAssistedNode();
     [self _cancelInteraction];
     [_webSelectionAssistant resignedFirstResponder];
+    [_textSelectionAssistant deactivateSelection];
 
     return [super resignFirstResponder];
 }
@@ -1086,7 +1096,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
             [_textSelectionAssistant setGestureRecognizers];
         }
 
-        [_textSelectionAssistant activateSelection];
+        if (self.isFirstResponder)
+            [_textSelectionAssistant activateSelection];
     }
 }
 
