@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-struct _PlatformRSAKeyGtk {
+struct _PlatformRSAKeyGnuTLS {
 };
 
 CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)

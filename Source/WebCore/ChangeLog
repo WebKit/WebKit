@@ -1,3 +1,64 @@
+2014-12-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [EFL] Add subtle crypto to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=138612
+
+        Reviewed by Csaba Osztrogonác.
+
+        It is obvious to make Efl use GnuTLS as well,
+        and since there seems no reason why to separate
+        Efl and Gtk implementations from each other, I
+        also propose renaming the gtk directory and file
+        suffixes to gnutls.
+
+        No new tests needed.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * crypto/gnutls/CryptoAlgorithmAES_CBCGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmAES_CBCGtk.cpp.
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmAES_KWGtk.cpp.
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt):
+        * crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmHMACGtk.cpp.
+        (WebCore::getGnutlsDigestAlgorithm):
+        (WebCore::calculateSignature):
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/gnutls/CryptoAlgorithmRSAES_PKCS1_v1_5GnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmRSAES_PKCS1_v1_5Gtk.cpp.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        * crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmRSASSA_PKCS1_v1_5Gtk.cpp.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+        * crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmRSA_OAEPGtk.cpp.
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+        * crypto/gnutls/CryptoAlgorithmRegistryGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoAlgorithmRegistryGtk.cpp.
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/gnutls/CryptoDigestGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoDigestGtk.cpp.
+        (WebCore::CryptoDigest::CryptoDigest):
+        (WebCore::CryptoDigest::~CryptoDigest):
+        (WebCore::CryptoDigest::create):
+        (WebCore::CryptoDigest::addBytes):
+        (WebCore::CryptoDigest::computeHash):
+        * crypto/gnutls/CryptoKeyRSAGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/CryptoKeyRSAGtk.cpp.
+        (WebCore::CryptoKeyRSA::CryptoKeyRSA):
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::~CryptoKeyRSA):
+        (WebCore::CryptoKeyRSA::restrictToHash):
+        (WebCore::CryptoKeyRSA::isRestrictedToHash):
+        (WebCore::CryptoKeyRSA::keySizeInBits):
+        (WebCore::CryptoKeyRSA::buildAlgorithmDescription):
+        (WebCore::CryptoKeyRSA::exportData):
+        (WebCore::CryptoKeyRSA::generatePair):
+        * crypto/gnutls/SerializedCryptoKeyWrapGnuTLS.cpp: Renamed from Source/WebCore/crypto/gtk/SerializedCryptoKeyWrapGtk.cpp.
+        (WebCore::getDefaultWebCryptoMasterKey):
+        (WebCore::wrapSerializedCryptoKey):
+        (WebCore::unwrapSerializedCryptoKey):
+        * crypto/keys/CryptoKeyRSA.h:
+
 2014-12-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Little cleanup of the default stylesheet

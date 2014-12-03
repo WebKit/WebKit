@@ -833,22 +833,23 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/algorithms/CryptoAlgorithmSHA256.cpp
         crypto/algorithms/CryptoAlgorithmSHA384.cpp
         crypto/algorithms/CryptoAlgorithmSHA512.cpp
+
+        crypto/gnutls/CryptoAlgorithmRegistryGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmAES_CBCGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmRSAES_PKCS1_v1_5GnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp
+        crypto/gnutls/CryptoDigestGnuTLS.cpp
+        crypto/gnutls/CryptoKeyRSAGnuTLS.cpp
+        crypto/gnutls/SerializedCryptoKeyWrapGnuTLS.cpp
+
         crypto/keys/CryptoKeyAES.cpp
         crypto/keys/CryptoKeyDataOctetSequence.cpp
         crypto/keys/CryptoKeyDataRSAComponents.cpp
         crypto/keys/CryptoKeyHMAC.cpp
         crypto/keys/CryptoKeySerializationRaw.cpp
-
-        crypto/gtk/CryptoAlgorithmRegistryGtk.cpp
-        crypto/gtk/CryptoAlgorithmAES_CBCGtk.cpp
-        crypto/gtk/CryptoAlgorithmAES_KWGtk.cpp
-        crypto/gtk/CryptoAlgorithmHMACGtk.cpp
-        crypto/gtk/CryptoAlgorithmRSAES_PKCS1_v1_5Gtk.cpp
-        crypto/gtk/CryptoAlgorithmRSA_OAEPGtk.cpp
-        crypto/gtk/CryptoAlgorithmRSASSA_PKCS1_v1_5Gtk.cpp
-        crypto/gtk/CryptoDigestGtk.cpp
-        crypto/gtk/CryptoKeyRSAGtk.cpp
-        crypto/gtk/SerializedCryptoKeyWrapGtk.cpp
     )
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES

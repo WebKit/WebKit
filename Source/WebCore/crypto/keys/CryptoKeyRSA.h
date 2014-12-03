@@ -36,9 +36,9 @@ typedef struct _CCRSACryptor *CCRSACryptorRef;
 typedef CCRSACryptorRef PlatformRSAKey;
 #endif
 
-#if PLATFORM(GTK)
-typedef struct _PlatformRSAKeyGtk PlatformRSAKeyGtk;
-typedef PlatformRSAKeyGtk *PlatformRSAKey;
+#if PLATFORM(GTK) || PLATFORM(EFL)
+typedef struct _PlatformRSAKeyGnuTLS PlatformRSAKeyGnuTLS;
+typedef PlatformRSAKeyGnuTLS *PlatformRSAKey;
 #endif
 
 namespace WebCore {

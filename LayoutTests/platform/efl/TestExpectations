@@ -1621,8 +1621,20 @@ webkit.org/b/123561 printing/simultaneous-position-float-change.html [ Missing ]
 webkit.org/b/123561 printing/single-line-must-not-be-split-into-two-pages.html [ Missing ]
 webkit.org/b/123561 printing/width-overflow.html [ Missing ]
 
-# crypto.subtle is not yet enabled
-crypto/subtle [ Skip ]
+# crypto.subtle is not yet enabled, but digest algorithms are already implemented
+# and their tests are whitelisted
+webkit.org/b/133122 crypto/subtle [ Skip ]
+webkit.org/b/133319 crypto/subtle/sha-1.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-224.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-256.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-384.html [ Pass ]
+webkit.org/b/133319 crypto/subtle/sha-512.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-check-algorithm.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-export-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-generate-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-import-jwk.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-sign-verify-empty-key.html [ Pass ]
+webkit.org/b/133320 crypto/subtle/hmac-sign-verify.html [ Pass ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
 webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html [ Failure ]
