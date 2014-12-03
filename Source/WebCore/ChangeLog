@@ -1,5 +1,16 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176692. <rdar://problem/18944696>
+
+    2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+            Another build fix.
+
+            * platform/spi/mac/NSMenuSPI.h:
+
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176689. <rdar://problem/18944696>
 
     2014-12-02  Beth Dakin  <bdakin@apple.com>

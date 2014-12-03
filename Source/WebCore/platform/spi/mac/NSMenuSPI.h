@@ -25,16 +25,8 @@
 
 #import "QuickLookMacSPI.h"
 
-#if USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101002
-
-#import <AppKit/NSMenu_Private.h>
-
-#else
-
-#import <AppKit/NSMenu.h>
+// FIXME: We should just include the appropriate internal headers.
 
 @interface NSMenuItem (Private)
 + (QLPreviewMenuItem *)standardQuickLookMenuItem;
 @end
-
-#endif
