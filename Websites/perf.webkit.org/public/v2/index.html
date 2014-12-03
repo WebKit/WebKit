@@ -156,8 +156,7 @@
                             highlightedItems=highlightedItems
                             rangeRoute="analysisTask"
                             selection=timeRange
-                            sharedSelection=sharedSelection
-                            selectionChanged="rangeChanged"
+                            selectedPoints=selectedPoints
                             selectionIsLocked=timeRangeIsLocked
                             markedPoints=markedPoints
                             zoom="zoomed"}}
@@ -176,9 +175,7 @@
                                 chartData=chartData
                                 showYAxis=false
                                 domain=overviewDomain
-                                domainChanged="overviewDomainChanged"
-                                selection=mainPlotDomain
-                                selectionChanged="zoomed"}}
+                                selection=overviewSelection}}
                         {{/if}}
                         </div>
                         {{#if details}}

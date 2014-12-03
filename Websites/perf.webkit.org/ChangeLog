@@ -1,3 +1,59 @@
+2014-12-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard's chart UI is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=139214
+
+        Reviewed by Chris Dumez.
+
+        The bugginess was caused by weird interactions between charts and panes. Rewrote the code to fix it.
+
+        Superfluous selectionChanged and domainChanged "event" actions were removed from the interactive chart
+        component. This is not how Ember.js components should interact to begin with. The component now exposes
+        selectedPoints and always updates selection instead of sharedSelection.
+
+        * public/v2/app.js:
+        (App.ChartsController.present): Added. We can't call Date.now() in various points in our code as that
+        would lead to infinite mutual recursions since X-axis domain values wouldn't match up.
+        (App.ChartsController.updateSharedDomain): This function was completely useless. The overview's start
+        and end time should be completely determined by "since" and the present time.
+        (App.ChartsController._startTimeChanged): Ditto.
+        (App.ChartsController._scheduleQueryStringUpdate):
+        (App.ChartsController._updateQueryString): Set "zoom" only if it's different from the shared domain.
+
+        (App.domainsAreEqual): Moved from InteractiveChartComponent._xDomainsAreSame.
+
+        (App.PaneController.actions.createAnalysisTask): Use selectedPoints property set by the chart.
+        (App.PaneController.actions.overviewDomainChanged): Removed; only needed to call updateSharedDomain.
+        (App.PaneController.actions.rangeChanged): Removed. _showDetails (renamed to _updateDetails) directly
+        observes the changes to selectedPoints property as it gets updated by the main chart.
+        (App.PaneController._overviewSelectionChanged): This was previously a dead code. Now it's used again
+        with a bug fix. When the overview selection is cleared, we use the same domain in the main chart and
+        the overview chart.
+        (App.PaneController._sharedDomainChanged): Fixed a but that it erroneously updates the overview domain
+        when domain arrays aren't identical. This was causing a subtle race with other logic.
+        (App.PaneController._sharedZoomChanged): Ditto. Also don't set mainPlotDomain here as any changes to
+        overviewSelection will automatically propagate to the main plot's domain as they're aliased.
+        (App.PaneController._currentItemChanged): Merged into _updateDetails (renamed from _showDetails).
+        (App.PaneController._updateDetails): Previously, this function took points and inspected _hasRange to
+        see if those two points correspond to a range or a single data point. Rewrote all that logic by
+        directly observing selectedPoints and currentItem properties instead of taking points and relying on
+        an instance variable, which was a terrible API.
+        (App.PaneController._updateCanAnalyze): Use selectedPoints property. Since this property is only set
+        when the main plot has a selected range, we don't have to check this._hasRange anymore.
+
+        (App.InteractiveChartComponent._updateDomain): No longer sends domainChanged "event" action.
+        (App.InteractiveChartComponent._sharedSelectionChanged): Removed. This is a dead code.
+        (App.InteractiveChartComponent._updateSelection):
+        (App.InteractiveChartComponent._xDomainsAreSame): Moved to App.domainsAreEqual.
+        (App.InteractiveChartComponent._setCurrentSelection): Update the selection only if needed. Also set
+        selectedPoints property.
+
+        (App.AnalysisTaskController._fetchedRuns):
+        (App.AnalysisTaskController._rootChangedForTestSet):
+
+        * public/v2/index.html:
+        Removed non-functional sharedSelection and superfluous selectionChanged and domainChanged actions.
+
 2014-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed. Fixed syntax errors.

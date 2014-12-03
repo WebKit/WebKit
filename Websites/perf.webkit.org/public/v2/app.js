@@ -399,6 +399,7 @@ App.ChartsController = Ember.Controller.extend({
     platforms: null,
     sharedZoom: null,
     startTime: null,
+    present: Date.now(),
     defaultSince: Date.now() - 7 * 24 * 3600 * 1000,
 
     addPane: function (pane)
@@ -450,35 +451,8 @@ App.ChartsController = Ember.Controller.extend({
 
     }.observes('zoom').on('init'),
 
-    updateSharedDomain: function ()
-    {
-        var panes = this.get('panes');
-        if (!panes.length)
-            return;
-
-        var union = [undefined, undefined];
-        for (var i = 0; i < panes.length; i++) {
-            var domain = panes[i].intrinsicDomain;
-            if (!domain)
-                continue;
-            if (!union[0] || domain[0] < union[0])
-                union[0] = domain[0];
-            if (!union[1] || domain[1] > union[1])
-                union[1] = domain[1];
-        }
-        if (union[0] === undefined)
-            return;
-
-        var startTime = this.get('startTime');
-        var zoom = this.get('sharedZoom');
-        if (startTime)
-            union[0] = zoom ? Math.min(zoom[0], startTime) : startTime;
-
-        this.set('sharedDomain', union);
-    }.observes('panes.@each'),
-
     _startTimeChanged: function () {
-        this.updateSharedDomain();
+        this.set('sharedDomain', [this.get('startTime'), this.get('present')]);
         this._scheduleQueryStringUpdate();
     }.observes('startTime'),
 
@@ -536,9 +510,8 @@ App.ChartsController = Ember.Controller.extend({
 
     _scheduleQueryStringUpdate: function ()
     {
-        Ember.run.debounce(this, '_updateQueryString', 500);
-    }.observes('sharedZoom')
-        .observes('panes.@each.platform', 'panes.@each.metric', 'panes.@each.selectedItem',
+        Ember.run.debounce(this, '_updateQueryString', 1000);
+    }.observes('sharedZoom', 'panes.@each.platform', 'panes.@each.metric', 'panes.@each.selectedItem',
         'panes.@each.timeRange', 'panes.@each.timeRangeIsLocked'),
 
     _updateQueryString: function ()
@@ -547,9 +520,9 @@ App.ChartsController = Ember.Controller.extend({
         this.set('paneList', this._currentEncodedPaneList);
 
         var zoom = undefined;
-        var selection = this.get('sharedZoom');
-        if (selection)
-            zoom = (selection[0] - 0) + '-' + (selection[1] - 0);
+        var sharedZoom = this.get('sharedZoom');
+        if (sharedZoom && !App.domainsAreEqual(sharedZoom, this.get('sharedDomain')))
+            zoom = +sharedZoom[0] + '-' + +sharedZoom[1];
         this.set('zoom', zoom);
 
         if (this.get('startTime') - this.defaultSince)
@@ -635,6 +608,10 @@ App.TestProxyForPopup = Ember.ObjectProxy.extend({
     }.property('childTests', 'metrics'),
 });
 
+App.domainsAreEqual = function (domain1, domain2) {
+    return (!domain1 && !domain2) || (domain1 && domain2 && !(domain1[0] - domain2[0]) && !(domain1[1] - domain2[1]));
+}
+
 App.PaneController = Ember.ObjectController.extend({
     needs: ['charts'],
     sharedTime: Ember.computed.alias('parentController.sharedTime'),
@@ -657,7 +634,7 @@ App.PaneController = Ember.ObjectController.extend({
         createAnalysisTask: function ()
         {
             var name = this.get('newAnalysisTaskName');
-            var points = this._selectedPoints;
+            var points = this.get('selectedPoints');
             Ember.assert('The analysis name should not be empty', name);
             Ember.assert('There should be at least two points in the range', points && points.length >= 2);
 
@@ -695,24 +672,6 @@ App.PaneController = Ember.ObjectController.extend({
             this.set('mainPlotDomain', selection ? selection : this.get('overviewDomain'));
             Ember.run.debounce(this, 'propagateZoom', 100);
         },
-        overviewDomainChanged: function (domain, intrinsicDomain)
-        {
-            this.set('overviewDomain', domain);
-            this.set('intrinsicDomain', intrinsicDomain);
-            this.get('parentController').updateSharedDomain();
-        },
-        rangeChanged: function (extent, points)
-        {
-            if (!points) {
-                this._hasRange = false;
-                this.set('details', null);
-                this.set('timeRange', null);
-                return;
-            }
-            this._hasRange = true;
-            this._showDetails(points);
-            this.set('timeRange', extent);
-        },
     },
     _detailsChanged: function ()
     {
@@ -721,13 +680,13 @@ App.PaneController = Ember.ObjectController.extend({
     _overviewSelectionChanged: function ()
     {
         var overviewSelection = this.get('overviewSelection');
-        this.set('mainPlotDomain', overviewSelection);
+        this.set('mainPlotDomain', overviewSelection || this.get('overviewDomain'));
         Ember.run.debounce(this, 'propagateZoom', 100);
     }.observes('overviewSelection'),
     _sharedDomainChanged: function ()
     {
         var newDomain = this.get('parentController').get('sharedDomain');
-        if (newDomain == this.get('overviewDomain'))
+        if (App.domainsAreEqual(newDomain, this.get('overviewDomain')))
             return;
         this.set('overviewDomain', newDomain);
         if (!this.get('overviewSelection'))
@@ -740,28 +699,30 @@ App.PaneController = Ember.ObjectController.extend({
     _sharedZoomChanged: function ()
     {
         var newSelection = this.get('parentController').get('sharedZoom');
-        if (newSelection == this.get('mainPlotDomain'))
+        if (App.domainsAreEqual(newSelection, this.get('mainPlotDomain')))
             return;
         this.set('overviewSelection', newSelection);
-        this.set('mainPlotDomain', newSelection);
     }.observes('parentController.sharedZoom').on('init'),
-    _currentItemChanged: function ()
+    _updateDetails: function ()
     {
-        if (this._hasRange)
-            return;
-        var point = this.get('currentItem');
-        if (!point || !point.measurement)
+        var selectedPoints = this.get('selectedPoints');
+        var currentPoint = this.get('currentItem');
+        if (!selectedPoints && !currentPoint) {
             this.set('details', null);
-        else {
-            var previousPoint = point.series.previousPoint(point);
-            this._showDetails(previousPoint ? [previousPoint, point] : [point]);
+            return;
         }
-    }.observes('currentItem'),
-    _showDetails: function (points)
-    {
-        var isShowingEndPoint = !this._hasRange;
-        var currentMeasurement = points[points.length - 1].measurement;
-        var oldMeasurement = points[0].measurement;
+
+        var currentMeasurement;
+        var oldMeasurement;
+        if (currentPoint) {
+            currentMeasurement = currentPoint.measurement;
+            var previousPoint = currentPoint.series.previousPoint(currentPoint);
+            oldMeasurement = previousPoint ? previousPoint.measurement : null;
+        } else {
+            currentMeasurement = selectedPoints[selectedPoints.length - 1].measurement;
+            oldMeasurement = selectedPoints[0].measurement;            
+        }
+
         var formattedRevisions = currentMeasurement.formattedRevisions(oldMeasurement);
         var revisions = App.Manifest.get('repositories')
             .filter(function (repository) { return formattedRevisions[repository.get('id')]; })
@@ -778,28 +739,27 @@ App.PaneController = Ember.ObjectController.extend({
 
         var buildNumber = null;
         var buildURL = null;
-        if (isShowingEndPoint) {
+        if (currentPoint) {
             buildNumber = currentMeasurement.buildNumber();
             var builder = App.Manifest.builder(currentMeasurement.builderId());
             if (builder)
                 buildURL = builder.urlFromBuildNumber(buildNumber);
         }
 
-        this._selectedPoints = points;
         this.set('details', Ember.Object.create({
             currentValue: currentMeasurement.mean().toFixed(2),
-            oldValue: oldMeasurement && !isShowingEndPoint ? oldMeasurement.mean().toFixed(2) : null,
+            oldValue: oldMeasurement && selectedPoints ? oldMeasurement.mean().toFixed(2) : null,
             buildNumber: buildNumber,
             buildURL: buildURL,
             buildTime: currentMeasurement.formattedBuildTime(),
             revisions: revisions,
         }));
         this._updateCanAnalyze();
-    },
+    }.observes('currentItem', 'selectedPoints'),
     _updateCanAnalyze: function ()
     {
-        var points = this._selectedPoints;
-        this.set('cannotAnalyze', !this.get('newAnalysisTaskName') || !this._hasRange || !points || points.length < 2);
+        var points = this.get('selectedPoints');
+        this.set('cannotAnalyze', !this.get('newAnalysisTaskName') || !points || points.length < 2);
     }.observes('newAnalysisTaskName'),
 });
 
@@ -994,13 +954,12 @@ App.InteractiveChartComponent = Ember.Component.extend({
         if (!xDomain)
             xDomain = intrinsicXDomain;
         var currentDomain = this._x.domain();
-        if (currentDomain && this._xDomainsAreSame(currentDomain, xDomain))
+        if (currentDomain && App.domainsAreEqual(currentDomain, xDomain))
             return currentDomain;
 
         var yDomain = this._computeYAxisDomain(xDomain[0], xDomain[1]);
         this._x.domain(xDomain);
         this._y.domain(yDomain);
-        this.sendAction('domainChanged', xDomain, intrinsicXDomain);
         return xDomain;
     },
     _updateDimensionsIfNeeded: function (newSelection)
@@ -1180,33 +1139,23 @@ App.InteractiveChartComponent = Ember.Component.extend({
     {
         this._updateSelection(this.get('selection'));
     }.observes('selection'),
-    _sharedSelectionChanged: function ()
-    {
-        if (this.get('selectionIsLocked'))
-            return;
-        this._updateSelection(this.get('sharedSelection'));
-    }.observes('sharedSelection'),
     _updateSelection: function (newSelection)
     {
         if (!this._brush)
             return;
 
         var currentSelection = this._currentSelection();
-        if (newSelection && currentSelection && this._xDomainsAreSame(newSelection, currentSelection))
+        if (newSelection && currentSelection && App.domainsAreEqual(newSelection, currentSelection))
             return;
 
         var domain = this._x.domain();
-        if (!newSelection || this._xDomainsAreSame(domain, newSelection))
+        if (!newSelection || App.domainsAreEqual(domain, newSelection))
             this._brush.clear();
         else
             this._brush.extent(newSelection);
         this._updateBrush();
 
         this._setCurrentSelection(newSelection);
-    },
-    _xDomainsAreSame: function (domain1, domain2)
-    {
-        return !(domain1[0] - domain2[0]) && !(domain1[1] - domain2[1]);
     },
     _brushChanged: function ()
     {
@@ -1557,8 +1506,9 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._setCurrentItem(undefined);
         this._updateSelectionToolbar();
 
-        this.set('sharedSelection', newSelection);
-        this.sendAction('selectionChanged', newSelection, points);
+        if (!App.domainsAreEqual(this.get('selection'), newSelection))
+            this.set('selection', newSelection);
+        this.set('selectedPoints', points);
     },
     _updateSelectionToolbar: function ()
     {
@@ -1675,7 +1625,8 @@ App.AnalysisTaskController = Ember.Controller.extend({
             });
         }));
     },
-    _fetchedRuns: function (data) {
+    _fetchedRuns: function (data)
+    {
         var runs = data.runs;
 
         var currentTimeSeries = runs.current.timeSeriesByCommitTime();
@@ -1718,7 +1669,8 @@ App.AnalysisTaskController = Ember.Controller.extend({
             Ember.Object.create({name: "B", options: pointOptions, selection: pointOptions[pointOptions.length - 1]}),
         ];
     }.property('analysisPoints'),
-    _rootChangedForTestSet: function () {
+    _rootChangedForTestSet: function ()
+    {
         var sets = this.get('testSets');
         var roots = this.get('roots');
         if (!sets || !roots)
