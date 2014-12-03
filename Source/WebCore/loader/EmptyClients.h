@@ -403,10 +403,6 @@ public:
     virtual void didRequestAutocomplete(PassRefPtr<FormState>) override { }
 #endif
 
-#if PLATFORM(MAC)
-    virtual bool needsQuickLookResourceCachingQuirks() const override { return false; }
-#endif
-
     virtual bool isEmptyFrameLoaderClient() override { return true; }
 };
 

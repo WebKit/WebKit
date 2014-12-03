@@ -2249,14 +2249,6 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
 }
 #endif
 
-#if PLATFORM(MAC)
-bool WebFrameLoaderClient::needsQuickLookResourceCachingQuirks() const
-{
-    static const bool shouldUseQuickLookResourceCachingQuirks = QuickLookMac::computeNeedsQuickLookResourceCachingQuirks();
-    return shouldUseQuickLookResourceCachingQuirks;
-}
-#endif
-
 void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter)
 {
     m_webFrame->_private->contentFilterForBlockedLoad = WTF::move(contentFilter);

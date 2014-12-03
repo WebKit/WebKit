@@ -126,7 +126,6 @@ struct WebProcessCreationParameters {
     pid_t presenterApplicationPid;
 
     bool accessibilityEnhancedUserInterfaceEnabled;
-    bool needsQuickLookResourceCachingQuirks;
 
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;

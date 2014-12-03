@@ -167,11 +167,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if PLATFORM(MAC)
     parameters.accessibilityEnhancedUserInterfaceEnabled = [[NSApp accessibilityAttributeValue:@"AXEnhancedUserInterface"] boolValue];
-    static const bool shouldUseQuickLookResourceCachingQuirks = QuickLookMac::computeNeedsQuickLookResourceCachingQuirks();
-    parameters.needsQuickLookResourceCachingQuirks = shouldUseQuickLookResourceCachingQuirks;
 #else
     parameters.accessibilityEnhancedUserInterfaceEnabled = false;
-    parameters.needsQuickLookResourceCachingQuirks = false;
 #endif
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];

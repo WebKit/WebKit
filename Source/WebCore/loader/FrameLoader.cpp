@@ -2152,11 +2152,6 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
         return CachePolicyRevalidate;
 
     const ResourceRequest& request(documentLoader()->request());
-#if PLATFORM(MAC)
-    if (request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post") && m_client.needsQuickLookResourceCachingQuirks())
-        return CachePolicyRevalidate;
-#endif
-
     if (request.cachePolicy() == ReturnCacheDataElseLoad)
         return CachePolicyHistoryBuffer;
 

@@ -1,3 +1,27 @@
+2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        Remove a SnowLeopard-era quirk for QuickLook
+        https://bugs.webkit.org/show_bug.cgi?id=139208
+        <rdar://problem/19121822>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::needsQuickLookResourceCachingQuirks): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::needsQuickLookResourceCachingQuirks): Deleted.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-12-02  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

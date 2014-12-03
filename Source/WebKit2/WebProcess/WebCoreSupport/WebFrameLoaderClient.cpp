@@ -1642,11 +1642,4 @@ void WebFrameLoaderClient::didRequestAutocomplete(PassRefPtr<WebCore::FormState>
 }
 #endif
 
-#if PLATFORM(MAC)
-bool WebFrameLoaderClient::needsQuickLookResourceCachingQuirks() const
-{
-    return WebProcess::shared().needsQuickLookResourceCachingQuirks();
-}
-#endif
-
 } // namespace WebKit
