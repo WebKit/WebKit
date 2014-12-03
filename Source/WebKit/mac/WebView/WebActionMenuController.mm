@@ -55,10 +55,12 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LookupSPI.h>
+#import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
+#import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
@@ -71,19 +73,12 @@
 #import <objc/objc.h>
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
-SOFT_LINK_CLASS(QuickLookUI, QLPreviewBubble)
+SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 
-@class QLPreviewBubble;
-@interface NSObject (WKQLPreviewBubbleDetails)
-@property (copy) NSArray * controls;
-@property NSSize maximumSize;
-@property NSRectEdge preferredEdge;
-@property (retain) IBOutlet NSWindow* parentWindow;
-- (void)showPreviewItem:(id)previewItem itemFrame:(NSRect)frame;
-- (void)setAutomaticallyCloseWithMask:(NSEventMask)autocloseMask filterMask:(NSEventMask)filterMask block:(void (^)(void))block;
+@interface WebActionMenuController () <QLPreviewMenuItemDelegate>
 @end
 
 using namespace WebCore;
@@ -283,39 +278,14 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     return view->contentsToWindow(node->pixelSnappedBoundingBox());
 }
 
-- (void)_quickLookURLFromActionMenu:(id)sender
-{
-    if (!_webView)
-        return;
-
-    NSURL *url = _hitTestResult.absoluteLinkURL();
-    if (!url)
-        return;
-
-    Node* node = _hitTestResult.innerNode();
-    if (!node)
-        return;
-
-    NSRect itemFrame = elementBoundingBoxInWindowCoordinatesFromNode(node);
-    NSSize maximumPreviewSize = NSMakeSize(_webView.bounds.size.width * 0.75, _webView.bounds.size.height * 0.75);
-
-    RetainPtr<QLPreviewBubble> bubble = adoptNS([[getQLPreviewBubbleClass() alloc] init]);
-    [bubble setParentWindow:_webView.window];
-    [bubble setMaximumSize:maximumPreviewSize];
-    [bubble setPreferredEdge:NSMaxYEdge];
-    [bubble setControls:@[ ]];
-    NSEventMask filterMask = NSAnyEventMask & ~(NSAppKitDefinedMask | NSSystemDefinedMask | NSApplicationDefinedMask | NSMouseEnteredMask | NSMouseExitedMask);
-    NSEventMask autocloseMask = NSLeftMouseDownMask | NSRightMouseDownMask | NSKeyDownMask;
-    [bubble setAutomaticallyCloseWithMask:autocloseMask filterMask:filterMask block:[bubble] {
-        [bubble close];
-    }];
-    [bubble showPreviewItem:url itemFrame:itemFrame];
-}
-
 - (NSArray *)_defaultMenuItemsForLink
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser];
-    RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagPreviewLink];
+
+    RetainPtr<QLPreviewMenuItem> previewLinkItem = [NSMenuItem standardQuickLookMenuItem];
+    [previewLinkItem setPreviewStyle:QLPreviewStylePopover];
+    [previewLinkItem setDelegate:self];
+
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList];
 
     return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
@@ -749,6 +719,26 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     return _webView.window;
 }
 
+#pragma mark QLPreviewMenuItemDelegate implementation
+
+- (NSView *)menuItem:(NSMenuItem *)menuItem viewAtScreenPoint:(NSPoint)screenPoint
+{
+    return _webView;
+}
+
+- (id<QLPreviewItem>)menuItem:(NSMenuItem *)menuItem previewItemAtPoint:(NSPoint)point
+{
+    if (!_webView)
+        return nil;
+
+    return _hitTestResult.absoluteLinkURL();
+}
+
+- (NSRectEdge)menuItem:(NSMenuItem *)menuItem preferredEdgeForPoint:(NSPoint)point
+{
+    return NSMaxYEdge;
+}
+
 #pragma mark Menu Items
 
 - (RetainPtr<NSMenuItem>)_createActionMenuItemForTag:(uint32_t)tag
@@ -763,12 +753,6 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         selector = @selector(_openURLFromActionMenu:);
         title = WEB_UI_STRING_KEY("Open", "Open (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuOpenInNewWindow"];
-        break;
-
-    case WebActionMenuItemTagPreviewLink:
-        selector = @selector(_quickLookURLFromActionMenu:);
-        title = WEB_UI_STRING_KEY("Preview", "Preview (action menu item)", "action menu item");
-        image = [NSImage imageNamed:@"NSActionMenuQuickLook"];
         break;
 
     case WebActionMenuItemTagAddLinkToSafariReadingList:
