@@ -1,5 +1,16 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176689. <rdar://problem/18944696>
+
+    2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+            Speculative build fix.
+
+            * platform/spi/mac/QuickLookMacSPI.h:
+
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176688. <rdar://problem/18944696>
 
     2014-12-02  Beth Dakin  <bdakin@apple.com>

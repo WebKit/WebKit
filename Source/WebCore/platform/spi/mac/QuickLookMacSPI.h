@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#if __has_include(<QuickLookUI/QLPreviewMenuItem.h>)
 
 #import <QuickLookUI/QLPreviewItem.h>
 #import <QuickLookUI/QLPreviewMenuItem.h>
