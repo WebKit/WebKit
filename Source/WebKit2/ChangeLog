@@ -1,3 +1,25 @@
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176678. <rdar://problem/19072236>
+
+    2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+            TextIndicator can get stuck (especially if we don't get LUNotificationPopoverWillClose when we should)
+            https://bugs.webkit.org/show_bug.cgi?id=139175
+            <rdar://problem/19072236>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView scrollWheel:]):
+            (-[WKView mouseDown:]):
+            Work around <rdar://problem/19086993> by always explicitly clearing the
+            active text indicator in mouseDown: and scrollWheel:.
+            This way, even if you manage to get a text indicator that outlives the
+            Look Up popover (or find-in-page, or whatever), it will be dismissed
+            by clicking or scrolling the view.
+
+
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
         Merge r176474. <rdar://problem/19063717>
