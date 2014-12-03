@@ -70,7 +70,6 @@
 #include "MapData.h"
 #include "Nodes.h"
 #include "Parser.h"
-#include "ParserArena.h"
 #include "ProfilerDatabase.h"
 #include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
@@ -154,7 +153,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new MarkedArgumentBuffer)
-    , parserArena(adoptPtr(new ParserArena))
     , keywords(adoptPtr(new Keywords(*this)))
     , interpreter(0)
     , jsArrayClassInfo(JSArray::info())

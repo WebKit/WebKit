@@ -27,19 +27,19 @@
 
 namespace JSC {
 
-    inline void* ParserArenaFreeable::operator new(size_t size, VM* vm)
+    inline void* ParserArenaFreeable::operator new(size_t size, ParserArena& parserArena)
     {
-        return vm->parserArena->allocateFreeable(size);
+        return parserArena.allocateFreeable(size);
     }
 
-    inline void* ParserArenaDeletable::operator new(size_t size, VM* vm)
+    inline void* ParserArenaDeletable::operator new(size_t size, ParserArena& parserArena)
     {
-        return vm->parserArena->allocateDeletable(size);
+        return parserArena.allocateDeletable(size);
     }
 
-    inline ParserArenaRefCounted::ParserArenaRefCounted(VM* vm)
+    inline ParserArenaRefCounted::ParserArenaRefCounted(ParserArena& parserArena)
     {
-        vm->parserArena->derefWithArena(adoptRef(this));
+        parserArena.derefWithArena(adoptRef(this));
     }
 
     inline Node::Node(const JSTokenLocation& location)

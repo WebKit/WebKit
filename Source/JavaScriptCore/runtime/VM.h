@@ -87,7 +87,6 @@ class Keywords;
 class LLIntOffsetsExtractor;
 class LegacyProfiler;
 class NativeExecutable;
-class ParserArena;
 class RegExpCache;
 class ScriptExecutable;
 class SourceProvider;
@@ -325,7 +324,6 @@ public:
 
     PrototypeMap prototypeMap;
 
-    OwnPtr<ParserArena> parserArena;
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
     OwnPtr<Keywords> keywords;

@@ -174,11 +174,11 @@ public:
         ASSERT(name);
         return Property(name, type);
     }
-    Property createProperty(VM* vm, double name, int, PropertyNode::Type type, bool complete)
+    Property createProperty(VM* vm, ParserArena& parserArena, double name, int, PropertyNode::Type type, bool complete)
     {
         if (!complete)
             return Property(type);
-        return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
+        return Property(&parserArena.identifierArena().makeNumericIdentifier(vm, name), type);
     }
     Property createProperty(int, int, PropertyNode::Type type, bool)
     {
@@ -226,11 +226,11 @@ public:
             return Property(type);
         return Property(name, type);
     }
-    Property createGetterOrSetterProperty(VM* vm, const JSTokenLocation&, PropertyNode::Type type, bool strict, double name, int, int, int, int, int, int, int)
+    Property createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation&, PropertyNode::Type type, bool strict, double name, int, int, int, int, int, int, int)
     {
         if (!strict)
             return Property(type);
-        return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
+        return Property(&parserArena.identifierArena().makeNumericIdentifier(vm, name), type);
     }
 
     void appendStatement(int, int) { }
