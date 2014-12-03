@@ -26,7 +26,7 @@
 #ifndef StorageNamespaceProvider_h
 #define StorageNamespaceProvider_h
 
-#include <WebCore/SecurityOriginHash.h>
+#include "SecurityOriginHash.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

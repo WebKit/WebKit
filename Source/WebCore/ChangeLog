@@ -1,3 +1,12 @@
+2014-12-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build break EFL port since r176696
+        https://bugs.webkit.org/show_bug.cgi?id=139215
+
+        Unreviewed, build fix for EFL port.
+
+        * storage/StorageNamespaceProvider.h: Include SecurityOriginHash.h from WebCore/page directory.
+
 2014-12-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Table captions and table rows are missing from the accessible hierarchy
