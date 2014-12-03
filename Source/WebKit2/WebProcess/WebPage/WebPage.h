@@ -861,6 +861,8 @@ public:
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
 
     void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
+    bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1081,6 +1083,8 @@ private:
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID);
 #endif
+
+    void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
 
     uint64_t m_pageID;
 
@@ -1326,6 +1330,7 @@ private:
 #endif
 
     bool m_mainFrameProgressCompleted;
+    bool m_shouldDispatchFakeMouseMoveEvents;
 };
 
 } // namespace WebKit

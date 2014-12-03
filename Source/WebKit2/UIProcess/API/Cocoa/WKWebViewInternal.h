@@ -99,7 +99,7 @@ struct PrintInfo;
 
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
 #else
-@property (nonatomic, setter=_setIgnoresNonWheelMouseEvents:) BOOL _ignoresNonWheelMouseEvents;
+@property (nonatomic, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents;
 #endif
 
 @end

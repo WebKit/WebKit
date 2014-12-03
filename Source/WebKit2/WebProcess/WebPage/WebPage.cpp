@@ -334,6 +334,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_systemWebGLPolicy(WebGLAllowCreation)
 #endif
     , m_mainFrameProgressCompleted(false)
+    , m_shouldDispatchFakeMouseMoveEvents(true)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and

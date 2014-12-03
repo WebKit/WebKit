@@ -5342,4 +5342,9 @@ void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& re
 }
 #endif
 
+void WebPageProxy::setShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
+{
+    m_process->send(Messages::WebPage::SetShouldDispatchFakeMouseMoveEvents(shouldDispatchFakeMouseMoveEvents), m_pageID);
+}
+
 } // namespace WebKit

@@ -1080,7 +1080,11 @@ bool WebChromeClient::hasRelevantSelectionServices(bool isTextOnly) const
 {
     return (isTextOnly && WebProcess::shared().hasSelectionServices()) || WebProcess::shared().hasRichContentServices();
 }
-
 #endif
+
+bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const
+{
+    return m_page->shouldDispatchFakeMouseMoveEvents();
+}
 
 } // namespace WebKit

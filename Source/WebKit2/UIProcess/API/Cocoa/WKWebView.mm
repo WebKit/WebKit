@@ -1583,14 +1583,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_wkView setMagnification:magnification centeredAtPoint:NSPointFromCGPoint(point)];
 }
 
-- (BOOL)_ignoresNonWheelMouseEvents
+- (BOOL)_ignoresNonWheelEvents
 {
-    return [_wkView _ignoresNonWheelMouseEvents];
+    return [_wkView _ignoresNonWheelEvents];
 }
 
-- (void)_setIgnoresNonWheelMouseEvents:(BOOL)ignoresNonWheelMouseEvents
+- (void)_setIgnoresNonWheelEvents:(BOOL)ignoresNonWheelEvents
 {
-    [_wkView _setIgnoresNonWheelMouseEvents:ignoresNonWheelMouseEvents];
+    [_wkView _setIgnoresNonWheelEvents:ignoresNonWheelEvents];
 }
 
 #endif

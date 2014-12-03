@@ -1,3 +1,18 @@
+2014-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        Keyboard input should be disabled in the preview popover
+        https://bugs.webkit.org/show_bug.cgi?id=139219
+        <rdar://problem/19052381>
+
+        Reviewed by Anders Carlsson.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldDispatchFakeMouseMoveEvents):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        Allow ChromeClient to disable the dispatch of "fake" mouseMove events
+        that happens during scrolling.
+
 2014-12-03  Antti Koivisto  <antti@apple.com>
 
         Remove genericFamily enum from FontDescription
