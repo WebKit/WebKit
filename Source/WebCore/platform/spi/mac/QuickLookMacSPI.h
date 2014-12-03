@@ -30,9 +30,6 @@
 
 #else
 
-@protocol QLPreviewItem <NSObject>
-@end
-
 @protocol QLPreviewMenuItemDelegate <NSObject>
 @optional
 
