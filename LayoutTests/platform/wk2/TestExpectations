@@ -224,14 +224,13 @@ webkit.org/b/127683 http/tests/navigation/new-window-redirect-history.html [ Ski
 webkit.org/b/132297 svg/custom/bug79798.html [ Skip ]
 
 # These tests started crashing with assertion failures only on debug builds after r176687:
-# https://webkit.org/b/139224
-fast/events/clear-drag-state.html  [ Crash ]
-fast/css/user-drag-none.html  [ Crash ]
-editing/pasteboard/dataTransfer-setData-getData.html [ Crash ]
-editing/pasteboard/drop-text-events-sideeffect-crash.html [ Crash ]
-editing/pasteboard/drag-drop-iframe-refresh-crash.html [ Crash ]
-editing/pasteboard/drop-text-events-sideeffect.html [ Crash ]
-editing/selection/user-drag-element-and-user-select-none.html [ Crash ]
+webkit.org/b/139224 [ Debug ] fast/events/clear-drag-state.html  [ Skip ]
+webkit.org/b/139224 [ Debug ] fast/css/user-drag-none.html  [ Skip ]
+webkit.org/b/139224 [ Debug ] editing/pasteboard/dataTransfer-setData-getData.html [ Skip ]
+webkit.org/b/139224 [ Debug ] editing/pasteboard/drop-text-events-sideeffect-crash.html [ Skip ]
+webkit.org/b/139224 [ Debug ] editing/pasteboard/drag-drop-iframe-refresh-crash.html [ Skip ]
+webkit.org/b/139224 [ Debug ] editing/pasteboard/drop-text-events-sideeffect.html [ Skip ]
+webkit.org/b/139224 [ Debug ] editing/selection/user-drag-element-and-user-select-none.html [ Skip ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################

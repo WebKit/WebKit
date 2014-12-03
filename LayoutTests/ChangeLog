@@ -1,5 +1,14 @@
 2014-12-03  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: updating some tests as skips instead of crashes.
+        <https://webkit.org/b/139224>
+
+        Not reviewed.
+
+        * platform/wk2/TestExpectations:
+
+2014-12-03  Mark Lam  <mark.lam@apple.com>
+
         Gardening: marking some tests as crashes.
         <https://webkit.org/b/139224>
 
