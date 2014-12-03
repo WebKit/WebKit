@@ -304,14 +304,16 @@
     </branch>
   </autotools>
 
-  <autotools id="gst-plugins-bad" autogenargs="--disable-examples  --disable-gtk-doc">
+  <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
     <branch module="gst-plugins-bad/gst-plugins-bad-1.4.4.tar.xz" version="1.4.4"
             repo="gstreamer"
             hash="sha256:e41b36105c0a13a2cb1ff9f559714e839b82dc3841484cd664790fb7947e55c7"
-            md5sum="972c6e22dd2e44fcf0b04b9d810a56be"/>
+            md5sum="972c6e22dd2e44fcf0b04b9d810a56be">
+      <patch file="gst-plugins-bad-remove-gnustep-support.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
