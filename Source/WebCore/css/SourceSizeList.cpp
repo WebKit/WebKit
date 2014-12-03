@@ -50,7 +50,7 @@ bool SourceSize::match(RenderStyle& style, Frame* frame)
 static unsigned computeLength(CSSParserValue& value, RenderStyle& style, RenderView* view)
 {
     CSSToLengthConversionData conversionData(&style, &style, view);
-    if (CSSParser::isCalculation(&value)) {
+    if (CSSParser::isCalculation(value)) {
         CSSParserValueList* args = value.function->args.get();
         if (args && args->size()) {
             RefPtr<CSSCalcValue> calcValue = CSSCalcValue::create(value.function->name, *args, CalculationRangeNonNegative);

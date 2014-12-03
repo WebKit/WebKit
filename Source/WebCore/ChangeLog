@@ -1,3 +1,16 @@
+2014-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Modernize the CSSParser code
+        https://bugs.webkit.org/show_bug.cgi?id=139209
+
+        Reviewed by Antti Koivisto.
+
+        Modernize the CSSParser code by:
+        - Using more references instead of pointers
+        - Using nullptr instead of 0
+
+        No new tests, no behavior change.
+
 2014-12-03  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] REGRESSION (r176622): WebCore fails to link
