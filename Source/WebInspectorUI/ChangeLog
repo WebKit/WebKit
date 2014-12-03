@@ -1,3 +1,19 @@
+2014-12-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSS Minification breaks some selectors with colons
+        https://bugs.webkit.org/show_bug.cgi?id=139206
+
+        Reviewed by Simon Fraser.
+
+        Do not remove spaces preceeding colons, as they may change the semantics
+        of selectors with colon prefixes (e.g. "a :not(b)").
+
+        At the same time, we can strip spaces around "!" characters, for example
+        a space is not required before "!important" priority.
+
+        * Scripts/cssmin.py:
+        (cssminify):
+
 2014-12-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Web Inspector: add more :not() and :matches() awesomeness

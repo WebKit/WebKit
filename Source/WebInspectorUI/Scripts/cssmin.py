@@ -30,7 +30,8 @@ def cssminify(css):
         (r"\/\*.*?\*\/", ""),          # delete comments
         (r"\n", ""),                   # delete new lines
         (r"\s+", " "),                 # change multiple spaces to one space
-        (r"\s?([;:{},~>])\s?", r"\1"), # delete space where it is not needed
+        (r"\s?([;{},~>!])\s?", r"\1"), # delete space where it is not needed
+        (r":\s", ":"),                 # delete spaces after colons, but not before. E.g. do not break selectors "a :focus", "b :matches(...)", "c :not(...)" where the leading space is significant
         (r"\s?([-+])(?:\s(?![0-9(]))", r"\1"), # delete whitespace around + and - when not followed by a number or paren. E.g. strip for selector "a + b" but not "calc(a + b)" which requires spaces.
         (r";}", "}")                   # change ';}' to '}' because the semicolon is not needed
     )
