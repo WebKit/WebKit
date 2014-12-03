@@ -1189,6 +1189,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
     pageConfiguration.userContentController = &_private->group->userContentController();
+    pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
 
     _private->page = new Page(pageConfiguration);
     

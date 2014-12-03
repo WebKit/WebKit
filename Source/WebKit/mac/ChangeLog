@@ -1,3 +1,14 @@
+2014-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Set a visited link store when creating a simple WebView
+        https://bugs.webkit.org/show_bug.cgi?id=139234
+        <rdar://problem/19132978>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2014-12-02  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
