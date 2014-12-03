@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that a repeating timer in an iframe changing the style of an element gets throttled when scrolling the frame out of view.");
+jsTestIsAsync = true;
+
+function scrollFrameOutOfView()
+{
+  debug("Scrolling frame out of view.");
+  window.scrollBy(0,800);
+}
+
+function timerFired(iterationCount, isThrottled) {
+  // 5 iterations should suffice to throttle the timer.
+  if (iterationCount == 5) {
+    debug("Frame is inside viewport, timer should not be throttled");
+    isTimerThrottledBeforeScroll = isThrottled;
+    shouldBeFalse("isTimerThrottledBeforeScroll");
+    scrollFrameOutOfView();
+  } else if (iterationCount == 7) {
+    debug("Frame is outside viewport, timer should now be throttled");
+    isTimerThrottledAfterScroll = isThrottled;
+    shouldBeTrue("isTimerThrottledAfterScroll");
+    finishJSTest();
+  }
+}
+
+</script>
+<div style="position: relative; width: 1600px; height: 2400px; background-color: green;">
+  <iframe id="testFrame" src="resources/timer-throttling-iframe.html" style="width: 100px; height: 100px;"></iframe>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>

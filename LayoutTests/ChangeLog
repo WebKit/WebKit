@@ -1,3 +1,16 @@
+2014-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Add layout test for DOM timer throttling in iframe scrolled out of viewport
+        https://bugs.webkit.org/show_bug.cgi?id=138884
+
+        Reviewed by Andreas Kling.
+
+        Add a layout test to test that a repeating DOM timer inside an iframe
+        get throttled if the iframe is scrolled out of the viewport.
+
+        * fast/dom/resources/timer-throttling-iframe.html: Added.
+        * fast/dom/timer-throttle-on-scrolling-iframe-away.html: Added.
+
 2014-12-03  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION(r176687): Caused webkit2 test assertion failure crashes in WebKit::WebPage::willStartDrag()

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<div id="testElement">TEST</div>
+<script>
+var testElement = document.getElementById("testElement");
+var iterationCount = 0;
+var timeoutId;
+
+function timerCallback() {
+  ++iterationCount;
+
+  // Change style of Element.
+  testElement.style["opacity"] = "" + (iterationCount / 10.);
+
+  parent.timerFired(iterationCount, internals.isTimerThrottled(timeoutId));
+
+  if (iterationCount == 7)
+    clearInterval(timeoutId);
+}
+
+timeoutId = setInterval(timerCallback, 0);
+</script>
+</body>
