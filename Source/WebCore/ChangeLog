@@ -1,3 +1,14 @@
+2014-12-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Subtitle menu should only appear when useful.
+        https://bugs.webkit.org/show_bug.cgi?id=139133
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController hasLegibleMediaSelectionOptions]): only enable when there are non default options.
+        (-[WebAVPlayerController hasAudioMediaSelectionOptions]): only enable when there is more than one option.
+
 2014-12-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Inline text elements with accessible object attributes and/or event handlers are not exposed
