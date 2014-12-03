@@ -249,7 +249,7 @@ static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, Render
     if (style.columnSpan() != ColumnSpanAll || !is<RenderBox>(*descendant) || descendant->isFloatingOrOutOfFlowPositioned())
         return false;
 
-    RenderBlock* container = descendant->containingBlock();
+    RenderElement* container = descendant->parent();
     if (!is<RenderBlockFlow>(*container) || container->childrenInline()) {
         // Needs to be block-level.
         return false;
