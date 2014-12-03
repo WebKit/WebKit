@@ -1,3 +1,17 @@
+2014-12-02  Dean Jackson  <dino@apple.com>
+
+        [Media] Audio content shouldn't have fullscreen buttons, even if in a video element
+        https://bugs.webkit.org/show_bug.cgi?id=139200
+        <rdar://problem/18914506>
+
+        Reviewed by Eric Carlson.
+
+        Loads an audio file via the video element and checks if the
+        fullscreen button is visible.
+
+        * media/audio-as-video-fullscreen-expected.txt: Added.
+        * media/audio-as-video-fullscreen.html: Added.
+
 2014-12-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Add subtle crypto to the build system

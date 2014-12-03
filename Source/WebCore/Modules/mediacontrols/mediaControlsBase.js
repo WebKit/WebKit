@@ -12,6 +12,7 @@ function Controller(root, video, host)
     this.listeners = {};
     this.isLive = false;
     this.statusHidden = true;
+    this.hasVisualMedia = false;
 
     this.addVideoListeners();
     this.createBase();
@@ -554,6 +555,7 @@ Controller.prototype = {
 
     handleReadyStateChange: function(event)
     {
+        this.hasVisualMedia = this.video.videoTracks && this.video.videoTracks.length > 0;
         this.updateReadyState();
         this.updateDuration();
         this.updateCaptionButton();
@@ -836,7 +838,7 @@ Controller.prototype = {
 
     updateFullscreenButton: function()
     {
-        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, !this.video.webkitSupportsFullscreen);
+        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, (!this.video.webkitSupportsFullscreen || !this.hasVisualMedia));
     },
 
     handleFullscreenButtonClicked: function(event)

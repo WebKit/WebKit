@@ -1,5 +1,31 @@
 2014-12-02  Dean Jackson  <dino@apple.com>
 
+        [Media] Audio content shouldn't have fullscreen buttons, even if in a video element
+        https://bugs.webkit.org/show_bug.cgi?id=139200
+        <rdar://problem/18914506>
+
+        Reviewed by Eric Carlson.
+
+        An audio-only resource, even if loaded into a <video> element, should not
+        present the fullscreen or optimised fullscreen controls. This includes a
+        MediaDocument, which is always a <video> element. We can detect this by
+        examining the length of the videoTracks property as our content loads.
+
+        Test: media/audio-as-video-fullscreen.html
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): Initialize a hasVisualMedia to false.
+        (Controller.prototype.handleReadyStateChange): If we see a videoTrack, hasVisualMedia is now true.
+        (Controller.prototype.updateFullscreenButtons): Merge the updateFullscreenButton and
+        updateOptimizedFullscreenButton methods into this single spot, and check for
+        hasVisualMedia.
+        (Controller.prototype.updateFullscreenButton): Deleted.
+        (Controller.prototype.updateOptimizedFullscreenButton): Deleted.
+
+        * Modules/mediacontrols/mediaControlsBase.js: Do the same for the other ports.
+
+2014-12-02  Dean Jackson  <dino@apple.com>
+
         Missing support for innerHTML on SVGElement
         https://bugs.webkit.org/show_bug.cgi?id=136903
 

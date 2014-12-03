@@ -12,6 +12,7 @@ function Controller(root, video, host)
     this.listeners = {};
     this.isLive = false;
     this.statusHidden = true;
+    this.hasVisualMedia = false;
 
     this.addVideoListeners();
     this.createBase();
@@ -26,7 +27,7 @@ function Controller(root, video, host)
     this.updateThumbnail();
     this.updateCaptionButton();
     this.updateCaptionContainer();
-    this.updateFullscreenButton();
+    this.updateFullscreenButtons();
     this.updateVolume();
     this.updateHasAudio();
     this.updateHasVideo();
@@ -554,12 +555,12 @@ Controller.prototype = {
 
     handleReadyStateChange: function(event)
     {
+        this.hasVisualMedia = this.video.videoTracks && this.video.videoTracks.length > 0;
         this.updateReadyState();
         this.updateDuration();
         this.updateCaptionButton();
         this.updateCaptionContainer();
-        this.updateFullscreenButton();
-        this.updateOptimizedFullscreenButton();
+        this.updateFullscreenButtons();
         this.updateProgress();
     },
 
@@ -860,16 +861,13 @@ Controller.prototype = {
         return true;
     },
 
-    updateFullscreenButton: function()
+    updateFullscreenButtons: function()
     {
-        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, !this.video.webkitSupportsFullscreen);
+        var shouldBeHidden = !this.video.webkitSupportsFullscreen || !this.hasVisualMedia;
+        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
+        this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
     },
 
-    updateOptimizedFullscreenButton: function()
-    {
-        this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, !this.video.webkitSupportsFullscreen);
-    },
-    
     handleFullscreenButtonClicked: function(event)
     {
         if (this.isFullScreen())
