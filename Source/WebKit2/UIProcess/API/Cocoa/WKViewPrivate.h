@@ -126,6 +126,7 @@
 - (void)_setPreviewTitle:(NSString *)previewTitle;
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
 - (void)_handleClickInPreviewView:(NSView *)previewView URL:(NSURL *)url;
+- (BOOL)_shouldUseStandardQuickLookPreview;
 #endif
 
 - (void)_dismissActionMenuPopovers;

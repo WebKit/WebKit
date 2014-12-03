@@ -1,5 +1,31 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176684. <rdar://problem/18944696>
+
+    2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+            Should use standardQuickLookMenuItem for apps that don't implement customizations
+            https://bugs.webkit.org/show_bug.cgi?id=139193
+            -and corresponding-
+            rdar://problem/18944696
+
+            Reviewed by Anders Carlsson.
+
+            Use [NSMenuItem standardQuickLookMenuItem].
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItemsForLink]):
+
+            Delegate methods to set up the standardQuickLookMenuItem.
+            (-[WebActionMenuController menuItem:viewAtScreenPoint:]):
+            (-[WebActionMenuController menuItem:previewItemAtPoint:]):
+            (-[WebActionMenuController menuItem:preferredEdgeForPoint:]):
+
+            Remove all of the old QLPreviewBubble code.
+            (-[WebActionMenuController _createActionMenuItemForTag:]):
+            (-[WebActionMenuController _quickLookURLFromActionMenu:]): Deleted.
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176681. <rdar://problem/19067172>
 
     2014-12-02  Timothy Horton  <timothy_horton@apple.com>

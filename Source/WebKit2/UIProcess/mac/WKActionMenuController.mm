@@ -45,12 +45,17 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LookupSPI.h>
+#import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSViewSPI.h>
+#import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/URL.h>
+
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
+SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
@@ -58,7 +63,7 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 using namespace WebCore;
 using namespace WebKit;
 
-@interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate>
+@interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate, NSPopoverDelegate, QLPreviewMenuItemDelegate>
 - (void)_updateActionMenuItems;
 - (BOOL)_canAddMediaToPhotos;
 - (void)_showTextIndicator;
@@ -388,14 +393,25 @@ static const CGFloat previewViewTitleHeight = 34;
 - (NSArray *)_defaultMenuItemsForLink
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
+
+    BOOL shouldUseStandardQuickLookPreview = [_wkView _shouldUseStandardQuickLookPreview];
+    RetainPtr<NSMenuItem> previewLinkItem;
+    RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem;
+    if (shouldUseStandardQuickLookPreview) {
+        qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
+        [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
+        [qlPreviewLinkItem setDelegate:self];
+    } else {
 #if WK_API_ENABLED
-    RetainPtr<NSMenuItem> previewLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPreviewLink];
+        previewLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPreviewLink];
 #else
-    RetainPtr<NSMenuItem> previewLinkItem = [NSMenuItem separatorItem];
+        previewLinkItem = [NSMenuItem separatorItem];
 #endif
+    }
+
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:kWKContextActionItemTagAddLinkToSafariReadingList];
 
-    return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
+    return @[ openLinkItem.get(), shouldUseStandardQuickLookPreview ? qlPreviewLinkItem.get() : previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
 }
 
 - (void)_openURLFromActionMenu:(id)sender
@@ -929,6 +945,27 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 {
     _shouldKeepPreviewPopoverOpen = NO;
     [self _clearPreviewPopover];
+}
+
+#pragma mark QLPreviewMenuItemDelegate implementation
+
+- (NSView *)menuItem:(NSMenuItem *)menuItem viewAtScreenPoint:(NSPoint)screenPoint
+{
+    return _wkView;
+}
+
+- (id<QLPreviewItem>)menuItem:(NSMenuItem *)menuItem previewItemAtPoint:(NSPoint)point
+{
+    if (!_wkView)
+        return nil;
+
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    return [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
+}
+
+- (NSRectEdge)menuItem:(NSMenuItem *)menuItem preferredEdgeForPoint:(NSPoint)point
+{
+    return NSMaxYEdge;
 }
 
 #pragma mark Menu Items

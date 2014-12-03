@@ -3286,6 +3286,8 @@
 		9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */; };
 		9377ABA015DEFEEF0031FD04 /* Pagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 9377AB9F15DEFEEF0031FD04 /* Pagination.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		937F4CCC1A2D48C100BB39F5 /* QuickLookMacSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 937F4CCB1A2D48C100BB39F5 /* QuickLookMacSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		937F4CCE1A2D4B0100BB39F5 /* NSMenuSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 937F4CCD1A2D4B0100BB39F5 /* NSMenuSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		937FF3D51A1012D6008EBA31 /* DictionaryLookup.h in Headers */ = {isa = PBXBuildFile; fileRef = 937FF3D41A1012D6008EBA31 /* DictionaryLookup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		937FF3D71A10131B008EBA31 /* DictionaryLookup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 937FF3D61A10131B008EBA31 /* DictionaryLookup.mm */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
@@ -10453,6 +10455,8 @@
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
 		9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textAreaResizeCorner@2x.png"; sourceTree = "<group>"; };
 		9377AB9F15DEFEEF0031FD04 /* Pagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pagination.h; sourceTree = "<group>"; };
+		937F4CCB1A2D48C100BB39F5 /* QuickLookMacSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookMacSPI.h; sourceTree = "<group>"; };
+		937F4CCD1A2D4B0100BB39F5 /* NSMenuSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMenuSPI.h; sourceTree = "<group>"; };
 		937FF3D41A1012D6008EBA31 /* DictionaryLookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryLookup.h; sourceTree = "<group>"; };
 		937FF3D61A10131B008EBA31 /* DictionaryLookup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DictionaryLookup.mm; sourceTree = "<group>"; };
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
@@ -17648,9 +17652,11 @@
 			children = (
 				2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */,
 				2D413F601A187A3F0041A521 /* LookupSPI.h */,
+				937F4CCD1A2D4B0100BB39F5 /* NSMenuSPI.h */,
 				2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */,
 				2DCB837819F99BBA00A7FBE4 /* NSSharingServiceSPI.h */,
 				9348428119F1A9190009D5AE /* NSViewSPI.h */,
+				937F4CCB1A2D48C100BB39F5 /* QuickLookMacSPI.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -23442,6 +23448,7 @@
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
 				1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */,
+				937F4CCC1A2D48C100BB39F5 /* QuickLookMacSPI.h in Headers */,
 				24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */,
 				1A8F6BC10DB55CDC001DB794 /* ApplicationCacheResource.h in Headers */,
 				1A2AAC590DC2A3B100A20D9A /* ApplicationCacheStorage.h in Headers */,
@@ -26057,6 +26064,7 @@
 				E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */,
 				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
 				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
+				937F4CCE1A2D4B0100BB39F5 /* NSMenuSPI.h in Headers */,
 				FD00D7A514A3F61900734011 /* SincResampler.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,

@@ -1,5 +1,23 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176684. <rdar://problem/18944696>
+
+    2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+            Should use standardQuickLookMenuItem for apps that don't implement customizations
+            https://bugs.webkit.org/show_bug.cgi?id=139193
+            -and corresponding-
+            rdar://problem/18944696
+
+            Reviewed by Anders Carlsson.
+
+            New SPI headers.
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/spi/mac/NSMenuSPI.h: Added.
+            * platform/spi/mac/QuickLookMacSPI.h: Added.
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Fix merge-related build failure.
 
         * rendering/RenderBlock.cpp:

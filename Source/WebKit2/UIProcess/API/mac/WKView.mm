@@ -4241,6 +4241,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [[NSWorkspace sharedWorkspace] openURL:url];
 }
 
+- (BOOL)_shouldUseStandardQuickLookPreview
+{
+    return YES;
+}
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets
