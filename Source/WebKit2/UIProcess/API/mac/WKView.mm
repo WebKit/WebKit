@@ -1209,6 +1209,9 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     if ([self _shouldIgnoreWheelEvents])
         return;
 
+    // Work around <rdar://problem/19086993> by always clearing the active text indicator on scroll.
+    [self _setTextIndicator:nullptr fadeOut:NO];
+
     if (_data->_allowsBackForwardNavigationGestures) {
         [self _ensureGestureController];
         if (_data->_gestureController->handleScrollWheelEvent(event))
@@ -1256,6 +1259,9 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
+
+    // Work around <rdar://problem/19086993> by always clearing the active text indicator on mouseDown.
+    [self _setTextIndicator:nullptr fadeOut:NO];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController wkView:self willHandleMouseDown:event];
 #endif
