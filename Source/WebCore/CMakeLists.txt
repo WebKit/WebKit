@@ -2482,6 +2482,7 @@ set(WebCore_SOURCES
     storage/StorageMap.cpp
     storage/StorageNamespace.cpp
     storage/StorageNamespaceImpl.cpp
+    storage/StorageNamespaceProvider.cpp
     storage/StorageStrategy.cpp
     storage/StorageSyncManager.cpp
     storage/StorageThread.cpp

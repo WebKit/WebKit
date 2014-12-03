@@ -1,3 +1,45 @@
+2014-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Begin stubbing out a StorageNamespaceProvider class
+        https://bugs.webkit.org/show_bug.cgi?id=139203
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage):
+        If the page has a storage namespace provider, get the local storage from it.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Move the storage namespace provider from the configuration.
+
+        (WebCore::Page::setStorageNamespaceProvider):
+        Add a setter. This will be used by setGroupName.
+
+        * page/Page.h:
+        (WebCore::Page::storageNamespaceProvider):
+        Add a getter.
+
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+        Add a storage namespace provider member.
+
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::StorageNamespaceProvider):
+        (WebCore::StorageNamespaceProvider::~StorageNamespaceProvider):
+        (WebCore::StorageNamespaceProvider::addPage):
+        (WebCore::StorageNamespaceProvider::removePage):
+        (WebCore::StorageNamespaceProvider::localStorageNamespace):
+        (WebCore::StorageNamespaceProvider::transientLocalStorageNamespace):
+        * storage/StorageNamespaceProvider.h:
+        Stub out a storage namespace provider class.
+
 2014-12-02  Beth Dakin  <bdakin@apple.com>
 
         More build fixing.

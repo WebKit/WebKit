@@ -79,6 +79,7 @@
 #include "SharedBuffer.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
+#include "StorageNamespaceProvider.h"
 #include "StyleResolver.h"
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
@@ -201,6 +202,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
+    , m_storageNamespaceProvider(WTF::move(pageConfiguration.storageNamespaceProvider))
     , m_userContentController(WTF::move(pageConfiguration.userContentController))
     , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
@@ -211,6 +213,8 @@ Page::Page(PageConfiguration& pageConfiguration)
     
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
 
+    if (m_storageNamespaceProvider)
+        m_storageNamespaceProvider->addPage(*this);
     if (m_userContentController)
         m_userContentController->addPage(*this);
 
@@ -1609,6 +1613,17 @@ void Page::setUserContentController(UserContentController* userContentController
             document->styleResolverChanged(DeferRecalcStyle);
         }
     }
+}
+
+void Page::setStorageNamespaceProvider(PassRef<StorageNamespaceProvider> storageNamespaceProvider)
+{
+    if (m_storageNamespaceProvider)
+        m_storageNamespaceProvider->removePage(*this);
+
+    m_storageNamespaceProvider = WTF::move(storageNamespaceProvider);
+    m_storageNamespaceProvider->addPage(*this);
+
+    // This needs to reset all the local storage namespaces of all the pages.
 }
 
 VisitedLinkStore& Page::visitedLinkStore()

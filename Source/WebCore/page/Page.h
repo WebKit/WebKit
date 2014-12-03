@@ -100,6 +100,7 @@ class ScrollableArea;
 class ScrollingCoordinator;
 class Settings;
 class StorageNamespace;
+class StorageNamespaceProvider;
 class UserContentController;
 class ValidationMessageClient;
 class ViewStateChangeObserver;
@@ -398,6 +399,9 @@ public:
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
+    StorageNamespaceProvider* storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
+    void setStorageNamespaceProvider(PassRef<StorageNamespaceProvider>);
+
     UserContentController* userContentController() { return m_userContentController.get(); }
     void setUserContentController(UserContentController*);
 
@@ -566,6 +570,7 @@ private:
     unsigned m_lastSpatialNavigationCandidatesCount;
     unsigned m_framesHandlingBeforeUnloadEvent;
 
+    RefPtr<StorageNamespaceProvider> m_storageNamespaceProvider;
     RefPtr<UserContentController> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;
 

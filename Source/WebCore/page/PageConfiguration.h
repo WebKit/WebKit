@@ -44,6 +44,7 @@ class FrameLoaderClient;
 class InspectorClient;
 class PlugInClient;
 class ProgressTrackerClient;
+class StorageNamespaceProvider;
 class UserContentController;
 class ValidationMessageClient;
 class VisitedLinkStore;
@@ -69,6 +70,7 @@ public:
     FrameLoaderClient* loaderClientForMainFrame;
     DiagnosticLoggingClient* diagnosticLoggingClient;
 
+    RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
     RefPtr<UserContentController> userContentController;
     RefPtr<VisitedLinkStore> visitedLinkStore;
 };

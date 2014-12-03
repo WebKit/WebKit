@@ -4704,6 +4704,9 @@
     <ClCompile Include="..\storage\StorageNamespaceImpl.cpp">
       <Filter>storage</Filter>
     </ClCompile>
+    <ClCompile Include="..\storage\StorageNamespaceProvider.cpp">
+      <Filter>storage</Filter>
+    </ClCompile>
     <ClCompile Include="..\storage\StorageSyncManager.cpp">
       <Filter>storage</Filter>
     </ClCompile>

@@ -17858,6 +17858,7 @@
     <ClCompile Include="..\storage\StorageMap.cpp" />
     <ClCompile Include="..\storage\StorageNamespace.cpp" />
     <ClCompile Include="..\storage\StorageNamespaceImpl.cpp" />
+    <ClCompile Include="..\storage\StorageNamespaceProvider.cpp" />
     <ClCompile Include="..\storage\StorageSyncManager.cpp" />
     <ClCompile Include="..\storage\StorageThread.cpp" />
     <ClCompile Include="..\storage\StorageTracker.cpp" />
@@ -21259,6 +21260,7 @@
     <ClInclude Include="..\storage\StorageMap.h" />
     <ClInclude Include="..\storage\StorageNamespace.h" />
     <ClInclude Include="..\storage\StorageNamespaceImpl.h" />
+    <ClInclude Include="..\storage\StorageNamespaceProvider.h" />
     <ClInclude Include="..\storage\StorageSyncManager.h" />
     <ClInclude Include="..\storage\StorageThread.h" />
     <ClInclude Include="..\storage\StorageTracker.h" />
