@@ -442,7 +442,9 @@ static const CGFloat previewViewTitleHeight = 34;
         return;
 
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    [_previewPopover showRelativeToRect:_popoverOriginRect ofView:_wkView preferredEdge:NSMaxYEdge];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_previewPopover showRelativeToRect:_popoverOriginRect ofView:_wkView preferredEdge:NSMaxYEdge];
+    });
 }
 
 - (void)_createPreviewPopover
