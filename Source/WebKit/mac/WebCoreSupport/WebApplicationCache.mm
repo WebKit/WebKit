@@ -66,7 +66,7 @@ using namespace WebCore;
 
 + (void)setMaximumSize:(long long)size
 {
-    [WebApplicationCache deleteAllApplicationCaches];
+    cacheStorage().deleteAllEntries();
     cacheStorage().setMaximumSize(size);
 }
 
@@ -87,7 +87,7 @@ using namespace WebCore;
 
 + (void)deleteAllApplicationCaches
 {
-    cacheStorage().deleteAllEntries();
+    ApplicationCache::deleteAllCaches();
 }
 
 + (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin

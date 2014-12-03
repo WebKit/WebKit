@@ -1372,7 +1372,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     return copyStorage.storeNewestCache(groupCopy.get());
 }
 
-bool ApplicationCacheStorage::manifestURLs(Vector<URL>* urls)
+bool ApplicationCacheStorage::getManifestURLs(Vector<URL>* urls)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
@@ -1562,10 +1562,7 @@ long long ApplicationCacheStorage::flatFileAreaSize()
 void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>>& origins)
 {
     Vector<URL> urls;
-    if (!manifestURLs(&urls)) {
-        LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
-        return;
-    }
+    getManifestURLs(&urls);
 
     // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
     // The current schema doesn't allow for a more efficient way of building this list.
@@ -1582,7 +1579,7 @@ void ApplicationCacheStorage::deleteAllEntries()
     vacuumDatabaseFile();
 }
 
-ApplicationCacheStorage::ApplicationCacheStorage() 
+ApplicationCacheStorage::ApplicationCacheStorage()
     : m_maximumSize(ApplicationCacheStorage::noQuota())
     , m_isMaximumSizeReached(false)
     , m_defaultOriginQuota(ApplicationCacheStorage::noQuota())

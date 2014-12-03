@@ -49,7 +49,8 @@ public:
     static PassRefPtr<ApplicationCache> create() { return adoptRef(new ApplicationCache); }
     
     WEBCORE_EXPORT static void deleteCacheForOrigin(SecurityOrigin*);
-    
+    WEBCORE_EXPORT static void deleteAllCaches();
+
     ~ApplicationCache();
 
     void addResource(PassRefPtr<ApplicationCacheResource> resource);

@@ -1870,6 +1870,7 @@ static void runTest(const string& inputLine)
 
     sizeWebViewForCurrentTest();
     gTestRunner->setIconDatabaseEnabled(false);
+    gTestRunner->clearAllApplicationCaches();
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);

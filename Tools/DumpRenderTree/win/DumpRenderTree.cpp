@@ -1019,6 +1019,7 @@ static void runTest(const string& inputLine)
 
     sizeWebViewForCurrentTest();
     gTestRunner->setIconDatabaseEnabled(false);
+    gTestRunner->clearAllApplicationCaches();
 
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gTestRunner->setDumpFrameLoadCallbacks(true);

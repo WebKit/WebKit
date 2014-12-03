@@ -89,7 +89,7 @@ public:
     
     static bool WEBCORE_EXPORT storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost*);
 
-    bool manifestURLs(Vector<URL>* urls);
+    bool getManifestURLs(Vector<URL>* urls);
     bool cacheGroupSize(const String& manifestURL, int64_t* size);
     bool deleteCacheGroup(const String& manifestURL);
     WEBCORE_EXPORT void vacuumDatabaseFile();

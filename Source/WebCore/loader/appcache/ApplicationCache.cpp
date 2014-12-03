@@ -193,7 +193,7 @@ void ApplicationCache::clearStorageID()
 void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
 {
     Vector<URL> urls;
-    if (!cacheStorage().manifestURLs(&urls)) {
+    if (!cacheStorage().getManifestURLs(&urls)) {
         LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
         return;
     }
@@ -210,6 +210,17 @@ void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
                 cacheStorage().deleteCacheGroup(urls[i]);
         }
     }
+}
+
+void ApplicationCache::deleteAllCaches()
+{
+    HashSet<RefPtr<SecurityOrigin>> origins;
+
+    cacheStorage().getOriginsWithCache(origins);
+    for (auto& origin : origins)
+        deleteCacheForOrigin(origin.get());
+
+    cacheStorage().vacuumDatabaseFile();
 }
 
 int64_t ApplicationCache::diskUsageForOrigin(SecurityOrigin* origin)

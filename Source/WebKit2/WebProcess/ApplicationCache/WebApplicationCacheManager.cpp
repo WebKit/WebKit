@@ -87,7 +87,7 @@ void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData
 
 void WebApplicationCacheManager::deleteAllEntries()
 {
-    cacheStorage().deleteAllEntries();
+    ApplicationCache::deleteAllCaches();
 }
 
 void WebApplicationCacheManager::setAppCacheMaximumSize(uint64_t size)

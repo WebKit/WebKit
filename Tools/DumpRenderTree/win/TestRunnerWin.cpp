@@ -750,7 +750,7 @@ bool TestRunner::isCommandEnabled(JSStringRef /*name*/)
 
 void TestRunner::clearAllApplicationCaches()
 {
-    // FIXME: Implement to support application cache quotas.
+    // FIXME: Implement to support application cache quotas, and to make testing more reliable (see <https://bugs.webkit.org/show_bug.cgi?id=139149>).
 }
 
 void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
