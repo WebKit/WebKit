@@ -674,6 +674,11 @@ inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationPr
     return constructArrayNegativeIndexed(exec, profile, exec->lexicalGlobalObject(), values, length);
 }
 
+inline JSObject* ExecState::globalThisValue() const
+{
+    return lexicalGlobalObject()->globalThis();
+}
+
 inline JSObject* JSScope::globalThis()
 { 
     return globalObject()->globalThis();

@@ -1,3 +1,20 @@
+2014-12-02  Michael Saboff  <msaboff@apple.com>
+
+        Change CallFrame::globalThisValue() to not use CallFrame::scope()
+        https://bugs.webkit.org/show_bug.cgi?id=139202
+
+        Reviewed by Mark Lam.
+
+        Changed to use the globalThis() on the globalObject associated with the
+        callee.  Moved the inline definition to JSGlobalObject.h instead of
+        including JSGlobalObject.h in JSScope.h.  Also moved it as JSScope
+        objects are no longer involved in getting the value.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::ExecState::globalThisValue):
+        * runtime/JSScope.h:
+        (JSC::ExecState::globalThisValue): Deleted.
+
 2014-12-02  Matthew Mirman  <mmirman@apple.com>
 
         Fixes inline cache fast path accessing nonexistant getters.

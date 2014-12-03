@@ -244,11 +244,6 @@ inline JSGlobalObject* ExecState::lexicalGlobalObject() const
     return callee()->globalObject();
 }
 
-inline JSObject* ExecState::globalThisValue() const
-{
-    return scope()->globalThis();
-}
-
 inline size_t JSScope::offsetOfNext()
 {
     return OBJECT_OFFSETOF(JSScope, m_next);
