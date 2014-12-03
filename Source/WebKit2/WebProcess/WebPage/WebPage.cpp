@@ -1955,6 +1955,11 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
 void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
 {
+#if ENABLE(DRAG_SUPPORT)
+    if (m_isStartingDrag)
+        messageSenderConnection()->waitForAndDispatchImmediately<Messages::WebPage::DidStartDrag>(messageSenderDestinationID(), std::chrono::seconds(60));
+#endif
+
     handled = false;
 #if !PLATFORM(IOS)
     if (!handled && m_headerBanner)

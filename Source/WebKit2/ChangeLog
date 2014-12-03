@@ -1,3 +1,14 @@
+2014-12-03  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION(r176687): Caused webkit2 test assertion failure crashes in WebKit::WebPage::willStartDrag()
+        https://bugs.webkit.org/show_bug.cgi?id=139224
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEventSyncForTesting): Wait for the UI process to start dragging if
+        needed before handling the event.
+
 2014-12-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] outdated comment
