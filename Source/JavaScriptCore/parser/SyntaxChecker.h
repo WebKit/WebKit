@@ -180,7 +180,7 @@ public:
             return Property(type);
         return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
     }
-    Property createProperty(VM*, ExpressionNode*, int, PropertyNode::Type type, bool)
+    Property createProperty(int, int, PropertyNode::Type type, bool)
     {
         return Property(type);
     }

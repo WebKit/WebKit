@@ -1,3 +1,70 @@
+2014-12-03  Geoffrey Garen  <ggaren@apple.com>
+
+        The parser should allocate all pieces of the AST
+        https://bugs.webkit.org/show_bug.cgi?id=139230
+
+        Reviewed by Oliver Hunt.
+
+        This is a step toward a 14% parsing speedup.
+
+        Previously, allocation was split between the parser and certain node
+        constructor functions. This made for some duplicated code and circular
+        dependencies.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty): No need to pass through
+        the VM, since our callee no longer needs to allocate anything.
+
+        (JSC::ASTBuilder::createProperty): Allocate the identifier for our
+        callee, since that is simpler than requiring our callee to notice that
+        we didn't do so, and do it for us.
+
+        (JSC::ASTBuilder::createForInLoop): Allocate the DeconstructingAssignmentNode
+        for our callee, since that is simpler than requiring our callee to notice
+        that we didn't do so, and do it for us.
+
+        Also, reuse some code instead of duplicating it.
+
+        (JSC::ASTBuilder::createForOfLoop): Ditto.
+
+        (JSC::ASTBuilder::createArrayPattern):
+        (JSC::ASTBuilder::createObjectPattern):
+        (JSC::ASTBuilder::createBindingLocation): No need to pass through a VM
+        pointer, since our callee no longer needs to allocate anything.
+
+        (JSC::ASTBuilder::createBreakStatement): Deleted.
+        (JSC::ASTBuilder::createContinueStatement): Deleted.
+
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        (JSC::DeconstructionPatternNode::DeconstructionPatternNode):
+        (JSC::ArrayPatternNode::ArrayPatternNode):
+        (JSC::ArrayPatternNode::create):
+        (JSC::ObjectPatternNode::ObjectPatternNode):
+        (JSC::ObjectPatternNode::create):
+        (JSC::BindingNode::create):
+        (JSC::BindingNode::BindingNode):
+        (JSC::ContinueNode::ContinueNode): Deleted.
+        (JSC::BreakNode::BreakNode): Deleted.
+        (JSC::EnumerationNode::EnumerationNode): Deleted.
+        (JSC::ForInNode::ForInNode): Deleted.
+        (JSC::ForOfNode::ForOfNode): Deleted. Deleted a bunch of special cases
+        that don't exist anymore, now that the parser allocates all pieces of
+        the AST unconditionally.
+
+        * parser/Nodes.h: Ditto.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseBreakStatement):
+        (JSC::Parser<LexerType>::parseContinueStatement): Allocate the null
+        identifier for our callee, since that is simpler than requiring our
+        callee to notice that we didn't do so, and do it for us.
+
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createProperty): No need to pass through a VM
+        pointer, since our callee no longer needs to allocate anything.
+
 2014-12-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Remove unused JSC runtime options

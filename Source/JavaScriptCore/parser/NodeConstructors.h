@@ -147,21 +147,14 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     {
     }
 
-    inline PropertyNode::PropertyNode(VM*, const Identifier& name, ExpressionNode* assign, Type type)
+    inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type)
         : m_name(&name)
         , m_assign(assign)
         , m_type(type)
     {
     }
 
-    inline PropertyNode::PropertyNode(VM* vm, double name, ExpressionNode* assign, Type type)
-        : m_name(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name))
-        , m_assign(assign)
-        , m_type(type)
-    {
-    }
-    
-    inline PropertyNode::PropertyNode(VM*, ExpressionNode* name, ExpressionNode* assign, Type type)
+    inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type)
         : m_name(0)
         , m_expression(name)
         , m_assign(assign)
@@ -694,24 +687,12 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         ASSERT(statement);
     }
 
-    inline ContinueNode::ContinueNode(VM* vm, const JSTokenLocation& location)
-        : StatementNode(location)
-        , m_ident(vm->propertyNames->nullIdentifier)
-    {
-    }
-
     inline ContinueNode::ContinueNode(const JSTokenLocation& location, const Identifier& ident)
         : StatementNode(location)
         , m_ident(ident)
     {
     }
     
-    inline BreakNode::BreakNode(VM* vm, const JSTokenLocation& location)
-        : StatementNode(location)
-        , m_ident(vm->propertyNames->nullIdentifier)
-    {
-    }
-
     inline BreakNode::BreakNode(const JSTokenLocation& location, const Identifier& ident)
         : StatementNode(location)
         , m_ident(ident)
@@ -841,22 +822,8 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         ASSERT(l);
     }
     
-    inline EnumerationNode::EnumerationNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
-        : StatementNode(location)
-        , m_lexpr(new (vm) DeconstructingAssignmentNode(location, pattern, 0))
-        , m_expr(expr)
-        , m_statement(statement)
-    {
-        ASSERT(pattern);
-    }
-    
     inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
         : EnumerationNode(location, l, expr, statement)
-    {
-    }
-    
-    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
-        : EnumerationNode(vm, location, pattern, expr, statement)
     {
     }
     
@@ -865,42 +832,37 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     {
     }
     
-    inline ForOfNode::ForOfNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
-        : EnumerationNode(vm, location, pattern, expr, statement)
-    {
-    }
-    
-    inline DeconstructionPatternNode::DeconstructionPatternNode(VM*)
+    inline DeconstructionPatternNode::DeconstructionPatternNode()
     {
     }
 
-    inline ArrayPatternNode::ArrayPatternNode(VM* vm)
-        : DeconstructionPatternNode(vm)
+    inline ArrayPatternNode::ArrayPatternNode()
+        : DeconstructionPatternNode()
     {
     }
     
-    inline PassRefPtr<ArrayPatternNode> ArrayPatternNode::create(VM* vm)
+    inline PassRefPtr<ArrayPatternNode> ArrayPatternNode::create()
     {
-        return adoptRef(new ArrayPatternNode(vm));
+        return adoptRef(new ArrayPatternNode);
     }
     
-    inline ObjectPatternNode::ObjectPatternNode(VM* vm)
-        : DeconstructionPatternNode(vm)
+    inline ObjectPatternNode::ObjectPatternNode()
+        : DeconstructionPatternNode()
     {
     }
     
-    inline PassRefPtr<ObjectPatternNode> ObjectPatternNode::create(VM* vm)
+    inline PassRefPtr<ObjectPatternNode> ObjectPatternNode::create()
     {
-        return adoptRef(new ObjectPatternNode(vm));
+        return adoptRef(new ObjectPatternNode);
     }
 
-    inline PassRefPtr<BindingNode> BindingNode::create(VM* vm, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
+    inline PassRefPtr<BindingNode> BindingNode::create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
     {
-        return adoptRef(new BindingNode(vm, boundProperty, start, end));
+        return adoptRef(new BindingNode(boundProperty, start, end));
     }
     
-    inline BindingNode::BindingNode(VM* vm, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
-        : DeconstructionPatternNode(vm)
+    inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
+        : DeconstructionPatternNode()
         , m_divotStart(start)
         , m_divotEnd(end)
         , m_boundProperty(boundProperty)

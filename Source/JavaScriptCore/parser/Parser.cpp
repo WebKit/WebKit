@@ -863,7 +863,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBreakStatemen
     
     if (autoSemiColon()) {
         semanticFailIfFalse(breakIsValid(), "'break' is only valid inside a switch or loop statement");
-        return context.createBreakStatement(location, start, end);
+        return context.createBreakStatement(location, &m_vm->propertyNames->nullIdentifier, start, end);
     }
     matchOrFail(IDENT, "Expected an identifier as the target for a break statement");
     const Identifier* ident = m_token.m_data.ident;
@@ -885,7 +885,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseContinueState
     
     if (autoSemiColon()) {
         semanticFailIfFalse(continueIsValid(), "'continue' is only valid inside a loop statement");
-        return context.createContinueStatement(location, start, end);
+        return context.createContinueStatement(location, &m_vm->propertyNames->nullIdentifier, start, end);
     }
     matchOrFail(IDENT, "Expected an identifier as the target for a continue statement");
     const Identifier* ident = m_token.m_data.ident;
@@ -1827,7 +1827,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
-        return context.createProperty(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant, complete);
+        return context.createProperty(propertyName, node, PropertyNode::Constant, complete);
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");

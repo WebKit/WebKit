@@ -483,9 +483,8 @@ namespace JSC {
     public:
         enum Type { Constant = 1, Getter = 2, Setter = 4 };
 
-        PropertyNode(VM*, const Identifier&, ExpressionNode*, Type);
-        PropertyNode(VM*, double, ExpressionNode*, Type);
-        PropertyNode(VM*, ExpressionNode* propertyName, ExpressionNode*, Type);
+        PropertyNode(const Identifier&, ExpressionNode*, Type);
+        PropertyNode(ExpressionNode* propertyName, ExpressionNode*, Type);
         
         ExpressionNode* expressionName() const { return m_expression; }
         const Identifier* name() const { return m_name; }
@@ -1280,7 +1279,6 @@ namespace JSC {
     class EnumerationNode : public StatementNode, public ThrowableExpressionData {
     public:
         EnumerationNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
-        EnumerationNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
         
     protected:
         ExpressionNode* m_lexpr;
@@ -1291,7 +1289,6 @@ namespace JSC {
     class ForInNode : public EnumerationNode {
     public:
         ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
-        ForInNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
 
     private:
         RegisterID* tryGetBoundLocal(BytecodeGenerator&);
@@ -1304,7 +1301,6 @@ namespace JSC {
     class ForOfNode : public EnumerationNode {
     public:
         ForOfNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
-        ForOfNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
         
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -1312,7 +1308,6 @@ namespace JSC {
 
     class ContinueNode : public StatementNode, public ThrowableExpressionData {
     public:
-        ContinueNode(VM*, const JSTokenLocation&);
         ContinueNode(const JSTokenLocation&, const Identifier&);
         Label* trivialTarget(BytecodeGenerator&);
         
@@ -1325,7 +1320,6 @@ namespace JSC {
 
     class BreakNode : public StatementNode, public ThrowableExpressionData {
     public:
-        BreakNode(VM*, const JSTokenLocation&);
         BreakNode(const JSTokenLocation&, const Identifier&);
         Label* trivialTarget(BytecodeGenerator&);
         
@@ -1618,19 +1612,19 @@ namespace JSC {
         virtual ~DeconstructionPatternNode() = 0;
         
     protected:
-        DeconstructionPatternNode(VM*);
+        DeconstructionPatternNode();
     };
 
     class ArrayPatternNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<ArrayPatternNode> create(VM*);
+        static PassRefPtr<ArrayPatternNode> create();
         void appendIndex(const JSTokenLocation&, DeconstructionPatternNode* node)
         {
             m_targetPatterns.append(node);
         }
 
     private:
-        ArrayPatternNode(VM*);
+        ArrayPatternNode();
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const override;
         virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;
         virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID* dst, ExpressionNode*) override;
@@ -1641,14 +1635,14 @@ namespace JSC {
     
     class ObjectPatternNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<ObjectPatternNode> create(VM*);
+        static PassRefPtr<ObjectPatternNode> create();
         void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DeconstructionPatternNode* pattern)
         {
             m_targetPatterns.append(Entry(identifier, wasString, pattern));
         }
         
     private:
-        ObjectPatternNode(VM*);
+        ObjectPatternNode();
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const override;
         virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;
         virtual void toString(StringBuilder&) const override;
@@ -1668,14 +1662,14 @@ namespace JSC {
 
     class BindingNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<BindingNode> create(VM*, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
+        static PassRefPtr<BindingNode> create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
         const Identifier& boundProperty() const { return m_boundProperty; }
 
         const JSTextPosition& divotStart() const { return m_divotStart; }
         const JSTextPosition& divotEnd() const { return m_divotEnd; }
         
     private:
-        BindingNode(VM*, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
+        BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
 
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const override;
         virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;

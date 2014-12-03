@@ -299,13 +299,13 @@ public:
         ASSERT(name);
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
         body->setInferredName(*name);
-        return new (m_vm) PropertyNode(m_vm, *name, new (m_vm) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), params), type);
+        return new (m_vm) PropertyNode(*name, new (m_vm) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), params), type);
     }
     
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(VM*, const JSTokenLocation& location, PropertyNode::Type type, bool, double name, ParameterNode* params, FunctionBodyNode* body, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn)
     {
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
-        return new (m_vm) PropertyNode(m_vm, name, new (m_vm) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), params), type);
+        return new (m_vm) PropertyNode(m_vm->parserArena->identifierArena().makeNumericIdentifier(m_vm, name), new (m_vm) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), params), type);
     }
 
     ArgumentsNode* createArguments() { return new (m_vm) ArgumentsNode(); }
@@ -317,10 +317,13 @@ public:
     {
         if (node->isFuncExprNode())
             static_cast<FuncExprNode*>(node)->body()->setInferredName(*propertyName);
-        return new (m_vm) PropertyNode(m_vm, *propertyName, node, type);
+        return new (m_vm) PropertyNode(*propertyName, node, type);
     }
-    PropertyNode* createProperty(VM*, double propertyName, ExpressionNode* node, PropertyNode::Type type, bool) { return new (m_vm) PropertyNode(m_vm, propertyName, node, type); }
-    PropertyNode* createProperty(VM*, ExpressionNode* propertyName, ExpressionNode* node, PropertyNode::Type type, bool) { return new (m_vm) PropertyNode(m_vm, propertyName, node, type); }
+    PropertyNode* createProperty(VM*, double propertyName, ExpressionNode* node, PropertyNode::Type type, bool)
+    {
+        return new (m_vm) PropertyNode(m_vm->parserArena->identifierArena().makeNumericIdentifier(m_vm, propertyName), node, type);
+    }
+    PropertyNode* createProperty(ExpressionNode* propertyName, ExpressionNode* node, PropertyNode::Type type, bool) { return new (m_vm) PropertyNode(propertyName, node, type); }
     PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property) { return new (m_vm) PropertyListNode(location, property); }
     PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property, PropertyListNode* tail) { return new (m_vm) PropertyListNode(location, property, tail); }
 
@@ -384,10 +387,8 @@ public:
     
     StatementNode* createForInLoop(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
     {
-        ForInNode* result = new (m_vm) ForInNode(m_vm, location, pattern.get(), iter, statements);
-        result->setLoc(start, end, location.startOffset, location.lineStartOffset);
-        setExceptionLocation(result, eStart, eDivot, eEnd);
-        return result;
+        auto lexpr = new (m_vm) DeconstructingAssignmentNode(location, pattern.get(), 0);
+        return createForInLoop(location, lexpr, iter, statements, eStart, eDivot, eEnd, start, end);
     }
     
     StatementNode* createForOfLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
@@ -400,10 +401,8 @@ public:
     
     StatementNode* createForOfLoop(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
     {
-        ForOfNode* result = new (m_vm) ForOfNode(m_vm, location, pattern.get(), iter, statements);
-        result->setLoc(start, end, location.startOffset, location.lineStartOffset);
-        setExceptionLocation(result, eStart, eDivot, eEnd);
-        return result;
+        auto lexpr = new (m_vm) DeconstructingAssignmentNode(location, pattern.get(), 0);
+        return createForOfLoop(location, lexpr, iter, statements, eStart, eDivot, eEnd, start, end);
     }
 
     bool isBindingNode(const DeconstructionPattern& pattern)
@@ -434,25 +433,9 @@ public:
         return result;
     }
 
-    StatementNode* createBreakStatement(const JSTokenLocation& location, const JSTextPosition& start, const JSTextPosition& end)
-    {
-        BreakNode* result = new (m_vm) BreakNode(m_vm, location);
-        setExceptionLocation(result, start, end, end);
-        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
-        return result;
-    }
-
     StatementNode* createBreakStatement(const JSTokenLocation& location, const Identifier* ident, const JSTextPosition& start, const JSTextPosition& end)
     {
         BreakNode* result = new (m_vm) BreakNode(location, *ident);
-        setExceptionLocation(result, start, end, end);
-        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
-        return result;
-    }
-
-    StatementNode* createContinueStatement(const JSTokenLocation& location, const JSTextPosition& start, const JSTextPosition& end)
-    {
-        ContinueNode* result = new (m_vm) ContinueNode(m_vm, location);
         setExceptionLocation(result, start, end, end);
         result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
         return result;
@@ -659,7 +642,7 @@ public:
     
     ArrayPattern createArrayPattern(const JSTokenLocation&)
     {
-        return ArrayPatternNode::create(m_vm);
+        return ArrayPatternNode::create();
     }
     
     void appendArrayPatternSkipEntry(ArrayPattern node, const JSTokenLocation& location)
@@ -674,7 +657,7 @@ public:
     
     ObjectPattern createObjectPattern(const JSTokenLocation&)
     {
-        return ObjectPatternNode::create(m_vm);
+        return ObjectPatternNode::create();
     }
     
     void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, bool wasString, const Identifier& identifier, DeconstructionPattern pattern)
@@ -684,7 +667,7 @@ public:
     
     BindingPattern createBindingLocation(const JSTokenLocation&, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
     {
-        return BindingNode::create(m_vm, boundProperty, start, end);
+        return BindingNode::create(boundProperty, start, end);
     }
 
     void setEndOffset(Node* node, int offset)
