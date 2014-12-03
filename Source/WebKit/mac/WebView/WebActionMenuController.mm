@@ -282,9 +282,13 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser];
 
-    RetainPtr<QLPreviewMenuItem> previewLinkItem = [NSMenuItem standardQuickLookMenuItem];
-    [previewLinkItem setPreviewStyle:QLPreviewStylePopover];
-    [previewLinkItem setDelegate:self];
+    RetainPtr<QLPreviewMenuItem> previewLinkItem;
+    if ([NSMenuItem instancesRespondToSelector:@selector(standardQuickLookMenuItem)]) {
+        previewLinkItem = [NSMenuItem standardQuickLookMenuItem];
+        [previewLinkItem setPreviewStyle:QLPreviewStylePopover];
+        [previewLinkItem setDelegate:self];
+    } else
+        previewLinkItem = [NSMenuItem separatorItem];
 
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList];
 

@@ -1,5 +1,17 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176690. <rdar://problem/18944696>
+
+    2014-12-02  Beth Dakin  <bdakin@apple.com>
+
+            More build fix.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForLink]):
+
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176684. <rdar://problem/18944696>
 
     2014-12-02  Beth Dakin  <bdakin@apple.com>
