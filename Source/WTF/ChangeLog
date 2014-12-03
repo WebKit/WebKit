@@ -1,3 +1,9 @@
+2014-12-02  Oliver Hunt  <oliver@apple.com>
+
+        Fix IOS builds.
+
+        * wtf/IndexedIterator.h:
+
 2014-12-02  Gavin Barraclough  <barraclough@apple.com>
 
         Generalize PageActivityAssertionToken
