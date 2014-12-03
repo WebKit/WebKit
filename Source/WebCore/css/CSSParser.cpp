@@ -12216,7 +12216,7 @@ bool CSSParser::parseViewportProperty(CSSPropertyID propId, bool important)
 
     RefPtr<CSSValue> parsedValue;
     if (validPrimitive) {
-        parsedValue = parseValidPrimitive(id, value);
+        parsedValue = parseValidPrimitive(id, *value);
         m_valueList->next();
     }
 

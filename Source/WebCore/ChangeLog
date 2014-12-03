@@ -1,3 +1,10 @@
+2014-12-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r176721 to fix ENABLE(CSS_DEVICE_ADAPTATION) build.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseViewportProperty):
+
 2014-12-03  Chris Dumez  <cdumez@apple.com>
 
         Move 'display' CSS property to the new StyleBuilder
