@@ -1,3 +1,56 @@
+2014-12-03  Antti Koivisto  <antti@apple.com>
+
+        Remove genericFamily enum from FontDescription
+        https://bugs.webkit.org/show_bug.cgi?id=139207
+
+        Reviewed by Andreas Kling.
+
+        We use predefined AtomicStrings for generic families. The side enum adds no information.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::resolveGenericFamily):
+        (WebCore::CSSFontSelector::getFontData):
+
+            Match the existing quirk where the default font can be replaced by @font-face rule but user generic families can't.
+
+        (WebCore::CSSFontSelector::resolvesFamilyFor):
+        (WebCore::fontDataForGenericFamily): Deleted.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontFamily::applyInheritValue):
+        (WebCore::ApplyPropertyFontFamily::applyInitialValue):
+        (WebCore::ApplyPropertyFontFamily::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+
+            Remove the explicit monospace check, earlier useFixedDefaultSize check is equivalent.
+
+        (WebCore::StyleResolver::initializeFontStyle):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::useFixedDefaultSize):
+        (WebCore::FontDescription::setWeight):
+        (WebCore::FontDescription::equalForTextAutoSizing):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontDescription::genericFamily): Deleted.
+        (WebCore::FontDescription::setGenericFamily): Deleted.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::controlFont):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+
+            Reset the lineheight unconditionally for buttons.
+            This always happened before because the explicitly set generic family made the font compare false.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemFont):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
+            Resolve document style for final value immediately as it can't be affected by @font-face rules.
+
 2014-12-03  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION: RenderMultiColumnFlowThread::processPossibleSpannerDescendant() when column spanner's parent is not a RenderBlockFlow.

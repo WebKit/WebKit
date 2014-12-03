@@ -360,35 +360,30 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
-static PassRefPtr<SimpleFontData> fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
+static const AtomicString& resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
 {
     if (!document || !document->frame())
-        return 0;
+        return familyName;
 
     const Settings& settings = document->frame()->settings();
 
-    AtomicString genericFamily;
     UScriptCode script = fontDescription.script();
-
     if (familyName == serifFamily)
-        genericFamily = settings.serifFontFamily(script);
-    else if (familyName == sansSerifFamily)
-        genericFamily = settings.sansSerifFontFamily(script);
-    else if (familyName == cursiveFamily)
-        genericFamily = settings.cursiveFontFamily(script);
-    else if (familyName == fantasyFamily)
-        genericFamily = settings.fantasyFontFamily(script);
-    else if (familyName == monospaceFamily)
-        genericFamily = settings.fixedFontFamily(script);
-    else if (familyName == pictographFamily)
-        genericFamily = settings.pictographFontFamily(script);
-    else if (familyName == standardFamily)
-        genericFamily = settings.standardFontFamily(script);
+        return settings.serifFontFamily(script);
+    if (familyName == sansSerifFamily)
+        return settings.sansSerifFontFamily(script);
+    if (familyName == cursiveFamily)
+        return settings.cursiveFontFamily(script);
+    if (familyName == fantasyFamily)
+        return settings.fantasyFontFamily(script);
+    if (familyName == monospaceFamily)
+        return settings.fixedFontFamily(script);
+    if (familyName == pictographFamily)
+        return settings.pictographFontFamily(script);
+    if (familyName == standardFamily)
+        return settings.standardFontFamily(script);
 
-    if (!genericFamily.isEmpty())
-        return fontCache().getCachedFontData(fontDescription, genericFamily);
-
-    return nullptr;
+    return familyName;
 }
 
 static FontTraitsMask desiredTraitsMaskForComparison;
@@ -475,25 +470,17 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
 
 PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    if (m_fontFaces.isEmpty()) {
-        if (familyName.startsWith("-webkit-"))
-            return fontDataForGenericFamily(m_document, fontDescription, familyName);
-        if (fontDescription.genericFamily() == FontDescription::StandardFamily && !fontDescription.isSpecifiedFont())
-            return fontDataForGenericFamily(m_document, fontDescription, standardFamily);
-        return 0;
-    }
+    // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
+    bool resolveGenericFamilyFirst = familyName == standardFamily;
 
-    CSSSegmentedFontFace* face = getFontFace(fontDescription, familyName);
-    // If no face was found, then return 0 and let the OS come up with its best match for the name.
+    AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document, fontDescription, familyName) : familyName;
+    CSSSegmentedFontFace* face = getFontFace(fontDescription, familyForLookup);
     if (!face) {
-        // If we were handed a generic family, but there was no match, go ahead and return the correct font based off our
-        // settings.
-        if (fontDescription.genericFamily() == FontDescription::StandardFamily && !fontDescription.isSpecifiedFont())
-            return fontDataForGenericFamily(m_document, fontDescription, standardFamily);
-        return fontDataForGenericFamily(m_document, fontDescription, familyName);
+        if (!resolveGenericFamilyFirst)
+            familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
+        return fontCache().getCachedFontData(fontDescription, familyForLookup);
     }
 
-    // We have a face. Ask it for a font data. If it cannot produce one, it will fail, and the OS will take over.
     return face->getFontData(fontDescription);
 }
 
@@ -613,8 +600,6 @@ bool CSSFontSelector::resolvesFamilyFor(const FontDescription& description) cons
 {
     for (unsigned i = 0; i < description.familyCount(); ++i) {
         const AtomicString& familyName = description.familyAt(i);
-        if (description.genericFamily() == FontDescription::StandardFamily && !description.isSpecifiedFont())
-            return true;
         if (familyName.isEmpty())
             continue;
         if (m_fontFaces.contains(familyName))

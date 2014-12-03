@@ -390,7 +390,6 @@ void RenderThemeMac::systemFont(CSSValueID cssValueId, FontDescription& fontDesc
     if (font) {
         NSFontManager *fontManager = [NSFontManager sharedFontManager];
         cachedDesc->setIsAbsoluteSize(true);
-        cachedDesc->setGenericFamily(FontDescription::NoFamily);
         cachedDesc->setOneFamily([font webCoreFamilyName]);
         cachedDesc->setSpecifiedSize([font pointSize]);
         cachedDesc->setWeight(toFontWeight([fontManager weightOfFont:font]));
@@ -808,7 +807,6 @@ void RenderThemeMac::setFontFromControlSize(StyleResolver&, RenderStyle& style, 
 {
     FontDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setGenericFamily(FontDescription::SerifFamily);
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
     fontDescription.setOneFamily([font webCoreFamilyName]);

@@ -69,9 +69,6 @@ enum FontSmallCaps {
 
 class FontDescription {
 public:
-    enum GenericFamilyType { NoFamily, StandardFamily, SerifFamily, SansSerifFamily, 
-                             MonospaceFamily, CursiveFamily, FantasyFamily, PictographFamily };
-
     enum Kerning { AutoKerning, NormalKerning, NoneKerning };
 
     enum LigaturesState { NormalLigaturesState, DisabledLigaturesState, EnabledLigaturesState };
@@ -87,7 +84,6 @@ public:
         , m_smallCaps(FontSmallCapsOff)
         , m_isAbsoluteSize(false)
         , m_weight(FontWeightNormal)
-        , m_genericFamily(NoFamily)
         , m_usePrinterFont(false)
         , m_renderingMode(NormalRenderingMode)
         , m_kerning(AutoKerning)
@@ -119,10 +115,9 @@ public:
     FontWeight weight() const { return static_cast<FontWeight>(m_weight); }
     FontWeight lighterWeight() const;
     FontWeight bolderWeight() const;
-    GenericFamilyType genericFamily() const { return static_cast<GenericFamilyType>(m_genericFamily); }
     bool usePrinterFont() const { return m_usePrinterFont; }
     // only use fixed default size when there is only one font family, and that family is "monospace"
-    bool useFixedDefaultSize() const { return genericFamily() == MonospaceFamily && familyCount() == 1 && firstFamily() == monospaceFamily; }
+    bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily() == monospaceFamily; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     Kerning kerning() const { return static_cast<Kerning>(m_kerning); }
     LigaturesState commonLigaturesState() const { return static_cast<LigaturesState>(m_commonLigaturesState); }
@@ -152,7 +147,6 @@ public:
     void setSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
-    void setGenericFamily(GenericFamilyType genericFamily) { m_genericFamily = genericFamily; }
     void setUsePrinterFont(bool p) { m_usePrinterFont = p; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
     void setKerning(Kerning kerning) { m_kerning = kerning; }
@@ -178,7 +172,6 @@ public:
             && m_specifiedSize == other.m_specifiedSize
             && m_smallCaps == other.m_smallCaps
             && m_isAbsoluteSize == other.m_isAbsoluteSize
-            && m_genericFamily == other.m_genericFamily
             && m_usePrinterFont == other.m_usePrinterFont;
     }
 #endif
@@ -201,7 +194,6 @@ private:
     unsigned m_isAbsoluteSize : 1; // Whether or not CSS specified an explicit size
                                   // (logical sizes like "medium" don't count).
     unsigned m_weight : 8; // FontWeight
-    unsigned m_genericFamily : 3; // GenericFamilyType
     unsigned m_usePrinterFont : 1;
 
     unsigned m_renderingMode : 1;  // Used to switch between CG and GDI text on Windows.
@@ -230,7 +222,6 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_smallCaps == other.m_smallCaps
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_weight == other.m_weight
-        && m_genericFamily == other.m_genericFamily
         && m_usePrinterFont == other.m_usePrinterFont
         && m_renderingMode == other.m_renderingMode
         && m_kerning == other.m_kerning

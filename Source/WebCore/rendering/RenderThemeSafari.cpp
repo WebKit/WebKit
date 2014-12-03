@@ -243,7 +243,6 @@ void RenderThemeSafari::systemFont(CSSValueID valueID, FontDescription& fontDesc
 
     if (fontSize) {
         cachedDesc->setIsAbsoluteSize(true);
-        cachedDesc->setGenericFamily(FontDescription::NoFamily);
         cachedDesc->setOneFamily("Lucida Grande");
         cachedDesc->setSpecifiedSize(fontSize);
         cachedDesc->setWeight(FontWeightNormal);
@@ -392,7 +391,6 @@ void RenderThemeSafari::setFontFromControlSize(StyleResolver& styleResolver, Ren
 {
     FontDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setGenericFamily(FontDescription::SerifFamily);
 
     float fontSize = systemFontSizeForControlSize(controlSize);
     fontDescription.setOneFamily("Lucida Grande");

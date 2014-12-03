@@ -991,7 +991,6 @@ void RenderThemeEfl::systemFont(CSSValueID, FontDescription& fontDescription) co
     fontDescription.setOneFamily("Sans");
     fontDescription.setSpecifiedSize(defaultFontSize);
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setGenericFamily(FontDescription::NoFamily);
     fontDescription.setWeight(FontWeightNormal);
     fontDescription.setItalic(false);
 }

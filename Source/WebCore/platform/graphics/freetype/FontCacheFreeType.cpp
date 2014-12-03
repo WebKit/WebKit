@@ -119,22 +119,17 @@ static String getFamilyNameStringFromFontDescriptionAndFamily(const FontDescript
     if (family.length() && !family.startsWith("-webkit-"))
         return family.string();
 
-    switch (fontDescription.genericFamily()) {
-    case FontDescription::StandardFamily:
-    case FontDescription::SerifFamily:
+    if (family == standardFamily || family == serifFamily)
         return "serif";
-    case FontDescription::SansSerifFamily:
+    if (family == sansSerifFamily)
         return "sans-serif";
-    case FontDescription::MonospaceFamily:
+    if (family == monospaceFamily)
         return "monospace";
-    case FontDescription::CursiveFamily:
+    if (family == cursiveFamily)
         return "cursive";
-    case FontDescription::FantasyFamily:
+    if (family == fantasyFamily)
         return "fantasy";
-    case FontDescription::NoFamily:
-    default:
-        return "";
-    }
+    return "";
 }
 
 int fontWeightToFontconfigWeight(FontWeight weight)

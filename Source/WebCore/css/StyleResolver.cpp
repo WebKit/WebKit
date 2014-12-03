@@ -3139,12 +3139,6 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
     const FontDescription& parentFont = parentStyle->fontDescription();
     if (childFont.useFixedDefaultSize() == parentFont.useFixedDefaultSize())
         return;
-
-    // For now, lump all families but monospace together.
-    if (childFont.genericFamily() != FontDescription::MonospaceFamily
-        && parentFont.genericFamily() != FontDescription::MonospaceFamily)
-        return;
-
     // We know the parent is monospace or the child is monospace, and that font
     // size was unspecified. We want to scale our font size as appropriate.
     // If the font uses a keyword size, then we refetch from the table rather than
@@ -3170,12 +3164,9 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
 void StyleResolver::initializeFontStyle(Settings* settings)
 {
     FontDescription fontDescription;
-    fontDescription.setGenericFamily(FontDescription::StandardFamily);
     fontDescription.setRenderingMode(settings->fontRenderingMode());
     fontDescription.setUsePrinterFont(document().printing() || !settings->screenFontSubstitutionEnabled());
-    const AtomicString& standardFontFamily = documentSettings()->standardFontFamily();
-    if (!standardFontFamily.isEmpty())
-        fontDescription.setOneFamily(standardFontFamily);
+    fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
     m_state.style()->setLineHeight(RenderStyle::initialLineHeight());

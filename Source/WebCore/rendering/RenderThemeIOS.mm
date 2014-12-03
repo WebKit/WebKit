@@ -1230,7 +1230,6 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
     if (fontDescriptor) {
         RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
         cachedDesc->setIsAbsoluteSize(true);
-        cachedDesc->setGenericFamily(FontDescription::NoFamily);
         cachedDesc->setOneFamily(textStyle);
         cachedDesc->setSpecifiedSize(CTFontGetSize(font.get()));
         cachedDesc->setWeight(fromCTFontWeight(FontCache::weightOfCTFont(font.get())));

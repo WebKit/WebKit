@@ -170,14 +170,12 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         // Font
         FontDescription controlFont = m_theme->controlFont(part, style.font(), style.effectiveZoom());
         if (controlFont != style.font().fontDescription()) {
-            // Reset our line-height
-            style.setLineHeight(RenderStyle::initialLineHeight());
-
             // Now update our font.
             if (style.setFontDescription(controlFont))
                 style.font().update(0);
         }
-
+        // Reset our line-height
+        style.setLineHeight(RenderStyle::initialLineHeight());
         style.setInsideDefaultButton(part == DefaultButtonPart);
     }
     break;

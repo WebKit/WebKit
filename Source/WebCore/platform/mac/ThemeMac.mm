@@ -683,7 +683,6 @@ FontDescription ThemeMac::controlFont(ControlPart part, const Font& font, float 
         case PushButtonPart: {
             FontDescription fontDescription;
             fontDescription.setIsAbsoluteSize(true);
-            fontDescription.setGenericFamily(FontDescription::SerifFamily);
 
             NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
             fontDescription.setOneFamily([nsFont webCoreFamilyName]);
