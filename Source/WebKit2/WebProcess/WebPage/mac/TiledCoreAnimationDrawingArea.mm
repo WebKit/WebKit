@@ -295,38 +295,36 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 {
     ASSERT(!m_layerTreeStateIsFrozen);
 
-    // This gets called outside of the normal event loop so wrap in an autorelease pool
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        m_webPage.layoutIfNeeded();
 
-    m_webPage.layoutIfNeeded();
+        updateIntrinsicContentSizeIfNeeded();
 
-    updateIntrinsicContentSizeIfNeeded();
+        if (m_pendingRootLayer) {
+            setRootCompositingLayer(m_pendingRootLayer.get());
+            m_pendingRootLayer = nullptr;
+        }
 
-    if (m_pendingRootLayer) {
-        setRootCompositingLayer(m_pendingRootLayer.get());
-        m_pendingRootLayer = nullptr;
+        FloatRect visibleRect = [m_hostingLayer frame];
+        visibleRect.intersect(m_scrolledExposedRect);
+
+        // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
+        if (m_viewOverlayRootLayer)
+            m_viewOverlayRootLayer->flushCompositingState(visibleRect);
+
+        bool returnValue = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
+    #if ENABLE(ASYNC_SCROLLING)
+        if (ScrollingCoordinator* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator())
+            scrollingCoordinator->commitTreeStateIfNeeded();
+    #endif
+
+        // If we have an active transient zoom, we want the zoom to win over any changes
+        // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
+        if (m_transientZoomScale != 1)
+            applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
+
+        return returnValue;
     }
-
-    FloatRect visibleRect = [m_hostingLayer frame];
-    visibleRect.intersect(m_scrolledExposedRect);
-
-    // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
-    if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState(visibleRect);
-
-    bool returnValue = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
-#if ENABLE(ASYNC_SCROLLING)
-    if (ScrollingCoordinator* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator())
-        scrollingCoordinator->commitTreeStateIfNeeded();
-#endif
-
-    // If we have an active transient zoom, we want the zoom to win over any changes
-    // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
-    if (m_transientZoomScale != 1)
-        applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
-
-    [pool drain];
-    return returnValue;
 }
 
 void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed, bool wantsDidUpdateViewState)

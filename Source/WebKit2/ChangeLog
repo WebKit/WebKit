@@ -1,3 +1,12 @@
+2014-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Use an @autoreleasepool instead of NSAutoreleasePool.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2014-12-03  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION(r176687): Caused webkit2 test assertion failure crashes in WebKit::WebPage::willStartDrag()
