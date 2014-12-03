@@ -3,7 +3,7 @@
 // prompt for login if not already present
 if (!strlen($_SERVER["PHP_AUTH_USER"]) || !strlen($_SERVER["PHP_AUTH_PW"]))
 {
-    header("WWW-Authenticate: Basic realm=\"WebKit Bug Test\"");
+    header("WWW-Authenticate: Basic realm=\"http/tests/misc/authentication-redirect-1\"");
     header("HTTP/1.0 401 Unauthorized");
     exit;
 }
