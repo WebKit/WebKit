@@ -967,47 +967,6 @@ public:
     }
 };
 
-class ApplyPropertyDisplay {
-private:
-    static inline bool isValidDisplayValue(StyleResolver* styleResolver, EDisplay displayPropertyValue)
-    {
-        if (styleResolver->element() && styleResolver->element()->isSVGElement() && styleResolver->style()->styleType() == NOPSEUDO)
-            return (displayPropertyValue == INLINE || displayPropertyValue == BLOCK || displayPropertyValue == NONE);
-        return true;
-    }
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        EDisplay display = styleResolver->parentStyle()->display();
-        if (!isValidDisplayValue(styleResolver, display))
-            return;
-        styleResolver->style()->setDisplay(display);
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setDisplay(RenderStyle::initialDisplay());
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-
-        EDisplay display = downcast<CSSPrimitiveValue>(*value);
-
-        if (!isValidDisplayValue(styleResolver, display))
-            return;
-
-        styleResolver->style()->setDisplay(display);
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-};
-
 const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
     static NeverDestroyed<DeprecatedStyleBuilder> styleBuilderInstance;
@@ -1039,7 +998,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyCounterIncrement, ApplyPropertyCounter<Increment>::createHandler());
     setPropertyHandler(CSSPropertyCounterReset, ApplyPropertyCounter<Reset>::createHandler());
     setPropertyHandler(CSSPropertyCursor, ApplyPropertyCursor::createHandler());
-    setPropertyHandler(CSSPropertyDisplay, ApplyPropertyDisplay::createHandler());
     setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());

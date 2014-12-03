@@ -44,20 +44,25 @@
 // can indicate that a Converter helper function in
 // css/StyleBuilderConverter.h should be used.
 //
-// * Custom=[Value|All]:
+// * Custom=[Initial|Value|Inherit|All]:
+// Custom=Initial option is used to indicate that the CSS property requires
+// special handling to set its initial value.
+// Custom=Inherit option is used to indicate that the CSS property requires
+// special handling to set its inherit value.
 // Custom=Value option is used to indicate that the CSS property requires special
 // handling to set its value, and a regular Converter helper cannot be
 // used. The Custom code for the property should be located in
 // css/StyleBuilderCustom.h and named applyValue[CSSPropertyName]().
 // If special handling is also needed to apply inherit or initial value, use
-// Custom=All.
+// Custom=All. Alternatively, several '|'-separated options can be passed:
+// e.g. 'Custom=Inherit|Value".
 
 
 // high-priority property names have to be listed first, to simplify the check
 // for applying them first.
 color [Inherited, LegacyStyleBuilder]
 direction [Inherited, Custom=Value]
-display [LegacyStyleBuilder]
+display [Custom=Inherit|Value]
 font [Inherited, LegacyStyleBuilder]
 font-family [Inherited, Custom=All]
 font-size [Inherited, LegacyStyleBuilder]

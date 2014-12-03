@@ -1,5 +1,33 @@
 2014-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Move 'display' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139218
+
+        Reviewed by Antti Koivisto.
+
+        Move 'display' CSS property to the new StyleBuilder.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyDisplay::isValidDisplayValue): Deleted.
+        (WebCore::ApplyPropertyDisplay::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyDisplay::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyDisplay::applyValue): Deleted.
+        (WebCore::ApplyPropertyDisplay::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::isValidDisplayValue):
+        (WebCore::StyleBuilderCustom::applyInheritDisplay):
+        (WebCore::StyleBuilderCustom::applyValueDisplay):
+        * css/makeprop.pl:
+        Add support for passing multiple values for Custom option, e.g.:
+        'Custom=Inherit|Value'. This was useful as we did not need custom
+        code for display's initial value.
+
+2014-12-03  Chris Dumez  <cdumez@apple.com>
+
         Modernize the CSSParser code
         https://bugs.webkit.org/show_bug.cgi?id=139209
 

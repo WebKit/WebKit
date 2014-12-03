@@ -330,6 +330,13 @@ close HEADER;
 # StyleBuilder.cpp generator.
 #
 
+sub getScopeForFunction {
+  my $name = shift;
+  my $builderFunction = shift;
+
+  return $propertiesWithStyleBuilderOptions{$name}{"Custom"}{$builderFunction} ? "StyleBuilderCustom" : "StyleBuilderFunctions";
+}
+
 foreach my $name (@names) {
   # Skip properties still using the legacy style builder.
   next unless exists($propertiesWithStyleBuilderOptions{$name});
@@ -353,8 +360,12 @@ foreach my $name (@names) {
     $propertiesWithStyleBuilderOptions{$name}{"Initial"} = "initial" . $nameForMethods;
   }
   if (!exists($propertiesWithStyleBuilderOptions{$name}{"Custom"})) {
-    $propertiesWithStyleBuilderOptions{$name}{"Custom"} = "None";
+    $propertiesWithStyleBuilderOptions{$name}{"Custom"} = "";
+  } elsif ($propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "All") {
+    $propertiesWithStyleBuilderOptions{$name}{"Custom"} = "Initial|Inherit|Value";
   }
+  my %customValues = map { $_ => 1 } split(/\|/, $propertiesWithStyleBuilderOptions{$name}{"Custom"});
+  $propertiesWithStyleBuilderOptions{$name}{"Custom"} = \%customValues;
 }
 
 open STYLEBUILDER, ">StyleBuilder.cpp" || die "Could not open StyleBuilder.cpp for writing";
@@ -380,18 +391,20 @@ foreach my $name (@names) {
   # Skip properties still using the legacy style builder.
   next unless exists($propertiesWithStyleBuilderOptions{$name});
 
-  next if $propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "All";
-
   my $setValue = "styleResolver.style()->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
-  print STYLEBUILDER "    inline void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
-  print STYLEBUILDER "    {\n";
-  print STYLEBUILDER "        " . $setValue . "(RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "());\n";
-  print STYLEBUILDER "    }\n";
-  print STYLEBUILDER "    inline void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
-  print STYLEBUILDER "    {\n";
-  print STYLEBUILDER "        " . $setValue . "(styleResolver.parentStyle()->" .  $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "());\n";
-  print STYLEBUILDER "    }\n";
-  if ($propertiesWithStyleBuilderOptions{$name}{"Custom"} ne "Value") {
+  if (!$propertiesWithStyleBuilderOptions{$name}{"Custom"}{"Initial"}) {
+    print STYLEBUILDER "    inline void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+    print STYLEBUILDER "    {\n";
+    print STYLEBUILDER "        " . $setValue . "(RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "());\n";
+    print STYLEBUILDER "    }\n";
+  }
+  if (!$propertiesWithStyleBuilderOptions{$name}{"Custom"}{"Inherit"}) {
+    print STYLEBUILDER "    inline void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+    print STYLEBUILDER "    {\n";
+    print STYLEBUILDER "        " . $setValue . "(styleResolver.parentStyle()->" .  $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "());\n";
+    print STYLEBUILDER "    }\n";
+  }
+  if (!$propertiesWithStyleBuilderOptions{$name}{"Custom"}{"Value"}) {
     print STYLEBUILDER "    inline void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
     print STYLEBUILDER "    {\n";
     my $convertedValue;
@@ -417,16 +430,13 @@ foreach my $name (@names) {
   # Skip properties still using the legacy style builder.
   next unless exists($propertiesWithStyleBuilderOptions{$name});
 
-  my $scope = $propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "All" ? "StyleBuilderCustom" : "StyleBuilderFunctions";
-  my $valueScope = $propertiesWithStyleBuilderOptions{$name}{"Custom"} eq "Value" ? "StyleBuilderCustom" : $scope;
-
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
   print STYLEBUILDER "        if (isInitial)\n";
-  print STYLEBUILDER "            " . $scope . "::applyInitial" . $nameToId{$name} . "(styleResolver);\n";
+  print STYLEBUILDER "            " . getScopeForFunction($name, "Initial") . "::applyInitial" . $nameToId{$name} . "(styleResolver);\n";
   print STYLEBUILDER "        else if (isInherit)\n";
-  print STYLEBUILDER "            " . $scope . "::applyInherit" . $nameToId{$name} . "(styleResolver);\n";
+  print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit" . $nameToId{$name} . "(styleResolver);\n";
   print STYLEBUILDER "        else\n";
-  print STYLEBUILDER "            " . $valueScope . "::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
+  print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
   print STYLEBUILDER "        return true;\n";
 }
 

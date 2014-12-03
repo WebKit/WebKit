@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "LocaleToScriptMapping.h"
 #include "Rect.h"
+#include "SVGElement.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 
@@ -121,6 +122,9 @@ public:
     static void applyInheritFontFamily(StyleResolver&);
     static void applyValueFontFamily(StyleResolver&, CSSValue&);
 
+    static void applyInheritDisplay(StyleResolver&);
+    static void applyValueDisplay(StyleResolver&, CSSValue&);
+
 private:
     static void resetEffectiveZoom(StyleResolver&);
     static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
@@ -132,6 +136,7 @@ private:
 
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(StyleResolver&, CSSValue&);
+    static bool isValidDisplayValue(StyleResolver&, EDisplay);
 };
 
 inline void StyleBuilderCustom::applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
@@ -978,6 +983,27 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
         styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize, styleResolver.document()));
 
     styleResolver.setFontDescription(fontDescription);
+}
+
+inline bool StyleBuilderCustom::isValidDisplayValue(StyleResolver& styleResolver, EDisplay display)
+{
+    if (is<SVGElement>(styleResolver.element()) && styleResolver.style()->styleType() == NOPSEUDO)
+        return display == INLINE || display == BLOCK || display == NONE;
+    return true;
+}
+
+inline void StyleBuilderCustom::applyInheritDisplay(StyleResolver& styleResolver)
+{
+    EDisplay display = styleResolver.parentStyle()->display();
+    if (isValidDisplayValue(styleResolver, display))
+        styleResolver.style()->setDisplay(display);
+}
+
+inline void StyleBuilderCustom::applyValueDisplay(StyleResolver& styleResolver, CSSValue& value)
+{
+    EDisplay display = downcast<CSSPrimitiveValue>(value);
+    if (isValidDisplayValue(styleResolver, display))
+        styleResolver.style()->setDisplay(display);
 }
 
 } // namespace WebCore
