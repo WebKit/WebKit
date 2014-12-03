@@ -100,7 +100,6 @@ public:
     void setRepaintCount(int);
 
     void setAnimations(const GraphicsLayerAnimations&);
-    bool startedAnimation() const { return m_startedAnimation; }
 
 private:
     // GraphicsLayer
@@ -181,7 +180,6 @@ private:
 
     IntSize m_committedScrollOffset;
     bool m_isScrollable;
-    bool m_startedAnimation;
 };
 
 } // namespace WebCore
