@@ -1,3 +1,14 @@
+2014-12-02  Sam Weinig  <sam@webkit.org>
+
+        Remove empty directories
+
+        Reviewed by Anders Carlsson.
+
+        * Source: Removed.
+        * Source/WebKit: Removed.
+        * Source/WebKit/mac: Removed.
+        * Source/WebKit/mac/Resources: Removed.
+
 2014-12-02  Tim Horton  <timothy_horton@apple.com>
 
         Implement Lookup transition from selection for Legacy WebKit
