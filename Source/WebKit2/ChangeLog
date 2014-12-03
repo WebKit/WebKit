@@ -1,5 +1,16 @@
 2014-12-03  Anders Carlsson  <andersca@apple.com>
 
+        Remove ENABLE_UI_PROCESS_STORAGE define, it's always 1.
+
+        Rubber-stamped by Beth Dakin.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::localStorageNamespace):
+        (WebKit::WebPlatformStrategies::transientLocalStorageNamespace):
+        (WebKit::WebPlatformStrategies::sessionStorageNamespace):
+
+2014-12-03  Anders Carlsson  <andersca@apple.com>
+
         Use an @autoreleasepool instead of NSAutoreleasePool.
 
         Rubber-stamped by Tim Horton.
