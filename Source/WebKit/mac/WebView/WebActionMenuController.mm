@@ -30,6 +30,7 @@
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "DictionaryPopupInfo.h"
 #import "WebDocumentInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
@@ -86,12 +87,6 @@ SOFT_LINK_CLASS(ImageKit, IKSlideshow)
 @end
 
 using namespace WebCore;
-
-struct DictionaryPopupInfo {
-    NSPoint origin;
-    RetainPtr<NSDictionary> options;
-    RetainPtr<NSAttributedString> attributedString;
-};
 
 @implementation WebActionMenuController
 
@@ -634,15 +629,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return;
 
     DictionaryPopupInfo popupInfo = performDictionaryLookupForSelection(frame, frame->selection().selection());
-    if (!popupInfo.attributedString)
-        return;
-
-    NSPoint textBaselineOrigin = popupInfo.origin;
-
-    // Convert to screen coordinates.
-    textBaselineOrigin = [_webView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
-
-    [getLULookupDefinitionModuleClass() showDefinitionForTerm:popupInfo.attributedString.get() atLocation:textBaselineOrigin options:popupInfo.options.get()];
+    [_webView _showDictionaryLookupPopup:popupInfo];
 }
 
 - (void)_paste:(id)sender
@@ -682,11 +669,11 @@ static DictionaryPopupInfo performDictionaryLookupForSelection(Frame* frame, con
     DictionaryPopupInfo popupInfo;
     RefPtr<Range> selectedRange = rangeForDictionaryLookupForSelection(selection, &options);
     if (selectedRange)
-        popupInfo = performDictionaryLookupForRange(frame, *selectedRange, options);
+        popupInfo = performDictionaryLookupForRange(frame, *selectedRange, options, TextIndicatorPresentationTransition::BounceAndCrossfade);
     return popupInfo;
 }
 
-static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options)
+static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
 {
     DictionaryPopupInfo popupInfo;
     if (range.text().stripWhiteSpace().isEmpty())
@@ -722,6 +709,7 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     }];
 
     popupInfo.attributedString = scaledNSAttributedString.get();
+    popupInfo.textIndicator = TextIndicator::createWithRange(range, presentationTransition);
     return popupInfo;
 }
 

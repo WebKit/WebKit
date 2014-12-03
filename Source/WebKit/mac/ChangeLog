@@ -1,3 +1,51 @@
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176680. <rdar://problem/19067172>
+
+    2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+            Implement Lookup transition from selection for Legacy WebKit
+            https://bugs.webkit.org/show_bug.cgi?id=139180
+            <rdar://problem/19067172>
+
+            Reviewed by Beth Dakin.
+
+            * WebView/DictionaryPopupInfo.h: Added.
+            Split DictionaryPopupInfo out into its own file.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _lookupText:]):
+            Hand the DictionaryPopupInfo to WebView, which will show the TextIndicator and invoke Lookup.
+
+            (performDictionaryLookupForSelection):
+            (performDictionaryLookupForRange):
+            Plumb the transition style through these helpers.
+            Create a TextIndicator from the selection range.
+
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+            Make use of TextIndicator (and DictionaryPopupInfo, and the new
+            _showDictionaryLookupPopup on WebView) to add a transition from blue
+            when performing Lookup from the context menu.
+
+            (-[WebHTMLView quickLookWithEvent:]):
+            Remove our TextIndicator whenever a normal three-finger-tap event
+            comes through, as it will have its own indication.
+
+            * WebView/WebView.mm:
+            (-[WebView _commonInitializationWithFrameName:groupName:]):
+            (-[WebView _dictionaryLookupPopoverWillClose:]):
+            Register for the LUNotificationPopoverWillClose notification and remove
+            our TextIndicator when it is called, just like in WebKit2.
+            Deregistration is already handled in _close.
+
+            (-[WebView _showDictionaryLookupPopup:]):
+            Just like WebKit2, show our TextIndicator and tell Lookup not to show its own,
+            if the relevant API is available.
+
+            * WebView/WebViewInternal.h:
+
+
 2014-12-02  Dana Burkart  <dburkart@apple.com>
 
         Merge r176618. <rdar://problem/18992185>

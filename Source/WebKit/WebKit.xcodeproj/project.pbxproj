@@ -85,6 +85,7 @@
 		2D25396718CE85C200270222 /* WebSharingServicePickerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D25396518CE85C200270222 /* WebSharingServicePickerController.mm */; };
 		2DD632C219E5D1F0002E9C7B /* WebSelectionServiceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */; };
 		2DD632C319E5D1F0002E9C7B /* WebSelectionServiceController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */; };
+		2DF064A91A2DD53C00DBB354 /* DictionaryPopupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF064A81A2DD53C00DBB354 /* DictionaryPopupInfo.h */; };
 		312E2FE514E48182007CCA18 /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 312E2FE314E48182007CCA18 /* WebNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = 312E2FE414E48182007CCA18 /* WebNotification.mm */; };
 		312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 312E2FE814E48215007CCA18 /* WebNotificationInternal.h */; };
@@ -541,6 +542,7 @@
 		2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFormDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2DD632C019E5D1F0002E9C7B /* WebSelectionServiceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSelectionServiceController.h; sourceTree = "<group>"; };
 		2DD632C119E5D1F0002E9C7B /* WebSelectionServiceController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSelectionServiceController.mm; sourceTree = "<group>"; };
+		2DF064A81A2DD53C00DBB354 /* DictionaryPopupInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictionaryPopupInfo.h; sourceTree = "<group>"; };
 		312E2FE314E48182007CCA18 /* WebNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotification.h; sourceTree = "<group>"; };
 		312E2FE414E48182007CCA18 /* WebNotification.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNotification.mm; sourceTree = "<group>"; };
 		312E2FE814E48215007CCA18 /* WebNotificationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationInternal.h; sourceTree = "<group>"; };
@@ -1294,6 +1296,7 @@
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				A10C1D79182030190036883A /* ios */,
+				2DF064A81A2DD53C00DBB354 /* DictionaryPopupInfo.h */,
 				935D44E219F9AFF000FB5306 /* WebActionMenuController.h */,
 				935D44E319F9AFF000FB5306 /* WebActionMenuController.mm */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
@@ -1814,6 +1817,7 @@
 				A10C1D8C1820305E0036883A /* WebPDFViewIPhone.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
 				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
+				2DF064A91A2DD53C00DBB354 /* DictionaryPopupInfo.h in Headers */,
 				9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */,
 				9398101E0824BF01008DF038 /* WebKitNSStringExtras.h in Headers */,
 				1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */,

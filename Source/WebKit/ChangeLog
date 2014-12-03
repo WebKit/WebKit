@@ -1,3 +1,19 @@
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176680. <rdar://problem/19067172>
+
+    2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+            Implement Lookup transition from selection for Legacy WebKit
+            https://bugs.webkit.org/show_bug.cgi?id=139180
+            <rdar://problem/19067172>
+
+            Reviewed by Beth Dakin.
+
+            * WebKit.xcodeproj/project.pbxproj:
+            Add mac/WebView/DictionaryPopupInfo.h.
+
+
 2014-10-28  Dana Burkart  <dburkart@apple.com>
 
         Merge r174791. <rdar://problem/18753175>
