@@ -1,4 +1,0 @@
-framebuffer-object-attachment.html
-framebuffer-test.html
-renderbuffer-initialization.html
-

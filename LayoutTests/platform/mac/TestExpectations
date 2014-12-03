@@ -490,19 +490,8 @@ editing/pasteboard/5478250.html
 # Mac does not have global selections.
 editing/pasteboard/paste-global-selection.html
 
-# Skipping all webgl conformance tests on trunk
-webgl/conformance
-
 # Unexpected WebGL Conformance tests that need to be fixed
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
-webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html [ Failure ]
-webgl/1.0.1/conformance/glsl/misc/shader-with-do-scoping.html [ Failure ]
-webgl/1.0.1/conformance/glsl/misc/shader-with-for-scoping.html [ Failure ]
-webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html [ Failure ]
-webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html [ Failure ]
-webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html [ Failure ]
-webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Skip ]
-webgl/1.0.1/conformance/context/context-lost-restored.html [ Failure ]
 webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure Timeout ]
 webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
@@ -512,10 +501,6 @@ http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
 
 # Some WebGL tests don't work properly on MountainLion
-[ MountainLion ] webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Pass Failure ]
-[ MountainLion ] webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
-[ MountainLion ] webgl/1.0.1/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
-[ MountainLion ] webgl/1.0.1/conformance/textures/texture-size.html [ Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Pass Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
@@ -1304,12 +1289,6 @@ webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html
 # FIXME: Needs bugzilla (<rdar://problem/16664245>)
 # We should land updated results if we can't get this bug fixed in time.
 [ Yosemite+ ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16676355>)
-[ Yosemite ] webgl/1.0.1/conformance/canvas/buffer-offscreen-test.html [ Pass Failure ]
-[ Yosemite ] webgl/1.0.1/conformance/canvas/buffer-preserve-test.html [ Pass Failure ]
-[ Yosemite ] webgl/1.0.2/conformance/canvas/buffer-offscreen-test.html [ Pass Failure ]
-[ Yosemite ] webgl/1.0.2/conformance/canvas/buffer-preserve-test.html [ Pass Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16687875>)
 [ Yosemite ] fast/frames/flattening/iframe-flattening-fixed-width.html [ Pass Failure ]
