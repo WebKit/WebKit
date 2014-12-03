@@ -394,7 +394,7 @@ static const CGFloat previewViewTitleHeight = 34;
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:kWKContextActionItemTagOpenLinkInDefaultBrowser];
 
-    BOOL shouldUseStandardQuickLookPreview = [_wkView _shouldUseStandardQuickLookPreview];
+    BOOL shouldUseStandardQuickLookPreview = [_wkView _shouldUseStandardQuickLookPreview] && [NSMenuItem instancesRespondToSelector:@selector(standardQuickLookMenuItem)];
     RetainPtr<NSMenuItem> previewLinkItem;
     RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem;
     if (shouldUseStandardQuickLookPreview) {
