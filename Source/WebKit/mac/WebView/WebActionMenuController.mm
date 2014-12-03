@@ -282,17 +282,19 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser];
 
-    RetainPtr<QLPreviewMenuItem> previewLinkItem;
-    if ([NSMenuItem respondsToSelector:@selector(standardQuickLookMenuItem)]) {
-        previewLinkItem = [NSMenuItem standardQuickLookMenuItem];
-        [previewLinkItem setPreviewStyle:QLPreviewStylePopover];
-        [previewLinkItem setDelegate:self];
+    BOOL shouldUseStandardQuickLookPreview = [NSMenuItem respondsToSelector:@selector(standardQuickLookMenuItem)];
+    RetainPtr<NSMenuItem> previewLinkItem;
+    RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem;
+    if (shouldUseStandardQuickLookPreview) {
+        qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
+        [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
+        [qlPreviewLinkItem setDelegate:self];
     } else
         previewLinkItem = [NSMenuItem separatorItem];
 
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList];
 
-    return @[ openLinkItem.get(), previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
+    return @[ openLinkItem.get(), shouldUseStandardQuickLookPreview ? qlPreviewLinkItem.get() : previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
 }
 
 #pragma mark Mailto Link actions
