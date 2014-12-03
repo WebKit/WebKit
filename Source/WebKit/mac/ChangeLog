@@ -1,5 +1,16 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176681. <rdar://problem/19067172>
+
+    2014-12-02  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * WebView/WebViewData.h:
+
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176680. <rdar://problem/19067172>
 
     2014-12-02  Tim Horton  <timothy_horton@apple.com>
