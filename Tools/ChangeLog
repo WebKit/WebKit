@@ -1,3 +1,12 @@
+2014-12-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Remove unused JSC runtime options
+        https://bugs.webkit.org/show_bug.cgi?id=133070
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-12-03  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Add subtle crypto to the build system

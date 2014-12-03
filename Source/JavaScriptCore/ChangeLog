@@ -1,3 +1,12 @@
+2014-12-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Remove unused JSC runtime options
+        https://bugs.webkit.org/show_bug.cgi?id=133070
+
+        Reviewed by Csaba Osztrogonác.
+
+        * runtime/Options.h:
+
 2014-12-02  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r176592, r176603, r176616, and r176705 until build and perf issues are resolved.

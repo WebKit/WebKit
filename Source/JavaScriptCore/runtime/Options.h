@@ -150,7 +150,6 @@ typedef const char* optionString;
     v(bool, enableOSREntryToFTL, true) \
     \
     v(bool, useFTLJIT, true) \
-    v(bool, enableExperimentalFTLCoverage, false) \
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMFastISel, false) \
     v(bool, useLLVMSmallCodeModel, false) \
@@ -206,8 +205,6 @@ typedef const char* optionString;
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
     v(unsigned, maximumInliningDepth, 5) \
     v(unsigned, maximumInliningRecursion, 2) \
-    v(unsigned, maximumInliningDepthForMustInline, 7) \
-    v(unsigned, maximumInliningRecursionForMustInline, 3) \
     \
     v(unsigned, maximumLLVMInstructionCountForNativeInlining, 80) \
     \
@@ -250,7 +247,6 @@ typedef const char* optionString;
     v(unsigned, osrExitCountForReoptimizationFromLoop, 5) \
     \
     v(unsigned, reoptimizationRetryCounterMax, 0)  \
-    v(unsigned, reoptimizationRetryCounterStep, 1) \
     \
     v(unsigned, minimumOptimizationDelay, 1) \
     v(unsigned, maximumOptimizationDelay, 5) \
