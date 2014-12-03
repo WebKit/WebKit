@@ -8,7 +8,8 @@
 <!-- ==================================================================================================== -->
 <a data-platform="atk,mac" href="#" data-note="[href]" class="ex">X</a>
 <a data-platform="atk,mac" data-note=":not([href])" class="ex">X</a>
-<abbr data-platform="atk,mac" class="ex">X</abbr>
+<abbr data-platform="atk,mac" data-note=":not([title])" class="ex">X</abbr>
+<abbr data-platform="atk,mac" title="Times" data-note="[title]" class="ex">X</abbr>
 <!-- http://webkit.org/b/83989 --><address data-platform="atk,mac" class="ex">X</address>
 <!-- skipped <area> -->
 <article data-platform="atk,mac" class="ex">X</article>
@@ -23,7 +24,8 @@
 <code data-platform="atk,mac" class="ex">X</code>
 <!-- skipped <command> -->
 <!-- skipped <datalist> -->
-<del data-platform="atk,mac" class="ex">X</del>
+<del data-platform="atk,mac" data-note=":not([datetime])" class="ex">X</del>
+<del data-platform="atk,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</del>
 <!-- skipped <details/summary> http://webkit.org/b/108979 -->
 <dfn data-platform="atk,mac" class="ex">X</dfn>
 <dl data-platform="atk,mac" class="ex">
@@ -87,7 +89,8 @@
 <!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="time" value="X" class="ex" data-note="[type='time']">
 <!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="url" value="X" class="ex" data-note="[type='url']">
 <!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="week" value="X" class="ex" data-note="[type='week']">
-<ins data-platform="atk,mac" class="ex">X</ins>
+<ins data-platform="atk,mac" data-note=":not([datetime])" class="ex">X</ins>
+<ins data-platform="atk,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</ins>
 <!-- skipped <link> -->
 <map data-platform="atk,mac" class="ex" name="imagemap">
   <area data-platform="atk,mac" class="ex" shape="rect" coords="0,0,10,10" href="#" title="x" />
@@ -131,7 +134,8 @@
 </select>
 <small data-platform="atk,mac" class="ex">X</small>
 <!-- skipped <source> -->
-<span data-platform="atk,mac" class="ex">X</span>
+<span data-platform="atk,mac" data-note=":not([onclick])" class="ex">X</span>
+<span data-platform="atk,mac" onclick="return;" data-note="[onclick]" class="ex">X</span>
 <strong data-platform="atk,mac" class="ex">X</strong>
 <!-- skipped <style> -->
 <sub data-platform="atk,mac" class="ex">X</sub>
@@ -159,7 +163,8 @@
     </tfoot>
 </table>
 <textarea data-platform="atk,mac" class="ex">X</textarea>
-<time data-platform="atk,mac" class="ex">X</time>
+<time data-platform="atk,mac" data-note=":not([datetime])" class="ex">X</time>
+<time data-platform="atk,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</time>
 <!-- skipped <title> -->
 <ul data-platform="atk,mac" class="ex">
     <li data-platform="atk,mac" class="ex">X</li>

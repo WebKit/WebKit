@@ -10,8 +10,11 @@ a[href]
 a:not([href])
       AXRole: 
       
-abbr
+abbr:not([title])
       AXRole: 
+      
+abbr[title]
+      AXRole: AXUnknown
       
 address
       AXRole: AXLandmarkContentInfo
@@ -46,8 +49,11 @@ cite
 code
       AXRole: 
       
-del
+del:not([datetime])
       AXRole: 
+      
+del[datetime]
+      AXRole: AXUnknown
       
 dfn
       AXRole: AXDefinition
@@ -196,8 +202,11 @@ input[type='url']
 input[type='week']
       AXRole: AXTextField
       
-ins
+ins:not([datetime])
       AXRole: 
+      
+ins[datetime]
+      AXRole: AXUnknown
       
 map
       AXRole: 
@@ -265,8 +274,11 @@ optgroup
 small
       AXRole: 
       
-span
+span:not([onclick])
       AXRole: 
+      
+span[onclick]
+      AXRole: AXUnknown
       
 strong
       AXRole: 
@@ -316,8 +328,11 @@ th
 textarea
       AXRole: AXTextField
       
-time
+time:not([datetime])
       AXRole: 
+      
+time[datetime]
+      AXRole: AXUnknown
       
 ul
       AXRole: AXList

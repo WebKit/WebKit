@@ -1,3 +1,30 @@
+2014-12-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Inline text elements with accessible object attributes and/or event handlers are not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=139071
+
+        Reviewed by Chris Fleizach.
+
+        Adds a new InlineRole accessibility role type for non-focusable inline
+        elements which have an event handler or attribute suggesting possible
+        inclusion by the platform. This is mapped to ATK_ROLE_STATIC for GTK and
+        EFL. On the Mac, it is currently ignored to preserve existing behavior.
+
+        Added new test cases to the existing roles-exposed.html test.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsDatetimeAttribute): Added.
+        * accessibility/AccessibilityObject.h: Added InlineRole.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): Handle InlineRole.
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject): Include InlineRole objects.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject): Ignore InlineRole objects.
+        * html/HTMLTagNames.in: Added 'time'.
+
 2014-12-03  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Hang when calling -[AVAsset resolvedURL].

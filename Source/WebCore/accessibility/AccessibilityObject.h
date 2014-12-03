@@ -137,6 +137,7 @@ enum AccessibilityRole {
     HelpTagRole,
     HorizontalRuleRole,
     IgnoredRole,
+    InlineRole,
     ImageRole,
     ImageMapRole,
     ImageMapLinkRole,
@@ -548,6 +549,8 @@ public:
     bool isStaticText() const { return roleValue() == StaticTextRole; }
     virtual bool hasUnderline() const { return false; }
     bool hasHighlighting() const;
+
+    bool supportsDatetimeAttribute() const;
 
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }

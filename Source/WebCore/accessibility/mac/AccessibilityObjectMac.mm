@@ -85,6 +85,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (roleValue() == UnknownRole && !isAttachment())
         return IgnoreObject;
     
+    if (roleValue() == InlineRole)
+        return IgnoreObject;
+
     if (RenderObject* renderer = this->renderer()) {
         // The legend element is ignored if it lives inside of a fieldset element that uses it to generate alternative text.
         if (renderer->isLegend()) {

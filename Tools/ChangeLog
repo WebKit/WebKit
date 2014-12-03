@@ -1,3 +1,14 @@
+2014-12-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Inline text elements with accessible object attributes and/or event handlers are not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=139071
+
+        Reviewed by Chris Fleizach.
+
+        Add string value for ATK_ROLE_STATIC in roleToString.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2014-12-03  Renato Nagy  <rnagy@inf.u-szeged.hu>
 
         check-webkit-style is confused by ternary expression inside first member initializer

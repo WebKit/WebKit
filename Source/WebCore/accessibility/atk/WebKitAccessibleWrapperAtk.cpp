@@ -665,6 +665,10 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case DescriptionListDetailRole:
         return ATK_ROLE_DESCRIPTION_VALUE;
 #endif
+#if ATK_CHECK_VERSION(2, 15, 2)
+    case InlineRole:
+        return ATK_ROLE_STATIC;
+#endif
     default:
         return ATK_ROLE_UNKNOWN;
     }

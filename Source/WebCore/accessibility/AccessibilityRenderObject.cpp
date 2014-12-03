@@ -2646,6 +2646,15 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (supportsARIAAttributes() || canSetFocusAttribute())
         return GroupRole;
     
+    // InlineRole is the final fallback before assigning UnknownRole to an object. It makes it
+    // possible to distinguish truly unknown objects from non-focusable inline text elements
+    // which have an event handler or attribute suggesting possible inclusion by the platform.
+    if (is<RenderInline>(*m_renderer)
+        && (hasAttributesRequiredForInclusion()
+            || (node && node->hasEventListeners())
+            || (supportsDatetimeAttribute() && !getAttribute(datetimeAttr).isEmpty())))
+        return InlineRole;
+
     return UnknownRole;
 }
 

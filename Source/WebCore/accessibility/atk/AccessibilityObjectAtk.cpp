@@ -76,6 +76,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == UnknownRole)
         return IgnoreObject;
 
+    if (role == InlineRole)
+        return IncludeObject;
+
     // Lines past this point only make sense for AccessibilityRenderObjects.
     RenderObject* renderObject = renderer();
     if (!renderObject)

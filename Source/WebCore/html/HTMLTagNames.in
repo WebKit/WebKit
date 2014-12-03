@@ -127,6 +127,7 @@ textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
 tfoot interfaceName=HTMLTableSectionElement
 th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement
+time interfaceName=HTMLElement
 title
 tr interfaceName=HTMLTableRowElement
 track wrapperOnlyIfMediaIsAvailable, conditional=VIDEO_TRACK

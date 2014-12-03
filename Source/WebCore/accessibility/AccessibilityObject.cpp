@@ -1965,6 +1965,11 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
+bool AccessibilityObject::supportsDatetimeAttribute() const
+{
+    return hasTagName(insTag) || hasTagName(delTag) || hasTagName(timeTag);
+}
+
 Element* AccessibilityObject::element() const
 {
     Node* node = this->node();

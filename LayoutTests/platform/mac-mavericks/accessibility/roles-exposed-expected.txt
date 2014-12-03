@@ -14,7 +14,12 @@ a:not([href])
       AXSubrole: 
       AXRoleDescription: 
       
-abbr
+abbr:not([title])
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+abbr[title]
       AXRole: 
       AXSubrole: 
       AXRoleDescription: 
@@ -74,7 +79,12 @@ code
       AXSubrole: 
       AXRoleDescription: 
       
-del
+del:not([datetime])
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+del[datetime]
       AXRole: 
       AXSubrole: 
       AXRoleDescription: 
@@ -324,7 +334,12 @@ input[type='week']
       AXSubrole: 
       AXRoleDescription: text field
       
-ins
+ins:not([datetime])
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+ins[datetime]
       AXRole: 
       AXSubrole: 
       AXRoleDescription: 
@@ -439,7 +454,12 @@ small
       AXSubrole: 
       AXRoleDescription: 
       
-span
+span:not([onclick])
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+span[onclick]
       AXRole: 
       AXSubrole: 
       AXRoleDescription: 
@@ -524,7 +544,12 @@ textarea
       AXSubrole: 
       AXRoleDescription: text entry area
       
-time
+time:not([datetime])
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+time[datetime]
       AXRole: 
       AXSubrole: 
       AXRoleDescription: 
