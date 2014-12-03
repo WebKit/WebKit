@@ -1,3 +1,14 @@
+2014-12-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] outdated comment
+        https://bugs.webkit.org/show_bug.cgi?id=137801
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove a comment that is no longer correct.
+
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp:
+
 2014-12-02  Conrad Shultz  <conrad_shultz@apple.com>
 
         Don't block menu highlighting when presenting a page preview
