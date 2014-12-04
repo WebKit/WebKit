@@ -301,7 +301,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     } interactionStoppedHandler:^() {
     }];
 
-    [actionContext setHighlightFrame:elementBoundingBoxInWindowCoordinatesFromNode(node)];
+    [_currentActionContext setHighlightFrame:elementBoundingBoxInWindowCoordinatesFromNode(node)];
 
     return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL() actionContext:_currentActionContext.get()];
 }
