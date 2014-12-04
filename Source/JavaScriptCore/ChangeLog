@@ -1,3 +1,31 @@
+2014-12-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move JavaScriptCore/dfg to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=139169
+
+        Reviewed by Filip Pizlo.
+
+        Use std::unique_ptr<>|std::make_unique<> in JavaScriptCore/dfg directory.
+
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::linkFunction):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSlowPathGenerator.h:
+        * dfg/DFGWorklist.h:
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+
 2014-12-03  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r176479): DFG ASSERTION beneath emitOSRExitCall running Kraken/imaging-gaussian-blur.js.ftl-no-cjit-osr-validation and other tests

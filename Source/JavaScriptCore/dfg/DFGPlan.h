@@ -86,7 +86,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
 
     RefPtr<Profiler::Compilation> compilation;
 
-    OwnPtr<Finalizer> finalizer;
+    std::unique_ptr<Finalizer> finalizer;
     
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     DesiredWatchpoints watchpoints;

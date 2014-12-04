@@ -336,7 +336,7 @@ private:
     // The dataflow graph currently being generated.
     Graph& m_graph;
 
-    OwnPtr<Disassembler> m_disassembler;
+    std::unique_ptr<Disassembler> m_disassembler;
     
     RefPtr<JITCode> m_jitCode;
     
@@ -372,7 +372,7 @@ private:
     
     Call m_callArityFixup;
     Label m_arityCheck;
-    OwnPtr<SpeculativeJIT> m_speculative;
+    std::unique_ptr<SpeculativeJIT> m_speculative;
 };
 
 } } // namespace JSC::DFG

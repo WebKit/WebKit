@@ -33,7 +33,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {

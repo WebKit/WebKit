@@ -38,7 +38,7 @@ using namespace DFG;
 
 void fail(State& state)
 {
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
+    state.graph.m_plan.finalizer = std::make_unique<FailedFinalizer>(state.graph.m_plan);
     
     if (state.module)
         llvm->DisposeModule(state.module);

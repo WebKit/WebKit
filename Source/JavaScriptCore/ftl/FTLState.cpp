@@ -76,9 +76,9 @@ State::State(Graph& graph)
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
-    
-    finalizer = new JITFinalizer(graph.m_plan);
-    graph.m_plan.finalizer = adoptPtr(finalizer);
+
+    graph.m_plan.finalizer = std::make_unique<JITFinalizer>(graph.m_plan);
+    finalizer = static_cast<JITFinalizer*>(graph.m_plan.finalizer.get());
 }
 
 State::~State()
