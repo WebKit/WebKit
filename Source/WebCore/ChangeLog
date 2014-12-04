@@ -1,5 +1,25 @@
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176803. <rdar://problem/19034499>
+
+    2014-12-04  Oliver Hunt  <oliver@apple.com>
+
+            Serialization of MapData object provides unsafe access to internal types
+            https://bugs.webkit.org/show_bug.cgi?id=138653
+
+            Reviewed by Geoffrey Garen.
+
+            We now keep the value portion of the key/value pair in MapData as a
+            separate stack. This allows us to maintain the spec semantic of
+            "atomic" serialisation of the key/value pair without retaining the
+            use of a potentially invalid iterator.
+
+            * bindings/js/SerializedScriptValue.cpp:
+            (WebCore::CloneSerializer::serialize):
+
+
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r176682. <rdar://problem/18903995>
 
     2014-12-02  Tim Horton  <timothy_horton@apple.com>
