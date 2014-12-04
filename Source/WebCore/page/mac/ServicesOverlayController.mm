@@ -30,6 +30,7 @@
 
 #import "Chrome.h"
 #import "ChromeClient.h"
+#import "DataDetectorsSPI.h"
 #import "Document.h"
 #import "Editor.h"
 #import "EventHandler.h"
@@ -50,23 +51,9 @@
 #import "SoftLinking.h"
 #import <QuartzCore/QuartzCore.h>
 
-#if __has_include(<DataDetectors/DDHighlightDrawing.h>)
-#import <DataDetectors/DDHighlightDrawing.h>
-#else
-typedef struct __DDHighlight DDHighlight, *DDHighlightRef;
-#endif
-
-#if __has_include(<DataDetectors/DDHighlightDrawing_Private.h>)
-#import <DataDetectors/DDHighlightDrawing_Private.h>
-#endif
-
 const float highlightFadeAnimationDuration = 0.3;
 
-typedef NSUInteger DDHighlightStyle;
-static const DDHighlightStyle DDHighlightNoOutlineWithArrow = (1 << 16);
-static const DDHighlightStyle DDHighlightOutlineWithArrow = (1 << 16) | 1;
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
+// FIXME: Move more of this to DataDetectorsSPI.h.
 SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withArrow, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped), (allocator, rects, count, globalVisibleRect, style, withArrow, writingDirection, endsWithEOL, flipped))
 SOFT_LINK(DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
 SOFT_LINK(DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
@@ -511,7 +498,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
             rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
             CGRect cgRect = rect;
-            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 
             newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, ddHighlight, range));
         }
@@ -555,7 +542,7 @@ void ServicesOverlayController::buildSelectionHighlight()
 
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();
-            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightNoOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
             
             newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, selectionRange));
         }

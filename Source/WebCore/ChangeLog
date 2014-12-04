@@ -1,5 +1,26 @@
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176682. <rdar://problem/18903995>
+
+    2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+            Always show the arrow for text selection services
+            https://bugs.webkit.org/show_bug.cgi?id=139191
+            <rdar://problem/18903995>
+
+            Reviewed by Anders Carlsson.
+
+            * platform/spi/mac/DataDetectorsSPI.h:
+            * page/mac/ServicesOverlayController.mm:
+            Move a few things to DataDetectorsSPI.h.
+
+            (WebCore::ServicesOverlayController::buildPhoneNumberHighlights):
+            (WebCore::ServicesOverlayController::buildSelectionHighlight):
+            Make use of the real DDHighlightStyle names.
+            Add DDHighlightStyleButtonShowAlways for selection services.
+
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r176766. <rdar://problem/19072083>
 
     2014-12-03  Beth Dakin  <bdakin@apple.com> 
