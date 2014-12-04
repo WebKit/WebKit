@@ -442,10 +442,10 @@ class TestShard(object):
     def __init__(self, name, test_inputs):
         self.name = name
         self.test_inputs = test_inputs
-        self.requires_lock = test_inputs[0].requires_lock
+        self.needs_servers = test_inputs[0].needs_servers
 
     def __repr__(self):
-        return "TestShard(name='%s', test_inputs=%s, requires_lock=%s'" % (self.name, self.test_inputs, self.requires_lock)
+        return "TestShard(name='%s', test_inputs=%s, needs_servers=%s'" % (self.name, self.test_inputs, self.needs_servers)
 
     def __eq__(self, other):
         return self.name == other.name and self.test_inputs == other.test_inputs
@@ -482,7 +482,7 @@ class Sharder(object):
         locked_inputs = []
         unlocked_inputs = []
         for test_input in test_inputs:
-            if test_input.requires_lock:
+            if test_input.needs_servers:
                 locked_inputs.append(test_input)
             else:
                 unlocked_inputs.append(test_input)
@@ -506,7 +506,7 @@ class Sharder(object):
             # Note that we use a '.' for the shard name; the name doesn't really
             # matter, and the only other meaningful value would be the filename,
             # which would be really redundant.
-            if test_input.requires_lock:
+            if test_input.needs_servers:
                 locked_shards.append(TestShard('.', [test_input]))
             else:
                 unlocked_shards.append(TestShard('.', [test_input]))
@@ -530,7 +530,7 @@ class Sharder(object):
 
         for directory, test_inputs in tests_by_dir.iteritems():
             shard = TestShard(directory, test_inputs)
-            if test_inputs[0].requires_lock:
+            if test_inputs[0].needs_servers:
                 locked_shards.append(shard)
             else:
                 unlocked_shards.append(shard)

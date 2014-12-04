@@ -112,10 +112,6 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner = self._runner()
         self._run_tests(runner, ['http/tests/passes/text.html', 'passes/text.html'])
 
-    def test_perf_locking(self):
-        runner = self._runner()
-        self._run_tests(runner, ['http/tests/passes/text.html', 'perf/foo/test.html'])
-
     def test_interrupt_if_at_failure_limits(self):
         runner = self._runner()
         runner._options.exit_after_n_failures = None
@@ -233,11 +229,10 @@ class SharderTests(unittest.TestCase):
         "dom/html/level2/html/HTMLAnchorElement03.html",
         "ietestcenter/Javascript/11.1.5_4-4-c-1.html",
         "dom/html/level2/html/HTMLAnchorElement06.html",
-        "perf/object-keys.html",
     ]
 
     def get_test_input(self, test_file):
-        return TestInput(test_file, requires_lock=(test_file.startswith('http') or test_file.startswith('perf')))
+        return TestInput(test_file, needs_servers=(test_file.startswith('http')))
 
     def get_shards(self, num_workers, fully_parallel, test_list=None, max_locked_shards=1):
         port = TestPort(MockSystemHost())
@@ -264,8 +259,7 @@ class SharderTests(unittest.TestCase):
                ['http/tests/security/view-source-no-refresh.html',
                 'http/tests/websocket/tests/unicode.htm',
                 'http/tests/websocket/tests/websocket-protocol-ignored.html',
-                'http/tests/xmlhttprequest/supported-xml-content-types.html',
-                'perf/object-keys.html'])])
+                'http/tests/xmlhttprequest/supported-xml-content-types.html'])])
         self.assert_shards(unlocked,
             [('animations', ['animations/keyframes.html']),
              ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html',
@@ -279,8 +273,7 @@ class SharderTests(unittest.TestCase):
             [('.', ['http/tests/websocket/tests/unicode.htm']),
              ('.', ['http/tests/security/view-source-no-refresh.html']),
              ('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             ('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
-             ('.', ['perf/object-keys.html'])]),
+             ('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html'])]),
         self.assert_shards(unlocked,
             [('.', ['animations/keyframes.html']),
              ('.', ['fast/css/display-none-inline-style-change-crash.html']),
@@ -295,8 +288,7 @@ class SharderTests(unittest.TestCase):
               ['http/tests/websocket/tests/unicode.htm',
                'http/tests/security/view-source-no-refresh.html',
                'http/tests/websocket/tests/websocket-protocol-ignored.html',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
+               'http/tests/xmlhttprequest/supported-xml-content-types.html'])])
         self.assert_shards(unlocked,
             [('unlocked_tests',
               ['animations/keyframes.html',
@@ -325,8 +317,7 @@ class SharderTests(unittest.TestCase):
                'http/tests/websocket/tests/unicode.htm',
                'http/tests/websocket/tests/websocket-protocol-ignored.html']),
              ('locked_shard_2',
-              ['http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
+              ['http/tests/xmlhttprequest/supported-xml-content-types.html'])])
 
         locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False)
         self.assert_shards(locked,
@@ -334,5 +325,4 @@ class SharderTests(unittest.TestCase):
               ['http/tests/security/view-source-no-refresh.html',
                'http/tests/websocket/tests/unicode.htm',
                'http/tests/websocket/tests/websocket-protocol-ignored.html',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
+               'http/tests/xmlhttprequest/supported-xml-content-types.html'])])

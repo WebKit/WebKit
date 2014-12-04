@@ -339,9 +339,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(tests_to_run, tests_run)
 
     def test_no_order_with_directory_entries_in_natural_order(self):
-        tests_to_run = ['http/tests/ssl', 'perf/foo', 'http/tests/passes']
+        tests_to_run = ['http/tests/ssl', 'http/tests/passes']
         tests_run = get_tests_run(['--order=none'] + tests_to_run)
-        self.assertEqual(tests_run, ['http/tests/ssl/text.html', 'perf/foo/test.html', 'http/tests/passes/image.html', 'http/tests/passes/text.html'])
+        self.assertEqual(tests_run, ['http/tests/ssl/text.html', 'http/tests/passes/image.html', 'http/tests/passes/text.html'])
 
     def test_gc_between_tests(self):
         self.assertTrue(passing_run(['--gc-between-tests']))

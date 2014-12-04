@@ -78,7 +78,6 @@ class Manager(object):
         self._expectations = None
 
         self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR
-        self.PERF_SUBDIR = 'perf'
         self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
 
@@ -102,9 +101,6 @@ class Manager(object):
     def _http_tests(self, test_names):
         return set(test for test in test_names if self._is_http_test(test))
 
-    def _is_perf_test(self, test):
-        return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
-
     def _prepare_lists(self, paths, test_names):
         tests_to_skip = self._finder.skip_tests(paths, test_names, self._expectations, self._http_tests(test_names))
         tests_to_run = [test for test in test_names if test not in tests_to_skip]
@@ -125,20 +121,13 @@ class Manager(object):
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
             self._options.slow_time_out_ms if self._test_is_slow(test_file) else self._options.time_out_ms,
-            self._test_requires_lock(test_file))
-
-    def _test_requires_lock(self, test_file):
-        """Return True if the test needs to be locked when
-        running multiple copies of NRWTs. Perf tests are locked
-        because heavy load caused by running other tests in parallel
-        might cause some of them to timeout."""
-        return self._is_http_test(test_file) or self._is_perf_test(test_file)
+            self._is_http_test(test_file))
 
     def _test_is_slow(self, test_file):
         return self._expectations.model().has_modifier(test_file, test_expectations.SLOW)
 
     def needs_servers(self, test_names):
-        return any(self._test_requires_lock(test_name) for test_name in test_names) and self._options.http
+        return any(self._is_http_test(test_name) for test_name in test_names) and self._options.http
 
     def _set_up_run(self, test_names):
         self._printer.write_update("Checking build ...")

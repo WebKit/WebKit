@@ -1,3 +1,16 @@
+2014-12-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't lock perf tests in run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=139264
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
 2014-12-03  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html fails unless certain other tests run before it
