@@ -1,3 +1,26 @@
+2014-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Add a way to delete local storage origins modified after a given date
+        https://bugs.webkit.org/show_bug.cgi?id=139249
+
+        Reviewed by Tim Horton.
+
+        Also change LocalStorageDatabaseTracker to hold on to WTF::Optional time_t values
+        instead of treating missing values as zero.
+
+        * UIProcess/LocalStorageDetails.h:
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::fileCreationTime):
+        (WebKit::fileModificationTime):
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince):
+        (WebKit::LocalStorageDatabaseTracker::details):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::didGetStorageDetailsByOrigin):
+
 2014-12-04  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         [EFL][WK2] Add ewk API to allow accepting a specific TLS certificate for a specific host

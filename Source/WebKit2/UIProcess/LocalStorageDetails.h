@@ -26,14 +26,15 @@
 #ifndef LocalStorageDetails_h
 #define LocalStorageDetails_h
 
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 struct LocalStorageDetails {
     String originIdentifier;
-    double creationTime;
-    double modificationTime;
+    Optional<time_t> creationTime;
+    Optional<time_t> modificationTime;
 };
 
 } // namespace WebKit

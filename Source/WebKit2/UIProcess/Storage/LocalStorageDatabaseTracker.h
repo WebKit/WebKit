@@ -55,6 +55,9 @@ public:
     void deleteDatabaseWithOrigin(WebCore::SecurityOrigin*);
     void deleteAllDatabases();
 
+    // Returns a vector of the origins whose databases have been deleted.
+    Vector<RefPtr<WebCore::SecurityOrigin>> deleteDatabasesModifiedSince(time_t);
+
     Vector<RefPtr<WebCore::SecurityOrigin>> origins() const;
     Vector<LocalStorageDetails> details();
 

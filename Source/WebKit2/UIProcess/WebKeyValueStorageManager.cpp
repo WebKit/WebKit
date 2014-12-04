@@ -118,9 +118,9 @@ static void didGetStorageDetailsByOrigin(const Vector<LocalStorageDetails>& stor
 
         detailsMap.set(WebKeyValueStorageManager::originKey(), origin);
         if (originDetails.creationTime)
-            detailsMap.set(WebKeyValueStorageManager::creationTimeKey(), API::Double::create(originDetails.creationTime));
+            detailsMap.set(WebKeyValueStorageManager::creationTimeKey(), API::Double::create(originDetails.creationTime.valueOr(0)));
         if (originDetails.modificationTime)
-            detailsMap.set(WebKeyValueStorageManager::modificationTimeKey(), API::Double::create(originDetails.modificationTime));
+            detailsMap.set(WebKeyValueStorageManager::modificationTimeKey(), API::Double::create(originDetails.modificationTime.valueOr(0)));
 
         result.uncheckedAppend(ImmutableDictionary::create(WTF::move(detailsMap)));
     }

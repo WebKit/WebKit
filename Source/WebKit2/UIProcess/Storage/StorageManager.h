@@ -27,6 +27,7 @@
 #define StorageManager_h
 
 #include "Connection.h"
+#include <chrono>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -65,6 +66,8 @@ public:
     void getStorageDetailsByOrigin(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>&, void* context));
     void deleteEntriesForOrigin(const WebCore::SecurityOrigin&);
     void deleteAllEntries();
+
+    void deleteLocalStorageOriginsModifiedSince(time_t, std::function<void ()> completionHandler);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);

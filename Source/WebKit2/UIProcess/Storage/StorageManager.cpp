@@ -438,6 +438,22 @@ void StorageManager::deleteAllEntries()
     m_queue->dispatch(bind(&StorageManager::deleteAllEntriesInternal, this));
 }
 
+void StorageManager::deleteLocalStorageOriginsModifiedSince(time_t time, std::function<void ()> completionHandler)
+{
+    RefPtr<StorageManager> storageManager(this);
+
+    m_queue->dispatch([storageManager, time, completionHandler] {
+        auto deletedOrigins = storageManager->m_localStorageDatabaseTracker->deleteDatabasesModifiedSince(time);
+
+        for (const auto& origin : deletedOrigins) {
+            for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
+                localStorageNamespace->clearStorageAreasMatchingOrigin(origin.get());
+        }
+
+        RunLoop::main().dispatch(completionHandler);
+    });
+}
+
 void StorageManager::createLocalStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
