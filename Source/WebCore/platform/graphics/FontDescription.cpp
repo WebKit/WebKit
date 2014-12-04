@@ -30,6 +30,10 @@
 #include "config.h"
 #include "FontDescription.h"
 
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/AtomicStringHash.h>
+
 namespace WebCore {
 
 struct SameSizeAsFontDescription {
@@ -99,6 +103,29 @@ FontDescription FontDescription::makeNormalFeatureSettings() const
     FontDescription normalDescription(*this);
     normalDescription.setFeatureSettings(0);
     return normalDescription;
+}
+
+static const HashSet<AtomicString>& genericFamiliesSet()
+{
+    static NeverDestroyed<HashSet<AtomicString>> set;
+    if (set.get().isEmpty()) {
+        set.get().add(cursiveFamily);
+        set.get().add(fantasyFamily);
+        set.get().add(monospaceFamily);
+        set.get().add(pictographFamily);
+        set.get().add(sansSerifFamily);
+        set.get().add(serifFamily);
+        set.get().add(standardFamily);
+    }
+    return set.get();
+}
+
+bool FontDescription::hasGenericFirstFamily() const
+{
+    auto& family = firstFamily();
+    if (family.isNull())
+        return false;
+    return genericFamiliesSet().contains(family);
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)

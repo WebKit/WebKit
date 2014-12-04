@@ -1,3 +1,33 @@
+2014-12-03  Antti Koivisto  <antti@apple.com>
+
+        Remove isSpecifiedFont boolean from FontDescription
+        https://bugs.webkit.org/show_bug.cgi?id=139233
+
+        Reviewed by Andreas Kling.
+
+        It is barely used.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInheritFontFamily):
+        (WebCore::StyleBuilderCustom::applyValueFontFamily):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::genericFamiliesSet):
+        (WebCore::FontDescription::hasGenericFirstFamily):
+
+            Add a function to test for generic families.
+
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::setTextRenderingMode):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontDescription::isSpecifiedFont): Deleted.
+        (WebCore::FontDescription::setIsSpecifiedFont): Deleted.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeUseBackslashAsYenSymbol):
+
+            This is the only client.
+            Figure out the equivalent information dynamically if needed.
+
 2014-12-03  Joonghun Park  <jh718.park@samsung.com>
 
         Use std::unique_ptr instead of PassOwnPtr|OwnPtr for Pasteboard
