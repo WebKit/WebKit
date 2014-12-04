@@ -1289,6 +1289,7 @@ set(WebCore_SOURCES
     css/TransformFunctions.cpp
     css/ViewportStyleResolver.cpp
     css/WebKitCSSFilterValue.cpp
+    css/WebKitCSSResourceValue.cpp
     css/CSSKeyframeRule.cpp
     css/CSSKeyframesRule.cpp
     css/WebKitCSSMatrix.cpp
@@ -2089,6 +2090,7 @@ set(WebCore_SOURCES
     platform/graphics/ISOVTTCue.cpp
     platform/graphics/LayoutBoxExtent.cpp
     platform/graphics/LayoutRect.cpp
+    platform/graphics/MaskImageOperation.cpp
     platform/graphics/MediaPlayer.cpp
     platform/graphics/Path.cpp
     platform/graphics/PathTraversalState.cpp
@@ -2295,6 +2297,7 @@ set(WebCore_SOURCES
     rendering/RenderLayerBacking.cpp
     rendering/RenderLayerCompositor.cpp
     rendering/RenderLayerFilterInfo.cpp
+    rendering/RenderLayerMaskImageInfo.cpp
     rendering/RenderLayerModelObject.cpp
     rendering/RenderLineBoxList.cpp
     rendering/RenderLineBreak.cpp

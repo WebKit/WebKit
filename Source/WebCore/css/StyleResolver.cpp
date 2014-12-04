@@ -135,6 +135,7 @@
 #include "VisitedLinkState.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSRegionRule.h"
+#include "WebKitCSSResourceValue.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
@@ -236,6 +237,7 @@ inline void StyleResolver::State::clear()
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
     m_filtersWithPendingSVGDocuments.clear();
+    m_maskImagesWithPendingSVGDocuments.clear();
     m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
@@ -3456,6 +3458,51 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
     }
 
     outOperations = operations;
+    return true;
+}
+
+bool StyleResolver::createMaskImageOperations(CSSValue* inValue, Vector<RefPtr<MaskImageOperation>>& outOperations)
+{
+    ASSERT(outOperations.isEmpty());
+    if (!inValue)
+        return false;
+
+    ASSERT(is<CSSValueList>(*inValue));
+
+    for (auto& currValue : downcast<CSSValueList>(*inValue)) {
+        if (!is<WebKitCSSResourceValue>(currValue.get()))
+            continue;
+        
+        WebKitCSSResourceValue& maskImageValue = downcast<WebKitCSSResourceValue>(currValue.get());
+        RefPtr<CSSValue> maskInnerValue = maskImageValue.innerValue();
+        RefPtr<MaskImageOperation> newMaskImage;
+        
+        if (is<CSSPrimitiveValue>(maskInnerValue.get())) {
+            RefPtr<CSSPrimitiveValue> primitiveValue = downcast<CSSPrimitiveValue>(maskInnerValue.get());
+            if (primitiveValue->isValueID() && primitiveValue->getValueID() == CSSValueNone)
+                newMaskImage = MaskImageOperation::create();
+            else {
+                String cssUrl = primitiveValue->getStringValue();
+                URL url = m_state.document().completeURL(cssUrl);
+                
+                bool isExternalDocument = (SVGURIReference::isExternalURIReference(cssUrl, m_state.document()));
+                newMaskImage = MaskImageOperation::create(&maskImageValue, cssUrl, url.fragmentIdentifier(), isExternalDocument, m_state.document().cachedResourceLoader());
+                if (isExternalDocument)
+                    m_state.maskImagesWithPendingSVGDocuments().append(newMaskImage);
+            }
+        } else {
+            RefPtr<StyleImage> image = styleImage(CSSPropertyWebkitMaskImage, *maskInnerValue);
+            if (image.get())
+                newMaskImage = MaskImageOperation::create(image);
+        }
+
+        // If we didn't get a valid value, use None so we keep the correct number and order of masks.
+        if (!newMaskImage.get())
+            newMaskImage = MaskImageOperation::create();
+
+        outOperations.append(newMaskImage);
+    }
+
     return true;
 }
 

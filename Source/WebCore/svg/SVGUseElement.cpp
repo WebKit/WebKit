@@ -992,8 +992,11 @@ void SVGUseElement::setCachedDocument(CachedResourceHandle<CachedSVGDocument> ca
         m_cachedDocument->removeClient(this);
 
     m_cachedDocument = cachedDocument;
-    if (m_cachedDocument)
+    if (m_cachedDocument) {
+        // We don't need the SVG document to create a new frame because the new document belongs to the parent UseElement.
+        m_cachedDocument->setShouldCreateFrameForDocument(false);
         m_cachedDocument->addClient(this);
+    }
 }
 
 }

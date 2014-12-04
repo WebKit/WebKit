@@ -45,12 +45,16 @@ public:
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) override;
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) override;
+    bool applySVGMask(RenderElement& renderer, GraphicsContext*&, bool applyClip);
     virtual FloatRect resourceBoundingBox(const RenderObject&) override;
 
     SVGUnitTypes::SVGUnitType maskUnits() const { return maskElement().maskUnits(); }
     SVGUnitTypes::SVGUnitType maskContentUnits() const { return maskElement().maskContentUnits(); }
 
     virtual RenderSVGResourceType resourceType() const override { return MaskerResourceType; }
+
+    MaskerData* maskerDataForRenderer(RenderObject& renderer) { return m_masker.get(&renderer); }
+    void drawMaskForRenderer(RenderElement& renderer, const BackgroundImageGeometry&, GraphicsContext*, CompositeOperator);
 
 private:
     void element() const = delete;

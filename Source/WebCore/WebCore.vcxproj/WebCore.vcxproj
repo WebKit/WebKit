@@ -749,6 +749,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\css\WebKitCSSResourceValue.cpp" />
     <ClCompile Include="..\DerivedSources.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -7582,6 +7583,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\MaskImageOperation.cpp" />
     <ClCompile Include="..\platform\graphics\OpenGLShims.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGL.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.cpp" />
@@ -7950,6 +7952,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\RenderLayerMaskImageInfo.cpp" />
     <ClCompile Include="..\rendering\style\StyleCachedImageSet.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
@@ -18851,6 +18854,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.h" />
     <ClInclude Include="..\accessibility\AccessibilityNodeObject.h" />
     <ClInclude Include="..\css\CSSImageSetValue.h" />
+    <ClInclude Include="..\css\WebKitCSSResourceValue.h" />
     <ClInclude Include="..\ForwardingHeaders\bindings\ScriptFunctionCall.h" />
     <ClInclude Include="..\ForwardingHeaders\bindings\ScriptObject.h" />
     <ClInclude Include="..\ForwardingHeaders\bindings\ScriptValue.h" />
@@ -19407,6 +19411,7 @@
     <ClInclude Include="..\platform\graphics\gstreamer\VideoSinkGStreamer.h" />
     <ClInclude Include="..\platform\graphics\gstreamer\VideoTrackPrivateGStreamer.h" />
     <ClInclude Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.h" />
+    <ClInclude Include="..\platform\graphics\MaskImageOperation.h" />
     <ClInclude Include="..\platform\graphics\MediaPlayerPrivate.h" />
     <ClInclude Include="..\platform\graphics\OpenGLShims.h" />
     <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGL.h" />
@@ -19538,6 +19543,7 @@
     <ClInclude Include="..\platform\win\WebCoreBundleWin.h" />
     <ClInclude Include="..\platform\win\WebCoreInstanceHandle.h" />
     <ClInclude Include="..\rendering\HitTestLocation.h" />
+    <ClInclude Include="..\rendering\RenderLayerMaskImageInfo.h" />
     <ClInclude Include="..\rendering\style\StyleCachedImageSet.h" />
     <ClInclude Include="..\storage\StorageStrategy.h" />
     <ClInclude Include="..\svg\graphics\SVGImageForContainer.h" />

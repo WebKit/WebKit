@@ -30,12 +30,17 @@
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
+    
+class RenderLayer;
 
 class SVGMaskElement final : public SVGElement,
                              public SVGTests,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document&);
+
+    void addClientRenderLayer(RenderLayer*);
+    void removeClientRenderLayer(RenderLayer*);
 
 private:
     SVGMaskElement(const QualifiedName&, Document&);
@@ -47,6 +52,8 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual void childrenChanged(const ChildChange&) override;
+
+    HashSet<RenderLayer*> m_clientLayers;
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 

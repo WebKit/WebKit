@@ -161,7 +161,33 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));
+    RenderPtr<RenderElement> maskRenderer = createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));
+    
+    // Pass along existing render layer clients.
+    for (auto* clientLayer : m_clientLayers)
+        static_cast<RenderSVGResourceMasker*>(maskRenderer.get())->addClientRenderLayer(clientLayer);
+    
+    return maskRenderer;
+}
+
+void SVGMaskElement::addClientRenderLayer(RenderLayer* client)
+{
+    ASSERT(client);
+    m_clientLayers.add(client);
+    
+    // Pass it along to the renderer.
+    if (renderer())
+        static_cast<RenderSVGResourceMasker*>(renderer())->addClientRenderLayer(client);
+}
+
+void SVGMaskElement::removeClientRenderLayer(RenderLayer* client)
+{
+    ASSERT(client);
+    m_clientLayers.remove(client);
+    
+    // Pass it along to the renderer.
+    if (renderer())
+        static_cast<RenderSVGResourceMasker*>(renderer())->removeClientRenderLayer(client);
 }
 
 }

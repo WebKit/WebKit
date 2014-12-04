@@ -65,6 +65,52 @@ class RenderNamedFlowFragment;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 
+class BackgroundImageGeometry {
+public:
+    BackgroundImageGeometry()
+        : m_hasNonLocalGeometry(false)
+    { }
+
+    LayoutPoint destOrigin() const { return m_destOrigin; }
+    void setDestOrigin(const LayoutPoint& destOrigin) { m_destOrigin = destOrigin; }
+    
+    LayoutRect destRect() const { return m_destRect; }
+    void setDestRect(const LayoutRect& destRect) { m_destRect = destRect; }
+    
+    // Returns the phase relative to the destination rectangle.
+    LayoutPoint relativePhase() const;
+    
+    LayoutPoint phase() const { return m_phase; }
+    void setPhase(const LayoutPoint& phase) { m_phase = phase; }
+    
+    LayoutSize tileSize() const { return m_tileSize; }
+    void setTileSize(const LayoutSize& tileSize) { m_tileSize = tileSize; }
+    
+    LayoutSize spaceSize() const { return m_space; }
+    void setSpaceSize(const LayoutSize& space) { m_space = space; }
+    
+    void setPhaseX(LayoutUnit  x) { m_phase.setX(x); }
+    void setPhaseY(LayoutUnit y) { m_phase.setY(y); }
+    
+    void setNoRepeatX(LayoutUnit xOffset);
+    void setNoRepeatY(LayoutUnit yOffset);
+    
+    void useFixedAttachment(const LayoutPoint& attachmentPoint);
+    
+    void clip(const LayoutRect&);
+    
+    void setHasNonLocalGeometry(bool hasNonLocalGeometry = true) { m_hasNonLocalGeometry = hasNonLocalGeometry; }
+    bool hasNonLocalGeometry() const { return m_hasNonLocalGeometry; }
+    
+private:
+    LayoutRect m_destRect;
+    LayoutPoint m_destOrigin;
+    LayoutPoint m_phase;
+    LayoutSize m_tileSize;
+    LayoutSize m_space;
+    bool m_hasNonLocalGeometry; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
+};
+
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -209,51 +255,6 @@ protected:
     RenderBoxModelObject(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
     virtual void willBeDestroyed() override;
-
-    class BackgroundImageGeometry {
-    public:
-        BackgroundImageGeometry()
-            : m_hasNonLocalGeometry(false)
-        { }
-        LayoutPoint destOrigin() const { return m_destOrigin; }
-        void setDestOrigin(const LayoutPoint& destOrigin) { m_destOrigin = destOrigin; }
-        
-        LayoutRect destRect() const { return m_destRect; }
-        void setDestRect(const LayoutRect& destRect) { m_destRect = destRect; }
-
-        // Returns the phase relative to the destination rectangle.
-        LayoutPoint relativePhase() const;
-        
-        LayoutPoint phase() const { return m_phase; }
-        void setPhase(const LayoutPoint& phase) { m_phase = phase; }
-
-        LayoutSize tileSize() const { return m_tileSize; }
-        void setTileSize(const LayoutSize& tileSize) { m_tileSize = tileSize; }
-
-        LayoutSize spaceSize() const { return m_space; }
-        void setSpaceSize(const LayoutSize& space) { m_space = space; }
-
-        void setPhaseX(LayoutUnit  x) { m_phase.setX(x); }
-        void setPhaseY(LayoutUnit y) { m_phase.setY(y); }
-        
-        void setNoRepeatX(LayoutUnit xOffset);
-        void setNoRepeatY(LayoutUnit yOffset);
-        
-        void useFixedAttachment(const LayoutPoint& attachmentPoint);
-        
-        void clip(const LayoutRect&);
-        
-        void setHasNonLocalGeometry(bool hasNonLocalGeometry = true) { m_hasNonLocalGeometry = hasNonLocalGeometry; }
-        bool hasNonLocalGeometry() const { return m_hasNonLocalGeometry; }
-
-    private:
-        LayoutRect m_destRect;
-        LayoutPoint m_destOrigin;
-        LayoutPoint m_phase;
-        LayoutSize m_tileSize;
-        LayoutSize m_space;
-        bool m_hasNonLocalGeometry; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
-    };
 
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 

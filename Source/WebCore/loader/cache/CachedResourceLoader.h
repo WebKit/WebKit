@@ -114,6 +114,7 @@ public:
     SessionID sessionID() const;
 
     void removeCachedResource(CachedResource*) const;
+    void addCachedResource(CachedResource*);
 
     void loadDone(CachedResource*, bool shouldPerformPostLoadActions = true);
 

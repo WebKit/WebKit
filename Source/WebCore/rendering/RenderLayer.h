@@ -1266,6 +1266,7 @@ private:
 #endif
 
     bool m_hasFilterInfo : 1;
+    unsigned m_hasMaskImageInfo : 1;
 
 #if ENABLE(CSS_COMPOSITING)
     unsigned m_blendMode : 5;
@@ -1342,6 +1343,7 @@ private:
     std::unique_ptr<RenderLayerBacking> m_backing;
 
     class FilterInfo;
+    class MaskImageInfo;
 };
 
 inline void RenderLayer::clearZOrderLists()

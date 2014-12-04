@@ -28,6 +28,7 @@
 #include "DocumentRuleSets.h"
 #include "InspectorCSSOMWrappers.h"
 #include "LinkHash.h"
+#include "MaskImageOperation.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "RuleFeature.h"
@@ -237,6 +238,7 @@ public:
     void clearCachedPropertiesAffectedByViewportUnits();
 
     bool createFilterOperations(CSSValue* inValue, FilterOperations& outOperations);
+    bool createMaskImageOperations(CSSValue* inValue, Vector<RefPtr<MaskImageOperation>>& outOperations);
     void loadPendingSVGDocuments();
 
     void loadPendingResources();
@@ -380,6 +382,7 @@ public:
         PendingImagePropertyMap& pendingImageProperties() { return m_pendingImageProperties; }
 
         Vector<RefPtr<ReferenceFilterOperation>>& filtersWithPendingSVGDocuments() { return m_filtersWithPendingSVGDocuments; }
+        Vector<RefPtr<MaskImageOperation>>& maskImagesWithPendingSVGDocuments() { return m_maskImagesWithPendingSVGDocuments; }
 
         void setLineHeightValue(CSSValue* value) { m_lineHeightValue = value; }
         CSSValue* lineHeightValue() { return m_lineHeightValue; }
@@ -428,6 +431,7 @@ public:
         PendingImagePropertyMap m_pendingImageProperties;
 
         Vector<RefPtr<ReferenceFilterOperation>> m_filtersWithPendingSVGDocuments;
+        Vector<RefPtr<MaskImageOperation>> m_maskImagesWithPendingSVGDocuments;
 
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;

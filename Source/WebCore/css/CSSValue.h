@@ -103,6 +103,7 @@ public:
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
+    bool isWebKitCSSResourceValue() const { return m_classType == WebKitCSSResourceClass; }
 
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
@@ -173,6 +174,8 @@ protected:
 #if ENABLE(CSS_GRID_LAYOUT)
         GridLineNamesClass,
 #endif
+        WebKitCSSResourceClass
+
         // Do not append non-list class types here.
     };
 

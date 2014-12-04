@@ -7252,6 +7252,15 @@
     <ClCompile Include="..\editing\win\EditorWin.cpp">
       <Filter>editing</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\MaskImageOperation.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderLayerMaskImageInfo.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\WebKitCSSResourceValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -15241,6 +15250,15 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.h">
       <Filter>platform\graphics\avfoundation</Filter>
+    </ClInclude>
+        <ClInclude Include="..\platform\graphics\MaskImageOperation.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderLayerMaskImageInfo.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\WebKitCSSResourceValue.h">
+      <Filter>css</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

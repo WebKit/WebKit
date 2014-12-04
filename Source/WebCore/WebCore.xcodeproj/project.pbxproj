@@ -2236,8 +2236,14 @@
 		65FD466619B596F6001E2B4D /* WebVideoFullscreenModelVideoElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6586FE3D19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.mm */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6C568CB019DAFEA000430CA2 /* MaskImageOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */; };
+		6C568CB119DAFEA000430CA2 /* MaskImageOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C638895A96CCEE50C8C946C /* CachedResourceRequestInitiators.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C638896A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */; };
+		6C6CCAB019DC42B90043D5DB /* WebKitCSSResourceValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */; };
+		6C6CCAB119DC42B90043D5DB /* WebKitCSSResourceValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */; };
+		6CBFE4A419EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6CBFE4A219EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp */; };
+		6CBFE4A519EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */; };
 		6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C70A81417707C49009A446E /* RegionOversetState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E0E569B183BFFE600E0E8D5 /* FloatRoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */; };
 		6E0E569C183BFFE600E0E8D5 /* FloatRoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9401,9 +9407,15 @@
 		65F80697054D9F86008BF776 /* BlockExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NativeImagePtr.h; sourceTree = "<group>"; };
+		6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MaskImageOperation.cpp; sourceTree = "<group>"; };
+		6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskImageOperation.h; sourceTree = "<group>"; };
 		6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequestInitiators.h; sourceTree = "<group>"; };
 		6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceRequestInitiators.cpp; sourceTree = "<group>"; };
+		6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSResourceValue.cpp; sourceTree = "<group>"; };
+		6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSResourceValue.h; sourceTree = "<group>"; };
 		6C70A81417707C49009A446E /* RegionOversetState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionOversetState.h; sourceTree = "<group>"; };
+		6CBFE4A219EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerMaskImageInfo.cpp; sourceTree = "<group>"; };
+		6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerMaskImageInfo.h; sourceTree = "<group>"; };
 		6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRoundedRect.cpp; sourceTree = "<group>"; };
 		6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatRoundedRect.h; sourceTree = "<group>"; };
 		6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3D.cpp; sourceTree = "<group>"; };
@@ -20588,6 +20600,8 @@
 				141DC04C164834B900371E5A /* LayoutRect.cpp */,
 				141DC04D164834B900371E5A /* LayoutRect.h */,
 				141DC04E164834B900371E5A /* LayoutSize.h */,
+				6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */,
+				6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */,
 				E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */,
 				E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */,
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
@@ -22293,6 +22307,8 @@
 				3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */,
 				3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */,
 				3106036E14327D2E00ABF4BA /* WebKitCSSFilterValue.idl */,
+				6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */,
+				6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */,
 				31288E6E0E3005D6003619AE /* CSSKeyframeRule.cpp */,
 				31288E6F0E3005D6003619AE /* CSSKeyframeRule.h */,
 				316FE0910E6CCD7F00BF6088 /* CSSKeyframeRule.idl */,
@@ -22447,6 +22463,8 @@
 				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
 				50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */,
 				50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */,
+				6CBFE4A219EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp */,
+				6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */,
 				3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */,
 				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
@@ -23430,6 +23448,7 @@
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
 				0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
+				6C568CB119DAFEA000430CA2 /* MaskImageOperation.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
@@ -25442,6 +25461,7 @@
 				CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */,
 				070E09191875EEFC003A1D3C /* MediaSession.h in Headers */,
 				07F944161864D046005D31CB /* MediaSessionManager.h in Headers */,
+				6CBFE4A519EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h in Headers */,
 				07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */,
 				CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */,
 				CD641EB31818F5ED00EE4C41 /* MediaSourcePrivate.h in Headers */,
@@ -26045,6 +26065,7 @@
 				CDCFABBD18C0AF78006F8450 /* SelectionSubtreeRoot.h in Headers */,
 				E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */,
 				432D3FE818A8658400D7DC03 /* SelectorCheckerTestFunctions.h in Headers */,
+				6C6CCAB119DC42B90043D5DB /* WebKitCSSResourceValue.h in Headers */,
 				26B999971804D54200D01121 /* SelectorCompiler.h in Headers */,
 				415071581685067300C3C7B3 /* SelectorFilter.h in Headers */,
 				43107BE218CC19DE00CC18E8 /* SelectorPseudoTypeMap.h in Headers */,
@@ -27753,6 +27774,7 @@
 				8A195933147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm in Sources */,
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
+				6C6CCAB019DC42B90043D5DB /* WebKitCSSResourceValue.cpp in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				FD677738195CAF3D0072E0D3 /* DOMWindowCSS.cpp in Sources */,
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
@@ -28979,6 +29001,7 @@
 				CDB859F7160D48A400E5B07F /* MediaKeyEvent.cpp in Sources */,
 				CDA98DD816025BEF00FEA3B1 /* MediaKeyMessageEvent.cpp in Sources */,
 				CD1B4A65160786AE00282DF9 /* MediaKeyNeededEvent.cpp in Sources */,
+				6C568CB019DAFEA000430CA2 /* MaskImageOperation.cpp in Sources */,
 				CDA98E0D1603FE4A00FEA3B1 /* MediaKeys.cpp in Sources */,
 				CDA98E0E1603FE5800FEA3B1 /* MediaKeySession.cpp in Sources */,
 				A8EA80090A19516E00A8EF5F /* MediaList.cpp in Sources */,
@@ -29047,6 +29070,7 @@
 				F55B3DC51251F12D003EF269 /* MonthInputType.cpp in Sources */,
 				85031B450A44EFC700F992E0 /* MouseEvent.cpp in Sources */,
 				93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */,
+				6CBFE4A419EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp in Sources */,
 				85031B470A44EFC700F992E0 /* MouseRelatedEvent.cpp in Sources */,
 				93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */,
 				FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */,

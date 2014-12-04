@@ -1017,31 +1017,31 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLaye
     return LayoutSize();
 }
 
-void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX(LayoutUnit xOffset)
+void BackgroundImageGeometry::setNoRepeatX(LayoutUnit xOffset)
 {
     m_destRect.move(std::max<LayoutUnit>(xOffset, 0), 0);
     m_phase.setX(-std::min<LayoutUnit>(xOffset, 0));
     m_destRect.setWidth(m_tileSize.width() + std::min<float>(xOffset, 0));
 }
-void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY(LayoutUnit yOffset)
+void BackgroundImageGeometry::setNoRepeatY(LayoutUnit yOffset)
 {
     m_destRect.move(0, std::max<LayoutUnit>(yOffset, 0));
     m_phase.setY(-std::min<LayoutUnit>(yOffset, 0));
     m_destRect.setHeight(m_tileSize.height() + std::min<float>(yOffset, 0));
 }
 
-void RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment(const LayoutPoint& attachmentPoint)
+void BackgroundImageGeometry::useFixedAttachment(const LayoutPoint& attachmentPoint)
 {
     FloatPoint alignedPoint = attachmentPoint;
     m_phase.move(std::max<LayoutUnit>(alignedPoint.x() - m_destRect.x(), 0), std::max<LayoutUnit>(alignedPoint.y() - m_destRect.y(), 0));
 }
 
-void RenderBoxModelObject::BackgroundImageGeometry::clip(const LayoutRect& clipRect)
+void BackgroundImageGeometry::clip(const LayoutRect& clipRect)
 {
     m_destRect.intersect(clipRect);
 }
 
-LayoutPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
+LayoutPoint BackgroundImageGeometry::relativePhase() const
 {
     LayoutPoint phase = m_phase;
     phase += m_destRect.location() - m_destOrigin;

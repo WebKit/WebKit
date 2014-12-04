@@ -756,6 +756,14 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
     m_documentResources.remove(resource->url());
 }
 
+void CachedResourceLoader::addCachedResource(CachedResource* resource)
+{
+    m_documentResources.set(resource->url(), resource);
+
+    if (!memoryCache().add(resource))
+        resource->setOwningCachedResourceLoader(this);
+}
+
 void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerformPostLoadActions)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);

@@ -54,6 +54,7 @@
 #include "SVGColor.h"
 #include "SVGPaint.h"
 #include "WebKitCSSFilterValue.h"
+#include "WebKitCSSResourceValue.h"
 #include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -311,6 +312,8 @@ String CSSValue::cssText() const
         return downcast<SVGColor>(*this).customCSSText();
     case SVGPaintClass:
         return downcast<SVGPaint>(*this).customCSSText();
+    case WebKitCSSResourceClass:
+        return downcast<WebKitCSSResourceValue>(*this).customCSSText();
     }
     ASSERT_NOT_REACHED();
     return String();
@@ -422,6 +425,9 @@ void CSSValue::destroy()
         return;
     case SVGPaintClass:
         delete downcast<SVGPaint>(this);
+        return;
+    case WebKitCSSResourceClass:
+        delete downcast<WebKitCSSResourceValue>(this);
         return;
     }
     ASSERT_NOT_REACHED();

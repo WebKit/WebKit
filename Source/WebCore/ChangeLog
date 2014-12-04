@@ -1,3 +1,183 @@
+2014-12-04  Radu Stavila  <stavila@adobe.com>
+
+        [SVG Masking] Add support for referencing <mask> elements from -webkit-mask-image
+        https://bugs.webkit.org/show_bug.cgi?id=139092
+
+        Reviewed by Simon Fraser.
+
+        This patch improves the -webkit-mask-image property by allowing it to reference
+        a <mask> element defined in an inline or external SVG document.
+        Up until now, each image to be used as a mask consisted of a FillLayer object 
+        whose m_image member represented the mask. Now, in order to accomodate
+        <mask> elements referenced by a fragment identifier (e.g. file.svg#mask1)
+        a new class was created (MaskImageOperation) and added as a member of the 
+        FillLayer. As such, from now on, all FillLayer objects used for masking will
+        store the masking information in this new member.
+        When parsing the -webkit-mask-image property (or the -webkit-mask shorthand)
+        a new MaskImageOperation object is created for each image. If the value represents
+        an external URL, a pending SVG document will be created which will be loaded 
+        during the phase that loads the pending resources. When the download is complete,
+        the MaskImageOperation is notified by the CachedSVGDocument class and checks if
+        the received download is a valid SVG and the requested fragment identifier
+        actually exists and identifies a <mask> element. If it does, that element's
+        renderer (of type RenderSVGResourceMasker) will be used when painting the mask layers.
+        Otherwise, the MaskImageOperation class will use the already downloaded data 
+        buffer to create a CachedImage from it and use that instead, basically emulating
+        the previous behavior, when only images were accepted. This ensures that all existing
+        behavior, like painting entire SVGs, painting normal images (e.g. PNG/JPG), painting
+        generated images (e.g. linear-gradient) works as it did before.
+
+        No new tests required, this patch doesn't change any current functionality. 
+        It only adds support for referencing <mask> elements for the -webkit-mask-image 
+        property. This is sub-part 1 of the bigger patch https://bugs.webkit.org/show_bug.cgi?id=129682.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isWebKitCSSResourceValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::createMaskImageOperations):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::maskImagesWithPendingSVGDocuments):
+        * css/WebKitCSSResourceValue.cpp: Added.
+        (WebCore::WebKitCSSResourceValue::WebKitCSSResourceValue):
+        (WebCore::WebKitCSSResourceValue::customCSSText):
+        (WebCore::WebKitCSSResourceValue::isCSSValueNone):
+        * css/WebKitCSSResourceValue.h: Added.
+        (WebCore::WebKitCSSResourceValue::create):
+        (WebCore::WebKitCSSResourceValue::innerValue):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::addCachedResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        (WebCore::CachedSVGDocument::finishLoading):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedSVGDocumentReference.cpp:
+        (WebCore::CachedSVGDocumentReference::CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::~CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::load):
+        * loader/cache/CachedSVGDocumentReference.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isSVGDocument):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::createPageFromBuffer):
+        * page/Page.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::isSVGDocument):
+        * platform/graphics/MaskImageOperation.cpp: Added.
+        (WebCore::MaskImageOperation::create):
+        (WebCore::MaskImageOperation::MaskImageOperation):
+        (WebCore::MaskImageOperation::~MaskImageOperation):
+        (WebCore::MaskImageOperation::isCSSValueNone):
+        (WebCore::MaskImageOperation::cssValue):
+        (WebCore::MaskImageOperation::isMaskLoaded):
+        (WebCore::MaskImageOperation::setRenderLayerImageClient):
+        (WebCore::MaskImageOperation::addRendererImageClient):
+        (WebCore::MaskImageOperation::removeRendererImageClient):
+        (WebCore::MaskImageOperation::getOrCreateCachedSVGDocumentReference):
+        (WebCore::MaskImageOperation::notifyFinished): This is the method that gets called when the document has finished 
+        downloading and checks if it can find a valid <mask> element.
+        (WebCore::MaskImageOperation::drawMask):
+        (WebCore::MaskImageOperation::getSVGMasker):
+        * platform/graphics/MaskImageOperation.h: Added.
+        * rendering/RenderBoxModelObject.cpp: The BackgroundImageGeometry class was moved out of RenderBoxModelObject in 
+        order to be used as a parameter for other methods. This was necessary to avoid having methods with very many parameters.
+        (WebCore::BackgroundImageGeometry::setNoRepeatX):
+        (WebCore::BackgroundImageGeometry::setNoRepeatY):
+        (WebCore::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::BackgroundImageGeometry::clip):
+        (WebCore::BackgroundImageGeometry::relativePhase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::clip): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::relativePhase): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::BackgroundImageGeometry::BackgroundImageGeometry):
+        (WebCore::BackgroundImageGeometry::destOrigin):
+        (WebCore::BackgroundImageGeometry::setDestOrigin):
+        (WebCore::BackgroundImageGeometry::destRect):
+        (WebCore::BackgroundImageGeometry::setDestRect):
+        (WebCore::BackgroundImageGeometry::phase):
+        (WebCore::BackgroundImageGeometry::setPhase):
+        (WebCore::BackgroundImageGeometry::tileSize):
+        (WebCore::BackgroundImageGeometry::setTileSize):
+        (WebCore::BackgroundImageGeometry::spaceSize):
+        (WebCore::BackgroundImageGeometry::setSpaceSize):
+        (WebCore::BackgroundImageGeometry::setPhaseX):
+        (WebCore::BackgroundImageGeometry::setPhaseY):
+        (WebCore::BackgroundImageGeometry::setHasNonLocalGeometry):
+        (WebCore::BackgroundImageGeometry::hasNonLocalGeometry):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::BackgroundImageGeometry): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destOrigin): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestOrigin): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destRect): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestRect): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::phase): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhase): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::tileSize): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setTileSize): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::spaceSize): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setSpaceSize): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhaseX): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhaseY): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setHasNonLocalGeometry): Deleted.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::hasNonLocalGeometry): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerMaskImageInfo.cpp: Added.
+        (WebCore::RenderLayer::MaskImageInfo::layerToMaskMap): Returns a static map that links MaskImageInfo objects to RenderLayers.
+        (WebCore::RenderLayer::MaskImageInfo::getIfExists): Returns the MaskImageInfo associated with a specific RenderLayer.
+        (WebCore::RenderLayer::MaskImageInfo::get): Returns the MaskImageInfo associated with a specific RenderLayer (creates it if necessary).
+        (WebCore::RenderLayer::MaskImageInfo::remove): Removes the MaskImageInfo associated with a specific RenderLayer.
+        (WebCore::RenderLayer::MaskImageInfo::MaskImageInfo):
+        (WebCore::RenderLayer::MaskImageInfo::~MaskImageInfo):
+        (WebCore::RenderLayer::MaskImageInfo::notifyFinished): Gets called when the SVG document finished loading, triggers repaint.
+        (WebCore::RenderLayer::MaskImageInfo::imageChanged): Gets called when the image object changed, triggers repaint.
+        (WebCore::RenderLayer::MaskImageInfo::updateMaskImageClients): Goes through all mask layers and sets image/SVG clients. 
+        Updates list of internal and external SVG references.
+        (WebCore::RenderLayer::MaskImageInfo::removeMaskImageClients): Removes all image/SVG clients and clears lists of internal and external SVG references.
+        * rendering/RenderLayerMaskImageInfo.h: Added.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderSVGResourceMasker):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        (WebCore::FillLayer::cullEmptyLayers):
+        (WebCore::FillLayer::hasNonEmptyMaskImage):
+        (WebCore::FillLayer::imagesAreLoaded):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::maskImage):
+        (WebCore::FillLayer::imageOrMaskImage):
+        (WebCore::FillLayer::setMaskImage):
+        (WebCore::FillLayer::clearMaskImage):
+        (WebCore::FillLayer::hasMaskImage):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applySVGMask):
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawMaskForRenderer):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::createElementRenderer):
+        (WebCore::SVGMaskElement::addClientRenderLayer):
+        (WebCore::SVGMaskElement::removeClientRenderLayer):
+        * svg/SVGMaskElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::setCachedDocument):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2014-12-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r176789.
