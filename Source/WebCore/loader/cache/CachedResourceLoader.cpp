@@ -452,9 +452,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (!canRequest(type, url, request.options(), request.forPreload()))
         return 0;
 
-    if (Frame* f = frame())
-        f->loader().client().dispatchWillRequestResource(&request);
-
     if (memoryCache().disabled()) {
         DocumentResourceMap::iterator it = m_documentResources.find(url.string());
         if (it != m_documentResources.end()) {

@@ -184,8 +184,6 @@ namespace WebCore {
 
         virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
 
-        virtual void dispatchWillRequestResource(CachedResourceRequest*) { }
-
         virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) = 0;
         virtual void dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction) = 0;
 

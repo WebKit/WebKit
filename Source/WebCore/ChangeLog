@@ -1,3 +1,17 @@
+2014-12-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of FrameLoaderClient::dispatchWillRequestResource
+        https://bugs.webkit.org/show_bug.cgi?id=139235
+
+        Reviewed by Alexey Proskuryakov.
+
+        It is useless.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::dispatchWillRequestResource): Deleted.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
 2014-12-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         List markers in RTL languages do not draw the first character.
