@@ -1124,7 +1124,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return [self _defaultMenuItemsForImage];
     }
 
-    if (hitTestResult->isTextNode() || hitTestResult->isOverTextInsideFormControlElement()) {
+    if (hitTestResult->isTextNode()) {
         NSArray *dataDetectorMenuItems = [self _defaultMenuItemsForDataDetectedText];
         if (_currentActionContext) {
             // If this is a data detected item with no menu items, we should not fall back to regular text options.

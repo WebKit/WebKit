@@ -54,7 +54,6 @@ public:
         bool isScrollbar;
         bool isSelected;
         bool isTextNode;
-        bool isOverTextInsideFormControlElement;
         bool isDownloadableMedia;
 
         Data();
@@ -86,8 +85,6 @@ public:
     bool isSelected() const { return m_data.isSelected; }
 
     bool isTextNode() const { return m_data.isTextNode; }
-
-    bool isOverTextInsideFormControlElement() const { return m_data.isOverTextInsideFormControlElement; }
 
     bool isDownloadableMedia() const { return m_data.isDownloadableMedia; }
 

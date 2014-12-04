@@ -977,8 +977,22 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         return;
     }
 
+    RenderView& mainRenderView = *mainFrame.view()->renderView();
+
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
+
     IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCooordinates));
-    HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
+    HitTestResult hitTestResult(locationInContentCoordinates);
+    mainRenderView.hitTest(request, hitTestResult);
+
+    // We hit test including shadow content to get the desired result for editable text regions.
+    // But for media, we want to re-set to the shadow root.
+    if (Node* node = hitTestResult.innerNode()) {
+        if (Element* shadowHost = node->shadowHost()) {
+            if (shadowHost->isMediaElement())
+                hitTestResult.setToNonShadowAncestor();
+        }
+    }
 
     ActionMenuHitTestResult actionMenuResult;
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
@@ -1054,7 +1068,7 @@ PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInVi
         return nullptr;
 
     IntPoint point = roundedIntPoint(locationInViewCooordinates);
-    HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
+    HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
     NSDictionary *options = nil;
     return rangeForDictionaryLookupAtHitTestResult(result, &options);
 }
@@ -1074,13 +1088,13 @@ void WebPage::focusAndSelectLastActionMenuHitTestResult()
     if (!element)
         return;
 
-    Frame* frame = element->document().frame();
-    if (!frame)
+    auto renderer = element->renderer();
+    if (!renderer)
         return;
 
-    m_page->focusController().setFocusedElement(element, frame);
-    VisiblePosition position = frame->visiblePositionForPoint(m_lastActionMenuHitTestResult.roundedPointInInnerNodeFrame());
-    frame->selection().setSelection(position);
+    m_page->focusController().setFocusedElement(element, element->document().frame());
+    VisiblePosition position = renderer->positionForPoint(m_lastActionMenuHitTestResult.localPoint(), nullptr);
+    element->document().frame()->selection().setSelection(position);
 }
 
 void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)
