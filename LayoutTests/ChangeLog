@@ -19,6 +19,14 @@
 
 2014-12-03  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Add 1.0.3 conformance tests. Remove unused webgl test resource files.
+
+        * platform/mac/TestExpectations: Skipping 1.0.3 tests until we are at least somewhat conformant.
+        * webgl/1.0.3: Added.
+        * webgl/resources/webgl_test_files: Removed
+
+2014-12-03  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Remove 1.0.1 and experimental 1.0.3 WebGL conformance tests to make way for official 1.0.3 tests.
 
         * platform/mac/TestExpectations:

@@ -55,13 +55,13 @@ if sys.version < '2.6':
 
 GLOBAL_OPTIONS = {
   # version use. Tests at or below this will be included.
-  "version": "1.0.2",
+  "version": "1.0.3",
 
   # version used for unlabled tests
   "default-version": "1.0",
 
   # If set, the version we require. Tests below this will be ignored.
-  #"min-version": "1.0.2",
+  "min-version": "1.0.3",
 }
 
 
@@ -161,10 +161,10 @@ def GetTestList(list_filename, dest_dir, hierarchical_options):
         option = arg[2:]
         if option == 'slow':
           pass
-        elif option == 'min-version':
+        elif option == 'min-version' or option == "max-version":
           test_options[option] = args.pop(0)
         else:
-          raise "%s:%d unknown option '%s'" % (list_filename, line_number, arg)
+          raise Exception("%s:%d unknown option '%s'" % (list_filename, line_number, arg))
       else:
         non_options.append(arg)
     url = os.path.join(prefix, " ".join(non_options))
