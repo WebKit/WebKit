@@ -152,8 +152,6 @@ public:
         m_hasCapturedVariables = hasCapturedVariables;
     }
 
-    bool forceUsesArguments() const { return m_forceUsesArguments; }
-
     CodeFeatures features() const { return m_features; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
 
@@ -168,8 +166,6 @@ private:
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
-    unsigned m_numCapturedVariables : 29;
-    bool m_forceUsesArguments : 1;
     bool m_isInStrictContext : 1;
     bool m_hasCapturedVariables : 1;
     bool m_isBuiltinFunction : 1;

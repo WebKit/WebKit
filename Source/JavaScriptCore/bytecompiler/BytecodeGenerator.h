@@ -260,7 +260,7 @@ namespace JSC {
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
         BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
-        BytecodeGenerator(VM&, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
         BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);
 
         ~BytecodeGenerator();
@@ -631,8 +631,8 @@ namespace JSC {
 
         // Returns the index of the added var.
         void addParameter(const Identifier&, int parameterIndex);
-        RegisterID* resolveCallee(FunctionBodyNode*);
-        void addCallee(FunctionBodyNode*, RegisterID*);
+        RegisterID* resolveCallee(FunctionNode*);
+        void addCallee(FunctionNode*, RegisterID*);
 
         void preserveLastVar();
 

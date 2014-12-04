@@ -1,3 +1,93 @@
+2014-12-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Split out FunctionNode from FunctionBodyNode
+        https://bugs.webkit.org/show_bug.cgi?id=139273
+
+        Reviewed by Andreas Kling.
+
+        This is step toward a parser speedup.
+
+        We used to use FunctionBodyNode for two different purposes:
+
+        (1) "I am the root function you are currently parsing";
+
+        (2) "I am a lazy record of a nested function, which you will parse later".
+
+        This made for awkward lifetime semantics and interfaces.
+
+        Now, case (1) is handled by FunctionBodyNode, and case (2) is handled by
+        a new node named FunctionNode.
+
+        Since case (1) no longer needs to handle being the root of the parse
+        tree, FunctionBodyNode can be a normal arena-allocated node.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock): Use FunctionNode instead of
+        FunctionBodyNode, since we are producing the root of the function parse
+        tree.
+
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable): Removed
+        some unused data, and default-initialized other data, which isn't filled
+        in meaningfully until recordParse() is called. (The previous values were
+        incorrect / meaningless, since the FunctionBodyNode didn't have
+        meaningful values in this case.)
+
+        * bytecode/UnlinkedCodeBlock.h: Ditto.
+
+        (JSC::UnlinkedFunctionExecutable::forceUsesArguments): Deleted.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Use FunctionNode instead of
+        FunctionBodyNode, since we are generating code starting at the root of
+        the parse tree.
+
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::addCallee):
+        * bytecompiler/BytecodeGenerator.h: Ditto.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionBodyNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode): Moved the emitBytecode implementation
+        to FunctionNode, since we never generate code for FunctionBodyNode,
+        since it's just a placeholder in the AST.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::setUsesArguments): Deleted. Updated for interface
+        changes.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::finishParsing):
+        (JSC::FunctionBodyNode::setEndPosition):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::FunctionNode::create):
+        (JSC::FunctionNode::finishParsing):
+        (JSC::FunctionBodyNode::create): Deleted.
+
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::parameters):
+        (JSC::FunctionBodyNode::source):
+        (JSC::FunctionBodyNode::startStartOffset):
+        (JSC::FunctionBodyNode::isInStrictContext):
+        (JSC::FunctionNode::parameters):
+        (JSC::FunctionNode::ident):
+        (JSC::FunctionNode::functionMode):
+        (JSC::FunctionNode::startColumn):
+        (JSC::FunctionNode::endColumn):
+        (JSC::ScopeNode::setSource): Deleted.
+        (JSC::FunctionBodyNode::parameterCount): Deleted. Split out the differences
+        between FunctionNode and FunctionBodyNode.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClauseList):
+        (JSC::SyntaxChecker::setUsesArguments): Deleted. Removed setUsesArguments
+        since it wasn't used.
+
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax): Removed a branch that was always
+        false.
+
 2014-12-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: timeline probe records have inaccurate per-probe hit counts

@@ -51,22 +51,20 @@ const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock
 
 static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, UnlinkedFunctionKind functionKind, bool bodyIncludesBraces, ParserError& error)
 {
-    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error, 0, bodyIncludesBraces);
+    RefPtr<FunctionNode> function = parse<FunctionNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error, 0, bodyIncludesBraces);
 
-    if (!body) {
+    if (!function) {
         ASSERT(error.m_type != ParserError::ErrorNone);
         return 0;
     }
 
-    if (executable->forceUsesArguments())
-        body->setUsesArguments();
-    body->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
-    executable->recordParse(body->features(), body->hasCapturedVariables());
+    function->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
+    executable->recordParse(function->features(), function->hasCapturedVariables());
     
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, body.get(), result, debuggerMode, profilerMode)));
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->needsActivation(), function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, function.get(), result, debuggerMode, profilerMode)));
     error = generator->generate();
-    body->destroyData();
+    function->destroyData();
     if (error.m_type != ParserError::ErrorNone)
         return 0;
     return result;
@@ -84,10 +82,8 @@ unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
 
 UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind kind)
     : Base(*vm, structure)
-    , m_numCapturedVariables(node->capturedVariableCount())
-    , m_forceUsesArguments(node->usesArguments())
-    , m_isInStrictContext(node->isStrictMode())
-    , m_hasCapturedVariables(node->hasCapturedVariables())
+    , m_isInStrictContext(node->isInStrictContext())
+    , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
@@ -101,7 +97,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_sourceLength(node->source().length())
     , m_typeProfilingStartOffset(node->functionNameStart())
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
-    , m_features(node->features())
+    , m_features(0)
     , m_functionMode(node->functionMode())
 {
 }

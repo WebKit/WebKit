@@ -287,7 +287,7 @@ public:
 
     FunctionBodyNode* createFunctionBody(const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext)
     {
-        return FunctionBodyNode::create(m_parserArena, startLocation, endLocation, startColumn, endColumn, inStrictContext);
+        return new (m_parserArena) FunctionBodyNode(m_parserArena, startLocation, endLocation, startColumn, endColumn, inStrictContext);
     }
 
     void setFunctionNameStart(FunctionBodyNode* body, int functionNameStart)
@@ -337,8 +337,6 @@ public:
     CaseClauseNode* createClause(ExpressionNode* expr, JSC::SourceElements* statements) { return new (m_parserArena) CaseClauseNode(expr, statements); }
     ClauseListNode* createClauseList(CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(clause); }
     ClauseListNode* createClauseList(ClauseListNode* tail, CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(tail, clause); }
-
-    void setUsesArguments(FunctionBodyNode* node) { node->setUsesArguments(); }
 
     StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn)
     {

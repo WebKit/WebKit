@@ -2635,7 +2635,11 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-void FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
+void FunctionBodyNode::emitBytecode(BytecodeGenerator&, RegisterID*)
+{
+}
+
+void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     if (generator.vm()->typeProfiler()) {
         for (size_t i = 0; i < m_parameters->size(); i++) {

@@ -206,11 +206,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, UnlinkedFunctionCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode)
     : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
     , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
     , m_symbolTable(codeBlock->symbolTable())
-    , m_scopeNode(functionBody)
+    , m_scopeNode(functionNode)
     , m_codeBlock(vm, codeBlock)
     , m_scopeRegister(0)
     , m_lexicalEnvironmentRegister(0)
@@ -239,7 +239,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
     Vector<Identifier> boundParameterProperties;
-    FunctionParameters& parameters = *functionBody->parameters();
+    FunctionParameters& parameters = *functionNode->parameters();
     for (size_t i = 0; i < parameters.size(); i++) {
         auto pattern = parameters.at(i);
         if (pattern->isBindingNode())
@@ -247,7 +247,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         pattern->collectBoundIdentifiers(boundParameterProperties);
         continue;
     }
-    m_symbolTable->setParameterCountIncludingThis(functionBody->parameters()->size() + 1);
+    m_symbolTable->setParameterCountIncludingThis(functionNode->parameters()->size() + 1);
 
     emitOpcode(op_enter);
 
@@ -264,7 +264,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     RegisterID* scratch = addVar();
     m_symbolTable->setCaptureStart(virtualRegisterForLocal(m_codeBlock->m_numVars).offset());
 
-    if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
+    if (functionNode->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
         RegisterID* argumentsRegister = addVar(propertyNames().arguments, IsVariable, NotWatchable); // Can be changed by assigning to 'arguments'.
 
@@ -287,7 +287,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                 initializeCapturedVariable(argumentsRegister, propertyNames().arguments, argumentsRegister);
                 RegisterID* uncheckedArgumentsRegister = &registerFor(JSC::unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()).offset());
                 initializeCapturedVariable(uncheckedArgumentsRegister, propertyNames().arguments, uncheckedArgumentsRegister);
-                if (functionBody->modifiesArguments()) {
+                if (functionNode->modifiesArguments()) {
                     emitOpcode(op_mov);
                     instructions().append(argumentsRegister->index());
                     instructions().append(addConstantValue(jsUndefined())->index());
@@ -304,8 +304,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     bool capturesAnyArgumentByName = false;
     Vector<RegisterID*, 0, UnsafeVectorOverflow> capturedArguments;
-    if (functionBody->hasCapturedVariables() || shouldCaptureAllTheThings) {
-        FunctionParameters& parameters = *functionBody->parameters();
+    if (functionNode->hasCapturedVariables() || shouldCaptureAllTheThings) {
+        FunctionParameters& parameters = *functionNode->parameters();
         capturedArguments.resize(parameters.size());
         for (size_t i = 0; i < parameters.size(); ++i) {
             capturedArguments[i] = 0;
@@ -313,7 +313,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
             if (!pattern->isBindingNode())
                 continue;
             const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
-            if (!functionBody->captures(ident) && !shouldCaptureAllTheThings)
+            if (!functionNode->captures(ident) && !shouldCaptureAllTheThings)
                 continue;
             capturesAnyArgumentByName = true;
             capturedArguments[i] = addVar();
@@ -335,24 +335,24 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_symbolTable->setSlowArguments(WTF::move(slowArguments));
     }
 
-    RegisterID* calleeRegister = resolveCallee(functionBody); // May push to the scope chain and/or add a captured var.
+    RegisterID* calleeRegister = resolveCallee(functionNode); // May push to the scope chain and/or add a captured var.
 
-    const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
-    const DeclarationStacks::VarStack& varStack = functionBody->varStack();
+    const DeclarationStacks::FunctionStack& functionStack = functionNode->functionStack();
+    const DeclarationStacks::VarStack& varStack = functionNode->varStack();
     IdentifierSet test;
 
     // Captured variables and functions go first so that activations don't have
     // to step over the non-captured locals to mark them.
-    if (functionBody->hasCapturedVariables() || shouldCaptureAllTheThings) {
+    if (functionNode->hasCapturedVariables() || shouldCaptureAllTheThings) {
         for (size_t i = 0; i < boundParameterProperties.size(); i++) {
             const Identifier& ident = boundParameterProperties[i];
-            if (functionBody->captures(ident) || shouldCaptureAllTheThings)
+            if (functionNode->captures(ident) || shouldCaptureAllTheThings)
                 addVar(ident, IsVariable, IsWatchable);
         }
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             const Identifier& ident = function->ident();
-            if (functionBody->captures(ident) || shouldCaptureAllTheThings) {
+            if (functionNode->captures(ident) || shouldCaptureAllTheThings) {
                 m_functions.add(ident.impl());
                 emitNewFunction(scratch, function);
                 initializeCapturedVariable(addVar(ident, IsVariable, IsWatchable), ident, scratch);
@@ -360,20 +360,20 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
             const Identifier& ident = varStack[i].first;
-            if (functionBody->captures(ident) || shouldCaptureAllTheThings)
+            if (functionNode->captures(ident) || shouldCaptureAllTheThings)
                 addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, IsWatchable);
         }
     }
 
     m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
 
-    bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks && !m_vm->typeProfiler();
+    bool canLazilyCreateFunctions = !functionNode->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks && !m_vm->typeProfiler();
     m_firstLazyFunction = codeBlock->m_numVars;
     if (!shouldCaptureAllTheThings) {
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             const Identifier& ident = function->ident();
-            if (!functionBody->captures(ident)) {
+            if (!functionNode->captures(ident)) {
                 m_functions.add(ident.impl());
                 RefPtr<RegisterID> reg = addVar(ident, IsVariable, NotWatchable);
                 // Don't lazily create functions that override the name 'arguments'
@@ -389,12 +389,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
         for (size_t i = 0; i < boundParameterProperties.size(); i++) {
             const Identifier& ident = boundParameterProperties[i];
-            if (!functionBody->captures(ident))
+            if (!functionNode->captures(ident))
                 addVar(ident, IsVariable, IsWatchable);
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
             const Identifier& ident = varStack[i].first;
-            if (!functionBody->captures(ident))
+            if (!functionNode->captures(ident))
                 addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, NotWatchable);
         }
     }
@@ -421,7 +421,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         }
         auto simpleParameter = static_cast<const BindingNode*>(pattern);
         if (capturedArguments.size() && capturedArguments[i]) {
-            ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(simpleParameter->boundProperty())) || shouldCaptureAllTheThings);
+            ASSERT((functionNode->hasCapturedVariables() && functionNode->captures(simpleParameter->boundProperty())) || shouldCaptureAllTheThings);
             index = capturedArguments[i]->index();
             RegisterID original(nextParameterIndex);
             initializeCapturedVariable(capturedArguments[i], simpleParameter->boundProperty(), &original);
@@ -431,11 +431,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     preserveLastVar();
 
     // We declare the callee's name last because it should lose to a var, function, and/or parameter declaration.
-    addCallee(functionBody, calleeRegister);
+    addCallee(functionNode, calleeRegister);
 
     if (isConstructor()) {
         emitCreateThis(&m_thisRegister);
-    } else if (functionBody->usesThis() || codeBlock->usesEval()) {
+    } else if (functionNode->usesThis() || codeBlock->usesEval()) {
         m_codeBlock->addPropertyAccessInstruction(instructions().size());
         emitOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
@@ -523,27 +523,27 @@ RegisterID* BytecodeGenerator::initializeCapturedVariable(RegisterID* dst, const
     return dst;
 }
 
-RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
+RegisterID* BytecodeGenerator::resolveCallee(FunctionNode* functionNode)
 {
-    if (!functionNameIsInScope(functionBodyNode->ident(), functionBodyNode->functionMode()))
+    if (!functionNameIsInScope(functionNode->ident(), functionNode->functionMode()))
         return 0;
 
     if (functionNameScopeIsDynamic(m_codeBlock->usesEval(), m_codeBlock->isStrictMode()))
         return 0;
 
     m_calleeRegister.setIndex(JSStack::Callee);
-    if (functionBodyNode->captures(functionBodyNode->ident()))
-        return initializeCapturedVariable(addVar(), functionBodyNode->ident(), &m_calleeRegister);
+    if (functionNode->captures(functionNode->ident()))
+        return initializeCapturedVariable(addVar(), functionNode->ident(), &m_calleeRegister);
 
     return &m_calleeRegister;
 }
 
-void BytecodeGenerator::addCallee(FunctionBodyNode* functionBodyNode, RegisterID* calleeRegister)
+void BytecodeGenerator::addCallee(FunctionNode* functionNode, RegisterID* calleeRegister)
 {
     if (!calleeRegister)
         return;
 
-    symbolTable().add(functionBodyNode->ident().impl(), SymbolTableEntry(calleeRegister->index(), ReadOnly));
+    symbolTable().add(functionNode->ident().impl(), SymbolTableEntry(calleeRegister->index(), ReadOnly));
 }
 
 void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex)

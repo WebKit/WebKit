@@ -187,42 +187,41 @@ FunctionParameters::~FunctionParameters()
         patterns()[i]->deref();
 }
 
-inline FunctionBodyNode::FunctionBodyNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext)
-    : ScopeNode(parserArena, startLocation, endLocation, inStrictContext)
+FunctionBodyNode::FunctionBodyNode(ParserArena&, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool isInStrictContext)
+    : StatementNode(endLocation)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
+    , m_startStartOffset(startLocation.startOffset)
+    , m_isInStrictContext(isInStrictContext)
 {
 }
 
-inline FunctionBodyNode::FunctionBodyNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident, enum FunctionMode functionMode)
+{
+    m_source = source;
+    m_parameters = FunctionParameters::create(firstParameter);
+    m_ident = ident;
+    m_functionMode = functionMode;
+}
+
+void FunctionBodyNode::setEndPosition(JSTextPosition position)
+{
+    m_lastLine = position.line;
+    m_endColumn = position.offset - position.lineStartOffset;
+}
+
+// =====================
+
+inline FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
 {
 }
 
-void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident, enum FunctionMode functionMode)
+PassRefPtr<FunctionNode> FunctionNode::create(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
 {
-    setSource(source);
-    finishParsing(FunctionParameters::create(firstParameter), ident, functionMode);
-}
-
-void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident, enum FunctionMode functionMode)
-{
-    ASSERT(!source().isNull());
-    m_parameters = parameters;
-    m_ident = ident;
-    m_functionMode = functionMode;
-}
-
-FunctionBodyNode* FunctionBodyNode::create(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext)
-{
-    return new FunctionBodyNode(parserArena, startLocation, endLocation, startColumn, endColumn, inStrictContext);
-}
-
-PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
-{
-    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(parserArena, startLocation, endLocation, startColumn, endColumn , children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
+    RefPtr<FunctionNode> node = new FunctionNode(parserArena, startLocation, endLocation, startColumn, endColumn , children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();
@@ -231,10 +230,12 @@ PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(ParserArena& parserArena, 
     return node.release();
 }
 
-void FunctionBodyNode::setEndPosition(JSTextPosition position)
+void FunctionNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident, enum FunctionMode functionMode)
 {
-    m_lastLine = position.line;
-    m_endColumn = position.offset - position.lineStartOffset;
+    ASSERT(!source().isNull());
+    m_parameters = parameters;
+    m_ident = ident;
+    m_functionMode = functionMode;
 }
 
 } // namespace JSC
