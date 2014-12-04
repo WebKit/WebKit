@@ -1538,7 +1538,7 @@ namespace JSC {
         DeconstructionPatternNode* m_storage;
     };
 
-    class FunctionBodyNode : public StatementNode, public ParserArenaDeletable {
+    class FunctionBodyNode final : public StatementNode, public ParserArenaDeletable {
     public:
         using ParserArenaDeletable::operator new;
 
@@ -1582,7 +1582,7 @@ namespace JSC {
         bool m_isInStrictContext;
     };
 
-    class FunctionNode : public ScopeNode {
+    class FunctionNode final : public ScopeNode {
     public:
         static PassRefPtr<FunctionNode> create(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 

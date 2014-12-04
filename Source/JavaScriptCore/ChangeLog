@@ -1,5 +1,13 @@
 2014-12-04  Geoffrey Garen  <ggaren@apple.com>
 
+        Marked some final things final.
+
+        Reviewed by Andreas Kling.
+
+        * parser/Nodes.h:
+
+2014-12-04  Geoffrey Garen  <ggaren@apple.com>
+
         Split out FunctionNode from FunctionBodyNode
         https://bugs.webkit.org/show_bug.cgi?id=139273
 
