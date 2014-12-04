@@ -59,7 +59,7 @@ void QuickLookDocumentData::encode(IPC::ArgumentEncoder& encoder) const
     encoder << size;
 
     for (const auto& data : m_data)
-        encoder.encodeFixedLengthData(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+        encoder.encodeFixedLengthData(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()), 1);
 }
 
 bool QuickLookDocumentData::decode(IPC::ArgumentDecoder& decoder, QuickLookDocumentData& documentData)
