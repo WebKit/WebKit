@@ -439,6 +439,8 @@ public:
     virtual bool hasRelevantSelectionServices(bool /* isTextOnly */) const { return false; }
 #endif
 
+    virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
+
 protected:
     virtual ~ChromeClient() { }
 };

@@ -834,6 +834,7 @@ public:
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
 
     void willChangeCurrentHistoryItemForMainFrame();
+    bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -1051,6 +1052,8 @@ private:
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID);
 #endif
+
+    void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
 
     uint64_t m_pageID;
 
@@ -1279,6 +1282,8 @@ private:
     WebCore::HitTestResult m_lastActionMenuHitTestResult;
     RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
 #endif
+
+    bool m_shouldDispatchFakeMouseMoveEvents;
 };
 
 } // namespace WebKit

@@ -1,5 +1,24 @@
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176753. <rdar://problem/19052381>
+
+    2014-12-03  Tim Horton  <timothy_horton@apple.com>
+
+            Keyboard input should be disabled in the preview popover
+            https://bugs.webkit.org/show_bug.cgi?id=139219
+            <rdar://problem/19052381>
+
+            Reviewed by Anders Carlsson.
+
+            * page/ChromeClient.h:
+            (WebCore::ChromeClient::shouldDispatchFakeMouseMoveEvents):
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+            Allow ChromeClient to disable the dispatch of "fake" mouseMove events
+            that happens during scrolling.
+
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
         Merge r176694. <rdar://problem/18944696>
 
     2014-12-02  Beth Dakin  <bdakin@apple.com>

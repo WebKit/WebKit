@@ -147,7 +147,7 @@ static const CGFloat previewViewTitleHeight = 34;
     _previewView = [_delegate pagePreviewViewController:self viewForPreviewingURL:_url.get() initialFrameSize:defaultFrame.size];
     if (!_previewView) {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:defaultFrame]);
-        [webView _setIgnoresNonWheelMouseEvents:YES];
+        [webView _setIgnoresNonWheelEvents:YES];
         if (_url) {
             NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
             [webView loadRequest:request];
@@ -252,11 +252,6 @@ static const CGFloat previewViewTitleHeight = 34;
 {
     if (menu != _wkView.actionMenu)
         return;
-
-    if (_wkView._shouldIgnoreMouseEvents) {
-        [menu cancelTracking];
-        return;
-    }
 
     [self dismissActionMenuPopovers];
 
