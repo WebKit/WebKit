@@ -1,0 +1,14 @@
+Tests that a repeating timer in an iframe changing the style of an element gets throttled when scrolling the frame out of view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Frame is inside viewport, timer should not be throttled
+PASS isTimerThrottledBeforeScroll is false
+Scrolling frame out of view.
+Frame is outside viewport, timer should now be throttled
+PASS isTimerThrottledAfterScroll is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,12 @@
+2014-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed gardening.
+
+        Land expected result for fast/dom/timer-throttle-on-scrolling-iframe-away.html
+        that was missing in r176729.
+
+        * fast/dom/timer-throttle-on-scrolling-iframe-away-expected.txt: Added.
+
 2014-12-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Remove 1.0.1 and experimental 1.0.3 WebGL conformance tests to make way for official 1.0.3 tests.
