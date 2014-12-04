@@ -1,3 +1,17 @@
+2014-12-04  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        [EFL][WK2] Add ewk API to allow accepting a specific TLS certificate for a specific host
+        https://bugs.webkit.org/show_bug.cgi?id=131160
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::allowSpecificHTTPSCertificateForHost):
+        (ewk_context_tls_certificate_for_host_allow):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/tests/test_ewk2_ssl.cpp:
+
 2014-12-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r176457.

@@ -443,6 +443,16 @@ EAPI void ewk_context_tls_error_policy_set(Ewk_Context *context, Ewk_TLS_Error_P
  */
 EAPI void ewk_context_preferred_languages_set(Eina_List *languages);
 
+
+/**
+ * Allows accepting the specified TLS certificate for the speficied host.
+ *
+ * @param context context object to allow accepting a specific certificate for a specific host
+ * @param pem the certificate to be accepted in PEM format
+ * @param host the host for which the certificate is to be accepted
+ */
+EAPI void ewk_context_tls_certificate_for_host_allow(Ewk_Context *context, const char *pem, const char *host);
+
 #ifdef __cplusplus
 }
 #endif

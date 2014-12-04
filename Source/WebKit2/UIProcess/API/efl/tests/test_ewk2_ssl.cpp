@@ -262,3 +262,30 @@ TEST_F(EWK2SSLTest, ewk_ssl_bad_cert_redirect_https_to_http)
 
     waitUntilTrue(finishTest, testTimeoutSeconds);
 }
+
+TEST_F(EWK2SSLTest, ewk_ssl_bad_cert_page_load_test_allow_specific)
+{
+    finishTest = false;
+
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ewk_context_tls_error_policy_set(context, EWK_TLS_ERROR_POLICY_FAIL);
+    ewk_context_tls_certificate_for_host_allow(context, certificate_data, "127.0.0.1");
+
+    GTlsCertificate* TLSCertificate = getCertificate();
+
+    if (!TLSCertificate)
+        FAIL();
+
+    std::unique_ptr<EWK2UnitTestServer> httpsServer = std::make_unique<EWK2UnitTestServer>(TLSCertificate);
+    httpsServer->run(serverCallbackBadCertPageLoadTest);
+
+    Ewk_Error* error = nullptr;
+    evas_object_smart_callback_add(webView(), "load,provisional,failed", onLoadProvisionalFailedIgnore, &error);
+
+    bool isFinished = false;
+    evas_object_smart_callback_add(webView(), "load,finished", onLoadFinishedIgnore, &isFinished);
+
+    ewk_view_url_set(webView(), httpsServer->getURLForPath("/index.html").data());
+
+    waitUntilTrue(finishTest, testTimeoutSeconds);
+}

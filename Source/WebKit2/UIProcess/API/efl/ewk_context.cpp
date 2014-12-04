@@ -40,6 +40,8 @@
 #include "ewk_storage_manager_private.h"
 #include "ewk_url_scheme_request_private.h"
 #include <JavaScriptCore/JSContextRef.h>
+#include <Shared/WebCertificateInfo.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Language.h>
@@ -443,6 +445,23 @@ void EwkContext::setIgnoreTLSErrors(Ewk_TLS_Error_Policy TLSErrorPolicy) const
     toImpl(m_context.get())->setIgnoreTLSErrors(isNewPolicy);
 }
 
+void EwkContext::allowSpecificHTTPSCertificateForHost(const String& pem, const String& host) const
+{
+    CString certificate = pem.ascii();
+
+    GTlsCertificate* gTlsCertificate = g_tls_certificate_new_from_pem(
+        certificate.data(), certificate.length(), nullptr);
+
+    if (!gTlsCertificate)
+        return;
+
+    WebCore::CertificateInfo certificateInfo = WebCore::CertificateInfo(gTlsCertificate, G_TLS_CERTIFICATE_VALIDATE_ALL);
+
+    RefPtr<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(certificateInfo);
+
+    toImpl(m_context.get())->allowSpecificHTTPSCertificateForHost(webCertificateInfo.get(), host);
+}
+
 Ewk_Context* ewk_context_default_get()
 {
     return EwkContext::defaultContext();
@@ -594,4 +613,11 @@ void ewk_context_preferred_languages_set(Eina_List* languages)
 
     WebCore::overrideUserPreferredLanguages(preferredLanguages);
     WebCore::languageDidChange();
+}
+
+void ewk_context_tls_certificate_for_host_allow(Ewk_Context* context, const char* pem, const char* host)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl);
+
+    impl->allowSpecificHTTPSCertificateForHost(pem, host);
 }

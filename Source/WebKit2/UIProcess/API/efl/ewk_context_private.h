@@ -88,6 +88,8 @@ public:
 
     const String& extensionsPath() const { return m_extensionsPath; }
 
+    void allowSpecificHTTPSCertificateForHost(const String& pem, const String& host) const;
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void setAdditionalPluginPath(const String&);
 #endif
