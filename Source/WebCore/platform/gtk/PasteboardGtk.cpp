@@ -26,7 +26,6 @@
 #include "URL.h"
 #include "PasteboardHelper.h"
 #include <gtk/gtk.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -39,40 +38,30 @@ enum ClipboardDataType {
     ClipboardDataTypeUnknown
 };
 
-PassOwnPtr<Pasteboard> Pasteboard::create(GtkClipboard* gtkClipboard)
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return adoptPtr(new Pasteboard(gtkClipboard));
+    return std::make_unique<Pasteboard>(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::create(PassRefPtr<DataObjectGtk> dataObject)
+std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection()
 {
-    return adoptPtr(new Pasteboard(dataObject));
+    return std::make_unique<Pasteboard>(gtk_clipboard_get(GDK_SELECTION_PRIMARY));
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
 {
-    return create(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
-}
-
-PassOwnPtr<Pasteboard> Pasteboard::createForGlobalSelection()
-{
-    return create(gtk_clipboard_get(GDK_SELECTION_PRIMARY));
-}
-
-PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
-{
-    return create(DataObjectGtk::create());
+    return std::make_unique<Pasteboard>(DataObjectGtk::create());
 }
 
 #if ENABLE(DRAG_SUPPORT)
-PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
-    return create(DataObjectGtk::create());
+    return std::make_unique<Pasteboard>(DataObjectGtk::create());
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
-    return create(dragData.platformData());
+    return std::make_unique<Pasteboard>(dragData.platformData());
 }
 #endif
 

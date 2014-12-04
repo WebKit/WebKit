@@ -99,14 +99,14 @@ namespace WebCore {
 
     private:
         enum Type { CopyAndPaste, DragAndDrop };
-        DataTransfer(DataTransferAccessPolicy, PassOwnPtr<Pasteboard>, Type = CopyAndPaste, bool forFileDrag = false);
+        DataTransfer(DataTransferAccessPolicy, std::unique_ptr<Pasteboard>, Type = CopyAndPaste, bool forFileDrag = false);
 
 #if ENABLE(DRAG_SUPPORT)
         bool canSetDragImage() const;
 #endif
 
         DataTransferAccessPolicy m_policy;
-        OwnPtr<Pasteboard> m_pasteboard;
+        std::unique_ptr<Pasteboard> m_pasteboard;
 
         mutable RefPtr<FileList> m_fileList;
 

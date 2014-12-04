@@ -139,10 +139,22 @@ struct PasteboardPlainText {
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
+    Pasteboard();
     ~Pasteboard();
 
-    WEBCORE_EXPORT static PassOwnPtr<Pasteboard> createForCopyAndPaste();
-    static PassOwnPtr<Pasteboard> createPrivate(); // Temporary pasteboard. Can put data on this and then write to another pasteboard with writePasteboard.
+#if PLATFORM(GTK)
+    explicit Pasteboard(PassRefPtr<DataObjectGtk>);
+    explicit Pasteboard(GtkClipboard*);
+#endif
+
+#if PLATFORM(WIN)
+    explicit Pasteboard(IDataObject*);
+    explicit Pasteboard(WCDataObject*);
+    explicit Pasteboard(const DragDataMap&);
+#endif
+
+    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForCopyAndPaste();
+    static std::unique_ptr<Pasteboard> createPrivate(); // Temporary pasteboard. Can put data on this and then write to another pasteboard with writePasteboard.
 
     bool hasData();
     Vector<String> types();
@@ -168,8 +180,8 @@ public:
     void writePasteboard(const Pasteboard& sourcePasteboard);
 
 #if ENABLE(DRAG_SUPPORT)
-    static PassOwnPtr<Pasteboard> createForDragAndDrop();
-    static PassOwnPtr<Pasteboard> createForDragAndDrop(const DragData&);
+    static std::unique_ptr<Pasteboard> createForDragAndDrop();
+    static std::unique_ptr<Pasteboard> createForDragAndDrop(const DragData&);
 
     void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
@@ -181,10 +193,8 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    static PassOwnPtr<Pasteboard> create(PassRefPtr<DataObjectGtk>);
-    static PassOwnPtr<Pasteboard> create(GtkClipboard*);
     PassRefPtr<DataObjectGtk> dataObject() const;
-    static PassOwnPtr<Pasteboard> createForGlobalSelection();
+    static std::unique_ptr<Pasteboard> createForGlobalSelection();
 #endif
 
 #if PLATFORM(IOS)
@@ -194,7 +204,6 @@ public:
 
 #if PLATFORM(MAC)
     explicit Pasteboard(const String& pasteboardName);
-    static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
 
     const String& name() const { return m_pasteboardName; }
 #endif
@@ -209,18 +218,7 @@ public:
 #endif
 
 private:
-    Pasteboard();
-
-#if PLATFORM(GTK)
-    Pasteboard(PassRefPtr<DataObjectGtk>);
-    Pasteboard(GtkClipboard*);
-#endif
-
 #if PLATFORM(WIN)
-    explicit Pasteboard(IDataObject*);
-    explicit Pasteboard(WCDataObject*);
-    explicit Pasteboard(const DragDataMap&);
-
     void finishCreatingPasteboard();
     void writeRangeToDataObject(Range&, Frame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);

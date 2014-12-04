@@ -90,37 +90,37 @@ static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM w
     return lresult;
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    OwnPtr<Pasteboard> pasteboard = adoptPtr(new Pasteboard);
+    auto pasteboard = std::make_unique<Pasteboard>();
     COMPtr<IDataObject> clipboardData;
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
     pasteboard->setExternalDataObject(clipboardData.get());
-    return pasteboard.release();
+    return pasteboard;
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
+std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
 {
     // Windows has no "Private pasteboard" concept.
     return createForCopyAndPaste();
 }
 
 #if ENABLE(DRAG_SUPPORT)
-PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject);
-    return adoptPtr(new Pasteboard(dataObject.get()));
+    return std::make_unique<Pasteboard>(dataObject.get());
 }
 
 // static
-PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
     if (dragData.platformData())
-        return adoptPtr(new Pasteboard(dragData.platformData()));
+        return std::make_unique<Pasteboard>(dragData.platformData());
     // FIXME: Should add a const overload of dragDataMap so we don't need a const_cast here.
-    return adoptPtr(new Pasteboard(const_cast<DragData&>(dragData).dragDataMap()));
+    return std::make_unique<Pasteboard>(const_cast<DragData&>(dragData).dragDataMap());
 }
 #endif
 

@@ -55,9 +55,9 @@ private:
 
 #endif
 
-DataTransfer::DataTransfer(DataTransferAccessPolicy policy, PassOwnPtr<Pasteboard> pasteboard, Type type, bool forFileDrag)
+DataTransfer::DataTransfer(DataTransferAccessPolicy policy, std::unique_ptr<Pasteboard> pasteboard, Type type, bool forFileDrag)
     : m_policy(policy)
-    , m_pasteboard(pasteboard)
+    , m_pasteboard(WTF::move(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
     , m_forDrag(type != CopyAndPaste)
     , m_forFileDrag(forFileDrag)

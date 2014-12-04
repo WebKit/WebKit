@@ -123,30 +123,25 @@ Pasteboard::Pasteboard(const String& pasteboardName)
     ASSERT(pasteboardName);
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::create(const String& pasteboardName)
+std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return adoptPtr(new Pasteboard(pasteboardName));
+    return std::make_unique<Pasteboard>(NSGeneralPboard);
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
+std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
 {
-    return create(NSGeneralPboard);
-}
-
-PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
-{
-    return create(platformStrategies()->pasteboardStrategy()->uniqueName());
+    return std::make_unique<Pasteboard>(platformStrategies()->pasteboardStrategy()->uniqueName());
 }
 
 #if ENABLE(DRAG_SUPPORT)
-PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
-    return create(NSDragPboard);
+    return std::make_unique<Pasteboard>(NSDragPboard);
 }
 
-PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
-    return create(dragData.pasteboardName());
+    return std::make_unique<Pasteboard>(dragData.pasteboardName());
 }
 #endif
 

@@ -681,7 +681,7 @@ PassRefPtr<DataTransfer> EventHandler::createDraggingDataTransfer() const
 {
     // Must be done before ondragstart adds types and data to the pboard,
     // also done for security, as it erases data from the last drag.
-    OwnPtr<Pasteboard> pasteboard = Pasteboard::create(NSDragPboard);
+    auto pasteboard = std::make_unique<Pasteboard>(NSDragPboard);
     pasteboard->clear();
     return DataTransfer::createForDragAndDrop();
 }
