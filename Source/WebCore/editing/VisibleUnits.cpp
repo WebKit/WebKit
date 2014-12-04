@@ -1445,8 +1445,6 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
     return direction == LTR ? logicalEndOfLine(c) : logicalStartOfLine(c);
 }
 
-#if PLATFORM(IOS)
-
 static bool directionIsDownstream(SelectionDirection direction)
 {
     if (direction == DirectionBackward)
@@ -1920,7 +1918,5 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
     }
     return result;
 }
-
-#endif
 
 }

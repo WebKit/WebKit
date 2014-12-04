@@ -51,10 +51,7 @@ public:
     const VisibleSelection& startingSelection() const { return m_startingSelection; }
     const VisibleSelection& endingSelection() const { return m_endingSelection; }
 
-#if PLATFORM(IOS)
-    virtual bool isInsertTextCommand() const { return false; }
-#endif
-    
+    virtual bool isInsertTextCommand() const { return false; }    
     virtual bool isSimpleEditCommand() const { return false; }
     virtual bool isCompositeEditCommand() const { return false; }
     virtual bool isEditCommandComposition() const { return false; }

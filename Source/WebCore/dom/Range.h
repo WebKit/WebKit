@@ -45,9 +45,9 @@ class FloatQuad;
 class Node;
 class NodeWithIndex;
 class Text;
+class VisiblePosition;
 #if PLATFORM(IOS)
 class SelectionRect;
-class VisiblePosition;
 #endif
 
 class Range : public RefCounted<Range> {
@@ -56,10 +56,7 @@ public:
     static PassRefPtr<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
     static PassRefPtr<Range> create(Document&, const Position&, const Position&);
     static PassRefPtr<Range> create(ScriptExecutionContext&);
-#if PLATFORM(IOS)
-    // FIXME: Consider making this a static non-member, non-friend function.
     static PassRefPtr<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
-#endif
     ~Range();
 
     Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
