@@ -126,7 +126,7 @@ using namespace WebCore;
 
 - (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event
 {
-    if (_type == WebActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
+    if (_currentActionContext && _hasActivatedActionContext) {
         [getDDActionsManagerClass() didUseActions];
         _hasActivatedActionContext = NO;
     }
@@ -159,7 +159,7 @@ using namespace WebCore;
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
 
-    if (_type == WebActionMenuDataDetectedItem && _currentActionContext) {
+    if (_currentActionContext) {
         _hasActivatedActionContext = YES;
         if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
             [menu cancelTracking];
@@ -230,7 +230,7 @@ using namespace WebCore;
     if (menu != _webView.actionMenu)
         return;
 
-    if (_type == WebActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
+    if (_currentActionContext && _hasActivatedActionContext) {
         [getDDActionsManagerClass() didUseActions];
         _hasActivatedActionContext = NO;
     }
@@ -297,19 +297,24 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     return @[ openLinkItem.get(), shouldUseStandardQuickLookPreview ? qlPreviewLinkItem.get() : previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
 }
 
-#pragma mark Mailto Link actions
+#pragma mark mailto: and tel: Link actions
 
-- (NSArray *)_defaultMenuItemsForMailtoLink
+- (NSArray *)_defaultMenuItemsForDataDetectableLink
 {
     Node* node = _hitTestResult.innerNode();
     if (!node)
         return @[ ];
 
     RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
-    [actionContext setAltMode:YES];
 
     // FIXME: Should this show a yellow highlight?
+    _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
+    } interactionChangedHandler:^() {
+    } interactionStoppedHandler:^() {
+    }];
+
     [actionContext setHighlightFrame:elementBoundingBoxInWindowCoordinatesFromNode(node)];
+
     return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL() actionContext:actionContext.get()];
 }
 
@@ -847,14 +852,20 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
 - (NSArray *)_defaultMenuItems
 {
     NSURL *url = _hitTestResult.absoluteLinkURL();
-    if (url && WebCore::protocolIsInHTTPFamily([url absoluteString])) {
+    NSString *absoluteURLString = [url absoluteString];
+    if (url && WebCore::protocolIsInHTTPFamily(absoluteURLString)) {
         _type = WebActionMenuLink;
         return [self _defaultMenuItemsForLink];
     }
 
-    if (url && WebCore::protocolIs([url absoluteString], "mailto")) {
+    if (url && WebCore::protocolIs(absoluteURLString, "mailto")) {
         _type = WebActionMenuMailtoLink;
-        return [self _defaultMenuItemsForMailtoLink];
+        return [self _defaultMenuItemsForDataDetectableLink];
+    }
+
+    if (url && WebCore::protocolIs(absoluteURLString, "tel")) {
+        _type = WebActionMenuTelLink;
+        return [self _defaultMenuItemsForDataDetectableLink];
     }
 
     Image* image = _hitTestResult.image();

@@ -1,3 +1,31 @@
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176763. <rdar://problem/19115662>
+
+    2014-12-03  Tim Horton  <timothy_horton@apple.com>
+
+            Implement action menus for tel: URLs
+            https://bugs.webkit.org/show_bug.cgi?id=139240
+            <rdar://problem/19115662>
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/API/c/WKActionMenuTypes.h:
+            Add a new type.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectableLink]):
+            Rename this function as it will work for both mailto and tel URLs.
+            Adjust it to use contextForView:.
+
+            (-[WKActionMenuController _clearActionMenuState]):
+            (-[WKActionMenuController menuNeedsUpdate:]):
+            (-[WKActionMenuController _defaultMenuItems]):
+            Don't check the menu type when going to interact with _currentActionContext.
+            We'll only have a _currentActionContext if we have a data detected item,
+            and there are multiple menu types that end up using DDActionContext.
+
+
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
         Merge r176753. <rdar://problem/19052381>

@@ -321,7 +321,7 @@ static const CGFloat previewViewTitleHeight = 34;
 
 - (void)_clearActionMenuState
 {
-    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext && _hasActivatedActionContext) {
+    if (_currentActionContext && _hasActivatedActionContext) {
         [getDDActionsManagerClass() didUseActions];
         _hasActivatedActionContext = NO;
     }
@@ -859,17 +859,22 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     return @[ [NSMenuItem separatorItem], [NSMenuItem separatorItem], pasteItem.get() ];
 }
 
-#pragma mark Mailto Link actions
+#pragma mark mailto: and tel: Link actions
 
-- (NSArray *)_defaultMenuItemsForMailtoLink
+- (NSArray *)_defaultMenuItemsForDataDetectableLink
 {
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
 
     // FIXME: Should this show a yellow highlight?
-    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
-    [actionContext setAltMode:YES];
-    [actionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil]]];
-    return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:actionContext.get()];
+    _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+    } interactionChangedHandler:^() {
+    } interactionStoppedHandler:^() {
+    }];
+
+    [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];
+
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:_currentActionContext.get()];
 }
 
 #pragma mark NSMenuDelegate implementation
@@ -891,7 +896,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     if (_state != ActionMenuState::Ready)
         [self _updateActionMenuItems];
 
-    if (_type == kWKActionMenuDataDetectedItem && _currentActionContext) {
+    if (_currentActionContext) {
         _hasActivatedActionContext = YES;
         if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()]) {
             [menu cancelTracking];
@@ -1100,7 +1105,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
         if (protocolIs(absoluteLinkURL, "mailto")) {
             _type = kWKActionMenuMailtoLink;
-            return [self _defaultMenuItemsForMailtoLink];
+            return [self _defaultMenuItemsForDataDetectableLink];
+        }
+
+        if (protocolIs(absoluteLinkURL, "tel")) {
+            _type = kWKActionMenuTelLink;
+            return [self _defaultMenuItemsForDataDetectableLink];
         }
     }
 
