@@ -700,11 +700,9 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
         // FIXME: implement all of the above?
         pos = modifyExtendingForward(granularity);
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     }
 #if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, directionOfEnclosingBlock() == LTR);
@@ -731,11 +729,9 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
     case ParagraphGranularity:
         pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     case SentenceBoundary:
         pos = endOfSentence(endForPlatform());
         break;
@@ -791,11 +787,9 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
     case LineBoundary:
         pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     }
     return pos;
 }
@@ -828,11 +822,9 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
     case ParagraphGranularity:
         pos = nextParagraphPosition(endForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     case SentenceBoundary:
         pos = endOfSentence(endForPlatform());
         break;
@@ -889,11 +881,9 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity)
     case DocumentBoundary:
         pos = modifyExtendingBackward(granularity);
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     }
 #if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, !(directionOfEnclosingBlock() == LTR));
@@ -941,11 +931,9 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         else
             pos = startOfDocument(pos);
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     }
 #if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, !(directionOfEnclosingBlock() == LTR));
@@ -983,11 +971,9 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
     case LineBoundary:
         pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     }
     return pos;
 }
@@ -1030,11 +1016,9 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         else
             pos = startOfDocument(pos);
         break;
-#if PLATFORM(IOS)
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
         break;
-#endif
     }
     return pos;
 }

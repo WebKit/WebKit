@@ -586,10 +586,8 @@ static NSString* undoNameForEditAction(EditAction editAction)
         case EditActionOutdent: return UI_STRING_KEY_INTERNAL("Outdent", "Outdent (Undo action name)", "Undo action name");
         case EditActionBold: return UI_STRING_KEY_INTERNAL("Bold", "Bold (Undo action name)", "Undo action name");
         case EditActionItalics: return UI_STRING_KEY_INTERNAL("Italics", "Italics (Undo action name)", "Undo action name");
-#if PLATFORM(IOS)
         case EditActionDelete: return UI_STRING_KEY_INTERNAL("Delete", "Delete (Undo action name)", "Undo action name (Used only by PLATFORM(IOS) code)");
         case EditActionDictation: return UI_STRING_KEY_INTERNAL("Dictation", "Dictation (Undo action name)", "Undo action name (Used only by PLATFORM(IOS) code)");
-#endif
     }
     return nil;
 }

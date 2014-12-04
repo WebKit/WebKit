@@ -1,5 +1,19 @@
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173235. <rdar://problem/19072083>
+
+    2014-09-03  Enrica Casucci  <enrica@apple.com>
+
+            Remove PLATFORM(IOS) from WebCore/editing (Part 1).
+            https://bugs.webkit.org/show_bug.cgi?id=136474
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/WebEditCommandProxy.cpp:
+            (WebKit::WebEditCommandProxy::nameForEditAction):
+
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r176763. <rdar://problem/19115662>
 
     2014-12-03  Tim Horton  <timothy_horton@apple.com>

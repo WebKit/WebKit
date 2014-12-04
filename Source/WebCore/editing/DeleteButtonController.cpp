@@ -330,7 +330,6 @@ void DeleteButtonController::hide()
 
 void DeleteButtonController::enable()
 {
-#if !PLATFORM(IOS)
     ASSERT(m_disableStack > 0);
     if (m_disableStack > 0)
         m_disableStack--;
@@ -341,16 +340,13 @@ void DeleteButtonController::enable()
         m_frame.document()->updateStyleIfNeeded();
         show(enclosingDeletableElement(m_frame.selection().selection()));
     }
-#endif
 }
 
 void DeleteButtonController::disable()
 {
-#if !PLATFORM(IOS)
     if (enabled())
         hide();
     m_disableStack++;
-#endif
 }
 
 class RemoveTargetCommand : public CompositeEditCommand {

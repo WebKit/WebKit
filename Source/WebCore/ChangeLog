@@ -1,5 +1,62 @@
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r173235. <rdar://problem/19072083>
+
+    2014-09-03  Enrica Casucci  <enrica@apple.com>
+
+            Remove PLATFORM(IOS) from WebCore/editing (Part 1).
+            https://bugs.webkit.org/show_bug.cgi?id=136474
+
+            Reviewed by Tim Horton.
+
+            This is the first part of the work to remove PLATFORM(IOS) everywhere
+            in the editing code.
+
+            * dom/Range.cpp:
+            (WebCore::Range::create): Adding create function that takes VisiblePosition.
+            * dom/Range.h:
+            * editing/CompositeEditCommand.cpp:
+            (WebCore::CompositeEditCommand::apply):
+            (WebCore::CompositeEditCommand::inputText):
+            * editing/CompositeEditCommand.h:
+            * editing/DeleteButton.h: No need for the platform guard since it is already under
+            DELETION_UI
+            * editing/DeleteButtonController.cpp:
+            (WebCore::DeleteButtonController::enable):
+            (WebCore::DeleteButtonController::disable):
+            * editing/EditAction.h:
+            * editing/EditCommand.h:
+            (WebCore::EditCommand::isInsertTextCommand):
+            * editing/Editor.cpp:
+            (WebCore::ClearTextCommand::CreateAndApply):
+            * editing/Editor.h:
+            * editing/EditorCommand.cpp:
+            (WebCore::executeClearText):
+            (WebCore::enabledCopy):
+            (WebCore::enabledCut):
+            (WebCore::enabledClearText):
+            (WebCore::createCommandMap):
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::modifyExtendingRight):
+            (WebCore::FrameSelection::modifyExtendingForward):
+            (WebCore::FrameSelection::modifyMovingRight):
+            (WebCore::FrameSelection::modifyMovingForward):
+            (WebCore::FrameSelection::modifyExtendingLeft):
+            (WebCore::FrameSelection::modifyExtendingBackward):
+            (WebCore::FrameSelection::modifyMovingLeft):
+            (WebCore::FrameSelection::modifyMovingBackward):
+            * editing/InsertTextCommand.h:
+            * editing/TextCheckingHelper.cpp:
+            * editing/TextGranularity.h:
+            * editing/VisiblePosition.h:
+            (WebCore::operator>=):
+            * editing/VisibleSelection.cpp:
+            (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+            * editing/VisibleUnits.cpp:
+            * editing/VisibleUnits.h:
+
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r176697. <rdar://problem/19121822>
 
     2014-12-02  Tim Horton  <timothy_horton@apple.com>

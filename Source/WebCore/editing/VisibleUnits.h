@@ -96,7 +96,6 @@ VisiblePosition startOfEditableContent(const VisiblePosition&);
 VisiblePosition endOfEditableContent(const VisiblePosition&);
 bool isEndOfEditableOrNonEditableContent(const VisiblePosition&);
 
-#if PLATFORM(IOS)
 bool atBoundaryOfGranularity(const VisiblePosition&, TextGranularity, SelectionDirection);
 bool withinTextUnitOfGranularity(const VisiblePosition&, TextGranularity, SelectionDirection);
 VisiblePosition positionOfNextBoundaryOfGranularity(const VisiblePosition&, TextGranularity, SelectionDirection);
@@ -105,7 +104,6 @@ int distanceBetweenPositions(const VisiblePosition&, const VisiblePosition&);
 PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position);
 VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
 void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
-#endif
 } // namespace WebCore
 
 #endif // VisibleUnits_h

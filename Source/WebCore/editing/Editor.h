@@ -175,8 +175,8 @@ public:
 
     bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
     void deleteSelectionWithSmartDelete(bool smartDelete);
-#if PLATFORM(IOS)
     void clearText();
+#if PLATFORM(IOS)
     void removeUnchangeableStyles();
 #endif
     

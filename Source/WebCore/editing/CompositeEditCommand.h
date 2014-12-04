@@ -104,9 +104,7 @@ protected:
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     void deleteSelection(const VisibleSelection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true, bool sanitizeMarkup = true);
     virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned offset, unsigned count);
-#if PLATFORM(IOS)
     void inputText(const String&, bool selectInsertedText = false);
-#endif
     bool isRemovableBlock(const Node*);
     void insertNodeAfter(PassRefPtr<Node>, PassRefPtr<Node> refChild);
     void insertNodeAt(PassRefPtr<Node>, const Position&);

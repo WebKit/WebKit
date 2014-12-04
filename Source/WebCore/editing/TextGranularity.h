@@ -36,9 +36,7 @@ enum TextGranularity {
     SentenceGranularity,
     LineGranularity,
     ParagraphGranularity,
-#if PLATFORM(IOS)
     DocumentGranularity,
-#endif
     SentenceBoundary,
     LineBoundary,
     ParagraphBoundary,
