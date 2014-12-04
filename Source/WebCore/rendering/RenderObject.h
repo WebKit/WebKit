@@ -872,7 +872,7 @@ protected:
 private:
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadIncludingDescendants(bool);
-
+    static void calculateBorderStyleColor(const EBorderStyle&, const BoxSide&, Color&);
     Node* generatingPseudoHostElement() const;
 
     virtual bool isWBR() const { ASSERT_NOT_REACHED(); return false; }
