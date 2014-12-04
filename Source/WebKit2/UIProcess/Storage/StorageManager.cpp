@@ -418,14 +418,30 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<IPC::Connection>(webProcessProxy->connection())));
 }
 
-void StorageManager::getOrigins(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
+void StorageManager::getOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler)
 {
-    m_queue->dispatch(bind(&StorageManager::getOriginsInternal, this, RefPtr<FunctionDispatcher>(&callbackDispatcher), context, callback));
+    RefPtr<StorageManager> storageManager(this);
+
+    m_queue->dispatch([storageManager, completionHandler] {
+        auto origins = storageManager->m_localStorageDatabaseTracker->origins();
+
+        RunLoop::main().dispatch([origins, completionHandler]() mutable {
+            completionHandler(WTF::move(origins));
+        });
+    });
 }
 
-void StorageManager::getStorageDetailsByOrigin(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>& storageDetails, void* context))
+void StorageManager::getStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler)
 {
-    m_queue->dispatch(bind(&StorageManager::getStorageDetailsByOriginInternal, this, RefPtr<FunctionDispatcher>(&callbackDispatcher), context, callback));
+    RefPtr<StorageManager> storageManager(this);
+
+    m_queue->dispatch([storageManager, completionHandler] {
+        auto storageDetails = storageManager->m_localStorageDatabaseTracker->details();
+
+        RunLoop::main().dispatch([storageDetails, completionHandler]() mutable {
+            completionHandler(WTF::move(storageDetails));
+        });
+    });
 }
 
 void StorageManager::deleteEntriesForOrigin(const SecurityOrigin& securityOrigin)
@@ -663,24 +679,6 @@ StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNa
         result.iterator->value = LocalStorageNamespace::create(this, storageNamespaceID);
 
     return result.iterator->value.get();
-}
-
-static void callCallbackFunction(void* context, void (*callbackFunction)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context), Vector<RefPtr<WebCore::SecurityOrigin>>* securityOriginsPtr)
-{
-    std::unique_ptr<Vector<RefPtr<WebCore::SecurityOrigin>>> securityOrigins(securityOriginsPtr);
-    callbackFunction(*securityOrigins, context);
-}
-
-void StorageManager::getOriginsInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
-{
-    auto securityOrigins = std::make_unique<Vector<RefPtr<WebCore::SecurityOrigin>>>(m_localStorageDatabaseTracker->origins());
-    dispatcher->dispatch(bind(callCallbackFunction, context, callbackFunction, securityOrigins.release()));
-}
-
-void StorageManager::getStorageDetailsByOriginInternal(FunctionDispatcher* dispatcher, void* context, void (*callbackFunction)(const Vector<LocalStorageDetails>& storageDetails, void* context))
-{
-    Vector<LocalStorageDetails> storageDetails = m_localStorageDatabaseTracker->details();
-    dispatcher->dispatch(bind(callbackFunction, WTF::move(storageDetails), context));
 }
 
 void StorageManager::deleteEntriesForOriginInternal(SecurityOrigin* securityOrigin)

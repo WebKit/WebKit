@@ -1,3 +1,23 @@
+2014-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Simplify StorageManager callback functions
+        https://bugs.webkit.org/show_bug.cgi?id=139257
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getOrigins):
+        (WebKit::StorageManager::getStorageDetailsByOrigin):
+        (WebKit::callCallbackFunction): Deleted.
+        (WebKit::StorageManager::getOriginsInternal): Deleted.
+        (WebKit::StorageManager::getStorageDetailsByOriginInternal): Deleted.
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin):
+        (WebKit::didGetKeyValueStorageOrigins): Deleted.
+        (WebKit::didGetStorageDetailsByOrigin): Deleted.
+
 2014-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r176794.

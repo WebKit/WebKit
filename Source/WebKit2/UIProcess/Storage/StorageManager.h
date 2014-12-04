@@ -60,10 +60,8 @@ public:
     void processWillCloseConnection(WebProcessProxy*);
     void applicationWillTerminate();
 
-    // FIXME: Instead of a context + C function, this should take a WTF::Function, but we currently don't
-    // support arguments in functions.
-    void getOrigins(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>&, void* context));
-    void getStorageDetailsByOrigin(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>&, void* context));
+    void getOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler);
+    void getStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler);
     void deleteEntriesForOrigin(const WebCore::SecurityOrigin&);
     void deleteAllEntries();
 
@@ -99,8 +97,6 @@ private:
     class LocalStorageNamespace;
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
 
-    void getOriginsInternal(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>&, void* context));
-    void getStorageDetailsByOriginInternal(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>&, void* context));
     void deleteEntriesForOriginInternal(WebCore::SecurityOrigin*);
     void deleteAllEntriesInternal();
 
