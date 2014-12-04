@@ -1,3 +1,15 @@
+2014-12-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r176489.
+        https://bugs.webkit.org/show_bug.cgi?id=139242
+
+        More iOS breakage (Requested by andersca on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed, iOS build fix after r176452."
+        http://trac.webkit.org/changeset/176489
+
 2014-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Implement action menus for tel: URLs
