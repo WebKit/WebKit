@@ -73,17 +73,17 @@ WebInspector.TimelineDataGrid.Event = {
     FiltersDidChange: "timelinedatagrid-filters-did-change"
 };
 
-WebInspector.TimelineDataGrid.createColumnScopeBar = function(prefix, dictionary)
+WebInspector.TimelineDataGrid.createColumnScopeBar = function(prefix, map)
 {
     prefix = prefix + "-timeline-data-grid-";
 
-    var scopeBarItems = Object.keys(dictionary).map(function(key) {
+    var scopeBarItems = [];
+    for (var [key, value] of map) {
         var id = prefix + key;
-        var label = dictionary[key];
-        var item = new WebInspector.ScopeBarItem(id, label);
+        var item = new WebInspector.ScopeBarItem(id, value);
         item.value = key;
-        return item;
-    });
+        scopeBarItems.push(item);
+    }
 
     scopeBarItems.unshift(new WebInspector.ScopeBarItem(prefix + "type-all", WebInspector.UIString("All"), true));
 

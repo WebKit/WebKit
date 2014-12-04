@@ -1,5 +1,17 @@
 2014-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Timeline Filter Bar only has "All", missing Resource Type filters
+        https://bugs.webkit.org/show_bug.cgi?id=139268
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.createColumnScopeBar):
+        Users of createColumnScopeBar pass a Map object now instead of a dictionary.
+        Iterate over the map appropriately.
+
+2014-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: LayoutTests/inspector tests fail in Production builds due to missing test resources
         https://bugs.webkit.org/show_bug.cgi?id=138898
 
