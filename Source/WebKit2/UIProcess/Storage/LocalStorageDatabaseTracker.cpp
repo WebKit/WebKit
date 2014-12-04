@@ -128,13 +128,13 @@ void LocalStorageDatabaseTracker::deleteAllDatabases()
 static Optional<time_t> fileCreationTime(const String& filePath)
 {
     time_t time;
-    return getFileCreationTime(filePath, time) ? time : Nullopt;
+    return getFileCreationTime(filePath, time) ? time : Optional<time_t>(Nullopt);
 }
 
 static Optional<time_t> fileModificationTime(const String& filePath)
 {
     time_t time;
-    return getFileModificationTime(filePath, time) ? time : Nullopt;
+    return getFileModificationTime(filePath, time) ? time : Optional<time_t>(Nullopt);
 }
 
 Vector<RefPtr<SecurityOrigin>> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(time_t time)

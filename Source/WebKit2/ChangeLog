@@ -1,3 +1,11 @@
+2014-12-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r176794.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::fileCreationTime):
+        (WebKit::fileModificationTime):
+
 2014-12-03  Anders Carlsson  <andersca@apple.com>
 
         Add a way to delete local storage origins modified after a given date
