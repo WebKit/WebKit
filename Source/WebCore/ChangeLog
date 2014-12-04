@@ -1,5 +1,12 @@
 2014-12-04  Timothy Horton  <timothy_horton@apple.com>
 
+        Further fix the 32-bit build.
+
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+
+2014-12-04  Timothy Horton  <timothy_horton@apple.com>
+
         Fix the 32-bit build.
 
         * page/mac/TextIndicatorWindow.h:
