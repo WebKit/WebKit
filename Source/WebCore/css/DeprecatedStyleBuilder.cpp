@@ -919,54 +919,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-class ApplyPropertyAspectRatio {
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        if (styleResolver->parentStyle()->aspectRatioType() == AspectRatioAuto)
-            return;
-        styleResolver->style()->setAspectRatioType(styleResolver->parentStyle()->aspectRatioType());
-        styleResolver->style()->setAspectRatioDenominator(styleResolver->parentStyle()->aspectRatioDenominator());
-        styleResolver->style()->setAspectRatioNumerator(styleResolver->parentStyle()->aspectRatioNumerator());
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setAspectRatioType(RenderStyle::initialAspectRatioType());
-        styleResolver->style()->setAspectRatioDenominator(RenderStyle::initialAspectRatioDenominator());
-        styleResolver->style()->setAspectRatioNumerator(RenderStyle::initialAspectRatioNumerator());
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (is<CSSPrimitiveValue>(*value)) {
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-
-            if (primitiveValue.getValueID() == CSSValueAuto)
-                return styleResolver->style()->setAspectRatioType(AspectRatioAuto);
-            if (primitiveValue.getValueID() == CSSValueFromDimensions)
-                return styleResolver->style()->setAspectRatioType(AspectRatioFromDimensions);
-            if (primitiveValue.getValueID() == CSSValueFromIntrinsic)
-                return styleResolver->style()->setAspectRatioType(AspectRatioFromIntrinsic);
-        }
-
-        if (!is<CSSAspectRatioValue>(*value)) {
-            styleResolver->style()->setAspectRatioType(AspectRatioAuto);
-            return;
-        }
-
-        CSSAspectRatioValue& aspectRatioValue = downcast<CSSAspectRatioValue>(*value);
-        styleResolver->style()->setAspectRatioType(AspectRatioSpecified);
-        styleResolver->style()->setAspectRatioDenominator(aspectRatioValue.denominatorValue());
-        styleResolver->style()->setAspectRatioNumerator(aspectRatioValue.numeratorValue());
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-};
-
 const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
     static NeverDestroyed<DeprecatedStyleBuilder> styleBuilderInstance;
@@ -1026,7 +978,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitAnimationName, ApplyPropertyAnimation<const String&, &Animation::name, &Animation::setName, &Animation::isNameSet, &Animation::clearName, &Animation::initialAnimationName, &CSSToStyleMap::mapAnimationName, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationPlayState, ApplyPropertyAnimation<EAnimPlayState, &Animation::playState, &Animation::setPlayState, &Animation::isPlayStateSet, &Animation::clearPlayState, &Animation::initialAnimationPlayState, &CSSToStyleMap::mapAnimationPlayState, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAnimationTimingFunction, ApplyPropertyAnimation<const PassRefPtr<TimingFunction>, &Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSToStyleMap::mapAnimationTimingFunction, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitAspectRatio, ApplyPropertyAspectRatio::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
     setPropertyHandler(CSSPropertyWebkitBackgroundComposite, ApplyPropertyFillLayer<CompositeOperator, CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSToStyleMap::mapFillComposite>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);

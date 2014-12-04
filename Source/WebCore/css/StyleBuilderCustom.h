@@ -28,6 +28,7 @@
 #define StyleBuilderCustom_h
 
 #include "BasicShapeFunctions.h"
+#include "CSSAspectRatioValue.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
@@ -124,6 +125,10 @@ public:
 
     static void applyInheritDisplay(StyleResolver&);
     static void applyValueDisplay(StyleResolver&, CSSValue&);
+
+    static void applyInitialWebkitAspectRatio(StyleResolver&);
+    static void applyInheritWebkitAspectRatio(StyleResolver&);
+    static void applyValueWebkitAspectRatio(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1003,6 +1008,42 @@ inline void StyleBuilderCustom::applyValueDisplay(StyleResolver& styleResolver, 
     EDisplay display = downcast<CSSPrimitiveValue>(value);
     if (isValidDisplayValue(styleResolver, display))
         styleResolver.style()->setDisplay(display);
+}
+
+inline void StyleBuilderCustom::applyInitialWebkitAspectRatio(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setAspectRatioType(RenderStyle::initialAspectRatioType());
+    styleResolver.style()->setAspectRatioDenominator(RenderStyle::initialAspectRatioDenominator());
+    styleResolver.style()->setAspectRatioNumerator(RenderStyle::initialAspectRatioNumerator());
+}
+
+inline void StyleBuilderCustom::applyInheritWebkitAspectRatio(StyleResolver& styleResolver)
+{
+    if (styleResolver.parentStyle()->aspectRatioType() == AspectRatioAuto)
+        return;
+    styleResolver.style()->setAspectRatioType(styleResolver.parentStyle()->aspectRatioType());
+    styleResolver.style()->setAspectRatioDenominator(styleResolver.parentStyle()->aspectRatioDenominator());
+    styleResolver.style()->setAspectRatioNumerator(styleResolver.parentStyle()->aspectRatioNumerator());
+}
+
+inline void StyleBuilderCustom::applyValueWebkitAspectRatio(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+        if (primitiveValue.getValueID() == CSSValueFromDimensions)
+            return styleResolver.style()->setAspectRatioType(AspectRatioFromDimensions);
+        if (primitiveValue.getValueID() == CSSValueFromIntrinsic)
+            return styleResolver.style()->setAspectRatioType(AspectRatioFromIntrinsic);
+
+        ASSERT(primitiveValue.getValueID() == CSSValueAuto);
+        return styleResolver.style()->setAspectRatioType(AspectRatioAuto);
+    }
+
+    auto& aspectRatioValue = downcast<CSSAspectRatioValue>(value);
+    styleResolver.style()->setAspectRatioType(AspectRatioSpecified);
+    styleResolver.style()->setAspectRatioDenominator(aspectRatioValue.denominatorValue());
+    styleResolver.style()->setAspectRatioNumerator(aspectRatioValue.numeratorValue());
 }
 
 } // namespace WebCore

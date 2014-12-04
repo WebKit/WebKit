@@ -286,7 +286,7 @@ alt [LegacyStyleBuilder]
 -webkit-animation-play-state [LegacyStyleBuilder]
 -webkit-animation-timing-function [LegacyStyleBuilder]
 -webkit-appearance [TypeName=ControlPart]
--webkit-aspect-ratio [Inherited, LegacyStyleBuilder]
+-webkit-aspect-ratio [Inherited, Custom=All]
 -webkit-backface-visibility
 -webkit-background-clip [LegacyStyleBuilder]
 -webkit-background-composite [LegacyStyleBuilder]

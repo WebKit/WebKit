@@ -1,3 +1,27 @@
+2014-12-04  Chris Dumez  <cdumez@apple.com>
+
+        Move 'webkit-aspect-ratio' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139250
+
+        Reviewed by Sam Weinig.
+
+        Move 'aspect-ratio' CSS property to the new StyleBuilder by
+        using custom code.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyAspectRatio::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyAspectRatio::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyAspectRatio::applyValue): Deleted.
+        (WebCore::ApplyPropertyAspectRatio::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitAspectRatio):
+        (WebCore::StyleBuilderCustom::applyInheritWebkitAspectRatio):
+        (WebCore::StyleBuilderCustom::applyValueWebkitAspectRatio):
+
 2014-12-04  Timothy Horton  <timothy_horton@apple.com>
 
         Further fix the 32-bit build.
