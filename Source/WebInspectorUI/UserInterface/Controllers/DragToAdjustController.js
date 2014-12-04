@@ -51,6 +51,11 @@ WebInspector.DragToAdjustController.prototype = {
         this._element = element;
     },
 
+    get enabled()
+    {
+        return this._enabled;
+    },
+
     set enabled(enabled)
     {
         if (this._enabled === enabled)
