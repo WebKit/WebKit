@@ -125,6 +125,7 @@ public:
     bool mediaMuted() const;
     void toggleMediaMuteState() const;
     bool isDownloadableMedia() const;
+    bool isOverTextInsideFormControlElement() const;
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
