@@ -303,7 +303,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     [actionContext setHighlightFrame:elementBoundingBoxInWindowCoordinatesFromNode(node)];
 
-    return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL() actionContext:actionContext.get()];
+    return [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL() actionContext:_currentActionContext.get()];
 }
 
 #pragma mark Image actions
