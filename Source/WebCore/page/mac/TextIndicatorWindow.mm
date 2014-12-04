@@ -171,7 +171,7 @@ using namespace WebCore;
         [textLayer setContents:(id)contentsImage.get()];
 
         FloatRect imageRect = textRect;
-        imageRect.move(_textIndicator->textBoundingRectInScreenCoordinates().location() - _textIndicator->selectionRectInScreenCoordinates().location());
+        imageRect.move(_textIndicator->textBoundingRectInWindowCoordinates().location() - _textIndicator->selectionRectInWindowCoordinates().location());
         [textLayer setContentsRect:CGRectMake(imageRect.x() / contentsImageLogicalSize.width(), imageRect.y() / contentsImageLogicalSize.height(), imageRect.width() / contentsImageLogicalSize.width(), imageRect.height() / contentsImageLogicalSize.height())];
         [textLayer setContentsGravity:kCAGravityCenter];
         [textLayer setContentsScale:_textIndicator->contentImageScaleFactor()];
@@ -266,7 +266,7 @@ TextIndicatorWindow::~TextIndicatorWindow()
     closeWindow();
 }
 
-void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut, std::function<void ()> animationCompletionHandler)
+void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, NSRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler)
 {
     if (m_textIndicator == textIndicator)
         return;
@@ -279,7 +279,6 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     if (!m_textIndicator)
         return;
 
-    NSRect contentRect = m_textIndicator->textBoundingRectInScreenCoordinates();
     CGFloat horizontalMargin = std::max(dropShadowBlurRadius * 2 + horizontalBorder, contentRect.size.width * 2);
     CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
 

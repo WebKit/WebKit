@@ -146,7 +146,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
-    IntRect selectionRectInScreenCoordinates = frame.view()->contentsToScreen(selectionRect);
+    IntRect selectionRectInWindowCoordinates = frame.view()->contentsToWindow(selectionRect);
 
     Vector<FloatRect> textRects;
     frame.selection().getClippedVisibleTextRectangles(textRects);
@@ -154,23 +154,23 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame
     // The bounding rect of all the text rects can be different than the selection
     // rect when the selection spans multiple lines; the indicator doesn't actually
     // care where the selection highlight goes, just where the text actually is.
-    FloatRect textBoundingRectInScreenCoordinates;
-    Vector<FloatRect> textRectsInScreenCoordinates;
+    FloatRect textBoundingRectInWindowCoordinates;
+    Vector<FloatRect> textRectsInWindowCoordinates;
     for (const FloatRect& textRect : textRects) {
-        FloatRect textRectInScreenCoordinates = frame.view()->contentsToScreen(enclosingIntRect(textRect));
-        textRectsInScreenCoordinates.append(textRectInScreenCoordinates);
-        textBoundingRectInScreenCoordinates.unite(textRectInScreenCoordinates);
+        FloatRect textRectInWindowCoordinates = frame.view()->contentsToWindow(enclosingIntRect(textRect));
+        textRectsInWindowCoordinates.append(textRectInWindowCoordinates);
+        textBoundingRectInWindowCoordinates.unite(textRectInWindowCoordinates);
     }
 
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
-    for (auto rect : textRectsInScreenCoordinates) {
-        rect.moveBy(-textBoundingRectInScreenCoordinates.location());
+    for (auto rect : textRectsInWindowCoordinates) {
+        rect.moveBy(-textBoundingRectInWindowCoordinates.location());
         textRectsInBoundingRectCoordinates.append(rect);
     }
 
     TextIndicatorData data;
-    data.selectionRectInScreenCoordinates = selectionRectInScreenCoordinates;
-    data.textBoundingRectInScreenCoordinates = textBoundingRectInScreenCoordinates;
+    data.selectionRectInWindowCoordinates = selectionRectInWindowCoordinates;
+    data.textBoundingRectInWindowCoordinates = textBoundingRectInWindowCoordinates;
     data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
     data.contentImageScaleFactor = frame.page()->deviceScaleFactor();
     data.contentImage = indicatorBitmap;
@@ -183,7 +183,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame
 TextIndicator::TextIndicator(const TextIndicatorData& data)
     : m_data(data)
 {
-    ASSERT(m_data.contentImageScaleFactor != 1 || m_data.contentImage->size() == enclosingIntRect(m_data.selectionRectInScreenCoordinates).size());
+    ASSERT(m_data.contentImageScaleFactor != 1 || m_data.contentImage->size() == enclosingIntRect(m_data.selectionRectInWindowCoordinates).size());
 
     if (textIndicatorsForTextRectsOverlap(m_data.textRectsInBoundingRectCoordinates)) {
         m_data.textRectsInBoundingRectCoordinates[0] = unionRect(m_data.textRectsInBoundingRectCoordinates);

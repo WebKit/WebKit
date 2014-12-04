@@ -51,8 +51,8 @@ enum class TextIndicatorPresentationTransition {
 };
 
 struct TextIndicatorData {
-    FloatRect selectionRectInScreenCoordinates;
-    FloatRect textBoundingRectInScreenCoordinates;
+    FloatRect selectionRectInWindowCoordinates;
+    FloatRect textBoundingRectInWindowCoordinates;
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
     float contentImageScaleFactor;
     RefPtr<Image> contentImageWithHighlight;
@@ -68,8 +68,8 @@ public:
 
     ~TextIndicator();
 
-    FloatRect selectionRectInScreenCoordinates() const { return m_data.selectionRectInScreenCoordinates; }
-    FloatRect textBoundingRectInScreenCoordinates() const { return m_data.textBoundingRectInScreenCoordinates; }
+    FloatRect selectionRectInWindowCoordinates() const { return m_data.selectionRectInWindowCoordinates; }
+    FloatRect textBoundingRectInWindowCoordinates() const { return m_data.textBoundingRectInWindowCoordinates; }
     const Vector<FloatRect>& textRectsInBoundingRectCoordinates() const { return m_data.textRectsInBoundingRectCoordinates; }
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
     Image *contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }

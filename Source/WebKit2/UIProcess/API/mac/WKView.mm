@@ -3081,7 +3081,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (!_data->_textIndicatorWindow)
         _data->_textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
-    _data->_textIndicatorWindow->setTextIndicator(textIndicator, fadeOut, WTF::move(completionHandler));
+    NSRect contentRect = [self.window convertRectToScreen:[self convertRect:textIndicator->textBoundingRectInWindowCoordinates() toView:nil]];
+    _data->_textIndicatorWindow->setTextIndicator(textIndicator, contentRect, fadeOut, WTF::move(completionHandler));
 }
 
 - (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut

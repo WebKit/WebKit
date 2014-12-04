@@ -1963,8 +1963,8 @@ bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPar
 
 void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const TextIndicatorData& textIndicatorData)
 {
-    encoder << textIndicatorData.selectionRectInScreenCoordinates;
-    encoder << textIndicatorData.textBoundingRectInScreenCoordinates;
+    encoder << textIndicatorData.selectionRectInWindowCoordinates;
+    encoder << textIndicatorData.textBoundingRectInWindowCoordinates;
     encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
     encoder << textIndicatorData.contentImageScaleFactor;
     encoder.encodeEnum(textIndicatorData.presentationTransition);
@@ -1982,10 +1982,10 @@ void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const Te
 
 bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndicatorData& textIndicatorData)
 {
-    if (!decoder.decode(textIndicatorData.selectionRectInScreenCoordinates))
+    if (!decoder.decode(textIndicatorData.selectionRectInWindowCoordinates))
         return false;
 
-    if (!decoder.decode(textIndicatorData.textBoundingRectInScreenCoordinates))
+    if (!decoder.decode(textIndicatorData.textBoundingRectInWindowCoordinates))
         return false;
 
     if (!decoder.decode(textIndicatorData.textRectsInBoundingRectCoordinates))
