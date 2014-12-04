@@ -26,9 +26,12 @@
 #import "SoftLinking.h"
 #import <objc/runtime.h>
 
+// FIXME: This header should include various DataDetectors SPI headers if using the internal SDK.
+
 typedef struct __DDScanner DDScanner, *DDScannerRef;
 typedef struct __DDScanQuery *DDScanQueryRef;
 typedef struct __DDResult *DDResultRef;
+typedef struct __DDHighlight DDHighlight, *DDHighlightRef;
 
 typedef enum {
     DDScannerTypeStandard = 0,
@@ -72,6 +75,22 @@ SOFT_LINK_CLASS(DataDetectors, DDActionContext)
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
 
 @end
+
+enum {
+    DDHighlightStyleBubbleNone = 0,
+    DDHighlightStyleBubbleStandard = 1
+};
+
+enum {
+    DDHighlightStyleIconNone = (0 << 16),
+    DDHighlightStyleStandardIconArrow = (1 << 16)
+};
+
+enum {
+    DDHighlightStyleButtonShowAlways  = (1 << 24),
+};
+
+typedef NSUInteger DDHighlightStyle;
 #endif
 
 SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
