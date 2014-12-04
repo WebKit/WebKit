@@ -214,7 +214,7 @@ protected:
 
     virtual void breakpointActionLog(JSC::ExecState*, const String&) override { }
     virtual void breakpointActionSound(int) override { }
-    virtual void breakpointActionProbe(JSC::ExecState*, const Inspector::ScriptBreakpointAction&, int hitCount, const Deprecated::ScriptValue& result) override;
+    virtual void breakpointActionProbe(JSC::ExecState*, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& result) override;
 
 private:
     friend class TimelineRecordStack;

@@ -10,16 +10,15 @@ function test()
     InspectorTest.sendCommand("Debugger.enable", {});
 
     var samples = [];
-    const expectedSampleCount = 2;
+    const expectedSampleCount = 4;
 
     function receivedAllExpectedSamples() {
         return samples.length === expectedSampleCount;
     }
 
-    function dumpSamples()
-    {
-        InspectorTest.log("Sample 1: " + JSON.stringify(samples[0]));
-        InspectorTest.log("Sample 2: " + JSON.stringify(samples[1]));
+    function dumpSamples() {
+        for (var i = 0; i < samples.length; i++)
+            InspectorTest.log("Sample " + (i + 1) + ": " + JSON.stringify(samples[i]));
     }
 
     var tests = [
@@ -34,6 +33,13 @@ function test()
             message: "Samples from probe actions on the same breakpoint should have the same batch identifiers.",
             predicate: function samplesHaveEqualBatchIds() {
                 return samples[0].batchId === samples[1].batchId;
+            },
+            error: dumpSamples
+        },
+        {
+            message: "SampleIds from a any probe are sequential and start counting from one.",
+            predicate: function samplesHaveSequentialIds() {
+                return samples.every(function(sample, idx) { return sample.sampleId === idx + 1; });
             },
             error: dumpSamples
         },
@@ -57,6 +63,7 @@ function test()
                 InspectorTest.checkForError(responseObject);
 
                 InspectorTest.log("Running breakpointActions to trigger probe samples.");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
                 InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
             });
         }

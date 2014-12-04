@@ -50,8 +50,6 @@ namespace Inspector {
 
 ScriptDebugServer::ScriptDebugServer(bool isInWorkerThread)
     : Debugger(isInWorkerThread)
-    , m_doneProcessingDebuggerEvents(true)
-    , m_callingListeners(false)
 {
 }
 
@@ -176,7 +174,7 @@ void ScriptDebugServer::dispatchBreakpointActionSound(ExecState*, int breakpoint
         listener->breakpointActionSound(breakpointActionIdentifier);
 }
 
-void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const ScriptBreakpointAction& action, const Deprecated::ScriptValue& sample)
+void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const ScriptBreakpointAction& action, const Deprecated::ScriptValue& sampleValue)
 {
     if (m_callingListeners)
         return;
@@ -187,10 +185,12 @@ void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const Scr
 
     TemporaryChange<bool> change(m_callingListeners, true);
 
+    unsigned sampleId = m_nextProbeSampleId++;
+
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(listeners, listenersCopy);
     for (auto* listener : listenersCopy)
-        listener->breakpointActionProbe(exec, action, m_hitCount, sample);
+        listener->breakpointActionProbe(exec, action, m_currentProbeBatchId, sampleId, sampleValue);
 }
 
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
@@ -288,7 +288,7 @@ void ScriptDebugServer::notifyDoneProcessingDebuggerEvents()
 
 void ScriptDebugServer::handleBreakpointHit(const JSC::Breakpoint& breakpoint)
 {
-    m_hitCount++;
+    m_currentProbeBatchId++;
     BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(breakpoint.id);
     if (it != m_breakpointIDToActions.end()) {
         BreakpointActions& actions = it->value;

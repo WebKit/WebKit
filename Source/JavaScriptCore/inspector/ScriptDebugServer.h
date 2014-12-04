@@ -93,7 +93,7 @@ protected:
     void dispatchBreakpointActionSound(JSC::ExecState*, int breakpointActionIdentifier);
     void dispatchBreakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, const Deprecated::ScriptValue& sample);
 
-    bool m_doneProcessingDebuggerEvents;
+    bool m_doneProcessingDebuggerEvents {true};
 
 private:
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
@@ -107,9 +107,12 @@ private:
 
     Deprecated::ScriptValue exceptionOrCaughtValue(JSC::ExecState*);
 
-    unsigned m_hitCount;
-    bool m_callingListeners;
+    bool m_callingListeners {false};
+
     BreakpointIDToActionsMap m_breakpointIDToActions;
+
+    unsigned m_nextProbeSampleId {1};
+    unsigned m_currentProbeBatchId {0};
 };
 
 } // namespace Inspector

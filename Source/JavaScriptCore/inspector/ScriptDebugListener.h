@@ -75,7 +75,7 @@ public:
 
     virtual void breakpointActionLog(JSC::ExecState*, const String&) = 0;
     virtual void breakpointActionSound(int breakpointActionIdentifier) = 0;
-    virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, int hitCount, const Deprecated::ScriptValue& result) = 0;
+    virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& result) = 0;
 };
 
 } // namespace Inspector

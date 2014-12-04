@@ -421,7 +421,7 @@ void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
     if (frame && m_callStackDepth) {
         --m_callStackDepth;
         ASSERT(m_callStackDepth >= 0);
-        
+
         if (!m_callStackDepth) {
             if (m_recordStack.isEmpty())
                 return;
@@ -552,11 +552,12 @@ void InspectorTimelineAgent::didDestroyWebSocket(unsigned long identifier, Frame
 
 // ScriptDebugListener
 
-void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const Inspector::ScriptBreakpointAction& action, int hitCount, const Deprecated::ScriptValue&)
+void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const Inspector::ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue&)
 {
+    UNUSED_PARAM(batchId);
     ASSERT(exec);
 
-    appendRecord(TimelineRecordFactory::createProbeSampleData(action, hitCount), TimelineRecordType::ProbeSample, false, frameFromExecState(exec));
+    appendRecord(TimelineRecordFactory::createProbeSampleData(action, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(exec));
 }
 
 static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)

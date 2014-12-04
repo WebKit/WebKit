@@ -95,11 +95,11 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createConsoleProfileData(cons
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, int hitCount)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, unsigned sampleId)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("probeId"), action.identifier);
-    data->setInteger(ASCIILiteral("hitCount"), hitCount);
+    data->setInteger(ASCIILiteral("sampleId"), sampleId);
     return data.release();
 }
 

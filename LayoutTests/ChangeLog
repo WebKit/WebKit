@@ -1,3 +1,16 @@
+2014-12-02  Brian J. Burg <burg@cs.washington.edu>
+
+        Web Inspector: timeline probe records have inaccurate per-probe hit counts
+        https://bugs.webkit.org/show_bug.cgi?id=138976
+
+        Reviewed by Joseph Pecoraro.
+        Patch by Katie Madonna <madonnk@gmail.com>
+
+        Update test to also cover expected probe sampleId behavior.
+
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes-expected.txt:
+        * inspector-protocol/debugger/didSampleProbe-multiple-probes.html:
+
 2014-12-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Groove/inset/outset borders show solid if the color is black

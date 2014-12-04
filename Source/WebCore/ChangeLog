@@ -1,3 +1,20 @@
+2014-12-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: timeline probe records have inaccurate per-probe hit counts
+        https://bugs.webkit.org/show_bug.cgi?id=138976
+
+        Reviewed by Joseph Pecoraro.
+
+        Update the signature for breakpointActionProbe to take batchId and sampleId.
+        Covered by existing test inspector-protocol/debugger/didSampleProbe-multiple-probes.html.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::breakpointActionProbe):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        * inspector/TimelineRecordFactory.h:
+
 2014-12-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Groove/inset/outset borders show solid if the color is black

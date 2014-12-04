@@ -60,13 +60,7 @@ static String objectGroupForBreakpointAction(const ScriptBreakpointAction& actio
 InspectorDebuggerAgent::InspectorDebuggerAgent(InjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Debugger"))
     , m_injectedScriptManager(injectedScriptManager)
-    , m_listener(nullptr)
-    , m_pausedScriptState(nullptr)
     , m_continueToLocationBreakpointID(JSC::noBreakpointID)
-    , m_enabled(false)
-    , m_javaScriptPauseScheduled(false)
-    , m_hasExceptionValue(false)
-    , m_nextProbeSampleId(1)
 {
     // FIXME: make breakReason optional so that there was no need to init it with "other".
     clearBreakDetails();
@@ -667,16 +661,14 @@ void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifie
     m_frontendDispatcher->playBreakpointActionSound(breakpointActionIdentifier);
 }
 
-void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, const ScriptBreakpointAction& action, int hitCount, const Deprecated::ScriptValue& sample)
+void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, const ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& sample)
 {
-    int sampleId = m_nextProbeSampleId++;
-
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
     RefPtr<Protocol::Runtime::RemoteObject> payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action));
     RefPtr<Protocol::Debugger::ProbeSample> result = Protocol::Debugger::ProbeSample::create()
         .setProbeId(action.identifier)
+        .setBatchId(batchId)
         .setSampleId(sampleId)
-        .setBatchId(hitCount)
         .setTimestamp(m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->elapsedTime())
         .setPayload(payload.release());
 

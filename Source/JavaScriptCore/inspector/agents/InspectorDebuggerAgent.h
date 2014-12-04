@@ -138,7 +138,7 @@ private:
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
 
     virtual void breakpointActionSound(int breakpointActionIdentifier) override;
-    virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, int hitCount, const Deprecated::ScriptValue& sample) override final;
+    virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& sample) override final;
 
     PassRefPtr<Inspector::Protocol::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     bool assertPaused(ErrorString&);
@@ -156,8 +156,8 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorDebuggerBackendDispatcher> m_backendDispatcher;
-    Listener* m_listener;
-    JSC::ExecState* m_pausedScriptState;
+    Listener* m_listener {nullptr};
+    JSC::ExecState* m_pausedScriptState {nullptr};
     Deprecated::ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
@@ -165,11 +165,10 @@ private:
     JSC::BreakpointID m_continueToLocationBreakpointID;
     InspectorDebuggerFrontendDispatcher::Reason m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
-    bool m_enabled;
-    bool m_javaScriptPauseScheduled;
-    bool m_hasExceptionValue;
+    bool m_enabled {false};
+    bool m_javaScriptPauseScheduled {false};
+    bool m_hasExceptionValue {false};
     RefPtr<WTF::Stopwatch> m_stopwatch;
-    int m_nextProbeSampleId;
 };
 
 } // namespace Inspector
