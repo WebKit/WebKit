@@ -1,3 +1,18 @@
+2014-12-03  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html fails unless certain other tests run before it
+        https://bugs.webkit.org/show_bug.cgi?id=139243
+
+        Reviewed by Anders Carlsson.
+
+        We didn't get WKPageLoaderClient calls in secondary windows, so we didn't have a
+        chance to allow untrusted certificates.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::createOtherPage):
+        Set up more client objects for secondary windows. We may be able to share some of the
+        code with main view creation function, but it's not exactly the same (notably, we
+        do not focus a secondary window when it's done loading).
+
 2014-12-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Inline text elements with accessible object attributes and/or event handlers are not exposed

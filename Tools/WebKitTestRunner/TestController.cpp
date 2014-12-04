@@ -265,6 +265,61 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
+    WKPageLoaderClientV5 pageLoaderClient = {
+        { 5, clientInfo },
+        0, // didStartProvisionalLoadForFrame
+        0, // didReceiveServerRedirectForProvisionalLoadForFrame
+        0, // didFailProvisionalLoadWithErrorForFrame
+        0, // didCommitLoadForFrame,
+        0, // didFinishDocumentLoadForFrame
+        0, // didFinishLoadForFrame,
+        0, // didFailLoadWithErrorForFrame
+        0, // didSameDocumentNavigationForFrame
+        0, // didReceiveTitleForFrame
+        0, // didFirstLayoutForFrame
+        0, // didFirstVisuallyNonEmptyLayoutForFrame
+        0, // didRemoveFrameFromHierarchy
+        0, // didFailToInitializePlugin
+        0, // didDisplayInsecureContentForFrame
+        canAuthenticateAgainstProtectionSpaceInFrame,
+        didReceiveAuthenticationChallengeInFrame,
+        0, // didStartProgress
+        0, // didChangeProgress
+        0, // didFinishProgress
+        0, // didBecomeUnresponsive
+        0, // didBecomeResponsive
+        processDidCrash,
+        0, // didChangeBackForwardList
+        0, // shouldGoToBackForwardListItem
+        0, // didRunInsecureContentForFrame
+        0, // didDetectXSSForFrame
+        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
+        0, // willGoToBackForwardListItem
+        0, // interactionOccurredWhileProcessUnresponsive
+        0, // pluginDidFail_deprecatedForUseWithV1
+        0, // didReceiveIntentForFrame
+        0, // registerIntentServiceForFrame
+        0, // didLayout
+        0, // pluginLoadPolicy_deprecatedForUseWithV2
+        0, // pluginDidFail
+        pluginLoadPolicy, // pluginLoadPolicy
+        0, // webGLLoadPolicy
+        0, // resolveWebGLLoadPolicy
+        0, // shouldKeepCurrentBackForwardListItemInList
+    };
+    WKPageSetPageLoaderClient(view->page(), &pageLoaderClient.base);
+
+    WKPagePolicyClientV1 pagePolicyClient = {
+        { 1, clientInfo },
+        0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
+        0, // decidePolicyForNewWindowAction
+        0, // decidePolicyForResponse_deprecatedForUseWithV0
+        0, // unableToImplementPolicy
+        decidePolicyForNavigationAction,
+        decidePolicyForResponse,
+    };
+    WKPageSetPagePolicyClient(view->page(), &pagePolicyClient.base);
+
     view->didInitializeClients();
 
     WKRetain(newPage);
