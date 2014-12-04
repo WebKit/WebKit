@@ -1,3 +1,24 @@
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176697. <rdar://problem/19121822>
+
+    2014-12-02  Tim Horton  <timothy_horton@apple.com>
+
+            Remove a SnowLeopard-era quirk for QuickLook
+            https://bugs.webkit.org/show_bug.cgi?id=139208
+            <rdar://problem/19121822>
+
+            Reviewed by Alexey Proskuryakov.
+
+            * WebCore.exp.in:
+            * WebCore.xcodeproj/project.pbxproj:
+            * loader/EmptyClients.h:
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::subresourceCachePolicy):
+            * loader/FrameLoaderClient.h:
+            * platform/mac/QuickLookMac.h: Removed.
+            * platform/mac/QuickLookMac.mm: Removed.
+
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
         Merge r176753. <rdar://problem/19052381>
