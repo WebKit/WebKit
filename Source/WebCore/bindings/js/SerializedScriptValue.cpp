@@ -1218,6 +1218,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<JSObject*, 32> inputObjectStack;
     Vector<MapData*, 4> mapDataStack;
     Vector<MapData::const_iterator, 4> iteratorStack;
+    Vector<JSValue, 4> iteratorValueStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = in;
@@ -1386,16 +1387,20 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     goto objectStartVisitMember;
                 }
                 inValue = ptr.key();
+                m_gcBuffer.append(ptr.value());
+                iteratorValueStack.append(ptr.value());
                 stateStack.append(MapDataEndVisitKey);
                 goto stateUnknown;
             }
             case MapDataEndVisitKey: {
-                inValue = iteratorStack.last().value();
+                inValue = iteratorValueStack.last();
+                iteratorValueStack.removeLast();
                 stateStack.append(MapDataEndVisitValue);
                 goto stateUnknown;
             }
             case MapDataEndVisitValue: {
-                ++iteratorStack.last();
+                if (iteratorStack.last() != mapDataStack.last()->end())
+                    ++iteratorStack.last();
                 goto mapDataStartVisitEntry;
             }
 
