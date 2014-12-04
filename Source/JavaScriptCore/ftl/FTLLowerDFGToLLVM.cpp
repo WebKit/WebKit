@@ -6559,7 +6559,7 @@ private:
             if (Options::validateFTLOSRExitLiveness()) {
                 DFG_ASSERT(
                     m_graph, m_node,
-                    !(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin)));
+                    (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
             }
             
             exit.m_values[i] = exitValueForAvailability(arguments, map, availability);

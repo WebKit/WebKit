@@ -1,3 +1,20 @@
+2014-12-03  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r176479): DFG ASSERTION beneath emitOSRExitCall running Kraken/imaging-gaussian-blur.js.ftl-no-cjit-osr-validation and other tests
+        https://bugs.webkit.org/show_bug.cgi?id=139246
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        The DFG_ASSERT that checks liveness at exit time doesn't properly
+        handle the case where the local is not available at OSR exit time,
+        but the local is live in the bytecode.  This now happens with the
+        allocated scope register when we are compiling for FTLForOSREntryMode
+        due to DCE done when the control flow was changed and a new entrypoint
+        was added in the OSR entrypoint creation phase.  Therefore we silence
+        the assert when compiling for FTLForOSREntryMode.
+
 2014-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Removed the global parser arena
