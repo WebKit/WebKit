@@ -1182,7 +1182,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     for (NSMenuItem *item in menuItems)
         [_wkView.actionMenu addItem:item];
 
-    if (_state == ActionMenuState::Ready && !_wkView.actionMenu.numberOfItems)
+    if (!_wkView.actionMenu.numberOfItems)
         [_wkView.actionMenu cancelTracking];
 }
 
