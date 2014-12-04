@@ -1,3 +1,63 @@
+2014-12-03  Ada Chan  <adachan@apple.com>
+
+        Add a sample plugin to demonstrate the mute plugin API.
+        https://bugs.webkit.org/show_bug.cgi?id=139231
+
+        Reviewed by Anders Carlsson.
+
+        * NetscapeMuteAPIPlugin/AudioPlayer.h: Added.
+        * NetscapeMuteAPIPlugin/AudioPlayer.mm: Added.
+        (-[AudioPlayer initWithURL:]):
+        (-[AudioPlayer dealloc]):
+        (-[AudioPlayer isReadyToPlay]):
+        (-[AudioPlayer isPlaying]):
+        (-[AudioPlayer setPlaying:]):
+        (-[AudioPlayer isMuted]):
+        (-[AudioPlayer setMuted:]):
+        (-[AudioPlayer observeValueForKeyPath:ofObject:change:context:]):
+        * NetscapeMuteAPIPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeMuteAPIPlugin/Info.plist: Added.
+        * NetscapeMuteAPIPlugin/MenuHandler.h: Added.
+        * NetscapeMuteAPIPlugin/MenuHandler.m: Added.
+        (-[MenuHandler _play:]):
+        (-[MenuHandler _pause:]):
+        (-[MenuHandler validateUserInterfaceItem:]):
+        (-[MenuHandler initWithAudioPlayer:]):
+        (-[MenuHandler dealloc]):
+        (-[MenuHandler menu]):
+        * NetscapeMuteAPIPlugin/NetscapeMuteAPIPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeMuteAPIPlugin/main.m: Added.
+        (-[PluginObject initWithNPP:audioURL:]):
+        (-[PluginObject dealloc]):
+        (-[PluginObject menuHandler]):
+        (-[PluginObject isPlayingAudio]):
+        (-[PluginObject isMuted]):
+        (-[PluginObject setMuted:]):
+        (-[PluginObject readyStateDidChangeForAudioPlayer:]):
+        (-[PluginObject mutedStateDidChangeForAudioPlayer:]):
+        (-[PluginObject playStateDidChangeForAudioPlayer:]):
+        (-[PluginObject _invalidateDisplayString]):
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleDraw):
+        (invalidatePlugin):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeMuteAPIPlugin/test.html: Added.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
