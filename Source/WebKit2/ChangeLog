@@ -1,3 +1,91 @@
+2014-12-03  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176753. <rdar://problem/19052381>
+
+    2014-12-03  Tim Horton  <timothy_horton@apple.com>
+
+            Keyboard input should be disabled in the preview popover
+            https://bugs.webkit.org/show_bug.cgi?id=139219
+            <rdar://problem/19052381>
+
+            Reviewed by Anders Carlsson.
+
+            Make sure that keyboard input, Quick Look, etc. are blocked in preview popovers
+            and WKThumbnailViews. Also block the fake mouseMove events that originate in
+            the Web process upon scrolling, because we were missing those despite blocking
+            ordinary mouseMove events.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            Rename _ignoresNonWheelMouseEvents to _ignoresNonWheelEvents, because it will
+            apply not only to mouse events but also key events, Quick Look events, menu
+            preparation events, swipe events, etc.
+
+            Add _ignoresAllEvents, which means the same thing as _ignoresNonWheelEvents
+            with the addition of ignoring scrollWheel events.
+
+            (-[WKView scrollWheel:]):
+            (-[WKView swipeWithEvent:]):
+            (-[WKView mouseMoved:]):
+            (-[WKView mouseDown:]):
+            (-[WKView mouseUp:]):
+            (-[WKView mouseDragged:]):
+            Adjust to the new name.
+
+            (-[WKView performKeyEquivalent:]):
+            (-[WKView keyUp:]):
+            (-[WKView keyDown:]):
+            (-[WKView flagsChanged:]):
+            (-[WKView quickLookWithEvent:]):
+            (-[WKView prepareForMenu:withEvent:]):
+            (-[WKView willOpenMenu:withEvent:]):
+            (-[WKView didCloseMenu:withEvent:]):
+            Block all of these events as well as those we were previously blocking.
+
+            (-[WKView _setIgnoresAllEvents:]):
+            (-[WKView _setIgnoresNonWheelMouseEvents:]):
+            (-[WKView _setIgnoresNonWheelEvents:]):
+            (-[WKView _ignoresNonWheelEvents]):
+            (-[WKView _ignoresAllEvents]):
+            * UIProcess/API/mac/WKViewInternal.h:
+            Adjust to the new names and the addition of ignoresAllEvents.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKPagePreviewViewController loadView]):
+            Adjust to the new name.
+
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            Move bailing from prepareForMenu: up to WKView.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _ignoresNonWheelEvents]):
+            (-[WKWebView _setIgnoresNonWheelEvents:]):
+            (-[WKWebView _ignoresNonWheelMouseEvents]): Deleted.
+            (-[WKWebView _setIgnoresNonWheelMouseEvents:]): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            Adjust to the new name (without "mouse" in it).
+
+            * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+            (-[_WKThumbnailView _viewWasUnparented]):
+            (-[_WKThumbnailView _viewWasParented]):
+            Explicitly tell WKView to disable event handling while thumbnailed,
+            instead of having WKView special-case thumbnail views internally.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setShouldDispatchFakeMouseMoveEvents):
+            * UIProcess/WebPageProxy.h:
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::shouldDispatchFakeMouseMoveEvents):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::shouldDispatchFakeMouseMoveEvents):
+            (WebKit::WebPage::setShouldDispatchFakeMouseMoveEvents):
+            * WebProcess/WebPage/WebPage.messages.in:
+            Plumb shouldDispatchFakeMouseMoveEvents from the UI process to the Web process
+            and through to WebKit2's ChromeClient implementation.
+
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
         Merge r176707. <rdar://problem/19037590>

@@ -81,7 +81,8 @@
 @property (readonly, getter=isUsingUISideCompositing) BOOL usingUISideCompositing;
 @property (readwrite) BOOL allowsMagnification;
 @property (readwrite) double magnification;
-@property (readwrite, setter=_setIgnoresNonWheelMouseEvents:) BOOL _ignoresNonWheelMouseEvents;
+@property (readwrite, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents;
+@property (readwrite, setter=_setIgnoresAllEvents:) BOOL _ignoresAllEvents;
 @property (readwrite) BOOL allowsBackForwardNavigationGestures;
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 

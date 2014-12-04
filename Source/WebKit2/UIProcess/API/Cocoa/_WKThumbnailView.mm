@@ -80,6 +80,7 @@ using namespace WebKit;
 - (void)_viewWasUnparented
 {
     [_wkView _setThumbnailView:nil];
+    [_wkView _setIgnoresAllEvents:NO];
 
     self.layer.contents = nil;
     _lastSnapshotScale = NAN;
@@ -97,6 +98,7 @@ using namespace WebKit;
 
     [self _requestSnapshotIfNeeded];
     [_wkView _setThumbnailView:self];
+    [_wkView _setIgnoresAllEvents:YES];
 }
 
 - (void)_requestSnapshotIfNeeded

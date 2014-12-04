@@ -305,6 +305,8 @@ private:
     virtual bool hasRelevantSelectionServices(bool isTextOnly) const override;
 #endif
 
+    virtual bool shouldDispatchFakeMouseMoveEvents() const override;
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;

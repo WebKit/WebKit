@@ -395,4 +395,6 @@ messages -> WebPage LegacyReceiver {
     DataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
     DataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
 #endif
+
+    SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
 }

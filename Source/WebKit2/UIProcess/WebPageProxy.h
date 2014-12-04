@@ -927,6 +927,8 @@ public:
 #endif
     void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
 
+    void setShouldDispatchFakeMouseMoveEvents(bool);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

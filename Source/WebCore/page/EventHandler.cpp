@@ -2796,6 +2796,11 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (!m_frame.settings().deviceSupportsMouse())
         return;
 
+    if (Page* page = m_frame.page()) {
+        if (!page->chrome().client().shouldDispatchFakeMouseMoveEvents())
+            return;
+    }
+
     // If the content has ever taken longer than fakeMouseMoveShortInterval we
     // reschedule the timer and use a longer time. This will cause the content
     // to receive these moves only after the user is done scrolling, reducing
