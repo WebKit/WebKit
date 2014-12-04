@@ -42,10 +42,10 @@ public:
 
     size_t length() const { return m_bufferEnd - m_buffer; }
 
-    bool isInvalid() const { return m_bufferPosition > m_bufferEnd; }
-    void markInvalid() { m_bufferPosition = m_bufferEnd + 1; }
+    bool isInvalid() const { return m_bufferPos > m_bufferEnd; }
+    void markInvalid() { m_bufferPos = m_bufferEnd + 1; }
 
-    bool decodeFixedLengthData(uint8_t*, size_t);
+    bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment);
 
     // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
     bool decodeVariableLengthByteArray(DataReference&);
@@ -80,7 +80,7 @@ public:
         if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
             return false;
 
-        return bufferIsLargeEnoughToContain(numElements * sizeof(T));
+        return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
     // Generic type decode function.
@@ -96,12 +96,12 @@ protected:
 
     void initialize(const uint8_t* buffer, size_t bufferSize);
 
-    bool bufferIsLargeEnoughToContain(size_t) const;
-    template <typename Type> bool decodeNumber(Type& value);
+    bool alignBufferPosition(unsigned alignment, size_t size);
+    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const;
 
 private:
     uint8_t* m_buffer;
-    uint8_t* m_bufferPosition;
+    uint8_t* m_bufferPos;
     uint8_t* m_bufferEnd;
 
     Vector<Attachment> m_attachments;

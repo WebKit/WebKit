@@ -327,7 +327,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
         if (messageBodyIsOOL) {
             mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
 
-            descriptor->out_of_line.address = const_cast<uint8_t*>(encoder->buffer());
+            descriptor->out_of_line.address = encoder->buffer();
             descriptor->out_of_line.size = encoder->bufferSize();
             descriptor->out_of_line.copy = MACH_MSG_VIRTUAL_COPY;
             descriptor->out_of_line.deallocate = false;
