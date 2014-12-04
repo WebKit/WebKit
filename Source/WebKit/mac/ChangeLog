@@ -1,5 +1,22 @@
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176777. <rdar://problem/19115662>
+
+    2014-12-03  Timothy Horton  <timothy_horton@apple.com>
+
+            Implement action menus for tel: URLs
+            https://bugs.webkit.org/show_bug.cgi?id=139240
+            <rdar://problem/19115662>
+
+            Reviewed by Anders Carlsson.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItemsForDataDetectableLink]):
+            Make sure to use the newly created currentActionContext... everywhere.
+
+
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
         Merge r176775. <rdar://problem/19115662>
 
     2014-12-03  Timothy Horton  <timothy_horton@apple.com>
