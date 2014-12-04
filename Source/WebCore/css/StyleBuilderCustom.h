@@ -911,6 +911,7 @@ inline void StyleBuilderCustom::applyInheritFontFamily(StyleResolver& styleResol
     FontDescription parentFontDescription = styleResolver.parentStyle()->fontDescription();
 
     fontDescription.setFamilies(parentFontDescription.families());
+    fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
     styleResolver.setFontDescription(fontDescription);
 }
 
@@ -928,6 +929,7 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
     for (auto& item : valueList) {
         auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
         AtomicString family;
+        bool isGenericFamily = false;
         if (contentValue.isString())
             family = contentValue.getStringValue();
         else {
@@ -938,28 +940,37 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
                 break;
             case CSSValueSerif:
                 family = serifFamily;
+                isGenericFamily = true;
                 break;
             case CSSValueSansSerif:
                 family = sansSerifFamily;
+                isGenericFamily = true;
                 break;
             case CSSValueCursive:
                 family = cursiveFamily;
+                isGenericFamily = true;
                 break;
             case CSSValueFantasy:
                 family = fantasyFamily;
+                isGenericFamily = true;
                 break;
             case CSSValueMonospace:
                 family = monospaceFamily;
+                isGenericFamily = true;
                 break;
             case CSSValueWebkitPictograph:
                 family = pictographFamily;
+                isGenericFamily = true;
                 break;
             default:
                 break;
             }
         }
+
         if (family.isEmpty())
             continue;
+        if (families.isEmpty())
+            fontDescription.setIsSpecifiedFont(!isGenericFamily);
         families.uncheckedAppend(family);
     }
 

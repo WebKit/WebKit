@@ -213,11 +213,15 @@ bool RenderText::isTextFragment() const
 bool RenderText::computeUseBackslashAsYenSymbol() const
 {
     const RenderStyle& style = this->style();
+    const FontDescription& fontDescription = style.font().fontDescription();
     if (style.font().useBackslashAsYenSymbol())
         return true;
-    if (!document().decoder() || document().decoder()->encoding().backslashAsCurrencySymbol() == '\\')
+    if (fontDescription.isSpecifiedFont())
         return false;
-    return style.font().fontDescription().hasGenericFirstFamily() || style.font().primaryFontDataIsSystemFont();
+    const TextEncoding* encoding = document().decoder() ? &document().decoder()->encoding() : 0;
+    if (encoding && encoding->backslashAsCurrencySymbol() != '\\')
+        return true;
+    return false;
 }
 
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
