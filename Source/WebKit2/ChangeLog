@@ -1,3 +1,19 @@
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176707. <rdar://problem/19037590>
+
+    2014-12-02  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Don't block menu highlighting when presenting a page preview
+            https://bugs.webkit.org/show_bug.cgi?id=139217
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _previewURLFromActionMenu:]):
+            Defer popover presentation to the next turn of the runloop.
+
+
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
         Merge r176691. <rdar://problem/18944696>
