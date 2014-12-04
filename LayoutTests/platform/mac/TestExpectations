@@ -1413,19 +1413,17 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 [ Yosemite+ ] storage/websql/sql-error-codes.html [ Failure ]
 
-# Some inspector tests fail when run from Production builds due to missing test resources.
-# FIXME: Needs bugzilla (<rdar://problem/16200275>)
 # Also, these tests are flaky in Debug/Release builds, <https://bugs.webkit.org/show_bug.cgi?id=138636>
 # and <https://bugs.webkit.org/show_bug.cgi?id=129817>.
-[ Yosemite+ ] inspector/css/matched-style-properties.html [ Pass Failure Crash ]
-[ Yosemite+ ] inspector/css/pseudo-element-matches.html [ Pass Failure Crash ]
-[ Yosemite+ ] inspector/css/selector-specificity.html [ Pass Failure Crash ]
+[ Yosemite+ ] inspector/css/matched-style-properties.html [ Pass Failure ]
+[ Yosemite+ ] inspector/css/pseudo-element-matches.html [ Pass Failure ]
+[ Yosemite+ ] inspector/css/selector-specificity.html [ Pass Failure ]
 [ Yosemite+ ] inspector/dom/content-flow-content-removal.html [ Skip ]
 [ Yosemite+ ] inspector/dom/content-flow-list.html [ Skip ]
-[ Yosemite+ ] inspector/event-listener-set.html [ Pass Failure Crash ]
-[ Yosemite+ ] inspector/event-listener.html [ Pass Failure Crash ]
-[ Yosemite+ ] inspector/model/parse-script-syntax-tree.html [ Pass Failure Crash ]
-[ Yosemite+ ] inspector/protocol-promise-result.html [ Pass Failure Crash ]
+[ Yosemite+ ] inspector/event-listener-set.html [ Pass Failure ]
+[ Yosemite+ ] inspector/event-listener.html [ Pass Failure ]
+[ Yosemite+ ] inspector/model/parse-script-syntax-tree.html [ Pass Failure ]
+[ Yosemite+ ] inspector/protocol-promise-result.html [ Pass Failure ]
 [ Yosemite+ ] inspector/test-harness-trivially-works.html [ Skip ]
 
 # Specific to Yosemite's font fallback

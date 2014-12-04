@@ -1,3 +1,16 @@
+2014-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: LayoutTests/inspector tests fail in Production builds due to missing test resources
+        https://bugs.webkit.org/show_bug.cgi?id=138898
+
+        Reviewed by Mark Rowe.
+
+        In Production builds, if FORCE_TOOL_INSTALL=YES is in the environment
+        we will copy all resources (for Tests) and still do the combine and
+        optimize phase for normal Production inspection resources.
+
+        * Scripts/copy-user-interface-resources.pl:
+
 2014-12-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Missing getter, clients never see DragToAdjustController is enabled
