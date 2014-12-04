@@ -1,3 +1,24 @@
+2014-12-04  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176766. <rdar://problem/19072083>
+
+    2014-12-03  Beth Dakin  <bdakin@apple.com>
+
+            <input> elements get whitespace action menu instead of editable text menu
+            https://bugs.webkit.org/show_bug.cgi?id=139241
+            -and corresponding-
+            rdar://problem/19072083
+
+            Reviewed by Sam Weinig.
+
+            Since we will hit test form controls as form controls, we need a new function to 
+            determine if the hit point is over text inside that form control or not.
+            * WebCore.exp.in:
+            * rendering/HitTestResult.cpp:
+            (WebCore::HitTestResult::isOverTextInsideFormControlElement):
+            * rendering/HitTestResult.h:
+
+
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
         Merge r176753. <rdar://problem/19052381>
