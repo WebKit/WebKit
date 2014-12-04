@@ -1,3 +1,10 @@
+2014-12-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Some webgl conformance tests crash.
+        <rdar://problem/19136723>
+
+        * platform/mac/TestExpectations:
+
 2014-12-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         List markers in RTL languages do not draw the first character.
