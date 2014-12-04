@@ -62,6 +62,12 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Id
 NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 {
 }
+
+void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoader& loader)
+{
+    RefPtr<NetworkResourceLoader> removedLoader = m_networkResourceLoaders.take(loader.identifier());
+    ASSERT(removedLoader == &loader);
+}
     
 void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
@@ -94,14 +100,13 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection*)
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
 
-    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator end = m_networkResourceLoaders.end();
-    for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)
-        i->value->abort();
+    Vector<RefPtr<NetworkResourceLoader>> loaders;
+    copyValuesToVector(m_networkResourceLoaders, loaders);
+    for (auto& loader : loaders)
+        loader->abort();
+    ASSERT(m_networkResourceLoaders.isEmpty());
 
     NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
-
-    m_networkResourceLoaders.clear();
-    
     NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
 }
 
@@ -125,7 +130,7 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResource
 
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)
 {
-    RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.take(identifier);
+    RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
 
     // It's possible we have no loader for this identifier if the NetworkProcess crashed and this was a respawned NetworkProcess.
     if (!loader)
@@ -134,6 +139,7 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     // Abort the load now, as the WebProcess won't be able to respond to messages any more which might lead
     // to leaked loader resources (connections, threads, etc).
     loader->abort();
+    ASSERT(!m_networkResourceLoaders.contains(identifier));
 }
 
 void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier identifier, bool defers)
