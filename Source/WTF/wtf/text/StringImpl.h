@@ -740,13 +740,13 @@ private:
     template<typename T>
     const T* tailPointer() const
     {
-        return reinterpret_cast<const T*>(reinterpret_cast<const uint8_t*>(this) + tailOffset<T>());
+        return reinterpret_cast_ptr<const T*>(reinterpret_cast<const uint8_t*>(this) + tailOffset<T>());
     }
 
     template<typename T>
     T* tailPointer()
     {
-        return reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(this) + tailOffset<T>());
+        return reinterpret_cast_ptr<T*>(reinterpret_cast<uint8_t*>(this) + tailOffset<T>());
     }
 
     StringImpl* const& substringBuffer() const
