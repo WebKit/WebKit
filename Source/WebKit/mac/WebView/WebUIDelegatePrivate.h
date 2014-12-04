@@ -140,7 +140,8 @@ typedef enum {
     WebActionMenuImage,
     WebActionMenuVideo,
     WebActionMenuDataDetectedItem,
-    WebActionMenuMailtoLink
+    WebActionMenuMailtoLink,
+    WebActionMenuTelLink
 } WebActionMenuType;
 
 // Message Sources.
