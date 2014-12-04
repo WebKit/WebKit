@@ -1,3 +1,10 @@
+2014-12-04  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the 32-bit build.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setTextIndicator:fadeOut:animationCompletionHandler:]):
+
 2014-12-04  Tim Horton  <timothy_horton@apple.com>
 
         TextIndicator::createWithSelectionInFrame does synchronous IPC in WebKit2

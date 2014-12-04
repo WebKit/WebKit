@@ -266,7 +266,7 @@ TextIndicatorWindow::~TextIndicatorWindow()
     closeWindow();
 }
 
-void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, NSRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler)
+void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, CGRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler)
 {
     if (m_textIndicator == textIndicator)
         return;
@@ -282,7 +282,7 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     CGFloat horizontalMargin = std::max(dropShadowBlurRadius * 2 + horizontalBorder, contentRect.size.width * 2);
     CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
 
-    contentRect = NSInsetRect(contentRect, -horizontalMargin, -verticalMargin);
+    contentRect = NSInsetRect(NSRectFromCGRect(contentRect), -horizontalMargin, -verticalMargin);
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(contentRect) styleMask:NSBorderlessWindowMask];
     m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
 
