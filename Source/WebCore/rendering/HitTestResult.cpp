@@ -49,7 +49,6 @@
 #include "SVGImageElement.h"
 #include "SVGNames.h"
 #include "UserGestureIndicator.h"
-#include "VisibleUnits.h"
 #include "XLinkNames.h"
 
 namespace WebCore {
@@ -514,34 +513,6 @@ bool HitTestResult::isDownloadableMedia() const
 #endif
 
     return false;
-}
-
-bool HitTestResult::isOverTextInsideFormControlElement() const
-{
-    Node* node = innerNode();
-    if (!node)
-        return false;
-
-    if (!is<HTMLTextFormControlElement>(*node))
-        return false;
-
-    Frame* frame = node->document().frame();
-    if (!frame)
-        return false;
-
-    IntPoint framePoint = roundedPointInInnerNodeFrame();
-    if (!frame->rangeForPoint(framePoint))
-        return false;
-
-    VisiblePosition position = frame->visiblePositionForPoint(framePoint);
-    if (position.isNull())
-        return false;
-
-    RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward);
-    if (!wordRange)
-        return false;
-
-    return !wordRange->text().isEmpty();
 }
 
 URL HitTestResult::absoluteLinkURL() const

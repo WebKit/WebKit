@@ -1,42 +1,5 @@
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
-        Merge r176766. <rdar://problem/19072083>
-
-    2014-12-03  Beth Dakin  <bdakin@apple.com>
-
-            <input> elements get whitespace action menu instead of editable text menu
-            https://bugs.webkit.org/show_bug.cgi?id=139241
-            -and corresponding-
-            rdar://problem/19072083
-
-            Reviewed by Sam Weinig.
-
-            Add isOverTextInsideFormControlElement to WebHitTestResult.
-            * Shared/WebHitTestResult.cpp:
-            (WebKit::WebHitTestResult::Data::Data):
-            (WebKit::WebHitTestResult::Data::encode):
-            (WebKit::WebHitTestResult::Data::decode):
-            * Shared/WebHitTestResult.h:
-            (WebKit::WebHitTestResult::isOverTextInsideFormControlElement):
-
-            Offer the text menus for text inside form controls.
-            * UIProcess/mac/WKActionMenuController.mm:
-            (-[WKActionMenuController _defaultMenuItems]):
-
-            We should disallow shadow content in the hit test. This is the default and it is 
-            how context menus behave. We originally wanted to text inside shadow content so 
-            that we could find the text, but the new function I added to HitTestResult will 
-            allow that.
-            * WebProcess/WebPage/mac/WebPageMac.mm:
-
-            Adjust to the fact that we don’t hit test shadow content any more.
-            (WebKit::WebPage::performActionMenuHitTestAtLocation):
-            (WebKit::WebPage::lookupTextAtLocation):
-            (WebKit::WebPage::focusAndSelectLastActionMenuHitTestResult):
-
-
-2014-12-04  Dana Burkart  <dburkart@apple.com>
-
         Merge r176763. <rdar://problem/19115662>
 
     2014-12-03  Tim Horton  <timothy_horton@apple.com>

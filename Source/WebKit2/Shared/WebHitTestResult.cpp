@@ -54,7 +54,6 @@ WebHitTestResult::Data::Data(const HitTestResult& hitTestResult)
     , isScrollbar(hitTestResult.scrollbar())
     , isSelected(hitTestResult.isSelected())
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
-    , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
 {
 }
@@ -76,7 +75,6 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
     encoder << isScrollbar;
     encoder << isSelected;
     encoder << isTextNode;
-    encoder << isOverTextInsideFormControlElement;
     encoder << isDownloadableMedia;
 }
 
@@ -93,7 +91,6 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         || !decoder.decode(hitTestResultData.isScrollbar)
         || !decoder.decode(hitTestResultData.isSelected)
         || !decoder.decode(hitTestResultData.isTextNode)
-        || !decoder.decode(hitTestResultData.isOverTextInsideFormControlElement)
         || !decoder.decode(hitTestResultData.isDownloadableMedia))
         return false;
 

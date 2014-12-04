@@ -109,7 +109,17 @@ using namespace WebCore;
     Frame* coreFrame = core([documentView _frame]);
     if (!coreFrame)
         return nil;
-    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point));
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
+    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point), hitType);
+
+    // We hit test including shadow content to get the desired result for editable text regions.
+    // But for media, we want to re-set to the shadow root.
+    if (Node* node = _hitTestResult.innerNode()) {
+        if (Element* shadowHost = node->shadowHost()) {
+            if (shadowHost->isMediaElement())
+                _hitTestResult.setToNonShadowAncestor();
+        }
+    }
 
     return [[[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult] autorelease];
 }
@@ -172,13 +182,15 @@ using namespace WebCore;
     if (!element)
         return;
 
-    Frame* frame = element->document().frame();
-    if (!frame)
+    auto renderer = element->renderer();
+    if (!renderer)
         return;
 
-    frame->page()->focusController().setFocusedElement(element, frame);
-    VisiblePosition position = frame->visiblePositionForPoint(_hitTestResult.roundedPointInInnerNodeFrame());
-    frame->selection().setSelection(position);
+    Frame& frame = renderer->frame();
+
+    frame.page()->focusController().setFocusedElement(element, element->document().frame());
+    VisiblePosition position = renderer->positionForPoint(_hitTestResult.localPoint(), nullptr);
+    frame.selection().setSelection(position);
 }
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -863,7 +875,7 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
     }
 
     Node* node = _hitTestResult.innerNode();
-    if ((node && node->isTextNode()) || _hitTestResult.isOverTextInsideFormControlElement()) {
+    if (node && node->isTextNode()) {
         NSArray *dataDetectorMenuItems = [self _defaultMenuItemsForDataDetectedText];
         if (_currentActionContext) {
             // If this is a data detected item with no menu items, we should not fall back to regular text options.
