@@ -37,7 +37,7 @@ static bool s_shouldTrackVisitedLinks;
 
 WebVisitedLinkStore& WebVisitedLinkStore::shared()
 {
-    return WebVisitedLinkStore& visitedLinkStore = *adoptRef(new WebVisitedLinkStore);
+    static WebVisitedLinkStore& visitedLinkStore = *adoptRef(new WebVisitedLinkStore).leakRef();
     
     return visitedLinkStore;
 }

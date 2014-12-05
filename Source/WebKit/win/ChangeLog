@@ -1,3 +1,10 @@
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Follow-up build fix.
+
+        * WebCoreSupport/WebVisitedLinkStore.cpp:
+        (WebVisitedLinkStore::shared):
+
 2014-12-04  Anders Carlsson  <andersca@apple.com>
 
         Don't use NeverDestroyed with a RefCounted object.
