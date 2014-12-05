@@ -1,3 +1,20 @@
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
+        Merge r173566. <rdar://problem/19150984>
+
+    2014-09-11  Andy Estes  <aestes@apple.com>
+
+            [WebKit2] WKImageCreateCGImage crashes when passed a null WKImage
+            https://bugs.webkit.org/show_bug.cgi?id=136768
+
+            Reviewed by Tim Horton.
+
+            WKImageCreateFromCGImage can return null, so it only seems fair that WKImageCreateCGImage should tolerate null.
+
+            * Shared/API/c/cg/WKImageCG.cpp:
+            (WKImageCreateCGImage):
+
+
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
         Merge r176766. <rdar://problem/19072083>

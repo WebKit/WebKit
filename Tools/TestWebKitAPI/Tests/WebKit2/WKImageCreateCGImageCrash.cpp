@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +24,14 @@
  */
 
 #include "config.h"
-#include "WKImageCG.h"
 
-#include "ShareableBitmap.h"
-#include "WKSharedAPICast.h"
-#include "WebImage.h"
-#include <WebCore/ColorSpace.h>
-#include <WebCore/GraphicsContext.h>
+#include <WebKit/WKImageCG.h>
 
-using namespace WebKit;
-using namespace WebCore;
+namespace TestWebKitAPI {
 
-CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
+TEST(WebKit2, WKImageCreateCGImageCrash)
 {
-    WebImage* webImage = toImpl(imageRef);
-    if (!webImage || !webImage->bitmap())
-        return 0;
-
-    return webImage->bitmap()->makeCGImageCopy().leakRef();
+    EXPECT_FALSE(WKImageCreateCGImage(nullptr));
 }
 
-WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
-{
-    if (!imageRef)
-        return 0;
-    
-    IntSize imageSize(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
-    RefPtr<WebImage> webImage = WebImage::create(imageSize, toImageOptions(options));
-    if (!webImage->bitmap())
-        return 0;
-
-    auto graphicsContext = webImage->bitmap()->createGraphicsContext();
-    FloatRect rect(FloatPoint(0, 0), imageSize);
-    graphicsContext->clearRect(rect);
-    graphicsContext->drawNativeImage(imageRef, imageSize, WebCore::ColorSpaceDeviceRGB, rect, rect);
-    return toAPI(webImage.release().leakRef());
-}
+} // namespace TestWebKitAPI
