@@ -33,6 +33,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Plugins"
     "${WEBKIT2_DIR}/UIProcess/Storage"
     "${WEBKIT2_DIR}/UIProcess/UserContent"
+    "${WEBKIT2_DIR}/UIProcess/WebsiteData"
     "${WEBKIT2_DIR}/WebProcess"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Battery"

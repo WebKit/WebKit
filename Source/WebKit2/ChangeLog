@@ -1,3 +1,9 @@
+2014-12-05  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: speculative build fix for GTK builds.
+
+        * CMakeLists.txt:
+
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
