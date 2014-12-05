@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayConstructor.h"
+#include "BasicBlockLocation.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -2882,6 +2883,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* valueToProfile = get(VirtualRegister(currentInstruction[1].u.operand));
             addToGraph(ProfileType, OpInfo(currentInstruction[2].u.location), valueToProfile);
             NEXT_OPCODE(op_profile_type);
+        }
+
+        case op_profile_control_flow: {
+            BasicBlockLocation* basicBlockLocation = currentInstruction[1].u.basicBlockLocation;
+            addToGraph(ProfileControlFlow, OpInfo(basicBlockLocation));
+            NEXT_OPCODE(op_profile_control_flow);
         }
 
         // === Block terminators. ===

@@ -226,7 +226,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
         location->getInteger(ASCIILiteral("divot"), divot);
 
         bool okay;
-        TypeLocation* typeLocation = vm.typeProfiler()->findLocation(divot, sourceIDAsString.toIntPtrStrict(&okay), static_cast<TypeProfilerSearchDescriptor>(descriptor));
+        TypeLocation* typeLocation = vm.typeProfiler()->findLocation(divot, sourceIDAsString.toIntPtrStrict(&okay), static_cast<TypeProfilerSearchDescriptor>(descriptor), vm);
 
         RefPtr<TypeSet> typeSet;
         if (typeLocation) {

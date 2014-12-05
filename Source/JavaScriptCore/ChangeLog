@@ -1,3 +1,181 @@
+2014-12-04  Saam Barati  <saambarati1@gmail.com>
+
+        JavaScript Control Flow Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=137785
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a mechanism for JavaScriptCore to profile
+        which basic blocks have executed. This mechanism will then be
+        used by the Web Inspector to indicate which basic blocks
+        have and have not executed.
+        
+        The profiling works by compiling in an op_profile_control_flow
+        at the start of every basic block. Then, whenever this op code 
+        executes, we know that a particular basic block has executed.
+        
+        When we tier up a CodeBlock that contains an op_profile_control_flow
+        that corresponds to an already executed basic block, we don't
+        have to emit code for that particular op_profile_control_flow
+        because the internal data structures used to keep track of 
+        basic block locations has already recorded that the corresponding
+        op_profile_control_flow has executed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/Instruction.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addOpProfileControlFlowBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::opProfileControlFlowBytecodeOffsets):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitProfileControlFlow):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConditionalNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::CaseClauseNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::basicBlockLocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_control_flow):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_control_flow):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionFindTypeForExpression):
+        (functionReturnTypeFor):
+        (functionDumpBasicBlockExecutionRanges):
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::endOffset):
+        (JSC::ASTBuilder::setStartOffset):
+        * parser/NodeConstructors.h:
+        (JSC::Node::Node):
+        * parser/Nodes.h:
+        (JSC::CaseClauseNode::setStartOffset):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseSwitchClauses):
+        (JSC::Parser<LexerType>::parseSwitchDefaultClause):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseIfStatement):
+        (JSC::Parser<LexerType>::parseExpression):
+        (JSC::Parser<LexerType>::parseConditionalExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/BasicBlockLocation.cpp: Added.
+        (JSC::BasicBlockLocation::BasicBlockLocation):
+        (JSC::BasicBlockLocation::insertGap):
+        (JSC::BasicBlockLocation::getExecutedRanges):
+        (JSC::BasicBlockLocation::dumpData):
+        (JSC::BasicBlockLocation::emitExecuteCode):
+        * runtime/BasicBlockLocation.h: Added.
+        (JSC::BasicBlockLocation::startOffset):
+        (JSC::BasicBlockLocation::endOffset):
+        (JSC::BasicBlockLocation::setStartOffset):
+        (JSC::BasicBlockLocation::setEndOffset):
+        (JSC::BasicBlockLocation::hasExecuted):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        * runtime/ControlFlowProfiler.cpp: Added.
+        (JSC::ControlFlowProfiler::~ControlFlowProfiler):
+        (JSC::ControlFlowProfiler::getBasicBlockLocation):
+        (JSC::ControlFlowProfiler::dumpData):
+        (JSC::ControlFlowProfiler::getBasicBlocksForSourceID):
+        * runtime/ControlFlowProfiler.h: Added. This class is in 
+        charge of generating BasicBlockLocations and also
+        providing an interface that the Web Inspector can use to ping
+        which basic blocks have executed based on the source id of a script.
+
+        (JSC::BasicBlockKey::BasicBlockKey):
+        (JSC::BasicBlockKey::isHashTableDeletedValue):
+        (JSC::BasicBlockKey::operator==):
+        (JSC::BasicBlockKey::hash):
+        (JSC::BasicBlockKeyHash::hash):
+        (JSC::BasicBlockKeyHash::equal):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/FunctionHasExecutedCache.cpp:
+        (JSC::FunctionHasExecutedCache::getUnexecutedFunctionRanges):
+        * runtime/FunctionHasExecutedCache.h:
+        * runtime/Options.h:
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::logTypesForTypeLocation):
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset):
+        (JSC::TypeProfiler::findLocation):
+        (JSC::TypeProfiler::dumpTypeProfilerData):
+        * runtime/TypeProfiler.h:
+        (JSC::TypeProfiler::functionHasExecutedCache): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::enableProfilerWithRespectToCount):
+        (JSC::disableProfilerWithRespectToCount):
+        (JSC::VM::enableTypeProfiler):
+        (JSC::VM::disableTypeProfiler):
+        (JSC::VM::enableControlFlowProfiler):
+        (JSC::VM::disableControlFlowProfiler):
+        (JSC::VM::dumpTypeProfilerData):
+        * runtime/VM.h:
+        (JSC::VM::functionHasExecutedCache):
+        (JSC::VM::controlFlowProfiler):
+
 2014-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         printInternal(PrintStream& out, JSC::JITCode::JITType type) ends up dumping a literal %s

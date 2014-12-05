@@ -534,6 +534,9 @@
     <ClCompile Include="..\runtime\ArrayPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\BasicBlockLocation.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\BooleanConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -565,6 +568,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\ConstructData.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\ControlFlowProfiler.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\CustomGetterSetter.cpp">
@@ -2510,6 +2516,9 @@
     <ClInclude Include="..\runtime\ArrayStorage.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\BasicBlockLocation.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\BatchedTransitionOptimizer.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2562,6 +2571,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ConstructData.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ControlFlowProfiler.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\CustomGetterSetter.h">

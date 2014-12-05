@@ -44,6 +44,7 @@ namespace JSC {
 
     inline Node::Node(const JSTokenLocation& location)
         : m_position(location.line, location.startOffset, location.lineStartOffset)
+        , m_endOffset(-1)
     {
         ASSERT(location.startOffset >= location.lineStartOffset);
     }

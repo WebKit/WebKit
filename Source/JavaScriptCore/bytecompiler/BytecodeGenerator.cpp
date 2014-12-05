@@ -1178,6 +1178,18 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTy
     instructions().append(resolveType());
 }
 
+void BytecodeGenerator::emitProfileControlFlow(int textOffset)
+{
+    if (vm()->controlFlowProfiler()) {
+        RELEASE_ASSERT(textOffset >= 0);
+        size_t bytecodeOffset = instructions().size();
+        m_codeBlock->addOpProfileControlFlowBytecodeOffset(bytecodeOffset);
+
+        emitOpcode(op_profile_control_flow);
+        instructions().append(textOffset);
+    }
+}
+
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
 {
     return emitLoad(dst, jsBoolean(b));

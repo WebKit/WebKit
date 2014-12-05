@@ -647,6 +647,7 @@ private:
         case ProfileWillCall:
         case ProfileDidCall:
         case ProfileType:
+        case ProfileControlFlow:
         case CheckHasInstance:
         case ThrowReferenceError:
         case ForceOSRExit:

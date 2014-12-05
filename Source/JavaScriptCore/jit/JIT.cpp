@@ -262,6 +262,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_profile_did_call)
         DEFINE_OP(op_profile_will_call)
         DEFINE_OP(op_profile_type)
+        DEFINE_OP(op_profile_control_flow)
         DEFINE_OP(op_push_name_scope)
         DEFINE_OP(op_push_with_scope)
         case op_put_by_id_out_of_line:

@@ -674,6 +674,7 @@
     <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\ArrayIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayPrototype.cpp" />
+    <ClCompile Include="..\runtime\BasicBlockLocation.cpp" />
     <ClCompile Include="..\runtime\BooleanConstructor.cpp" />
     <ClCompile Include="..\runtime\BooleanObject.cpp" />
     <ClCompile Include="..\runtime\BooleanPrototype.cpp" />
@@ -688,6 +689,7 @@
     <ClCompile Include="..\runtime\ConsoleClient.cpp" />
     <ClCompile Include="..\runtime\ConsolePrototype.cpp" />
     <ClCompile Include="..\runtime\ConstructData.cpp" />
+    <ClCompile Include="..\runtime\ControlFlowProfiler.cpp" />
     <ClCompile Include="..\runtime\CustomGetterSetter.cpp" />
     <ClCompile Include="..\runtime\DataView.cpp" />
     <ClCompile Include="..\runtime\DateConstructor.cpp" />
@@ -1422,6 +1424,7 @@
     <ClInclude Include="..\runtime\ArrayIteratorPrototype.h" />
     <ClInclude Include="..\runtime\ArrayPrototype.h" />
     <ClInclude Include="..\runtime\ArrayStorage.h" />
+    <ClInclude Include="..\runtime\BasicBlockLocation.h" />
     <ClInclude Include="..\runtime\BatchedTransitionOptimizer.h" />
     <ClInclude Include="..\runtime\BigInteger.h" />
     <ClInclude Include="..\runtime\BooleanConstructor.h" />
@@ -1443,6 +1446,7 @@
     <ClInclude Include="..\runtime\ConsoleTypes.h" />
     <ClInclude Include="..\runtime\ConstantMode.h" />
     <ClInclude Include="..\runtime\ConstructData.h" />
+    <ClInclude Include="..\runtime\ControlFlowProfiler.h" />
     <ClInclude Include="..\runtime\CustomGetterSetter.h" />
     <ClInclude Include="..\runtime\DataView.h" />
     <ClInclude Include="..\runtime\DateConstructor.h" />

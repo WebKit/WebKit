@@ -378,8 +378,8 @@ ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
 {
     m_typeProfilingStartOffset = 0;
     m_typeProfilingEndOffset = source.length() - 1;
-    if (exec->vm().typeProfiler())
-        exec->vm().typeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(sourceID(), m_typeProfilingStartOffset, m_typeProfilingEndOffset);
+    if (exec->vm().typeProfiler() || exec->vm().controlFlowProfiler())
+        exec->vm().functionHasExecutedCache()->insertUnexecutedRange(sourceID(), m_typeProfilingStartOffset, m_typeProfilingEndOffset);
 }
 
 void ProgramExecutable::destroy(JSCell* cell)
@@ -501,8 +501,8 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
         JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source, lineNo()), scope);
         globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
-        if (vm.typeProfiler()) {
-            vm.typeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
+        if (vm.typeProfiler() || vm.controlFlowProfiler()) {
+            vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
                 unlinkedFunctionExecutable->typeProfilingStartOffset(), 
                 unlinkedFunctionExecutable->typeProfilingEndOffset());
         }

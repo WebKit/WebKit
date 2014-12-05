@@ -27,7 +27,6 @@
 #define TypeProfiler_h
 
 #include "CodeBlock.h"
-#include "FunctionHasExecutedCache.h"
 #include "TypeLocation.h"
 #include "TypeLocationCache.h"
 #include <wtf/Bag.h>
@@ -87,6 +86,8 @@ template<> struct HashTraits<JSC::QueryKey> : SimpleClassHashTraits<JSC::QueryKe
 
 namespace JSC {
 
+class VM;
+
 enum TypeProfilerSearchDescriptor {
     TypeProfilerSearchDescriptorNormal = 1,
     TypeProfilerSearchDescriptorFunctionReturn = 2
@@ -95,21 +96,19 @@ enum TypeProfilerSearchDescriptor {
 class TypeProfiler {
 public:
     TypeProfiler();
-    void logTypesForTypeLocation(TypeLocation*);
-    JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, intptr_t sourceID);
+    void logTypesForTypeLocation(TypeLocation*, VM&);
+    JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, intptr_t sourceID, VM&);
     void insertNewLocation(TypeLocation*);
-    FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }
-    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor);
+    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor, VM&);
     GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
     TypeLocation* nextTypeLocation();
     void invalidateTypeSetCache();
-    void dumpTypeProfilerData();
+    void dumpTypeProfilerData(VM&);
     
 private:
     typedef HashMap<intptr_t, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
     SourceIDToLocationBucketMap m_bucketMap;
-    FunctionHasExecutedCache m_functionHasExecutedCache;
     TypeLocationCache m_typeLocationCache;
     typedef HashMap<QueryKey, TypeLocation*> TypeLocationQueryCache;
     TypeLocationQueryCache m_queryCache;

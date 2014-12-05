@@ -439,6 +439,8 @@ namespace JSC {
         void emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
         void emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag, const Identifier*);
 
+        void emitProfileControlFlow(int);
+
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);

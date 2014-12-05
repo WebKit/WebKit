@@ -29,6 +29,7 @@
 #ifndef Instruction_h
 #define Instruction_h
 
+#include "BasicBlockLocation.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "TypeLocation.h"
@@ -122,6 +123,7 @@ struct Instruction {
         bool* predicatePointer;
         ToThisStatus toThisStatus;
         TypeLocation* location;
+        BasicBlockLocation* basicBlockLocation;
     } u;
         
 private:

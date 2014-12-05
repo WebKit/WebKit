@@ -1545,6 +1545,8 @@ namespace JSC {
 
         void setFunctionNameStart(int functionNameStart) { m_functionNameStart = functionNameStart; }
         int functionNameStart() const { return m_functionNameStart; }
+        void setFunctionKeywordStart(int functionKeywordStart) { m_functionKeywordStart = functionKeywordStart; }
+        int functionKeywordStart() const { return m_functionKeywordStart; }
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
 
@@ -1561,6 +1563,7 @@ namespace JSC {
         FunctionMode m_functionMode;
         RefPtr<FunctionParameters> m_parameters;
         int m_functionNameStart;
+        int m_functionKeywordStart;
         unsigned m_startColumn;
         unsigned m_endColumn;
         SourceCode m_source;
@@ -1729,10 +1732,12 @@ namespace JSC {
         ExpressionNode* expr() const { return m_expr; }
 
         void emitBytecode(BytecodeGenerator&, RegisterID* destination);
+        void setStartOffset(int offset) { m_startOffset = offset; }
 
     private:
         ExpressionNode* m_expr;
         SourceElements* m_statements;
+        int m_startOffset;
     };
 
     class ClauseListNode : public ParserArenaFreeable {

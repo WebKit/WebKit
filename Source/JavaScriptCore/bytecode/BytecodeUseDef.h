@@ -53,6 +53,7 @@ void computeUsesForBytecodeOffset(
     case op_enter:
     case op_catch:
     case op_touch_entry:
+    case op_profile_control_flow:
         return;
     case op_create_lexical_environment:
     case op_get_scope:
@@ -283,6 +284,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_put_by_index:
     case op_tear_off_arguments:
     case op_profile_type:
+    case op_profile_control_flow:
     case op_touch_entry:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);

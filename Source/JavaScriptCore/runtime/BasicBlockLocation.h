@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Saam Barati. <saambarati1@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,46 +21,49 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FunctionHasExecutedCache_h
-#define FunctionHasExecutedCache_h
+#ifndef BasicBlockLocation_h
+#define BasicBlockLocation_h
 
-#include <unordered_map>
-#include <wtf/HashMethod.h>
+#include "MacroAssembler.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-class FunctionHasExecutedCache {
+class CCallHelpers;
+class LLIntOffsetsExtractor;
+
+class BasicBlockLocation {
 public:
-    struct FunctionRange {
-        FunctionRange() {}
-        bool operator==(const FunctionRange& other) const 
-        {
-            return m_start == other.m_start && m_end == other.m_end;
-        }
-        unsigned hash() const
-        {
-            return m_start * m_end;
-        }
+    typedef std::pair<int, int> Gap;
 
-        unsigned m_start;
-        unsigned m_end;
-    };
+    BasicBlockLocation(int startOffset = -1, int endOffset = -1);
 
-    bool hasExecutedAtOffset(intptr_t id, unsigned offset);
-    void insertUnexecutedRange(intptr_t id, unsigned start, unsigned end);
-    void removeUnexecutedRange(intptr_t id, unsigned start, unsigned end);
-    Vector<std::pair<unsigned, unsigned>> getUnexecutedFunctionRanges(intptr_t id);
+    int startOffset() const { return m_startOffset; }
+    int endOffset() const { return m_endOffset; }
+    void setStartOffset(int startOffset) { m_startOffset = startOffset; }
+    void setEndOffset(int endOffset) { m_endOffset = endOffset; }
+    bool hasExecuted() const { return m_hasExecuted; }
+    void insertGap(int, int);
+    Vector<Gap> getExecutedRanges() const;
+    JS_EXPORT_PRIVATE void dumpData() const;
+#if ENABLE(JIT)
+    void emitExecuteCode(CCallHelpers&, MacroAssembler::RegisterID) const;
+#endif
 
-private:     
-    typedef std::unordered_map<FunctionRange, bool, HashMethod<FunctionRange>> RangeMap;
-    typedef std::unordered_map<intptr_t, RangeMap> SourceIDToRangeMap;
-    SourceIDToRangeMap m_rangeMap;
+private:
+    friend class LLIntOffsetsExtractor;
+
+    int m_startOffset;
+    int m_endOffset;
+    bool m_hasExecuted;
+    Vector<Gap> m_gaps;
 };
 
 } // namespace JSC
 
-#endif // FunctionHasExecutedCache_h
+#endif // BasicBlockLocation_h

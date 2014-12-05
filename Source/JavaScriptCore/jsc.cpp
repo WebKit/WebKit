@@ -481,6 +481,7 @@ static EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -635,6 +636,8 @@ protected:
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
         addFunction(vm, "findTypeForExpression", functionFindTypeForExpression, 2);
         addFunction(vm, "returnTypeFor", functionReturnTypeFor, 1);
+
+        addFunction(vm, "dumpBasicBlockExecutionRanges", functionDumpBasicBlockExecutionRanges , 0);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1086,7 +1089,7 @@ EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState* exec)
     String sourceCodeText = executable->source().toString();
     unsigned offset = static_cast<unsigned>(sourceCodeText.find(substring) + executable->source().startOffset());
     
-    String jsonString = exec->vm().typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorNormal, offset, executable->sourceID());
+    String jsonString = exec->vm().typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorNormal, offset, executable->sourceID(), exec->vm());
     return JSValue::encode(JSONParse(exec, jsonString));
 }
 
@@ -1100,8 +1103,15 @@ EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     unsigned offset = executable->source().startOffset();
-    String jsonString = exec->vm().typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID());
+    String jsonString = exec->vm().typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID(), exec->vm());
     return JSValue::encode(JSONParse(exec, jsonString));
+}
+
+EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->vm().controlFlowProfiler());
+    exec->vm().controlFlowProfiler()->dumpData();
+    return JSValue::encode(jsUndefined());
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

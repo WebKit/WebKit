@@ -190,6 +190,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_enabledProfiler(nullptr)
     , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
+    , m_controlFlowProfilerEnabledCount(0)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
@@ -281,6 +282,8 @@ VM::VM(VMType vmType, HeapType heapType)
 
     if (Options::enableTypeProfiler())
         enableTypeProfiler();
+    if (Options::enableControlFlowProfiler())
+        enableControlFlowProfiler();
 }
 
 VM::~VM()
@@ -893,32 +896,67 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
     }
 }
 
-bool VM::enableTypeProfiler()
+static bool enableProfilerWithRespectToCount(unsigned& counter, std::function<void()> doEnableWork)
 {
     bool needsToRecompile = false;
-    if (!m_typeProfilerEnabledCount) {
-        m_typeProfiler = std::make_unique<TypeProfiler>();
-        m_typeProfilerLog = std::make_unique<TypeProfilerLog>();
+    if (!counter) {
+        doEnableWork();
         needsToRecompile = true;
     }
-    m_typeProfilerEnabledCount++;
+    counter++;
 
     return needsToRecompile;
 }
 
-bool VM::disableTypeProfiler()
+static bool disableProfilerWithRespectToCount(unsigned& counter, std::function<void()> doDisableWork)
 {
-    RELEASE_ASSERT(m_typeProfilerEnabledCount > 0);
-
+    RELEASE_ASSERT(counter > 0);
     bool needsToRecompile = false;
-    m_typeProfilerEnabledCount--;
-    if (!m_typeProfilerEnabledCount) {
-        m_typeProfiler.reset(nullptr);
-        m_typeProfilerLog.reset(nullptr);
+    counter--;
+    if (!counter) {
+        doDisableWork();
         needsToRecompile = true;
     }
 
     return needsToRecompile;
+}
+
+bool VM::enableTypeProfiler()
+{
+    auto enableTypeProfiler = [this] () {
+        this->m_typeProfiler = std::make_unique<TypeProfiler>();
+        this->m_typeProfilerLog = std::make_unique<TypeProfilerLog>();
+    };
+
+    return enableProfilerWithRespectToCount(m_typeProfilerEnabledCount, enableTypeProfiler);
+}
+
+bool VM::disableTypeProfiler()
+{
+    auto disableTypeProfiler = [this] () {
+        this->m_typeProfiler.reset(nullptr);
+        this->m_typeProfilerLog.reset(nullptr);
+    };
+
+    return disableProfilerWithRespectToCount(m_typeProfilerEnabledCount, disableTypeProfiler);
+}
+
+bool VM::enableControlFlowProfiler()
+{
+    auto enableControlFlowProfiler = [this] () {
+        this->m_controlFlowProfiler = std::make_unique<ControlFlowProfiler>();
+    };
+
+    return enableProfilerWithRespectToCount(m_controlFlowProfilerEnabledCount, enableControlFlowProfiler);
+}
+
+bool VM::disableControlFlowProfiler()
+{
+    auto disableControlFlowProfiler = [this] () {
+        this->m_controlFlowProfiler.reset(nullptr);
+    };
+
+    return disableProfilerWithRespectToCount(m_controlFlowProfilerEnabledCount, disableControlFlowProfiler);
 }
 
 void VM::dumpTypeProfilerData()
@@ -927,7 +965,7 @@ void VM::dumpTypeProfilerData()
         return;
 
     typeProfilerLog()->processLogEntries(ASCIILiteral("VM Dump Types"));
-    typeProfiler()->dumpTypeProfilerData();
+    typeProfiler()->dumpTypeProfilerData(*this);
 }
 
 void sanitizeStackForVM(VM* vm)

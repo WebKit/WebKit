@@ -278,10 +278,11 @@ public:
         return node;
     }
 
-    ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned startColumn)
+    ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned startColumn, unsigned functionKeywordStart)
     {
         FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *name, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, startColumn), parameters);
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
+        body->setFunctionKeywordStart(functionKeywordStart);
         return result;
     }
 
@@ -295,17 +296,19 @@ public:
         body->setFunctionNameStart(functionNameStart);
     }
     
-    NEVER_INLINE PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, bool, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn)
+    NEVER_INLINE PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, bool, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn, unsigned getOrSetStartOffset)
     {
         ASSERT(name);
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
         body->setInferredName(*name);
+        body->setFunctionKeywordStart(getOrSetStartOffset);
         return new (m_parserArena) PropertyNode(*name, new (m_parserArena) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), params), type);
     }
     
-    NEVER_INLINE PropertyNode* createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation& location, PropertyNode::Type type, bool, double name, ParameterNode* params, FunctionBodyNode* body, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn)
+    NEVER_INLINE PropertyNode* createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation& location, PropertyNode::Type type, bool, double name, ParameterNode* params, FunctionBodyNode* body, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn, unsigned getOrSetStartOffset)
     {
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
+        body->setFunctionKeywordStart(getOrSetStartOffset);
         return new (m_parserArena) PropertyNode(parserArena.identifierArena().makeNumericIdentifier(vm, name), new (m_parserArena) FuncExprNode(location, vm->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), params), type);
     }
 
@@ -338,13 +341,14 @@ public:
     ClauseListNode* createClauseList(CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(clause); }
     ClauseListNode* createClauseList(ClauseListNode* tail, CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(tail, clause); }
 
-    StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn)
+    StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn, unsigned functionKeywordStart)
     {
         FuncDeclNode* decl = new (m_parserArena) FuncDeclNode(location, *name, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), parameters);
         if (*name == m_vm->propertyNames->arguments)
             usesArguments();
         m_scope.m_funcDeclarations->data.append(decl->body());
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
+        body->setFunctionKeywordStart(functionKeywordStart);
         return decl;
     }
 
@@ -672,6 +676,16 @@ public:
     void setEndOffset(Node* node, int offset)
     {
         node->setEndOffset(offset);
+    }
+
+    int endOffset(Node* node)
+    {
+        return node->endOffset();
+    }
+
+    void setStartOffset(CaseClauseNode* node, int offset)
+    {
+        node->setStartOffset(offset);
     }
     
 private:

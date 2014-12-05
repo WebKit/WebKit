@@ -79,7 +79,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 {
     SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
     CodeCacheMap::AddResult addResult = m_sourceCode.add(key, SourceCodeValue());
-    bool canCache = debuggerMode == DebuggerOff && profilerMode == ProfilerOff && !vm.typeProfiler();
+    bool canCache = debuggerMode == DebuggerOff && profilerMode == ProfilerOff && !vm.typeProfiler() && !vm.controlFlowProfiler();
     if (!addResult.isNewEntry && canCache) {
         UnlinkedCodeBlockType* unlinkedCodeBlock = jsCast<UnlinkedCodeBlockType*>(addResult.iterator->value.cell.get());
         unsigned firstLine = source.firstLine() + unlinkedCodeBlock->firstLine();

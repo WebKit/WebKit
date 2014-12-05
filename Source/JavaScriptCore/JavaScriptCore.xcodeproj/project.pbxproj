@@ -896,10 +896,14 @@
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52678F8C1A031009006A306D /* BasicBlockLocation.cpp */; };
+		52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F8D1A031009006A306D /* BasicBlockLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B310FD1974AE870080857C /* FunctionHasExecutedCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B310FC1974AE870080857C /* FunctionHasExecutedCache.cpp */; };
 		52B310FF1975B4240080857C /* TypeLocationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B310FE1975B4240080857C /* TypeLocationCache.cpp */; };
 		52B311011975B4670080857C /* TypeLocationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B311001975B4670080857C /* TypeLocationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52B717B51A0597E1007AF4F3 /* ControlFlowProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
 		5D53726F0E1C54880021E549 /* Tracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D53726E0E1C54880021E549 /* Tracing.h */; };
@@ -2528,10 +2532,14 @@
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
 		51F0EB6105C86C6B00E6DF1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
+		52678F8C1A031009006A306D /* BasicBlockLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicBlockLocation.cpp; sourceTree = "<group>"; };
+		52678F8D1A031009006A306D /* BasicBlockLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicBlockLocation.h; sourceTree = "<group>"; };
+		52678F901A04177C006A306D /* ControlFlowProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlFlowProfiler.h; sourceTree = "<group>"; };
 		52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionHasExecutedCache.h; sourceTree = "<group>"; };
 		52B310FC1974AE870080857C /* FunctionHasExecutedCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionHasExecutedCache.cpp; sourceTree = "<group>"; };
 		52B310FE1975B4240080857C /* TypeLocationCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeLocationCache.cpp; sourceTree = "<group>"; };
 		52B311001975B4670080857C /* TypeLocationCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeLocationCache.h; sourceTree = "<group>"; };
+		52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowProfiler.cpp; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
 		5540758418F4A37500602A5D /* CompileRuntimeToLLVMIR.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompileRuntimeToLLVMIR.xcconfig; sourceTree = "<group>"; };
@@ -4176,6 +4184,10 @@
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
 				F692A84E0255597D01FF60F7 /* ArrayPrototype.h */,
 				0FB7F38A15ED8E3800F167B2 /* ArrayStorage.h */,
+				52678F8C1A031009006A306D /* BasicBlockLocation.cpp */,
+				52678F8D1A031009006A306D /* BasicBlockLocation.h */,
+				52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */,
+				52678F901A04177C006A306D /* ControlFlowProfiler.h */,
 				147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */,
 				866739D013BFDE710023D87C /* BigInteger.h */,
 				BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */,
@@ -5367,6 +5379,8 @@
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */,
+				52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */,
 				A5EA710E19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h in Headers */,
 				A5EA70EC19F5B3EA0098F5EC /* generate_cpp_alternate_backend_dispatcher_header.py in Headers */,
 				C4F4B6F31A05C944005CAB76 /* cpp_generator_templates.py in Headers */,
@@ -6879,6 +6893,7 @@
 				A7D89CFF17A0B8CC00773AD8 /* DFGSSAConversionPhase.cpp in Sources */,
 				2A05ABD51961DF2400341750 /* JSPropertyNameEnumerator.cpp in Sources */,
 				0FC20CB918556A3500C9E954 /* DFGSSALoweringPhase.cpp in Sources */,
+				52B717B51A0597E1007AF4F3 /* ControlFlowProfiler.cpp in Sources */,
 				0FC3CD0119ADA411006AC72A /* DFGNaiveDominators.cpp in Sources */,
 				0F9FB4F417FCB91700CB67F8 /* DFGStackLayoutPhase.cpp in Sources */,
 				0F4F29DF18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp in Sources */,
@@ -6919,6 +6934,7 @@
 				A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */,
 				86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */,
 				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
+				52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */,
 				0F2D4DEB19832DC4007D4B19 /* TypeProfilerLog.cpp in Sources */,
 				0F0332C018ADFAE1005F979A /* ExitingJITType.cpp in Sources */,
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,

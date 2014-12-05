@@ -80,4 +80,22 @@ void FunctionHasExecutedCache::removeUnexecutedRange(intptr_t id, unsigned start
     map[range] = true;
 }
 
+Vector<std::pair<unsigned, unsigned>> FunctionHasExecutedCache::getUnexecutedFunctionRanges(intptr_t id)
+{
+    Vector<std::pair<unsigned, unsigned>> ranges(0);
+    auto findResult = m_rangeMap.find(id);
+    if (findResult == m_rangeMap.end())
+        return ranges;
+
+    RangeMap& map = m_rangeMap.find(id)->second;
+    for (auto iter = map.begin(), end = map.end(); iter != end; ++iter) {
+        if (!iter->second) {
+            const FunctionRange& range = iter->first;
+            ranges.append(std::pair<unsigned, unsigned>(range.m_start, range.m_end));
+        }
+    }
+
+    return ranges;
+}
+
 } // namespace JSC

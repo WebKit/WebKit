@@ -282,6 +282,7 @@ typedef const char* optionString;
     v(bool, recordGCPauseTimes, false) \
     v(bool, logHeapStatisticsAtExit, false) \
     v(bool, enableTypeProfiler, false) \
+    v(bool, enableControlFlowProfiler, false) \
     \
     v(bool, verifyHeap, false) \
     v(unsigned, numberOfGCCyclesToRecordForVerification, 3) \

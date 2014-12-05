@@ -159,7 +159,7 @@ public:
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
     ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createEmptyVarExpression(const JSTokenLocation&, const Identifier&) { return AssignmentExpr; }
-    ExpressionType createFunctionExpr(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int) { return FunctionExpr; }
+    ExpressionType createFunctionExpr(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int, int) { return FunctionExpr; }
     int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, int, int, bool) { return FunctionBodyResult; }
     void setFunctionNameStart(int, int) { }
     int createArguments() { return ArgumentsResult; }
@@ -193,7 +193,7 @@ public:
     int createClause(int, int) { return ClauseResult; }
     int createClauseList(int) { return ClauseListResult; }
     int createClauseList(int, int) { return ClauseListResult; }
-    int createFuncDeclStatement(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int) { return StatementResult; }
+    int createFuncDeclStatement(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int, int) { return StatementResult; }
     int createBlockStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createExprStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createIfStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
@@ -218,14 +218,14 @@ public:
     int createDebugger(const JSTokenLocation&, int, int) { return StatementResult; }
     int createConstStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int appendConstDecl(const JSTokenLocation&, int, const Identifier*, int) { return StatementResult; }
-    Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, bool strict, const Identifier* name, int, int, int, int, int, int, int)
+    Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, bool strict, const Identifier* name, int, int, int, int, int, int, int, int)
     {
         ASSERT(name);
         if (!strict)
             return Property(type);
         return Property(name, type);
     }
-    Property createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation&, PropertyNode::Type type, bool strict, double name, int, int, int, int, int, int, int)
+    Property createGetterOrSetterProperty(VM* vm, ParserArena& parserArena, const JSTokenLocation&, PropertyNode::Type type, bool strict, double name, int, int, int, int, int, int, int, int)
     {
         if (!strict)
             return Property(type);
@@ -297,6 +297,8 @@ public:
     }
 
     void setEndOffset(int, int) { }
+    int endOffset(int) { return 0; }
+    void setStartOffset(int, int) { }
 
 private:
     int m_topBinaryExpr;

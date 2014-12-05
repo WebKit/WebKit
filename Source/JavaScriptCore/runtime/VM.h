@@ -29,8 +29,10 @@
 #ifndef VM_h
 #define VM_h
 
+#include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
+#include "FunctionHasExecutedCache.h"
 #include "Heap.h"
 #include "Intrinsic.h"
 #include "JITThunks.h"
@@ -517,6 +519,12 @@ public:
     TypeProfiler* typeProfiler() { return m_typeProfiler.get(); }
     JS_EXPORT_PRIVATE void dumpTypeProfilerData();
 
+    FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
+
+    JS_EXPORT_PRIVATE ControlFlowProfiler* controlFlowProfiler() { return m_controlFlowProfiler.get(); }
+    bool enableControlFlowProfiler();
+    bool disableControlFlowProfiler();
+
 private:
     friend class LLIntOffsetsExtractor;
     friend class ClearExceptionScope;
@@ -568,6 +576,9 @@ private:
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount;
+    FunctionHasExecutedCache m_functionHasExecutedCache;
+    std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
+    unsigned m_controlFlowProfilerEnabledCount;
 };
 
 #if ENABLE(GC_VALIDATION)

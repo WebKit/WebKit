@@ -4935,6 +4935,15 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
     }
+    case ProfileControlFlow: {
+        BasicBlockLocation* basicBlockLocation = node->basicBlockLocation();
+        if (!basicBlockLocation->hasExecuted()) {
+            GPRTemporary scratch1(this);
+            basicBlockLocation->emitExecuteCode(m_jit, scratch1.gpr());
+        }
+        noResult(node);
+        break;
+    }
 
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {

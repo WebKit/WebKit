@@ -1346,6 +1346,17 @@ _llint_op_to_index_string:
     callSlowPath(_slow_path_to_index_string)
     dispatch(3)
 
+_llint_op_profile_type:
+    traceExecution()
+    callSlowPath(_slow_path_profile_type)
+    dispatch(6)
+
+_llint_op_profile_control_flow:
+    traceExecution()
+    loadpFromInstruction(1, t0)
+    storeb 1, BasicBlockLocation::m_hasExecuted[t0]
+    dispatch(2)
+
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert
 # as much.
@@ -1366,7 +1377,3 @@ end
 
 _llint_op_init_global_const_nop:
     dispatch(5)
-
-_llint_op_profile_type:
-    callSlowPath(_slow_path_profile_type)
-    dispatch(6)

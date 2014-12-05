@@ -487,6 +487,9 @@ public:
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
     unsigned endColumn() const { return m_endColumn; }
 
+    void addOpProfileControlFlowBytecodeOffset(size_t offset) { m_opProfileControlFlowBytecodeOffsets.append(offset); }
+    const Vector<size_t>& opProfileControlFlowBytecodeOffsets() const { return m_opProfileControlFlowBytecodeOffsets; }
+
     void dumpExpressionRangeInfo(); // For debugging purpose only.
 
 protected:
@@ -587,6 +590,7 @@ private:
         unsigned m_endDivot;
     };
     HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
+    Vector<size_t> m_opProfileControlFlowBytecodeOffsets;
 
 protected:
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "BasicBlockLocation.h"
 #include "CodeBlock.h"
 #include "DFGAbstractValue.h"
 #include "DFGAdjacencyList.h"
@@ -1787,6 +1788,11 @@ struct Node {
     TypeLocation* typeLocation()
     {
         return reinterpret_cast<TypeLocation*>(m_opInfo);
+    }
+
+    BasicBlockLocation* basicBlockLocation()
+    {
+        return reinterpret_cast<BasicBlockLocation*>(m_opInfo);
     }
     
     void dumpChildren(PrintStream& out)
