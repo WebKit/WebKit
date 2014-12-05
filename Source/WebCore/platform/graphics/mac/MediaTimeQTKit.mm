@@ -31,11 +31,12 @@
 #import "SoftLinking.h"
 #import <QTKit/QTTime.h>
 
-SOFT_LINK_FRAMEWORK(QTKit);
-SOFT_LINK_CONSTANT(QTKit, QTIndefiniteTime, QTTime);
-SOFT_LINK_CONSTANT(QTKit, QTZeroTime, QTTime);
-SOFT_LINK(QTKit, QTTimeCompare, NSComparisonResult, (QTTime time, QTTime otherTime), (time, otherTime));
-SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (timeValue, timeScale));
+SOFT_LINK_FRAMEWORK(QTKit)
+SOFT_LINK_CONSTANT(QTKit, QTIndefiniteTime, QTTime)
+SOFT_LINK_CONSTANT(QTKit, QTZeroTime, QTTime)
+SOFT_LINK(QTKit, QTTimeCompare, NSComparisonResult, (QTTime time, QTTime otherTime), (time, otherTime))
+SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (timeValue, timeScale))
+SOFT_LINK(QTKit, QTMakeTimeWithTimeInterval, QTTime, (NSTimeInterval timeInterval), (timeInterval))
 
 namespace WebCore {
 
@@ -55,6 +56,8 @@ QTTime toQTTime(const MediaTime& mediaTime)
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (mediaTime.hasDoubleValue())
+        return QTMakeTimeWithTimeInterval(mediaTime.toDouble());
     return QTMakeTime(mediaTime.timeValue(), mediaTime.timeScale());
 #pragma clang diagnostic pop
 }

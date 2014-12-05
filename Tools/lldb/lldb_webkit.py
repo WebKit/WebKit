@@ -83,6 +83,8 @@ def WTFMediaTime_SummaryProvider(valobj, dict):
         return "{ -Infinity }"
     if provider.isIndefinite():
         return "{ Indefinite }"
+    if provider.hasDoubleValue():
+        return "{ %f }" % (provider.timeValueAsDouble())
     return "{ %d/%d, %f }" % (provider.timeValue(), provider.timeScale(), float(provider.timeValue()) / provider.timeScale())
 
 
@@ -407,6 +409,10 @@ class WTFMediaTimeProvider:
     def timeValue(self):
         return self.valobj.GetChildMemberWithName('m_timeValue').GetValueAsSigned(0)
 
+    def timeValueAsDouble(self):
+        error = lldb.SBError()
+        return self.valobj.GetChildMemberWithName('m_timeValueAsDouble').GetData().GetDouble(error, 0)
+
     def timeScale(self):
         return self.valobj.GetChildMemberWithName('m_timeScale').GetValueAsSigned(0)
 
@@ -421,3 +427,6 @@ class WTFMediaTimeProvider:
 
     def isIndefinite(self):
         return self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 4)
+
+    def hasDoubleValue(self):
+        return self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 5)

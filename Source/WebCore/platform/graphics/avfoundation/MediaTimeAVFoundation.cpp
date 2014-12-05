@@ -28,6 +28,16 @@
 
 #if USE(AVFOUNDATION)
 
+#if PLATFORM(WIN)
+#include <CoreMedia/CoreMedia.h>
+#include "CoreMediaSoftLinking.h"
+#else
+#include "SoftLinking.h"
+SOFT_LINK_FRAMEWORK(CoreMedia)
+SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
+SOFT_LINK(CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
+#endif
+
 namespace WebCore {
 
 static bool CMTimeHasFlags(const CMTime& cmTime, uint32_t flags)
@@ -54,7 +64,12 @@ MediaTime toMediaTime(const CMTime& cmTime)
 
 CMTime toCMTime(const MediaTime& mediaTime)
 {
-    CMTime time = {mediaTime.timeValue(), mediaTime.timeScale(), 0, 0};
+    CMTime time;
+
+    if (mediaTime.hasDoubleValue())
+        time = CMTimeMakeWithSeconds(mediaTime.toDouble(), mediaTime.timeScale());
+    else
+        time = CMTimeMake(mediaTime.timeValue(), mediaTime.timeScale());
 
     if (mediaTime.isValid())
         time.flags |= kCMTimeFlags_Valid;

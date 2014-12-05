@@ -44,6 +44,8 @@ std::ostream& operator<<(std::ostream& out, const MediaTime& val)
         out << "+infinite";
     else if (val.isNegativeInfinite())
         out << "-infinite";
+    else if (val.hasDoubleValue())
+        out << "double: " << val.toDouble();
     else
         out << "value: " << val.timeValue() << ", scale: " << val.timeScale();
     return out << " }";
@@ -176,6 +178,20 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::createWithDouble(INFINITY), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::createWithDouble(-INFINITY), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime::createWithDouble(NAN), MediaTime::invalidTime());
+
+    // Floating Point Round Trip
+    EXPECT_EQ(10.0123456789f, MediaTime::createWithFloat(10.0123456789f).toFloat());
+    EXPECT_EQ(10.0123456789, MediaTime::createWithDouble(10.0123456789).toDouble());
+
+    // Floating Point Math
+    EXPECT_EQ(1.5 + 3.3, (MediaTime::createWithDouble(1.5) + MediaTime::createWithDouble(3.3)).toDouble());
+    EXPECT_EQ(1.5 - 3.3, (MediaTime::createWithDouble(1.5) - MediaTime::createWithDouble(3.3)).toDouble());
+    EXPECT_EQ(-3.3, (-MediaTime::createWithDouble(3.3)).toDouble());
+    EXPECT_EQ(3.3 * 2, (MediaTime::createWithDouble(3.3) * 2).toDouble());
+
+    // Floating Point and non-Floating Point math
+    EXPECT_EQ(2.0, (MediaTime::createWithDouble(1.5) + MediaTime(1, 2)).toDouble());
+    EXPECT_EQ(1.0, (MediaTime::createWithDouble(1.5) - MediaTime(1, 2)).toDouble());
 
     // Overflow Behavior
     EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 64.0f)), MediaTime::positiveInfiniteTime());
