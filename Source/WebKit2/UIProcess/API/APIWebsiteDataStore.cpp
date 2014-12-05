@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Availability.h>
-#import <TargetConditionals.h>
+#include "config.h"
+#include "APIWebsiteDataStore.h"
 
-#if !defined(WK_API_ENABLED)
-#if TARGET_OS_IPHONE
-#define WK_API_ENABLED 1
-#else
-#define WK_API_ENABLED 0// (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
-#endif
-#endif
+#include <WebCore/SessionID.h>
 
-#ifndef __NSi_10_11
-#define __NSi_10_11 introduced=10.11
-#endif
+namespace API {
 
-#ifdef __cplusplus
-#define WK_EXTERN extern "C" __attribute__((visibility ("default")))
-#else
-#define WK_EXTERN extern __attribute__((visibility ("default")))
-#endif
+static uint64_t generateNonPersistentSessionID()
+{
+    // FIXME: We count backwards here to not conflict with API::Session.
+    static uint64_t sessionID = std::numeric_limits<uint64_t>::max();
 
-#ifndef WK_API_AVAILABILITY_ENABLED
-#define WK_AVAILABLE(_mac, _ios)
-#define WK_CLASS_AVAILABLE(_mac, _ios) __attribute__((visibility ("default")))
-#define WK_ENUM_AVAILABLE(_mac, _ios)
-#define WK_ENUM_AVAILABLE_IOS(_ios)
+    return --sessionID;
+}
 
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+RefPtr<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
+{
+    static WebsiteDataStore* defaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration())).leakRef();
 
-#define WK_DESIGNATED_INITIALIZER
-#define WK_UNAVAILABLE
+    return defaultDataStore;
+}
 
-#ifdef __OBJC__
-#import <Foundation/Foundation.h>
+RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
+{
+    return adoptRef(new WebsiteDataStore);
+}
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101000
-typedef NSUInteger NSEventModifierFlags;
-#endif
+WebsiteDataStore::WebsiteDataStore()
+    : m_sessionID(WebCore::SessionID(generateNonPersistentSessionID()))
+{
+}
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1090
-typedef NSInteger NSURLSessionAuthChallengeDisposition;
-#endif
+WebsiteDataStore::WebsiteDataStore(Configuration configuration)
+    : m_sessionID(WebCore::SessionID::defaultSessionID())
+{
+}
 
-#endif
+WebsiteDataStore::~WebsiteDataStore()
+{
+}
 
-#else
+bool WebsiteDataStore::isNonPersistent()
+{
+    return m_sessionID.isEphemeral();
+}
 
-#define WK_DESIGNATED_INITIALIZER NS_DESIGNATED_INITIALIZER
-#define WK_UNAVAILABLE NS_UNAVAILABLE
-
-#endif
-
-#endif
+}

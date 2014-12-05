@@ -27,22 +27,22 @@
 
 #if WK_API_ENABLED
 
+#import "APIWebsiteDataStore.h"
 #import "WKObject.h"
-#import "APISession.h"
 
 namespace WebKit {
 
-inline _WKWebsiteDataStore *wrapper(API::Session& session)
+inline _WKWebsiteDataStore *wrapper(API::WebsiteDataStore& websiteDataStore)
 {
-    ASSERT([session.wrapper() isKindOfClass:[_WKWebsiteDataStore class]]);
-    return (_WKWebsiteDataStore *)session.wrapper();
+    ASSERT([websiteDataStore.wrapper() isKindOfClass:[_WKWebsiteDataStore class]]);
+    return (_WKWebsiteDataStore *)websiteDataStore.wrapper();
 }
 
 }
 
 @interface _WKWebsiteDataStore () <WKObject> {
 @package
-    API::ObjectStorage<API::Session> _session;
+    API::ObjectStorage<API::WebsiteDataStore> _websiteDataStore;
 }
 @end
 

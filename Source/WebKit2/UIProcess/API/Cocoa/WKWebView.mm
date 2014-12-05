@@ -271,8 +271,8 @@ static int32_t deviceOrientation()
 
     webPageConfiguration.userContentController = [_configuration userContentController]->_userContentControllerProxy.get();
     webPageConfiguration.visitedLinkProvider = [_configuration _visitedLinkProvider]->_visitedLinkProvider.get();
-    webPageConfiguration.sessionID = [_configuration _websiteDataStore]->_session->getID();
-    
+    webPageConfiguration.sessionID = [_configuration _websiteDataStore]->_websiteDataStore->sessionID();
+
     RefPtr<WebKit::WebPageGroup> pageGroup;
     NSString *groupIdentifier = configuration._groupIdentifier;
     if (groupIdentifier.length) {

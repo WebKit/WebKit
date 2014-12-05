@@ -136,10 +136,6 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKBrowsingContextGroup alloc];
         break;
 
-    case Type::Session:
-        wrapper = [_WKWebsiteDataStore alloc];
-        break;
-            
     case Type::String:
         wrapper = NSAllocateObject([WKNSString class], size, nullptr);
         break;
@@ -150,6 +146,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::URLRequest:
         wrapper = NSAllocateObject([WKNSURLRequest class], size, nullptr);
+        break;
+
+    case Type::WebsiteDataStore:
+        wrapper = [_WKWebsiteDataStore alloc];
         break;
 
     case Type::BundleFrame:

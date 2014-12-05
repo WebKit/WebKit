@@ -135,6 +135,7 @@ public:
         UserMediaPermissionRequest,
         Vibration,
         ViewportAttributes,
+        WebsiteDataStore,
 
         // Bundle types
         Bundle,

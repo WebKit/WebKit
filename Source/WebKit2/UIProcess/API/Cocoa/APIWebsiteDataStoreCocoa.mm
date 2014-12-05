@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Availability.h>
-#import <TargetConditionals.h>
+#include "config.h"
+#include "APIWebsiteDataStore.h"
 
-#if !defined(WK_API_ENABLED)
-#if TARGET_OS_IPHONE
-#define WK_API_ENABLED 1
-#else
-#define WK_API_ENABLED 0// (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
-#endif
-#endif
+namespace API {
 
-#ifndef __NSi_10_11
-#define __NSi_10_11 introduced=10.11
-#endif
+WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
+{
+    // FIXME: Fill everything in.
+    Configuration configuration;
 
-#ifdef __cplusplus
-#define WK_EXTERN extern "C" __attribute__((visibility ("default")))
-#else
-#define WK_EXTERN extern __attribute__((visibility ("default")))
-#endif
+    return configuration;
+}
 
-#ifndef WK_API_AVAILABILITY_ENABLED
-#define WK_AVAILABLE(_mac, _ios)
-#define WK_CLASS_AVAILABLE(_mac, _ios) __attribute__((visibility ("default")))
-#define WK_ENUM_AVAILABLE(_mac, _ios)
-#define WK_ENUM_AVAILABLE_IOS(_ios)
-
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-
-#define WK_DESIGNATED_INITIALIZER
-#define WK_UNAVAILABLE
-
-#ifdef __OBJC__
-#import <Foundation/Foundation.h>
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101000
-typedef NSUInteger NSEventModifierFlags;
-#endif
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1090
-typedef NSInteger NSURLSessionAuthChallengeDisposition;
-#endif
-
-#endif
-
-#else
-
-#define WK_DESIGNATED_INITIALIZER NS_DESIGNATED_INITIALIZER
-#define WK_UNAVAILABLE NS_UNAVAILABLE
-
-#endif
-
-#endif
+}

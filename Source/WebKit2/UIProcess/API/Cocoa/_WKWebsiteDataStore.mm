@@ -28,38 +28,35 @@
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
-
 @implementation _WKWebsiteDataStore
 
 + (instancetype)defaultDataStore
 {
-    return wrapper(API::Session::defaultSession());
+    return WebKit::wrapper(*API::WebsiteDataStore::defaultDataStore().get());
 }
 
 + (instancetype)nonPersistentDataStore
 {
-    RefPtr<API::Session> session = API::Session::createEphemeral();
-    return [wrapper(*session.release().leakRef()) autorelease];
+    return [WebKit::wrapper(*API::WebsiteDataStore::createNonPersistentDataStore().release().leakRef()) autorelease];
 }
 
 - (void)dealloc
 {
-    _session->API::Session::~Session();
+    _websiteDataStore->API::WebsiteDataStore::~WebsiteDataStore();
 
     [super dealloc];
 }
 
 - (BOOL)isNonPersistent
 {
-    return _session->isEphemeral();
+    return _websiteDataStore->isNonPersistent();
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *_session;
+    return *_websiteDataStore;
 }
 
 @end
