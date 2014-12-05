@@ -311,18 +311,18 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
     GraphicsLayer::setContentsToImage(image);
 }
 
-void GraphicsLayerTextureMapper::setContentsToPlatformLayer(TextureMapperPlatformLayer* media, ContentsLayerPurpose purpose)
+void GraphicsLayerTextureMapper::setContentsToPlatformLayer(TextureMapperPlatformLayer* platformLayer, ContentsLayerPurpose purpose)
 {
-    if (media == m_contentsLayer)
+    if (platformLayer == m_contentsLayer)
         return;
 
-    GraphicsLayer::setContentsToPlatformLayer(media, purpose);
+    GraphicsLayer::setContentsToPlatformLayer(platformLayer, purpose);
     notifyChange(ContentChange);
 
     if (m_contentsLayer)
         m_contentsLayer->setClient(0);
 
-    m_contentsLayer = media;
+    m_contentsLayer = platformLayer;
 
     if (m_contentsLayer)
         m_contentsLayer->setClient(this);

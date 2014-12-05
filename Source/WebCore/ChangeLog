@@ -1,3 +1,17 @@
+2014-12-05  sungmin cho  <sungmin17.cho@lge.com>
+
+        GraphicsLayerTextureMapper: Rename parameter to be more clear
+        https://bugs.webkit.org/show_bug.cgi?id=139288
+
+        Reviewed by Martin Robinson.
+
+        Rename 'media' to 'platformLayer'.
+
+        No new tests, no change in functionality.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsToPlatformLayer):
+
 2014-12-04  Mark Rowe  <mrowe@apple.com>
 
         Fix pre-Yosemite builds.
