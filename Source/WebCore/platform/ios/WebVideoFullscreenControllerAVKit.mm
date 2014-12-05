@@ -125,7 +125,7 @@ public:
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setVideoElement(_videoElement.get());
     _videoFullscreenLayer = [CALayer layer];
-    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _videoElement->clientRect(), view, mode);
+    _interface->setupFullscreen(*_videoFullscreenLayer.get(), _videoElement->clientRect(), view, mode, _videoElement->mediaSession().allowsAlternateFullscreen(*_videoElement.get()));
 }
 
 - (void)exitFullscreen

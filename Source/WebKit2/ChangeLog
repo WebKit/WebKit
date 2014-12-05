@@ -1,3 +1,19 @@
+2014-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] allow host application to opt-out of alternate fullscreen pt. 2
+        https://bugs.webkit.org/show_bug.cgi?id=139227
+
+        Reviewed by Jer Noble and Anders Carlsson.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h: Add bool param to setupFullscreenWithID.
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in: Ditto.
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): Ditto.
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement): Pass new parameter
+            to SetupFullscreenWithID.
+
 2014-12-04  Anders Carlsson  <andersca@apple.com>
 
         Add missing includes in preparation for making toAPI require that it's passed an API::Object

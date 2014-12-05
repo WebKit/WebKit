@@ -784,7 +784,7 @@ void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, Externa
     });
 }
 
-void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer, WebCore::IntRect initialRect, UIView* parentView, HTMLMediaElement::VideoFullscreenMode mode)
+void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer, WebCore::IntRect initialRect, UIView* parentView, HTMLMediaElement::VideoFullscreenMode mode, bool allowOptimizedFullscreen)
 {
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
     
@@ -823,6 +823,8 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
         [m_playerViewController setShowsPlaybackControls:NO];
         [m_playerViewController setPlayerController:(AVPlayerController *)playerController()];
         [m_playerViewController setDelegate:playerController()];
+        [m_playerViewController setAllowsOptimizedFullscreen:allowOptimizedFullscreen];
+
         [m_videoLayerContainer setPlayerViewController:m_playerViewController.get()];
 
         if (m_viewController) {
