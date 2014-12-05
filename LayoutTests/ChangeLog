@@ -1,3 +1,53 @@
+2014-12-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix style sharing with the "type" and "readonly" attributes
+        https://bugs.webkit.org/show_bug.cgi?id=139283
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/data-attribute-style-sharing-1-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-1.html: Added.
+        * fast/css/data-attribute-style-sharing-2-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-2.html: Added.
+        * fast/css/data-attribute-style-sharing-3-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-3.html: Added.
+        * fast/css/data-attribute-style-sharing-4-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-4.html: Added.
+        * fast/css/data-attribute-style-sharing-5-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-5.html: Added.
+        * fast/css/data-attribute-style-sharing-6-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-6.html: Added.
+        * fast/css/data-attribute-style-sharing-7-expected.html: Added.
+        * fast/css/data-attribute-style-sharing-7.html: Added.
+        * fast/css/readonly-attribute-style-sharing-1-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-1.html: Added.
+        * fast/css/readonly-attribute-style-sharing-2-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-2.html: Added.
+        * fast/css/readonly-attribute-style-sharing-3-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-3.html: Added.
+        * fast/css/readonly-attribute-style-sharing-4-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-4.html: Added.
+        * fast/css/readonly-attribute-style-sharing-5-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-5.html: Added.
+        * fast/css/readonly-attribute-style-sharing-6-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-6.html: Added.
+        * fast/css/readonly-attribute-style-sharing-7-expected.html: Added.
+        * fast/css/readonly-attribute-style-sharing-7.html: Added.
+        * fast/css/type-attribute-style-sharing-1-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-1.html: Added.
+        * fast/css/type-attribute-style-sharing-2-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-2.html: Added.
+        * fast/css/type-attribute-style-sharing-3-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-3.html: Added.
+        * fast/css/type-attribute-style-sharing-4-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-4.html: Added.
+        * fast/css/type-attribute-style-sharing-5-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-5.html: Added.
+        * fast/css/type-attribute-style-sharing-6-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-6.html: Added.
+        * fast/css/type-attribute-style-sharing-7-expected.html: Added.
+        * fast/css/type-attribute-style-sharing-7.html: Added.
+
 2014-12-04  Dean Jackson  <dino@apple.com>
 
         css3/viewport-percentage-lengths tests are flakey on WK1 Mavericks Debug

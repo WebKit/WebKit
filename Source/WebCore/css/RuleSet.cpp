@@ -96,47 +96,42 @@ static bool selectorCanMatchPseudoElement(const CSSSelector& rootSelector)
     return false;
 }
 
-static inline bool selectorListContainsAttributeSelector(const CSSSelector* selector)
-{
-    const CSSSelectorList* selectorList = selector->selectorList();
-    if (!selectorList)
-        return false;
-    for (const CSSSelector* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
-        for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
-            if (component->isAttributeSelector())
-                return true;
-        }
-    }
-    return false;
-}
-
 static inline bool isCommonAttributeSelectorAttribute(const QualifiedName& attribute)
 {
     // These are explicitly tested for equality in canShareStyleWithElement.
     return attribute == typeAttr || attribute == readonlyAttr;
 }
 
-static inline bool containsUncommonAttributeSelector(const CSSSelector* selector)
+static bool containsUncommonAttributeSelector(const CSSSelector& rootSelector, bool matchesRightmostElement)
 {
-    for (; selector; selector = selector->tagHistory()) {
-        // Allow certain common attributes (used in the default style) in the selectors that match the current element.
-        if (selector->isAttributeSelector() && !isCommonAttributeSelectorAttribute(selector->attribute()))
-            return true;
-        if (selectorListContainsAttributeSelector(selector))
-            return true;
-        if (selector->relation() != CSSSelector::SubSelector) {
-            selector = selector->tagHistory();
-            break;
+    const CSSSelector* selector = &rootSelector;
+    do {
+        if (selector->isAttributeSelector()) {
+            // FIXME: considering non-rightmost simple selectors is necessary because of the style sharing of cousins.
+            // It is a primitive solution which disable a lot of style sharing on pages that rely on attributes for styling.
+            // We should investigate better ways of doing this.
+            if (!isCommonAttributeSelectorAttribute(selector->attribute()) || !matchesRightmostElement)
+                return true;
         }
-    }
 
-    for (; selector; selector = selector->tagHistory()) {
-        if (selector->isAttributeSelector())
-            return true;
-        if (selectorListContainsAttributeSelector(selector))
-            return true;
-    }
+        if (const CSSSelectorList* selectorList = selector->selectorList()) {
+            for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                if (containsUncommonAttributeSelector(*subSelector, matchesRightmostElement))
+                    return true;
+            }
+        }
+
+        if (selector->relation() != CSSSelector::SubSelector)
+            matchesRightmostElement = false;
+
+        selector = selector->tagHistory();
+    } while (selector);
     return false;
+}
+
+static inline bool containsUncommonAttributeSelector(const CSSSelector& rootSelector)
+{
+    return containsUncommonAttributeSelector(rootSelector, true);
 }
 
 static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRuleFlags addRuleFlags, const CSSSelector* selector)
@@ -161,7 +156,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     , m_position(position)
     , m_matchBasedOnRuleHash(static_cast<unsigned>(computeMatchBasedOnRuleHash(*selector())))
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
-    , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector()))
+    , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_propertyWhitelistType(determinePropertyWhitelistType(addRuleFlags, selector()))
 #if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING

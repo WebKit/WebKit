@@ -505,13 +505,6 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (!thisInputElement || !otherInputElement)
         return false;
 
-    if (thisInputElement->elementData() != otherInputElement->elementData()) {
-        if (thisInputElement->fastGetAttribute(typeAttr) != otherInputElement->fastGetAttribute(typeAttr))
-            return false;
-        if (thisInputElement->fastGetAttribute(readonlyAttr) != otherInputElement->fastGetAttribute(readonlyAttr))
-            return false;
-    }
-
     if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
         return false;
     if (thisInputElement->shouldAppearChecked() != otherInputElement->shouldAppearChecked())
@@ -646,6 +639,18 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
     if (element->isLink() && state.elementLinkState() != style->insideLink())
         return false;
+
+    if (element->elementData() != state.element()->elementData()) {
+        if (element->fastGetAttribute(readonlyAttr) != state.element()->fastGetAttribute(readonlyAttr))
+            return false;
+        if (element->isSVGElement()) {
+            if (element->getAttribute(typeAttr) != state.element()->getAttribute(typeAttr))
+                return false;
+        } else {
+            if (element->fastGetAttribute(typeAttr) != state.element()->fastGetAttribute(typeAttr))
+                return false;
+        }
+    }
 
 #if ENABLE(VIDEO_TRACK)
     // Deny sharing styles between WebVTT and non-WebVTT nodes.

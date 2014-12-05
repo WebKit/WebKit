@@ -1,3 +1,75 @@
+2014-12-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix style sharing with the "type" and "readonly" attributes
+        https://bugs.webkit.org/show_bug.cgi?id=139283
+
+        Reviewed by Antti Koivisto.
+
+        There are two bugs adressed with this patch:
+        1) The attributes "type" and "readonly" where only handled correctly
+           for input elements. For everything else, they could incorrectly
+           be ignored for style sharing.
+        2) The handling of attributes was incorrect for selector lists, leading
+           to various bugs (incorrect style sharing in some cases, disabling
+           style sharing on valid cases).
+
+        For [1], the problem was that attribute checking had been limited to
+        StyleResolver::canShareStyleWithControl(). That function is for handling
+        the special states of input element. For any other element, the attributes
+        were simply ignored.
+
+        For [2], there were a bunch of small problems. First, containsUncommonAttributeSelector()
+        was not recursive, which caused it to ignored any nested selector list. This used to be
+        correct but since we have advanced selectors we can no longer assumed selectors are not nested.
+
+        A second issue was that any attribute in a selector list was causing us to fall back
+        to the slow case. Now that we have the fast :matches(), we really don't want that.
+
+        The function containsUncommonAttributeSelector() was transformed into a recursive function
+        tracking where we are in the selector.
+
+        At the entry point, we start with the flag "startsOnRightmostElement" set to true. The flag is then
+        updated on the stack of each recursive call.
+
+        For example, "webkit > is:matches(freaking > awesome)". We evalute "is" with the flag to true, then recurse
+        into evaluating "freaking > awesome" with the flag still set to true. When we evalute ">", the flag
+        is set to false to evaluate any following selectors.
+        After evaluating "freaking > awesome", we go back to our previous stack frame, and the flag
+        is back to true and we can continue evaluating with the curren top level state.
+
+        From some logging, I discovered that the attribute handling is way too aggressive.
+        This is not a regression and I cannot fix that easily so I left a fixme.
+
+        Tests: fast/css/data-attribute-style-sharing-1.html
+               fast/css/data-attribute-style-sharing-2.html
+               fast/css/data-attribute-style-sharing-3.html
+               fast/css/data-attribute-style-sharing-4.html
+               fast/css/data-attribute-style-sharing-5.html
+               fast/css/data-attribute-style-sharing-6.html
+               fast/css/data-attribute-style-sharing-7.html
+               fast/css/readonly-attribute-style-sharing-1.html
+               fast/css/readonly-attribute-style-sharing-2.html
+               fast/css/readonly-attribute-style-sharing-3.html
+               fast/css/readonly-attribute-style-sharing-4.html
+               fast/css/readonly-attribute-style-sharing-5.html
+               fast/css/readonly-attribute-style-sharing-6.html
+               fast/css/readonly-attribute-style-sharing-7.html
+               fast/css/type-attribute-style-sharing-1.html
+               fast/css/type-attribute-style-sharing-2.html
+               fast/css/type-attribute-style-sharing-3.html
+               fast/css/type-attribute-style-sharing-4.html
+               fast/css/type-attribute-style-sharing-5.html
+               fast/css/type-attribute-style-sharing-6.html
+               fast/css/type-attribute-style-sharing-7.html
+
+        * css/RuleSet.cpp:
+        (WebCore::containsUncommonAttributeSelector):
+        (WebCore::RuleData::RuleData):
+        (WebCore::selectorListContainsAttributeSelector): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithControl):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+
 2014-12-05  Jer Noble  <jer.noble@apple.com>
 
         [WTF] MediaTime should support round-tripping from and to doubles.
