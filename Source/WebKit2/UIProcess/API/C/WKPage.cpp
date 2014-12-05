@@ -34,6 +34,7 @@
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
+#include "AuthenticationChallengeProxy.h"
 #include "ImmutableDictionary.h"
 #include "LegacySessionStateCoding.h"
 #include "NativeWebKeyboardEvent.h"
@@ -47,9 +48,14 @@
 #include "WebBackForwardList.h"
 #include "WebContext.h"
 #include "WebFormClient.h"
+#include "WebInspectorProxy.h"
+#include "WebOpenPanelParameters.h"
+#include "WebOpenPanelResultListenerProxy.h"
+#include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include "WebProtectionSpace.h"
 #include <WebCore/Page.h>
 #include <WebCore/WindowFeatures.h>
 

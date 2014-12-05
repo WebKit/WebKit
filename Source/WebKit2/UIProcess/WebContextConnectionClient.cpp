@@ -27,6 +27,7 @@
 #include "WebContextConnectionClient.h"
 
 #include "WKAPICast.h"
+#include "WebContext.h"
 
 namespace WebKit {
 

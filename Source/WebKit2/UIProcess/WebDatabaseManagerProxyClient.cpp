@@ -27,6 +27,7 @@
 #include "WebDatabaseManagerProxyClient.h"
 
 #include "WKAPICast.h"
+#include "WebDatabaseManagerProxy.h"
 
 namespace WebKit {
 

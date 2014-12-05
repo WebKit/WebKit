@@ -28,7 +28,10 @@
 
 #include "APIError.h"
 #include "APIURLRequest.h"
+#include "InjectedBundleNavigationAction.h"
 #include "WKBundleAPICast.h"
+#include "WebFrame.h"
+#include "WebPage.h"
 
 using namespace WebCore;
 

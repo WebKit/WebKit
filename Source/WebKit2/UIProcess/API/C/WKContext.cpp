@@ -32,10 +32,15 @@
 #include "APIHistoryClient.h"
 #include "APINavigationData.h"
 #include "APIURLRequest.h"
+#include "AuthenticationChallengeProxy.h"
+#include "DownloadProxy.h"
 #include "WKAPICast.h"
 #include "WKContextConfigurationRef.h"
 #include "WKRetainPtr.h"
+#include "WebCertificateInfo.h"
 #include "WebContext.h"
+#include "WebIconDatabase.h"
+#include "WebPluginSiteDataManager.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

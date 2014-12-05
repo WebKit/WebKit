@@ -31,9 +31,10 @@
 
 #include "APIArray.h"
 #include "Logging.h"
-#include "WebContextMenuItem.h"
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
+#include "WebContextMenuItem.h"
+#include "WebPageProxy.h"
 
 namespace WebKit {
 

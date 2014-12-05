@@ -46,6 +46,7 @@
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
 #include "WebImage.h"
+#include "WebInspector.h"
 #include "WebPage.h"
 #include "WebPageOverlay.h"
 #include "WebRenderLayer.h"

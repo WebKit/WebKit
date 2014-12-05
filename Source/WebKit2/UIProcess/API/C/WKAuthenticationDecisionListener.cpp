@@ -28,6 +28,7 @@
 
 #include "AuthenticationDecisionListener.h"
 #include "WKAPICast.h"
+#include "WebCredential.h"
 
 using namespace WebKit;
 

@@ -31,11 +31,13 @@
 #include "APIError.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
+#include "InjectedBundleBackForwardListItem.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"
+#include "WebFrame.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 

@@ -26,7 +26,10 @@
 #include "config.h"
 #include "InjectedBundleClient.h"
 
+#include "InjectedBundle.h"
 #include "WKBundleAPICast.h"
+#include "WebPage.h"
+#include "WebPageGroupProxy.h"
 
 namespace WebKit {
 

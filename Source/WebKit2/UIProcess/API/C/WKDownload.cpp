@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKDownload.h"
 
+#include "APIData.h"
 #include "APIURLRequest.h"
 #include "DownloadProxy.h"
 #include "WKAPICast.h"

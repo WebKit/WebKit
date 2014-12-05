@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebGeolocationPosition.h"
 
 using namespace WebKit;
 

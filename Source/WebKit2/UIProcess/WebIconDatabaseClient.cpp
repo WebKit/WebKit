@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
+#include "WebIconDatabase.h"
 
 namespace WebKit {
 

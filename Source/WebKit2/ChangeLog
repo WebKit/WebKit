@@ -1,5 +1,42 @@
 2014-12-04  Anders Carlsson  <andersca@apple.com>
 
+        Add missing includes in preparation for making toAPI require that it's passed an API::Object
+        https://bugs.webkit.org/show_bug.cgi?id=139278
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKAuthenticationChallenge.cpp:
+        * UIProcess/API/C/WKAuthenticationDecisionListener.cpp:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKDownload.cpp:
+        * UIProcess/API/C/WKFrame.cpp:
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        * UIProcess/API/C/WKInspector.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/GenericCallback.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        * UIProcess/WebContextConnectionClient.cpp:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        * UIProcess/WebCookieManagerProxyClient.cpp:
+        * UIProcess/WebDatabaseManagerProxyClient.cpp:
+        * UIProcess/WebFindClient.cpp:
+        * UIProcess/WebFormClient.cpp:
+        * UIProcess/WebIconDatabaseClient.cpp:
+        * UIProcess/WebPageContextMenuClient.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+
+2014-12-04  Anders Carlsson  <andersca@apple.com>
+
         Make API::String copy the underlying strings if needed, for thread safety
         https://bugs.webkit.org/show_bug.cgi?id=139261
 

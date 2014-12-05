@@ -27,6 +27,7 @@
 #include "WebCookieManagerProxyClient.h"
 
 #include "WKAPICast.h"
+#include "WebCookieManagerProxy.h"
 
 namespace WebKit {
 

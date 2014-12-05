@@ -29,6 +29,9 @@
 
 #include "APIArray.h"
 #include "InjectedBundleHitTestResult.h"
+#include "InjectedBundleNodeHandle.h"
+#include "InjectedBundleRangeHandle.h"
+#include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKData.h"

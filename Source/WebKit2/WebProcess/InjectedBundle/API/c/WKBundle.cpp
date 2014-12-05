@@ -29,9 +29,12 @@
 #include "APIArray.h"
 #include "APIData.h"
 #include "InjectedBundle.h"
+#include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKBundlePrivate.h"
+#include "WebConnection.h"
+#include "WebFrame.h"
 
 using namespace WebKit;
 

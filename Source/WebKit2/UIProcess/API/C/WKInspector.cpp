@@ -30,6 +30,7 @@
 
 #include "WKAPICast.h"
 #include "WebInspectorProxy.h"
+#include "WebPageProxy.h"
 
 using namespace WebKit;
 

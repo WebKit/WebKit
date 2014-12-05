@@ -25,7 +25,10 @@
 
 #include "config.h"
 #include "WebFindClient.h"
+
 #include "WKAPICast.h"
+#include "WebImage.h"
+#include "WebPageProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

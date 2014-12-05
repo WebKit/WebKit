@@ -27,6 +27,7 @@
 #include "WebContextInjectedBundleClient.h"
 
 #include "WKAPICast.h"
+#include "WebContext.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

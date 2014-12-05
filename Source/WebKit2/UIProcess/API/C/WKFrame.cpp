@@ -26,8 +26,11 @@
 #include "config.h"
 #include "WKFrame.h"
 
+#include "APIData.h"
 #include "WKAPICast.h"
+#include "WebCertificateInfo.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 
 using namespace WebKit;
 

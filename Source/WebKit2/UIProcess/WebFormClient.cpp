@@ -29,6 +29,8 @@
 #include "APIString.h"
 #include "ImmutableDictionary.h"
 #include "WKAPICast.h"
+#include "WebFormSubmissionListenerProxy.h"
+#include "WebPageProxy.h"
 
 namespace WebKit {
 

@@ -27,7 +27,9 @@
 #include "WKBundleDOMWindowExtension.h"
 
 #include "InjectedBundleDOMWindowExtension.h"
+#include "InjectedBundleScriptWorld.h"
 #include "WKBundleAPICast.h"
+#include "WebFrame.h"
 
 using namespace WebKit;
 

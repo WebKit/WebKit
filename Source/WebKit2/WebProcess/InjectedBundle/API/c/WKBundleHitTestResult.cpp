@@ -30,6 +30,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebFrame.h"
 
 using namespace WebKit;
 
