@@ -1,5 +1,17 @@
 2014-12-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176812. <rdar://problem/19140827>
+
+    2014-12-04  Timothy Horton  <timothy_horton@apple.com>
+
+            Further fix the 32-bit build.
+
+            * page/mac/TextIndicatorWindow.mm:
+            (WebCore::TextIndicatorWindow::setTextIndicator):
+
+
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r176811. <rdar://problem/19140827>
 
     2014-12-04  Timothy Horton  <timothy_horton@apple.com>
