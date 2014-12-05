@@ -1,3 +1,11 @@
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Don't use PLATFORM(IOS) in non-project headers.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _allowsAlternateFullscreen]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2014-12-05  Sam Weinig  <sam@webkit.org>
 
         WKBundleCSSStyleDeclarationRef needs to be a real API::Object
