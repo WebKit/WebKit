@@ -1,3 +1,27 @@
+2014-12-05  Chris Dumez  <cdumez@apple.com>
+
+        Move 'text-emphasis-style' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139285
+
+        Reviewed by Sam Weinig.
+
+        Move 'text-emphasis-style' CSS property to the new StyleBuilder by
+        using custom code.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue): Deleted.
+        (WebCore::ApplyPropertyTextEmphasisStyle::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitTextEmphasisStyle):
+        (WebCore::StyleBuilderCustom::applyInheritWebkitTextEmphasisStyle):
+        (WebCore::StyleBuilderCustom::applyValueWebkitTextEmphasisStyle):
+
 2014-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] remove "enter optimized fullscreen" gesture

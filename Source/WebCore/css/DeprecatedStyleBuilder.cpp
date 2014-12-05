@@ -780,69 +780,6 @@ public:
     }
 };
 
-class ApplyPropertyTextEmphasisStyle {
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setTextEmphasisFill(styleResolver->parentStyle()->textEmphasisFill());
-        styleResolver->style()->setTextEmphasisMark(styleResolver->parentStyle()->textEmphasisMark());
-        styleResolver->style()->setTextEmphasisCustomMark(styleResolver->parentStyle()->textEmphasisCustomMark());
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setTextEmphasisFill(RenderStyle::initialTextEmphasisFill());
-        styleResolver->style()->setTextEmphasisMark(RenderStyle::initialTextEmphasisMark());
-        styleResolver->style()->setTextEmphasisCustomMark(RenderStyle::initialTextEmphasisCustomMark());
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (is<CSSValueList>(*value)) {
-            CSSValueList& list = downcast<CSSValueList>(*value);
-            ASSERT(list.length() == 2);
-            if (list.length() != 2)
-                return;
-            for (unsigned i = 0; i < 2; ++i) {
-                CSSValue* item = list.itemWithoutBoundsCheck(i);
-                if (!is<CSSPrimitiveValue>(*item))
-                    continue;
-
-                CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(*item);
-                if (value.getValueID() == CSSValueFilled || value.getValueID() == CSSValueOpen)
-                    styleResolver->style()->setTextEmphasisFill(value);
-                else
-                    styleResolver->style()->setTextEmphasisMark(value);
-            }
-            styleResolver->style()->setTextEmphasisCustomMark(nullAtom);
-            return;
-        }
-
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-
-        if (primitiveValue.isString()) {
-            styleResolver->style()->setTextEmphasisFill(TextEmphasisFillFilled);
-            styleResolver->style()->setTextEmphasisMark(TextEmphasisMarkCustom);
-            styleResolver->style()->setTextEmphasisCustomMark(primitiveValue.getStringValue());
-            return;
-        }
-
-        styleResolver->style()->setTextEmphasisCustomMark(nullAtom);
-
-        if (primitiveValue.getValueID() == CSSValueFilled || primitiveValue.getValueID() == CSSValueOpen) {
-            styleResolver->style()->setTextEmphasisFill(primitiveValue);
-            styleResolver->style()->setTextEmphasisMark(TextEmphasisMarkAuto);
-        } else {
-            styleResolver->style()->setTextEmphasisFill(TextEmphasisFillFilled);
-            styleResolver->style()->setTextEmphasisMark(primitiveValue);
-        }
-    }
-
-    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
-};
-
 template <typename T,
           T (Animation::*getterFunction)() const,
           void (Animation::*setterFunction)(T),
@@ -1001,7 +938,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitMaskSourceType, ApplyPropertyFillLayer<EMaskSourceType, CSSPropertyWebkitMaskSourceType, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isMaskSourceTypeSet, &FillLayer::maskSourceType, &FillLayer::setMaskSourceType, &FillLayer::clearMaskSourceType, &FillLayer::initialMaskSourceType, &CSSToStyleMap::mapFillMaskSourceType>::createHandler());
     setPropertyHandler(CSSPropertyWebkitPerspectiveOrigin, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitPerspectiveOriginX, CSSPropertyWebkitPerspectiveOriginY>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::setVisitedLinkTextEmphasisColor, &RenderStyle::color>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextEmphasisStyle, ApplyPropertyTextEmphasisStyle::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextFillColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::setVisitedLinkTextFillColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextStrokeColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTransitionDelay, ApplyPropertyAnimation<double, &Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSToStyleMap::mapAnimationDelay, &RenderStyle::accessTransitions, &RenderStyle::transitions>::createHandler());
