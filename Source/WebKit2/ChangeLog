@@ -1,5 +1,17 @@
 2014-12-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176811. <rdar://problem/19140827>
+
+    2014-12-04  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the 32-bit build.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setTextIndicator:fadeOut:animationCompletionHandler:]):
+
+
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r176810. <rdar://problem/19140827>
 
     2014-12-04  Tim Horton  <timothy_horton@apple.com>
