@@ -1,3 +1,13 @@
+2014-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] remove "enter optimized fullscreen" gesture
+        https://bugs.webkit.org/show_bug.cgi?id=139301
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handleWrapperTouchStart): Remove gesture recognizer.
+
 2014-12-05  Beth Dakin  <bdakin@apple.com>
 
         rdar://problem/19156353 Additional build-fixes needed.

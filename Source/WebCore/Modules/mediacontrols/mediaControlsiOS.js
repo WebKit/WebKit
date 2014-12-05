@@ -366,23 +366,6 @@ ControllerIOS.prototype = {
 
         this.mostRecentNumberOfTargettedTouches = event.targetTouches.length;
         
-        if (this.host.optimizedFullscreenSupported) {
-            if (this.mostRecentNumberOfTargettedTouches == 2) {
-                var now = new Date();
-                if (this.lastDoubleTouchTime === undefined) {
-                    this.lastDoubleTouchTime = now;
-                } else {
-                    var doubleTouchIntervalThresholdms = 300
-                    if (now - this.lastDoubleTouchTime < doubleTouchIntervalThresholdms) {
-                        delete this.lastDoubleTouchTime;
-                        event.preventDefault();
-                        this.host.enterFullscreenOptimized();
-                    } else
-                        this.lastDoubleTouchTime = now;
-                }
-            }
-        }
-        
         if (this.controlsAreHidden()) {
             this.showControls();
             if (this.hideTimer)
