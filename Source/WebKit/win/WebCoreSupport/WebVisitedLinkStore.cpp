@@ -37,7 +37,7 @@ static bool s_shouldTrackVisitedLinks;
 
 WebVisitedLinkStore& WebVisitedLinkStore::shared()
 {
-    static NeverDestroyed<WebVisitedLinkStore> visitedLinkStore;
+    return WebVisitedLinkStore& visitedLinkStore = *adoptRef(new WebVisitedLinkStore);
     
     return visitedLinkStore;
 }
