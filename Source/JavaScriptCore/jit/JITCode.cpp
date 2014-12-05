@@ -254,7 +254,7 @@ namespace WTF {
 
 void printInternal(PrintStream& out, JSC::JITCode::JITType type)
 {
-    out.print("%s", JSC::JITCode::typeName(type));
+    out.print(JSC::JITCode::typeName(type));
 }
 
 } // namespace WTF
