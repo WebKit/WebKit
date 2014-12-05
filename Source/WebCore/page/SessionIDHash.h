@@ -39,7 +39,7 @@ struct SessionIDHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 template<> struct HashTraits<WebCore::SessionID> : GenericHashTraits<WebCore::SessionID> {
-    static const uint64_t deletedValueIdentifier = std::numeric_limits<uint64_t>::max();
+    static const uint64_t deletedValueIdentifier = 0xffffffffffffffff;
     static const bool needsDestruction = false;
     static WebCore::SessionID emptyValue() { return WebCore::SessionID::emptySessionID(); }
 
