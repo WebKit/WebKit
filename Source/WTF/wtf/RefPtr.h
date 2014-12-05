@@ -64,6 +64,8 @@ namespace WTF {
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = nullptr; return tmp; }
         PassRef<T> releaseNonNull() { ASSERT(m_ptr); PassRef<T> tmp = adoptRef(*m_ptr); m_ptr = nullptr; return tmp; }
 
+        T* leakRef() WARN_UNUSED_RETURN;
+
         T& operator*() const { return *m_ptr; }
         ALWAYS_INLINE T* operator->() const { return m_ptr; }
         
@@ -105,6 +107,15 @@ namespace WTF {
         T* ptr = m_ptr;
         m_ptr = nullptr;
         derefIfNotNull(ptr);
+    }
+
+    template<typename T>
+    inline T* RefPtr<T>::leakRef()
+    {
+        T* ptr = m_ptr;
+        m_ptr = nullptr;
+
+        return ptr;
     }
 
     template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr& o)

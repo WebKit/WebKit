@@ -1,3 +1,20 @@
+2014-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Make API::String copy the underlying strings if needed, for thread safety
+        https://bugs.webkit.org/show_bug.cgi?id=139261
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RefPtr.h:
+        (WTF::RefPtr<T>::leakRef):
+        Add a leakRef() to RefPtr so we don't have to go through PassRefPtr.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isSafeToSendToAnotherThread):
+        Check if the string is empty before checking whether it's in an atomic string table.
+        It's safe to send empty strings to other threads even if they're in the atomic string table
+        since they will never be deallocated.
+
 2014-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warning in StringImpl.h

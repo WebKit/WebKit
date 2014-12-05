@@ -28,6 +28,9 @@
 #include "WKStringPrivate.h"
 
 #include "WKAPICast.h"
+#include <JavaScriptCore/InitializeThreading.h>
+#include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 
 using namespace WebKit;
 
@@ -38,7 +41,7 @@ WKTypeID WKStringGetTypeID()
 
 WKStringRef WKStringCreateWithUTF8CString(const char* string)
 {
-    RefPtr<API::String> apiString = API::String::createFromUTF8String(string);
+    auto apiString = API::String::create(WTF::String::fromUTF8(string));
     return toAPI(apiString.release().leakRef());
 }
 
@@ -85,11 +88,13 @@ bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef aRef, const char* b)
 
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 {
-    RefPtr<API::String> apiString = jsStringRef ? API::String::create(jsStringRef) : API::String::createNull();
+    auto apiString = jsStringRef ? API::String::create(jsStringRef->string()) : API::String::createNull();
+
     return toAPI(apiString.release().leakRef());
 }
 
 JSStringRef WKStringCopyJSString(WKStringRef stringRef)
 {
-    return toImpl(stringRef)->createJSString();
+    JSC::initializeThreading();
+    return OpaqueJSString::create(toImpl(stringRef)->string()).leakRef();
 }

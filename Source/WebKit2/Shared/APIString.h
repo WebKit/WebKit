@@ -27,9 +27,6 @@
 #define APIString_h
 
 #include "APIObject.h"
-#include <JavaScriptCore/InitializeThreading.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/OpaqueJSString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -39,24 +36,19 @@ namespace API {
 
 class String final : public ObjectImpl<Object::Type::String> {
 public:
-    static PassRefPtr<String> createNull()
+    static RefPtr<String> createNull()
     {
         return adoptRef(new String);
     }
 
-    static PassRefPtr<String> create(const WTF::String& string)
+    static RefPtr<String> create(WTF::String&& string)
     {
-        return adoptRef(new String(string));
+        return adoptRef(new String(string.isNull() ? WTF::String(StringImpl::empty()) : string.isolatedCopy()));
     }
 
-    static PassRefPtr<String> create(JSStringRef jsStringRef)
+    static RefPtr<String> create(const WTF::String& string)
     {
-        return adoptRef(new String(jsStringRef->string()));
-    }
-
-    static PassRefPtr<String> createFromUTF8String(const char* string)
-    {
-        return adoptRef(new String(WTF::String::fromUTF8(string)));
+        return create(string.isolatedCopy());
     }
 
     virtual ~String()
@@ -101,24 +93,20 @@ public:
 
     const WTF::String& string() const { return m_string; }
 
-    JSStringRef createJSString() const
-    {
-        JSC::initializeThreading();
-        return OpaqueJSString::create(m_string).leakRef();
-    }
-
 private:
     String()
         : m_string()
     {
     }
 
-    String(const WTF::String& string)
-        : m_string(!string.impl() ? WTF::String(StringImpl::empty()) : string)
+    String(WTF::String&& string)
+        : m_string(WTF::move(string))
     {
+        ASSERT(!m_string.isNull());
+        ASSERT(m_string.isSafeToSendToAnotherThread());
     }
 
-    WTF::String m_string;
+    const WTF::String m_string;
 };
 
 } // namespace WebKit

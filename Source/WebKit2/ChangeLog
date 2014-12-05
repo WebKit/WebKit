@@ -1,3 +1,23 @@
+2014-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Make API::String copy the underlying strings if needed, for thread safety
+        https://bugs.webkit.org/show_bug.cgi?id=139261
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringCreateWithUTF8CString):
+        (WKStringCreateWithJSString):
+        (WKStringCopyJSString):
+        Move the implementations from API::String and directly into the API functions.
+
+        * Shared/APIString.h:
+        Add a create overload that takes an rvalue reference. Call it from the create overload
+        that takes an lvalue reference, but explicitly copy the string.
+        We call isolatedCopy() again on the string in the rvalue reference overload, but that is a no-op
+        if the string can be sent to another thread. Add assertions in the String constructor that we can
+        send the string to another thread.
+
 2014-12-04  Beth Dakin  <bdakin@apple.com>
 
         Clients disabling action menus sometimes still invoke action menu behaviors
