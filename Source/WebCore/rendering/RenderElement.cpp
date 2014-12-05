@@ -159,7 +159,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
         return createRenderer<RenderRubyText>(element, WTF::move(style));
     switch (style.get().display()) {
     case NONE:
-        style.dropRef();
         return nullptr;
     case INLINE:
         return createRenderer<RenderInline>(element, WTF::move(style));
@@ -399,7 +398,6 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
         ASSERT(!isRenderIFrame());
         ASSERT(!isEmbeddedObject());
         ASSERT(!isCanvas());
-        style.dropRef();
         return;
     }
 

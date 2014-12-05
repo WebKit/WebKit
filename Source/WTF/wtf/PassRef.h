@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -49,12 +49,9 @@ public:
     const T* ptr() const;
     T* ptr();
 
-    void dropRef();
     T& leakRef() WARN_UNUSED_RETURN;
 
-#ifndef NDEBUG
     ~PassRef();
-#endif
 
 private:
     friend PassRef adoptRef<T>(T&);
@@ -67,103 +64,73 @@ private:
     enum AdoptTag { Adopt };
     PassRef(T&, AdoptTag);
 
-    T& m_reference;
-
-#ifndef NDEBUG
+    T* m_ptr;
     bool m_gaveUpReference;
-#endif
 };
 
 template<typename T> inline PassRef<T>::PassRef(T& reference)
-    : m_reference(reference)
-#ifndef NDEBUG
-    , m_gaveUpReference(false)
-#endif
+    : m_ptr(&reference)
 {
-    reference.ref();
+    m_ptr->ref();
 }
 
 template<typename T> inline PassRef<T>::PassRef(PassRef&& other)
-    : m_reference(other.leakRef())
-#ifndef NDEBUG
-    , m_gaveUpReference(false)
-#endif
+    : m_ptr(&other.leakRef())
 {
 }
 
 template<typename T> template<typename U> inline PassRef<T>::PassRef(PassRef<U> other)
-    : m_reference(other.leakRef())
-#ifndef NDEBUG
-    , m_gaveUpReference(false)
-#endif
+    : m_ptr(&other.leakRef())
 {
 }
 
 template<typename T> template<typename U> inline PassRef<T>::PassRef(const Ref<U>& other)
-    : m_reference(static_cast<T&>(const_cast<U&>(other.get())))
-#ifndef NDEBUG
-    , m_gaveUpReference(false)
-#endif
+    : m_ptr(static_cast<T*>(const_cast<U*>(other.ptr())))
 {
-    m_reference.ref();
+    ASSERT(m_ptr);
+    m_ptr->ref();
 }
-
-#ifndef NDEBUG
 
 template<typename T> PassRef<T>::~PassRef()
 {
-    ASSERT(m_gaveUpReference);
-}
-
-#endif
-
-template<typename T> inline void PassRef<T>::dropRef()
-{
-    ASSERT(!m_gaveUpReference);
-    m_reference.deref();
-#ifndef NDEBUG
-    m_gaveUpReference = true;
-#endif
+    if (m_ptr)
+        m_ptr->deref();
 }
 
 template<typename T> inline const T& PassRef<T>::get() const
 {
-    ASSERT(!m_gaveUpReference);
-    return m_reference;
+    ASSERT(m_ptr);
+    return *m_ptr;
 }
 
 template<typename T> inline T& PassRef<T>::get()
 {
-    ASSERT(!m_gaveUpReference);
-    return m_reference;
+    ASSERT(m_ptr);
+    return *m_ptr;
 }
 
 template<typename T> const T* PassRef<T>::ptr() const
 {
-    ASSERT(!m_gaveUpReference);
-    return &m_reference;
+    ASSERT(m_ptr);
+    return m_ptr;
 }
 
 template<typename T> T* PassRef<T>::ptr()
 {
-    ASSERT(!m_gaveUpReference);
-    return &m_reference;
+    ASSERT(m_ptr);
+    return m_ptr;
 }
 
 template<typename T> inline T& PassRef<T>::leakRef()
 {
-#ifndef NDEBUG
-    ASSERT(!m_gaveUpReference);
-    m_gaveUpReference = true;
-#endif
-    return m_reference;
+    ASSERT(m_ptr);
+    T* leakedPtr = m_ptr;
+    m_ptr = nullptr;
+    return *leakedPtr;
 }
 
 template<typename T> inline PassRef<T>::PassRef(T& reference, AdoptTag)
-    : m_reference(reference)
-#ifndef NDEBUG
-    , m_gaveUpReference(false)
-#endif
+    : m_ptr(&reference)
 {
 }
 

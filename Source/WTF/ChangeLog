@@ -1,3 +1,25 @@
+2014-12-05  Andreas Kling  <akling@apple.com>
+
+        PassRef should deref on destruction if pointee was not moved.
+        <https://webkit.org/b/139309>
+
+        Reviewed by Antti Koivisto.
+
+        Let PassRef become nullptr internally after having WTF::move()'d the pointee.
+        This means that PassRef is now essentially a PassRefPtr that can only be
+        constructed with a non-null pointee.
+
+        This should make it possible for all ::create()-style construction helpers to
+        return PassRef, removing a branch in each case.
+
+        * wtf/PassRef.h:
+        (WTF::PassRef<T>::PassRef):
+        (WTF::PassRef<T>::~PassRef):
+        (WTF::PassRef<T>::get):
+        (WTF::PassRef<T>::ptr):
+        (WTF::PassRef<T>::leakRef):
+        (WTF::PassRef<T>::dropRef): Deleted.
+
 2014-12-05  Jer Noble  <jer.noble@apple.com>
 
         [WTF] MediaTime should support round-tripping from and to doubles.

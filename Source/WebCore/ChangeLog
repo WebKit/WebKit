@@ -1,3 +1,19 @@
+2014-12-05  Andreas Kling  <akling@apple.com>
+
+        PassRef should deref on destruction if pointee was not moved.
+        <https://webkit.org/b/139309>
+
+        Reviewed by Antti Koivisto.
+
+        Remove calls to PassRef::dropRef() since it's no longer necessary to manually
+        notify PassRef that you didn't move the pointee.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+        (WebCore::RenderElement::setStyle):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+
 2014-12-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix style sharing with the "type" and "readonly" attributes
