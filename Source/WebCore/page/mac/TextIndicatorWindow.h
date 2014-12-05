@@ -48,7 +48,7 @@ public:
     explicit TextIndicatorWindow(NSView *);
     ~TextIndicatorWindow();
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, NSRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler);
+    void setTextIndicator(PassRefPtr<TextIndicator>, CGRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler);
 
 private:
     void closeWindow();
