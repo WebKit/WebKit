@@ -1,3 +1,34 @@
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176810. <rdar://problem/19140827>
+
+    2014-12-04  Tim Horton  <timothy_horton@apple.com>
+
+            TextIndicator::createWithSelectionInFrame does synchronous IPC in WebKit2
+            https://bugs.webkit.org/show_bug.cgi?id=139252
+            <rdar://problem/19140827>
+
+            Reviewed by Anders Carlsson.
+
+            * WebCore.exp.in:
+            * page/TextIndicator.cpp:
+            (WebCore::TextIndicator::createWithSelectionInFrame):
+            (WebCore::TextIndicator::TextIndicator):
+            * page/TextIndicator.h:
+            (WebCore::TextIndicator::selectionRectInWindowCoordinates):
+            (WebCore::TextIndicator::textBoundingRectInWindowCoordinates):
+            (WebCore::TextIndicator::selectionRectInScreenCoordinates): Deleted.
+            (WebCore::TextIndicator::textBoundingRectInScreenCoordinates): Deleted.
+            Go back to keeping the rects in "window" coordinates.
+
+            * page/mac/TextIndicatorWindow.h:
+            * page/mac/TextIndicatorWindow.mm:
+            (-[WebTextIndicatorView initWithFrame:textIndicator:margin:]):
+            (WebCore::TextIndicatorWindow::setTextIndicator):
+            Let callers pass in the contentRect instead of trying to share the code
+            to compute it, since it needs to be different for legacy and modern WebKit.
+
+
 2014-12-05  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176855.

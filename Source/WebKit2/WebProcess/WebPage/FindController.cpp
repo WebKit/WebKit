@@ -318,7 +318,7 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
     if (!indicator)
         return false;
 
-    m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInScreenCoordinates());
+    m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInWindowCoordinates());
     m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), !isShowingOverlay));
     m_isShowingFindIndicator = true;
 
@@ -450,7 +450,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
         return;
 
     if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
-        IntRect findIndicatorRect = selectedFrame->view()->contentsToScreen(enclosingIntRect(selectedFrame->selection().selectionBounds()));
+        IntRect findIndicatorRect = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection().selectionBounds()));
 
         if (findIndicatorRect != m_findIndicatorRect)
             hideFindIndicator();
