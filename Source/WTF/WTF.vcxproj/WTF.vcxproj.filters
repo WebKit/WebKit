@@ -249,6 +249,9 @@
     <ClCompile Include="..\wtf\FastBitVector.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\gobject\GThreadSafeMainLoopSource.cpp">
+      <Filter>wtf\gobject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\wtf\dtoa\utils.h">
@@ -716,6 +719,9 @@
     </ClInclude>
     <ClInclude Include="..\wtf\HashMethod.h">
       <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\gobject\GThreadSafeMainLoopSource.h">
+      <Filter>wtf\gobject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

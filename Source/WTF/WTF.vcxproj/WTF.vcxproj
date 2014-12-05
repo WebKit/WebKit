@@ -104,6 +104,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\wtf\gobject\GThreadSafeMainLoopSource.cpp" />
     <ClCompile Include="..\wtf\GregorianDateTime.cpp" />
     <ClCompile Include="..\wtf\HashTable.cpp" />
     <ClCompile Include="..\wtf\MainThread.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="..\wtf\gobject\GMainLoopSource.h" />
     <ClInclude Include="..\wtf\gobject\GMutexLocker.h" />
     <ClInclude Include="..\wtf\gobject\GRefPtr.h" />
+    <ClInclude Include="..\wtf\gobject\GThreadSafeMainLoopSource.h" />
     <ClInclude Include="..\wtf\gobject\GTypedefs.h" />
     <ClInclude Include="..\wtf\gobject\GUniquePtr.h" />
     <ClInclude Include="..\wtf\GregorianDateTime.h" />
