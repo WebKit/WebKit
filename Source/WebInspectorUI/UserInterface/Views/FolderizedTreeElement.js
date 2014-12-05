@@ -237,7 +237,7 @@ WebInspector.FolderizedTreeElement.prototype = {
     _insertChildTreeElement: function(parentTreeElement, childTreeElement)
     {
         console.assert(!childTreeElement.parent);
-        parentTreeElement.insertChild(childTreeElement, insertionIndexForObjectInListSortedByFunction(childTreeElement, parentTreeElement.children, this.compareChildTreeElements));
+        parentTreeElement.insertChild(childTreeElement, insertionIndexForObjectInListSortedByFunction(childTreeElement, parentTreeElement.children, this.compareChildTreeElements.bind(this)));
     },
 
     _removeTreeElement: function(childTreeElement, suppressOnDeselect, suppressSelectSibling)

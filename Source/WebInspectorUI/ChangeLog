@@ -1,3 +1,19 @@
+2014-12-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exceptions when attempting to show Content Flow
+        https://bugs.webkit.org/show_bug.cgi?id=139276
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        LegacyJavaScriptProfileObject no longer exists, these references should be removed.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WebInspector.FolderizedTreeElement.prototype._insertChildTreeElement):
+        This sort function references "this" and needed to be bound.
+
 2014-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Timeline Filter Bar only has "All", missing Resource Type filters
