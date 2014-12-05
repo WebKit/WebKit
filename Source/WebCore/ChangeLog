@@ -1,3 +1,17 @@
+2014-12-05  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix build warning in WebCore/platform/graphics module
+        https://bugs.webkit.org/show_bug.cgi?id=139290
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix a build warning by removing parameter name from function.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::getFamilyNameStringFromFontDescriptionAndFamily):
+
 2014-12-05  sungmin cho  <sungmin17.cho@lge.com>
 
         GraphicsLayerTextureMapper: Rename parameter to be more clear
