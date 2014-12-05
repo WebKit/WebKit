@@ -282,8 +282,8 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     CGFloat horizontalMargin = std::max(dropShadowBlurRadius * 2 + horizontalBorder, contentRect.size.width * 2);
     CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
 
-    contentRect = NSInsetRect(NSRectFromCGRect(contentRect), -horizontalMargin, -verticalMargin);
-    NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(contentRect) styleMask:NSBorderlessWindowMask];
+    contentRect = CGRectInset(contentRect, -horizontalMargin, -verticalMargin);
+    NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(NSRectFromCGRect(contentRect)) styleMask:NSBorderlessWindowMask];
     m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
 
     [m_textIndicatorWindow setBackgroundColor:[NSColor clearColor]];
