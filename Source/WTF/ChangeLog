@@ -1,3 +1,11 @@
+2014-12-04  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r176683): RefCounter.h is installed outside SDKROOT
+
+        * WTF.xcodeproj/project.pbxproj: Don't mark RefCounter.h as a
+        private header.  WTF headers use a special build phase script to
+        be installed.
+
 2014-12-04  Anders Carlsson  <andersca@apple.com>
 
         Make API::String copy the underlying strings if needed, for thread safety

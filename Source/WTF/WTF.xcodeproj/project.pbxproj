@@ -81,7 +81,7 @@
 		8134013915B092FD001FF0B8 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8134013715B092FD001FF0B8 /* Base64.h */; };
 		83FBA93219DF459700F30ADB /* TypeCasts.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBA93119DF459700F30ADB /* TypeCasts.h */; };
 		86F46F601A2840EE00CCBF22 /* RefCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86F46F5E1A2840EE00CCBF22 /* RefCounter.cpp */; };
-		86F46F611A2840EE00CCBF22 /* RefCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F46F5F1A2840EE00CCBF22 /* RefCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86F46F611A2840EE00CCBF22 /* RefCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F46F5F1A2840EE00CCBF22 /* RefCounter.h */; };
 		93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */; };
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93AC91A818942FC400244939 /* LChar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AC91A718942FC400244939 /* LChar.h */; };
@@ -1165,10 +1165,10 @@
 				A8A47418151A825B004123FF /* RefCounted.h in Headers */,
 				A8A47419151A825B004123FF /* RefCountedArray.h in Headers */,
 				A8A4741B151A825B004123FF /* RefCountedLeakCounter.h in Headers */,
+				86F46F611A2840EE00CCBF22 /* RefCounter.h in Headers */,
 				A8A4741C151A825B004123FF /* RefPtr.h in Headers */,
 				A8A4741E151A825B004123FF /* RetainPtr.h in Headers */,
 				2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */,
-				86F46F611A2840EE00CCBF22 /* RefCounter.h in Headers */,
 				1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */,
 				14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */,
 				1469419616EAAFF80024E146 /* SchedulePair.h in Headers */,
