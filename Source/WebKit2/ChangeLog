@@ -1,3 +1,19 @@
+2014-12-05  Tim Horton  <timothy_horton@apple.com>
+
+        Keyboard input should be disabled in the preview popover
+        https://bugs.webkit.org/show_bug.cgi?id=139219
+        <rdar://problem/19052381>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performKeyEquivalent:]):
+        (-[WKView keyUp:]):
+        (-[WKView keyDown:]):
+        (-[WKView flagsChanged:]):
+        There are two implementations of each of these methods in this file.
+        Adjust the ones that the original patch missed.
+
 2014-12-05  Antti Koivisto  <antti@apple.com>
 
         In NetworkResourceLoader always bail out after abort()

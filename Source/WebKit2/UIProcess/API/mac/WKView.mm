@@ -1729,6 +1729,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
+    if (_data->_ignoresNonWheelEvents)
+        return NO;
+
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
@@ -1766,6 +1769,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)keyUp:(NSEvent *)theEvent
 {
+    if (_data->_ignoresNonWheelEvents)
+        return;
+
     LOG(TextInput, "keyUp:%p %@", theEvent, theEvent);
 
     [self _interpretKeyEvent:theEvent completionHandler:^(BOOL handledByInputMethod, const Vector<KeypressCommand>& commands) {
@@ -1776,6 +1782,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    if (_data->_ignoresNonWheelEvents)
+        return;
+
     LOG(TextInput, "keyDown:%p %@%s", theEvent, theEvent, (theEvent == _data->_keyDownEventBeingResent) ? " (re-sent)" : "");
 
     if ([self _tryHandlePluginComplexTextInputKeyDown:theEvent]) {
@@ -1800,6 +1809,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
+    if (_data->_ignoresNonWheelEvents)
+        return;
+
     LOG(TextInput, "flagsChanged:%p %@", theEvent, theEvent);
 
     unsigned short keyCode = [theEvent keyCode];
