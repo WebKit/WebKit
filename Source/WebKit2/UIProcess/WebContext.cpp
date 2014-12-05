@@ -60,6 +60,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceCacheManagerProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
@@ -150,6 +151,14 @@ const Vector<WebContext*>& WebContext::allContexts()
     return contexts();
 }
 
+static WebsiteDataStore::Configuration websiteDataStoreConfiguration()
+{
+    WebsiteDataStore::Configuration configuration;
+
+    // FIXME: Fill in the configuration.
+    return configuration;
+}
+
 WebContext::WebContext(WebContextConfiguration configuration)
     : m_processModel(ProcessModelSharedSecondaryProcess)
     , m_webProcessCountLimit(UINT_MAX)
@@ -167,6 +176,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
     , m_cacheModel(CacheModelDocumentViewer)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
+    , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration()))
     , m_storageManager(StorageManager::create(configuration.localStorageDirectory))
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
@@ -860,8 +870,11 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
         configuration.preferences = &configuration.pageGroup->preferences();
     if (!configuration.visitedLinkProvider)
         configuration.visitedLinkProvider = m_visitedLinkProvider.get();
-    if (!configuration.sessionID.isValid())
+    if (!configuration.websiteDataStore) {
+        ASSERT(!configuration.sessionID.isValid());
+        configuration.websiteDataStore = m_websiteDataStore.get();
         configuration.sessionID = configuration.preferences->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID();
+    }
 
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {

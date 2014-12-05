@@ -110,7 +110,6 @@ static WKWebViewConfiguration *defaultConfiguration()
 
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindowControllers addObject:controller];
-    [controller release];
 
     [controller loadURLString:[SettingsController shared].defaultURL];
 #endif

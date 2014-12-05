@@ -1,5 +1,29 @@
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
+        Give all web pages a website data store
+        https://bugs.webkit.org/show_bug.cgi?id=139317
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Set the website data store on the window.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::websiteDataStoreConfiguration):
+        Helper function that will create the default website data store configuration for a context.
+
+        (WebKit::WebContext::WebContext):
+        Create a new, per-context data store.
+
+        (WebKit::WebContext::createWebPage):
+        If we don't have a data store filled in, use the default per-context one.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.h:
+
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
         Move the website data store code to a new file
         https://bugs.webkit.org/show_bug.cgi?id=139312
 

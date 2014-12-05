@@ -171,6 +171,7 @@ class WebPageGroup;
 class WebProcessProxy;
 class WebUserContentControllerProxy;
 class WebWheelEvent;
+class WebsiteDataStore;
 struct ActionMenuHitTestResult;
 struct AttributedString;
 struct ColorSpaceData;
@@ -227,7 +228,11 @@ struct WebPageConfiguration {
     WebUserContentControllerProxy* userContentController = nullptr;
     VisitedLinkProvider* visitedLinkProvider = nullptr;
 
+    WebsiteDataStore* websiteDataStore = nullptr;
+    // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.
+    // Once we get rid of it we should get rid of this configuration parameter as well.
     WebCore::SessionID sessionID;
+
     WebPageProxy* relatedPage = nullptr;
 
     WebPreferencesStore::ValueMap preferenceValues;

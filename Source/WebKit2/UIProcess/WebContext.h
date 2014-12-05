@@ -505,6 +505,7 @@ private:
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 #endif
 
+    RefPtr<WebsiteDataStore> m_websiteDataStore;
     RefPtr<StorageManager> m_storageManager;
 
     typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
