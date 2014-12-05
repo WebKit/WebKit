@@ -1,3 +1,13 @@
+2014-12-04  Mark Rowe  <mrowe@apple.com>
+
+        Fix pre-Yosemite builds.
+
+        The #ifs in two SPI wrapper headers were incorrect, resulting in code being included
+        prior to Yosemite that required Yosemite to compile.
+
+        * platform/spi/mac/NSSharingServicePickerSPI.h:
+        * platform/spi/mac/NSSharingServiceSPI.h:
+
 2014-12-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: timeline probe records have inaccurate per-probe hit counts
