@@ -1,3 +1,13 @@
+2014-12-04  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r176836.
+
+        Reviewed by Mark Lam.
+
+        * runtime/VM.h:
+        (JSC::VM::controlFlowProfiler): Don't try to export an inline function.
+        Doing so results in a weak external symbol being generated.
+
 2014-12-04  Saam Barati  <saambarati1@gmail.com>
 
         JavaScript Control Flow Profiler

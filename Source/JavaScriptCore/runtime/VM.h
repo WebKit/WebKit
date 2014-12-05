@@ -521,7 +521,7 @@ public:
 
     FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
 
-    JS_EXPORT_PRIVATE ControlFlowProfiler* controlFlowProfiler() { return m_controlFlowProfiler.get(); }
+    ControlFlowProfiler* controlFlowProfiler() { return m_controlFlowProfiler.get(); }
     bool enableControlFlowProfiler();
     bool disableControlFlowProfiler();
 
