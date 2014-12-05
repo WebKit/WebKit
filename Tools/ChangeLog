@@ -1,3 +1,38 @@
+2014-12-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DumpRenderTree produces many reference test mismatches
+        https://bugs.webkit.org/show_bug.cgi?id=139314
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where the scale factor used to render the snapshot taken by
+        DumpRenderTree may differ from the device scale factor. In particular, the
+        scale factor used to render a snapshot of a test may differ from the scale
+        factor used to render the snapshot of its expected result.
+
+        Currently DumpRenderTree uses SPI, -[UIView newSnapshotForRect], on iOS to
+        snapshot the UIWebBrowserView. This SPI always render using a scale factor
+        of one when the backing store for the LegacyTileLayer objects were out-of-
+        date regardless of the device scale factor. Instead we should use UIImage
+        and CALayer API to perform the snapshot with respect to the device scale
+        factor.
+
+        Additionally write iOS pixel dump support logic in terms of existing
+        DumpRenderTree abstractions so as to support generating and comparing
+        pixel dump checksums as well as make the iOS code more consistent with
+        the logic used by other ports.
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected): Removed !PLATFORM(IOS)-guard.
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (BitmapContext::createFromUIImage): Added.
+        (BitmapContext::pixelData): Added.
+        (BitmapContext::BitmapContext): Added.
+        (computeMD5HashStringForBitmapContext): Added.
+        (dumpBitmap): Added.
+        (createBitmapContextFromWebView): Moved logic from dumpWebViewAsPixelsAndCompareWithExpected() to here.
+        (dumpWebViewAsPixelsAndCompareWithExpected): Deleted.
+
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
         Give all web pages a website data store

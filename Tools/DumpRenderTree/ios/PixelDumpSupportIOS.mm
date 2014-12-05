@@ -30,7 +30,6 @@
 #import "PixelDumpSupport.h"
 
 #import "DumpRenderTree.h"
-#import "PixelDumpSupportCG.h"
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
@@ -40,38 +39,56 @@
 #import <UIKit/UIView_Private.h>
 #import <UIKit/UIWebBrowserView.h>
 #import <WebKit/WebCoreThread.h>
-
+#import <WebKitSystemInterface.h>
+#import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
 
 extern UIWebBrowserView *gWebBrowserView;
 
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally,
- bool drawSelectionRect)
+class BitmapContext : public RefCounted<BitmapContext> {
+public:
+    static PassRefPtr<BitmapContext> createFromUIImage(UIImage *image)
+    {
+        return adoptRef(new BitmapContext(image));
+    }
+
+    NSData *pixelData() const { return m_pixelData.get(); }
+
+private:
+    BitmapContext(UIImage *image)
+        : m_pixelData(UIImagePNGRepresentation(image))
+    {
+    }
+
+    RetainPtr<NSData> m_pixelData;
+};
+
+void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
 {
-    // FIXME: Implement; see PixelDumpSupportMac.mm.
-    return 0;
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    CC_MD5([context->pixelData() bytes], [context->pixelData() length], result);
+    hashString[0] = '\0';
+    for (int i = 0; i < 16; ++i)
+        snprintf(hashString, 33, "%s%02x", hashString, result[i]);
 }
 
-void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
+void dumpBitmap(BitmapContext* context, const char* checksum)
+{
+    printPNG(static_cast<const unsigned char*>([context->pixelData() bytes]), [context->pixelData() length], checksum);
+}
+
+PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     // TODO: <rdar://problem/6558366> DumpRenderTree: Investigate testRepaintSweepHorizontally and dumpSelectionRect
     WebThreadLock();
     [gWebBrowserView layoutIfNeeded]; // Re-enables tile painting, which was disabled when committing the frame load.
     [gWebBrowserView setNeedsDisplay];
-    RetainPtr<CGImageRef> snapshot = adoptCF([gWebBrowserView newSnapshotWithRect:[[mainFrame webView] frame]]);
-    NSData *pngData = UIImagePNGRepresentation([UIImage imageWithCGImage:snapshot.get()]);
-    
-    // Hash the PNG data
-    char actualHash[33];
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5([pngData bytes], [pngData length], result);
-    actualHash[0] = '\0';
-    for (int i = 0; i < 16; i++)
-        snprintf(actualHash, 33, "%s%02x", actualHash, result[i]);
-    printf("\nActualHash: %s\n", actualHash);
-    
-    // Print the image
-    printf("Content-Type: image/png\n");
-    printf("Content-Length: %lu\n", (unsigned long)[pngData length]);
-    fwrite([pngData bytes], 1, [pngData length], stdout);
+
+    UIGraphicsBeginImageContextWithOptions([[mainFrame webView] frame].size, YES /* opaque */, WKGetScreenScaleFactor());
+    [[gWebBrowserView layer] renderInContext:UIGraphicsGetCurrentContext()];
+    RefPtr<BitmapContext> context = BitmapContext::createFromUIImage(UIGraphicsGetImageFromCurrentImageContext());
+    UIGraphicsEndImageContext();
+
+    return context.release();
 }
