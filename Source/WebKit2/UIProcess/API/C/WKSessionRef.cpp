@@ -33,7 +33,11 @@ using namespace WebKit;
 
 WKSessionRef WKSessionCreate(bool isEphemeral)
 {
-    RefPtr<API::Session> session = API::Session::create(isEphemeral);
+    // The implementation doesn't support non-ephemeral
+    if (!isEphemeral)
+        return nullptr;
+
+    RefPtr<API::Session> session = API::Session::createEphemeral();
     return toAPI(session.release().leakRef());
 }
 

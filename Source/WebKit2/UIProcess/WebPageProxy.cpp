@@ -321,7 +321,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_isTrackingTouchEvents(false)
 #endif
     , m_pageID(pageID)
-    , m_session(*configuration.session)
+    , m_sessionID(configuration.sessionID)
     , m_isPageSuspended(false)
     , m_addsVisitedLinks(true)
 #if ENABLE(REMOTE_INSPECTOR)
@@ -418,7 +418,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
     IPC::Connection* connection = m_process->state() == WebProcessProxy::State::Running ? m_process->connection() : nullptr;
     m_process->context().storageManager().createSessionStorageNamespace(m_pageID, connection, std::numeric_limits<unsigned>::max());
-    setSession(*configuration.session);
+    setSessionID(configuration.sessionID);
 
 #if PLATFORM(COCOA)
     const CFIndex viewStateChangeRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit - 1;
@@ -611,14 +611,14 @@ uint64_t WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item
     return navigationID;
 }
 
-void WebPageProxy::setSession(API::Session& session)
+void WebPageProxy::setSessionID(SessionID sessionID)
 {
-    m_session = session;
-    m_process->send(Messages::WebPage::SetSessionID(session.getID()), m_pageID);
+    m_sessionID = sessionID;
+    m_process->send(Messages::WebPage::SetSessionID(sessionID), m_pageID);
 
 #if ENABLE(NETWORK_PROCESS)
-    if (session.isEphemeral())
-        m_process->context().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(session.getID()));
+    if (sessionID.isEphemeral())
+        m_process->context().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(sessionID));
 #endif
 }
 
@@ -4602,7 +4602,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
     parameters.itemStates = m_backForwardList->itemStates();
-    parameters.sessionID = m_session->getID();
+    parameters.sessionID = m_sessionID;
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.userContentControllerID = m_userContentController ? m_userContentController->identifier() : 0;
     parameters.visitedLinkTableID = m_visitedLinkProvider->identifier();

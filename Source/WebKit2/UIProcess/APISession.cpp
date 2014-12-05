@@ -30,12 +30,12 @@
 
 namespace API {
 
-static uint64_t generateID(bool isEphemeral)
+static uint64_t generateID()
 {
     ASSERT(RunLoop::isMain());
 
     static uint64_t uniqueSessionID = WebCore::SessionID::legacyPrivateSessionID().sessionID();
-    ASSERT_UNUSED(isEphemeral, isEphemeral);
+
     return ++uniqueSessionID;
 }
 
@@ -47,16 +47,8 @@ Session& Session::defaultSession()
     return *defaultSession;
 }
 
-Session& Session::legacyPrivateSession()
-{
-    ASSERT(RunLoop::isMain());
-
-    static Session* legacyPrivateSession = new Session(WebCore::SessionID::legacyPrivateSessionID());
-    return *legacyPrivateSession;
-}
-
-Session::Session(bool isEphemeral)
-    : m_sessionID(generateID(isEphemeral))
+Session::Session()
+    : m_sessionID(generateID())
 {
 }
 
@@ -65,10 +57,10 @@ Session::Session(WebCore::SessionID sessionID)
 {
 }
 
-PassRefPtr<Session> Session::create(bool isEphemeral)
+PassRefPtr<Session> Session::createEphemeral()
 {
     // FIXME: support creation of non-default, non-ephemeral sessions
-    return adoptRef(new Session(isEphemeral));
+    return adoptRef(new Session());
 }
 
 bool Session::isEphemeral() const

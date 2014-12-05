@@ -1640,7 +1640,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
 void WKPageSetSession(WKPageRef pageRef, WKSessionRef session)
 {
-    toImpl(pageRef)->setSession(*toImpl(session));
+    toImpl(pageRef)->setSessionID(toImpl(session)->getID());
 }
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)

@@ -39,7 +39,7 @@ using namespace WebKit;
 
 + (instancetype)nonPersistentDataStore
 {
-    RefPtr<API::Session> session = API::Session::create(true);
+    RefPtr<API::Session> session = API::Session::createEphemeral();
     return [wrapper(*session.release().leakRef()) autorelease];
 }
 

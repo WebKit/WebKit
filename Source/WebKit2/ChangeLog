@@ -1,3 +1,38 @@
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Make WebPageProxy hold on to a SessionID instead of an API:Session
+        https://bugs.webkit.org/show_bug.cgi?id=139302
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation for adding API::WebsiteDataStore. Currently we have to keep the
+        Session ID and the WebsiteDataStore separate because we still need to support toggling private browsing.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetSession):
+        * UIProcess/API/C/WKSessionRef.cpp:
+        (WKSessionCreate):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (+[_WKWebsiteDataStore nonPersistentDataStore]):
+        * UIProcess/APISession.cpp:
+        (API::generateID):
+        (API::Session::Session):
+        (API::Session::createEphemeral):
+        (API::Session::legacyPrivateSession): Deleted.
+        (API::Session::create): Deleted.
+        * UIProcess/APISession.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setSessionID):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setSession): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sessionID):
+
 2014-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] allow host application to opt-out of alternate fullscreen pt. 2

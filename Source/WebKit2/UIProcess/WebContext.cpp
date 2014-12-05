@@ -860,8 +860,8 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
         configuration.preferences = &configuration.pageGroup->preferences();
     if (!configuration.visitedLinkProvider)
         configuration.visitedLinkProvider = m_visitedLinkProvider.get();
-    if (!configuration.session)
-        configuration.session = configuration.preferences->privateBrowsingEnabled() ? &API::Session::legacyPrivateSession() : &API::Session::defaultSession();
+    if (!configuration.sessionID.isValid())
+        configuration.sessionID = configuration.preferences->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID();
 
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
