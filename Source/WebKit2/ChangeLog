@@ -1,3 +1,30 @@
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Move the website data store code to a new file
+        https://bugs.webkit.org/show_bug.cgi?id=139312
+
+        Reviewed by Tim Horton.
+
+        It's weird to have all the website data code in the API class, so move it to a new file.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::WebsiteDataStore):
+        (API::WebsiteDataStore::isNonPersistent):
+        (API::generateNonPersistentSessionID): Deleted.
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp: Copied from Source/WebKit2/UIProcess/API/APIWebsiteDataStore.cpp.
+        (WebKit::generateNonPersistentSessionID):
+        (WebKit::WebsiteDataStore::createNonPersistent):
+        (WebKit::WebsiteDataStore::create):
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h: Copied from Source/WebKit2/UIProcess/API/APIWebsiteDataStore.h.
+        (WebKit::WebsiteDataStore::isNonPersistent):
+        (WebKit::WebsiteDataStore::sessionID):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-12-05  Tim Horton  <timothy_horton@apple.com>
 
         Keyboard input should be disabled in the preview popover

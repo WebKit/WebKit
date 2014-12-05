@@ -23,42 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIWebsiteDataStore.h"
+#ifndef WebsiteDataStore_h
+#define WebsiteDataStore_h
 
-#include "WebsiteDataStore.h"
+#include <WebCore/SessionID.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
-namespace API {
+namespace WebKit {
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
-{
-    static WebsiteDataStore* defaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration())).leakRef();
+class WebsiteDataStore : public RefCounted<WebsiteDataStore> {
+public:
+    struct Configuration {
+    };
+    static RefPtr<WebsiteDataStore> createNonPersistent();
+    static RefPtr<WebsiteDataStore> create(Configuration);
+    virtual ~WebsiteDataStore();
 
-    return defaultDataStore;
-}
+    bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
+    WebCore::SessionID sessionID() const { return m_sessionID; }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
-{
-    return adoptRef(new WebsiteDataStore);
-}
+private:
+    explicit WebsiteDataStore(WebCore::SessionID);
+    explicit WebsiteDataStore(Configuration);
 
-WebsiteDataStore::WebsiteDataStore()
-    : m_websiteDataStore(WebKit::WebsiteDataStore::createNonPersistent())
-{
-}
-
-WebsiteDataStore::WebsiteDataStore(WebKit::WebsiteDataStore::Configuration configuration)
-    : m_websiteDataStore(WebKit::WebsiteDataStore::create(WTF::move(configuration)))
-{
-}
-
-WebsiteDataStore::~WebsiteDataStore()
-{
-}
-
-bool WebsiteDataStore::isNonPersistent()
-{
-    return m_websiteDataStore->isNonPersistent();
-}
+    WebCore::SessionID m_sessionID;
+};
 
 }
+
+#endif // WebsiteDataStore_h

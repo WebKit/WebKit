@@ -24,41 +24,40 @@
  */
 
 #include "config.h"
-#include "APIWebsiteDataStore.h"
-
 #include "WebsiteDataStore.h"
 
-namespace API {
+namespace WebKit {
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
+static WebCore::SessionID generateNonPersistentSessionID()
 {
-    static WebsiteDataStore* defaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration())).leakRef();
+    // FIXME: We count backwards here to not conflict with API::Session.
+    static uint64_t sessionID = std::numeric_limits<uint64_t>::max();
 
-    return defaultDataStore;
+    return WebCore::SessionID(--sessionID);
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
+RefPtr<WebsiteDataStore::WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
-    return adoptRef(new WebsiteDataStore);
+    return adoptRef(new WebsiteDataStore(generateNonPersistentSessionID()));
 }
 
-WebsiteDataStore::WebsiteDataStore()
-    : m_websiteDataStore(WebKit::WebsiteDataStore::createNonPersistent())
+RefPtr<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
+{
+    return adoptRef(new WebsiteDataStore(WTF::move(configuration)));
+}
+
+WebsiteDataStore::WebsiteDataStore(Configuration configuration)
+    : m_sessionID(WebCore::SessionID::defaultSessionID())
 {
 }
 
-WebsiteDataStore::WebsiteDataStore(WebKit::WebsiteDataStore::Configuration configuration)
-    : m_websiteDataStore(WebKit::WebsiteDataStore::create(WTF::move(configuration)))
+WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
+    : m_sessionID(sessionID)
 {
 }
 
 WebsiteDataStore::~WebsiteDataStore()
 {
-}
-
-bool WebsiteDataStore::isNonPersistent()
-{
-    return m_websiteDataStore->isNonPersistent();
 }
 
 }

@@ -27,6 +27,7 @@
 #define APIWebsiteDataStore_h
 
 #include "APIObject.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/SessionID.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,25 +35,21 @@ namespace API {
 
 class WebsiteDataStore final : public ObjectImpl<Object::Type::WebsiteDataStore> {
 public:
-    struct Configuration {
-        // FIXME: Add configuration parameters here.
-    };
-
     static RefPtr<WebsiteDataStore> defaultDataStore();
     static RefPtr<WebsiteDataStore> createNonPersistentDataStore();
     virtual ~WebsiteDataStore();
 
     bool isNonPersistent();
 
-    WebCore::SessionID sessionID() const { return m_sessionID; }
+    WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
 
 private:
-    static Configuration defaultDataStoreConfiguration();
-
+    WebsiteDataStore(WebKit::WebsiteDataStore::Configuration);
     WebsiteDataStore();
-    WebsiteDataStore(Configuration);
 
-    WebCore::SessionID m_sessionID;
+    static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
+
+    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
 };
 
 }
