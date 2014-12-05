@@ -34,8 +34,9 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKWebsiteDataStore.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 
@@ -43,19 +44,15 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 @end
 
 @implementation WK2BrowserWindowController {
+    WKWebViewConfiguration *_configuration;
     WKWebView *_webView;
     BOOL _zoomTextOnly;
+    BOOL _isPrivateBrowsingWindow;
 }
 
 - (void)awakeFromNib
 {
-    static WKWebViewConfiguration *configuration;
-    if (!configuration) {
-        configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.preferences._fullScreenEnabled = YES;
-        configuration.preferences._developerExtrasEnabled = YES;
-    }
-    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:configuration];
+    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:_configuration];
     [self didChangeSettings];
 
     _webView.allowsMagnification = YES;
@@ -76,6 +73,17 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     _zoomTextOnly = NO;
 }
 
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
+{
+    if (!(self = [super initWithWindowNibName:@"BrowserWindow"]))
+        return nil;
+
+    _configuration = [configuration copy];
+    _isPrivateBrowsingWindow = _configuration._websiteDataStore.isNonPersistent;
+
+    return self;
+}
+
 - (void)dealloc
 {
     [_webView removeObserver:self forKeyPath:@"title"];
@@ -85,6 +93,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [progressIndicator unbind:NSValueBinding];
 
     [_webView release];
+    [_configuration release];
 
     [super dealloc];
 }
@@ -315,7 +324,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         return;
 
     if ([keyPath isEqualToString:@"title"])
-        self.window.title = [_webView.title stringByAppendingFormat:@" [WK2, %d]", _webView._webProcessIdentifier];
+        self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]", _isPrivateBrowsingWindow ? @"🙈 " : @"", _webView.title, _webView._webProcessIdentifier];
     else if ([keyPath isEqualToString:@"URL"])
         [self updateTextFieldFromURL:_webView.URL];
 }
