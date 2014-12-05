@@ -1,3 +1,16 @@
+2014-12-05  Tim Horton  <timothy_horton@apple.com>
+
+        Legacy WebKit should set deviceScaleFactor in _commonInitializationWithFrameName, not _initWithFrame
+        https://bugs.webkit.org/show_bug.cgi?id=139306
+        <rdar://problem/19157955>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _initWithFrame:frameName:groupName:]):
+        Move setDeviceScaleFactor to the initialization path that is guaranteed to happen.
+
 2014-12-05  David Kilzer  <ddkilzer@apple.com>
 
         FeatureDefines.xcconfig: Workaround bug in Xcode 5.1.1 when defining ENABLE_WEB_REPLAY
