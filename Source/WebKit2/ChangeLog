@@ -1,5 +1,26 @@
 2014-12-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176820. <rdar://problem/19147218>
+
+    2014-12-04  Beth Dakin  <bdakin@apple.com>
+
+            Clients disabling action menus sometimes still invoke action menu behaviors
+            https://bugs.webkit.org/show_bug.cgi?id=139270
+            -and corresponding-
+            rdar://problem/19147218
+
+            Reviewed by Tim Horton.
+
+            By default, we will keep a single item in the action menu up until the point where 
+            _state == ActionMenuState::Ready. So by checking _state here, we are preventing 
+            clients from opting out of our choice to wait. Ideally we would always still wait 
+            for the Ready state, but this will get the best behavior in the mean time.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _updateActionMenuItems]):
+
+
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r176811. <rdar://problem/19140827>
 
     2014-12-04  Timothy Horton  <timothy_horton@apple.com>
