@@ -150,8 +150,6 @@ namespace JSC {
             return deletable;
         }
 
-        JS_EXPORT_PRIVATE void reset();
-
         IdentifierArena& identifierArena()
         {
             if (UNLIKELY (!m_identifierArena))

@@ -63,22 +63,6 @@ ParserArena::~ParserArena()
     deallocateObjects();
 }
 
-void ParserArena::reset()
-{
-    // Since this code path is used only when parsing fails, it's not bothering to reuse
-    // any of the memory the arena allocated. We could improve that later if we want to
-    // efficiently reuse the same arena.
-
-    deallocateObjects();
-
-    m_freeableMemory = 0;
-    m_freeablePoolEnd = 0;
-    if (m_identifierArena)
-        m_identifierArena->clear();
-    m_freeablePools.clear();
-    m_deletableObjects.clear();
-}
-
 void ParserArena::allocateFreeablePool()
 {
     if (m_freeablePoolEnd)
