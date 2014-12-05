@@ -28,10 +28,10 @@
 
 namespace API {
 
-WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
+WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     // FIXME: Fill everything in.
-    Configuration configuration;
+    WebKit::WebsiteDataStore::Configuration configuration;
 
     return configuration;
 }

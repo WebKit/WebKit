@@ -1,5 +1,12 @@
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
         Give all web pages a website data store
         https://bugs.webkit.org/show_bug.cgi?id=139317
 
