@@ -889,8 +889,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     // FIXME: We need to be able to cancel this if the menu goes away.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == ActionMenuState::Pending) {
-        if (auto* connection = _page->process().connection())
-            connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
+        if (auto* connection = _page->process().connection()) {
+            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
+            if (!receivedReply)
+                _state = ActionMenuState::TimedOut;
+        }
     }
 
     if (_state != ActionMenuState::Ready)
@@ -1093,7 +1096,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     if (!hitTestResult) {
         _type = kWKActionMenuNone;
-        return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
+        return _state == ActionMenuState::Pending ? @[ [NSMenuItem separatorItem] ] : @[ ];
     }
 
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
@@ -1164,7 +1167,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     }
 
     _type = kWKActionMenuNone;
-    return _state != ActionMenuState::Ready ? @[ [NSMenuItem separatorItem] ] : @[ ];
+    return _state == ActionMenuState::Pending ? @[ [NSMenuItem separatorItem] ] : @[ ];
 }
 
 - (void)_updateActionMenuItems

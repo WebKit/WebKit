@@ -40,6 +40,7 @@ class WebPageProxy;
 enum class ActionMenuState {
     None = 0,
     Pending,
+    TimedOut,
     Ready
 };
 }
