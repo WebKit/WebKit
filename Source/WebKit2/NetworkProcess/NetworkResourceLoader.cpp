@@ -197,12 +197,10 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
 
     if (isSynchronous())
         m_synchronousLoadData->response = response;
-    else
-        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(response, m_parameters.isMainResource));
-
-    // m_handle will be null if the request got aborted above.
-    if (!m_handle)
-        return;
+    else {
+        if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(response, m_parameters.isMainResource)))
+            return;
+    }
 
     // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
     if (m_parameters.isMainResource)
@@ -232,7 +230,7 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
         startBufferingTimerIfNeeded();
         return;
     }
-    sendBuffer(buffer.get(), encodedDataLength);
+    sendBufferMaybeAborting(*buffer, encodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double finishTime)
@@ -242,8 +240,12 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
     else {
-        if (m_bufferedData && m_bufferedData->size())
-            sendBuffer(m_bufferedData.get(), -1);
+        if (m_bufferedData && m_bufferedData->size()) {
+            // FIXME: Pass a real value or remove the encoded data size feature.
+            bool shouldContinue = sendBufferMaybeAborting(*m_bufferedData, -1);
+            if (!shouldContinue)
+                return;
+        }
         send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     }
 
@@ -396,30 +398,30 @@ void NetworkResourceLoader::bufferingTimerFired()
         return;
 
     IPC::SharedBufferDataReference dataReference(m_bufferedData.get());
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, m_bufferedDataEncodedDataLength));
+    size_t encodedLength = m_bufferedDataEncodedDataLength;
 
     m_bufferedData = WebCore::SharedBuffer::create();
     m_bufferedDataEncodedDataLength = 0;
+
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedLength));
 }
 
-void NetworkResourceLoader::sendBuffer(WebCore::SharedBuffer* buffer, int encodedDataLength)
+bool NetworkResourceLoader::sendBufferMaybeAborting(WebCore::SharedBuffer& buffer, size_t encodedDataLength)
 {
-    ASSERT(buffer);
     ASSERT(!isSynchronous());
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     ShareableResource::Handle shareableResourceHandle;
-    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, *buffer);
+    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
     if (!shareableResourceHandle.isNull()) {
-        // Since we're delivering this resource by ourselves all at once and don't need any more data or callbacks from the network layer, abort the loader.
-        abort();
         send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
-        return;
+        abort();
+        return false;
     }
 #endif
 
-    IPC::SharedBufferDataReference dataReference(buffer);
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
+    IPC::SharedBufferDataReference dataReference(&buffer);
+    return sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()

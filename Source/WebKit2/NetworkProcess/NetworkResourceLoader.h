@@ -150,7 +150,7 @@ private:
 
     void startBufferingTimerIfNeeded();
     void bufferingTimerFired();
-    void sendBuffer(WebCore::SharedBuffer*, int encodedDataLength);
+    bool sendBufferMaybeAborting(WebCore::SharedBuffer&, size_t encodedDataLength);
 
     bool isSynchronous() const;
 
