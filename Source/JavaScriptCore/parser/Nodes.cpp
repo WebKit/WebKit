@@ -78,7 +78,7 @@ StatementNode* SourceElements::singleStatement() const
 
 ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, bool inStrictContext)
     : StatementNode(endLocation)
-    , ParserArenaRefCounted(parserArena)
+    , ParserArenaRoot(parserArena)
     , m_startLineNumber(startLocation.line)
     , m_startStartOffset(startLocation.startOffset)
     , m_startLineStartOffset(startLocation.lineStartOffset)
@@ -90,7 +90,7 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
 
 ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
     : StatementNode(endLocation)
-    , ParserArenaRefCounted(parserArena)
+    , ParserArenaRoot(parserArena)
     , m_startLineNumber(startLocation.line)
     , m_startStartOffset(startLocation.startOffset)
     , m_startLineStartOffset(startLocation.lineStartOffset)
@@ -99,7 +99,6 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
     , m_numConstants(numConstants)
     , m_statements(children)
 {
-    m_arena.swap(parserArena);
     if (varStack)
         m_varStack.swap(*varStack);
     if (funcStack)
@@ -114,24 +113,12 @@ StatementNode* ScopeNode::singleStatement() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-inline ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
 {
 }
-
-PassRefPtr<ProgramNode> ProgramNode::create(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
-{
-    RefPtr<ProgramNode> node = new ProgramNode(parserArena, startLocation, endLocation, startColumn, endColumn, children, varStack, funcStack,  capturedVariables, source, features, numConstants);
-
-    ASSERT(node->m_arena.last() == node);
-    node->m_arena.removeLast();
-    ASSERT(!node->m_arena.contains(node.get()));
-
-    return node.release();
-}
-
 
 void ProgramNode::setClosedVariables(Vector<RefPtr<StringImpl>>&& closedVariables)
 {
@@ -140,21 +127,10 @@ void ProgramNode::setClosedVariables(Vector<RefPtr<StringImpl>>&& closedVariable
 
 // ------------------------------ EvalNode -----------------------------
 
-inline EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_endColumn(endColumn)
 {
-}
-
-PassRefPtr<EvalNode> EvalNode::create(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
-{
-    RefPtr<EvalNode> node = new EvalNode(parserArena, startLocation, endLocation, endColumn, children, varStack, funcStack, capturedVariables, source, features, numConstants);
-
-    ASSERT(node->m_arena.last() == node);
-    node->m_arena.removeLast();
-    ASSERT(!node->m_arena.contains(node.get()));
-
-    return node.release();
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
@@ -210,24 +186,13 @@ void FunctionBodyNode::setEndPosition(JSTextPosition position)
     m_endColumn = position.offset - position.lineStartOffset;
 }
 
-// =====================
+// ------------------------------ FunctionNode -----------------------------
 
-inline FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
 {
-}
-
-PassRefPtr<FunctionNode> FunctionNode::create(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
-{
-    RefPtr<FunctionNode> node = new FunctionNode(parserArena, startLocation, endLocation, startColumn, endColumn , children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
-
-    ASSERT(node->m_arena.last() == node);
-    node->m_arena.removeLast();
-    ASSERT(!node->m_arena.contains(node.get()));
-
-    return node.release();
 }
 
 void FunctionNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident, enum FunctionMode functionMode)

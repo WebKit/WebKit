@@ -46,7 +46,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const So
 {
     JSTextPosition positionBeforeLastNewline;
     ParserError error;
-    RefPtr<ProgramNode> program = parse<ProgramNode>(&m_vm, source, 0, Identifier(), JSParseBuiltin, JSParseProgramCode, error, &positionBeforeLastNewline);
+    std::unique_ptr<ProgramNode> program = parse<ProgramNode>(&m_vm, source, 0, Identifier(), JSParseBuiltin, JSParseProgramCode, error, &positionBeforeLastNewline);
 
     if (!program) {
         dataLog("Fatal error compiling builtin function '", name.string(), "': ", error.m_message);

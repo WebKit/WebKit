@@ -51,7 +51,7 @@ const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock
 
 static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, UnlinkedFunctionKind functionKind, bool bodyIncludesBraces, ParserError& error)
 {
-    RefPtr<FunctionNode> function = parse<FunctionNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error, 0, bodyIncludesBraces);
+    std::unique_ptr<FunctionNode> function = parse<FunctionNode>(&vm, source, executable->parameters(), executable->name(), executable->toStrictness(), JSParseFunctionCode, error, 0, bodyIncludesBraces);
 
     if (!function) {
         ASSERT(error.m_type != ParserError::ErrorNone);
@@ -64,7 +64,6 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->needsActivation(), function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, function.get(), result, debuggerMode, profilerMode)));
     error = generator->generate();
-    function->destroyData();
     if (error.m_type != ParserError::ErrorNone)
         return 0;
     return result;

@@ -92,7 +92,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     }
 
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
-    RefPtr<RootNode> rootNode = parse<RootNode>(&vm, source, 0, Identifier(), strictness, JSParseProgramCode, error);
+    std::unique_ptr<RootNode> rootNode = parse<RootNode>(&vm, source, 0, Identifier(), strictness, JSParseProgramCode, error);
     if (!rootNode) {
         m_sourceCode.remove(addResult.iterator);
         return 0;
@@ -109,7 +109,6 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 
     auto generator = std::make_unique<BytecodeGenerator>(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode);
     error = generator->generate();
-    rootNode->destroyData();
     if (error.m_type != ParserError::ErrorNone) {
         m_sourceCode.remove(addResult.iterator);
         return 0;
@@ -142,7 +141,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
         return jsCast<UnlinkedFunctionExecutable*>(addResult.iterator->value.cell.get());
 
     JSTextPosition positionBeforeLastNewline;
-    RefPtr<ProgramNode> program = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error, &positionBeforeLastNewline);
+    std::unique_ptr<ProgramNode> program = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error, &positionBeforeLastNewline);
     if (!program) {
         RELEASE_ASSERT(error.m_type != ParserError::ErrorNone);
         m_sourceCode.remove(addResult.iterator);

@@ -63,21 +63,6 @@ ParserArena::~ParserArena()
     deallocateObjects();
 }
 
-bool ParserArena::contains(ParserArenaRefCounted* object) const
-{
-    return m_refCountedObjects.find(object) != notFound;
-}
-
-ParserArenaRefCounted* ParserArena::last() const
-{
-    return m_refCountedObjects.last().get();
-}
-
-void ParserArena::removeLast()
-{
-    m_refCountedObjects.removeLast();
-}
-
 void ParserArena::reset()
 {
     // Since this code path is used only when parsing fails, it's not bothering to reuse
@@ -92,7 +77,6 @@ void ParserArena::reset()
         m_identifierArena->clear();
     m_freeablePools.clear();
     m_deletableObjects.clear();
-    m_refCountedObjects.clear();
 }
 
 void ParserArena::allocateFreeablePool()
@@ -104,20 +88,6 @@ void ParserArena::allocateFreeablePool()
     m_freeableMemory = pool;
     m_freeablePoolEnd = pool + freeablePoolSize;
     ASSERT(freeablePool() == pool);
-}
-
-bool ParserArena::isEmpty() const
-{
-    return !m_freeablePoolEnd
-        && (!m_identifierArena || m_identifierArena->isEmpty())
-        && m_freeablePools.isEmpty()
-        && m_deletableObjects.isEmpty()
-        && m_refCountedObjects.isEmpty();
-}
-
-void ParserArena::derefWithArena(PassRefPtr<ParserArenaRefCounted> object)
-{
-    m_refCountedObjects.append(object);
 }
 
 }

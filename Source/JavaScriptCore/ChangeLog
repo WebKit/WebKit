@@ -1,3 +1,76 @@
+2014-12-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the concept of ParserArenaRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=139277
+
+        Reviewed by Oliver Hunt.
+
+        This is a step toward a parser speedup.
+
+        Now that we have a clear root node type for each parse tree, there's no
+        need to have a concept for "I might be refcounted or arena allocated".
+        Instead, we can just use unique_ptr to manage the tree as a whole.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createBuiltinExecutable): Updated for type change.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock): Use unique_ptr. No need to call
+        destroyData() explicitly: the unique_ptr destructor will do everything
+        we need, as Bjarne intended.
+
+        * parser/NodeConstructors.h:
+        (JSC::ParserArenaRoot::ParserArenaRoot):
+        (JSC::ParserArenaRefCounted::ParserArenaRefCounted): Deleted.
+
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::ProgramNode::create): Deleted.
+        (JSC::EvalNode::create): Deleted.
+        (JSC::FunctionNode::create): Deleted. All special create semantics can
+        just go away now that we play by C++ constructor / destructor rules.
+
+        * parser/Nodes.h:
+        (JSC::ParserArenaRoot::parserArena):
+        (JSC::ParserArenaRoot::~ParserArenaRoot): Just a normal class now, which
+        holds onto the whole parse tree by virtue of owning the arena in which
+        all the parsed nodes (except for itself) were allocated.
+
+        (JSC::ProgramNode::closedVariables):
+        (JSC::ParserArenaRefCounted::~ParserArenaRefCounted): Deleted.
+
+        (JSC::ScopeNode::destroyData): Deleted. No need to destroy anything
+        explicitly anymore -- we can just rely on destructors.
+
+        (JSC::ScopeNode::parserArena): Deleted.
+
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse): unique_ptr all the things.
+
+        * parser/ParserArena.cpp:
+        (JSC::ParserArena::reset):
+        (JSC::ParserArena::isEmpty):
+        (JSC::ParserArena::contains): Deleted.
+        (JSC::ParserArena::last): Deleted.
+        (JSC::ParserArena::removeLast): Deleted.
+        (JSC::ParserArena::derefWithArena): Deleted.
+        * parser/ParserArena.h:
+        (JSC::ParserArena::swap): Much delete. Such wow.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax): unique_ptr all the things.
+
 2014-12-04  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r173188): Text inserted when trying to delete a word from the Twitter message box.

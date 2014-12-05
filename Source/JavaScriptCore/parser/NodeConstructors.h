@@ -37,9 +37,9 @@ namespace JSC {
         return parserArena.allocateDeletable(size);
     }
 
-    inline ParserArenaRefCounted::ParserArenaRefCounted(ParserArena& parserArena)
+    inline ParserArenaRoot::ParserArenaRoot(ParserArena& parserArena)
     {
-        parserArena.derefWithArena(adoptRef(this));
+        m_arena.swap(parserArena);
     }
 
     inline Node::Node(const JSTokenLocation& location)

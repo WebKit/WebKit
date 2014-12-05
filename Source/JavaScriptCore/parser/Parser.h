@@ -402,7 +402,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> parse(ParserError&, bool needReparsingAdjustment);
+    std::unique_ptr<ParsedNode> parse(ParserError&, bool needReparsingAdjustment);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     Vector<RefPtr<StringImpl>>&& closedVariables() { return WTF::move(m_closedVariables); }
@@ -861,7 +861,7 @@ private:
 
 template <typename LexerType>
 template <class ParsedNode>
-PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool needReparsingAdjustment)
+std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool needReparsingAdjustment)
 {
     int errLine;
     String errMsg;
@@ -892,14 +892,14 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool needRep
         m_sourceElements = 0;
     }
 
-    RefPtr<ParsedNode> result;
+    std::unique_ptr<ParsedNode> result;
     if (m_sourceElements) {
         JSTokenLocation endLocation;
         endLocation.line = m_lexer->lineNumber();
         endLocation.lineStartOffset = m_lexer->currentLineStartOffset();
         endLocation.startOffset = m_lexer->currentOffset();
         unsigned endColumn = endLocation.startOffset - endLocation.lineStartOffset;
-        result = ParsedNode::create(m_parserArena,
+        result = std::make_unique<ParsedNode>(m_parserArena,
                                     startLocation,
                                     endLocation,
                                     startColumn,
@@ -936,18 +936,18 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool needRep
         }
     }
 
-    return result.release();
+    return result;
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0, bool needReparsingAdjustment = false)
+std::unique_ptr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0, bool needReparsingAdjustment = false)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode);
-        RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
+        std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (strictness == JSParseBuiltin) {
@@ -956,13 +956,13 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
             RELEASE_ASSERT(result);
             result->setClosedVariables(parser.closedVariables());
         }
-        return result.release();
+        return result;
     }
     Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
-    RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
+    std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, needReparsingAdjustment);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();
-    return result.release();
+    return result;
 }
 
 } // namespace
