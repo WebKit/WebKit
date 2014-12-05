@@ -1,3 +1,25 @@
+2014-12-05  Sam Weinig  <sam@webkit.org>
+
+        WKBundleCSSStyleDeclarationRef needs to be a real API::Object
+        https://bugs.webkit.org/show_bug.cgi?id=139291
+
+        Reviewed by Dan Bernstein.
+
+        Change WKBundleCSSStyleDeclarationRef from being a WebCore::CSSStyleDeclaration, to
+        being a real API::Object.  WKRetain and WKRelease require this.
+
+        * Shared/APIObject.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp: Added.
+        (WebKit::domHandleCache):
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate):
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle):
+        (WebKit::InjectedBundleCSSStyleDeclarationHandle::~InjectedBundleCSSStyleDeclarationHandle):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.h: Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::shouldApplyStyle):
+
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
         Oops, didn't mean to commit this.

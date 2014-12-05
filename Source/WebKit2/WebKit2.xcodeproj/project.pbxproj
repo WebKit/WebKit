@@ -252,6 +252,7 @@
 		1A4D664C18A3030E00D82E21 /* WKFrameInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4D664A18A3030E00D82E21 /* WKFrameInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A4D664E18A3031B00D82E21 /* WKFrameInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4D664D18A3031B00D82E21 /* WKFrameInfoInternal.h */; };
 		1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
+		1A53C2A21A323004004E8C70 /* InjectedBundleCSSStyleDeclarationHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */; };
 		1A5B1C501898606F004FCF9B /* WKNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */; };
 		1A5B1C511898606F004FCF9B /* WKNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5B1C4F1898606F004FCF9B /* WKNavigation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */; };
@@ -1046,6 +1047,7 @@
 		7C387434172F5615001BD88A /* PageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C387433172F5615001BD88A /* PageBanner.cpp */; };
 		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
+		7C4ED3291A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */; };
 		7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6D37FA172F555F009D2847 /* PageBannerMac.mm */; };
 		7C6E70FB18B2DC7A00F24E2E /* WebProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */; };
 		7C85FD7C193415A8000177C4 /* WebPreferencesDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C85FD7B193415A8000177C4 /* WebPreferencesDefinitions.h */; };
@@ -3119,6 +3121,8 @@
 		7C387433172F5615001BD88A /* PageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBanner.cpp; sourceTree = "<group>"; };
 		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
 		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
+		7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleCSSStyleDeclarationHandle.cpp; sourceTree = "<group>"; };
+		7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleCSSStyleDeclarationHandle.h; sourceTree = "<group>"; };
 		7C6D37FA172F555F009D2847 /* PageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageBannerMac.mm; sourceTree = "<group>"; };
 		7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessCocoa.mm; sourceTree = "<group>"; };
 		7C85FD7B193415A8000177C4 /* WebPreferencesDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitions.h; sourceTree = "<group>"; };
@@ -6393,6 +6397,8 @@
 		BC4BEE96120A091700FBA0C7 /* DOM */ = {
 			isa = PBXGroup;
 			children = (
+				7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */,
+				7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */,
 				BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */,
 				BC4BEEA9120A0A5E00FBA0C7 /* InjectedBundleNodeHandle.h */,
 				BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */,
@@ -7094,6 +7100,7 @@
 				1AF459321946559500F9D4A2 /* WKError.h in Headers */,
 				E19BDA8A193686A400B97F57 /* SandboxUtilities.h in Headers */,
 				1A7284471959ED100007BCE5 /* SessionStateConversion.h in Headers */,
+				7C4ED3291A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9122,6 +9129,7 @@
 				0F3C725C196F605200AEDD0C /* WKInspectorHighlightView.mm in Sources */,
 				1F7506AF1859162800EC0FF7 /* WKWebProcessPlugInNodeHandle.mm in Sources */,
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,
+				1A53C2A21A323004004E8C70 /* InjectedBundleCSSStyleDeclarationHandle.cpp in Sources */,
 				1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */,
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
