@@ -46,7 +46,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager():
             port = Mock()  # FIXME: Use a tighter mock.
             port.TEST_PATH_SEPARATOR = '/'
-            manager = Manager(port, options=MockOptions(http=True, max_locked_shards=1), printer=Mock())
+            manager = Manager(port, options=MockOptions(http=True), printer=Mock())
             return manager
 
         manager = get_manager()
@@ -59,7 +59,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager():
             host = MockHost()
             port = host.port_factory.get()
-            manager = Manager(port, options=MockOptions(test_list=None, http=True, max_locked_shards=1), printer=Mock())
+            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
             return manager
 
         manager = get_manager()
@@ -79,7 +79,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager():
             host = MockHost()
             port = host.port_factory.get('test-mac-leopard')
-            manager = Manager(port, options=MockOptions(test_list=None, http=True, max_locked_shards=1), printer=Mock())
+            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
             return manager
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard')

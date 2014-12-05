@@ -1,5 +1,90 @@
 2014-12-04  Alexey Proskuryakov  <ap@apple.com>
 
+        Run http tests parallel
+        https://bugs.webkit.org/show_bug.cgi?id=138958
+
+        Reviewed by Daniel Bates.
+
+        Remove the concept of "locked shard". Now http tests are just like any other tests.
+        We start HTTP and WebSocket servers at the start if we need them, and terminate them
+        when done with all the tests (not when the last http test runs, which is unnecessarily
+        unpredictable).
+
+        This makes debug tests run in 8 minutes and 12 seconds on my Mac Pro. Without the
+        patch, they used to take over 15 minutes.
+
+        As part of the fix, we no longer pass the number of servers to Apache. I don't
+        think that these parameters did what we wanted them to do; Apache handles the load
+        just fine without them.
+
+        The change applies to all platforms. I fixed everything I could find on Mac, and
+        Ossy told me that he's been running http tests in parallel for a long time. If
+        there is increased instability for some ports, it will need to be fixed - there is
+        generally nothing special about http tests at this point, and most code is
+        cross-platform in WebKit2.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__):
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner.start_servers_with_lock):
+        (LayoutTestRunner._handle_started_test):
+        (Worker.handle):
+        (Sharder.__init__):
+        (Sharder.shard_tests):
+        (Sharder._shard_every_file):
+        (Sharder._shard_by_directory):
+        (LayoutTestRunner._handle_finished_test_list): Deleted.
+        (LayoutTestRunner._handle_finished_test_list.find): Deleted.
+        (Sharder._shard_in_two): Deleted.
+        (Sharder): Deleted.
+        (Sharder._resize_shards): Deleted.
+        (Sharder._resize_shards.divide_and_round_up): Deleted.
+        (Sharder._resize_shards.extract_and_flatten): Deleted.
+        (Sharder._resize_shards.split_at): Deleted.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (FakePrinter.print_workers_and_shards):
+        (LayoutTestRunnerTests.test_servers_started.start_http_server):
+        (LayoutTestRunnerTests.test_servers_started):
+        (SharderTests.get_shards):
+        (SharderTests.test_shard_by_dir):
+        (SharderTests.test_shard_every_file):
+        (SharderTests): Deleted.
+        (SharderTests.test_shard_in_two): Deleted.
+        (SharderTests.test_shard_in_two_has_no_locked_shards): Deleted.
+        (SharderTests.test_shard_in_two_has_no_unlocked_shards): Deleted.
+        (SharderTests.test_multiple_locked_shards): Deleted.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_needs_servers.get_manager):
+        (ManagerTest.integration_test_needs_servers.get_manager):
+        (ManagerTest.test_look_for_new_crash_logs.get_manager):
+        (ManagerTest):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_batch_size):
+        (RunTest.test_max_locked_shards): Deleted.
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py:
+        (TestLayoutTestApacheHttpd.test_start_cmd):
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.__init__):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_workers_and_shards):
+        * Scripts/webkitpy/port/base.py:
+        (Port.default_child_processes):
+        (Port.to.start_http_server):
+        (Port.default_max_locked_shards): Deleted.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.make_port):
+        (PortTestCase.test_default_max_locked_shards): Deleted.
+        * Scripts/webkitpy/port/test.py:
+        (TestPort.start_http_server):
+
+2014-12-04  Alexey Proskuryakov  <ap@apple.com>
+
         Don't lock perf tests in run-webkit-tests
         https://bugs.webkit.org/show_bug.cgi?id=139264
 

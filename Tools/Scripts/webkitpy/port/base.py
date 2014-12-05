@@ -159,10 +159,6 @@ class Port(object):
         """Return the number of DumpRenderTree instances to use for this port."""
         return self._executive.cpu_count()
 
-    def default_max_locked_shards(self):
-        """Return the number of "locked" shards to run in parallel (like the http tests)."""
-        return 1
-
     def worker_startup_delay_secs(self):
         # FIXME: If we start workers up too quickly, DumpRenderTree appears
         # to thrash on something and time out its first few tests. Until
@@ -877,16 +873,16 @@ class Port(object):
         storage, it should override this method."""
         pass
 
-    def start_http_server(self, additional_dirs=None, number_of_servers=None):
+    def start_http_server(self, additional_dirs=None):
         """Start a web server. Raise an error if it can't start or is already running.
 
         Ports can stub this out if they don't need a web server to be running."""
         assert not self._http_server, 'Already running an http server.'
 
         if self._uses_apache():
-            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, number_of_servers=number_of_servers)
+            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs)
         else:
-            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs, number_of_servers=number_of_servers)
+            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs)
 
         server.start()
         self._http_server = server

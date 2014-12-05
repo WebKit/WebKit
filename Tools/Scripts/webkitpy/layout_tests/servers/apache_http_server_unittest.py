@@ -53,7 +53,7 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
         test_port = test.TestPort(host)
         host.filesystem.write_text_file(test_port._path_to_apache_config_file(), '')
 
-        server = LayoutTestApacheHttpd(test_port, "/mock/output_dir", number_of_servers=4)
+        server = LayoutTestApacheHttpd(test_port, "/mock/output_dir")
         server._check_that_all_ports_are_available = lambda: True
         server._is_server_running_on_all_ports = lambda: True
         server._wait_for_action = fake_pid
@@ -64,7 +64,4 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
             server.stop()
         finally:
             _, _, logs = oc.restore_output()
-        self.assertIn("StartServers 4", logs)
-        self.assertIn("MinSpareServers 4", logs)
-        self.assertIn("MaxSpareServers 4", logs)
         self.assertTrue(host.filesystem.exists("/mock/output_dir/httpd.conf"))

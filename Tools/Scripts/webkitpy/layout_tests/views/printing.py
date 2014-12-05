@@ -110,14 +110,14 @@ class Printer(object):
         self._print_expected_results_of_type(run_results, test_expectations.FLAKY, "flaky", tests_with_result_type_callback)
         self._print_debug('')
 
-    def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
+    def print_workers_and_shards(self, num_workers, num_shards):
         driver_name = self._port.driver_name()
         if num_workers == 1:
             self._print_default("Running 1 %s." % driver_name)
             self._print_debug("(%s)." % grammar.pluralize(num_shards, "shard"))
         else:
             self._print_default("Running %s in parallel." % (grammar.pluralize(num_workers, driver_name)))
-            self._print_debug("(%d shards; %d locked)." % (num_shards, num_locked_shards))
+            self._print_debug("(%d shards)." % num_shards)
         self._print_default('')
 
     def _print_expected_results_of_type(self, run_results, result_type, result_type_str, tests_with_result_type_callback):

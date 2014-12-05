@@ -91,13 +91,6 @@ class PortTestCase(unittest.TestCase):
         port._config.build_directory = lambda configuration: '/mock-build'
         return port
 
-    def test_default_max_locked_shards(self):
-        port = self.make_port()
-        port.default_child_processes = lambda: 16
-        self.assertEqual(port.default_max_locked_shards(), 1)
-        port.default_child_processes = lambda: 2
-        self.assertEqual(port.default_max_locked_shards(), 1)
-
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 35000)
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 35000)

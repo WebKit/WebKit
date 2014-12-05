@@ -46,7 +46,7 @@ class ServerError(Exception):
 class HttpServerBase(object):
     """A skeleton class for starting and stopping servers used by the layout tests."""
 
-    def __init__(self, port_obj, number_of_servers=None):
+    def __init__(self, port_obj):
         self._executive = port_obj._executive
         self._filesystem = port_obj._filesystem
         self._name = '<virtual>'
@@ -54,7 +54,6 @@ class HttpServerBase(object):
         self._pid = None
         self._pid_file = None
         self._port_obj = port_obj
-        self._number_of_servers = number_of_servers
 
         # We need a non-checkout-dependent place to put lock files, etc. We
         # don't use the Python default on the Mac because it defaults to a
