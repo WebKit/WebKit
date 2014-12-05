@@ -55,11 +55,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
 {
     // TODO: <rdar://problem/6558366> DumpRenderTree: Investigate testRepaintSweepHorizontally and dumpSelectionRect
-    
-    // Take snapshot
     WebThreadLock();
+    [gWebBrowserView layoutIfNeeded]; // Re-enables tile painting, which was disabled when committing the frame load.
     [gWebBrowserView setNeedsDisplay];
-    [gWebBrowserView layoutTilesNow];
     RetainPtr<CGImageRef> snapshot = adoptCF([gWebBrowserView newSnapshotWithRect:[[mainFrame webView] frame]]);
     NSData *pngData = UIImagePNGRepresentation([UIImage imageWithCGImage:snapshot.get()]);
     
