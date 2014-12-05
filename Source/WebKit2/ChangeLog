@@ -1,5 +1,35 @@
 2014-12-05  Dana Burkart  <dburkart@apple.com>
 
+        Merge r176810. <rdar://problem/19140827>
+
+    2014-12-04  Tim Horton  <timothy_horton@apple.com>
+
+            TextIndicator::createWithSelectionInFrame does synchronous IPC in WebKit2
+            https://bugs.webkit.org/show_bug.cgi?id=139252
+            <rdar://problem/19140827>
+
+            Reviewed by Anders Carlsson.
+
+            It turns out contentsToScreen requires sync IPC in Mac WebKit2, which we
+            really don't want to be doing here (especially since the UI process will often
+            be sitting in waitForAndDispatchImmediately waiting for didPerformActionMenuHitTest).
+
+            Go back to keeping TextIndicator rects in "window" coordinates and do the conversion
+            in each of the WebKits instead of trying to share that code.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<TextIndicatorData>::encode):
+            (IPC::ArgumentCoder<TextIndicatorData>::decode):
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setTextIndicator:fadeOut:animationCompletionHandler:]):
+            * WebProcess/WebPage/FindController.cpp:
+            (WebKit::FindController::updateFindIndicator):
+            (WebKit::FindController::drawRect):
+            Adjust to the WebCore changes.
+
+
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
         Merge r173566. <rdar://problem/19150984>
 
     2014-09-11  Andy Estes  <aestes@apple.com>

@@ -1,3 +1,20 @@
+2014-12-05  Dana Burkart  <dburkart@apple.com>
+
+        Merge r176810. <rdar://problem/19140827>
+
+    2014-12-04  Tim Horton  <timothy_horton@apple.com>
+
+            TextIndicator::createWithSelectionInFrame does synchronous IPC in WebKit2
+            https://bugs.webkit.org/show_bug.cgi?id=139252
+            <rdar://problem/19140827>
+
+            Reviewed by Anders Carlsson.
+
+            * WebView/WebView.mm:
+            (-[WebView _setTextIndicator:fadeOut:animationCompletionHandler:]):
+            Adjust to the WebCore changes.
+
+
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
         Merge r173235. <rdar://problem/19072083>
