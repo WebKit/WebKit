@@ -25,12 +25,6 @@
 
 #import <QuickLookUI/QLPreviewItem.h>
 
-#if __has_include(<QuickLookUI/QLPreviewMenuItem.h>)
-
-#import <QuickLookUI/QLPreviewMenuItem.h>
-
-#else
-
 @protocol QLPreviewMenuItemDelegate <NSObject>
 @optional
 
@@ -52,5 +46,3 @@ typedef NS_ENUM(NSInteger, QLPreviewStyle) {
 @property (assign) id<QLPreviewMenuItemDelegate> delegate;
 @property QLPreviewStyle previewStyle;
 @end
-
-#endif

@@ -1,3 +1,16 @@
+2014-12-05  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r176855.
+
+    2014-12-05  Beth Dakin  <bdakin@apple.com>
+
+            rdar://problem/19156353 Additional build-fixes needed.
+
+            Rubber-stamped by Tim Horton.
+
+            This is a bit unfortunate, but we need to always forward-declare this for now.
+            * platform/spi/mac/QuickLookMacSPI.h:
+
 2014-12-04  Dana Burkart  <dburkart@apple.com>
 
         Merge r176803. <rdar://problem/19034499>
