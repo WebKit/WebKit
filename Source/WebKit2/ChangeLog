@@ -1,3 +1,9 @@
+2014-12-05  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: more speculative build fix for GTK builds.
+
+        * CMakeLists.txt:
+
 2014-12-05  Tim Horton  <timothy_horton@apple.com>
 
         If the action menu hit test times out, a menu with a single separator appears

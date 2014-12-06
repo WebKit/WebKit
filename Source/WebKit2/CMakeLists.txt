@@ -485,6 +485,7 @@ set(WebKit2_SOURCES
 
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
+    WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp
 
     WebProcess/MediaCache/WebMediaCacheManager.cpp
 
