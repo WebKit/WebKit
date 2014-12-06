@@ -61,4 +61,14 @@ bool WebsiteDataStore::isNonPersistent()
     return m_websiteDataStore->isNonPersistent();
 }
 
+#if !PLATFORM(COCOA)
+WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
+{
+    // FIXME: Fill everything in.
+    WebKit::WebsiteDataStore::Configuration configuration;
+
+    return configuration;
+}
+#endif
+
 }

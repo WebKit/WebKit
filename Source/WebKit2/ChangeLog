@@ -1,3 +1,12 @@
+2014-12-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF, EFL is happy now.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::createNonPersistent):
+
 2014-12-05  Mark Lam  <mark.lam@apple.com>
 
         Gardening: one more build fix for GTK builds.

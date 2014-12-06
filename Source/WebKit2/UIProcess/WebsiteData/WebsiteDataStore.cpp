@@ -36,7 +36,7 @@ static WebCore::SessionID generateNonPersistentSessionID()
     return WebCore::SessionID(--sessionID);
 }
 
-RefPtr<WebsiteDataStore::WebsiteDataStore> WebsiteDataStore::createNonPersistent()
+RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
     return adoptRef(new WebsiteDataStore(generateNonPersistentSessionID()));
 }
