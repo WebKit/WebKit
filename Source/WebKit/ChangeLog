@@ -1,3 +1,13 @@
+2014-12-05  Roger Fong  <roger_fong@apple.com>
+
+        [Win] proj files copying over too many resources..
+        https://bugs.webkit.org/show_bug.cgi?id=139315.
+        <rdar://problem/19148278>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit.proj: Only copy resource folders and WebKit.dll.
+
 2014-12-02  Sam Weinig  <sam@webkit.org>
 
         Remove empty directories

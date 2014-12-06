@@ -1,3 +1,13 @@
+2014-12-05  Roger Fong  <roger_fong@apple.com>
+
+        [Win] proj files copying over too many resources..
+        https://bugs.webkit.org/show_bug.cgi?id=139315.
+        <rdar://problem/19148278>
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.proj: Don't copy over bin32 build output.
+
 2014-12-05  Timothy Horton  <timothy_horton@apple.com>
 
         Use the system string for telephone number menu

@@ -83,6 +83,18 @@
     <CreateItem Include="$(ConfigurationBuildDir)\bin64\*.pdb">
       <Output TaskParameter="Include" ItemName="Bin64SymbolFiles" />
     </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\JavaScriptCore.dll">
+      <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\JavaScriptCore.dll">
+      <Output TaskParameter="Include" ItemName="Bin64DLLFiles" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\*.resources">
+      <Output TaskParameter="Include" ItemName="Bin32ResourceFolders" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\*.resources">
+      <Output TaskParameter="Include" ItemName="Bin64ResourceFolders" />
+    </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\bin32\JavaScriptCore.resources\**\*.*">
       <Output TaskParameter="Include" ItemName="Bin32Resources" />
     </CreateItem>
@@ -106,11 +118,13 @@
     <Copy SourceFiles="@(Lib32Files)" DestinationFolder="$(AppleInternalLib32)" />
     <Copy SourceFiles="@(Lib64Files)" DestinationFolder="$(AppleInternalLib64)" />
     <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(AppleInternalBin32)" />
-    <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
+    <Copy SourceFiles="@(Bin32DLLFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
+    <Copy SourceFiles="@(Bin32ResourceFolders)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
     <Copy SourceFiles="@(Bin32SymbolFiles)" DestinationFolder="$(AppleInternal32Symbols)" />
     <Copy SourceFiles="@(Bin32Resources)" DestinationFiles="@(Bin32Resources->'$(DSTROOT)\$(ProgramFilesAAS32)\JavaScriptCore.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Bin64Files)" DestinationFolder="$(AppleInternalBin64)" />
-    <Copy SourceFiles="@(Bin64Files)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
+    <Copy SourceFiles="@(Bin64DLLFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
+    <Copy SourceFiles="@(Bin64ResourceFolders)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
     <Copy SourceFiles="@(Bin64SymbolFiles)" DestinationFolder="$(AppleInternal64Symbols)" />
     <Copy SourceFiles="@(Bin64Resources)" DestinationFiles="@(Bin64Resources->'$(DSTROOT)\$(ProgramFilesAAS64)\JavaScriptCore.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Derived32Sources)" DestinationFiles="@(Derived32Sources->'$(DSTROOT)\AppleInternal\Sources32\JavaScriptCore\%(RecursiveDir)%(Filename)%(Extension)')" />

@@ -1,3 +1,13 @@
+2014-12-05  Roger Fong  <roger_fong@apple.com>
+
+        [Win] proj files copying over too many resources..
+        https://bugs.webkit.org/show_bug.cgi?id=139315.
+        <rdar://problem/19148278>
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj: Only copy resource folders and JavaScriptCore.dll.
+
 2014-12-05  Juergen Ributzka  <juergen@apple.com>
 
         [JSC][FTL] Add the data layout to the module and fix the pass order.
