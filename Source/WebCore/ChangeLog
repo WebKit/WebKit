@@ -1,3 +1,15 @@
+2014-12-06  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error, missing guard.
+        https://bugs.webkit.org/show_bug.cgi?id=139338
+
+        Reviewed by Alex Christensen.
+
+        There is missing a ENABLE(CSS_SELECTORS_LEVEL4) guard in CSSParser.cpp.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::realLex):
+
 2014-12-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: I cannot activate links on the mobile version of news.google.com

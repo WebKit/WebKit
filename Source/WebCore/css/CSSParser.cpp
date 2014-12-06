@@ -11486,6 +11486,7 @@ restartAfterComment:
         if (*currentCharacter<SrcCharacterType>() == '=') {
             ++currentCharacter<SrcCharacterType>();
             m_token = CONTAINS;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         } else if (*currentCharacter<SrcCharacterType>() == '-') {
             result = currentCharacter<SrcCharacterType>();
 
@@ -11498,6 +11499,7 @@ restartAfterComment:
 
             m_token = LANGRANGE;
             yylval->string.init(parsedLangRange.toString());
+#endif
         }
         break;
 
