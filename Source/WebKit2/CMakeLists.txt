@@ -431,6 +431,8 @@ set(WebKit2_SOURCES
     UIProcess/UserContent/WebScriptMessageHandler.cpp
     UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
+    UIProcess/WebsiteData/WebsiteDataStore.cpp
+
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
 

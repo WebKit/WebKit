@@ -1,3 +1,9 @@
+2014-12-05  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: one more build fix for GTK builds.
+
+        * CMakeLists.txt:
+
 2014-12-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF, remove duplicated entry due to parallel buildfixing.
