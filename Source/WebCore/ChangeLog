@@ -1,3 +1,9 @@
+2014-12-05  Timothy Horton  <timothy_horton@apple.com>
+
+        Build fix.
+
+        * platform/spi/mac/TUCallSPI.h:
+
 2014-12-05  Roger Fong  <roger_fong@apple.com>
 
         [Win] proj files copying over too many resources..
