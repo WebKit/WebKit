@@ -1,5 +1,11 @@
 2014-12-05  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: another build fix for GTK builds.
+
+        * CMakeLists.txt:
+
+2014-12-05  Mark Lam  <mark.lam@apple.com>
+
         Gardening: more speculative build fix for GTK builds.
 
         * CMakeLists.txt:

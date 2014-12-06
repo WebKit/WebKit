@@ -350,6 +350,7 @@ set(WebKit2_SOURCES
     UIProcess/WebViewportAttributes.cpp
 
     UIProcess/API/APISessionState.cpp
+    UIProcess/API/APIWebsiteDataStore.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
