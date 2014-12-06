@@ -39,6 +39,18 @@
 
 2014-12-05  Tim Horton  <timothy_horton@apple.com>
 
+        Use the system string for telephone number menu
+        https://bugs.webkit.org/show_bug.cgi?id=139324
+        <rdar://problem/18726471>
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/mac/MenuUtilities.mm:
+        (WebKit::menuItemTitleForTelephoneNumberGroup):
+        Make use of the SPI to retrieve the string if it exists.
+
+2014-12-05  Tim Horton  <timothy_horton@apple.com>
+
         If the action menu hit test times out, a menu with a single separator appears
         https://bugs.webkit.org/show_bug.cgi?id=139320
         <rdar://problem/19158331>
