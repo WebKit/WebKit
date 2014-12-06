@@ -23,40 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#ifndef WebStorageNamespaceProvider_h
+#define WebStorageNamespaceProvider_h
 
-namespace WebCore {
-class StorageNamespaceProvider;
-class UserContentController;
-}
+#include <WebCore/StorageNamespaceProvider.h>
 
-class WebVisitedLinkStore;
-
-@class WebView;
-
-class WebViewGroup : public RefCounted<WebViewGroup> {
+class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider {
 public:
-    static RefPtr<WebViewGroup> getOrCreate(const String& name);
-    ~WebViewGroup();
-
-    static WebViewGroup* get(const String& name);
-
-    void addWebView(WebView *);
-    void removeWebView(WebView *);
-
-    WebCore::StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
-    WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
+    static RefPtr<WebStorageNamespaceProvider> create();
+    virtual ~WebStorageNamespaceProvider();
 
 private:
-    WebViewGroup(const String& name);
+    WebStorageNamespaceProvider();
 
-    String m_name;
-    HashSet<WebView *> m_webViews;
-
-    Ref<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
-    Ref<WebCore::UserContentController> m_userContentController;
-    Ref<WebVisitedLinkStore> m_visitedLinkStore;
+    virtual RefPtr<WebCore::StorageNamespace> createSessionStorageNamespace(WebCore::Page&) override;
+    virtual RefPtr<WebCore::StorageNamespace> createLocalStorageNamespace() override;
+    virtual RefPtr<WebCore::StorageNamespace> createTransientLocalStorageNamespace(WebCore::SecurityOrigin&) override;
 };
+
+#endif // WebStorageNamespaceProvider_h

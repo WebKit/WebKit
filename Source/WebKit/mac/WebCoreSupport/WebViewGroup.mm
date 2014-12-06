@@ -25,8 +25,10 @@
 
 #import "WebViewGroup.h"
 
+#import "WebStorageNamespaceProvider.h"
 #import "WebView.h"
 #import "WebVisitedLinkStore.h"
+#import <WebCore/UserContentController.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringHash.h>
 
@@ -40,7 +42,7 @@ static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()
     return webViewGroups;
 }
 
-PassRefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name)
+RefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name)
 {
     if (name.isEmpty())
         return adoptRef(new WebViewGroup(String()));
@@ -61,6 +63,7 @@ WebViewGroup* WebViewGroup::get(const String& name)
 
 WebViewGroup::WebViewGroup(const String& name)
     : m_name(name)
+    , m_storageNamespaceProvider(*WebStorageNamespaceProvider::create())
     , m_userContentController(*UserContentController::create())
     , m_visitedLinkStore(WebVisitedLinkStore::create())
 {

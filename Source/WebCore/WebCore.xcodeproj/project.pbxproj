@@ -700,7 +700,7 @@
 		1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3586DE15264C450022A659 /* RenderMultiColumnFlowThread.h */; };
 		1A3586E115264F950022A659 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */; };
 		1A37636B1A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3763691A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp */; };
-		1A37636C1A2E68BB009A7EE2 /* StorageNamespaceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A37636A1A2E68BB009A7EE2 /* StorageNamespaceProvider.h */; };
+		1A37636C1A2E68BB009A7EE2 /* StorageNamespaceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A37636A1A2E68BB009A7EE2 /* StorageNamespaceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A3FF9C315265359002288A1 /* RenderNamedFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC85F23E1519187300BC17BE /* RenderNamedFlowThread.cpp */; };
 		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };
 		1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };

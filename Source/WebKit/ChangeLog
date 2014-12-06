@@ -1,3 +1,18 @@
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Add a stubbed out version of WebStorageNamespaceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=139213
+
+        Reviewed by Sam Weinig.
+
+        * Storage/WebStorageNamespaceProvider.cpp: Added.
+        * Storage/WebStorageNamespaceProvider.h: Added.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
 2014-12-05  Roger Fong  <roger_fong@apple.com>
 
         [Win] proj files copying over too many resources..

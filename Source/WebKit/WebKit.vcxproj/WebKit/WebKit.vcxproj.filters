@@ -217,6 +217,9 @@
     <ClCompile Include="..\..\win\WebSerializedJSValue.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\win\WebTextRenderer.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -496,6 +499,9 @@
     <ClInclude Include="..\..\win\WebSerializedJSValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.h">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClInclude Include="..\..\win\WebTextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

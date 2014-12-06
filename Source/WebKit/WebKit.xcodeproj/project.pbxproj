@@ -25,6 +25,8 @@
 		1A4DF5230EC8C74D006BD4B4 /* WebNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */; };
 		1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */; };
+		1A591D451A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A591D431A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp */; };
+		1A591D461A2E91BB000907C4 /* WebStorageNamespaceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A591D441A2E91BB000907C4 /* WebStorageNamespaceProvider.h */; };
 		1A60519117502A5D00BC62F5 /* BinaryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */; };
 		1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */; };
 		1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A60518F17502A5D00BC62F5 /* HistoryPropertyList.mm */; };
@@ -471,6 +473,8 @@
 		1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginView.mm; sourceTree = "<group>"; };
 		1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginView.h; sourceTree = "<group>"; };
 		1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBaseNetscapePluginView.mm; sourceTree = "<group>"; };
+		1A591D431A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebStorageNamespaceProvider.cpp; path = ../../Storage/WebStorageNamespaceProvider.cpp; sourceTree = "<group>"; };
+		1A591D441A2E91BB000907C4 /* WebStorageNamespaceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebStorageNamespaceProvider.h; path = ../../Storage/WebStorageNamespaceProvider.h; sourceTree = "<group>"; };
 		1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryPropertyList.cpp; sourceTree = "<group>"; };
 		1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryPropertyList.h; sourceTree = "<group>"; };
 		1A60518F17502A5D00BC62F5 /* HistoryPropertyList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HistoryPropertyList.mm; sourceTree = "<group>"; };
@@ -1194,6 +1198,8 @@
 				511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */,
 				A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */,
 				A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */,
+				1A591D431A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp */,
+				1A591D441A2E91BB000907C4 /* WebStorageNamespaceProvider.h */,
 				3AB02AF512C1319B00FBB694 /* WebStorageManager.mm */,
 				3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */,
 				3AB02AFF12C132B200FBB694 /* WebStorageManagerPrivate.h */,
@@ -1864,6 +1870,7 @@
 				939810250824BF01008DF038 /* WebNSWindowExtras.h in Headers */,
 				A58A5799143E727000125F50 /* WebOpenPanelResultListener.h in Headers */,
 				2D25396618CE85C200270222 /* WebSharingServicePickerController.h in Headers */,
+				1A591D461A2E91BB000907C4 /* WebStorageNamespaceProvider.h in Headers */,
 				9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */,
 				37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */,
 				939810A50824BF01008DF038 /* WebPDFRepresentation.h in Headers */,
@@ -2272,6 +2279,7 @@
 				1AA879B711CBE9BF003C664F /* WebPlatformStrategies.mm in Sources */,
 				939811260824BF01008DF038 /* WebPluginContainerCheck.mm in Sources */,
 				939810DA0824BF01008DF038 /* WebPluginController.mm in Sources */,
+				1A591D451A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp in Sources */,
 				939810DB0824BF01008DF038 /* WebPluginDatabase.mm in Sources */,
 				939810DC0824BF01008DF038 /* WebPluginPackage.mm in Sources */,
 				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,

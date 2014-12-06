@@ -23,40 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "WebStorageNamespaceProvider.h"
 
-namespace WebCore {
-class StorageNamespaceProvider;
-class UserContentController;
+#include <WebCore/StorageNamespace.h>
+
+using namespace WebCore;
+
+RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create()
+{
+    return adoptRef(new WebStorageNamespaceProvider);
 }
 
-class WebVisitedLinkStore;
+WebStorageNamespaceProvider::WebStorageNamespaceProvider()
+{
+}
 
-@class WebView;
+WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
+{
+}
 
-class WebViewGroup : public RefCounted<WebViewGroup> {
-public:
-    static RefPtr<WebViewGroup> getOrCreate(const String& name);
-    ~WebViewGroup();
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page&)
+{
+    // FIXME: Implement.
+    return nullptr;
+}
 
-    static WebViewGroup* get(const String& name);
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace()
+{
+    // FIXME: Implement.
+    return nullptr;
+}
 
-    void addWebView(WebView *);
-    void removeWebView(WebView *);
-
-    WebCore::StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
-    WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
-    WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
-
-private:
-    WebViewGroup(const String& name);
-
-    String m_name;
-    HashSet<WebView *> m_webViews;
-
-    Ref<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
-    Ref<WebCore::UserContentController> m_userContentController;
-    Ref<WebVisitedLinkStore> m_visitedLinkStore;
-};
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&)
+{
+    // FIXME: Implement.
+    return nullptr;
+}
