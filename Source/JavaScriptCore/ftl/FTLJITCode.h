@@ -72,8 +72,8 @@ public:
     
     CodePtr exitThunks();
     
-    JITCode* ftl();
-    DFG::CommonData* dfgCommon();
+    JITCode* ftl() override;
+    DFG::CommonData* dfgCommon() override;
     
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
