@@ -1,3 +1,17 @@
+2014-12-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Query -[WAKWindow screenScale] instead of using WKGetScreenScaleFactor()
+        https://bugs.webkit.org/show_bug.cgi?id=139326
+
+        Reviewed by Anders Carlsson.
+
+        Ask the window for its screen scale factor instead of calling WKGetScreenScaleFactor()
+        to query the OS for it. This approach will ensure DumpRenderTree takes the snapshot
+        using the same scale factor as used in WebKit.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView):
+
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r176677): All tests crash on Windows

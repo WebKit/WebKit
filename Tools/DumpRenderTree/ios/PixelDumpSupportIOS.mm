@@ -30,6 +30,7 @@
 #import "PixelDumpSupport.h"
 
 #import "DumpRenderTree.h"
+#import "DumpRenderTreeWindow.h"
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
@@ -39,11 +40,11 @@
 #import <UIKit/UIView_Private.h>
 #import <UIKit/UIWebBrowserView.h>
 #import <WebKit/WebCoreThread.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
+extern DumpRenderTreeWindow *gDrtWindow;
 extern UIWebBrowserView *gWebBrowserView;
 
 class BitmapContext : public RefCounted<BitmapContext> {
@@ -85,7 +86,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     [gWebBrowserView layoutIfNeeded]; // Re-enables tile painting, which was disabled when committing the frame load.
     [gWebBrowserView setNeedsDisplay];
 
-    UIGraphicsBeginImageContextWithOptions([[mainFrame webView] frame].size, YES /* opaque */, WKGetScreenScaleFactor());
+    UIGraphicsBeginImageContextWithOptions([[mainFrame webView] frame].size, YES /* opaque */, [gDrtWindow screenScale]);
     [[gWebBrowserView layer] renderInContext:UIGraphicsGetCurrentContext()];
     RefPtr<BitmapContext> context = BitmapContext::createFromUIImage(UIGraphicsGetImageFromCurrentImageContext());
     UIGraphicsEndImageContext();
