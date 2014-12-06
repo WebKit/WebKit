@@ -130,6 +130,10 @@ webkit.org/b/135390 fast/css/fontloader-multiple-families.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-page-cache.html [ Skip ]
 webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Skip ]
 
+# regression due to r176902:
+webkit.org/b/139014 [ Debug ] fast/css/parsing-css-lang.html [ Skip ]
+webkit.org/b/139014 [ Debug ] fast/css/css-selector-text.html [ Skip ]
+
 # Various failures from the W3C CSS Shapes test suite import
 
 webkit.org/b/137788 css3/shapes/shape-outside/shape-image/shape-image-010.html [ ImageOnlyFailure ]
