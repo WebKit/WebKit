@@ -1,3 +1,9 @@
+2014-12-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r176849.
+
+        * CMakeLists.txt: Added WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp.
+
 2014-12-05  Mark Lam  <mark.lam@apple.com>
 
         Gardening: another build fix for GTK builds.
