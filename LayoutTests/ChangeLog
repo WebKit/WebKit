@@ -1,3 +1,14 @@
+2014-12-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: I cannot activate links on the mobile version of news.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=139330
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-simulator/ios-accessibility: Added.
+        * platform/ios-simulator/ios-accessibility/press-fires-touch-events-expected.txt: Added.
+        * platform/ios-simulator/ios-accessibility/press-fires-touch-events.html: Added.
+
 2014-12-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Directional single quotation marks are not rotated in vertical text

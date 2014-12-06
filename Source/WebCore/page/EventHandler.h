@@ -210,6 +210,7 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomicString&, const EventTargetTouchMap&, float, float);
+    bool dispatchSimulatedTouchEvent(IntPoint location);
 #endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)

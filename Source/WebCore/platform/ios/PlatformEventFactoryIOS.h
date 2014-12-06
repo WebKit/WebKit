@@ -45,6 +45,7 @@ public:
     WEBCORE_EXPORT static PlatformKeyboardEvent createPlatformKeyboardEvent(WebEvent *);
 #if ENABLE(TOUCH_EVENTS) || ENABLE(IOS_TOUCH_EVENTS)
     static PlatformTouchEvent createPlatformTouchEvent(WebEvent *);
+    static PlatformTouchEvent createPlatformSimulatedTouchEvent(PlatformEvent::Type, IntPoint location);
 #endif
 };
 
