@@ -382,7 +382,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
-        id newRep = repClass != nil ? [[repClass alloc] init] : nil;
+        id newRep = repClass != nil ? [(NSObject *)[repClass alloc] init] : nil;
         [self _setRepresentation:(id <WebDocumentRepresentation>)newRep];
         [newRep release];
     }

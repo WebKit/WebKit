@@ -41,7 +41,7 @@
 
 + (WebSelectionRect *)selectionRect
 {
-    return [[[self alloc] init] autorelease];
+    return [[(WebSelectionRect *)[self alloc] init] autorelease];
 }
 
 + (CGRect)startEdge:(NSArray *)rects

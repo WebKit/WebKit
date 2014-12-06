@@ -123,7 +123,7 @@ public:
     void notifyRegionWhenRemovingDisplayTree(bool);
 #endif
 
-    virtual void setIsActive(bool);
+    virtual void setIsActive(bool) override;
 
     bool hasDisplayTree() const { return m_displayTree; }
     VTTCueBox* getDisplayTree(const IntSize& videoSize, int fontSize);
@@ -167,7 +167,7 @@ public:
     virtual bool cueContentsMatch(const TextTrackCue&) const override;
     virtual bool doesExtendCue(const TextTrackCue&) const override;
 
-    virtual CueType cueType() const { return WebVTT; }
+    virtual CueType cueType() const override { return WebVTT; }
     virtual bool isRenderable() const override final { return true; }
 
     virtual void didChange() override;

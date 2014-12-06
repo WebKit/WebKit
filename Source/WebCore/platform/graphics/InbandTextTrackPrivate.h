@@ -69,9 +69,9 @@ public:
     virtual bool isMainProgramContent() const { return true; }
     virtual bool isEasyToRead() const { return false; }
     virtual bool isDefault() const { return false; }
-    virtual AtomicString label() const { return emptyAtom; }
-    virtual AtomicString language() const { return emptyAtom; }
-    virtual AtomicString id() const { return emptyAtom; }
+    virtual AtomicString label() const override { return emptyAtom; }
+    virtual AtomicString language() const override { return emptyAtom; }
+    virtual AtomicString id() const override { return emptyAtom; }
     virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyAtom; }
 
     virtual int textTrackIndex() const { return 0; }

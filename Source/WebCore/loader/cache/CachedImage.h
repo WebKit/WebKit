@@ -84,7 +84,7 @@ public:
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     bool isManuallyCached() const { return m_isManuallyCached; }
-    virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+    virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const override;
     virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) override;
 
     bool isOriginClean(SecurityOrigin*);

@@ -1,3 +1,20 @@
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+        rdar://problem/18978687
+
+        Add missing overrides and missing casts.
+
+        * Storage/WebDatabaseManagerClient.h:
+        * Storage/WebStorageTrackerClient.h:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _makeRepresentation]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+
 2014-12-05  Tim Horton  <timothy_horton@apple.com>
 
         Legacy WebKit should set deviceScaleFactor in _commonInitializationWithFrameName, not _initWithFrame

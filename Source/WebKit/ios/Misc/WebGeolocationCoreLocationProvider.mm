@@ -65,10 +65,8 @@ using namespace WebCore;
 {
     ASSERT(!_locationManager);
 
-#define CLLocationManager getCLLocationManagerClass()
-    _locationManager = adoptNS([[CLLocationManager alloc] init]);
-    _lastAuthorizationStatus = [CLLocationManager authorizationStatus];
-#undef CLLocationManager
+    _locationManager = adoptNS([(CLLocationManager *)[getCLLocationManagerClass() alloc] init]);
+    _lastAuthorizationStatus = [getCLLocationManagerClass() authorizationStatus];
 
     [ _locationManager setDelegate:self];
 }

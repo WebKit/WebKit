@@ -119,7 +119,7 @@ private:
     virtual WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) override;
     virtual void dispatchShow() override;
 
-    virtual void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebCore::FramePolicyFunction);
+    virtual void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebCore::FramePolicyFunction) override;
     virtual void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>, const WTF::String& frameName, WebCore::FramePolicyFunction) override;
     virtual void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>, WebCore::FramePolicyFunction) override;
     virtual void cancelPolicyCheck() override;
@@ -225,15 +225,15 @@ private:
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>) const;
     
-    virtual bool canCachePage() const;
+    virtual bool canCachePage() const override;
 
-    virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
+    virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext() override;
 
 #if ENABLE(REQUEST_AUTOCOMPLETE)
     virtual void didRequestAutocomplete(PassRefPtr<WebCore::FormState>) override { }
 #endif
 
-    virtual bool shouldPaintBrokenImage(const WebCore::URL&) const;
+    virtual bool shouldPaintBrokenImage(const WebCore::URL&) const override;
 
 #if USE(QUICK_LOOK)
     virtual void didCreateQuickLookHandle(WebCore::QuickLookHandle&) override;

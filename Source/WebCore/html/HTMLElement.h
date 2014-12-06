@@ -107,7 +107,7 @@ protected:
     void applyAlignmentAttributeToStyle(const AtomicString&, MutableStyleProperties&);
     void applyBorderAttributeToStyle(const AtomicString&, MutableStyleProperties&);
 
-    virtual bool matchesReadWritePseudoClass() const;
+    virtual bool matchesReadWritePseudoClass() const override;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;

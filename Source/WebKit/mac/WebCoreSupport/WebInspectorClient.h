@@ -110,22 +110,22 @@ public:
 
     void attachAvailabilityChanged(bool);
 
-    virtual void frontendLoaded();
+    virtual void frontendLoaded() override;
 
-    virtual String localizedStringsURL();
+    virtual String localizedStringsURL() override;
 
-    virtual void bringToFront();
-    virtual void closeWindow();
+    virtual void bringToFront() override;
+    virtual void closeWindow() override;
     virtual void disconnectFromBackend();
 
-    virtual void attachWindow(DockSide);
-    virtual void detachWindow();
+    virtual void attachWindow(DockSide) override;
+    virtual void detachWindow() override;
 
-    virtual void setAttachedWindowHeight(unsigned height);
-    virtual void setAttachedWindowWidth(unsigned height);
+    virtual void setAttachedWindowHeight(unsigned height) override;
+    virtual void setAttachedWindowWidth(unsigned height) override;
     virtual void setToolbarHeight(unsigned) override;
 
-    virtual void inspectedURLChanged(const String& newURL);
+    virtual void inspectedURLChanged(const String& newURL) override;
 
 private:
     void updateWindowTitle() const;

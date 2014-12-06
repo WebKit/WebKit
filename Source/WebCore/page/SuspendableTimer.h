@@ -55,7 +55,7 @@ public:
     void cancel(); // Equivalent to TimerBase::stop(), whose name conflicts with ActiveDOMObject::stop().
 
 private:
-    virtual void fired() = 0;
+    virtual void fired() override = 0;
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const final override;
