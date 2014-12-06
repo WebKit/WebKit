@@ -1,6 +1,28 @@
 2014-12-06  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.
+        rdar://problem/18978733
+
+        Add a bunch of overrides since we're not disabling the "inconsistent missing override" warning in WebKit.
+
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateOverflowScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        (WebCore::ScrollingTreeFrameScrollingNode::updateLayersAfterDelegatedScroll): Deleted.
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * platform/graphics/GraphicsLayerUpdater.h:
+        * platform/mac/ScrollbarThemeMac.h:
+        (WebCore::ScrollbarThemeMac::supportsControlTints): Deleted.
+        (WebCore::ScrollbarThemeMac::maxOverlapBetweenPages): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderSnapshottedPlugIn.h:
+
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
         rdar://problem/18978687
 
         Add a bunch of overrides since we're not disabling the "inconsistent missing override" warning in WebKit.

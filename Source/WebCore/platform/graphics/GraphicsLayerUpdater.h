@@ -59,7 +59,7 @@ public:
 #endif
 
 private:
-    virtual void displayRefreshFired(double timestamp);
+    virtual void displayRefreshFired(double timestamp) override;
 
     GraphicsLayerUpdaterClient* m_client;
     bool m_scheduled;

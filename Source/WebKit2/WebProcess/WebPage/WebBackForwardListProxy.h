@@ -50,17 +50,17 @@ public:
 private:
     WebBackForwardListProxy(WebPage*);
 
-    virtual void addItem(PassRefPtr<WebCore::HistoryItem>);
+    virtual void addItem(PassRefPtr<WebCore::HistoryItem>) override;
 
-    virtual void goToItem(WebCore::HistoryItem*);
+    virtual void goToItem(WebCore::HistoryItem*) override;
         
-    virtual WebCore::HistoryItem* itemAtIndex(int);
-    virtual int backListCount();
-    virtual int forwardListCount();
+    virtual WebCore::HistoryItem* itemAtIndex(int) override;
+    virtual int backListCount() override;
+    virtual int forwardListCount() override;
 
     virtual bool isActive();
 
-    virtual void close();
+    virtual void close() override;
 
 #if PLATFORM(IOS)
     virtual unsigned current() override;

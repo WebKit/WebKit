@@ -118,7 +118,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
-    id <WKWebProcessPlugIn> instance = (id <WKWebProcessPlugIn>)[[principalClass alloc] init];
+    id <WKWebProcessPlugIn> instance = (id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init];
     if (!instance) {
         WTFLogAlways("InjectedBundle::load failed - Could not initialize an instance of the principal class.\n");
         return false;

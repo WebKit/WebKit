@@ -66,7 +66,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    _WKProcessPoolConfiguration *configuration = [[[self class] allocWithZone:zone] init];
+    _WKProcessPoolConfiguration *configuration = [(_WKProcessPoolConfiguration *)[[self class] allocWithZone:zone] init];
 
     configuration.maximumProcessCount = self.maximumProcessCount;
     configuration.injectedBundleURL = self.injectedBundleURL;

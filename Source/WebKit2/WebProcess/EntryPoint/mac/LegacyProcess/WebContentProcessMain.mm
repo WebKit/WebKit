@@ -64,7 +64,7 @@ public:
     {
     }
 
-    virtual void doPreInitializationWork()
+    virtual void doPreInitializationWork() override
     {
         // Remove the WebProcess and SecItem shims from the DYLD_INSERT_LIBRARIES environment variable so any processes
         // spawned by the WebProcess don't try to insert the shims and crash.
@@ -86,7 +86,7 @@ public:
 #endif // PLATFORM(IOS)
     }
 
-    virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier)
+    virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier) override
     {
         String clientExecutable = m_commandLine["client-executable"];
         if (clientExecutable.isEmpty())
@@ -146,7 +146,7 @@ public:
         return true;
     }
 
-    virtual bool getClientIdentifier(String& clientIdentifier)
+    virtual bool getClientIdentifier(String& clientIdentifier) override
     {
         String clientExecutable = m_commandLine["client-executable"];
         if (clientExecutable.isEmpty())
@@ -161,7 +161,7 @@ public:
         return true;
     }
 
-    virtual bool getClientProcessName(String& clientProcessName)
+    virtual bool getClientProcessName(String& clientProcessName) override
     {
         String clientExecutable = m_commandLine["client-executable"];
         if (clientExecutable.isEmpty())

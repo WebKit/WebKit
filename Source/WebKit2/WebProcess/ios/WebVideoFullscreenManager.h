@@ -57,7 +57,7 @@ public:
     static PassRefPtr<WebVideoFullscreenManager> create(PassRefPtr<WebPage>);
     virtual ~WebVideoFullscreenManager();
     
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
     
     bool supportsVideoFullscreen() const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode);

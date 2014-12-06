@@ -45,12 +45,12 @@ public:
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
     virtual void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
 
-    virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
-    virtual void setScrollPosition(const FloatPoint&);
-    virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) = 0;
+    virtual void handleWheelEvent(const PlatformWheelEvent&) override = 0;
+    virtual void setScrollPosition(const FloatPoint&) override;
+    virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override = 0;
 
-    virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) = 0;
-    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
+    virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override = 0;
+    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }
 
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }

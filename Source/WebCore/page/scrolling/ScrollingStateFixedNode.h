@@ -41,7 +41,7 @@ class ScrollingStateFixedNode final : public ScrollingStateNode {
 public:
     static PassRefPtr<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&);
+    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateFixedNode();
 

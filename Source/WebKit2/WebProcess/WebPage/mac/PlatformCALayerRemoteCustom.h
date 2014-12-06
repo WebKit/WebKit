@@ -52,7 +52,7 @@ private:
 
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
 
-    virtual bool isPlatformCALayerRemoteCustom() const { return true; }
+    virtual bool isPlatformCALayerRemoteCustom() const override { return true; }
 
     virtual CFTypeRef contents() const override;
     virtual void setContents(CFTypeRef) override;

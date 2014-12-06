@@ -1,5 +1,48 @@
 2014-12-06  Anders Carlsson  <andersca@apple.com>
 
+        Fix build with newer versions of clang.
+        rdar://problem/18978733
+
+        Add missing overrides and casts.
+
+        * NetworkProcess/NetworkProcess.h:
+        * Shared/Downloads/DownloadAuthenticationClient.h:
+        (WebKit::DownloadAuthenticationClient::refAuthenticationClient): Deleted.
+        (WebKit::DownloadAuthenticationClient::derefAuthenticationClient): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration copyWithZone:]):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterViewportChange): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        (WebKit::WebContentProcessMainDelegate::doPreInitializationWork): Deleted.
+        (WebKit::WebContentProcessMainDelegate::getConnectionIdentifier): Deleted.
+        (WebKit::WebContentProcessMainDelegate::getClientIdentifier): Deleted.
+        (WebKit::WebContentProcessMainDelegate::getClientProcessName): Deleted.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::didClose): Deleted.
+        (WebKit::WebInspector::didReceiveInvalidMessage): Deleted.
+        * WebProcess/WebPage/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::didClose): Deleted.
+        (WebKit::WebInspectorUI::didReceiveInvalidMessage): Deleted.
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
         Only include TUCallSPI on Mac.
 
         * Platform/mac/MenuUtilities.mm:

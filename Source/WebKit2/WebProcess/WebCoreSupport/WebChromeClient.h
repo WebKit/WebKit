@@ -222,7 +222,7 @@ private:
     virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 #endif
 
-    virtual CompositingTriggerFlags allowedCompositingTriggers() const
+    virtual CompositingTriggerFlags allowedCompositingTriggers() const override
     {
         return static_cast<CompositingTriggerFlags>(
             ThreeDTransformTrigger |
@@ -251,9 +251,9 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    virtual bool supportsVideoFullscreen();
-    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode);
-    virtual void exitVideoFullscreen();
+    virtual bool supportsVideoFullscreen() override;
+    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*, WebCore::HTMLMediaElement::VideoFullscreenMode) override;
+    virtual void exitVideoFullscreen() override;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

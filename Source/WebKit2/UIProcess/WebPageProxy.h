@@ -852,7 +852,7 @@ public:
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
         
     // WebPopupMenuProxy::Client
-    virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
+    virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent() override;
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     void setAcceleratedCompositingWindowId(uint64_t nativeWindowId);
@@ -979,8 +979,8 @@ private:
     virtual uint64_t messageSenderDestinationID() override;
 
     // WebPopupMenuProxy::Client
-    virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex);
-    virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index);
+    virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) override;
+    virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) override;
 #if PLATFORM(GTK)
     virtual void failedToShowPopupMenu();
 #endif
