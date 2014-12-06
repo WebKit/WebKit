@@ -97,7 +97,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
         return;
     
     if (!m_synthesizer) {
-        m_synthesizer = adoptNS([[AVSpeechSynthesizerClass alloc] init]);
+        m_synthesizer = adoptNS([(AVSpeechSynthesizer *)[AVSpeechSynthesizerClass alloc] init]);
         [m_synthesizer setDelegate:self];
     }
 

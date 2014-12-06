@@ -182,7 +182,6 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
 {
     String stringID = origin + "/" + name;
 
-    typedef HashMap<String, int> IDGuidMap;
     static NeverDestroyed<HashMap<String, int>> map;
     DatabaseGuid guid = map.get().get(stringID);
     if (!guid) {

@@ -114,7 +114,7 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const S
 
     static CUIStyleEffectConfiguration *styleConfiguration;
     if (!styleConfiguration) {
-        styleConfiguration = [[getCUIStyleEffectConfigurationClass() alloc] init];
+        styleConfiguration = [(CUIStyleEffectConfiguration *)[getCUIStyleEffectConfigurationClass() alloc] init];
         styleConfiguration.useSimplifiedEffect = YES;
     }
 

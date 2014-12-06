@@ -138,9 +138,7 @@ static const double kGravity = 9.80665;
 {
     ASSERT(!WebThreadIsCurrent());
 
-#define CMMotionManager getCMMotionManagerClass()
-    m_motionManager = [[CMMotionManager alloc] init];
-#undef CMMotionManager
+    m_motionManager = [(CMMotionManager *)[getCMMotionManagerClass() alloc] init];
 
     m_gyroAvailable = m_motionManager.deviceMotionAvailable;
 
@@ -149,10 +147,8 @@ static const double kGravity = 9.80665;
     else
         m_motionManager.accelerometerUpdateInterval = kMotionUpdateInterval;
 
-#define CLLocationManager getCLLocationManagerClass()
-    m_locationManager = [[CLLocationManager alloc] init];
-    m_headingAvailable = [CLLocationManager headingAvailable];
-#undef CLLocationManager
+    m_locationManager = [(CLLocationManager *)[getCLLocationManagerClass() alloc] init];
+    m_headingAvailable = [getCLLocationManagerClass() headingAvailable];
 
     [self checkClientStatus];
 }

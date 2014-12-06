@@ -2040,7 +2040,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     
     NSArray* array = [self arrayOfTextForTextMarkers:[NSArray arrayWithObjects:startMarker, endMarker, nil] attributed:attributed];
     Class returnClass = attributed ? [NSMutableAttributedString class] : [NSMutableString class];
-    id returnValue = [[[returnClass alloc] init] autorelease];
+    id returnValue = [[(NSString *)[returnClass alloc] init] autorelease];
     
     NSInteger count = [array count];
     for (NSInteger k = 0; k < count; ++k) {

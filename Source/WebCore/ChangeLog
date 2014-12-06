@@ -1,3 +1,35 @@
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+        rdar://problem/18978689
+
+        Disable the "inconsistent missing override" warning due to our use of macros in SVG where it's hard to
+        know whether we can add an override or not.
+
+        Also, cast return values of +alloc to the right type, and add some casts for vector iterator arithmetic.
+
+        * Configurations/Base.xcconfig:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::guidForOriginAndName):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _stringForRange:attributed:]):
+        * editing/cocoa/HTMLConverter.mm:
+        (_shadowForShadowStyle):
+        (HTMLConverter::_addTableForElement):
+        * platform/graphics/SVGGlyph.cpp:
+        (WebCore::isCompatibleArabicForm):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::createMix):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        (-[WebSpeechSynthesisWrapper speakUtterance:]):
+        * platform/ios/WebCoreMotionManager.mm:
+        (-[WebCoreMotionManager initializeOnMainThread]):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::spannedRows):
+        (WebCore::RenderTableSection::spannedColumns):
+
 2014-12-06  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error, missing guard.
