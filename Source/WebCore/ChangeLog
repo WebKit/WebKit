@@ -1,5 +1,11 @@
 2014-12-06  Anders Carlsson  <andersca@apple.com>
 
+        Follow-up build fix.
+
+        * Configurations/Base.xcconfig:
+
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
         Fix build with newer versions of clang.
         rdar://problem/18978689
 
