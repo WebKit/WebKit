@@ -1,3 +1,21 @@
+2014-12-05  Juergen Ributzka  <juergen@apple.com>
+
+        [JSC][FTL] Add the data layout to the module and fix the pass order.
+        https://bugs.webkit.org/show_bug.cgi?id=138748
+
+        Reviewed by Oliver Hunt.
+
+        This adds the data layout to the module, so it can be used by all
+        optimization passes in the LLVM optimizer pipeline. This also allows
+        FastISel to select more instructions, because less non-legal types are
+        generated.
+        
+        Also fix the order of the alias analysis passes in the optimization
+        pipeline.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+
 2014-12-05  Geoffrey Garen  <ggaren@apple.com>
 
         Removed an unused function.

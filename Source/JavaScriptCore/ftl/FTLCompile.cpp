@@ -633,33 +633,35 @@ void compile(State& state, Safepoint::Result& safepointResult)
             CRASH();
         }
 
+        // The data layout also has to be set in the module. Get the data layout from the MCJIT and apply
+        // it to the module.
+        LLVMTargetMachineRef targetMachine = llvm->GetExecutionEngineTargetMachine(engine);
+        LLVMTargetDataRef targetData = llvm->GetExecutionEngineTargetData(engine);
+        llvm->SetDataLayout(state.module, llvm->CopyStringRepOfTargetData(targetData));
+
         LLVMPassManagerRef functionPasses = 0;
         LLVMPassManagerRef modulePasses;
-    
+
         if (Options::llvmSimpleOpt()) {
             modulePasses = llvm->CreatePassManager();
-            llvm->AddTargetData(llvm->GetExecutionEngineTargetData(engine), modulePasses);
-
-            LLVMTargetMachineRef targetMachine = llvm->GetExecutionEngineTargetMachine(engine);
-             
+            llvm->AddTargetData(targetData, modulePasses);
             llvm->AddAnalysisPasses(targetMachine, modulePasses);
             llvm->AddPromoteMemoryToRegisterPass(modulePasses);
- 
             llvm->AddGlobalOptimizerPass(modulePasses);
- 
             llvm->AddFunctionInliningPass(modulePasses);
             llvm->AddPruneEHPass(modulePasses);
             llvm->AddGlobalDCEPass(modulePasses);
-             
             llvm->AddConstantPropagationPass(modulePasses);
             llvm->AddAggressiveDCEPass(modulePasses);
             llvm->AddInstructionCombiningPass(modulePasses);
-            llvm->AddBasicAliasAnalysisPass(modulePasses);
+            // BEGIN - DO NOT CHANGE THE ORDER OF THE ALIAS ANALYSIS PASSES
             llvm->AddTypeBasedAliasAnalysisPass(modulePasses);
+            llvm->AddBasicAliasAnalysisPass(modulePasses);
+            // END - DO NOT CHANGE THE ORDER OF THE ALIAS ANALYSIS PASSES
             llvm->AddGVNPass(modulePasses);
             llvm->AddCFGSimplificationPass(modulePasses);
             llvm->AddDeadStoreEliminationPass(modulePasses);
- 
+
             llvm->RunPassManager(modulePasses, state.module);
         } else {
             LLVMPassManagerBuilderRef passBuilder = llvm->PassManagerBuilderCreate();
