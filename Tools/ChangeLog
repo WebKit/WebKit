@@ -1,3 +1,14 @@
+2014-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] DumpRenderTree sets storage directory incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=139347
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (setDefaultsToConsistentValuesForTesting):
+        Don't use user defaults to pass per-instance paths, as user defaults are shared
+        across all instances.
+
 2014-12-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: I cannot activate links on the mobile version of news.google.com

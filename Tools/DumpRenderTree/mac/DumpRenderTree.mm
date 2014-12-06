@@ -792,9 +792,6 @@ static void destroyWebViewAndOffscreenWindow()
 
 static NSString *libraryPathForDumpRenderTree()
 {
-    //FIXME: This may not be sufficient to prevent interactions/crashes
-    //when running more than one copy of DumpRenderTree.
-    //See https://bugs.webkit.org/show_bug.cgi?id=10906
     char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
     if (dumpRenderTreeTemp)
         return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dumpRenderTreeTemp length:strlen(dumpRenderTreeTemp)];
@@ -944,12 +941,17 @@ static void setDefaultsToConsistentValuesForTesting()
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
         @"NSButtonAnimationsEnabled": @NO, // Ideally, we should find a way to test animations, but for now, make sure that the dumped snapshot matches actual state.
+    };
+
+    [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
+
+    NSDictionary *processInstanceDefaults = @{
         WebDatabaseDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"Databases"],
         WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
         WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"]
     };
 
-    [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:processInstanceDefaults forName:NSArgumentDomain];
 }
 
 static void runThread(void* arg)
