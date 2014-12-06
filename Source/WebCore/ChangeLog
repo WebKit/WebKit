@@ -1,3 +1,22 @@
+2014-12-05  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Implement parser for :lang pseudo class selector arguments that contain wildcard '*' subtags
+        https://bugs.webkit.org/show_bug.cgi?id=139014
+
+        Reviewed by Benjamin Poulain.
+
+        Consider each language range in :lang() that consists of an asterisk 
+        immediately followed by an identifier beginning with an ASCII hyphen 
+        as a valid input for the selector as specified in [1].
+
+        [1] http://dev.w3.org/csswg/selectors4/#the-lang-pseudo 
+
+        Test: fast/css/parsing-css-lang.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::realLex):
+
 2014-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Programmatic scrolling and content changes are not always synchronized

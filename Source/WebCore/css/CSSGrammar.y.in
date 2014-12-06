@@ -234,6 +234,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
 %token <string> DIRFUNCTION
+%token <string> LANGRANGE
 %token <string> LANGFUNCTION
 %token <string> ROLEFUNCTION
 #endif
@@ -335,9 +336,10 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %destructor { delete $$; } calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
+%type <string> lang_range
 %union { Vector<CSSParserString>* stringList; }
-%type <stringList> comma_separated_identifiers
-%destructor { delete $$; } comma_separated_identifiers
+%type <stringList> comma_separated_lang_ranges
+%destructor { delete $$; } comma_separated_lang_ranges
 #endif
 
 %type <string> min_or_max
@@ -1102,17 +1104,19 @@ nested_selector_list:
     ;
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
-comma_separated_identifiers:
-    IDENT %prec UNIMPORTANT_TOK {
+lang_range: LANGRANGE | IDENT 
+
+comma_separated_lang_ranges:
+    lang_range %prec UNIMPORTANT_TOK {
         $$ = new Vector<CSSParserString>;
         $$->append($1);
     }
-    | comma_separated_identifiers maybe_space ',' maybe_space IDENT %prec UNIMPORTANT_TOK {
+    | comma_separated_lang_ranges maybe_space ',' maybe_space lang_range %prec UNIMPORTANT_TOK {
         $$ = $1;
         if ($$)
             $1->append($5);
     }
-    | comma_separated_identifiers error {
+    | comma_separated_lang_ranges error {
         $$ = nullptr;
         delete $1;
     }
@@ -1388,7 +1392,7 @@ pseudo:
             $$ = selector.release();
     }
 
-    | ':' LANGFUNCTION maybe_space comma_separated_identifiers maybe_space ')' {
+    | ':' LANGFUNCTION maybe_space comma_separated_lang_ranges maybe_space ')' {
         $$ = nullptr;
         if ($4) {
           auto selector = std::make_unique<CSSParserSelector>();

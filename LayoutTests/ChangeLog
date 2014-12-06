@@ -1,3 +1,15 @@
+2014-12-05  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Implement parser for :lang pseudo class selector arguments that contain wildcard '*' subtags
+        https://bugs.webkit.org/show_bug.cgi?id=139014
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/css/css-selector-text-expected.txt: Updated for asterisk containing input.
+        * fast/css/css-selector-text.html: Updated for asterisk containing input.
+        * fast/css/parsing-css-lang-expected.txt: Added.
+        * fast/css/parsing-css-lang.html: Added.
+
 2014-12-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix style sharing with the "type" and "readonly" attributes

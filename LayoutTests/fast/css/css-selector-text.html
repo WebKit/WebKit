@@ -80,6 +80,20 @@ testSelectorRoundTrip(":visited");
 
 debug('');
 
+testSelectorRoundTrip(":lang(*-)");
+testSelectorRoundTrip(":lang(*--)");
+testSelectorRoundTrip(":lang(*---)");
+testSelectorRoundTrip(":lang(*----)");
+
+debug('');
+
+testSelectorRoundTrip(":lang(*-ab)");
+testSelectorRoundTrip(":lang(*-ab-)");
+testSelectorRoundTrip(":lang(*-1996)");
+testSelectorRoundTrip(":lang(*-DE-1996)");
+
+debug('');
+
 testSelectorRoundTrip(":lang(a)");
 testSelectorRoundTrip(":lang(a, b, c)");
 testSelectorRoundTrip(":lang(fr, de, en, id)");
@@ -88,7 +102,7 @@ testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-
 testSelectorRoundTrip(":lang(de-CH, it-CH, fr-CH, rm-CH)");
 testSelectorRoundTrip(":lang(de-DE, de-DE-1996, de-Latn-DE, de-Latf-DE, de-Latn-DE-1996, de-CH, it-CH, fr-CH, rm-CH)");
 
-debug('')
+debug('');
 
 testSelectorRoundTrip(":lang(a, a, a)");
 testSelectorRoundTrip(":lang(en, en, en)");
@@ -375,6 +389,96 @@ shouldBe("parseThenSerializeRule(':lang(    en,en,en    ) { }')", "':lang(en, en
 
 debug('');
 
+shouldBe("parseThenSerializeRule(':lang(*-DE, *-CH, *-EN) { }')", "':lang(*-DE, *-CH, *-EN) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-DE,*-CH,*-EN) { }')", "':lang(*-DE, *-CH, *-EN) { }'");
+shouldBe("parseThenSerializeRule(':lang(   *-DE  ,  *-CH  ,  *-EN  ) { }')", "':lang(*-DE, *-CH, *-EN) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(\\\\*) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-\\\\*) { }')", "':lang(*-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-\\\\*-\\\\*) { }')", "':lang(*-*-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-\\\\*-\\\\*-\\\\*) { }')", "':lang(*-*-*-*) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(ab-\\\\*) { }')", "':lang(ab-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-ab-\\\\*) { }')", "':lang(*-ab-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-ab-\\\\*-) { }')", "':lang(*-ab-*-) { }'");
+
+shouldBe("parseThenSerializeRule(':lang(*-foo-\\\\3A) { }')", "':lang(*-foo-:) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-foo-\\\\3A\\\\`\\\\)) { }')", "':lang(*-foo-:`)) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-foo-\\\\*) { }')", "':lang(*-foo-*) { }'");
+
+shouldBe("parseThenSerializeRule(':lang(*-foo-\\\\0072 aisin) { }')", "':lang(*-foo-raisin) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-foo-\\\\0062 \\\\0061 r) { }')", "':lang(*-foo-bar) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-foo-col\\\\6Fr) { }')", "':lang(*-foo-color) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(\\\\*    ) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-    ) { }')", "':lang(*-) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en    ) { }')", "':lang(*-en) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*    ) { }')", "':lang(*-en-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr    ) { }')", "':lang(*-en-*-fr) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,br    ) { }')", "':lang(*-en-*-fr, br) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr, br    ) { }')", "':lang(*-en-*-fr, br) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,   br    ) { }')", "':lang(*-en-*-fr, br) { }'");
+shouldBe("parseThenSerializeRule(':lang(  *-en-\\\\*-fr,   br    ) { }')", "':lang(*-en-*-fr, br) { }'");
+shouldBe("parseThenSerializeRule(':lang(    *-en-\\\\*-fr,   br    ) { }')", "':lang(*-en-*-fr, br) { }'");
+shouldBe("parseThenSerializeRule(':lang(    *-en-\\\\*-fr  ,   br    ) { }')", "':lang(*-en-*-fr, br) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,*-br-zh    ) { }')", "':lang(*-en-*-fr, *-br-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr, *-br-zh    ) { }')", "':lang(*-en-*-fr, *-br-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,   *-br-zh    ) { }')", "':lang(*-en-*-fr, *-br-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,     *-br-zh    ) { }')", "':lang(*-en-*-fr, *-br-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,       *-br-zh    ) { }')", "':lang(*-en-*-fr, *-br-zh) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr, br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,   br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr,      br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(  *-en-\\\\*-fr,      br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(  *-en-\\\\*-fr ,      br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+shouldBe("parseThenSerializeRule(':lang(  *-en-\\\\*-fr  ,      br-\\\\*-zh    ) { }')", "':lang(*-en-*-fr, br-*-zh) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(\\\\*) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang(\\\\* ) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang(\\\\*   ) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang( \\\\*   ) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang(  \\\\*) { }')", "':lang(*) { }'");
+shouldBe("parseThenSerializeRule(':lang(   \\\\*   ) { }')", "':lang(*) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(   \\\\*,id-\\\\*-sumatra   ) { }')", "':lang(*, id-*-sumatra) { }'");
+shouldBe("parseThenSerializeRule(':lang(   \\\\* ,id-\\\\*-sumatra) { }')", "':lang(*, id-*-sumatra) { }'");
+shouldBe("parseThenSerializeRule(':lang(   \\\\*  ,  id-\\\\*-sumatra  ) { }')", "':lang(*, id-*-sumatra) { }'");
+shouldBe("parseThenSerializeRule(':lang(   \\\\*   ,    id-\\\\*-sumatra  ) { }')", "':lang(*, id-*-sumatra) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(*-1996) { }')", "':lang(*-1996) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-1996, *-1997) { }')", "':lang(*-1996, *-1997) { }'");
+shouldBe("parseThenSerializeRule(':lang(*-1996, *-1997 ) { }')", "':lang(*-1996, *-1997) { }'");
+shouldBe("parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }')", "':lang(*-1996, *-1997) { }'");
+shouldBe("parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }')", "':lang(*-1996, *-1997) { }'");
+shouldBe("parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }')", "':lang(*-1996, *-1997) { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(en-\\\\*) { }')", "':lang(en-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\*) { }')", "':lang(en-*, fr-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\* ) { }')", "':lang(en-*, fr-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(   en-\\\\*   ,  fr-\\\\*   ) { }')", "':lang(en-*, fr-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(   en-\\\\*   ,fr-\\\\*   ) { }')", "':lang(en-*, fr-*) { }'");
+shouldBe("parseThenSerializeRule(':lang(   en-\\\\*,fr-\\\\*   ) { }')", "':lang(en-*, fr-*) { }'");
+
+debug('');
+
 shouldThrow("parseThenSerializeRule(':lang() { }')");
 shouldThrow("parseThenSerializeRule(':lang(12, b, c) { }')");
 shouldThrow("parseThenSerializeRule(':lang(a, 12, c) { }')");
@@ -397,6 +501,28 @@ shouldThrow("parseThenSerializeRule(':lang(]) { }')");
 shouldThrow("parseThenSerializeRule(':lang([) { }')");
 shouldThrow("parseThenSerializeRule(':lang([]) { }')");
 shouldThrow("parseThenSerializeRule(':lang(@media screen {}) { }')");
+
+shouldThrow("parseThenSerializeRule(':lang(*)')");
+shouldThrow("parseThenSerializeRule(':lang(**)')");
+shouldThrow("parseThenSerializeRule(':lang(-*-)')");
+shouldThrow("parseThenSerializeRule(':lang(*-*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(de-*)')");
+shouldThrow("parseThenSerializeRule(':lang(*-en-*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-en-fr-*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-en-*fr) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-*en-fr) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-1997)')");
+shouldThrow("parseThenSerializeRule(':lang(*-1997-*)')");
+shouldThrow("parseThenSerializeRule(':lang(*a*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*a) { }')");
+shouldThrow("parseThenSerializeRule(':lang(a*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-a, a*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-a, a**) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-a, *a) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-a, **a) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*- a*) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-a, br fr) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-a, br fr en *) { }')");
 
 debug('');
 

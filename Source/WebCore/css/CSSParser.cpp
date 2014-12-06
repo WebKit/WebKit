@@ -11486,6 +11486,18 @@ restartAfterComment:
         if (*currentCharacter<SrcCharacterType>() == '=') {
             ++currentCharacter<SrcCharacterType>();
             m_token = CONTAINS;
+        } else if (*currentCharacter<SrcCharacterType>() == '-') {
+            result = currentCharacter<SrcCharacterType>();
+
+            CSSParserString parsedIdentifier;
+            parseIdentifier(result, parsedIdentifier, hasEscape);
+
+            StringBuilder parsedLangRange;
+            parsedLangRange.append('*');
+            parsedLangRange.append(parsedIdentifier);
+
+            m_token = LANGRANGE;
+            yylval->string.init(parsedLangRange.toString());
         }
         break;
 
