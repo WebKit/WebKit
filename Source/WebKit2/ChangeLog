@@ -1,5 +1,11 @@
 2014-12-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        URTBF, remove duplicated entry due to parallel buildfixing.
+
+        * CMakeLists.txt:
+
+2014-12-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r176849.
 
         * CMakeLists.txt: Added WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp.
