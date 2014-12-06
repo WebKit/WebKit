@@ -82,6 +82,15 @@ static void didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameR
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didStartProvisionalLoadForFrame:wrapper(*toImpl(frame))];
 }
 
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef *userDataRef, const void *clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didReceiveServerRedirectForProvisionalLoadForFrame:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didReceiveServerRedirectForProvisionalLoadForFrame:wrapper(*toImpl(frame))];
+}
+
 static void didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
 {
     WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
@@ -207,6 +216,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.base.version = 8;
     client.base.clientInfo = contextController;
     client.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
+    client.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
     client.didCommitLoadForFrame = didCommitLoadForFrame;
     client.didFinishDocumentLoadForFrame = didFinishDocumentLoadForFrame;
     client.didFailLoadWithErrorForFrame = didFailLoadWithErrorForFrame;
