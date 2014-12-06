@@ -59,7 +59,9 @@ public:
 #endif
 
 private:
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     virtual void displayRefreshFired(double timestamp) override;
+#endif
 
     GraphicsLayerUpdaterClient* m_client;
     bool m_scheduled;

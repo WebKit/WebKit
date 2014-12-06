@@ -1,3 +1,20 @@
+2014-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r176915.
+
+        DisplayRefreshMonitorClient is the parent class of GraphicsLayerUpdater
+        only if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is true, so override
+        is incorrect if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is false.
+
+        That's why r176915 broke the build on non PLATFORM(COCOA) platforms,
+        such as GTK, EFL, Apple Windows.
+
+        Additionally displayRefreshFired is only used inside USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+        guard, so there is no reason to define it for non COCOA platforms.
+
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        * platform/graphics/GraphicsLayerUpdater.h:
+
 2014-12-06  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.

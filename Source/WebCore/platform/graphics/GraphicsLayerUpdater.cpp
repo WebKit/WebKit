@@ -69,6 +69,7 @@ void GraphicsLayerUpdater::screenDidChange(PlatformDisplayID displayID)
 #endif
 }
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 void GraphicsLayerUpdater::displayRefreshFired(double timestamp)
 {
     UNUSED_PARAM(timestamp);
@@ -77,6 +78,7 @@ void GraphicsLayerUpdater::displayRefreshFired(double timestamp)
     if (m_client)
         m_client->flushLayersSoon(this);
 }
+#endif
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 PassRefPtr<DisplayRefreshMonitor> GraphicsLayerUpdater::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
