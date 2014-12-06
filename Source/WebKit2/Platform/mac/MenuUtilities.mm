@@ -29,10 +29,12 @@
 #import "StringUtilities.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
-#import <WebCore/TUCallSPI.h>
 #import <objc/runtime.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+#import <WebCore/TUCallSPI.h>
+
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectors)
 SOFT_LINK_CLASS(DataDetectors, DDAction)
 SOFT_LINK_CLASS(DataDetectors, DDActionsManager)

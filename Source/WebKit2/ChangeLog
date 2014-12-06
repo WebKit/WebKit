@@ -1,3 +1,9 @@
+2014-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Only include TUCallSPI on Mac.
+
+        * Platform/mac/MenuUtilities.mm:
+
 2014-12-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r176905.
