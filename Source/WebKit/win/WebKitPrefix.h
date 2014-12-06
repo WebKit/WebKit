@@ -48,3 +48,4 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKit/WebKit.h>
+#include "config.h"

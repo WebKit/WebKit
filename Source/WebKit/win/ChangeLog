@@ -1,5 +1,99 @@
 2014-12-05  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of config.h includes and include config.h in the prefix header instead
+        https://bugs.webkit.org/show_bug.cgi?id=139323
+
+        Reviewed by Brent Fulgham.
+
+        This is making it easier to share code between WebKit1 for Mac and WebKit1 for Windows.
+
+        * AccessibleBase.cpp:
+        * AccessibleDocument.cpp:
+        * AccessibleImage.cpp:
+        * AccessibleTextImpl.cpp:
+        * CFDictionaryPropertyBag.cpp:
+        * DOMCSSClasses.cpp:
+        * DOMCoreClasses.cpp:
+        * DOMEventsClasses.cpp:
+        * DOMHTMLClasses.cpp:
+        * DefaultDownloadDelegate.cpp:
+        * DefaultPolicyDelegate.cpp:
+        * ForEachCoClass.cpp:
+        * FullscreenVideoController.cpp:
+        * MarshallingHelpers.cpp:
+        * MemoryStream.cpp:
+        * WebActionPropertyBag.cpp:
+        * WebArchive.cpp:
+        * WebBackForwardList.cpp:
+        * WebCache.cpp:
+        * WebCoreStatistics.cpp:
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        * WebCoreSupport/WebChromeClient.cpp:
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        * WebCoreSupport/WebDragClient.cpp:
+        * WebCoreSupport/WebEditorClient.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        * WebCoreSupport/WebGeolocationClient.cpp:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        * WebCoreSupport/WebInspectorDelegate.cpp:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebCoreSupport/WebVisitedLinkStore.cpp:
+        * WebDataSource.cpp:
+        * WebDatabaseManager.cpp:
+        * WebDocumentLoader.cpp:
+        * WebDownload.cpp:
+        * WebDownloadCFNet.cpp:
+        * WebDownloadCurl.cpp:
+        * WebDropSource.cpp:
+        * WebElementPropertyBag.cpp:
+        * WebError.cpp:
+        * WebFrame.cpp:
+        * WebFramePolicyListener.cpp:
+        * WebGeolocationPolicyListener.cpp:
+        * WebGeolocationPosition.cpp:
+        * WebHTMLRepresentation.cpp:
+        * WebHistory.cpp:
+        * WebHistoryItem.cpp:
+        * WebIconDatabase.cpp:
+        * WebInspector.cpp:
+        * WebJavaScriptCollector.cpp:
+        * WebKitCOMAPI.cpp:
+        * WebKitClassFactory.cpp:
+        * WebKitDLL.cpp:
+        * WebKitGraphics.cpp:
+        * WebKitLogging.cpp:
+        * WebKitPrefix.h:
+        * WebKitStatistics.cpp:
+        * WebKitSystemBits.cpp:
+        * WebLocalizableStrings.cpp:
+        * WebMutableURLRequest.cpp:
+        * WebNavigationData.cpp:
+        * WebNodeHighlight.cpp:
+        * WebNotification.cpp:
+        * WebNotificationCenter.cpp:
+        * WebPreferences.cpp:
+        * WebResource.cpp:
+        * WebScriptObject.cpp:
+        * WebScriptWorld.cpp:
+        * WebSecurityOrigin.cpp:
+        * WebSerializedJSValue.cpp:
+        * WebTextRenderer.cpp:
+        * WebURLAuthenticationChallenge.cpp:
+        * WebURLAuthenticationChallengeSender.cpp:
+        * WebURLAuthenticationChallengeSenderCFNet.cpp:
+        * WebURLAuthenticationChallengeSenderCurl.cpp:
+        * WebURLCredential.cpp:
+        * WebURLProtectionSpace.cpp:
+        * WebURLResponse.cpp:
+        * WebUserContentURLPattern.cpp:
+        * WebView.cpp:
+        * WebWorkersPrivate.cpp:
+
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
         Follow-up build fix.
 
         * WebCoreSupport/WebVisitedLinkStore.cpp:
