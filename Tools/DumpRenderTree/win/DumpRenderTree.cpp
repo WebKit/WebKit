@@ -993,8 +993,6 @@ static void runTest(const string& inputLine)
 
     str = CFURLGetString(url);
 
-    CFRelease(url);
-
     CFIndex length = CFStringGetLength(str);
     UniChar* buffer = new UniChar[length + 1];
 
@@ -1005,9 +1003,11 @@ static void runTest(const string& inputLine)
     ASSERT(urlBStr.length() == length);
     delete[] buffer;
 
-    CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
-    char* testURL = new char[];
+    CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+    char* testURL = new char[maximumURLLengthAsUTF8];
     CFStringGetCString(str, testURL, maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
+
+    CFRelease(url);
 
     ::gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
     topLoadingFrame = 0;

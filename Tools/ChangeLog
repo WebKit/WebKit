@@ -1,3 +1,15 @@
+2014-12-05  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r176677): All tests crash on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139321
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        Don't call CFRelease on the url while we have an outstanding pointer to its string,
+        and use the right number of bytes when allocating the testURL buffer.
+
 2014-12-05  Daniel Bates  <dabates@apple.com>
 
         [iOS] DumpRenderTree produces many reference test mismatches
