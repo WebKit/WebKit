@@ -83,8 +83,6 @@
 #include "JIT.h"
 #endif
 
-#define WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND (!defined(__llvm__))
-
 using namespace std;
 
 namespace JSC {
