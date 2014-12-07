@@ -465,6 +465,7 @@ list(APPEND GObjectDOMBindings_SOURCES
     bindings/gobject/GObjectNodeFilterCondition.cpp
     bindings/gobject/GObjectXPathNSResolver.cpp
     bindings/gobject/WebKitDOMCustom.cpp
+    bindings/gobject/WebKitDOMDeprecated.cpp
     bindings/gobject/WebKitDOMEventTarget.cpp
     bindings/gobject/WebKitDOMHTMLPrivate.cpp
     bindings/gobject/WebKitDOMNodeFilter.cpp
@@ -680,13 +681,14 @@ if (ENABLE_QUOTA)
     )
 endif ()
 
-set(GObjectDOMBindings_STATIC_CLASS_LIST Custom EventTarget NodeFilter Object XPathNSResolver)
+set(GObjectDOMBindings_STATIC_CLASS_LIST Custom Deprecated EventTarget NodeFilter Object XPathNSResolver)
 
 set(GObjectDOMBindingsStable_CLASS_LIST ${GObjectDOMBindings_STATIC_CLASS_LIST})
 set(GObjectDOMBindingsStable_INSTALLED_HEADERS
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMDeprecated.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMNodeFilter.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
@@ -752,6 +754,13 @@ add_custom_target(fake-generated-webkitdom-headers
 )
 
 set(GObjectDOMBindings_IDL_FILES ${GObjectDOMBindingsStable_IDL_FILES} ${GObjectDOMBindingsUnstable_IDL_FILES})
+set(ADDITIONAL_BINDINGS_DEPENDENCIES
+    ${WEBCORE_DIR}/bindings/gobject/webkitdom.symbols
+    ${WINDOW_CONSTRUCTORS_FILE}
+    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+)
 GENERATE_BINDINGS(GObjectDOMBindings_SOURCES
     "${GObjectDOMBindings_IDL_FILES}"
     "${WEBCORE_DIR}"
@@ -761,10 +770,7 @@ GENERATE_BINDINGS(GObjectDOMBindings_SOURCES
     WebKitDOM GObject cpp
     ${IDL_ATTRIBUTES_FILE}
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
-    ${WINDOW_CONSTRUCTORS_FILE}
-    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-    ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
+    ${ADDITIONAL_BINDINGS_DEPENDENCIES})
 
 add_definitions(-DBUILDING_WEBKIT)
 add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)

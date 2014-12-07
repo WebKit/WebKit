@@ -43,9 +43,15 @@ class WebKitDOMDocGenerator(object):
     def write(self, string):
         self._file_handle.write(string)
 
+    @staticmethod
+    def is_deprecated_symbol_file(file_path):
+        return 'WebKitDOMDeprecated' in file_path
+
     def generate(self):
         self.write_header()
         for symbol_file in self._symbol_files:
+            if WebKitDOMDocGenerator.is_deprecated_symbol_file(symbol_file):
+                continue
             self.write_section(symbol_file)
         self.write_footer()
 
@@ -78,6 +84,10 @@ class WebKitDOMDocGeneratorSGML(WebKitDOMDocGenerator):
     <title>Index</title>
     <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
   </index>
+  <index id="api-index-deprecated" role="deprecated">
+    <title>Index of deprecated symbols</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
 </book>
@@ -93,6 +103,11 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         self._dom_class_re = re.compile('(^WebKitDOM)(.+)$')
         self._function_re = re.compile('^.+ (.+)\((.+)\)$')
         self._constant_re = re.compile('^[A-Z_]+$')
+
+        self.deprecated_symbols = {}
+        for symbol_file in symbol_files:
+            if WebKitDOMDocGenerator.is_deprecated_symbol_file(symbol_file):
+                self._deprecated_symbols = self._find_deprecated_symbols(symbol_file)
 
     def _dom_class(self, class_name):
         return self._dom_class_re.sub(r'\2', class_name)
@@ -111,6 +126,22 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         retval = retval.replace('HTMLD', 'HTML_D')
         retval = retval.replace('HTMLO', 'HTML_O')
         retval = retval.replace('HTMLU', 'HTML_U')
+
+        return retval
+
+    def _find_deprecated_symbols(self, symbol_file):
+        retval = {}
+        f = open(symbol_file, 'r')
+        for line in f.readlines():
+            match = self._function_re.match(line)
+            if not match:
+                continue
+
+            function = match.group(1)
+            args = match.group(2).split(', ')
+            class_name = args[0].strip('*')
+            retval.setdefault(class_name, []).append(function)
+        f.close()
 
         return retval
 
@@ -141,6 +172,11 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
             self.write('%s\n' % class_name)
         self.write('\n')
         self.write('\n'.join(self._symbol_list(symbol_file)) + '\n')
+        try:
+            deprecated_functions = self._deprecated_symbols[class_name]
+            self.write('\n'.join(deprecated_functions) + '\n')
+        except KeyError:
+            pass
         if not is_custom:
             self.write('\n<SUBSECTION Standard>\n')
             if is_interface:

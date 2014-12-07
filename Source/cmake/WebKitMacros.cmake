@@ -38,15 +38,12 @@ macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _fea
     set(BINDING_GENERATOR ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
     set(_args ${ARGN})
     list(LENGTH _args _argCount)
-    if (_argCount EQUAL 5)
+    if (_argCount GREATER 0)
         list(GET _args 0 _supplemental_dependency_file)
         if (_supplemental_dependency_file)
             set(_supplemental_dependency --supplementalDependencyFile ${_supplemental_dependency_file})
         endif ()
-        list(GET _args 1 _window_constructors_file)
-        list(GET _args 2 _workerglobalscope_constructors_file)
-        list(GET _args 3 _sharedworkerglobalscope_constructors_file)
-        list(GET _args 4 _dedicatedworkerglobalscope_constructors_file)
+        list(GET _args 1 _additional_dependencies)
     endif ()
 
     set(COMMON_GENERATOR_DEPENDENCIES
@@ -55,11 +52,8 @@ macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _fea
         ${SCRIPTS_BINDINGS}
         ${_supplemental_dependency_file}
         ${_idl_attributes_file}
-        ${_window_constructors_file}
-        ${_workerglobalscope_constructors_file}
-        ${_sharedworkerglobalscope_constructors_file}
-        ${_dedicatedworkerglobalscope_constructors_file}
     )
+    list(APPEND COMMON_GENERATOR_DEPENDENCIES ${_additional_dependencies})
 
     if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${_generator}.pm)
         list(APPEND COMMON_GENERATOR_DEPENDENCIES ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${_generator}.pm)

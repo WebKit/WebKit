@@ -1,3 +1,16 @@
+2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Missing API detected in GObject DOM bindings after r176630
+        https://bugs.webkit.org/show_bug.cgi?id=139201
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Change GENERATE_BINDINGS macro to receive a list of optional
+        additional dependencies, so that we can add more dependecies
+        without having to change the macro.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2014-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Programmatic scrolling and content changes are not always synchronized

@@ -1,0 +1,4 @@
+void webkit_dom_html_element_set_inner_html(WebKitDOMHTMLElement*, const gchar*, GError**)
+gchar* webkit_dom_html_element_get_outer_html(WebKitDOMHTMLElement*)
+gchar* webkit_dom_html_element_get_inner_html(WebKitDOMHTMLElement*)
+void webkit_dom_html_element_set_outer_html(WebKitDOMHTMLElement*, const gchar*, GError**)
