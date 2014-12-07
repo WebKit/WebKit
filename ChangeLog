@@ -1,3 +1,15 @@
+2014-12-07  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] WebKit has a new required dependency on GnuTLS
+        https://bugs.webkit.org/show_bug.cgi?id=136158
+
+        Reviewed by Martin Robinson.
+
+        Detect if GnuTLS is installed and enable or disable subtle crypto
+        support accordingly.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Missing API detected in GObject DOM bindings after r176630
