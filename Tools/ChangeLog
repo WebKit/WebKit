@@ -1,3 +1,18 @@
+2014-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Update style checker to deal with "const override"
+        https://bugs.webkit.org/show_bug.cgi?id=139371
+
+        Reviewed by Csaba Osztrogonác.
+
+        check-webkit-style shouldn't complain about an open brace to start a
+        line after a function definition with const override.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_braces):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_brace_at_begin_of_line):
+
 2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix GObject DOM bindings API break tests after r176920
