@@ -32,7 +32,7 @@ def read_built_api():
 
 def read_expected_api():
     with open(EXPECTED_API_PATH) as file_handle:
-        return set(file_handle.readlines())
+        return set([symbol.strip('\n').split('@', 1)[0] + '\n' for symbol in file_handle.readlines()])
 
 def check_api(expected_api, built_api):
     missing_api = expected_api.difference(built_api)

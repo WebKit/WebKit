@@ -1,5 +1,17 @@
 2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix GObject DOM bindings API break tests after r176920
+        https://bugs.webkit.org/show_bug.cgi?id=139368
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove the @version from the symbol name before comparing.
+
+        * gtk/check-for-webkitdom-api-breaks:
+        (read_expected_api):
+
+2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Remove the option to automatically update the GObject DOM bindings symbols file
         https://bugs.webkit.org/show_bug.cgi?id=139366
 
