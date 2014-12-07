@@ -760,8 +760,10 @@ sub GenerateConstants {
             my $conditionalString = $codeGenerator->GenerateConditionalString($constant);
             my $constantName = $prefix . $constant->name;
             my $constantValue = $constant->value;
-            my $isStableSymbol = grep {$_ eq $constantName} @stableSymbols;
-            if ($isStableSymbol) {
+            my $stableSymbol = grep {$_ =~ /^\Q$constantName/} @stableSymbols;
+            my $stableSymbolVersion;
+            if ($stableSymbol) {
+                ($dummy, $stableSymbolVersion) = split('@', $stableSymbol, 2);
                 push(@symbols, "$constantName\n");
             }
 
@@ -769,12 +771,15 @@ sub GenerateConstants {
             push(@constantHeader, "#if ${conditionalString}") if $conditionalString;
             push(@constantHeader, "/**");
             push(@constantHeader, " * ${constantName}:");
+            if ($stableSymbolVersion) {
+                push(@constantHeader, " * Since: ${stableSymbolVersion}");
+            }
             push(@constantHeader, " */");
             push(@constantHeader, "#define $constantName $constantValue");
             push(@constantHeader, "#endif /* ${conditionalString} */") if $conditionalString;
             push(@constantHeader, "\n");
 
-            if ($isStableSymbol or !$isStableClass) {
+            if ($stableSymbol or !$isStableClass) {
                 push(@hBody, join("\n", @constantHeader));
             } else {
                 push(@hBodyUnstable, join("\n", @constantHeader));
@@ -1006,8 +1011,10 @@ sub GenerateFunction {
 
     my $symbol = "$returnType $functionName($symbolSig)";
     my $isStableClass = scalar(@stableSymbols);
-    my $isStableSymbol = grep {$_ eq $symbol} @stableSymbols;
-    if ($isStableSymbol and $isStableClass) {
+    my ($stableSymbol) = grep {$_ =~ /^\Q$symbol/} @stableSymbols;
+    my $stableSymbolVersion;
+    if ($stableSymbol and $isStableClass) {
+        ($dummy, $stableSymbolVersion) = split('@', $stableSymbol, 2);
         push(@symbols, "$symbol\n");
     }
 
@@ -1043,17 +1050,22 @@ sub GenerateFunction {
         push(@functionHeader, " * Returns: A #${returnTypeName}");
         $hasReturnTag = 1;
     }
-    if (!$isStableSymbol) {
+    if (!$stableSymbol) {
         if ($hasReturnTag) {
             push(@functionHeader, " *");
         }
         push(@functionHeader, " * Stability: Unstable");
+    } elsif ($stableSymbolVersion) {
+        if ($hasReturnTag) {
+            push(@functionHeader, " *");
+        }
+        push(@functionHeader, " * Since: ${stableSymbolVersion}");
     }
     push(@functionHeader, "**/");
 
     push(@functionHeader, "WEBKIT_API $returnType\n$functionName($functionSig);");
     push(@functionHeader, "\n");
-    if ($isStableSymbol or !$isStableClass) {
+    if ($stableSymbol or !$isStableClass) {
         push(@hBody, join("\n", @functionHeader));
     } else {
         push(@hBodyUnstable, join("\n", @functionHeader));
@@ -1783,17 +1795,19 @@ sub ReadStableSymbols {
     foreach $line (@lines) {
         $line =~ s/\n$//;
 
-        if ($line eq "GType ${lowerCaseIfaceName}_get_type(void)") {
+        my ($symbol) = split('@', $line, 2);
+
+        if ($symbol eq "GType ${lowerCaseIfaceName}_get_type(void)") {
             push(@stableSymbols, $line);
             next;
         }
 
-        if (scalar(@stableSymbols) and IsInterfaceSymbol($line, $lowerCaseIfaceName) and $line !~ /^GType/) {
+        if (scalar(@stableSymbols) and IsInterfaceSymbol($symbol, $lowerCaseIfaceName) and $symbol !~ /^GType/) {
             push(@stableSymbols, $line);
             next;
         }
 
-        if (scalar(@stableSymbols) and $line !~ /^GType/) {
+        if (scalar(@stableSymbols) and $symbol !~ /^GType/) {
             warn "Symbol %line found, but a get_type was expected";
         }
 

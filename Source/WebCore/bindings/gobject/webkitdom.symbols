@@ -22,7 +22,7 @@ WebKitDOMDocument* webkit_dom_dom_implementation_create_document(WebKitDOMDOMImp
 WebKitDOMCSSStyleSheet* webkit_dom_dom_implementation_create_css_style_sheet(WebKitDOMDOMImplementation*, const gchar*, const gchar*, GError**)
 WebKitDOMHTMLDocument* webkit_dom_dom_implementation_create_html_document(WebKitDOMDOMImplementation*, const gchar*)
 GType webkit_dom_dom_window_get_type(void)
-gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow*, const gchar*, const gchar*)
+gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow*, const gchar*, const gchar*)@2.8
 GType webkit_dom_document_get_type(void)
 WebKitDOMDocumentType* webkit_dom_document_get_doctype(WebKitDOMDocument*)
 WebKitDOMHTMLCollection* webkit_dom_document_get_images(WebKitDOMDocument*)
@@ -112,10 +112,10 @@ void webkit_dom_element_set_id(WebKitDOMElement*, const gchar*)
 WebKitDOMCSSStyleDeclaration* webkit_dom_element_get_style(WebKitDOMElement*)
 gchar* webkit_dom_element_get_class_name(WebKitDOMElement*)
 void webkit_dom_element_set_class_name(WebKitDOMElement*, const gchar*)
-void webkit_dom_element_set_inner_html(WebKitDOMElement*, const gchar*, GError**)
-gchar* webkit_dom_element_get_inner_html(WebKitDOMElement*)
-void webkit_dom_element_set_outer_html(WebKitDOMElement*, const gchar*, GError**)
-gchar* webkit_dom_element_get_outer_html(WebKitDOMElement*)
+void webkit_dom_element_set_inner_html(WebKitDOMElement*, const gchar*, GError**)@2.8
+gchar* webkit_dom_element_get_inner_html(WebKitDOMElement*)@2.8
+void webkit_dom_element_set_outer_html(WebKitDOMElement*, const gchar*, GError**)@2.8
+gchar* webkit_dom_element_get_outer_html(WebKitDOMElement*)@2.8
 gchar* webkit_dom_element_get_tag_name(WebKitDOMElement*)
 WebKitDOMElement* webkit_dom_element_get_offset_parent(WebKitDOMElement*)
 glong webkit_dom_element_get_scroll_left(WebKitDOMElement*)
