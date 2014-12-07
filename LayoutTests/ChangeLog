@@ -1,5 +1,14 @@
 2014-12-07  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/borders/mixed-border-style2.html has missing results on Mac Yosemite.
+
+        Looking at the bots, Yosemite results are the same as Mavericks, so moving the file.
+
+        * platform/mac-mavericks/fast/borders/mixed-border-style2-expected.txt: Removed.
+        * platform/mac/fast/borders/mixed-border-style2-expected.txt: Copied from LayoutTests/platform/mac-mavericks/fast/borders/mixed-border-style2-expected.txt.
+
+2014-12-07  Alexey Proskuryakov  <ap@apple.com>
+
         Remove platform/mac-mavericks/TestExpectations file.
         
         We don't need it, we should be using modifiers such as [ Mavericks ].
