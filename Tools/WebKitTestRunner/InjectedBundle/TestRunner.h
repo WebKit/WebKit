@@ -38,7 +38,8 @@
 #include <CoreFoundation/CFRunLoop.h>
 typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
 #elif PLATFORM(GTK)
-typedef unsigned int PlatformTimerRef;
+#include <wtf/gobject/GMainLoopSource.h>
+typedef GMainLoopSource PlatformTimerRef;
 #elif PLATFORM(EFL)
 typedef Ecore_Timer* PlatformTimerRef;
 #endif
