@@ -1,3 +1,12 @@
+2014-12-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures.
+        * platform/gtk/svg/animations/animate-marker-orienttype-1-expected.txt: Added. Rebaseline after r175525.
+        * platform/gtk/svg/animations/animate-marker-orienttype-2-expected.txt: Added. Rebaseline after r175525.
+        * platform/gtk/svg/animations/animate-marker-orienttype-3-expected.txt: Added. Rebaseline after r175525.
+
 2014-12-06  Mark Lam  <mark.lam@apple.com>
 
         Skipping tests due to regression in r176902.

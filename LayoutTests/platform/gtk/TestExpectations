@@ -571,6 +571,8 @@ webkit.org/b/135051 fast/regions/repaint/region-painting-invalidation.html [ Cra
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
+webkit.org/b/139364 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -865,6 +867,7 @@ webkit.org/b/132248 media/media-fragments/TC0059.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0082.html [ Timeout Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0086.html [ Failure Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0087.html [ Failure Timeout Crash Pass ]
@@ -900,6 +903,7 @@ webkit.org/b/132258 fast/overflow/scrollbar-click-retains-focus.html [ Failure P
 webkit.org/b/132271 media/controls-styling-strict.html [ Failure Timeout Pass ]
 webkit.org/b/132271 media/controls-strict.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/132271 media/media-controller-playbackrate.html [ Timeout Pass Crash ]
+webkit.org/b/132271 media/media-controller-time-clamp.html [ Timeout Pass ]
 webkit.org/b/132271 media/track/add-and-remove-track.html [ Timeout Pass ]
 webkit.org/b/132271 media/controls-without-preload.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/132271 media/controls-right-click-on-timebar.html [ Timeout Pass ]
@@ -1005,6 +1009,8 @@ webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-lab
 webkit.org/b/136580 media/context-menu-actions.html [ Timeout Pass ]
 
 webkit.org/b/136581 editing/pasteboard/drag-drop-dead-frame.html [ Timeout Pass ]
+
+webkit.org/b/139359 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1192,6 +1198,11 @@ webkit.org/b/136069 fast/forms/mailto/formenctype-attribute-input-2.html [ Timeo
 webkit.org/b/136674 media/track/track-cue-rendering-with-padding.html [ Timeout Pass ]
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
+
+webkit.org/b/139362 inspector/css/pseudo-element-matches.html [ Timeout ]
+webkit.org/b/139362 inspector/css/selector-specificity.html [ Timeout Pass ]
+
+webkit.org/b/139363 media/media-controls-timeline-updates.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1440,45 +1451,47 @@ Bug(GTK) fast/media/media-query-list-06.html [ Failure ]
 Bug(GTK) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 
 # Shared workers disabled with the Network Process
-Bug(GTK) fast/workers/shared-worker-constructor.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-context-gc.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-event-listener.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-exception.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-frame-lifecycle.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-gc.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-in-iframe.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-lifecycle.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-location.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-messageevent-source.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-name.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-navigator.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-replace-global-constructor.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-replace-self.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-script-error.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-shared.html [ Skip ]
-Bug(GTK) fast/workers/shared-worker-simple.html [ Skip ]
-Bug(GTK) fast/workers/worker-crash-with-invalid-location.html [ Skip ]
-Bug(GTK) http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Skip ]
-Bug(GTK) http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Skip ]
-Bug(GTK) http/tests/security/cross-origin-shared-worker-allowed.html [ Skip ]
-Bug(GTK) http/tests/security/cross-origin-shared-worker.html [ Skip ]
-Bug(GTK) http/tests/security/same-origin-shared-worker-blocked.html [ Skip ]
-Bug(GTK) http/tests/security/storage-blocking-loosened-shared-worker.html [ Skip ]
-Bug(GTK) http/tests/security/storage-blocking-strengthened-shared-worker.html [ Skip ]
-Bug(GTK) http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ Skip ]
-Bug(GTK) http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ Skip ]
-Bug(GTK) http/tests/workers/shared-worker-importScripts.html [ Skip ]
-Bug(GTK) http/tests/workers/shared-worker-invalid-url.html [ Skip ]
-Bug(GTK) http/tests/workers/shared-worker-redirect.html [ Skip ]
-Bug(GTK) http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ Skip ]
-Bug(GTK) http/tests/xmlhttprequest/workers/shared-worker-close.html [ Skip ]
-Bug(GTK) http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ Skip ]
-Bug(GTK) http/tests/xmlhttprequest/workers/shared-worker-methods.html [ Skip ]
-Bug(GTK) http/tests/xmlhttprequest/workers/shared-worker-referer.html [ Skip ]
-Bug(GTK) http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ Skip ]
-Bug(GTK) js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
-Bug(GTK) fast/dom/call-a-constructor-as-a-function.html [ Failure ]
-Bug(GTK) js/dom/constructor-length.html [ Failure ]
+webkit.org/b/139357 fast/workers/shared-worker-constructor.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-context-gc.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-event-listener.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-exception.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-frame-lifecycle.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-gc.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-in-iframe.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-lifecycle.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-location.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-messageevent-source.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-name.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-navigator.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-replace-global-constructor.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-replace-self.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-script-error.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-shared.html [ Skip ]
+webkit.org/b/139357 fast/workers/shared-worker-simple.html [ Skip ]
+webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]
+webkit.org/b/139357 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
+webkit.org/b/139357 http/tests/media/video-accept-encoding.html [ Failure ]
+webkit.org/b/139357 http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Skip ]
+webkit.org/b/139357 http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Skip ]
+webkit.org/b/139357 http/tests/security/cross-origin-shared-worker-allowed.html [ Skip ]
+webkit.org/b/139357 http/tests/security/cross-origin-shared-worker.html [ Skip ]
+webkit.org/b/139357 http/tests/security/same-origin-shared-worker-blocked.html [ Skip ]
+webkit.org/b/139357 http/tests/security/storage-blocking-loosened-shared-worker.html [ Skip ]
+webkit.org/b/139357 http/tests/security/storage-blocking-strengthened-shared-worker.html [ Skip ]
+webkit.org/b/139357 http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ Skip ]
+webkit.org/b/139357 http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ Skip ]
+webkit.org/b/139357 http/tests/workers/shared-worker-importScripts.html [ Skip ]
+webkit.org/b/139357 http/tests/workers/shared-worker-invalid-url.html [ Skip ]
+webkit.org/b/139357 http/tests/workers/shared-worker-redirect.html [ Skip ]
+webkit.org/b/139357 http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ Skip ]
+webkit.org/b/139357 http/tests/xmlhttprequest/workers/shared-worker-close.html [ Skip ]
+webkit.org/b/139357 http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ Skip ]
+webkit.org/b/139357 http/tests/xmlhttprequest/workers/shared-worker-methods.html [ Skip ]
+webkit.org/b/139357 http/tests/xmlhttprequest/workers/shared-worker-referer.html [ Skip ]
+webkit.org/b/139357 http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ Skip ]
+webkit.org/b/139357 js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
+webkit.org/b/139357 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
+webkit.org/b/139357 js/dom/constructor-length.html [ Failure ]
 
 # testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
 webkit.org/b/138687 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
@@ -2249,6 +2262,27 @@ webkit.org/b/138078 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyF
 
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
+
+webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
+
+webkit.org/b/139353 fast/css/css-selector-text.html [ Failure ]
+webkit.org/b/139353 fast/css/parsing-css-lang.html [ Failure ]
+
+webkit.org/b/139354 fast/repaint/selection-ruby-rl.html [ Failure ]
+
+webkit.org/b/139355 fast/css/fontloader-svg-select.svg [ Failure ]
+
+webkit.org/b/139358 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
+
+webkit.org/b/139361 fast/css/data-attribute-style-sharing-5.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/data-attribute-style-sharing-6.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/data-attribute-style-sharing-7.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/readonly-attribute-style-sharing-5.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/readonly-attribute-style-sharing-6.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/readonly-attribute-style-sharing-7.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/type-attribute-style-sharing-5.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/type-attribute-style-sharing-6.html [ ImageOnlyFailure ]
+webkit.org/b/139361 fast/css/type-attribute-style-sharing-7.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
