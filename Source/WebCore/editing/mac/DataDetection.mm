@@ -85,7 +85,7 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
     if (!mainResult)
         return nullptr;
 
-    RetainPtr<DDActionContext> actionContext = adoptNS([[getDDActionContextClass() alloc] init]);
+    RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
     [actionContext setAllResults:@[ (id)mainResult ]];
     [actionContext setMainResult:mainResult];
 

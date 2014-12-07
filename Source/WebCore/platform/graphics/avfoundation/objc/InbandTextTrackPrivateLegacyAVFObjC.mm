@@ -37,7 +37,6 @@
 #import <objc/runtime.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-#define AVPlayerItem getAVPlayerItemClass()
 
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
 SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
@@ -48,6 +47,7 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicLegible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataCommonKeyTitle, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
 
+#define AVPlayerItem getAVPlayerItemClass()
 #define AVMetadataItem getAVMetadataItemClass()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
 #define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()

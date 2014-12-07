@@ -40,9 +40,6 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
-#define AVPlayer getAVPlayerClass()
-#define AVPlayerItem getAVPlayerItemClass()
-
 SOFT_LINK_CLASS(AVFoundation, AVPlayer)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
 SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
@@ -65,6 +62,8 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicEasyToRead, NSString *)
 
+#define AVPlayer getAVPlayerClass()
+#define AVPlayerItem getAVPlayerItemClass()
 #define AVMetadataItem getAVMetadataItemClass()
 #define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()

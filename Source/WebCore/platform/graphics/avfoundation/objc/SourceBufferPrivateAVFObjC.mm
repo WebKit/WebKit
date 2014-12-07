@@ -580,7 +580,7 @@ RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourc
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
     : m_weakFactory(this)
-    , m_parser(adoptNS([[getAVStreamDataParserClass() alloc] init]))
+    , m_parser(adoptNS([allocAVStreamDataParserInstance() init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:this]))
     , m_mediaSource(parent)
@@ -777,7 +777,7 @@ void SourceBufferPrivateAVFObjC::abort()
     // FIXME(135164): Support resetting parser to the last appended initialization segment.
     destroyParser();
 
-    m_parser = adoptNS([[getAVStreamDataParserClass() alloc] init]);
+    m_parser = adoptNS([allocAVStreamDataParserInstance() init]);
     m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]);
 }
 
@@ -862,7 +862,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
         m_enabledVideoTrackID = trackID;
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
         if (!m_displayLayer) {
-            m_displayLayer = adoptNS([[getAVSampleBufferDisplayLayerClass() alloc] init]);
+            m_displayLayer = adoptNS([allocAVSampleBufferDisplayLayerInstance() init]);
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
             }];
@@ -886,7 +886,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
         RetainPtr<AVSampleBufferAudioRenderer> renderer;
         if (!m_audioRenderers.count(trackID)) {
-            renderer = adoptNS([[getAVSampleBufferAudioRendererClass() alloc] init]);
+            renderer = adoptNS([allocAVSampleBufferAudioRendererInstance() init]);
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 didBecomeReadyForMoreSamples(trackID);
             }];

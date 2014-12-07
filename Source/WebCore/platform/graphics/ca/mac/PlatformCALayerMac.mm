@@ -254,7 +254,7 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
     }
 
     if (layerClass)
-        m_layer = adoptNS([[layerClass alloc] init]);
+        m_layer = adoptNS([(CALayer *)[layerClass alloc] init]);
 
     commonInit();
 }

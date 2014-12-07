@@ -38,13 +38,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import <objc/objc-runtime.h>
 
-namespace WebCore {
-
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
 #define AVURLAsset getAVURLAssetClass()
 #define AVAssetResourceLoadingRequest getAVAssetResourceLoadingRequest()
+
+namespace WebCore {
 
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent)
     : m_parent(parent)

@@ -184,7 +184,7 @@ void AudioSourceProviderAVFObjC::createMix()
     ASSERT(m_avPlayerItem);
     ASSERT(m_client);
 
-    m_avAudioMix = adoptNS([(AVMutableAudioMix *)[getAVMutableAudioMixClass() alloc] init]);
+    m_avAudioMix = adoptNS([allocAVMutableAudioMixInstance() init]);
 
     MTAudioProcessingTapCallbacks callbacks = {
         0,
@@ -201,7 +201,7 @@ void AudioSourceProviderAVFObjC::createMix()
     ASSERT(tap);
     ASSERT(m_tap == tap);
 
-    RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([(AVMutableAudioMixInputParameters *)[getAVMutableAudioMixInputParametersClass() alloc] init]);
+    RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([allocAVMutableAudioMixInputParametersInstance() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
 
     CMPersistentTrackID firstEnabledAudioTrackID = kCMPersistentTrackID_Invalid;

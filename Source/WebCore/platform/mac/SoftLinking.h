@@ -143,6 +143,7 @@
     }
 
 #define SOFT_LINK_CLASS(framework, className) \
+    @class className; \
     static Class init##className(); \
     static Class (*get##className##Class)() = init##className; \
     static Class class##className; \
@@ -159,9 +160,17 @@
         ASSERT(class##className); \
         get##className##Class = className##Function; \
         return class##className; \
-    }
+    } \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wunused-function\"") \
+    static className *alloc##className##Instance() \
+    { \
+        return [get##className##Class() alloc]; \
+    } \
+    _Pragma("clang diagnostic pop")
 
 #define SOFT_LINK_CLASS_OPTIONAL(framework, className) \
+    @class className; \
     static Class init##className(); \
     static Class (*get##className##Class)() = init##className; \
     static Class class##className; \
@@ -177,7 +186,14 @@
         class##className = objc_getClass(#className); \
         get##className##Class = className##Function; \
         return class##className; \
-    }
+    } \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wunused-function\"") \
+    static className *alloc##className##Instance() \
+    { \
+        return [get##className##Class() alloc]; \
+    } \
+    _Pragma("clang diagnostic pop")
 
 #define SOFT_LINK_POINTER(framework, name, type) \
     static type init##name(); \

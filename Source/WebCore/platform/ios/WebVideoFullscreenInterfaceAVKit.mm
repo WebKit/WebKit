@@ -135,7 +135,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
         return self;
     
     initAVPlayerController();
-    self.playerControllerProxy = [[[getAVPlayerControllerClass() alloc] init] autorelease];
+    self.playerControllerProxy = [[allocAVPlayerControllerInstance() init] autorelease];
     return self;
 }
 
@@ -801,9 +801,9 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
         m_parentWindow = parentView.window;
 
         if (!applicationIsAdSheet()) {
-            m_window = adoptNS([[getUIWindowClass() alloc] initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
+            m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
             [m_window setBackgroundColor:[getUIColorClass() clearColor]];
-            m_viewController = adoptNS([[getUIViewControllerClass() alloc] init]);
+            m_viewController = adoptNS([allocUIViewControllerInstance() init]);
             [[m_viewController view] setFrame:[m_window bounds]];
             [m_window setRootViewController:m_viewController.get()];
             [m_window makeKeyAndVisible];
@@ -819,7 +819,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
         CGRect videoRect = CGRectMake(0, 0, videoSize.width, videoSize.height);
         [m_videoLayerContainer setVideoRect:videoRect];
 
-        m_playerViewController = adoptNS([[getAVPlayerViewControllerClass() alloc] initWithVideoLayer:m_videoLayerContainer.get()]);
+        m_playerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithVideoLayer:m_videoLayerContainer.get()]);
         [m_playerViewController setShowsPlaybackControls:NO];
         [m_playerViewController setPlayerController:(AVPlayerController *)playerController()];
         [m_playerViewController setDelegate:playerController()];

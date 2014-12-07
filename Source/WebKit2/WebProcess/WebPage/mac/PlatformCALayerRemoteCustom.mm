@@ -104,7 +104,7 @@ PassRefPtr<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(Platform
     bool copyContents = true;
 
     if (layerType() == LayerTypeAVPlayerLayer) {
-        clonedLayer = adoptNS([[getAVPlayerLayerClass() alloc] init]);
+        clonedLayer = adoptNS([allocAVPlayerLayerInstance() init]);
 
         AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
         AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());

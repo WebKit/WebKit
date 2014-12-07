@@ -129,7 +129,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
     if ([self isWindowLoaded]) {
         if (_videoElement->platformMedia().type == PlatformMedia::QTMovieType) {
             QTMovie *movie = _videoElement->platformMedia().media.qtMovie;
-            QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
+            QTMovieLayer *layer = [allocQTMovieLayerInstance() init];
             [layer setMovie:movie];
             [self setupVideoOverlay:layer];
 
@@ -140,7 +140,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
         } else if (_videoElement->platformMedia().type == PlatformMedia::AVFoundationMediaPlayerType) {
             AVPlayer *player = _videoElement->platformMedia().media.avfMediaPlayer;
-            AVPlayerLayer *layer = [[getAVPlayerLayerClass() alloc] init];
+            AVPlayerLayer *layer = [allocAVPlayerLayerInstance() init];
             [self setupVideoOverlay:layer];
             [layer setPlayer:player];
 

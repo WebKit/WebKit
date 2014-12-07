@@ -100,11 +100,11 @@ ContentFilter::ContentFilter(const ResourceResponse& response)
 #endif
 {
     if ([getWebFilterEvaluatorClass() isManagedSession])
-        m_platformContentFilter = adoptNS([[getWebFilterEvaluatorClass() alloc] initWithResponse:response.nsURLResponse()]);
+        m_platformContentFilter = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.nsURLResponse()]);
 
 #if HAVE(NE_FILTER_SOURCE)
     if ([getNEFilterSourceClass() filterRequired]) {
-        m_neFilterSource = adoptNS([[getNEFilterSourceClass() alloc] initWithURL:[response.nsURLResponse() URL] direction:NEFilterSourceDirectionInbound socketIdentifier:0]);
+        m_neFilterSource = adoptNS([allocNEFilterSourceInstance() initWithURL:[response.nsURLResponse() URL] direction:NEFilterSourceDirectionInbound socketIdentifier:0]);
         m_neFilterSourceQueue = dispatch_queue_create("com.apple.WebCore.NEFilterSourceQueue", DISPATCH_QUEUE_SERIAL);
         
         long long expectedContentSize = [response.nsURLResponse() expectedContentLength];

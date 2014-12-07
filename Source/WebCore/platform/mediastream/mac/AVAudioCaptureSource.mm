@@ -51,12 +51,6 @@ SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDeviceInput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureOutput)
 
-#define AVCaptureAudioDataOutput getAVCaptureAudioDataOutputClass()
-#define AVCaptureConnection getAVCaptureConnectionClass()
-#define AVCaptureDevice getAVCaptureDeviceClass()
-#define AVCaptureDeviceInput getAVCaptureDeviceInputClass()
-#define AVCaptureOutput getAVCaptureOutputClass()
-
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 
 #define AVMediaTypeAudio getAVMediaTypeAudio()
@@ -92,12 +86,12 @@ void AVAudioCaptureSource::updateStates()
 
 void AVAudioCaptureSource::setupCaptureSession()
 {
-    RetainPtr<AVCaptureDeviceInputType> audioIn = adoptNS([[AVCaptureDeviceInput alloc] initWithDevice:device() error:nil]);
+    RetainPtr<AVCaptureDeviceInputType> audioIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:nil]);
     ASSERT([session() canAddInput:audioIn.get()]);
     if ([session() canAddInput:audioIn.get()])
         [session() addInput:audioIn.get()];
     
-    RetainPtr<AVCaptureAudioDataOutputType> audioOutput = adoptNS([[AVCaptureAudioDataOutput alloc] init]);
+    RetainPtr<AVCaptureAudioDataOutputType> audioOutput = adoptNS([allocAVCaptureAudioDataOutputInstance() init]);
     setAudioSampleBufferDelegate(audioOutput.get());
     ASSERT([session() canAddOutput:audioOutput.get()]);
     if ([session() canAddOutput:audioOutput.get()])

@@ -46,7 +46,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 #define AVSpeechUtteranceDefaultSpeechRate getAVSpeechUtteranceDefaultSpeechRate()
 #define AVSpeechUtteranceMaximumSpeechRate getAVSpeechUtteranceMaximumSpeechRate()
 
-#define AVSpeechSynthesizerClass getAVSpeechSynthesizerClass()
 #define AVSpeechUtteranceClass getAVSpeechUtteranceClass()
 #define AVSpeechSynthesisVoiceClass getAVSpeechSynthesisVoiceClass()
 
@@ -97,7 +96,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
         return;
     
     if (!m_synthesizer) {
-        m_synthesizer = adoptNS([(AVSpeechSynthesizer *)[AVSpeechSynthesizerClass alloc] init]);
+        m_synthesizer = adoptNS([allocAVSpeechSynthesizerInstance() init]);
         [m_synthesizer setDelegate:self];
     }
 

@@ -329,7 +329,7 @@ void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttri
         return;
     
     NSError *error = nil;
-    m_qtMovie = adoptNS([[QTMovie alloc] initWithAttributes:movieAttributes error:&error]);
+    m_qtMovie = adoptNS([allocQTMovieInstance() initWithAttributes:movieAttributes error:&error]);
     
     if (!m_qtMovie)
         return;
@@ -425,7 +425,7 @@ void MediaPlayerPrivateQTKit::createQTMovieLayer()
     ASSERT(supportsAcceleratedRendering());
     
     if (!m_qtVideoLayer) {
-        m_qtVideoLayer = adoptNS([[QTMovieLayer alloc] init]);
+        m_qtVideoLayer = adoptNS([allocQTMovieLayerInstance() init]);
         if (!m_qtVideoLayer)
             return;
 

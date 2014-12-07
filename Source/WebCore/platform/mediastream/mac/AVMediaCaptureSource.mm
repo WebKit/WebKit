@@ -177,7 +177,7 @@ void AVMediaCaptureSource::setupSession()
     if (m_session)
         return;
 
-    m_session = adoptNS([[AVCaptureSession alloc] init]);
+    m_session = adoptNS([allocAVCaptureSessionInstance() init]);
     
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(captureSessionStoppedRunning:) name:AVCaptureSessionDidStopRunningNotification object:nil];
     

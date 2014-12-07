@@ -208,7 +208,7 @@ bool AVVideoCaptureSource::applyConstraints(MediaConstraints* constraints)
 
 void AVVideoCaptureSource::setupCaptureSession()
 {
-    RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([[AVCaptureDeviceInput alloc] initWithDevice:device() error:nil]);
+    RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:nil]);
     ASSERT([session() canAddInput:videoIn.get()]);
     if ([session() canAddInput:videoIn.get()])
         [session() addInput:videoIn.get()];
@@ -216,7 +216,7 @@ void AVVideoCaptureSource::setupCaptureSession()
     if (constraints())
         applyConstraints(constraints());
 
-    RetainPtr<AVCaptureVideoDataOutputType> videoOutput = adoptNS([[AVCaptureVideoDataOutput alloc] init]);
+    RetainPtr<AVCaptureVideoDataOutputType> videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
     setVideoSampleBufferDelegate(videoOutput.get());
     ASSERT([session() canAddOutput:videoOutput.get()]);
     if ([session() canAddOutput:videoOutput.get()])

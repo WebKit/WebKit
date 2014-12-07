@@ -864,7 +864,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (NSArray *)_defaultMenuItemsForDataDetectableLink
 {
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    RetainPtr<DDActionContext> actionContext = [allocDDActionContextInstance() init];
 
     // FIXME: Should this show a yellow highlight?
     _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {

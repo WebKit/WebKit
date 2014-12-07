@@ -241,7 +241,7 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) co
         });
     }
 
-    _volumeView = adoptNS([[getMPVolumeViewClass() alloc] init]);
+    _volumeView = adoptNS([allocMPVolumeViewInstance() init]);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
     
 }
@@ -324,7 +324,7 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) co
         if (strongSelf->_airPlayPresenceRoutingController)
             return;
 
-        strongSelf->_airPlayPresenceRoutingController = adoptNS([[getMPAVRoutingControllerClass() alloc] initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
+        strongSelf->_airPlayPresenceRoutingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
         [strongSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModePresence];
     });
 }
