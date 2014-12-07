@@ -1,3 +1,18 @@
+2014-12-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove platform/mac-mavericks/TestExpectations file.
+        
+        We don't need it, we should be using modifiers such as [ Mavericks ].
+
+        1. platform/mac/editing/input/undo-grouping-on-text-insertion.html was already
+        skipped on all OS versions in platform/mac, so this skip did nothing.
+        2. Moved css3/filters/backdrop expectation to platform/mac.
+        3. css3/viewport-percentage-lengths tests are now fixed by a configuration change
+        on a bot.
+
+        * platform/mac-mavericks/TestExpectations: Removed.
+        * platform/mac/TestExpectations:
+
 2014-12-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

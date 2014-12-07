@@ -1438,3 +1438,6 @@ webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Timeou
 webkit.org/b/89235 css3/line-break [ Pass ]
 webkit.org/b/138115 css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
 webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
+
+# Backdrop filters are supported in Yosemite and above only.
+[ MountainLion Mavericks ] css3/filters/backdrop [ WontFix ]
