@@ -73,7 +73,7 @@ static ALWAYS_INLINE HashSet<StringImpl*>& stringTable()
 }
 
 template<typename T, typename HashTranslator>
-static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
+static inline PassRef<StringImpl> addToStringTable(const T& value)
 {
     AtomicStringTableLocker locker;
 
@@ -81,7 +81,7 @@ static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
-    return addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
+    return addResult.isNewEntry ? adoptRef(**addResult.iterator) : **addResult.iterator;
 }
 
 struct CStringTranslator {
@@ -103,10 +103,10 @@ struct CStringTranslator {
     }
 };
 
-PassRefPtr<StringImpl> AtomicString::add(const LChar* c)
+RefPtr<StringImpl> AtomicString::add(const LChar* c)
 {
     if (!c)
-        return 0;
+        return nullptr;
     if (!*c)
         return StringImpl::empty();
 
@@ -235,10 +235,10 @@ struct HashAndUTF8CharactersTranslator {
     }
 };
 
-PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length)
+RefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length)
 {
     if (!s)
-        return 0;
+        return nullptr;
 
     if (!length)
         return StringImpl::empty();
@@ -247,22 +247,22 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length)
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
-PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length, unsigned existingHash)
+PassRef<StringImpl> AtomicString::add(const UChar* s, unsigned length, unsigned existingHash)
 {
     ASSERT(s);
     ASSERT(existingHash);
 
     if (!length)
-        return StringImpl::empty();
+        return *StringImpl::empty();
 
     HashAndCharacters<UChar> buffer = { existingHash, s, length };
     return addToStringTable<HashAndCharacters<UChar>, HashAndCharactersTranslator<UChar>>(buffer);
 }
 
-PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
+RefPtr<StringImpl> AtomicString::add(const UChar* s)
 {
     if (!s)
-        return 0;
+        return nullptr;
 
     unsigned length = 0;
     while (s[length] != UChar(0))
@@ -314,7 +314,7 @@ struct SubstringTranslator16 : SubstringTranslator {
     }
 };
 
-PassRefPtr<StringImpl> AtomicString::add(StringImpl* baseString, unsigned start, unsigned length)
+RefPtr<StringImpl> AtomicString::add(StringImpl* baseString, unsigned start, unsigned length)
 {
     if (!baseString)
         return nullptr;
@@ -375,10 +375,10 @@ struct CharBufferFromLiteralDataTranslator {
     }
 };
 
-PassRefPtr<StringImpl> AtomicString::add(const LChar* s, unsigned length)
+RefPtr<StringImpl> AtomicString::add(const LChar* s, unsigned length)
 {
     if (!s)
-        return 0;
+        return nullptr;
 
     if (!length)
         return StringImpl::empty();
@@ -387,7 +387,7 @@ PassRefPtr<StringImpl> AtomicString::add(const LChar* s, unsigned length)
     return addToStringTable<LCharBuffer, LCharBufferTranslator>(buffer);
 }
 
-PassRefPtr<StringImpl> AtomicString::addFromLiteralData(const char* characters, unsigned length)
+PassRef<StringImpl> AtomicString::addFromLiteralData(const char* characters, unsigned length)
 {
     ASSERT(characters);
     ASSERT(length);
@@ -396,10 +396,10 @@ PassRefPtr<StringImpl> AtomicString::addFromLiteralData(const char* characters, 
     return addToStringTable<CharBuffer, CharBufferFromLiteralDataTranslator>(buffer);
 }
 
-PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl& string)
+PassRef<StringImpl> AtomicString::addSlowCase(StringImpl& string)
 {
     if (!string.length())
-        return StringImpl::empty();
+        return *StringImpl::empty();
 
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
@@ -411,13 +411,13 @@ PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl& string)
         string.setIsAtomic(true);
     }
 
-    return *addResult.iterator;
+    return **addResult.iterator;
 }
 
-PassRefPtr<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable, StringImpl& string)
+PassRef<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable, StringImpl& string)
 {
     if (!string.length())
-        return StringImpl::empty();
+        return *StringImpl::empty();
 
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
 
@@ -429,7 +429,7 @@ PassRefPtr<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable,
         string.setIsAtomic(true);
     }
 
-    return *addResult.iterator;
+    return **addResult.iterator;
 }
 
 void AtomicString::remove(StringImpl* string)

@@ -166,7 +166,7 @@ EXPORTS
         symbolWithPointer(?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z, ?absoluteBoundingBoxRect@RenderObject@WebCore@@QEBA?AVIntRect@2@_N@Z)
         symbolWithPointer(?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ, ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QEBA?AVIntRect@2@XZ)
         symbolWithPointer(?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ, ?description@DocumentMarker@WebCore@@QEBAAEBVString@WTF@@XZ)
-        symbolWithPointer(?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@AAVStringImpl@2@@Z, ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@AEAVStringImpl@2@@Z)
+        symbolWithPointer(?addSlowCase@AtomicString@WTF@@CA?AV?$PassRef@VStringImpl@WTF@@@2@AAVStringImpl@2@@Z, ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRef@VStringImpl@WTF@@@2@AEAVStringImpl@2@@Z)
         symbolWithPointer(?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z, ?cacheDOMStructure@WebCore@@YAPEAVStructure@JSC@@PEAVJSDOMGlobalObject@1@PEAV23@PEBUClassInfo@3@@Z)
         symbolWithPointer(?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z, ?childItemWithTarget@HistoryItem@WebCore@@QEBAPEAV12@AEBVString@WTF@@@Z)
         symbolWithPointer(?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z, ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AEAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z)

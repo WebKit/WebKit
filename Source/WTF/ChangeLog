@@ -1,3 +1,25 @@
+2014-12-07  Andreas Kling  <akling@apple.com>
+
+        Use more PassRef in AtomicString.
+        <https://webkit.org/b/139319>
+
+        Reviewed by Antti Koivisto.
+
+        Make a pass over AtomicString and convert functions that return PassRefPtr
+        into returning RefPtr (where it may be null) and PassRef otherwise.
+        This allows the compiler to skip null checks in many places.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::addToStringTable):
+        (WTF::AtomicString::add):
+        (WTF::AtomicString::addFromLiteralData):
+        (WTF::AtomicString::addSlowCase):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::add):
+        (WTF::AtomicString::addWithStringTableProvider):
+        * wtf/text/cf/AtomicStringCF.cpp:
+        (WTF::AtomicString::add):
+
 2014-12-05  Roger Fong  <roger_fong@apple.com>
 
         [Win] proj files copying over too many resources..
