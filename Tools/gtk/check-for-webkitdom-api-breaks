@@ -16,7 +16,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-import argparse
 import common
 import os
 import sys
@@ -35,11 +34,7 @@ def read_expected_api():
     with open(EXPECTED_API_PATH) as file_handle:
         return set(file_handle.readlines())
 
-def write_expected_api(new_expected_api):
-    with open(EXPECTED_API_PATH, 'w') as file_handle:
-        file_handle.writelines(new_expected_api)
-
-def check_api(options, expected_api, built_api):
+def check_api(expected_api, built_api):
     missing_api = expected_api.difference(built_api)
     new_api = built_api.difference(expected_api)
 
@@ -57,22 +52,12 @@ def check_api(options, expected_api, built_api):
         # DOM bindings API varies depending on the compilation options.
         # So this shouldn't be made fatal until we figure out a way to handle it.
         # See https://bugs.webkit.org/show_bug.cgi?id=121481
-        sys.stderr.write("Re-add the missing API and rerun the %s.\n" % __file__)
         return 0
 
     if new_api:
-        if options.reset_results:
-            sys.stdout.write("Resetting expected API\n")
-            write_expected_api(built_api)
-        else:
-            sys.stdout.write("API compatible changes found in GObject DOM bindings.\n")
-            sys.stdout.write("To update the symbols file, run %s --reset-results.\n" % __file__)
+        sys.stdout.write("API compatible changes found in GObject DOM bindings.\n")
 
     return 0
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Detect API breakage in the WebKitGTK+ GObject DOM bindings.')
-    parser.add_argument('--reset-results', action='store_true',
-                        help='When specified, rest the expected results file with the built results.')
-    options = parser.parse_args()
-    sys.exit(check_api(options, read_expected_api(), read_built_api()))
+    sys.exit(check_api(read_expected_api(), read_built_api()))

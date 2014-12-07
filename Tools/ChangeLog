@@ -1,5 +1,22 @@
 2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Remove the option to automatically update the GObject DOM bindings symbols file
+        https://bugs.webkit.org/show_bug.cgi?id=139366
+
+        Reviewed by Martin Robinson.
+
+        It's currently broken, because symbols now need to be in a
+        specific order. Now that the symbols file only contains stable
+        API, it's not a problem to manually update it every time new API
+        is added.
+
+        * gtk/check-for-webkitdom-api-breaks:
+        (read_expected_api):
+        (check_api):
+        (write_expected_api): Deleted.
+
+2014-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use GMainLoopSource in WebKitTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=138831
 
