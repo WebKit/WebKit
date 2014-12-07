@@ -1,3 +1,14 @@
+2014-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][jhbuild] Fix libsoup build with clang
+        https://bugs.webkit.org/show_bug.cgi?id=139088
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/patches/soup-clang-warning-fix1.patch: Added.
+        * efl/patches/soup-clang-warning-fix2.patch: Added.
+
 2014-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] DumpRenderTree sets storage directory incorrectly

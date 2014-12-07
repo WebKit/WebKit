@@ -1,0 +1,41 @@
+commit 3c96f1977a556b76bc768edeb78497a2e92dd898
+Author: Dan Winship <danw@gnome.org>
+Date:   Thu Oct 17 17:56:29 2013 -0400
+
+    soup-logger: fix -Wformat-nonliteral warnings in clang
+
+diff --git a/configure.ac b/configure.ac
+index f498b96..3759bab 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -340,6 +340,7 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
+		-Wall -Wstrict-prototypes -Werror=missing-prototypes \
+		-Werror=implicit-function-declaration \
+		-Werror=pointer-arith -Werror=init-self -Werror=format=2 \
++		-Wno-format-zero-length \
+		-Werror=missing-include-dirs -Werror=aggregate-return \
+		-Werror=declaration-after-statement"
+ fi
+diff --git a/libsoup/soup-logger.c b/libsoup/soup-logger.c
+index a441f21..34a5576 100644
+--- a/libsoup/soup-logger.c
++++ b/libsoup/soup-logger.c
+@@ -374,6 +374,9 @@ soup_logger_detach (SoupLogger  *logger,
+        soup_session_remove_feature (session, SOUP_SESSION_FEATURE (logger));
+ }
+
++static void soup_logger_print (SoupLogger *logger, SoupLoggerLogLevel level,
++                              char direction, const char *format, ...) G_GNUC_PRINTF (4, 5);
++
+ static void
+ soup_logger_print (SoupLogger *logger, SoupLoggerLogLevel level,
+                   char direction, const char *format, ...)
+@@ -428,7 +425,7 @@
+ 			*p = '*';
+ 	}
+ 	soup_logger_print (logger, SOUP_LOGGER_LOG_HEADERS, '>',
+-			   "Authorization: Basic [%.*s]", len, decoded);
++			   "Authorization: Basic [%.*s]", (int)len, decoded);
+ 	g_free (decoded);
+ }
+ 

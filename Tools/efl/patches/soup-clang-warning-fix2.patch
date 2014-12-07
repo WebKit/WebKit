@@ -1,0 +1,65 @@
+commit c2c2ecbf7d021bb5445a205ec8c66286afaf1008
+Author: Ryan Lortie <desrt@desrt.ca>
+Date:   Sun Dec 8 15:41:56 2013 -0500
+
+    fix up non-literal format string issues
+    
+    Fix up a couple of errors picked up by -Werror=format-nonliteral on
+    clang.
+    
+    https://bugzilla.gnome.org/show_bug.cgi?id=720082
+
+diff --git a/libsoup/soup-xmlrpc.c b/libsoup/soup-xmlrpc.c
+index 8d711d3..e289010 100644
+--- a/libsoup/soup-xmlrpc.c
++++ b/libsoup/soup-xmlrpc.c
+@@ -290,6 +290,11 @@ soup_xmlrpc_build_method_response (GValue *value)
+ }
+ 
+ static char *
++soup_xmlrpc_build_faultv (int         fault_code,
++                          const char *fault_format,
++                          va_list     args) G_GNUC_PRINTF (2, 0);
++
++static char *
+ soup_xmlrpc_build_faultv (int fault_code, const char *fault_format, va_list args)
+ {
+ 	xmlDoc *doc;
+diff --git a/tests/coding-test.c b/tests/coding-test.c
+index 30417b4..1bffbc4 100644
+--- a/tests/coding-test.c
++++ b/tests/coding-test.c
+@@ -33,7 +33,7 @@ server_callback (SoupServer *server, SoupMessage *msg,
+ 
+ 	if (codings) {
+ 		gboolean claim_deflate, claim_gzip;
+-		const char *file_path = NULL, *encoding = NULL;
++		const char *extension = NULL, *encoding = NULL;
+ 
+ 		claim_deflate = g_slist_find_custom (codings, "deflate", (GCompareFunc)g_ascii_strcasecmp) != NULL;
+ 		claim_gzip = g_slist_find_custom (codings, "gzip", (GCompareFunc)g_ascii_strcasecmp) != NULL;
+@@ -41,19 +41,19 @@ server_callback (SoupServer *server, SoupMessage *msg,
+ 		if (claim_gzip && (!claim_deflate ||
+ 				   (!soup_header_contains (options, "prefer-deflate-zlib") &&
+ 				    !soup_header_contains (options, "prefer-deflate-raw")))) {
+-			file_path = SRCDIR "/resources%s.gz";
++			extension = "gz";
+ 			encoding = "gzip";
+ 		} else if (claim_deflate) {
+ 			if (soup_header_contains (options, "prefer-deflate-raw")) {
+-				file_path = SRCDIR "/resources%s.raw";
++				extension = "raw";
+ 				encoding = "deflate";
+ 			} else {
+-				file_path = SRCDIR "/resources%s.zlib";
++				extension = "zlib";
+ 				encoding = "deflate";
+ 			}
+ 		}
+-		if (file_path && encoding) {
+-			file = g_strdup_printf (file_path, path);
++		if (extension && encoding) {
++			file = g_strdup_printf (SRCDIR "/resources%s.%s", path, extension);
+ 			if (g_file_test (file, G_FILE_TEST_EXISTS)) {
+ 				soup_message_headers_append (msg->response_headers,
+ 							     "Content-Encoding",
