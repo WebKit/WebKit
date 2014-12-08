@@ -227,7 +227,7 @@ void deleteAllCookies(const NetworkStorageSession& session)
     }
 }
 
-void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point);
+void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point)
 {
 }
 

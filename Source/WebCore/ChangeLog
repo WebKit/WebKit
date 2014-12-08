@@ -1,3 +1,10 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::deleteAllCookiesModifiedSince):
+
 2014-12-08  Andreas Kling  <akling@apple.com>
 
         Roll out r175352.
