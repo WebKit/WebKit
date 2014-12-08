@@ -1352,6 +1352,7 @@ private:
     Ref<WebPreferences> m_preferences;
     const RefPtr<WebUserContentControllerProxy> m_userContentController;
     Ref<VisitedLinkProvider> m_visitedLinkProvider;
+    Ref<WebsiteDataStore> m_websiteDataStore;
 
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;

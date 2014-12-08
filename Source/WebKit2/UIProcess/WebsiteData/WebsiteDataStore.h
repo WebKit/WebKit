@@ -28,10 +28,13 @@
 
 #include <WebCore/SessionID.h>
 #include <functional>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
+
+class WebPageProxy;
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore> {
 public:
@@ -45,6 +48,9 @@ public:
     static RefPtr<WebsiteDataStore> create(Configuration);
     virtual ~WebsiteDataStore();
 
+    void addWebPage(WebPageProxy&);
+    void removeWebPage(WebPageProxy&);
+
     bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
@@ -54,6 +60,7 @@ private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration);
 
+    HashSet<WebPageProxy*> m_webPages;
     WebCore::SessionID m_sessionID;
 };
 

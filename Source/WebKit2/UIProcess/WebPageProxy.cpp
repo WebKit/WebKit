@@ -88,6 +88,7 @@
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
 #include "WebUserContentControllerProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -268,6 +269,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_preferences(*configuration.preferences)
     , m_userContentController(configuration.userContentController)
     , m_visitedLinkProvider(*configuration.visitedLinkProvider)
+    , m_websiteDataStore(*configuration.websiteDataStore)
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
 #if PLATFORM(IOS)
@@ -376,6 +378,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_viewStateChangeWantsReply(false)
     , m_isPlayingAudio(false)
 {
+    m_websiteDataStore->addWebPage(*this);
+
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
             m_process->addWebUserContentControllerProxy(*m_userContentController);
@@ -692,6 +696,8 @@ void WebPageProxy::close()
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->context().storageManager().destroySessionStorageNamespace(m_pageID);
     m_process->context().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
+
+    m_websiteDataStore->removeWebPage(*this);
 }
 
 bool WebPageProxy::tryClose()

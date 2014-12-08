@@ -1,3 +1,20 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        The website data store should know all its associated pages
+        https://bugs.webkit.org/show_bug.cgi?id=139411
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::addWebPage):
+        (WebKit::WebsiteDataStore::removeWebPage):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2014-12-08  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/18046692> [iOS] Safari crashes at -[_NSUndoStack popAndInvoke] when trying to undo typing on closed tab

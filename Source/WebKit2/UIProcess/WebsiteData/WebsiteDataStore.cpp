@@ -60,6 +60,21 @@ WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+    ASSERT(m_webPages.isEmpty());
+}
+
+void WebsiteDataStore::addWebPage(WebPageProxy& webPageProxy)
+{
+    ASSERT(!m_webPages.contains(&webPageProxy));
+
+    m_webPages.add(&webPageProxy);
+}
+
+void WebsiteDataStore::removeWebPage(WebPageProxy& webPageProxy)
+{
+    ASSERT(m_webPages.contains(&webPageProxy));
+
+    m_webPages.remove(&webPageProxy);
 }
 
 void WebsiteDataStore::removeDataModifiedSince(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point, std::function<void ()> completionHandler)
