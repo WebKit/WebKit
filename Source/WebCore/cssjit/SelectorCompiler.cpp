@@ -866,16 +866,11 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
     for (const CSSSelector* selector = rootSelector; selector; selector = selector->tagHistory()) {
         specificity = CSSSelector::addSpecificities(specificity, selector->simpleSelectorSpecificity());
 
-        CSSSelector::Relation relation = selector->relation();
-
         // A selector is invalid if something follows a pseudo-element.
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        if (relation == CSSSelector::SubSelector
-            && fragment.pseudoElementSelector
-            && !isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType())) {
+        if (fragment.pseudoElementSelector && !isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType()))
             return FunctionType::CannotMatchAnything;
-        }
 
         switch (selector->match()) {
         case CSSSelector::Tag:
@@ -933,6 +928,7 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             case CSSSelector::PseudoElementScrollbarThumb:
             case CSSSelector::PseudoElementScrollbarTrack:
             case CSSSelector::PseudoElementScrollbarTrackPiece:
+                ASSERT(!fragment.pseudoElementSelector);
                 fragment.pseudoElementSelector = selector;
                 break;
             case CSSSelector::PseudoElementUnknown:
@@ -979,6 +975,7 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             return FunctionType::CannotMatchAnything;
         }
 
+        CSSSelector::Relation relation = selector->relation();
         if (relation == CSSSelector::SubSelector)
             continue;
 

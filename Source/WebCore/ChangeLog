@@ -1,3 +1,31 @@
+2014-12-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        A selector should not match anything if there is a subselector after a non-scrollbar pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=139336
+        rdar://problem/19051623
+
+        Reviewed by Andreas Kling.
+
+        Tests: fast/css/duplicated-after-pseudo-element.html
+               fast/css/duplicated-before-pseudo-element.html
+               fast/css/simple-selector-after-pseudo-element.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::constructFragments):
+        The code filtering out simple selectors was only considering
+        the relation CSSSelector::SubSelector. That comes from SelectorChecker where
+        the relation considered is the one from the previous selector.
+
+        In this case, the relation is the extracted from the current simple selector,
+        which is the relation with the following selector.
+
+        When a single simple selector was following a pseudo element, the relation evaluated
+        to descendant/adjacent/direct-adjacent and we were skipping the early return.
+        That simple selector was evaluated as a regular filter on the element.
+
+        In the CSS JIT, we can just remove that test altogether. Fragments are built one after
+        the other. By definition, the evaluated simple selector belong to the current fragment.
+
 2014-12-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the parsing of advanced :lang() after r176902
