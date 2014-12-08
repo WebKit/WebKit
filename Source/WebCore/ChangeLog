@@ -1,3 +1,19 @@
+2014-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Stop using ResourceRequest::cachePolicy() in FrameLoader::subresourceCachePolicy()
+        https://bugs.webkit.org/show_bug.cgi?id=139350
+
+        Reviewed by Antti Koivisto.
+
+        Stop using ResourceRequest::cachePolicy() in FrameLoader::subresourceCachePolicy()
+        and use m_loadType instead. ResourceRequest::cachePolicy() is meant to be passed
+        to the network stack, and isn't supposed to be used as input inside WebCore.
+
+        No new tests, no behavior change.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy):
+
 2014-12-08  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] UserMedia Permission Request API
