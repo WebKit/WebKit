@@ -86,6 +86,7 @@ typedef NSInteger AVPlayerViewControllerOptimizedFullscreenStopReason;
 
 - (void)startOptimizedFullscreenWithStartCompletionHandler:(void (^)(BOOL success, NSError*))startCompletionHandler stopCompletionHandler:(void (^)(AVPlayerViewControllerOptimizedFullscreenStopReason))stopCompletionHandler;
 - (void)stopOptimizedFullscreen;
+- (void)setAllowsOptimizedFullscreen:(BOOL)allowsOptimizedFullscreen;
 
 @property (nonatomic, strong) AVPlayerController *playerController;
 @property (nonatomic, weak) id <AVPlayerViewControllerDelegate> delegate;

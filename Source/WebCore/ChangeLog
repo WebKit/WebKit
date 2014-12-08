@@ -1,3 +1,10 @@
+2014-12-08  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Attempt to fix the public SDK build after <https://trac.webkit.org/r176841>
+        (https://bugs.webkit.org/show_bug.cgi?id=139227)
+
+        * platform/spi/ios/AVKitSPI.h:
+
 2014-12-08  Chris Dumez  <cdumez@apple.com>
 
         Stop using ResourceRequest::cachePolicy() in FrameLoader::subresourceCachePolicy()
