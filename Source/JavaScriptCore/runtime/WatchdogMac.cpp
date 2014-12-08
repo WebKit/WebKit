@@ -41,7 +41,7 @@ void Watchdog::destroyTimer()
         dispatch_release(m_queue);
 }
 
-void Watchdog::startTimer(double limit)
+void Watchdog::startTimer(std::chrono::microseconds limit)
 {
     ASSERT(!m_timer);
     if (!m_queue)
@@ -49,7 +49,7 @@ void Watchdog::startTimer(double limit)
     m_timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_queue);
 
     dispatch_source_set_timer(m_timer,
-        dispatch_time(DISPATCH_TIME_NOW, limit * NSEC_PER_SEC),
+        dispatch_time(DISPATCH_TIME_NOW, std::chrono::nanoseconds(limit).count()),
         DISPATCH_TIME_FOREVER, 0);
 
     dispatch_source_set_event_handler(m_timer, ^{

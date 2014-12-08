@@ -32,6 +32,7 @@
 #ifndef CurrentTime_h
 #define CurrentTime_h
 
+#include <chrono>
 #include <time.h>
 
 namespace WTF {
@@ -55,13 +56,10 @@ inline double currentTimeMS()
 // NTP or manual adjustments, so it is better suited for elapsed time measurement.
 WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
-// Returns the current CPU time of the current thread in seconds.
+// Returns the current CPU time of the current thread.
 // Precision varies depending on platform but is usually as good or better
 // than a millisecond.
-WTF_EXPORT_PRIVATE double currentCPUTime();
-
-// Returns the current CPU time of the current thread in milliseconds.
-WTF_EXPORT_PRIVATE double currentCPUTimeMS();
+WTF_EXPORT_PRIVATE std::chrono::microseconds currentCPUTime();
 
 } // namespace WTF
 

@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-#define NO_LIMIT std::numeric_limits<double>::infinity()
+#define NO_LIMIT std::chrono::microseconds::max()
 
 Watchdog::Watchdog()
     : m_timerDidFire(false)
@@ -56,7 +56,7 @@ Watchdog::~Watchdog()
     destroyTimer();
 }
 
-void Watchdog::setTimeLimit(VM& vm, double limit,
+void Watchdog::setTimeLimit(VM& vm, std::chrono::microseconds limit,
     ShouldTerminateCallback callback, void* data1, void* data2)
 {
     bool wasEnabled = isEnabled();
@@ -97,9 +97,9 @@ bool Watchdog::didFire(ExecState* exec)
     m_timerDidFire = false;
     stopCountdown();
 
-    double currentTime = currentCPUTime();
-    double deltaTime = currentTime - m_startTime;
-    double totalElapsedTime = m_elapsedTime + deltaTime;
+    auto currentTime = currentCPUTime();
+    auto deltaTime = currentTime - m_startTime;
+    auto totalElapsedTime = m_elapsedTime + deltaTime;
     if (totalElapsedTime > m_limit) {
         // Case 1: the allowed CPU time has elapsed.
 
@@ -121,7 +121,7 @@ bool Watchdog::didFire(ExecState* exec)
 
         // Tell the timer to alarm us again when it thinks we've reached the
         // end of the allowed time.
-        double remainingTime = m_limit - totalElapsedTime;
+        auto remainingTime = m_limit - totalElapsedTime;
         m_elapsedTime = totalElapsedTime;
         m_startTime = currentTime;
         startCountdown(remainingTime);
@@ -164,13 +164,13 @@ void Watchdog::startCountdownIfNeeded()
         return; // Not executing JS script. No need to start.
 
     if (isEnabled()) {
-        m_elapsedTime = 0;
+        m_elapsedTime = std::chrono::microseconds::zero();
         m_startTime = currentCPUTime();
         startCountdown(m_limit);
     }
 }
 
-void Watchdog::startCountdown(double limit)
+void Watchdog::startCountdown(std::chrono::microseconds limit)
 {
     ASSERT(m_isStopped);
     m_isStopped = false;

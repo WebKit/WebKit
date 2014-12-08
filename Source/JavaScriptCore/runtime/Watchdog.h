@@ -43,7 +43,7 @@ public:
     ~Watchdog();
 
     typedef bool (*ShouldTerminateCallback)(ExecState*, void* data1, void* data2);
-    void setTimeLimit(VM&, double seconds, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    void setTimeLimit(VM&, std::chrono::microseconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
 
     // This version of didFire() will check the elapsed CPU time and call the
     // callback (if needed) to determine if the watchdog should fire.
@@ -63,14 +63,14 @@ private:
     void arm();
     void disarm();
     void startCountdownIfNeeded();
-    void startCountdown(double limit);
+    void startCountdown(std::chrono::microseconds limit);
     void stopCountdown();
     bool isArmed() { return !!m_reentryCount; }
 
     // Platform specific timer implementation:
     void initTimer();
     void destroyTimer();
-    void startTimer(double limit);
+    void startTimer(std::chrono::microseconds limit);
     void stopTimer();
 
     // m_timerDidFire (above) indicates whether the timer fired. The Watchdog
@@ -81,10 +81,9 @@ private:
     bool m_timerDidFire;
     bool m_didFire;
 
-    // All time units are in seconds.
-    double m_limit;
-    double m_startTime;
-    double m_elapsedTime;
+    std::chrono::microseconds m_limit;
+    std::chrono::microseconds m_startTime;
+    std::chrono::microseconds m_elapsedTime;
 
     int m_reentryCount;
     bool m_isStopped;

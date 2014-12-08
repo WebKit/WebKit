@@ -39,7 +39,7 @@ void Watchdog::destroyTimer()
 {
 }
 
-void Watchdog::startTimer(double)
+void Watchdog::startTimer(std::chrono::microseconds)
 {
 }
 

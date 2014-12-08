@@ -1,3 +1,22 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Change WTF::currentCPUTime to return std::chrono::microseconds and get rid of currentCPUTimeMS
+        https://bugs.webkit.org/show_bug.cgi?id=139410
+
+        Reviewed by Andreas Kling.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupSetExecutionTimeLimit):
+        (JSContextGroupClearExecutionTimeLimit):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::didFire):
+        (JSC::Watchdog::startCountdownIfNeeded):
+        (JSC::Watchdog::startCountdown):
+        * runtime/Watchdog.h:
+        * runtime/WatchdogMac.cpp:
+        (JSC::Watchdog::startTimer):
+
 2014-12-08  Mark Lam  <mark.lam@apple.com>
 
         CFA wrongly assumes that a speculation for SlowPutArrayStorageShape disallows ArrayStorageShape arrays.

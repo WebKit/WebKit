@@ -1,3 +1,15 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Change WTF::currentCPUTime to return std::chrono::microseconds and get rid of currentCPUTimeMS
+        https://bugs.webkit.org/show_bug.cgi?id=139410
+
+        Reviewed by Andreas Kling.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentCPUTime):
+        (WTF::currentCPUTimeMS): Deleted.
+        * wtf/CurrentTime.h:
+
 2014-12-08  Chris Dumez  <cdumez@apple.com>
 
         Revert r176293 & r176275
