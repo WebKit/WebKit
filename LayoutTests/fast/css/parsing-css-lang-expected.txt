@@ -124,30 +124,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":lang(rm-CH    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(rm-CH)"
-PASS document.querySelector(":lang(*-)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-)"
-PASS document.querySelector(":lang(*-    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-)"
-PASS document.querySelector(":lang(*--)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*--)"
-PASS document.querySelector(":lang(*--    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*--)"
-PASS document.querySelector(":lang(*---)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*---)"
-PASS document.querySelector(":lang(*---    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*---)"
-PASS document.querySelector(":lang(*----)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*----)"
-PASS document.querySelector(":lang(*----    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*----)"
 PASS document.querySelector(":lang(*-CH)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-CH)"
@@ -160,12 +136,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":lang(*-DE-1996    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-DE-1996)"
-PASS document.querySelector(":lang(*-1996)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-1996)"
-PASS document.querySelector(":lang(*-1996    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-1996)"
 PASS document.querySelector(":lang(*-br-zh)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":lang(*-br-zh)"

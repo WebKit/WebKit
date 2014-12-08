@@ -1,3 +1,30 @@
+2014-12-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the parsing of advanced :lang() after r176902
+        https://bugs.webkit.org/show_bug.cgi?id=139379
+
+        Reviewed by Andreas Kling.
+
+        There were two mistakes that were only caught in debug:
+
+        The lexer was not calling isIdentifierStart() before parseIdentifier().
+        Some identifier we were parsing should have been invalid.
+        This was caught with an assertion in parseIdentifier().
+
+        The other issue is that we were accumulating pointer to freed memory.
+        The tokenizer for LANGRANGE was creating a new string with a StringBuilder.
+        The problem is that CSSParserString does not keep the source string alive.
+        Consequently, the list of language range was accumulating pointers to dead
+        StringImpls.
+
+        The fix there is to simply extend the token to take the original asterisk character
+        from the input. That is not elegant but that's efficient and we know
+        the buffer lifetime.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::realLex):
+        * css/CSSGrammar.y.in: Fix the indentation of a language range rule.
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the 32-bit build.

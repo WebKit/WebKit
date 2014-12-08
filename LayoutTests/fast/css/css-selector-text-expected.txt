@@ -47,14 +47,8 @@ PASS parseThenSerializeRule(':root { }') is ':root { }'
 PASS parseThenSerializeRule(':target { }') is ':target { }'
 PASS parseThenSerializeRule(':visited { }') is ':visited { }'
 
-PASS parseThenSerializeRule(':lang(*-) { }') is ':lang(*-) { }'
-PASS parseThenSerializeRule(':lang(*--) { }') is ':lang(*--) { }'
-PASS parseThenSerializeRule(':lang(*---) { }') is ':lang(*---) { }'
-PASS parseThenSerializeRule(':lang(*----) { }') is ':lang(*----) { }'
-
 PASS parseThenSerializeRule(':lang(*-ab) { }') is ':lang(*-ab) { }'
 PASS parseThenSerializeRule(':lang(*-ab-) { }') is ':lang(*-ab-) { }'
-PASS parseThenSerializeRule(':lang(*-1996) { }') is ':lang(*-1996) { }'
 PASS parseThenSerializeRule(':lang(*-DE-1996) { }') is ':lang(*-DE-1996) { }'
 
 PASS parseThenSerializeRule(':lang(a) { }') is ':lang(a) { }'
@@ -324,7 +318,6 @@ PASS parseThenSerializeRule(':lang(*-foo-\\0062 \\0061 r) { }') is ':lang(*-foo-
 PASS parseThenSerializeRule(':lang(*-foo-col\\6Fr) { }') is ':lang(*-foo-color) { }'
 
 PASS parseThenSerializeRule(':lang(\\*    ) { }') is ':lang(*) { }'
-PASS parseThenSerializeRule(':lang(*-    ) { }') is ':lang(*-) { }'
 PASS parseThenSerializeRule(':lang(*-en    ) { }') is ':lang(*-en) { }'
 PASS parseThenSerializeRule(':lang(*-en-\\*    ) { }') is ':lang(*-en-*) { }'
 PASS parseThenSerializeRule(':lang(*-en-\\*-fr    ) { }') is ':lang(*-en-*-fr) { }'
@@ -360,13 +353,6 @@ PASS parseThenSerializeRule(':lang(   \\* ,id-\\*-sumatra) { }') is ':lang(*, id
 PASS parseThenSerializeRule(':lang(   \\*  ,  id-\\*-sumatra  ) { }') is ':lang(*, id-*-sumatra) { }'
 PASS parseThenSerializeRule(':lang(   \\*   ,    id-\\*-sumatra  ) { }') is ':lang(*, id-*-sumatra) { }'
 
-PASS parseThenSerializeRule(':lang(*-1996) { }') is ':lang(*-1996) { }'
-PASS parseThenSerializeRule(':lang(*-1996, *-1997) { }') is ':lang(*-1996, *-1997) { }'
-PASS parseThenSerializeRule(':lang(*-1996, *-1997 ) { }') is ':lang(*-1996, *-1997) { }'
-PASS parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }') is ':lang(*-1996, *-1997) { }'
-PASS parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }') is ':lang(*-1996, *-1997) { }'
-PASS parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }') is ':lang(*-1996, *-1997) { }'
-
 PASS parseThenSerializeRule(':lang(en-\\*) { }') is ':lang(en-*) { }'
 PASS parseThenSerializeRule(':lang(en-\\*, fr-\\*) { }') is ':lang(en-*, fr-*) { }'
 PASS parseThenSerializeRule(':lang(en-\\*, fr-\\* ) { }') is ':lang(en-*, fr-*) { }'
@@ -396,17 +382,22 @@ PASS parseThenSerializeRule(':lang(]) { }') threw exception TypeError: undefined
 PASS parseThenSerializeRule(':lang([) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang([]) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(@media screen {}) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
-PASS parseThenSerializeRule(':lang(*)') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
-PASS parseThenSerializeRule(':lang(**)') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
-PASS parseThenSerializeRule(':lang(-*-)') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*-) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*-    ) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*--) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*---) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*----) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*)' { }) threw exception SyntaxError: Unexpected token '{'. Expected ')' to end a argument list..
+PASS parseThenSerializeRule(':lang(**) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(-*-) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(de-*)') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-en-*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-en-fr-*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-en-*fr) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-*en-fr) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
-PASS parseThenSerializeRule(':lang(*-1997)') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
-PASS parseThenSerializeRule(':lang(*-1997-*)') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*-1997) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*-1997-*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*a*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*a) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(a*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
@@ -417,6 +408,11 @@ PASS parseThenSerializeRule(':lang(*-a, **a) { }') threw exception TypeError: un
 PASS parseThenSerializeRule(':lang(*- a*) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-a, br fr) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 PASS parseThenSerializeRule(':lang(*-a, br fr en *) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*-1996, *-1997) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(*-1996, *-1997 ) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
+PASS parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }') threw exception TypeError: undefined is not an object (evaluating 'styleElement.sheet.cssRules[0].cssText').
 
 PASS parseThenSerializeRule(':role(a) { }') is ':role(a) { }'
 PASS parseThenSerializeRule(':role(button) { }') is ':role(button) { }'

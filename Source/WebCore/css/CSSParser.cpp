@@ -11487,18 +11487,16 @@ restartAfterComment:
             ++currentCharacter<SrcCharacterType>();
             m_token = CONTAINS;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        } else if (*currentCharacter<SrcCharacterType>() == '-') {
+        } else if (*currentCharacter<SrcCharacterType>() == '-' && isIdentifierStart<SrcCharacterType>()) {
             result = currentCharacter<SrcCharacterType>();
 
             CSSParserString parsedIdentifier;
             parseIdentifier(result, parsedIdentifier, hasEscape);
 
-            StringBuilder parsedLangRange;
-            parsedLangRange.append('*');
-            parsedLangRange.append(parsedIdentifier);
-
-            m_token = LANGRANGE;
-            yylval->string.init(parsedLangRange.toString());
+            if (parsedIdentifier.length()) {
+                m_token = LANGRANGE;
+                yylval->string.init(tokenStart<SrcCharacterType>(), parsedIdentifier.length() + 1);
+            }
 #endif
         }
         break;

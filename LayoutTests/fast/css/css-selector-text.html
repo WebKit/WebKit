@@ -80,16 +80,8 @@ testSelectorRoundTrip(":visited");
 
 debug('');
 
-testSelectorRoundTrip(":lang(*-)");
-testSelectorRoundTrip(":lang(*--)");
-testSelectorRoundTrip(":lang(*---)");
-testSelectorRoundTrip(":lang(*----)");
-
-debug('');
-
 testSelectorRoundTrip(":lang(*-ab)");
 testSelectorRoundTrip(":lang(*-ab-)");
-testSelectorRoundTrip(":lang(*-1996)");
 testSelectorRoundTrip(":lang(*-DE-1996)");
 
 debug('');
@@ -417,7 +409,6 @@ shouldBe("parseThenSerializeRule(':lang(*-foo-col\\\\6Fr) { }')", "':lang(*-foo-
 debug('');
 
 shouldBe("parseThenSerializeRule(':lang(\\\\*    ) { }')", "':lang(*) { }'");
-shouldBe("parseThenSerializeRule(':lang(*-    ) { }')", "':lang(*-) { }'");
 shouldBe("parseThenSerializeRule(':lang(*-en    ) { }')", "':lang(*-en) { }'");
 shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*    ) { }')", "':lang(*-en-*) { }'");
 shouldBe("parseThenSerializeRule(':lang(*-en-\\\\*-fr    ) { }')", "':lang(*-en-*-fr) { }'");
@@ -461,15 +452,6 @@ shouldBe("parseThenSerializeRule(':lang(   \\\\*   ,    id-\\\\*-sumatra  ) { }'
 
 debug('');
 
-shouldBe("parseThenSerializeRule(':lang(*-1996) { }')", "':lang(*-1996) { }'");
-shouldBe("parseThenSerializeRule(':lang(*-1996, *-1997) { }')", "':lang(*-1996, *-1997) { }'");
-shouldBe("parseThenSerializeRule(':lang(*-1996, *-1997 ) { }')", "':lang(*-1996, *-1997) { }'");
-shouldBe("parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }')", "':lang(*-1996, *-1997) { }'");
-shouldBe("parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }')", "':lang(*-1996, *-1997) { }'");
-shouldBe("parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }')", "':lang(*-1996, *-1997) { }'");
-
-debug('');
-
 shouldBe("parseThenSerializeRule(':lang(en-\\\\*) { }')", "':lang(en-*) { }'");
 shouldBe("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\*) { }')", "':lang(en-*, fr-*) { }'");
 shouldBe("parseThenSerializeRule(':lang(en-\\\\*, fr-\\\\* ) { }')", "':lang(en-*, fr-*) { }'");
@@ -502,17 +484,23 @@ shouldThrow("parseThenSerializeRule(':lang([) { }')");
 shouldThrow("parseThenSerializeRule(':lang([]) { }')");
 shouldThrow("parseThenSerializeRule(':lang(@media screen {}) { }')");
 
-shouldThrow("parseThenSerializeRule(':lang(*)')");
-shouldThrow("parseThenSerializeRule(':lang(**)')");
-shouldThrow("parseThenSerializeRule(':lang(-*-)')");
+shouldThrow("parseThenSerializeRule(':lang(*-) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-    ) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*--) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*---) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*----) { }')");
+
+shouldThrow("parseThenSerializeRule(':lang(*)' { })");
+shouldThrow("parseThenSerializeRule(':lang(**) { }')");
+shouldThrow("parseThenSerializeRule(':lang(-*-) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*-*) { }')");
 shouldThrow("parseThenSerializeRule(':lang(de-*)')");
 shouldThrow("parseThenSerializeRule(':lang(*-en-*) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*-en-fr-*) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*-en-*fr) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*-*en-fr) { }')");
-shouldThrow("parseThenSerializeRule(':lang(*-1997)')");
-shouldThrow("parseThenSerializeRule(':lang(*-1997-*)')");
+shouldThrow("parseThenSerializeRule(':lang(*-1997) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-1997-*) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*a*) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*a) { }')");
 shouldThrow("parseThenSerializeRule(':lang(a*) { }')");
@@ -523,6 +511,12 @@ shouldThrow("parseThenSerializeRule(':lang(*-a, **a) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*- a*) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*-a, br fr) { }')");
 shouldThrow("parseThenSerializeRule(':lang(*-a, br fr en *) { }')");
+
+shouldThrow("parseThenSerializeRule(':lang(*-1996, *-1997) { }')");
+shouldThrow("parseThenSerializeRule(':lang(*-1996, *-1997 ) { }')");
+shouldThrow("parseThenSerializeRule(':lang(   *-1996   ,  *-1997   ) { }')");
+shouldThrow("parseThenSerializeRule(':lang(   *-1996   ,*-1997   ) { }')");
+shouldThrow("parseThenSerializeRule(':lang(   *-1996,*-1997   ) { }')");
 
 debug('');
 

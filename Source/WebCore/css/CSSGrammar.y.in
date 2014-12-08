@@ -1395,12 +1395,12 @@ pseudo:
     | ':' LANGFUNCTION maybe_space comma_separated_lang_ranges maybe_space ')' {
         $$ = nullptr;
         if ($4) {
-          auto selector = std::make_unique<CSSParserSelector>();
-          selector->setMatch(CSSSelector::PseudoClass);
-          selector->setArgumentList(*std::unique_ptr<Vector<CSSParserString>>($4));
-          selector->setPseudoClassValue($2);
-          if (selector->pseudoClassType() == CSSSelector::PseudoClassLang)
-              $$ = selector.release();
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgumentList(*std::unique_ptr<Vector<CSSParserString>>($4));
+            selector->setPseudoClassValue($2);
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassLang)
+                $$ = selector.release();
         }
     }
 
