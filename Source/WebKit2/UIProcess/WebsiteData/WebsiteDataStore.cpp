@@ -46,7 +46,7 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
     return adoptRef(new WebsiteDataStore(WTF::move(configuration)));
 }
 
-WebsiteDataStore::WebsiteDataStore(Configuration configuration)
+WebsiteDataStore::WebsiteDataStore(Configuration)
     : m_sessionID(WebCore::SessionID::defaultSessionID())
 {
 }
