@@ -1,5 +1,52 @@
 2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
 
+        [GStreamer] Minor cleanup of the AudioFileReader implementation
+        https://bugs.webkit.org/show_bug.cgi?id=139367
+
+        Reviewed by Philippe Normand.
+
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::~AudioFileReader):
+        Don't call gst_bus_remove_signal_watch(), the source was already
+        destroyed together with the main context and doing it again here
+        will give a g_critical().
+
+        (WebCore::AudioFileReader::handleSample):
+        Calculate the number of samples from the actual buffer size
+        and the bytes-per-frame instead of the buffer duration. Using
+        the buffer duration can lead to rounding errors and might cause
+        too few samples to be copied over later.
+
+        (WebCore::AudioFileReader::handleMessage):
+        Set the pipeline to GST_STATE_NULL immediately when receiving
+        errors to prevent other follow-up error messages from propagating
+        through the bus and spamming the user's terminal with g_warnings().
+
+        (WebCore::AudioFileReader::handleNewDeinterleavePad):
+        Sync the state of the queue and sink after deinterleave with
+        the parent state instead of just setting them to READY. That
+        way we potentially go to PAUSED state a bit earlier already
+        and prevent a potential race condition that could cause buffers
+        to arrive in the new elements in READY state already (which would
+        fail).
+
+        (WebCore::AudioFileReader::plugDeinterleave):
+        Handle multiple decodebin source pads by ignoring all following
+        ones just in case there are multiple for whatever reason.
+
+        (WebCore::AudioFileReader::decodeAudioForBusCreation):
+        Catch errors from going to PAUSED state early. We might not
+        get a error message at all if we're unlucky.
+
+        (WebCore::AudioFileReader::plugDeinterleave):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::AudioFileReader::handleSample):
+        Downmix to mono if required instead of just using the front
+        left channel and claiming it is mono. Downmixing from stereo
+        to mono will mix both channels instead of just taking the left.
+
+2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
+
         [GStreamer] Handle CLOCK_LOST and LATENCY messages
         https://bugs.webkit.org/show_bug.cgi?id=139341
 
