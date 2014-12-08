@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

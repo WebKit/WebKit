@@ -1,3 +1,11 @@
+2014-12-08  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the WebKit build with the public SDK
+
+        Include header NSURLDownloadSPI.h.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2014-12-07  Dan Bernstein  <mitz@apple.com>
 
         Introduce and deploy a function that allocates and returns an instance of a soft-linked class

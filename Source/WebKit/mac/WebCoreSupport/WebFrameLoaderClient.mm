@@ -109,6 +109,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
+#import <WebCore/NSURLDownloadSPI.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginViewBase.h>
