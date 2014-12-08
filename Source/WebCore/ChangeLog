@@ -1,3 +1,16 @@
+2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Narrow non-breaking space does not fall back to a correct font
+        https://bugs.webkit.org/show_bug.cgi?id=139335
+
+        Reviewed by Enrica Casucci.
+
+        Test: fast/text/narrow-non-breaking-space.html
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::requiresCustomFallbackFont):
+        (WebCore::FontCache::getCustomFallbackFont):
+
 2014-12-08  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix the WebKit build with the public SDK

@@ -1,3 +1,13 @@
+2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Narrow non-breaking space does not fall back to a correct font
+        https://bugs.webkit.org/show_bug.cgi?id=139335
+
+        Reviewed by Enrica Casucci.
+
+        * fast/text/narrow-non-breaking-space-expected.html: Added.
+        * fast/text/narrow-non-breaking-space.html: Added.
+
 2014-12-08  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Grid items must set a new formatting context.
