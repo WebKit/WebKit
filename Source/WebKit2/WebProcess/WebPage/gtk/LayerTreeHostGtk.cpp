@@ -82,7 +82,7 @@ GLContext* LayerTreeHostGtk::glContext()
     if (m_context)
         return m_context.get();
 
-    uint64_t windowHandle = m_webPage->nativeWindowHandle();
+    uint64_t windowHandle = m_webPage->drawingArea()->nativeSurfaceHandleForCompositing();
     if (!windowHandle)
         return 0;
 
@@ -112,7 +112,7 @@ void LayerTreeHostGtk::initialize()
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
     m_nonCompositedContentLayer->setNeedsDisplay();
 
-    m_layerTreeContext.contextID = m_webPage->nativeWindowHandle();
+    m_layerTreeContext.contextID = m_webPage->drawingArea()->nativeSurfaceHandleForCompositing();
 
     GLContext* context = glContext();
     if (!context)

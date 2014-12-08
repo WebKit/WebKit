@@ -39,4 +39,8 @@ messages -> DrawingArea {
     
     AddTransactionCallbackID(uint64_t callbackID)
 #endif
+
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    SetNativeSurfaceHandleForCompositing(uint64_t handle)
+#endif
 }

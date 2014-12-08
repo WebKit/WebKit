@@ -643,4 +643,11 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_displayTimer.stop();
 }
 
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+void DrawingAreaImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
+{
+    m_nativeSurfaceHandleForCompositing = handle;
+}
+#endif
+
 } // namespace WebKit

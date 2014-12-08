@@ -300,6 +300,13 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
 }
 
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+void DrawingAreaProxyImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
+{
+    m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID());
+}
+#endif
+
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 {
     ASSERT(isInAcceleratedCompositingMode());

@@ -67,6 +67,10 @@ private:
     virtual void scheduleCompositingLayerFlush() override;
     virtual void scheduleCompositingLayerFlushImmediately() override;
 
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;
+#endif
+
     // IPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();

@@ -48,6 +48,10 @@ public:
 
     bool hasReceivedFirstUpdate() const { return m_hasReceivedFirstUpdate; }
 
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    void setNativeSurfaceHandleForCompositing(uint64_t);
+#endif
+
 private:
     // DrawingAreaProxy
     virtual void sizeDidChange();

@@ -124,11 +124,19 @@ public:
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) { }
 
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    uint64_t nativeSurfaceHandleForCompositing() { return m_nativeSurfaceHandleForCompositing; }
+#endif
+
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
 
     DrawingAreaType m_type;
     WebPage& m_webPage;
+
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    uint64_t m_nativeSurfaceHandleForCompositing;
+#endif
 
 private:
     // IPC::MessageReceiver.
@@ -150,6 +158,10 @@ private:
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
 
     virtual void addTransactionCallbackID(uint64_t callbackID) { ASSERT_NOT_REACHED(); }
+#endif
+
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
 #endif
 };
 
