@@ -1,3 +1,17 @@
+2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
+
+        [GStreamer] Add application/x-mpegurl to the list of supported mimetypes.
+        https://bugs.webkit.org/show_bug.cgi?id=139343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+        It's an alternative mimetype for the already supported
+        application/vnd.apple.mpegurl (aka HLS) and adding it
+        allows all streams on http://www.jwplayer.com/html5/hls/
+        to be played.
+
 2014-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [TextureMapper] Normalize pattern transform for pattern compositing
