@@ -413,6 +413,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
 }
 
+- (IBAction)clearWebsiteData:(id)sender
+{
+    [_configuration._websiteDataStore removeDataOfTypes:WKWebsiteDataTypeAll modifiedSince:[NSDate distantPast] completionHandler:^{
+        NSLog(@"Did clear website data.");
+    }];
+}
+
 #pragma mark WKNavigationDelegate
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler

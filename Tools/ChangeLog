@@ -1,3 +1,16 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a stubbed out method for clearing out the website data store
+        https://bugs.webkit.org/show_bug.cgi?id=139404
+
+        Reviewed by Antti Koivisto.
+
+        Add a debug menu item for testing clearing of website data.
+
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController clearWebsiteData:]):
+
 2014-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Update style checker to deal with "const override"

@@ -456,6 +456,13 @@
                                     <action selector="dumpSourceToConsole:" target="-1" id="567"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="77P-rp-OVT"/>
+                            <menuItem title="Clear Website Data" id="bfj-13-wQ4">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="clearWebsiteData:" target="-1" id="pEC-gb-vGm"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

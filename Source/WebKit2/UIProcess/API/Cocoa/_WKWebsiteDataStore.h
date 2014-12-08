@@ -29,6 +29,12 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
+    WKWebsiteDataTypeCookies = 1 << 0,
+
+    WKWebsiteDataTypeAll = ~0ULL,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 WK_CLASS_AVAILABLE(10_10, 8_0)
 @interface _WKWebsiteDataStore : NSObject
 
@@ -39,6 +45,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 + (instancetype)nonPersistentDataStore;
 
 @property (readonly, getter=isNonPersistent) BOOL nonPersistent;
+
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
 
 @end
 

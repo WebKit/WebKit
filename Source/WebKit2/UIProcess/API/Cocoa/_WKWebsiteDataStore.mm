@@ -52,6 +52,14 @@
     return _websiteDataStore->isNonPersistent();
 }
 
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler
+{
+    // FIXME: Actually remove something.
+    dispatch_async(dispatch_get_main_queue(), [completionHandler] {
+        completionHandler();
+    });
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
