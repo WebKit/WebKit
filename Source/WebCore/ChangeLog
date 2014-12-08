@@ -1,5 +1,45 @@
 2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
 
+        [GStreamer] Major cleanup of AudioDestination implementation
+        https://bugs.webkit.org/show_bug.cgi?id=139370
+
+        Reviewed by Philippe Normand.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        Add an audioresample element before the audio sink. The audio sink
+        might not be able to handle our sampling rate.
+
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        (WebCore::AudioDestinationGStreamer::~AudioDestinationGStreamer):
+        (WebCore::AudioDestinationGStreamer::stop):
+        (WebCore::AudioDestinationGStreamer::finishBuildingPipelineAfterWavParserPadReady): Deleted.
+        Don't use a wavparse element but directly link the raw audio from
+        the source to the audio sink.
+
+        (WebCore::AudioDestinationGStreamer::start):
+        Catch errors when going to PLAYING early, we might not get an error
+        message.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (getGStreamerMonoAudioCaps):
+        (webKitWebAudioSrcConstructed):
+        (webKitWebAudioSrcChangeState):
+        Don't use a WAV encoder but directly output raw audio. Also don't
+        include a unneeded audioconvert element before the interleave.
+
+        (webKitWebAudioSrcLoop):
+        Add timestamps and durations to the output buffers, map them in
+        READWRITE mode and actually keep them mapped until we're sure
+        nothing is actually writing into them.
+
+        (webKitWebAudioSrcLoop):
+        Pause the task on errors instead of continuously calling it again
+        immediately.
+
+2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
+
         [GStreamer] Use gst_message_parse_buffering()
         https://bugs.webkit.org/show_bug.cgi?id=139365
 

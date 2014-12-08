@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2011, 2012 Igalia S.L
+ *  Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -87,38 +88,10 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
                                                                             "provider", &m_callback,
                                                                             "frames", framesToPull, NULL));
 
-    GstElement* wavParser = gst_element_factory_make("wavparse", 0);
-
-    m_wavParserAvailable = wavParser;
-    ASSERT_WITH_MESSAGE(m_wavParserAvailable, "Failed to create GStreamer wavparse element");
-    if (!m_wavParserAvailable)
-        return;
-
-    gst_bin_add_many(GST_BIN(m_pipeline), webkitAudioSrc, wavParser, NULL);
-    gst_element_link_pads_full(webkitAudioSrc, "src", wavParser, "sink", GST_PAD_LINK_CHECK_NOTHING);
-
-    GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_static_pad(wavParser, "src"));
-    finishBuildingPipelineAfterWavParserPadReady(srcPad.get());
-}
-
-AudioDestinationGStreamer::~AudioDestinationGStreamer()
-{
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
-    ASSERT(bus);
-    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
-    gst_bus_remove_signal_watch(bus.get());
-
-    gst_element_set_state(m_pipeline, GST_STATE_NULL);
-    gst_object_unref(m_pipeline);
-}
-
-void AudioDestinationGStreamer::finishBuildingPipelineAfterWavParserPadReady(GstPad* pad)
-{
-    ASSERT(m_wavParserAvailable);
+    GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_static_pad(webkitAudioSrc, "src"));
 
     GRefPtr<GstElement> audioSink = gst_element_factory_make("autoaudiosink", 0);
     m_audioSinkAvailable = audioSink;
-
     if (!audioSink) {
         LOG_ERROR("Failed to create GStreamer autoaudiosink element");
         return;
@@ -136,16 +109,27 @@ void AudioDestinationGStreamer::finishBuildingPipelineAfterWavParserPadReady(Gst
     }
 
     GstElement* audioConvert = gst_element_factory_make("audioconvert", 0);
-    gst_bin_add_many(GST_BIN(m_pipeline), audioConvert, audioSink.get(), NULL);
+    GstElement* audioResample = gst_element_factory_make("audioresample", 0);
+    gst_bin_add_many(GST_BIN(m_pipeline), webkitAudioSrc, audioConvert, audioResample, audioSink.get(), NULL);
 
     // Link wavparse's src pad to audioconvert sink pad.
     GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(audioConvert, "sink"));
-    gst_pad_link_full(pad, sinkPad.get(), GST_PAD_LINK_CHECK_NOTHING);
+    gst_pad_link_full(srcPad.get(), sinkPad.get(), GST_PAD_LINK_CHECK_NOTHING);
 
     // Link audioconvert to audiosink and roll states.
-    gst_element_link_pads_full(audioConvert, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
-    gst_element_sync_state_with_parent(audioConvert);
-    gst_element_sync_state_with_parent(audioSink.leakRef());
+    gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(audioResample, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+}
+
+AudioDestinationGStreamer::~AudioDestinationGStreamer()
+{
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    ASSERT(bus);
+    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
+    gst_bus_remove_signal_watch(bus.get());
+
+    gst_element_set_state(m_pipeline, GST_STATE_NULL);
+    gst_object_unref(m_pipeline);
 }
 
 gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
@@ -172,18 +156,23 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
 
 void AudioDestinationGStreamer::start()
 {
-    ASSERT(m_wavParserAvailable);
-    if (!m_wavParserAvailable)
+    ASSERT(m_audioSinkAvailable);
+    if (!m_audioSinkAvailable)
         return;
 
-    gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+    if (gst_element_set_state(m_pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+        g_warning("Error: Failed to set pipeline to playing");
+        m_isPlaying = false;
+        return;
+    }
+
     m_isPlaying = true;
 }
 
 void AudioDestinationGStreamer::stop()
 {
-    ASSERT(m_wavParserAvailable && m_audioSinkAvailable);
-    if (!m_wavParserAvailable || !m_audioSinkAvailable)
+    ASSERT(m_audioSinkAvailable);
+    if (!m_audioSinkAvailable)
         return;
 
     gst_element_set_state(m_pipeline, GST_STATE_PAUSED);

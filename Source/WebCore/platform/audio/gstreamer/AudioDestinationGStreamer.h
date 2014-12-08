@@ -41,7 +41,6 @@ public:
     float sampleRate() const { return m_sampleRate; }
     AudioIOCallback& callback() const { return m_callback; }
 
-    void finishBuildingPipelineAfterWavParserPadReady(GstPad*);
     gboolean handleMessage(GstMessage*);
 
 private:
@@ -50,7 +49,6 @@ private:
 
     float m_sampleRate;
     bool m_isPlaying;
-    bool m_wavParserAvailable;
     bool m_audioSinkAvailable;
     GstElement* m_pipeline;
 };

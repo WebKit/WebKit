@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2011, 2012 Igalia S.L
+ *  Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,7 +54,6 @@ struct _WebKitWebAudioSourcePrivate {
     guint framesToPull;
 
     GRefPtr<GstElement> interleave;
-    GRefPtr<GstElement> wavEncoder;
 
     GRefPtr<GstTask> task;
     GRecMutex mutex;
@@ -63,6 +63,7 @@ struct _WebKitWebAudioSourcePrivate {
 
     bool newStreamEventPending;
     GstSegment segment;
+    guint64 numberOfSamples;
 };
 
 enum {
@@ -72,10 +73,15 @@ enum {
     PROP_FRAMES
 };
 
+typedef struct {
+    GstBuffer* buffer;
+    GstMapInfo info;
+} AudioSrcBuffer;
+
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
-                                                                  GST_PAD_SRC,
-                                                                  GST_PAD_ALWAYS,
-                                                                  GST_STATIC_CAPS("audio/x-wav"));
+    GST_PAD_SRC,
+    GST_PAD_ALWAYS,
+    GST_STATIC_CAPS(GST_AUDIO_CAPS_MAKE(GST_AUDIO_NE(F32))));
 
 GST_DEBUG_CATEGORY_STATIC(webkit_web_audio_src_debug);
 #define GST_CAT_DEFAULT webkit_web_audio_src_debug
@@ -91,7 +97,7 @@ static GstCaps* getGStreamerMonoAudioCaps(float sampleRate)
 {
     return gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, static_cast<int>(sampleRate),
         "channels", G_TYPE_INT, 1,
-        "format", G_TYPE_STRING, gst_audio_format_to_string(GST_AUDIO_FORMAT_F32),
+        "format", G_TYPE_STRING, GST_AUDIO_NE(F32),
         "layout", G_TYPE_STRING, "interleaved", nullptr);
 }
 
@@ -203,28 +209,20 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     ASSERT(priv->sampleRate);
 
     priv->interleave = gst_element_factory_make("interleave", 0);
-    priv->wavEncoder = gst_element_factory_make("wavenc", 0);
 
     if (!priv->interleave) {
         GST_ERROR_OBJECT(src, "Failed to create interleave");
         return;
     }
 
-    if (!priv->wavEncoder) {
-        GST_ERROR_OBJECT(src, "Failed to create wavenc");
-        return;
-    }
-
-    gst_bin_add_many(GST_BIN(src), priv->interleave.get(), priv->wavEncoder.get(), NULL);
-    gst_element_link_pads_full(priv->interleave.get(), "src", priv->wavEncoder.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_bin_add(GST_BIN(src), priv->interleave.get());
 
     // For each channel of the bus create a new upstream branch for interleave, like:
-    // queue ! capsfilter ! audioconvert. which is plugged to a new interleave request sinkpad.
+    // queue ! capsfilter. which is plugged to a new interleave request sinkpad.
     for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++) {
         GUniquePtr<gchar> queueName(g_strdup_printf("webaudioQueue%u", channelIndex));
         GstElement* queue = gst_element_factory_make("queue", queueName.get());
         GstElement* capsfilter = gst_element_factory_make("capsfilter", 0);
-        GstElement* audioconvert = gst_element_factory_make("audioconvert", 0);
 
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
 
@@ -240,16 +238,15 @@ static void webKitWebAudioSrcConstructed(GObject* object)
         GstPad* pad = gst_element_get_static_pad(queue, "sink");
         priv->pads = g_slist_prepend(priv->pads, pad);
 
-        gst_bin_add_many(GST_BIN(src), queue, capsfilter, audioconvert, NULL);
+        gst_bin_add_many(GST_BIN(src), queue, capsfilter, NULL);
         gst_element_link_pads_full(queue, "src", capsfilter, "sink", GST_PAD_LINK_CHECK_NOTHING);
-        gst_element_link_pads_full(capsfilter, "src", audioconvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
-        gst_element_link_pads_full(audioconvert, "src", priv->interleave.get(), 0, GST_PAD_LINK_CHECK_NOTHING);
+        gst_element_link_pads_full(capsfilter, "src", priv->interleave.get(), "sink_%u", GST_PAD_LINK_CHECK_NOTHING);
 
     }
     priv->pads = g_slist_reverse(priv->pads);
 
     // wavenc's src pad is the only visible pad of our element.
-    GRefPtr<GstPad> targetPad = adoptGRef(gst_element_get_static_pad(priv->wavEncoder.get(), "src"));
+    GRefPtr<GstPad> targetPad = adoptGRef(gst_element_get_static_pad(priv->interleave.get(), "src"));
     gst_ghost_pad_set_target(GST_GHOST_PAD(priv->sourcePad), targetPad.get());
 }
 
@@ -320,20 +317,28 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 
     ASSERT(priv->bus);
     ASSERT(priv->provider);
-    if (!priv->provider || !priv->bus)
+    if (!priv->provider || !priv->bus) {
+        gst_task_pause(src->priv->task.get());
         return;
+    }
+
+    GstClockTime timestamp = gst_util_uint64_scale(priv->numberOfSamples, GST_SECOND, priv->sampleRate);
+    priv->numberOfSamples += priv->framesToPull;
+    GstClockTime duration = gst_util_uint64_scale(priv->numberOfSamples, GST_SECOND, priv->sampleRate) - timestamp;
 
     GSList* channelBufferList = 0;
     register int i;
     unsigned bufferSize = priv->framesToPull * sizeof(float);
     for (i = g_slist_length(priv->pads) - 1; i >= 0; i--) {
+        AudioSrcBuffer* buffer = g_new(AudioSrcBuffer, 1);
         GstBuffer* channelBuffer = gst_buffer_new_and_alloc(bufferSize);
         ASSERT(channelBuffer);
-        channelBufferList = g_slist_prepend(channelBufferList, channelBuffer);
-        GstMapInfo info;
-        gst_buffer_map(channelBuffer, &info, GST_MAP_READ);
-        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(info.data), priv->framesToPull);
-        gst_buffer_unmap(channelBuffer, &info);
+        buffer->buffer = channelBuffer;
+        GST_BUFFER_TIMESTAMP(channelBuffer) = timestamp;
+        GST_BUFFER_DURATION(channelBuffer) = duration;
+        gst_buffer_map(channelBuffer, &buffer->info, (GstMapFlags) GST_MAP_READWRITE);
+        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(buffer->info.data), priv->framesToPull);
+        channelBufferList = g_slist_prepend(channelBufferList, buffer);
     }
 
     // FIXME: Add support for local/live audio input.
@@ -350,7 +355,12 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 
     for (i = 0; padsIt && buffersIt; padsIt = g_slist_next(padsIt), buffersIt = g_slist_next(buffersIt), ++i) {
         GstPad* pad = static_cast<GstPad*>(padsIt->data);
-        GstBuffer* channelBuffer = static_cast<GstBuffer*>(buffersIt->data);
+        AudioSrcBuffer* buffer = static_cast<AudioSrcBuffer*>(buffersIt->data);
+        GstBuffer* channelBuffer = buffer->buffer;
+
+        // Unmap before passing on the buffer.
+        gst_buffer_unmap(channelBuffer, &buffer->info);
+        g_free(buffer);
 
         // Send stream-start, segment and caps events downstream, along with the first buffer.
         if (priv->newStreamEventPending) {
@@ -375,8 +385,10 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
         }
 
         GstFlowReturn ret = gst_pad_chain(pad, channelBuffer);
-        if (ret != GST_FLOW_OK)
+        if (ret != GST_FLOW_OK) {
             GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to push buffer on %s:%s flow: %s", GST_DEBUG_PAD_NAME(pad), gst_flow_get_name(ret)));
+            gst_task_pause(src->priv->task.get());
+        }
     }
 
     priv->newStreamEventPending = false;
@@ -396,11 +408,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
             GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (0), ("no interleave"));
             return GST_STATE_CHANGE_FAILURE;
         }
-        if (!src->priv->wavEncoder) {
-            gst_element_post_message(element, gst_missing_element_message_new(element, "wavenc"));
-            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (0), ("no wavenc"));
-            return GST_STATE_CHANGE_FAILURE;
-        }
+        src->priv->numberOfSamples = 0;
         break;
     default:
         break;
