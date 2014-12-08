@@ -129,10 +129,8 @@ void unmapGstBuffer(GstBuffer* buffer)
 
 bool initializeGStreamer()
 {
-#if GST_CHECK_VERSION(0, 10, 31)
     if (gst_is_initialized())
         return true;
-#endif
 
     GUniqueOutPtr<GError> error;
     // FIXME: We should probably pass the arguments from the command line.

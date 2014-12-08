@@ -854,7 +854,6 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     if (m_errorOccured || isLiveStream())
         return timeRanges;
 
-#if GST_CHECK_VERSION(0, 10, 31)
     float mediaDuration(duration());
     if (!mediaDuration || std::isinf(mediaDuration))
         return timeRanges;
@@ -881,11 +880,7 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
             timeRanges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(loaded));
 
     gst_query_unref(query);
-#else
-    float loaded = maxTimeLoaded();
-    if (!m_errorOccured && !isLiveStream() && loaded > 0)
-        timeRanges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(loaded));
-#endif
+
     return timeRanges;
 }
 
