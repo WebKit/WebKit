@@ -1,5 +1,18 @@
 2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
 
+        [GStreamer] Add video/flv to the list of supported mimetypes
+        https://bugs.webkit.org/show_bug.cgi?id=139344
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+        Add video/flv additional to video/x-flv to the list of supported
+        mimetypes. It's used on some websites, e.g.
+        http://www.jwplayer.com/html5/formats/
+
+2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
+
         [GStreamer] Remove GStreamer 0.10 #ifdefs.
         https://bugs.webkit.org/show_bug.cgi?id=138921
 

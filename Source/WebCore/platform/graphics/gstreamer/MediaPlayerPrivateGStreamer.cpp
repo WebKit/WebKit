@@ -1730,6 +1730,7 @@ static HashSet<String> mimeTypeCache()
         "audio/x-wavpack",
         "audio/x-wavpack-correction",
         "video/3gpp",
+        "video/flv",
         "video/mj2",
         "video/mp4",
         "video/mpeg",
