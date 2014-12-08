@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
+#include <wtf/RunLoop.h>
+
 namespace WebKit {
 
 static WebCore::SessionID generateNonPersistentSessionID()
@@ -58,6 +60,12 @@ WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+}
+
+void WebsiteDataStore::removeDataModifiedSince(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point, std::function<void ()> completionHandler)
+{
+    // FIXME: Actually remove data.
+    RunLoop::main().dispatch(WTF::move(completionHandler));
 }
 
 }

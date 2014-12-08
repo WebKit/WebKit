@@ -52,11 +52,32 @@
     return _websiteDataStore->isNonPersistent();
 }
 
+static WebKit::WebsiteDataStore::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteDataTypes)
+{
+    using WebsiteDataTypes = WebKit::WebsiteDataStore::WebsiteDataTypes;
+
+    int websiteDataTypes = 0;
+
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeCookies)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeCookies;
+
+    return static_cast<WebsiteDataTypes>(websiteDataTypes);
+}
+
+static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
+{
+    ASSERT(date);
+    using namespace std::chrono;
+
+    return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
+}
+
 - (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler
 {
-    // FIXME: Actually remove something.
-    dispatch_async(dispatch_get_main_queue(), [completionHandler] {
-        completionHandler();
+    auto completionHandlerCopy = Block_copy(completionHandler);
+    _websiteDataStore->websiteDataStore().removeDataModifiedSince(toWebsiteDataTypes(websiteDataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
+        completionHandlerCopy();
+        Block_release(completionHandlerCopy);
     });
 }
 

@@ -1,3 +1,20 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a stub implementation of WebsiteDataStore::removeDataModifiedSince
+        https://bugs.webkit.org/show_bug.cgi?id=139406
+
+        Reviewed by Antti Koivisto.
+
+        Change _WKWebsiteDataStore to call the newly added function.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataTypes):
+        (toSystemClockTime):
+        (-[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeDataModifiedSince):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2014-12-08  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Let DrawingArea manages setAcceleratedCompositingWindowId

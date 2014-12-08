@@ -27,6 +27,7 @@
 #define WebsiteDataStore_h
 
 #include <WebCore/SessionID.h>
+#include <functional>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -34,6 +35,10 @@ namespace WebKit {
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore> {
 public:
+    enum WebsiteDataTypes {
+        WebsiteDataTypeCookies = 1 << 0,
+    };
+
     struct Configuration {
     };
     static RefPtr<WebsiteDataStore> createNonPersistent();
@@ -42,6 +47,8 @@ public:
 
     bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
     WebCore::SessionID sessionID() const { return m_sessionID; }
+
+    void removeDataModifiedSince(WebsiteDataTypes, std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
 
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
