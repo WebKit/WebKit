@@ -17,7 +17,7 @@ Example #1: Nested Stubs
 THEAD, TFOOT table
 --------------------------
 
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -27,7 +27,7 @@ AXDescription:
 AXValue: 1
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -36,7 +36,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -46,7 +46,7 @@ AXDescription:
 AXValue: a
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -78,7 +78,26 @@ AXPlatformAttributes: toolkit:WebKitEfl
 
 --------------------------
 
-AXRole: AXCell
+AXRole: AXColumnHeader
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 20.000000, 30.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
+------------
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -97,26 +116,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
-AXParent: AXTable: Example #1: Nested Stubs
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: 1
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 1
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -163,7 +163,7 @@ AXPlatformAttributes:
 
 --------------------------
 
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -173,7 +173,7 @@ AXDescription:
 AXValue: 1
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -182,7 +182,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -192,7 +192,7 @@ AXDescription:
 AXValue: a
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -220,7 +220,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -277,7 +277,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -403,7 +403,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 Multi-TBODY table
 --------------------------
 
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -413,7 +413,7 @@ AXDescription:
 AXValue: 1
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -422,7 +422,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -432,7 +432,7 @@ AXDescription:
 AXValue: a
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -464,7 +464,26 @@ AXPlatformAttributes: toolkit:WebKitEfl
 
 --------------------------
 
-AXRole: AXCell
+AXRole: AXColumnHeader
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 20.000000, 30.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
+------------
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -483,26 +502,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
-AXParent: AXTable: Example #1: Nested Stubs
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: 1
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 1
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -549,7 +549,7 @@ AXPlatformAttributes:
 
 --------------------------
 
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -559,7 +559,7 @@ AXDescription:
 AXValue: 1
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -568,7 +568,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -578,7 +578,7 @@ AXDescription:
 AXValue: a
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
@@ -606,7 +606,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -663,7 +663,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXCell
+AXRole: AXRowHeader
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
