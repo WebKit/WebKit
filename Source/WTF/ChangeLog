@@ -1,3 +1,11 @@
+2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix iOS build after r176971.
+
+        I had previously modified the WTF forwarding header instead of modifying the real source.
+
+        * wtf/unicode/CharacterNames.h:
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Change WTF::currentCPUTime to return std::chrono::microseconds and get rid of currentCPUTimeMS
