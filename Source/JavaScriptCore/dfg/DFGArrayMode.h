@@ -406,7 +406,7 @@ public:
         case Array::ArrayStorage:
             return arrayModesWithIndexingShape(ArrayStorageShape);
         case Array::SlowPutArrayStorage:
-            return arrayModesWithIndexingShape(SlowPutArrayStorageShape);
+            return arrayModesWithIndexingShapes(SlowPutArrayStorageShape, ArrayStorageShape);
         default:
             return asArrayModes(NonArray);
         }
@@ -462,6 +462,13 @@ private:
         }
     }
     
+    ArrayModes arrayModesWithIndexingShapes(IndexingType shape1, IndexingType shape2) const
+    {
+        ArrayModes arrayMode1 = arrayModesWithIndexingShape(shape1);
+        ArrayModes arrayMode2 = arrayModesWithIndexingShape(shape2);
+        return arrayMode1 | arrayMode2;
+    }
+
     bool alreadyChecked(Graph&, Node*, AbstractValue&, IndexingType shape) const;
     
     union {
