@@ -1,5 +1,14 @@
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
+        Move the callback invocation outside of the loop.
+
+        Rubber-stamped by Tim Horton.
+
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin):
+
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
         Add a stub implementation of WebsiteDataStore::removeDataModifiedSince
         https://bugs.webkit.org/show_bug.cgi?id=139406
 

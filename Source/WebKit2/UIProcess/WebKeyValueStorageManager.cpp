@@ -117,9 +117,9 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
                 detailsMap.set(WebKeyValueStorageManager::modificationTimeKey(), API::Double::create(originDetails.modificationTime.valueOr(0)));
 
             result.uncheckedAppend(ImmutableDictionary::create(WTF::move(detailsMap)));
-
-            callbackFunction(API::Array::create(WTF::move(result)).get(), CallbackBase::Error::None);
         }
+
+        callbackFunction(API::Array::create(WTF::move(result)).get(), CallbackBase::Error::None);
     });
 }
 
