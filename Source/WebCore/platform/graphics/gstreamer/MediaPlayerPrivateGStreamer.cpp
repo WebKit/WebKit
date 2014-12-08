@@ -987,6 +987,27 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 loadingFailed(MediaPlayer::Empty);
         }
         break;
+    case GST_MESSAGE_CLOCK_LOST:
+        // This can only happen in PLAYING state and we should just
+        // get a new clock by moving back to PAUSED and then to
+        // PLAYING again.
+        // This can happen if the stream that ends in a sink that
+        // provides the current clock disappears, for example if
+        // the audio sink provides the clock and the audio stream
+        // is disabled. It also happens relatively often with
+        // HTTP adaptive streams when switching between different
+        // variants of a stream.
+        gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+        gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
+        break;
+    case GST_MESSAGE_LATENCY:
+        // Recalculate the latency, we don't need any special handling
+        // here other than the GStreamer default.
+        // This can happen if the latency of live elements changes, or
+        // for one reason or another a new live element is added or
+        // removed from the pipeline.
+        gst_bin_recalculate_latency(GST_BIN(m_playBin.get()));
+        break;
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
             gchar* detail = gst_missing_plugin_message_get_installer_detail(message);
