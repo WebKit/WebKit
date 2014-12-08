@@ -38,7 +38,7 @@ class WebVisitedLinkStore;
 
 class WebViewGroup : public RefCounted<WebViewGroup> {
 public:
-    static RefPtr<WebViewGroup> getOrCreate(const String& name);
+    static RefPtr<WebViewGroup> getOrCreate(const String& name, const String& localStorageDatabasePath);
     ~WebViewGroup();
 
     static WebViewGroup* get(const String& name);
@@ -51,7 +51,7 @@ public:
     WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
 private:
-    WebViewGroup(const String& name);
+    WebViewGroup(const String& name, const String& localStorageDatabasePath);
 
     String m_name;
     HashSet<WebView *> m_webViews;

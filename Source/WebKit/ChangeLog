@@ -1,3 +1,15 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        WebStorageNamespaceProvider should know about its local storage database path
+        https://bugs.webkit.org/show_bug.cgi?id=139413
+
+        Reviewed by Andreas Kling.
+
+        * Storage/WebStorageNamespaceProvider.cpp:
+        (WebStorageNamespaceProvider::create):
+        (WebStorageNamespaceProvider::WebStorageNamespaceProvider):
+        * Storage/WebStorageNamespaceProvider.h:
+
 2014-12-06  Anders Carlsson  <andersca@apple.com>
 
         Add a stubbed out version of WebStorageNamespaceProvider

@@ -29,12 +29,13 @@
 
 using namespace WebCore;
 
-RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create()
+RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const String& localStorageDatabasePath)
 {
-    return adoptRef(new WebStorageNamespaceProvider);
+    return adoptRef(new WebStorageNamespaceProvider(localStorageDatabasePath));
 }
 
-WebStorageNamespaceProvider::WebStorageNamespaceProvider()
+WebStorageNamespaceProvider::WebStorageNamespaceProvider(const String& localStorageDatabasePath)
+    : m_localStorageDatabasePath(localStorageDatabasePath)
 {
 }
 

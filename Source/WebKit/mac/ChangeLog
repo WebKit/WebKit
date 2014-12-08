@@ -1,3 +1,20 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        WebStorageNamespaceProvider should know about its local storage database path
+        https://bugs.webkit.org/show_bug.cgi?id=139413
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebViewGroup.h:
+        * WebCoreSupport/WebViewGroup.mm:
+        (WebViewGroup::getOrCreate):
+        (WebViewGroup::WebViewGroup):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView setGroupName:]):
+        (-[WebView groupName]): Deleted.
+
 2014-12-08  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix the WebKit build with the public SDK

@@ -42,14 +42,14 @@ static HashMap<String, RefPtr<WebViewGroup>>& webViewGroups()
     return webViewGroups;
 }
 
-RefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name)
+RefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name, const String& localStorageDatabasePath)
 {
     if (name.isEmpty())
-        return adoptRef(new WebViewGroup(String()));
+        return adoptRef(new WebViewGroup(String(), localStorageDatabasePath));
 
     auto& webViewGroup = webViewGroups().add(name, nullptr).iterator->value;
     if (!webViewGroup)
-        webViewGroup = adoptRef(new WebViewGroup(name));
+        webViewGroup = adoptRef(new WebViewGroup(name, localStorageDatabasePath));
 
     return webViewGroup;
 }
@@ -61,9 +61,9 @@ WebViewGroup* WebViewGroup::get(const String& name)
     return webViewGroups().get(name);
 }
 
-WebViewGroup::WebViewGroup(const String& name)
+WebViewGroup::WebViewGroup(const String& name, const String& localStorageDatabasePath)
     : m_name(name)
-    , m_storageNamespaceProvider(*WebStorageNamespaceProvider::create())
+    , m_storageNamespaceProvider(*WebStorageNamespaceProvider::create(localStorageDatabasePath))
     , m_userContentController(*UserContentController::create())
     , m_visitedLinkStore(WebVisitedLinkStore::create())
 {
