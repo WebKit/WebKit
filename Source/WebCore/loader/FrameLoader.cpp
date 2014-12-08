@@ -2164,6 +2164,9 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
     case FrameLoadType::Standard:
         return CachePolicyVerify;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return CachePolicyVerify;
 }
 
 void FrameLoader::checkLoadCompleteForThisFrame()

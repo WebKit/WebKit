@@ -1,3 +1,10 @@
+2014-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r176953, add an unreachable return to make GCC happy.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy):
+
 2014-12-08  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Grid items must set a new formatting context.
