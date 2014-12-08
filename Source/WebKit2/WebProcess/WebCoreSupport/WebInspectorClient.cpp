@@ -95,7 +95,7 @@ void WebInspectorClient::highlight()
 void WebInspectorClient::hideHighlight()
 {
 #if !PLATFORM(IOS)
-    if (m_highlightOverlay)
+    if (m_highlightOverlay && m_page->mainFrame())
         m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(m_highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
     m_page->hideInspectorHighlight();
@@ -161,7 +161,7 @@ void WebInspectorClient::willMoveToPage(PageOverlay&, Page* page)
 
     // The page overlay is moving away from the web page, reset it.
     ASSERT(m_highlightOverlay);
-    m_highlightOverlay = 0;
+    m_highlightOverlay = nullptr;
 }
 
 void WebInspectorClient::didMoveToPage(PageOverlay&, Page*)
