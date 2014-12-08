@@ -1,3 +1,23 @@
+2014-12-08  Andreas Kling  <akling@apple.com>
+
+        Roll out r175352.
+        <https://webkit.org/b/139146>
+
+        This change caused some unexpected assertions in line box teardown.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::willBeDestroyed):
+        * rendering/RenderReplaced.h:
+
 2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Narrow non-breaking space does not fall back to a correct font

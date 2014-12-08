@@ -233,6 +233,16 @@ RenderBlock::~RenderBlock()
         removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
+void RenderBlock::willBeDestroyed()
+{
+    if (!documentBeingDestroyed()) {
+        if (parent())
+            parent()->dirtyLinesFromChangedChild(*this);
+    }
+
+    RenderBox::willBeDestroyed();
+}
+
 bool RenderBlock::hasRareData() const
 {
     return gRareDataMap ? gRareDataMap->contains(this) : false;

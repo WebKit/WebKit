@@ -316,6 +316,7 @@ public:
 
 protected:
     virtual RenderFlowThread* locateFlowThreadContainingBlock() const override;
+    virtual void willBeDestroyed() override;
 
     virtual void layout() override;
 

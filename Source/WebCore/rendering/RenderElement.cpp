@@ -1038,7 +1038,7 @@ void RenderElement::willBeRemovedFromTree()
     if (m_style->hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(this);
 
-    if (!documentBeingDestroyed())
+    if (isOutOfFlowPositioned() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);
 
     if (auto* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
