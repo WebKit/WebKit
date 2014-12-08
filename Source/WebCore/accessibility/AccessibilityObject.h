@@ -758,6 +758,7 @@ public:
 #else
     virtual void detachFromParent() { }
 #endif
+    virtual bool isDetachedFromParent() { return false; }
 
     virtual void selectedChildren(AccessibilityChildrenVector&) { }
     virtual void visibleChildren(AccessibilityChildrenVector&) { }
