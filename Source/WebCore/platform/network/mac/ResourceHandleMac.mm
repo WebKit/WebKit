@@ -381,11 +381,6 @@ NSURLConnection *ResourceHandle::connection() const
     return d->m_connection.get();
 }
     
-bool ResourceHandle::loadsBlocked()
-{
-    return false;
-}
-
 CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
 {
     return CFSTR("WebCoreSynchronousLoaderRunLoopMode");

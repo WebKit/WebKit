@@ -579,11 +579,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
         CFURLConnectionResume(d->m_connection.get());
 }
 
-bool ResourceHandle::loadsBlocked()
-{
-    return false;
-}
-
 #if PLATFORM(COCOA)
 void ResourceHandle::schedule(SchedulePair& pair)
 {
