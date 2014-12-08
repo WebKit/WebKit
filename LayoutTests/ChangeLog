@@ -1,3 +1,24 @@
+2014-12-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Grid items must set a new formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=139150
+
+        Reviewed by David Hyatt.
+
+        Test to verify that grid items's margin don't collapese with its parent's margin
+        and there is no 'float' protruding content on the adjoining grid items.
+
+        I had to rebaseline the form-hides-table.html test because table-caption, which
+        is supposed to establish a new formatting context, does not allow margins collapsing.
+
+        * fast/css-grid-layout/float-not-protruding-into-next-grid-item-expected.html: Added.
+        * fast/css-grid-layout/float-not-protruding-into-next-grid-item.html: Added.
+        * fast/css-grid-layout/grid-item-margins-not-collapse-expected.html: Added.
+        * fast/css-grid-layout/grid-item-margins-not-collapse.html: Added.
+        * platform/gtk/fast/forms/form-hides-table-expected.txt: Rebaseline needed.
+        * platform/mac/fast/forms/form-hides-table-expected.txt: Rebaseline needed.
+        * platform/efl/TestExpectations: Mark fast/forms/form-hides-table-expected as failure.
+
 2014-12-08  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Change expectations for two accessibility layout tests.

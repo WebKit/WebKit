@@ -2128,3 +2128,6 @@ webkit.org/b/136406 compositing/tiling/tiled-layer-resize.html [ Failure ]
 webkit.org/b/136406 compositing/video/video-reflection.html [ Failure ]
 webkit.org/b/136406 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
 webkit.org/b/136406 compositing/visibility/visibility-simple-video-layer.html [ Failure ]
+
+# This test need a rebaseline.
+webkit.org/b/139150 fast/forms/form-hides-table.html [ Failure ]

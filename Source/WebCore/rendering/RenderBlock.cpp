@@ -1092,12 +1092,6 @@ void RenderBlock::addVisualOverflowFromTheme()
         flowThread->addRegionsVisualOverflowFromTheme(this);
 }
 
-bool RenderBlock::expandsToEncloseOverhangingFloats() const
-{
-    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBoxIncludingDeprecated())
-        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isRoot() || isRenderFlowThread();
-}
-
 LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox& child, LayoutUnit childMarginStart, RenderRegion* region)
 {
     LayoutUnit startPosition = startOffsetForContent(region);
@@ -2381,8 +2375,6 @@ bool RenderBlock::avoidsFloats() const
 {
     // Floats can't intrude into our box if we have a non-auto column count or width.
     return RenderBox::avoidsFloats()
-        || !style().hasAutoColumnCount()
-        || !style().hasAutoColumnWidth()
         || style().hasFlowFrom();
 }
 

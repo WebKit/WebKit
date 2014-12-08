@@ -4270,9 +4270,19 @@ bool RenderBox::shrinkToAvoidFloats() const
     return style().width().isAuto();
 }
 
+bool RenderBox::createsNewFormattingContext() const
+{
+    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || isFlexItemIncludingDeprecated()
+        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isRoot() || isRenderFlowThread() || isRenderRegion()
+#if ENABLE(CSS_GRID_LAYOUT)
+        || isGridItem()
+#endif
+        || style().specifiesColumns() || style().columnSpan();
+}
+
 bool RenderBox::avoidsFloats() const
 {
-    return isReplaced() || hasOverflowClip() || isHR() || isLegend() || isWritingModeRoot() || isFlexItemIncludingDeprecated();
+    return isReplaced() || isHR() || isLegend() || createsNewFormattingContext();
 }
 
 void RenderBox::addVisualEffectOverflow()

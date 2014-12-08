@@ -1,3 +1,38 @@
+2014-12-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Grid items must set a new formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=139150
+
+        Reviewed by David Hyatt.
+
+        Grid item's margins must not collapse even when they may be adjoining to
+        its content's margins. Also, setting a new formatting context prevents any
+        'float' protruding content on the adjoining grid items.
+
+        This patch also renames the expandsToEncloseOverhangingFloats to be more generic now,
+        determining whether a new formatting context is set or not. This affects not only to
+        how floats behave, but whether margins should collapse or not.
+
+        Tests: fast/css-grid-layout/float-not-protruding-into-next-grid-item.html
+               fast/css-grid-layout/grid-item-margins-not-collapse.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::avoidsFloats): Using the new createsNewFormattingContext function.
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::MarginInfo::MarginInfo): Using the new createsNewFormattingContext function.
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats): Using the new createsNewFormattingContext function.
+        (WebCore::RenderBlockFlow::layoutBlock): Using the new createsNewFormattingContext function.
+        (WebCore::RenderBlockFlow::computeOverflow): Using the new createsNewFormattingContext function.
+        (WebCore::RenderBlockFlow::addOverhangingFloats): Using the new createsNewFormattingContext function.
+        (WebCore::RenderBlockFlow::needsLayoutAfterRegionRangeChange): Using the new createsNewFormattingContext function.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createsNewFormattingContext): Added.
+        (WebCore::RenderBox::avoidsFloats): Removed checks already defined in the new createsNewFormattingContext function.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isGridItem): Added.
+
 2014-12-08  Daniel Bates  <dabates@apple.com>
 
         [iOS] Attempt to fix the public SDK build after <https://trac.webkit.org/r176841>

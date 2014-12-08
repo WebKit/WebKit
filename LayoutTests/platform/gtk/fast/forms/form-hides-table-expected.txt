@@ -1,8 +1,8 @@
-layer at (0,0) size 785x624
+layer at (0,0) size 785x640
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x624
-  RenderBlock {HTML} at (0,0) size 785x624
-    RenderBody {BODY} at (8,8) size 769x608
+layer at (0,0) size 785x640
+  RenderBlock {HTML} at (0,0) size 785x640
+    RenderBody {BODY} at (8,8) size 769x624
       RenderBlock {P} at (0,0) size 769x17
         RenderText {#text} at (0,0) size 551x17
           text run at (0,0) width 551: "This page has a few tables within form elements within divs with various display styles."
@@ -155,9 +155,9 @@ layer at (0,0) size 785x624
                         RenderTableCell {TD} at (2,2) size 112x19 [r=0 c=0 rs=1 cs=1]
                           RenderText {#text} at (1,1) size 110x17
                             text run at (1,1) width 110: "display: table-cell"
-      RenderBlock {DIV} at (0,551) size 769x57
-        RenderTable at (0,0) size 55x57
-          RenderBlock {DIV} at (0,0) size 55x57
+      RenderBlock {DIV} at (0,551) size 769x73
+        RenderTable at (0,0) size 55x73
+          RenderBlock {DIV} at (0,0) size 55x73
             RenderBlock {FORM} at (0,0) size 55x57
               RenderTable {TABLE} at (0,0) size 55x57
                 RenderTableSection {TBODY} at (0,0) size 55x57
