@@ -1,3 +1,9 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the 32-bit build.
+
+        * WebCore.exp.in:
+
 2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Inline elements whose parents have small line-height are laid out too low
