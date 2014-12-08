@@ -533,27 +533,19 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassNthChild:
                 str.appendLiteral(":nth-child(");
                 str.append(cs->argument());
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = cs->selectorList()) {
                     str.appendLiteral(" of ");
                     appendSelectorList(str, selectorList);
                 }
-#else
-                ASSERT(!cs->selectorList());
-#endif
                 str.append(')');
                 break;
             case CSSSelector::PseudoClassNthLastChild:
                 str.appendLiteral(":nth-last-child(");
                 str.append(cs->argument());
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = cs->selectorList()) {
                     str.appendLiteral(" of ");
                     appendSelectorList(str, selectorList);
                 }
-#else
-                ASSERT(!cs->selectorList());
-#endif
                 str.append(')');
                 break;
             case CSSSelector::PseudoClassNthLastOfType:

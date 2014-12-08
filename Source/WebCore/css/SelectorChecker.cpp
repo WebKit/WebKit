@@ -742,7 +742,6 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (!selector->parseNth())
                 break;
             if (element->parentElement()) {
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     unsigned selectorListSpecificity;
                     if (matchSelectorList(context, *element, *selectorList, selectorListSpecificity))
@@ -750,13 +749,11 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                     else
                         return false;
                 }
-#endif
 
                 if (context.resolvingMode == Mode::ResolvingStyle)
                     element->setStyleIsAffectedByPreviousSibling();
 
                 int count = 1;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
                         if (context.resolvingMode == Mode::ResolvingStyle)
@@ -766,9 +763,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                         if (matchSelectorList(context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
-                } else
-#endif
-                {
+                } else {
                     count += countElementsBefore(element, context.resolvingMode == Mode::ResolvingStyle);
                     if (context.resolvingMode == Mode::ResolvingStyle)
                         element->setChildIndex(count);
@@ -798,7 +793,6 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
 
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     unsigned selectorListSpecificity;
                     if (matchSelectorList(context, *element, *selectorList, selectorListSpecificity))
@@ -810,13 +804,10 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                         parentElement->setChildrenAffectedByPropertyBasedBackwardPositionalRules();
                         parentElement->setChildrenAffectedByBackwardPositionalRules();
                     }
-                } else
-#endif
-                if (context.resolvingMode == Mode::ResolvingStyle)
+                } else if (context.resolvingMode == Mode::ResolvingStyle)
                     parentElement->setChildrenAffectedByBackwardPositionalRules();
 
                 int count = 1;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
                         unsigned ignoredSpecificity;
@@ -824,10 +815,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                             ++count;
                     }
                 } else
-#endif
-                {
                     count += countElementsAfter(element);
-                }
 
                 if (selector->matchNth(count))
                     return true;

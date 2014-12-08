@@ -1,3 +1,21 @@
+2014-12-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Move the new :nth-child() and :nth-last-child() out of experimental
+        https://bugs.webkit.org/show_bug.cgi?id=139329
+
+        Reviewed by Andreas Kling.
+
+        The code is stable.
+        Feedback has only been positive.
+        All the known issues have been reported to the CSS WG.
+
+        The #ifdef don't really work anymore anyway for :nth-child() and :nth-last-child().
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
 2014-12-08  Benjamin Poulain  <bpoulain@apple.com>
 
         A selector should not match anything if there is a subselector after a non-scrollbar pseudo element
