@@ -1051,8 +1051,7 @@ void MediaPlayerPrivateGStreamer::handlePluginInstallerResult(GstInstallPluginsR
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
 {
     m_buffering = true;
-    const GstStructure *structure = gst_message_get_structure(message);
-    gst_structure_get_int(structure, "buffer-percent", &m_bufferingPercentage);
+    gst_message_parse_buffering(message, &m_bufferingPercentage);
 
     LOG_MEDIA_MESSAGE("[Buffering] Buffering: %d%%.", m_bufferingPercentage);
 
