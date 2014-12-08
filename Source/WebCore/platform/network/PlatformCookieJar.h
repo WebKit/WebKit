@@ -26,6 +26,7 @@
 #ifndef PlatformCookieJar_h
 #define PlatformCookieJar_h
 
+#include <chrono>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -48,7 +49,7 @@ WEBCORE_EXPORT void deleteCookie(const NetworkStorageSession&, const URL&, const
 WEBCORE_EXPORT void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
 WEBCORE_EXPORT void deleteCookiesForHostname(const NetworkStorageSession&, const String& hostname);
 WEBCORE_EXPORT void deleteAllCookies(const NetworkStorageSession&);
-WEBCORE_EXPORT void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double date);
+WEBCORE_EXPORT void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point);
 
 }
 

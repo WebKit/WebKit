@@ -278,6 +278,11 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
     }
 };
 
+template<> struct ArgumentCoder<std::chrono::system_clock::time_point> {
+    static void encode(ArgumentEncoder&, const std::chrono::system_clock::time_point&);
+    static bool decode(ArgumentDecoder&, std::chrono::system_clock::time_point&);
+};
+
 template<> struct ArgumentCoder<AtomicString> {
     static void encode(ArgumentEncoder&, const AtomicString&);
     static bool decode(ArgumentDecoder&, AtomicString&);

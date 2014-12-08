@@ -63,7 +63,7 @@ public:
     void getHostnamesWithCookies(std::function<void (API::Array*, CallbackBase::Error)>);
     void deleteCookiesForHostname(const String& hostname);
     void deleteAllCookies();
-    void deleteAllCookiesModifiedAfterDate(double);
+    void deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point);
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);

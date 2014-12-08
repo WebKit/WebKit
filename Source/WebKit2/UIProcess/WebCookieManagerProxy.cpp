@@ -129,9 +129,9 @@ void WebCookieManagerProxy::deleteAllCookies()
     context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
 }
 
-void WebCookieManagerProxy::deleteAllCookiesModifiedAfterDate(double date)
+void WebCookieManagerProxy::deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point time)
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedAfterDate(date));
+    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(time));
 }
 
 void WebCookieManagerProxy::startObservingCookieChanges()

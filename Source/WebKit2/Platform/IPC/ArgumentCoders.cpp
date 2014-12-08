@@ -32,6 +32,21 @@
 
 namespace IPC {
 
+void ArgumentCoder<std::chrono::system_clock::time_point>::encode(IPC::ArgumentEncoder& encoder, const std::chrono::system_clock::time_point& timePoint)
+{
+    encoder << static_cast<int64_t>(timePoint.time_since_epoch().count());
+}
+
+bool ArgumentCoder<std::chrono::system_clock::time_point>::decode(ArgumentDecoder& decoder, std::chrono::system_clock::time_point& result)
+{
+    int64_t time;
+    if (!decoder.decode(time))
+        return false;
+
+    result = std::chrono::system_clock::time_point(std::chrono::system_clock::duration(static_cast<std::chrono::system_clock::rep>(time)));
+    return true;
+}
+
 void ArgumentCoder<AtomicString>::encode(ArgumentEncoder& encoder, const AtomicString& atomicString)
 {
     encoder << atomicString.string();

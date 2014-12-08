@@ -61,7 +61,7 @@ private:
     void getHostnamesWithCookies(uint64_t callbackID);
     void deleteCookiesForHostname(const String&);
     void deleteAllCookies();
-    void deleteAllCookiesModifiedAfterDate(double date);
+    void deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point);
 
     void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(uint64_t callbackID);

@@ -1,5 +1,33 @@
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
+        Make deleting all cookies after a given date a little more sane
+        https://bugs.webkit.org/show_bug.cgi?id=139409
+
+        Reviewed by Antti Koivisto.
+
+        Change all the doubles to std::chrono::system_clock::time_points instead.
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<std::chrono::system_clock::time_point>::encode):
+        (IPC::ArgumentCoder<std::chrono::system_clock::time_point>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerDeleteAllCookiesModifiedAfterDate):
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedAfterDate): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedAfterDate): Deleted.
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
         Move the callback invocation outside of the loop.
 
         Rubber-stamped by Tim Horton.

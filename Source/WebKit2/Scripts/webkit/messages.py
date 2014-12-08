@@ -451,6 +451,7 @@ def headers_for_type(type):
         'WebKit::WebTouchEvent': ['"WebEvent.h"'],
         'WebKit::WebWheelEvent': ['"WebEvent.h"'],
         'WebKit::WebScriptMessageHandlerHandle': ['"WebScriptMessageHandler.h"'],
+        'std::chrono::system_clock::time_point': ['<chrono>'],
     }
 
     headers = []

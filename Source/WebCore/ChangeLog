@@ -1,3 +1,27 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Make deleting all cookies after a given date a little more sane
+        https://bugs.webkit.org/show_bug.cgi?id=139409
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.exp.in:
+        Update exports.
+
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/curl/CookieJarCurl.cpp:
+        * platform/network/soup/CookieJarSoup.cpp:
+        Rename deleteAllCookiesModifiedAfterDate to deleteAllCookiesModifiedSince and change it
+        to take an std::chrono::system_clock::time_point instead.
+
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookieStorage):
+        Helper function that returns an NSHTTPCookieStorage given a network session.
+
+        (WebCore::deleteAllCookiesModifiedSince):
+        Get the cookie storage from the network storage instead of just getting the global one.
+
 2014-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r176953, add an unreachable return to make GCC happy.

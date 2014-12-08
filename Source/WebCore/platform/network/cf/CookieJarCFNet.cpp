@@ -239,7 +239,7 @@ void deleteAllCookies(const NetworkStorageSession& session)
     CFHTTPCookieStorageDeleteAllCookies(session.cookieStorage().get());
 }
 
-void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double)
+void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point)
 {
 }
 

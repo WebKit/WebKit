@@ -58,7 +58,10 @@ void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManagerRef)
 
 void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieManagerRef, double date)
 {
-    toImpl(cookieManagerRef)->deleteAllCookiesModifiedAfterDate(date);
+    using namespace std::chrono;
+
+    auto time = system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date)));
+    toImpl(cookieManagerRef)->deleteAllCookiesModifiedSince(time);
 }
 
 void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy)

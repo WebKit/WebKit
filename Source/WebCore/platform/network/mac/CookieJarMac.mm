@@ -42,6 +42,8 @@ enum {
 
 @interface NSHTTPCookieStorage (Details)
 - (void)removeCookiesSinceDate:(NSDate *)date;
+- (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
+- (CFHTTPCookieStorageRef)_cookieStorage;
 @end
 
 namespace WebCore {
@@ -215,13 +217,24 @@ void deleteAllCookies(const NetworkStorageSession& session)
     wkDeleteAllHTTPCookies(session.cookieStorage().get());
 }
 
-void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession& session, double date)
+static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession& session)
 {
-    UNUSED_PARAM(session);
+    auto cookieStorage = session.cookieStorage();
+    if (!cookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cookieStorage)
+        return [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
-    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    if ([cookieStorage respondsToSelector:@selector(removeCookiesSinceDate:)])
-        [cookieStorage removeCookiesSinceDate:[NSDate dateWithTimeIntervalSince1970:date]];
+    return [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorage.get()] autorelease];
+}
+
+void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::chrono::system_clock::time_point timePoint)
+{
+    if (![NSHTTPCookieStorage instancesRespondToSelector:@selector(removeCookiesSinceDate:)])
+        return;
+
+    NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(timePoint.time_since_epoch()).count();
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
+
+    [cookieStorage(session) removeCookiesSinceDate:date];
 }
 
 }
