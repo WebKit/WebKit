@@ -36,7 +36,7 @@ template<typename T> class RefPtr;
 template<typename T> class Ref;
 template<typename T> class StringBuffer;
 
-template<typename T, unsigned inlineCapacity, typename OverflowHandler> class Vector;
+template<typename T, size_t inlineCapacity, typename OverflowHandler> class Vector;
 
 class AtomicString;
 class AtomicStringImpl;

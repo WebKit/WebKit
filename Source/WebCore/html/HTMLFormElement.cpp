@@ -510,7 +510,7 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
         HTMLElement::parseAttribute(name, value);
 }
 
-template<class T, unsigned inlineCapacity> static void removeFromVector(Vector<T*, inlineCapacity> & vec, T* item)
+template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T* item)
 {
     size_t size = vec.size();
     for (size_t i = 0; i != size; ++i)

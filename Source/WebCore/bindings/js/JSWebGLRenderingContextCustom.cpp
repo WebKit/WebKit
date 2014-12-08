@@ -424,7 +424,7 @@ JSValue JSWebGLRenderingContext::getVertexAttrib(ExecState* exec)
     return getObjectParameter(this, exec, kVertexAttrib);
 }
 
-template<typename T, unsigned inlineCapacity>
+template<typename T, size_t inlineCapacity>
 bool toVector(JSC::ExecState* exec, JSC::JSValue value, Vector<T, inlineCapacity>& vector)
 {
     if (!value.isObject())

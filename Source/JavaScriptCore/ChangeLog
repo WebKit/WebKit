@@ -1,3 +1,15 @@
+2014-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Revert r176293 & r176275
+
+        Unreviewed, revert r176293 & r176275 changing the Vector API to use unsigned type
+        instead of size_t. There is some disagreement regarding the long-term direction
+        of the API and we shouldn’t leave the API partly transitioned to unsigned type
+        while making a decision.
+
+        * bytecode/PreciseJumpTargets.cpp:
+        * replay/EncodedValue.h:
+
 2014-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove the unused WTF_USE_GCC_COMPUTED_GOTO_WORKAROUND after r129453.

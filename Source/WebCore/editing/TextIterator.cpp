@@ -100,8 +100,8 @@ private:
     FindOptions m_options;
 
     Vector<UChar> m_buffer;
-    unsigned m_overlap;
-    unsigned m_prefixLength;
+    size_t m_overlap;
+    size_t m_prefixLength;
     bool m_atBreak;
     bool m_needsMoreContext;
 
@@ -113,7 +113,7 @@ private:
 
 private:
     void append(UChar, bool isCharacterStart);
-    unsigned length() const;
+    size_t length() const;
 
     String m_target;
     FindOptions m_options;
@@ -2010,12 +2010,12 @@ inline size_t SearchBuffer::append(StringView text)
         m_atBreak = false;
     } else if (m_buffer.size() == m_buffer.capacity()) {
         memcpy(m_buffer.data(), m_buffer.data() + m_buffer.size() - m_overlap, m_overlap * sizeof(UChar));
-        m_prefixLength -= std::min(m_prefixLength, static_cast<unsigned>(m_buffer.size()) - m_overlap);
+        m_prefixLength -= std::min(m_prefixLength, m_buffer.size() - m_overlap);
         m_buffer.shrink(m_overlap);
     }
 
-    unsigned oldLength = m_buffer.size();
-    unsigned usableLength = std::min(m_buffer.capacity() - oldLength, text.length());
+    size_t oldLength = m_buffer.size();
+    size_t usableLength = std::min<size_t>(m_buffer.capacity() - oldLength, text.length());
     ASSERT(usableLength);
     m_buffer.grow(oldLength + usableLength);
     for (unsigned i = 0; i < usableLength; ++i)
@@ -2038,13 +2038,13 @@ inline void SearchBuffer::prependContext(StringView text)
 
     m_atBreak = false;
 
-    unsigned wordBoundaryContextStart = text.length();
+    size_t wordBoundaryContextStart = text.length();
     if (wordBoundaryContextStart) {
         U16_BACK_1(text, 0, wordBoundaryContextStart);
         wordBoundaryContextStart = startOfLastWordBoundaryContext(text.substring(0, wordBoundaryContextStart));
     }
 
-    unsigned usableLength = std::min(m_buffer.capacity() - m_prefixLength, text.length() - wordBoundaryContextStart);
+    size_t usableLength = std::min(m_buffer.capacity() - m_prefixLength, text.length() - wordBoundaryContextStart);
     WTF::append(m_buffer, text.substring(text.length() - usableLength, usableLength));
     m_prefixLength += usableLength;
 
@@ -2190,7 +2190,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
 inline size_t SearchBuffer::search(size_t& start)
 {
-    unsigned size = m_buffer.size();
+    size_t size = m_buffer.size();
     if (m_atBreak) {
         if (!size)
             return 0;
@@ -2221,7 +2221,7 @@ nextMatch:
     // The same match may appear later, matching more characters,
     // possibly including a combining character that's not yet in the buffer.
     if (!m_atBreak && static_cast<size_t>(matchStart) >= size - m_overlap) {
-        unsigned overlap = m_overlap;
+        size_t overlap = m_overlap;
         if (m_options & AtWordStarts) {
             // Ensure that there is sufficient context before matchStart the next time around for
             // determining if it is at a word boundary.
@@ -2358,11 +2358,11 @@ inline size_t SearchBuffer::search(size_t& start)
 // Returns the number of characters that were appended to the buffer (what we are searching in).
 // That's not necessarily the same length as the passed-in target string, because case folding
 // can make two strings match even though they're not the same length.
-unsigned SearchBuffer::length() const
+size_t SearchBuffer::length() const
 {
-    unsigned bufferSize = m_target.length();
-    unsigned length = 0;
-    for (unsigned i = 0; i < bufferSize; ++i)
+    size_t bufferSize = m_target.length();
+    size_t length = 0;
+    for (size_t i = 0; i < bufferSize; ++i)
         length += m_isCharacterStartBuffer[i];
     return length;
 }

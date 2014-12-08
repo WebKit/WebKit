@@ -48,7 +48,7 @@ public:
     {
     }
 
-    template<unsigned inlineCapacity>
+    template<size_t inlineCapacity>
     DataReference(const Vector<uint8_t, inlineCapacity>& vector)
         : m_data(vector.data())
         , m_size(vector.size())

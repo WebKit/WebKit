@@ -1,3 +1,29 @@
+2014-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Revert r176293 & r176275
+
+        Unreviewed, revert r176293 & r176275 changing the Vector API to use unsigned type
+        instead of size_t. There is some disagreement regarding the long-term direction
+        of the API and we shouldn’t leave the API partly transitioned to unsigned type
+        while making a decision.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsArray):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * cssjit/SelectorCompiler.cpp:
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::append):
+        (WebCore::SearchBuffer::prependContext):
+        (WebCore::SearchBuffer::search):
+        (WebCore::SearchBuffer::length):
+        * html/HTMLFormElement.cpp:
+        (WebCore::removeFromVector):
+        * html/parser/HTMLParserIdioms.h:
+        * html/parser/XSSAuditor.cpp:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::duplicateDataBufferIfNecessary):
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Make deleting all cookies after a given date a little more sane

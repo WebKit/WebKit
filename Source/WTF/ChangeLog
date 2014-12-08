@@ -1,3 +1,61 @@
+2014-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Revert r176293 & r176275
+
+        Unreviewed, revert r176293 & r176275 changing the Vector API to use unsigned type
+        instead of size_t. There is some disagreement regarding the long-term direction
+        of the API and we shouldn’t leave the API partly transitioned to unsigned type
+        while making a decision.
+
+        * wtf/Forward.h:
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::compare):
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::shouldReallocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (WTF::VectorBufferBase::capacity):
+        (WTF::VectorBufferBase::VectorBufferBase):
+        (WTF::VectorBuffer::VectorBuffer):
+        (WTF::VectorBuffer::allocateBuffer):
+        (WTF::VectorBuffer::tryAllocateBuffer):
+        (WTF::VectorBuffer::shouldReallocateBuffer):
+        (WTF::VectorBuffer::reallocateBuffer):
+        (WTF::VectorBuffer::swap):
+        (WTF::VectorBuffer::swapInlineBuffer):
+        (WTF::VectorBuffer::swapInlineBuffers):
+        (WTF::Vector::Vector):
+        (WTF::Vector::capacity):
+        (WTF::Vector::at):
+        (WTF::Vector::operator[]):
+        (WTF::OverflowHandler>::find):
+        (WTF::OverflowHandler>::reverseFind):
+        (WTF::OverflowHandler>::fill):
+        (WTF::OverflowHandler>::expandCapacity):
+        (WTF::OverflowHandler>::tryExpandCapacity):
+        (WTF::OverflowHandler>::resize):
+        (WTF::OverflowHandler>::resizeToFit):
+        (WTF::OverflowHandler>::shrink):
+        (WTF::OverflowHandler>::grow):
+        (WTF::OverflowHandler>::reserveCapacity):
+        (WTF::OverflowHandler>::tryReserveCapacity):
+        (WTF::OverflowHandler>::reserveInitialCapacity):
+        (WTF::OverflowHandler>::shrinkCapacity):
+        (WTF::OverflowHandler>::append):
+        (WTF::OverflowHandler>::tryAppend):
+        (WTF::OverflowHandler>::insert):
+        (WTF::OverflowHandler>::insertVector):
+        (WTF::OverflowHandler>::remove):
+        (WTF::OverflowHandler>::reverse):
+        (WTF::OverflowHandler>::checkConsistency):
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::adopt):
+        (WTF::equalIgnoringNullity):
+        * wtf/text/StringView.h:
+        (WTF::append):
+        * wtf/text/WTFString.h:
+
 2014-12-07  Andreas Kling  <akling@apple.com>
 
         Use more PassRef in AtomicString.

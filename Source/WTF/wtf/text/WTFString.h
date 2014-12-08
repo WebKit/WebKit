@@ -97,7 +97,7 @@ public:
     // which will sometimes return a null string when vector.data() is null
     // which can only occur for vectors without inline capacity.
     // See: https://bugs.webkit.org/show_bug.cgi?id=109792
-    template<unsigned inlineCapacity, typename OverflowHandler>
+    template<size_t inlineCapacity, typename OverflowHandler>
     explicit String(const Vector<UChar, inlineCapacity, OverflowHandler>&);
 
     // Construct a string with UTF-16 data, from a null-terminated source.
@@ -141,7 +141,7 @@ public:
 
     static String adopt(StringBuffer<LChar>& buffer) { return StringImpl::adopt(buffer); }
     static String adopt(StringBuffer<UChar>& buffer) { return StringImpl::adopt(buffer); }
-    template<typename CharacterType, unsigned inlineCapacity, typename OverflowHandler>
+    template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler>
     static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler>& vector) { return StringImpl::adopt(vector); }
 
     bool isNull() const { return !m_impl; }
@@ -407,7 +407,7 @@ public:
 #endif
 
     WTF_EXPORT_STRING_API static String make8BitFrom16BitSource(const UChar*, size_t);
-    template<unsigned inlineCapacity>
+    template<size_t inlineCapacity>
     static String make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>& buffer)
     {
         return make8BitFrom16BitSource(buffer.data(), buffer.size());
@@ -472,9 +472,9 @@ inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(),
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const LChar* a, const String& b) { return equal(a, b.impl()); }
 inline bool operator==(const char* a, const String& b) { return equal(reinterpret_cast<const LChar*>(a), b.impl()); }
-template<unsigned inlineCapacity>
+template<size_t inlineCapacity>
 inline bool operator==(const Vector<char, inlineCapacity>& a, const String& b) { return equal(b.impl(), a.data(), a.size()); }
-template<unsigned inlineCapacity>
+template<size_t inlineCapacity>
 inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
 
@@ -483,9 +483,9 @@ inline bool operator!=(const String& a, const LChar* b) { return !equal(a.impl()
 inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
 inline bool operator!=(const LChar* a, const String& b) { return !equal(a, b.impl()); }
 inline bool operator!=(const char* a, const String& b) { return !equal(reinterpret_cast<const LChar*>(a), b.impl()); }
-template<unsigned inlineCapacity>
+template<size_t inlineCapacity>
 inline bool operator!=(const Vector<char, inlineCapacity>& a, const String& b) { return !(a == b); }
-template<unsigned inlineCapacity>
+template<size_t inlineCapacity>
 inline bool operator!=(const String& a, const Vector<char, inlineCapacity>& b) { return b != a; }
 
 inline bool equalIgnoringCase(const String& a, const String& b) { return equalIgnoringCase(a.impl(), b.impl()); }
@@ -501,7 +501,7 @@ inline bool equalPossiblyIgnoringCase(const String& a, const String& b, bool ign
 
 inline bool equalIgnoringNullity(const String& a, const String& b) { return equalIgnoringNullity(a.impl(), b.impl()); }
 
-template<unsigned inlineCapacity>
+template<size_t inlineCapacity>
 inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, const String& b) { return equalIgnoringNullity(a, b.impl()); }
 
 inline bool operator!(const String& str) { return str.isNull(); }
@@ -510,7 +510,7 @@ inline void swap(String& a, String& b) { a.swap(b); }
 
 // Definitions of string operations
 
-template<unsigned inlineCapacity, typename OverflowHandler>
+template<size_t inlineCapacity, typename OverflowHandler>
 String::String(const Vector<UChar, inlineCapacity, OverflowHandler>& vector)
     : m_impl(vector.size() ? StringImpl::create(vector.data(), vector.size()) : *StringImpl::empty())
 {

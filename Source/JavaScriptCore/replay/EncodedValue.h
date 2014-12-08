@@ -104,7 +104,7 @@ struct EncodingTraits {
     static bool decodeValue(EncodedValue&, std::unique_ptr<DecodedType>&);
 };
 
-template<typename T, unsigned inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
 struct EncodingTraits<Vector<T, inlineCapacity, OverflowHandler>> {
     typedef Vector<typename EncodingTraits<T>::DecodedType, inlineCapacity, OverflowHandler> DecodedType;
 
