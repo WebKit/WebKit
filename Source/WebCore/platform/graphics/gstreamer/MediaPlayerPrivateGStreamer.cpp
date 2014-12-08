@@ -1828,6 +1828,10 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
     if (!m_preservesPitch)
         return m_autoAudioSink.get();
 
+    // On 1.4.2 and newer we use the audio-filter property instead.
+    if (webkitGstCheckVersion(1, 4, 2))
+        return m_autoAudioSink.get();
+
     GstElement* scale = gst_element_factory_make("scaletempo", 0);
     if (!scale) {
         GST_WARNING("Failed to create scaletempo");
@@ -1898,6 +1902,18 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 #endif
 
     g_object_set(m_playBin.get(), "video-sink", createVideoSink(), "audio-sink", createAudioSink(), nullptr);
+
+    // On 1.4.2 and newer we use the audio-filter property instead.
+    // See https://bugzilla.gnome.org/show_bug.cgi?id=735748 for
+    // the reason for using >= 1.4.2 instead of >= 1.4.0.
+    if (m_preservesPitch && webkitGstCheckVersion(1, 4, 2)) {
+        GstElement* scale = gst_element_factory_make("scaletempo", 0);
+
+        if (!scale)
+            GST_WARNING("Failed to create scaletempo");
+        else
+            g_object_set(m_playBin.get(), "audio-filter", scale, nullptr);
+    }
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
     if (videoSinkPad)

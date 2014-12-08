@@ -1,5 +1,22 @@
 2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
 
+        [GStreamer] Use audio-filter property on GStreamer >= 1.4.2
+        https://bugs.webkit.org/show_bug.cgi?id=139360
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        Since 1.4.0 there is an audio-filter property we can use to place
+        the pitch-preserving filter at a more canonical position inside
+        the pipeline. Since 1.4.2 this property also handles all necessary
+        conversions for us.
+        This simplifies our sink code a bit because we don't have to create
+        a custom sink bin anymore.
+
+2014-12-08  Sebastian Dröge  <sebastian@centricular.com>
+
         [GStreamer] Add video/flv to the list of supported mimetypes
         https://bugs.webkit.org/show_bug.cgi?id=139344
 
