@@ -1,3 +1,45 @@
+2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Inline elements whose parents have small line-height are laid out too low
+        https://bugs.webkit.org/show_bug.cgi?id=139375
+
+        Reviewed by Dave Hyatt.
+
+        This is a port of the Blink patch at
+        https://src.chromium.org/viewvc/blink?revision=155253&view=revision.
+
+        When laying out inline elements, we try to align leaf children's parents'
+        baselines across the entire line. However, if you set line-height: 0px on a
+        span, the entire InlineBox which represents that span will have a height of
+        0, and therefore be laid out entirely on the baseline. In addition, we will
+        try to vertically center the leaf text in the span's InlineBox, which means
+        the leaf text will be vertically centered on the baseline. All the other
+        major browsers do not have this behavior; instead, they line up the boxes
+        as you would expect.
+
+        This bug led to a rendering problem on the front page of the New York Times.
+
+        Here is the ChangeLog from the Blink patch:
+
+        Fix baseline position when it is outside the element's box
+
+        Specifically, we shouldn't force the baseline to be inside the element. IE
+        and FF don't do this, and it's incompatible with the CSS spec:
+        
+        "The baseline of an 'inline-block' is the baseline of its last line box in
+        the normal flow, unless it has either no in-flow line boxes or if its
+        'overflow' property has a computed value other than 'visible', in which case
+        the baseline is the bottom margin edge."
+        -- http://www.w3.org/TR/CSS21/visudet.html#leading
+        
+        It doesn't have a special case for "baseline is outside of the element's
+        margin box".
+        
+        Test: fast/text/small-line-height.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition):
+
 2014-12-08  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] YouTube plug-in replacement should support partial urls
