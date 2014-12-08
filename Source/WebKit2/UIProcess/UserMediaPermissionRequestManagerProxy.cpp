@@ -38,9 +38,9 @@ void UserMediaPermissionRequestManagerProxy::invalidateRequests()
     m_pendingRequests.clear();
 }
 
-PassRefPtr<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, bool audio, bool video)
+PassRefPtr<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, bool requiresAudio, bool requiresVideo)
 {
-    RefPtr<UserMediaPermissionRequestProxy> request = UserMediaPermissionRequestProxy::create(*this, userMediaID, audio, video);
+    RefPtr<UserMediaPermissionRequestProxy> request = UserMediaPermissionRequestProxy::create(*this, userMediaID, requiresAudio, requiresVideo);
     m_pendingRequests.add(userMediaID, request.get());
     return request.release();
 }

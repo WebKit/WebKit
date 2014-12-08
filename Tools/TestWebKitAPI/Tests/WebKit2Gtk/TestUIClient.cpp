@@ -197,6 +197,12 @@ public:
         g_assert(WEBKIT_IS_PERMISSION_REQUEST(request));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
 
+        if (test->m_verifyMediaTypes && WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request)) {
+            WebKitUserMediaPermissionRequest* userMediaRequest = WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request);
+            g_assert(webkit_user_media_permission_is_for_audio_device(userMediaRequest) == test->m_expectedAudioMedia);
+            g_assert(webkit_user_media_permission_is_for_video_device(userMediaRequest) == test->m_expectedVideoMedia);
+        }
+
         if (test->m_allowPermissionRequests)
             webkit_permission_request_allow(request);
         else
@@ -209,6 +215,9 @@ public:
         : m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
         , m_scriptDialogConfirmed(true)
         , m_allowPermissionRequests(false)
+        , m_verifyMediaTypes(false)
+        , m_expectedAudioMedia(false)
+        , m_expectedVideoMedia(false)
         , m_mouseTargetModifiers(0)
     {
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
@@ -288,6 +297,9 @@ public:
     WebKitScriptDialogType m_scriptDialogType;
     bool m_scriptDialogConfirmed;
     bool m_allowPermissionRequests;
+    gboolean m_verifyMediaTypes;
+    gboolean m_expectedAudioMedia;
+    gboolean m_expectedVideoMedia;
     WindowProperties m_windowProperties;
     HashSet<WTF::String> m_windowPropertiesChanged;
     GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
@@ -620,7 +632,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
 
 }
 
-static void testWebViewPermissionRequests(UIClientTest* test, gconstpointer)
+static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstpointer)
 {
     // Some versions of geoclue give a runtime warning because it tries
     // to register the error quark twice. See https://bugs.webkit.org/show_bug.cgi?id=89858.
@@ -659,6 +671,75 @@ static void testWebViewPermissionRequests(UIClientTest* test, gconstpointer)
     result = webkit_web_view_get_title(test->m_webView);
     g_assert_cmpstr(result, !=, "1");
     test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
+}
+
+static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
+{
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    gboolean enabled = webkit_settings_get_enable_media_stream(settings);
+    webkit_settings_set_enable_media_stream(settings, TRUE);
+
+    test->showInWindowAndWaitUntilMapped();
+    static const char* userMediaRequestHTML =
+        "<html>"
+        "  <script>"
+        "  function runTest()"
+        "  {"
+        "    navigator.webkitGetUserMedia({audio: true, video: true},"
+        "                                 function(s) { document.title = \"OK\" },"
+        "                                 function(e) { document.title = e.name });"
+        "  }"
+        "  </script>"
+        "  <body onload='runTest();'></body>"
+        "</html>";
+
+    test->m_verifyMediaTypes = TRUE;
+    test->m_expectedAudioMedia = TRUE;
+    test->m_expectedVideoMedia = TRUE;
+
+    // Test denying a permission request.
+    test->m_allowPermissionRequests = false;
+    test->loadHtml(userMediaRequestHTML, nullptr);
+    test->waitUntilTitleChangedTo("PermissionDeniedError");
+
+    // Test allowing a permission request.
+    test->m_allowPermissionRequests = true;
+    test->loadHtml(userMediaRequestHTML, nullptr);
+    test->waitUntilTitleChangedTo("OK");
+
+    webkit_settings_set_enable_media_stream(settings, enabled);
+}
+
+static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
+{
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    gboolean enabled = webkit_settings_get_enable_media_stream(settings);
+    webkit_settings_set_enable_media_stream(settings, TRUE);
+
+    test->showInWindowAndWaitUntilMapped();
+    static const char* userMediaRequestHTML =
+        "<html>"
+        "  <script>"
+        "  function runTest()"
+        "  {"
+        "    navigator.webkitGetUserMedia({audio: true, video: false},"
+        "                                 function(s) { document.title = \"OK\" },"
+        "                                 function(e) { document.title = e.name });"
+        "  }"
+        "  </script>"
+        "  <body onload='runTest();'></body>"
+        "</html>";
+
+    test->m_verifyMediaTypes = TRUE;
+    test->m_expectedAudioMedia = TRUE;
+    test->m_expectedVideoMedia = FALSE;
+
+    // Test denying a permission request.
+    test->m_allowPermissionRequests = false;
+    test->loadHtml(userMediaRequestHTML, nullptr);
+    test->waitUntilTitleChangedTo("PermissionDeniedError");
+
+    webkit_settings_set_enable_media_stream(settings, enabled);
 }
 
 class FileChooserTest: public UIClientTest {
@@ -785,7 +866,9 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
-    UIClientTest::add("WebKitWebView", "permission-requests", testWebViewPermissionRequests);
+    UIClientTest::add("WebKitWebView", "geolocation-permission-requests", testWebViewGeolocationPermissionRequests);
+    UIClientTest::add("WebKitWebView", "usermedia-permission-requests", testWebViewUserMediaPermissionRequests);
+    UIClientTest::add("WebKitWebView", "audio-usermedia-permission-request", testWebViewAudioOnlyUserMediaPermissionRequests);
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
 }
 

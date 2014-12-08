@@ -1,3 +1,31 @@
+2014-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] UserMedia Permission Request API
+        https://bugs.webkit.org/show_bug.cgi?id=136449
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake: GTK-specific new files.
+        * UIProcess/API/gtk/WebKitUIClient.cpp:  DecidePolicy handler
+        implementation for UserMediaPermissionRequest.
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp: Added,
+        WebKitGTK API for UserMediaPermissionRequest, very similar to the
+        one used for Geolocation.
+        (webkitUserMediaPermissionRequestAllow):
+        (webkitUserMediaPermissionRequestDeny):
+        (webkit_permission_request_interface_init):
+        (webkitUserMediaPermissionRequestDispose):
+        (webkit_user_media_permission_get_media_types):
+        (webkitUserMediaPermissionRequestGetProperty):
+        (webkit_user_media_permission_request_class_init):
+        (webkitUserMediaPermissionRequestCreate):
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h: Added.
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequestPrivate.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Expose new API
+        in documentation.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ditto.
+        * UIProcess/API/gtk/webkit2.h: Expose UserMediaPermissionRequest API.
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Add a stubbed out method for clearing out the website data store

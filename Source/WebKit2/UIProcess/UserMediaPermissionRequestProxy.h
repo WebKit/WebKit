@@ -20,7 +20,6 @@
 #define UserMediaPermissionRequestProxy_h
 
 #include "APIObject.h"
-#include "ImmutableDictionary.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
@@ -29,9 +28,9 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static PassRefPtr<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool audio, bool video)
+    static PassRefPtr<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo)
     {
-        return adoptRef(new UserMediaPermissionRequestProxy(manager, userMediaID, audio, video));
+        return adoptRef(new UserMediaPermissionRequestProxy(manager, userMediaID, requiresAudio, requiresVideo));
     }
 
     void allow();
@@ -39,14 +38,16 @@ public:
 
     void invalidate();
 
-    PassRefPtr<ImmutableDictionary> mediaParameters() const { return m_mediaParameters; }
+    bool requiresAudio() const { return m_requiresAudio; }
+    bool requiresVideo() const { return m_requiresVideo; }
 
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, bool audio, bool video);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, bool requiresAudio, bool requiresVideo);
 
     UserMediaPermissionRequestManagerProxy& m_manager;
     uint64_t m_userMediaID;
-    RefPtr<ImmutableDictionary> m_mediaParameters;
+    bool m_requiresAudio;
+    bool m_requiresVideo;
 };
 
 } // namespace WebKit

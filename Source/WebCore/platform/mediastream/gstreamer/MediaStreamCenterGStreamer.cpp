@@ -59,14 +59,25 @@ MediaStreamCenterGStreamer::~MediaStreamCenterGStreamer()
 {
 }
 
-void MediaStreamCenterGStreamer::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
+void MediaStreamCenterGStreamer::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
 {
-    notImplemented();
+    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
+    // FIXME: Actually do constraints validation. The MediaConstraints
+    // need to comply with the available audio/video device(s)
+    // capabilities. See bug #123345.
+    client->constraintsValidated();
 }
     
-void MediaStreamCenterGStreamer::createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
+void MediaStreamCenterGStreamer::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
 {
-    notImplemented();
+    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
+    ASSERT(client);
+
+    Vector<RefPtr<MediaStreamSource>> audioSources;
+    Vector<RefPtr<MediaStreamSource>> videoSources;
+    // FIXME: fill source vectors, see bug #110150.
+    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
+
 }
 
 bool MediaStreamCenterGStreamer::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)

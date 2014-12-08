@@ -255,7 +255,7 @@ static void backForwadlistChanged(WebKitBackForwardList *backForwadlist, WebKitB
     browserWindowUpdateNavigationActions(window, backForwadlist);
 }
 
-static void geolocationRequestDialogCallback(GtkDialog *dialog, gint response, WebKitPermissionRequest *request)
+static void permissionRequestDialogCallback(GtkDialog *dialog, gint response, WebKitPermissionRequest *request)
 {
     switch (response) {
     case GTK_RESPONSE_YES:
@@ -408,19 +408,38 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
 
 static gboolean webViewDecidePermissionRequest(WebKitWebView *webView, WebKitPermissionRequest *request, BrowserWindow *window)
 {
-    if (!WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST(request))
+    const gchar *dialog_title = NULL;
+    const gchar *dialog_message = NULL;
+    const gchar *dialog_message_format = NULL;
+
+    if (WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST(request)) {
+        dialog_title = "Geolocation request";
+        dialog_message_format = "%s";
+        dialog_message = "Allow geolocation request?";
+    } else if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request)) {
+        dialog_message_format = "Allow access to %s device?";
+        gboolean is_for_audio_device = webkit_user_media_permission_is_for_audio_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
+        gboolean is_for_video_device = webkit_user_media_permission_is_for_video_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
+        dialog_title = "UserMedia request";
+        if (is_for_audio_device) {
+            if (is_for_video_device)
+                dialog_message = "audio/video";
+            else
+                dialog_message = "audio";
+        } else if (is_for_video_device)
+            dialog_message = "video";
+    } else
         return FALSE;
 
     GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window),
-                                               GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                               GTK_MESSAGE_QUESTION,
-                                               GTK_BUTTONS_YES_NO,
-                                               "Geolocation request");
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_QUESTION,
+        GTK_BUTTONS_YES_NO,
+        "%s", dialog_title);
 
-    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "Allow geolocation request?");
-    g_signal_connect(dialog, "response", G_CALLBACK(geolocationRequestDialogCallback), g_object_ref(request));
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), dialog_message_format, dialog_message);
+    g_signal_connect(dialog, "response", G_CALLBACK(permissionRequestDialogCallback), g_object_ref(request));
     gtk_widget_show(dialog);
-
     return TRUE;
 }
 

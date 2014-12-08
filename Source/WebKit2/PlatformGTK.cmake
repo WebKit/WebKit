@@ -206,6 +206,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitUserContentManager.h
     UIProcess/API/gtk/WebKitUserContentManagerPrivate.h
     UIProcess/API/gtk/WebKitUserContentManager.cpp
+    UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp
+    UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h
+    UIProcess/API/gtk/WebKitUserMediaPermissionRequestPrivate.h
     UIProcess/API/gtk/WebKitVersion.cpp
     UIProcess/API/gtk/WebKitVersion.h.in
     UIProcess/API/gtk/WebKitWebContext.cpp
@@ -361,6 +364,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitURISchemeRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitUserContent.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitUserContentManager.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitWebContext.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitWebInspector.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitWebResource.h

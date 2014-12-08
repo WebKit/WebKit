@@ -19,20 +19,17 @@
 #include "config.h"
 #include "UserMediaPermissionRequestProxy.h"
 
-#include "APINumber.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool audio, bool video)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo)
     : m_manager(manager)
     , m_userMediaID(userMediaID)
+    , m_requiresAudio(requiresAudio)
+    , m_requiresVideo(requiresVideo)
 {
-    HashMap<String, RefPtr<API::Object>> parametersMap;
-    parametersMap.add(ASCIILiteral("audio"), API::Boolean::create(audio));
-    parametersMap.add(ASCIILiteral("video"), API::Boolean::create(video));
-    m_mediaParameters = ImmutableDictionary::create(WTF::move(parametersMap));
 }
 
 void UserMediaPermissionRequestProxy::allow()

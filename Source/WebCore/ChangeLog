@@ -1,3 +1,19 @@
+2014-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] UserMedia Permission Request API
+        https://bugs.webkit.org/show_bug.cgi?id=136449
+
+        Reviewed by Carlos Garcia Campos.
+
+        Very basic constraints validation support in the GStreamer
+        MediaStreamCenter. This is needed so the GTK C API tests using the
+        getUserMedia() API would not time out.
+
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp:
+        (WebCore::MediaStreamCenterGStreamer::~MediaStreamCenterGStreamer):
+        (WebCore::MediaStreamCenterGStreamer::validateRequestConstraints):
+        (WebCore::MediaStreamCenterGStreamer::createMediaStream):
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Remove ResourceHandle::loadsBlocked()

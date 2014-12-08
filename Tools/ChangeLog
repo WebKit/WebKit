@@ -1,3 +1,19 @@
+2014-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] UserMedia Permission Request API
+        https://bugs.webkit.org/show_bug.cgi?id=136449
+
+        Reviewed by Carlos Garcia Campos.
+
+        The GTK version of the MiniBrowser has gained UserMedia permission
+        request support.
+
+        * MiniBrowser/gtk/BrowserWindow.c: Show a popup when the page
+        requires user permission to access audio/video devices.
+        (permissionRequestDialogCallback):
+        (webViewDecidePermissionRequest):
+        (geolocationRequestDialogCallback): Deleted.
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Add a stubbed out method for clearing out the website data store
