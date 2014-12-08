@@ -1,3 +1,39 @@
+2014-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [CoordinatedGraphics] Change the namespace of CoordinatedBackingStore and CoordinatedGraphicsScene
+        https://bugs.webkit.org/show_bug.cgi?id=139372
+
+        Reviewed by Gyuyoung Kim.
+
+        CoordinatedBackingStore and CoordinatedGraphicsScene should be declared in the WebKit namespace
+        instead of WebCore namespace.
+
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h:
+        (WebKit::CoordinatedBackingStoreTile::CoordinatedBackingStoreTile):
+        (WebKit::CoordinatedBackingStore::rect):
+        (WebCore::CoordinatedBackingStoreTile::CoordinatedBackingStoreTile): Deleted.
+        (WebCore::CoordinatedBackingStore::rect): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        (WebKit::CoordinatedGraphicsScene::setViewBackgroundColor):
+        (WebKit::CoordinatedGraphicsScene::viewBackgroundColor):
+        (WebKit::CoordinatedGraphicsScene::layerByID):
+        (WebKit::CoordinatedGraphicsScene::rootLayer):
+        (WebCore::CoordinatedGraphicsScene::setViewBackgroundColor): Deleted.
+        (WebCore::CoordinatedGraphicsScene::viewBackgroundColor): Deleted.
+        (WebCore::CoordinatedGraphicsScene::layerByID): Deleted.
+        (WebCore::CoordinatedGraphicsScene::rootLayer): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (WebKit::CoordinatedLayerTreeHostProxy::coordinatedGraphicsScene):
+        * UIProcess/CoordinatedGraphics/WKCoordinatedSceneAPICast.h:
+        (WebKit::toImpl):
+        (WebKit::toAPI):
+        (toImpl): Deleted.
+        (toAPI): Deleted.
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2014-12-07  Dan Bernstein  <mitz@apple.com>
 
         Introduce and deploy a function that allocates and returns an instance of a soft-linked class

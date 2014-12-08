@@ -37,7 +37,7 @@ namespace WebKit {
 
 class CoordinatedDrawingAreaProxy;
 
-class CoordinatedLayerTreeHostProxy : public WebCore::CoordinatedGraphicsSceneClient, public IPC::MessageReceiver {
+class CoordinatedLayerTreeHostProxy : public CoordinatedGraphicsSceneClient, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -47,7 +47,7 @@ public:
     void commitCoordinatedGraphicsState(const WebCore::CoordinatedGraphicsState&);
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);
-    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene() const { return m_scene.get(); }
+    CoordinatedGraphicsScene* coordinatedGraphicsScene() const { return m_scene.get(); }
 
     virtual void updateViewport() override;
     virtual void renderNextFrame() override;
@@ -62,7 +62,7 @@ protected:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     CoordinatedDrawingAreaProxy* m_drawingAreaProxy;
-    RefPtr<WebCore::CoordinatedGraphicsScene> m_scene;
+    RefPtr<CoordinatedGraphicsScene> m_scene;
     WebCore::FloatRect m_lastSentVisibleRect;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
 };

@@ -22,29 +22,29 @@
 #define CoordinatedGraphicsScene_h
 
 #if USE(COORDINATED_GRAPHICS)
-#include "GraphicsContext.h"
-#include "GraphicsLayer.h"
-#include "GraphicsLayerAnimation.h"
-#include "GraphicsSurface.h"
-#include "IntRect.h"
-#include "IntSize.h"
-#include "TextureMapper.h"
-#include "TextureMapperBackingStore.h"
-#include "TextureMapperFPSCounter.h"
-#include "TextureMapperLayer.h"
-#include "Timer.h"
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/CoordinatedSurface.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerAnimation.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/TextureMapper.h>
+#include <WebCore/TextureMapperBackingStore.h>
+#include <WebCore/TextureMapperFPSCounter.h>
+#include <WebCore/TextureMapperLayer.h>
+#include <WebCore/Timer.h>
 #include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
 #if USE(GRAPHICS_SURFACE)
-#include "TextureMapperSurfaceBackingStore.h"
+#include <WebCore/GraphicsSurface.h>
+#include <WebCore/TextureMapperSurfaceBackingStore.h>
 #endif
 
-namespace WebCore {
+namespace WebKit {
 
 class CoordinatedBackingStore;
 
@@ -54,21 +54,21 @@ public:
     virtual void purgeBackingStores() = 0;
     virtual void renderNextFrame() = 0;
     virtual void updateViewport() = 0;
-    virtual void commitScrollOffset(uint32_t layerID, const IntSize& offset) = 0;
+    virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
 };
 
-class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public TextureMapperLayer::ScrollingClient {
+class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public WebCore::TextureMapperLayer::ScrollingClient {
 public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
-    void paintToCurrentGLContext(const TransformationMatrix&, float, const FloatRect&, const Color& backgroundColor, bool drawsBackground, const FloatPoint&, TextureMapper::PaintFlags = 0);
-    void paintToGraphicsContext(PlatformGraphicsContext*, const Color& backgroundColor, bool drawsBackground);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, const WebCore::FloatPoint&, WebCore::TextureMapper::PaintFlags = 0);
+    void paintToGraphicsContext(PlatformGraphicsContext*, const WebCore::Color& backgroundColor, bool drawsBackground);
     void detach();
     void appendUpdate(std::function<void()>);
 
     WebCore::TextureMapperLayer* findScrollableContentsLayerAt(const WebCore::FloatPoint&);
 
-    virtual void commitScrollOffset(uint32_t layerID, const IntSize& offset);
+    virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
     // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.
@@ -77,113 +77,113 @@ public:
     bool isActive() const { return m_isActive; }
     void setActive(bool);
 
-    void commitSceneState(const CoordinatedGraphicsState&);
+    void commitSceneState(const WebCore::CoordinatedGraphicsState&);
 
-    void setViewBackgroundColor(const Color& color) { m_viewBackgroundColor = color; }
-    Color viewBackgroundColor() const { return m_viewBackgroundColor; }
+    void setViewBackgroundColor(const WebCore::Color& color) { m_viewBackgroundColor = color; }
+    WebCore::Color viewBackgroundColor() const { return m_viewBackgroundColor; }
 
 private:
-    void setRootLayerID(CoordinatedLayerID);
-    void createLayers(const Vector<CoordinatedLayerID>&);
-    void deleteLayers(const Vector<CoordinatedLayerID>&);
-    void setLayerState(CoordinatedLayerID, const CoordinatedGraphicsLayerState&);
-    void setLayerChildrenIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void updateTilesIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void createTilesIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void removeTilesIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void setLayerFiltersIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void setLayerAnimationsIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
+    void setRootLayerID(WebCore::CoordinatedLayerID);
+    void createLayers(const Vector<WebCore::CoordinatedLayerID>&);
+    void deleteLayers(const Vector<WebCore::CoordinatedLayerID>&);
+    void setLayerState(WebCore::CoordinatedLayerID, const WebCore::CoordinatedGraphicsLayerState&);
+    void setLayerChildrenIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void updateTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void createTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void removeTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void setLayerFiltersIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void setLayerAnimationsIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
 #if USE(GRAPHICS_SURFACE)
-    void createPlatformLayerIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void syncPlatformLayerIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
-    void destroyPlatformLayerIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
+    void createPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void syncPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
+    void destroyPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
 #endif
-    void setLayerRepaintCountIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
+    void setLayerRepaintCountIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
 
-    void syncUpdateAtlases(const CoordinatedGraphicsState&);
-    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>);
+    void syncUpdateAtlases(const WebCore::CoordinatedGraphicsState&);
+    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>);
     void removeUpdateAtlas(uint32_t atlasID);
 
-    void syncImageBackings(const CoordinatedGraphicsState&);
-    void createImageBacking(CoordinatedImageBackingID);
-    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
-    void clearImageBackingContents(CoordinatedImageBackingID);
-    void removeImageBacking(CoordinatedImageBackingID);
+    void syncImageBackings(const WebCore::CoordinatedGraphicsState&);
+    void createImageBacking(WebCore::CoordinatedImageBackingID);
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, PassRefPtr<WebCore::CoordinatedSurface>);
+    void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
+    void removeImageBacking(WebCore::CoordinatedImageBackingID);
 
-    TextureMapperLayer* layerByID(CoordinatedLayerID id)
+    WebCore::TextureMapperLayer* layerByID(WebCore::CoordinatedLayerID id)
     {
         ASSERT(m_layers.contains(id));
-        ASSERT(id != InvalidCoordinatedLayerID);
+        ASSERT(id != WebCore::InvalidCoordinatedLayerID);
         return m_layers.get(id);
     }
-    TextureMapperLayer* getLayerByIDIfExists(CoordinatedLayerID);
-    TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
+    WebCore::TextureMapperLayer* getLayerByIDIfExists(WebCore::CoordinatedLayerID);
+    WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
     void syncRemoteContent();
-    void adjustPositionForFixedLayers(const FloatPoint& contentPosition);
+    void adjustPositionForFixedLayers(const WebCore::FloatPoint& contentPosition);
 
     void dispatchOnMainThread(std::function<void()>);
     void updateViewport();
     void renderNextFrame();
     void purgeBackingStores();
 
-    void createLayer(CoordinatedLayerID);
-    void deleteLayer(CoordinatedLayerID);
+    void createLayer(WebCore::CoordinatedLayerID);
+    void deleteLayer(WebCore::CoordinatedLayerID);
 
-    void assignImageBackingToLayer(TextureMapperLayer*, CoordinatedImageBackingID);
+    void assignImageBackingToLayer(WebCore::TextureMapperLayer*, WebCore::CoordinatedImageBackingID);
     void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
     void commitPendingBackingStoreOperations();
 
-    void prepareContentBackingStore(TextureMapperLayer*);
-    void createBackingStoreIfNeeded(TextureMapperLayer*);
-    void removeBackingStoreIfNeeded(TextureMapperLayer*);
-    void resetBackingStoreSizeToLayerSize(TextureMapperLayer*);
+    void prepareContentBackingStore(WebCore::TextureMapperLayer*);
+    void createBackingStoreIfNeeded(WebCore::TextureMapperLayer*);
+    void removeBackingStoreIfNeeded(WebCore::TextureMapperLayer*);
+    void resetBackingStoreSizeToLayerSize(WebCore::TextureMapperLayer*);
 
-    void dispatchCommitScrollOffset(uint32_t layerID, const IntSize& offset);
+    void dispatchCommitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<std::function<void()>> m_renderQueue;
     Mutex m_renderQueueMutex;
 
-    std::unique_ptr<TextureMapper> m_textureMapper;
+    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 
-    typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore> > ImageBackingMap;
+    typedef HashMap<WebCore::CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore>> ImageBackingMap;
     ImageBackingMap m_imageBackings;
-    Vector<RefPtr<CoordinatedBackingStore> > m_releasedImageBackings;
+    Vector<RefPtr<CoordinatedBackingStore>> m_releasedImageBackings;
 
-    typedef HashMap<TextureMapperLayer*, RefPtr<CoordinatedBackingStore> > BackingStoreMap;
+    typedef HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore>> BackingStoreMap;
     BackingStoreMap m_backingStores;
 
-    HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
+    HashSet<RefPtr<CoordinatedBackingStore>> m_backingStoresWithPendingBuffers;
 
 #if USE(GRAPHICS_SURFACE)
-    typedef HashMap<TextureMapperLayer*, RefPtr<TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
+    typedef HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperSurfaceBackingStore>> SurfaceBackingStoreMap;
     SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
 
-    typedef HashMap<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
+    typedef HashMap<uint32_t /* atlasID */, RefPtr<WebCore::CoordinatedSurface>> SurfaceMap;
     SurfaceMap m_surfaces;
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedGraphicsSceneClient* m_client;
     bool m_isActive;
 
-    std::unique_ptr<TextureMapperLayer> m_rootLayer;
+    std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
-    typedef HashMap<CoordinatedLayerID, std::unique_ptr<TextureMapperLayer>> LayerMap;
+    typedef HashMap<WebCore::CoordinatedLayerID, std::unique_ptr<WebCore::TextureMapperLayer>> LayerMap;
     LayerMap m_layers;
-    typedef HashMap<CoordinatedLayerID, TextureMapperLayer*> LayerRawPtrMap;
+    typedef HashMap<WebCore::CoordinatedLayerID, WebCore::TextureMapperLayer*> LayerRawPtrMap;
     LayerRawPtrMap m_fixedLayers;
-    CoordinatedLayerID m_rootLayerID;
-    FloatPoint m_scrollPosition;
-    FloatPoint m_renderedContentsScrollPosition;
-    Color m_viewBackgroundColor;
+    WebCore::CoordinatedLayerID m_rootLayerID;
+    WebCore::FloatPoint m_scrollPosition;
+    WebCore::FloatPoint m_renderedContentsScrollPosition;
+    WebCore::Color m_viewBackgroundColor;
 
-    TextureMapperFPSCounter m_fpsCounter;
+    WebCore::TextureMapperFPSCounter m_fpsCounter;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)
 

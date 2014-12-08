@@ -40,11 +40,8 @@
 #include "WebViewClient.h"
 #include <WebCore/TransformationMatrix.h>
 
-namespace WebCore {
-class CoordinatedGraphicsScene;
-}
-
 namespace WebKit {
+class CoordinatedGraphicsScene;
 
 class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClient
 #if ENABLE(FULLSCREEN_API)
@@ -118,7 +115,7 @@ public:
 
 protected:
     WebView(WebContext*, WebPageGroup*);
-    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
+    CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
     void updateViewportSize();
     WebCore::FloatSize dipSize() const;

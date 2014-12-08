@@ -31,18 +31,19 @@
 #include <WebKit/WKCoordinatedScene.h>
 
 namespace WebCore {
-
-class CoordinatedGraphicsScene;
 class TextureMapperLayer;
-
-} // namespace WebCore
-
-inline WebCore::CoordinatedGraphicsScene* toImpl(WKCoordinatedScene scene)
-{
-    return reinterpret_cast<WebCore::CoordinatedGraphicsScene*>(scene);
 }
 
-inline WKCoordinatedScene toAPI(WebCore::CoordinatedGraphicsScene* scene)
+namespace WebKit {
+
+class CoordinatedGraphicsScene;
+
+inline WebKit::CoordinatedGraphicsScene* toImpl(WKCoordinatedScene scene)
+{
+    return reinterpret_cast<WebKit::CoordinatedGraphicsScene*>(scene);
+}
+
+inline WKCoordinatedScene toAPI(WebKit::CoordinatedGraphicsScene* scene)
 {
     return reinterpret_cast<WKCoordinatedScene>(scene);
 }
@@ -56,5 +57,7 @@ inline WKCoordinatedSceneLayer toAPI(WebCore::TextureMapperLayer* layer)
 {
     return reinterpret_cast<WKCoordinatedSceneLayer>(layer);
 }
+
+} // namespace WebKit
 
 #endif // WKCoordinatedSceneAPICast_h

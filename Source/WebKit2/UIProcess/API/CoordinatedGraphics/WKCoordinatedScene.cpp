@@ -34,6 +34,8 @@
 #include "WKCoordinatedSceneAPICast.h"
 #include <WebCore/TextureMapperLayer.h>
 
+using namespace WebKit;
+
 WK_EXPORT WKCoordinatedSceneLayer WKCoordinatedSceneFindScrollableContentsLayerAt(WKCoordinatedScene scene, WKPoint point)
 {
     return toAPI(toImpl(scene)->findScrollableContentsLayerAt(WebCore::FloatPoint(point.x, point.y)));

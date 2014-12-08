@@ -24,14 +24,16 @@
 #include "CoordinatedGraphicsScene.h"
 
 #include "CoordinatedBackingStore.h"
-#include "TextureMapper.h"
-#include "TextureMapperBackingStore.h"
-#include "TextureMapperGL.h"
-#include "TextureMapperLayer.h"
+#include <WebCore/TextureMapper.h>
+#include <WebCore/TextureMapperBackingStore.h>
+#include <WebCore/TextureMapperGL.h>
+#include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 void CoordinatedGraphicsScene::dispatchOnMainThread(std::function<void()> function)
 {
@@ -709,6 +711,6 @@ TextureMapperLayer* CoordinatedGraphicsScene::findScrollableContentsLayerAt(cons
     return rootLayer() ? rootLayer()->findScrollableContentsLayerAt(point) : 0;
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)

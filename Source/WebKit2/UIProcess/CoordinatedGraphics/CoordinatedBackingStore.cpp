@@ -21,12 +21,14 @@
 #include "CoordinatedBackingStore.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "GraphicsLayer.h"
-#include "TextureMapper.h"
-#include "TextureMapperGL.h"
 #include <WebCore/CoordinatedSurface.h>
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/TextureMapper.h>
+#include <WebCore/TextureMapperGL.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 void CoordinatedBackingStoreTile::swapBuffers(TextureMapper* textureMapper)
 {
