@@ -1,3 +1,12 @@
+2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Bump minimum version of ATK used by jhbuild to at least 2.15.2
+        https://bugs.webkit.org/show_bug.cgi?id=139070
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules:
+
 2014-12-08  Tim Horton  <timothy_horton@apple.com>
 
         Add action menu tests

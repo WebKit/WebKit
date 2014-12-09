@@ -1,3 +1,13 @@
+2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Bump minimum version of ATK used by jhbuild to at least 2.15.2
+        https://bugs.webkit.org/show_bug.cgi?id=139070
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated to reflect
+        the fact that the exposed role is STATIC and not UNKNOWN.
+
 2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rebaseline Mavericks test results after r176978.
