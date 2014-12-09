@@ -1,3 +1,24 @@
+2014-12-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Kotoeri sometimes doesn't correctly process the first chanaracter in a text field in Safari 7.1 or 6.2
+        https://bugs.webkit.org/show_bug.cgi?id=139459
+        rdar://problem/19017432
+        rdar://problem/19036869
+
+        Reviewed by Enrica Casucci.
+
+        When inputContext changes, notify the application. We already did this when the context
+        changed due to plug-ins, and this used to sort of make it work on on yahoo.co.jp,
+        which has plug-ins. But that was quite unreliable, as evidenced by the reproducible
+        cases where we didn't use an input method for the first keypress.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::notifyApplicationAboutInputContextChange):
+
 2014-12-09  Jeremy Jones  <jeremyj@apple.com>
 
         Enable automatic optimized fullscreen mode.
