@@ -1,3 +1,14 @@
+2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix iOS build after r177035.
+
+        Unreviewed.
+
+        I accidentally added my line to WebCore.exp.in inside an
+        #IF PLATFORM(MAC) block.
+
+        * WebCore.exp.in:
+
 2014-12-09  Jeremy Jones  <jeremyj@apple.com>
 
         Enable automatic optimized fullscreen mode.
