@@ -77,14 +77,15 @@
     // This is required as a workaround for AppKit issue 4118422
     [[self retain] autorelease];
 
-    [panel close];
     if (usingSheet) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         [panel.sheetParent endSheet:panel returnCode:NSModalResponseCancel];
 #else
+        [panel orderOut:sender];
         [[NSApplication sharedApplication] endSheet:panel returnCode:1];
 #endif
     } else {
+        [panel orderOut:sender];
         [[NSApplication sharedApplication] stopModalWithCode:1];
     }
 }
@@ -97,14 +98,15 @@
     // sure it lives on a bit longer.
     [[panel retain] autorelease];
 
-    [panel close];
     if (usingSheet) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         [panel.sheetParent endSheet:panel returnCode:NSModalResponseOK];
 #else
+        [panel orderOut:sender];
         [[NSApplication sharedApplication] endSheet:panel returnCode:0];
 #endif
     } else {
+        [panel orderOut:sender];
         [[NSApplication sharedApplication] stopModalWithCode:0];
     }
 }
