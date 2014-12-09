@@ -115,6 +115,9 @@ private:
 
     void deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
 
+    // FIXME: This should take a session ID so we can identify which disk cache to delete.
+    void clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancelDownload(uint64_t downloadID);

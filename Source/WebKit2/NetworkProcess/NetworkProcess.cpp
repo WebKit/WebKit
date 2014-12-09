@@ -243,7 +243,16 @@ void NetworkProcess::deleteWebsiteData(WebCore::SessionID sessionID, uint64_t we
             deleteAllCookiesModifiedSince(*networkStorageSession, modifiedSince);
     }
 
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteData(callbackID), 0);
+    auto completionHandler = [this, callbackID] {
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteData(callbackID), 0);
+    };
+
+    if ((websiteDataTypes & WebsiteDataTypeDiskCache) & !sessionID.isEphemeral()) {
+        clearDiskCache(modifiedSince, WTF::move(completionHandler));
+        return;
+    }
+
+    completionHandler();
 }
 
 void NetworkProcess::downloadRequest(uint64_t downloadID, const ResourceRequest& request)

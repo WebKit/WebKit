@@ -31,6 +31,7 @@
 
 typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
     WKWebsiteDataTypeCookies = 1 << 0,
+    WKWebsiteDataTypeDiskCache = 1 << 1,
 
     WKWebsiteDataTypeAll = NSUIntegerMax,
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);

@@ -1,3 +1,34 @@
+2014-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Add support for clearing the disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=139458
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        If we're asked to clear the disk cache, do so. Clearing the cache is asynchronous,
+        so we make sure not to call the completion handler right away in that case.
+
+        * NetworkProcess/NetworkProcess.h:
+        Add clearDiskCache member function.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache):
+        Clear the disk cache, then call the completion handler.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins):
+        Call the new clearDiskCache function.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Add WebsiteDataTypeDiskCache.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataTypes):
+        Handle WKWebsiteDataTypeDiskCache.
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete Node::boundingBox()

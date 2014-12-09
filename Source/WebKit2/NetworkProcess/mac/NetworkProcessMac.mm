@@ -129,12 +129,7 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     if (resourceCachesToClear == InMemoryResourceCachesOnly)
         return;
 
-    if (!m_clearCacheDispatchGroup)
-        m_clearCacheDispatchGroup = dispatch_group_create();
-
-    dispatch_group_async(m_clearCacheDispatchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[NSURLCache sharedURLCache] removeAllCachedResponses];
-    });
+    clearDiskCache(std::chrono::system_clock::time_point::min(), [] { });
 }
 
 void NetworkProcess::platformTerminate()

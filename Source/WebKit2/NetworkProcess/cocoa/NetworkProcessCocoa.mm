@@ -133,6 +133,27 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
         [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
+void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+{
+    if (!m_clearCacheDispatchGroup)
+        m_clearCacheDispatchGroup = dispatch_group_create();
+
+    dispatch_group_async(m_clearCacheDispatchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [modifiedSince, completionHandler] {
+        NSURLCache *cache = [NSURLCache sharedURLCache];
+
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
+        [cache removeCachedResponsesSinceDate:date];
+#else
+        [cache removeAllCachedResponses];
+#endif
+        dispatch_async(dispatch_get_main_queue(), [completionHandler] {
+            completionHandler();
+        });
+    });
+}
+
 }
 
 #endif
