@@ -27,25 +27,19 @@
 // Only export our hook for initializing LLVM and returning the API struct.
 OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-exported_symbol -Wl,_initializeAndGetJSCLLVMAPI -Wl,-all_load;
 
-LLVM_LIBS_iphoneos = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils;
+LLVM_LIBS_ios = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils;
 LLVM_LIBS_macosx   = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lLLVMX86Disassembler     -lLLVMX86CodeGen     -lLLVMX86AsmParser     -lLLVMX86Desc     -lLLVMX86Info     -lLLVMX86AsmPrinter     -lLLVMX86Utils;
 
-LLVM_LIBRARY_PATHS = $(LLVM_LIBRARY_PATHS_$(PLATFORM_NAME))
-LLVM_LIBRARY_PATHS_macosx = "${BUILT_PRODUCTS_DIR}/usr/local/LLVMForJavaScriptCore/lib" /usr/local/LLVMForJavaScriptCore/lib;
-LLVM_LIBRARY_PATHS_iphoneos = "${BUILT_PRODUCTS_DIR}/usr/local/lib" /usr/local/lib;
-LLVM_LIBRARY_PATHS_iphonesimulator = ;
+LLVM_LIBRARY_PATHS[sdk=iphoneos*] = "$(BUILT_PRODUCTS_DIR)/usr/local/lib" /usr/local/lib;
+LLVM_LIBRARY_PATHS[sdk=macosx*] = "$(BUILT_PRODUCTS_DIR)/usr/local/LLVMForJavaScriptCore/lib" /usr/local/LLVMForJavaScriptCore/lib;
 
-LIBRARY_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR} $(LLVM_LIBRARY_PATHS) $(LIBRARY_SEARCH_PATHS)
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(LLVM_LIBRARY_PATHS) $(LIBRARY_SEARCH_PATHS);
 
 OTHER_LDFLAGS_LLVM = $(OTHER_LDFLAGS_LLVM_$(ENABLE_FTL_JIT));
-OTHER_LDFLAGS_LLVM_ = ;
-OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT = -lpthread -lm $(LLVM_LIBS_$(PLATFORM_NAME));
+OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT[sdk=iphoneos*] = -lpthread -lm $(LLVM_LIBS_ios);
+OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT[sdk=macosx*] = -lpthread -lm $(LLVM_LIBS_macosx);
 
-OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_LLVM);
-OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_LLVM)
+OTHER_LDFLAGS = $(inherited) -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS) $(OTHER_LDFLAGS_LLVM);
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
 

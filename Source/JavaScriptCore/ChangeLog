@@ -1,3 +1,46 @@
+2014-12-09  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from using PLATFORM_NAME to SDK selectors in ANGLE, bmalloc, gtest, JavaScriptCore, WTF
+        <http://webkit.org/b/139212>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/Base.xcconfig:
+        - Only set GCC_ENABLE_OBJC_GC, GCC_MODEL_TUNING and TOOLCHAINS
+          on OS X.
+        - Only set LLVM_LOCAL_HEADER_PATH and LLVM_SYSTEM_HEADER_PATH on
+          OS X.
+        - Set JAVASCRIPTCORE_CONTENTS_DIR and
+          JAVASCRIPTCORE_FRAMEWORKS_DIR separately for iOS and OS X.
+
+        * Configurations/DebugRelease.xcconfig:
+        - Only set MACOSX_DEPLOYMENT_TARGET and SDKROOT on OS X.
+
+        * Configurations/JSC.xcconfig:
+        - Only set CODE_SIGN_ENTITLEMENTS for iOS hardware builds.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        - Set OTHER_LDFLAGS separately for iOS and OS X.
+        - Set SECTORDER_FLAGS separately for iOS and OS X, but only for
+          Production builds.
+        - Only set EXCLUDED_SOURCE_FILE_NAMES for iOS.
+
+        * Configurations/LLVMForJSC.xcconfig:
+        - Rename LLVM_LIBS_iphoneos to LLVM_LIBS_ios.
+        - Set LLVM_LIBRARY_PATHS and OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT
+          separately for iOS hardware and OS X.
+        - Fix curly braces in LIBRARY_SEARCH_PATHS.
+        - Merge OTHER_LDFLAGS_BASE into OTHER_LDFLAGS. (Could have been
+          done before this patch.)
+
+        * Configurations/ToolExecutable.xcconfig:
+        - Only set CODE_SIGN_ENTITLEMENTS for iOS, per target.
+        - Only set CLANG_ENABLE_OBJC_ARC for i386 on the iOS Simulator.
+        - Add missing newline.
+
+        * Configurations/Version.xcconfig:
+        - Set SYSTEM_VERSION_PREFIX separately for iOS and OS X.
+
 2014-12-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix EFL build fix since r177001
