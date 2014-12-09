@@ -1,3 +1,70 @@
+2014-12-08  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r176959. <rdar://problem/19179009>
+
+    2014-12-08  Tim Horton  <timothy_horton@apple.com>
+
+            Add action menu tests
+            https://bugs.webkit.org/show_bug.cgi?id=139156
+
+            Reviewed by Dean Jackson.
+
+            * TestWebKitAPI/PlatformWebView.h:
+            * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+            (TestWebKitAPI::PlatformWebView::PlatformWebView):
+            Add a mechanism allowing tests to provide their own WKView subclass.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2/action-menu-targets.html: Added.
+            Add a file with lots of menu targets.
+
+            * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm: Added.
+            (-[ActionMenusTestWKView _actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:userData:]):
+            (-[ActionMenusTestWKView runMenuSequenceAtPoint:preMenuNeedsUpdateHandler:preWillOpenMenuHandler:preDidCloseMenuHandler:]):
+            (-[ActionMenusTestWKView runMenuSequenceAtPoint:preDidCloseMenuHandler:]):
+            Run through the normal sequence of callbacks, recording what items and type were returned, and give clients a chance to do work at various points in the process.
+
+            (-[ActionMenusTestWKView _setOverrideActionMenuItems:]):
+
+            (TestWebKitAPI::didFinishLoadForFrameCallback):
+            (TestWebKitAPI::didFinishDownloadCallback):
+            (TestWebKitAPI::didCreateDownloadDestinationCallback):
+            Watch downloads and ensure that they match the content we expect.
+
+            (TestWebKitAPI::watchPasteboardForString):
+            (TestWebKitAPI::watchPasteboardForImage):
+            (TestWebKitAPI::JavaScriptStringCallbackContext::JavaScriptStringCallbackContext):
+            (TestWebKitAPI::JavaScriptBoolCallbackContext::JavaScriptBoolCallbackContext):
+            (TestWebKitAPI::javaScriptStringCallback):
+            (TestWebKitAPI::javaScriptBoolCallback):
+            (TestWebKitAPI::callJavaScriptReturningString):
+            (TestWebKitAPI::callJavaScriptReturningBool):
+            (TestWebKitAPI::watchEditableAreaForString):
+            (TestWebKitAPI::waitForVideoReady):
+            (TestWebKitAPI::retrieveSelection):
+            (TestWebKitAPI::retrieveSelectionInElement):
+            (TestWebKitAPI::performMenuItemAtIndexOfTypeAsync):
+            (TestWebKitAPI::ensureMenuItemAtIndexOfTypeIsDisabled):
+            Add many helpers for testing, especially to make asynchronous things synchronous.
+
+            (TestWebKitAPI::windowPointForTarget):
+            (TestWebKitAPI::inset8):
+            Hard-code points in action-menu-targets.html for hit testing.
+
+            (TestWebKitAPI::TEST):
+            Add a suite of tests for WebKit2 action menus.
+
+            * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenusBundle.mm: Added.
+            (TestWebKitAPI::createActionContextForPhoneNumber):
+            (TestWebKitAPI::ActionMenuTest::ActionMenuTest):
+            (TestWebKitAPI::ActionMenuTest::prepareForActionMenu):
+            (TestWebKitAPI::ActionMenuTest::actionContextForResultAtPoint):
+            (TestWebKitAPI::ActionMenuTest::drawRect):
+            (TestWebKitAPI::ActionMenuTest::didCreatePage):
+            Add a bundle with a PageOverlay and a actionContextForResultAtPoint override,
+            so that we can test that infrastructure.
+
+
 2014-12-05  Dana Burkart  <dburkart@apple.com>
 
         Merge r173566. <rdar://problem/19150984>
