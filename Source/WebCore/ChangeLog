@@ -1,3 +1,27 @@
+2014-12-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        Refactor of rebuildFloatingObjectSetFromIntrudingFloats function after r176957.
+        https://bugs.webkit.org/show_bug.cgi?id=139445
+
+        Reviewed by Darin Adler.
+
+        The function rebuildFloatingObjectSetFromIntrudingFloats would be clearer if
+        we use a helper function to locate the previous sibling with overhanging floats.
+
+        These changes has been suggested as part of the patch review for bug #139150, which
+        landed in r176957.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::avoidsFloats):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::previousSiblingWithOverhangingFloats):
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isGridItem):
+
 2014-12-09  Alberto Garcia  <berto@igalia.com>
 
         convertToUTF8String converts null string to empty string

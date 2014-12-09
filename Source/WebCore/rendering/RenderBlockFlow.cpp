@@ -175,6 +175,24 @@ void RenderBlockFlow::willBeDestroyed()
     RenderBox::willBeDestroyed();
 }
 
+RenderBlockFlow* RenderBlockFlow::previousSiblingWithOverhangingFloats(bool& parentHasFloats) const
+{
+    // Attempt to locate a previous sibling with overhanging floats. We skip any elements that are
+    // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
+    // to avoid floats.
+    parentHasFloats = false;
+    for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        if (is<RenderBlockFlow>(*sibling)) {
+            auto& siblingBlock = downcast<RenderBlockFlow>(*sibling);
+            if (!siblingBlock.avoidsFloats())
+                return &siblingBlock;
+        }
+        if (sibling->isFloating())
+            parentHasFloats = true;
+    }
+    return nullptr;
+}
+
 void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
 {
     if (m_floatingObjects)
@@ -215,36 +233,26 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     if (!is<RenderBlockFlow>(parent()))
         return;
 
-    // Attempt to locate a previous sibling with overhanging floats. We skip any elements that are
-    // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
-    // to avoid floats.
-    RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(*parent());
-    bool parentHasFloats = false;
-    RenderObject* prev = previousSibling();
-    while (prev && (!is<RenderBox>(*prev) || !is<RenderBlockFlow>(*prev) || downcast<RenderBlockFlow>(*prev).avoidsFloats() || downcast<RenderBlock>(prev)->createsNewFormattingContext())) {
-        if (prev->isFloating())
-            parentHasFloats = true;
-        prev = prev->previousSibling();
-    }
-
     // First add in floats from the parent. Self-collapsing blocks let their parent track any floats that intrude into
     // them (as opposed to floats they contain themselves) so check for those here too.
+    RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(*parent());
+    bool parentHasFloats = false;
+    RenderBlockFlow* previousBlock = previousSiblingWithOverhangingFloats(parentHasFloats);
     LayoutUnit logicalTopOffset = logicalTop();
-    if (parentHasFloats || (parentBlock.lowestFloatLogicalBottom() > logicalTopOffset && prev && downcast<RenderBlockFlow>(*prev).isSelfCollapsingBlock()))
+    if (parentHasFloats || (parentBlock.lowestFloatLogicalBottom() > logicalTopOffset && previousBlock && previousBlock->isSelfCollapsingBlock()))
         addIntrudingFloats(&parentBlock, parentBlock.logicalLeftOffsetForContent(), logicalTopOffset);
     
     LayoutUnit logicalLeftOffset = 0;
-    if (prev)
-        logicalTopOffset -= downcast<RenderBox>(*prev).logicalTop();
+    if (previousBlock)
+        logicalTopOffset -= previousBlock->logicalTop();
     else {
-        prev = &parentBlock;
+        previousBlock = &parentBlock;
         logicalLeftOffset += parentBlock.logicalLeftOffsetForContent();
     }
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.    
-    RenderBlockFlow& block = downcast<RenderBlockFlow>(*prev);
-    if (block.m_floatingObjects && block.lowestFloatLogicalBottom() > logicalTopOffset)
-        addIntrudingFloats(&block, logicalLeftOffset, logicalTopOffset);
+    if (previousBlock->m_floatingObjects && previousBlock->lowestFloatLogicalBottom() > logicalTopOffset)
+        addIntrudingFloats(previousBlock, logicalLeftOffset, logicalTopOffset);
 
     if (childrenInline()) {
         LayoutUnit changeLogicalTop = LayoutUnit::max();

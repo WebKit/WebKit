@@ -530,10 +530,6 @@ public:
     bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isDeprecatedFlexibleBox(); }
     bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
     
-#if ENABLE(CSS_GRID_LAYOUT)
-    bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
-#endif
-
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
@@ -657,6 +653,10 @@ protected:
 private:
 #if ENABLE(CSS_SHAPES)
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
+#endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
 #endif
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement);

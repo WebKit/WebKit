@@ -462,6 +462,8 @@ private:
     bool recomputeLogicalWidthAndColumnWidth();
     LayoutUnit columnGap() const;
     
+    RenderBlockFlow* previousSiblingWithOverhangingFloats(bool& parentHasFloats) const;
+
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
     virtual RenderObject* layoutSpecialExcludedChild(bool /*relayoutChildren*/);
