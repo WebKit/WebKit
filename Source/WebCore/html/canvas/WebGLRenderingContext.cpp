@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
+#include "EXTsRGB.h"
 #include "ExceptionCode.h"
 #include "Extensions3D.h"
 #include "Frame.h"
@@ -2430,6 +2431,15 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     if (isContextLostOrPending())
         return nullptr;
 
+    if (equalIgnoringCase(name, "EXT_sRGB")
+        && m_context->getExtensions()->supports("GL_EXT_sRGB")) {
+        if (!m_extsRGB) {
+            m_context->getExtensions()->ensureEnabled("GL_EXT_sRGB");
+            m_extsRGB = std::make_unique<EXTsRGB>(this);
+        }
+        return m_extsRGB.get();
+    }
+
     if (equalIgnoringCase(name, "EXT_shader_texture_lod")
         && (m_context->getExtensions()->supports("GL_EXT_shader_texture_lod") || m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))) {
         if (!m_extShaderTextureLOD) {
@@ -2594,11 +2604,11 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
             return WebGLGetInfo(PassRefPtr<WebGLTexture>(reinterpret_cast<WebGLTexture*>(object)));
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-            {
-                GC3Dint value = 0;
-                m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-                return WebGLGetInfo(value);
-            }
+        case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
+            GC3Dint value = 0;
+            m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+            return WebGLGetInfo(value);
+        }
         default:
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
             return WebGLGetInfo();
@@ -2609,6 +2619,14 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
             return WebGLGetInfo(GraphicsContext3D::RENDERBUFFER);
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
             return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(reinterpret_cast<WebGLRenderbuffer*>(object)));
+        case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
+            WebGLRenderbuffer* renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
+            GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
+            ASSERT(renderBufferFormat != Extensions3D::SRGB_EXT && renderBufferFormat != Extensions3D::SRGB_ALPHA_EXT);
+            if (renderBufferFormat == Extensions3D::SRGB8_ALPHA8_EXT)
+                return WebGLGetInfo(Extensions3D::SRGB_EXT);
+            return WebGLGetInfo(GraphicsContext3D::LINEAR);
+        }
         default:
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
             return WebGLGetInfo();
@@ -3038,6 +3056,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_isPendingPolicyResolution)
         return result;
 
+    if (m_context->getExtensions()->supports("GL_EXT_sRGB"))
+        result.append("EXT_sRGB");
     if (m_context->getExtensions()->supports("GL_OES_texture_float"))
         result.append("OES_texture_float");
     if (m_context->getExtensions()->supports("GL_OES_texture_float_linear"))
@@ -3625,6 +3645,11 @@ void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum intern
     case GraphicsContext3D::RGB5_A1:
     case GraphicsContext3D::RGB565:
     case GraphicsContext3D::STENCIL_INDEX8:
+    case Extensions3D::SRGB8_ALPHA8_EXT:
+        if (internalformat == Extensions3D::SRGB8_ALPHA8_EXT && !m_extsRGB) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+            return;
+        }
         m_context->renderbufferStorage(target, internalformat, width, height);
         m_renderbufferBinding->setInternalFormat(internalformat);
         m_renderbufferBinding->setIsValid(true);
@@ -5088,7 +5113,12 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
             break;
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "depth texture formats not enabled");
         return false;
+    case Extensions3D::SRGB_EXT:
+    case Extensions3D::SRGB_ALPHA_EXT:
     default:
+        if ((format == Extensions3D::SRGB_EXT || format == Extensions3D::SRGB_ALPHA_EXT)
+            && m_extsRGB)
+            break;
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture format");
         return false;
     }
@@ -5134,6 +5164,7 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
         }
         break;
     case GraphicsContext3D::RGB:
+    case Extensions3D::SRGB_EXT:
         if (type != GraphicsContext3D::UNSIGNED_BYTE
             && type != GraphicsContext3D::UNSIGNED_SHORT_5_6_5
             && type != GraphicsContext3D::FLOAT
@@ -5143,6 +5174,7 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
         }
         break;
     case GraphicsContext3D::RGBA:
+    case Extensions3D::SRGB_ALPHA_EXT:
         if (type != GraphicsContext3D::UNSIGNED_BYTE
             && type != GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4
             && type != GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1

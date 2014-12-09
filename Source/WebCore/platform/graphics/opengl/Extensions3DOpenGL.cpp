@@ -169,6 +169,13 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
             && (m_availableExtensions.contains("GL_ARB_draw_instanced") || m_availableExtensions.contains("GL_EXT_draw_instanced"));
     }
 
+    if (name == "GL_EXT_sRGB")
+#if PLATFORM(IOS)
+        return m_availableExtensions.contians("GL_EXT_sRGB")
+#else
+        return m_availableExtensions.contains("GL_EXT_texture_sRGB") && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB") || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"));
+#endif
+
     // Desktop GL always supports GL_OES_rgb8_rgba8.
     if (name == "GL_OES_rgb8_rgba8")
         return true;

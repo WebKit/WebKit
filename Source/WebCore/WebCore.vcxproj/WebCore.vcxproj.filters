@@ -4995,9 +4995,6 @@
     <ClCompile Include="..\page\Page.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\PageActivityAssertionToken.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\PageConsoleClient.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7260,6 +7257,15 @@
     </ClCompile>
     <ClCompile Include="..\css\WebKitCSSResourceValue.cpp">
       <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\PageConfiguration.cpp" />
+    <ClCompile Include="..\loader\cache\CacheValidation.cpp" />
+    <ClCompile Include="..\html\HTMLWBRElement.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTsRGB.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\EXTsRGB.cpp">
+      <Filter>html\canvas</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15251,7 +15257,7 @@
     <ClInclude Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.h">
       <Filter>platform\graphics\avfoundation</Filter>
     </ClInclude>
-        <ClInclude Include="..\platform\graphics\MaskImageOperation.h">
+    <ClInclude Include="..\platform\graphics\MaskImageOperation.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderLayerMaskImageInfo.h">
@@ -15259,6 +15265,15 @@
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSResourceValue.h">
       <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\loader\cache\CacheValidation.h" />
+    <ClInclude Include="..\html\HTMLWBRElement.h" />
+    <ClInclude Include="..\storage\StorageNamespaceProvider.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTsRGB.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\EXTsRGB.h">
+      <Filter>html\canvas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

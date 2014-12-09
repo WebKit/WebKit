@@ -43,6 +43,7 @@ namespace WebCore {
 class ANGLEInstancedArrays;
 class EXTTextureFilterAnisotropic;
 class EXTShaderTextureLOD;
+class EXTsRGB;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBuffer;
@@ -538,6 +539,7 @@ private:
     bool isContextLostOrPending();
 
     // Enabled extension objects.
+    std::unique_ptr<EXTsRGB> m_extsRGB;
     std::unique_ptr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     std::unique_ptr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     std::unique_ptr<OESTextureFloat> m_oesTextureFloat;

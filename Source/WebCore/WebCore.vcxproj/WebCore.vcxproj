@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -707,6 +707,20 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLVertexArrayObjectOES.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTsRGB.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -6655,6 +6669,7 @@
     <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp" />
     <ClCompile Include="..\html\canvas\CanvasPathMethods.cpp" />
     <ClCompile Include="..\html\canvas\EXTShaderTextureLOD.cpp" />
+    <ClCompile Include="..\html\canvas\EXTsRGB.cpp" />
     <ClCompile Include="..\html\canvas\EXTTextureFilterAnisotropic.cpp" />
     <ClCompile Include="..\html\canvas\OESElementIndexUint.cpp" />
     <ClCompile Include="..\html\canvas\OESStandardDerivatives.cpp" />
@@ -14933,7 +14948,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\editing\win\EditorWin.cpp"/>
+    <ClCompile Include="..\editing\win\EditorWin.cpp" />
     <ClCompile Include="..\fileapi\AsyncFileStream.cpp" />
     <ClCompile Include="..\html\BaseButtonInputType.cpp" />
     <ClCompile Include="..\html\BaseCheckableInputType.cpp" />
@@ -18852,6 +18867,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegion.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.cpp" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSVTTRegionList.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTsRGB.h" />
     <ClInclude Include="..\accessibility\AccessibilityNodeObject.h" />
     <ClInclude Include="..\css\CSSImageSetValue.h" />
     <ClInclude Include="..\css\WebKitCSSResourceValue.h" />
@@ -18940,6 +18956,7 @@
     <ClInclude Include="..\html\canvas\CanvasContextAttributes.h" />
     <ClInclude Include="..\html\canvas\CanvasPathMethods.h" />
     <ClInclude Include="..\html\canvas\EXTShaderTextureLOD.h" />
+    <ClInclude Include="..\html\canvas\EXTsRGB.h" />
     <ClInclude Include="..\html\canvas\EXTTextureFilterAnisotropic.h" />
     <ClInclude Include="..\html\canvas\OESElementIndexUint.h" />
     <ClInclude Include="..\html\canvas\OESStandardDerivatives.h" />

@@ -534,6 +534,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/DOMPath.idl
     html/canvas/EXTShaderTextureLOD.idl
     html/canvas/EXTTextureFilterAnisotropic.idl
+    html/canvas/EXTsRGB.idl
     html/canvas/OESElementIndexUint.idl
     html/canvas/OESStandardDerivatives.idl
     html/canvas/OESTextureFloat.idl
@@ -1675,6 +1676,7 @@ set(WebCore_SOURCES
     html/canvas/CanvasStyle.cpp
     html/canvas/EXTShaderTextureLOD.cpp
     html/canvas/EXTTextureFilterAnisotropic.cpp
+    html/canvas/EXTsRGB.cpp
     html/canvas/OESElementIndexUint.cpp
     html/canvas/OESStandardDerivatives.cpp
     html/canvas/OESTextureFloat.cpp
@@ -2807,6 +2809,7 @@ if (ENABLE_WEBGL)
         html/canvas/ANGLEInstancedArrays.cpp
         html/canvas/EXTShaderTextureLOD.cpp
         html/canvas/EXTTextureFilterAnisotropic.cpp
+        html/canvas/EXTsRGB.cpp
         html/canvas/OESElementIndexUint.cpp
         html/canvas/OESStandardDerivatives.cpp
         html/canvas/OESTextureFloat.cpp
@@ -2845,6 +2848,7 @@ if (ENABLE_WEBGL)
         html/canvas/ANGLEInstancedArrays.idl
         html/canvas/EXTShaderTextureLOD.idl
         html/canvas/EXTTextureFilterAnisotropic.idl
+        html/canvas/EXTsRGB.idl
         html/canvas/OESElementIndexUint.idl
         html/canvas/OESStandardDerivatives.idl
         html/canvas/OESTextureFloat.idl

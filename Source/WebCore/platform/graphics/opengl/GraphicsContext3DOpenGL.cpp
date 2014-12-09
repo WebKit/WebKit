@@ -322,6 +322,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
         return false;
     }
 
+    GC3Denum openGLFormat = format;
     GC3Denum openGLInternalFormat = internalformat;
 #if !PLATFORM(IOS)
     if (type == GL_FLOAT) {
@@ -342,8 +343,13 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
             openGLInternalFormat = GL_LUMINANCE_ALPHA16F_ARB;
         type = GL_HALF_FLOAT_ARB;
     }
+
+    if (format == Extensions3D::SRGB_ALPHA_EXT)
+        openGLFormat = GL_RGBA;
+    else if (format == Extensions3D::SRGB_EXT)
+        openGLFormat = GL_RGB;
 #endif
-    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, format, type, pixels);
+    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels);
     return true;
 }
 

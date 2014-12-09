@@ -44,6 +44,7 @@
 #if ENABLE(WEBGL)
 #include "JSEXTShaderTextureLOD.cpp"
 #include "JSEXTTextureFilterAnisotropic.cpp"
+#include "JSEXTsRGB.cpp"
 #include "JSOESElementIndexUint.cpp"
 #include "JSOESStandardDerivatives.cpp"
 #include "JSOESTextureFloat.cpp"

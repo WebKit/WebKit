@@ -90,6 +90,12 @@ public:
     virtual bool isEnabled(const String&) = 0;
 
     enum ExtensionsEnumType {
+        // EXT_sRGB formats
+        SRGB_EXT = 0x8C40,
+        SRGB_ALPHA_EXT = 0x8C42,
+        SRGB8_ALPHA8_EXT = 0x8C43,
+        FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210,
+
         // GL_EXT_texture_format_BGRA8888 enums
         BGRA_EXT = 0x80E1,
 

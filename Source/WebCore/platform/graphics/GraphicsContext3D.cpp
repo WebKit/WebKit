@@ -159,10 +159,12 @@ bool GraphicsContext3D::computeFormatAndTypeParameters(GC3Denum format, GC3Denum
         *componentsPerPixel = 2;
         break;
     case GraphicsContext3D::RGB:
+    case Extensions3D::SRGB_EXT:
         *componentsPerPixel = 3;
         break;
     case GraphicsContext3D::RGBA:
     case Extensions3D::BGRA_EXT: // GL_EXT_texture_format_BGRA8888
+    case Extensions3D::SRGB_ALPHA_EXT:
         *componentsPerPixel = 4;
         break;
     default:
@@ -412,6 +414,9 @@ unsigned GraphicsContext3D::getClearBitsByFormat(GC3Denum format)
     case GraphicsContext3D::RGBA:
     case GraphicsContext3D::RGBA4:
     case GraphicsContext3D::RGB5_A1:
+    case Extensions3D::SRGB_EXT:
+    case Extensions3D::SRGB_ALPHA_EXT:
+    case Extensions3D::SRGB8_ALPHA8_EXT:
         return GraphicsContext3D::COLOR_BUFFER_BIT;
     case GraphicsContext3D::DEPTH_COMPONENT16:
     case GraphicsContext3D::DEPTH_COMPONENT:
@@ -436,10 +441,12 @@ unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
         return ChannelRGBA;
     case GraphicsContext3D::RGB:
     case GraphicsContext3D::RGB565:
+    case Extensions3D::SRGB_EXT:
         return ChannelRGB;
     case GraphicsContext3D::RGBA:
     case GraphicsContext3D::RGBA4:
     case GraphicsContext3D::RGB5_A1:
+    case Extensions3D::SRGB_ALPHA_EXT:
         return ChannelRGBA;
     case GraphicsContext3D::DEPTH_COMPONENT16:
     case GraphicsContext3D::DEPTH_COMPONENT:

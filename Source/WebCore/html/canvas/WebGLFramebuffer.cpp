@@ -431,7 +431,13 @@ GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
             *reason = "attachment is not valid";
             return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
         }
-        if (!attachment->getFormat()) {
+        GC3Denum attachmentFormat = attachment->getFormat();
+
+        // Attaching an SRGB_EXT format attachment to a framebuffer is invalid.
+        if (attachmentFormat == Extensions3D::SRGB_EXT)
+            attachmentFormat = 0;
+
+        if (!attachmentFormat) {
             *reason = "attachment is an unsupported format";
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
         }

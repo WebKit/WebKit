@@ -1,3 +1,54 @@
+2014-12-07  Roger Fong  <roger_fong@apple.com>
+
+        Implementation EXT_sRGB as a WebGL1 extension.
+        https://bugs.webkit.org/show_bug.cgi?id=109332.
+        <rdar://problem/17363470>
+
+        Reviewed by Dean Jackson.
+
+        Tested by:
+        webgl/1.0.3/conformance/webgl/ext-sRGB.html
+        fast/canvas/webgl/constants.html
+
+        This patch implements the SRGB extension for WebGL1.
+        Details of the extension specification are outlined here: 
+        https://www.khronos.org/registry/webgl/extensions/EXT_sRGB/
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/EXTsRGB.cpp: Added.
+        (WebCore::EXTsRGB::EXTsRGB):
+        (WebCore::EXTsRGB::~EXTsRGB):
+        (WebCore::EXTsRGB::getName):
+        * html/canvas/EXTsRGB.h: Added.
+        * html/canvas/EXTsRGB.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::checkStatus):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::renderbufferStorage):
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters):
+        (WebCore::GraphicsContext3D::getClearBitsByFormat):
+        (WebCore::GraphicsContext3D::getChannelBitsByFormat):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::texImage2D):
+
 2014-12-08  Dean Jackson  <dino@apple.com>
 
         [Apple] Use Accelerate framework to speed-up FEGaussianBlur
