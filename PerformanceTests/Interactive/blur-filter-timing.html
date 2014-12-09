@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timing test for blur filter</title>
+  <style>
+  img {
+      width: 600px;
+      height: 600px;
+  }
+  </style>
+  <script>
+
+  var WIDTH = 600;
+  var HEIGHT = 600;
+  var NUM_ITERATIONS = 10;
+  var MAX_RADIUS = 20;
+  var currentIteration = 0;
+  var currentRadius = 0;
+  var testIsRunning = false;
+  var image = null;
+  var startTime = null;
+
+  function init() {
+      document.querySelector("button").addEventListener("click", run, false);
+      image = document.querySelector("img");
+
+      // Fill the image with generated content. We can't use a canvas directly,
+      // since that gets composited.
+      var canvas = document.createElement("canvas");
+      canvas.width = WIDTH * window.devicePixelRatio;
+      canvas.height = HEIGHT * window.devicePixelRatio;
+
+      // Fill the canvas with some generated content.
+      var ctx = canvas.getContext("2d");
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      for (var i = 0; i < WIDTH; i += 20) {
+          for (var j = 0; j < HEIGHT; j += 20) {
+              ctx.fillStyle = "rgb(" + Math.round(i / WIDTH * 255) + ", " + Math.round(j / HEIGHT * 255) + ", " + (i % 40 ? 64 : 192) + ")";
+              ctx.fillRect(i, j, 20, 20);
+          }
+      }
+
+      image.src = canvas.toDataURL();
+  }
+
+  function run() {
+      if (testIsRunning)
+          return;
+
+      testIsRunning = true;
+      currentIteration = 0;
+      currentRadius = 0;
+      startTime = Date.now();
+
+      step();
+  }
+
+  function step() {
+      var usedRadius = (currentIteration % 2) ? (MAX_RADIUS - currentRadius) : currentRadius;
+      image.style.webkitFilter = "blur(" + usedRadius + "px)";
+      currentRadius++;
+      if (currentRadius > MAX_RADIUS) {
+          currentIteration++;
+          currentRadius = 0;
+      }
+
+      if (currentIteration < NUM_ITERATIONS)
+          setTimeout(step, 0);
+      else
+          end();
+  }
+
+  function end() {
+      testIsRunning = false;
+      var elapsedTime = (Date.now() - startTime) / 1000;
+      var result = document.createElement("p");
+      result.textContent = (NUM_ITERATIONS * MAX_RADIUS) + " blurs done in " + elapsedTime + " seconds";
+      document.body.appendChild(result);
+      if (window.testRunner)
+          testRunner.notifyDone();
+  }
+
+  window.addEventListener("load", init, false);
+  </script>
+</head>
+<body>
+<img>
+<p>
+    <button>Start</button>
+</p>
+</body>
+</html>
