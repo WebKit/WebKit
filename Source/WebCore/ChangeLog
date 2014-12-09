@@ -1,3 +1,17 @@
+2014-12-09  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r173272): When open PDF from Safari in iBooks, title is replaced to “QuickLookPDF-s72DbgAU-1”
+        https://bugs.webkit.org/show_bug.cgi?id=139453
+        rdar://problem/19052192
+
+        Reviewed by Pratik Solanki.
+
+        Pulling the suggested filename from the platform response returned null string on USE(CFNETWORK) code path
+        if it was the first thing needed from it.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformSuggestedFilename): Use the lazy accessor.
+
 2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] MathML tokens, tables, and row-like elements are exposed with ATK_ROLE_UNKNOWN
