@@ -90,6 +90,7 @@ public:
 
     HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
     void setIsOptimized(bool);
+    bool mayAutomaticallyShowVideoOptimized();
 
 protected:
         

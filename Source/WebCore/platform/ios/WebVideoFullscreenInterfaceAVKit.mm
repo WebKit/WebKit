@@ -33,6 +33,7 @@
 #import "AVKitSPI.h"
 #import "Logging.h"
 #import "GeometryUtilities.h"
+#import "WebCoreSystemInterface.h"
 #import "WebVideoFullscreenModel.h"
 #import <AVFoundation/AVTime.h>
 #import <CoreMedia/CMTime.h>
@@ -1113,5 +1114,11 @@ void WebVideoFullscreenInterfaceAVKit::setIsOptimized(bool active)
             m_fullscreenChangeObserver->didExitFullscreen();
     });
 }
+
+bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized()
+{
+    return [m_playerController isPlaying] && m_mode == HTMLMediaElement::VideoFullscreenModeStandard && wkIsOptimizedFullscreenSupported();
+}
+
 
 #endif

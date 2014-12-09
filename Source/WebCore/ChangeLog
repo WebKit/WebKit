@@ -1,3 +1,19 @@
+2014-12-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable automatic optimized fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=139437
+
+        Reviewed by Eric Carlson.
+
+        Anticipate transition to optimized video fullscreen mode when entering background.
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::overrideBackgroundPlaybackRestriction): Add logic for automatic transition detection.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized): Add logic for automatic transition detection.
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete Node::boundingBox()

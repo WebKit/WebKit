@@ -95,7 +95,8 @@ struct PrintInfo;
 
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType;
 
-- (BOOL)_isPlayingFullscreenOptimizedVideo;
+- (BOOL)_isShowingVideoOptimized;
+- (BOOL)_mayAutomaticallyShowVideoOptimized;
 
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
 #else

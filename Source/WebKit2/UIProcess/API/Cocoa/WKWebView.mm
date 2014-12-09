@@ -233,16 +233,22 @@ static int32_t deviceOrientation()
     return deviceOrientationForUIInterfaceOrientation([[UIApplication sharedApplication] statusBarOrientation]);
 }
 
-- (BOOL)_isPlayingFullscreenOptimizedVideo
+- (BOOL)_isShowingVideoOptimized
 {
-    if (!_page->videoFullscreenManager())
+    if (!_page || !_page->videoFullscreenManager())
         return false;
     
-    if (_page->videoFullscreenManager()->mode() & WebCore::HTMLMediaElement::HTMLMediaElement::VideoFullscreenModeOptimized)
-        return true;
-    
-    return false;
+    return _page->videoFullscreenManager()->mode() & WebCore::HTMLMediaElement::VideoFullscreenModeOptimized;
 }
+
+- (BOOL)_mayAutomaticallyShowVideoOptimized
+{
+    if (!_page || !_page->videoFullscreenManager())
+        return false;
+
+    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoOptimized();
+}
+
 #endif
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration

@@ -6073,7 +6073,10 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
 #endif
     if (m_videoFullscreenMode & VideoFullscreenModeOptimized)
         return true;
-    
+#if PLATFORM(IOS)
+    if (m_videoFullscreenMode == VideoFullscreenModeStandard && wkIsOptimizedFullscreenSupported() && isPlaying())
+        return true;
+#endif
     return false;
 }
 
