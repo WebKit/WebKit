@@ -1,3 +1,12 @@
+2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rebaseline Mavericks test results after r176978.
+
+        Unreviewed.
+
+        * platform/mac-mavericks/fast/forms/search-vertical-alignment-expected.png:
+        * platform/mac-mavericks/fast/forms/search-vertical-alignment-expected.txt:
+
 2014-12-05  Roger Fong  <roger_fong@apple.com>
 
         Implementation EXT_sRGB as a WebGL1 extension.
