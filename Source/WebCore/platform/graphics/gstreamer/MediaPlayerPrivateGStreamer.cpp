@@ -1752,6 +1752,7 @@ static HashSet<String> mimeTypeCache()
         "video/3gpp",
         "video/flv",
         "video/mj2",
+        "video/mp2t",
         "video/mp4",
         "video/mpeg",
         "video/mpegts",
