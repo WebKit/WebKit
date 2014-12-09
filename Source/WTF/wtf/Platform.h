@@ -1092,8 +1092,4 @@
 #define WTF_USE_MEDIATOOLBOX 1
 #endif
 
-#if PLATFORM(COCOA)
-#define HAVE_ACCELERATE 1
-#endif
-
 #endif /* WTF_Platform_h */

@@ -30,7 +30,7 @@
 #include "GraphicsContext.h"
 #include "TextStream.h"
 
-#if HAVE(ACCELERATE)
+#if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
 #endif
 
@@ -294,7 +294,7 @@ inline void boxBlur(const Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* d
     }
 }
 
-#if HAVE(ACCELERATE)
+#if USE(ACCELERATE)
 inline void accelerateBoxBlur(const Uint8ClampedArray* src, Uint8ClampedArray* dst, unsigned kernelSize, int stride, int effectWidth, int effectHeight)
 {
     // We must always use an odd radius.
@@ -379,7 +379,7 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
 {
     int stride = 4 * paintSize.width();
 
-#if HAVE(ACCELERATE)
+#if USE(ACCELERATE)
     if (kernelSizeX == kernelSizeY && (m_edgeMode == EDGEMODE_NONE || m_edgeMode == EDGEMODE_DUPLICATE)) {
         accelerateBoxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, stride, paintSize.width(), paintSize.height());
         return;
@@ -398,7 +398,7 @@ void FEGaussianBlur::platformApplyWorker(PlatformApplyParameters* parameters)
 
 inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
 {
-#if !HAVE(ACCELERATE)
+#if !USE(ACCELERATE)
     int scanline = 4 * paintSize.width();
     int extraHeight = 3 * kernelSizeY * 0.5f;
     int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (s_minimalRectDimension + extraHeight * paintSize.width());

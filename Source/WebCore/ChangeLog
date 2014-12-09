@@ -1,3 +1,17 @@
+2014-12-09  Dean Jackson  <dino@apple.com>
+
+        [Apple] Use Accelerate framework to speed-up FEGaussianBlur
+        https://bugs.webkit.org/show_bug.cgi?id=139310
+
+        Unreviewed followup, after comments by Andreas Kling.
+
+        It was pointed out that we already have a USE(ACCELERATE), so
+        we don't need a HAVE(ACCELERATE) :)
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+        (WebCore::FEGaussianBlur::platformApply):
+
 2014-12-09  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed. Style fix following r177019.
