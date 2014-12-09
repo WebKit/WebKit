@@ -1,3 +1,21 @@
+2014-12-09  Alberto Garcia  <berto@igalia.com>
+
+        [Media][GTK][EFL] Reduce style updates (painting) in controls
+        https://bugs.webkit.org/show_bug.cgi?id=137773
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't update media controls if they are not visible, and
+        initialize slider to a zero value.
+
+        * Modules/mediacontrols/mediaControlsBase.js:
+        (Controller.prototype.createControls):
+        (Controller.prototype.handleDurationChange):
+        (Controller.prototype.updateProgress):
+        (Controller.prototype.updateTime):
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.updateTime):
+
 2014-12-09  Sebastian Dröge  <sebastian@centricular.com>
 
         [GStreamer] Add video/mp2t as alternative mimetype for MPEG TS
