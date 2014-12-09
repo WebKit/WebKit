@@ -112,7 +112,7 @@ typedef const char* optionString;
     v(bool, forceDebuggerBytecodeGeneration, false) \
     v(bool, forceProfilerBytecodeGeneration, false) \
     \
-    v(bool, enableFunctionDotArguments, false) \
+    v(bool, enableFunctionDotArguments, true) \
     \
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \

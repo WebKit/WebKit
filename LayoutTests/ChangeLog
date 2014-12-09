@@ -1,3 +1,13 @@
+2014-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Re-enable function.arguments
+        https://bugs.webkit.org/show_bug.cgi?id=139452
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Re-enable these tests, since WebKit supports this
+        feature by default now.
+
 2014-12-09  Alexey Proskuryakov  <ap@apple.com>
 
         Mark several hidpi compositing tests that fail on EWS bots with ATI graphics.

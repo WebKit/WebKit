@@ -174,30 +174,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFa
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 
-# Deprecated tests for function.arguments. These tests need to stay in the tree because the RJST
-# harness will run these after forcibly reenabling the function.arguments feature. We want to
-# keep testing the feature for as long as we haven't achieved confidence that it is safe to
-# remove it entirely.
-webkit.org/b/137167 js/dfg-arguments-unexpected-escape.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-become-double.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-become-int32.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-int32.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-osr-exit-and-capture.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-reset-changetype.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-reset.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-simple.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-use-directly-from-inlined-code.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-use-from-all-the-places.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-use-from-getter.html [ Failure ]
-webkit.org/b/137167 js/dfg-inline-arguments-use-from-uninlined-code.html [ Failure ]
-webkit.org/b/137167 js/dfg-tear-off-arguments-not-activation.html [ Failure ]
-webkit.org/b/137167 js/dfg-tear-off-function-dot-arguments.html [ Failure ]
-webkit.org/b/137167 js/dom/exception-thrown-from-function-with-lazy-activation.html [ Failure ]
-webkit.org/b/137167 js/dom/function-dot-arguments2.html [ Failure ]
-webkit.org/b/137167 js/function-dot-arguments.html [ Failure ]
-webkit.org/b/137167 js/kde/function.html [ Failure ]
-webkit.org/b/137167 js/kde/function_arguments.html [ Failure ]
-
 # Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit.
 webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 

@@ -1,3 +1,19 @@
+2014-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Re-enable function.arguments
+        https://bugs.webkit.org/show_bug.cgi?id=139452
+        <rdar://problem/18848149>
+
+        Reviewed by Sam Weinig.
+
+        Disabling function.arguments broke a few websites, and we don't have
+        time right now to work through the details.
+
+        I'm re-enabling function.arguments but leaving in the infrastructure
+        to re-disable it, so we can try this experiment again in the future.
+
+        * runtime/Options.h:
+
 2014-12-09  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in ANGLE, bmalloc, gtest, JavaScriptCore, WTF
