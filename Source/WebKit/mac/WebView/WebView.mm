@@ -1061,9 +1061,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         SecurityPolicy::setLocalLoadPolicy(SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);
     }
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_CONTENT_SNIFFING_FOR_FILE_URLS))
         ResourceHandle::forceContentSniffing();
+
+    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
 #endif
 
 #if USE(GLIB)
@@ -1092,9 +1094,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private = [[WebViewPrivate alloc] init];
     [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];
-#if !PLATFORM(IOS)
-    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-#endif
     return self;
 }
 
