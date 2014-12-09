@@ -153,6 +153,16 @@
                 { "name": "sourceID", "type": "string", "description": "sourceID uniquely identifying a script" },
                 { "name": "divot", "type": "integer", "description": "character offset for assignment range" }
             ]
+        },
+        {
+            "id": "BasicBlock",
+            "type": "object",
+            "description": "From Wikipedia: a basic block is a portion of the code within a program with only one entry point and only one exit point. This type gives the location of a basic block and if that basic block has executed.",
+            "properties": [
+                { "name": "startOffset", "type": "integer", "description": "Start offset of the basic block." },
+                { "name": "endOffset", "type": "integer", "description": "End offset of the basic block." },
+                { "name": "hasExecuted", "type": "boolean", "description": "Indicates if the basic block has executed before." }
+            ]
         }
     ],
     "commands": [
@@ -256,6 +266,16 @@
         {
             "name": "disableTypeProfiler",
             "description": "Disables type profiling on the VM."
+        },
+        {
+            "name": "getBasicBlocks",
+            "parameters": [
+                { "name": "sourceID", "type": "string", "description": "Indicates which sourceID information is requested for." }
+            ],
+            "returns": [
+                { "name": "basicBlocks", "type": "array", "items": { "$ref": "BasicBlock", "description": "Array of basic blocks." } }
+            ],
+            "description": "Returns a list of basic blocks for the given sourceID with information about their text ranges and whether or not they have executed."
         }
     ],
     "events": [

@@ -71,6 +71,7 @@ public:
     virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
     virtual void enableTypeProfiler(ErrorString&) override;
     virtual void disableTypeProfiler(ErrorString&) override;
+    virtual void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
     
     void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
 
