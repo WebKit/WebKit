@@ -50,6 +50,8 @@ RefPtr<WebViewGroup> WebViewGroup::getOrCreate(const String& name, const String&
     auto& webViewGroup = webViewGroups().add(name, nullptr).iterator->value;
     if (!webViewGroup)
         webViewGroup = adoptRef(new WebViewGroup(name, localStorageDatabasePath));
+    else if (!webViewGroup->m_storageNamespaceProvider && webViewGroup->m_localStorageDatabasePath.isEmpty() && !localStorageDatabasePath.isEmpty())
+        webViewGroup->m_localStorageDatabasePath = localStorageDatabasePath;
 
     return webViewGroup;
 }
@@ -63,7 +65,7 @@ WebViewGroup* WebViewGroup::get(const String& name)
 
 WebViewGroup::WebViewGroup(const String& name, const String& localStorageDatabasePath)
     : m_name(name)
-    , m_storageNamespaceProvider(*WebStorageNamespaceProvider::create(localStorageDatabasePath))
+    , m_localStorageDatabasePath(localStorageDatabasePath)
     , m_userContentController(*UserContentController::create())
     , m_visitedLinkStore(WebVisitedLinkStore::create())
 {
@@ -87,4 +89,12 @@ void WebViewGroup::removeWebView(WebView *webView)
     ASSERT(m_webViews.contains(webView));
 
     m_webViews.remove(webView);
+}
+
+StorageNamespaceProvider& WebViewGroup::storageNamespaceProvider()
+{
+    if (!m_storageNamespaceProvider)
+        m_storageNamespaceProvider = WebStorageNamespaceProvider::create(m_localStorageDatabasePath);
+
+    return *m_storageNamespaceProvider;
 }

@@ -46,7 +46,7 @@ public:
     void addWebView(WebView *);
     void removeWebView(WebView *);
 
-    WebCore::StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
+    WebCore::StorageNamespaceProvider& storageNamespaceProvider();
     WebCore::UserContentController& userContentController() { return m_userContentController.get(); }
     WebVisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
@@ -56,7 +56,9 @@ private:
     String m_name;
     HashSet<WebView *> m_webViews;
 
-    Ref<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
+    String m_localStorageDatabasePath;
+    RefPtr<WebCore::StorageNamespaceProvider> m_storageNamespaceProvider;
+
     Ref<WebCore::UserContentController> m_userContentController;
     Ref<WebVisitedLinkStore> m_visitedLinkStore;
 };

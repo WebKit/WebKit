@@ -4023,7 +4023,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (group.isEmpty())
         return;
 
-    auto* viewGroup = WebViewGroup::get(group);
+    auto viewGroup = WebViewGroup::getOrCreate(groupName, String());
     if (!viewGroup)
         return;
 
@@ -4048,7 +4048,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (group.isEmpty())
         return;
 
-    auto* viewGroup = WebViewGroup::get(group);
+    auto viewGroup = WebViewGroup::getOrCreate(groupName, String());
     if (!viewGroup)
         return;
 

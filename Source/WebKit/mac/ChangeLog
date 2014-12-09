@@ -1,5 +1,32 @@
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
+        Adding user content to a group should force that group to be created
+        https://bugs.webkit.org/show_bug.cgi?id=139421
+        rdar://problem/19180108
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebViewGroup.h:
+        Store the local storage database path in the group.
+
+        * WebCoreSupport/WebViewGroup.mm:
+        (WebViewGroup::getOrCreate):
+        If we have an existing group that hasn't had its storage namespace provider created, and the path passed is not empty,
+        set it. This will ensure that getOrCreate will still work when creating a storage namspace provider.
+
+        (WebViewGroup::WebViewGroup):
+        Initialize the new member variable.
+
+        (WebViewGroup::storageNamespaceProvider):
+        Create the namespace provider lazily.
+
+        * WebView/WebView.mm:
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        Use getOrCreate instead of get.
+
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
         WebStorageNamespaceProvider should know about its local storage database path
         https://bugs.webkit.org/show_bug.cgi?id=139413
 
