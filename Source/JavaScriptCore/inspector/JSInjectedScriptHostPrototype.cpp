@@ -63,9 +63,9 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     JSC_NATIVE_FUNCTION("isHTMLAllCollection", jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection, DontEnum, 1);
 
     Identifier evaluateIdentifier(&vm, "evaluate");
-    GetterSetter* accessor = GetterSetter::create(vm);
+    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, evaluateIdentifier.string(), jsInjectedScriptHostPrototypeAttributeEvaluate);
-    accessor->setGetter(vm, function);
+    accessor->setGetter(vm, globalObject, function);
     putDirectNonIndexAccessor(vm, evaluateIdentifier, accessor, DontEnum | Accessor);
 }
 

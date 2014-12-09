@@ -756,6 +756,9 @@
     <ClCompile Include="..\runtime\NativeErrorPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\NullGetterFunction.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\NumberConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2766,6 +2769,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\NativeErrorPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\NullGetterFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\NumberConstructor.h">

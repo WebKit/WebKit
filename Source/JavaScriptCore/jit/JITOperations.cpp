@@ -1268,7 +1268,7 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue enco
     ASSERT(JSValue::decode(encodedObjectValue).isObject());
     JSObject* baseObj = asObject(JSValue::decode(encodedObjectValue));
 
-    GetterSetter* accessor = GetterSetter::create(vm);
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
     JSValue getter = JSValue::decode(encodedGetterValue);
     JSValue setter = JSValue::decode(encodedSetterValue);
@@ -1277,9 +1277,9 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue enco
     ASSERT(getter.isObject() || setter.isObject());
 
     if (!getter.isUndefined())
-        accessor->setGetter(vm, asObject(getter));
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
     if (!setter.isUndefined())
-        accessor->setSetter(vm, asObject(setter));
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
     baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
 }
 #else
@@ -1291,16 +1291,16 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
     ASSERT(object && object->isObject());
     JSObject* baseObj = object->getObject();
 
-    GetterSetter* accessor = GetterSetter::create(vm);
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
     ASSERT(!getter || getter->isObject());
     ASSERT(!setter || setter->isObject());
     ASSERT(getter || setter);
 
     if (getter)
-        accessor->setGetter(vm, getter->getObject());
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), getter->getObject());
     if (setter)
-        accessor->setSetter(vm, setter->getObject());
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), setter->getObject());
     baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
 }
 #endif

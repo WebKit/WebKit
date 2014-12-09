@@ -778,6 +778,7 @@
     <ClCompile Include="..\runtime\NamePrototype.cpp" />
     <ClCompile Include="..\runtime\NativeErrorConstructor.cpp" />
     <ClCompile Include="..\runtime\NativeErrorPrototype.cpp" />
+    <ClCompile Include="..\runtime\NullGetterFunction.cpp" />
     <ClCompile Include="..\runtime\NumberConstructor.cpp" />
     <ClCompile Include="..\runtime\NumberObject.cpp" />
     <ClCompile Include="..\runtime\NumberPrototype.cpp" />
@@ -1571,6 +1572,7 @@
     <ClInclude Include="..\runtime\NamePrototype.h" />
     <ClInclude Include="..\runtime\NativeErrorConstructor.h" />
     <ClInclude Include="..\runtime\NativeErrorPrototype.h" />
+    <ClInclude Include="..\runtime\NullGetterFunction.h" />
     <ClInclude Include="..\runtime\NumberConstructor.h" />
     <ClInclude Include="..\runtime\NumberObject.h" />
     <ClInclude Include="..\runtime\NumberPrototype.h" />

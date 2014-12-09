@@ -99,6 +99,7 @@
 #include "NamePrototype.h"
 #include "NativeErrorConstructor.h"
 #include "NativeErrorPrototype.h"
+#include "NullGetterFunction.h"
 #include "NumberConstructor.h"
 #include "NumberPrototype.h"
 #include "ObjCCallbackFunction.h"
@@ -232,10 +233,11 @@ void JSGlobalObject::init(VM& vm)
     m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction);
     m_callFunction.set(vm, this, callFunction);
     m_applyFunction.set(vm, this, applyFunction);
+    m_nullGetterFunction.set(vm, this, NullGetterFunction::create(vm, NullGetterFunction::createStructure(vm, this, m_functionPrototype.get())));
     m_objectPrototype.set(vm, this, ObjectPrototype::create(vm, this, ObjectPrototype::createStructure(vm, this, jsNull())));
-    GetterSetter* protoAccessor = GetterSetter::create(vm);
-    protoAccessor->setGetter(vm, JSFunction::create(vm, this, 0, String(), globalFuncProtoGetter));
-    protoAccessor->setSetter(vm, JSFunction::create(vm, this, 0, String(), globalFuncProtoSetter));
+    GetterSetter* protoAccessor = GetterSetter::create(vm, this);
+    protoAccessor->setGetter(vm, this, JSFunction::create(vm, this, 0, String(), globalFuncProtoGetter));
+    protoAccessor->setSetter(vm, this, JSFunction::create(vm, this, 0, String(), globalFuncProtoSetter));
     m_objectPrototype->putDirectNonIndexAccessor(vm, vm.propertyNames->underscoreProto, protoAccessor, Accessor | DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     
@@ -609,9 +611,9 @@ bool JSGlobalObject::stringPrototypeChainIsSane()
 void JSGlobalObject::createThrowTypeError(VM& vm)
 {
     JSFunction* thrower = JSFunction::create(vm, this, 0, String(), globalFuncThrowTypeError);
-    GetterSetter* getterSetter = GetterSetter::create(vm);
-    getterSetter->setGetter(vm, thrower);
-    getterSetter->setSetter(vm, thrower);
+    GetterSetter* getterSetter = GetterSetter::create(vm, this);
+    getterSetter->setGetter(vm, this, thrower);
+    getterSetter->setSetter(vm, this, thrower);
     m_throwTypeErrorGetterSetter.set(vm, this, getterSetter);
 }
 
@@ -650,6 +652,8 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #if ENABLE(PROMISES)
     visitor.append(&thisObject->m_promiseConstructor);
 #endif
+
+    visitor.append(&thisObject->m_nullGetterFunction);
 
     visitor.append(&thisObject->m_evalFunction);
     visitor.append(&thisObject->m_callFunction);

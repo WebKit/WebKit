@@ -1,3 +1,85 @@
+2014-12-09  Michael Saboff  <msaboff@apple.com>
+
+        DFG Tries using an inner object's getter/setter when one hasn't been defined
+        https://bugs.webkit.org/show_bug.cgi?id=139229
+
+        Reviewed by Filip Pizlo.
+
+        Added a new NullGetterFunction singleton class to use for getters and setters that
+        haven't been set to a user defined value.  The NullGetterFunction callReturnUndefined()
+        and createReturnUndefined() methods return undefined.  Changed all null checks of the
+        getter and setter pointers to the newly added isGetterNull() and isSetterNull()
+        helper methods.  
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added NullGetterFunction.cpp & .h to build files.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setDescriptor):
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        Changed checking getter and setter to null to use new isGetterNull() and isSetterNull()
+        helpers.
+
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        Updated calls to GetterSetter::create(), setGetter(), setSetter(), withGetter()
+        and withSetter() to provide a global object.
+
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::withGetter):
+        (JSC::GetterSetter::withSetter):
+        (JSC::callGetter):
+        (JSC::callSetter):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        (JSC::GetterSetter::create):
+        (JSC::GetterSetter::isGetterNull):
+        (JSC::GetterSetter::isSetterNull):
+        (JSC::GetterSetter::setGetter):
+        (JSC::GetterSetter::setSetter):
+        Changed to use NullGetterFunction for unspecified getters / setters.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::createThrowTypeError):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::nullGetterFunction):
+        (JSC::JSGlobalObject::evalFunction):
+        Added m_nullGetterFunction singleton.  Updated calls to GetterSetter::create(),
+        setGetter() and setSetter() to provide a global object.
+
+        * runtime/NullGetterFunction.cpp: Added.
+        (JSC::callReturnUndefined):
+        (JSC::constructReturnUndefined):
+        (JSC::NullGetterFunction::getCallData):
+        (JSC::NullGetterFunction::getConstructData):
+        * runtime/NullGetterFunction.h: Added.
+        (JSC::NullGetterFunction::create):
+        (JSC::NullGetterFunction::createStructure):
+        (JSC::NullGetterFunction::NullGetterFunction):
+        New singleton class that returns undefined when called.
+
 2014-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Re-enable function.arguments

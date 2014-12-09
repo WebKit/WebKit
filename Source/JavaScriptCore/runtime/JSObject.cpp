@@ -1689,11 +1689,11 @@ void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
         else if (oldDescriptor.isAccessorDescriptor())
             setter = oldDescriptor.setterObject();
 
-        GetterSetter* accessor = GetterSetter::create(vm);
+        GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
         if (getter)
-            accessor->setGetter(vm, getter);
+            accessor->setGetter(vm, exec->lexicalGlobalObject(), getter);
         if (setter)
-            accessor->setSetter(vm, setter);
+            accessor->setSetter(vm, exec->lexicalGlobalObject(), setter);
 
         entryInMap->set(vm, this, accessor);
         entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~ReadOnly;
@@ -2463,11 +2463,11 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
     VM& vm = exec->vm();
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
-            GetterSetter* accessor = GetterSetter::create(vm);
+            GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
             if (oldDescriptor.getterPresent())
-                accessor->setGetter(vm, oldDescriptor.getterObject());
+                accessor->setGetter(vm, exec->lexicalGlobalObject(), oldDescriptor.getterObject());
             if (oldDescriptor.setterPresent())
-                accessor->setSetter(vm, oldDescriptor.setterObject());
+                accessor->setSetter(vm, exec->lexicalGlobalObject(), oldDescriptor.setterObject());
             target->putDirectAccessor(exec, propertyName, accessor, attributes | Accessor);
             return true;
         }
@@ -2482,16 +2482,16 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
         return true;
     }
     attributes &= ~ReadOnly;
-    GetterSetter* accessor = GetterSetter::create(vm);
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
     if (descriptor.getterPresent())
-        accessor->setGetter(vm, descriptor.getterObject());
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), descriptor.getterObject());
     else if (oldDescriptor.getterPresent())
-        accessor->setGetter(vm, oldDescriptor.getterObject());
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), oldDescriptor.getterObject());
     if (descriptor.setterPresent())
-        accessor->setSetter(vm, descriptor.setterObject());
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), descriptor.setterObject());
     else if (oldDescriptor.setterPresent())
-        accessor->setSetter(vm, oldDescriptor.setterObject());
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), oldDescriptor.setterObject());
 
     target->putDirectAccessor(exec, propertyName, accessor, attributes | Accessor);
     return true;
@@ -2632,17 +2632,17 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     GetterSetter* getterSetter;
     bool getterSetterChanged = false;
     if (accessor.isCustomGetterSetter())
-        getterSetter = GetterSetter::create(exec->vm());
+        getterSetter = GetterSetter::create(exec->vm(), exec->lexicalGlobalObject());
     else {
         ASSERT(accessor.isGetterSetter());
         getterSetter = asGetterSetter(accessor);
     }
     if (descriptor.setterPresent()) {
-        getterSetter = getterSetter->withSetter(exec->vm(), descriptor.setterObject());
+        getterSetter = getterSetter->withSetter(exec->vm(), exec->lexicalGlobalObject(), descriptor.setterObject());
         getterSetterChanged = true;
     }
     if (descriptor.getterPresent()) {
-        getterSetter = getterSetter->withGetter(exec->vm(), descriptor.getterObject());
+        getterSetter = getterSetter->withGetter(exec->vm(), exec->lexicalGlobalObject(), descriptor.getterObject());
         getterSetterChanged = true;
     }
     if (current.attributesEqual(descriptor) && !getterSetterChanged)

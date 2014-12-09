@@ -1,3 +1,23 @@
+2014-12-09  Michael Saboff  <msaboff@apple.com>
+
+        DFG Tries using an inner object's getter/setter when one hasn't been defined
+        https://bugs.webkit.org/show_bug.cgi?id=139229
+
+        Reviewed by Filip Pizlo.
+
+        New regression test.
+
+        * js/regress-139229-expected.txt: Added.
+        * js/regress-139229.html: Added.
+        * js/script-tests/regress-139229.js: Added.
+        (InnerObjectNoGetter):
+        (InnerObjectNoGetter.prototype.set enabled):
+        (InnerObjectNoSetter):
+        (InnerObjectNoSetter.prototype.get enabled):
+        (OuterObject):
+        (OuterObject.prototype.get enabled):
+        (OuterObject.prototype.set enabled):
+
 2014-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Re-enable function.arguments

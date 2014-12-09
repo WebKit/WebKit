@@ -44,29 +44,29 @@ void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_setter);
 }
 
-GetterSetter* GetterSetter::withGetter(VM& vm, JSObject* newGetter)
+GetterSetter* GetterSetter::withGetter(VM& vm, JSGlobalObject* globalObject, JSObject* newGetter)
 {
-    if (!getter()) {
-        setGetter(vm, newGetter);
+    if (isGetterNull()) {
+        setGetter(vm, globalObject, newGetter);
         return this;
     }
     
-    GetterSetter* result = GetterSetter::create(vm);
-    result->setGetter(vm, newGetter);
-    result->setSetter(vm, setter());
+    GetterSetter* result = GetterSetter::create(vm, globalObject);
+    result->setGetter(vm, globalObject, newGetter);
+    result->setSetter(vm, globalObject, setter());
     return result;
 }
 
-GetterSetter* GetterSetter::withSetter(VM& vm, JSObject* newSetter)
+GetterSetter* GetterSetter::withSetter(VM& vm, JSGlobalObject* globalObject, JSObject* newSetter)
 {
-    if (!setter()) {
-        setSetter(vm, newSetter);
+    if (isSetterNull()) {
+        setSetter(vm, globalObject, newSetter);
         return this;
     }
     
-    GetterSetter* result = GetterSetter::create(vm);
-    result->setGetter(vm, getter());
-    result->setSetter(vm, newSetter);
+    GetterSetter* result = GetterSetter::create(vm, globalObject);
+    result->setGetter(vm, globalObject, getter());
+    result->setSetter(vm, globalObject, newSetter);
     return result;
 }
 
@@ -78,8 +78,6 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
         return exec->exception();
 
     JSObject* getter = jsCast<GetterSetter*>(getterSetter)->getter();
-    if (!getter)
-        return jsUndefined();
 
     CallData callData;
     CallType callType = getter->methodTable(exec->vm())->getCallData(getter, callData);
@@ -88,12 +86,15 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
 
 void callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
 {
-    JSObject* setter = jsCast<GetterSetter*>(getterSetter)->setter();
-    if (!setter) {
+    GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
+
+    if (getterSetterObj->isSetterNull()) {
         if (ecmaMode == StrictMode)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
     }
+
+    JSObject* setter = getterSetterObj->setter();
 
     MarkedArgumentBuffer args;
     args.append(value);

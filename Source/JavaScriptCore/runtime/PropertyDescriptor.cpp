@@ -106,8 +106,8 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
         m_attributes &= ~ReadOnly; // FIXME: we should be able to ASSERT this!
 
         GetterSetter* accessor = asGetterSetter(value);
-        m_getter = accessor->getter() ? accessor->getter() : jsUndefined();
-        m_setter = accessor->setter() ? accessor->setter() : jsUndefined();
+        m_getter = !accessor->isGetterNull() ? accessor->getter() : jsUndefined();
+        m_setter = !accessor->isSetterNull() ? accessor->setter() : jsUndefined();
         m_seenAttributes = EnumerablePresent | ConfigurablePresent;
     } else {
         m_value = value;
@@ -131,8 +131,8 @@ void PropertyDescriptor::setAccessorDescriptor(GetterSetter* accessor, unsigned 
     attributes &= ~ReadOnly; // FIXME: we should be able to ASSERT this!
 
     m_attributes = attributes;
-    m_getter = accessor->getter() ? accessor->getter() : jsUndefined();
-    m_setter = accessor->setter() ? accessor->setter() : jsUndefined();
+    m_getter = !accessor->isGetterNull() ? accessor->getter() : jsUndefined();
+    m_setter = !accessor->isSetterNull() ? accessor->setter() : jsUndefined();
     m_seenAttributes = EnumerablePresent | ConfigurablePresent;
 }
 

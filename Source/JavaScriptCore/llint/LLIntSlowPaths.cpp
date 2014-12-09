@@ -872,7 +872,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
     ASSERT(LLINT_OP(1).jsValue().isObject());
     JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
     
-    GetterSetter* accessor = GetterSetter::create(vm);
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
     LLINT_CHECK_EXCEPTION();
     
     JSValue getter = LLINT_OP(3).jsValue();
@@ -882,9 +882,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
     ASSERT(getter.isObject() || setter.isObject());
     
     if (!getter.isUndefined())
-        accessor->setGetter(vm, asObject(getter));
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
     if (!setter.isUndefined())
-        accessor->setSetter(vm, asObject(setter));
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
     baseObj->putDirectAccessor(
         exec,
         exec->codeBlock()->identifier(pc[2].u.operand),
