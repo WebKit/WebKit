@@ -2398,6 +2398,7 @@
 		1ABC3DF31899E437004F0626 /* NavigationState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationState.mm; sourceTree = "<group>"; };
 		1ABC3DF41899E437004F0626 /* NavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationState.h; sourceTree = "<group>"; };
 		1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDelegate.h; sourceTree = "<group>"; };
+		1ABF43791A368050003FB0E6 /* WebsiteDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataTypes.h; sourceTree = "<group>"; };
 		1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageProxyCocoa.mm; sourceTree = "<group>"; };
 		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
 		1AC1336618565B5700F3EC05 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
@@ -4423,6 +4424,7 @@
 				1AAE058C1279DCD400852418 /* Plugins */,
 				3709504918A9FAD20087AE5D /* posix */,
 				0F5947A0187B3B7100437857 /* Scrolling */,
+				1ABF43781A368035003FB0E6 /* WebsiteData */,
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
@@ -4692,6 +4694,14 @@
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 			);
 			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		1ABF43781A368035003FB0E6 /* WebsiteData */ = {
+			isa = PBXGroup;
+			children = (
+				1ABF43791A368050003FB0E6 /* WebsiteDataTypes.h */,
+			);
+			path = WebsiteData;
 			sourceTree = "<group>";
 		};
 		1AE00D6818327C1200087DD7 /* IPC */ = {

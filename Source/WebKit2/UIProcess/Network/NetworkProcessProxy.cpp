@@ -51,6 +51,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static uint64_t generateCallbackID()
+{
+    static uint64_t callbackID;
+
+    return ++callbackID;
+}
+
 PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebContext& webContext)
 {
     return adoptRef(new NetworkProcessProxy(webContext));
@@ -66,6 +73,7 @@ NetworkProcessProxy::NetworkProcessProxy(WebContext& webContext)
 
 NetworkProcessProxy::~NetworkProcessProxy()
 {
+    ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -107,6 +115,14 @@ DownloadProxy* NetworkProcessProxy::createDownloadProxy(const ResourceRequest& r
     return m_downloadProxyMap->createDownloadProxy(m_webContext, resourceRequest);
 }
 
+void NetworkProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince,  std::function<void ()> completionHandler)
+{
+    auto callbackID = generateCallbackID();
+
+    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
+    send(Messages::NetworkProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
+}
+
 void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
 {
     // The network process must have crashed or exited, send any pending sync replies we might have.
@@ -121,6 +137,10 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
         notImplemented();
 #endif
     }
+
+    for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
+        callback();
+    m_pendingDeleteWebsiteDataCallbacks.clear();
 
     // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
     m_webContext.networkProcessCrashed(this);
@@ -181,6 +201,12 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uin
 
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, connection());
     page->didReceiveAuthenticationChallengeProxy(frameID, authenticationChallenge.release());
+}
+
+void NetworkProcessProxy::didDeleteWebsiteData(uint64_t callbackID)
+{
+    auto callback = m_pendingDeleteWebsiteDataCallbacks.take(callbackID);
+    callback();
 }
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)

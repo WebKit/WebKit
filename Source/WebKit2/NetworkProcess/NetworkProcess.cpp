@@ -43,8 +43,10 @@
 #include "StatisticsData.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
+#include "WebsiteDataTypes.h"
 #include <WebCore/Logging.h>
 #include <WebCore/MemoryPressureHandler.h>
+#include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
 #include <wtf/RunLoop.h>
@@ -232,6 +234,16 @@ void NetworkProcess::ensurePrivateBrowsingSession(SessionID sessionID)
 void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
 {
     SessionTracker::destroySession(sessionID);
+}
+
+void NetworkProcess::deleteWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+{
+    if (websiteDataTypes & WebsiteDataTypeCookies) {
+        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+            deleteAllCookiesModifiedSince(*networkStorageSession, modifiedSince);
+    }
+
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteData(callbackID), 0);
 }
 
 void NetworkProcess::downloadRequest(uint64_t downloadID, const ResourceRequest& request)

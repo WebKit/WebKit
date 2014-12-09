@@ -32,6 +32,7 @@
 #include "CustomProtocolManagerProxy.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
+#include "WebsiteDataTypes.h"
 #include <memory>
 #include <wtf/Deque.h>
 
@@ -42,6 +43,7 @@
 namespace WebCore {
 class AuthenticationChallenge;
 class ResourceRequest;
+class SessionID;
 }
 
 namespace WebKit {
@@ -59,6 +61,8 @@ public:
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
 
     DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
+
+    void deleteWebsiteData(WebCore::SessionID, WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
 
 #if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);
@@ -85,6 +89,7 @@ private:
     void didReceiveNetworkProcessProxyMessage(IPC::Connection*, IPC::MessageDecoder&);
     void didCreateNetworkConnectionToWebProcess(const IPC::Attachment&);
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
+    void didDeleteWebsiteData(uint64_t callbackID);
 
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
@@ -94,9 +99,10 @@ private:
     unsigned m_numPendingConnectionRequests;
     Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
+    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
+
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
-    
 #if PLATFORM(IOS)
     std::unique_ptr<ProcessAssertion> m_assertion;
 #endif

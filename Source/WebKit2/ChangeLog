@@ -1,5 +1,70 @@
 2014-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Implement clearing of cookies
+        https://bugs.webkit.org/show_bug.cgi?id=139455
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        Handle deleting cookies by finding the right network storage session and deleting the cookies from it.
+        Then, send a DidDeleteWebsiteData message back.
+
+        * NetworkProcess/NetworkProcess.h:
+        Add new members.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+        Add new DeleteWebsiteData message.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Move the website data types enum to its own file so it can be shared.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataTypes):
+        Update now that WebsiteDataTypes is its own enum.
+
+        (-[_WKWebsiteDataStore removeDataOfTypes:modifiedSince:completionHandler:]):
+        removeDataModifiedSince was renamed to removeData.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::generateCallbackID):
+        Helper function to create a callback ID.
+
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        Assert that we have no pending callbacks.
+
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        Put the completion handler in our map and message the network process.
+
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch):
+        Call all completion handlers.
+
+        (WebKit::NetworkProcessProxy::didDeleteWebsiteData):
+        Grab the completion handler and call it.
+
+        * UIProcess/Network/NetworkProcessProxy.h:
+        Add new members.
+
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        Add DidDeleteWebsiteData callback.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessType):
+        Helper function that computes the type of process access we'd need for the given mask of
+        website data types.
+
+        (WebKit::WebsiteDataStore::removeData):
+        Gather all the network processes and message them. Use a callback aggregator object to track callbacks
+        so we'll call the completion handler once all callbacks have been invoked.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Move WebsiteDataTypes to its own file.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2014-12-09  Anders Carlsson  <andersca@apple.com>
+
         Give WebsiteDataStore a unique ID
         https://bugs.webkit.org/show_bug.cgi?id=139448
 

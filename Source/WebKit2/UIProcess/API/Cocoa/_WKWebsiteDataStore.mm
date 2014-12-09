@@ -52,9 +52,9 @@
     return _websiteDataStore->isNonPersistent();
 }
 
-static WebKit::WebsiteDataStore::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteDataTypes)
+static WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteDataTypes)
 {
-    using WebsiteDataTypes = WebKit::WebsiteDataStore::WebsiteDataTypes;
+    using WebsiteDataTypes = WebKit::WebsiteDataTypes;
 
     int websiteDataTypes = 0;
 
@@ -75,7 +75,7 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
 - (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler
 {
     auto completionHandlerCopy = Block_copy(completionHandler);
-    _websiteDataStore->websiteDataStore().removeDataModifiedSince(toWebsiteDataTypes(websiteDataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
+    _websiteDataStore->websiteDataStore().removeData(toWebsiteDataTypes(websiteDataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
         completionHandlerCopy();
         Block_release(completionHandlerCopy);
     });

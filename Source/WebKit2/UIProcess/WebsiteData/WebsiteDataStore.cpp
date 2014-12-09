@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
+#include "WebContext.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -86,10 +87,91 @@ void WebsiteDataStore::removeWebPage(WebPageProxy& webPageProxy)
     m_webPages.remove(&webPageProxy);
 }
 
-void WebsiteDataStore::removeDataModifiedSince(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point, std::function<void ()> completionHandler)
+enum class ProcessAccessType {
+    None,
+    OnlyIfLaunched,
+    Launch,
+};
+
+static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTypes, bool isNonPersistantStore)
 {
-    // FIXME: Actually remove data.
-    RunLoop::main().dispatch(WTF::move(completionHandler));
+    ProcessAccessType processAccessType = ProcessAccessType::None;
+
+    if (dataTypes & WebsiteDataTypeCookies) {
+        if (isNonPersistantStore)
+            processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
+        else
+            processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+    }
+
+    // FIXME: Handle caches here too.
+
+    return processAccessType;
+}
+
+void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+{
+    struct CallbackAggregator : public RefCounted<CallbackAggregator> {
+        explicit CallbackAggregator (std::function<void ()> completionHandler)
+            : completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        void addPendingCallback()
+        {
+            pendingCallbacks++;
+        }
+
+        void removePendingCallback()
+        {
+            ASSERT(pendingCallbacks);
+            --pendingCallbacks;
+
+            callIfNeeded();
+        }
+
+        void callIfNeeded()
+        {
+            if (!pendingCallbacks)
+                RunLoop::main().dispatch(WTF::move(completionHandler));
+        }
+
+        unsigned pendingCallbacks = 0;
+        std::function<void ()> completionHandler;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+
+    auto networkProcessAccessType = computeNetworkProcessAccessType(dataTypes, isNonPersistent());
+    if (networkProcessAccessType != ProcessAccessType::None) {
+        HashSet<WebContext*> contexts;
+        for (auto& webPage : m_webPages)
+            contexts.add(&webPage->process().context());
+
+        for (auto& context : contexts) {
+            switch (networkProcessAccessType) {
+            case ProcessAccessType::OnlyIfLaunched:
+                if (!context->networkProcess())
+                    continue;
+                break;
+
+            case ProcessAccessType::Launch:
+                context->ensureNetworkProcess();
+                break;
+
+            case ProcessAccessType::None:
+                ASSERT_NOT_REACHED();
+            }
+
+            callbackAggregator->addPendingCallback();
+            context->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        }
+    }
+
+    // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
+    callbackAggregator->callIfNeeded();
 }
 
 }

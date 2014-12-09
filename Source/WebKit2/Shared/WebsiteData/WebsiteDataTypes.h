@@ -23,47 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteDataStore_h
-#define WebsiteDataStore_h
-
-#include "WebsiteDataTypes.h"
-#include <WebCore/SessionID.h>
-#include <functional>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#ifndef WebsiteDataTypes_h
+#define WebsiteDataTypes_h
 
 namespace WebKit {
 
-class WebPageProxy;
-
-class WebsiteDataStore : public RefCounted<WebsiteDataStore> {
-public:
-    struct Configuration {
-    };
-    static RefPtr<WebsiteDataStore> createNonPersistent();
-    static RefPtr<WebsiteDataStore> create(Configuration);
-    virtual ~WebsiteDataStore();
-
-    void addWebPage(WebPageProxy&);
-    void removeWebPage(WebPageProxy&);
-
-    uint64_t identifier() const { return m_identifier; }
-
-    bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
-    WebCore::SessionID sessionID() const { return m_sessionID; }
-
-    void removeData(WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
-
-private:
-    explicit WebsiteDataStore(WebCore::SessionID);
-    explicit WebsiteDataStore(Configuration);
-
-    HashSet<WebPageProxy*> m_webPages;
-    uint64_t m_identifier;
-    WebCore::SessionID m_sessionID;
+enum WebsiteDataTypes {
+    WebsiteDataTypeCookies = 1 << 0,
 };
 
-}
+};
 
-#endif // WebsiteDataStore_h
+#endif // WebsiteDataTypes_h
