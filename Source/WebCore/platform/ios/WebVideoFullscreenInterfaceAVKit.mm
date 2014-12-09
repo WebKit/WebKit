@@ -1041,7 +1041,7 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
     m_window = nil;
     m_videoFullscreenModel = nil;
     if (m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
-        [m_playerViewController stopOptimizedFullscreen];
+        [m_playerViewController cancelOptimizedFullscreen];
     if (m_mode & HTMLMediaElement::VideoFullscreenModeStandard)
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:nil];
     m_playerController = nil;

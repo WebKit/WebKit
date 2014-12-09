@@ -1,3 +1,14 @@
+2014-12-09  Jeremy Jones  <jeremyj@apple.com>
+
+        When invalidating fullscreen, cancel instead of stop optimizedFullscfreen.
+        https://bugs.webkit.org/show_bug.cgi?id=139145
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::invalidate): call cancel instead of stop
+        * platform/spi/ios/AVKitSPI.h: add -cancelOptimizedFullscreen.
+
 2014-12-09  Alberto Garcia  <berto@igalia.com>
 
         [Media][GTK][EFL] Reduce style updates (painting) in controls
