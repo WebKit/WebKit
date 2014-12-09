@@ -1,3 +1,17 @@
+2014-12-08  Beth Dakin  <bdakin@apple.com>
+
+        Copy and Lookup menu items should be disabled when something is not copyable
+        https://bugs.webkit.org/show_bug.cgi?id=139423
+
+        Reviewed by Tim Horton.
+
+        New function allowCopy() indicates whether the HitTestResult would allow itself to 
+        be copied onto the pasteboard.
+        * WebCore.exp.in:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::allowsCopy):
+        * rendering/HitTestResult.h:
+
 2014-12-08  Chris Dumez  <cdumez@apple.com>
 
         Move 'text-shadow' check from RenderStyle::changeRequiresLayout() to changeAffectsVisualOverflow()
