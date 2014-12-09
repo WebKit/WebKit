@@ -1235,7 +1235,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, con
     if (!baseValue.isCell())
         return GiveUpOnCache;
     JSCell* baseCell = baseValue.asCell();
-    Structure* structure = baseCell->structure(*vm);
+    Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
     if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
@@ -1341,18 +1341,15 @@ void repatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& proper
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
-static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
 
-    if (!baseValue.isCell() || !structure)
+    if (!baseValue.isCell())
         return GiveUpOnCache;
     JSCell* baseCell = baseValue.asCell();
-
-    if (baseCell->structure(*vm)->id() != structure->id())
-        return GiveUpOnCache;
-
+    Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
     
@@ -1469,11 +1466,11 @@ static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue,
     return GiveUpOnCache;
 }
 
-void buildPutByIdList(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+void buildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    if (tryBuildPutByIdList(exec, baseValue, structure, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
+    if (tryBuildPutByIdList(exec, baseValue, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
