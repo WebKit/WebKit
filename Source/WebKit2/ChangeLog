@@ -1,3 +1,9 @@
+2014-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+
 2014-12-09  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] LDFLAGS is ignored when running g-ir-scanner
