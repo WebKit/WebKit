@@ -1,3 +1,22 @@
+2014-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Move 'text-shadow' check from RenderStyle::changeRequiresLayout() to changeAffectsVisualOverflow()
+        https://bugs.webkit.org/show_bug.cgi?id=139420
+
+        Reviewed by Simon Fraser.
+
+        Move 'text-shadow' check from RenderStyle::changeRequiresLayout() to
+        changeAffectsVisualOverflow(). This has no behavior change as
+        changeRequiresLayout() calls changeAffectsVisualOverflow(). However,
+        this is clearer as text-shadow affects the visual overflow (similarly
+        to box-shadow).
+
+        No new tests, no behavior change.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow):
+        (WebCore::RenderStyle::changeRequiresLayout):
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Fix typo.

@@ -392,6 +392,10 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         && !rareNonInheritedData->shadowDataEquivalent(*other.rareNonInheritedData.get()))
         return true;
 
+    if (rareInheritedData.get() != other.rareInheritedData.get()
+        && !rareInheritedData->shadowDataEquivalent(*other.rareInheritedData.get()))
+        return true;
+
     if (inherited_flags._text_decorations != other.inherited_flags._text_decorations
         || visual->textDecoration != other.visual->textDecoration
         || rareNonInheritedData->m_textDecorationStyle != other.rareNonInheritedData->m_textDecorationStyle) {
@@ -532,9 +536,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             || rareInheritedData->useTouchOverflowScrolling != other.rareInheritedData->useTouchOverflowScrolling
 #endif
             || rareInheritedData->listStyleImage != other.rareInheritedData->listStyleImage)
-            return true;
-
-        if (!rareInheritedData->shadowDataEquivalent(*other.rareInheritedData.get()))
             return true;
 
         if (textStrokeWidth() != other.textStrokeWidth())
