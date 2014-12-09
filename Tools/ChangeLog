@@ -1,3 +1,62 @@
+2014-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Blink Merge: Remove 'http_lock' code from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=136722
+
+        Reviewed by Alexey Proskuryakov.
+
+        Based on Blink commit by Dirk Pranke <dpranke@chromium.org>
+        https://chromium.googlesource.com/chromium/blink/+/196f8146a948275c2f1594b13e30ab19a6e6fd66
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__):
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner.start_servers): Renamed from start_servers_with_lock.
+        (LayoutTestRunner.stop_servers): Renamed from stop_servers_with_lock.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (FakePrinter.flush):
+        (LayoutTestRunnerTests._runner):
+        (LayoutTestRunnerTests._run_tests):
+        (LayoutTestRunnerTests.test_servers_started):
+        (LockCheckingRunner): Deleted.
+        (LockCheckingRunner.__init__): Deleted.
+        (LockCheckingRunner.handle_finished_list): Deleted.
+        (LayoutTestRunnerTests.test_http_locking): Deleted.
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port.to.http_server_supports_ipv6):
+        (Port.to.stop_websocket_server):
+        (Port.to.acquire_http_lock): Deleted.
+        (Port.to.release_http_lock): Deleted.
+        * Scripts/webkitpy/port/http_lock.py: Removed.
+        * Scripts/webkitpy/port/http_lock_unittest.py: Removed.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.show_results_html_file):
+        (IOSSimulatorPort.acquire_http_lock): Deleted.
+        (IOSSimulatorPort): Deleted.
+        (IOSSimulatorPort.release_http_lock): Deleted.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.show_results_html_file):
+        (MacPort): Deleted.
+        (MacPort.acquire_http_lock): Deleted.
+        (MacPort.release_http_lock): Deleted.
+        * Scripts/webkitpy/port/mock_drt.py:
+        (MockDRTPort.start_websocket_server):
+        (MockDRTPort.stop_websocket_server):
+        (MockDRTPort.acquire_http_lock): Deleted.
+        (MockDRTPort.release_http_lock): Deleted.
+        * Scripts/webkitpy/port/mock_drt_unittest.py:
+        (MockDRTPortTest.test_uses_apache):
+        (MockDRTPortTest.integration_test_http_lock): Deleted.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.assert_servers_are_up):
+        (PortTestCase.integration_test_http_lock): Deleted.
+        * Scripts/webkitpy/port/test.py:
+        (TestPort.start_websocket_server):
+        (TestPort.stop_websocket_server):
+        (TestPort.acquire_http_lock): Deleted.
+        (TestPort.release_http_lock): Deleted.
+
 2014-12-09  Alberto Garcia  <berto@igalia.com>
 
         convertToUTF8String converts null string to empty string

@@ -109,9 +109,6 @@ class MockDRTPort(object):
     def start_websocket_server(self):
         pass
 
-    def acquire_http_lock(self):
-        pass
-
     def stop_helper(self):
         pass
 
@@ -119,9 +116,6 @@ class MockDRTPort(object):
         pass
 
     def stop_websocket_server(self):
-        pass
-
-    def release_http_lock(self):
         pass
 
     def show_results_html_file(self, results_filename):

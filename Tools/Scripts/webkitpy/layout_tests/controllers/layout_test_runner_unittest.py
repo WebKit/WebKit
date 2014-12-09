@@ -70,27 +70,6 @@ class FakePrinter(object):
         pass
 
 
-class LockCheckingRunner(LayoutTestRunner):
-    def __init__(self, port, options, printer, tester, http_lock):
-        super(LockCheckingRunner, self).__init__(options, port, printer, port.results_directory(), lambda test_name: False)
-        self._finished_list_called = False
-        self._tester = tester
-        self._should_have_http_lock = http_lock
-
-    def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
-        if not self._finished_list_called:
-            self._tester.assertEqual(list_name, 'locked_tests')
-            self._tester.assertTrue(self._remaining_locked_shards)
-            self._tester.assertTrue(self._has_http_lock is self._should_have_http_lock)
-
-        super(LockCheckingRunner, self).handle_finished_list(source, list_name, num_tests, elapsed_time)
-
-        if not self._finished_list_called:
-            self._tester.assertEqual(self._remaining_locked_shards, [])
-            self._tester.assertFalse(self._has_http_lock)
-            self._finished_list_called = True
-
-
 class LayoutTestRunnerTests(unittest.TestCase):
     def _runner(self, port=None):
         # FIXME: we shouldn't have to use run_webkit_tests.py to get the options we need.
@@ -99,7 +78,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
 
         host = MockHost()
         port = port or host.port_factory.get(options.platform, options=options)
-        return LockCheckingRunner(port, options, FakePrinter(), self, True)
+        return LayoutTestRunner(options, port, FakePrinter(), port.results_directory(), lambda test_name: False)
 
     def _run_tests(self, runner, tests):
         test_inputs = [TestInput(test, 6000) for test in tests]
@@ -107,10 +86,6 @@ class LayoutTestRunnerTests(unittest.TestCase):
         expectations.parse_all_expectations()
         runner.run_tests(expectations, test_inputs, set(),
             num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), retrying=False)
-
-    def test_http_locking(self):
-        runner = self._runner()
-        self._run_tests(runner, ['http/tests/passes/text.html', 'passes/text.html'])
 
     def test_interrupt_if_at_failure_limits(self):
         runner = self._runner()
@@ -189,30 +164,30 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner = self._runner(port=port)
         runner._needs_http = True
         runner._needs_websockets = False
-        runner.start_servers_with_lock()
+        runner.start_servers()
         self.assertEqual(self.http_started, True)
         self.assertEqual(self.websocket_started, False)
-        runner.stop_servers_with_lock()
+        runner.stop_servers()
         self.assertEqual(self.http_stopped, True)
         self.assertEqual(self.websocket_stopped, False)
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
         runner._needs_http = True
         runner._needs_websockets = True
-        runner.start_servers_with_lock()
+        runner.start_servers()
         self.assertEqual(self.http_started, True)
         self.assertEqual(self.websocket_started, True)
-        runner.stop_servers_with_lock()
+        runner.stop_servers()
         self.assertEqual(self.http_stopped, True)
         self.assertEqual(self.websocket_stopped, True)
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
         runner._needs_http = False
         runner._needs_websockets = False
-        runner.start_servers_with_lock()
+        runner.start_servers()
         self.assertEqual(self.http_started, False)
         self.assertEqual(self.websocket_started, False)
-        runner.stop_servers_with_lock()
+        runner.stop_servers()
         self.assertEqual(self.http_stopped, False)
         self.assertEqual(self.websocket_stopped, False)
 

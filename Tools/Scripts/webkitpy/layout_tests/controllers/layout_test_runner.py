@@ -75,9 +75,7 @@ class LayoutTestRunner(object):
         self._needs_http = None
         self._needs_websockets = None
         self._retrying = False
-
         self._current_run_results = None
-        self._has_http_lock = False
 
     def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, retrying):
         self._expectations = expectations
@@ -89,7 +87,6 @@ class LayoutTestRunner(object):
         # FIXME: rename all variables to test_run_results or some such ...
         run_results = TestRunResults(self._expectations, len(test_inputs) + len(tests_to_skip))
         self._current_run_results = run_results
-        self._has_http_lock = False
         self._printer.num_tests = len(test_inputs)
         self._printer.num_started = 0
 
@@ -105,7 +102,7 @@ class LayoutTestRunner(object):
         all_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
 
         if self._needs_http and self._options.http:
-            self.start_servers_with_lock()
+            self.start_servers()
 
         num_workers = min(num_workers, len(all_shards))
         self._printer.print_workers_and_shards(num_workers, len(all_shards))
@@ -129,7 +126,7 @@ class LayoutTestRunner(object):
             _log.debug('%s("%s") raised, exiting' % (e.__class__.__name__, str(e)))
             raise
         finally:
-            self.stop_servers_with_lock()
+            self.stop_servers()
 
         return run_results
 
@@ -185,28 +182,21 @@ class LayoutTestRunner(object):
 
         self._interrupt_if_at_failure_limits(run_results)
 
-    def start_servers_with_lock(self):
-        self._printer.write_update('Acquiring http lock ...')
-        self._port.acquire_http_lock()
+    def start_servers(self):
         if self._needs_http:
             self._printer.write_update('Starting HTTP server ...')
             self._port.start_http_server()
         if self._needs_websockets:
             self._printer.write_update('Starting WebSocket server ...')
             self._port.start_websocket_server()
-        self._has_http_lock = True
 
-    def stop_servers_with_lock(self):
-        if self._has_http_lock:
-            if self._needs_http:
-                self._printer.write_update('Stopping HTTP server ...')
-                self._port.stop_http_server()
-            if self._needs_websockets:
-                self._printer.write_update('Stopping WebSocket server ...')
-                self._port.stop_websocket_server()
-            self._printer.write_update('Releasing server lock ...')
-            self._port.release_http_lock()
-            self._has_http_lock = False
+    def stop_servers(self):
+        if self._needs_http:
+            self._printer.write_update('Stopping HTTP server ...')
+            self._port.stop_http_server()
+        if self._needs_websockets:
+            self._printer.write_update('Stopping WebSocket server ...')
+            self._port.stop_websocket_server()
 
     def handle(self, name, source, *args):
         method = getattr(self, '_handle_' + name)

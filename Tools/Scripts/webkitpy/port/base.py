@@ -54,7 +54,6 @@ from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import config as port_config
 from webkitpy.port import driver
-from webkitpy.port import http_lock
 from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
@@ -119,7 +118,6 @@ class Port(object):
         self._websocket_server = None
         self._image_differ = None
         self._server_process_constructor = server_process.ServerProcess  # overridable for testing
-        self._http_lock = None  # FIXME: Why does this live on the port object?
 
         if not hasattr(options, 'configuration') or not options.configuration:
             self.set_option_default('configuration', self.default_configuration())
@@ -904,10 +902,6 @@ class Port(object):
             return False
         return True
 
-    def acquire_http_lock(self):
-        self._http_lock = http_lock.HttpLock(None, filesystem=self._filesystem, executive=self._executive)
-        self._http_lock.wait_for_httpd_lock()
-
     def stop_helper(self):
         """Shut down the test helper if it is running. Do nothing if
         it isn't, or it isn't available. If a port overrides start_helper()
@@ -925,10 +919,6 @@ class Port(object):
         if self._websocket_server:
             self._websocket_server.stop()
             self._websocket_server = None
-
-    def release_http_lock(self):
-        if self._http_lock:
-            self._http_lock.cleanup_http_lock()
 
     def exit_code_from_summarized_results(self, unexpected_results):
         """Given summarized results, compute the exit code to be returned by new-run-webkit-tests.

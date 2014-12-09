@@ -129,12 +129,6 @@ class PortTestCase(unittest.TestCase):
             finally:
                 test_socket.close()
 
-    def integration_test_http_lock(self):
-        port = self.make_port()
-        # Only checking that no exception is raised.
-        port.acquire_http_lock()
-        port.release_http_lock()
-
     def integration_test_check_sys_deps(self):
         port = self.make_port()
         # Only checking that no exception is raised.

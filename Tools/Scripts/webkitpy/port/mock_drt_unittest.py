@@ -65,9 +65,6 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def test_uses_apache(self):
         pass
 
-    def integration_test_http_lock(self):
-        pass
-
     def integration_test_start_helper(self):
         pass
 

@@ -210,12 +210,6 @@ class IOSSimulatorPort(Port):
         self._executive.popen([self.path_to_script('run-safari')] + self._arguments_for_configuration() + ['--no-saved-state', '-NSOpen', results_filename],
             cwd=self.webkit_base(), stdout=file(os.devnull), stderr=file(os.devnull))
 
-    def acquire_http_lock(self):
-        pass
-
-    def release_http_lock(self):
-        pass
-
     def sample_file_path(self, name, pid):
         return self._filesystem.join(self.results_directory(), "{0}-{1}-sample.txt".format(name, pid))
 
