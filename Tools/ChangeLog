@@ -1,5 +1,13 @@
 2014-12-09  Benjamin Poulain  <bpoulain@apple.com>
 
+        Fix webkitpy test expectation
+
+        Not sure what I messed up, but TOTAL_SKIPS was not right.
+
+        * Scripts/webkitpy/port/test.py:
+
+2014-12-09  Benjamin Poulain  <bpoulain@apple.com>
+
         Remove virtual test support from webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=139427
 
