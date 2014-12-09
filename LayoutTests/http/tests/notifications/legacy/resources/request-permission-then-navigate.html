@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+function requestPermission()
+{
+  window.webkitNotifications.requestPermission(function() { });
+}
+
+window.onunload = requestPermission;
+window.location = "notify-opener-done.html"
+</script>
