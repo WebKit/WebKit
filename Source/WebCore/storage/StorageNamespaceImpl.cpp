@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static HashMap<String, StorageNamespaceImpl*> localStorageNamespaceMap()
+static HashMap<String, StorageNamespaceImpl*>& localStorageNamespaceMap()
 {
     static NeverDestroyed<HashMap<String, StorageNamespaceImpl*>> localStorageNamespaceMap;
 
