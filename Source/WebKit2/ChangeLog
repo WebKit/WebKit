@@ -1,3 +1,11 @@
+2014-12-08  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Use DependenciesEFL instead of Dependencies
+
+        Unreviewed, fix simple typo.
+
+        * PlatformEfl.cmake:
+
 2014-12-08  Beth Dakin  <bdakin@apple.com>
 
         Copy and Lookup menu items should be disabled when something is not copyable
