@@ -1,5 +1,22 @@
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
+        WebStorageNamespaceProvider should create StorageNamespaceImpls
+        https://bugs.webkit.org/show_bug.cgi?id=139419
+
+        Reviewed by Andreas Kling.
+
+        * Storage/WebStorageNamespaceProvider.cpp:
+        (WebStorageNamespaceProvider::createLocalStorageNamespace):
+        (WebStorageNamespaceProvider::createTransientLocalStorageNamespace):
+        Create StorageNamespaceImpls.
+
+        (WebStorageNamespaceProvider::createSessionStorageNamespace): Deleted.
+        Delete this for now.
+
+        * Storage/WebStorageNamespaceProvider.h:
+
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
         WebStorageNamespaceProvider should know about its local storage database path
         https://bugs.webkit.org/show_bug.cgi?id=139413
 

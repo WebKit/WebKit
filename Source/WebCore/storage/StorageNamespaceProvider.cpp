@@ -30,6 +30,9 @@
 
 namespace WebCore {
 
+// Suggested by the HTML5 spec.
+unsigned localStorageDatabaseQuotaInBytes = 5 * 1024 * 1024;
+
 StorageNamespaceProvider::StorageNamespaceProvider()
 {
 }
@@ -56,7 +59,7 @@ void StorageNamespaceProvider::removePage(Page& page)
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace()
 {
     if (!m_localStorageNamespace)
-        m_localStorageNamespace = createLocalStorageNamespace();
+        m_localStorageNamespace = createLocalStorageNamespace(localStorageDatabaseQuotaInBytes);
 
     return *m_localStorageNamespace;
 }
@@ -65,7 +68,7 @@ StorageNamespace& StorageNamespaceProvider::transientLocalStorageNamespace(Secur
 {
     auto& slot = m_transientLocalStorageMap.add(&securityOrigin, nullptr).iterator->value;
     if (!slot)
-        slot = createTransientLocalStorageNamespace(securityOrigin);
+        slot = createTransientLocalStorageNamespace(securityOrigin, localStorageDatabaseQuotaInBytes);
 
     return *slot;
 }

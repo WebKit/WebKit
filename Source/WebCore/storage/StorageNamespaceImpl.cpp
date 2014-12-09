@@ -36,17 +36,35 @@
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
 #include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-typedef HashMap<String, StorageNamespace*> LocalStorageNamespaceMap;
-
-static LocalStorageNamespaceMap& localStorageNamespaceMap()
+static HashMap<String, StorageNamespaceImpl*> localStorageNamespaceMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(LocalStorageNamespaceMap, localStorageNamespaceMap, ());
+    static NeverDestroyed<HashMap<String, StorageNamespaceImpl*>> localStorageNamespaceMap;
+
     return localStorageNamespaceMap;
+}
+
+RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(unsigned quota)
+{
+    return adoptRef(new StorageNamespaceImpl(SessionStorage, String(), quota));
+}
+
+RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota)
+{
+    ASSERT(!databasePath.isNull());
+
+    auto& slot = localStorageNamespaceMap().add(databasePath, nullptr).iterator->value;
+    if (slot)
+        return slot;
+
+    RefPtr<StorageNamespaceImpl> storageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, databasePath, quota));
+    slot = storageNamespace.get();
+
+    return storageNamespace;
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(PageGroup* pageGroup)
@@ -60,19 +78,12 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(PageGro
     unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
     const String lookupPath = path.isNull() ? emptyString() : path;
 
-    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(lookupPath, nullptr);
-    if (!result.isNewEntry)
-        return result.iterator->value;
-
-    RefPtr<StorageNamespace> storageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, lookupPath, quota));
-
-    result.iterator->value = storageNamespace.get();
-    return storageNamespace.release();
+    return getOrCreateLocalStorageNamespace(path.isNull() ? emptyString() : path, quota);
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(Page* page)
 {
-    return adoptRef(new StorageNamespaceImpl(SessionStorage, String(), page->settings().sessionStorageQuota()));
+    return createSessionStorageNamespace(page->settings().sessionStorageQuota());
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin*)

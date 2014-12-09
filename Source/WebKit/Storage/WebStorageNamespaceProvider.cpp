@@ -25,7 +25,7 @@
 
 #include "WebStorageNamespaceProvider.h"
 
-#include <WebCore/StorageNamespace.h>
+#include <WebCore/StorageNamespaceImpl.h>
 
 using namespace WebCore;
 
@@ -43,20 +43,14 @@ WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 {
 }
 
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page&)
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
-    // FIXME: Implement.
-    return nullptr;
+    return StorageNamespaceImpl::getOrCreateLocalStorageNamespace(m_localStorageDatabasePath, quota);
 }
 
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace()
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota)
 {
-    // FIXME: Implement.
-    return nullptr;
-}
-
-RefPtr<StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&)
-{
-    // FIXME: Implement.
-    return nullptr;
+    // FIXME: A smarter implementation would create a special namespace type instead of just piggy-backing off
+    // SessionStorageNamespace here.
+    return StorageNamespaceImpl::createSessionStorageNamespace(quota);
 }
