@@ -4612,6 +4612,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.userContentControllerID = m_userContentController ? m_userContentController->identifier() : 0;
     parameters.visitedLinkTableID = m_visitedLinkProvider->identifier();
+    parameters.websiteDataStoreID = m_websiteDataStore->identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();

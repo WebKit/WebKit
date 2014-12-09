@@ -51,6 +51,8 @@ public:
     void addWebPage(WebPageProxy&);
     void removeWebPage(WebPageProxy&);
 
+    uint64_t identifier() const { return m_identifier; }
+
     bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
@@ -61,6 +63,7 @@ private:
     explicit WebsiteDataStore(Configuration);
 
     HashSet<WebPageProxy*> m_webPages;
+    uint64_t m_identifier;
     WebCore::SessionID m_sessionID;
 };
 

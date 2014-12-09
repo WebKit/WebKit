@@ -38,6 +38,13 @@ static WebCore::SessionID generateNonPersistentSessionID()
     return WebCore::SessionID(--sessionID);
 }
 
+static uint64_t generateIdentifier()
+{
+    static uint64_t identifier;
+
+    return ++identifier;
+}
+
 RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
     return adoptRef(new WebsiteDataStore(generateNonPersistentSessionID()));
@@ -49,12 +56,14 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
 }
 
 WebsiteDataStore::WebsiteDataStore(Configuration)
-    : m_sessionID(WebCore::SessionID::defaultSessionID())
+    : m_identifier(generateIdentifier())
+    , m_sessionID(WebCore::SessionID::defaultSessionID())
 {
 }
 
 WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
-    : m_sessionID(sessionID)
+    : m_identifier(generateIdentifier())
+    , m_sessionID(sessionID)
 {
 }
 
