@@ -531,8 +531,8 @@ private:
     Parser();
     String parseInner();
 
-    void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
-        ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures, int, IdentifierSet&, const Vector<RefPtr<StringImpl>>&&);
+    void didFinishParsing(SourceElements*, DeclarationStacks::VarStack&, 
+        DeclarationStacks::FunctionStack&, CodeFeatures, int, IdentifierSet&, const Vector<RefPtr<StringImpl>>&&);
 
     // Used to determine type of error to report.
     bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -833,8 +833,8 @@ private:
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
     bool m_parsingBuiltin;
-    ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
-    ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+    DeclarationStacks::VarStack m_varDeclarations;
+    DeclarationStacks::FunctionStack m_funcDeclarations;
     IdentifierSet m_capturedVariables;
     Vector<RefPtr<StringImpl>> m_closedVariables;
     CodeFeatures m_features;
@@ -905,8 +905,8 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, bool ne
                                     startColumn,
                                     endColumn,
                                     m_sourceElements,
-                                    m_varDeclarations ? &m_varDeclarations->data : 0,
-                                    m_funcDeclarations ? &m_funcDeclarations->data : 0,
+                                    m_varDeclarations,
+                                    m_funcDeclarations,
                                     m_capturedVariables,
                                     *m_source,
                                     m_features,

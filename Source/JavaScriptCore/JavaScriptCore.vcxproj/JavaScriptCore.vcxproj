@@ -1382,7 +1382,6 @@
     <ClInclude Include="..\parser\ASTBuilder.h" />
     <ClInclude Include="..\parser\Lexer.h" />
     <ClInclude Include="..\parser\NodeConstructors.h" />
-    <ClInclude Include="..\parser\NodeInfo.h" />
     <ClInclude Include="..\parser\Nodes.h" />
     <ClInclude Include="..\parser\Parser.h" />
     <ClInclude Include="..\parser\ParserArena.h" />

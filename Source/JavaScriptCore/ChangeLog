@@ -1,3 +1,85 @@
+2014-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some allocation and cruft from the parser
+        https://bugs.webkit.org/show_bug.cgi?id=139416
+
+        Reviewed by Mark Lam.
+
+        Now, the only AST nodes that require a destructor are the ones that
+        relate to pickling a function's arguments -- which will required some
+        deeper thinking to resolve.
+
+        This is a < 1% parser speedup.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed NodeInfo because it
+        was unused.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CommaNode::emitBytecode):
+        (JSC::SourceElements::lastStatement):
+        (JSC::SourceElements::emitBytecode): Updated for interface change to linked list.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::ASTBuilder):
+        (JSC::ASTBuilder::varDeclarations):
+        (JSC::ASTBuilder::funcDeclarations):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::addVar): Removed the ParserArenaData abstraction because
+        it wasn't buying us anything. We can just use Vector directly.
+
+        (JSC::ASTBuilder::createCommaExpr):
+        (JSC::ASTBuilder::appendToCommaExpr): Changed to use a linked list instead
+        of a vector, to avoid allocating a vector with inline capacity in the
+        common case in which an expression is not followed by a vector.
+
+        (JSC::ASTBuilder::Scope::Scope): Use Vector directly to avoid new'ing
+        up a Vector*.
+
+        (JSC::ASTBuilder::appendToComma): Deleted.
+        (JSC::ASTBuilder::combineCommaNodes): Deleted.
+
+        * parser/Lexer.cpp:
+
+        * parser/NodeConstructors.h:
+        (JSC::StatementNode::StatementNode):
+        (JSC::CommaNode::CommaNode):
+        (JSC::SourceElements::SourceElements): Updated for interface change to linked list.
+
+        * parser/NodeInfo.h: Removed.
+
+        * parser/Nodes.cpp:
+        (JSC::SourceElements::append):
+        (JSC::SourceElements::singleStatement): Use a linked list instead of a
+        vector to track the statements in a list. This removes some allocation
+        and it means that we don't need a destructor anymore.
+
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode): Updated for interface change to reference,
+        since these values are never null.
+
+        * parser/Nodes.h:
+        (JSC::StatementNode::next):
+        (JSC::StatementNode::setNext):
+        (JSC::CommaNode::append): Deleted. Updated for interface change to linked list.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::didFinishParsing): Updated for interface change to reference.
+
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        (JSC::Parser<LexerType>::parseExpression): Track comma expressions as
+        an explicit list of CommaNodes, removing a use of vector and a destructor.
+
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createCommaExpr):
+        (JSC::SyntaxChecker::appendToCommaExpr):
+        (JSC::SyntaxChecker::appendToComma): Deleted. Updated for interface changes.
+
 2014-12-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r176979.

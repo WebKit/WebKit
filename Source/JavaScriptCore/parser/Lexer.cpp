@@ -30,7 +30,6 @@
 #include "BuiltinNames.h"
 #include "JSGlobalObjectFunctions.h"
 #include "Identifier.h"
-#include "NodeInfo.h"
 #include "Nodes.h"
 #include "JSCInlines.h"
 #include <wtf/dtoa.h>

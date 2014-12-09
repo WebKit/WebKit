@@ -1686,10 +1686,10 @@ RegisterID* ReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    ASSERT(m_expressions.size() > 1);
-    for (size_t i = 0; i < m_expressions.size() - 1; i++)
-        generator.emitNode(generator.ignoredResult(), m_expressions[i]);
-    return generator.emitNode(dst, m_expressions.last());
+    CommaNode* node = this;
+    for (; node && node->next(); node = node->next())
+        generator.emitNode(generator.ignoredResult(), node->m_expr);
+    return generator.emitNode(dst, node->m_expr);
 }
 
 // ------------------------------ ConstDeclNode ------------------------------------
@@ -1753,15 +1753,13 @@ void ConstStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 inline StatementNode* SourceElements::lastStatement() const
 {
-    size_t size = m_statements.size();
-    return size ? m_statements[size - 1] : 0;
+    return m_tail;
 }
 
 inline void SourceElements::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    size_t size = m_statements.size();
-    for (size_t i = 0; i < size; ++i)
-        generator.emitNode(dst, m_statements[i]);
+    for (StatementNode* statement = m_head; statement; statement = statement->next())
+        generator.emitNode(dst, statement);
 }
 
 // ------------------------------ BlockNode ------------------------------------

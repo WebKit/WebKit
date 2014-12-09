@@ -65,13 +65,20 @@ void SourceElements::append(StatementNode* statement)
 {
     if (statement->isEmptyStatement())
         return;
-    m_statements.append(statement);
+
+    if (!m_head) {
+        m_head = statement;
+        m_tail = statement;
+        return;
+    }
+
+    m_tail->setNext(statement);
+    m_tail = statement;
 }
 
 StatementNode* SourceElements::singleStatement() const
 {
-    size_t size = m_statements.size();
-    return size == 1 ? m_statements[0] : 0;
+    return m_head == m_tail ? m_head : nullptr;
 }
 
 // ------------------------------ ScopeNode -----------------------------
@@ -88,7 +95,7 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
 {
 }
 
-ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
+ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, const SourceCode& source, SourceElements* children, VarStack& varStack, FunctionStack& funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
     : StatementNode(endLocation)
     , ParserArenaRoot(parserArena)
     , m_startLineNumber(startLocation.line)
@@ -99,10 +106,8 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
     , m_numConstants(numConstants)
     , m_statements(children)
 {
-    if (varStack)
-        m_varStack.swap(*varStack);
-    if (funcStack)
-        m_functionStack.swap(*funcStack);
+    m_varStack.swap(varStack);
+    m_functionStack.swap(funcStack);
     m_capturedVariables.swap(capturedVariables);
 }
 
@@ -113,7 +118,7 @@ StatementNode* ScopeNode::singleStatement() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack& varStack, FunctionStack& funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)
@@ -127,7 +132,7 @@ void ProgramNode::setClosedVariables(Vector<RefPtr<StringImpl>>&& closedVariable
 
 // ------------------------------ EvalNode -----------------------------
 
-EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VarStack& varStack, FunctionStack& funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_endColumn(endColumn)
 {
@@ -188,7 +193,7 @@ void FunctionBodyNode::setEndPosition(JSTextPosition position)
 
 // ------------------------------ FunctionNode -----------------------------
 
-FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VarStack& varStack, FunctionStack& funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
     : ScopeNode(parserArena, startLocation, endLocation, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
     , m_startColumn(startColumn)
     , m_endColumn(endColumn)

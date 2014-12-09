@@ -2408,9 +2408,6 @@
     <ClInclude Include="..\parser\NodeConstructors.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\parser\NodeInfo.h">
-      <Filter>parser</Filter>
-    </ClInclude>
     <ClInclude Include="..\parser\Nodes.h">
       <Filter>parser</Filter>
     </ClInclude>

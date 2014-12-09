@@ -130,12 +130,16 @@ PASS (function(){'use strict'; function f() { arguments-- }}) threw exception Sy
 PASS global.eval('"use strict"; if (0) ++arguments; true;') threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
 PASS 'use strict'; ++(1, eval) threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..
 PASS (function(){'use strict'; ++(1, eval)}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
+PASS 'use strict'; ++(1, 2, 3, eval) threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..
+PASS (function(){'use strict'; ++(1, 2, 3, eval)}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
 PASS 'use strict'; (1, eval)++ threw exception ReferenceError: Postfix ++ operator applied to value that is not a reference..
 PASS (function(){'use strict'; (1, eval)++}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
 PASS 'use strict'; --(1, eval) threw exception ReferenceError: Prefix -- operator applied to value that is not a reference..
 PASS (function(){'use strict'; --(1, eval)}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
 PASS 'use strict'; (1, eval)-- threw exception ReferenceError: Postfix -- operator applied to value that is not a reference..
 PASS (function(){'use strict'; (1, eval)--}) threw exception SyntaxError: 'eval' cannot be modified in strict mode..
+PASS 'use strict'; (1, 2, 3, eval)-- threw exception ReferenceError: Postfix -- operator applied to value that is not a reference..
+PASS (function(){'use strict'; (1, 2, 3, eval)--}) threw exception SyntaxError: 'eval' cannot be modified in strict mode..
 PASS 'use strict'; function f() { ++(1, arguments) } threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
 PASS (function(){'use strict'; function f() { ++(1, arguments) }}) threw exception SyntaxError: Cannot modify 'arguments' in strict mode..
 PASS 'use strict'; function f() { (1, arguments)++ } threw exception SyntaxError: Cannot modify 'arguments' in strict mode..

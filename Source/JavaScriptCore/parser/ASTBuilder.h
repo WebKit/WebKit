@@ -80,7 +80,6 @@ public:
         : m_vm(vm)
         , m_parserArena(parserArena)
         , m_sourceCode(sourceCode)
-        , m_scope(m_parserArena)
         , m_evalCount(0)
     {
     }
@@ -125,14 +124,10 @@ public:
 
     JSC::SourceElements* createSourceElements() { return new (m_parserArena) JSC::SourceElements(); }
 
-    ParserArenaData<DeclarationStacks::VarStack>* varDeclarations() { return m_scope.m_varDeclarations; }
-    ParserArenaData<DeclarationStacks::FunctionStack>* funcDeclarations() { return m_scope.m_funcDeclarations; }
+    DeclarationStacks::VarStack& varDeclarations() { return m_scope.m_varDeclarations; }
+    DeclarationStacks::FunctionStack& funcDeclarations() { return m_scope.m_funcDeclarations; }
     int features() const { return m_scope.m_features; }
     int numConstants() const { return m_scope.m_numConstants; }
-
-    void appendToComma(CommaNode* commaNode, ExpressionNode* expr) { commaNode->append(expr); }
-
-    CommaNode* createCommaExpr(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* rhs) { return new (m_parserArena) CommaNode(location, lhs, rhs); }
 
     ExpressionNode* makeAssignNode(const JSTokenLocation&, ExpressionNode* left, Operator, ExpressionNode* right, bool leftHasAssignments, bool rightHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
     ExpressionNode* makePrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
@@ -346,7 +341,7 @@ public:
         FuncDeclNode* decl = new (m_parserArena) FuncDeclNode(location, *name, body, m_sourceCode->subExpression(openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn), parameters);
         if (*name == m_vm->propertyNames->arguments)
             usesArguments();
-        m_scope.m_funcDeclarations->data.append(decl->body());
+        m_scope.m_funcDeclarations.append(decl->body());
         body->setLoc(bodyStartLine, bodyEndLine, location.startOffset, location.lineStartOffset);
         body->setFunctionKeywordStart(functionKeywordStart);
         return decl;
@@ -538,18 +533,20 @@ public:
         if (m_vm->propertyNames->arguments == *ident)
             usesArguments();
         ASSERT(ident->impl()->isAtomic());
-        m_scope.m_varDeclarations->data.append(std::make_pair(*ident, attrs));
+        m_scope.m_varDeclarations.append(std::make_pair(*ident, attrs));
     }
 
-    ExpressionNode* combineCommaNodes(const JSTokenLocation& location, ExpressionNode* list, ExpressionNode* init)
+    CommaNode* createCommaExpr(const JSTokenLocation& location, ExpressionNode* node)
     {
-        if (!list)
-            return init;
-        if (list->isCommaNode()) {
-            static_cast<CommaNode*>(list)->append(init);
-            return list;
-        }
-        return new (m_parserArena) CommaNode(location, list, init);
+        return new (m_parserArena) CommaNode(location, node);
+    }
+
+    CommaNode* appendToCommaExpr(const JSTokenLocation& location, ExpressionNode*, ExpressionNode* tail, ExpressionNode* next)
+    {
+        ASSERT(tail->isCommaNode());
+        CommaNode* newTail = new (m_parserArena) CommaNode(location, next);
+        static_cast<CommaNode*>(tail)->setNext(newTail);
+        return newTail;
     }
 
     int evalCount() const { return m_evalCount; }
@@ -690,15 +687,13 @@ public:
     
 private:
     struct Scope {
-        Scope(ParserArena& parserArena)
-            : m_varDeclarations(new (parserArena) ParserArenaData<DeclarationStacks::VarStack>)
-            , m_funcDeclarations(new (parserArena) ParserArenaData<DeclarationStacks::FunctionStack>)
-            , m_features(0)
+        Scope()
+            : m_features(0)
             , m_numConstants(0)
         {
         }
-        ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
-        ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+        DeclarationStacks::VarStack m_varDeclarations;
+        DeclarationStacks::FunctionStack m_funcDeclarations;
         int m_features;
         int m_numConstants;
     };

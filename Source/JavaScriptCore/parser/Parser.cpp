@@ -28,7 +28,6 @@
 #include "Debugger.h"
 #include "JSCJSValueInlines.h"
 #include "Lexer.h"
-#include "NodeInfo.h"
 #include "JSCInlines.h"
 #include "SourceProvider.h"
 #include "VM.h"
@@ -307,12 +306,12 @@ String Parser<LexerType>::parseInner()
 }
 
 template <typename LexerType>
-void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
-    ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int numConstants, IdentifierSet& capturedVars, const Vector<RefPtr<StringImpl>>&& closedVariables)
+void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, DeclarationStacks::VarStack& varStack, 
+    DeclarationStacks::FunctionStack& funcStack, CodeFeatures features, int numConstants, IdentifierSet& capturedVars, const Vector<RefPtr<StringImpl>>&& closedVariables)
 {
     m_sourceElements = sourceElements;
-    m_varDeclarations = varStack;
-    m_funcDeclarations = funcStack;
+    m_varDeclarations.swap(varStack);
+    m_funcDeclarations.swap(funcStack);
     m_capturedVariables.swap(capturedVars);
     m_closedVariables = closedVariables;
     m_features = features;
@@ -451,7 +450,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarationList(TreeBuilder& context, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd)
 {
-    TreeExpression varDecls = 0;
+    TreeExpression head = 0;
+    TreeExpression tail = 0;
     const Identifier* lastIdent;
     do {
         lastIdent = 0;
@@ -497,14 +497,17 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             }
         }
         
-        if (!varDecls)
-            varDecls = node;
-        else
-            varDecls = context.combineCommaNodes(location, varDecls, node);
+        if (!head)
+            head = node;
+        else if (!tail) {
+            head = context.createCommaExpr(location, head);
+            tail = context.appendToCommaExpr(location, head, head, node);
+        } else
+            tail = context.appendToCommaExpr(location, head, tail, node);
     } while (match(COMMA));
     if (lastIdent)
         lastPattern = createBindingPattern(context, DeconstructToVariables, *lastIdent, 0, m_token);
-    return varDecls;
+    return head;
 }
 
 template <typename LexerType>
@@ -1595,16 +1598,17 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     TreeExpression right = parseAssignmentExpression(context);
     failIfFalse(right, "Cannot parse expression in a comma expression");
     context.setEndOffset(right, m_lastTokenEndPosition.offset);
-    typename TreeBuilder::Comma commaNode = context.createCommaExpr(location, node, right);
+    typename TreeBuilder::Comma head = context.createCommaExpr(location, node);
+    typename TreeBuilder::Comma tail = context.appendToCommaExpr(location, head, head, right);
     while (match(COMMA)) {
         next(TreeBuilder::DontBuildStrings);
         right = parseAssignmentExpression(context);
         failIfFalse(right, "Cannot parse expression in a comma expression");
         context.setEndOffset(right, m_lastTokenEndPosition.offset);
-        context.appendToComma(commaNode, right);
+        tail = context.appendToCommaExpr(location, head, tail, right);
     }
-    context.setEndOffset(commaNode, m_lastTokenEndPosition.offset);
-    return commaNode;
+    context.setEndOffset(head, m_lastTokenEndPosition.offset);
+    return head;
 }
 
 template <typename LexerType>

@@ -1,3 +1,15 @@
+2014-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the custom allocator for ParserArena
+        https://bugs.webkit.org/show_bug.cgi?id=139305
+
+        Reviewed by Mark Lam.
+
+        Added a test for something I messed up while writing this patch.
+
+        * js/basic-strict-mode-expected.txt:
+        * js/script-tests/basic-strict-mode.js:
+
 2014-12-08  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (173394): Support for webcam is broken

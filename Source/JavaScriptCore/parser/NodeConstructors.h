@@ -57,6 +57,7 @@ namespace JSC {
 
     inline StatementNode::StatementNode(const JSTokenLocation& location)
         : Node(location)
+        , m_next(nullptr)
         , m_lastLine(-1)
     {
     }
@@ -609,13 +610,11 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     {
     }
 
-    inline CommaNode::CommaNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2)
+    inline CommaNode::CommaNode(const JSTokenLocation& location, ExpressionNode* expr)
         : ExpressionNode(location)
+        , m_expr(expr)
+        , m_next(nullptr)
     {
-        ASSERT(expr1);
-        ASSERT(expr2);
-        m_expressions.append(expr1);
-        m_expressions.append(expr2);
     }
 
     inline ConstStatementNode::ConstStatementNode(const JSTokenLocation& location, ConstDeclNode* next)
@@ -625,6 +624,8 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     }
 
     inline SourceElements::SourceElements()
+        : m_head(nullptr)
+        , m_tail(nullptr)
     {
     }
 
