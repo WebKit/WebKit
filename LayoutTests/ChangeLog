@@ -1,3 +1,17 @@
+2014-12-08  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (173394): Support for webcam is broken
+        https://bugs.webkit.org/show_bug.cgi?id=139313
+
+        Test by Antti Koivisto, reviewed and tweaked by Alexey Proskuryakov.
+
+        * http/tests/multipart/multipart-image-expected.html: Added.
+        * http/tests/multipart/multipart-image.html: Added.
+
+        * http/tests/multipart/resources/multipart.php: Multiopart boundary must start on
+        a new line, so make it so. In newwer OS versions, CFNetwork has a workaround that
+        makes invalid multipart response work, which is why the test was passing locally.
+
 2014-12-08  Benjamin Poulain  <bpoulain@apple.com>
 
         A selector should not match anything if there is a subselector after a non-scrollbar pseudo element

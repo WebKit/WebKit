@@ -7,7 +7,7 @@
 
         echo("Content-Type: image/png\r\n\r\n");
         echo($data);
-        echo("--$boundary\r\n");
+        echo("\r\n--$boundary\r\n");
         flush();
     }
 
