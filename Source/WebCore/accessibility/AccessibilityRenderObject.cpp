@@ -3541,6 +3541,11 @@ bool AccessibilityRenderObject::isMathSquareRoot() const
     return m_renderer && m_renderer->isRenderMathMLSquareRoot();
 }
     
+bool AccessibilityRenderObject::isMathToken() const
+{
+    return m_renderer && m_renderer->isRenderMathMLToken();
+}
+
 bool AccessibilityRenderObject::isMathRoot() const
 {
     return m_renderer && m_renderer->isRenderMathMLRoot();
@@ -3572,7 +3577,7 @@ bool AccessibilityRenderObject::isMathSeparatorOperator() const
     
 bool AccessibilityRenderObject::isMathText() const
 {
-    return node() && node()->hasTagName(MathMLNames::mtextTag);
+    return node() && (node()->hasTagName(MathMLNames::mtextTag) || hasTagName(MathMLNames::msTag));
 }
 
 bool AccessibilityRenderObject::isMathNumber() const
@@ -3597,7 +3602,7 @@ bool AccessibilityRenderObject::isMathTable() const
 
 bool AccessibilityRenderObject::isMathTableRow() const
 {
-    return node() && node()->hasTagName(MathMLNames::mtrTag);
+    return node() && (node()->hasTagName(MathMLNames::mtrTag) || hasTagName(MathMLNames::mlabeledtrTag));
 }
 
 bool AccessibilityRenderObject::isMathTableCell() const

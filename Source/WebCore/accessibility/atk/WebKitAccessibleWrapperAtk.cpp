@@ -649,6 +649,20 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_DEFINITION;
     case DocumentMathRole:
         return ATK_ROLE_MATH;
+    case MathElementRole:
+        if (coreObject->isMathRow())
+            return ATK_ROLE_PANEL;
+        if (coreObject->isMathTable())
+            return ATK_ROLE_TABLE;
+        if (coreObject->isMathTableRow())
+            return ATK_ROLE_TABLE_ROW;
+        if (coreObject->isMathTableCell())
+            return ATK_ROLE_TABLE_CELL;
+#if ATK_CHECK_VERSION(2, 15, 2)
+        if (coreObject->isMathToken())
+            return ATK_ROLE_STATIC;
+#endif
+        return ATK_ROLE_UNKNOWN;
     case LandmarkBannerRole:
     case LandmarkComplementaryRole:
     case LandmarkContentInfoRole:

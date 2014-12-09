@@ -1,4 +1,4 @@
- X
+X
 This tests that native elements and ARIA overrides result in the expected role, subrole and role description.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -363,6 +363,86 @@ math
       AXRole: AXGroup
       AXSubrole: AXDocumentMath
       AXRoleDescription: math
+      
+merror
+      AXRole: AXGroup
+      AXSubrole: AXMathRow
+      AXRoleDescription: group
+      
+mfenced
+      AXRole: AXGroup
+      AXSubrole: AXMathFenced
+      AXRoleDescription: group
+      
+mfrac
+      AXRole: AXGroup
+      AXSubrole: AXMathFraction
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mn
+      AXRole: AXGroup
+      AXSubrole: AXMathNumber
+      AXRoleDescription: group
+      
+mo
+      AXRole: AXGroup
+      AXSubrole: AXMathOperator
+      AXRoleDescription: group
+      
+mroot
+      AXRole: AXGroup
+      AXSubrole: AXMathRoot
+      AXRoleDescription: group
+      
+msqrt
+      AXRole: AXGroup
+      AXSubrole: AXMathSquareRoot
+      AXRoleDescription: group
+      
+mrow
+      AXRole: AXGroup
+      AXSubrole: AXMathRow
+      AXRoleDescription: group
+      
+ms
+      AXRole: AXGroup
+      AXSubrole: AXMathText
+      AXRoleDescription: group
+      
+mtext
+      AXRole: AXGroup
+      AXSubrole: AXMathText
+      AXRoleDescription: group
+      
+mtable
+      AXRole: AXGroup
+      AXSubrole: AXMathTable
+      AXRoleDescription: group
+      
+mlabeledtr
+      AXRole: AXGroup
+      AXSubrole: AXMathTableRow
+      AXRoleDescription: group
+      
+mtd
+      AXRole: AXGroup
+      AXSubrole: AXMathTableCell
+      AXRoleDescription: group
+      
+mtr
+      AXRole: AXGroup
+      AXSubrole: AXMathTableRow
+      AXRoleDescription: group
+      
+mtd
+      AXRole: AXGroup
+      AXSubrole: AXMathTableCell
+      AXRoleDescription: group
       
 meter
       AXRole: AXProgressIndicator

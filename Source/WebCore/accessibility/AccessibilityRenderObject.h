@@ -303,6 +303,7 @@ private:
     virtual bool isMathTableRow() const override;
     virtual bool isMathTableCell() const override;
     virtual bool isMathMultiscript() const override;
+    virtual bool isMathToken() const override;
     
     // Generic components.
     virtual AccessibilityObject* mathBaseObject() override;

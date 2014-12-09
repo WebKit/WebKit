@@ -33,7 +33,7 @@ math[display="block"] {
     -webkit-margin-after: 1em;
 }
 
-mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose {
+ms, mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose {
     display: -webkit-inline-flex !important;
 }
 

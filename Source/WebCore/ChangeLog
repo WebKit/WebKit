@@ -1,3 +1,31 @@
+2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] MathML tokens, tables, and row-like elements are exposed with ATK_ROLE_UNKNOWN
+        https://bugs.webkit.org/show_bug.cgi?id=139402
+
+        Reviewed by Chris Fleizach.
+
+        Expose tables and their children using existing table AtkRole types,
+        token elements using the new ATK_ROLE_STATIC, and row-like elements
+        using ATK_ROLE_PANEL. Also expose <mlabeledtr> as a math table row
+        and <ms> as math text.
+
+        No new tests; instead, added MathML elements to roles-exposed.html.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isMathToken):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isMathToken):
+        (WebCore::AccessibilityRenderObject::isMathText):
+        (WebCore::AccessibilityRenderObject::isMathTableRow):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * css/mathml.css:
+        (ms, mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose):
+        (mi, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose): Deleted.
+        * mathml/mathtags.in:
+
 2014-12-09  Dean Jackson  <dino@apple.com>
 
         [Apple] Use Accelerate framework to speed-up FEGaussianBlur

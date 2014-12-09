@@ -1,5 +1,19 @@
 2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] MathML tokens, tables, and row-like elements are exposed with ATK_ROLE_UNKNOWN
+        https://bugs.webkit.org/show_bug.cgi?id=139402
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/roles-exposed.html: Added MathML elements.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/mac-mountainlion/accessibility/roles-exposed-expected.txt: Updated for added elements.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Updated for added elements.
+
+2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK] Bump minimum version of ATK used by jhbuild to at least 2.15.2
         https://bugs.webkit.org/show_bug.cgi?id=139070
 
