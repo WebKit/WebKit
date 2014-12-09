@@ -55,7 +55,7 @@ void ControlFlowProfiler::dumpData() const
     auto iter = m_sourceIDBuckets.begin();
     auto end = m_sourceIDBuckets.end();
     for (; iter != end; ++iter) {
-        dataLogF("SourceID: %ld\n", iter->key);
+        dataLog("SourceID: ", iter->key, "\n");
         for (const BasicBlockLocation* block : iter->value.values())
             block->dumpData();
     }

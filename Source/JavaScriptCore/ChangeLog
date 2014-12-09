@@ -1,3 +1,15 @@
+2014-12-08  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix Build Warning in JavaScriptCore ControlFlowProfiler::dumpData() api.
+        https://bugs.webkit.org/show_bug.cgi?id=139384
+
+        Reviewed by Mark Lam.
+
+        Fix Build Warning by using dataLog() function instead of dataLogF() function.
+
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::dumpData):
+
 2014-12-08  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Enable runtime API for JSC's control flow profiler
