@@ -350,12 +350,6 @@ class Printer(object):
         test_name = result.test_name
         self._print_default(self._test_status_line(test_name, ''))
 
-        base = self._port.lookup_virtual_test_base(test_name)
-        if base:
-            args = ' '.join(self._port.lookup_virtual_test_args(test_name))
-            self._print_default(' base: %s' % base)
-            self._print_default(' args: %s' % args)
-
         for extension in ('.txt', '.png', '.wav', '.webarchive'):
             self._print_baseline(test_name, extension)
 

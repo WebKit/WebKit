@@ -350,19 +350,11 @@ class PortTest(unittest.TestCase):
         self.assertTrue(port.test_exists('passes/text.html'))
         self.assertFalse(port.test_exists('passes/does_not_exist.html'))
 
-        self.assertTrue(port.test_exists('virtual'))
-        self.assertFalse(port.test_exists('virtual/does_not_exist.html'))
-        self.assertTrue(port.test_exists('virtual/passes/text.html'))
-
     def test_test_isfile(self):
         port = self.make_port(with_tests=True)
         self.assertFalse(port.test_isfile('passes'))
         self.assertTrue(port.test_isfile('passes/text.html'))
         self.assertFalse(port.test_isfile('passes/does_not_exist.html'))
-
-        self.assertFalse(port.test_isfile('virtual'))
-        self.assertTrue(port.test_isfile('virtual/passes/text.html'))
-        self.assertFalse(port.test_isfile('virtual/does_not_exist.html'))
 
     def test_test_isdir(self):
         port = self.make_port(with_tests=True)
@@ -371,28 +363,13 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port.test_isdir('passes/does_not_exist.html'))
         self.assertFalse(port.test_isdir('passes/does_not_exist/'))
 
-        self.assertTrue(port.test_isdir('virtual'))
-        self.assertFalse(port.test_isdir('virtual/does_not_exist.html'))
-        self.assertFalse(port.test_isdir('virtual/does_not_exist/'))
-        self.assertFalse(port.test_isdir('virtual/passes/text.html'))
-
     def test_tests(self):
         port = self.make_port(with_tests=True)
         tests = port.tests([])
         self.assertIn('passes/text.html', tests)
-        self.assertIn('virtual/passes/text.html', tests)
 
         tests = port.tests(['passes'])
         self.assertIn('passes/text.html', tests)
-        self.assertIn('passes/passes/test-virtual-passes.html', tests)
-        self.assertNotIn('virtual/passes/text.html', tests)
-
-        tests = port.tests(['virtual/passes'])
-        self.assertNotIn('passes/text.html', tests)
-        self.assertIn('virtual/passes/test-virtual-passes.html', tests)
-        self.assertIn('virtual/passes/passes/test-virtual-passes.html', tests)
-        self.assertNotIn('virtual/passes/test-virtual-virtual/passes.html', tests)
-        self.assertNotIn('virtual/passes/virtual/passes/test-virtual-passes.html', tests)
 
     def test_build_path(self):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))

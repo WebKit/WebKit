@@ -31,7 +31,6 @@ import sys
 import time
 
 from webkitpy.port import Port, Driver, DriverOutput
-from webkitpy.port.base import VirtualTestSuite
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.crashlogs import CrashLogs
@@ -100,7 +99,7 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 107
+TOTAL_TESTS = 71
 TOTAL_SKIPS = 28
 TOTAL_RETRIES = 14
 
@@ -254,11 +253,6 @@ layer at (0,0) size 800x34
         actual_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum_fail',
         expected_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum-png')
 
-    # For testing that virtual test suites don't expand names containing themselves
-    # See webkit.org/b/97925 and base_unittest.PortTest.test_tests().
-    tests.add('passes/test-virtual-passes.html')
-    tests.add('passes/passes/test-virtual-passes.html')
-
     return tests
 
 
@@ -343,7 +337,6 @@ Bug(test) passes/skipped/skip.html [ Skip ]
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
 
-    filesystem.write_text_file(filesystem.join(LAYOUT_TEST_DIR, 'virtual', 'passes', 'args-expected.txt'), 'args-txt --virtual-arg')
     # Clear the list of written files so that we can watch what happens during testing.
     filesystem.clear_written_files()
 
@@ -445,8 +438,7 @@ class TestPort(Port):
 
     def _skipped_tests_for_unsupported_features(self, test_list):
         return set(['failures/expected/skip_text.html',
-                    'failures/unexpected/skip_pass.html',
-                    'virtual/skipped'])
+                    'failures/unexpected/skip_pass.html'])
 
     def name(self):
         return self._name
@@ -524,13 +516,6 @@ class TestPort(Port):
 
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS
-
-    def virtual_test_suites(self):
-        return [
-            VirtualTestSuite('virtual/passes', 'passes', ['--virtual-arg']),
-            VirtualTestSuite('virtual/skipped', 'failures/expected', ['--virtual-arg2']),
-        ]
-
 
 class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""

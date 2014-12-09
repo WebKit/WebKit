@@ -716,10 +716,6 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         test_port = get_port_for_run(base_args)
         self.assertEqual(None, test_port.tolerance_used_for_diff_image)
 
-    def test_virtual(self):
-        self.assertTrue(passing_run(['passes/text.html', 'passes/args.html',
-                                     'virtual/passes/text.html', 'virtual/passes/args.html']))
-
     def test_reftest_run(self):
         tests_run = get_tests_run(['passes/reftest.html'])
         self.assertEqual(['passes/reftest.html'], tests_run)

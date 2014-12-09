@@ -1,3 +1,55 @@
+2014-12-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove virtual test support from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=139427
+
+        Reviewed by Alexey Proskuryakov.
+
+        It seems that the only concrete client of virtual tests is the unit tests :D
+
+        This patch tries to clean as much useless code as possible.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tolerance):
+        (RunTest.test_virtual): Deleted.
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._print_test_trace):
+        * Scripts/webkitpy/port/base.py:
+        (Port.expected_filename):
+        (Port.tests):
+        (Port.test_isfile):
+        (Port.test_isdir):
+        (Port.sample_process):
+        (Port.find_system_pid):
+        (Port.test_expectations_file_position):
+        (Port.virtual_test_suites): Deleted.
+        (Port): Deleted.
+        (Port.populated_virtual_test_suites): Deleted.
+        (Port._virtual_tests): Deleted.
+        (Port.lookup_virtual_test_base): Deleted.
+        (Port.lookup_virtual_test_args): Deleted.
+        (VirtualTestSuite): Deleted.
+        (VirtualTestSuite.__init__): Deleted.
+        (VirtualTestSuite.__repr__): Deleted.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_test_exists):
+        (PortTest.test_test_isfile):
+        (PortTest.test_test_isdir):
+        (PortTest.test_tests):
+        * Scripts/webkitpy/port/driver.py:
+        (DriverProxy.run_test): Deleted.
+        * Scripts/webkitpy/port/test.py:
+        (TestPort._skipped_tests_for_unsupported_features):
+        (TestPort.all_baseline_variants):
+        (TestPort.virtual_test_suites): Deleted.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintBaselines.__init__):
+        (PrintBaselines.execute):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintBaselinesTest.test_basic):
+        (PrintBaselinesTest.test_multiple):
+        (PrintBaselinesTest.test_csv):
+
 2014-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Blink Merge: Remove 'http_lock' code from webkitpy

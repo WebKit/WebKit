@@ -539,8 +539,6 @@ class PrintBaselines(Command):
                         help='display the baselines for *all* tests'),
             make_option('--csv', action='store_true', default=False,
                         help='Print a CSV-style report that includes the port name, test_name, test platform, baseline type, baseline location, and baseline platform'),
-            make_option('--include-virtual-tests', action='store_true',
-                        help='Include virtual tests'),
         ] + platform_options(use_globs=True)
         Command.__init__(self, options=options)
         self._platform_regexp = re.compile('platform/([^\/]+)/(.+)')
@@ -558,11 +556,8 @@ class PrintBaselines(Command):
         else:
             port_names = [default_port.name()]
 
-        if options.include_virtual_tests:
-            tests = sorted(default_port.tests(args))
-        else:
-            # FIXME: make real_tests() a public method.
-            tests = sorted(default_port._real_tests(args))
+        # FIXME: make real_tests() a public method.
+        tests = sorted(default_port._real_tests(args))
 
         for port_name in port_names:
             if port_name != port_names[0]:
