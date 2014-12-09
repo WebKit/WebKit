@@ -1,5 +1,27 @@
 2014-12-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r176883. <rdar://problem/19158331>
+
+    2014-12-05  Tim Horton  <timothy_horton@apple.com>
+
+            If the action menu hit test times out, a menu with a single separator appears
+            https://bugs.webkit.org/show_bug.cgi?id=139320
+            <rdar://problem/19158331>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController menuNeedsUpdate:]):
+            (-[WKActionMenuController _defaultMenuItems]):
+            Add a new "TimedOut" state, which we get into if the sync wait for
+            didPerformActionMenuHitTest times out. In this case, we'll drop the
+            separator item and give up on the menu. This way, the menu will never
+            have just a single separator item at the end of menuNeedsUpdate:.
+
+
+2014-12-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r176870. <rdar://problem/19052381>
 
     2014-12-05  Tim Horton  <timothy_horton@apple.com>
