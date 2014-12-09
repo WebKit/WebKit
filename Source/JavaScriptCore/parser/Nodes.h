@@ -1096,7 +1096,7 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
     
-    class CommaNode final : public ExpressionNode, public ParserArenaFreeable {
+    class CommaNode final : public ExpressionNode {
     public:
         CommaNode(const JSTokenLocation&, ExpressionNode*);
 

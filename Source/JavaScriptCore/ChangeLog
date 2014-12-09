@@ -1,3 +1,15 @@
+2014-12-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix EFL build fix since r177001
+        https://bugs.webkit.org/show_bug.cgi?id=139428
+
+        Unreviewed, EFL build fix.
+
+        Do not inherit duplicated class. ExpressionNode is already
+        child of ParserArenaFreeable class.
+
+        * parser/Nodes.h:
+
 2014-12-08  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix Build Warning in JavaScriptCore ControlFlowProfiler::dumpData() api.
