@@ -62,9 +62,6 @@
 		29AB8AA1164C735800D49BEC /* CustomProtocolsTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */; };
 		29AB8AA4164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */; };
 		2D640B5517875DFF00BFAF99 /* ScrollPinningBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */; };
-		2D950FBC1A2217D000012434 /* ActionMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBA1A2217D000012434 /* ActionMenus.mm */; };
-		2D950FBE1A2217D300012434 /* ActionMenusBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */; };
-		2D950FC01A230C3A00012434 /* action-menu-targets.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2D950FBF1A230C1E00012434 /* action-menu-targets.html */; };
 		2DD7D3AA178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
@@ -327,7 +324,6 @@
 				BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */,
 				378E64791632707400B6C676 /* link-with-title.html in Copy Resources */,
 				9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */,
-				2D950FC01A230C3A00012434 /* action-menu-targets.html in Copy Resources */,
 				93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */,
 				930AD402150698D00067970F /* lots-of-text.html in Copy Resources */,
 				2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */,
@@ -408,12 +404,8 @@
 		29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestBrowsingContextLoadDelegate.mm; sourceTree = "<group>"; };
 		29AB8AA3164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBrowsingContextLoadDelegate.h; sourceTree = "<group>"; };
 		2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPinningBehaviors.cpp; sourceTree = "<group>"; };
-		2D950FBA1A2217D000012434 /* ActionMenus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionMenus.mm; path = WebKit2ObjC/ActionMenus.mm; sourceTree = "<group>"; };
-		2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionMenusBundle.mm; path = WebKit2ObjC/ActionMenusBundle.mm; sourceTree = "<group>"; };
-		2D950FBF1A230C1E00012434 /* action-menu-targets.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "action-menu-targets.html"; sourceTree = "<group>"; };
 		2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeReversePaginatedWebView.cpp; sourceTree = "<group>"; };
 		2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "lots-of-text-vertical-lr.html"; sourceTree = "<group>"; };
-		2DDE58961A36342B00AA80DE /* ActionMenusBundleSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ActionMenusBundleSPI.h; path = WebKit2ObjC/ActionMenusBundleSPI.h; sourceTree = "<group>"; };
 		2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainIOS.mm; sourceTree = "<group>"; };
 		2E7765CE16C4D81100BA2BB1 /* mainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainMac.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
@@ -769,9 +761,6 @@
 		BC3C4C6F14575B1D0025FB62 /* WebKit2 Objective-C */ = {
 			isa = PBXGroup;
 			children = (
-				2D950FBA1A2217D000012434 /* ActionMenus.mm */,
-				2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */,
-				2DDE58961A36342B00AA80DE /* ActionMenusBundleSPI.h */,
 				297234B2173AD04800983601 /* CustomProtocolsInvalidScheme.mm */,
 				297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */,
 				290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */,
@@ -946,7 +935,6 @@
 			isa = PBXGroup;
 			children = (
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
-				2D950FBF1A230C1E00012434 /* action-menu-targets.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */,
@@ -1290,7 +1278,6 @@
 				14464013167A8305000BD218 /* LayoutUnit.cpp in Sources */,
 				2D640B5517875DFF00BFAF99 /* ScrollPinningBehaviors.cpp in Sources */,
 				26300B1816755CD90066886D /* ListHashSet.cpp in Sources */,
-				2D950FBC1A2217D000012434 /* ActionMenus.mm in Sources */,
 				A1A4FE5F18DD3DB700B5EA8A /* Download.mm in Sources */,
 				52CB47411448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
 				33DC8911141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
@@ -1426,7 +1413,6 @@
 				F6B7BE9517469212008A3445 /* DidAssociateFormControls_Bundle.cpp in Sources */,
 				C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */,
 				51FCF7A11534B2A000104491 /* ShouldGoToBackForwardListItem_Bundle.cpp in Sources */,
-				2D950FBE1A2217D300012434 /* ActionMenusBundle.mm in Sources */,
 				BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */,
 				520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */,
 				76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */,
