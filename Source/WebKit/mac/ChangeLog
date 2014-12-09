@@ -1,3 +1,15 @@
+2014-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Use the new storage namespace provider in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=139425
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Set the storage namespace provider from the web page group.
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete Node::boundingBox()
