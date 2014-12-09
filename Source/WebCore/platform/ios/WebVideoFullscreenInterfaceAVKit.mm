@@ -85,8 +85,9 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
 }
 
-@property(retain) AVPlayerController* playerControllerProxy;
-@property(assign) WebVideoFullscreenModel* delegate;
+@property (retain) AVPlayerController* playerControllerProxy;
+@property (assign) WebVideoFullscreenModel* delegate;
+@property (assign) WebVideoFullscreenInterfaceAVKit* fullscreenInterface;
 
 @property (readonly) BOOL canScanForward;
 @property BOOL canScanBackward;
@@ -94,7 +95,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 @property (readonly) BOOL canSeekToEnd;
 
 @property BOOL canPlay;
-@property(getter=isPlaying) BOOL playing;
+@property (getter=isPlaying) BOOL playing;
 @property BOOL canPause;
 @property BOOL canTogglePlayback;
 @property double rate;
@@ -106,10 +107,10 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 @property NSTimeInterval minTime;
 @property NSTimeInterval maxTime;
 @property NSTimeInterval contentDurationWithinEndTimes;
-@property(retain) NSArray *loadedTimeRanges;
+@property (retain) NSArray *loadedTimeRanges;
 @property AVPlayerControllerStatus status;
-@property(retain) AVValueTiming *timing;
-@property(retain) NSArray *seekableTimeRanges;
+@property (retain) AVValueTiming *timing;
+@property (retain) NSArray *seekableTimeRanges;
 
 @property (readonly) BOOL hasMediaSelectionOptions;
 @property (readonly) BOOL hasAudioMediaSelectionOptions;
@@ -522,8 +523,28 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 
 - (void)setPlayerViewController:(AVPlayerViewController *)playerViewController
 {
+    NSString* propertyName = NSStringFromSelector(@selector(optimizedFullscreenActive));
+
+    [_avPlayerViewController removeObserver:self forKeyPath:propertyName];
     _avPlayerViewController = playerViewController;
+    [_avPlayerViewController addObserver:self forKeyPath:propertyName options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
+
+    NSString* propertyName = NSStringFromSelector(@selector(optimizedFullscreenActive));
+
+    if ([keyPath isEqualToString:propertyName] && change[NSKeyValueChangeNewKey]) {
+        BOOL oldActive = [change[NSKeyValueChangeOldKey] boolValue];
+        BOOL active = [change[NSKeyValueChangeNewKey] boolValue];
+        if (oldActive != active && [_avPlayerController fullscreenInterface])
+            [_avPlayerController fullscreenInterface]->setIsOptimized(active);
+    }
+}
+
 
 - (void)setVideoSublayer:(CALayer *)videoSublayer
 {
@@ -593,6 +614,11 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 
 WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit()
     : m_videoFullscreenModel(nullptr)
+    , m_fullscreenChangeObserver(nullptr)
+    , m_mode(HTMLMediaElement::VideoFullscreenModeNone)
+    , m_exitRequested(false)
+    , m_exitCompleted(false)
+    , m_enterRequested(false)
 {
 }
 
@@ -603,6 +629,7 @@ WebAVPlayerController *WebVideoFullscreenInterfaceAVKit::playerController()
         m_playerController = adoptNS([[WebAVPlayerController alloc] init]);
         if (m_videoFullscreenModel)
             [m_playerController setDelegate:m_videoFullscreenModel];
+        [m_playerController setFullscreenInterface:this];
     }
     return m_playerController.get();
 }
@@ -894,8 +921,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
                         m_videoFullscreenModel->requestExitFullscreen();
                 }
             }];
-        } else
-        if (m_mode == HTMLMediaElement::VideoFullscreenModeStandard) {
+        } else if (m_mode == HTMLMediaElement::VideoFullscreenModeStandard) {
             [m_playerViewController enterFullScreenWithCompletionHandler:^(BOOL, NSError*)
             {
                 [m_playerViewController setShowsPlaybackControls:YES];
@@ -941,8 +967,12 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect
         if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized) {
             [m_window setHidden:NO];
             [m_playerViewController stopOptimizedFullscreen];
-        } else
-        if (m_mode == HTMLMediaElement::VideoFullscreenModeStandard) {
+        } else if (m_mode == (HTMLMediaElement::VideoFullscreenModeOptimized | HTMLMediaElement::VideoFullscreenModeStandard)) {
+            [m_playerViewController exitFullScreenAnimated:NO completionHandler:^(BOOL , NSError *) {
+                [m_window setHidden:NO];
+                [m_playerViewController stopOptimizedFullscreen];
+            }];
+        } else if (m_mode == HTMLMediaElement::VideoFullscreenModeStandard) {
             [m_playerViewController exitFullScreenWithCompletionHandler:^(BOOL, NSError*) {
                 m_exitCompleted = true;
                 [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
@@ -1008,9 +1038,11 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
 {
     [m_window setHidden:YES];
     [m_window setRootViewController:nil];
-    if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized)
+    m_window = nil;
+    m_videoFullscreenModel = nil;
+    if (m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
         [m_playerViewController stopOptimizedFullscreen];
-    else
+    if (m_mode & HTMLMediaElement::VideoFullscreenModeStandard)
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:nil];
     m_playerController = nil;
     [m_playerViewController setDelegate:nil];
@@ -1025,8 +1057,8 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
     [m_videoLayerContainer setPlayerViewController:nil];
     m_videoLayerContainer = nil;
     [[m_viewController view] removeFromSuperview];
+    [m_playerController setFullscreenInterface:nil];
     m_viewController = nil;
-    m_window = nil;
     m_parentView = nil;
     m_parentWindow = nil;
 }
@@ -1036,7 +1068,7 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     if (!m_enterRequested)
         return;
     
-    if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized)
+    if (m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
         return;
     
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
@@ -1053,5 +1085,33 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
         m_videoFullscreenModel->requestExitFullscreen();
 }
 
+void WebVideoFullscreenInterfaceAVKit::setIsOptimized(bool active)
+{
+    if (m_mode & HTMLMediaElement::VideoFullscreenModeStandard) {
+        if (!active && m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
+            m_mode &= ~HTMLMediaElement::VideoFullscreenModeOptimized;
+        else if (active && ~m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
+            m_mode |= HTMLMediaElement::VideoFullscreenModeOptimized;
+    }
+    
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->fullscreenModeChanged(m_mode);
+
+    if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized)
+        return;
+    
+    [m_window setHidden:m_mode & HTMLMediaElement::VideoFullscreenModeOptimized];
+    
+    if (!m_exitRequested || active)
+        return;
+    
+    m_exitCompleted = true;
+    [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
+    [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
+    WebThreadRun(^{
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->didExitFullscreen();
+    });
+}
 
 #endif

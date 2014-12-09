@@ -5996,18 +5996,14 @@ MediaSession::MediaType HTMLMediaElement::presentationType() const
 
 MediaSession::DisplayType HTMLMediaElement::displayType() const
 {
-    switch (m_videoFullscreenMode) {
-    case VideoFullscreenModeStandard:
+    if (m_videoFullscreenMode == VideoFullscreenModeStandard)
         return MediaSession::Fullscreen;
-    case VideoFullscreenModeOptimized:
+    if (m_videoFullscreenMode & VideoFullscreenModeOptimized)
         return MediaSession::Optimized;
-    case VideoFullscreenModeNone:
+    if (m_videoFullscreenMode == VideoFullscreenModeNone)
         return MediaSession::Normal;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
 
+    ASSERT_NOT_REACHED();
     return MediaSession::Normal;
 }
 
@@ -6075,7 +6071,7 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
     if (m_player && m_player->isCurrentPlaybackTargetWireless())
         return true;
 #endif
-    if (m_videoFullscreenMode == VideoFullscreenModeOptimized)
+    if (m_videoFullscreenMode & VideoFullscreenModeOptimized)
         return true;
     
     return false;

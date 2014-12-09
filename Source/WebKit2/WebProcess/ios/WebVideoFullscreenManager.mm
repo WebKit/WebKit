@@ -69,6 +69,7 @@ WebVideoFullscreenManager::WebVideoFullscreenManager(PassRefPtr<WebPage> page)
     : m_page(page.get())
     , m_isAnimating(false)
     , m_targetIsFullscreen(false)
+    , m_fullscreenMode(HTMLMediaElement::VideoFullscreenModeNone)
     , m_isFullscreen(false)
 {
     setWebVideoFullscreenInterface(this);

@@ -1,3 +1,46 @@
+2014-12-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable activating optimized fullscreen mode from standard fulscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=139137
+
+        Reviewed by Jer Noble.
+
+        Going from standard fullscreen mode to optimized fullscreen mode requires the ability to
+        update the fullscreen mode in HTMLMediaElement and a new standard-and-optimized-fullscreen mode.
+
+        This change KVO observes AVKit's optimizedFullscreenActive and forwards the change down to HTMLMediaElement so it can adjust behavior appropriately.
+        It also hides the standard fullscreen window when going into this mode.
+        When exiting fullscreen from standard-and-optimized, first exit fullscreen immediately, then stopOptimizedFullscreen, and notify of completion when
+        optimizedFullscreen goes inactive.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::fullscreenMode):
+            Treat VideoFullscreenModeStandardAndOptimized as a kind of optimized mode.
+        * WebCore.exp.in: New export for WebVideoFullscreenModelVideoElement::fullscreenModeChanged
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::displayType):
+            Treat VideoFullscreenModeStandardAndOptimized as a kind of optimized mode.
+        * html/HTMLMediaElement.h: Add new fullscreen mode.
+        (WebCore::HTMLMediaElement::fullscreenModeChanged): Update fullscreen mode so it does optimized fullscreen mode behaviors when applicable.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: Declare setOptimizedActive
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVVideoLayer setPlayerViewController:]): observe optimizedFullscreenActive
+        (-[WebAVVideoLayer observeValueForKeyPath:ofObject:change:context:]): respond to changes to optimizedFullscreenActive
+        (WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit): Init members.
+        (WebVideoFullscreenInterfaceAVKit::playerController): 
+            Give player controller a reference to the WebVideoFullscreenInterface so it can pass along mode change state.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Handle new fullscreen modes.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): ditto
+        (WebVideoFullscreenInterfaceAVKit::invalidate): ditto
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): ditto
+        (WebVideoFullscreenInterfaceAVKit::setOptimizedActive): Handle changes to fullscreen mode.
+            Also handle the case that exiting fullscreen happend when optimized mode ends.
+        * platform/ios/WebVideoFullscreenModel.h: declare fullscreenModeChanged()
+        * platform/ios/WebVideoFullscreenModelVideoElement.h: declare fullscreenModeChanged()
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm: add fullscreenModeChanged()
+        (WebVideoFullscreenModelVideoElement::WebVideoFullscreenModelVideoElement): Init members.
+        (WebVideoFullscreenModelVideoElement::fullscreenModeChanged): Added. Update video element fullscreen mode.
+
 2014-12-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the iOS build after r177002

@@ -52,6 +52,7 @@ public:
     virtual void setVideoLayerGravity(VideoGravity) = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
+    virtual void fullscreenModeChanged(HTMLMediaElement::VideoFullscreenMode) = 0;
 };
 
 }

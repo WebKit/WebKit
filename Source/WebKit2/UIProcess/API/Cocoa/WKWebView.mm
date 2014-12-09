@@ -235,7 +235,13 @@ static int32_t deviceOrientation()
 
 - (BOOL)_isPlayingFullscreenOptimizedVideo
 {
-    return _page->videoFullscreenManager() && _page->videoFullscreenManager()->mode() == WebCore::HTMLMediaElement::HTMLMediaElement::VideoFullscreenModeOptimized;
+    if (!_page->videoFullscreenManager())
+        return false;
+    
+    if (_page->videoFullscreenManager()->mode() & WebCore::HTMLMediaElement::HTMLMediaElement::VideoFullscreenModeOptimized)
+        return true;
+    
+    return false;
 }
 #endif
 

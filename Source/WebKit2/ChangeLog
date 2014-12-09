@@ -1,3 +1,25 @@
+2014-12-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable activating optimized fullscreen mode from standard fulscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=139137
+
+        Reviewed by Simon Fraser.
+
+        Going from standard fullscreen mode to optimized fullscreen mode requires the ability to
+        update the fullscreen mode and a new standard-and-optimized-fullscreen mode.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isPlayingFullscreenOptimizedVideo]): 
+        Treat new standard-and-optimized as a kind of optimized.
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h: IPC fullscreen mode changes
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm: ditto
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenModeChanged): dito
+        * WebProcess/ios/WebVideoFullscreenManager.h: ditto
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in: ditto
+        * WebProcess/ios/WebVideoFullscreenManager.mm: dito
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager): ditto
+        (WebKit::WebVideoFullscreenManager::setFullscreenModeChanged): ditto
+
 2014-12-08  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Use DependenciesEFL instead of Dependencies

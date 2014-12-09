@@ -84,7 +84,7 @@ void WebVideoFullscreenManagerProxy::invalidate()
     m_layerHost.clear();
 }
 
-void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingDeviceScaleFactor, uint32_t videoFullscreenMode, bool allowOptimizedFullscreen)
+void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingDeviceScaleFactor, HTMLMediaElement::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
 {
     ASSERT(videoLayerID);
     m_layerHost = WKMakeRenderLayer(videoLayerID);
@@ -95,8 +95,12 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID
     }
 
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
-    HTMLMediaElement::VideoFullscreenMode mode = static_cast<HTMLMediaElement::VideoFullscreenMode>(videoFullscreenMode);
-    setupFullscreen(*m_layerHost.get(), initialRect, parentView, mode, allowOptimizedFullscreen);
+    setupFullscreen(*m_layerHost.get(), initialRect, parentView, videoFullscreenMode, allowOptimizedFullscreen);
+}
+    
+void WebVideoFullscreenManagerProxy::fullscreenModeChanged(HTMLMediaElement::VideoFullscreenMode mode)
+{
+    m_page->send(Messages::WebVideoFullscreenManager::fullscreenModeChanged(mode), m_page->pageID());
 }
     
 void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<double, double>>& ranges)

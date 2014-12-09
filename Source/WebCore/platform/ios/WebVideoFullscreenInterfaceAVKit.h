@@ -89,6 +89,7 @@ public:
     WEBCORE_EXPORT virtual void requestHideAndExitFullscreen();
 
     HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
+    void setIsOptimized(bool);
 
 protected:
         

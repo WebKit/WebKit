@@ -31,6 +31,7 @@
 
 #include <WebCore/EventListener.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/WebVideoFullscreenModel.h>
 #include <wtf/RefPtr.h>
@@ -70,6 +71,7 @@ public:
     WEBCORE_EXPORT virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
     WEBCORE_EXPORT virtual void selectAudioMediaOption(uint64_t index) override;
     WEBCORE_EXPORT virtual void selectLegibleMediaOption(uint64_t index) override;
+    WEBCORE_EXPORT virtual void fullscreenModeChanged(HTMLMediaElement::VideoFullscreenMode) override;
 
 private:
     static const Vector<WTF::AtomicString>& observedEventNames();
