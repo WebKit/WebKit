@@ -146,6 +146,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
     , m_snapshotRemovalTargetRenderTreeSize(0)
     , m_shouldRemoveSnapshotWhenTargetRenderTreeSizeHit(false)
+    , m_gesturePendingSnapshotRemoval(0)
 {
     viewGestureControllersForAllPages().add(webPageProxy.pageID(), this);
 }
@@ -178,7 +179,7 @@ static void addLogEntry(Vector<String>& entries, const String& message)
     int size = WTF_ARRAY_LENGTH(stack);
     WTFGetBacktrace(stack, &size);
     StringBuilder stringBuilder;
-    stringBuilder.append(String::format("%f [ ]", CFAbsoluteTimeGetCurrent()));
+    stringBuilder.append(String::format("%f [ ", CFAbsoluteTimeGetCurrent()));
     for (int i = 2; i < size; ++i) {
         if (i > 2)
             stringBuilder.appendLiteral(", ");
@@ -335,9 +336,10 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     if (auto drawingArea = m_webPageProxy.drawingArea()) {
         uint64_t pageID = m_webPageProxy.pageID();
-        drawingArea->dispatchAfterEnsuringDrawing([pageID] (CallbackBase::Error error) {
+        uint64_t gesturePendingSnapshotRemoval = m_gesturePendingSnapshotRemoval;
+        drawingArea->dispatchAfterEnsuringDrawing([pageID, gesturePendingSnapshotRemoval] (CallbackBase::Error error) {
             auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
-            if (gestureControllerIter != viewGestureControllersForAllPages().end())
+            if (gestureControllerIter != viewGestureControllersForAllPages().end() && gestureControllerIter->value->m_gesturePendingSnapshotRemoval == gesturePendingSnapshotRemoval)
                 gestureControllerIter->value->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
         });
     } else {
@@ -393,6 +395,8 @@ void ViewGestureController::removeSwipeSnapshot()
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
     
+    ++m_gesturePendingSnapshotRemoval;
+
 #if USE(IOSURFACE)
     if (m_currentSwipeSnapshotSurface)
         m_currentSwipeSnapshotSurface->setIsVolatile(true);
