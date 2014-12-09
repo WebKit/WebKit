@@ -1,3 +1,12 @@
+2014-12-09  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed. Style fix following r177019.
+
+        Use nullptr instead of 0.
+
+        * bindings/gobject/ConvertToUTF8String.cpp:
+        (convertToUTF8String):
+
 2014-12-09  Javier Fernandez  <jfernandez@igalia.com>
 
         Refactor of rebuildFloatingObjectSetFromIntrudingFloats function after r176957.

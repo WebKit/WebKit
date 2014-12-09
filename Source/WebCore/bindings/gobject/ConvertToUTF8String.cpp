@@ -30,7 +30,7 @@
 gchar* convertToUTF8String(WTF::String const& s)
 {
     if (s.isNull())
-        return 0;
+        return nullptr;
 
     return g_strdup(s.utf8().data());
 }
