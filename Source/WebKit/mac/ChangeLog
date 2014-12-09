@@ -1,3 +1,14 @@
+2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete Node::boundingBox()
+        https://bugs.webkit.org/show_bug.cgi?id=139333
+
+        Reviewed by Zalan Bujtas.
+
+        * WebView/WebActionMenuController.mm:
+        (elementBoundingBoxInWindowCoordinatesFromNode): Use
+        RenderObject::absoluteBoundingBoxRect().
+
 2014-12-08  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r158036): WebView cannot handle HTTP Basic Authentication challenge

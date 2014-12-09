@@ -150,6 +150,10 @@ public:
     bool hasClipPath() const { return style().clipPath(); }
     bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
 
+    // anchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an anchor.
+    // It works differently than absoluteBoundingBoxRect() for inline renderers.
+    LayoutRect anchorRect() const;
+
     bool hasFilter() const { return style().hasFilter(); }
     bool hasBackdropFilter() const
     {
@@ -260,6 +264,9 @@ private:
     RenderStyle* cachedFirstLineStyle() const;
 
     virtual void newImageAnimationFrameAvailable(CachedImage&) final override;
+
+    bool getLeadingCorner(FloatPoint& output) const;
+    bool getTrailingCorner(FloatPoint& output) const;
 
     unsigned m_baseTypeFlags : 6;
     unsigned m_ancestorLineBoxDirty : 1;

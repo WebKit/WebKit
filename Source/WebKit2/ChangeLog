@@ -1,3 +1,17 @@
+2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete Node::boundingBox()
+        https://bugs.webkit.org/show_bug.cgi?id=139333
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates):
+        Use RenderObject::absoluteBoundingBoxRect().
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint): Use
+        RenderObject::absoluteBoundingBoxRect().
+
 2014-12-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Crash when answering notification permission request after navigating

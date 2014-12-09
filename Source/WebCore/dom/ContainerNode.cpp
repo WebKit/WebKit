@@ -777,126 +777,6 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
     }
 }
 
-bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
-{
-    if (!renderer())
-        return false;
-    // What is this code really trying to do?
-    RenderObject* o = renderer();
-    if (!o->isInline() || o->isReplaced()) {
-        point = o->localToAbsolute(FloatPoint(), UseTransforms);
-        return true;
-    }
-
-    // find the next text/image child, to get a position
-    while (o) {
-        RenderObject* p = o;
-        if (RenderObject* child = o->firstChildSlow())
-            o = child;
-        else if (o->nextSibling())
-            o = o->nextSibling();
-        else {
-            RenderObject* next = 0;
-            while (!next && o->parent()) {
-                o = o->parent();
-                next = o->nextSibling();
-            }
-            o = next;
-
-            if (!o)
-                break;
-        }
-        ASSERT(o);
-
-        if (!o->isInline() || o->isReplaced()) {
-            point = o->localToAbsolute(FloatPoint(), UseTransforms);
-            return true;
-        }
-
-        if (p->node() && p->node() == this && is<RenderText>(*o) && !downcast<RenderText>(*o).firstTextBox()) {
-            // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
-        } else if (is<RenderText>(*o) || o->isReplaced()) {
-            point = FloatPoint();
-            if (is<RenderText>(*o) && downcast<RenderText>(*o).firstTextBox())
-                point.move(downcast<RenderText>(*o).linesBoundingBox().x(), downcast<RenderText>(*o).firstTextBox()->root().lineTop());
-            else if (is<RenderBox>(*o))
-                point.moveBy(downcast<RenderBox>(*o).location());
-            point = o->container()->localToAbsolute(point, UseTransforms);
-            return true;
-        }
-    }
-    
-    // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
-    // at the end of the document. Scroll to the bottom. FIXME: who said anything about scrolling?
-    if (!o && document().view()) {
-        point = FloatPoint(0, document().view()->contentsHeight());
-        return true;
-    }
-    return false;
-}
-
-bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
-{
-    if (!renderer())
-        return false;
-
-    RenderObject* o = renderer();
-    if (!o->isInline() || o->isReplaced()) {
-        point = o->localToAbsolute(LayoutPoint(downcast<RenderBox>(*o).size()), UseTransforms);
-        return true;
-    }
-
-    // find the last text/image child, to get a position
-    while (o) {
-        if (RenderObject* child = o->lastChildSlow())
-            o = child;
-        else if (o->previousSibling())
-            o = o->previousSibling();
-        else {
-            RenderObject* prev = 0;
-            while (!prev) {
-                o = o->parent();
-                if (!o)
-                    return false;
-                prev = o->previousSibling();
-            }
-            o = prev;
-        }
-        ASSERT(o);
-        if (is<RenderText>(*o) || o->isReplaced()) {
-            point = FloatPoint();
-            if (is<RenderText>(*o)) {
-                IntRect linesBox = downcast<RenderText>(*o).linesBoundingBox();
-                if (!linesBox.maxX() && !linesBox.maxY())
-                    continue;
-                point.moveBy(linesBox.maxXMaxYCorner());
-            } else
-                point.moveBy(downcast<RenderBox>(*o).frameRect().maxXMaxYCorner());
-            point = o->container()->localToAbsolute(point, UseTransforms);
-            return true;
-        }
-    }
-    return true;
-}
-
-LayoutRect ContainerNode::boundingBox() const
-{
-    FloatPoint upperLeft, lowerRight;
-    bool foundUpperLeft = getUpperLeftCorner(upperLeft);
-    bool foundLowerRight = getLowerRightCorner(lowerRight);
-    
-    // If we've found one corner, but not the other,
-    // then we should just return a point at the corner that we did find.
-    if (foundUpperLeft != foundLowerRight) {
-        if (foundUpperLeft)
-            lowerRight = upperLeft;
-        else
-            upperLeft = lowerRight;
-    } 
-
-    return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
-}
-
 unsigned ContainerNode::countChildNodes() const
 {
     unsigned count = 0;
@@ -1028,6 +908,13 @@ RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);
+}
+
+LayoutRect rendererAnchorRect(const ContainerNode& node)
+{
+    if (RenderElement* renderer = node.renderer())
+        return renderer->anchorRect();
+    return LayoutRect();
 }
 
 } // namespace WebCore

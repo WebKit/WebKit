@@ -377,8 +377,6 @@ public:
         return false;
     }
 
-    virtual LayoutRect boundingBox() const;
-    IntRect pixelSnappedBoundingBox() const { return snappedIntRect(boundingBox()); }
     WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
 
@@ -738,6 +736,8 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     ASSERT(!isShadowRoot());
     return parentNode();
 }
+
+WEBCORE_EXPORT IntRect rendererBoundingBox(const Node&);
 
 } // namespace WebCore
 
