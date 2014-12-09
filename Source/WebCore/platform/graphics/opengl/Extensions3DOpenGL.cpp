@@ -171,7 +171,7 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
 
     if (name == "GL_EXT_sRGB")
 #if PLATFORM(IOS)
-        return m_availableExtensions.contians("GL_EXT_sRGB")
+        return m_availableExtensions.contains("GL_EXT_sRGB");
 #else
         return m_availableExtensions.contains("GL_EXT_texture_sRGB") && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB") || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"));
 #endif

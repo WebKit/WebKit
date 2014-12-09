@@ -1,3 +1,10 @@
+2014-12-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the iOS build after r177002
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+
 2014-12-07  Roger Fong  <roger_fong@apple.com>
 
         Implementation EXT_sRGB as a WebGL1 extension.
