@@ -1441,3 +1441,10 @@ webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnly
 
 # Backdrop filters are supported in Yosemite and above only.
 [ MountainLion Mavericks ] css3/filters/backdrop [ WontFix ]
+
+# These tests pass with a very small difference on 10.8 EWS bots that have ATI graphics cards, and fail on ones with NVidia cards.
+[ MountainLion ] compositing/hidpi-compositing-layer-with-subpixel-offset-accumulation-clipping.html [ Pass ImageOnlyFailure ]
+[ MountainLion ] compositing/hidpi-compositing-layer-with-zero-sized-container.html [ Pass ImageOnlyFailure ]
+[ MountainLion ] compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html [ Pass ImageOnlyFailure ]
+[ MountainLion ] compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Pass ImageOnlyFailure ]
+[ MountainLion ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass ImageOnlyFailure ]

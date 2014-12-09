@@ -1,3 +1,9 @@
+2014-12-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Mark several hidpi compositing tests that fail on EWS bots with ATI graphics.
+
+        * platform/mac/TestExpectations:
+
 2014-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] MathML tokens, tables, and row-like elements are exposed with ATK_ROLE_UNKNOWN
