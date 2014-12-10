@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2014 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,6 +43,7 @@
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitLoaderClient.h"
 #include "WebKitMarshal.h"
+#include "WebKitNotificationPrivate.h"
 #include "WebKitPolicyClient.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
@@ -68,6 +70,10 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+
+#if USE(LIBNOTIFY)
+#include <libnotify/notify.h>
+#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -124,6 +130,9 @@ enum {
 
     AUTHENTICATE,
 
+    SHOW_NOTIFICATION,
+    CLOSE_NOTIFICATION,
+
     LAST_SIGNAL
 };
 
@@ -144,6 +153,9 @@ enum {
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
 typedef HashMap<uint64_t, GRefPtr<GTask> > SnapshotResultsMap;
+#if USE(LIBNOTIFY)
+typedef HashMap<uint64_t, GRefPtr<NotifyNotification>> NotifyNotificationsMap;
+#endif
 class PageLoadStateObserver;
 
 struct _WebKitWebViewPrivate {
@@ -194,6 +206,10 @@ struct _WebKitWebViewPrivate {
 
     SnapshotResultsMap snapshotResultsMap;
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
+
+#if USE(LIBNOTIFY)
+    NotifyNotificationsMap notifyNotificationsMap;
+#endif
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -562,6 +578,44 @@ static void webkitWebViewHandleDownloadRequest(WebKitWebViewBase* webViewBase, D
     webkitDownloadSetWebView(download.get(), WEBKIT_WEB_VIEW(webViewBase));
 }
 
+static gboolean webkitWebViewShowNotification(WebKitWebView* webView, WebKitNotification* webNotification)
+{
+#if USE(LIBNOTIFY)
+    if (!notify_is_initted())
+        notify_init(g_get_prgname());
+
+    GRefPtr<NotifyNotification> notification = webView->priv->notifyNotificationsMap.get(webkit_notification_get_id(webNotification));
+    if (!notification) {
+        notification = adoptGRef(notify_notification_new(webkit_notification_get_title(webNotification),
+            webkit_notification_get_body(webNotification), nullptr));
+
+        webView->priv->notifyNotificationsMap.set(webkit_notification_get_id(webNotification), notification);
+    } else
+        notify_notification_update(notification.get(), webkit_notification_get_title(webNotification),
+            webkit_notification_get_body(webNotification), nullptr);
+
+    notify_notification_show(notification.get(), nullptr);
+    return TRUE;
+#else
+    UNUSED_PARAM(webNotification);
+    return FALSE;
+#endif
+}
+
+static gboolean webkitWebViewCloseNotification(WebKitWebView* webView, WebKitNotification* webNotification)
+{
+#if USE(LIBNOTIFY)
+    if (GRefPtr<NotifyNotification> notification = webView->priv->notifyNotificationsMap.get(webkit_notification_get_id(webNotification))) {
+        notify_notification_close(notification.get(), nullptr);
+        webView->priv->notifyNotificationsMap.remove(webkit_notification_get_id(webNotification));
+    }
+    return TRUE;
+#else
+    UNUSED_PARAM(webNotification);
+    return FALSE;
+#endif
+}
+
 static void webkitWebViewConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed(object);
@@ -713,6 +767,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->permission_request = webkitWebViewPermissionRequest;
     webViewClass->run_file_chooser = webkitWebViewRunFileChooser;
     webViewClass->authenticate = webkitWebViewAuthenticate;
+    webViewClass->show_notification = webkitWebViewShowNotification;
+    webViewClass->close_notification = webkitWebViewCloseNotification;
 
     /**
      * WebKitWebView:web-context:
@@ -1574,6 +1630,56 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_BOOLEAN__OBJECT,
             G_TYPE_BOOLEAN, 1, /* number of parameters */
             WEBKIT_TYPE_AUTHENTICATION_REQUEST);
+
+    /**
+     * WebKitWebView::show-notification:
+     * @web_view: the #WebKitWebView
+     * @notification: a #WebKitNofication
+     *
+     * This signal is emitted when a notification should be presented to the
+     * user. The @notification is kept alive until either: 1) the web page cancels it
+     * or 2) a navigation happens.
+     *
+     * The default handler will emit a notification using libnotify, if built with
+     * support for it.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked. %FALSE otherwise.
+     *
+     * Since: 2.8
+     */
+    signals[SHOW_NOTIFICATION] =
+        g_signal_new("show-notification",
+            G_TYPE_FROM_CLASS(gObjectClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebViewClass, show_notification),
+            g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+            webkit_marshal_BOOLEAN__OBJECT,
+            G_TYPE_BOOLEAN, 1,
+            WEBKIT_TYPE_NOTIFICATION);
+
+    /**
+     * WebKitNotification::close-notification:
+     * @web_view: the #WebKitWebView
+     * @notification: a #WebKitNofication
+     *
+     * This signal is emitted when a notification should be withdrawn.
+     *
+     * The default handler will close the notification using libnotify, if built with
+     * support for it.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked. %FALSE otherwise.
+     *
+     * Since: 2.8
+     */
+    signals[CLOSE_NOTIFICATION] =
+        g_signal_new("close-notification",
+            G_TYPE_FROM_CLASS(gObjectClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebViewClass, close_notification),
+            g_signal_accumulator_true_handled, nullptr /* accumulator data */,
+            webkit_marshal_BOOLEAN__OBJECT,
+            G_TYPE_BOOLEAN, 1,
+            WEBKIT_TYPE_NOTIFICATION);
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
@@ -1955,6 +2061,19 @@ void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, Authenti
 void webkitWebViewInsecureContentDetected(WebKitWebView* webView, WebKitInsecureContentEvent type)
 {
     g_signal_emit(webView, signals[INSECURE_CONTENT_DETECTED], 0, type);
+}
+
+bool webkitWebViewEmitShowNotification(WebKitWebView* webView, WebKitNotification* webNotification)
+{
+    gboolean handled;
+    g_signal_emit(webView, signals[SHOW_NOTIFICATION], 0, webNotification, &handled);
+    return handled;
+}
+
+void webkitWebViewEmitCloseNotification(WebKitWebView* webView, WebKitNotification* webNotification)
+{
+    gboolean handled;
+    g_signal_emit(webView, signals[CLOSE_NOTIFICATION], 0, webNotification, &handled);
 }
 
 /**

@@ -158,6 +158,14 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
     UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h
+    UIProcess/API/gtk/WebKitNotificationPermissionRequest.cpp
+    UIProcess/API/gtk/WebKitNotificationPermissionRequest.h
+    UIProcess/API/gtk/WebKitNotificationPermissionRequestPrivate.h
+    UIProcess/API/gtk/WebKitNotificationProvider.cpp
+    UIProcess/API/gtk/WebKitNotificationProvider.h
+    UIProcess/API/gtk/WebKitNotification.cpp
+    UIProcess/API/gtk/WebKitNotification.h
+    UIProcess/API/gtk/WebKitNotificationPrivate.h
     UIProcess/API/gtk/WebKitPermissionRequest.cpp
     UIProcess/API/gtk/WebKitPermissionRequest.h
     UIProcess/API/gtk/WebKitPlugin.cpp
@@ -351,6 +359,8 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitMimeInfo.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationAction.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNotificationPermissionRequest.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNotification.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPlugin.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPolicyDecision.h
@@ -455,6 +465,12 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
+if (LIBNOTIFY_FOUND)
+list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    ${LIBNOTIFY_INCLUDE_DIRS}
+)
+endif ()
+
 set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
@@ -489,6 +505,13 @@ list(APPEND WebKit2_LIBRARIES
     WebCorePlatformGTK
     ${GTK_UNIX_PRINT_LIBRARIES}
 )
+
+if (LIBNOTIFY_FOUND)
+list(APPEND WebKit2_LIBRARIES
+    ${LIBNOTIFY_LIBRARIES}
+)
+endif ()
+
 ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit2_LIBRARIES)
 
 set(WebKit2_MARSHAL_LIST ${WEBKIT2_DIR}/UIProcess/API/gtk/webkit2marshal.list)

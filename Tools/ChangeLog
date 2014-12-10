@@ -1,3 +1,19 @@
+2014-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK][WK2] Add HTML5 Notifications support
+        https://bugs.webkit.org/show_bug.cgi?id=61140
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitperl/FeatureList.pm: enable notifications for GTK+.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewNotification):
+        (beforeAll):
+        * MiniBrowser/gtk/BrowserWindow.c: also handle notification permission requests.
+        (permissionRequestDialogCallback):
+        (webViewDecidePermissionRequest):
+        (geolocationRequestDialogCallback): Deleted.
+
 2014-12-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix webkitpy test expectation

@@ -33,6 +33,7 @@
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitGeolocationProvider.h"
 #include "WebKitInjectedBundleClient.h"
+#include "WebKitNotificationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitRequestManagerClient.h"
@@ -44,6 +45,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include "WebNotificationManagerProxy.h"
 #include "WebResourceCacheManagerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
@@ -166,6 +168,9 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(BATTERY_STATUS)
     RefPtr<WebKitBatteryProvider> batteryProvider;
 #endif
+#if ENABLE(NOTIFICATIONS)
+    RefPtr<WebKitNotificationProvider> notificationProvider;
+#endif
 #if ENABLE(SPELLCHECK)
     std::unique_ptr<WebKitTextChecker> textChecker;
 #endif
@@ -277,6 +282,9 @@ static void webkitWebContextConstructed(GObject* object)
 #endif
 #if ENABLE(BATTERY_STATUS)
     priv->batteryProvider = WebKitBatteryProvider::create(priv->context->supplement<WebBatteryManagerProxy>());
+#endif
+#if ENABLE(NOTIFICATIONS)
+    priv->notificationProvider = WebKitNotificationProvider::create(priv->context->supplement<WebNotificationManagerProxy>());
 #endif
 #if ENABLE(SPELLCHECK)
     priv->textChecker = WebKitTextChecker::create();

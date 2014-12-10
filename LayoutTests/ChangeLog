@@ -1,3 +1,12 @@
+2014-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK][WK2] Add HTML5 Notifications support
+        https://bugs.webkit.org/show_bug.cgi?id=61140
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: unskip the HTTP tests for new-style notifications.
+
 2014-12-09  Alexey Proskuryakov  <ap@apple.com>
 
         Unskip more multipart tests

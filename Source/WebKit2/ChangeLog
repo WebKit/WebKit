@@ -1,3 +1,59 @@
+2014-12-09  Claudio Saavedra  <csaavedra@igalia.com> and Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK][WK2] Add HTML5 Notifications support
+        https://bugs.webkit.org/show_bug.cgi?id=61140
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake: add new files to the build.
+        * UIProcess/API/gtk/WebKitForwardDeclarations.h:
+        * UIProcess/API/gtk/WebKitNotification.cpp: Added. New GObject used to expose information about
+        the notification to the API.
+        (webkitNotificationGetProperty):
+        (webkit_notification_class_init):
+        (webkitNotificationCreate):
+        (webkit_notification_get_id):
+        (webkit_notification_get_title):
+        (webkit_notification_get_body):
+        * UIProcess/API/gtk/WebKitNotification.h: Added.
+        * UIProcess/API/gtk/WebKitNotificationPermissionRequest.cpp: Added. Permission request object
+        for notifications.
+        (webkitNotificationPermissionRequestAllow):
+        (webkitNotificationPermissionRequestDeny):
+        (webkit_permission_request_interface_init):
+        (webkitNotificationPermissionRequestDispose):
+        (webkit_notification_permission_request_class_init):
+        (webkitNotificationPermissionRequestCreate):
+        * UIProcess/API/gtk/WebKitNotificationPermissionRequest.h: Added.
+        * UIProcess/API/gtk/WebKitNotificationPermissionRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitNotificationPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitNotificationProvider.cpp: Added. Notification provider that emits signals.
+        The C API allows overriding the notification providers and managers for customizing the handling of
+        notifications. We decided to go for a single manager and a single provider which provide more idiomatic
+        GObject API - signals.
+        (toNotificationProvider):
+        (showCallback):
+        (cancelCallback):
+        (WebKitNotificationProvider::~WebKitNotificationProvider):
+        (WebKitNotificationProvider::create):
+        (WebKitNotificationProvider::WebKitNotificationProvider):
+        (WebKitNotificationProvider::show):
+        (WebKitNotificationProvider::cancel):
+        * UIProcess/API/gtk/WebKitNotificationProvider.h: Added.
+        * UIProcess/API/gtk/WebKitUIClient.cpp: implemented decidePolicyForNotificationPermissionRequest.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed): initialize the notification provider.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewShowNotification): default implementation for showing the notification, currently
+        using GNotification, about to be ported to libnotify.
+        (webkit_web_view_class_init): set the default implementation for the show-notification signal.
+        (webkitWebViewEmitCloseNotification): emit the close-notification signal.
+        (webkitWebViewEmitShowNotification): emit the show-notification signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: list new objects and methods.
+        * UIProcess/API/gtk/webkit2.h: include new headers.
+
 2014-12-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL][[WK2] test_ewk2_text_checker is failed

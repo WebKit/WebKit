@@ -327,7 +327,7 @@ my @features = (
       define => "ENABLE_NOSNIFF", default => isEfl(), value => \$nosniffSupport },
 
     { option => "notifications", desc => "Toggle Notifications support",
-      define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },
+      define => "ENABLE_NOTIFICATIONS", default => isGtk(), value => \$notificationsSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
       define => "ENABLE_ORIENTATION_EVENTS", default => isIOSWebKit(), value => \$orientationEventsSupport },

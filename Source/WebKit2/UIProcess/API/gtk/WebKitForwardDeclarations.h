@@ -35,5 +35,6 @@ typedef struct _WebKitFindController  WebKitFindController;
 typedef struct _WebKitWebView         WebKitWebView;
 typedef struct _WebKitContextMenu     WebKitContextMenu;
 typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
+typedef struct _WebKitNotification    WebKitNotification;
 
 #endif // WebKitForward_h

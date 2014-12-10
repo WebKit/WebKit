@@ -616,6 +616,45 @@ webkit_user_media_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitNotification</FILE>
+WebKitNotification
+webkit_notification_get_id
+webkit_notification_get_title
+webkit_notification_get_body
+
+<SUBSECTION Standard>
+WebKitNotificationClass
+WEBKIT_TYPE_NOTIFICATION
+WEBKIT_IS_NOTIFICATION
+WEBKIT_NOTIFICATION
+WEBKIT_NOTIFICATION_CLASS
+WEBKIT_IS_NOTIFICATION_CLASS
+WEBKIT_NOTIFICATION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitNotificationPrivate
+webkit_notification_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitNotificationPermissionRequest</FILE>
+WebKitNotificationPermissionRequest
+
+<SUBSECTION Standard>
+WebKitNotificationPermissionRequestClass
+WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST
+WEBKIT_NOTIFICATION_PERMISSION_REQUEST
+WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST
+WEBKIT_NOTIFICATION_PERMISSION_REQUEST_CLASS
+WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST_CLASS
+WEBKIT_NOTIFICATION_PERMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitNotificationPermissionRequestPrivate
+webkit_notification_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitPolicyDecision</FILE>
 WebKitPolicyDecision
 webkit_policy_decision_download

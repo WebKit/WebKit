@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2014 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +19,14 @@
  */
 
 #include "config.h"
+#include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <glib/gstdio.h>
 #include <wtf/gobject/GRefPtr.h>
+
+static WebKitTestServer* gServer;
 
 static void testWebViewWebContext(WebViewTest* test, gconstpointer)
 {
@@ -581,8 +585,142 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     g_assert(test->getSnapshotAndCancel());
 }
 
+class NotificationWebViewTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(NotificationWebViewTest);
+
+    enum NotificationEvent {
+        None,
+        Permission,
+        Shown,
+        Cancelled
+    };
+
+    static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionRequest *request, NotificationWebViewTest* test)
+    {
+        g_assert(WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST(request));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+
+        test->m_event = Permission;
+
+        webkit_permission_request_allow(request);
+
+        g_main_loop_quit(test->m_mainLoop);
+
+        return TRUE;
+    }
+
+    static gboolean showNotificationCallback(WebKitWebView*, WebKitNotification* notification, NotificationWebViewTest* test)
+    {
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(notification));
+        test->m_notification = notification;
+        test->m_event = Shown;
+        g_main_loop_quit(test->m_mainLoop);
+        return TRUE;
+    }
+
+    static gboolean closeNotificationCallback(WebKitWebView*, WebKitNotification*, NotificationWebViewTest* test)
+    {
+        test->m_notification = nullptr;
+        test->m_event = Cancelled;
+        g_main_loop_quit(test->m_mainLoop);
+        return TRUE;
+    }
+
+    NotificationWebViewTest()
+        : m_event(None)
+    {
+        g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequestCallback), this);
+        g_signal_connect(m_webView, "show-notification", G_CALLBACK(showNotificationCallback), this);
+        g_signal_connect(m_webView, "close-notification", G_CALLBACK(closeNotificationCallback), this);
+
+    }
+
+    ~NotificationWebViewTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+   void requestPermissionAndWaitUntilGiven()
+    {
+        m_event = None;
+        webkit_web_view_run_javascript(m_webView, "Notification.requestPermission();", nullptr, nullptr, nullptr);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    void requestNotificationAndWaitUntilShown(const char* title, const char* body)
+    {
+        m_event = None;
+
+        GUniquePtr<char> jscode(g_strdup_printf("n = new Notification('%s', { body: '%s'});", title, body));
+        webkit_web_view_run_javascript(m_webView, jscode.get(), nullptr, nullptr, nullptr);
+
+        g_main_loop_run(m_mainLoop);
+    }
+
+    void closeNotificationAndWaitUntilCancelled()
+    {
+        m_event = None;
+        webkit_web_view_run_javascript(m_webView, "n.close()", nullptr, nullptr, nullptr);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    NotificationEvent m_event;
+    WebKitNotification* m_notification;
+};
+
+static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer)
+{
+    // Notifications don't work with local or special schemes.
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    test->requestPermissionAndWaitUntilGiven();
+
+    g_assert(test->m_event == NotificationWebViewTest::Permission);
+
+    static const char* title = "This is a notification";
+    static const char* body = "This is the body.";
+    test->requestNotificationAndWaitUntilShown(title, body);
+
+    g_assert(test->m_event == NotificationWebViewTest::Shown);
+    g_assert(test->m_notification);
+    g_assert_cmpstr(webkit_notification_get_title(test->m_notification), ==, title);
+    g_assert_cmpstr(webkit_notification_get_body(test->m_notification), ==, body);
+
+    test->closeNotificationAndWaitUntilCancelled();
+
+    g_assert(test->m_event == NotificationWebViewTest::Cancelled);
+
+    test->requestNotificationAndWaitUntilShown(title, body);
+
+    g_assert(test->m_event == NotificationWebViewTest::Shown);
+
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    g_assert(test->m_event == NotificationWebViewTest::Cancelled);
+}
+
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    if (g_str_equal(path, "/")) {
+        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_complete(message->response_body);
+    } else
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+}
+
 void beforeAll()
 {
+    gServer = new WebKitTestServer();
+    gServer->run(serverCallback);
+
     WebViewTest::add("WebKitWebView", "web-context", testWebViewWebContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
@@ -594,6 +732,7 @@ void beforeAll()
     SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
+    NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
 }
 
 void afterAll()

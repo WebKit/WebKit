@@ -416,6 +416,10 @@ static gboolean webViewDecidePermissionRequest(WebKitWebView *webView, WebKitPer
         dialog_title = "Geolocation request";
         dialog_message_format = "%s";
         dialog_message = "Allow geolocation request?";
+    } else if (WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST(request)) {
+        dialog_title = "Notification request";
+        dialog_message_format = "%s";
+        dialog_message = "Allow notifications request?";
     } else if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request)) {
         dialog_message_format = "Allow access to %s device?";
         gboolean is_for_audio_device = webkit_user_media_permission_is_for_audio_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
