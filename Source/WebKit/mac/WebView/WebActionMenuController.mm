@@ -764,13 +764,14 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
         selector = @selector(_copySelection:);
         title = WEB_UI_STRING_KEY("Copy", "Copy (text action menu item)", "text action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        enabled = _hitTestResult.allowsCopy();
         break;
 
     case WebActionMenuItemTagLookupText:
         selector = @selector(_lookupText:);
         title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
-        enabled = getLULookupDefinitionModuleClass();
+        enabled = getLULookupDefinitionModuleClass() && _hitTestResult.allowsCopy();
         break;
 
     case WebActionMenuItemTagPaste:

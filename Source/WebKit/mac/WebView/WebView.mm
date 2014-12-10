@@ -893,6 +893,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
         self.actionMenu = actionMenu.get();
         _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
+        self.actionMenu.autoenablesItems = NO;
     }
 #endif
 

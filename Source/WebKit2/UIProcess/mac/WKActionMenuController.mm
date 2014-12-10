@@ -981,6 +981,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     NSString *title = nil;
     NSImage *image = nil;
     bool enabled = true;
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
 
     switch (tag) {
     case kWKContextActionItemTagOpenLinkInDefaultBrowser:
@@ -1030,13 +1031,14 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_copySelection:);
         title = WEB_UI_STRING_KEY("Copy", "Copy (text action menu item)", "text action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
+        enabled = hitTestResult->allowsCopy();
         break;
 
     case kWKContextActionItemTagLookupText:
         selector = @selector(_lookupText:);
         title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
         image = [NSImage imageNamed:@"NSActionMenuLookup"];
-        enabled = getLULookupDefinitionModuleClass();
+        enabled = getLULookupDefinitionModuleClass() && hitTestResult->allowsCopy();
         break;
 
     case kWKContextActionItemTagPaste:
