@@ -196,9 +196,20 @@ NSView *PageClientImpl::activeView() const
 #endif
 }
 
+NSWindow *PageClientImpl::activeWindow() const
+{
+#if WK_API_ENABLED
+    if (m_wkView._thumbnailView)
+        return m_wkView._thumbnailView.window;
+#endif
+    if (m_wkView._targetWindowForMovePreparation)
+        return m_wkView._targetWindowForMovePreparation;
+    return m_wkView.window;
+}
+
 bool PageClientImpl::isViewWindowActive()
 {
-    NSWindow *activeViewWindow = activeView().window;
+    NSWindow *activeViewWindow = activeWindow();
     return activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow;
 }
 
@@ -215,7 +226,7 @@ void PageClientImpl::makeFirstResponder()
 bool PageClientImpl::isViewVisible()
 {
     NSView *activeView = this->activeView();
-    NSWindow *activeViewWindow = activeView.window;
+    NSWindow *activeViewWindow = activeWindow();
 
     if (!activeViewWindow)
         return false;
@@ -243,12 +254,12 @@ bool PageClientImpl::isViewVisible()
 
 bool PageClientImpl::isViewVisibleOrOccluded()
 {
-    return activeView().window.isVisible;
+    return activeWindow().isVisible;
 }
 
 bool PageClientImpl::isViewInWindow()
 {
-    return activeView().window;
+    return activeWindow();
 }
 
 bool PageClientImpl::isVisuallyIdle()
@@ -259,7 +270,7 @@ bool PageClientImpl::isVisuallyIdle()
 LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    if ([activeView().window _hostsLayersInWindowServer])
+    if ([activeWindow() _hostsLayersInWindowServer])
         return LayerHostingMode::OutOfProcess;
 #endif
     return LayerHostingMode::InProcess;
