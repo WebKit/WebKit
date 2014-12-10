@@ -1,3 +1,31 @@
+2014-12-10  Julien Isorce  <j.isorce@samsung.com>
+
+        [GTK] Enable depth 32 for the RedirectedXCompositeWindow
+        https://bugs.webkit.org/show_bug.cgi?id=139028
+
+        On gtk/X11, the layout compositing is done in the web process.
+        If one needs to handle alpha with the rest of the application
+        then it is not enough to make to browser's window as RGBA.
+        The shared redirected window needs to be RGBA as well.
+        (The shared X composite window between UIProcess and WebProcess).
+
+        This allows an end-to-end RGBA solution when the application
+        wants to interact with the alpha channel at compositing time.
+        For example for transparent Web UI.
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseConstructed):
+        (webkitWebViewRenderAcceleratedCompositingResults):
+        (webkitWebViewBaseUpdatePreferences):
+        (webkitWebViewBaseCreateWebPage):
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::create):
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        * UIProcess/gtk/RedirectedXCompositeWindow.h:
+
 2014-12-09  Claudio Saavedra  <csaavedra@igalia.com> and Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK][WK2] Add HTML5 Notifications support

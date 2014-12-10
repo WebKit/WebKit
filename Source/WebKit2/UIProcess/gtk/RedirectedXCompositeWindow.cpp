@@ -126,12 +126,12 @@ static bool supportsXDamageAndXComposite(Display* display)
     return true;
 }
 
-std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(Display* display, const IntSize& size, std::function<void()> damageNotify)
+std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(Display* display, Window parent, const IntSize& size, std::function<void()> damageNotify)
 {
-    return supportsXDamageAndXComposite(display) ? std::unique_ptr<RedirectedXCompositeWindow>(new RedirectedXCompositeWindow(display, size, damageNotify)) : nullptr;
+    return supportsXDamageAndXComposite(display) ? std::unique_ptr<RedirectedXCompositeWindow>(new RedirectedXCompositeWindow(display, parent, size, damageNotify)) : nullptr;
 }
 
-RedirectedXCompositeWindow::RedirectedXCompositeWindow(Display* display, const IntSize& size, std::function<void()> damageNotify)
+RedirectedXCompositeWindow::RedirectedXCompositeWindow(Display* display, Window parent, const IntSize& size, std::function<void()> damageNotify)
     : m_display(display)
     , m_size(size)
     , m_window(0)
@@ -146,7 +146,7 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(Display* display, const I
     XSetWindowAttributes windowAttributes;
     windowAttributes.override_redirect = True;
     m_parentWindow = XCreateWindow(display,
-        RootWindowOfScreen(screen),
+        parent ? parent : RootWindowOfScreen(screen),
         WidthOfScreen(screen) + 1, 0, 1, 1,
         0,
         CopyFromParent,
@@ -155,6 +155,10 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(Display* display, const I
         CWOverrideRedirect,
         &windowAttributes);
     XMapWindow(display, m_parentWindow);
+
+    // The top parent is only necessary to copy from parent the visual and depth at creation time.
+    if (parent)
+        XReparentWindow(display, m_parentWindow, RootWindowOfScreen(screen), WidthOfScreen(screen) + 1, 0);
 
     windowAttributes.event_mask = StructureNotifyMask;
     windowAttributes.override_redirect = False;

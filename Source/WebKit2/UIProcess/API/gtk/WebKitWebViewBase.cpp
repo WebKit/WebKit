@@ -255,6 +255,26 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
+    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+    if (GDK_IS_X11_DISPLAY(display)) {
+        WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+        GdkWindow* parentWindow = gtk_widget_get_parent_window(widget);
+        priv->redirectedWindow = RedirectedXCompositeWindow::create(
+            GDK_DISPLAY_XDISPLAY(display),
+            parentWindow ? GDK_WINDOW_XID(parentWindow) : 0,
+            IntSize(1, 1),
+            [widget] {
+                gtk_widget_queue_draw(widget);
+            });
+        if (priv->redirectedWindow) {
+            DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+            drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
+        }
+        webkitWebViewBaseUpdatePreferences(WEBKIT_WEB_VIEW_BASE(widget));
+    }
+#endif
+
     gtk_widget_set_realized(widget, TRUE);
 
     GtkAllocation allocation;
@@ -427,13 +447,6 @@ static void webkitWebViewBaseConstructed(GObject* object)
 
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
     priv->pageClient = PageClientImpl::create(viewWidget);
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_X11_DISPLAY(display))
-        priv->redirectedWindow = RedirectedXCompositeWindow::create(GDK_DISPLAY_XDISPLAY(display), IntSize(1, 1), [viewWidget] { gtk_widget_queue_draw(viewWidget); });
-#endif
-
     priv->authenticationDialog = 0;
 }
 
@@ -453,6 +466,7 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
         cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
         cairo_set_source_surface(cr, surface, 0, 0);
+        cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
         cairo_fill(cr);
     }
 
@@ -1027,11 +1041,12 @@ void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-    if (priv->redirectedWindow)
-        return;
+    bool acceleratedCompositingEnabled = priv->redirectedWindow ? true : false;
+#else
+    bool acceleratedCompositingEnabled = false;
 #endif
 
-    priv->pageProxy->preferences().setAcceleratedCompositingEnabled(false);
+    priv->pageProxy->preferences().setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
 }
 
 #if HAVE(GTK_SCALE_FACTOR)
@@ -1054,13 +1069,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
     priv->pageProxy->initializeWebPage();
 
     priv->inputMethodFilter.setPage(priv->pageProxy.get());
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-    if (priv->redirectedWindow) {
-        DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
-        drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
-    }
-#endif
 
 #if HAVE(GTK_SCALE_FACTOR)
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
