@@ -1,3 +1,22 @@
+2014-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] MathML tokens with text fail to expose their text content via AtkText
+        https://bugs.webkit.org/show_bug.cgi?id=139454
+
+        Reviewed by Chris Fleizach.
+
+        Expose the text content of the element for non-anonymous RenderMathMLOperators.
+        This is needed because for ATK we expose the rendered element itself; not the
+        descendant text renderers. Also include MathML tokens as objects which should
+        implement AtkText.
+
+        Test: accessibility/math-text.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2014-12-10  Sebastian Dröge  <sebastian@centricular.com>
 
         [GStreamer] Use appsrcs instead of unconnected queues

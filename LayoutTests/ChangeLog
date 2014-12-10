@@ -1,3 +1,15 @@
+2014-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] MathML tokens with text fail to expose their text content via AtkText
+        https://bugs.webkit.org/show_bug.cgi?id=139454
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/math-text.html: Added.
+        * platform/efl/accessibility/math-text-expected.txt: Added.
+        * platform/gtk/accessibility/math-text-expected.txt: Added.
+        * platform/mac/accessibility/math-text-expected.txt: Added.
+
 2014-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for text-decoration-skip

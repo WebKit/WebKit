@@ -1095,7 +1095,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     } else if (!coreObject->isWebArea()) {
         if (role != TableRole) {
             interfaceMask |= 1 << WAIHypertext;
-            if ((renderer && renderer->childrenInline()) || roleIsTextType(role))
+            if ((renderer && renderer->childrenInline()) || roleIsTextType(role) || coreObject->isMathToken())
                 interfaceMask |= 1 << WAIText;
         }
 

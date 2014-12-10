@@ -638,6 +638,8 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     // so rangeOfContents does not work for them (nor does regular text selection).
     if (is<RenderText>(*m_renderer) && m_renderer->isAnonymous() && ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
         return downcast<RenderText>(*m_renderer).text();
+    if (is<RenderMathMLOperator>(*m_renderer) && !m_renderer->isAnonymous())
+        return downcast<RenderMathMLOperator>(*m_renderer).element().textContent();
 #endif
 
     // rangeOfContents does not include CSS-generated content.
