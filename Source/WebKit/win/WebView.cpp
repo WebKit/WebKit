@@ -64,7 +64,6 @@
 #include "WebPlatformStrategies.h"
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
-#include "WebStorageNamespaceProvider.h"
 #include "WebVisitedLinkStore.h"
 #include "resource.h"
 #include <JavaScriptCore/APICast.h>
@@ -2727,16 +2726,7 @@ bool WebView::shouldInitializeTrackPointHack()
 
     return shouldCreateScrollbars;
 }
-
-static String localStorageDatabasePath(WebPreferences* preferences)
-{
-    BString localStorageDatabasePath;
-    if (FAILED(preferences->localStorageDatabasePath(&localStorageDatabasePath)))
-        return String();
-
-    return toString(localStorageDatabasePath);
-}
-
+    
 HRESULT STDMETHODCALLTYPE WebView::initWithFrame( 
     /* [in] */ RECT frame,
     /* [in] */ BSTR frameName,
@@ -2811,7 +2801,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     configuration.inspectorClient = m_inspectorClient;
 #endif // ENABLE(INSPECTOR)
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
-    configuration.storageNamespaceProvider = WebStorageNamespaceProvider::create(localStorageDatabasePath(m_preferences.get()));
     configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);
     configuration.visitedLinkStore = &WebVisitedLinkStore::shared();
 
@@ -2821,6 +2810,9 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;
     m_page->addLayoutMilestones(static_cast<LayoutMilestones>(layoutMilestones));
 
+    BString localStoragePath;
+    if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath)))
+        m_page->settings().setLocalStorageDatabasePath(toString(localStoragePath));
 
     if (m_uiDelegate) {
         BString path;
