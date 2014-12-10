@@ -5440,16 +5440,16 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, GPRReg scratch
     if (Heap::isMarked(value))
         return;
 
-    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = m_jit.checkMarkByte(ownerGPR);
+    JITCompiler::Jump ownerIsRememberedOrInEden = m_jit.jumpIfIsRememberedOrInEden(ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
+    ownerIsRememberedOrInEden.link(&m_jit);
 }
 
 void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scratch2)
 {
-    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = m_jit.checkMarkByte(ownerGPR);
+    JITCompiler::Jump ownerIsRememberedOrInEden = m_jit.jumpIfIsRememberedOrInEden(ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
+    ownerIsRememberedOrInEden.link(&m_jit);
 }
 #else
 void SpeculativeJIT::compileStoreBarrier(Node* node)

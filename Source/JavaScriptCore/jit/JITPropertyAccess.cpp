@@ -875,9 +875,9 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
     if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
         ownerNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
 
-    Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(regT0);
+    Jump ownerIsRememberedOrInEden = jumpIfIsRememberedOrInEden(regT0);
     callOperation(operationUnconditionalWriteBarrier, regT0);
-    ownerNotMarkedOrAlreadyRemembered.link(this);
+    ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
         ownerNotCell.link(this);
@@ -925,9 +925,9 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
         ownerNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
 
-    Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(regT1);
+    Jump ownerIsRememberedOrInEden = jumpIfIsRememberedOrInEden(regT1);
     callOperation(operationUnconditionalWriteBarrier, regT1);
-    ownerNotMarkedOrAlreadyRemembered.link(this);
+    ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
         ownerNotCell.link(this);
@@ -966,9 +966,9 @@ void JIT::emitWriteBarrier(JSCell* owner)
 {
 #if ENABLE(GGC)
     if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
-        Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(owner);
+        Jump ownerIsRememberedOrInEden = jumpIfIsRememberedOrInEden(owner);
         callOperation(operationUnconditionalWriteBarrier, owner);
-        ownerNotMarkedOrAlreadyRemembered.link(this);
+        ownerIsRememberedOrInEden.link(this);
     } else
         callOperation(operationUnconditionalWriteBarrier, owner);
 #else

@@ -148,9 +148,14 @@ public:
     JSValue fastGetOwnProperty(VM&, Structure&, const String&);
 
     enum GCData : uint8_t {
-        Marked = 0,
-        NotMarked = 1,
-        MarkedAndRemembered = 2,
+        Marked = 0, // The object has survived a GC and is in the old gen.
+        NotMarked = 1, // The object is new and in the eden gen.
+        MarkedAndRemembered = 2, // The object is in the GC's remembered set.
+
+        // The object being in the GC's remembered set implies that it is also
+        // Marked. This is because objects are only added to the remembered sets
+        // by write barriers, and write barriers are only interested in old gen
+        // objects that point to potential eden gen objects.
     };
 
     void setMarked() { m_gcData = Marked; }

@@ -450,7 +450,7 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
     loadb JSCell::m_indexingType[cell], indexingType
 end
 
-macro checkMarkByte(cell, scratch1, scratch2, continuation)
+macro skipIfIsRememberedOrInEden(cell, scratch1, scratch2, continuation)
     loadb JSCell::m_gcData[cell], scratch1
     continuation(scratch1)
 end

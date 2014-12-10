@@ -626,12 +626,12 @@ public:
 
     static void emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest);
 
-    Jump checkMarkByte(GPRReg cell)
+    Jump jumpIfIsRememberedOrInEden(GPRReg cell)
     {
         return branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(cell, JSCell::gcDataOffset()));
     }
 
-    Jump checkMarkByte(JSCell* cell)
+    Jump jumpIfIsRememberedOrInEden(JSCell* cell)
     {
         uint8_t* address = reinterpret_cast<uint8_t*>(cell) + JSCell::gcDataOffset();
         return branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(address));
