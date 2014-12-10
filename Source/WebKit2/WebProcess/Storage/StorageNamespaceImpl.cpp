@@ -49,21 +49,26 @@ static LocalStorageNamespaceMap& localStorageNamespaceMap()
     return localStorageNamespaceMap;
 }
 
-PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
+RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
     LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(identifier, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
-    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, quotaInBytes));
+    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, nullptr, quotaInBytes));
 
     result.iterator->value = localStorageNamespace.get();
     return localStorageNamespace.release();
 }
 
+RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
+{
+    return adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, &topLevelOrigin, quotaInBytes));
+}
+
 PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(WebPage* webPage)
 {
-    return adoptRef(new StorageNamespaceImpl(SessionStorage, webPage->pageID(), webPage->corePage()->settings().sessionStorageQuota()));
+    return adoptRef(new StorageNamespaceImpl(SessionStorage, webPage->pageID(), nullptr, webPage->corePage()->settings().sessionStorageQuota()));
 }
 
 PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(PageGroup* pageGroup)
@@ -74,9 +79,10 @@ PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespa
     return createLocalStorageNamespace(pageGroupID, quota);
 }
 
-StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, unsigned quotaInBytes)
+StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)
     : m_storageType(storageType)
     , m_storageNamespaceID(storageNamespaceID)
+    , m_topLevelOrigin(topLevelOrigin)
     , m_quotaInBytes(quotaInBytes)
 {
 }

@@ -68,10 +68,20 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, PassRefPt
     , m_hasPendingClear(false)
     , m_hasPendingGetValues(false)
 {
-    if (m_storageType == LocalStorage)
-        WebProcess::shared().parentProcessConnection()->send(Messages::StorageManager::CreateLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
-    else
+    switch (m_storageType) {
+    case WebCore::LocalStorage:
+        if (SecurityOrigin* topLevelOrigin = storageNamespace->topLevelOrigin())
+            WebProcess::shared().parentProcessConnection()->send(Messages::StorageManager::CreateTransientLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(topLevelOrigin), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+        else
+            WebProcess::shared().parentProcessConnection()->send(Messages::StorageManager::CreateLocalStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+
+        break;
+
+    case WebCore::SessionStorage:
         WebProcess::shared().parentProcessConnection()->send(Messages::StorageManager::CreateSessionStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+        break;
+    }
+
     WebProcess::shared().addMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID, *this);
 }
 

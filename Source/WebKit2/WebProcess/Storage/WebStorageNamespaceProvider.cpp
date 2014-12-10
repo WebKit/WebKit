@@ -70,10 +70,9 @@ RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorag
     return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota);
 }
 
-RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota)
+RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota)
 {
-    // FIXME: Implement.
-    return nullptr;
+    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_identifier, topLevelOrigin, quota);
 }
 
 }

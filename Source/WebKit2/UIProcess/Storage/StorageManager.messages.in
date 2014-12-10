@@ -22,6 +22,7 @@
 
 messages -> StorageManager {
     CreateLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
+    CreateTransientLocalStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData topLevelSecurityOriginData, WebKit::SecurityOriginData securityOriginData) WantsConnection
     CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
     DestroyStorageMap(uint64_t storageMapID) WantsConnection
 

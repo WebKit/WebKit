@@ -494,6 +494,11 @@ void StorageManager::createLocalStorageMap(IPC::Connection* connection, uint64_t
     result.iterator->value = storageArea.release();
 }
 
+void StorageManager::createTransientLocalStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& topLevelOriginData, const SecurityOriginData& securityOriginData)
+{
+    // FIXME: Implement this.
+}
+
 void StorageManager::createSessionStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     // FIXME: This should be a message check.

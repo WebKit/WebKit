@@ -1,5 +1,46 @@
 2014-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Begin fixing transient local storage handling
+        https://bugs.webkit.org/show_bug.cgi?id=139503
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        * UIProcess/Storage/StorageManager.h:
+        Add empty stub implementation of createTransientLocalStorageMap.
+
+        * UIProcess/Storage/StorageManager.messages.in:
+        Add CreateTransientLocalStorageMap message.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        If we have a local storage namespace with a non-null top-level origin, create a 
+        transient local storage map.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        Pass a null top-level origin to the StorageNamespaceImpl constructor.
+
+        (WebKit::StorageNamespaceImpl::createTransientLocalStorageNamespace):
+        Create a new StorageNamespaceImpl, passing the top-level origin to the constructor.
+
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        Pass a null top-level origin to the StorageNamespaceImpl constructor.
+
+        (WebKit::StorageNamespaceImpl::StorageNamespaceImpl):
+        Add a top-level origin parameter.
+
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+        (WebKit::StorageNamespaceImpl::topLevelOrigin):
+        Add top-level origin member and getter.
+
+        * WebProcess/Storage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createTransientLocalStorageNamespace):
+        Call StorageNamespaceImpl::createTransientLocalStorageNamespace.
+
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
         Implement WebStorageNamespaceProvider::createLocalStorageNamespace
         https://bugs.webkit.org/show_bug.cgi?id=139498
 
