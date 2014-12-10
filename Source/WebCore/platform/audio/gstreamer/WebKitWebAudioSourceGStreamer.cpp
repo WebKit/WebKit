@@ -64,6 +64,8 @@ struct _WebKitWebAudioSourcePrivate {
     bool newStreamEventPending;
     GstSegment segment;
     guint64 numberOfSamples;
+
+    GstBufferPool* pool;
 };
 
 enum {
@@ -318,6 +320,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     ASSERT(priv->bus);
     ASSERT(priv->provider);
     if (!priv->provider || !priv->bus) {
+        GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without provider or bus"));
         gst_task_pause(src->priv->task.get());
         return;
     }
@@ -328,10 +331,26 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 
     GSList* channelBufferList = 0;
     register int i;
-    unsigned bufferSize = priv->framesToPull * sizeof(float);
     for (i = g_slist_length(priv->pads) - 1; i >= 0; i--) {
         AudioSrcBuffer* buffer = g_new(AudioSrcBuffer, 1);
-        GstBuffer* channelBuffer = gst_buffer_new_and_alloc(bufferSize);
+        GstBuffer* channelBuffer;
+
+        GstFlowReturn ret = gst_buffer_pool_acquire_buffer(priv->pool, &channelBuffer, nullptr);
+
+        if (ret != GST_FLOW_OK) {
+            g_free(buffer);
+            while (channelBufferList) {
+                buffer = static_cast<AudioSrcBuffer*>(channelBufferList->data);
+                gst_buffer_unmap(buffer->buffer, &buffer->info);
+                gst_buffer_unref(buffer->buffer);
+                g_free(buffer);
+                channelBufferList = g_slist_delete_link(channelBufferList, channelBufferList);
+            }
+            GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
+            gst_task_pause(src->priv->task.get());
+            return;
+        }
+
         ASSERT(channelBuffer);
         buffer->buffer = channelBuffer;
         GST_BUFFER_TIMESTAMP(channelBuffer) = timestamp;
@@ -421,16 +440,26 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     }
 
     switch (transition) {
-    case GST_STATE_CHANGE_READY_TO_PAUSED:
+    case GST_STATE_CHANGE_READY_TO_PAUSED: {
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
-        if (!gst_task_start(src->priv->task.get()))
+        src->priv->pool = gst_buffer_pool_new();
+        GstStructure* config = gst_buffer_pool_get_config(src->priv->pool);
+        gst_buffer_pool_config_set_params(config, nullptr, src->priv->framesToPull * sizeof(float), 0, 0);
+        gst_buffer_pool_set_config(src->priv->pool, config);
+        if (!gst_buffer_pool_set_active(src->priv->pool, TRUE))
+            returnValue = GST_STATE_CHANGE_FAILURE;
+        else if (!gst_task_start(src->priv->task.get()))
             returnValue = GST_STATE_CHANGE_FAILURE;
         break;
+    }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         src->priv->newStreamEventPending = true;
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
         if (!gst_task_join(src->priv->task.get()))
             returnValue = GST_STATE_CHANGE_FAILURE;
+        gst_buffer_pool_set_active(src->priv->pool, FALSE);
+        gst_object_unref(src->priv->pool);
+        src->priv->pool = nullptr;
         break;
     default:
         break;

@@ -1,3 +1,16 @@
+2014-12-10  Sebastian Dröge  <sebastian@centricular.com>
+
+        [GStreamer] Use a buffer pool for allocations in the AudioDestination
+        https://bugs.webkit.org/show_bug.cgi?id=139487
+
+        Reviewed by Philippe Normand.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcLoop):
+        (webKitWebAudioSrcChangeState):
+        Use a buffer pool for the allocations instead of allocating a
+        new small buffer for every 128 samples we produce.
+
 2014-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for text-decoration-skip
