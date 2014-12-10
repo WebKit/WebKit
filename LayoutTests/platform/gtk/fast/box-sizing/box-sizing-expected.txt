@@ -1,90 +1,91 @@
-layer at (0,0) size 785x899
+layer at (0,0) size 785x940
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x899
-  RenderBlock {HTML} at (0,0) size 785x900
-    RenderBody {BODY} at (8,8) size 769x884
-      RenderBlock (anonymous) at (0,0) size 769x17
-        RenderText {#text} at (0,0) size 373x17
-          text run at (0,0) width 373: "All of the boxes below should be 20x20 and look identical."
-      RenderBlock {H1} at (0,38) size 769x37
+layer at (0,0) size 785x940
+  RenderBlock {HTML} at (0,0) size 785x941
+    RenderBody {BODY} at (8,8) size 769x925
+      RenderBlock (anonymous) at (0,0) size 769x34
+        RenderText {#text} at (0,0) size 733x34
+          text run at (0,0) width 733: "All of the boxes below should be 20x20 and look identical, except for the rightmost box in the Inline Blocks section,"
+          text run at (0,17) width 491: "which should look the same but be raised above the other three in that section."
+      RenderBlock {H1} at (0,55) size 769x37
         RenderText {#text} at (0,0) size 203x36
           text run at (0,0) width 203: "Normal Blocks"
-      RenderBlock {DIV} at (5,95) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock {DIV} at (5,125) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock {DIV} at (5,155) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock {DIV} at (5,185) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,112) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,142) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,172) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (5,202) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderBR {BR} at (6,6) size 0x17
         RenderBR {BR} at (6,23) size 0x17
         RenderBR {BR} at (6,40) size 0x17
-      RenderBlock {H1} at (0,227) size 769x37
+      RenderBlock {H1} at (0,244) size 769x37
         RenderText {#text} at (0,0) size 178x36
           text run at (0,0) width 178: "Inline Blocks"
-      RenderBlock (anonymous) at (0,284) size 769x41
-        RenderBlock {DIV} at (5,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-        RenderBlock {DIV} at (35,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-        RenderBlock {DIV} at (65,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (anonymous) at (0,301) size 769x65
+        RenderBlock {DIV} at (5,34) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBlock {DIV} at (35,34) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+        RenderBlock {DIV} at (65,34) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderBlock {DIV} at (95,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
           RenderBR {BR} at (6,6) size 0x17
           RenderBR {BR} at (6,23) size 0x17
           RenderBR {BR} at (6,40) size 0x17
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H1} at (0,346) size 769x37
+      RenderBlock {H1} at (0,387) size 769x37
         RenderText {#text} at (0,0) size 241x36
           text run at (0,0) width 241: "Positioned Blocks"
-      RenderBlock (anonymous) at (0,403) size 769x18
+      RenderBlock (anonymous) at (0,444) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {H1} at (0,442) size 769x37
+      RenderBlock {H1} at (0,483) size 769x37
         RenderText {#text} at (0,0) size 210x36
           text run at (0,0) width 210: "Floating blocks"
-      RenderBlock (floating) {DIV} at (5,509) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (floating) {DIV} at (35,509) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (floating) {DIV} at (65,509) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (floating) {DIV} at (95,509) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (5,550) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (35,550) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (65,550) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (95,550) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderBR {BR} at (6,6) size 0x17
         RenderBR {BR} at (6,23) size 0x17
         RenderBR {BR} at (6,40) size 0x17
-      RenderBlock (anonymous) at (0,499) size 769x41
+      RenderBlock (anonymous) at (0,540) size 769x41
         RenderBR {BR} at (120,0) size 0x17
-      RenderBlock {H1} at (0,560) size 769x37
+      RenderBlock {H1} at (0,601) size 769x37
         RenderText {#text} at (0,0) size 210x36
           text run at (0,0) width 210: "Normal Images"
-      RenderBlock (anonymous) at (0,618) size 769x41
+      RenderBlock (anonymous) at (0,659) size 769x41
         RenderImage {IMG} at (5,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderImage {IMG} at (35,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderImage {IMG} at (65,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderImage {IMG} at (95,10) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H1} at (0,679) size 769x37
+      RenderBlock {H1} at (0,720) size 769x37
         RenderText {#text} at (0,0) size 248x36
           text run at (0,0) width 248: "Positioned Images"
-      RenderBlock (anonymous) at (0,737) size 769x18
+      RenderBlock (anonymous) at (0,778) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderBlock {H1} at (0,775) size 769x37
+      RenderBlock {H1} at (0,816) size 769x37
         RenderText {#text} at (0,0) size 220x36
           text run at (0,0) width 220: "Floating Images"
-      RenderImage {IMG} at (5,843) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderImage {IMG} at (35,843) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderImage {IMG} at (65,843) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderImage {IMG} at (95,843) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (anonymous) at (0,833) size 769x41
+      RenderImage {IMG} at (5,884) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderImage {IMG} at (35,884) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderImage {IMG} at (65,884) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderImage {IMG} at (95,884) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (anonymous) at (0,874) size 769x41
         RenderBR {BR} at (120,0) size 0x17
-      RenderBlock {HR} at (0,881) size 769x3 [border: (1px inset #000000)]
-layer at (13,422) size 20x20
-  RenderBlock (positioned) {DIV} at (13,421) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (43,422) size 20x20
-  RenderBlock (positioned) {DIV} at (43,421) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (73,422) size 20x20
-  RenderBlock (positioned) {DIV} at (73,421) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (103,422) size 20x20
-  RenderBlock (positioned) {DIV} at (103,421) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock {HR} at (0,922) size 769x3 [border: (1px inset #000000)]
+layer at (13,463) size 20x20
+  RenderBlock (positioned) {DIV} at (13,462) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (43,463) size 20x20
+  RenderBlock (positioned) {DIV} at (43,462) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (73,463) size 20x20
+  RenderBlock (positioned) {DIV} at (73,462) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (103,463) size 20x20
+  RenderBlock (positioned) {DIV} at (103,462) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
     RenderBR {BR} at (6,6) size 0x17
     RenderBR {BR} at (6,23) size 0x17
     RenderBR {BR} at (6,40) size 0x17
-layer at (13,755) size 20x20
-  RenderImage {IMG} at (13,755) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (43,755) size 20x20
-  RenderImage {IMG} at (43,755) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (73,755) size 20x20
-  RenderImage {IMG} at (73,755) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (103,755) size 20x20
-  RenderImage {IMG} at (103,755) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (13,796) size 20x20
+  RenderImage {IMG} at (13,796) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (43,796) size 20x20
+  RenderImage {IMG} at (43,796) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (73,796) size 20x20
+  RenderImage {IMG} at (73,796) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (103,796) size 20x20
+  RenderImage {IMG} at (103,796) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]

@@ -1,3 +1,28 @@
+2014-12-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures.
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt: Rebaseline after r177015.
+        * platform/gtk/fast/box-sizing/box-sizing-expected.txt: Rebaseline after 176978.
+        * platform/gtk/fast/forms/basic-selects-expected.txt: Rebaseline after r176978.
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.txt: Rebaseline after 176978.
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt: Rebaseline after r176978.
+        * platform/gtk/fast/forms/textfield-overflow-by-value-update-expected.txt: Rebaseline after r176978.
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt: Rebaseline after r177015.
+        * platform/gtk/fast/layers/video-layer-expected.txt: Rebaseline after r177015.
+        * platform/gtk/fast/multicol/client-rects-expected.txt: Rebaseline after 176978.
+        * platform/gtk/fast/multicol/client-rects-spanners-complex-expected.txt: Rebaseline after 176978.
+        * platform/gtk/fast/multicol/client-rects-spanners-expected.txt: Rebaseline after 176978.
+        * platform/gtk/fast/multicol/layers-split-across-columns-expected.txt: Rebaseline after 176978.
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.txt: Rebaseline after 176978.
+        * platform/gtk/http/tests/media/hls/video-controls-live-stream-expected.txt: Rebaseline after r177015.
+        * platform/gtk/media/audio-repaint-expected.txt: Rebaseline after r177015.
+        * platform/gtk/media/controls-without-preload-expected.txt: Rebaseline after r177015.
+        * platform/gtk/media/media-controls-clone-expected.txt: Rebaseline after r177015.
+        * platform/gtk/media/video-empty-source-expected.txt: Rebaseline after r177015
+        * platform/gtk/svg/zoom/page/zoom-foreignObject-expected.txt: Rebaseline after r175847.
+
 2014-12-10  Chris Dumez  <cdumez@apple.com>
 
         [WK1] new http/tests/notifications/legacy/notification-request-permission-then-navigate.html test is crashing

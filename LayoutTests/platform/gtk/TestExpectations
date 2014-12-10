@@ -1019,6 +1019,8 @@ webkit.org/b/136581 editing/pasteboard/drag-drop-dead-frame.html [ Timeout Pass 
 
 webkit.org/b/139359 inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure Pass ]
 
+webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2290,6 +2292,12 @@ webkit.org/b/139361 fast/css/readonly-attribute-style-sharing-7.html [ ImageOnly
 webkit.org/b/139361 fast/css/type-attribute-style-sharing-5.html [ ImageOnlyFailure ]
 webkit.org/b/139361 fast/css/type-attribute-style-sharing-6.html [ ImageOnlyFailure ]
 webkit.org/b/139361 fast/css/type-attribute-style-sharing-7.html [ ImageOnlyFailure ]
+
+webkit.org/b/139479 fast/regions/overflow/overflow-region-inline.html [ ImageOnlyFailure ]
+
+webkit.org/b/139492 fast/text/space-width.html [ ImageOnlyFailure ]
+
+webkit.org/b/139493 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

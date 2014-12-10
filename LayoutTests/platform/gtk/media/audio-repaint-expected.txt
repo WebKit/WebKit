@@ -23,7 +23,7 @@ layer at (8,71) size 300x30
     RenderSlider {INPUT} at (49,11) size 115x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 127x12
-          RenderBlock {DIV} at (50,0) size 13x12 [color=#FFFFFF]
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
     RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
       RenderText {#text} at (0,7) size 74x15
         text run at (0,7) width 74: "00:00 / 00:01"
@@ -38,7 +38,7 @@ layer at (8,41) size 300x30
     RenderSlider {INPUT} at (49,11) size 115x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 127x12
-          RenderBlock {DIV} at (50,0) size 13x12 [color=#FFFFFF]
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
     RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
       RenderText {#text} at (0,7) size 74x15
         text run at (0,7) width 74: "00:00 / 00:01"
@@ -55,7 +55,7 @@ layer at (8,153) size 300x30
     RenderSlider {INPUT} at (49,11) size 115x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 127x12
-          RenderBlock {DIV} at (50,0) size 13x12 [color=#FFFFFF]
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
     RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
       RenderText {#text} at (0,7) size 74x15
         text run at (0,7) width 74: "00:00 / 00:01"

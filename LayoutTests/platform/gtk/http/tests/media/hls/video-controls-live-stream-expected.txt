@@ -7,7 +7,7 @@ EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-controls-play-button: classes: [paused]
 -webkit-media-controls-timeline: classes: []
 -webkit-media-controls-current-time-display: classes: [hour-long-time]
--webkit-media-controls-time-remaining-display: classes: [hour-long-time hidden]
+-webkit-media-controls-time-remaining-display: classes: [hidden hour-long-time]
 -webkit-media-controls-toggle-closed-captions-button: classes: [hidden]
 -webkit-media-controls-fullscreen-button: classes: []
 none: classes: [mute-box]
