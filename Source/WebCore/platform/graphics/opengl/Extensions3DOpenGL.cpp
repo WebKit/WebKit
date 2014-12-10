@@ -211,7 +211,9 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
         return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
 
     if (name == "GL_EXT_draw_buffers") {
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(IOS)
+        return m_availableExtensions.contains(name);
+#elif PLATFORM(MAC) || PLATFORM(GTK)
         return m_availableExtensions.contains("GL_ARB_draw_buffers");
 #else
         // FIXME: implement support for other platforms.
