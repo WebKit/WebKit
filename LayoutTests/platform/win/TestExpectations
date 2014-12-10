@@ -716,7 +716,7 @@ http/tests/xmlhttprequest/upload-onloadstart-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 
-# LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+# testRunner::setAutomaticLinkDetectionEnabled isn't implemented
 editing/inserting/typing-space-to-trigger-smart-link.html
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html
 
@@ -834,7 +834,7 @@ webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
 # webkit.org/b/25220 media/video-document-types.html [ WontFix ]
 
 webkit.org/b/25792 fast/encoding/percent-escaping.html [ Pass Timeout ]
-# Bug 26481: Implement layoutTestController.dispatchPendingLoadRequests <https://bugs.webkit.org/show_bug.cgi?id=26481>
+# Bug 26481: Implement testRunner.dispatchPendingLoadRequests <https://bugs.webkit.org/show_bug.cgi?id=26481>
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 
 # <rdar://problem/7091605> http/tests/cache/subresource-expiration.html fails intermittently
@@ -1010,7 +1010,7 @@ fast/media/media-query-list-05.html [ Failure ]
 fast/media/media-query-list-06.html [ Failure ]
 #fast/media/media-query-list-07.html
 
-# Needs layoutTestController.enableAutoResizeMode()
+# Needs testRunner.enableAutoResizeMode()
 fast/autoresize
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
@@ -1088,7 +1088,7 @@ fast/dom/HTMLLinkElement/subresource.html
 http/tests/misc/link-rel-prefetch-and-subresource.html
 http/tests/misc/prefetch-purpose.html
 
-# LayoutTestController::pageProperty is not implemented for WIN yet.
+# testRunner::pageProperty is not implemented for WIN yet.
 printing/page-rule-selection.html
 
 # Hyphenation is not implemented yet.
@@ -1102,7 +1102,7 @@ fast/events/scroll-event-during-modal-dialog.html
 fast/dom/Window/open-window-min-size.html
 js/dom/function-length.html
 
-# LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
+# testRunner::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
 printing/page-format-data.html
 
 # Implement spinbutton support in RenderThemeSafari
@@ -1237,7 +1237,7 @@ fast/images/webp-color-profile-lossy.html
 http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
 
-# Missing layoutTestController.findString()
+# Missing testRunner.findString()
 webkit.org/b/50234 editing/text-iterator/findString.html
 
 # The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
@@ -1324,7 +1324,7 @@ webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html
 # HTTP 204 (No Content) should be ignored
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
-# Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
+# Unskip after implementing testRunner::setDefersLoading and ::goBack.
 loader/navigation-while-deferring-loads.html
 
 # Skip all webgl tests on Windows for now since they don't seem to work consistently
@@ -1420,7 +1420,7 @@ webkit.org/b/66620 editing/spelling/spelling-insert-html.html
 
 webkit.org/b/66773 http/tests/loading/progress-finished-callback.html
 
-# HiDPI tests require test infrastructure enhancements (e.g. layoutTestController.setBackingScaleFactor)
+# HiDPI tests require test infrastructure enhancements (e.g. testRunner.setBackingScaleFactor)
 # https://bugs.webkit.org/show_bug.cgi?id=87919
 webkit.org/b/87919 compositing/tiled-layers-hidpi.html
 webkit.org/b/87919 fast/canvas/2d.backingStorePixelRatio.html

@@ -1296,7 +1296,7 @@ webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drag-list-item.html [ Failure ]
 
-# WebKit2 needs layoutTestController.setEditingBehaviour and other issues.
+# WebKit2 needs testRunner.setEditingBehaviour and other issues.
 webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
 Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 
@@ -1550,7 +1550,7 @@ Bug(GTK) fast/events/frame-tab-focus.html [ Failure ]
 
 Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
 
-# Looks like a bug in the LayoutTestController global history support due to missing API.
+# Looks like a bug in the testRunner global history support due to missing API.
 Bug(GTK) fast/history/window-open.html [ Failure ]
 
 # All of these IDN encoding tests seem to fail.

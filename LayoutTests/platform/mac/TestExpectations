@@ -75,10 +75,10 @@ fast/media/media-query-list-04.html [ Failure ]
 fast/media/media-query-list-05.html [ Failure ]
 fast/media/media-query-list-06.html [ Failure ]
 
-# Needs layoutTestController.enableAutoResizeMode()
+# Needs testRunner.enableAutoResizeMode()
 fast/autoresize
 
-# Uses layoutTestController.titleTextDirection, which is Chromium-only
+# Uses testRunner.titleTextDirection, which is Chromium-only
 webkit.org/b/58845 fast/dom/title-directionality-removeChild.html
 webkit.org/b/58845 fast/dom/title-directionality.html
 

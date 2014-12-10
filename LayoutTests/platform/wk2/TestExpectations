@@ -123,7 +123,7 @@ platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
 platform/mac/fast/text/attributed-substring-from-range.html
 platform/mac/fast/text/justified-text-rect.html
 
-# WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
+# WebKitTestRunner needs testRunner.setDashboardCompatibilityMode
 # <https://bugs.webkit.org/show_bug.cgi?id=42547>
 fast/canvas/canvas-gradient-addStop-error.html
 http/tests/xmlhttprequest/default-content-type-dashboard.html
@@ -133,7 +133,7 @@ svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
 svg/custom/manually-parsed-svg-allowed-in-dashboard.html
 svg/custom/svg-allowed-in-dashboard-object.html
 
-# WebKitTestRunner needs layoutTestController.setMainFrameIsFirstResponder
+# WebKitTestRunner needs testRunner.setMainFrameIsFirstResponder
 # <https://bugs.webkit.org/show_bug.cgi?id=42685>
 editing/selection/caret-and-focus-ring.html
 editing/selection/designmode-no-caret.html
@@ -141,23 +141,23 @@ editing/selection/selection-background.html
 fast/dom/Window/window-onFocus.html
 platform/mac/scrollbars/key-window-not-first-responder.html
 
-# WebKitTestRunner needs layoutTestController.encodeHostName
+# WebKitTestRunner needs testRunner.encodeHostName
 # <https://bugs.webkit.org/show_bug.cgi?id=42686>
 fast/encoding/idn-security.html
 
-# WebKitTestRunner needs layoutTestController.abortModal
+# WebKitTestRunner needs testRunner.abortModal
 # <https://bugs.webkit.org/show_bug.cgi?id=69548>
 fast/events/show-modal-dialog-onblur-onfocus.html
 
-# WebKitTestRunner needs layoutTestController.setWillSendRequestClearHeader
+# WebKitTestRunner needs testRunner.setWillSendRequestClearHeader
 # <https://bugs.webkit.org/show_bug.cgi?id=42699>
 http/tests/security/no-referrer.html
 
-# WebKitTestRunner needs layoutTestController.setDomainRelaxationForbiddenForURLScheme
+# WebKitTestRunner needs testRunner.setDomainRelaxationForbiddenForURLScheme
 # <https://bugs.webkit.org/show_bug.cgi?id=42700>
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
-# WebKit2 needs layoutTestController.setDeferMainResourceDataLoad
+# WebKit2 needs testRunner.setDeferMainResourceDataLoad
 # <https://bugs.webkit.org/show_bug.cgi?id=42777>
 fast/loader/non-deferred-substitute-load.html
 
@@ -171,7 +171,7 @@ http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
 
-# WebKitTestRunner needs layoutTestController.setCallCloseOnWebViews
+# WebKitTestRunner needs testRunner.setCallCloseOnWebViews
 # http://webkit.org/b/46714
 plugins/geturlnotify-during-document-teardown.html
 plugins/open-and-close-window-with-plugin.html
@@ -193,7 +193,7 @@ http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
 
-# layoutTestController.setWindowIsKey() has no effect on the web process side in WebKit2
+# testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
 # https://bugs.webkit.org/show_bug.cgi?id=81736 rdar://problem/11088268
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/selectors/querySelector-window-inactive.html
@@ -230,14 +230,14 @@ webkit.org/b/132297 svg/custom/bug79798.html [ Skip ]
 ########################################
 ### START OF (2) Classified failures without bug reports (yet)
 
-# WebKitTestRunner needs layoutTestController.shouldPaintBrockenImage
+# WebKitTestRunner needs testRunner.shouldPaintBrockenImage
 fast/images/support-broken-image-delegate.html
 
-# WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
+# WebKitTestrunner needs testRunner.dumpSourceAsWebArchive
 webarchive/doctype.html
 webarchive/archive-empty-frame-source.html
 
-# WebKitTestRunner needs layoutTestController.setIconDatabaseEnabled
+# WebKitTestRunner needs testRunner.setIconDatabaseEnabled
 webarchive/test-link-rel-icon.html
 http/tests/misc/favicon-loads-with-images-disabled.html
 http/tests/misc/favicon-loads-with-icon-loading-override.html
@@ -249,26 +249,26 @@ http/tests/incremental/slow-utf8-text.pl
 # WebKitTestRunner needs plainText.plainText
 editing/text-iterator/basic-iteration.html
 
-# WebKitTestRunner needs layoutTestController.setNewWindowsCopyBackForwardList
+# WebKitTestRunner needs testRunner.setNewWindowsCopyBackForwardList
 fast/loader/crash-copying-backforwardlist.html
 
-# WebKitTestRunner needs layoutTestController.authenticateSession
+# WebKitTestRunner needs testRunner.authenticateSession
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
-# WebKitTestRunner needs layoutTestController.addDisallowedURL
+# WebKitTestRunner needs testRunner.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 
-# WebKitTestRunner needs layoutTestController.pageProperty
+# WebKitTestRunner needs testRunner.pageProperty
 printing/page-rule-selection.html
 
-# WebKitTestRunner needs layoutTestController.dumpUserGestureInFrameLoadCallbacks
+# WebKitTestRunner needs testRunner.dumpUserGestureInFrameLoadCallbacks
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
 
-# WebKitTestRunner needs layoutTestController.setUseDashboardCompatibilityMode
+# WebKitTestRunner needs testRunner.setUseDashboardCompatibilityMode
 platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
 
-# WebKitTestRunner needs layoutTestController.addURLToRedirect
+# WebKitTestRunner needs testRunner.addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
 # WebKit2 needs showModalDialog
@@ -321,11 +321,11 @@ fast/replaced/applet-disabled-positioned.html
 fast/replaced/applet-rendering-java-disabled.html
 java
 
-# WebKitTestRunner needs layoutTestController.displayInvalidatedRegion
+# WebKitTestRunner needs testRunner.displayInvalidatedRegion
 compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
-# WebKitTestRunner needs layoutTestController.originsWithLocalStorage
+# WebKitTestRunner needs testRunner.originsWithLocalStorage
 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
