@@ -1132,7 +1132,9 @@ Bug(jernoble) [ MountainLion ] fast/events/constructors/media-key-event-construc
 ## --- Start media tests failing on Mavericks and earlier ---
 # HTTP Auth in Media is not supported in Mavericks and Mountain Lion
 webkit.org/b/40382 [ Mavericks MountainLion ] http/tests/media/video-auth.html [ WontFix ]
-webkit.org/b/137368 [ Mavericks ] media/video-controls-no-scripting.html [ Pass Failure ]
+
+# HTML sandboxing produces two or three messages flakily.
+webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 
 # Mavericks and prior do not support Media Source.
 [ MountainLion Mavericks ] media/media-source [ WontFix ]
