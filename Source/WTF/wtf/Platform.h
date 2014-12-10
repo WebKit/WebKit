@@ -452,6 +452,11 @@
 #endif
 #endif
 
+/* PLATFORM(APPLETV) */
+#if defined(TARGET_OS_TV) && TARGET_OS_TV
+#define WTF_PLATFORM_APPLETV 1
+#endif
+
 /* Graphics engines */
 
 /* USE(CG) and PLATFORM(CI) */

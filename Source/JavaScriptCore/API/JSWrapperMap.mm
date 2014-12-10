@@ -654,6 +654,11 @@ NS_ROOT_CLASS @interface JSExport <JSExport>
 
 bool supportsInitMethodConstructors()
 {
+#if PLATFORM(APPLETV)
+    // There are no old clients on Apple TV, so there's no need for backwards compatibility.
+    return true;
+#endif
+
     static int32_t versionOfLinkTimeLibrary = 0;
     if (!versionOfLinkTimeLibrary)
         versionOfLinkTimeLibrary = NSVersionOfLinkTimeLibrary("JavaScriptCore");

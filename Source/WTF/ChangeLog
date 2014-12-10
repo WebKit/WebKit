@@ -1,3 +1,16 @@
+2014-12-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Please disable the webkitFirstVersionWithInitConstructorSupport check on Apple TV
+        https://bugs.webkit.org/show_bug.cgi?id=139501
+
+        Reviewed by Gavin Barraclough.
+
+        Added a platform definition for APPLETV.
+
+        (It's not an OS because it's not mutually exclusive with other OS definitions.)
+
+        * wtf/Platform.h:
+
 2014-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for text-decoration-skip
