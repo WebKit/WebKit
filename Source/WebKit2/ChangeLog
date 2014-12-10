@@ -1,5 +1,12 @@
 2014-12-10  Timothy Horton  <timothy_horton@apple.com>
 
+        Fix the build.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _targetWindowForMovePreparation]):
+
+2014-12-10  Timothy Horton  <timothy_horton@apple.com>
+
         Provide SPI to asynchronously move a WKView into a window and know when it has painted
         https://bugs.webkit.org/show_bug.cgi?id=139460
         <rdar://problem/19135389>
