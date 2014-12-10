@@ -142,6 +142,12 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     if (cachesToClear == InMemoryResourceCachesOnly)
         return;
 
+    clearDiskCache(std::chrono::system_clock::time_point::min(), [] { });
+}
+
+void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+{
+    // FIXME: Find a way to only clear a part of the cache based on the date.
     soup_cache_clear(SoupNetworkSession::defaultSession().cache());
 }
 

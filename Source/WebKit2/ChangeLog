@@ -1,3 +1,16 @@
+2014-12-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r177038): [SOUP] [GTK] Debug build broken
+        https://bugs.webkit.org/show_bug.cgi?id=139475
+
+        Reviewed by Martin Robinson.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins): Call clearDiskCache().
+        (WebKit::NetworkProcess::clearDiskCache): Implement this for SOUP.
+        SoupCache don't seems to have API for clearing a part of the cache,
+        so add a FIXME note regarding that.
+
 2014-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177032.
