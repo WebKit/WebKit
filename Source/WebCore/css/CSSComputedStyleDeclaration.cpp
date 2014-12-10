@@ -1671,6 +1671,17 @@ PassRef<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() co
     return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
+static inline bool nodeOrItsAncestorNeedsStyleRecalc(Node* styledNode)
+{
+    if (styledNode->document().hasPendingForcedStyleRecalc())
+        return true;
+    for (Node* n = styledNode; n; n = n->parentNode()) {// FIXME: parentOrShadowHostNode() instead
+        if (n->needsStyleRecalc())
+            return true;
+    }
+    return false;
+}
+
 static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID)
 {
     RenderObject* renderer = styledNode->renderer();
@@ -1725,7 +1736,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
     if (updateLayout) {
         Document& document = styledNode->document();
 
-        if (document.updateStyleIfNeededForNode(*styledNode)) {
+        if (nodeOrItsAncestorNeedsStyleRecalc(styledNode)) {
+            document.updateStyleIfNeeded();
             // The style recalc could have caused the styled node to be discarded or replaced
             // if it was a PseudoElement so we need to update it.
             styledNode = this->styledNode();

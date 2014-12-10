@@ -1,3 +1,22 @@
+2014-12-09  Andreas Kling  <akling@apple.com>
+
+        Roll out r165076.
+        <rdar://problem/18490587>
+
+        This change broke selection when editing Confluence wiki pages.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * dom/Document.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc): Deleted.
+        (WebCore::Document::updateStyleIfNeededForNode): Deleted.
+        * dom/Document.h:
+        * editing/htmlediting.cpp:
+        (WebCore::isEditablePosition):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix iOS build after r177035.

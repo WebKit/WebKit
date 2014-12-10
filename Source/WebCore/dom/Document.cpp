@@ -6282,34 +6282,6 @@ bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t
 }
 #endif // ENABLE(SUBTLE_CRYPTO)
 
-static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
-{
-    if (node.needsStyleRecalc())
-        return true;
-
-    const Node* currentNode = &node;
-    const Element* ancestor = currentNode->parentOrShadowHostElement();
-    while (ancestor) {
-        if (ancestor->needsStyleRecalc())
-            return true;
-
-        if (ancestor->directChildNeedsStyleRecalc() && currentNode->styleIsAffectedByPreviousSibling())
-            return true;
-
-        currentNode = ancestor;
-        ancestor = currentNode->parentOrShadowHostElement();
-    }
-    return false;
-}
-
-bool Document::updateStyleIfNeededForNode(const Node& node)
-{
-    if (!hasPendingForcedStyleRecalc() && !(childNeedsStyleRecalc() && nodeOrItsAncestorNeedsStyleRecalc(node)))
-        return false;
-    updateStyleIfNeeded();
-    return true;
-}
-
 Element* Document::activeElement()
 {
     if (Element* element = treeScope().focusedElement())

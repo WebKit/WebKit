@@ -593,7 +593,6 @@ public:
 
     void recalcStyle(Style::Change = Style::NoChange);
     WEBCORE_EXPORT void updateStyleIfNeeded();
-    bool updateStyleIfNeededForNode(const Node&);
 
     WEBCORE_EXPORT void updateLayout();
     

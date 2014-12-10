@@ -190,7 +190,7 @@ void TextFieldInputType::forwardEvent(Event* event)
         || event->type() == eventNames().blurEvent
         || event->type() == eventNames().focusEvent)
     {
-        element().document().updateStyleIfNeededForNode(element());
+        element().document().updateStyleIfNeeded();
 
         if (element().renderer()) {
             RenderTextControlSingleLine& renderTextControl = downcast<RenderTextControlSingleLine>(*element().renderer());
