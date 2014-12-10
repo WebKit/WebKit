@@ -1362,6 +1362,8 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
 
 void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
 {
+    if (document().inPageCache())
+        return;
     auto& frameView = view().frameView();
     auto visibleRect = frameView.windowToContents(frameView.windowClipRect());
     if (!shouldRepaintForImageAnimation(*this, visibleRect)) {

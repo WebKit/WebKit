@@ -1,3 +1,16 @@
+2014-12-10  Andreas Kling  <akling@apple.com>
+
+        Speculative fix for assertion "frame().view() == this"
+        <rdar://problem/18419449>
+
+        Rubber-stamped by Anders Carlsson.
+
+        I have not reproduced this issue, but we can safely ignore animation
+        notifications for cached pages.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::newImageAnimationFrameAvailable):
+
 2014-12-10  Anders Carlsson  <andersca@apple.com>
 
         Add session storage handling to StorageNamespaceProvider
