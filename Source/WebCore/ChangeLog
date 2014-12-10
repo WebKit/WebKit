@@ -1,3 +1,26 @@
+2014-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for text-decoration-skip
+        https://bugs.webkit.org/show_bug.cgi?id=131540
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. This is covered by existing layout tests.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::GlyphIterationState): Added this class, a modified version of the Mac
+        port's implementation.
+        (WebCore::Font::dashesForIntersectionsWithRect): Ditto.
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText): Added an implementation for
+        HarfBuzz that just fills out the GlyphBuffer, but does not render it.
+        (WebCore::Font::drawComplexText): Use the new getGlyphsAndAdvancesForComplexText
+        in a similar way to the Mac port.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun): We need to pass the current
+        character index to GlyphBuffer:add since it's used by dashesForIntersectionsWithRect
+        and otherwise it will be uninitialized when we try to access it.
+
 2014-12-10  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r177048) 11 failures on layout tests fast/selectors.

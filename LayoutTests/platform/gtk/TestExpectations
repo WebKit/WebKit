@@ -1969,6 +1969,7 @@ webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
 webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
+webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
 
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
@@ -2111,8 +2112,6 @@ webkit.org/b/131496 accessibility/help-text.html [ Failure ]
 webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 
 webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
-
-webkit.org/b/131540 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure ]
 
 webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
 

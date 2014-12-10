@@ -1,3 +1,13 @@
+2014-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for text-decoration-skip
+        https://bugs.webkit.org/show_bug.cgi?id=131540
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/gtk/TestExpectations: Unskip a test relying on text-decoration-skip
+        and skip a new test that has a newly exposed, but unrelated issue.
+
 2014-12-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

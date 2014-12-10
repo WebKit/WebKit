@@ -579,10 +579,10 @@ void HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun(GlyphBuffer* glyphBuffer, Ha
             if (currentCharacterIndex > m_run.length())
                 m_startOffset.move(glyphAdvanceX, glyphAdvanceY);
             else
-                glyphBuffer->add(glyphs[i], currentRun->fontData(), createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY));
+                glyphBuffer->add(glyphs[i], currentRun->fontData(), createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY), currentCharacterIndex);
         } else {
             if (currentCharacterIndex < m_run.length())
-                glyphBuffer->add(glyphs[i], currentRun->fontData(), createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY));
+                glyphBuffer->add(glyphs[i], currentRun->fontData(), createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY), currentCharacterIndex);
         }
     }
 }

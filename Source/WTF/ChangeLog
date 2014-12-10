@@ -1,3 +1,12 @@
+2014-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for text-decoration-skip
+        https://bugs.webkit.org/show_bug.cgi?id=131540
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * wtf/Platform.h: Enable text decoration skip by default.
+
 2014-12-09  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in ANGLE, bmalloc, gtest, JavaScriptCore, WTF

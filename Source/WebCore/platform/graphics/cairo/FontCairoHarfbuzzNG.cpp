@@ -38,18 +38,34 @@
 
 namespace WebCore {
 
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int, int) const
+
+float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, int, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
 {
-    GlyphBuffer glyphBuffer;
     HarfBuzzShaper shaper(this, run);
-    if (shaper.shape(&glyphBuffer)) {
-        FloatPoint startPoint = point;
-        float startX = startPoint.x();
-        drawGlyphBuffer(context, run, glyphBuffer, startPoint);
-        return startPoint.x() - startX;
+    if (!shaper.shape(&glyphBuffer)) {
+        LOG_ERROR("Shaper couldn't shape glyphBuffer.");
+        return 0;
     }
-    LOG_ERROR("Shaper couldn't shape glyphBuffer.");
+
+    // FIXME: Mac returns an initial advance here.
     return 0;
+}
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+{
+    // This glyph buffer holds our glyphs + advances + font data for each glyph.
+    GlyphBuffer glyphBuffer;
+
+    float startX = point.x() + getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer);
+
+    // We couldn't generate any glyphs for the run. Give up.
+    if (glyphBuffer.isEmpty())
+        return 0;
+
+    // Draw the glyph buffer now at the starting point returned in startX.
+    FloatPoint startPoint(startX, point.y());
+    drawGlyphBuffer(context, run, glyphBuffer, startPoint);
+
+    return startPoint.x() - startX;
 }
 
 void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
