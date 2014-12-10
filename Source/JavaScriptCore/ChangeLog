@@ -1,3 +1,12 @@
+2014-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r177030.
+
+        Fix linking failure occured on ARM buildbots:
+        lib/libjavascriptcore_efl.so.1.11.0: undefined reference to `JSC::Structure::get(JSC::VM&, JSC::PropertyName, unsigned int&)'
+
+        * runtime/NullGetterFunction.cpp:
+
 2014-12-09  Michael Saboff  <msaboff@apple.com>
 
         DFG Tries using an inner object's getter/setter when one hasn't been defined
