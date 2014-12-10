@@ -1,5 +1,23 @@
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175974.
+
+    2014-11-11  David Kilzer  <ddkilzer@apple.com>
+
+            Protect Document in ProcessingInstruction::setXSLStyleSheet()
+            <http://webkit.org/b/138621>
+
+            Reviewed by Andreas Kling.
+
+            The patch is inspired by the following Blink revision by
+            <tasak@google.com>:
+            <https://src.chromium.org/viewvc/blink?view=rev&revision=182309>
+
+            * dom/ProcessingInstruction.cpp:
+            (WebCore::ProcessingInstruction::setXSLStyleSheet):
+
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175347.
 
     2014-10-29  Alexey Proskuryakov  <ap@apple.com>
