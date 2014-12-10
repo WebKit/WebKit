@@ -1,5 +1,40 @@
 2014-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Implement the rest of the transient local storage namespace code
+        https://bugs.webkit.org/show_bug.cgi?id=139505
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::TransientLocalStorageNamespace::create):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::~TransientLocalStorageNamespace):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::clearStorageAreasMatchingOrigin):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::clearAllStorageAreas):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::TransientLocalStorageNamespace):
+        Introduce a new TransientLocalStorageNamespace that's just a glorified SecurityOrigin -> StorageArea HashMap.
+
+        (WebKit::StorageManager::StorageArea::create):
+        Change the return type to RefPtr.
+
+        (WebKit::StorageManager::deleteEntriesForOrigin):
+        (WebKit::StorageManager::deleteAllEntries):
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        Use lambdas instead of bind. Delete the transient local storage as well.
+
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        Get a transient local storage namespace and ask it for a storage area.
+
+        (WebKit::StorageManager::getOrCreateTransientLocalStorageNamespace):
+        Look up the namespace from the map and create one if it doesn't exist.
+
+        (WebKit::StorageManager::deleteEntriesForOriginInternal): Deleted.
+        (WebKit::StorageManager::deleteAllEntriesInternal): Deleted.
+
+        * UIProcess/Storage/StorageManager.h:
+
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
         Begin fixing transient local storage handling
         https://bugs.webkit.org/show_bug.cgi?id=139503
 

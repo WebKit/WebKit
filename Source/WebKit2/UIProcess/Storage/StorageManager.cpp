@@ -46,7 +46,7 @@ namespace WebKit {
 
 class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
 public:
-    static PassRefPtr<StorageArea> create(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
+    static RefPtr<StorageArea> create(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
     ~StorageArea();
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
@@ -106,7 +106,55 @@ private:
     HashMap<RefPtr<SecurityOrigin>, StorageArea*> m_storageAreaMap;
 };
 
-PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, PassRefPtr<SecurityOrigin> securityOrigin, unsigned quotaInBytes)
+class StorageManager::TransientLocalStorageNamespace : public ThreadSafeRefCounted<TransientLocalStorageNamespace> {
+public:
+    static RefPtr<TransientLocalStorageNamespace> create()
+    {
+        return adoptRef(new TransientLocalStorageNamespace());
+    }
+
+    ~TransientLocalStorageNamespace()
+    {
+    }
+
+    RefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
+    {
+        auto& slot = m_storageAreaMap.add(securityOrigin.get(), nullptr).iterator->value;
+        if (slot)
+            return slot;
+
+        auto storageArea = StorageArea::create(nullptr, securityOrigin, m_quotaInBytes);
+        slot = storageArea.get();
+
+        return storageArea;
+    }
+
+    void clearStorageAreasMatchingOrigin(const SecurityOrigin& securityOrigin)
+    {
+        for (auto& storageArea : m_storageAreaMap.values()) {
+            if (storageArea->securityOrigin()->equal(&securityOrigin))
+                storageArea->clear();
+        }
+    }
+
+    void clearAllStorageAreas()
+    {
+        for (auto& storageArea : m_storageAreaMap.values())
+            storageArea->clear();
+    }
+
+private:
+    explicit TransientLocalStorageNamespace()
+    {
+    }
+
+    const unsigned m_quotaInBytes = 5 * 1024 * 1024;
+
+    // We don't hold an explicit reference to the StorageAreas; they are kept alive by the m_storageAreasByConnection map in StorageManager.
+    HashMap<RefPtr<SecurityOrigin>, StorageArea*> m_storageAreaMap;
+};
+
+RefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, PassRefPtr<SecurityOrigin> securityOrigin, unsigned quotaInBytes)
 {
     return adoptRef(new StorageArea(localStorageNamespace, securityOrigin, quotaInBytes));
 }
@@ -446,12 +494,33 @@ void StorageManager::getStorageDetailsByOrigin(std::function<void (Vector<LocalS
 
 void StorageManager::deleteEntriesForOrigin(const SecurityOrigin& securityOrigin)
 {
-    m_queue->dispatch(bind(&StorageManager::deleteEntriesForOriginInternal, this, RefPtr<SecurityOrigin>(const_cast<SecurityOrigin*>(&securityOrigin))));
+    RefPtr<StorageManager> storageManager(this);
+
+    RefPtr<SecurityOrigin> copiedOrigin = securityOrigin.isolatedCopy();
+    m_queue->dispatch([storageManager, copiedOrigin] {
+        for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
+            localStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin.get());
+
+        for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values())
+            transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(*copiedOrigin);
+
+        storageManager->m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(copiedOrigin.get());
+    });
 }
 
 void StorageManager::deleteAllEntries()
 {
-    m_queue->dispatch(bind(&StorageManager::deleteAllEntriesInternal, this));
+    RefPtr<StorageManager> storageManager(this);
+
+    m_queue->dispatch([storageManager] {
+        for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
+            localStorageNamespace->clearAllStorageAreas();
+
+        for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values())
+            transientLocalStorageNamespace->clearAllStorageAreas();
+
+        storageManager->m_localStorageDatabaseTracker->deleteAllDatabases();
+    });
 }
 
 void StorageManager::deleteLocalStorageOriginsModifiedSince(time_t time, std::function<void ()> completionHandler)
@@ -465,6 +534,9 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(time_t time, std::fu
             for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
                 localStorageNamespace->clearStorageAreasMatchingOrigin(origin.get());
         }
+
+        for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values())
+            transientLocalStorageNamespace->clearAllStorageAreas();
 
         RunLoop::main().dispatch(completionHandler);
     });
@@ -496,7 +568,20 @@ void StorageManager::createLocalStorageMap(IPC::Connection* connection, uint64_t
 
 void StorageManager::createTransientLocalStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& topLevelOriginData, const SecurityOriginData& securityOriginData)
 {
-    // FIXME: Implement this.
+    // FIXME: This should be a message check.
+    ASSERT(m_storageAreasByConnection.isValidKey({ connection, storageMapID }));
+
+    auto& slot = m_storageAreasByConnection.add({ connection, storageMapID }, nullptr).iterator->value;
+
+    // FIXME: This should be a message check.
+    ASSERT(!slot);
+
+    TransientLocalStorageNamespace* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, *topLevelOriginData.securityOrigin());
+
+    auto storageArea = transientLocalStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
+    storageArea->addListener(connection, storageMapID);
+
+    slot = WTF::move(storageArea);
 }
 
 void StorageManager::createSessionStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
@@ -686,21 +771,16 @@ StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNa
     return result.iterator->value.get();
 }
 
-void StorageManager::deleteEntriesForOriginInternal(SecurityOrigin* securityOrigin)
+StorageManager::TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOrigin& topLevelOrigin)
 {
-    for (auto it = m_localStorageNamespaces.begin(), end = m_localStorageNamespaces.end(); it != end; ++it)
-        it->value->clearStorageAreasMatchingOrigin(securityOrigin);
+    if (!m_transientLocalStorageNamespaces.isValidKey({ storageNamespaceID, &topLevelOrigin }))
+        return nullptr;
 
-    m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(securityOrigin);
+    auto& slot = m_transientLocalStorageNamespaces.add({ storageNamespaceID, &topLevelOrigin }, nullptr).iterator->value;
+    if (!slot)
+        slot = TransientLocalStorageNamespace::create();
+
+    return slot.get();
 }
-
-void StorageManager::deleteAllEntriesInternal()
-{
-    for (auto it = m_localStorageNamespaces.begin(), end = m_localStorageNamespaces.end(); it != end; ++it)
-        it->value->clearAllStorageAreas();
-
-    m_localStorageDatabaseTracker->deleteAllDatabases();
-}
-
 
 } // namespace WebKit
