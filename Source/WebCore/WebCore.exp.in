@@ -3491,7 +3491,7 @@ __ZNK7WebCore16HTMLVideoElement11videoHeightEv
 __ZThn?_N7WebCore35WebVideoFullscreenModelVideoElement11handleEventEPNS_22ScriptExecutionContextEPNS_5EventE
 #endif
 
-#if ENABLE(VIDEO) && PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
+#if ENABLE(VIDEO) && PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 82000
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit10invalidateEv
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit11setDurationEd
 __ZN7WebCore32WebVideoFullscreenInterfaceAVKit14exitFullscreenENS_7IntRectE
