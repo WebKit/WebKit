@@ -100,6 +100,7 @@
 #import "WebScriptWorldInternal.h"
 #import "WebSelectionServiceController.h"
 #import "WebStorageManagerInternal.h"
+#import "WebStorageNamespaceProvider.h"
 #import "WebSystemInterface.h"
 #import "WebTextCompletionController.h"
 #import "WebTextIterator.h"
@@ -4791,6 +4792,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pluginDatabaseClientCount)
         [WebPluginDatabase closeSharedDatabase];
 
+    WebStorageNamespaceProvider::closeLocalStorage();
     PageGroup::closeLocalStorage();
 }
 #endif // !PLATFORM(IOS)

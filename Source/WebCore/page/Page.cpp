@@ -271,6 +271,7 @@ Page::~Page()
     pageCounter.decrement();
 #endif
 
+    m_storageNamespaceProvider->removePage(*this);
     if (m_userContentController)
         m_userContentController->removePage(*this);
     m_visitedLinkStore->removePage(*this);

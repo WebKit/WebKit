@@ -49,6 +49,9 @@ public:
     void addPage(Page&);
     void removePage(Page&);
 
+protected:
+    StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }
+
 private:
     virtual RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned quota) = 0;
     virtual RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota) = 0;

@@ -33,6 +33,8 @@ public:
     static RefPtr<WebStorageNamespaceProvider> create(const String& localStorageDatabasePath);
     virtual ~WebStorageNamespaceProvider();
 
+    static void closeLocalStorage();
+
 private:
     explicit WebStorageNamespaceProvider(const String& localStorageDatabasePath);
 

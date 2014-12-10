@@ -26,8 +26,16 @@
 #include "WebStorageNamespaceProvider.h"
 
 #include <WebCore/StorageNamespaceImpl.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
+
+static HashSet<WebStorageNamespaceProvider*>& storageNamespaceProviders()
+{
+    static NeverDestroyed<HashSet<WebStorageNamespaceProvider*>> storageNamespaceProviders;
+
+    return storageNamespaceProviders;
+}
 
 RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const String& localStorageDatabasePath)
 {
@@ -37,10 +45,21 @@ RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const St
 WebStorageNamespaceProvider::WebStorageNamespaceProvider(const String& localStorageDatabasePath)
     : m_localStorageDatabasePath(localStorageDatabasePath)
 {
+    storageNamespaceProviders().add(this);
 }
 
 WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 {
+    ASSERT(storageNamespaceProviders().contains(this));
+    storageNamespaceProviders().remove(this);
+}
+
+void WebStorageNamespaceProvider::closeLocalStorage()
+{
+    for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
+        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            localStorageNamespace->close();
+    }
 }
 
 RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
