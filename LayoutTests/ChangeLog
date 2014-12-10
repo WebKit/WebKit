@@ -1,3 +1,19 @@
+2014-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r164329): Input fields are not honoring the maxlength attribute
+        https://bugs.webkit.org/show_bug.cgi?id=139447
+
+        Reviewed by Benjamin Poulain.
+
+        Added regression tests.
+
+        * fast/forms/input-maxlength-inserting-in-middle-expected.txt: Added.
+        * fast/forms/input-maxlength-inserting-in-middle.html: Added.
+        * fast/forms/input-maxlength-paste-clusters-in-middle-expected.txt: Added.
+        * fast/forms/input-maxlength-paste-clusters-in-middle.html: Added.
+        * fast/forms/input-maxlength-paste-in-middle-expected.txt: Added.
+        * fast/forms/input-maxlength-paste-in-middle.html: Added.
+
 2014-12-10  Antti Koivisto  <antti@apple.com>
 
         Crash when creating CSSCalcBinaryOperation
