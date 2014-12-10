@@ -1,3 +1,17 @@
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173424.
+
+    2014-09-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+            [CSSRegions]Incorrect layout for multicol element transformed into region
+            https://bugs.webkit.org/show_bug.cgi?id=136459
+
+            Reviewed by David Hyatt.
+
+            * fast/regions/multicol/nested-multicol-into-region-dynamic-expected.txt: Added.
+            * fast/regions/multicol/nested-multicol-into-region-dynamic.html: Added.
+
 2014-12-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173061.
