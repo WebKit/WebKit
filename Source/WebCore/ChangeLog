@@ -1,5 +1,21 @@
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174922.
+
+    2014-10-17  Jeffrey Pfau  <jpfau@apple.com>
+
+            Ensure attached frame count doesn't exceed the maximum allowed frames
+            https://bugs.webkit.org/show_bug.cgi?id=136457
+
+            Reviewed by Alexey Proskuryakov.
+
+            Test: fast/frames/exponential-frames.html
+
+            * html/HTMLFrameElementBase.cpp:
+            (WebCore::HTMLFrameElementBase::isURLAllowed):
+
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173845.
 
     2014-09-22  David Hyatt  <hyatt@apple.com>
