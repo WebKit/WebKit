@@ -236,6 +236,7 @@
     macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \
     macro(SimpleLineLayoutDebugBordersEnabled, simpleLineLayoutDebugBordersEnabled, Bool, bool, false) \
     macro(LogsPageMessagesToSystemConsoleEnabled, logsPageMessagesToSystemConsoleEnabled, Bool, bool, false) \
+    macro(IgnoreViewportScalingConstraints, ignoreViewportScalingConstraints, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \

@@ -77,11 +77,13 @@ public:
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
 
+    void setIgnoreScalingConstraints(bool ignoreScalingConstraints) {m_ignoreScalingConstraints = ignoreScalingConstraints; }
+
     WEBCORE_EXPORT IntSize layoutSize() const;
     WEBCORE_EXPORT double initialScale() const;
     WEBCORE_EXPORT double minimumScale() const;
     double maximumScale() const { return m_configuration.maximumScale; }
-    bool allowsUserScaling() const { return m_configuration.allowsUserScaling; }
+    WEBCORE_EXPORT bool allowsUserScaling() const;
 
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();
@@ -105,6 +107,8 @@ private:
     IntSize m_contentSize;
     FloatSize m_minimumLayoutSize;
     ViewportArguments m_viewportArguments;
+
+    bool m_ignoreScalingConstraints;
 };
 
 } // namespace WebCore

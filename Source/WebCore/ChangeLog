@@ -1,3 +1,21 @@
+2014-12-10  Martin Hock  <mhock@apple.com>
+
+        [iOS] Add setting to ignore viewport scaling constraints
+        https://bugs.webkit.org/show_bug.cgi?id=139466
+        <rdar://problem/19200328>
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.exp.in:
+        * page/Settings.in: Add setting to ignore viewport scaling constraints.
+        * page/ViewportConfiguration.cpp: Ignore viewport scaling constraints based on preference.
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::minimumScale):
+        (WebCore::ViewportConfiguration::allowsUserScaling):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::setIgnoreScalingConstraints):
+        (WebCore::ViewportConfiguration::allowsUserScaling): Moved to cpp.
+
 2014-12-10  Andreas Kling  <akling@apple.com>
 
         Speculative fix for assertion "frame().view() == this"

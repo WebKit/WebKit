@@ -1,3 +1,19 @@
+2014-12-10  Martin Hock  <mhock@apple.com>
+
+        [iOS] Add setting to ignore viewport scaling constraints
+        https://bugs.webkit.org/show_bug.cgi?id=139466
+        <rdar://problem/19200328>
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/WebPreferencesDefinitions.h: Add ignoreViewportScalingConstraints preference.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIgnoreViewportScalingConstraints):
+        (WKPreferencesGetIgnoreViewportScalingConstraints):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-12-10  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

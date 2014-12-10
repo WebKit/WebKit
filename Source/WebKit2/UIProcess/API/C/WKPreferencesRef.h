@@ -258,6 +258,10 @@ WK_EXPORT bool WKPreferencesGetSpatialNavigationEnabled(WKPreferencesRef prefere
 WK_EXPORT void WKPreferencesSetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef, WKDebugOverlayRegions enabled);
 WK_EXPORT WKDebugOverlayRegions WKPreferencesGetVisibleDebugOverlayRegions(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetIgnoreViewportScalingConstraints(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif
