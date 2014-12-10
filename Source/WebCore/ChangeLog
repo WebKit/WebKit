@@ -1,5 +1,16 @@
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176735.
+
+    2014-12-03  Dana Burkart  <dburkart@apple.com>
+
+            Fix merge-related build failure.
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::blockSelectionGaps):
+
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176295.
 
     2014-11-18  David Hyatt  <hyatt@apple.com>
