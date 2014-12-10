@@ -1,5 +1,34 @@
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175345.
+
+    2014-10-29  Zalan Bujtas  <zalan@apple.com>
+
+            Remove invalid float from RootInlineBox.
+            https://bugs.webkit.org/show_bug.cgi?id=137707
+
+            Reviewed by Antti Koivisto.
+
+            In certain cases, floating boxes get attached to the last (root) inline box.
+            When this particular floating box gets destroyed, it also needs to be detached
+            from the last inline box.
+            1. Introduce RootInlineBox::removeFloat() (vs. RootInlineBox::appendFloat())
+            2. Ensure that it is called when the floating box is being destroyed.
+
+            Test: fast/inline/crash-when-inline-box-has-invalid-float.html
+
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::RenderBlockFlow::removeFloatingObject):
+            (WebCore::RenderBlockFlow::markAllDescendantsWithFloatsForLayout): During style recalc, while
+            tearing down the render tree, we can get to a state where a block element has both inline and block children.
+            It happens when the style change on an element makes sibling anonymous block wrappers detached.
+            In that case the markAllDescendantsWithFloatsForLayout() call does not get propagated down on the
+            block child elements as we return early at the childrenInline() check.
+            * rendering/RootInlineBox.h:
+            (WebCore::RootInlineBox::removeFloat):
+
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175197.
 
     2014-10-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
