@@ -1,3 +1,76 @@
+2014-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] AudioSourceProvider support in the MediaPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=78883
+
+        Reviewed by Gustavo Noronha Silva.
+
+        GStreamer-based audio source provider for the GTK and EFL
+        ports. This new component gathers decoded raw audio data from the
+        MediaPlayer and pipes it to an AudioBus when required by the
+        User Agent.
+
+        * PlatformEfl.cmake: New files in the build.
+        * PlatformGTK.cmake: Ditto.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp: Added.
+        (WebCore::onAppsinkNewBufferCallback): Function called when a new
+        buffer can be pulled from appsink.
+        (WebCore::onGStreamerDeinterleavePadAddedCallback): Function
+        called when a new source pad has been added to deinterleave.
+        (WebCore::onGStreamerDeinterleaveReadyCallback): Function called
+        when the deinterleave element completed the configuration of all
+        its source pads.
+        (WebCore::copyGstreamerBuffersToAudioChannel): Called for each
+        channel of the AudioBus that needs data as input.
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        Create an audio bin that by default routes buffers only to
+        autoaudiosink. A new route is added if the provider has a client.
+        (WebCore::AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer):
+        Clean buffer adapters and audio bin.
+        (WebCore::AudioSourceProviderGStreamer::configureAudioBin):
+        (WebCore::AudioSourceProviderGStreamer::provideInput): Transfer
+        data from the buffer adapters to the bus channels.
+        (WebCore::AudioSourceProviderGStreamer::handleAudioBuffer): Pull a
+        buffer from appsink and queue it to the buffer adapter.
+        (WebCore::AudioSourceProviderGStreamer::setClient): Complete the
+        construction of the audio bin by adding a new chain to the tee
+        element. This new chain will deinterleave the buffer stream to
+        planar audio channels and route them to an appsink per channel for
+        data extraction.
+        (WebCore::AudioSourceProviderGStreamer::handleNewDeinterleavePad):
+        A new appsink after a new source pad has been added to deinterleave.
+        (WebCore::AudioSourceProviderGStreamer::deinterleavePadsConfigured):
+        Configure the client Node format (number of channels and sample
+        rate) once the provider knows how many audio channels are managed
+        by the pipeline.
+        (WebCore::cleanUpElementsAfterDeinterleaveSourcePadCallback):
+        (WebCore::AudioSourceProviderGStreamer::cleanUpElementsAfterDeinterleaveSourcePad):
+        Remove the elements after the given deinterleave source pad.
+        (WebCore::AudioSourceProviderGStreamer::reset): Cleanup the
+        deinterleave source pads. This is especially needed before the
+        whole pipeline goes to NULL and later on prerolls again.
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h: Added.
+        (WebCore::AudioSourceProviderGStreamer::create): Use this to
+        create the provider and get an OwnPtr of it.
+        (WebCore::AudioSourceProviderGStreamer::client): Provider client getter.
+        (WebCore::AudioSourceProviderGStreamer::getAudioBin): Audio bin
+        getter, used by the media player to configure its
+        playbin::audio-sink property.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        Provider life cycle management and reset the audio provider before
+        going to NULL.
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::handlePluginInstallerResult): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::cancelLoad): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink): Configure
+        the audio source provider if needed.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::audioSourceProvider):
+        Provider getter, used by MediaPlayer and MediaElement.
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Scrolling to anchor tags does nothing in vertical-rl writing mode

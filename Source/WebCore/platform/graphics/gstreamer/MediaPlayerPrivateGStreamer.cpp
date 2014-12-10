@@ -64,6 +64,10 @@
 #include "WebKitMediaSourceGStreamer.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "AudioSourceProviderGStreamer.h"
+#endif
+
 // Max interval in seconds to stay in the READY state on manual
 // state change requests.
 static const unsigned gReadyStateTimerInterval = 60;
@@ -212,6 +216,9 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_hasAudio(false)
     , m_totalBytes(0)
     , m_preservesPitch(false)
+#if ENABLE(WEB_AUDIO)
+    , m_audioSourceProvider(AudioSourceProviderGStreamer::create())
+#endif
     , m_requestedState(GST_STATE_VOID_PENDING)
     , m_missingPlugins(false)
 {
@@ -265,6 +272,10 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
         g_signal_handlers_disconnect_by_func(videoSinkPad.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
     }
+
+#if ENABLE(WEB_AUDIO)
+    m_audioSourceProvider.release();
+#endif
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
@@ -1845,35 +1856,56 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
     m_autoAudioSink = gst_element_factory_make("autoaudiosink", 0);
     g_signal_connect(m_autoAudioSink.get(), "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
 
+    GstElement* audioSinkBin;
+
+    if (webkitGstCheckVersion(1, 4, 2)) {
+#if ENABLE(WEB_AUDIO)
+        audioSinkBin = gst_bin_new("audio-sink");
+        m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
+        return audioSinkBin;
+#else
+        return m_autoAudioSink.get();
+#endif
+    }
+
     // Construct audio sink only if pitch preserving is enabled.
-    if (!m_preservesPitch)
-        return m_autoAudioSink.get();
+    // If GStreamer 1.4.2 is used the audio-filter playbin property is used instead.
+    if (m_preservesPitch) {
+        GstElement* scale = gst_element_factory_make("scaletempo", nullptr);
+        if (!scale) {
+            GST_WARNING("Failed to create scaletempo");
+            return m_autoAudioSink.get();
+        }
 
-    // On 1.4.2 and newer we use the audio-filter property instead.
-    if (webkitGstCheckVersion(1, 4, 2))
-        return m_autoAudioSink.get();
+        audioSinkBin = gst_bin_new("audio-sink");
+        gst_bin_add(GST_BIN(audioSinkBin), scale);
+        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(scale, "sink"));
+        gst_element_add_pad(audioSinkBin, gst_ghost_pad_new("sink", pad.get()));
 
-    GstElement* scale = gst_element_factory_make("scaletempo", 0);
-    if (!scale) {
-        GST_WARNING("Failed to create scaletempo");
-        return m_autoAudioSink.get();
+#if ENABLE(WEB_AUDIO)
+        m_audioSourceProvider->configureAudioBin(audioSinkBin, scale);
+#else
+        GstElement* convert = gst_element_factory_make("audioconvert", nullptr);
+        GstElement* resample = gst_element_factory_make("audioresample", nullptr);
+
+        gst_bin_add_many(GST_BIN(audioSinkBin), convert, resample, m_autoAudioSink.get(), nullptr);
+
+        if (!gst_element_link_many(scale, convert, resample, m_autoAudioSink.get(), nullptr)) {
+            GST_WARNING("Failed to link audio sink elements");
+            gst_object_unref(audioSinkBin);
+            return m_autoAudioSink.get();
+        }
+#endif
+        return audioSinkBin;
     }
 
-    GstElement* audioSinkBin = gst_bin_new("audio-sink");
-    GstElement* convert = gst_element_factory_make("audioconvert", 0);
-    GstElement* resample = gst_element_factory_make("audioresample", 0);
-
-    gst_bin_add_many(GST_BIN(audioSinkBin), scale, convert, resample, m_autoAudioSink.get(), NULL);
-
-    if (!gst_element_link_many(scale, convert, resample, m_autoAudioSink.get(), NULL)) {
-        GST_WARNING("Failed to link audio sink elements");
-        gst_object_unref(audioSinkBin);
-        return m_autoAudioSink.get();
-    }
-
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(scale, "sink"));
-    gst_element_add_pad(audioSinkBin, gst_ghost_pad_new("sink", pad.get()));
+#if ENABLE(WEB_AUDIO)
+    audioSinkBin = gst_bin_new("audio-sink");
+    m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
     return audioSinkBin;
+#endif
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 GstElement* MediaPlayerPrivateGStreamer::audioSink() const

@@ -50,6 +50,11 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 
 namespace WebCore {
 
+#if ENABLE(WEB_AUDIO)
+class AudioSourceProvider;
+class AudioSourceProviderGStreamer;
+#endif
+
 class AudioTrackPrivateGStreamer;
 class InbandMetadataTextTrackPrivateGStreamer;
 class InbandTextTrackPrivateGStreamer;
@@ -124,6 +129,10 @@ public:
     void simulateAudioInterruption();
 
     bool changePipelineState(GstState);
+
+#if ENABLE(WEB_AUDIO)
+    AudioSourceProvider* audioSourceProvider() { return reinterpret_cast<AudioSourceProvider*>(m_audioSourceProvider.get()); }
+#endif
 
 private:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
@@ -211,6 +220,9 @@ private:
     mutable unsigned long long m_totalBytes;
     URL m_url;
     bool m_preservesPitch;
+#if ENABLE(WEB_AUDIO)
+    OwnPtr<AudioSourceProviderGStreamer> m_audioSourceProvider;
+#endif
     GstState m_requestedState;
     GRefPtr<GstElement> m_autoAudioSink;
     bool m_missingPlugins;
