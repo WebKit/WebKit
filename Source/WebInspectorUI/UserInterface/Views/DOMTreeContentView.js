@@ -446,6 +446,7 @@ WebInspector.DOMTreeContentView.prototype = {
         // in a different way than just using the navigation bar button.
         PageAgent.getCompositingBordersVisible(function(error, compositingBordersVisible) {
             button.activated = error ? false : compositingBordersVisible;
+            button.enabled = error !== "unsupported";
         });
     },
 
