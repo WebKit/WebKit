@@ -54,6 +54,9 @@ public:
     void didFinishLoading(ResourceHandle&);
     void didFail(ResourceHandle&);
 
+    void addCacheEntryClient(const String& url, ResourceHandle* job);
+    void removeCacheEntryClient(const String& url, ResourceHandle* job);
+
 private:
     CurlCacheManager();
     ~CurlCacheManager();

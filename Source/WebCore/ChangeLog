@@ -1,3 +1,30 @@
+2014-12-10  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Cache entry is sometimes deleted when request receives a not modified response.
+        https://bugs.webkit.org/show_bug.cgi?id=139339
+
+        Reviewed by Alex Christensen.
+
+        Sometimes it happens that a request receives a not modified response,
+        but the cache entry has already been deleted by another request.
+        This can be avoided by locking a cache entry while there are pending
+        requests for the cache entry's url.
+
+        * platform/network/curl/CurlCacheEntry.h:
+        (WebCore::CurlCacheEntry::addClient):
+        (WebCore::CurlCacheEntry::removeClient):
+        (WebCore::CurlCacheEntry::hasClients):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::didReceiveResponse):
+        (WebCore::CurlCacheManager::didFail):
+        (WebCore::CurlCacheManager::addCacheEntryClient):
+        (WebCore::CurlCacheManager::removeCacheEntryClient):
+        * platform/network/curl/CurlCacheManager.h:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::isHttpNotModified):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2014-12-10  Sebastian Dröge  <sebastian@centricular.com>
 
         [GStreamer] Use a buffer pool for allocations in the AudioDestination

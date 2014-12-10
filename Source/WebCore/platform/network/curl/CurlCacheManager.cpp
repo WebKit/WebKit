@@ -204,13 +204,15 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
 
     const String& url = job.firstRequest().url().string();
 
+    removeCacheEntryClient(url, &job);
+
     if (response.httpStatusCode() == 304) {
         readCachedData(url, &job, response);
         m_LRUEntryList.prependOrMoveToFirst(url);
     }
     else if (response.httpStatusCode() == 200) {
         auto it = m_index.find(url);
-        if (it != m_index.end() && it->value->isLoading())
+        if (it != m_index.end() && (it->value->isLoading() || it->value->hasClients()))
             return;
 
         invalidateCacheEntry(url); // Invalidate existing entry on 200
@@ -324,6 +326,26 @@ void CurlCacheManager::didFail(ResourceHandle &job)
     const String& url = job.firstRequest().url().string();
 
     invalidateCacheEntry(url);
+}
+
+void CurlCacheManager::addCacheEntryClient(const String& url, ResourceHandle* job)
+{
+    if (m_disabled)
+        return;
+
+    auto it = m_index.find(url);
+    if (it != m_index.end())
+        it->value->addClient(job);
+}
+
+void CurlCacheManager::removeCacheEntryClient(const String& url, ResourceHandle* job)
+{
+    if (m_disabled)
+        return;
+
+    auto it = m_index.find(url);
+    if (it != m_index.end())
+        it->value->removeClient(job);
 }
 
 void CurlCacheManager::readCachedData(const String& url, ResourceHandle* job, ResourceResponse& response)

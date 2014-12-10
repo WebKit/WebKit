@@ -228,6 +228,11 @@ inline static bool isHttpAuthentication(int statusCode)
     return statusCode == 401;
 }
 
+inline static bool isHttpNotModified(int statusCode)
+{
+    return statusCode == 304;
+}
+
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(*this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(cookieJarPath())
@@ -546,7 +551,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         }
 
         if (client) {
-            if (httpCode == 304) {
+            if (isHttpNotModified(httpCode)) {
                 const String& url = job->firstRequest().url().string();
                 CurlCacheManager::getInstance().getCachedResponse(url, d->m_response);
             }
@@ -1081,6 +1086,7 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         HTTPHeaderMap customHeaders = job->firstRequest().httpHeaderFields();
 
         if (CurlCacheManager::getInstance().isCached(url)) {
+            CurlCacheManager::getInstance().addCacheEntryClient(url, job);
             HTTPHeaderMap& requestHeaders = CurlCacheManager::getInstance().requestHeaders(url);
 
             // append additional cache information
@@ -1090,6 +1096,10 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
                 customHeaders.set(it->key, it->value);
                 ++it;
             }
+        } else {
+            // Make sure we don't send any cache headers when url is not cached.
+            customHeaders.remove(HTTPHeaderName::IfModifiedSince);
+            customHeaders.remove(HTTPHeaderName::IfNoneMatch);
         }
 
         HTTPHeaderMap::const_iterator end = customHeaders.end();
