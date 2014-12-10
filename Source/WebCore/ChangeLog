@@ -1,3 +1,22 @@
+2014-12-10  Sebastian Dröge  <sebastian@centricular.com>
+
+        [GStreamer] Use appsrcs instead of unconnected queues
+        https://bugs.webkit.org/show_bug.cgi?id=139490
+
+        Reviewed by Philippe Normand.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_init):
+        (webKitWebAudioSrcConstructed):
+        (webKitWebAudioSrcFinalize):
+        (webKitWebAudioSrcSetProperty):
+        (webKitWebAudioSrcLoop):
+        (webKitWebAudioSrcChangeState):
+        Previously we directly chained buffers into unconnected queues,
+        which confused some code inside GStreamer and caused some harmless
+        warnings. Now we use appsrcs instead, which also allows us to remove
+        quite some code.
+
 2014-12-10  Enrica Casucci  <enrica@apple.com>
 
         Fix iOS builders for 8.0
