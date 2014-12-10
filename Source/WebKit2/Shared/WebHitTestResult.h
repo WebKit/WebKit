@@ -55,6 +55,7 @@ public:
         bool isSelected;
         bool isTextNode;
         bool isOverTextInsideFormControlElement;
+        bool allowsCopy;
         bool isDownloadableMedia;
 
         Data();
@@ -88,6 +89,8 @@ public:
     bool isTextNode() const { return m_data.isTextNode; }
 
     bool isOverTextInsideFormControlElement() const { return m_data.isOverTextInsideFormControlElement; }
+
+    bool allowsCopy() const { return m_data.allowsCopy; }
 
     bool isDownloadableMedia() const { return m_data.isDownloadableMedia; }
 

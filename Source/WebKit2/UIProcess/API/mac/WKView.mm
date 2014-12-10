@@ -3600,6 +3600,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         self.actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
         self.actionMenu.delegate = _data->_actionMenuController.get();
+        self.actionMenu.autoenablesItems = NO;
     }
 #endif
 

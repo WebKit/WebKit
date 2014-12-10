@@ -544,6 +544,21 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     return !wordRange->text().isEmpty();
 }
 
+bool HitTestResult::allowsCopy() const
+{
+    Node* node = innerNode();
+    if (!node)
+        return false;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return false;
+
+    bool isUserSelectNone = renderer->style().userSelect() == SELECT_NONE;
+    bool isPasswordField = isHTMLInputElement(node) && toHTMLInputElement(node)->isPasswordField();
+    return !isPasswordField && !isUserSelectNone;
+}
+
 URL HitTestResult::absoluteLinkURL() const
 {
     if (m_innerURLElement)
