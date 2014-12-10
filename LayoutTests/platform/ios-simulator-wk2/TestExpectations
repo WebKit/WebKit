@@ -360,3 +360,23 @@ css3/shapes/spec-examples/shape-outside-016.html [ Failure ]
 css3/shapes/spec-examples/shape-outside-017.html [ Failure ]
 css3/shapes/spec-examples/shape-outside-018.html [ Failure ]
 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure ]
+
+# ietestcenter tests that fail:
+ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
+ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
+ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
+ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
+ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-block-formatting-context-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-containing-block-003.htm [ ImageOnlyFailure ]
+ietestcenter/css3/text/textshadow-001.htm [ Failure ]
+ietestcenter/css3/text/textshadow-005.htm [ Failure ]
+ietestcenter/css3/text/textshadow-007.htm [ Failure ]
+ietestcenter/css3/text/textshadow-008.htm [ Failure ]
+
+# CSS multicol tests that fail:
+imported/w3c/css/multicol/multicol-basic-001.html [ ImageOnlyFailure ]
+imported/w3c/css/multicol/multicol-basic-002.html [ ImageOnlyFailure ]
+imported/w3c/css/multicol/multicol-basic-003.html [ ImageOnlyFailure ]
+imported/w3c/css/multicol/multicol-basic-004.html [ ImageOnlyFailure ]

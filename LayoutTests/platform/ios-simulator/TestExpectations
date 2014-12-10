@@ -35,6 +35,17 @@ touchadjustment
 vibration
 webaudio
 
+# iOS doesn't have a local inspector
+inspector/event-listener-set.html
+inspector/protocol-promise-result.html
+inspector/event-listener.html
+inspector/test-harness-trivially-works.html
+inspector/model/parse-script-syntax-tree.html
+inspector/page/main-frame-resource.html
+inspector/css/selector-specificity.html
+inspector/css/matched-style-properties.html
+inspector/css/pseudo-element-matches.html
+
 ###
 # Known failures
 ##
@@ -659,22 +670,51 @@ css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.
 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html
 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html
 
+# Font tests that fail:
+fonts/font-fallback-prefers-pictographs.html [ ImageOnlyFailure ]
+
+# ietestcenter tests that fail:
+ietestcenter/css3/flexbox/flexbox-align-baseline-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/flexbox/flexbox-align-center-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/flexbox/flexbox-align-center-002.htm [ ImageOnlyFailure ]
+ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-width-applies-to-007.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-width-applies-to-009.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
+ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
+ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
+ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
+
+# html-templates tests that time-out:
+imported/w3c/html-templates/additions-to-serializing-xhtml-documents/outerhtml.html
+imported/w3c/html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html
+imported/w3c/html-templates/additions-to-the-steps-to-clone-a-node/template-clone-children.html
+imported/w3c/html-templates/definitions/template-contents-owner-document-type.html
+imported/w3c/html-templates/innerhtml-on-templates/innerhtml.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-a-foster-parent-element.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-body-token.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-frameset-insertion-mode/end-tag-frameset.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/generating-of-implied-end-tags.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/template-end-tag-without-start-one.html
+imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-table-insertion-mode/end-tag-table.html
+imported/w3c/html-templates/parsing-html-templates/appending-to-a-template/template-child-nodes.html
+imported/w3c/html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html
+
 ###
 # Temporarily skip all others tests
 # We'll un-skip each directory as we land updated/new expected results
 ##
 editing
 fast
-fonts
-html5lib
 http
-ietestcenter
-imported
-indieui
-inspector
 inspector-obsolete
 inspector-protocol
-jquery
 js
 loader
 mathml

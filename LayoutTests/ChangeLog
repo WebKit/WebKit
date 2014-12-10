@@ -1,5 +1,12 @@
 2014-12-09  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Unskip some tests in LayoutTests/{fonts, html5lib, ietestcenter, imported, indieui, inspector, jquery}
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2014-12-09  Daniel Bates  <dabates@apple.com>
+
         [iOS] Update expected results for LayoutTests/{compositing, css1, css2.1, css3, cssom}
         https://bugs.webkit.org/show_bug.cgi?id=139467
 
