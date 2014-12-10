@@ -1,3 +1,25 @@
+2014-12-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][[WK2] test_ewk2_text_checker is failed
+        https://bugs.webkit.org/show_bug.cgi?id=132982
+
+        Reviewed by Gyuyoung Kim.
+
+        Insert misspelled word to the input field using execCommand instead of
+        input.value attribute change which stops spell check, tracked by
+        https://bugs.webkit.org/show_bug.cgi?id=139473.
+
+        Since text checker API tests do not verify spellchecker itself (it's being
+        tested by LayoutTests/editing/spelling) but rather opportunity for overriding
+        its functionality this patch unskips those tests in order to API coverage.
+
+        * PlatformEfl.cmake:
+        Unskip test_ewk2_text_checker
+
+        * UIProcess/API/efl/tests/resources/spelling_test.html:
+        Use document.execCommand("InsertText", false, "aa ") instead of
+        input.value = "aa " to trigger spellchecker.
+
 2014-12-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r177038): [SOUP] [GTK] Debug build broken

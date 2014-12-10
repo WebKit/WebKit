@@ -12,7 +12,7 @@
             document.getElementById("input").focus();
 
             // 'Space' notifies WebKit that word has been inserted.
-            document.getElementById("input").value = "aa ";
+            document.execCommand("InsertText", false, "aa ");
         }
     </SCRIPT>
 </HEAD>
