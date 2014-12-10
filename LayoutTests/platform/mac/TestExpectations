@@ -545,9 +545,7 @@ fast/events/mousedown-in-subframe-scrollbar.html [ Skip ]
 # http://webkit.org/b/96828
 fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
 
-# --- WebKit1 only ---
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
-http/tests/multipart/load-last-non-html-frame.php [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 platform/mac/accessibility/selection-value-changes-for-aria-textbox.html [ Failure ]
 
@@ -572,8 +570,7 @@ plugins/npruntime/invoke-failure.html
 # Very flaky, often failing on retry, too.
 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
 
-# Unknown failures
-http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
+[ MountainLion Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
 # Needs ENABLE_SHADOW_DOM
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]

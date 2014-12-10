@@ -1,3 +1,13 @@
+2014-12-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Unskip more multipart tests
+        https://bugs.webkit.org/show_bug.cgi?id=139431
+
+        Reviewed by Darin Adler.
+
+        * http/tests/multipart/load-last-non-html-frame.php:
+        * platform/mac/TestExpectations:
+
 2014-12-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Unskip some tests in LayoutTests/{fonts, html5lib, ietestcenter, imported, indieui, inspector, jquery}

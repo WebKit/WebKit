@@ -9,8 +9,8 @@ FAIL
 <?php
 # Add some padding because CFNetwork merges small multipart segments together.
 echo str_pad('', 5000);
-?>
---asdf
+echo "\r\n";
+?>--asdf
 Content-type: text/plain
 
 This test passes if the last multipart frame is displayed.
@@ -18,4 +18,5 @@ PASS
 <?php
 # Add some padding because CFNetwork merges small multipart segments together.
 echo str_pad('', 5000);
+echo "\r\n";
 ?>--asdf--
