@@ -1,5 +1,24 @@
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r176972. <rdar://problem/19196762>
+
+    2014-12-08  Mark Lam  <mark.lam@apple.com>
+
+            CFA wrongly assumes that a speculation for SlowPutArrayStorageShape disallows ArrayStorageShape arrays.
+            <https://webkit.org/b/139327>
+
+            Reviewed by Michael Saboff.
+
+            The code generator and runtime slow paths expects otherwise.  This patch fixes
+            CFA to match the code generator's expectation.
+
+            * dfg/DFGArrayMode.h:
+            (JSC::DFG::ArrayMode::arrayModesThatPassFiltering):
+            (JSC::DFG::ArrayMode::arrayModesWithIndexingShapes):
+
+
+2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175653. <rdar://problem/19196762>
 
     2014-11-05  Mark Lam  <mark.lam@apple.com>
