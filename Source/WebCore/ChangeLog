@@ -1,3 +1,18 @@
+2014-12-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        REGRESSION(r155906): Page content disappears on Tuaw article after loading
+        https://bugs.webkit.org/show_bug.cgi?id=138100
+
+        Reviewed by Simon Fraser.
+
+        Test: ManualTests/float-layer-not-painting.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::insertFloatingObject): If a layout happens,
+        it can change whether the float's renderer has a self painting layer.
+        So in that case, we need to update the flag on the FloatingObject
+        instance for that float.
+
 2014-12-09  Andreas Kling  <akling@apple.com>
 
         Roll out r165076.
