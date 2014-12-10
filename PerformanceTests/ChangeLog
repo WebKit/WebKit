@@ -1,3 +1,13 @@
+2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add performance test related to font fallback
+        https://bugs.webkit.org/show_bug.cgi?id=139332
+
+        Reviewed by Simon Fraser.
+
+        * Layout/font-fallback.html: Added.
+        * Layout/resources/font-fallback.html: Added.
+
 2014-12-08  Dean Jackson  <dino@apple.com>
 
         [Apple] Use Accelerate framework to speed-up FEGaussianBlur
