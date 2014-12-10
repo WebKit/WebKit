@@ -1,3 +1,15 @@
+2014-12-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update expected results for LayoutTests/{compositing, css1, css2.1, css3, cssom}
+        https://bugs.webkit.org/show_bug.cgi?id=139467
+
+        Rubber-stamped by Zalan Bujtas.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator-wk2/compositing/absolute-inside-out-of-view-fixed-expected.txt: Copied from LayoutTests/platform/ios-simulator/compositing/absolute-inside-out-of-view-fixed-expected.txt.
+        * platform/ios-simulator-wk2/compositing/backing/backface-visibility-flip-expected.txt: Copied from LayoutTests/platform/ios-simulator/compositing/backing/backface-visibility-flip-expected.txt.
+        [...]
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Scrolling to anchor tags does nothing in vertical-rl writing mode
