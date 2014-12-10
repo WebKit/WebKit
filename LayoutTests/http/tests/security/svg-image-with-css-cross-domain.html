@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="svg-image-with-css-cross-domain.css"/>
+  </head>
+  <body>
+    <h1>WebKit bug</h1>
+    <h3>SVG circle with same-origin and different-origin CSS</h3>
+    <p>Expected: 2 gray circles, 4 orange circles with red borders, 2 gray circle.</p>
+    <p>
+      <span class="image"><img src="resources/image-with-css-cross-domain.svg" alt="circle" width="68" height="68"/></span>
+      <span class="image circle-css-cross-domain"></span>
+      <object data="resources/image-with-css-cross-domain.svg" type="image/svg+xml" width="68" height="68"></object>
+      <embed src="resources/image-with-css-cross-domain.svg" type="image/svg+xml" width="68" height="68"></embed>
+      <iframe src="resources/image-with-css-cross-domain.svg" width="68" height="68"></iframe>
+      <iframe src="resources/image-with-css-cross-domain.svg" width="68" height="68" sandbox=""></iframe>
+      <span class="image"><img width="68" height="68" alt="circle" src="data:image/svg+xml;charset=utf-8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8P3htbC1zdHlsZXNoZWV0IHR5cGU9InRleHQvY3NzIiBocmVmPSJjaXJjbGUuY3NzIj8+DQo8P3htbC1zdHlsZXNoZWV0IHR5cGU9InRleHQvY3NzIiBocmVmPSJodHRwOi8vZG9tMi5jaHJvbWVidWcyLnRlc3QvY2lyY2xlMi5jc3MiPz4NCjxzdmcNCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHdpZHRoPSI2OCINCiAgIGhlaWdodD0iNjgiDQogICB2aWV3Qm94PSItMzQgLTM0IDY4IDY4Ig0KICAgdmVyc2lvbj0iMS4xIj4NCiAgPGNpcmNsZQ0KICAgICBjeD0iMCINCiAgICAgY3k9IjAiDQogICAgIHI9IjI0Ig0KICAgICBmaWxsPSIjYzhjOGM4Ii8+DQo8L3N2Zz4="/></span>
+	  <span class="image">
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <?xml-stylesheet type="text/css" href="circle.css"?>
+        <?xml-stylesheet type="text/css" href="http://localhost:8000/security/circle2.css"?>
+        <svg xmlns="http://www.w3.org/2000/svg" width="68" height="68" viewBox="-34 -34 68 68" version="1.1">
+          <circle cx="0" cy="0" r="24" fill="#c8c8c8"/>
+        </svg>
+      </span>
+    </p>
+  </body>
+</html>

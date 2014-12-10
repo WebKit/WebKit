@@ -36,6 +36,8 @@
 #include "CachedResourceRequest.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -379,6 +381,12 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
             return false;
         break;
 #endif
+    }
+
+    // SVG Images have unique security rules that prevent all subresource requests except for data urls.
+    if (type != CachedResource::MainResource && frame() && frame()->page()) {
+        if (frame()->page()->chrome().client().isSVGImageChromeClient() && !url.protocolIsData())
+            return false;
     }
 
     // Last of all, check for insecure content. We do this last so that when
