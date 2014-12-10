@@ -1,5 +1,19 @@
 2014-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Add session storage handling to StorageNamespaceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=139507
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+        * WebProcess/Storage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+        * WebProcess/Storage/WebStorageNamespaceProvider.h:
+
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
         Implement the rest of the transient local storage namespace code
         https://bugs.webkit.org/show_bug.cgi?id=139505
 

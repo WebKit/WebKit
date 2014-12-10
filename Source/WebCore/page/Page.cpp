@@ -1090,8 +1090,12 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
 StorageNamespace* Page::sessionStorage(bool optionalCreate)
 {
-    if (!m_sessionStorage && optionalCreate)
-        m_sessionStorage = StorageNamespace::sessionStorageNamespace(this);
+    if (!m_sessionStorage && optionalCreate) {
+        if (m_storageNamespaceProvider)
+            m_sessionStorage = m_storageNamespaceProvider->createSessionStorageNamespace(*this, m_settings->sessionStorageQuota());
+        else
+            m_sessionStorage = StorageNamespace::sessionStorageNamespace(this);
+    }
 
     return m_sessionStorage.get();
 }

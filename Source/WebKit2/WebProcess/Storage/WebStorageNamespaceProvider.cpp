@@ -27,6 +27,7 @@
 #include "WebStorageNamespaceProvider.h"
 
 #include "StorageNamespaceImpl.h"
+#include "WebPage.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -63,6 +64,11 @@ WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
     ASSERT(storageNamespaceProviders().contains(m_identifier));
 
     storageNamespaceProviders().remove(m_identifier);
+}
+
+RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page& page, unsigned quota)
+{
+    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(&page)->pageID(), quota);
 }
 
 RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)

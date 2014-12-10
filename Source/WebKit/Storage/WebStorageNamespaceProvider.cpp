@@ -62,6 +62,11 @@ void WebStorageNamespaceProvider::closeLocalStorage()
     }
 }
 
+RefPtr<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned quota)
+{
+    return StorageNamespaceImpl::createSessionStorageNamespace(quota);
+}
+
 RefPtr<StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
     return StorageNamespaceImpl::getOrCreateLocalStorageNamespace(m_localStorageDatabasePath, quota);

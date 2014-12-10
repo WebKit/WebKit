@@ -49,6 +49,11 @@ static LocalStorageNamespaceMap& localStorageNamespaceMap()
     return localStorageNamespaceMap;
 }
 
+RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
+{
+    return adoptRef(new StorageNamespaceImpl(SessionStorage, identifier, nullptr, quotaInBytes));
+}
+
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
     LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(identifier, nullptr);
@@ -68,7 +73,7 @@ RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNa
 
 PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(WebPage* webPage)
 {
-    return adoptRef(new StorageNamespaceImpl(SessionStorage, webPage->pageID(), nullptr, webPage->corePage()->settings().sessionStorageQuota()));
+    return createSessionStorageNamespace(webPage->pageID(), webPage->corePage()->settings().sessionStorageQuota());
 }
 
 PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(PageGroup* pageGroup)

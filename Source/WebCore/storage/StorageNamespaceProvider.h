@@ -43,6 +43,7 @@ public:
     StorageNamespaceProvider();
     virtual ~StorageNamespaceProvider();
 
+    virtual RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
     StorageNamespace& localStorageNamespace();
     StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&);
 
