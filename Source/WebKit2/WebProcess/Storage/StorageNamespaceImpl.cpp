@@ -49,16 +49,13 @@ static LocalStorageNamespaceMap& localStorageNamespaceMap()
     return localStorageNamespaceMap;
 }
 
-PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(PageGroup* pageGroup)
+PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    uint64_t pageGroupID = WebProcess::shared().webPageGroup(pageGroup)->pageGroupID();
-
-    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(pageGroupID, nullptr);
+    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(identifier, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
-    unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
-    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, pageGroupID, quota));
+    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, quotaInBytes));
 
     result.iterator->value = localStorageNamespace.get();
     return localStorageNamespace.release();
@@ -67,6 +64,14 @@ PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespa
 PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(WebPage* webPage)
 {
     return adoptRef(new StorageNamespaceImpl(SessionStorage, webPage->pageID(), webPage->corePage()->settings().sessionStorageQuota()));
+}
+
+PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(PageGroup* pageGroup)
+{
+    uint64_t pageGroupID = WebProcess::shared().webPageGroup(pageGroup)->pageGroupID();
+    unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
+
+    return createLocalStorageNamespace(pageGroupID, quota);
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, unsigned quotaInBytes)

@@ -1,5 +1,23 @@
 2014-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Implement WebStorageNamespaceProvider::createLocalStorageNamespace
+        https://bugs.webkit.org/show_bug.cgi?id=139498
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        Add a new overload that takes an identifier + quota. Have the old overload call the new one.
+
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+        Add new member.
+
+        * WebProcess/Storage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createLocalStorageNamespace):
+        Call StorageNamespaceImpl::createLocalStorageNamespace.
+
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
         Add a stubbed out WebStorageNamespaceProvider class to WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=139497
 

@@ -38,13 +38,16 @@ class WebPage;
 
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
-    static PassRefPtr<StorageNamespaceImpl> createLocalStorageNamespace(WebCore::PageGroup*);
+    static PassRefPtr<StorageNamespaceImpl> createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes);
     static PassRefPtr<StorageNamespaceImpl> createSessionStorageNamespace(WebPage*);
     virtual ~StorageNamespaceImpl();
 
     WebCore::StorageType storageType() const { return m_storageType; }
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
+
+    // FIXME: Remove this deprecated overload.
+    static PassRefPtr<StorageNamespaceImpl> createLocalStorageNamespace(WebCore::PageGroup*);
 
 private:
     explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, unsigned quotaInBytes);

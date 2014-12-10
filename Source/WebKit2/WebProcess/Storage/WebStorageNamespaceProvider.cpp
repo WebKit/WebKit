@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebStorageNamespaceProvider.h"
 
-#include <WebCore/StorageNamespace.h>
+#include "StorageNamespaceImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -67,8 +67,7 @@ WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
 
 RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota)
 {
-    // FIXME: Implement.
-    return nullptr;
+    return StorageNamespaceImpl::createLocalStorageNamespace(m_identifier, quota);
 }
 
 RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin&, unsigned quota)
