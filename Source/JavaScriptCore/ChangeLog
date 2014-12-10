@@ -1,5 +1,56 @@
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175593. <rdar://problem/19196762>
+
+    2014-11-04  Mark Lam  <mark.lam@apple.com>
+
+            Rename checkMarkByte() to jumpIfIsRememberedOrInEden().
+            <https://webkit.org/b/138369>
+
+            Reviewed by Geoffrey Garen.
+
+            Write barriers are needed for GC Eden collections so that we can scan pointers
+            pointing from old generation objects to eden generation objects.  The barrier
+            currently checks the mark byte in a cell to see if we should skip adding the
+            cell to the GC remembered set.  The addition should be skipped if:
+
+            1. The cell is in the young generation.  It has no old to eden pointers by
+               definition.
+            2. The cell is already in the remembered set.  While it is ok to add the cell
+               to the GC remembered set more than once, it would be redundant.  Hence,
+               we skip this as an optimization to avoid doing unnecessary work.
+
+            The barrier currently names this check as checkMarkByte().  We should rename it
+            to jumpIfIsRememberedOrInEden() to be clearer about its intent.
+
+            Similarly, Jump results of this check are currently named
+            ownerNotMarkedOrAlreadyRemembered.  This can be misinterpreted as the owner is
+            not marked or not already remembered.  We should rename it to
+            ownerIsRememberedOrInEden which is clearer about the intent of the
+            check.  What we are really checking for is that the cell is in the eden gen,
+            which is implied by it being "not marked".
+
+            * dfg/DFGOSRExitCompilerCommon.cpp:
+            (JSC::DFG::osrWriteBarrier):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::writeBarrier):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::writeBarrier):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::writeBarrier):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::jumpIfIsRememberedOrInEden):
+            (JSC::AssemblyHelpers::checkMarkByte): Deleted.
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emitWriteBarrier):
+            * llint/LowLevelInterpreter.asm:
+            * llint/LowLevelInterpreter32_64.asm:
+            * llint/LowLevelInterpreter64.asm:
+            * runtime/JSCell.h:
+
+
+2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175243. <rdar://problem/19196762>
 
     2014-10-27  Mark Lam  <mark.lam@apple.com>
