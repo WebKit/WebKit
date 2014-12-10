@@ -1,3 +1,36 @@
+2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175243. <rdar://problem/19196762>
+
+    2014-10-27  Mark Lam  <mark.lam@apple.com>
+
+            Crash when attempting to perform array iteration on a non-array with numeric keys not initialized.
+            <https://webkit.org/b/137814>
+
+            Reviewed by Geoffrey Garen.
+
+            * js/array-length-shortening-expected.txt: Added.
+            * js/array-length-shortening.html: Added.
+            * js/for-of-crash-expected.txt: Added.
+            * js/for-of-crash.html: Added.
+            * js/script-tests/array-length-shortening.js: Added.
+            (testLengthShortening):
+            (denseInt32Elements):
+            (denseDoubleElements):
+            (denseObjectElements):
+            (holeyInt32Elements):
+            (holeyDoubleElements):
+            (holeyObjectElements):
+            (arrayStorageInt32Elements):
+            (arrayStorageDoubleElements):
+            (arrayStorageObjectElements):
+            (sparseInt32Elements):
+            (sparseDoubleElements):
+            (sparseObjectElements):
+            * js/script-tests/for-of-crash.js: Added.
+            (foo):
+
+
 2014-12-03  Dana Burkart  <dburkart@apple.com>
 
         Merge r176295. <rdar://problem/19122588>
