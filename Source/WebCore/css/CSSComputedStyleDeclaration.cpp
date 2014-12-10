@@ -1671,15 +1671,33 @@ PassRef<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() co
     return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
-static inline bool nodeOrItsAncestorNeedsStyleRecalc(Node* styledNode)
+static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
 {
-    if (styledNode->document().hasPendingForcedStyleRecalc())
+    if (node.needsStyleRecalc())
         return true;
-    for (Node* n = styledNode; n; n = n->parentNode()) {// FIXME: parentOrShadowHostNode() instead
-        if (n->needsStyleRecalc())
+
+    const Node* currentNode = &node;
+    const Element* ancestor = currentNode->parentOrShadowHostElement();
+    while (ancestor) {
+        if (ancestor->needsStyleRecalc())
             return true;
+
+        if (ancestor->directChildNeedsStyleRecalc() && currentNode->styleIsAffectedByPreviousSibling())
+            return true;
+
+        currentNode = ancestor;
+        ancestor = currentNode->parentOrShadowHostElement();
     }
     return false;
+}
+
+static inline bool updateStyleIfNeededForNode(const Node& node)
+{
+    Document& document = node.document();
+    if (!document.hasPendingForcedStyleRecalc() && !(document.childNeedsStyleRecalc() && nodeOrItsAncestorNeedsStyleRecalc(node)))
+        return false;
+    document.updateStyleIfNeeded();
+    return true;
 }
 
 static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID)
@@ -1736,8 +1754,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
     if (updateLayout) {
         Document& document = styledNode->document();
 
-        if (nodeOrItsAncestorNeedsStyleRecalc(styledNode)) {
-            document.updateStyleIfNeeded();
+        if (updateStyleIfNeededForNode(*styledNode)) {
             // The style recalc could have caused the styled node to be discarded or replaced
             // if it was a PseudoElement so we need to update it.
             styledNode = this->styledNode();

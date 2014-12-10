@@ -1,3 +1,19 @@
+2014-12-10  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r177048) 11 failures on layout tests fast/selectors.
+        <https://webkit.org/b/139483>
+
+        Unreviewed fix for bots.
+
+        When rolling out the broken change, I accidentally also rolled out
+        a bug fix that Benjamin had made to sibling invalidation.
+        Restore his implementation of nodeOrItsAncestorNeedsStyleRecalc().
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        (WebCore::updateStyleIfNeededForNode):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
 2014-12-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] AudioSourceProvider support in the MediaPlayer
