@@ -1,5 +1,21 @@
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174946.
+
+    2014-10-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+            ASSERTION FAILED: !gridWasPopulated() in WebCore::RenderGrid::placeItemsOnGrid
+            https://bugs.webkit.org/show_bug.cgi?id=136939
+
+            Reviewed by Darin Adler.
+
+            Added a test case to reproduce the crash in debug mode.
+
+            * fast/css-grid-layout/grid-was-populated-assert-expected.txt: Added.
+            * fast/css-grid-layout/grid-was-populated-assert.html: Added.
+
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174922.
 
     2014-10-17  Jeffrey Pfau  <jpfau@apple.com>
