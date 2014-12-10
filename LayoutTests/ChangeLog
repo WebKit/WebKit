@@ -1,3 +1,18 @@
+2014-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Crash in CachedRawResource::canReuse() when reloading http://dnd.wizards.com/dungeons-and-dragons/story
+        https://bugs.webkit.org/show_bug.cgi?id=138164
+
+        Reviewed by Andreas Kling.
+
+        Add a layout test that does XHR loads from cache with only uncommon
+        HTTP headers to reproduce a crash in CachedRawResource::canReuse()
+        when iterating over a HTTPHeaderMap that had uncommon HTTP headers
+        but no common ones.
+
+        * http/tests/cache/xhr-uncommon-header-expected.txt: Added.
+        * http/tests/cache/xhr-uncommon-header.html: Added.
+
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175243. <rdar://problem/19196762>
