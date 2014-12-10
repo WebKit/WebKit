@@ -1,3 +1,9 @@
+2014-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r177032.
+
+        * CMakeLists.txt:
+
 2014-12-09  Alexey Proskuryakov  <ap@apple.com>
 
         Kotoeri sometimes doesn't correctly process the first chanaracter in a text field in Safari 7.1 or 6.2
