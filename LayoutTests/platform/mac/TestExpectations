@@ -328,13 +328,6 @@ fast/events/constructors/device-proximity-event-constructor.html
 
 webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
-# These canvas tests are flaky (fail on bots, not locally, or vice versa)
-webkit.org/b/81599 fast/canvas/canvas-createPattern-fillRect-shadow.html [ Pass Failure ]
-webkit.org/b/81599 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
-webkit.org/b/81599 fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
-webkit.org/b/81599 fast/canvas/set-colors.html [ Pass Failure ]
-webkit.org/b/81599 canvas/philip/tests/2d.path.arc.scale.1.html [ Pass Failure ]
-
 webkit.org/b/81618 fast/workers/storage/use-same-database-in-page-and-workers.html [ Pass Failure ]
 
 # Has failed since its introduction in r105826. Skipped everywhere but chromium.
@@ -872,8 +865,6 @@ webkit.org/b/121452 fast/frames/lots-of-objects.html [ Pass Timeout ]
 webkit.org/b/121452 fast/frames/lots-of-iframes.html [ Pass Timeout ]
 
 webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass Failure Crash Timeout ]
-
-webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
 # Resizing windows appears broken in both DRT and WTR, making the test fail or time out flakily.
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]
@@ -1447,3 +1438,25 @@ webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnly
 [ MountainLion ] compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html [ Pass ImageOnlyFailure ]
 [ MountainLion ] compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Pass ImageOnlyFailure ]
 [ MountainLion ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass ImageOnlyFailure ]
+# Probably the same issue as above, but noticed earlier
+webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
+
+# More tests that pass on all regression test bots, but flakily fail on 10.8 EWS, possibly also on ATI graphics only.
+[ MountainLion ] fast/borders/hidpi-border-radius-outer-border-goes-rectangle.html [ Pass ImageOnlyFailure ]
+[ MountainLion ] fast/canvas/canvas-fillRect-shadow.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/canvas-scale-fillRect-shadow.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/canvas-scale-shadowBlur.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/canvas-shadow.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/canvas-transforms-fillRect-shadow.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/array-bounds-clamping.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb565.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-svg-image.html [ Pass Failure ]
+webkit.org/b/81599 [ MountainLion ] canvas/philip/tests/2d.path.arc.scale.1.html [ Pass Failure ]
+webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-createPattern-fillRect-shadow.html [ Pass Failure ]
+webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
+webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
+webkit.org/b/81599 [ MountainLion ] fast/canvas/set-colors.html [ Pass Failure ]

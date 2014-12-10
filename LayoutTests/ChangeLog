@@ -1,5 +1,15 @@
 2014-12-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Mark more tests that fail on EWS bots with ATI graphics.
+
+        * platform/mac/TestExpectations:
+
+        * platform/mac/fast/canvas/canvas-draw-canvas-on-canvas-shadow-expected.txt: Removed.
+        * platform/mac/fast/canvas/canvas-fillRect-gradient-shadow-expected.txt: Removed.
+        These were expecting failure, but the tests pass on regular bots.
+
+2014-12-10  Alexey Proskuryakov  <ap@apple.com>
+
         Rename layoutTestController to testRunner in TestExpectations.
 
         * platform/gtk/TestExpectations:
