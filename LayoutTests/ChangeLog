@@ -1,5 +1,19 @@
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173843.
+
+    2014-09-22  David Hyatt  <hyatt@apple.com>
+
+            ASSERT in RenderMultiColumnSet::requiresBalancing.
+            https://bugs.webkit.org/show_bug.cgi?id=136376.
+
+            Reviewed by David Kilzer.
+
+            * fast/multicol/multicol-selection-expected.txt: Added.
+            * fast/multicol/multicol-selection.html: Added.
+
+2014-12-10  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173738.
 
     2014-09-18  Daniel Bates  <dabates@apple.com>
