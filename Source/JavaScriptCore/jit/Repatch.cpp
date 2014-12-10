@@ -1108,6 +1108,39 @@ static void emitPutTransitionStub(
     }
 #endif
     
+    ScratchBuffer* scratchBuffer = nullptr;
+
+#if ENABLE(GGC)
+    MacroAssembler::Call callFlushWriteBarrierBuffer;
+    MacroAssembler::Jump ownerIsRememberedOrInEden = stubJit.jumpIfIsRememberedOrInEden(baseGPR);
+    {
+        WriteBarrierBuffer* writeBarrierBuffer = &stubJit.vm()->heap.writeBarrierBuffer();
+        stubJit.move(MacroAssembler::TrustedImmPtr(writeBarrierBuffer), scratchGPR1);
+        stubJit.load32(MacroAssembler::Address(scratchGPR1, WriteBarrierBuffer::currentIndexOffset()), scratchGPR2);
+        MacroAssembler::Jump needToFlush =
+            stubJit.branch32(MacroAssembler::AboveOrEqual, scratchGPR2, MacroAssembler::Address(scratchGPR1, WriteBarrierBuffer::capacityOffset()));
+
+        stubJit.add32(MacroAssembler::TrustedImm32(1), scratchGPR2);
+        stubJit.store32(scratchGPR2, MacroAssembler::Address(scratchGPR1, WriteBarrierBuffer::currentIndexOffset()));
+
+        stubJit.loadPtr(MacroAssembler::Address(scratchGPR1, WriteBarrierBuffer::bufferOffset()), scratchGPR1);
+        // We use an offset of -sizeof(void*) because we already added 1 to scratchGPR2.
+        stubJit.storePtr(baseGPR, MacroAssembler::BaseIndex(scratchGPR1, scratchGPR2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
+
+        MacroAssembler::Jump doneWithBarrier = stubJit.jump();
+        needToFlush.link(&stubJit);
+
+        scratchBuffer = vm->scratchBufferForSize(allocator.desiredScratchBufferSizeForCall());
+        allocator.preserveUsedRegistersToScratchBufferForCall(stubJit, scratchBuffer, scratchGPR2);
+        stubJit.setupArgumentsWithExecState(baseGPR);
+        callFlushWriteBarrierBuffer = stubJit.call();
+        allocator.restoreUsedRegistersFromScratchBufferForCall(stubJit, scratchBuffer, scratchGPR2);
+
+        doneWithBarrier.link(&stubJit);
+    }
+    ownerIsRememberedOrInEden.link(&stubJit);
+#endif
+
     MacroAssembler::Jump success;
     MacroAssembler::Jump failure;
             
@@ -1128,7 +1161,8 @@ static void emitPutTransitionStub(
         slowPath.link(&stubJit);
         
         allocator.restoreReusedRegistersByPopping(stubJit);
-        ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(allocator.desiredScratchBufferSizeForCall());
+        if (!scratchBuffer)
+            scratchBuffer = vm->scratchBufferForSize(allocator.desiredScratchBufferSizeForCall());
         allocator.preserveUsedRegistersToScratchBufferForCall(stubJit, scratchBuffer, scratchGPR1);
 #if USE(JSVALUE64)
         stubJit.setupArgumentsWithExecState(baseGPR, MacroAssembler::TrustedImmPtr(structure), MacroAssembler::TrustedImm32(slot.cachedOffset()), valueGPR);
@@ -1146,6 +1180,9 @@ static void emitPutTransitionStub(
         patchBuffer.link(failure, failureLabel);
     else
         patchBuffer.link(failureCases, failureLabel);
+#if ENABLE(GGC)
+    patchBuffer.link(callFlushWriteBarrierBuffer, operationFlushWriteBarrierBuffer);
+#endif
     if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
         patchBuffer.link(operationCall, operationReallocateStorageAndFinishPut);
         patchBuffer.link(successInSlowPath, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));

@@ -1,5 +1,40 @@
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175653. <rdar://problem/19196762>
+
+    2014-11-05  Mark Lam  <mark.lam@apple.com>
+
+            PutById inline caches should have a store barrier when it triggers a structure transition.
+            <https://webkit.org/b/138441>
+
+            Reviewed by Geoffrey Garen.
+
+            After r174025, we no longer insert DFG store barriers when the payload of a
+            PutById operation is not a cell.  However, this can lead to a crash when we have
+            PutById inline cache code transitioning the structure and re-allocating the
+            butterfly of an old gen object.  The lack of a store barrier in that inline
+            cache results in the old gen object not being noticed during an eden GC scan.
+            As a result, its newly allocated butterfly will not be kept alive, which leads
+            to a stale butterfly pointer and, eventually, a crash.
+
+            It is also possible that the new structure can be collected by the eden GC if
+            (at GC time):
+            1. It is in the eden gen.
+            2. The inline cache that installed it has been evicted.
+            3. There are no live eden gen objects referring to it.
+
+            The chances of this should be more rare than the butterfly re-allocation, but
+            it is still possible.  Hence, the fix is to always add a store barrier if the
+            inline caches performs a structure transition.
+
+            * jit/Repatch.cpp:
+            (JSC::emitPutTransitionStub):
+            - Added store barrier code based on SpeculativeJIT::storeToWriteBarrierBuffer()'s
+              implementation.
+
+
+2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175593. <rdar://problem/19196762>
 
     2014-11-04  Mark Lam  <mark.lam@apple.com>
