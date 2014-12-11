@@ -608,11 +608,11 @@ void JIT_OPERATION operationDirectPutByValGeneric(ExecState* exec, EncodedJSValu
 
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState* exec, ExecState* execCallee)
 {
-    ASSERT(exec->codeBlock()->codeType() != FunctionCode
+
+    ASSERT_UNUSED(exec, exec->codeBlock()->codeType() != FunctionCode
         || !exec->codeBlock()->needsActivation()
         || exec->hasActivation());
 
-    execCallee->setScope(exec->scope());
     execCallee->setCodeBlock(0);
 
     if (!isHostFunction(execCallee->calleeAsValue(), globalFuncEval))
@@ -631,7 +631,6 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
 
-    execCallee->setScope(exec->scope());
     execCallee->setCodeBlock(0);
 
     if (kind == CodeForCall) {
@@ -692,7 +691,6 @@ inline char* linkFor(
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = callee->scopeUnchecked();
-    execCallee->setScope(scope);
     ExecutableBase* executable = callee->executable();
 
     MacroAssemblerCodePtr codePtr;
@@ -702,7 +700,6 @@ inline char* linkFor(
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, &scope, kind);
-        execCallee->setScope(scope);
         if (error) {
             throwStackOverflowError(exec);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
@@ -757,12 +754,10 @@ inline char* virtualForWithFunction(
     
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = function->scopeUnchecked();
-    execCallee->setScope(scope);
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->prepareForExecution(execCallee, function, &scope, kind);
-        execCallee->setScope(scope);
         if (error) {
             exec->vm().throwException(exec, error);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
@@ -1401,12 +1396,11 @@ EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState* exec, EncodedJ
     return JSValue::encode(JSValue());
 }
 
-JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec, int32_t offset)
+JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec, JSScope* currentScope, int32_t offset)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, exec->registers() + offset, exec->codeBlock());
-    exec->setScope(lexicalEnvironment);
+    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, exec->registers() + offset, currentScope, exec->codeBlock());
     return lexicalEnvironment;
 }
 

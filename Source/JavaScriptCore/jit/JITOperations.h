@@ -132,6 +132,7 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_EJscC)(ExecState*, JSScope*, JSCe
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJZC)(ExecState*, EncodedJSValue, int32_t, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJJC)(ExecState*, EncodedJSValue, EncodedJSValue, JSCell*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EJscZ)(ExecState*, JSScope*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJssSt)(ExecState*, JSString*, Structure*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJssJss)(ExecState*, JSString*, JSString*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJssJssJss)(ExecState*, JSString*, JSString*, JSString*);
@@ -292,7 +293,7 @@ void JIT_OPERATION operationPopScope(ExecState*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationProfileWillCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState*, EncodedJSValue, EncodedJSValue baseVal) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateActivation(ExecState*, int32_t offset) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateActivation(ExecState*, JSScope* currentScope, int32_t offset) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateArguments(ExecState*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateArgumentsDuringOSRExit(ExecState*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState*, int32_t) WTF_INTERNAL;

@@ -53,16 +53,6 @@ public:
     DECLARE_EXPORT_INFO;
 
 private:
-    JSWithScope(ExecState* exec, JSObject* object)
-        : Base(
-            exec->vm(),
-            exec->lexicalGlobalObject()->withScopeStructure(),
-            exec->scope()
-        )
-        , m_object(exec->vm(), this, object)
-    {
-    }
-
     JSWithScope(ExecState* exec, JSObject* object, JSScope* next)
         : Base(
             exec->vm(),

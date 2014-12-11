@@ -45,12 +45,6 @@ namespace JSC  {
         JSValue calleeAsValue() const { return this[JSStack::Callee].jsValue(); }
         JSObject* callee() const { return this[JSStack::Callee].function(); }
         CodeBlock* codeBlock() const { return this[JSStack::CodeBlock].Register::codeBlock(); }
-        JSScope* scope() const
-        {
-            ASSERT(this[JSStack::ScopeChain].Register::scope());
-            return this[JSStack::ScopeChain].Register::scope();
-        }
-
         JSScope* scope(int scopeRegisterOffset) const
         {
             ASSERT(this[scopeRegisterOffset].Register::scope());
@@ -191,22 +185,8 @@ namespace JSC  {
 #endif
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
-        void setScope(JSScope* scope) { static_cast<Register*>(this)[JSStack::ScopeChain] = scope; }
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
         void setActivation(JSLexicalEnvironment*);
-
-        ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,
-            CallFrame* callerFrame, int argc, JSObject* callee)
-        {
-            ASSERT(callerFrame == noCaller() || callerFrame->stack()->containsAddress(this));
-
-            setCodeBlock(codeBlock);
-            setScope(scope);
-            setCallerFrame(callerFrame);
-            setReturnPC(vPC); // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            setArgumentCountIncludingThis(argc); // original argument count (for the sake of the "arguments" object)
-            setCallee(callee);
-        }
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);

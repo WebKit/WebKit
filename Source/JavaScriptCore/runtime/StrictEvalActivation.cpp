@@ -35,11 +35,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StrictEvalActivation);
 
 const ClassInfo StrictEvalActivation::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(StrictEvalActivation) };
 
-StrictEvalActivation::StrictEvalActivation(ExecState* exec)
+StrictEvalActivation::StrictEvalActivation(ExecState* exec, JSScope* currentScope)
     : Base(
         exec->vm(),
         exec->lexicalGlobalObject()->strictEvalActivationStructure(),
-        exec->scope()
+        currentScope
     )
 {
 }

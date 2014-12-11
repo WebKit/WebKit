@@ -1,3 +1,75 @@
+2014-12-11  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION: Use of undefined CallFrame::ScopeChain value
+        https://bugs.webkit.org/show_bug.cgi?id=139533
+
+        Reviewed by Mark Lam.
+
+        Removed CallFrame::scope() and CallFrame::setScope() and eliminated or changed
+        all usages of these funcitons.  In some cases the scope is passed in or determined
+        another way.  In some cases the scope is used to calculate other values.  Lastly
+        were places where these functions where used that are no longer needed.  For
+        example when making a call, the caller's ScopeChain was copied to the callee's
+        ScopeChain.  This change no longer uses the ScopeChain call frame header slot.
+        That slot will be removed in a future patch.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::create):
+        (JSC::JSLexicalEnvironment::JSLexicalEnvironment):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_lexical_environment):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_lexical_environment):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        (JSC::LLInt::llint_throw_stack_overflow_error):
+        Pass the current scope value to the helper operationCreateActivation() and
+        the call to JSLexicalEnvironment::create() instead of using the stack frame
+        scope chain value.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        CreateActivation now has a second child, the scope.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init): Deleted.  This is dead code.
+        (JSC::ExecState::scope): Deleted.
+        (JSC::ExecState::setScope): Deleted.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters): Changed so we didn't access the scope
+        chain slot.  
+        
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        Changed process to find JSScope values on the stack or by some other means.
+
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::JSWithScope): Deleted.
+        Eliminated unused constructor.
+
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create):
+        Changed to pass in the current scope.
+
 2014-12-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use std::unique_ptr instead of OwnPtr in JSC - heap, jit, runtime, and parser directories

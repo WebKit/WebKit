@@ -34,9 +34,9 @@ class StrictEvalActivation : public JSScope {
 public:
     typedef JSScope Base;
 
-    static StrictEvalActivation* create(ExecState* exec)
+    static StrictEvalActivation* create(ExecState* exec, JSScope* currentScope)
     {
-        StrictEvalActivation* lexicalEnvironment = new (NotNull, allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+        StrictEvalActivation* lexicalEnvironment = new (NotNull, allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec, currentScope);
         lexicalEnvironment->finishCreation(exec->vm());
         return lexicalEnvironment;
     }
@@ -55,7 +55,7 @@ protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | Base::StructureFlags;
 
 private:
-    StrictEvalActivation(ExecState*);
+    StrictEvalActivation(ExecState*, JSScope*);
 };
 
 } // namespace JSC

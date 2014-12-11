@@ -259,7 +259,7 @@ LLINT_SLOW_PATH_DECL(trace)
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
             opcodeNames[exec->vm().interpreter->getOpcodeID(pc[0].u.opcode)],
-            exec->scope(), pc);
+            exec->uncheckedR(exec->codeBlock()->scopeRegister().offset()).Register::scope(), pc);
     if (exec->vm().interpreter->getOpcodeID(pc[0].u.opcode) == op_enter) {
         dataLogF("Frame will eventually return to %p\n", exec->returnPC().value());
         *bitwise_cast<volatile char*>(exec->returnPC().value());
@@ -503,7 +503,9 @@ LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Creating an lexicalEnvironment, exec = %p!\n", exec);
 #endif
-    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, exec->codeBlock());
+    int scopeReg = pc[2].u.operand;
+    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
+    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, scope, exec->codeBlock());
     exec->uncheckedR(pc[2].u.operand) = lexicalEnvironment;
     LLINT_RETURN(JSValue(lexicalEnvironment));
 }
@@ -1030,7 +1032,6 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
     ExecState* exec = execCallee->callerFrame();
     VM& vm = exec->vm();
 
-    execCallee->setScope(exec->scope());
     execCallee->setCodeBlock(0);
     execCallee->clearReturnPC();
 
@@ -1094,7 +1095,6 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = callee->scopeUnchecked();
     VM& vm = *scope->vm();
-    execCallee->setScope(scope);
     ExecutableBase* executable = callee->executable();
     
     MacroAssemblerCodePtr codePtr;
@@ -1104,7 +1104,6 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, &scope, kind);
-        execCallee->setScope(scope);
         if (error)
             LLINT_CALL_THROW(exec, error);
         codeBlock = functionExecutable->codeBlockFor(kind);
@@ -1235,8 +1234,6 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
-    JSScope* callerScope = exec->uncheckedR(exec->codeBlock()->scopeRegister().offset()).Register::scope();
-    execCallee->setScope(callerScope);
     execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);
@@ -1433,7 +1430,7 @@ extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCall
 {
     ExecState* exec = vm->topCallFrame;
     if (!exec)
-        exec = protoFrame->scope()->globalObject()->globalExec();
+        exec = protoFrame->callee()->globalObject()->globalExec();
     throwStackOverflowError(exec);
     return encodeResult(0, 0);
 }

@@ -4180,9 +4180,11 @@ void SpeculativeJIT::compile(Node* node)
     case CreateActivation: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
+        SpeculateCellOperand scope(this, node->child2());
+        GPRReg scopeGPR = scope.gpr();
 
         flushRegisters();
-        callOperation(operationCreateActivation, resultGPR, framePointerOffsetToGetActivationRegisters());
+        callOperation(operationCreateActivation, resultGPR, scopeGPR, framePointerOffsetToGetActivationRegisters());
         
         cellResult(resultGPR, node);
         break;

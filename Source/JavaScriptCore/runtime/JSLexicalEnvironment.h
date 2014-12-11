@@ -41,12 +41,12 @@ class Register;
     
 class JSLexicalEnvironment : public JSEnvironmentRecord {
 private:
-    JSLexicalEnvironment(VM&, CallFrame*, Register*, CodeBlock*);
+    JSLexicalEnvironment(VM&, CallFrame*, Register*, JSScope*, CodeBlock*);
     
 public:
     typedef JSEnvironmentRecord Base;
 
-    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
+    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, Register* registers, JSScope* currentScope, CodeBlock* codeBlock)
     {
         SymbolTable* symbolTable = codeBlock->symbolTable();
         ASSERT(codeBlock->codeType() == FunctionCode);
@@ -56,14 +56,14 @@ public:
                 vm.heap,
                 allocationSize(symbolTable)
             )
-        ) JSLexicalEnvironment(vm, callFrame, registers, codeBlock);
+        ) JSLexicalEnvironment(vm, callFrame, registers, currentScope, codeBlock);
         lexicalEnvironment->finishCreation(vm);
         return lexicalEnvironment;
     }
         
-    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
+    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, JSScope* currentScope, CodeBlock* codeBlock)
     {
-        return create(vm, callFrame, callFrame->registers() + codeBlock->framePointerOffsetToGetActivationRegisters(), codeBlock);
+        return create(vm, callFrame, callFrame->registers() + codeBlock->framePointerOffsetToGetActivationRegisters(), currentScope, codeBlock);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -108,12 +108,12 @@ private:
 extern int activationCount;
 extern int allTheThingsCount;
 
-inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
+inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, CallFrame* callFrame, Register* registers, JSScope* currentScope, CodeBlock* codeBlock)
     : Base(
         vm,
         callFrame->lexicalGlobalObject()->activationStructure(),
         registers,
-        callFrame->scope(),
+        currentScope,
         codeBlock->symbolTable())
 {
     SymbolTable* symbolTable = codeBlock->symbolTable();

@@ -672,7 +672,8 @@ void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int scope = currentInstruction[2].u.operand;
 
-    callOperation(operationCreateActivation, 0);
+    emitGetVirtualRegister(scope, regT0);
+    callOperation(operationCreateActivation, regT0, 0);
     emitStoreCell(dst, returnValueGPR);
     emitStoreCell(scope, returnValueGPR);
 }
