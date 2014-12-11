@@ -1,5 +1,91 @@
 2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177104. rdar://problem/19135389
+
+    2014-12-10  Timothy Horton  <timothy_horton@apple.com>
+
+            Provide SPI to asynchronously move a WKView into a window and know when it has painted
+            https://bugs.webkit.org/show_bug.cgi?id=139460
+            <rdar://problem/19135389>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Add _prepareForMoveToWindow:withCompletionHandler:, which internally
+            goes through the motions of being parented in that window and calls
+            the completion handler once painting is done and the view is ready
+            to be displayed (upon which we expect the view to actually move into the window).
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView viewWillMoveToWindow:]):
+            If we currently have a _targetWindowForMovePreparation (and are
+            pretending to be in that window), avoid performing viewWillMoveToWindow:
+            for a different window.
+
+            (-[WKView viewDidMoveToWindow]):
+            (-[WKView doWindowDidChangeScreen]):
+            (-[WKView _intrinsicDeviceScaleFactor]):
+            (-[WKView _colorSpace]):
+            (-[WKView _targetWindowForMovePreparation]):
+            If we have a _targetWindowForMovePreparation, use its properties instead
+            of self.window's.
+
+            (-[WKView _prepareForMoveToWindow:withCompletionHandler:]):
+            Simulate a move into the target window, but defer sending the view state update.
+            Then, send the view state update after registering the completion handler.
+
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            Rename m_viewStateChangeWantsReply to m_viewStateChangeWantsSynchronousReply.
+
+            (WebKit::WebPageProxy::installViewStateChangeCompletionHandler):
+            Added. Allow installing a block that will be called the next time
+            we get a didUpdateViewState back from the WebProcess after pushing the
+            current view state changes.
+
+            (WebKit::WebPageProxy::viewStateDidChange):
+            Adapt to the aforementioned rename.
+
+            (WebKit::WebPageProxy::dispatchViewStateChange):
+            Adapt to the aforementioned rename.
+            Send the view state change callback IDs along with SetViewState.
+
+            (WebKit::WebPageProxy::updateViewState):
+            Adapt to the aforementioned rename.
+
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::activeWindow):
+            (WebKit::PageClientImpl::isViewWindowActive):
+            (WebKit::PageClientImpl::isViewVisible):
+            (WebKit::PageClientImpl::isViewVisibleOrOccluded):
+            (WebKit::PageClientImpl::isViewInWindow):
+            (WebKit::PageClientImpl::viewLayerHostingMode):
+            If we have a _targetWindowForMovePreparation, use its properties instead
+            of the WKView's window's.
+
+            * WebProcess/WebPage/DrawingArea.h:
+            (WebKit::DrawingArea::viewStateDidChange):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::reinitializeWebPage):
+            (WebKit::WebPage::setViewState):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+            (WebKit::RemoteLayerTreeDrawingArea::viewStateDidChange):
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::viewStateDidChange):
+            Push the callback IDs to the WebProcess, and accumulate them in TiledCoreAnimationDrawingArea.
+
+            (WebKit::TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired):
+            Call all of the callbacks after one runloop cycle, just like DidUpdateViewState.
+
+2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177111. rdar://problem/19198388
 
     2014-12-10  Timothy Horton  <timothy_horton@apple.com>

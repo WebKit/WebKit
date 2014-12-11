@@ -100,6 +100,7 @@
 - (void)endDeferringViewInWindowChanges;
 - (void)endDeferringViewInWindowChangesSync;
 - (BOOL)isDeferringViewInWindowChanges;
+- (void)_prepareForMoveToWindow:(NSWindow *)targetWindow withCompletionHandler:(void(^)(void))completionHandler;
 
 - (BOOL)windowOcclusionDetectionEnabled;
 - (void)setWindowOcclusionDetectionEnabled:(BOOL)flag;

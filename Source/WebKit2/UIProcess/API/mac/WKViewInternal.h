@@ -132,4 +132,6 @@ struct WebPageConfiguration;
 
 @property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;
 
+@property (readonly) NSWindow *_targetWindowForMovePreparation;
+
 @end
