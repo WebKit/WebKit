@@ -1,5 +1,16 @@
 2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177106. rdar://problem/19135389
+
+    2014-12-10  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _targetWindowForMovePreparation]):
+
+2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177104. rdar://problem/19135389
 
     2014-12-10  Timothy Horton  <timothy_horton@apple.com>
