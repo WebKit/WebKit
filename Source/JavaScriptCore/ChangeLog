@@ -1,3 +1,17 @@
+2014-12-11  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken build after r177146.
+        https://bugs.webkit.org/show_bug.cgi?id=139533 
+
+        Not reviewed.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        - Restored CallFrame::init() minus the unused JSScope* arg.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        - Remove JSScope* arg when calling CallFrame::init().
+
 2014-12-11  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: Use of undefined CallFrame::ScopeChain value

@@ -188,6 +188,18 @@ namespace JSC  {
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
         void setActivation(JSLexicalEnvironment*);
 
+        ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC,
+            CallFrame* callerFrame, int argc, JSObject* callee) 
+        { 
+            ASSERT(callerFrame == noCaller() || callerFrame->stack()->containsAddress(this)); 
+
+            setCodeBlock(codeBlock); 
+            setCallerFrame(callerFrame); 
+            setReturnPC(vPC); // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*. 
+            setArgumentCountIncludingThis(argc); // original argument count (for the sake of the "arguments" object) 
+            setCallee(callee); 
+        }
+
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);
         // Read a register for a non-constant

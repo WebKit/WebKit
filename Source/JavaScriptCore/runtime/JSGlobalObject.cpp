@@ -204,7 +204,7 @@ void JSGlobalObject::init(VM& vm)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
 
-    JSGlobalObject::globalExec()->init(0, 0, this, CallFrame::noCaller(), 0, 0);
+    JSGlobalObject::globalExec()->init(0, 0, CallFrame::noCaller(), 0, 0);
 
     m_debugger = 0;
 
