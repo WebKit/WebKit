@@ -1,3 +1,0 @@
-Interrupted transition should not jump back to pre-transition transform
-
-FAIL: transition should be re-targeted from 200px in x, so x > 0

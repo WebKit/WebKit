@@ -1,3 +1,16 @@
+2014-12-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update expected results for LayoutTests/{scrollingcoordinator, security, sputnik,
+        storage, svg, tables, transforms, transitions, traversal}
+
+        Also skip some animation, css, compositing, transitions, and crypto tests that timeout
+        when using WebKit1/WebKit2 and remove duplicate and erroneous entries from file
+        LayoutTests/platform/ios-simulator/TestExpectations.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        [...]
+
 2014-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         fast/workers/worker-constructor.html frequently crashes

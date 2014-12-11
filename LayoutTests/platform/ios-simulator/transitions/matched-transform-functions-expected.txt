@@ -1,3 +1,0 @@
-Box should start moving right, then move down
-
-FAIL: transition should still be running, so y < 200

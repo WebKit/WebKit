@@ -1,6 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (248,151) size 32x14
-    RenderSVGContainer {g} at (248,151) size 32x14
-      RenderSVGPath {path} at (248,151) size 32x14 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00] [line cap=ROUND]}] [data="M 37 107 L 40 105 L 45 105 L 52 104"]

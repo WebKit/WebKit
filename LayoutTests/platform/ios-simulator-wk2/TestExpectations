@@ -5,10 +5,44 @@
 # Animation tests that fail:
 animations/animation-direction-normal.html [ Failure ]
 webkit.org/b/129562 [ Debug ] animations/animation-direction-reverse-fill-mode.html [ Skip ]
+webkit.org/b/129562 [ Debug ] animations/fill-mode-reverse.html [ Skip ]
 
 # Animation tests that time out:
+animations/animation-direction-normal.html
+animations/animation-direction-reverse-hardware-opacity.html
+animations/animation-direction-reverse-hardware.html
+animations/animation-direction-reverse-non-hardware.html
+animations/animation-direction-reverse-timing-functions-hardware.html
+animations/animation-direction-reverse-timing-functions.html
+animations/animation-direction-reverse.html
+animations/animation-direction.html
+animations/animation-end-event-destroy-renderer.html
+animations/animation-end-event-short-iterations.html
+animations/animation-hit-test-transform.html
+animations/animation-hit-test.html
+animations/animation-internals-api-multiple-keyframes.html
+animations/animation-internals-api.html
+animations/animation-iteration-event-destroy-renderer.html
+animations/animation-matrix-negative-scale-unmatrix.html
+animations/animation-offscreen-to-onscreen.html
+animations/animation-start-event-destroy-renderer.html
+animations/animation-welcome-safari.html
+animations/big-rotation.html
+animations/change-keyframes-name.html
+animations/change-keyframes.html
+animations/change-one-anim.html
+animations/combo-transform-rotate+scale.html
+animations/combo-transform-translate+scale.html
 animations/cross-fade-list-style-image.html
+animations/cross-fade-webkit-mask-box-image.html
 animations/cross-fade-webkit-mask-image.html
+animations/duplicated-keyframes-name.html
+animations/fill-mode-forwards.html
+animations/fill-mode-forwards2.html
+animations/fill-mode-iteration-count-non-integer.html
+animations/fill-mode-missing-from-to-keyframes.html
+animations/fill-mode-multiple-keyframes.html
+animations/fill-mode-removed.html
 animations/state-at-end-event.html
 
 # Compositing tests that fail:
@@ -34,8 +68,6 @@ compositing/regions/position-layers-inside-regions-overflow-hidden.html [ ImageO
 compositing/repaint/absolute-painted-into-composited-ancestor.html [ Failure ]
 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
 compositing/video/video-border-radius.html [ ImageOnlyFailure ]
-
-# CSS tests that fail:
 compositing/geometry/fixed-position.html [ Failure ]
 compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
@@ -43,6 +75,22 @@ compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 compositing/overflow/fixed-position-ancestor-clip.html [ Failure ]
 compositing/overflow/overflow-compositing-descendant.html [ Failure ]
 compositing/overflow/scroll-ancestor-update.html [ Failure ]
+
+# Compositing test that time out:
+compositing/animation/animation-compositing.html
+compositing/backing/backface-visibility-flip.html
+compositing/checkerboard.html
+compositing/contents-scale/animating.html
+compositing/layer-creation/animation-overlap-with-children.html
+compositing/overflow/overflow-compositing-descendant.html
+compositing/overflow/scroll-ancestor-update.html
+compositing/visible-rect/animated.html
+
+# Crypto tests that time out:
+crypto/subtle/rsa-indexeddb.html
+crypto/subtle/rsa-indexeddb-non-exportable.html
+
+# CSS tests that fail:
 css2.1/20110323/absolute-non-replaced-height-002.htm [ Failure ]
 css2.1/20110323/absolute-non-replaced-height-007.htm [ Failure ]
 css2.1/20110323/absolute-non-replaced-height-009.htm [ Failure ]
@@ -361,6 +409,31 @@ css3/shapes/spec-examples/shape-outside-017.html [ Failure ]
 css3/shapes/spec-examples/shape-outside-018.html [ Failure ]
 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure ]
 
+# CSS tests that time out:
+css3/filters/composited-during-animation.html
+css3/filters/crash-filter-animation-invalid-url.html
+css3/filters/filter-animation-from-none-hw.html
+css3/filters/filter-animation-from-none-multi.html
+css3/filters/filter-animation-from-none.html
+css3/filters/filter-animation-hw.html
+css3/filters/filter-animation-multi-hw.html
+css3/filters/filter-animation-multi.html
+css3/filters/filter-animation.html
+css3/masking/clip-path-animation.html
+
+# jquery test that time out:
+jquery/manipulation.html
+
+# storage tests that time out:
+storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
+storage/domstorage/storage-close-database-on-idle.html
+
 # ietestcenter tests that fail:
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
@@ -384,6 +457,10 @@ imported/w3c/css/multicol/multicol-basic-004.html [ ImageOnlyFailure ]
 # <rdar://problem/17349058> Assertion in WebProcessProxy::didNavigateWithNavigationData() when running layout tests in WTR
 loader/go-back-cached-main-resource.html
 js/dom/function-constructor-this-value.html
+storage/domstorage/localstorage/access-storage-after-window-close.html
+storage/domstorage/localstorage/set-value-in-storage-after-window-close.html
+storage/domstorage/localstorage/window-open.html
+storage/domstorage/localstorage/access-storage-then-set-value-in-storage-after-window-close.html
 
 # JavaScript tests that fail:
 js/dom/deep-recursion-test.html [ Failure ]
@@ -412,3 +489,213 @@ mathml/presentation/bug97990.html [ ImageOnlyFailure ]
 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 mathml/presentation/semantics.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
+
+# SVG tests that time out:
+svg/animations/animVal-basics.html
+svg/animations/animate-calcMode-spline-by.html
+svg/animations/animate-calcMode-spline-from-by.html
+svg/animations/animate-calcMode-spline-from-to.html
+svg/animations/animate-calcMode-spline-to.html
+svg/animations/animate-calcMode-spline-values.html
+svg/animations/animate-color-calcMode-discrete.html
+svg/animations/animate-color-fill-currentColor.html
+svg/animations/animate-color-fill-from-by.html
+svg/animations/animate-color-rgba-calcMode-discrete.html
+svg/animations/animate-color-transparent.html
+svg/animations/animate-css-xml-attributeType.html
+svg/animations/animate-currentColor.html
+svg/animations/animate-dynamic-update-attributeName.html
+svg/animations/animate-end-attribute.html
+svg/animations/animate-endElement-beginElement.html
+svg/animations/animate-from-to-keyTimes.html
+svg/animations/animate-gradient-transform.html
+svg/animations/animate-inherit-css-property.html
+svg/animations/animate-keySplines.html
+svg/animations/animate-marker-orient-from-angle-to-angle.html
+svg/animations/animate-marker-orient-from-angle-to-auto.html
+svg/animations/animate-marker-orient-to-angle.html
+svg/animations/animate-mpath-insert.html
+svg/animations/animate-number-calcMode-discrete-keyTimes.html
+svg/animations/animate-number-calcMode-discrete.html
+svg/animations/animate-path-animation-Cc-Ss.html
+svg/animations/animate-path-animation-Ll-Vv-Hh.html
+svg/animations/animate-path-animation-Qq-Tt.html
+svg/animations/animate-path-animation-cC-sS-inverse.html
+svg/animations/animate-path-animation-lL-vV-hH-inverse.html
+svg/animations/animate-path-animation-qQ-tT-inverse.html
+svg/animations/animate-path-nested-transforms.html
+svg/animations/animate-path-to-animation.html
+svg/animations/animate-text-nested-transforms.html
+svg/animations/animateTransform-pattern-transform.html
+svg/animations/animateTransform-translate-attributetype-auto.html
+svg/animations/animateTransform-translate-invalid-attributetype.html
+svg/animations/deferred-insertion.html
+svg/animations/svgPreserveAspectRatio-animation-1.html
+svg/animations/svgangle-animation-deg-to-grad.html
+svg/animations/svgangle-animation-deg-to-rad.html
+svg/animations/svgangle-animation-grad-to-deg.html
+svg/animations/svgangle-animation-grad-to-rad.html
+svg/animations/svgangle-animation-rad-to-deg.html
+svg/animations/svgangle-animation-rad-to-grad.html
+svg/animations/svgboolean-animation-1.html
+svg/animations/svgenum-animation-1.html
+svg/animations/svgenum-animation-10.html
+svg/animations/svgenum-animation-11.html
+svg/animations/svgenum-animation-12.html
+svg/animations/svgenum-animation-13.html
+svg/animations/svgenum-animation-2.html
+svg/animations/svgenum-animation-3.html
+svg/animations/svgenum-animation-4.html
+svg/animations/svgenum-animation-5.html
+svg/animations/svgenum-animation-6.html
+svg/animations/svgenum-animation-7.html
+svg/animations/svgenum-animation-8.html
+svg/animations/svgenum-animation-9.html
+svg/animations/svginteger-animation-1.html
+svg/animations/svginteger-animation-2.html
+svg/animations/svglength-animation-LengthModeHeight.html
+svg/animations/svglength-animation-LengthModeOther.html
+svg/animations/svglength-animation-LengthModeWidth.html
+svg/animations/svglength-animation-invalid-value-1.html
+svg/animations/svglength-animation-invalid-value-2.html
+svg/animations/svglength-animation-invalid-value-3.html
+svg/animations/svglength-animation-number-to-number.html
+svg/animations/svglength-animation-px-to-cm.html
+svg/animations/svglength-animation-px-to-ems.html
+svg/animations/svglength-animation-px-to-exs.html
+svg/animations/svglength-animation-px-to-in.html
+svg/animations/svglength-animation-px-to-number.html
+svg/animations/svglength-animation-px-to-pc.html
+svg/animations/svglength-animation-px-to-percentage.html
+svg/animations/svglength-animation-px-to-pt.html
+svg/animations/svglength-animation-px-to-px.html
+svg/animations/svglength-animation-unitType.html
+svg/animations/svglength-animation-values.html
+svg/animations/svglengthlist-animation-1.html
+svg/animations/svglengthlist-animation-2.html
+svg/animations/svglengthlist-animation-3.html
+svg/animations/svglengthlist-animation-4.html
+svg/animations/svglengthlist-animation-5.html
+svg/animations/svgnumber-animation-1.html
+svg/animations/svgnumber-animation-2.html
+svg/animations/svgnumber-animation-3.html
+svg/animations/svgnumber-animation-4.html
+svg/animations/svgnumberlist-animation-1.html
+svg/animations/svgnumberlist-animation-2.html
+svg/animations/svgnumberoptionalnumber-animation-1.html
+svg/animations/svgnumberoptionalnumber-animation-2.html
+svg/animations/svgnumberoptionalnumber-animation-3.html
+svg/animations/svgnumberoptionalnumber-animation-4.html
+svg/animations/svgpath-animation-1.html
+svg/animations/svgpointlist-animation-1.html
+svg/animations/svgpointlist-animation-2.html
+svg/animations/svgrect-animation-1.html
+svg/animations/svgrect-animation-2.html
+svg/animations/svgstring-animation-fallback-to-discrete.html
+svg/animations/svgtransform-animation-1.html
+svg/animations/svgtransform-animation-discrete.html
+svg/animations/use-animate-transform-and-position.html
+svg/custom/gradient-attr-update.svg
+svg/custom/hit-test-path-stroke.svg
+svg/custom/hit-test-path.svg
+svg/custom/hit-test-unclosed-subpaths.svg
+svg/custom/hit-test-with-br.xhtml
+svg/custom/js-update-container2.svg
+svg/custom/linking-a-03-b-preserveAspectRatio.svg
+svg/custom/linking-a-03-b-transform.svg
+svg/custom/linking-a-03-b-viewBox-transform.svg
+svg/custom/linking-a-03-b-viewBox.svg
+svg/custom/linking-a-03-b-viewTarget.svg
+svg/custom/linking-a-03-b-zoomAndPan.svg
+svg/custom/linking-uri-01-b.svg
+svg/custom/mask-changes.svg
+svg/custom/mouse-move-on-svg-container-standalone.svg
+svg/custom/mouse-move-on-svg-container.xhtml
+svg/custom/mouse-move-on-svg-root-standalone.svg
+svg/custom/mouse-move-on-svg-root.xhtml
+svg/custom/pointer-events-invalid-fill.svg
+svg/custom/pointer-events-on-rounded-rect.xhtml
+svg/custom/pointer-events-on-svg-with-pointer.xhtml
+svg/custom/pointer-events-on-svg-without-pointer.xhtml
+svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml
+svg/custom/prevent-default.svg
+svg/custom/scroll-hit-test.xhtml
+svg/custom/use-elementInstance-event-target.svg
+svg/custom/use-elementInstance-methods.svg
+svg/custom/use-event-handler-on-referenced-element.svg
+svg/custom/use-event-handler-on-use-element.svg
+svg/custom/use-instanceRoot-as-event-target.xhtml
+svg/custom/use-instanceRoot-event-bubbling.xhtml
+svg/custom/use-instanceRoot-event-listeners.xhtml
+svg/custom/use-move-to-offset.svg
+svg/dom/viewspec-parser-1.html
+svg/dom/viewspec-parser-2.html
+svg/dom/viewspec-parser-3.html
+svg/dom/viewspec-parser-4.html
+svg/dom/viewspec-parser-5.html
+svg/dom/viewspec-parser-6.html
+svg/dom/viewspec-parser-7.html
+svg/dynamic-updates/SVGAElement-dom-href-attr.html
+svg/dynamic-updates/SVGAElement-dom-target-attr.html
+svg/dynamic-updates/SVGAElement-svgdom-href-prop.html
+svg/dynamic-updates/SVGAElement-svgdom-target-prop.html
+svg/dynamic-updates/SVGClipPath-influences-hitTesting.html
+svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html
+svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html
+
+# SVG tests that fail due to an assert failure:
+webkit.org/b/132297 [ Debug ] svg/custom/bug79798.html [ Skip ]
+svg/custom/image-with-prefix-in-webarchive.svg
+
+# SVG tests that fail:
+svg/animations/getCurrentTime-pause-unpause.html [ Failure ]
+svg/animations/reinserting-svg-into-document.html [ Failure ]
+svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
+svg/custom/focus-event-handling-keyboard.xhtml [ Failure ]
+svg/custom/focus-event-handling.xhtml [ Failure ]
+svg/custom/font-face-cascade-order.svg [ Failure ]
+svg/custom/foreignObject-crash-on-hover.xml [ Failure ]
+svg/custom/getSubStringLength.html [ Failure ]
+svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ Failure ]
+svg/custom/getscreenctm-in-scrollable-div-area.xhtml [ Failure ]
+svg/custom/getscreenctm-in-scrollable-svg-area.xhtml [ Failure ]
+svg/custom/hover-default-fill.svg [ Failure ]
+svg/custom/image-clipped-hit.svg [ Failure ]
+svg/custom/invisible-text-after-scrolling.xhtml [ Failure ]
+svg/custom/linking-a-03-b-all.svg [ ImageOnlyFailure ]
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
+svg/custom/marker-changes.svg [ Failure ]
+svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure ]
+svg/custom/polyline-hittest.svg [ Failure ]
+svg/custom/repaint-shadow.svg [ Failure ]
+svg/custom/stroke-width-click.svg [ Failure ]
+svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
+svg/custom/text-hit-test.svg [ Failure ]
+svg/custom/use-clipped-hit.svg [ Failure ]
+svg/custom/use-css-events.svg [ ImageOnlyFailure ]
+svg/custom/viewBox-hit.svg [ Failure ]
+svg/dom/SVGLength-px-with-context.html [ Failure ]
+svg/hixie/text/001.xml [ Failure ]
+svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFailure ]
+svg/text/foreignObject-repaint.xml [ Failure ]
+svg/text/text-outline.html [ ImageOnlyFailure ]
+svg/text/tspan-outline-2.svg [ ImageOnlyFailure ]
+svg/text/tspan-outline.html [ ImageOnlyFailure ]
+svg/zoom/page/absolute-sized-document-no-scrollbars.svg [ Failure ]
+svg/zoom/page/relative-sized-document-scrollbars.svg [ Failure ]
+svg/zoom/page/zoom-foreign-content.svg [ Failure ]
+svg/zoom/page/zoom-hixie-mixed-008.xml [ Failure ]
+svg/zoom/page/zoom-hixie-mixed-009.xml [ Failure ]
+svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
+svg/zoom/page/zoom-svg-as-image.html [ Failure ]
+svg/zoom/page/zoom-svg-as-object.html [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-override-size.html [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Failure ]
+
+# <rdar://problem/19223413> ASSERT(animatedTypes[0].properties.size() == 1) failed in SVGAnimatedTypeAnimator::constructFromBaseValue()
+svg/animations/unsupported-animate-element-attributes.svg
