@@ -1,5 +1,23 @@
 2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177132. rdar://problem/19213620
+
+    2014-12-10  Timothy Horton  <timothy_horton@apple.com>
+
+            Copy and paste action menu items don't work on the Mozilla Midas demo in WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=139529
+            <rdar://problem/19213620>
+
+            Reviewed by Beth Dakin.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _copySelection:]):
+            (-[WebActionMenuController _paste:]):
+            Use the copy: and paste: methods on WebView so that we traverse subviews
+            when trying to respond, otherwise these actions don't work in subframes.
+
+2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177111. rdar://problem/19198388
 
     2014-12-10  Timothy Horton  <timothy_horton@apple.com>
