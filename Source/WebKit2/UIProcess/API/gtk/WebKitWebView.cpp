@@ -899,13 +899,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The zoom level of the #WebKitWebView content.
      * See webkit_web_view_set_zoom_level() for more details.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_ZOOM_LEVEL,
-                                    g_param_spec_double("zoom-level",
-                                                        "Zoom level",
-                                                        _("The zoom level of the view content"),
-                                                        0, G_MAXDOUBLE, 1,
-                                                        WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_ZOOM_LEVEL,
+        g_param_spec_double(
+            "zoom-level",
+            _("Zoom level"),
+            _("The zoom level of the view content"),
+            0, G_MAXDOUBLE, 1,
+            WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitWebView:is-loading:
@@ -917,13 +919,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * When the load operation finishes the property is set to %FALSE before
      * #WebKitWebView::load-changed is emitted with %WEBKIT_LOAD_FINISHED.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_IS_LOADING,
-                                    g_param_spec_boolean("is-loading",
-                                                         "Is Loading",
-                                                         _("Whether the view is loading a page"),
-                                                         FALSE,
-                                                         WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_IS_LOADING,
+        g_param_spec_boolean(
+            "is-loading",
+            _("Is Loading"),
+            _("Whether the view is loading a page"),
+            FALSE,
+            WEBKIT_PARAM_READABLE));
 
     /**
      * WebKitWebView::load-changed:

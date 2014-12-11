@@ -1,3 +1,17 @@
+2014-12-11  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Minor fixes for documentation and translations
+        https://bugs.webkit.org/show_bug.cgi?id=139450
+
+        Reviewed by Sergio Villar Senin.
+
+        * UIProcess/API/gtk/WebKitNavigationAction.cpp:
+        Fix typo in documentation.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        Mark zoom-level and is-loading properties names for translation and
+        when touching them also fix the indentation style.
+
 2014-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inspector Process crash when navigating to non-inspectable page
