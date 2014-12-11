@@ -1,3 +1,21 @@
+2014-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused storage header includes
+        https://bugs.webkit.org/show_bug.cgi?id=139540
+
+        Reviewed by Antti Koivisto.
+
+        * storage/StorageAreaImpl.cpp:
+        * storage/StorageAreaSync.cpp:
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::localStorageNamespace): Deleted.
+        (WebCore::StorageNamespaceImpl::sessionStorageNamespace): Deleted.
+        (WebCore::StorageNamespaceImpl::transientLocalStorageNamespace): Deleted.
+        * storage/StorageNamespaceImpl.h:
+        * storage/StorageSyncManager.cpp:
+        * storage/StorageThread.cpp:
+        * storage/StorageTracker.cpp:
+
 2014-12-11  Radu Stavila  <stavila@adobe.com>
 
         [SVG Masking] Enable the use of <mask> elements for -webkit-mask-image
