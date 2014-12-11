@@ -1357,6 +1357,7 @@ typedef NS_ENUM(NSInteger, RWIProtocolDatabaseExecuteNoOptionalParametersPrintCo
 };
 
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;

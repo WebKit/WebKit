@@ -154,6 +154,7 @@ class ObjCHeaderGenerator(Generator):
     def _generate_type_interface(self, domain, declaration):
         lines = []
         objc_name = ObjCGenerator.objc_name_for_type(declaration.type)
+        lines.append('__attribute__((visibility ("default")))')
         lines.append('@interface %s : %s' % (objc_name, ObjCGenerator.OBJC_JSON_OBJECT_BASE))
         required_members = filter(lambda member: not member.is_optional, declaration.type_members)
         optional_members = filter(lambda member: member.is_optional, declaration.type_members)

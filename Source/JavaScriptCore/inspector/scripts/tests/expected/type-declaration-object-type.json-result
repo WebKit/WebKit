@@ -1233,12 +1233,14 @@ using namespace Inspector;
 
 
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseOptionalParameterBundle : RWIProtocolJSONObject
 /* optional */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* optional */ @property (nonatomic, copy) NSString *notes;
@@ -1248,6 +1250,7 @@ using namespace Inspector;
 /* optional */ @property (nonatomic, retain) RWIProtocolDatabaseError *error;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseParameterBundle : RWIProtocolJSONObject
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(RWIProtocolDatabaseError *)error;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
@@ -1258,6 +1261,7 @@ using namespace Inspector;
 /* required */ @property (nonatomic, retain) RWIProtocolDatabaseError *error;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseObjectWithPropertyNameConflicts : RWIProtocolJSONObject
 - (instancetype)initWithInteger:(NSString *)integer array:(NSString *)array string:(NSString *)string value:(NSString *)value object:(NSString *)object;
 /* required */ @property (nonatomic, copy) NSString *integer;
@@ -1267,9 +1271,11 @@ using namespace Inspector;
 /* required */ @property (nonatomic, copy) NSString *object;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseDummyObject : RWIProtocolJSONObject
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolTestParameterBundle : RWIProtocolJSONObject
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(RWIProtocolDatabaseError *)error;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;

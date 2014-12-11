@@ -1191,6 +1191,7 @@ typedef NS_ENUM(NSInteger, RWIProtocolTestCastedAnimals) {
 };
 
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolTestTypeNeedingCast : RWIProtocolJSONObject
 - (instancetype)initWithString:(NSString *)string number:(int)number animals:(RWIProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(RWIProtocolTestRecursiveObject1 *)tree;
 /* required */ @property (nonatomic, copy) NSString *string;
@@ -1200,10 +1201,12 @@ typedef NS_ENUM(NSInteger, RWIProtocolTestCastedAnimals) {
 /* required */ @property (nonatomic, retain) RWIProtocolTestRecursiveObject1 *tree;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolTestRecursiveObject1 : RWIProtocolJSONObject
 /* optional */ @property (nonatomic, retain) RWIProtocolTestRecursiveObject2 *obj;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolTestRecursiveObject2 : RWIProtocolJSONObject
 /* optional */ @property (nonatomic, retain) RWIProtocolTestRecursiveObject1 *obj;
 @end

@@ -867,6 +867,7 @@ typedef NS_ENUM(NSInteger, RWIProtocolRuntimeKeyPathType) {
 };
 
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolRuntimeKeyPath : RWIProtocolJSONObject
 - (instancetype)initWithType:(RWIProtocolRuntimeKeyPathType)type;
 /* required */ @property (nonatomic, assign) RWIProtocolRuntimeKeyPathType type;

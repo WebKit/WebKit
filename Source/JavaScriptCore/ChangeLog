@@ -1,3 +1,18 @@
+2014-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Explicitly export some RWIProtocol classes
+        rdar://problem/19220408
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._generate_type_interface):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2014-12-11  Mark Lam  <mark.lam@apple.com>
 
         Fix broken build after r177146.
