@@ -498,7 +498,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_vm->typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for JIT compilation."));
     
     if (Options::showDisassembly() || m_vm->m_perBytecodeProfiler)
-        m_disassembler = adoptPtr(new JITDisassembler(m_codeBlock));
+        m_disassembler = std::make_unique<JITDisassembler>(m_codeBlock);
     if (m_vm->m_perBytecodeProfiler) {
         m_compilation = adoptRef(
             new Profiler::Compilation(

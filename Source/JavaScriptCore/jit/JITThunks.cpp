@@ -36,7 +36,7 @@
 namespace JSC {
 
 JITThunks::JITThunks()
-    : m_hostFunctionStubMap(adoptPtr(new HostFunctionStubMap))
+    : m_hostFunctionStubMap(std::make_unique<HostFunctionStubMap>())
 {
 }
 
@@ -117,7 +117,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, T
 
 void JITThunks::clearHostFunctionStubs()
 {
-    m_hostFunctionStubMap.clear();
+    m_hostFunctionStubMap = nullptr;
 }
 
 } // namespace JSC

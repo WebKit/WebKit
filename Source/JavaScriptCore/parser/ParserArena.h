@@ -153,7 +153,7 @@ namespace JSC {
         IdentifierArena& identifierArena()
         {
             if (UNLIKELY (!m_identifierArena))
-                m_identifierArena = adoptPtr(new IdentifierArena);
+                m_identifierArena = std::make_unique<IdentifierArena>();
             return *m_identifierArena;
         }
 
@@ -172,7 +172,7 @@ namespace JSC {
         char* m_freeableMemory;
         char* m_freeablePoolEnd;
 
-        OwnPtr<IdentifierArena> m_identifierArena;
+        std::unique_ptr<IdentifierArena> m_identifierArena;
         Vector<void*> m_freeablePools;
         Vector<ParserArenaDeletable*> m_deletableObjects;
     };

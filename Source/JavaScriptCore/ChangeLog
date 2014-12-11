@@ -1,3 +1,47 @@
+2014-12-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr instead of OwnPtr in JSC - heap, jit, runtime, and parser directories
+        https://bugs.webkit.org/show_bug.cgi?id=139351
+
+        Reviewed by Filip Pizlo.
+
+        As a step to use std::unique_ptr<>, this cleans up OwnPtr and PassOwnPtr.
+
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingTool::SamplingTool):
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::didSurviveGC):
+        (JSC::CopiedBlock::pin):
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        * heap/GCActivityCallback.h:
+        * heap/GCThread.cpp:
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::markListSet):
+        * jit/ExecutableAllocator.cpp:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::clearHostFunctionStubs):
+        * jit/JITThunks.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::pushLabel):
+        * parser/ParserArena.cpp:
+        * parser/ParserArena.h:
+        (JSC::ParserArena::identifierArena):
+        * parser/SourceProviderCache.h:
+        * runtime/CodeCache.h:
+        * runtime/Executable.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortVector):
+        * runtime/JSGlobalObject.h:
+
 2014-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Please disable the webkitFirstVersionWithInitConstructorSupport check on Apple TV

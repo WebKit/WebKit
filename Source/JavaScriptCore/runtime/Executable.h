@@ -42,7 +42,6 @@
 #include "SourceCode.h"
 #include "TypeSet.h"
 #include "UnlinkedCodeBlock.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 

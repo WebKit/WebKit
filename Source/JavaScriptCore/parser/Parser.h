@@ -37,7 +37,6 @@
 #include "SourceProviderCacheItem.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 namespace JSC {
 struct Scope;
@@ -129,7 +128,7 @@ struct Scope {
         , m_switchDepth(rhs.m_switchDepth)
     {
         if (rhs.m_labels) {
-            m_labels = adoptPtr(new LabelStack);
+            m_labels = std::make_unique<LabelStack>();
 
             typedef LabelStack::const_iterator iterator;
             iterator end = rhs.m_labels->end();
@@ -149,7 +148,7 @@ struct Scope {
     void pushLabel(const Identifier* label, bool isLoop)
     {
         if (!m_labels)
-            m_labels = adoptPtr(new LabelStack);
+            m_labels = std::make_unique<LabelStack>();
         m_labels->append(ScopeLabelInfo(label->impl(), isLoop));
     }
 
@@ -357,7 +356,7 @@ private:
     int m_switchDepth;
 
     typedef Vector<ScopeLabelInfo, 2> LabelStack;
-    OwnPtr<LabelStack> m_labels;
+    std::unique_ptr<LabelStack> m_labels;
     IdentifierSet m_declaredParameters;
     IdentifierSet m_declaredVariables;
     IdentifierSet m_usedVariables;
@@ -816,7 +815,7 @@ private:
     VM* m_vm;
     const SourceCode* m_source;
     ParserArena m_parserArena;
-    OwnPtr<LexerType> m_lexer;
+    std::unique_ptr<LexerType> m_lexer;
     
     bool m_hasStackOverflow;
     String m_errorMessage;

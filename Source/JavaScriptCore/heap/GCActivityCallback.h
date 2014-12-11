@@ -30,7 +30,6 @@
 #define GCActivityCallback_h
 
 #include "HeapTimer.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 #if USE(CF)

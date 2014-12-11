@@ -34,9 +34,6 @@
 #include <wtf/MetaAllocator.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PageReservation.h>
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-#include <wtf/PassOwnPtr.h>
-#endif
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/VMTags.h>
 #endif

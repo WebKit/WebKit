@@ -32,7 +32,6 @@
 #include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include <wtf/MainThread.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 

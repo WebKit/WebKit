@@ -32,8 +32,6 @@
 #include "JSCJSValue.h"
 #include "Options.h"
 #include <wtf/Atomics.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
@@ -94,7 +92,7 @@ private:
     void checkConsistency();
 
     SpinLock m_workListLock;
-    OwnPtr<CopyWorkList> m_workList;
+    std::unique_ptr<CopyWorkList> m_workList;
 
     size_t m_remaining;
     bool m_isPinned : 1;
@@ -154,7 +152,7 @@ inline void CopiedBlock::didSurviveGC()
 #endif
     m_isPinned = false;
     if (m_workList)
-        m_workList.clear();
+        m_workList = nullptr;
 }
 
 inline void CopiedBlock::didEvacuateBytes(unsigned bytes)
@@ -185,7 +183,7 @@ inline void CopiedBlock::pin()
 {
     m_isPinned = true;
     if (m_workList)
-        m_workList.clear();
+        m_workList = nullptr;
 }
 
 inline bool CopiedBlock::isPinned()

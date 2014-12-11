@@ -36,7 +36,6 @@
 #include "Reject.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Assertions.h>
-#include <wtf/OwnPtr.h>
 
 using namespace std;
 using namespace WTF;
@@ -1307,7 +1306,7 @@ struct AVLTreeAbstractorForArrayCompare {
     JSValue m_compareFunction;
     CallType m_compareCallType;
     const CallData* m_compareCallData;
-    OwnPtr<CachedCall> m_cachedCall;
+    std::unique_ptr<CachedCall> m_cachedCall;
 
     handle get_less(handle h) { return m_nodes[h].lt & 0x7FFFFFFF; }
     void set_less(handle h, handle lh) { m_nodes[h].lt &= 0x80000000; m_nodes[h].lt |= lh; }
@@ -1390,10 +1389,10 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
     tree.abstractor().m_compareCallType = callType;
     tree.abstractor().m_compareCallData = &callData;
     tree.abstractor().m_nodes.grow(nodeCount);
-        
+
     if (callType == CallTypeJS)
-        tree.abstractor().m_cachedCall = adoptPtr(new CachedCall(exec, jsCast<JSFunction*>(compareFunction), 2));
-        
+        tree.abstractor().m_cachedCall = std::make_unique<CachedCall>(exec, jsCast<JSFunction*>(compareFunction), 2);
+
     if (!tree.abstractor().m_nodes.begin()) {
         throwOutOfMemoryError(exec);
         return;

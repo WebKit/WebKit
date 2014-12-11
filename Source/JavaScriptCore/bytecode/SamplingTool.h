@@ -271,7 +271,7 @@ namespace JSC {
             , m_sampleCount(0)
             , m_opcodeSampleCount(0)
 #if ENABLE(CODEBLOCK_SAMPLING)
-            , m_scopeSampleMap(adoptPtr(new ScriptSampleRecordMap))
+            , m_scopeSampleMap(std::make_unique<ScriptSampleRecordMap>)
 #endif
         {
             memset(m_opcodeSamples, 0, sizeof(m_opcodeSamples));
@@ -338,7 +338,7 @@ namespace JSC {
         
 #if ENABLE(CODEBLOCK_SAMPLING)
         Mutex m_scriptSampleMapMutex;
-        OwnPtr<ScriptSampleRecordMap> m_scopeSampleMap;
+        std::unique_ptr<ScriptSampleRecordMap> m_scopeSampleMap;
 #endif
     };
 

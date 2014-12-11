@@ -33,7 +33,6 @@
 #include "VM.h"
 #include <utility>
 #include <wtf/HashFunctions.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/WTFThreadData.h>
 
@@ -206,7 +205,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     , m_sourceElements(0)
     , m_parsingBuiltin(strictness == JSParseBuiltin)
 {
-    m_lexer = adoptPtr(new LexerType(vm, strictness));
+    m_lexer = std::make_unique<LexerType>(vm, strictness);
     m_lexer->setCode(source, &m_parserArena);
     m_token.m_location.line = source.firstLine();
     m_token.m_location.startOffset = source.startOffset();

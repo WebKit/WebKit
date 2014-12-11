@@ -353,7 +353,7 @@ private:
 
     ProtectCountSet m_protectedValues;
     Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>*> m_tempSortingVectors;
-    OwnPtr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
+    std::unique_ptr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
 
     MachineThreads m_machineThreads;
     

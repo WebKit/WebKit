@@ -836,7 +836,7 @@ namespace JSC {
         unsigned m_byValInstructionIndex;
         unsigned m_callLinkInfoIndex;
 
-        OwnPtr<JITDisassembler> m_disassembler;
+        std::unique_ptr<JITDisassembler> m_disassembler;
         RefPtr<Profiler::Compilation> m_compilation;
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(VM*);
