@@ -1,3 +1,11 @@
+2014-12-10  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * html/canvas/WebGLDrawBuffers.cpp:
+        Yosemite is 101000, not 10100.
+        Also, __MAC_OS_X_VERSION_MIN_REQUIRED is only defined for PLATFORM(MAC).
+
 2014-12-10  Zalan Bujtas  <zalan@apple.com>
 
         Continuously repainting large parts of Huffington Post.

@@ -46,7 +46,7 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
     return WebGLExtension::WebGLDrawBuffersName;
 }
 
-#if OS(DARWIN) && __MAC_OS_X_VERSION_MIN_REQUIRED < 10100
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000)
 
 bool WebGLDrawBuffers::supported(WebGLRenderingContext*)
 {
