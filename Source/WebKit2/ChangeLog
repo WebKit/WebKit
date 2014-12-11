@@ -1,3 +1,13 @@
+2014-12-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [SOUP] [GTK] warning: unused parameter at NetworkProcessSoup.cpp after r177056.
+        https://bugs.webkit.org/show_bug.cgi?id=139534
+
+        Reviewed by Martin Robinson.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::clearDiskCache): Comment the parameter names.
+
 2014-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Timers might never be fired during animations
