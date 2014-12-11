@@ -1,5 +1,16 @@
 2014-12-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Disable backspace key navigation
+        https://bugs.webkit.org/show_bug.cgi?id=136231
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): remove handling
+        for backspace and <shift>backspace key combinations.
+
+2014-12-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] String changes for the HTTP authentication dialog
         https://bugs.webkit.org/show_bug.cgi?id=136782
 
