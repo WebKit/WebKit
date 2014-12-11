@@ -3452,6 +3452,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
 }
 
+- (NSWindow *)_targetWindowForMovePreparation
+{
+    return _data->_targetWindowForMovePreparation;
+}
+
 #if ENABLE(FULLSCREEN_API)
 - (BOOL)_hasFullScreenWindowController
 {
