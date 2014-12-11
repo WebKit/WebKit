@@ -1,3 +1,14 @@
+2014-12-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] String changes for the HTTP authentication dialog
+        https://bugs.webkit.org/show_bug.cgi?id=136782
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogInitialize): Add a title to the dialog, add
+        some missing mnemonics, and tweak a few strings.
+
 2014-12-09  Jeremy Jones  <jeremyj@apple.com>
 
         Restore interface state when stopping optimized fullscreen.

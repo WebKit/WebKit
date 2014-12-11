@@ -88,18 +88,26 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     GtkWidget* vBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
     gtk_container_set_border_width(GTK_CONTAINER(vBox), 12);
 
+    GtkWidget* label = gtk_label_new(nullptr);
+    // Title of the HTTP authentication dialog.
+    GUniquePtr<char> title(g_strdup_printf("<b>%s</b>", _("Authentication Required")));
+    gtk_label_set_markup(GTK_LABEL(label), title.get());
+    gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
+    gtk_widget_show(label);
+    gtk_box_pack_start(GTK_BOX(vBox), label, FALSE, FALSE, 0);
+
     GtkWidget* buttonBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_END);
     gtk_container_set_border_width(GTK_CONTAINER(buttonBox), 5);
     gtk_box_set_spacing(GTK_BOX(buttonBox), 6);
 
-    GtkWidget* button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    GtkWidget* button = gtk_button_new_with_mnemonic(_("_Cancel"));
     g_signal_connect(button, "clicked", G_CALLBACK(cancelButtonClicked), authDialog);
     gtk_box_pack_end(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
     gtk_widget_show(button);
 
     WebKitAuthenticationDialogPrivate* priv = authDialog->priv;
-    button = gtk_button_new_from_stock(GTK_STOCK_OK);
+    button = gtk_button_new_with_mnemonic(_("_Authenticate"));
     priv->defaultButton = button;
     g_signal_connect(button, "clicked", G_CALLBACK(okButtonClicked), authDialog);
     gtk_widget_set_can_default(button, TRUE);
@@ -111,15 +119,16 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
 
     const WebCore::AuthenticationChallenge& challenge = webkitAuthenticationRequestGetAuthenticationChallenge(priv->request.get())->core();
     // Prompt on the HTTP authentication dialog.
-    GUniquePtr<char> prompt(g_strdup_printf(_("The site %s:%i requests a username and password"),
+    GUniquePtr<char> prompt(g_strdup_printf(_("Authentication required by %s:%i"),
         challenge.protectionSpace().host().utf8().data(), challenge.protectionSpace().port()));
-    GtkWidget* label = createLabelWithLineWrap(prompt.get());
+    label = createLabelWithLineWrap(prompt.get());
     gtk_widget_show(label);
     gtk_box_pack_start(GTK_BOX(authBox), label, FALSE, FALSE, 0);
 
     String realm = challenge.protectionSpace().realm();
     if (!realm.isEmpty()) {
-        GUniquePtr<char> message(g_strdup_printf("%s “%s”", _("Server message:"), realm.utf8().data()));
+        // Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+        GUniquePtr<char> message(g_strdup_printf(_("The site says: “%s”"), realm.utf8().data()));
         label = createLabelWithLineWrap(message.get());
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(authBox), label, FALSE, FALSE, 0);
@@ -129,27 +138,29 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     priv->rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
     gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(priv->rememberCheckButton))), TRUE);
 
-    // Entry on the HTTP authentication dialog.
-    GtkWidget* loginLabel = gtk_label_new(_("Username:"));
-    gtk_widget_set_halign(loginLabel, GTK_ALIGN_END);
-    gtk_style_context_add_class(gtk_widget_get_style_context(loginLabel), GTK_STYLE_CLASS_DIM_LABEL);
-    gtk_widget_show(loginLabel);
-
     priv->loginEntry = gtk_entry_new();
     gtk_widget_set_hexpand(priv->loginEntry, TRUE);
     gtk_entry_set_activates_default(GTK_ENTRY(priv->loginEntry), TRUE);
     gtk_widget_show(priv->loginEntry);
 
     // Entry on the HTTP authentication dialog.
-    GtkWidget* passwordLabel = gtk_label_new(_("Password:"));
-    gtk_widget_set_halign(passwordLabel, GTK_ALIGN_END);
-    gtk_style_context_add_class(gtk_widget_get_style_context(passwordLabel), GTK_STYLE_CLASS_DIM_LABEL);
-    gtk_widget_show(passwordLabel);
+    GtkWidget* loginLabel = gtk_label_new_with_mnemonic(_("_Username"));
+    gtk_label_set_mnemonic_widget(GTK_LABEL(loginLabel), priv->loginEntry);
+    gtk_widget_set_halign(loginLabel, GTK_ALIGN_END);
+    gtk_style_context_add_class(gtk_widget_get_style_context(loginLabel), GTK_STYLE_CLASS_DIM_LABEL);
+    gtk_widget_show(loginLabel);
 
     priv->passwordEntry = gtk_entry_new();
     gtk_widget_set_hexpand(priv->passwordEntry, TRUE);
     gtk_entry_set_activates_default(GTK_ENTRY(priv->passwordEntry), TRUE);
     gtk_widget_show(priv->passwordEntry);
+
+    // Entry on the HTTP authentication dialog.
+    GtkWidget* passwordLabel = gtk_label_new_with_mnemonic(_("_Password"));
+    gtk_label_set_mnemonic_widget(GTK_LABEL(passwordLabel), priv->passwordEntry);
+    gtk_widget_set_halign(passwordLabel, GTK_ALIGN_END);
+    gtk_style_context_add_class(gtk_widget_get_style_context(passwordLabel), GTK_STYLE_CLASS_DIM_LABEL);
+    gtk_widget_show(passwordLabel);
 
     GtkWidget* grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 6);
