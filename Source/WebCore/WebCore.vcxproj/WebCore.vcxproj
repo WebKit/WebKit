@@ -17873,7 +17873,6 @@
     <ClCompile Include="..\storage\StorageEvent.cpp" />
     <ClCompile Include="..\storage\StorageEventDispatcher.cpp" />
     <ClCompile Include="..\storage\StorageMap.cpp" />
-    <ClCompile Include="..\storage\StorageNamespace.cpp" />
     <ClCompile Include="..\storage\StorageNamespaceImpl.cpp" />
     <ClCompile Include="..\storage\StorageNamespaceProvider.cpp" />
     <ClCompile Include="..\storage\StorageSyncManager.cpp" />

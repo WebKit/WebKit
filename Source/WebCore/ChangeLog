@@ -1,3 +1,10 @@
+2014-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2014-12-11  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
