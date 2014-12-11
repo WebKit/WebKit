@@ -1,3 +1,18 @@
+2014-12-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac test expectations gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=139472
+
+        Removed expectations for tests that are no longer flaky, moved WK1 and WK2 only
+        expectations to correct files, added more flakiness expectations for tests that
+        fail with ATI graphics.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.gradient.interpolate.colouralpha-expected.txt: Removed.
+        * platform/wk2/TestExpectations:
+
 2014-12-10  Chris Dumez  <cdumez@apple.com>
 
         http://omfgdogs.info/ only animates when you resize the window

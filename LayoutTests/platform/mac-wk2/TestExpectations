@@ -347,6 +347,8 @@ webkit.org/b/133227 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pas
 
 webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 
+fast/dom/frame-loading-via-document-write.html [ Failure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 

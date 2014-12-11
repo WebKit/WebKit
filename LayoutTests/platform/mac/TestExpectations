@@ -17,8 +17,6 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 # https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
 fast/notifications
 
-webkit.org/b/108223 fast/forms/range/slider-delete-while-dragging-thumb.html [ Crash Pass ]
-
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
@@ -149,7 +147,7 @@ fast/forms/week
 gamepad/
 
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
-http/tests/security/contentTypeOptions
+webkit.org/b/136452 http/tests/security/contentTypeOptions
 
 # Media Stream API is not yet enabled.
 fast/mediastream
@@ -162,14 +160,13 @@ http/tests/media/media-stream
 # Directory upload is not enabled.
 fast/forms/file/input-file-directory-upload.html
 
-# Resource Timing is not enabled.
-# https://bugs.webkit.org/show_bug.cgi?id=133321
-http/tests/w3c/webperf
+# webkit.org/b/61138, webkit.org/b/84893, webkit.org/b/133321
+http/tests/w3c/webperf [ Skip ]
 
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
 
-# Still working out flakiness issues with the perf tests.
+# Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
 webkit.org/b/42821 animations/play-state.html [ Pass Failure ]
@@ -257,9 +254,6 @@ webkit.org/b/60206 http/tests/navigation/response204.html
 # Styled scope element is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped
 
-# fails because of antialiasing differences.
-fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
-
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow
 fast/dom/HTMLTemplateElement/cycles-in-shadow.html
@@ -330,8 +324,8 @@ webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
 webkit.org/b/81618 fast/workers/storage/use-same-database-in-page-and-workers.html [ Pass Failure ]
 
-# Has failed since its introduction in r105826. Skipped everywhere but chromium.
-webkit.org/b/61630 fast/events/dropzone-005.html
+# Has failed since its introduction in r105826.
+webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]
 
 # Spelling tests that are flakey.
 webkit.org/b/82555 editing/spelling/spellcheck-async-mutation.html [ Pass Failure ]
@@ -350,9 +344,11 @@ webkit.org/b/82805 fast/canvas/webgl/framebuffer-object-attachment.html [ Failur
 
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html [ Pass Failure ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html [ Pass Failure ]
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Failure Pass ]
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html [ Failure Pass ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html [ Pass Failure ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html [ Pass Failure ]
-webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html [ Pass Failure ]
 
 webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
 webkit.org/b/82972 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Pass Failure ]
@@ -391,7 +387,6 @@ platform/mac/fast/forms/input-appearance-spinbutton.html [ Failure ]
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
 
 fast/css/resize-corner-tracking.html [ Pass Failure ]
-fast/events/shadow-event-path-2.html [ Pass Failure ]
 
 # Multiple non contiguous selection with keyboard not enabled on mac
 webkit.org/b/15816 fast/forms/listbox-non-contiguous-keyboard-selection.html [ Skip ]
@@ -462,11 +457,6 @@ webkit.org/b/112620 [ Debug ] svg/custom/image-with-attr-change-after-delete-cra
 
 # Assorted failures that need investigation
 
-# --- Canvas ---
-canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
-canvas/philip/tests/2d.line.miter.lineedge.html
-canvas/philip/tests/2d.strokeRect.zero.4.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=107118
 fast/canvas/canvas-quadratic-same-endpoint.html
 
@@ -513,7 +503,6 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 platform/mac/accessibility/selection-value-changes-for-aria-textbox.html [ Failure ]
 
-# -- Flaky tests (WebKit 1 only) ---
 platform/mac/accessibility/search-with-frames.html [ Pass Failure ]
 
 # --- Plugins ---
@@ -530,9 +519,7 @@ plugins/form-value.html
 # WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
 plugins/npruntime/invoke-failure.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=93589
-# Very flaky, often failing on retry, too.
-svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
+webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Failure ]
 
 [ MountainLion Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
@@ -564,17 +551,11 @@ mhtml [ Skip ]
 # Our slow tests, in alphabetical order.
 webkit.org/b/57672 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Pass ]
 
-webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Failure Pass ]
-webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html [ Failure Pass ]
-
 # Flaky tests that appear to be fail depending on which earlier tests
 # run in the same process
 webkit.org/b/57688 fast/text/international/bidi-AN-after-empty-run.html [ Failure Pass ]
 webkit.org/b/57688 fast/text/international/bidi-CS-after-AN.html [ Failure Pass ]
 webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass ]
-
-# Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
-webkit.org/b/58192 plugins/npp-set-window-called-during-destruction.html [ Failure Pass ]
 
 webkit.org/b/112646 plugins/private-browsing-mode.html [ Failure Pass ]
 webkit.org/b/112616 plugins/plugin-clip-subframe.html [ Failure Pass ]
@@ -586,12 +567,7 @@ webkit.org/b/112518 [ Debug ] plugins/npruntime/evaluate.html [ Crash Pass ]
 # Flakey plugin tests
 webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
-# Flaky tests when run multi-process
-webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
-webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
-webkit.org/b/58192 http/tests/appcache/fail-on-update.html [ Failure Pass ]
-webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
-webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
+svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
 # Flakey frame flattening tests
 webkit.org/b/112532 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
@@ -659,20 +635,7 @@ webkit.org/b/84186 fast/text-autosizing
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
-# Flakey WebGL tests
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Failure Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Failure Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Failure Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Failure Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Failure Pass ]
-
-webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure Pass ]
-webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure Pass ]
-webkit.org/b/87541 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure Pass ]
-
 webkit.org/b/126624 [ MountainLion ] webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Pass Failure Timeout ]
-
-webkit.org/b/92464 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
 
 # MountainLion doesn't support textures this large.
 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Skip ]
@@ -701,32 +664,14 @@ webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
 # Should never have been a ref test.
 webkit.org/b/98456 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
 
-# Color profile dependent, passes on some bots and fails on others.
-webkit.org/b/121526 compositing/images/positioned-image-content-rect.html [ Pass ImageOnlyFailure ]
-
-# Ref tests suffering from colorspace issues
-compositing/patterns/direct-pattern-compositing-add-text.html [ Pass ImageOnlyFailure ]
-compositing/patterns/direct-pattern-compositing-contain.html [ Pass ImageOnlyFailure ]
-compositing/patterns/direct-pattern-compositing-cover.html [ Pass ImageOnlyFailure ]
-compositing/patterns/direct-pattern-compositing-padding.html [ Pass ImageOnlyFailure ]
-compositing/patterns/direct-pattern-compositing-position.html [ Pass ImageOnlyFailure ]
-compositing/patterns/direct-pattern-compositing-size.html [ Pass ImageOnlyFailure ]
-compositing/patterns/direct-pattern-compositing.html [ Pass ImageOnlyFailure ]
-
 # Timing out on Mountain Lion WK1 release sometimes
 webkit.org/b/99221 js/dom/random-array-gc-stress.html [ Pass Timeout ]
-
-# User Timing is not enable yet. so skip it.
-webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
 
 # Expected to fail until GL_EXT_draw_buffers works properly for DARWIN. See WebGLDrawBuffers::supported
 webkit.org/b/112486 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Pass ]
-
-# Resource Timing is not enable yet, skip it.
-webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
@@ -792,8 +737,6 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
 # webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/76364 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Pass Failure ]
-
 # Always very slow, frequently timing out (only on bots, not locally).
 webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
 
@@ -803,24 +746,15 @@ webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered
 # New test failing, needs investigation.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html
 
-# Reference test fast/sub-pixel/float-wrap-zoom.html fails
-webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
-
-webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Pass Failure ]
 
 webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
 
 webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 
 webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
-
-webkit.org/b/121053 fast/history/go-back-to-iframe-with-plugin.html [ Crash Timeout Pass ]
 
 webkit.org/b/114280 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
@@ -847,7 +781,6 @@ webkit.org/b/121628 fast/history/history-back-while-pdf-in-pagecache.html [ Pass
 webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
 webkit.org/b/122508 [ MountainLion ] compositing/video/video-reflection.html [ Pass Timeout ]
-[ MountainLion ] compositing/video/video-object-fit.html [ Pass Timeout ]
 webkit.org/b/138662 [ MountainLion ] compositing/video/video-border-radius.html [ Skip ]
 
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
@@ -866,13 +799,9 @@ webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Pass Failu
 # SubtleCrypto is disabled on Mountain Lion
 webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
 
-webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ImageOnlyFailure ]
+webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Failure ]
-
-webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Failure Timeout ]
-
-webkit.org/b/124424 webgl/1.0.2/conformance/ogles/GL/tan/tan_001_to_006.html [ Pass Failure ]
 
 webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Pass Failure ]
 
@@ -918,8 +847,6 @@ webkit.org/b/136419 fast/sub-pixel/block-with-margin-overflow.html [ ImageOnlyFa
 webkit.org/b/137729 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 # Subpixel failures END
 
-webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
-
 # These tests were always flaky, but became a lot more so at in r163472-r163476.
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/50959 animations/play-state-suspend.html [ Pass Failure ]
@@ -938,8 +865,8 @@ webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # These tests require an OpenType MATH font on the Apple bots.
-webkit.org/b/130322 [ MountainLion Lion Mavericks ] mathml/opentype/large-operators.html [ Failure ]
-webkit.org/b/130322 [ MountainLion Lion Mavericks ] mathml/opentype/vertical.html [ Failure ]
+webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/large-operators.html [ Failure ]
+webkit.org/b/130322 [ MountainLion Mavericks ] mathml/opentype/vertical.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 
@@ -959,8 +886,9 @@ webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Fai
 
 [ MountainLion Mavericks ] fast/images/image-controls-basic.html [ WontFix ]
 
-webkit.org/b/131886 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
-webkit.org/b/131886 [ MountainLion ] fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure ]
+# <rdar://problem/16696298>
+webkit.org/b/131886 [ MountainLion Yosemite ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
+webkit.org/b/131886 [ MountainLion Yosemite ] fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure ]
 
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
 
@@ -990,7 +918,7 @@ webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Fail
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]
 
-webkit.org/b/131787 fast/canvas/canvas-putImageData-zero-alpha.html [ Pass ImageOnlyFailure ]
+webkit.org/b/131787 [ MountainLion ] fast/canvas/canvas-putImageData-zero-alpha.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
@@ -1242,24 +1170,14 @@ webkit.org/b/137319 [ MountainLion ] fast/css/test-setting-canvas-color.html [ P
 [ Yosemite+ ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 [ Yosemite+ ] webaudio/oscillator-sawtooth.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/15971846>)
-[ Yosemite ] accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/15972788>)
-[ Yosemite ] accessibility/media-element.html [ Pass Failure ]
-
 # Flaky logging underneath us
 webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
 
 # FIXME: Needs bugzilla (<rdar://problem/15971968>)
 [ Yosemite+ ] platform/mac/accessibility/misspelled-attributed-string.html [ Pass Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/15764845>)
-[ Yosemite ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16040720>)
 [ Yosemite+ ] canvas/philip/tests/2d.drawImage.animated.poster.html [ Pass Failure ]
-[ Yosemite ] fast/canvas/canvas-lineDash.html [ Pass Failure ]
 [ Yosemite+ ] fast/canvas/canvas-scale-strokePath-shadow.html [ Pass Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16187249>)
@@ -1276,15 +1194,7 @@ webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html
 # We should land updated results if we can't get this bug fixed in time.
 [ Yosemite+ ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16687875>)
-[ Yosemite ] fast/frames/flattening/iframe-flattening-fixed-width.html [ Pass Failure ]
-[ Yosemite ] fast/frames/flattening/iframe-flattening-simple.html [ Pass Failure ]
-
 webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html [ Pass Failure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16696298>)
-[ Yosemite ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
-[ Yosemite ] fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16802900>)
 [ Yosemite+ ] fast/forms/select-initial-position.html [ Failure ]
@@ -1301,9 +1211,6 @@ webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html
 
 # FIXME: Needs bugzilla (<rdar://problem/15992006>)
 [ Yosemite+ ] fast/text/international/text-combine-image-test.html [ Failure ]
-
-# FIXME: Needs bugzilla (<rdar://problem/16804845>)
-[ Yosemite ] fast/forms/hidpi-textarea-on-subpixel-position.html [ ImageOnlyFailure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17458024>)
 [ Yosemite ] http/tests/misc/webtiming-ssl.php [ Skip ]
@@ -1414,6 +1321,7 @@ webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-te
 [ MountainLion ] fast/canvas/canvas-shadow.html [ Pass Failure ]
 [ MountainLion ] fast/canvas/canvas-transforms-fillRect-shadow.html [ Pass Failure ]
 [ MountainLion ] fast/canvas/webgl/array-bounds-clamping.html [ Pass Failure ]
+[ MountainLion ] fast/canvas/webgl/oes-texture-half-float-with-image.html [ Pass Failure ]
 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Pass Failure ]
 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444.html [ Pass Failure ]
 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Pass Failure ]
@@ -1425,3 +1333,9 @@ webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-createPattern-fillRect-sh
 webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
 webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 webkit.org/b/81599 [ MountainLion ] fast/canvas/set-colors.html [ Pass Failure ]
+webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
+webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
+webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Failure ]
+webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
+webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
+webkit.org/b/93560 [ MountainLion ] canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Pass Failure ]

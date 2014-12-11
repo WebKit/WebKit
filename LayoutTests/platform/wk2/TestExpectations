@@ -230,10 +230,10 @@ webkit.org/b/132297 svg/custom/bug79798.html [ Skip ]
 ########################################
 ### START OF (2) Classified failures without bug reports (yet)
 
-# WebKitTestRunner needs testRunner.shouldPaintBrockenImage
+# WebKitTestRunner needs testRunner.shouldPaintBrokenImage
 fast/images/support-broken-image-delegate.html
 
-# WebKitTestrunner needs testRunner.dumpSourceAsWebArchive
+# WebKitTestRunner needs testRunner.dumpSourceAsWebArchive
 webarchive/doctype.html
 webarchive/archive-empty-frame-source.html
 
@@ -587,9 +587,8 @@ http/tests/loading/pdf-commit-load-callbacks.html
 # Times out unexpectedly.
 http/tests/security/feed-urls-from-remote.html
 
-# Crashes in Debug builds
-# <rdar://problem/18216390>
-[ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Crash ]
+# Crashes in Debug builds, <rdar://problem/18216390>
+[ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
 
 ### END OF (3) Unclassified failures
 ########################################

@@ -24,6 +24,8 @@ webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 
 webkit.org/b/138697 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
 
+webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Failure ]
+
 webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Timeout ]
 
 ### END OF (1) Failures with bug reports
