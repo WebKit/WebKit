@@ -24,9 +24,9 @@
                     { "name": "apple-mini-129", "platform": "mac-mavericks" },
                     { "name": "apple-mini-130", "platform": "mac-mavericks" },
                     { "name": "apple-mini-137", "platform": "mac-mavericks" },
-                    { "name": "apple-mini-138", "platform": "mac-mavericks" },
-                    { "name": "apple-mini-142", "platform": "mac-mavericks" },
-                    { "name": "apple-mini-178", "platform": "mac-mavericks" },
+                    { "name": "bot104", "platform": "mac-mavericks" },
+                    { "name": "bot102", "platform": "mac-mavericks" },
+                    { "name": "bot101", "platform": "mac-mavericks" },
                     { "name": "apple-mini-179", "platform": "mac-mavericks" },
                     { "name": "apple-mini-180", "platform": "mac-mavericks" },
                     { "name": "apple-mini-211", "platform": "mac-mavericks" },
@@ -114,15 +114,15 @@
                     { "name": "Apple Mavericks Debug (Build)", "type": "Build", "builddir": "mavericks-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["mavericks-debug-tests-wk1", "mavericks-debug-tests-wk2"],
-                      "slavenames": ["apple-mini-178", "apple-mini-179"]
+                      "slavenames": ["bot101", "apple-mini-179"]
                     },
                     { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "Test", "builddir": "mavericks-debug-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-mini-137", "apple-mini-138"]
+                      "slavenames": ["apple-mini-137", "bot104"]
                     },
                     { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-debug-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-mini-142", "apple-mini-211"]
+                      "slavenames": ["bot142", "apple-mini-211"]
                     },
                     { "name": "Apple Mavericks LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "mavericks-cloop-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
