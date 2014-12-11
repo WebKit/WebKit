@@ -60,6 +60,7 @@ public:
 
     virtual void respondToChangedContents();
     virtual void respondToChangedSelection(WebCore::Frame*);
+    virtual void discardedComposition(WebCore::Frame*) override;
 
     bool shouldDeleteRange(WebCore::Range*);
 

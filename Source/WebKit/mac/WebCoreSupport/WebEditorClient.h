@@ -110,6 +110,7 @@ private:
 
     virtual void respondToChangedContents() override;
     virtual void respondToChangedSelection(WebCore::Frame*) override;
+    virtual void discardedComposition(WebCore::Frame*) override;
 
     virtual void registerUndoStep(PassRefPtr<WebCore::UndoStep>) override;
     virtual void registerRedoStep(PassRefPtr<WebCore::UndoStep>) override;
