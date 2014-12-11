@@ -14,8 +14,7 @@
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
 # Before Yosemite, the test did not actually test compositing vs. non-compositing on WebKit1, so it passed accidentally.
-webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
-[ MountainLion Mavericks ] fast/multicol/fixed-stack.html [ Pass ]
+webkit.org/b/132421 [ Mavericks+ ] fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
@@ -24,6 +23,8 @@ webkit.org/b/82981 http/tests/misc/favicon-loads-with-icon-loading-override.html
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 
 webkit.org/b/138697 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
+
+webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Timeout ]
 
 ### END OF (1) Failures with bug reports
 ########################################

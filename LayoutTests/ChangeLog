@@ -1,5 +1,13 @@
 2014-12-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Fix lint warnings on Mac TestExpectations.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-12-10  Alexey Proskuryakov  <ap@apple.com>
+
         Mark more tests that fail on EWS bots with ATI graphics.
 
         * platform/mac/TestExpectations:

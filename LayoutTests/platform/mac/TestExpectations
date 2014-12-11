@@ -485,8 +485,6 @@ editing/pasteboard/paste-global-selection.html
 
 # Unexpected WebGL Conformance tests that need to be fixed
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
-webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure Timeout ]
-webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
@@ -498,7 +496,7 @@ webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure 
 [ MountainLion ] webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Crash Pass Failure ]
-[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
 
 # <rdar://problem/19136723>
@@ -757,9 +755,7 @@ webkit.org/b/112486 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Pass ]
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
-# Flacky on Mountain Lion Release, fails everywhere else.
-fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
-webkit.org/b/107356 [ MountainLion Release ] fast/css/sticky/sticky-top-zoomed.html [ Pass ImageOnlyFailure ]
+webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
 # Overflowing LayoutUnits cause RenderGeometryMap assertions
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ]
@@ -886,10 +882,8 @@ webkit.org/b/138179 compositing/regions/propagate-region-box-shadow-border-paddi
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
-webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass ]
-webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
+webkit.org/b/123369 [ Mavericks+ ] svg/css/parent-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/123369 [ Mavericks+ ] svg/css/root-shadow-offscreen.svg [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/100846, webkit.org/b/136715
 inspector-protocol/debugger
@@ -1117,7 +1111,6 @@ webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pa
 
 # Mountain Lion and earlier do not support Encrypted Media Extensions.
 Bug(jernoble) [ MountainLion ] media/encrypted-media/ [ WontFix ]
-Bug(jernoble) [ MountainLion ] fast/events/constructors/media-key-event-constructor.html [ WontFix ]
 ## --- End media tests failing on Mountain Lion and earlier ---
 
 ## --- Start media tests failing on Mavericks and earlier ---
@@ -1140,7 +1133,6 @@ webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
 webkit.org/b/112492 media/track/track-language-preference.html [ Pass Failure Timeout ]
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Pass Failure Timeout ]
-webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Failure ]
 webkit.org/b/112659 media/video-playing-and-pause.html [ Pass Failure ]
 webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
@@ -1167,7 +1159,8 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failu
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
-webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure ]
+webkit.org/b/135160 [ Mavericks ] media/track/track-in-band-subtitles-too-large.html [ Failure ]
+webkit.org/b/135160 [ Yosemite+ ] media/track/track-in-band-subtitles-too-large.html [ Pass Failure ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Failure Crash Timeout ]
 webkit.org/b/138798 [ MountainLion ] media/track/track-cues-sorted-before-dispatch.html [ Pass Failure Timeout ]
@@ -1248,7 +1241,7 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-tra
 # REGRESSION(r156546): 7 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Failure ]
-webkit.org/b/122021 media/track/track-in-band-mode.html [ Failure ]
+webkit.org/b/122021 [ Mavericks+ ] media/track/track-in-band-mode.html [ Failure ]
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/122021 media/video-controls-toggling.html [ Failure ]
@@ -1300,7 +1293,6 @@ webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html
 [ Yosemite ] transitions/transition-end-event-destroy-iframe.html [ Skip ]
 [ Yosemite ] media/video-controls-in-media-document.html [ Skip ]
 [ Yosemite ] media/video-document-types.html [ Skip ]
-[ Yosemite ] media/auto-play-in-sandbox-with-allow-scripts.html [ Skip ]
 [ Yosemite ] fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16663912>)

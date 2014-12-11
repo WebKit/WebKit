@@ -449,7 +449,6 @@ storage/indexeddb/transaction-coordination-within-database.html [ Skip ] # SQLit
 
 # Blink tests that crash the DatabaseProcess under DatabaseProcessIDBConnection::deleteDatabase.
 storage/indexeddb/database-closepending-flag.html [ Skip ]
-storage/indexeddb/key-sort-order-across-types.html [ Skip ]
 storage/indexeddb/key-sort-order-date.html [ Skip ]
 storage/indexeddb/key-type-infinity.html [ Skip ]
 storage/indexeddb/keypath-fetch-key.html [ Skip ]
