@@ -23,66 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Allocator_h
-#define Allocator_h
-
-#include "BumpAllocator.h"
-#include <array>
+#include "Environment.h"
 
 namespace bmalloc {
 
-class Deallocator;
-class Heap;
-
-// Per-cache object allocator.
-
-class Allocator {
-public:
-    Allocator(Heap*, Deallocator&);
-    ~Allocator();
-
-    void* allocate(size_t);
-    void scavenge();
-
-private:
-    bool allocateFastCase(size_t, void*&);
-    void* allocateSlowCase(size_t);
-    
-    void* allocateMedium(size_t);
-    void* allocateLarge(size_t);
-    void* allocateXLarge(size_t);
-    
-    BumpRange allocateBumpRange(size_t sizeClass);
-    BumpRange allocateBumpRangeSlowCase(size_t sizeClass);
-    
-    std::array<BumpAllocator, mediumMax / alignment> m_bumpAllocators;
-    std::array<BumpRangeCache, mediumMax / alignment> m_bumpRangeCaches;
-
-    bool m_isBmallocEnabled;
-    Deallocator& m_deallocator;
-};
-
-inline bool Allocator::allocateFastCase(size_t size, void*& object)
+Environment::Environment()
+    : m_isBmallocEnabled(computeIsBmallocEnabled())
 {
-    if (size > mediumMax)
-        return false;
+}
 
-    BumpAllocator& allocator = m_bumpAllocators[sizeClass(size)];
-    if (!allocator.canAllocate())
-        return false;
-
-    object = allocator.allocate();
+bool Environment::computeIsBmallocEnabled()
+{
     return true;
 }
 
-inline void* Allocator::allocate(size_t size)
-{
-    void* object;
-    if (!allocateFastCase(size, object))
-        return allocateSlowCase(size);
-    return object;
-}
-
 } // namespace bmalloc
-
-#endif // Allocator_h

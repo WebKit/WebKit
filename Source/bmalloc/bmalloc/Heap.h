@@ -27,6 +27,7 @@
 #define Heap_h
 
 #include "BumpRange.h"
+#include "Environment.h"
 #include "LineMetadata.h"
 #include "MediumChunk.h"
 #include "MediumLine.h"
@@ -49,6 +50,8 @@ class EndTag;
 class Heap {
 public:
     Heap(std::lock_guard<StaticMutex>&);
+    
+    Environment& environment() { return m_environment; }
 
     void refillSmallBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpRangeCache&);
     void derefSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
@@ -100,6 +103,8 @@ private:
     SegregatedFreeList m_largeRanges;
 
     bool m_isAllocatingPages;
+
+    Environment m_environment;
 
     VMHeap m_vmHeap;
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;

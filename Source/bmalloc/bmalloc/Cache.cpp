@@ -41,11 +41,9 @@ void Cache::operator delete(void* p, size_t size)
 }
 
 Cache::Cache()
-    : m_deallocator()
-    , m_allocator(m_deallocator)
+    : m_deallocator(PerProcess<Heap>::get())
+    , m_allocator(PerProcess<Heap>::get(), m_deallocator)
 {
-    // Ensure that the heap exists, so Allocator and Deallocator can assume it does.
-    PerProcess<Heap>::get();
 }
     
 void Cache::scavenge()

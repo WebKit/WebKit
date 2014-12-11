@@ -24,10 +24,10 @@
  */
 
 #include "BoundaryTagInlines.h"
-#include "Heap.h"
 #include "LargeChunk.h"
 #include "Line.h"
 #include "PerProcess.h"
+#include "VMHeap.h"
 #include <thread>
 
 namespace bmalloc {

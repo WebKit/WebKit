@@ -28,7 +28,7 @@
 
 #include "StaticMutex.h"
 
-// A fast replacement for std::mutex.
+// A fast replacement for std::mutex, for use in standard storage.
 
 namespace bmalloc {
 
@@ -39,6 +39,7 @@ public:
 
 inline Mutex::Mutex()
 {
+    // StaticMutex requires explicit initialization when used in non-static storage.
     init();
 }
 

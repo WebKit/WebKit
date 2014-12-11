@@ -1,3 +1,59 @@
+2014-12-11  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc should support system memory analysis tools (part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=139559
+
+        Reviewed by Mark Lam.
+
+        This patch adds the hooks to disable bmalloc at runtime if certain
+        environment variables are set, but doesn't actually read from the
+        environment yet.
+
+        No performance change.
+
+        * bmalloc.xcodeproj/project.pbxproj: Added the Environment class, which
+        we'll use to read environment variables and see if memory analysis tools
+        have been enabled.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::allocateSlowCase): Added a hook to disable bmalloc
+        on the allocation path. We cache the setting to make the check fast.
+
+        * bmalloc/Allocator.h: Interface changes.
+
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::Cache): Pass a heap pointer through to our allocator
+        and deallocator. This main purpose is to enable them to query the
+        environment for whether bmalloc is enabled; but this is also a slightly
+        cleaner way to guarantee to them that the Heap has been pre-initialized.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator): If bmalloc is disable, artificially
+        fill the object log to force us to take the slow path on all deallocations.
+
+        (bmalloc::Deallocator::deallocateSlowCase): Do the disabled check.
+
+        * bmalloc/Deallocator.h: Interface changes.
+
+        * bmalloc/Environment.cpp: Added.
+        (bmalloc::Environment::Environment):
+        (bmalloc::Environment::computeIsBmallocEnabled):
+        * bmalloc/Environment.h: Added.
+        (bmalloc::Environment::isBmallocEnabled): This is the class that will
+        encapsulate looking for environment variables that turn on heap
+        analysis tools.
+
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::environment):
+
+        * bmalloc/Mutex.h:
+        (bmalloc::Mutex::Mutex):
+        * bmalloc/StaticMutex.h: A little refactoring to clarify these comments,
+        since I got super confused about them while writing this patch.
+
+        * bmalloc/VMHeap.cpp: Fixed an #include.
+
 2014-12-09  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in ANGLE, bmalloc, gtest, JavaScriptCore, WTF

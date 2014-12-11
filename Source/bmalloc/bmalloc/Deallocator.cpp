@@ -38,8 +38,14 @@ using namespace std;
 
 namespace bmalloc {
 
-Deallocator::Deallocator()
+Deallocator::Deallocator(Heap* heap)
+    : m_isBmallocEnabled(heap->environment().isBmallocEnabled())
 {
+    if (!m_isBmallocEnabled) {
+        // Fill the object log in order to disable the fast path.
+        while (m_objectLog.size() != m_objectLog.capacity())
+            m_objectLog.push(nullptr);
+    }
 }
 
 Deallocator::~Deallocator()
@@ -86,6 +92,11 @@ void Deallocator::processObjectLog()
 void Deallocator::deallocateSlowCase(void* object)
 {
     BASSERT(!deallocateFastCase(object));
+    
+    if (!m_isBmallocEnabled) {
+        free(object);
+        return;
+    }
 
     if (!object)
         return;

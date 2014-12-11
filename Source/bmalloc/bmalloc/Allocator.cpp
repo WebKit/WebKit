@@ -35,8 +35,9 @@ using namespace std;
 
 namespace bmalloc {
 
-Allocator::Allocator(Deallocator& deallocator)
-    : m_deallocator(deallocator)
+Allocator::Allocator(Heap* heap, Deallocator& deallocator)
+    : m_isBmallocEnabled(heap->environment().isBmallocEnabled())
+    , m_deallocator(deallocator)
 {
     for (unsigned short size = alignment; size <= mediumMax; size += alignment)
         m_bumpAllocators[sizeClass(size)].init(size);
@@ -103,6 +104,9 @@ NO_INLINE void* Allocator::allocateXLarge(size_t size)
 
 void* Allocator::allocateSlowCase(size_t size)
 {
+    if (!m_isBmallocEnabled)
+        return malloc(size);
+
     if (size <= mediumMax) {
         size_t sizeClass = bmalloc::sizeClass(size);
         BumpAllocator& allocator = m_bumpAllocators[sizeClass];
