@@ -38,9 +38,9 @@ try:
 except ValueError as e:
     sys.exit(e)
 
-dependencies_path = jhbuildutils.get_dependencies_path()
-installation_prefix = os.path.abspath(os.path.join(dependencies_path + platform.upper(), 'Root'))
-source_path = os.path.abspath(os.path.join(dependencies_path + platform.upper(), 'Source'))
+dependencies_path = jhbuildutils.get_dependencies_path(platform)
+installation_prefix = os.path.abspath(os.path.join(dependencies_path, 'Root'))
+source_path = os.path.abspath(os.path.join(dependencies_path, 'Source'))
 jhbuild_source_path = os.path.join(source_path, 'jhbuild')
 jhbuild_path = os.path.join(installation_prefix, 'bin', 'jhbuild')
 

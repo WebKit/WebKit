@@ -13,11 +13,12 @@ def top_level_path(*args):
     return os.path.join(*(top_level_dir,) + args)
 
 
-def get_dependencies_path():
+def get_dependencies_path(platform):
+    dependencies_dir = "%s%s" % ('Dependencies', platform.upper())
     if 'WEBKIT_OUTPUTDIR' in os.environ:
-        return os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies'))
+        return os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], dependencies_dir))
     else:
-        return os.path.abspath(top_level_path('WebKitBuild', 'Dependencies'))
+        return os.path.abspath(top_level_path('WebKitBuild', dependencies_dir))
 
 
 def get_config_file_for_platform(platform):
@@ -25,19 +26,19 @@ def get_config_file_for_platform(platform):
 
 
 def enter_jhbuild_environment_if_available(platform):
-    if not os.path.exists(get_dependencies_path()):
+    if not os.path.exists(get_dependencies_path(platform)):
         return False
 
     # Sometimes jhbuild chooses to install in a way that reads the library from the source directory, so fall
     # back to that method.
-    source_path = os.path.join(get_dependencies_path(), "Source", "jhbuild")
+    source_path = os.path.join(get_dependencies_path(platform), "Source", "jhbuild")
     sys.path.insert(0, source_path)
 
     # When loading jhbuild from the source checkout it fails if the SRCDIR variable is not set.
     __builtin__.__dict__['SRCDIR'] = source_path
 
     # We don't know the Python version, so we just assume that we can safely take the first one in the list.
-    site_packages_path = glob.glob(os.path.join(get_dependencies_path(), "Root", "lib", "*", "site-packages"))
+    site_packages_path = glob.glob(os.path.join(get_dependencies_path(platform), "Root", "lib", "*", "site-packages"))
     if len(site_packages_path):
        site_packages_path = site_packages_path[0]
        sys.path.insert(0, site_packages_path)

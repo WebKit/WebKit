@@ -1,3 +1,18 @@
+2014-12-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] REGRESSION(r175555) GTK API Tests run outside the JHBuild.
+        https://bugs.webkit.org/show_bug.cgi?id=139537
+
+        Reviewed by Carlos Garcia Campos.
+
+        * jhbuild/jhbuild-wrapper: Pass the port name in the invocation
+        of get_dependencies_path().
+        * jhbuild/jhbuildutils.py:
+        (get_dependencies_path): Fix the function to return the new
+        dependencies path: DependenciesPORT.
+        (enter_jhbuild_environment_if_available): Pass the port name
+        when invoking get_dependencies_path().
+
 2014-12-10  Lucas Forschler  <lforschler@apple.com>
 
         Update Apple owned build slaves.
