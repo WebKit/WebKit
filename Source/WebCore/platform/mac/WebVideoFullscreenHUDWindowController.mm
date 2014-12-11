@@ -30,8 +30,8 @@
 
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
+#import <WebCore/HTMLVideoElement.h>
 #import <WebCoreSystemInterface.h>
-#import <WebCore/HTMLMediaElement.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
@@ -406,8 +406,8 @@ static NSTextField *createTimeTextField(NSRect frame)
 {
     ASSERT(_isScrubbing);
     _isScrubbing = NO;
-    if (HTMLMediaElement* mediaElement = [_delegate mediaElement])
-        mediaElement->endScrubbing();
+    if (HTMLVideoElement* videoElement = [_delegate videoElement])
+        videoElement->endScrubbing();
 }
 
 - (void)timelinePositionChanged:(id)sender
@@ -416,8 +416,8 @@ static NSTextField *createTimeTextField(NSRect frame)
     [self setCurrentTime:[_timeline floatValue]];
     if (!_isScrubbing) {
         _isScrubbing = YES;
-        if (HTMLMediaElement* mediaElement = [_delegate mediaElement])
-            mediaElement->beginScrubbing();
+        if (HTMLVideoElement* videoElement = [_delegate videoElement])
+            videoElement->beginScrubbing();
         static NSArray *endScrubbingModes = [[NSArray alloc] initWithObjects:NSDefaultRunLoopMode, NSModalPanelRunLoopMode, nil];
         // Schedule -endScrubbing for when leaving mouse tracking mode.
         [[NSRunLoop currentRunLoop] performSelector:@selector(endScrubbing) target:self argument:nil order:0 modes:endScrubbingModes];
@@ -426,20 +426,20 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (float)currentTime
 {
-    return [_delegate mediaElement] ? [_delegate mediaElement]->currentTime() : 0;
+    return [_delegate videoElement] ? [_delegate videoElement]->currentTime() : 0;
 }
 
 - (void)setCurrentTime:(float)currentTime
 {
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return;
-    [_delegate mediaElement]->setCurrentTime(currentTime);
+    [_delegate videoElement]->setCurrentTime(currentTime);
     [self updateTime];
 }
 
 - (double)duration
 {
-    return [_delegate mediaElement] ? [_delegate mediaElement]->duration() : 0;
+    return [_delegate videoElement] ? [_delegate videoElement]->duration() : 0;
 }
 
 - (float)maxVolume
@@ -468,7 +468,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)decrementVolume
 {
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return;
 
     float volume = [self volume] - 10;
@@ -477,7 +477,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)incrementVolume
 {
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return;
 
     float volume = [self volume] + 10;
@@ -486,16 +486,16 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (float)volume
 {
-    return [_delegate mediaElement] ? [_delegate mediaElement]->volume() * [self maxVolume] : 0;
+    return [_delegate videoElement] ? [_delegate videoElement]->volume() * [self maxVolume] : 0;
 }
 
 - (void)setVolume:(float)volume
 {
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return;
-    if ([_delegate mediaElement]->muted())
-        [_delegate mediaElement]->setMuted(false);
-    [_delegate mediaElement]->setVolume(volume / [self maxVolume], IGNORE_EXCEPTION);
+    if ([_delegate videoElement]->muted())
+        [_delegate videoElement]->setMuted(false);
+    [_delegate videoElement]->setVolume(volume / [self maxVolume], IGNORE_EXCEPTION);
     [self updateVolume];
 }
 
@@ -526,24 +526,24 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (BOOL)playing
 {
-    HTMLMediaElement* mediaElement = [_delegate mediaElement];
-    if (!mediaElement)
+    HTMLVideoElement* videoElement = [_delegate videoElement];
+    if (!videoElement)
         return NO;
 
-    return !mediaElement->canPlay();
+    return !videoElement->canPlay();
 }
 
 - (void)setPlaying:(BOOL)playing
 {
-    HTMLMediaElement* mediaElement = [_delegate mediaElement];
+    HTMLVideoElement* videoElement = [_delegate videoElement];
 
-    if (!mediaElement)
+    if (!videoElement)
         return;
 
     if (playing)
-        mediaElement->play();
+        videoElement->play();
     else
-        mediaElement->pause();
+        videoElement->pause();
 }
 
 static NSString *timeToString(double time)
@@ -566,19 +566,19 @@ static NSString *timeToString(double time)
 
 - (NSString *)remainingTimeText
 {
-    HTMLMediaElement* mediaElement = [_delegate mediaElement];
-    if (!mediaElement)
+    HTMLVideoElement* videoElement = [_delegate videoElement];
+    if (!videoElement)
         return @"";
 
-    return [@"-" stringByAppendingString:timeToString(mediaElement->duration() - mediaElement->currentTime())];
+    return [@"-" stringByAppendingString:timeToString(videoElement->duration() - videoElement->currentTime())];
 }
 
 - (NSString *)elapsedTimeText
 {
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return @"";
 
-    return timeToString([_delegate mediaElement]->currentTime());
+    return timeToString([_delegate videoElement]->currentTime());
 }
 
 // MARK: NSResponder
@@ -601,15 +601,15 @@ static NSString *timeToString(double time)
 - (void)rewind:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return;
-    [_delegate mediaElement]->rewind(30);
+    [_delegate videoElement]->rewind(30);
 }
 
 - (void)fastForward:(id)sender
 {
     UNUSED_PARAM(sender);
-    if (![_delegate mediaElement])
+    if (![_delegate videoElement])
         return;
 }
 

@@ -33,7 +33,7 @@
 #import <AppKit/NSWindowController.h>
 
 namespace WebCore {
-    class HTMLMediaElement;
+class HTMLVideoElement;
 }
 
 @protocol WebVideoFullscreenHUDWindowControllerDelegate;
@@ -65,7 +65,7 @@ namespace WebCore {
 
 @protocol WebVideoFullscreenHUDWindowControllerDelegate <NSObject>
 - (void)requestExitFullscreen;
-- (WebCore::HTMLMediaElement*)mediaElement;
+- (WebCore::HTMLVideoElement*)videoElement;
 @end
 
 #endif
