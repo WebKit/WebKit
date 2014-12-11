@@ -1,3 +1,13 @@
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
+        Add an empty storage namespace provider
+        https://bugs.webkit.org/show_bug.cgi?id=139520
+
+        Reviewed by Tim Horton.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+
 2014-12-10  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.
