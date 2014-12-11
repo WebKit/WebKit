@@ -485,6 +485,7 @@ editing/pasteboard/paste-global-selection.html
 
 # Unexpected WebGL Conformance tests that need to be fixed
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
+webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure Timeout ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
@@ -498,34 +499,6 @@ webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure 
 [ MountainLion ] webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Crash Pass Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
-
-# <rdar://problem/19136723>
-webgl/1.0.2/conformance/attribs/gl-enable-vertex-attrib.html [ Skip ]
-webgl/1.0.2/conformance/attribs/gl-disabled-vertex-attrib.html [ Skip ]
-webgl/1.0.2/conformance/attribs/gl-vertexattribpointer.html [ Skip ]
-webgl/1.0.2/conformance/attribs/gl-vertex-attrib.html [ Skip ]
-webgl/1.0.2/conformance/attribs/gl-vertex-attrib-render.html [ Skip ]
-webgl/1.0.2/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip ]
-webgl/1.0.2/conformance/attribs/gl-vertexattribpointer-offsets.html [ Skip ]
-webgl/1.0.2/conformance/canvas/buffer-offscreen-test.html [ Skip ]
-webgl/1.0.2/conformance/canvas/canvas-test.html [ Skip ]
-webgl/1.0.2/conformance/canvas/buffer-preserve-test.html [ Skip ]
-webgl/1.0.2/conformance/canvas/canvas-zero-size.html [ Skip ]
-webgl/1.0.2/conformance/canvas/drawingbuffer-hd-dpi-test.html [ Skip ]
-webgl/1.0.2/conformance/context/constants.html [ Skip ]
-webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Skip ]
-webgl/1.0.2/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Skip ]
-webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Skip ]
-webgl/1.0.2/conformance/context/context-lost-restored.html [ Skip ]
-webgl/1.0.2/conformance/buffers/index-validation-large-buffer.html [ Skip ]
-webgl/1.0.2/conformance/buffers/index-validation-with-resized-buffer.html [ Skip ]
-webgl/1.0.2/conformance/buffers/index-validation-crash-with-buffer-sub-data.html [ Skip ]
-webgl/1.0.2/conformance/buffers/buffer-data-array-buffer.html [ Skip ]
-webgl/1.0.2/conformance/buffers/index-validation-verifies-too-many-indices.html [ Skip ]
-webgl/1.0.2/conformance/buffers/element-array-buffer-delete-recreate.html [ Skip ]
-webgl/1.0.2/conformance/buffers/index-validation.html [ Skip ]
-webgl/1.0.2/conformance/buffers/index-validation-copies-indices.html [ Skip ]
-webgl/1.0.2/conformance/buffers/buffer-bind-test.html [ Skip ]
 
 # Skip 1.0.3 tests for now, to be unskipped when we get closer to conformance
 webgl/1.0.3

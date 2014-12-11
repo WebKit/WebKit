@@ -1,5 +1,11 @@
 2014-12-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove expectations that were incorrectly landed in http://trac.webkit.org/changeset/176778
+
+        * platform/mac/TestExpectations:
+
+2014-12-10  Alexey Proskuryakov  <ap@apple.com>
+
         Fix a typo in the rpevious commit.
 
         * platform/mac-wk1/TestExpectations:
