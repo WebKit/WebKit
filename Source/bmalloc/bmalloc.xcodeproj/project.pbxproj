@@ -18,7 +18,7 @@
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14895D911A3A319C0006235D /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14895D8F1A3A319C0006235D /* Environment.cpp */; };
-		14895D921A3A319C0006235D /* Environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 14895D901A3A319C0006235D /* Environment.h */; };
+		14895D921A3A319C0006235D /* Environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 14895D901A3A319C0006235D /* Environment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C919C818FCC59F0028DB43 /* BPlatform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
 		14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8818CD17CE002201E4 /* LargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
