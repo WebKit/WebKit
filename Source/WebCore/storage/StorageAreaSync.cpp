@@ -28,7 +28,6 @@
 
 #include "FileSystem.h"
 #include "SQLiteDatabaseTracker.h"
-#include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "StorageAreaImpl.h"
@@ -525,7 +524,7 @@ void StorageAreaSync::deleteEmptyDatabase()
             });
         } else {
             String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
-            if (!SQLiteFileSystem::deleteDatabaseFile(databaseFilename))
+            if (!deleteFile(databaseFilename))
                 LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());
         }
     }

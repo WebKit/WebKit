@@ -1,3 +1,24 @@
+2014-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Stop using SQLiteFileSystem in the storage code
+        https://bugs.webkit.org/show_bug.cgi?id=139549
+
+        Reviewed by Sam Weinig.
+
+        Just inline the SQLiteFileSystem calls into their respective call sites.
+        This is more preparation for moving the old storage code into WebKit proper.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::deleteEmptyDatabase):
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::trackerDatabasePath):
+        (WebCore::ensureDatabaseFileExists):
+        (WebCore::StorageTracker::openTrackerDatabase):
+        (WebCore::truncateDatabaseFile):
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        (WebCore::StorageTracker::diskUsageForOrigin):
+
 2014-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed, rolling out r177155.

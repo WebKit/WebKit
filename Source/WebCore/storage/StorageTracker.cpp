@@ -29,7 +29,6 @@
 #include "FileSystem.h"
 #include "PageGroup.h"
 #include "SQLiteDatabaseTracker.h"
-#include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SecurityOrigin.h"
 #include "StorageThread.h"
@@ -39,6 +38,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(IOS)
+#include <sqlite3_private.h>
+#endif
 
 namespace WebCore {
 
@@ -123,7 +126,15 @@ String StorageTracker::databaseDirectoryPath() const
 String StorageTracker::trackerDatabasePath()
 {
     ASSERT(!m_databaseMutex.tryLock());
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_storageDirectoryPath, "StorageTracker.db");
+    return pathByAppendingComponent(m_storageDirectoryPath, "StorageTracker.db");
+}
+
+static bool ensureDatabaseFileExists(const String& fileName, bool createIfDoesNotExist)
+{
+    if (createIfDoesNotExist)
+        return makeAllDirectories(directoryName(fileName));
+
+    return fileExists(fileName);
 }
 
 void StorageTracker::openTrackerDatabase(bool createIfDoesNotExist)
@@ -140,7 +151,7 @@ void StorageTracker::openTrackerDatabase(bool createIfDoesNotExist)
     
     String databasePath = trackerDatabasePath();
     
-    if (!SQLiteFileSystem::ensureDatabaseFileExists(databasePath, createIfDoesNotExist)) {
+    if (!ensureDatabaseFileExists(databasePath, createIfDoesNotExist)) {
         if (createIfDoesNotExist)
             LOG_ERROR("Failed to create database file '%s'", databasePath.ascii().data());
         return;
@@ -392,7 +403,14 @@ void StorageTracker::deleteAllOrigins()
         syncDeleteAllOrigins();
     });
 }
-    
+
+#if PLATFORM(IOS)
+static void truncateDatabaseFile(SQLiteDatabase& database)
+{
+    sqlite3_file_control(database.sqlite3Handle(), 0, SQLITE_TRUNCATE_DATABASE, 0);
+}
+#endif
+
 void StorageTracker::syncDeleteAllOrigins()
 {
     ASSERT(!isMainThread());
@@ -416,7 +434,7 @@ void StorageTracker::syncDeleteAllOrigins()
         if (!canDeleteOrigin(statement.getColumnText(0)))
             continue;
 
-        SQLiteFileSystem::deleteDatabaseFile(statement.getColumnText(1));
+        deleteFile(statement.getColumnText(1));
 
         {
             MutexLocker locker(m_clientMutex);
@@ -430,13 +448,13 @@ void StorageTracker::syncDeleteAllOrigins()
 
     if (m_database.isOpen()) {
 #if PLATFORM(IOS)
-        SQLiteFileSystem::truncateDatabaseFile(m_database.sqlite3Handle());
+        truncateDatabaseFile(m_database.sqlite3Handle());
 #endif
         m_database.close();
     }
 
 #if !PLATFORM(IOS)
-    if (!SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath())) {
+    if (!deleteFile(trackerDatabasePath())) {
         // In the case where it is not possible to delete the database file (e.g some other program
         // like a virus scanner is accessing it), make sure to remove all entries.
         openTrackerDatabase(false);
@@ -452,7 +470,7 @@ void StorageTracker::syncDeleteAllOrigins()
             return;
         }
     }
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
+    deleteEmptyDirectory(m_storageDirectoryPath);
 #endif
 }
 
@@ -527,7 +545,7 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
         return;
     }
 
-    SQLiteFileSystem::deleteDatabaseFile(path);
+    deleteFile(path);
     
     bool shouldDeleteTrackerFiles = false;
     {
@@ -538,12 +556,12 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
 
     if (shouldDeleteTrackerFiles) {
 #if PLATFORM(IOS)
-        SQLiteFileSystem::truncateDatabaseFile(m_database.sqlite3Handle());
+        truncateDatabaseFile(m_database);
 #endif
         m_database.close();
 #if !PLATFORM(IOS)
-        SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
-        SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
+        deleteFile(trackerDatabasePath());
+        deleteEmptyDirectory(m_storageDirectoryPath);
 #endif
     }
 
@@ -635,7 +653,8 @@ long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
     if (path.isEmpty())
         return 0;
 
-    return SQLiteFileSystem::getDatabaseFileSize(path);
+    long long size;
+    return getFileSize(path, size) ? size : 0;
 }
 
 } // namespace WebCore
