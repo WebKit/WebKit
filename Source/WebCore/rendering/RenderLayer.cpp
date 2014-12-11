@@ -6499,6 +6499,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     updateBlendMode();
 #endif
     updateOrRemoveFilterClients();
+    updateOrRemoveMaskImageClients(oldStyle);
 
     updateNeedsCompositedScrolling();
 
@@ -6651,6 +6652,19 @@ void RenderLayer::updateOrRemoveFilterClients()
         FilterInfo::get(*this).updateReferenceFilterClients(renderer().style().filter());
     else if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
         filterInfo->removeReferenceFilterClients();
+}
+
+void RenderLayer::updateOrRemoveMaskImageClients(const RenderStyle* oldStyle)
+{
+    if (oldStyle && oldStyle->maskImage().get()) {
+        if (MaskImageInfo* maskImageInfo = MaskImageInfo::getIfExists(*this))
+            maskImageInfo->removeMaskImageClients(*oldStyle);
+    }
+
+    if (renderer().style().maskImage().get())
+        MaskImageInfo::get(*this).updateMaskImageClients();
+    else if (MaskImageInfo* maskImageInfo = MaskImageInfo::getIfExists(*this))
+        maskImageInfo->removeMaskImageClients(renderer().style());
 }
 
 void RenderLayer::updateOrRemoveFilterEffectRenderer()

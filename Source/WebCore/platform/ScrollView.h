@@ -410,7 +410,6 @@ protected:
     // Subclassed by FrameView to check the writing-mode of the document.
     virtual bool isVerticalDocument() const { return true; }
     virtual bool isFlippedDocument() const { return false; }
-    virtual bool containsSVGDocument() const { return false; }
 
     // Called to update the scrollbars to accurately reflect the state of the view.
     void updateScrollbars(const IntSize& desiredOffset);

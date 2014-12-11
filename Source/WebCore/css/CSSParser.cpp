@@ -83,6 +83,7 @@
 #include "TextEncoding.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSRegionRule.h"
+#include "WebKitCSSResourceValue.h"
 #include "WebKitCSSTransformValue.h"
 #include <bitset>
 #include <limits.h>
@@ -3358,6 +3359,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
                 RefPtr<CSSValue> val2;
                 CSSPropertyID propId1, propId2;
                 CSSParserValue& parserValue = *m_valueList->current();
+
                 if (parseFillProperty(properties[i], propId1, propId2, val1, val2)) {
                     parsedProperty[i] = found = true;
                     addFillValue(values[i], val1.releaseNonNull());
@@ -4446,8 +4448,11 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     }
                     break;
                 case CSSPropertyBackgroundImage:
-                case CSSPropertyWebkitMaskImage:
                     if (parseFillImage(*m_valueList, currValue))
+                        m_valueList->next();
+                    break;
+                case CSSPropertyWebkitMaskImage:
+                    if (parseMaskImage(*m_valueList, currValue))
                         m_valueList->next();
                     break;
                 case CSSPropertyWebkitBackgroundClip:
@@ -9425,6 +9430,23 @@ bool CSSParser::parseFilter(CSSParserValueList& valueList, RefPtr<CSSValue>& res
     result = list;
 
     return true;
+}
+
+bool CSSParser::parseMaskImage(CSSParserValueList& valueList, RefPtr<CSSValue>& outValue)
+{
+    outValue = nullptr;
+    CSSParserValue* value = valueList.current();
+    if (value->id == CSSValueNone)
+        outValue = WebKitCSSResourceValue::create(cssValuePool().createIdentifierValue(CSSValueNone));
+    else if (value->unit == CSSPrimitiveValue::CSS_URI)
+        outValue = WebKitCSSResourceValue::create(CSSPrimitiveValue::create(completeURL(value->string), CSSPrimitiveValue::CSS_URI));
+    else {
+        RefPtr<CSSValue> fillImageValue;
+        if (parseFillImage(valueList, fillImageValue))
+            outValue = WebKitCSSResourceValue::create(fillImageValue);
+    }
+
+    return outValue.get();
 }
 
 #if ENABLE(CSS_REGIONS)

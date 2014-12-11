@@ -2,24 +2,20 @@
 <html lang="en">
     <head>
         <style>
-            #back {
-                width: 600px;
-                height: 500px;
-                background-color: green;
+            p {
+                margin: 0px;
             }
             #front {
-                width: 400px;
-                height: 300px;
-                background-color: red;
-                border: 50px solid blue;
-                padding: 50px;
+                width: 200px;
+                height: 160px;
+                background-color: green;
                 -webkit-mask-repeat: no-repeat;
-                -webkit-mask-origin: padding-box;
-                -webkit-mask-clip: padding-box;
+                -webkit-mask-origin: content-box;
+                -webkit-mask-clip: content-box;
             }
         </style>
         <script>
-            var sizeX = 100, sizeY = 80, spaceX = 0, spaceY = 0, width = 700, height = 600;
+            var sizeX = 50, sizeY = 40, spaceX = 0, spaceY = 0, width = 200, height = 160;
 
             var urls = Array(), size = Array(), position = Array();
 
@@ -42,9 +38,9 @@
     </head>
 
     <body onload="addMasks()">
-        <div id="back">
-            <div id="front" />
-        </div>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=129682">Bug 129682</a> - On success, you should see a 4x4 grid of green circles.</p>
+        <p>This test sets the mask-image value using base64.</p>
+        <div id="front"></div>
     </body>
 </html>
 

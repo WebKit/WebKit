@@ -68,9 +68,8 @@ public:
     explicit FillLayer(EFillLayerType);
     ~FillLayer();
 
+    StyleImage* image() const { return hasMaskImage() ? maskImage()->image() : m_image.get(); }
     const RefPtr<MaskImageOperation>& maskImage() const { return m_maskImageOperation; }
-    StyleImage* image() const { return m_image.get(); }
-    StyleImage* imageOrMaskImage() const { return hasMaskImage() ? maskImage()->image() : image(); }
     const Length& xPosition() const { return m_xPosition; }
     const Length& yPosition() const { return m_yPosition; }
     BackgroundEdgeOrigin backgroundXOrigin() const { return static_cast<BackgroundEdgeOrigin>(m_backgroundXOrigin); }
@@ -182,6 +181,8 @@ private:
 
     std::unique_ptr<FillLayer> m_next;
 
+    // FIXME: A FillLayer will always have at least one of these pointers null.
+    // Maybe we could group them together somehow and decrease the size of FillLayer.
     RefPtr<MaskImageOperation> m_maskImageOperation;
     RefPtr<StyleImage> m_image;
 
