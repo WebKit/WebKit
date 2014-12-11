@@ -1,3 +1,27 @@
+2014-12-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r174642): Watchdog timer expiration reported as DumpRenderTree.app
+        timeout instead of test failure
+        https://bugs.webkit.org/show_bug.cgi?id=139525
+
+        Reviewed by Zalan Bujtas.
+
+        Increase the default process timeout limit in run-webkit-tests to 80ms to prevent
+        run-webkit-tests from prematurely terminating DumpRenderTree.app before it dumps
+        output.
+
+        Following <http://trac.webkit.org/changeset/174642>, DumpRenderTree.app waits
+        for the WebThread to spin its run loop before dumping its output. A test that
+        calls testRunner.waitUntilDone() and does not subsequently call testRunner.notifyDone()
+        before DumpRenderTree.app's watchdog timer expires may be incorrectly reported
+        by run-webkit-tests as a DumpRenderTree.app timeout instead of a test failure
+        because run-webkit-tests may terminate a DumpRenderTree.app process when it
+        exceeds its process time limit (defaults to 35ms) regardless of whether such
+        a DumpRenderTree.app process was waiting for the WebThread to run so as to dump output.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_timeout_ms):
+
 2014-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK][WK2] Add HTML5 Notifications support

@@ -82,6 +82,11 @@ class IOSSimulatorPort(Port):
     def default_timeout_ms(self):
         if self.get_option('guard_malloc'):
             return 350 * 1000
+        if not self.get_option('webkit_test_runner'):
+            # DumpRenderTree.app waits for the WebThread to run before dumping its output.  In practice
+            # it seems sufficient to wait up to 80ms to ensure that the WebThread ran and hence output
+            # for the test is dumped.
+            return 80 * 1000
         return super(IOSSimulatorPort, self).default_timeout_ms()
 
     def supports_per_test_timeout(self):
