@@ -26,11 +26,7 @@
 #include "config.h"
 #include "StorageNamespaceImpl.h"
 
-#include "GroupSettings.h"
-#include "Page.h"
-#include "PageGroup.h"
 #include "SecurityOriginHash.h"
-#include "Settings.h"
 #include "StorageAreaImpl.h"
 #include "StorageMap.h"
 #include "StorageSyncManager.h"
@@ -65,32 +61,6 @@ RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamesp
     slot = storageNamespace.get();
 
     return storageNamespace;
-}
-
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(PageGroup* pageGroup)
-{
-    // Need a page in this page group to query the settings for the local storage database path.
-    // Having these parameters attached to the page settings is unfortunate since these settings are
-    // not per-page (and, in fact, we simply grab the settings from some page at random), but
-    // at this point we're stuck with it.
-    Page* page = *pageGroup->pages().begin();
-    const String& path = page->settings().localStorageDatabasePath();
-    unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
-    const String lookupPath = path.isNull() ? emptyString() : path;
-
-    return getOrCreateLocalStorageNamespace(path.isNull() ? emptyString() : path, quota);
-}
-
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(Page* page)
-{
-    return createSessionStorageNamespace(page->settings().sessionStorageQuota());
-}
-
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin*)
-{
-    // FIXME: A smarter implementation would create a special namespace type instead of just piggy-backing off
-    // SessionStorageNamespace here.
-    return StorageNamespaceImpl::sessionStorageNamespace(*pageGroup->pages().begin());
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota)

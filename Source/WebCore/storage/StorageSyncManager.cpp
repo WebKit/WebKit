@@ -26,16 +26,9 @@
 #include "config.h"
 #include "StorageSyncManager.h"
 
-#include "EventNames.h"
 #include "FileSystem.h"
-#include "Frame.h"
-#include "FrameTree.h"
 #include "StorageThread.h"
-#include "Page.h"
-#include "PageGroup.h"
-#include "StorageAreaSync.h"
 #include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

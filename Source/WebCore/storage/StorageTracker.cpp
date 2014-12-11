@@ -26,9 +26,7 @@
 #include "config.h"
 #include "StorageTracker.h"
 
-#include "DatabaseThread.h"
 #include "FileSystem.h"
-#include "Logging.h"
 #include "PageGroup.h"
 #include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"

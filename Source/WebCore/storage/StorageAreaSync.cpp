@@ -26,20 +26,16 @@
 #include "config.h"
 #include "StorageAreaSync.h"
 
-#include "EventNames.h"
 #include "FileSystem.h"
-#include "HTMLElement.h"
 #include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
-#include "SecurityOrigin.h"
 #include "StorageAreaImpl.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
 #include "SuddenTermination.h"
 #include <wtf/MainThread.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 

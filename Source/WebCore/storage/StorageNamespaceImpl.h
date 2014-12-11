@@ -56,11 +56,6 @@ public:
     virtual void sync() override;
     virtual void closeIdleLocalStorageDatabases() override;
 
-    // FIXME: These are all deprecated and should not be called by anyone.
-    static PassRefPtr<StorageNamespace> localStorageNamespace(PageGroup*);
-    static PassRefPtr<StorageNamespace> transientLocalStorageNamespace(PageGroup*, SecurityOrigin*);
-    static PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
-
 private:
     StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 
