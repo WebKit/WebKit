@@ -1174,22 +1174,6 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::IsVisuallyIdle;
 }
 
-void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHandler)())
-{
-    if (!isValid()) {
-        completionHandler();
-        return;
-    }
-
-    auto copiedCompletionHandler = Block_copy(completionHandler);
-    RefPtr<VoidCallback> voidCallback = VoidCallback::create([copiedCompletionHandler] (CallbackBase::Error) {
-        copiedCompletionHandler();
-        Block_release(copiedCompletionHandler);
-    }, std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
-    uint64_t callbackID = m_callbacks.put(voidCallback.release());
-    m_nextViewStateChangeCallbacks.append(callbackID);
-}
-
 void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, bool wantsSynchronousReply, ViewStateChangeDispatchMode dispatchMode)
 {
     m_potentiallyChangedViewStateFlags |= mayHaveChanged;
@@ -5369,6 +5353,22 @@ void WebPageProxy::didPerformActionMenuHitTest(const ActionMenuHitTestResult& re
         return;
 
     m_pageClient.didPerformActionMenuHitTest(result, userData.get());
+}
+
+void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHandler)())
+{
+    if (!isValid()) {
+        completionHandler();
+        return;
+    }
+
+    auto copiedCompletionHandler = Block_copy(completionHandler);
+    RefPtr<VoidCallback> voidCallback = VoidCallback::create([copiedCompletionHandler] (CallbackBase::Error) {
+        copiedCompletionHandler();
+        Block_release(copiedCompletionHandler);
+    }, std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    uint64_t callbackID = m_callbacks.put(voidCallback.release());
+    m_nextViewStateChangeCallbacks.append(callbackID);
 }
 #endif
 

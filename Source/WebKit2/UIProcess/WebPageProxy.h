@@ -372,7 +372,6 @@ public:
 
     enum class ViewStateChangeDispatchMode { Deferrable, Immediate };
     void viewStateDidChange(WebCore::ViewState::Flags mayHaveChanged, bool wantsSynchronousReply = false, ViewStateChangeDispatchMode = ViewStateChangeDispatchMode::Deferrable);
-    void installViewStateChangeCompletionHandler(void(^completionHandler)());
     bool isInWindow() const { return m_viewState & WebCore::ViewState::IsInWindow; }
     void waitForDidUpdateViewState();
     void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
@@ -935,6 +934,8 @@ public:
     void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
+
+    void installViewStateChangeCompletionHandler(void(^completionHandler)());
 #endif
 
 #if PLATFORM(EFL) && HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
