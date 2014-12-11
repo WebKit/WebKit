@@ -1,3 +1,12 @@
+2014-12-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update expected results for LayoutTests/{js, loader, mathml, pageoverlay, scrollbars}
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt: Added.
+        * platform/ios-simulator/scrollbars/scrollbar-selectors-expected.png: Removed.
+
 2014-12-11  Radu Stavila  <stavila@adobe.com>
 
         [SVG Masking] Enable the use of <mask> elements for -webkit-mask-image

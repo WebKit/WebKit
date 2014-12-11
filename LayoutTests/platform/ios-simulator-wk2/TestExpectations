@@ -380,3 +380,35 @@ imported/w3c/css/multicol/multicol-basic-001.html [ ImageOnlyFailure ]
 imported/w3c/css/multicol/multicol-basic-002.html [ ImageOnlyFailure ]
 imported/w3c/css/multicol/multicol-basic-003.html [ ImageOnlyFailure ]
 imported/w3c/css/multicol/multicol-basic-004.html [ ImageOnlyFailure ]
+
+# <rdar://problem/17349058> Assertion in WebProcessProxy::didNavigateWithNavigationData() when running layout tests in WTR
+loader/go-back-cached-main-resource.html
+js/dom/function-constructor-this-value.html
+
+# JavaScript tests that fail:
+js/dom/deep-recursion-test.html [ Failure ]
+js/dom/dfg-inline-resolve.html [ Failure ]
+js/dom/dom-static-property-for-in-iteration.html [ Failure ]
+js/dom/global-constructors-attributes.html [ Failure ]
+js/large-expressions.html [ Failure ]
+
+# Page overlay tests that fail:
+pageoverlay/overlay-large-document-scrolled.html [ Failure ]
+pageoverlay/overlay-large-document.html [ Failure ]
+
+# Scrollbar test that fail:
+scrollbars/scrollbar-miss-mousemove-disabled.html [ Failure ]
+scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
+
+# MathML test that fail due to slight pixel differences:
+mathml/presentation/bug97990.html [ ImageOnlyFailure ]
+mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
+mathml/presentation/semantics.html [ ImageOnlyFailure ]
+mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]

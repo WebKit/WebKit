@@ -49,12 +49,6 @@ inspector/css/pseudo-element-matches.html
 ###
 # Known failures
 ##
-webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
-webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Skip ] # Timeout, Fail
-webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
-webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ Failure ]
-webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
-webkit.org/b/137572 scrollbars/scrollevent-iframe-no-scrolling.html [ Failure ]
 
 # SVG
 webkit.org/b/137574 svg/as-image/svg-nested.html [ Skip ] # Times out
@@ -706,6 +700,44 @@ imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-table-ins
 imported/w3c/html-templates/parsing-html-templates/appending-to-a-template/template-child-nodes.html
 imported/w3c/html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html
 
+# Scrollbar tests that fail:
+webkit.org/b/137572 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
+webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Skip ] # Timeout, Fail
+webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
+webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ Failure ]
+webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
+webkit.org/b/137572 scrollbars/scrollevent-iframe-no-scrolling.html [ Failure ]
+scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrollbar-miss-mousemove-disabled.html [ Failure ]
+scrollbars/custom-scrollbar-with-incomplete-style.html [ Failure ]
+scrollbars/overflow-scrollbar-combinations.html [ Failure ]
+scrollbars/scrollbars-on-positioned-content.html [ Failure ]
+
+# JavaScript tests that fail:
+js/dom/deep-recursion-test.html [ Failure ]
+js/dom/dfg-inline-resolve.html [ Failure ]
+js/dom/dom-static-property-for-in-iteration.html [ Failure ]
+js/dom/global-constructors-attributes.html [ Failure ]
+js/large-expressions.html [ Failure ]
+
+# Page overlay tests that fail:
+pageoverlay/overlay-large-document-scrolled.html [ Failure ]
+pageoverlay/overlay-large-document.html [ Failure ]
+
+# MathML tests that fail:
+mathml/opentype/horizontal.html [ Failure ]
+mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+
+# <rdar://problem/19221067> ASSERT(m_stretchyData.top().glyph) fails in RenderMathMLOperator.cpp
+mathml/presentation/style-changed.html
+
 ###
 # Temporarily skip all others tests
 # We'll un-skip each directory as we land updated/new expected results
@@ -715,17 +747,12 @@ fast
 http
 inspector-obsolete
 inspector-protocol
-js
-loader
-mathml
 media
 mhtml
-pageoverlay
 perf
 platform
 plugins
 resources
-scrollbars
 scrollingcoordinator
 security
 sputnik
