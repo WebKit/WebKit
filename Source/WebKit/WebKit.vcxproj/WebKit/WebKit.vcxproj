@@ -419,6 +419,7 @@
     <ClCompile Include="..\..\win\WebWorkersPrivate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Storage\WebStorageNamespaceProvider.h" />
     <ClInclude Include="..\..\win\AccessibleBase.h" />
     <ClInclude Include="..\..\win\AccessibleDocument.h" />
     <ClInclude Include="..\..\win\AccessibleImage.h" />
@@ -498,7 +499,6 @@
     <ClInclude Include="..\..\win\WebScriptWorld.h" />
     <ClInclude Include="..\..\win\WebSecurityOrigin.h" />
     <ClInclude Include="..\..\win\WebSerializedJSValue.h" />
-    <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.h" />
     <ClInclude Include="..\..\win\WebTextRenderer.h" />
     <ClInclude Include="..\..\win\WebURLAuthenticationChallenge.h" />
     <ClInclude Include="..\..\win\WebURLAuthenticationChallengeSender.h" />
