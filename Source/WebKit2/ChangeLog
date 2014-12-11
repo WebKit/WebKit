@@ -1,3 +1,11 @@
+2014-12-10  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [CMake] Fix build after WebStorageNamespaceProvider
+
+        Unreviewed, fix build.
+
+        * CMakeLists.txt: Add WebStorageNamespaceProvider.cpp to the source list.
+
 2014-12-10  Sanghyup Lee  <sh53.lee@samsung.com>
 
         Build fix for EFL and GTK ports since r177104

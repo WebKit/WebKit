@@ -525,6 +525,7 @@ set(WebKit2_SOURCES
     WebProcess/Storage/StorageAreaImpl.cpp
     WebProcess/Storage/StorageAreaMap.cpp
     WebProcess/Storage/StorageNamespaceImpl.cpp
+    WebProcess/Storage/WebStorageNamespaceProvider.cpp
 
     WebProcess/UserContent/WebUserContentController.cpp
 
