@@ -41,14 +41,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-typedef HashMap<uint64_t, StorageNamespaceImpl*> LocalStorageNamespaceMap;
-
-static LocalStorageNamespaceMap& localStorageNamespaceMap()
-{
-    static NeverDestroyed<LocalStorageNamespaceMap> localStorageNamespaceMap;
-    return localStorageNamespaceMap;
-}
-
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
     return adoptRef(new StorageNamespaceImpl(SessionStorage, identifier, nullptr, quotaInBytes));
@@ -56,14 +48,7 @@ RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {
-    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(identifier, nullptr);
-    if (!result.isNewEntry)
-        return result.iterator->value;
-
-    RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, nullptr, quotaInBytes));
-
-    result.iterator->value = localStorageNamespace.get();
-    return localStorageNamespace.release();
+    return adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, nullptr, quotaInBytes));
 }
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(uint64_t identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
@@ -94,10 +79,6 @@ StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uin
 
 StorageNamespaceImpl::~StorageNamespaceImpl()
 {
-    if (m_storageType == LocalStorage) {
-        ASSERT(localStorageNamespaceMap().contains(m_storageNamespaceID));
-        localStorageNamespaceMap().remove(m_storageNamespaceID);
-    }
 }
 
 PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)

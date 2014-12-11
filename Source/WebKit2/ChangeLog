@@ -1,3 +1,28 @@
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
+        Switch WebKit2 over to using the storage namespace provider
+        https://bugs.webkit.org/show_bug.cgi?id=139509
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::~StorageNamespaceImpl):
+        (WebKit::localStorageNamespaceMap): Deleted.
+        Get rid of the storage namespace map - we have a map inside WebStorageNamespaceProvider now.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createStorageStrategy):
+        (WebKit::WebPlatformStrategies::populatePluginCache): Deleted.
+        (WebKit::WebPlatformStrategies::localStorageNamespace): Deleted.
+        (WebKit::WebPlatformStrategies::transientLocalStorageNamespace): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Get rid of the storage strategy.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Set a storage namespace provider.
+
 2014-12-10  Beth Dakin  <bdakin@apple.com>
 
          Follow-up build fix.

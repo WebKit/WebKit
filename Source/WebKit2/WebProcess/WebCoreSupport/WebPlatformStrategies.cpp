@@ -31,7 +31,6 @@
 #include "NetworkResourceLoadParameters.h"
 #include "PluginInfoStore.h"
 #include "SessionTracker.h"
-#include "StorageNamespaceImpl.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -118,7 +117,8 @@ SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
 
 StorageStrategy* WebPlatformStrategies::createStorageStrategy()
 {
-    return this;
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 // CookiesStrategy
@@ -332,25 +332,6 @@ void WebPlatformStrategies::populatePluginCache()
     m_pluginCacheIsPopulated = true;
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-// StorageStrategy
-
-PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(PageGroup* pageGroup)
-{
-    return StorageNamespaceImpl::createLocalStorageNamespace(pageGroup);
-}
-
-PassRefPtr<StorageNamespace> WebPlatformStrategies::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin*securityOrigin)
-{
-    UNUSED_PARAM(securityOrigin);
-    // FIXME: This could be more clever and made to work across processes.
-    return StorageStrategy::sessionStorageNamespace(*pageGroup->pages().begin());
-}
-
-PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page)
-{
-    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(page));
-}
 
 #if PLATFORM(COCOA)
 // PasteboardStrategy
