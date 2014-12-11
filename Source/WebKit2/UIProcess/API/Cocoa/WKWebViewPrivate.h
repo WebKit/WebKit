@@ -29,6 +29,7 @@
 
 typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstLayout = 1 << 0,
+    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout = 1 << 1,
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
     _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA) = 1 << 3
 } WK_ENUM_AVAILABLE(10_10, 8_0);

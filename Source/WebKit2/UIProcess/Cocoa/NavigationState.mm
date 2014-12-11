@@ -670,6 +670,9 @@ static _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilesto
     if (milestones & WebCore::DidFirstLayout)
         events |= _WKRenderingProgressEventFirstLayout;
 
+    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
+        events |= _WKRenderingProgressEventFirstVisuallyNonEmptyLayout;
+
     if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
         events |= _WKRenderingProgressEventFirstPaintWithSignificantArea;
 

@@ -34,6 +34,9 @@ static inline WKRenderingProgressEvents renderingProgressEvents(WKLayoutMileston
     if (milestones & kWKDidFirstLayout)
         events |= WKRenderingProgressEventFirstLayout;
 
+    if (milestones & kWKDidFirstVisuallyNonEmptyLayout)
+        events |= WKRenderingProgressEventFirstVisuallyNonEmptyLayout;
+
     if (milestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
         events |= WKRenderingProgressEventFirstPaintWithSignificantArea;
 

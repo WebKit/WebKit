@@ -1822,6 +1822,9 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     if (events & _WKRenderingProgressEventFirstLayout)
         milestones |= WebCore::DidFirstLayout;
 
+    if (events & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
+        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+
     if (events & _WKRenderingProgressEventFirstPaintWithSignificantArea)
         milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
 
