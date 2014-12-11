@@ -77,6 +77,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_transientZoomScale(1)
     , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired)
+    , m_wantsDidUpdateViewState(false)
     , m_viewOverlayRootLayer(nullptr)
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);
@@ -325,8 +326,11 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     return returnValue;
 }
 
-void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed, bool wantsDidUpdateViewState)
+void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed, bool wantsDidUpdateViewState, const Vector<uint64_t>& nextViewStateChangeCallbackIDs)
 {
+    m_nextViewStateChangeCallbackIDs.appendVector(nextViewStateChangeCallbackIDs);
+    m_wantsDidUpdateViewState |= wantsDidUpdateViewState;
+
     if (changed & ViewState::IsVisible) {
         if (m_webPage.isVisible())
             resumePainting();
@@ -334,14 +338,22 @@ void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed,
             suspendPainting();
     }
 
-    if (wantsDidUpdateViewState)
+    if (m_wantsDidUpdateViewState || !m_nextViewStateChangeCallbackIDs.isEmpty())
         m_sendDidUpdateViewStateTimer.startOneShot(0);
 }
 
 void TiledCoreAnimationDrawingArea::didUpdateViewStateTimerFired()
 {
     [CATransaction flush];
-    m_webPage.send(Messages::WebPageProxy::DidUpdateViewState());
+
+    if (m_wantsDidUpdateViewState)
+        m_webPage.send(Messages::WebPageProxy::DidUpdateViewState());
+
+    for (uint64_t callbackID : m_nextViewStateChangeCallbackIDs)
+        m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
+
+    m_nextViewStateChangeCallbackIDs.clear();
+    m_wantsDidUpdateViewState = false;
 }
 
 void TiledCoreAnimationDrawingArea::suspendPainting()

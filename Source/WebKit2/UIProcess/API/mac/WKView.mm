@@ -227,6 +227,7 @@ struct WKViewInterpretKeyEventsParameters {
     
     unsigned _frameSizeUpdatesDisabledCount;
     BOOL _shouldDeferViewInWindowChanges;
+    NSWindow *_targetWindowForMovePreparation;
 
     BOOL _viewInWindowChangeWasDeferred;
 
@@ -2497,7 +2498,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)removeWindowObservers
 {
-    NSWindow *window = [self window];
+    NSWindow *window = _data->_targetWindowForMovePreparation ? _data->_targetWindowForMovePreparation : [self window];
     if (!window)
         return;
 
@@ -2524,6 +2525,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
+    // If we're in the middle of preparing to move to a window, we should only be moved to that window.
+    ASSERT(!_data->_targetWindowForMovePreparation || (_data->_targetWindowForMovePreparation == window));
+
     NSWindow *currentWindow = [self window];
     if (window == currentWindow)
         return;
@@ -2536,7 +2540,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)viewDidMoveToWindow
 {
-    if ([self window]) {
+    NSWindow *window = _data->_targetWindowForMovePreparation ? _data->_targetWindowForMovePreparation : self.window;
+
+    if (window) {
         [self doWindowDidChangeScreen];
 
         ViewState::Flags viewStateChanges = ViewState::WindowIsActive | ViewState::IsVisible;
@@ -2580,7 +2586,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)doWindowDidChangeScreen
 {
-    _data->_page->windowScreenDidChange((PlatformDisplayID)[[[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
+    NSWindow *window = _data->_targetWindowForMovePreparation ? _data->_targetWindowForMovePreparation : self.window;
+    _data->_page->windowScreenDidChange((PlatformDisplayID)[[[[window screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -2817,8 +2824,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (float)_intrinsicDeviceScaleFactor
 {
-    NSWindow *window = [self window];
-    if (window)
+    if (_data->_targetWindowForMovePreparation)
+        return [_data->_targetWindowForMovePreparation backingScaleFactor];
+    if (NSWindow *window = [self window])
         return [window backingScaleFactor];
     return [[NSScreen mainScreen] backingScaleFactor];
 }
@@ -2863,8 +2871,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (WebKit::ColorSpaceData)_colorSpace
 {
     if (!_data->_colorSpace) {
-        if ([self window])
-            _data->_colorSpace = [[self window] colorSpace];
+        if (_data->_targetWindowForMovePreparation)
+            _data->_colorSpace = [_data->_targetWindowForMovePreparation colorSpace];
+        else if (NSWindow *window = [self window])
+            _data->_colorSpace = [window colorSpace];
         else
             _data->_colorSpace = [[NSScreen mainScreen] colorSpace];
     }
@@ -3998,6 +4008,31 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_page->viewStateDidChange(ViewState::IsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
+}
+
+- (void)_prepareForMoveToWindow:(NSWindow *)targetWindow withCompletionHandler:(void(^)(void))completionHandler
+{
+    _data->_shouldDeferViewInWindowChanges = YES;
+    [self viewWillMoveToWindow:targetWindow];
+    _data->_targetWindowForMovePreparation = targetWindow;
+    [self viewDidMoveToWindow];
+
+    _data->_shouldDeferViewInWindowChanges = NO;
+
+    _data->_page->installViewStateChangeCompletionHandler(^() {
+        completionHandler();
+        ASSERT(self.window == _data->_targetWindowForMovePreparation);
+        _data->_targetWindowForMovePreparation = nil;
+    });
+
+    [self _dispatchSetTopContentInset];
+    _data->_page->viewStateDidChange(ViewState::IsInWindow, false, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
+    _data->_viewInWindowChangeWasDeferred = NO;
+}
+
+- (NSWindow *)_targetWindowForMovePreparation
+{
+    return _data->_targetWindowForMovePreparation;
 }
 
 - (BOOL)isDeferringViewInWindowChanges
