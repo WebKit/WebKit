@@ -1,3 +1,16 @@
+2014-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Initialize m_ownsGeneratedFile when decoding a FormDataElement
+        https://bugs.webkit.org/show_bug.cgi?id=139566
+
+        Reviewed by Tim Horton.
+
+        No tests, because it's random, and I couldn't reproduce an assertion failure in
+        controlled circumstances.
+
+        * platform/network/FormData.h: (WebCore::FormDataElement::decode): A newly created
+        FormDataElement by definition doesn't own the file.
+
 2014-12-11  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
