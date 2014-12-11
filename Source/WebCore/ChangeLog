@@ -1,5 +1,11 @@
 2014-12-10  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix.
+
+        * platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+
+2014-12-10  Beth Dakin  <bdakin@apple.com>
+
         WK2: Add initial support for immediate actions
         https://bugs.webkit.org/show_bug.cgi?id=139511
 

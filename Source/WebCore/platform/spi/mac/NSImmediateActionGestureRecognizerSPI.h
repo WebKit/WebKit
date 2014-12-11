@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+#import <AppKit/NSGestureRecognizer.h>
+
 #if __has_include(<AppKit/NSImmediateActionGestureRecognizer.h>)
 
 #import <AppKit/NSImmediateActionGestureRecognizer.h>
@@ -32,4 +36,6 @@
 @interface NSImmediateActionGestureRecognizer : NSGestureRecognizer
 @end
 
-#endif
+#endif // __has_include(<AppKit/NSImmediateActionGestureRecognizer.h>)
+
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
