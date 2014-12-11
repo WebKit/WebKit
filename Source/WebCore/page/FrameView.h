@@ -527,6 +527,7 @@ protected:
 
     virtual bool isVerticalDocument() const override;
     virtual bool isFlippedDocument() const override;
+    virtual bool containsSVGDocument() const override;
 
 private:
     explicit FrameView(Frame&);

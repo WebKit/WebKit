@@ -1794,8 +1794,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
         case CSSPropertyBackgroundColor:
             return cssValuePool().createColorValue(m_allowVisitedStyle? style->visitedDependentColor(CSSPropertyBackgroundColor).rgb() : style->backgroundColor().rgb());
-        case CSSPropertyBackgroundImage: {
-            const FillLayer* layers = style->backgroundLayers();
+        case CSSPropertyBackgroundImage:
+        case CSSPropertyWebkitMaskImage: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskImage ? style->maskLayers() : style->backgroundLayers();
             if (!layers)
                 return cssValuePool().createIdentifierValue(CSSValueNone);
 
@@ -1810,27 +1811,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
                 if (currLayer->image())
                     list->append(*currLayer->image()->cssValue());
-                else
-                    list->append(cssValuePool().createIdentifierValue(CSSValueNone));
-            }
-            return list.release();
-        }
-        case CSSPropertyWebkitMaskImage: {
-            const FillLayer* layers = style->maskLayers();
-            if (!layers)
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-
-            if (!layers->next()) {
-                if (layers->maskImage().get())
-                    return layers->maskImage()->cssValue();
-
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            }
-
-            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
-                if (currLayer->maskImage().get())
-                    list->append(*currLayer->maskImage()->cssValue());
                 else
                     list->append(cssValuePool().createIdentifierValue(CSSValueNone));
             }

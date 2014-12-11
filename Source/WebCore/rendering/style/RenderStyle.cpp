@@ -830,28 +830,6 @@ bool RenderStyle::diffRequiresLayerRepaint(const RenderStyle& style, bool isComp
 
     return false;
 }
-    
-void RenderStyle::setMaskImage(const Vector<RefPtr<MaskImageOperation>>& ops)
-{
-    FillLayer* curLayer = &rareNonInheritedData.access()->m_mask;
-    while (curLayer) {
-        curLayer->setMaskImage(nullptr);
-        curLayer = curLayer->next();
-    }
-
-    curLayer = &rareNonInheritedData.access()->m_mask;
-    FillLayer* prevLayer = nullptr;
-    for (auto& maskImage : ops) {
-        if (!curLayer) {
-            prevLayer->setNext(std::make_unique<FillLayer>(MaskFillLayer));
-            curLayer = prevLayer->next();
-        }
-
-        curLayer->setMaskImage(maskImage);
-        prevLayer = curLayer;
-        curLayer = curLayer->next();
-    }
-}
 
 void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)
 {

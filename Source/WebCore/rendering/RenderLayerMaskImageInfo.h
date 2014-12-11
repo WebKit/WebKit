@@ -80,7 +80,7 @@ public:
     ~MaskImageInfo();
 
     void updateMaskImageClients();
-    void removeMaskImageClients(const RenderStyle& oldStyle);
+    void removeMaskImageClients();
 
 private:
     friend void WTF::deleteOwnedPtr<MaskImageInfo>(MaskImageInfo*);
