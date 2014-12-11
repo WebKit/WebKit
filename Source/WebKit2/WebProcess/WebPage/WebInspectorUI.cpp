@@ -184,7 +184,8 @@ void WebInspectorUI::setToolbarHeight(unsigned height)
 
 void WebInspectorUI::openInNewTab(const String& url)
 {
-    m_backendConnection->send(Messages::WebInspector::OpenInNewTab(url), 0);
+    if (m_backendConnection)
+        m_backendConnection->send(Messages::WebInspector::OpenInNewTab(url), 0);
 }
 
 void WebInspectorUI::save(const WTF::String& filename, const WTF::String& content, bool base64Encoded, bool forceSaveAs)
@@ -244,7 +245,8 @@ void WebInspectorUI::sendMessageToFrontend(const String& message)
 
 void WebInspectorUI::sendMessageToBackend(const String& message)
 {
-    m_backendConnection->send(Messages::WebInspector::SendMessageToBackend(message), 0);
+    if (m_backendConnection)
+        m_backendConnection->send(Messages::WebInspector::SendMessageToBackend(message), 0);
 }
 
 void WebInspectorUI::evaluateCommandOnLoad(const String& command, const String& argument)

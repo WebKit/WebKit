@@ -1,3 +1,18 @@
+2014-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector Process crash when navigating to non-inspectable page
+        https://bugs.webkit.org/show_bug.cgi?id=139508
+
+        Reviewed by Zalan Bujtas.
+
+        The Inspector Process can still receive InspectorFrontendHost messages
+        even though the backend connection has been invalidated and cleared.
+        Only send messages if the connection exists.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::openInNewTab):
+        (WebKit::WebInspectorUI::sendMessageToBackend):
+
 2014-12-11  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         WebKit2 should expose FirstVisuallyNonEmptyLayout rendering milestone.
