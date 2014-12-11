@@ -74,6 +74,7 @@ public:
     static void resetToConsistentState(Page*);
 
     String elementRenderTreeAsText(Element*, ExceptionCode&);
+    bool hasPausedImageAnimations(Element*, ExceptionCode&);
 
     String address(Node*);
     bool nodeNeedsStyleRecalc(Node*, ExceptionCode&);
