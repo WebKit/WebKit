@@ -1,5 +1,11 @@
 2014-12-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Fix a typo in the rpevious commit.
+
+        * platform/mac-wk1/TestExpectations:
+
+2014-12-10  Alexey Proskuryakov  <ap@apple.com>
+
         Fix lint warnings on Mac TestExpectations.
 
         * platform/mac-wk1/TestExpectations:

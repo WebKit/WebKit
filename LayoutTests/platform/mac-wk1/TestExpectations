@@ -14,7 +14,7 @@
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
 # Before Yosemite, the test did not actually test compositing vs. non-compositing on WebKit1, so it passed accidentally.
-webkit.org/b/132421 [ Mavericks+ ] fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+webkit.org/b/132421 [ Yosemite+ ] fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
