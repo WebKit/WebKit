@@ -62,6 +62,38 @@ void WebStorageNamespaceProvider::closeLocalStorage()
     }
 }
 
+void WebStorageNamespaceProvider::clearLocalStorageForAllOrigins()
+{
+    for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
+        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            localStorageNamespace->clearAllOriginsForDeletion();
+    }
+}
+
+void WebStorageNamespaceProvider::clearLocalStorageForOrigin(SecurityOrigin* origin)
+{
+    for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
+        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            localStorageNamespace->clearOriginForDeletion(origin);
+    }
+}
+
+void WebStorageNamespaceProvider::closeIdleLocalStorageDatabases()
+{
+    for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
+        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            localStorageNamespace->closeIdleLocalStorageDatabases();
+    }
+}
+
+void WebStorageNamespaceProvider::syncLocalStorage()
+{
+    for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
+        if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
+            localStorageNamespace->sync();
+    }
+}
+
 RefPtr<StorageNamespace> WebStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned quota)
 {
     return StorageNamespaceImpl::createSessionStorageNamespace(quota);

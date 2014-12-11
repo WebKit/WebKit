@@ -1,3 +1,20 @@
+2014-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Replicate a bunch of PageGroup functions in WebStorageNamespaceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=139544
+
+        Reviewed by Antti Koivisto.
+
+        This code is currently unused but will be called by StorageTracker once that class has been
+        moved from WebCore to WebKit.
+
+        * Storage/WebStorageNamespaceProvider.cpp:
+        (WebStorageNamespaceProvider::clearLocalStorageForAllOrigins):
+        (WebStorageNamespaceProvider::clearLocalStorageForOrigin):
+        (WebStorageNamespaceProvider::closeIdleLocalStorageDatabases):
+        (WebStorageNamespaceProvider::syncLocalStorage):
+        * Storage/WebStorageNamespaceProvider.h:
+
 2014-12-10  Beth Dakin  <bdakin@apple.com>
 
         WK1: Add initial support for immediate actions

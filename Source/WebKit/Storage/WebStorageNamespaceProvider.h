@@ -35,6 +35,12 @@ public:
 
     static void closeLocalStorage();
 
+    static void clearLocalStorageForAllOrigins();
+    static void clearLocalStorageForOrigin(SecurityOrigin*);
+    static void closeIdleLocalStorageDatabases();
+    // DumpRenderTree helper that triggers a StorageArea sync.
+    static void syncLocalStorage();
+
 private:
     explicit WebStorageNamespaceProvider(const String& localStorageDatabasePath);
 
