@@ -590,7 +590,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 - (void)_copySelection:(id)sender
 {
-    [_webView _executeCoreCommandByName:@"copy" value:nil];
+    [_webView copy:self];
 }
 
 - (void)_lookupText:(id)sender
@@ -605,7 +605,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 - (void)_paste:(id)sender
 {
-    [_webView _executeCoreCommandByName:@"paste" value:nil];
+    [_webView paste:self];
 }
 
 - (void)_selectLookupText
