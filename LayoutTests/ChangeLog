@@ -3,6 +3,14 @@
         fast/workers/worker-constructor.html frequently crashes
         https://bugs.webkit.org/show_bug.cgi?id=139548
 
+        * TestExpectations: Skip it again, it definitely crashes for real, even though
+        we can't reproduce locally.
+
+2014-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/workers/worker-constructor.html frequently crashes
+        https://bugs.webkit.org/show_bug.cgi?id=139548
+
         * TestExpectations: Enable it again, going to try clean builds.
 
 2014-12-11  Daniel Bates  <dabates@apple.com>
