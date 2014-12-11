@@ -1,3 +1,14 @@
+2014-12-10  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the storage strategy
+        https://bugs.webkit.org/show_bug.cgi?id=139519
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createStorageStrategy): Deleted.
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2014-12-08  Anders Carlsson  <andersca@apple.com>
 
         Use the new storage namespace provider in WebKit1

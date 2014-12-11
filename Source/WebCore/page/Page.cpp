@@ -203,7 +203,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
-    , m_storageNamespaceProvider(WTF::move(pageConfiguration.storageNamespaceProvider))
+    , m_storageNamespaceProvider(*WTF::move(pageConfiguration.storageNamespaceProvider))
     , m_userContentController(WTF::move(pageConfiguration.userContentController))
     , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
@@ -214,8 +214,8 @@ Page::Page(PageConfiguration& pageConfiguration)
     
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
 
-    if (m_storageNamespaceProvider)
-        m_storageNamespaceProvider->addPage(*this);
+    m_storageNamespaceProvider->addPage(*this);
+
     if (m_userContentController)
         m_userContentController->addPage(*this);
 
@@ -271,8 +271,8 @@ Page::~Page()
     pageCounter.decrement();
 #endif
 
-    if (m_storageNamespaceProvider)
-        m_storageNamespaceProvider->removePage(*this);
+    m_storageNamespaceProvider->removePage(*this);
+
     if (m_userContentController)
         m_userContentController->removePage(*this);
     m_visitedLinkStore->removePage(*this);
@@ -1090,12 +1090,8 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
 StorageNamespace* Page::sessionStorage(bool optionalCreate)
 {
-    if (!m_sessionStorage && optionalCreate) {
-        if (m_storageNamespaceProvider)
-            m_sessionStorage = m_storageNamespaceProvider->createSessionStorageNamespace(*this, m_settings->sessionStorageQuota());
-        else
-            m_sessionStorage = StorageNamespace::sessionStorageNamespace(this);
-    }
+    if (!m_sessionStorage && optionalCreate)
+        m_sessionStorage = m_storageNamespaceProvider->createSessionStorageNamespace(*this, m_settings->sessionStorageQuota());
 
     return m_sessionStorage.get();
 }
@@ -1651,9 +1647,7 @@ void Page::setUserContentController(UserContentController* userContentController
 
 void Page::setStorageNamespaceProvider(PassRef<StorageNamespaceProvider> storageNamespaceProvider)
 {
-    if (m_storageNamespaceProvider)
-        m_storageNamespaceProvider->removePage(*this);
-
+    m_storageNamespaceProvider->removePage(*this);
     m_storageNamespaceProvider = WTF::move(storageNamespaceProvider);
     m_storageNamespaceProvider->addPage(*this);
 

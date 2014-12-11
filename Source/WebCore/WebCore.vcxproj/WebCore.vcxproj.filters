@@ -5098,9 +5098,6 @@
     <ClCompile Include="..\html\track\TextTrackCueGeneric.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
-    <ClCompile Include="..\storage\StorageStrategy.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\track\WebVTTElement.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
@@ -13051,9 +13048,6 @@
     <ClInclude Include="..\WebCorePrefix.h" />
     <ClInclude Include="..\html\track\TextTrackCueGeneric.h">
       <Filter>html\track</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageStrategy.h">
-      <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\WebVTTElement.h">
       <Filter>html\track</Filter>

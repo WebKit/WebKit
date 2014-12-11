@@ -7982,7 +7982,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\storage\StorageStrategy.cpp" />
     <ClCompile Include="..\svg\graphics\SVGImageForContainer.cpp" />
     <ClCompile Include="..\WebCorePrefix.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -19562,8 +19561,6 @@
     <ClInclude Include="..\rendering\HitTestLocation.h" />
     <ClInclude Include="..\rendering\RenderLayerMaskImageInfo.h" />
     <ClInclude Include="..\rendering\style\StyleCachedImageSet.h" />
-    <ClInclude Include="..\storage\StorageStrategy.h" />
-    <ClInclude Include="..\svg\graphics\SVGImageForContainer.h" />
     <ClInclude Include="..\WebCorePrefix.h" />
     <ClInclude Include="..\platform\win\WebCoreTextRenderer.h" />
     <ClInclude Include="..\platform\win\WindowMessageBroadcaster.h" />

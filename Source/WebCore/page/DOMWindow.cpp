@@ -857,18 +857,11 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
         return nullptr;
 
     RefPtr<StorageArea> storageArea;
-    if (auto* storageNamespaceProvider = page->storageNamespaceProvider()) {
-        if (document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
-            storageArea = storageNamespaceProvider->localStorageNamespace().storageArea(document->securityOrigin());
-        else
-            storageArea = storageNamespaceProvider->transientLocalStorageNamespace(*document->topOrigin()).storageArea(document->securityOrigin());
-    } else {
-        // FIXME: Remove this once everyone has transitioned away from using the page group local storage.
-        if (!document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
-            storageArea = page->group().transientLocalStorage(document->topOrigin())->storageArea(document->securityOrigin());
-        else
-            storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
-    }
+
+    if (document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
+        storageArea = page->storageNamespaceProvider().localStorageNamespace().storageArea(document->securityOrigin());
+    else
+        storageArea = page->storageNamespaceProvider().transientLocalStorageNamespace(*document->topOrigin()).storageArea(document->securityOrigin());
 
     if (!storageArea->canAccessStorage(m_frame)) {
         ec = SECURITY_ERR;

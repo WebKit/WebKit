@@ -115,12 +115,6 @@ SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
     return this;
 }
 
-StorageStrategy* WebPlatformStrategies::createStorageStrategy()
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 // CookiesStrategy
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)

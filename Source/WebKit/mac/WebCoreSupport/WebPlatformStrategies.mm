@@ -85,11 +85,6 @@ SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
     return this;
 }
 
-StorageStrategy* WebPlatformStrategies::createStorageStrategy()
-{
-    return this;
-}
-
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);

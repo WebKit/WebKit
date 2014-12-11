@@ -166,20 +166,12 @@ void PageGroup::removePage(Page& page)
 
 StorageNamespace* PageGroup::localStorage()
 {
-    if (!m_localStorage)
-        m_localStorage = StorageNamespace::localStorageNamespace(this);
-
     return m_localStorage.get();
 }
 
-StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
+StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin*)
 {
-    auto result = m_transientLocalStorageMap.add(topOrigin, nullptr);
-
-    if (result.isNewEntry)
-        result.iterator->value = StorageNamespace::transientLocalStorageNamespace(this, topOrigin);
-
-    return result.iterator->value.get();
+    return nullptr;
 }
 
 #if ENABLE(VIDEO_TRACK)

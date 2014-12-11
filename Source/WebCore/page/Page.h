@@ -402,7 +402,7 @@ public:
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
-    StorageNamespaceProvider* storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
+    StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
     void setStorageNamespaceProvider(PassRef<StorageNamespaceProvider>);
 
     UserContentController* userContentController() { return m_userContentController.get(); }
@@ -573,7 +573,7 @@ private:
     unsigned m_lastSpatialNavigationCandidatesCount;
     unsigned m_framesHandlingBeforeUnloadEvent;
 
-    RefPtr<StorageNamespaceProvider> m_storageNamespaceProvider;
+    Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     RefPtr<UserContentController> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;
 

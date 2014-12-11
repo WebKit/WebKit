@@ -69,11 +69,6 @@ SharedWorkerStrategy* NetworkProcessPlatformStrategies::createSharedWorkerStrate
     return 0;
 }
 
-StorageStrategy* NetworkProcessPlatformStrategies::createStorageStrategy()
-{
-    return 0;
-}
-
 ResourceLoadScheduler* NetworkProcessPlatformStrategies::resourceLoadScheduler()
 {
     ASSERT_NOT_REACHED();
