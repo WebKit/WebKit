@@ -36,11 +36,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSHTMLLinkElement::sizes(ExecState* exec) const
-{
-    return toJS(exec, globalObject(), impl().sizes());
-}
-
 void JSHTMLLinkElement::setSizes(ExecState* exec, JSValue value)
 {
     impl().setSizes(valueToStringWithNullCheck(exec, value));

@@ -1595,7 +1595,7 @@ sub Generate {
 sub HasUnstableCustomAPI {
     my $domClassName = shift;
 
-    return scalar(grep {$_ eq $domClassName} qw(WebKitDOMDOMWindow WebKitDOMUserMessageHandlersNamespace));
+    return scalar(grep {$_ eq $domClassName} qw(WebKitDOMDOMWindow WebKitDOMUserMessageHandlersNamespace WebKitDOMHTMLLinkElement));
 }
 
 sub WriteData {

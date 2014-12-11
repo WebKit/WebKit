@@ -50,6 +50,17 @@ webkit_dom_dom_window_get_webkit_namespace(WebKitDOMDOMWindow* self);
 WEBKIT_API WebKitDOMUserMessageHandler *
 webkit_dom_user_message_handlers_namespace_get_handler(WebKitDOMUserMessageHandlersNamespace* self, const gchar* name);
 
+/**
+ * webkit_dom_html_link_element_set_sizes:
+ * @self: A #WebKitDOMHTMLLinkElement
+ * @value: a #gchar
+ *
+ * Stability: Unstable
+ * Since: 2.8
+ */
+WEBKIT_API void
+webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

@@ -21,9 +21,11 @@
 
 #include "JSMainThreadExecState.h"
 #include "SerializedScriptValue.h"
+#include "WebKitDOMDOMSettableTokenListPrivate.h"
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMHTMLInputElement.h"
 #include "WebKitDOMHTMLInputElementPrivate.h"
+#include "WebKitDOMHTMLLinkElementPrivate.h"
 #include "WebKitDOMHTMLTextAreaElement.h"
 #include "WebKitDOMHTMLTextAreaElementPrivate.h"
 #include "WebKitDOMPrivate.h"
@@ -86,4 +88,12 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
     WebCore::JSMainThreadNullState state;
     handler->postMessage(WebCore::SerializedScriptValue::create(String::fromUTF8(message)));
     return TRUE;
+}
+
+void webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* linkElement, const gchar* value)
+{
+    g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(linkElement));
+    g_return_if_fail(value);
+
+    core(linkElement)->setSizes(String::fromUTF8(value));
 }
