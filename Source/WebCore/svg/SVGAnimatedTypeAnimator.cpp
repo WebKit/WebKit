@@ -68,7 +68,7 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
     Vector<RefPtr<SVGAnimatedProperty>> targetProperties;
     targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, targetProperties);
 
-    if (!SVGAnimatedType::supportsAnimVal(m_type))
+    if (!SVGAnimatedType::supportsAnimVal(m_type) || targetProperties.isEmpty())
         return SVGElementAnimatedPropertyList();
 
     SVGElementAnimatedProperties propertiesPair(targetElement, targetProperties);

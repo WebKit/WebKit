@@ -1,3 +1,16 @@
+2014-12-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        ASSERTION FAILED: animatedTypes[0].properties.size() == 1 in WebCore::SVGAnimatedTypeAnimator::constructFromBaseValue.
+        https://bugs.webkit.org/show_bug.cgi?id=139046.
+
+        Reviewed by Dirk Schulze.
+
+        Ensure the animation attributes will be ignored by the SVG base animator if
+        they are not supported by the SVG target element.
+
+        * svg/animations/unsupported-animate-element-attributes-expected.svg: Added.
+        * svg/animations/unsupported-animate-element-attributes.svg: Added.
+
 2014-12-10  Dean Jackson  <dino@apple.com>
 
         InstancedArray crashes attempting to draw out of bounds
