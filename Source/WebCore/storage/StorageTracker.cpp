@@ -448,7 +448,7 @@ void StorageTracker::syncDeleteAllOrigins()
 
     if (m_database.isOpen()) {
 #if PLATFORM(IOS)
-        truncateDatabaseFile(m_database.sqlite3Handle());
+        truncateDatabaseFile(m_database);
 #endif
         m_database.close();
     }
