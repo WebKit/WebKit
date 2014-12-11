@@ -1,3 +1,14 @@
+2014-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Null dereference performing a "TapAndAHalf" gesture in Google search field
+
+        <https://bugs.webkit.org/show_bug.cgi?id=139506>
+        <rdar://problem/19028828>
+
+        Reviewed by Darin Adler.
+
+        * ManualTests/ios/tap-and-a-half-gesture-in-empty-text-field.html: Added.
+
 2014-12-10  Dean Jackson  <dino@apple.com>
 
         Blur filter performance test doesn't provide results
