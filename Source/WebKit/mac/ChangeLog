@@ -1,3 +1,22 @@
+2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r177111. rdar://problem/19198388
+
+    2014-12-10  Timothy Horton  <timothy_horton@apple.com>
+
+            Should have copy and paste items in all text menus
+            https://bugs.webkit.org/show_bug.cgi?id=139510
+            <rdar://problem/19198388>
+
+            Reviewed by Beth Dakin.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItemsForText]):
+            Add a disabled paste menu item into the read-only text menu.
+
+            (-[WebActionMenuController _defaultMenuItemsForWhitespaceInEditableArea]):
+            Add a disabled copy menu item into the editable whitespace text menu.
+
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r176999. rdar://problem/19149219

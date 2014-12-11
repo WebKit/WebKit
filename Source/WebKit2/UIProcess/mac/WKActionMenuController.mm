@@ -778,8 +778,10 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 {
     RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
     RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
+    RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
+    [pasteItem setEnabled:NO];
 
-    return @[ copyTextItem.get(), lookupTextItem.get() ];
+    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
 }
 
 - (NSArray *)_defaultMenuItemsForEditableText
@@ -854,9 +856,11 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 - (NSArray *)_defaultMenuItemsForWhitespaceInEditableArea
 {
+    RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
     RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
+    [copyTextItem setEnabled:NO];
 
-    return @[ [NSMenuItem separatorItem], [NSMenuItem separatorItem], pasteItem.get() ];
+    return @[ copyTextItem.get(), [NSMenuItem separatorItem], pasteItem.get() ];
 }
 
 #pragma mark mailto: and tel: Link actions
