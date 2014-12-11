@@ -1846,7 +1846,7 @@
 		511EF2D017F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CD17F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp */; };
 		511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */; };
 		511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23150DC160DA004F0032 /* StorageThread.cpp */; };
-		511F231A0DC160DA004F0032 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* StorageThread.h */; };
+		511F231A0DC160DA004F0032 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* StorageThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5123AF181890A4CA0031CDC9 /* IDBKeyRangeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5123AF161890A4CA0031CDC9 /* IDBKeyRangeData.cpp */; };
 		5123AF191890A4CA0031CDC9 /* IDBKeyRangeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5123AF171890A4CA0031CDC9 /* IDBKeyRangeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5123AF1D18918AE40031CDC9 /* IDBGetResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 5123AF1C18918AE40031CDC9 /* IDBGetResult.h */; settings = {ATTRIBUTES = (Private, ); }; };

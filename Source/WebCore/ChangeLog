@@ -1,3 +1,17 @@
+2014-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Call StorageThread::releaseFastMallocFreeMemoryInAllThreads from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=139547
+
+        Reviewed by Sam Weinig.
+
+        This is another step towards moving StorageThread (and friends) to WebKit.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2014-12-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         ASSERTION FAILED: animatedTypes[0].properties.size() == 1 in WebCore::SVGAnimatedTypeAnimator::constructFromBaseValue.

@@ -175,6 +175,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
+#import <WebCore/StorageThread.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
@@ -1266,6 +1267,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
 
     [WebStorageManager closeIdleLocalStorageDatabases];
+    StorageThread::releaseFastMallocFreeMemoryInAllThreads();
 
     [WebView _releaseMemoryNow];
 }
