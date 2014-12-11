@@ -36,7 +36,6 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/GeometryUtilities.h>
-#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/SoftLinking.h>
@@ -96,7 +95,7 @@ using namespace WebKit;
     [self _updateImmediateActionItem];
 }
 
-#pragma mark NSGestureRecognizerDelegate
+#pragma mark NSImmediateActionGestureRecognizerDelegate
 
 - (void)immediateActionRecognizerWillPrepare:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {

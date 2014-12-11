@@ -34,7 +34,6 @@
 #import "WebViewInternal.h"
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
-#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
 
@@ -71,7 +70,7 @@ using namespace WebCore;
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint));
 }
 
-#pragma mark NSGestureRecognizerDelegate
+#pragma mark NSImmediateActionGestureRecognizerDelegate
 
 - (void)immediateActionRecognizerWillPrepare:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {

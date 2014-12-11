@@ -30,6 +30,7 @@
 
 #import "ActionMenuHitTestResult.h"
 #import "WKImmediateActionTypes.h"
+#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {
@@ -47,7 +48,7 @@ enum class ImmediateActionState {
 @class WKPagePreviewViewController;
 @class WKView;
 
-@interface WKImmediateActionController : NSObject <NSGestureRecognizerDelegate> {
+@interface WKImmediateActionController : NSObject <NSImmediateActionGestureRecognizerDelegate> {
 @private
     WebKit::WebPageProxy *_page;
     WKView *_wkView;

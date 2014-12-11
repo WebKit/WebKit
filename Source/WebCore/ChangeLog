@@ -6,6 +6,12 @@
 
 2014-12-11  Timothy Horton  <timothy_horton@apple.com>
 
+        Fix the build.
+
+        * platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+
+2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
         Move the preview popover to WKImmediateActionController
         https://bugs.webkit.org/show_bug.cgi?id=139560
         <rdar://problem/19208291>
