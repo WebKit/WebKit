@@ -48,10 +48,6 @@ enum class ActionMenuState {
 @class DDActionContext;
 @class WKView;
 
-#if WK_API_ENABLED
-@class WKPagePreviewViewController;
-#endif
-
 @interface WKActionMenuController : NSObject <NSMenuDelegate> {
 @private
     WebKit::WebPageProxy *_page;
@@ -63,17 +59,8 @@ enum class ActionMenuState {
     _WKActionMenuType _type;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
 
-    RetainPtr<NSPopover> _previewPopover;
-    NSPoint _eventLocationInView;
-    NSRect _popoverOriginRect;
-
     BOOL _isShowingTextIndicator;
-    BOOL _shouldKeepPreviewPopoverOpen;
     BOOL _hasActivatedActionContext;
-
-#if WK_API_ENABLED
-    RetainPtr<WKPagePreviewViewController> _previewViewController;
-#endif
 
     RetainPtr<DDActionContext> _currentActionContext;
 }
@@ -89,7 +76,6 @@ enum class ActionMenuState {
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
 - (void)dismissActionMenuPopovers;
-- (void)setPreviewTitle:(NSString *)previewTitle;
 
 @end
 

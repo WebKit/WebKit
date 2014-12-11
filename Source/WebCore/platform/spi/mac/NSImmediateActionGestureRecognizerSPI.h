@@ -27,13 +27,26 @@
 
 #import <AppKit/NSGestureRecognizer.h>
 
-#if __has_include(<AppKit/NSImmediateActionGestureRecognizer.h>)
+#if __has_include(<AppKit/NSImmediateActionGestureRecognizer_Private.h>)
 
-#import <AppKit/NSImmediateActionGestureRecognizer.h>
+#import <AppKit/NSImmediateActionGestureRecognizer_Private.h>
 
 #else
 
+@protocol NSImmediateActionAnimationController <NSObject>
+@optional
+
+- (void)recognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)recognizer;
+- (void)recognizerDidUpdateAnimation:(NSImmediateActionGestureRecognizer *)recognizer;
+- (void)recognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)recognizer;
+- (void)recognizerDidCompleteAnimation:(NSImmediateActionGestureRecognizer *)recognizer;
+- (void)recognizerDidDismissAnimation:(NSImmediateActionGestureRecognizer *)recognizer;
+@end
+
 @interface NSImmediateActionGestureRecognizer : NSGestureRecognizer
+
+@property (strong) id<NSImmediateActionAnimationController> animationController;
+
 @end
 
 #endif // __has_include(<AppKit/NSImmediateActionGestureRecognizer.h>)
