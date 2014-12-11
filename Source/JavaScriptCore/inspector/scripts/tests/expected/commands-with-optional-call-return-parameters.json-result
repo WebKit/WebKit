@@ -898,6 +898,7 @@ using namespace Inspector;
 
 #import "RWIProtocol.h"
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolConfiguration : NSObject
 @property (nonatomic, retain, setter=setDatabaseHandler:) id<RWIProtocolDatabaseDomainHandler> databaseHandler;
 @end

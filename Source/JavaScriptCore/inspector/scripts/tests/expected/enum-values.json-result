@@ -754,6 +754,7 @@ using namespace Inspector;
 
 #import "RWIProtocol.h"
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolConfiguration : NSObject
 @property (nonatomic, retain, setter=setCommandDomainHandler:) id<RWIProtocolCommandDomainDomainHandler> commandDomainHandler;
 @property (nonatomic, readonly) RWIProtocolEventDomainDomainEventDispatcher *eventDomainEventDispatcher;
@@ -1099,6 +1100,7 @@ typedef NS_ENUM(NSInteger, RWIProtocolEventDomainEventWithEnumParameterParameter
 - (void)commandWithEnumReturnValueWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue))successCallback;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolEventDomainDomainEventDispatcher : NSObject
 - (void)eventWithEnumParameterWithParameter:(RWIProtocolEventDomainEventWithEnumParameterParameter)parameter;
 @end

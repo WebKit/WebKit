@@ -655,6 +655,7 @@ using namespace Inspector;
 
 #import "RWIProtocol.h"
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolConfiguration : NSObject
 @end
 

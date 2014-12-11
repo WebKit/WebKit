@@ -720,6 +720,7 @@ using namespace Inspector;
 
 #import "RWIProtocol.h"
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolConfiguration : NSObject
 @property (nonatomic, readonly) RWIProtocolDatabaseDomainEventDispatcher *databaseEventDispatcher;
 @end
@@ -994,6 +995,7 @@ __attribute__((visibility ("default")))
 
 
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseDomainEventDispatcher : NSObject
 - (void)didExecuteOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload sqlError:(RWIProtocolDatabaseError **)sqlError screenColor:(NSString **)screenColor printColor:(NSString **)printColor;
 - (void)didExecuteNoOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload sqlError:(RWIProtocolDatabaseError *)sqlError screenColor:(NSString *)screenColor printColor:(NSString *)printColor;

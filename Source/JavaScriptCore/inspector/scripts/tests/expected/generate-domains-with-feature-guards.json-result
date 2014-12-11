@@ -803,6 +803,7 @@ using namespace Inspector;
 
 #import "RWIProtocol.h"
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolConfiguration : NSObject
 @property (nonatomic, retain, setter=setNetwork1Handler:) id<RWIProtocolNetwork1DomainHandler> network1Handler;
 @property (nonatomic, readonly) RWIProtocolNetwork3DomainEventDispatcher *network3EventDispatcher;
@@ -1052,6 +1053,7 @@ __attribute__((visibility ("default")))
 - (void)loadResourceWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)())successCallback;
 @end
 
+__attribute__((visibility ("default")))
 @interface RWIProtocolNetwork3DomainEventDispatcher : NSObject
 - (void)resourceLoaded;
 @end

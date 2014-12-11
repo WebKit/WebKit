@@ -1,3 +1,28 @@
+2014-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Explicitly export somre more RWIProtocol classes.
+        rdar://problem/19220408
+
+        Unreviewed build fix.
+
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator._generate_configuration_interface_for_domains):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._generate_event_interfaces):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2014-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         Explicitly export some RWIProtocol classes

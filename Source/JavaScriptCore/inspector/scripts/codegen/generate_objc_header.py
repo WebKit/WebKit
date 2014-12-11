@@ -211,6 +211,7 @@ class ObjCHeaderGenerator(Generator):
         lines = []
         if domain.events:
             objc_name = '%s%sDomainEventDispatcher' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name)
+            lines.append('__attribute__((visibility ("default")))')
             lines.append('@interface %s : NSObject' % objc_name)
             for event in domain.events:
                 lines.append(self._generate_single_event_interface(domain, event))
