@@ -907,8 +907,12 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
                         protect = nullptr;
                     }
                 });
-            } stopCompletionHandler:^(AVPlayerViewControllerOptimizedFullscreenStopReason) {
+            } stopCompletionHandler:^(AVPlayerViewControllerOptimizedFullscreenStopReason reason) {
                 m_exitCompleted = true;
+                
+                if (m_fullscreenChangeObserver && reason == AVPlayerViewControllerOptimizedFullscreenStopReasonStopped)
+                    m_fullscreenChangeObserver->fullscreenMayReturnToInline();
+
                 if (m_exitRequested) {
                     [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
                     [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
@@ -1103,6 +1107,9 @@ void WebVideoFullscreenInterfaceAVKit::setIsOptimized(bool active)
     
     [m_window setHidden:m_mode & HTMLMediaElement::VideoFullscreenModeOptimized];
     
+    if (m_fullscreenChangeObserver && ~m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
+        m_fullscreenChangeObserver->fullscreenMayReturnToInline();
+
     if (!m_exitRequested || active)
         return;
     

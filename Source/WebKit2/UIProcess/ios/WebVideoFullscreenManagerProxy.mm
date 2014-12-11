@@ -128,6 +128,11 @@ void WebVideoFullscreenManagerProxy::setExternalPlaybackProperties(bool enabled,
     setExternalPlayback(enabled, type, localizedDeviceName);
 }
     
+void WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline()
+{
+    m_page->fullscreenMayReturnToInline();
+}
+
 void WebVideoFullscreenManagerProxy::requestExitFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::RequestExitFullscreen(), m_page->pageID());

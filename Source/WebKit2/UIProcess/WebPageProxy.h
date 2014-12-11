@@ -268,6 +268,8 @@ public:
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
 
+    void fullscreenMayReturnToInline();
+
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
 #endif

@@ -72,6 +72,7 @@ using namespace WebCore;
 - (void)didEnterFullscreen;
 - (void)didExitFullscreen;
 - (void)didCleanupFullscreen;
+- (void)fullscreenMayReturnToInline;
 @end
 
 class WebVideoFullscreenControllerChangeObserver : public WebVideoFullscreenChangeObserver {
@@ -82,6 +83,7 @@ public:
     virtual void didEnterFullscreen() override { [_target didEnterFullscreen]; }
     virtual void didExitFullscreen() override { [_target didExitFullscreen]; }
     virtual void didCleanupFullscreen() override { [_target didCleanupFullscreen]; }
+    virtual void fullscreenMayReturnToInline() override { [_target fullscreenMayReturnToInline]; }
 };
 
 @implementation WebVideoFullscreenController
@@ -177,6 +179,10 @@ public:
         
         [self release]; // Balance the -retain we did in enterFullscreen:
     });
+}
+
+- (void)fullscreenMayReturnToInline
+{
 }
 
 @end

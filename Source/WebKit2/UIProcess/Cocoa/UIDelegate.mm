@@ -72,6 +72,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
     m_delegateMethods.webViewClose = [delegate respondsToSelector:@selector(_webViewClose:)];
+    m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
 #if PLATFORM(IOS)
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
@@ -241,6 +242,18 @@ void UIDelegate::UIClient::close(WebKit::WebPageProxy*)
     [(id <WKUIDelegatePrivate>)delegate _webViewClose:m_uiDelegate.m_webView];
 }
 
+void UIDelegate::UIClient::fullscreenMayReturnToInline(WebKit::WebPageProxy*)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewFullscreenMayReturnToInline)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webViewFullscreenMayReturnToInline:m_uiDelegate.m_webView];
+}
+    
 #if PLATFORM(IOS)
 RetainPtr<NSArray> UIDelegate::UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, RetainPtr<NSArray> defaultActions)
 {

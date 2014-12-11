@@ -65,6 +65,7 @@ private:
     virtual void didEnterFullscreen() override;
     virtual void didExitFullscreen() override;
     virtual void didCleanupFullscreen() override;
+    virtual void fullscreenMayReturnToInline() override;
     
     // FullscreenModel
     virtual void play() override;

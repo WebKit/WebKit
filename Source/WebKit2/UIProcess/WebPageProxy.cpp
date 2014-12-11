@@ -3089,6 +3089,11 @@ void WebPageProxy::showPage()
     m_uiClient->showPage(this);
 }
 
+void WebPageProxy::fullscreenMayReturnToInline()
+{
+    m_uiClient->fullscreenMayReturnToInline(this);
+}
+
 void WebPageProxy::closePage(bool stopResponsivenessTimer)
 {
     if (stopResponsivenessTimer)

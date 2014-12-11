@@ -59,6 +59,7 @@ public:
     virtual void didEnterFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
     virtual void didCleanupFullscreen() = 0;
+    virtual void fullscreenMayReturnToInline() = 0;
 };
 
 class WebVideoFullscreenInterfaceAVKit

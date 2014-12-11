@@ -45,6 +45,7 @@
 - (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
 
 - (void)_webViewClose:(WKWebView *)webView;
+- (void)_webViewFullscreenMayReturnToInline:(WKWebView *)webView;
 
 #if TARGET_OS_IPHONE
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray *)defaultActions;
