@@ -1,5 +1,18 @@
 2014-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Move click counter logic back to WebKitWebViewBase
+        https://bugs.webkit.org/show_bug.cgi?id=137685
+
+        Reviewed by Martin Robinson.
+
+        Remove GtkClickCounter.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/GtkClickCounter.cpp: Removed.
+        * platform/gtk/GtkClickCounter.h: Removed.
+
+2014-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Implement sizes attribute for link tag
         https://bugs.webkit.org/show_bug.cgi?id=125775
 

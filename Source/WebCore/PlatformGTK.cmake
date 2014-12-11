@@ -223,7 +223,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/DragIcon.cpp
     platform/gtk/DragImageGtk.cpp
     platform/gtk/GRefPtrGtk.cpp
-    platform/gtk/GtkClickCounter.cpp
     platform/gtk/GtkUtilities.cpp
     platform/gtk/GtkVersioning.c
     platform/gtk/KeyBindingTranslator.cpp
