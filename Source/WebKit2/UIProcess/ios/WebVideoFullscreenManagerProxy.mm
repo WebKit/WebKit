@@ -49,9 +49,7 @@
 using namespace WebCore;
 
 namespace WebKit {
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 82000
-
+    
 PassRefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy& page)
 {
     return adoptRef(new WebVideoFullscreenManagerProxy(page));
@@ -230,7 +228,6 @@ void WebVideoFullscreenManagerProxy::selectLegibleMediaOption(uint64_t index)
 {
     m_page->send(Messages::WebVideoFullscreenManager::SelectLegibleMediaOption(index), m_page->pageID());
 }
-#endif
 
 } // namespace WebKit
 

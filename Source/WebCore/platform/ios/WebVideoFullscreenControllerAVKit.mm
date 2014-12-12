@@ -37,7 +37,7 @@
 
 using namespace WebCore;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED <= 82000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
 
 @implementation WebVideoFullscreenController
 - (void)setVideoElement:(WebCore::HTMLVideoElement*)videoElement
@@ -50,14 +50,9 @@ using namespace WebCore;
     return nullptr;
 }
 
-- (void)enterFullscreen:(UIView *)view mode:(WebCore::HTMLMediaElement::VideoFullscreenMode)mode
+- (void)enterFullscreen:(UIView *)view
 {
     UNUSED_PARAM(view);
-    UNUSED_PARAM(mode);
-}
-
-- (void)requestHideAndExitFullscreen
-{
 }
 
 - (void)exitFullscreen
