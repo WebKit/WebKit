@@ -143,7 +143,7 @@ using namespace WebCore;
     // Allow clients the opportunity to override the default immediate action.
     id customClientAnimationController = nil;
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:immediateActionAnimationControllerForHitTestResult:withType:)]) {
-        RetainPtr<WebElementDictionary> webHitTestResult = [[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult];
+        RetainPtr<WebElementDictionary> webHitTestResult = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]);
         customClientAnimationController = [[_webView UIDelegate] _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
     }
 
