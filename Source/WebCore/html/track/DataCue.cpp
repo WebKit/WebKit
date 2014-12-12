@@ -101,14 +101,6 @@ void DataCue::setData(ArrayBuffer* data, ExceptionCode& ec)
     m_data = ArrayBuffer::create(data);
 }
 
-#if !ENABLE(DATACUE_VALUE)
-String DataCue::text(bool& isNull) const
-{
-    isNull = true;
-    return String();
-}
-#endif
-
 DataCue* toDataCue(TextTrackCue* cue)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(cue->cueType() == TextTrackCue::Data);

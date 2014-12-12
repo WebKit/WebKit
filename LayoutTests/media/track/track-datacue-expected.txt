@@ -17,7 +17,6 @@ EXPECTED (new Uint8Array(cue.data)[1] == '5') OK
 EXPECTED (new Uint8Array(cue.data)[2] == '2') OK
 EXPECTED (new Uint8Array(cue.data)[3] == '1') OK
 EXPECTED (new Uint8Array(cue.data)[4] == '9') OK
-EXPECTED (cue.text == 'null') OK
 
 *** Changing the original buffer data should not effect DataCue.data.
 RUN(expectedData[0] = 7)

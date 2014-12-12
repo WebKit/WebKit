@@ -86,8 +86,6 @@ public:
 
     String type() const { return m_type; }
     void setType(const String& type) { m_type = type; }
-#else
-    String text(bool&) const;
 #endif
 
     virtual bool isEqual(const TextTrackCue&, CueMatchRules) const override;

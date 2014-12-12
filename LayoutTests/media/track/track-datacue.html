@@ -22,7 +22,6 @@
                 consoleWrite("<br>*** Test DataCue interface.");
                 testExpected("cue", DataCue, "instanceof");
                 testArraysEqual("new Uint8Array(cue.data)", expectedData);
-                testExpected("cue.text", null);
 
                 // https://www.w3.org/Bugs/Public/show_bug.cgi?id=24687
                 consoleWrite("<br>*** Changing the original buffer data should not effect DataCue.data.");

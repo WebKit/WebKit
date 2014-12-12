@@ -39,7 +39,5 @@
 #if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
     [CustomGetter, CustomSetter] attribute any value;
     readonly attribute DOMString type;
-#else
-    readonly attribute DOMString? text;
 #endif
 };
