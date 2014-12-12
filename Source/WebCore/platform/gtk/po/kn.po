@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2014-09-10 10:57+0000\n"
-"PO-Revision-Date: 2014-09-22 16:31+0530\n"
+"POT-Creation-Date: 2014-12-12 00:00+0000\n"
+"PO-Revision-Date: 2014-12-12 16:56+0530\n"
 "Last-Translator: Shankar Prasad <svenkate AT redhat Dot com>\n"
 "Language-Team: Kannada <kde-i18n-doc@kde.org>\n"
 "Language: kn\n"
@@ -122,12 +122,10 @@ msgid "Open _Audio in New Window"
 msgstr "ಆಡಿಯೊವನ್ನು ಹೊಸ ಕಿಟಕಿಯಲ್ಲಿ ತೆರೆ (_A)"
 
 #: ../LocalizedStringsGtk.cpp:145
-#| msgid "_Download Linked File"
 msgid "Download _Video"
 msgstr "ವೀಡಿಯೊವನ್ನು ಇಳಿಸಿಕೊ (_V)"
 
 #: ../LocalizedStringsGtk.cpp:150
-#| msgid "_Download Linked File"
 msgid "Download _Audio"
 msgstr "ಆಡಿಯೊವನ್ನು ಇಳಿಸಿಕೊ (_A)"
 
@@ -144,12 +142,10 @@ msgid "_Toggle Media Controls"
 msgstr "ಮಾಧ್ಯಮ ನಿಯಂತ್ರಣಗಳನ್ನು ಹೊರಳಿಸು (_T)"
 
 #: ../LocalizedStringsGtk.cpp:170
-#| msgid "_Toggle Media Controls"
 msgid "_Show Media Controls"
 msgstr "ಮಾಧ್ಯಮ ನಿಯಂತ್ರಣಗಳನ್ನು ತೋರಿಸು (_S)"
 
 #: ../LocalizedStringsGtk.cpp:175
-#| msgid "_Toggle Media Controls"
 msgid "_Hide Media Controls"
 msgstr "ಮಾಧ್ಯಮ ನಿಯಂತ್ರಣಗಳನ್ನು ಅಡಗಿಸು (_H)"
 
@@ -602,36 +598,22 @@ msgctxt "Menu item label for a closed captions track that has no other name"
 msgid "No label"
 msgstr "ಯಾವುದೆ ಲೇಬಲ್ ಇಲ್ಲ"
 
-#: ../LocalizedStringsGtk.cpp:817
+#: ../LocalizedStringsGtk.cpp:816
+#| msgctxt "Menu item label for a closed captions track that has no other name"
+#| msgid "No label"
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr "ಯಾವುದೆ ಲೇಬಲ್ ಇಲ್ಲ"
+
+#: ../LocalizedStringsGtk.cpp:822
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "ಸ್ನಾಪ್‌ಶಾಟ್ ಮಾಡಲಾದ ಪ್ಲಗ್-ಇನ್‌ನಲ್ಲಿನ ತೋರಿಸಬೇಕಿರುವ ಲೇಬಲ್‌ನ ಶೀರ್ಷಿಕೆ"
 
-#: ../LocalizedStringsGtk.cpp:822
+#: ../LocalizedStringsGtk.cpp:827
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "ಸ್ನಾಪ್‌ಶಾಟ್ ಮಾಡಲಾದ ಪ್ಲಗ್-ಇನ್‌ನಲ್ಲಿನ ತೋರಿಸಬೇಕಿರುವ ಲೇಬಲ್‌ನ ಉಪಶೀರ್ಷಿಕೆ"
-
-#: ../WebKitAuthenticationWidget.cpp:155
-#, c-format
-msgid "The site %s:%i requests a username and password"
-msgstr "%s:%i ಎಂಬ ಜಾಲತಾಣವು ಒಂದು ಬಳಕೆದಾರಹೆಸರು ಮತ್ತು ಗುಪ್ತಪದಕ್ಕೆ ಮನವಿ ಮಾಡಿದೆ"
-
-#: ../WebKitAuthenticationWidget.cpp:159
-msgid "_Remember password"
-msgstr "ಗುಪ್ತಪದಗಳನ್ನು ನೆನಪಿಟ್ಟುಕೊ (_R)"
-
-#: ../WebKitAuthenticationWidget.cpp:167
-msgid "Server message:"
-msgstr "ಪೂರೈಕೆಗಣಕ ಸಂದೇಶ:"
-
-#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
-msgid "Username:"
-msgstr "ಬಳಕೆದಾರಹೆಸರು:"
-
-#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
-msgid "Password:"
-msgstr "ಗುಪ್ತಪದ:"
 
 #: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:99
 #, c-format
@@ -640,6 +622,49 @@ msgid ""
 msgstr ""
 "ಇಳಿಸಿಕೊಳ್ಳಲು ಸಲಹೆ ಮಾಡಲಾಗುವ %s ಎಂಬ ಕಡತದ ಹೆಸರಿನೊಂದಿಗೆ ಗುರಿ URI ಅನ್ನು ನಿರ್ಧರಿಸಲು "
 "ಸಾಧ್ಯವಾಗಿಲ್ಲ"
+
+#. Title of the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
+msgid "Authentication Required"
+msgstr "ದೃಢೀಕರಣದ ಅಗತ್ಯವಿದೆ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:104
+#| msgid "cancel"
+msgid "_Cancel"
+msgstr "ರದ್ದುಗೊಳಿಸು (_C)"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:110
+msgid "_Authenticate"
+msgstr "ದೃಢೀಕರಿಸು (_A)"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr "%s:%i ಇಂದ ದೃಢೀಕರಣದ ಅಗತ್ಯವಿದೆ"
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
+#, c-format
+msgid "The site says: “%s”"
+msgstr "ತಾಣವು ಹೀಗೆ ಹೇಳುತ್ತದೆ: “%s”"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:138
+msgid "_Remember password"
+msgstr "ಗುಪ್ತಪದಗಳನ್ನು ನೆನಪಿಟ್ಟುಕೊ (_R)"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:147
+#| msgid "Username:"
+msgid "_Username"
+msgstr "ಬಳಕೆದಾರಹೆಸರು (_U)"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:159
+#| msgid "Password:"
+msgid "_Password"
+msgstr "ಗುಪ್ತಪದ (_P)"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
 msgid "Destination"
@@ -650,7 +675,7 @@ msgid "The local URI to where the download will be saved"
 msgstr "ಇಳಿಸಿಕೊಳ್ಳಲಾಗಿರುವುದನ್ನು ಎಲ್ಲಿ ಉಳಿಸಲಾಗುವುದೋ ಅದರ URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
 msgid "Response"
 msgstr "ಪ್ರತಿಕ್ರಿಯೆ"
 
@@ -671,7 +696,6 @@ msgid "Allow Overwrite"
 msgstr "ತಿದ್ದಿಬರೆಯಲು ಅನುಮತಿಸು"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
-#| msgid "Whether the window can be resized."
 msgid "Whether the destination may be overwritten"
 msgstr "ಗುರಿಯನ್ನು ತಿದ್ದಿಬರೆಯಲು ಸಾಧ್ಯವೆ."
 
@@ -804,12 +828,10 @@ msgid "The media URI"
 msgstr "ಮಾಧ್ಯಮ URI"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
-#| msgid "Navigation type"
 msgid "Navigation action"
 msgstr "ನ್ಯಾವಿಗೇಶನ್ ಕ್ರಿಯೆ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
-#| msgid "The type of navigation triggering this decision"
 msgid "The WebKitNavigationAction triggering this decision"
 msgstr "WebKitNavigationAction ಈ ನಿರ್ಧಾರಕ್ಕೆ ಕಾರಣವಾಗುತ್ತಿದೆ"
 
@@ -1153,7 +1175,6 @@ msgid "Enable Fullscreen"
 msgstr "ಪೂರ್ಣತೆರೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸು"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:903
-#| msgid "Whether to enable the Javascriipt Fullscreen API"
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Javascriipt Fullscreen API ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಬೇಕೆ"
 
@@ -1279,12 +1300,10 @@ msgid "Whether to write console messages on stdout"
 msgstr "ಕನ್ಸೋಲ್ ಸಂದೇಶಗಳನ್ನು stdout ಗೆ ಬರೆಯಬೇಕೆ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1172
-#| msgid "Enable Media Stream"
 msgid "Enable MediaStream"
 msgstr "MediaStream ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸು"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1173
-#| msgid "Whether WebAudio content should be handled"
 msgid "Whether MediaStream content should be handled"
 msgstr "MediaStream ವಿಷಯವನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
 
@@ -1293,24 +1312,21 @@ msgid "Enable Spatial Navigation"
 msgstr "ಸ್ಪೇಶಿಯಲ್ ನ್ಯಾವಿಗೇಶನ್ ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸು"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1193
-#| msgid "Whether to enable Spatial Navigation"
 msgid "Whether to enable Spatial Navigation support."
 msgstr "ಸ್ಪೇಶಿಯಲ್ ನ್ಯಾವಿಗೇಶನ್ ಬೆಂಬಲವನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಬೇಕೆ"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1212
-#| msgid "Enable Media Stream"
 msgid "Enable MediaSource"
 msgstr "MediaSource ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸು"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1213
-#| msgid "Whether Media Stream should be enabled"
 msgid "Whether MediaSource should be enabled."
 msgstr "MediaSource ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಬೇಕೆ."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:743
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:891
 msgid "URI"
 msgstr "URI"
 
@@ -1359,56 +1375,65 @@ msgid "HTTP Headers"
 msgstr "HTTP ಹೆಡರ್‌ಗಳು"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
-#| msgid "The MIME type of the response"
 msgid "The The HTTP headers of the response"
 msgstr "ಪ್ರತಿಕ್ರಿಯೆಯ HTTP ಹೆಡರ್‌ಗಳು"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
 msgid "Inspected URI"
 msgstr "ಪರಿಶೀಲಿಸಲಾದ URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
 msgid "The URI that is currently being inspected"
 msgstr "ಪ್ರಸಕ್ತ ಪರಿಶೀಲಸಲಾಗುತ್ತಿರುವ URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
 msgid "Attached Height"
 msgstr "ಲಗತ್ತಿಸಲಾದ ಎತ್ತರ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
 msgid "The height that the inspector view should have when it is attached"
 msgstr "ಪರಿವೀಕ್ಷಕ ನೋಟವನ್ನು ಲಗತ್ತಿಸಿದಾಗ ಅದು ಹೊಂದಿರಬೇಕಿರುವ ಎತ್ತರ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "ಲಗತ್ತಿಸಬಹುದು"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+"ಪರಿಶೀಲಿಸಲಾದ ನೋಟವನ್ನು ಹೊಂದಿರುವ ಅದೇ ಕಿಟಕಿಗೆ ವಿಶ್ಲೇಷಕವನ್ನು ಲಗತ್ತಿಸಲು ಸಾಧ್ಯವೆ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:111
 msgid "The current active URI of the resource"
 msgstr "ಸಂಪನ್ಮೂಲದ ಪ್ರಸಕ್ತ ಸಕ್ರಿಯ URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:124
 msgid "The response of the resource"
 msgstr "ಸಂಪನ್ಮೂಲದ ಪ್ರತಿಕ್ರಿಯೆ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:460
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:555
 msgid "Select Files"
 msgstr "ಕಡತಗಳನ್ನು ಆರಿಸು"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:460
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:555
 msgid "Select File"
 msgstr "ಕಡತವನ್ನು ಆರಿಸು"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:633
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:781
 msgid "Web Context"
 msgstr "ಜಾಲ ಸನ್ನಿವೇಶ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:634
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:782
 msgid "The web context for the view"
 msgstr "ನೋಟಕ್ಕಾಗಿನ ಜಾಲ ಸನ್ನಿವೇಶ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:651
-#| msgid "WebView"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:799
 msgid "Related WebView"
 msgstr "ಸಂಬಂಧಿಸಿದ WebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:652
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:800
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -1416,66 +1441,72 @@ msgstr ""
 "ಅದೇ ಜಾಲ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಹಂಚಿಕೊಳ್ಳಲು ನೋಟವನ್ನು ರಚಿಸುವಾಗ ಬಳಸಬೇಕಿರುವ ಸಂಬಂಧಿತ "
 "WebKitWebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
-#| msgid "WebView"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:816
 msgid "WebView settings"
 msgstr "WebView ಸಿದ್ಧತೆಗಳು"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:669
-#| msgid "The WebKitWebViewGroup of the view"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:817
 msgid "The WebKitSettings of the view"
 msgstr "ನೋಟದ WebKitSettings"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:685
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:833
 msgid "WebView user content manager"
 msgstr "WebView ಬಳಕೆದಾರ ಕಂಟೆಂಟ್ ವ್ಯವಸ್ಥಾಪಕ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:686
-#| msgid "The WebKitWebViewGroup of the view"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:834
 msgid "The WebKitUserContentManager of the view"
 msgstr "ನೋಟದ WebKitUserContentManager"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:699
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:847
 msgid "Title"
 msgstr "ಶೀರ್ಷಿಕೆ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:700
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:848
 msgid "Main frame document title"
 msgstr "ಮುಖ್ಯ ಚೌಕಟ್ಟಿನ ದಾಖಲೆಯ ಶೀರ್ಷಿಕೆ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:718
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:866
 msgid "Estimated Load Progress"
 msgstr "ಲೋಡ್‌ ಮಾಡುವಿಕೆಯ ಅಂದಾಜು ಪ್ರಗತಿ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:719
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:867
 msgid "An estimate of the percent completion for a document load"
 msgstr "ದಸ್ತಾವೇಜು ಲೋಡ್ ಆಗುವುದಕ್ಕಾಗಿನ ಪೂರ್ಣಗೊಳಿಕೆ ಶೇಕಡಾದ ಒಂದು ಅಂದಾಜು"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:879
 msgid "Favicon"
 msgstr "ಫೆವಿಕಾನ್"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:732
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:880
 msgid "The favicon associated to the view, if any"
 msgstr "ಈ ನೋಟಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದಾದರೂ ಫೆವಿಕಾನ್"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:744
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:892
 msgid "The current active URI of the view"
 msgstr "ನೋಟದ ಪ್ರಸಕ್ತ ಸಕ್ರಿಯ URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:758
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:907
+msgid "Zoom level"
+msgstr "ಹಿಗ್ಗಿಸುವ ಮಟ್ಟ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:908
 msgid "The zoom level of the view content"
 msgstr "ನೋಟ ವಿಷಯದ ಗಾತ್ರ ಬದಲಾವಣೆಯ ಮಟ್ಟ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:776
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:927
+#| msgid "Loading..."
+msgid "Is Loading"
+msgstr "ಲೋಡ್ ಆಗುತ್ತಿದೆ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:928
 msgid "Whether the view is loading a page"
 msgstr "ನೋಟವು ಒಂದು ಪುಟವನ್ನು ಲೋಡ್ ಮಾಡುತ್ತಿದೆಯೆ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2725
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2907
 msgid "An exception was raised in JavaScript"
 msgstr "ಜಾವಾಸ್ಕ್ರಿಪ್ಟಿನಲ್ಲಿ ಒಂದು ಆಕ್ಷೇಪಣೆಯು ಕಂಡುಬಂದಿದೆ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3364
 msgid "There was an error creating the snapshot"
 msgstr "ಸ್ನ್ಯಾಪ್‌ಶಾಟ್ ಅನ್ನು ರಚಿಸುವಾಗ ದೋಷ ಉಂಟಾಗಿದೆ"
 
@@ -1543,10 +1574,17 @@ msgstr "ಪೂರ್ಣತೆರೆ"
 msgid "Whether window will be displayed fullscreen."
 msgstr "ಕಿಟಕಿಯನ್ನು ಪೂರ್ಣತೆರೆಯಲ್ಲಿ ತೋರಿಸಲು ಸಾಧ್ಯವೆ."
 
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:82
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:147
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:132
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:137
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:140
 msgid "Web Inspector"
 msgstr "ಜಾಲ ಮೇಲ್ವಿಚಾರಕ (ವೆಬ್ ಇನ್ಸ್‌ಪೆಕ್ಟರ್)"
+
+#~ msgid "The site %s:%i requests a username and password"
+#~ msgstr "%s:%i ಎಂಬ ಜಾಲತಾಣವು ಒಂದು ಬಳಕೆದಾರಹೆಸರು ಮತ್ತು ಗುಪ್ತಪದಕ್ಕೆ ಮನವಿ ಮಾಡಿದೆ"
+
+#~ msgid "Server message:"
+#~ msgstr "ಪೂರೈಕೆಗಣಕ ಸಂದೇಶ:"
 
 #~ msgctxt "Subtitles"
 #~ msgid "Menu section heading for subtitles"
@@ -2258,9 +2296,6 @@ msgstr "ಜಾಲ ಮೇಲ್ವಿಚಾರಕ (ವೆಬ್ ಇನ್ಸ್�
 
 #~ msgid "Whether content has a transparent background"
 #~ msgstr "ವಿಷಯವು ಪಾರದರ್ಶಕ ಹಿನ್ನಲೆಯನ್ನು ಹೊಂದಿದೆಯೆ"
-
-#~ msgid "Zoom level"
-#~ msgstr "ಹಿಗ್ಗಿಸುವ ಮಟ್ಟ"
 
 #~ msgid "The level of zoom of the content"
 #~ msgstr "ವಿಷಯದ ಗಾತ್ರ ಬದಲಾವಣೆಯ ಮಟ್ಟ"
