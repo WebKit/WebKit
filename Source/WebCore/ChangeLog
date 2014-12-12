@@ -19,6 +19,21 @@
 
         REGRESSION (r168217): Images are cropped out during animation at jetblue.com
         https://bugs.webkit.org/show_bug.cgi?id=136410
+
+        Reviewed by Dean Jackson.
+
+        We were hitting the new assertion under Page::setPageScaleFactor(), which
+        calls recalcStyle(), so move the AnimationUpdateBlock from updateStyleIfNeeded()
+        to recalcStyle().
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateStyleIfNeeded):
+
+2014-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r168217): Images are cropped out during animation at jetblue.com
+        https://bugs.webkit.org/show_bug.cgi?id=136410
         rdar://problem/18188533
 
         Reviewed by Dean Jackson.
