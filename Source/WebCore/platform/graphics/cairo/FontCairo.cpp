@@ -313,6 +313,7 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
     if (!fontData->isSVGFont())
         translator = std::make_unique<CairoGlyphToPathTranslator>(run, glyphBuffer, origin);
+#if ENABLE(SVG_FONTS)
     else {
         TextRun::RenderingContext* renderingContext = run.renderingContext();
         if (!renderingContext)
@@ -320,6 +321,7 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
         translator = renderingContext->createGlyphToPathTranslator(*fontData, &run, glyphBuffer, 0, glyphBuffer.size(), origin);
         isSVG = true;
     }
+#endif
     DashArray result;
     for (int index = 0; translator->containsMorePaths(); ++index, translator->advance()) {
         float centerOfLine = lineExtents.y() + (lineExtents.height() / 2);

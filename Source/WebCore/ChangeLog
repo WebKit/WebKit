@@ -1,3 +1,13 @@
+2014-12-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(SVG_FONTS) build after r177078
+        https://bugs.webkit.org/show_bug.cgi?id=139578
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::dashesForIntersectionsWithRect):
+
 2014-12-12  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add 16bit support.
