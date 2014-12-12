@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014 Raspberry Pi Foundation. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,8 @@
 
 #if PLATFORM(IOS)
 #include <wtf/ThreadingPrimitives.h>
+#elif OS(LINUX)
+#include "Timer.h"
 #endif
 
 namespace WebCore {
@@ -69,6 +72,8 @@ public:
     WEBCORE_EXPORT void clearMemoryPressure();
     WEBCORE_EXPORT bool shouldWaitForMemoryClearMessage();
     void respondToMemoryPressureIfNeeded();
+#elif OS(LINUX)
+    static void waitForMemoryPressureEvent(void*);
 #endif
 
     class ReliefLogger {
@@ -127,9 +132,16 @@ private:
     void (^m_releaseMemoryBlock)();
     CFRunLoopObserverRef m_observer;
     Mutex m_observerMutex;
+#elif OS(LINUX)
+    int m_eventFD;
+    int m_pressureLevelFD;
+    WTF::ThreadIdentifier m_threadID;
+    Timer m_holdOffTimer;
+    void holdOffTimerFired();
+    void logErrorAndCloseFDs(const char* error);
 #endif
 };
- 
+
 // Function to obtain the global memory pressure object.
 WEBCORE_EXPORT MemoryPressureHandler& memoryPressureHandler();
 

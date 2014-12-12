@@ -1,3 +1,39 @@
+2014-12-12  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Implement MemoryPressureHandler for Linux system
+        https://bugs.webkit.org/show_bug.cgi?id=123532
+
+        Reviewed by Sergio Villar Senin.
+
+        This is an initial implementation to support MemoryPressureHandler for linux system.
+        The patch is based on Tomeu's last patch and improved on top of it.
+        Most of current linux distributions support cgroup, so that we use the memory.pressure_level
+        mechanism of cgroup to get notifications when an application reaches the 'low' memory
+        pressure level.
+
+        No new tests since no engine behavior changed.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        * platform/MemoryPressureHandler.h:
+        * platform/linux/MemoryPressureHandlerLinux.cpp: Added.
+        (WebCore::nextToken):
+        (WebCore::MemoryPressureHandler::~MemoryPressureHandler):
+        (WebCore::MemoryPressureHandler::waitForMemoryPressureEvent): run in a seperated thread
+        to listen 'low' level event.
+        (WebCore::MemoryPressureHandler::logErrorAndCloseFDs):
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::uninstall):
+        (WebCore::MemoryPressureHandler::holdOffTimerFired):
+        (WebCore::MemoryPressureHandler::holdOff):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformLog):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage): read /proc/self/status
+        to get VM amount used by current process.
+
 2014-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Layer borders on contentsLayers don't correctly toggle with the rest of the borders

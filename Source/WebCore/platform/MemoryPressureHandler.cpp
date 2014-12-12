@@ -64,6 +64,11 @@ MemoryPressureHandler::MemoryPressureHandler()
     , m_clearPressureOnMemoryRelease(true)
     , m_releaseMemoryBlock(0)
     , m_observer(0)
+#elif OS(LINUX)
+    , m_eventFD(0)
+    , m_pressureLevelFD(0)
+    , m_threadID(0)
+    , m_holdOffTimer(*this, &MemoryPressureHandler::holdOffTimerFired)
 #endif
 {
 }
@@ -143,7 +148,7 @@ void MemoryPressureHandler::releaseMemory(bool critical)
     }
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !OS(LINUX)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }

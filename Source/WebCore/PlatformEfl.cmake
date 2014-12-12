@@ -212,6 +212,7 @@ list(APPEND WebCore_SOURCES
     platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/linux/GamepadDeviceLinux.cpp
+    platform/linux/MemoryPressureHandlerLinux.cpp
 
     platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
 
