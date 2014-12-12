@@ -597,6 +597,7 @@ static gboolean webkitWebViewShowNotification(WebKitWebView* webView, WebKitNoti
     notify_notification_show(notification.get(), nullptr);
     return TRUE;
 #else
+    UNUSED_PARAM(webView);
     UNUSED_PARAM(webNotification);
     return FALSE;
 #endif
@@ -611,6 +612,7 @@ static gboolean webkitWebViewCloseNotification(WebKitWebView* webView, WebKitNot
     }
     return TRUE;
 #else
+    UNUSED_PARAM(webView);
     UNUSED_PARAM(webNotification);
     return FALSE;
 #endif

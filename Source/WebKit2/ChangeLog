@@ -1,3 +1,14 @@
+2014-12-12  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        Fix Build Warning in WebKit2/UIProcess module for GTK build and WebKit2/NetworkProcess module in GTK and EFL build
+        https://bugs.webkit.org/show_bug.cgi?id=139535
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp: Use UNUSED_PARAM for conditional #if case
+        (webkitWebViewShowNotification):
+        (webkitWebViewCloseNotification):
+
 2014-12-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Disable all EWK2Accessibility unit tests
