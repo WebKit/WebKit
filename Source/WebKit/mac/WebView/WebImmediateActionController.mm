@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
@@ -126,6 +127,7 @@ using namespace WebCore;
 {
     _type = WebImmediateActionNone;
     _immediateActionRecognizer.animationController = nil;
+    id <NSImmediateActionAnimationController> defaultAnimationController = nil;
 
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];
@@ -135,9 +137,22 @@ using namespace WebCore;
         RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
         [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
         [qlPreviewLinkItem setDelegate:self];
-        _immediateActionRecognizer.animationController = (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
-        return;
+        defaultAnimationController = (id <NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
     }
+
+    // Allow clients the opportunity to override the default immediate action.
+    id customClientAnimationController = nil;
+    if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:immediateActionAnimationControllerForHitTestResult:withType:)]) {
+        RetainPtr<WebElementDictionary> webHitTestResult = [[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult];
+        customClientAnimationController = [[_webView UIDelegate] _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
+    }
+
+    if (customClientAnimationController == [NSNull null])
+        return;
+    if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
+        _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
+    else
+        _immediateActionRecognizer.animationController = defaultAnimationController;
 }
 
 #pragma mark QLPreviewMenuItemDelegate implementation
