@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageNamespaceImpl_h
-#define StorageNamespaceImpl_h
+#ifndef WebStorageNamespaceImpl_h
+#define WebStorageNamespaceImpl_h
 
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
@@ -77,4 +77,4 @@ private:
 
 } // namespace WebKit
 
-#endif // StorageNamespaceImpl_h
+#endif // WebStorageNamespaceImpl_h

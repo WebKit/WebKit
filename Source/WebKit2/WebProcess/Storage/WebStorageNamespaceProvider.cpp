@@ -28,6 +28,7 @@
 
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
+#include <WebCore/StorageNamespaceImpl.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -78,7 +79,8 @@ RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorag
 
 RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota)
 {
-    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_identifier, topLevelOrigin, quota);
+    // FIXME: This shouldn't use WebCore session storage.
+    return WebCore::StorageNamespaceImpl::createSessionStorageNamespace(quota);
 }
 
 }
