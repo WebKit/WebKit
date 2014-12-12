@@ -1,3 +1,13 @@
+2014-12-12  Roger Fong  <roger_fong@apple.com>
+
+        Implement EXT_blend_minmax as a WebGL 1 extension.
+        https://bugs.webkit.org/show_bug.cgi?id=128974.
+        <rdar://problem/19195535>
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/constants.html:
+
 2014-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html is flaky

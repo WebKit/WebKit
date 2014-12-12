@@ -1,3 +1,41 @@
+2014-12-12  Roger Fong  <roger_fong@apple.com>
+
+        Implement EXT_blend_minmax as a WebGL 1 extension.
+        https://bugs.webkit.org/show_bug.cgi?id=128974.
+        <rdar://problem/19195535>
+
+        Reviewed by Dean Jackson.
+
+        Tested by:
+        webgl/1.0.3/conformance/extensions/ext-blend-minmax.html
+        fast/canvas/webgl/constants.html
+
+        Specifications for this extension:
+        https://www.khronos.org/registry/webgl/extensions/EXT_blend_minmax/
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/EXTBlendMinMax.cpp: Added.
+        (WebCore::EXTBlendMinMax::EXTBlendMinMax):
+        (WebCore::EXTBlendMinMax::~EXTBlendMinMax):
+        (WebCore::EXTBlendMinMax::getName):
+        * html/canvas/EXTBlendMinMax.h: Added.
+        * html/canvas/EXTBlendMinMax.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::validateBlendEquation):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * platform/graphics/Extensions3D.h:
+
 2014-12-12  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the concept of simple selector from the parser

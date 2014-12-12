@@ -2309,6 +2309,9 @@
 		71E2183B17359FB8006E6E4D /* PlugInsResourcesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71E2183917359FB8006E6E4D /* PlugInsResourcesData.cpp */; };
 		71E623D1151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */; };
 		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */; };
+		724ED3311A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 724ED32F1A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp */; };
+		724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */ = {isa = PBXBuildFile; fileRef = 724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		727AFED41A2EA6AE000442E8 /* EXTsRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */; };
 		72E417631A2E8D2F004C562A /* JSEXTsRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */; };
@@ -9489,6 +9492,11 @@
 		71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedIntegerOptionalInteger.cpp; sourceTree = "<group>"; };
 		71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedIntegerOptionalInteger.h; sourceTree = "<group>"; };
 		71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumerationPropertyTearOff.h; sourceTree = "<group>"; };
+		724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTBlendMinMax.cpp; path = canvas/EXTBlendMinMax.cpp; sourceTree = "<group>"; };
+		724ED32A1A3A7E5400F5F13C /* EXTBlendMinMax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTBlendMinMax.h; path = canvas/EXTBlendMinMax.h; sourceTree = "<group>"; };
+		724ED32B1A3A7E5400F5F13C /* EXTBlendMinMax.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTBlendMinMax.idl; path = canvas/EXTBlendMinMax.idl; sourceTree = "<group>"; };
+		724ED32F1A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSEXTBlendMinMax.cpp; path = "JSEXTBlendMinMax.cpp"; sourceTree = "<group>"; };
+		724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSEXTBlendMinMax.h; path = "JSEXTBlendMinMax.h"; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTsRGB.cpp; path = canvas/EXTsRGB.cpp; sourceTree = "<group>"; };
 		727AFED21A2EA6A0000442E8 /* EXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTsRGB.h; path = canvas/EXTsRGB.h; sourceTree = "<group>"; };
@@ -15817,6 +15825,9 @@
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
 				FB91392016AE4B0B001FE682 /* DOMPath.h */,
 				FB91392116AE4B0B001FE682 /* DOMPath.idl */,
+				724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */,
+				724ED32A1A3A7E5400F5F13C /* EXTBlendMinMax.h */,
+				724ED32B1A3A7E5400F5F13C /* EXTBlendMinMax.idl */,
 				5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */,
 				5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */,
 				5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */,
@@ -18731,6 +18742,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				724ED32F1A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp */,
+				724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */,
 				72F1ADA31A390B9F00014E18 /* JSEXTFragDepth.cpp */,
 				72F1ADA41A390B9F00014E18 /* JSEXTFragDepth.h */,
 				72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */,
@@ -25222,6 +25235,7 @@
 				A83B78FC0CCAFF15000B0825 /* JSSVGFontFaceUriElement.h in Headers */,
 				B2FA3D990AB75A6F000E5AC4 /* JSSVGForeignObjectElement.h in Headers */,
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
+				724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */,
 				B27B28280CEF0C0700D39D54 /* JSSVGGlyphElement.h in Headers */,
 				24D9129A13CA971400D21915 /* JSSVGGlyphRefElement.h in Headers */,
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
@@ -29085,6 +29099,7 @@
 				BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */,
 				52F10865162B6DA4009AC81E /* MixedContentChecker.cpp in Sources */,
 				CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */,
+				724ED3311A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp in Sources */,
 				CDF2B0121820540600F2B424 /* MockMediaPlayerMediaSource.cpp in Sources */,
 				CDF2B0141820540600F2B424 /* MockMediaSourcePrivate.cpp in Sources */,
 				07C59B6317F4D1BF000FBCBB /* MockMediaStreamCenter.cpp in Sources */,
@@ -30043,6 +30058,7 @@
 				A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */,
 				6E3FAE8E14733FDB00E42307 /* WebGLDepthTexture.cpp in Sources */,
 				5B30695D18B3D3450099D5E8 /* WebGLDrawBuffers.cpp in Sources */,
+				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,
 				6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */,
 				49C7B9CE1042D32F0009D447 /* WebGLFramebuffer.cpp in Sources */,
 				6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */,

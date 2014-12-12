@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class ANGLEInstancedArrays;
+class EXTBlendMinMax;
 class EXTTextureFilterAnisotropic;
 class EXTShaderTextureLOD;
 class EXTsRGB;
@@ -541,6 +542,7 @@ private:
 
     // Enabled extension objects.
     std::unique_ptr<EXTFragDepth> m_extFragDepth;
+    std::unique_ptr<EXTBlendMinMax> m_extBlendMinMax;
     std::unique_ptr<EXTsRGB> m_extsRGB;
     std::unique_ptr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     std::unique_ptr<EXTShaderTextureLOD> m_extShaderTextureLOD;

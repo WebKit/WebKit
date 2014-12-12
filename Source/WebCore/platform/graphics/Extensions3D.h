@@ -96,6 +96,10 @@ public:
         SRGB8_ALPHA8_EXT = 0x8C43,
         FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210,
 
+        // EXT_blend_minmax enums
+        MIN_EXT = 0x8007,
+        MAX_EXT = 0x8008,
+
         // GL_EXT_texture_format_BGRA8888 enums
         BGRA_EXT = 0x80E1,
 

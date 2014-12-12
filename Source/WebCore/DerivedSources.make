@@ -425,6 +425,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/canvas/EXTShaderTextureLOD.idl \
     $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
     $(WebCore)/html/canvas/EXTsRGB.idl \
+    $(WebCore)/html/canvas/EXTBlendMinMax.idl \
     $(WebCore)/html/canvas/EXTFragDepth.idl \
     $(WebCore)/html/canvas/OESElementIndexUint.idl \
     $(WebCore)/html/canvas/OESStandardDerivatives.idl \

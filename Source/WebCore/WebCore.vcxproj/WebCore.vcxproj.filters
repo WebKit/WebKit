@@ -7267,6 +7267,12 @@
     <ClCompile Include="..\html\canvas\EXTFragDepth.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTBlendMinMax.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\EXTBlendMinMax.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -15276,6 +15282,12 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="..\html\canvas\EXTFragDepth.h”>
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTBlendMinMax.h”>
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\EXTBlendMinMax.h”>
       <Filter>html\canvas</Filter>
     </ClInclude>
   </ItemGroup>

@@ -33,6 +33,7 @@
 #include "CachedImage.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "EXTBlendMinMax.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
@@ -2455,6 +2456,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     if (isContextLostOrPending())
         return nullptr;
 
+    if (equalIgnoringCase(name, "EXT_blend_minmax")
+        && m_context->getExtensions()->supports("GL_EXT_blend_minmax")) {
+        if (!m_extBlendMinMax) {
+            m_context->getExtensions()->ensureEnabled("GL_EXT_blend_minmax");
+            m_extBlendMinMax = std::make_unique<EXTBlendMinMax>(this);
+        }
+        return m_extBlendMinMax.get();
+    }
     if (equalIgnoringCase(name, "EXT_sRGB")
         && m_context->getExtensions()->supports("GL_EXT_sRGB")) {
         if (!m_extsRGB) {
@@ -3087,6 +3096,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_isPendingPolicyResolution)
         return result;
 
+    if (m_context->getExtensions()->supports("GL_EXT_blend_minmax"))
+        result.append("EXT_blend_minmax");
     if (m_context->getExtensions()->supports("GL_EXT_sRGB"))
         result.append("EXT_sRGB");
     if (m_context->getExtensions()->supports("GL_EXT_frag_depth"))
@@ -5664,7 +5675,14 @@ bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3D
     case GraphicsContext3D::FUNC_ADD:
     case GraphicsContext3D::FUNC_SUBTRACT:
     case GraphicsContext3D::FUNC_REVERSE_SUBTRACT:
+    case Extensions3D::MIN_EXT:
+    case Extensions3D::MAX_EXT:
+        if ((mode == Extensions3D::MIN_EXT || mode == Extensions3D::MAX_EXT) && !m_extBlendMinMax) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid mode");
+            return false;
+        }
         return true;
+        break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid mode");
         return false;
