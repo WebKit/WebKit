@@ -1,3 +1,9 @@
+2014-12-11  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix to build fix in r177134.
+
+        * html/canvas/WebGLDrawBuffers.cpp: iOS should query the system for GL extension availability.
+
 2014-12-10  Roger Fong  <roger_fong@apple.com>
 
         Implement frag depth as a WebGL 1 extension.
