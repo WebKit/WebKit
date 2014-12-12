@@ -252,22 +252,73 @@ static const double kGravity = 9.80665;
         Vector<WebCore::DeviceOrientationClientIOS*> orientationClients;
         copyToVector(m_deviceOrientationClients, orientationClients);
 
-        // Note that the W3C DeviceOrientation specification labels the X axis
-        // as passing between the sides of the device, and the Y axis as passing
-        // from top to bottom of the device. Conventional Tait-Bryan Euler angles
-        // have the X axis pointing forward (the heading of the aircraft, for
-        // example), which is what you would "roll" around, and what the W3C says
-        // is the Y axis. Unfortunately CoreMotion doesn't normalize in the
-        // same order as the W3C requests, so our beta is [-90, 90] and gamma is
-        // [-180, 180]. For most practical uses this is acceptable.
-        // See <rdar://problem/9414459> Normalize our DeviceOrientation beta/gamma per spec
+        // Compose the raw motion data to an intermediate ZXY-based 3x3 rotation
+        // matrix (R) where [z=attitude.yaw, x=attitude.pitch, y=attitude.roll]
+        // in the form:
+        //
+        //   /  R[0]   R[1]   R[2]  \
+        //   |  R[3]   R[4]   R[5]  |
+        //   \  R[6]   R[7]   R[8]  /
 
-        // Rotation around the Z axis (pointing up, normalized to [0, 360] deg).
-        double alpha = rad2deg(attitude.yaw > 0 ? attitude.yaw : (M_PI * 2 + attitude.yaw));
-        // Rotation around the X axis (side to side).
-        double beta = rad2deg(attitude.pitch);
-        // Rotation around the Y axis (top to bottom).
-        double gamma = rad2deg(attitude.roll);
+        double cX = cos(attitude.pitch);
+        double cY = cos(attitude.roll);
+        double cZ = cos(attitude.yaw);
+        double sX = sin(attitude.pitch);
+        double sY = sin(attitude.roll);
+        double sZ = sin(attitude.yaw);
+
+        double R[] = {
+            cZ * cY - sZ * sX * sY,
+            - cX * sZ,
+            cY * sZ * sX + cZ * sY,
+            cY * sZ + cZ * sX * sY,
+            cZ * cX,
+            sZ * sY - cZ * cY * sX,
+            - cX * sY,
+            sX,
+            cX * cY
+        };
+
+        // Compute correct, normalized values for DeviceOrientation from
+        // rotation matrix (R) according to the angle conventions defined in the
+        // W3C DeviceOrientation specification.
+
+        double zRot;
+        double xRot;
+        double yRot;
+
+        if (R[8] > 0) {
+            zRot = atan2(-R[1], R[4]);
+            xRot = asin(R[7]);
+            yRot = atan2(-R[6], R[8]);
+        } else if (R[8] < 0) {
+            zRot = atan2(R[1], -R[4]);
+            xRot = -asin(R[7]);
+            xRot += (xRot >= 0) ? -M_PI : M_PI;
+            yRot = atan2(R[6], -R[8]);
+        } else {
+            if (R[6] > 0) {
+                zRot = atan2(-R[1], R[4]);
+                xRot = asin(R[7]);
+                yRot = -M_PI_2;
+            } else if (R[6] < 0) {
+                zRot = atan2(R[1], -R[4]);
+                xRot = -asin(R[7]);
+                xRot += (xRot >= 0) ? -M_PI : M_PI;
+                yRot = -M_PI_2;
+            } else {
+                zRot = atan2(R[3], R[0]);
+                xRot = (R[7] > 0) ? M_PI_2 : -M_PI_2;
+                yRot = 0;
+            }
+        }
+
+        // Rotation around the Z axis (pointing up. normalized to [0, 360] deg).
+        double alpha = rad2deg(zRot > 0 ? zRot : (M_PI * 2 + zRot));
+        // Rotation around the X axis (top to bottom).
+        double beta  = rad2deg(xRot);
+        // Rotation around the Y axis (side to side).
+        double gamma = rad2deg(yRot);
 
         double heading = (m_headingAvailable && newHeading) ? newHeading.magneticHeading : 0;
         double headingAccuracy = (m_headingAvailable && newHeading) ? newHeading.headingAccuracy : -1;

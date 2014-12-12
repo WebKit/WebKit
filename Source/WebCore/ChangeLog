@@ -1,3 +1,19 @@
+2014-12-11  Rich Tibbett <rich.tibbett@gmail.com>
+
+        [iOS] Normalize iOS DeviceOrientation beta/gamma per spec.
+        https://bugs.webkit.org/show_bug.cgi?id=137134
+        <radr://problem/9414459>
+
+        Reviewed by Benjamin Poulain.
+
+        Normalize DeviceOrientation beta and gamma on iOS to match the
+        conventions defined in the W3C DeviceOrientation Events specification.
+
+        beta values are returned in the range [-180, 180). gamma values are
+        returned in the range [-90, 90).
+
+        * platform/ios/WebCoreMotionManager.mm:
+
 2014-12-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177081.
