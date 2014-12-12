@@ -1,3 +1,58 @@
+2014-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r168217): Images are cropped out during animation at jetblue.com
+        https://bugs.webkit.org/show_bug.cgi?id=136410
+        rdar://problem/18188533
+
+        Reviewed by Dean Jackson.
+        
+        During GraphicsLayer flushing, for tiled layers we can compute a visible rect using
+        the current state of an animation, which is obtained via the AnimationController.
+        If that animation was running in a subframe, AnimationController could use a stale
+        beginAnimationUpdateTime since no-one called its beginAnimationUpdate(). That
+        resulted in an incorrect computation of the visible rect, resulting in missing tiles.
+        
+        There are two parts to this fix. First, add an assertion that beginAnimationUpdateTime()
+        is being called inside an animation update block. This required moving m_beginAnimationUpdateCount
+        into AnimationControllerPrivate, and changes to endAnimationUpdate().
+        
+        The second is adding a AnimationUpdateBlock to getAnimatedStyleForRenderer(), which
+        can be called outside of style resolution. We also need some in other API functions.
+        
+        Testing revealed that layout can call via layoutOverflowRectForPropagation(), suggesting
+        that we should have an animation batch inside FrameView::layout(). In addition, a single
+        resolveStyle/layout should use the same animationBeginTime, so we add a batch to 
+        updateLayoutAndStyleIfNeededRecursive().
+        
+        No test because it's timing-dependent. Existing tests exercise the new assertion.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationPrivateUpdateBlock::AnimationPrivateUpdateBlock):
+        (WebCore::AnimationPrivateUpdateBlock::~AnimationPrivateUpdateBlock):
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::animationTimerFired):
+        (WebCore::AnimationControllerPrivate::suspendAnimationsForDocument):
+        (WebCore::AnimationControllerPrivate::resumeAnimationsForDocument):
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdate):
+        (WebCore::AnimationControllerPrivate::endAnimationUpdate):
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::AnimationController::AnimationController):
+        (WebCore::AnimationController::notifyAnimationStarted):
+        (WebCore::AnimationController::pauseAnimationAtTime):
+        (WebCore::AnimationController::pauseTransitionAtTime):
+        (WebCore::AnimationController::resumeAnimationsForDocument):
+        (WebCore::AnimationController::startAnimationsIfNotSuspended):
+        (WebCore::AnimationController::beginAnimationUpdate):
+        (WebCore::AnimationController::endAnimationUpdate):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+
 2014-12-12  Roger Fong  <roger_fong@apple.com>
 
         [Win] Unreviewed build fix following r177235.
