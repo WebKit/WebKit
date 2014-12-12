@@ -1,3 +1,20 @@
+2014-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=139596
+        Subpixel rendering: REGRESSION (r163272): Fixed positioned pseudo content leaves trails while scrolling.
+        rdar://problem/18697851
+
+        Reviewed by Simon Fraser.
+
+        Final repaint rect at FrameView::scrollContentsFastPath needs to be pixel aligned (as opposed to snap to int).
+        However we can't pixelsnap it until after ScrollView finished transitioning to Float/LayoutRect.
+        Use enclosing int rect for now to ensure scrolling does not leave trails.
+
+        Unable to test. Apparently scrolling clears trails in dumprendertree. (repaint rects are not useful either with scrolling)
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+
 2014-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168217): Images are cropped out during animation at jetblue.com
