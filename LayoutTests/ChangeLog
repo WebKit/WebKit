@@ -1,3 +1,18 @@
+2014-12-11  Michael Saboff  <msaboff@apple.com>
+
+        Need a regression test for bug 139533
+        https://bugs.webkit.org/show_bug.cgi?id=139572
+
+        Reviewed by Mark Lam.
+
+        * js/regress-139533-expected.txt: Added.
+        * js/regress-139533.html: Added.
+        * js/script-tests/regress-139533.js: Added.
+        (.inner):
+        (outer):
+        (MyNumber):
+        (MyNumber.prototype.toString):
+
 2014-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         Transform-style should not kill position:fixed
