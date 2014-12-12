@@ -1,3 +1,17 @@
+2014-12-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Disable all EWK2Accessibility unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=139577
+
+        Reviewed by Csaba Osztrogonác.
+
+        WebAccessibility functionality isn't supported by EFL WebKit2 though,
+        EWK2Accessibility unit tests have been tested. That's why those tests have been failed
+        so far.
+
+        * UIProcess/API/efl/tests/test_ewk2_accessibility.cpp:
+        (TEST_F):
+
 2014-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Layer borders on contentsLayers don't correctly toggle with the rest of the borders

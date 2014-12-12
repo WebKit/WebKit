@@ -17,7 +17,7 @@ protected:
     }
 };
 
-TEST_F(EWK2Accessibility, ewk_accessibility_action_activate)
+TEST_F(EWK2Accessibility, DISABLED_ewk_accessibility_action_activate)
 {
     ecore_x_e_illume_access_action_activate_send(xwindow());
     bool activateSend = false;
@@ -25,7 +25,7 @@ TEST_F(EWK2Accessibility, ewk_accessibility_action_activate)
     ASSERT_TRUE(ewk_view_accessibility_action_activate_get(webView()));
 }
 
-TEST_F(EWK2Accessibility, ewk_accessibility_action_next)
+TEST_F(EWK2Accessibility, DISABLED_ewk_accessibility_action_next)
 {
     ecore_x_e_illume_access_action_read_next_send(xwindow());
     bool nextSend = false;
@@ -33,7 +33,7 @@ TEST_F(EWK2Accessibility, ewk_accessibility_action_next)
     ASSERT_TRUE(ewk_view_accessibility_action_next_get(webView()));
 }
 
-TEST_F(EWK2Accessibility, ewk_accessibility_action_prev)
+TEST_F(EWK2Accessibility, DISABLED_ewk_accessibility_action_prev)
 {
     ecore_x_e_illume_access_action_read_prev_send(xwindow());
     bool prevSend = false;
@@ -41,7 +41,7 @@ TEST_F(EWK2Accessibility, ewk_accessibility_action_prev)
     ASSERT_TRUE(ewk_view_accessibility_action_prev_get(webView()));
 }
 
-TEST_F(EWK2Accessibility, ewk_accessibility_action_read_by_point)
+TEST_F(EWK2Accessibility, DISABLED_ewk_accessibility_action_read_by_point)
 {
     ecore_x_e_illume_access_action_read_send(xwindow());
     bool readSend = false;
