@@ -26,7 +26,7 @@
 #ifndef Range_h
 #define Range_h
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace bmalloc {
 

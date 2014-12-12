@@ -32,7 +32,7 @@
 #include "PerProcess.h"
 #include "SmallChunk.h"
 #include <algorithm>
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/mman.h>
 
 using namespace std;
@@ -56,7 +56,8 @@ Deallocator::~Deallocator()
     
 void Deallocator::scavenge()
 {
-    processObjectLog();
+    if (m_isBmallocEnabled)
+        processObjectLog();
 }
 
 void Deallocator::deallocateLarge(void* object)

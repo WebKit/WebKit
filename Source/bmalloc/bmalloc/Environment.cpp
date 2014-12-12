@@ -24,8 +24,50 @@
  */
 
 #include "Environment.h"
+#include <cstdlib>
+#include <cstring>
 
 namespace bmalloc {
+
+static bool isMallocEnvironmentVariableSet()
+{
+    const char* list[] = {
+        "Malloc",
+        "MallocLogFile",
+        "MallocGuardEdges",
+        "MallocDoNotProtectPrelude",
+        "MallocDoNotProtectPostlude",
+        "MallocStackLogging",
+        "MallocStackLoggingNoCompact",
+        "MallocStackLoggingDirectory",
+        "MallocScribble",
+        "MallocCheckHeapStart",
+        "MallocCheckHeapEach",
+        "MallocCheckHeapSleep",
+        "MallocCheckHeapAbort",
+        "MallocErrorAbort",
+        "MallocCorruptionAbort",
+        "MallocHelp"
+    };
+    size_t size = sizeof(list) / sizeof(const char*);
+    
+    for (size_t i = 0; i < size; ++i) {
+        if (getenv(list[i]))
+            return true;
+    }
+
+    return false;
+}
+
+static bool isLibgmallocEnabled()
+{
+    char* variable = getenv("DYLD_INSERT_LIBRARIES");
+    if (!variable)
+        return false;
+    if (!strstr(variable, "libgmalloc"))
+        return false;
+    return true;
+}
 
 Environment::Environment()
     : m_isBmallocEnabled(computeIsBmallocEnabled())
@@ -34,6 +76,10 @@ Environment::Environment()
 
 bool Environment::computeIsBmallocEnabled()
 {
+    if (isMallocEnvironmentVariableSet())
+        return false;
+    if (isLibgmallocEnabled())
+        return false;
     return true;
 }
 
