@@ -124,7 +124,7 @@ void RenderInline::updateFromStyle()
     RenderBoxModelObject::updateFromStyle();
 
     // FIXME: Support transforms and reflections on inline flows someday.
-    setHasTransform(false);
+    setHasTransformRelatedProperty(false);
     setHasReflection(false);    
 }
 

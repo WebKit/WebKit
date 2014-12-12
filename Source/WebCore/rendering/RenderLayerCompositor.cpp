@@ -2261,7 +2261,7 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
         reasons |= CompositingReasonNegativeZIndexChildren;
         break;
     case RenderLayer::IndirectCompositingReason::GraphicalEffect:
-        if (renderer->layer()->transform())
+        if (renderer->hasTransform())
             reasons |= CompositingReasonTransformWithCompositedDescendants;
 
         if (renderer->isTransparent())

@@ -858,7 +858,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         setHorizontalWritingMode(true);
         setHasBoxDecorations(false);
         setHasOverflowClip(false);
-        setHasTransform(false);
+        setHasTransformRelatedProperty(false);
         setHasReflection(false);
     } else {
         s_affectsParentBlock = false;

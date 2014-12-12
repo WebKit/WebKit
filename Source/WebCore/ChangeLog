@@ -1,3 +1,93 @@
+2014-12-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Transform-style should not kill position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=138122
+
+        Reviewed by Dean Jackson.
+        
+        Various bits of rendering code checked RenderObject::hasTransform() for various
+        reasons. Confusingly, this meant "has transform, or preserve-3d, or perspective".
+        
+        This patch teases those behaviors apart to produce the following behavior:
+        
+        1. "transform" acts as containing block for fixed position (no behavior change).
+        2. "transform" acts as containing block for absolute/relative position (no behavior change).
+        3. "perspective" does not act as containing block for fixed position (no behavior change).
+        4. "perspective" acts as containing block for absolute/relative position (no behavior change).
+        5. "preserve-3d" does not act as containing block for fixed position (behavior change).
+        6. "preserve-3d" acts as containing block for absolute/relative position. This is not a
+        behavior change, but seems like incorrect behavior (https://www.w3.org/Bugs/Public/show_bug.cgi?id=27566).
+        However, we may be forced to keep it for compatibility.
+        
+        The gist of the change is to rename RenderObject::hasTransform() to RenderObject::hasTransformRelatedProperty(),
+        and add hasTransform() with the more restrictive meaning. All call sites of hasTransform() were examined
+        and fixed to produce the desired behaviors.
+
+        Tests: transforms/2d/perspective-not-fixed-container.html
+               transforms/2d/preserve3d-not-fixed-container.html
+               transforms/perspective-is-containing-block-for-absolute.html
+               transforms/preserve3d-is-containing-block-for-absolute.html
+               transforms/transform-is-containing-block-for-absolute.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform): Now we can just test hasTransform().
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::isContainingBlockCandidateForAbsolutelyPositionedObject): For now, this
+        can just use hasTransformRelatedProperty(), but if we change [6] above this will have
+        to change (as documented in the comment). Also FIXME comments about sharing code.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::mapLocalToContainer): Can just use hasTransform() now.
+        (WebCore::RenderBox::pushMappingToContainer): Ditto.
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint): Ditto.
+        (WebCore::RenderBox::layoutOverflowRectForPropagation): Ditto.
+        * rendering/RenderBox.h: All transform-related properties create RenderLayers.
+        * rendering/RenderBoxModelObject.h: Ditto.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::canMapBetweenRenderersViaLayers): Rename to clarify. We need to not map via
+        layers if we have a perspective (since we need to generate a perspective matrix). It's
+        OK with preserve-3d though.
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+        (WebCore::canMapBetweenRenderers): Deleted.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateFromStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform): Can just check hasTransform().
+        (WebCore::RenderLayer::updateLayerPosition): Avoid calling parent() and enclosingPositionedAncestor() twice.
+        (WebCore::RenderLayer::perspectiveTransform): Do the fast bit check hasTransformRelatedProperty() first.
+        (WebCore::RenderLayer::perspectiveOrigin): Ditto.
+        (WebCore::isContainerForPositioned): This code has to now have different behavior for absolute and fixed
+        position. Changed it to call existing functions, rather than having a 3rd place that has to know about
+        containing block rules.
+        (WebCore::RenderLayer::enclosingAncestorForPosition): Call isContainerForPositioned() now.
+        (WebCore::accumulateOffsetTowardsAncestor): Call enclosingAncestorForPosition().
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::isPositionedContainer): Deleted.
+        (WebCore::isFixedPositionedContainer): Deleted.
+        (WebCore::RenderLayer::enclosingPositionedAncestor): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldUseTransformFromContainer): Can just check hasTransform() now.
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransformRelatedProperty):
+        (WebCore::RenderObject::hasTransform):
+        (WebCore::RenderObject::setHasTransformRelatedProperty):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::setHasTransform): Deleted.
+        * rendering/RenderTableRow.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer): nullptr goodness.
+        (WebCore::RenderView::pushMappingToContainer): Ditto.
+        (WebCore::RenderView::mapAbsoluteToLocalPoint): Ditto.
+
 2014-12-11  Rich Tibbett <rich.tibbett@gmail.com>
 
         [iOS] Normalize iOS DeviceOrientation beta/gamma per spec.

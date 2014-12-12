@@ -1,3 +1,33 @@
+2014-12-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Transform-style should not kill position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=138122
+
+        Reviewed by Dean Jackson.
+        
+        New tests and updated results:
+
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Progression, caused
+        by RenderLayerBacking::updateCompositedBounds() now allowing shouldClipCompositedBounds on
+        preserve-3d layers, since they are no longer considered to have a transform.
+        * platform/mac/compositing/visible-rect/3d-transform-style-expected.txt: Ditto.
+        * transforms/2d/perspective-not-fixed-container-expected.html: Added.
+        * transforms/2d/perspective-not-fixed-container.html: Added. Tests that
+        perspective does not act as containing block for fixed position (not a behavior change).
+        * transforms/2d/preserve3d-not-fixed-container-expected.html: Added.
+        * transforms/2d/preserve3d-not-fixed-container.html: Added. Tests that
+        preserve3d does not act as containing block for fixed position. This is a behavior change.
+        * transforms/perspective-is-containing-block-for-absolute-expected.html: Added.
+        * transforms/perspective-is-containing-block-for-absolute.html: Added. Tests that
+        perspective is a as containing block for absolute/relative position. This is not a behavior change.
+        * transforms/preserve3d-is-containing-block-for-absolute-expected.html: Added.
+        * transforms/preserve3d-is-containing-block-for-absolute.html: Added. Tests that
+        preserve3d is a as containing block for absolute/relative position. This is not a behavior change,
+        but seems like incorrect behavior for now.
+        * transforms/transform-is-containing-block-for-absolute-expected.html: Added.
+        * transforms/transform-is-containing-block-for-absolute.html: Added. Tests that
+        transform is a as containing block for absolute/relative position. This is not a behavior change.
+
 2014-12-11  Roger Fong  <roger_fong@apple.com>
 
         Implement frag depth as a WebGL 1 extension.

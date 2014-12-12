@@ -544,7 +544,7 @@ LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox*
     if (!box->hasOverflowClip())
         rect.unite(layoutOverflowRectForBox(box));
 
-    bool hasTransform = box->hasLayer() && box->layer()->transform();
+    bool hasTransform = box->hasTransform();
     if (box->isInFlowPositioned() || hasTransform) {
         if (hasTransform)
             rect = box->layer()->currentTransform().mapRect(rect);

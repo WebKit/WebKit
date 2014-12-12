@@ -77,6 +77,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
+#include "LogicalSelectionOffsetCaches.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
@@ -830,9 +831,7 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
 
 void RenderLayer::updateTransform()
 {
-    // hasTransform() on the renderer is also true when there is transform-style: preserve-3d or perspective set,
-    // so check style too.
-    bool hasTransform = renderer().hasTransform() && renderer().style().hasTransform();
+    bool hasTransform = renderer().hasTransform();
     bool had3DTransform = has3DTransform();
 
     bool hadTransform = !!m_transform;
@@ -1210,10 +1209,10 @@ bool RenderLayer::updateLayerPosition()
         localPoint += box->topLeftLocationOffset();
     }
 
-    if (!renderer().isOutOfFlowPositioned() && renderer().parent()) {
+    RenderElement* ancestor;
+    if (!renderer().isOutOfFlowPositioned() && (ancestor = renderer().parent())) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
-        RenderElement* ancestor = renderer().parent();
         while (ancestor && !ancestor->hasLayer()) {
             if (is<RenderBox>(*ancestor) && !is<RenderTableRow>(*ancestor)) {
                 // Rows and cells share the same coordinate space (that of the section).
@@ -1229,9 +1228,8 @@ bool RenderLayer::updateLayerPosition()
     }
     
     // Subtract our parent's scroll offset.
-    if (renderer().isOutOfFlowPositioned() && enclosingPositionedAncestor()) {
-        RenderLayer* positionedParent = enclosingPositionedAncestor();
-
+    RenderLayer* positionedParent;
+    if (renderer().isOutOfFlowPositioned() && (positionedParent = enclosingAncestorForPosition(renderer().style().position()))) {
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
         if (positionedParent->renderer().hasOverflowClip()) {
             LayoutSize offset = positionedParent->scrolledContentOffset();
@@ -1269,7 +1267,7 @@ bool RenderLayer::updateLayerPosition()
 
 TransformationMatrix RenderLayer::perspectiveTransform() const
 {
-    if (!renderer().hasTransform())
+    if (!renderer().hasTransformRelatedProperty())
         return TransformationMatrix();
 
     const RenderStyle& style = renderer().style();
@@ -1299,7 +1297,7 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
 
 FloatPoint RenderLayer::perspectiveOrigin() const
 {
-    if (!renderer().hasTransform())
+    if (!renderer().hasTransformRelatedProperty())
         return FloatPoint();
 
     const LayoutRect borderBox = downcast<RenderBox>(renderer()).borderBoxRect();
@@ -1319,20 +1317,25 @@ RenderLayer* RenderLayer::stackingContainer() const
     return layer;
 }
 
-static inline bool isPositionedContainer(RenderLayer* layer)
+static inline bool isContainerForPositioned(RenderLayer& layer, EPosition position)
 {
-    return layer->isRootLayer() || layer->renderer().isPositioned() || layer->hasTransform();
+    switch (position) {
+    case FixedPosition:
+        return layer.renderer().canContainFixedPositionObjects();
+
+    case AbsolutePosition:
+        return isContainingBlockCandidateForAbsolutelyPositionedObject(layer.renderer());
+    
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 }
 
-static inline bool isFixedPositionedContainer(RenderLayer* layer)
-{
-    return layer->isRootLayer() || layer->hasTransform();
-}
-
-RenderLayer* RenderLayer::enclosingPositionedAncestor() const
+RenderLayer* RenderLayer::enclosingAncestorForPosition(EPosition position) const
 {
     RenderLayer* curr = parent();
-    while (curr && !isPositionedContainer(curr))
+    while (curr && !isContainerForPositioned(*curr, position))
         curr = curr->parent();
 
     return curr;
@@ -1911,7 +1914,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             if (currLayer == ancestorLayer)
                 foundAncestor = true;
 
-            if (isFixedPositionedContainer(currLayer)) {
+            if (isContainerForPositioned(*currLayer, FixedPosition)) {
                 fixedPositionContainerLayer = currLayer;
                 ASSERT_UNUSED(foundAncestor, foundAncestor);
                 break;
@@ -1948,14 +1951,14 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
     RenderLayer* parentLayer;
     if (position == AbsolutePosition || position == FixedPosition) {
-        // Do what enclosingPositionedAncestor() does, but check for ancestorLayer along the way.
+        // Do what enclosingAncestorForPosition() does, but check for ancestorLayer along the way.
         parentLayer = layer->parent();
         bool foundAncestorFirst = false;
         while (parentLayer) {
             // RenderFlowThread is a positioned container, child of RenderView, positioned at (0,0).
             // This implies that, for out-of-flow positioned elements inside a RenderFlowThread,
             // we are bailing out before reaching root layer.
-            if (isPositionedContainer(parentLayer))
+            if (isContainerForPositioned(*parentLayer, position))
                 break;
 
             if (parentLayer == ancestorLayer) {
@@ -1973,8 +1976,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
         if (foundAncestorFirst) {
             // Found ancestorLayer before the abs. positioned container, so compute offset of both relative
-            // to enclosingPositionedAncestor and subtract.
-            RenderLayer* positionedAncestor = parentLayer->enclosingPositionedAncestor();
+            // to enclosingAncestorForPosition and subtract.
+            RenderLayer* positionedAncestor = parentLayer->enclosingAncestorForPosition(position);
             LayoutSize thisCoords = layer->offsetFromAncestor(positionedAncestor);
             LayoutSize ancestorCoords = ancestorLayer->offsetFromAncestor(positionedAncestor);
             location += (thisCoords - ancestorCoords);
@@ -4718,7 +4721,7 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
     }
     offset += translationOffset;
 
-    RenderObject* containerRenderer = containerLayer ? &containerLayer->renderer() : 0;
+    RenderObject* containerRenderer = containerLayer ? &containerLayer->renderer() : nullptr;
     if (renderer().shouldUseTransformFromContainer(containerRenderer)) {
         TransformationMatrix containerTransform;
         renderer().getTransformFromContainer(containerRenderer, offset, containerTransform);
@@ -6215,7 +6218,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || (renderer().style().specifiesColumns() && !isRootLayer())
         || renderer().isInFlowRenderFlowThread())
         && !renderer().isPositioned()
-        && !renderer().hasTransform()
+        && !renderer().hasTransformRelatedProperty()
         && !renderer().hasClipPath()
         && !renderer().hasFilter()
         && !renderer().hasBackdropFilter()

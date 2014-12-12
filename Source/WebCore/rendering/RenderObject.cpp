@@ -1648,9 +1648,7 @@ void RenderObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformSt
 bool RenderObject::shouldUseTransformFromContainer(const RenderObject* containerObject) const
 {
 #if ENABLE(3D_RENDERING)
-    // hasTransform() indicates whether the object has transform, transform-style or perspective. We just care about transform,
-    // so check the layer's transform directly.
-    return (hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->transform()) || (containerObject && containerObject->style().hasPerspective());
+    return hasTransform() || (containerObject && containerObject->style().hasPerspective());
 #else
     UNUSED_PARAM(containerObject);
     return hasTransform();
@@ -1811,6 +1809,7 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
         // we'll just return 0).
         // FIXME: The definition of view() has changed to not crawl up the render tree.  It might
         // be safe now to use it.
+        // FIXME: share code with containingBlockForFixedPosition().
         while (o && o->parent() && !(o->hasTransform() && o->isRenderBlock())) {
             // foreignObject is the containing block for its contents.
             if (o->isSVGForeignObject())
@@ -1830,7 +1829,9 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
         // Same goes here.  We technically just want our containing block, but
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
-        while (o && o->style().position() == StaticPosition && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock())) {
+        // FIXME: share code with isContainingBlockCandidateForAbsolutelyPositionedObject().
+        // FIXME: hasTransformRelatedProperty() includes preserves3D() check, but this may need to change: https://www.w3.org/Bugs/Public/show_bug.cgi?id=27566
+        while (o && o->style().position() == StaticPosition && !o->isRenderView() && !(o->hasTransformRelatedProperty() && o->isRenderBlock())) {
             if (o->isSVGForeignObject()) // foreignObject is the containing block for contents inside it
                 break;
 

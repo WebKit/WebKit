@@ -484,7 +484,7 @@ void RenderBox::updateFromStyle()
         }
     }
 
-    setHasTransform(styleToUse.hasTransformRelatedProperty());
+    setHasTransformRelatedProperty(styleToUse.hasTransformRelatedProperty());
     setHasReflection(styleToUse.boxReflect());
 }
 
@@ -1918,10 +1918,9 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
         return;
 
     bool isFixedPos = style().position() == FixedPosition;
-    bool hasTransform = hasLayer() && layer()->transform();
     // If this box has a transform, it acts as a fixed position container for fixed descendants,
     // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-    if (hasTransform && !isFixedPos)
+    if (hasTransform() && !isFixedPos)
         mode &= ~IsFixed;
     else if (isFixedPos)
         mode |= IsFixed;
@@ -1967,8 +1966,6 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
         return nullptr;
 
     bool isFixedPos = style().position() == FixedPosition;
-    bool hasTransform = hasLayer() && layer()->transform();
-
     LayoutSize adjustmentForSkippedAncestor;
     if (ancestorSkipped) {
         // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
@@ -1985,10 +1982,10 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
         getTransformFromContainer(container, containerOffset, t);
         t.translateRight(adjustmentForSkippedAncestor.width(), adjustmentForSkippedAncestor.height());
         
-        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform);
+        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
     } else {
         containerOffset += adjustmentForSkippedAncestor;
-        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform);
+        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, isFixedPos, hasTransform());
     }
     
     return ancestorSkipped ? ancestorToStopAt : container;
@@ -1997,8 +1994,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
 void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
     bool isFixedPos = style().position() == FixedPosition;
-    bool hasTransform = hasLayer() && layer()->transform();
-    if (hasTransform && !isFixedPos) {
+    if (hasTransform() && !isFixedPos) {
         // If this box has a transform, it acts as a fixed position container for fixed descendants,
         // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
         mode &= ~IsFixed;
@@ -4566,7 +4562,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
     if (!hasOverflowClip())
         rect.unite(layoutOverflowRect());
 
-    bool hasTransform = hasLayer() && layer()->transform();
+    bool hasTransform = this->hasTransform();
 #if PLATFORM(IOS)
     if (isInFlowPositioned() || (hasTransform && document().settings()->shouldTransformsAffectOverflow())) {
 #else

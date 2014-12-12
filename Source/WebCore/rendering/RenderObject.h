@@ -550,7 +550,8 @@ public:
 
     bool hasOverflowClip() const { return m_bitfields.hasOverflowClip(); }
 
-    bool hasTransform() const { return m_bitfields.hasTransform(); }
+    bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
+    bool hasTransform() const { return hasTransformRelatedProperty() && style().hasTransform(); }
 
     inline bool preservesNewline() const;
 
@@ -616,7 +617,7 @@ public:
     void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
     void setHasOverflowClip(bool b = true) { m_bitfields.setHasOverflowClip(b); }
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
-    void setHasTransform(bool b = true) { m_bitfields.setHasTransform(b); }
+    void setHasTransformRelatedProperty(bool b = true) { m_bitfields.setHasTransformRelatedProperty(b); }
     void setHasReflection(bool b = true) { m_bitfields.setHasReflection(b); }
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
@@ -927,7 +928,7 @@ private:
             , m_isDragging(false)
             , m_hasLayer(false)
             , m_hasOverflowClip(false)
-            , m_hasTransform(false)
+            , m_hasTransformRelatedProperty(false)
             , m_hasReflection(false)
             , m_everHadLayout(false)
             , m_childrenInline(false)
@@ -958,7 +959,7 @@ private:
 
         ADD_BOOLEAN_BITFIELD(hasLayer, HasLayer);
         ADD_BOOLEAN_BITFIELD(hasOverflowClip, HasOverflowClip); // Set in the case of overflow:auto/scroll/hidden
-        ADD_BOOLEAN_BITFIELD(hasTransform, HasTransform);
+        ADD_BOOLEAN_BITFIELD(hasTransformRelatedProperty, HasTransformRelatedProperty);
         ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
 
         ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);

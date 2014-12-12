@@ -847,7 +847,7 @@ static PassRef<WebKitCSSTransformValue> matrixTransformValue(const Transformatio
 
 static PassRef<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle* style)
 {
-    if (!renderer || !renderer->hasTransform() || !style->hasTransform())
+    if (!renderer || !renderer->hasTransform())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
     FloatRect pixelSnappedRect;

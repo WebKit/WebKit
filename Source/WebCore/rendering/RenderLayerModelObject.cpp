@@ -147,7 +147,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         if (oldStyle->hasBlendMode())
             layer()->parent()->dirtyAncestorChainHasBlendingDescendants();
 #endif
-        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
+        setHasTransformRelatedProperty(false); // All transform-related propeties force layers, so we know we don't have one or the object doesn't support them.
         setHasReflection(false);
         layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())

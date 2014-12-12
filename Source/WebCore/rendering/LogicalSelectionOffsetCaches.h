@@ -25,10 +25,12 @@
 
 namespace WebCore {
 
+// FIXME: share code with RenderObject::container().
 static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(RenderElement& object)
 {
+    // FIXME: hasTransformRelatedProperty() includes preserves3D() check, but this may need to change: https://www.w3.org/Bugs/Public/show_bug.cgi?id=27566
     return object.style().position() != StaticPosition
-        || (object.hasTransform() && object.isRenderBlock())
+        || (object.isRenderBlock() && object.hasTransformRelatedProperty())
         || object.isSVGForeignObject()
         || object.isRenderView();
 }
@@ -38,6 +40,7 @@ static inline bool isNonRenderBlockInline(RenderElement& object)
     return (object.isInline() && !object.isReplaced()) || !object.isRenderBlock();
 }
 
+// FIXME: share code with RenderObject::container().
 static inline RenderBlock* containingBlockForFixedPosition(RenderElement* parent)
 {
     RenderElement* object = parent;

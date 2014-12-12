@@ -155,14 +155,17 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, con
     ASSERT(m_mapping.isEmpty() || m_mapping[0].m_renderer->isRenderView());
 }
 
-static bool canMapBetweenRenderers(const RenderLayerModelObject& renderer, const RenderLayerModelObject& ancestor)
+static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& renderer, const RenderLayerModelObject& ancestor)
 {
     for (const RenderElement* current = &renderer; ; current = current->parent()) {
         const RenderStyle& style = current->style();
         if (style.position() == FixedPosition || style.isFlippedBlocksWritingMode())
             return false;
 
-        if (current->hasTransform() || current->isRenderFlowThread())
+        if (current->hasTransformRelatedProperty() && (current->style().hasTransform() || current->style().hasPerspective()))
+            return false;
+        
+        if (current->isRenderFlowThread())
             return false;
 
         if (current->isSVGRoot())
@@ -181,7 +184,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
 
     // We have to visit all the renderers to detect flipped blocks. This might defeat the gains
     // from mapping via layers.
-    bool canConvertInLayerTree = ancestorLayer ? canMapBetweenRenderers(layer->renderer(), ancestorLayer->renderer()) : false;
+    bool canConvertInLayerTree = ancestorLayer ? canMapBetweenRenderersViaLayers(layer->renderer(), ancestorLayer->renderer()) : false;
 
     if (canConvertInLayerTree) {
         LayoutSize layerOffset = layer->offsetFromAncestor(ancestorLayer);

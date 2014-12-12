@@ -27,7 +27,6 @@
               (contentsScale 1.00)
               (children 1
                 (GraphicsLayer
-                  (bounds 500.00 0.00)
                   (preserves3D 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
                   (contentsScale 1.00)
