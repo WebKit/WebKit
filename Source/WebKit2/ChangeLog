@@ -1,3 +1,9 @@
+2014-12-12  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the 32-bit build.
+
+        * UIProcess/mac/WKImmediateActionController.h:
+
 2014-12-12  Rohit Kumar  <kumar.rohit@samsung.com>
 
         Fix Build Warning in WebKit2/UIProcess module for GTK build and WebKit2/NetworkProcess module in GTK and EFL build

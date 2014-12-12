@@ -72,7 +72,9 @@ enum class ImmediateActionState {
 - (void)willDestroyView:(WKView *)view;
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 
+#if WK_API_ENABLED
 - (void)setPreviewTitle:(NSString *)previewTitle;
+#endif // WK_API_ENABLED
 
 @end
 
