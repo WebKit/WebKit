@@ -1,3 +1,17 @@
+2014-12-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the concept of simple selector from the parser
+        https://bugs.webkit.org/show_bug.cgi?id=139575
+
+        Reviewed by Mark Lam.
+
+        We have complete support for nested selector list, we no longer
+        need the old concept of simple selector.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::isSimple): Deleted.
+        * css/CSSParserValues.h:
+
 2014-12-12  Antti Koivisto  <antti@apple.com>
 
         FontGlyphs::glyphDataAndPageForCharacter cleanups

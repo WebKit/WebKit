@@ -218,7 +218,6 @@ public:
 #endif
     }
 
-    bool isSimple() const;
     bool hasShadowDescendant() const;
     bool matchesPseudoElement() const;
 

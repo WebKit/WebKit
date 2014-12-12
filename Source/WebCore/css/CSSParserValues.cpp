@@ -281,26 +281,6 @@ void CSSParserSelector::setPseudoClassValue(const CSSParserString& pseudoClassSt
     m_selector->setPseudoClassType(pseudoType.pseudoClass);
 }
 
-bool CSSParserSelector::isSimple() const
-{
-    if (m_selector->selectorList() || m_selector->matchesPseudoElement())
-        return false;
-
-    if (!m_tagHistory)
-        return true;
-
-    if (m_selector->match() == CSSSelector::Tag) {
-        // We can't check against anyQName() here because namespace may not be nullAtom.
-        // Example:
-        //     @namespace "http://www.w3.org/2000/svg";
-        //     svg:not(:root) { ...
-        if (m_selector->tagQName().localName() == starAtom)
-            return m_tagHistory->isSimple();
-    }
-
-    return false;
-}
-
 static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
