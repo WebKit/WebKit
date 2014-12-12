@@ -1,3 +1,10 @@
+2014-12-11  Dan Bernstein  <mitz@apple.com>
+
+        iOS Simulator production build fix.
+
+        * Configurations/JavaScriptCore.xcconfig: Don’t use an order file when building for the iOS
+        Simulator, as we did prior to 177027.
+
 2014-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Explicitly export somre more RWIProtocol classes.
