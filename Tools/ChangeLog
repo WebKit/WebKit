@@ -1,3 +1,15 @@
+2014-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test http/tests/loading/307-after-303-after-post.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=73030
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::initialize): Set icon
+        database to empty to avoid having it fetch default favicons at random times.
+        DumpRenderTree also disables it, and also it has a way for tests to temporarily
+        enable it.
+
 2014-12-12  Lucas Forschler  <lforschler@apple.com>
 
         Update Apple owned build slaves after infrastructure update.

@@ -664,7 +664,9 @@ WebProcessProxy& WebContext::createNewWebProcess()
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
-    
+
+    // FIXME: This leaves UI process and WebProcess disagreeing about the state if the client hasn't set the path.
+    // iconDatabasePath is non-empty by default, but m_iconDatabase isn't enabled in UI process unless setDatabasePath is called explicitly.
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
     parameters.terminationTimeout = (m_processModel == ProcessModelSharedSecondaryProcess) ? sharedSecondaryProcessShutdownTimeout : 0;
@@ -1238,12 +1240,15 @@ String WebContext::applicationCacheDirectory() const
 void WebContext::setIconDatabasePath(const String& path)
 {
     m_overrideIconDatabasePath = path;
-    m_iconDatabase->setDatabasePath(path);
+    if (!m_overrideIconDatabasePath.isEmpty()) {
+        // This implicitly enables the database on UI process side.
+        m_iconDatabase->setDatabasePath(path);
+    }
 }
 
 String WebContext::iconDatabasePath() const
 {
-    if (!m_overrideIconDatabasePath.isEmpty())
+    if (!m_overrideIconDatabasePath.isNull())
         return m_overrideIconDatabasePath;
 
     return platformDefaultIconDatabasePath();
