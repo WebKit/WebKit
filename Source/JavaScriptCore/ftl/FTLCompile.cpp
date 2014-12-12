@@ -322,8 +322,8 @@ static void fixFunctionBasedOnStackMaps(
         RELEASE_ASSERT(state.finalizer->osrExit.size());
         RELEASE_ASSERT(didSeeUnwindInfo);
         
-        OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
-            vm, exitThunkGenerator, codeBlock, JITCompilationMustSucceed));
+        auto linkBuffer = std::make_unique<LinkBuffer>(
+            vm, exitThunkGenerator, codeBlock, JITCompilationMustSucceed);
         
         RELEASE_ASSERT(state.finalizer->osrExit.size() == state.jitCode->osrExit.size());
         
@@ -359,7 +359,7 @@ static void fixFunctionBasedOnStackMaps(
             }
         }
         
-        state.finalizer->exitThunksLinkBuffer = linkBuffer.release();
+        state.finalizer->exitThunksLinkBuffer = WTF::move(linkBuffer);
     }
 
     if (!state.getByIds.isEmpty() || !state.putByIds.isEmpty() || !state.checkIns.isEmpty()) {
@@ -483,8 +483,7 @@ static void fixFunctionBasedOnStackMaps(
         exceptionTarget.link(&slowPathJIT);
         MacroAssembler::Jump exceptionJump = slowPathJIT.jump();
         
-        state.finalizer->sideCodeLinkBuffer = adoptPtr(
-            new LinkBuffer(vm, slowPathJIT, codeBlock, JITCompilationMustSucceed));
+        state.finalizer->sideCodeLinkBuffer = std::make_unique<LinkBuffer>(vm, slowPathJIT, codeBlock, JITCompilationMustSucceed);
         state.finalizer->sideCodeLinkBuffer->link(
             exceptionJump, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
         

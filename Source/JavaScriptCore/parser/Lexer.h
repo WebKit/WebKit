@@ -44,7 +44,9 @@ public:
     {
         return m_keywordTable.entry(ident);
     }
-    
+
+    explicit Keywords(VM&);
+
     ~Keywords()
     {
         m_keywordTable.deleteTable();
@@ -52,8 +54,6 @@ public:
     
 private:
     friend class VM;
-    
-    explicit Keywords(VM&);
     
     VM& m_vm;
     const HashTable m_keywordTable;

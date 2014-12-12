@@ -29,7 +29,6 @@
 #include "IndexingType.h"
 #include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/AtomicStringImpl.h>
 
 namespace JSC {

@@ -62,7 +62,7 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
     executable->recordParse(function->features(), function->hasCapturedVariables());
     
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(function->needsActivation(), function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, function.get(), result, debuggerMode, profilerMode)));
+    auto generator(std::make_unique<BytecodeGenerator>(vm, function.get(), result, debuggerMode, profilerMode));
     error = generator->generate();
     if (error.m_type != ParserError::ErrorNone)
         return 0;

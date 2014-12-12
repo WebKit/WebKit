@@ -102,7 +102,7 @@ const AbstractField& IndexedAbstractHeap::atSlow(ptrdiff_t index)
     ASSERT(static_cast<size_t>(index) >= m_smallIndices.size());
     
     if (UNLIKELY(!m_largeIndices))
-        m_largeIndices = adoptPtr(new MapType());
+        m_largeIndices = std::make_unique<MapType>();
 
     std::unique_ptr<AbstractField>& field = m_largeIndices->add(index, nullptr).iterator->value;
     if (!field) {

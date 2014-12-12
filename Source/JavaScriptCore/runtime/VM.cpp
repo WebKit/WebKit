@@ -153,7 +153,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new MarkedArgumentBuffer)
-    , keywords(adoptPtr(new Keywords(*this)))
+    , keywords(std::make_unique<Keywords>(*this))
     , interpreter(0)
     , jsArrayClassInfo(JSArray::info())
     , jsFinalObjectClassInfo(JSFinalObject::info())
@@ -241,7 +241,7 @@ VM::VM(VMType vmType, HeapType heapType)
     wtfThreadData().setCurrentAtomicStringTable(existingEntryAtomicStringTable);
 
 #if ENABLE(JIT)
-    jitStubs = adoptPtr(new JITThunks());
+    jitStubs = std::make_unique<JITThunks>();
     arityCheckFailReturnThunks = std::make_unique<ArityCheckFailReturnThunks>();
 #endif
     arityCheckData = std::make_unique<CommonSlowPaths::ArityCheckData>();
@@ -261,7 +261,7 @@ VM::VM(VMType vmType, HeapType heapType)
     LLInt::Data::performAssertions(*this);
     
     if (Options::enableProfiler()) {
-        m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*this));
+        m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*this);
 
         StringPrintStream pathOut;
         const char* profilerPath = getenv("JSC_PROFILER_PATH");
@@ -273,7 +273,7 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(DFG_JIT)
     if (canUseJIT())
-        dfgState = adoptPtr(new DFG::LongLivedState());
+        dfgState = std::make_unique<DFG::LongLivedState>();
 #endif
     
     // Initialize this last, as a free way of asserting that VM initialization itself
@@ -303,8 +303,8 @@ VM::~VM()
 #endif // ENABLE(DFG_JIT)
     
     // Clear this first to ensure that nobody tries to remove themselves from it.
-    m_perBytecodeProfiler.clear();
-    
+    m_perBytecodeProfiler = nullptr;
+
     ASSERT(m_apiLock->currentThreadIsHoldingLock());
     m_apiLock->willDestroyVM(this);
     heap.lastChanceToFinalize();

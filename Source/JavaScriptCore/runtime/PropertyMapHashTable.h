@@ -28,7 +28,6 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashTable.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringImpl.h>
 
@@ -243,7 +242,7 @@ private:
     unsigned* m_index;
     unsigned m_keyCount;
     unsigned m_deletedCount;
-    OwnPtr< Vector<PropertyOffset>> m_deletedOffsets;
+    std::unique_ptr<Vector<PropertyOffset>> m_deletedOffsets;
 
     static const unsigned MinimumTableSize = 16;
     static const unsigned EmptyEntryIndex = 0;
@@ -421,7 +420,7 @@ inline unsigned PropertyTable::propertyStorageSize() const
 
 inline void PropertyTable::clearDeletedOffsets()
 {
-    m_deletedOffsets.clear();
+    m_deletedOffsets = nullptr;
 }
 
 inline bool PropertyTable::hasDeletedOffset()
@@ -439,7 +438,7 @@ inline PropertyOffset PropertyTable::getDeletedOffset()
 inline void PropertyTable::addDeletedOffset(PropertyOffset offset)
 {
     if (!m_deletedOffsets)
-        m_deletedOffsets = adoptPtr(new Vector<PropertyOffset>);
+        m_deletedOffsets = std::make_unique<Vector<PropertyOffset>>();
     m_deletedOffsets->append(offset);
 }
 

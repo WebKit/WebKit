@@ -48,9 +48,9 @@ public:
     bool finalize() override;
     bool finalizeFunction() override;
 
-    OwnPtr<LinkBuffer> exitThunksLinkBuffer;
+    std::unique_ptr<LinkBuffer> exitThunksLinkBuffer;
     std::unique_ptr<LinkBuffer> entrypointLinkBuffer;
-    OwnPtr<LinkBuffer> sideCodeLinkBuffer;
+    std::unique_ptr<LinkBuffer> sideCodeLinkBuffer;
     std::unique_ptr<LinkBuffer> handleExceptionsLinkBuffer;
     Vector<SlowPathCall> slowPathCalls; // Calls inside the side code.
     Vector<OSRExitCompilationInfo> osrExit;

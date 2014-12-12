@@ -29,13 +29,12 @@
 #include <limits.h>
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
 StructureIDTable::StructureIDTable()
     : m_firstFreeOffset(0)
-    , m_table(adoptPtr(new StructureOrOffset[s_initialSize]))
+    , m_table(std::make_unique<StructureOrOffset[]>(s_initialSize))
     , m_size(0)
     , m_capacity(s_initialSize)
 {
@@ -47,7 +46,7 @@ StructureIDTable::StructureIDTable()
 void StructureIDTable::resize(size_t newCapacity)
 {
     // Create the new table.
-    OwnPtr<StructureOrOffset> newTable = adoptPtr(new StructureOrOffset[newCapacity]);
+    auto newTable = std::make_unique<StructureOrOffset[]>(newCapacity);
 
     // Copy the contents of the old table to the new table.
     memcpy(newTable.get(), table(), m_capacity * sizeof(StructureOrOffset));
@@ -59,7 +58,7 @@ void StructureIDTable::resize(size_t newCapacity)
     swap(m_table, newTable);
 
     // Put the old table (now labeled as new) into the list of old tables.
-    m_oldTables.append(newTable.release());
+    m_oldTables.append(WTF::move(newTable));
 
     // Update the capacity.
     m_capacity = newCapacity;

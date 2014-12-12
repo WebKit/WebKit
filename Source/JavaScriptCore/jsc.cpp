@@ -1451,7 +1451,7 @@ int jscmain(int argc, char** argv)
         JSLockHolder locker(vm);
 
         if (options.m_profile && !vm->m_perBytecodeProfiler)
-            vm->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*vm));
+            vm->m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*vm);
     
         GlobalObject* globalObject = GlobalObject::create(*vm, GlobalObject::createStructure(*vm, jsNull()), options.m_arguments);
         bool success = runWithScripts(globalObject, options.m_scripts, options.m_dump);

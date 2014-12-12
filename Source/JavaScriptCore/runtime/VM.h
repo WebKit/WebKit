@@ -235,7 +235,7 @@ public:
     Heap heap;
 
 #if ENABLE(DFG_JIT)
-    OwnPtr<DFG::LongLivedState> dfgState;
+    std::unique_ptr<DFG::LongLivedState> dfgState;
 #endif // ENABLE(DFG_JIT)
 
     std::unique_ptr<CallEdgeLog> callEdgeLog;
@@ -328,10 +328,10 @@ public:
 
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
-    OwnPtr<Keywords> keywords;
+    std::unique_ptr<Keywords> keywords;
     Interpreter* interpreter;
 #if ENABLE(JIT)
-    OwnPtr<JITThunks> jitStubs;
+    std::unique_ptr<JITThunks> jitStubs;
     MacroAssemblerCodeRef getCTIStub(ThunkGenerator generator)
     {
         return jitStubs->ctiStub(this, generator);
@@ -458,7 +458,7 @@ public:
     String cachedDateString;
     double cachedDateStringValue;
 
-    OwnPtr<Profiler::Database> m_perBytecodeProfiler;
+    std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
     RefPtr<TypedArrayController> m_typedArrayController;
     RegExpCache* m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;

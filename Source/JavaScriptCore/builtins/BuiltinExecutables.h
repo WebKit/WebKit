@@ -29,7 +29,6 @@
 #include "JSCBuiltins.h"
 #include "SourceCode.h"
 #include "Weak.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 

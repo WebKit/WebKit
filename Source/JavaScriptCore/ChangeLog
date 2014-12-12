@@ -1,3 +1,46 @@
+2014-12-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Final clean up OwnPtr in JSC - runtime, ftl, and tool directories
+        https://bugs.webkit.org/show_bug.cgi?id=139532
+
+        Reviewed by Mark Lam.
+
+        Final remove OwnPtr, PassOwnPtr in runtime, ftl, and tools directories of JSC.
+
+        * builtins/BuiltinExecutables.h:
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::atSlow):
+        * ftl/FTLAbstractHeap.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJITFinalizer.h:
+        * jsc.cpp:
+        (jscmain):
+        * parser/Lexer.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::clearDeletedOffsets):
+        (JSC::PropertyTable::addDeletedOffset):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+        * runtime/RegExpObject.cpp:
+        * runtime/SmallStrings.cpp:
+        * runtime/Structure.cpp:
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::StructureIDTable):
+        (JSC::StructureIDTable::resize):
+        * runtime/StructureIDTable.h:
+        * runtime/StructureTransitionTable.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        * tools/CodeProfile.h:
+        (JSC::CodeProfile::CodeProfile):
+        (JSC::CodeProfile::addChild):
+
 2014-12-11  Dan Bernstein  <mitz@apple.com>
 
         iOS Simulator production build fix.
