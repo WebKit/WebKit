@@ -1,3 +1,16 @@
+2014-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash when trying to inspect LocalStorage
+        https://bugs.webkit.org/show_bug.cgi?id=139573
+
+        Reviewed by Anders Carlsson.
+
+        Move away from PageGroup::localStorage and instead to StorageNamespaceProvider.
+        This matches what DOMWindow::localStorage does to get the StorageArea for a document.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+
 2014-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         Transform-style should not kill position:fixed
