@@ -1,3 +1,30 @@
+2014-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer borders on contentsLayers don't correctly toggle with the rest of the borders
+        https://bugs.webkit.org/show_bug.cgi?id=139570
+        rdar://problem/18007746
+
+        Reviewed by Tim Horton.
+        
+        The "Show Debug Borders" toggle didn't cleanly remove layer borders from
+        content layers (image, video), nor did it deal with cloned layers (reflections).
+        
+        Fix by making updateDebugBorder() update the layer borders on the contents
+        layer and cloned layers, moving some code around to avoid having colors
+        in more than one place. If the borders are hidden, send an invalid color
+        to PlatformCALayer::setBorderColor(), which now knows to remove the color
+        property on the layer (to avoid leaving transparent border color properties
+        on CALayers).
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::setLayerDebugBorder):
+        (WebCore::contentsLayerDebugBorderColor):
+        (WebCore::cloneLayerDebugBorderColor):
+        (WebCore::GraphicsLayerCA::updateDebugBorder):
+        (WebCore::GraphicsLayerCA::setDebugBorder):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::setBorderColor):
+
 2014-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash when trying to inspect LocalStorage

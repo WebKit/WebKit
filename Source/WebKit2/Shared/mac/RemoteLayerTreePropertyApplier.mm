@@ -82,6 +82,9 @@ namespace WebKit {
 
 static RetainPtr<CGColorRef> cgColorFromColor(Color color)
 {
+    if (!color.isValid())
+        return nil;
+
     CGFloat components[4];
     color.getRGBA(components[0], components[1], components[2], components[3]);
 

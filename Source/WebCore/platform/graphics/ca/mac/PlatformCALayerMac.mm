@@ -694,15 +694,21 @@ void PlatformCALayerMac::setBorderWidth(float value)
 
 void PlatformCALayerMac::setBorderColor(const Color& value)
 {
-    CGFloat components[4];
-    value.getRGBA(components[0], components[1], components[2], components[3]);
+    if (value.isValid()) {
+        CGFloat components[4];
+        value.getRGBA(components[0], components[1], components[2], components[3]);
 
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setBorderColor:color.get()];
-    END_BLOCK_OBJC_EXCEPTIONS
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [m_layer.get() setBorderColor:color.get()];
+        END_BLOCK_OBJC_EXCEPTIONS
+    } else {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [m_layer.get() setBorderColor:nil];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 float PlatformCALayerMac::opacity() const

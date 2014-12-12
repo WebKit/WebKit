@@ -1,3 +1,17 @@
+2014-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer borders on contentsLayers don't correctly toggle with the rest of the borders
+        https://bugs.webkit.org/show_bug.cgi?id=139570
+        rdar://problem/18007746
+
+        Reviewed by Tim Horton.
+        
+        Return nil if the color is invalid, to remove the color from the layer's
+        border or background.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::cgColorFromColor):
+
 2014-12-11  Gavin Barraclough  <barraclough@apple.com>
 
         Track pages preventing suppression in WebProcessProxy using RefCounter
