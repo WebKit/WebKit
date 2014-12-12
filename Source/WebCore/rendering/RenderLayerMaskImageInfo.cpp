@@ -77,7 +77,7 @@ RenderLayer::MaskImageInfo::MaskImageInfo(RenderLayer& layer)
 
 RenderLayer::MaskImageInfo::~MaskImageInfo()
 {
-    removeMaskImageClients();
+    removeMaskImageClients(m_layer.renderer().style());
 }
 
 void RenderLayer::MaskImageInfo::notifyFinished(CachedResource*)
@@ -92,7 +92,7 @@ void RenderLayer::MaskImageInfo::imageChanged(CachedImage*, const IntRect*)
 
 void RenderLayer::MaskImageInfo::updateMaskImageClients()
 {
-    removeMaskImageClients();
+    removeMaskImageClients(m_layer.renderer().style());
     
     const FillLayer* maskLayer = m_layer.renderer().style().maskLayers();
     while (maskLayer) {
@@ -119,9 +119,9 @@ void RenderLayer::MaskImageInfo::updateMaskImageClients()
     }
 }
 
-void RenderLayer::MaskImageInfo::removeMaskImageClients()
+void RenderLayer::MaskImageInfo::removeMaskImageClients(const RenderStyle& oldStyle)
 {
-    const FillLayer* maskLayer = m_layer.renderer().style().maskLayers();
+    const FillLayer* maskLayer = oldStyle.maskLayers();
     while (maskLayer) {
         if (maskLayer->maskImage())
             maskLayer->maskImage()->setRenderLayerImageClient(nullptr);

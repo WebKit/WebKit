@@ -27,6 +27,8 @@
 #include "RenderBoxModelObject.h"
 
 #include "BorderEdge.h"
+#include "CachedImage.h"
+#include "CachedSVGDocument.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -47,13 +49,17 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
+#include "RenderSVGResourceMasker.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderView.h"
+#include "SVGImageForContainer.h"
+#include "SVGSVGElement.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "TransformState.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -676,7 +682,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     FloatRect pixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
     // Fast path for drawing simple color backgrounds.
-    if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill && !bgLayer->next()) {
+    if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill && !bgLayer->hasMaskImage() && !bgLayer->next()) {
         if (!colorVisible)
             return;
 
@@ -837,19 +843,26 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     // no progressive loading of the background image
-    if (!baseBgColorOnly && shouldPaintBackgroundImage) {
+    if (!baseBgColorOnly && (shouldPaintBackgroundImage || bgLayer->hasMaskImage())) {
         BackgroundImageGeometry geometry;
         calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, geometry, backgroundObject);
         geometry.clip(LayoutRect(pixelSnappedRect));
+
         if (!geometry.destRect().isEmpty()) {
+            bool didPaintCustomMask = false;
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
-            RefPtr<Image> image = bgImage->image(clientForBackgroundImage, geometry.tileSize());
-            context->setDrawLuminanceMask(bgLayer->maskSourceType() == MaskLuminance);
-            bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
-            if (image.get())
-                image->setSpaceSize(geometry.spaceSize());
-            context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+            RefPtr<Image> image = (bgImage ? bgImage->image(clientForBackgroundImage, geometry.tileSize()) : nullptr);
+            if (!image.get() && bgLayer->hasMaskImage())
+                didPaintCustomMask = bgLayer->maskImage()->drawMask(*this, geometry, context, compositeOp);
+
+            if (!didPaintCustomMask && shouldPaintBackgroundImage) {
+                context->setDrawLuminanceMask(bgLayer->maskSourceType() == MaskLuminance);
+                bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
+                if (image.get())
+                    image->setSpaceSize(geometry.spaceSize());
+                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+            }
         }
     }
 
@@ -954,8 +967,13 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLaye
     StyleImage* image = fillLayer->image();
     EFillSizeType type = fillLayer->size().type;
 
-    LayoutSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
-    imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
+    LayoutSize imageIntrinsicSize;
+    if (image) {
+        imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
+        imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
+    } else
+        imageIntrinsicSize = positioningAreaSize;
+
     switch (type) {
         case SizeLength: {
             LayoutSize tileSize = positioningAreaSize;
@@ -1151,7 +1169,9 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
 
     auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
     LayoutSize fillTileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
-    fillLayer->image()->setContainerSizeForRenderer(clientForBackgroundImage, fillTileSize, style().effectiveZoom());
+    if (StyleImage* layerImage = fillLayer->image())
+        layerImage->setContainerSizeForRenderer(clientForBackgroundImage, fillTileSize, style().effectiveZoom());
+    
     geometry.setTileSize(fillTileSize);
 
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();

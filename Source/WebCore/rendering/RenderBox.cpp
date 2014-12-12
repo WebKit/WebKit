@@ -1530,7 +1530,7 @@ LayoutRect RenderBox::maskClipRect()
     LayoutRect result;
     LayoutRect borderBox = borderBoxRect();
     for (const FillLayer* maskLayer = style().maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-        if (maskLayer->image()) {
+        if (maskLayer->maskImage()) {
             BackgroundImageGeometry geometry;
             // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
             calculateBackgroundImageGeometry(0, maskLayer, borderBox, geometry);

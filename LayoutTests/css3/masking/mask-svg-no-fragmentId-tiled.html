@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            p {
+                margin: 0px;
+            }
+            #background {
+                width: 400px;
+                height: 500px;
+                background-color: lightblue;
+            }
+            #maskedElement {
+                width: 400px;
+                height: 500px;
+                background-color: green;
+                -webkit-mask-image:url('resources/masks.svg');
+            }
+            #redSvg {
+                position: absolute;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=129682">Bug 129682</a> - On success, you should see a 4-rectangle green image painted tiled and no red.</p>
+        <p>This test references an external SVG without specifying a fragment id and paints using multiple tiles.</p>
+        <svg id="redSvg" width="400px" height="500px">
+            <rect x="5px" y="45px" width="140px" height="140px" fill="red"/>
+            <rect x="155px" y="45px" width="140px" height="140px" fill="red"/>
+            <rect x="305px" y="45px" width="95px" height="140px" fill="red"/>
+            <rect x="155px" y="215px" width="140px" height="140px" fill="red"/>
+            <rect x="305px" y="215px" width="95px" height="140px" fill="red"/>
+            <rect x="5px" y="215px" width="140px" height="140px" fill="red"/>
+            <rect x="5px" y="445px" width="140px" height="55px" fill="red"/>
+            <rect x="155px" y="445px" width="140px" height="55px" fill="red"/>
+            <rect x="305px" y="445px" width="95px" height="55px" fill="red"/>
+        </svg>
+        <div id="background">
+            <div id="maskedElement"></div>
+        </div>
+    </body>
+</html>

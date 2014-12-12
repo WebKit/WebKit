@@ -1,3 +1,51 @@
+2014-12-12  Radu Stavila  <stavila@adobe.com>
+
+        [SVG Masking] Enable the use of <mask> elements for -webkit-mask-image
+        https://bugs.webkit.org/show_bug.cgi?id=139294
+
+        Reviewed by Simon Fraser.
+
+        Added tests for different situations using URLs with fragment id
+        for the -webkit-mask-image property.
+
+        * css3/masking/mask-base64-expected.html: Added.
+        * css3/masking/mask-base64.html: Added.
+        * css3/masking/mask-multiple-values-expected.html: Added.
+        * css3/masking/mask-multiple-values.html: Added.
+        * css3/masking/mask-repeat-space-padding-expected.html:
+        * css3/masking/mask-repeat-space-padding.html:
+        * css3/masking/mask-svg-clipped-fragmentId-expected.html: Added.
+        * css3/masking/mask-svg-clipped-fragmentId.html: Added.
+        * css3/masking/mask-svg-fragmentId-expected.html: Added.
+        * css3/masking/mask-svg-fragmentId.html: Added.
+        * css3/masking/mask-svg-inline-fragmentId-expected.html: Added.
+        * css3/masking/mask-svg-inline-fragmentId.html: Added.
+        * css3/masking/mask-svg-inline-invalid-fragmentId-expected.html: Added.
+        * css3/masking/mask-svg-inline-invalid-fragmentId.html: Added.
+        * css3/masking/mask-svg-invalid-fragmentId-expected.html: Added.
+        * css3/masking/mask-svg-invalid-fragmentId.html: Added.
+        * css3/masking/mask-svg-no-fragmentId-expected.html: Added.
+        * css3/masking/mask-svg-no-fragmentId-tiled-expected.html: Added.
+        * css3/masking/mask-svg-no-fragmentId-tiled.html: Added.
+        * css3/masking/mask-svg-no-fragmentId.html: Added.
+        * css3/masking/mask-svg-script-entire-svg-to-mask-expected.html: Added.
+        * css3/masking/mask-svg-script-entire-svg-to-mask.html: Added.
+        * css3/masking/mask-svg-script-mask-to-entire-svg-expected.html: Added.
+        * css3/masking/mask-svg-script-mask-to-entire-svg.html: Added.
+        * css3/masking/mask-svg-script-mask-to-none-expected.html: Added.
+        * css3/masking/mask-svg-script-mask-to-none.html: Added.
+        * css3/masking/mask-svg-script-mask-to-png-expected.html: Added.
+        * css3/masking/mask-svg-script-mask-to-png.html: Added.
+        * css3/masking/mask-svg-script-none-to-mask-expected.html: Added.
+        * css3/masking/mask-svg-script-none-to-mask.html: Added.
+        * css3/masking/mask-svg-script-none-to-png-expected.html: Added.
+        * css3/masking/mask-svg-script-none-to-png.html: Added.
+        * css3/masking/mask-svg-script-png-to-mask-expected.html: Added.
+        * css3/masking/mask-svg-script-png-to-mask.html: Added.
+        * css3/masking/mask-svg-script-png-to-none-expected.html: Added.
+        * css3/masking/mask-svg-script-png-to-none.html: Added.
+        * css3/masking/resources/masks.svg: Added.
+
 2014-12-12  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add 16bit support.

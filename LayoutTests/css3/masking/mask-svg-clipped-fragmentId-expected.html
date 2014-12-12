@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            p {
+                margin: 0px;
+            }
+            #back {
+                width: 320px;
+                height: 420px;
+                background-color: green;
+                overflow: hidden;
+            }
+            #blackSVG {
+                position: relative;
+                left: 60px;
+                top: -35px;
+            }
+            #blueSVG {
+                position: relative;
+                left: 70px;
+                top: -474px;
+            }
+        </style>
+    </head>
+
+    <body>
+        
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=129682">Bug 129682</a> - This test used a &lt;mask&gt; element and paints it at the side of the masked element, causing it to be clipped.</p>
+        <div id="back">
+            <svg id="blackSVG" width="320px" height="420px">
+                <path fill="black" d="M80,20 L280,20 L280,380 L240,380 L240,60 L80,60 L80,20"/>
+            </svg>
+            <svg id="blueSVG" width="320px" height="420px">
+                <path fill="blue" d="M70,20 L280,20 L280,395 L240,395 L240,60 L70,60 L70,20"/>
+            </svg>
+        </div>
+    </body>
+</html>
+
