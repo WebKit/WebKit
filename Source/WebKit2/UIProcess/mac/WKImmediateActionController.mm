@@ -85,6 +85,7 @@ using namespace WebKit;
     _state = ImmediateActionState::None;
     _hitTestResult = ActionMenuHitTestResult();
     _type = kWKImmediateActionNone;
+    _userData = nil;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
@@ -92,6 +93,7 @@ using namespace WebKit;
     // FIXME: This needs to use the WebKit2 callback mechanism to avoid out-of-order replies.
     _state = ImmediateActionState::Ready;
     _hitTestResult = hitTestResult;
+    _userData = userData;
 
     [self _updateImmediateActionItem];
 }
@@ -166,6 +168,7 @@ using namespace WebKit;
 
     _type = kWKImmediateActionNone;
     _immediateActionRecognizer.animationController = nil;
+    id <NSImmediateActionAnimationController> defaultAnimationController = nil;
 
     if (!hitTestResult)
         return;
@@ -183,16 +186,22 @@ using namespace WebKit;
                 [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
                 [qlPreviewLinkItem setDelegate:self];
             }
-            _immediateActionRecognizer.animationController = (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
+            defaultAnimationController = (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
         } else {
 #if WK_API_ENABLED
             [self _createPreviewPopoverIfNeededForURL:absoluteLinkURL];
-            _immediateActionRecognizer.animationController = (id<NSImmediateActionAnimationController>)_previewPopover.get();
+            defaultAnimationController = (id<NSImmediateActionAnimationController>)_previewPopover.get();
 #endif // WK_API_ENABLED
         }
-
-        return;
     }
+
+    id customClientAnimationController = [_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:_type userData:toAPI(_userData.get())];
+    if (customClientAnimationController == [NSNull null])
+        return;
+    if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
+        _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
+    else
+        _immediateActionRecognizer.animationController = defaultAnimationController;
 }
 
 #pragma mark Link Preview action
