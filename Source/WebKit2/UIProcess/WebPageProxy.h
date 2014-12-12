@@ -383,7 +383,6 @@ public:
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const { return m_viewState & WebCore::ViewState::IsVisible; }
     bool isViewWindowActive() const;
-    bool isProcessSuppressible() const;
 
     void addMIMETypeWithCustomContentProvider(const String& mimeType);
 
@@ -959,6 +958,7 @@ private:
 
     void updateViewState(WebCore::ViewState::Flags flagsToUpdate = WebCore::ViewState::AllFlags);
     void updateActivityToken();
+    void updateProccessSuppressionState();
 
     enum class ResetStateReason {
         PageInvalidated,
@@ -1581,6 +1581,7 @@ private:
 #if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;
     std::unique_ptr<WebCore::RunLoopObserver> m_viewStateChangeDispatcher;
+    RefPtr<RefCounter::Count> m_preventProcessSuppression;
 #endif
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;

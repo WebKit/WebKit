@@ -43,6 +43,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefCounter.h>
 
 #if PLATFORM(IOS)
 #include "ProcessThrottler.h"
@@ -118,8 +119,12 @@ public:
 
     DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
-    void pageSuppressibilityChanged(WebPageProxy*);
-    void pagePreferencesChanged(WebPageProxy*);
+#if PLATFORM(COCOA)
+    PassRefPtr<RefCounter::Count> processSuppressionCounter()
+    {
+        return m_pagesPreventingSuppressionCounter.count();
+    }
+#endif
 
     void didSaveToPageCache();
     void releasePageCache();
@@ -226,7 +231,7 @@ private:
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
 
 #if PLATFORM(COCOA)
-    HashSet<uint64_t> m_processSuppressiblePages;
+    RefCounter m_pagesPreventingSuppressionCounter;
     bool m_processSuppressionEnabled;
 #endif
 

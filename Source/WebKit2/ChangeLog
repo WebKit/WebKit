@@ -1,3 +1,59 @@
+2014-12-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Track pages preventing suppression in WebProcessProxy using RefCounter
+        https://bugs.webkit.org/show_bug.cgi?id=139108
+
+        Reviewed by Benjamin Poulain.
+
+        The networking process is allowed to app nap if all web pages are also currently in app nap.
+        In order to detect whether any page in any process currently requires the networking process
+        to be active we:
+         - maintain hash sets in every WebProcessProxy of pages that are okay with suppression.
+         - if anything changes, the WebContext iterates every WebProcessProxy to recompute state.
+
+        This is all crazy - all we actually need is a simple count of the number of pages that need
+        to prevent the networking process from entering app nap. This patch gets us half way there -
+        replace the HashSet with a RefCounter. Next step will be to hoist the RefCounters from the
+        process proxies up to the context to do away with the iteration.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - make sure we prevent process suppression, per current viewstate & preferences.
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+            - make sure we prevent process suppression, per viewstate change.
+        (WebKit::WebPageProxy::updateProccessSuppressionState):
+            - recompute whether we need to prevent process suppression.
+        (WebKit::WebPageProxy::preferencesDidChange):
+            - when preferences change process supression may be disabled.
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+            - we need to drop the old ref, to allow a new one to be taken when we reattach.
+        (WebKit::WebPageProxy::isProcessSuppressible): Deleted.
+            - moreged into updateProccessSuppressionState.
+        * UIProcess/WebPageProxy.h:
+            - added m_preventProcessSuppression.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+            - initialize m_pagesPreventingSuppression
+        (WebKit::WebProcessProxy::createWebPage):
+            - moved to WebPageProxy::WebPageProxy
+        (WebKit::WebProcessProxy::addExistingWebPage):
+            - moved to WebPageProxy::reattachToWebProcess
+        (WebKit::WebProcessProxy::removeWebPage):
+            - now implicit; when the page is destroyed the RefPtr will release.
+        (WebKit::WebProcessProxy::pageSuppressibilityChanged): Deleted.
+            - moved to WebPageProxy::dispatchViewStateChange.
+        (WebKit::WebProcessProxy::pagePreferencesChanged): Deleted.
+            - moved to WebPageProxy::preferencesDidChange.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::preventProcessSuppressionForPage):
+            - reference count m_pagesPreventingSuppression
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::allPagesAreProcessSuppressible):
+            - converted to use m_pagesPreventingSuppression.
+            - removed guard that meant processes with no pages would keep the networking
+              process from entering app nap, which made no sense.
+
 2014-12-11  Anders Carlsson  <andersca@apple.com>
 
         Temporarily use WebCore session storage for transient local storage

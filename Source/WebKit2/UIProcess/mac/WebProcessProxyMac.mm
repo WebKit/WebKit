@@ -62,7 +62,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
 bool WebProcessProxy::allPagesAreProcessSuppressible() const
 {
-    return (m_processSuppressiblePages.size() == m_pageMap.size()) && !m_processSuppressiblePages.isEmpty();
+    return !m_pagesPreventingSuppressionCounter.value();
 }
 
 void WebProcessProxy::updateProcessSuppressionState()

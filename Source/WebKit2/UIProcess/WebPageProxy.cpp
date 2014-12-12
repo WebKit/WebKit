@@ -388,6 +388,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
     updateViewState();
     updateActivityToken();
+    updateProccessSuppressionState();
     
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     m_layerHostingMode = m_viewState & ViewState::IsInWindow ? m_pageClient.viewLayerHostingMode() : LayerHostingMode::OutOfProcess;
@@ -576,6 +577,7 @@ void WebPageProxy::reattachToWebProcess()
 
     updateViewState();
     updateActivityToken();
+    updateProccessSuppressionState();
 
 #if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);
@@ -657,11 +659,6 @@ void WebPageProxy::initializeWebPage()
 #if PLATFORM(COCOA)
     send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
 #endif
-}
-
-bool WebPageProxy::isProcessSuppressible() const
-{
-    return (m_viewState & ViewState::IsVisuallyIdle) && m_preferences->pageVisibilityBasedProcessSuppressionEnabled();
 }
 
 void WebPageProxy::close()
@@ -1245,9 +1242,7 @@ void WebPageProxy::dispatchViewStateChange()
 
     // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
     updateActivityToken();
-
-    if (changed & ViewState::IsVisuallyIdle)
-        m_process->pageSuppressibilityChanged(this);
+    updateProccessSuppressionState();
 
     // If we've started the responsiveness timer as part of telling the web process to update the backing store
     // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
@@ -1278,6 +1273,16 @@ void WebPageProxy::updateActivityToken()
         m_activityToken = nullptr;
     else if (!m_activityToken)
         m_activityToken = std::make_unique<ProcessThrottler::ForegroundActivityToken>(m_process->throttler());
+#endif
+}
+
+void WebPageProxy::updateProccessSuppressionState()
+{
+#if PLATFORM(COCOA)
+    if ((m_viewState & ViewState::IsVisuallyIdle) && m_preferences->pageVisibilityBasedProcessSuppressionEnabled())
+        m_preventProcessSuppression = nullptr;
+    else if (!m_preventProcessSuppression)
+        m_preventProcessSuppression = m_process->processSuppressionCounter();
 #endif
 }
 
@@ -2489,7 +2494,7 @@ void WebPageProxy::preferencesDidChange()
         inspector()->enableRemoteInspection();
 #endif
 
-    m_process->pagePreferencesChanged(this);
+    updateProccessSuppressionState();
 
     m_pageClient.preferencesDidChange();
 
@@ -4557,6 +4562,9 @@ void WebPageProxy::resetStateAfterProcessExited()
 
 #if PLATFORM(IOS)
     m_activityToken = nullptr;
+#endif
+#if PLATFORM(COCOA)
+    m_preventProcessSuppression = nullptr;
 #endif
 
     m_isValid = false;

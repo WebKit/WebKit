@@ -94,6 +94,7 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_customProtocolManagerProxy(this, context)
 #if PLATFORM(COCOA)
+    , m_pagesPreventingSuppressionCounter([this]() { updateProcessSuppressionState(); })
     , m_processSuppressionEnabled(false)
 #endif
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
@@ -189,11 +190,6 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, 
     RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, configuration);
     m_pageMap.set(pageID, webPage.get());
     globalPageMap().set(pageID, webPage.get());
-#if PLATFORM(COCOA)
-    if (webPage->isProcessSuppressible())
-        m_processSuppressiblePages.add(pageID);
-    updateProcessSuppressionState();
-#endif
     return webPage.release();
 }
 
@@ -204,11 +200,6 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
 
     m_pageMap.set(pageID, webPage);
     globalPageMap().set(pageID, webPage);
-#if PLATFORM(COCOA)
-    if (webPage->isProcessSuppressible())
-        m_processSuppressiblePages.add(pageID);
-    updateProcessSuppressionState();
-#endif
 }
 
 void WebProcessProxy::removeWebPage(uint64_t pageID)
@@ -223,11 +214,6 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     }
     for (auto itemID : itemIDsToRemove)
         m_backForwardListItemMap.remove(itemID);
-
-#if PLATFORM(COCOA)
-    m_processSuppressiblePages.remove(pageID);
-    updateProcessSuppressionState();
-#endif
 
     // If this was the last WebPage open in that web process, and we have no other reason to keep it alive, let it go.
     // We only allow this when using a network process, as otherwise the WebProcess needs to preserve its session state.
@@ -681,32 +667,6 @@ void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title
     MESSAGE_CHECK_URL(url);
 
     m_context->historyClient().didUpdateHistoryTitle(m_context.ptr(), page, title, url, frame);
-}
-
-void WebProcessProxy::pageSuppressibilityChanged(WebKit::WebPageProxy *page)
-{
-#if PLATFORM(COCOA)
-    if (page->isProcessSuppressible())
-        m_processSuppressiblePages.add(page->pageID());
-    else
-        m_processSuppressiblePages.remove(page->pageID());
-    updateProcessSuppressionState();
-#else
-    UNUSED_PARAM(page);
-#endif
-}
-
-void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
-{
-#if PLATFORM(COCOA)
-    if (page->isProcessSuppressible())
-        m_processSuppressiblePages.add(page->pageID());
-    else
-        m_processSuppressiblePages.remove(page->pageID());
-    updateProcessSuppressionState();
-#else
-    UNUSED_PARAM(page);
-#endif
 }
 
 void WebProcessProxy::didSaveToPageCache()
