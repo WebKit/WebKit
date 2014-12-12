@@ -320,3 +320,5 @@ webkit.org/b/138676 imported/w3c/canvas/canvas_transformations_scale_001.htm [ S
 webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Skip ]
 
 webkit.org/b/139548 [ MountainLion Mavericks ] fast/workers/worker-constructor.html [ Skip ]
+
+webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.html [ Pass Failure Timeout ]
