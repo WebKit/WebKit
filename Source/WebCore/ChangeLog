@@ -1,3 +1,35 @@
+2014-12-12  Antti Koivisto  <antti@apple.com>
+
+        FontGlyphs::glyphDataAndPageForCharacter cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=139584
+
+        Reviewed by Andreas Kling.
+
+        Split it up and use helper functions.
+
+        * WebCore.exp.in:
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::determinePitch):
+        (WebCore::FontGlyphs::realizeFontDataAt):
+        (WebCore::FontGlyphs::glyphDataAndPageForSystemFallback):
+        (WebCore::FontGlyphs::glyphDataAndPageForVariant):
+
+            Add private helpers.
+
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+
+            Do the m_pages cache lookup only once and use the pointer reference afterwards.
+
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::fontSelector):
+        (WebCore::FontGlyphs::widthCache):
+        (WebCore::FontGlyphs::primaryFontData):
+        (WebCore::FontGlyphs::isFixedPitch):
+        (WebCore::FontGlyphs::primarySimpleFontData):
+
+            Also removed the mutable attribute from the fields (almost everything was marked mutable) and made the inteface
+            non-const. The FontGlyphs member of Font is already mutable so this is not needed.
+
 2014-12-12  Chris Dumez  <cdumez@apple.com>
 
         Use is<>() / downcast<>() for StyleRuleBase subclasses

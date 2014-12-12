@@ -74,7 +74,7 @@ void FontGlyphs::releaseFontData()
     }
 }
 
-void FontGlyphs::determinePitch(const FontDescription& description) const
+void FontGlyphs::determinePitch(const FontDescription& description)
 {
     const FontData* fontData = primaryFontData(description);
     if (is<SimpleFontData>(*fontData))
@@ -89,7 +89,7 @@ void FontGlyphs::determinePitch(const FontDescription& description) const
     }
 }
 
-const FontData* FontGlyphs::realizeFontDataAt(const FontDescription& description, unsigned realizedFontIndex) const
+const FontData* FontGlyphs::realizeFontDataAt(const FontDescription& description, unsigned realizedFontIndex)
 {
     if (realizedFontIndex < m_realizedFontData.size())
         return m_realizedFontData[realizedFontIndex].get(); // This fallback font is already in our list.
@@ -256,115 +256,10 @@ static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForNonCJKCharacte
     return std::make_pair(data, page);
 }
 
-std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const FontDescription& description, UChar32 c, bool mirror, FontDataVariant variant) const
+std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForSystemFallback(UChar32 c, const FontDescription& description, FontDataVariant variant, unsigned pageNumber, GlyphPageTreeNode& node)
 {
-    ASSERT(isMainThread());
-
-    if (variant == AutoVariant) {
-        if (description.smallCaps() && !primarySimpleFontData(description)->isSVGFont()) {
-            UChar32 upperC = u_toupper(c);
-            if (upperC != c) {
-                c = upperC;
-                variant = SmallCapsVariant;
-            } else
-                variant = NormalVariant;
-        } else
-            variant = NormalVariant;
-    }
-
-    if (mirror)
-        c = u_charMirror(c);
-
-    unsigned pageNumber = (c / GlyphPage::size);
-
-    GlyphPageTreeNode* node = pageNumber ? m_pages.get(pageNumber) : m_pageZero;
-    if (!node) {
-        node = GlyphPageTreeNode::getRootChild(realizeFontDataAt(description, 0), pageNumber);
-        if (pageNumber)
-            m_pages.set(pageNumber, node);
-        else
-            m_pageZero = node;
-    }
-
-    GlyphPage* page = 0;
-    if (variant == NormalVariant) {
-        // Fastest loop, for the common case (normal variant).
-        while (true) {
-            page = node->page();
-            if (page) {
-                GlyphData data = page->glyphDataForCharacter(c);
-                if (data.fontData && (data.fontData->platformData().orientation() == Horizontal || data.fontData->isTextOrientationFallback()))
-                    return std::make_pair(data, page);
-
-                if (data.fontData) {
-                    if (Font::isCJKIdeographOrSymbol(c)) {
-                        if (!data.fontData->hasVerticalGlyphs()) {
-                            // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
-                            // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
-                            variant = BrokenIdeographVariant;
-                            break;
-                        }
-#if PLATFORM(COCOA)
-                        else if (data.fontData->platformData().syntheticOblique())
-                            return glyphDataAndPageForCJKCharacterWithoutSyntheticItalic(c, data, page, pageNumber);
-#endif
-                    } else
-                        return glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data, page, pageNumber);
-
-                    return std::make_pair(data, page);
-                }
-
-                if (node->isSystemFallback())
-                    break;
-            }
-
-            node = node->getChild(realizeFontDataAt(description, node->level()), pageNumber);
-            if (pageNumber)
-                m_pages.set(pageNumber, node);
-            else
-                m_pageZero = node;
-        }
-    }
-    if (variant != NormalVariant) {
-        while (true) {
-            page = node->page();
-            if (page) {
-                GlyphData data = page->glyphDataForCharacter(c);
-                if (data.fontData) {
-                    // The variantFontData function should not normally return 0.
-                    // But if it does, we will just render the capital letter big.
-                    RefPtr<SimpleFontData> variantFontData = data.fontData->variantFontData(description, variant);
-                    if (!variantFontData)
-                        return std::make_pair(data, page);
-
-                    GlyphPageTreeNode* variantNode = GlyphPageTreeNode::getRootChild(variantFontData.get(), pageNumber);
-                    GlyphPage* variantPage = variantNode->page();
-                    if (variantPage) {
-                        GlyphData data = variantPage->glyphDataForCharacter(c);
-                        if (data.fontData)
-                            return std::make_pair(data, variantPage);
-                    }
-
-                    // Do not attempt system fallback off the variantFontData. This is the very unlikely case that
-                    // a font has the lowercase character but the small caps font does not have its uppercase version.
-                    return std::make_pair(variantFontData->missingGlyphData(), page);
-                }
-
-                if (node->isSystemFallback())
-                    break;
-            }
-
-            node = node->getChild(realizeFontDataAt(description, node->level()), pageNumber);
-            if (pageNumber)
-                m_pages.set(pageNumber, node);
-            else
-                m_pageZero = node;
-        }
-    }
-
-    ASSERT(page);
-    ASSERT(node->isSystemFallback());
-
+    ASSERT(node.page());
+    ASSERT(node.isSystemFallback());
     // System fallback is character-dependent. When we get here, we
     // know that the character in question isn't in the system fallback
     // font's glyph page. Try to lazily create it here.
@@ -392,23 +287,113 @@ std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const 
         GlyphData data = fallbackPage && fallbackPage->fontDataForCharacter(c) ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
         // Cache it so we don't have to do system fallback again next time.
         if (variant == NormalVariant) {
-            page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
-            data.fontData->setMaxGlyphPageTreeLevel(std::max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
+            node.page()->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+            data.fontData->setMaxGlyphPageTreeLevel(std::max(data.fontData->maxGlyphPageTreeLevel(), node.level()));
             if (!Font::isCJKIdeographOrSymbol(c) && data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
                 return glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data, fallbackPage, pageNumber);
         }
-        return std::make_pair(data, page);
+        return std::make_pair(data, node.page());
     }
 
     // Even system fallback can fail; use the missing glyph in that case.
     // FIXME: It would be nicer to use the missing glyph from the last resort font instead.
     GlyphData data = primarySimpleFontData(description)->missingGlyphData();
     if (variant == NormalVariant) {
-        page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
-        data.fontData->setMaxGlyphPageTreeLevel(std::max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
+        node.page()->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+        data.fontData->setMaxGlyphPageTreeLevel(std::max(data.fontData->maxGlyphPageTreeLevel(), node.level()));
     }
-    return std::make_pair(data, page);
+    return std::make_pair(data, node.page());
 }
 
+std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForVariant(UChar32 c, const FontDescription& description, FontDataVariant variant, unsigned pageNumber, GlyphPageTreeNode*& node)
+{
+    while (true) {
+        if (GlyphPage* page = node->page()) {
+            GlyphData data = page->glyphDataForCharacter(c);
+            if (data.fontData) {
+                // The variantFontData function should not normally return 0.
+                // But if it does, we will just render the capital letter big.
+                RefPtr<SimpleFontData> variantFontData = data.fontData->variantFontData(description, variant);
+                if (!variantFontData)
+                    return std::make_pair(data, page);
+
+                GlyphPageTreeNode* variantNode = GlyphPageTreeNode::getRootChild(variantFontData.get(), pageNumber);
+                GlyphPage* variantPage = variantNode->page();
+                if (variantPage) {
+                    GlyphData data = variantPage->glyphDataForCharacter(c);
+                    if (data.fontData)
+                        return std::make_pair(data, variantPage);
+                }
+
+                // Do not attempt system fallback off the variantFontData. This is the very unlikely case that
+                // a font has the lowercase character but the small caps font does not have its uppercase version.
+                return std::make_pair(variantFontData->missingGlyphData(), page);
+            }
+
+            if (node->isSystemFallback())
+                return glyphDataAndPageForSystemFallback(c, description, variant, pageNumber, *node);
+        }
+
+        node = node->getChild(realizeFontDataAt(description, node->level()), pageNumber);
+    }
+}
+
+std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const FontDescription& description, UChar32 c, bool mirror, FontDataVariant variant)
+{
+    ASSERT(isMainThread());
+
+    if (variant == AutoVariant) {
+        if (description.smallCaps() && !primarySimpleFontData(description)->isSVGFont()) {
+            UChar32 upperC = u_toupper(c);
+            if (upperC != c) {
+                c = upperC;
+                variant = SmallCapsVariant;
+            } else
+                variant = NormalVariant;
+        } else
+            variant = NormalVariant;
+    }
+
+    if (mirror)
+        c = u_charMirror(c);
+
+    const unsigned pageNumber = (c / GlyphPage::size);
+
+    GlyphPageTreeNode*& node = pageNumber ? m_pages.add(pageNumber, nullptr).iterator->value : m_pageZero;
+    if (!node)
+        node = GlyphPageTreeNode::getRootChild(realizeFontDataAt(description, 0), pageNumber);
+
+    if (variant != NormalVariant)
+        return glyphDataAndPageForVariant(c, description, variant, pageNumber, node);
+
+    while (true) {
+        if (GlyphPage* page = node->page()) {
+            GlyphData data = page->glyphDataForCharacter(c);
+            if (data.fontData) {
+                if (data.fontData->platformData().orientation() == Vertical && !data.fontData->isTextOrientationFallback()) {
+                    if (!Font::isCJKIdeographOrSymbol(c))
+                        return glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data, page, pageNumber);
+
+                    if (!data.fontData->hasVerticalGlyphs()) {
+                        // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
+                        // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
+                        return glyphDataAndPageForVariant(c, description, BrokenIdeographVariant, pageNumber, node);
+                    }
+#if PLATFORM(COCOA)
+                    if (data.fontData->platformData().syntheticOblique())
+                        return glyphDataAndPageForCJKCharacterWithoutSyntheticItalic(c, data, page, pageNumber);
+#endif
+                }
+
+                return std::make_pair(data, page);
+            }
+
+            if (node->isSystemFallback())
+                return glyphDataAndPageForSystemFallback(c, description, variant, pageNumber, *node);
+        }
+
+        node = node->getChild(realizeFontDataAt(description, node->level()), pageNumber);
+    }
+}
 
 }

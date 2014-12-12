@@ -75,52 +75,56 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const FontDescription&, UChar32, bool mirror, FontDataVariant) const;
-    
-    bool isFixedPitch(const FontDescription&) const;
-    void determinePitch(const FontDescription&) const;
+    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const FontDescription&, UChar32, bool mirror, FontDataVariant);
+
+    bool isFixedPitch(const FontDescription&);
+    void determinePitch(const FontDescription&);
 
     bool loadingCustomFonts() const { return m_loadingCustomFonts; }
 
-    FontSelector* fontSelector() const { return m_fontSelector.get(); }
+    FontSelector* fontSelector() { return m_fontSelector.get(); }
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned fontSelectorVersion() const { return m_fontSelectorVersion; }
     unsigned generation() const { return m_generation; }
 
-    WidthCache& widthCache() const { return m_widthCache; }
+    WidthCache& widthCache() { return m_widthCache; }
+    const WidthCache& widthCache() const { return m_widthCache; }
 
-    const SimpleFontData* primarySimpleFontData(const FontDescription&) const;
-    const FontData* primaryFontData(const FontDescription& description) const { return realizeFontDataAt(description, 0); }
-    WEBCORE_EXPORT const FontData* realizeFontDataAt(const FontDescription&, unsigned index) const;
+    const SimpleFontData* primarySimpleFontData(const FontDescription&);
+    const FontData* primaryFontData(const FontDescription& description) { return realizeFontDataAt(description, 0); }
+    WEBCORE_EXPORT const FontData* realizeFontDataAt(const FontDescription&, unsigned index);
 
 private:
     FontGlyphs(PassRefPtr<FontSelector>);
     FontGlyphs(const FontPlatformData&);
 
+    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForSystemFallback(UChar32, const FontDescription&, FontDataVariant, unsigned pageNumber, GlyphPageTreeNode&);
+    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned pageNumber, GlyphPageTreeNode*&);
+
     WEBCORE_EXPORT void releaseFontData();
     
-    mutable Vector<RefPtr<FontData>, 1> m_realizedFontData;
-    mutable GlyphPages m_pages;
-    mutable GlyphPageTreeNode* m_pageZero;
-    mutable const SimpleFontData* m_cachedPrimarySimpleFontData;
+    Vector<RefPtr<FontData>, 1> m_realizedFontData;
+    GlyphPages m_pages;
+    GlyphPageTreeNode* m_pageZero;
+    const SimpleFontData* m_cachedPrimarySimpleFontData;
     RefPtr<FontSelector> m_fontSelector;
-    mutable WidthCache m_widthCache;
+    WidthCache m_widthCache;
     unsigned m_fontSelectorVersion;
-    mutable int m_familyIndex;
+    int m_familyIndex;
     unsigned short m_generation;
-    mutable unsigned m_pitch : 3; // Pitch
-    mutable bool m_loadingCustomFonts : 1;
-    bool m_isForPlatformFont : 1;
+    unsigned m_pitch : 3; // Pitch
+    unsigned m_loadingCustomFonts : 1;
+    unsigned m_isForPlatformFont : 1;
 };
 
-inline bool FontGlyphs::isFixedPitch(const FontDescription& description) const
+inline bool FontGlyphs::isFixedPitch(const FontDescription& description)
 {
     if (m_pitch == UnknownPitch)
         determinePitch(description);
     return m_pitch == FixedPitch;
 };
 
-inline const SimpleFontData* FontGlyphs::primarySimpleFontData(const FontDescription& description) const
+inline const SimpleFontData* FontGlyphs::primarySimpleFontData(const FontDescription& description)
 {
     ASSERT(isMainThread());
     if (!m_cachedPrimarySimpleFontData)
