@@ -59,7 +59,6 @@ enum class ActionMenuState {
     _WKActionMenuType _type;
     RetainPtr<NSSharingServicePicker> _sharingServicePicker;
 
-    BOOL _isShowingTextIndicator;
     BOOL _hasActivatedActionContext;
 
     RetainPtr<DDActionContext> _currentActionContext;
@@ -74,8 +73,6 @@ enum class ActionMenuState {
 - (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
 
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
-
-- (void)dismissActionMenuPopovers;
 
 @end
 

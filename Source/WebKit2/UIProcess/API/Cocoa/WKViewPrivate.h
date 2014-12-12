@@ -136,7 +136,7 @@
 - (void)_handleClickInPreviewView:(NSView *)previewView URL:(NSURL *)url;
 - (BOOL)_shouldUseStandardQuickLookPreview;
 
-- (void)_dismissActionMenuPopovers;
+- (void)_dismissContentRelativeChildWindows;
 #endif
 
 @end
