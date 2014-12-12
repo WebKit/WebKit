@@ -77,10 +77,11 @@ StringView RunResolver::Run::text() const
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
     auto& segment = resolver.m_flowContents.segmentForPosition(run.start);
-    ASSERT(segment.renderer.is8Bit());
     // We currently split runs on segment boundaries (different RenderText).
     ASSERT(run.end <= segment.end);
-    return StringView(segment.renderer.characters8(), segment.renderer.textLength()).substring(run.start - segment.start, run.end - run.start);
+    if (segment.renderer.is8Bit())
+        return StringView(segment.renderer.characters8(), segment.renderer.textLength()).substring(run.start - segment.start, run.end - run.start);
+    return StringView(segment.renderer.characters16(), segment.renderer.textLength()).substring(run.start - segment.start, run.end - run.start);
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)

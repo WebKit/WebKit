@@ -97,7 +97,7 @@ bool canUseFor(const RenderBlockFlow& flow)
     // This currently covers <blockflow>#text</blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (const auto& renderer : childrenOfType<RenderObject>(flow)) {
-        if (!is<RenderText>(renderer) || !downcast<RenderText>(renderer).text()->is8Bit())
+        if (!is<RenderText>(renderer))
             return false;
     }
     if (!flow.isHorizontalWritingMode())

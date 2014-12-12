@@ -80,7 +80,7 @@ private:
     unsigned segmentIndexForPositionSlow(unsigned position) const;
 
     UChar characterAt(unsigned position) const;
-    float runWidth(const String&, unsigned from, unsigned to, float xPosition) const;
+    template <typename CharacterType> float runWidth(const String&, unsigned from, unsigned to, float xPosition) const;
 
     const Style m_style;
     const Vector<Segment, 8> m_segments;

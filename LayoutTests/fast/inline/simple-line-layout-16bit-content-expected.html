@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+<title>This tests that we use simple line layout to layout/render 16bit content.</title>
+<style>
+  div {
+    color: white;
+  }
+</style>
+<script>
+  if (window.internals)
+    internals.settings.setSimpleLineLayoutDebugBordersEnabled(true);
+</script>
+</head>
+<body>
+  <div>uuuooooaaee</div>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2014-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add 16bit support.
+        https://bugs.webkit.org/show_bug.cgi?id=139469
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds the 16bit support to simple line layout.
+
+        * fast/inline/simple-line-layout-16bit-content-expected.html: Added.
+        * fast/inline/simple-line-layout-16bit-content.html: Added.
+
 2014-12-11  Michael Saboff  <msaboff@apple.com>
 
         Need a regression test for bug 139533

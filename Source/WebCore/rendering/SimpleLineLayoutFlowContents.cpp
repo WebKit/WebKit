@@ -66,6 +66,15 @@ FlowContents::FlowContents(const RenderBlockFlow& flow)
 {
 }
 
+template <typename CharacterType>
+static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakItearator, const FlowContents::Segment& segment, unsigned position)
+{
+    const auto* characters = segment.text.characters<CharacterType>();
+    unsigned segmentLength = segment.end - segment.start;
+    unsigned segmentPosition = position - segment.start;
+    return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakItearator, characters, segmentLength, segmentPosition);
+}
+
 unsigned FlowContents::findNextBreakablePosition(unsigned position) const
 {
     while (!isEnd(position)) {
@@ -77,10 +86,7 @@ unsigned FlowContents::findNextBreakablePosition(unsigned position) const
             m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorModeUAX14);
         }
 
-        auto* characters = segment.text.characters8();
-        unsigned segmentLength = segment.end - segment.start;
-        unsigned segmentPosition = position - segment.start;
-        unsigned breakable = nextBreakablePositionNonLoosely<LChar, NBSPBehavior::IgnoreNBSP>(m_lineBreakIterator, characters, segmentLength, segmentPosition);
+        unsigned breakable = segment.text.is8Bit() ? nextBreakablePosition<LChar>(m_lineBreakIterator, segment, position) : nextBreakablePosition<UChar>(m_lineBreakIterator, segment, position);
         position = segment.start + breakable;
         if (position < segment.end)
             break;
@@ -88,9 +94,10 @@ unsigned FlowContents::findNextBreakablePosition(unsigned position) const
     return position;
 }
 
+template <typename CharacterType>
 static bool findNextNonWhitespace(const FlowContents::Segment& segment, const FlowContents::Style& style, unsigned& position, unsigned& spaceCount)
 {
-    const LChar* text = segment.text.characters8();
+    const auto* text = segment.text.characters<CharacterType>();
     for (; position < segment.end; ++position) {
         auto character = text[position - segment.start];
         bool isSpace = character == ' ';
@@ -106,7 +113,9 @@ static bool findNextNonWhitespace(const FlowContents::Segment& segment, const Fl
 unsigned FlowContents::findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const
 {
     for (unsigned i = segmentIndexForPosition(position); i < m_segments.size(); ++i) {
-        if (findNextNonWhitespace(m_segments[i], m_style, position, spaceCount))
+        bool foundNonWhitespace = m_segments[i].text.is8Bit() ? findNextNonWhitespace<LChar>(m_segments[i], m_style, position, spaceCount) :
+            findNextNonWhitespace<UChar>(m_segments[i], m_style, position, spaceCount);
+        if (foundNonWhitespace)
             break;
     }
     return position;
@@ -114,17 +123,18 @@ unsigned FlowContents::findNextNonWhitespacePosition(unsigned position, unsigned
 
 float FlowContents::textWidth(unsigned from, unsigned to, float xPosition) const
 {
-    auto& fromSegment = segmentForPosition(from);
+    const auto& fromSegment = segmentForPosition(from);
 
     if ((m_style.font.isFixedPitch() && fromSegment.end >= to) || (from == fromSegment.start && to == fromSegment.end))
         return fromSegment.renderer.width(from - fromSegment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
 
-    auto* segment = &fromSegment;
+    const auto* segment = &fromSegment;
     float textWidth = 0;
     unsigned fragmentEnd = 0;
     while (true) {
         fragmentEnd = std::min(to, segment->end);
-        textWidth += runWidth(segment->text, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth);
+        textWidth += segment->text.is8Bit() ? runWidth<LChar>(segment->text, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth) :
+            runWidth<UChar>(segment->text, from - segment->start, fragmentEnd - segment->start, xPosition + textWidth);
         if (fragmentEnd == to)
             break;
         from = fragmentEnd;
@@ -155,13 +165,14 @@ const FlowContents::Segment& FlowContents::segmentForRenderer(const RenderText& 
     return m_segments.last();
 }
 
+template <typename CharacterType>
 float FlowContents::runWidth(const String& text, unsigned from, unsigned to, float xPosition) const
 {
     ASSERT(from < to);
     bool measureWithEndSpace = m_style.collapseWhitespace && to < text.length() && text[to] == ' ';
     if (measureWithEndSpace)
         ++to;
-    TextRun run(text.characters8() + from, to - from);
+    TextRun run(text.characters<CharacterType>() + from, to - from);
     run.setXPos(xPosition);
     run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
     float width = m_style.font.width(run);

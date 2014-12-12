@@ -1,3 +1,27 @@
+2014-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add 16bit support.
+        https://bugs.webkit.org/show_bug.cgi?id=139469
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds the 16bit support to simple line layout.
+
+        Test: fast/inline/simple-line-layout-16bit-content.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::nextBreakablePosition):
+        (WebCore::SimpleLineLayout::FlowContents::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::findNextNonWhitespace):
+        (WebCore::SimpleLineLayout::FlowContents::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContents::textWidth):
+        (WebCore::SimpleLineLayout::FlowContents::runWidth):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+
 2014-12-12  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Implement MemoryPressureHandler for Linux system
