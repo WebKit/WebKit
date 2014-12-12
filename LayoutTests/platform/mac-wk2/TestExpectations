@@ -564,8 +564,8 @@ webkit.org/b/138687 [ Mavericks+ ] http/tests/xmlhttprequest/cross-origin-cookie
 webkit.org/b/138688 [ Mavericks+ ] http/tests/navigation/ping-cookie.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.
-webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure ]
-webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure ]
+webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ]
+webkit.org/b/123431 [ Mavericks+ ] http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
 webkit.org/b/123431 [ Mavericks+ ] http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 [ Mavericks+ ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
 

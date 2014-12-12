@@ -1,3 +1,31 @@
+2014-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139591
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/css/resources/empty.css: Added.
+        * http/tests/css/resources/500.php: Copied from LayoutTests/http/tests/css/resources/slow-loading-sheet-in-error.php.
+        * http/tests/css/resources/slow-loading-sheet-in-error.php: Removed.
+        * http/tests/css/resources/slow-loading-sheet.php: Removed.
+        These scripts were not "slow" at all - 100 microseconds is nothing. Furthermore,
+        slow-loading-sheet-in-error.php wasn't even used, because of a typo in the test.
+        And worst of all, WebCore has its own ideas about when to load stylesheets - notably,
+        default stylesheet loading blocks script execution, so we cannot do anything before
+        the stylesheet loads.
+
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html:
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html:
+        Removed built-in timeout for the tests, we don't need it. Also, fixed a number of
+        small stylistic issues.
+
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet-in-error.js: Removed.
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet.js: Removed.
+        Moved inside HTML, because having tests in a separate file is useless and harmful.
+
+        * platform/mac-wk2/TestExpectations: These tests were always flaky, not 100% failing.
+
 2014-12-12  Radu Stavila  <stavila@adobe.com>
 
         animations/cross-fade-webkit-mask-image.html is flaky
