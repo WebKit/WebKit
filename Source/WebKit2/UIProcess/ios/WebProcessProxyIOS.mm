@@ -50,17 +50,6 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     launchOptions.useXPC = true;
 }
 
-bool WebProcessProxy::allPagesAreProcessSuppressible() const
-{
-    notImplemented();
-    return false;
-}
-
-void WebProcessProxy::updateProcessSuppressionState()
-{
-    notImplemented();
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

@@ -93,10 +93,6 @@ WebProcessProxy::WebProcessProxy(WebContext& context)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_customProtocolManagerProxy(this, context)
-#if PLATFORM(COCOA)
-    , m_pagesPreventingSuppressionCounter([this]() { updateProcessSuppressionState(); })
-    , m_processSuppressionEnabled(false)
-#endif
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(std::make_unique<ProcessThrottler>(this))
 {
@@ -506,10 +502,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     m_context->processDidFinishLaunching(this);
 
-#if PLATFORM(COCOA)
-    updateProcessSuppressionState();
-#endif
-    
 #if PLATFORM(IOS) && USE(XPC_SERVICES)
     xpc_connection_t xpcConnection = connection()->xpcConnection();
     ASSERT(xpcConnection);

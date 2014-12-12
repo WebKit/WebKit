@@ -48,6 +48,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -349,9 +350,16 @@ public:
 
     NSMutableDictionary *ensureBundleParameters();
     NSMutableDictionary *bundleParameters() { return m_bundleParameters.get(); }
+#else
+    void updateProcessSuppressionState() const { }
 #endif
 
     void setMemoryCacheDisabled(bool);
+
+    PassRefPtr<RefCounter::Count> userObservablePageCount()
+    {
+        return m_userObservablePageCounter.count();
+    }
 
 private:
     void platformInitialize();
@@ -556,6 +564,8 @@ private:
 #endif
 
     bool m_memoryCacheDisabled;
+
+    RefCounter m_userObservablePageCounter;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;

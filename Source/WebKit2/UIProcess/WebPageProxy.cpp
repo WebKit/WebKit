@@ -1282,7 +1282,7 @@ void WebPageProxy::updateProccessSuppressionState()
     if ((m_viewState & ViewState::IsVisuallyIdle) && m_preferences->pageVisibilityBasedProcessSuppressionEnabled())
         m_preventProcessSuppression = nullptr;
     else if (!m_preventProcessSuppression)
-        m_preventProcessSuppression = m_process->processSuppressionCounter();
+        m_preventProcessSuppression = m_process->context().userObservablePageCount();
 #endif
 }
 

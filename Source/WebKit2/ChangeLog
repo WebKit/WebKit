@@ -1,3 +1,47 @@
+2014-12-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Keep single RefCounter to track whether any pages in a context are process suppressible
+        https://bugs.webkit.org/show_bug.cgi?id=139576
+
+        Reviewed by Sam Weinig.
+
+        Currently we keep separate counters in each process, and coallesce these in the
+        context. Instead we should have a counter in the WebContext.
+
+        Also, changed the name to better describe the state we're tracking, rather than
+        describing what it's currently used for. This counter will also be useful for
+        iOS, to better manage background state of the networking process.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+            - initialize m_userObservablePageCounter.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::updateProcessSuppressionState):
+            - Added no-op implementation for non-cocoa platforms.
+        (WebKit::WebContext::userObservablePageCount):
+            - Count the number of user visible (audible / visible) pages in Context.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateProccessSuppressionState):
+            - WebProcessProxy::processSuppressionCounter -> WebContext::userObservablePageCount
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+            - moved all processs supression state tracking to the WebContext.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::processSuppressionCounter): Deleted.
+            - moved all processs supression state tracking to the WebContext.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::allPagesAreProcessSuppressible): Deleted.
+        (WebKit::WebProcessProxy::updateProcessSuppressionState): Deleted.
+            - moved all processs supression state tracking to the WebContext.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::processSuppressionEnabled):
+            - no need to interate all processes; just have a single counter.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::allPagesAreProcessSuppressible): Deleted.
+        (WebKit::WebProcessProxy::updateProcessSuppressionState): Deleted.
+            - moved all processs supression state tracking to the WebContext.
+
 2014-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test http/tests/loading/307-after-303-after-post.html is flaky
