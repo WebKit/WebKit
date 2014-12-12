@@ -1,3 +1,9 @@
+2014-12-12  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed 64bit build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-12-12  Anders Carlsson  <andersca@apple.com>
 
         Handle null local storage database URLs
