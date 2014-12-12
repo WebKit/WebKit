@@ -25,6 +25,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedStyleSheetClient.h"
 #include "StyleRule.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -82,5 +83,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleImport)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isImportRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

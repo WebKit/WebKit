@@ -134,12 +134,6 @@ private:
     CSSSelectorList m_selectorList;
 };
 
-inline const StyleRule* toStyleRule(const StyleRuleBase* rule)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isStyleRule());
-    return static_cast<const StyleRule*>(rule);
-}
-
 class StyleRuleFontFace : public StyleRuleBase {
 public:
     static PassRef<StyleRuleFontFace> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleFontFace(WTF::move(properties))); }
@@ -274,16 +268,34 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRule)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isStyleRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleFontFace)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isFontFaceRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleMedia)
-    static bool isType(const WebCore::StyleRuleGroup& group) { return group.isMediaRule(); }
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isMediaRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRulePage)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isPageRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleSupports)
-    static bool isType(const WebCore::StyleRuleGroup& group) { return group.isSupportsRule(); }
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isSupportsRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleRegion)
-    static bool isType(const WebCore::StyleRuleGroup& group) { return group.isRegionRule(); }
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isRegionRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleViewport)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isViewportRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+#endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
 #endif // StyleRule_h

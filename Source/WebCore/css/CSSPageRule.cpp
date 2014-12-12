@@ -96,8 +96,7 @@ String CSSPageRule::cssText() const
 
 void CSSPageRule::reattach(StyleRuleBase& rule)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(rule.isPageRule());
-    m_pageRule = static_cast<StyleRulePage&>(rule);
+    m_pageRule = downcast<StyleRulePage>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_pageRule.get().mutableProperties());
 }

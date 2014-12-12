@@ -1044,17 +1044,13 @@ PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Insp
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
     SelectorChecker selectorChecker(element->document());
 
-    for (unsigned i = 0; i < matchedRules.size(); ++i) {
-        if (!matchedRules[i]->isStyleRule())
-            continue;
-
-        StyleRule* matchedStyleRule = static_cast<StyleRule*>(matchedRules[i].get());
-        RefPtr<Inspector::Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(matchedStyleRule, styleResolver);
+    for (auto& matchedRule : matchedRules) {
+        RefPtr<Inspector::Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(matchedRule.get(), styleResolver);
         if (!ruleObject)
             continue;
 
         RefPtr<Inspector::Protocol::Array<int>> matchingSelectors = Inspector::Protocol::Array<int>::create();
-        const CSSSelectorList& selectorList = matchedStyleRule->selectorList();
+        const CSSSelectorList& selectorList = matchedRule->selectorList();
         long index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
             unsigned ignoredSpecificity;

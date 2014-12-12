@@ -127,10 +127,10 @@ bool StyleSheetContents::isCacheable() const
 void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
 {
     ASSERT(!rule->isCharsetRule());
-    if (rule->isImportRule()) {
+    if (is<StyleRuleImport>(*rule)) {
         // Parser enforces that @import rules come before anything else except @charset.
         ASSERT(m_childRules.isEmpty());
-        m_importRules.append(static_cast<StyleRuleImport*>(rule.get()));
+        m_importRules.append(downcast<StyleRuleImport>(rule.get()));
         m_importRules.last()->setParentStyleSheet(this);
         m_importRules.last()->requestStyleSheet();
         return;
@@ -138,14 +138,14 @@ void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
 
 #if ENABLE(RESOLUTION_MEDIA_QUERY)
     // Add warning message to inspector if dpi/dpcm values are used for screen media.
-    if (rule->isMediaRule())
-        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), static_cast<StyleRuleMedia*>(rule.get())->mediaQueries());
+    if (is<StyleRuleMedia>(*rule))
+        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), downcast<StyleRuleMedia>(*rule).mediaQueries());
 #endif
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     // If we're adding a rule with a huge number of selectors, split it up into multiple rules
-    if (rule->isStyleRule() && toStyleRule(rule.get())->selectorList().componentCount() > RuleData::maximumSelectorComponentCount) {
-        Vector<RefPtr<StyleRule>> rules = toStyleRule(rule.get())->splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount);
+    if (is<StyleRule>(*rule) && downcast<StyleRule>(*rule).selectorList().componentCount() > RuleData::maximumSelectorComponentCount) {
+        Vector<RefPtr<StyleRule>> rules = downcast<StyleRule>(*rule).splitIntoMultipleRulesWithMaximumSelectorComponentCount(RuleData::maximumSelectorComponentCount);
         m_childRules.appendVector(rules);
         return;
     }
@@ -221,16 +221,16 @@ bool StyleSheetContents::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
     
     if (childVectorIndex < m_importRules.size() || (childVectorIndex == m_importRules.size() && rule->isImportRule())) {
         // Inserting non-import rule before @import is not allowed.
-        if (!rule->isImportRule())
+        if (!is<StyleRuleImport>(*rule))
             return false;
-        m_importRules.insert(childVectorIndex, static_cast<StyleRuleImport*>(rule.get()));
+        m_importRules.insert(childVectorIndex, downcast<StyleRuleImport>(rule.get()));
         m_importRules[childVectorIndex]->setParentStyleSheet(this);
         m_importRules[childVectorIndex]->requestStyleSheet();
         // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
         return true;
     }
     // Inserting @import rule after a non-import rule is not allowed.
-    if (rule->isImportRule())
+    if (is<StyleRuleImport>(*rule))
         return false;
     childVectorIndex -= m_importRules.size();
  
@@ -410,42 +410,39 @@ void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<URL>& urls)
     while (!styleSheetQueue.isEmpty()) {
         StyleSheetContents* styleSheet = styleSheetQueue.takeFirst();
         
-        for (unsigned i = 0; i < styleSheet->m_importRules.size(); ++i) {
-            StyleRuleImport* importRule = styleSheet->m_importRules[i].get();
+        for (auto& importRule : styleSheet->m_importRules) {
             if (importRule->styleSheet()) {
                 styleSheetQueue.append(importRule->styleSheet());
                 addSubresourceURL(urls, importRule->styleSheet()->baseURL());
             }
         }
-        for (unsigned i = 0; i < styleSheet->m_childRules.size(); ++i) {
-            StyleRuleBase* rule = styleSheet->m_childRules[i].get();
-            if (rule->isStyleRule())
-                static_cast<StyleRule*>(rule)->properties().addSubresourceStyleURLs(urls, this);
-            else if (rule->isFontFaceRule())
-                static_cast<StyleRuleFontFace*>(rule)->properties().addSubresourceStyleURLs(urls, this);
+        for (auto& rule : styleSheet->m_childRules) {
+            if (is<StyleRule>(*rule))
+                downcast<StyleRule>(*rule).properties().addSubresourceStyleURLs(urls, this);
+            else if (is<StyleRuleFontFace>(*rule))
+                downcast<StyleRuleFontFace>(*rule).properties().addSubresourceStyleURLs(urls, this);
         }
     }
 }
 
 static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<StyleRuleBase>>& rules)
 {
-    for (unsigned i = 0; i < rules.size(); ++i) {
-        const StyleRuleBase* rule = rules[i].get();
+    for (auto& rule : rules) {
         switch (rule->type()) {
         case StyleRuleBase::Style:
-            if (static_cast<const StyleRule*>(rule)->properties().hasFailedOrCanceledSubresources())
+            if (downcast<StyleRule>(*rule).properties().hasFailedOrCanceledSubresources())
                 return true;
             break;
         case StyleRuleBase::FontFace:
-            if (static_cast<const StyleRuleFontFace*>(rule)->properties().hasFailedOrCanceledSubresources())
+            if (downcast<StyleRuleFontFace>(*rule).properties().hasFailedOrCanceledSubresources())
                 return true;
             break;
         case StyleRuleBase::Media:
-            if (childRulesHaveFailedOrCanceledSubresources(static_cast<const StyleRuleMedia*>(rule)->childRules()))
+            if (childRulesHaveFailedOrCanceledSubresources(downcast<StyleRuleMedia>(*rule).childRules()))
                 return true;
             break;
         case StyleRuleBase::Region:
-            if (childRulesHaveFailedOrCanceledSubresources(static_cast<const StyleRuleRegion*>(rule)->childRules()))
+            if (childRulesHaveFailedOrCanceledSubresources(downcast<StyleRuleRegion>(*rule).childRules()))
                 return true;
             break;
         case StyleRuleBase::Import:

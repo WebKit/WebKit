@@ -59,34 +59,34 @@ void StyleRuleBase::destroy()
 {
     switch (type()) {
     case Style:
-        delete static_cast<StyleRule*>(this);
+        delete downcast<StyleRule>(this);
         return;
     case Page:
-        delete static_cast<StyleRulePage*>(this);
+        delete downcast<StyleRulePage>(this);
         return;
     case FontFace:
-        delete static_cast<StyleRuleFontFace*>(this);
+        delete downcast<StyleRuleFontFace>(this);
         return;
     case Media:
-        delete static_cast<StyleRuleMedia*>(this);
+        delete downcast<StyleRuleMedia>(this);
         return;
     case Supports:
-        delete static_cast<StyleRuleSupports*>(this);
+        delete downcast<StyleRuleSupports>(this);
         return;
 #if ENABLE(CSS_REGIONS)
     case Region:
-        delete static_cast<StyleRuleRegion*>(this);
+        delete downcast<StyleRuleRegion>(this);
         return;
 #endif
     case Import:
-        delete static_cast<StyleRuleImport*>(this);
+        delete downcast<StyleRuleImport>(this);
         return;
     case Keyframes:
-        delete static_cast<StyleRuleKeyframes*>(this);
+        delete downcast<StyleRuleKeyframes>(this);
         return;
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
-        delete static_cast<StyleRuleViewport*>(this);
+        delete downcast<StyleRuleViewport>(this);
         return;
 #endif
     case Unknown:
@@ -105,24 +105,24 @@ PassRef<StyleRuleBase> StyleRuleBase::copy() const
 {
     switch (type()) {
     case Style:
-        return static_cast<const StyleRule*>(this)->copy();
+        return downcast<StyleRule>(*this).copy();
     case Page:
-        return static_cast<const StyleRulePage*>(this)->copy();
+        return downcast<StyleRulePage>(*this).copy();
     case FontFace:
-        return static_cast<const StyleRuleFontFace*>(this)->copy();
+        return downcast<StyleRuleFontFace>(*this).copy();
     case Media:
-        return static_cast<const StyleRuleMedia*>(this)->copy();
+        return downcast<StyleRuleMedia>(*this).copy();
     case Supports:
-        return static_cast<const StyleRuleSupports*>(this)->copy();
+        return downcast<StyleRuleSupports>(*this).copy();
 #if ENABLE(CSS_REGIONS)
     case Region:
-        return static_cast<const StyleRuleRegion*>(this)->copy();
+        return downcast<StyleRuleRegion>(*this).copy();
 #endif
     case Keyframes:
-        return static_cast<const StyleRuleKeyframes*>(this)->copy();
+        return downcast<StyleRuleKeyframes>(*this).copy();
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
-        return static_cast<const StyleRuleViewport*>(this)->copy();
+        return downcast<StyleRuleViewport>(*this).copy();
 #endif
     case Import:
         // FIXME: Copy import rules.
@@ -146,34 +146,34 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     StyleRuleBase& self = const_cast<StyleRuleBase&>(*this);
     switch (type()) {
     case Style:
-        rule = CSSStyleRule::create(static_cast<StyleRule&>(self), parentSheet);
+        rule = CSSStyleRule::create(downcast<StyleRule>(self), parentSheet);
         break;
     case Page:
-        rule = CSSPageRule::create(static_cast<StyleRulePage&>(self), parentSheet);
+        rule = CSSPageRule::create(downcast<StyleRulePage>(self), parentSheet);
         break;
     case FontFace:
-        rule = CSSFontFaceRule::create(static_cast<StyleRuleFontFace&>(self), parentSheet);
+        rule = CSSFontFaceRule::create(downcast<StyleRuleFontFace>(self), parentSheet);
         break;
     case Media:
-        rule = CSSMediaRule::create(static_cast<StyleRuleMedia&>(self), parentSheet);
+        rule = CSSMediaRule::create(downcast<StyleRuleMedia>(self), parentSheet);
         break;
     case Supports:
-        rule = CSSSupportsRule::create(static_cast<StyleRuleSupports&>(self), parentSheet);
+        rule = CSSSupportsRule::create(downcast<StyleRuleSupports>(self), parentSheet);
         break;
 #if ENABLE(CSS_REGIONS)
     case Region:
-        rule = WebKitCSSRegionRule::create(static_cast<StyleRuleRegion&>(self), parentSheet);
+        rule = WebKitCSSRegionRule::create(downcast<StyleRuleRegion>(self), parentSheet);
         break;
 #endif
     case Import:
-        rule = CSSImportRule::create(static_cast<StyleRuleImport&>(self), parentSheet);
+        rule = CSSImportRule::create(downcast<StyleRuleImport>(self), parentSheet);
         break;
     case Keyframes:
-        rule = CSSKeyframesRule::create(static_cast<StyleRuleKeyframes&>(self), parentSheet);
+        rule = CSSKeyframesRule::create(downcast<StyleRuleKeyframes>(self), parentSheet);
         break;
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
-        rule = WebKitCSSViewportRule::create(static_cast<StyleRuleViewport&>(self), parentSheet);
+        rule = WebKitCSSViewportRule::create(downcast<StyleRuleViewport>(self), parentSheet);
         break;
 #endif
     case Unknown:
@@ -183,7 +183,7 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     case Region:
 #endif
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     if (parentRule)
         rule->setParentRule(parentRule);

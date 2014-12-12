@@ -300,7 +300,7 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         return 0;
     }
 
-    RuleMutationScope mutationScope(this, RuleInsertion, rule->type() == StyleRuleBase::Keyframes ? static_cast<StyleRuleKeyframes*>(rule.get()) : 0);
+    RuleMutationScope mutationScope(this, RuleInsertion, is<StyleRuleKeyframes>(*rule) ? downcast<StyleRuleKeyframes>(rule.get()) : nullptr);
 
     bool success = m_contents.get().wrapperInsertRule(rule, index);
     if (!success) {

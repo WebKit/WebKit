@@ -307,10 +307,9 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
     const Vector<RefPtr<StyleRuleBase>>& childRules = regionRule->childRules();
     AddRuleFlags addRuleFlags = hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState;
     addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleIsInRegionRule);
-    for (unsigned i = 0; i < childRules.size(); ++i) {
-        StyleRuleBase* regionStylingRule = childRules[i].get();
-        if (regionStylingRule->isStyleRule())
-            regionRuleSet->addStyleRule(static_cast<StyleRule*>(regionStylingRule), addRuleFlags);
+    for (auto& childRule : childRules) {
+        if (is<StyleRule>(*childRule))
+            regionRuleSet->addStyleRule(downcast<StyleRule>(childRule.get()), addRuleFlags);
     }
     // Update the "global" rule count so that proper order is maintained
     m_ruleCount = regionRuleSet->m_ruleCount;
@@ -320,35 +319,31 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
 
 void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, StyleResolver* resolver, bool hasDocumentSecurityOrigin, AddRuleFlags addRuleFlags)
 {
-    for (unsigned i = 0; i < rules.size(); ++i) {
-        StyleRuleBase* rule = rules[i].get();
-
-        if (rule->isStyleRule()) {
-            StyleRule* styleRule = static_cast<StyleRule*>(rule);
-            addStyleRule(styleRule, addRuleFlags);
-        } else if (rule->isPageRule())
-            addPageRule(static_cast<StyleRulePage*>(rule));
-        else if (rule->isMediaRule()) {
-            StyleRuleMedia* mediaRule = static_cast<StyleRuleMedia*>(rule);
-            if ((!mediaRule->mediaQueries() || medium.eval(mediaRule->mediaQueries(), resolver)))
-                addChildRules(mediaRule->childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
-        } else if (rule->isFontFaceRule() && resolver) {
+    for (auto& rule : rules) {
+        if (is<StyleRule>(*rule))
+            addStyleRule(downcast<StyleRule>(rule.get()), addRuleFlags);
+        else if (is<StyleRulePage>(*rule))
+            addPageRule(downcast<StyleRulePage>(rule.get()));
+        else if (is<StyleRuleMedia>(*rule)) {
+            auto& mediaRule = downcast<StyleRuleMedia>(*rule);
+            if ((!mediaRule.mediaQueries() || medium.eval(mediaRule.mediaQueries(), resolver)))
+                addChildRules(mediaRule.childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
+        } else if (is<StyleRuleFontFace>(*rule) && resolver) {
             // Add this font face to our set.
-            const StyleRuleFontFace* fontFaceRule = static_cast<StyleRuleFontFace*>(rule);
-            resolver->fontSelector()->addFontFaceRule(fontFaceRule);
+            resolver->fontSelector()->addFontFaceRule(downcast<StyleRuleFontFace>(rule.get()));
             resolver->invalidateMatchedPropertiesCache();
-        } else if (rule->isKeyframesRule() && resolver)
-            resolver->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(rule));
-        else if (rule->isSupportsRule() && static_cast<StyleRuleSupports*>(rule)->conditionIsSupported())
-            addChildRules(static_cast<StyleRuleSupports*>(rule)->childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
+        } else if (is<StyleRuleKeyframes>(*rule) && resolver)
+            resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(rule.get()));
+        else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())
+            addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
 #if ENABLE(CSS_REGIONS)
-        else if (rule->isRegionRule() && resolver) {
-            addRegionRule(static_cast<StyleRuleRegion*>(rule), hasDocumentSecurityOrigin);
+        else if (is<StyleRuleRegion>(*rule) && resolver) {
+            addRegionRule(downcast<StyleRuleRegion>(rule.get()), hasDocumentSecurityOrigin);
         }
 #endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        else if (rule->isViewportRule() && resolver) {
-            resolver->viewportStyleResolver()->addViewportRule(static_cast<StyleRuleViewport*>(rule));
+        else if (is<StyleRuleViewport>(*rule) && resolver) {
+            resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
         }
 #endif
     }

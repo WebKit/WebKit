@@ -1,3 +1,49 @@
+2014-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Use is<>() / downcast<>() for StyleRuleBase subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=139571
+
+        Reviewed by Andreas Kling.
+
+        Use is<>() / downcast<>() for StyleRuleBase subclasses for safety and
+        consistency.
+
+        No new tests, no behavior change.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::reattach):
+        * css/CSSKeyframesRule.h:
+        (isType):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::reattach):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::reattach):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::insertRule):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addChildRules):
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::shouldDirtyAllStyle):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleRule.h:
+        (isType):
+        (WebCore::toStyleRule): Deleted.
+        * css/StyleRuleImport.h:
+        (isType):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+        (WebCore::StyleSheetContents::addSubresourceStyleURLs):
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * css/WebKitCSSViewportRule.cpp:
+        (WebCore::WebKitCSSViewportRule::reattach):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+
 2014-12-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add support for SourceBuffer.mode.

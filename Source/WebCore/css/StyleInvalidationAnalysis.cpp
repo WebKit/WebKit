@@ -39,13 +39,13 @@ namespace WebCore {
 static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
-        if (rule->isMediaRule()) {
-            if (shouldDirtyAllStyle(static_cast<StyleRuleMedia&>(*rule).childRules()))
+        if (is<StyleRuleMedia>(*rule)) {
+            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(*rule).childRules()))
                 return true;
             continue;
         }
         // FIXME: At least font faces don't need full recalc in all cases.
-        if (!rule->isStyleRule())
+        if (!is<StyleRule>(*rule))
             return true;
     }
     return false;

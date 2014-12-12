@@ -101,4 +101,8 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSKeyframesRule, CSSRule::KEYFRAMES_RULE)
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleKeyframes)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isKeyframesRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // CSSKeyframesRule_h
