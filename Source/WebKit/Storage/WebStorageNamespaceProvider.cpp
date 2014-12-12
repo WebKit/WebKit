@@ -43,7 +43,7 @@ RefPtr<WebStorageNamespaceProvider> WebStorageNamespaceProvider::create(const St
 }
 
 WebStorageNamespaceProvider::WebStorageNamespaceProvider(const String& localStorageDatabasePath)
-    : m_localStorageDatabasePath(localStorageDatabasePath)
+    : m_localStorageDatabasePath(localStorageDatabasePath.isNull() ? emptyString() : localStorageDatabasePath)
 {
     storageNamespaceProviders().add(this);
 }

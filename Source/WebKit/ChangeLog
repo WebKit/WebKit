@@ -1,3 +1,14 @@
+2014-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Handle null local storage database URLs
+        https://bugs.webkit.org/show_bug.cgi?id=139594
+        <rdar://problem/19236505>
+
+        Reviewed by Beth Dakin.
+
+        * Storage/WebStorageNamespaceProvider.cpp:
+        (WebStorageNamespaceProvider::WebStorageNamespaceProvider):
+
 2014-12-11  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
