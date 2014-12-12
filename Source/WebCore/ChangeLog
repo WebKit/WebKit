@@ -1,3 +1,20 @@
+2014-12-11  Chris Dumez  <cdumez@apple.com>
+
+        Optimize RenderElement::rendererForRootBackground() a bit
+        https://bugs.webkit.org/show_bug.cgi?id=139527
+
+        Reviewed by Andreas Kling.
+
+        Optimize RenderElement::rendererForRootBackground() a bit by not
+        calling Document::body(). We are only interested in the child element
+        with a <body> tag. However, Document::body() first checks if a
+        <frameset> child is present.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::rendererForRootBackground):
+
 2014-12-11  Brendan Long  <b.long@cablelabs.com>
 
         Remove DataCue "text" attribute

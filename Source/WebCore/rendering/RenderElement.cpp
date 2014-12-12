@@ -29,10 +29,12 @@
 #include "ContentData.h"
 #include "ControlStates.h"
 #include "CursorList.h"
+#include "ElementChildIterator.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "FrameSelection.h"
-#include "HTMLElement.h"
+#include "HTMLBodyElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "FlowThreadController.h"
 #include "RenderCounter.h"
@@ -1107,16 +1109,14 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
 RenderElement& RenderElement::rendererForRootBackground()
 {
     ASSERT(isRoot());
-    if (!hasBackground() && element() && element()->hasTagName(HTMLNames::htmlTag)) {
+    if (!hasBackground() && is<HTMLHtmlElement>(element())) {
         // Locate the <body> element using the DOM. This is easier than trying
         // to crawl around a render tree with potential :before/:after content and
         // anonymous blocks created by inline <body> tags etc. We can locate the <body>
         // render object very easily via the DOM.
-        if (auto body = document().body()) {
-            if (body->hasTagName(HTMLNames::bodyTag)) {
-                if (auto renderer = body->renderer())
-                    return *renderer;
-            }
+        if (auto* body = childrenOfType<HTMLBodyElement>(*element()).first()) {
+            if (auto* renderer = body->renderer())
+                return *renderer;
         }
     }
     return *this;
