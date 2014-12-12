@@ -1,3 +1,26 @@
+2014-12-12  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add support for SourceBuffer.mode.
+        https://bugs.webkit.org/show_bug.cgi?id=139265
+
+        Reviewed by Eric Carlson.
+
+        Support setting SourceBuffer's mode property, and add support for "sequence" mode. Prior
+        to this change, "segments" mode was implied.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::regenerateActiveSourceBuffers):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::segmentsKeyword):
+        (WebCore::SourceBuffer::sequenceKeyword):
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::setTimestampOffset):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::setMode):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+
 2014-12-12  Radu Stavila  <stavila@adobe.com>
 
         [SVG Masking] Enable the use of <mask> elements for -webkit-mask-image

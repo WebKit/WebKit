@@ -1249,6 +1249,7 @@ webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html
 [ Yosemite+ ] http/tests/media/media-source/mediasource-play.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-remove.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebufferlist.html [ Pass ]
+[ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebuffer-mode.html [ Pass ]
 
 # These two tests have "Error: InvalidStateError: DOM Exception 11" in output.
 [ Yosemite+ ] media/media-source/media-source-duplicate-seeked.html [ Failure ]
