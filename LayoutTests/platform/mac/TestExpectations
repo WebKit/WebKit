@@ -491,7 +491,21 @@ webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure 
 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
 
 # Skip 1.0.3 tests for now, to be unskipped when we get closer to conformance
-webgl/1.0.3
+webgl/1.0.3/conformance/attribs [ Skip ]
+webgl/1.0.3/conformance/buffers [ Skip ]
+webgl/1.0.3/conformance/canvas [ Skip ]
+webgl/1.0.3/conformance/context [ Skip ]
+webgl/1.0.3/conformance/glsl [ Skip ]
+webgl/1.0.3/conformance/renderbuffers [ Skip ]
+webgl/1.0.3/conformance/rendering [ Skip ]
+webgl/1.0.3/conformance/state [ Skip ]
+webgl/1.0.3/conformance/textures [ Skip ]
+webgl/1.0.3/conformance/typedarrays [ Skip ]
+webgl/1.0.3/conformance/uniforms [ Skip ]
+webgl/1.0.3/conformance/extensions/angle-instanced-arrays.html [ Skip ]
+webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Skip ]
+webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Skip ]
+webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
 
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html [ Skip ]

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
@@ -7259,6 +7259,12 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\EXTsRGB.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTFragDepth.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\EXTFragDepth.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
   </ItemGroup>
@@ -15264,6 +15270,12 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="..\html\canvas\EXTsRGB.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTFragDepth.h”>
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\EXTFragDepth.h”>
       <Filter>html\canvas</Filter>
     </ClInclude>
   </ItemGroup>

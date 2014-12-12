@@ -44,6 +44,7 @@ class ANGLEInstancedArrays;
 class EXTTextureFilterAnisotropic;
 class EXTShaderTextureLOD;
 class EXTsRGB;
+class EXTFragDepth;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBuffer;
@@ -539,6 +540,7 @@ private:
     bool isContextLostOrPending();
 
     // Enabled extension objects.
+    std::unique_ptr<EXTFragDepth> m_extFragDepth;
     std::unique_ptr<EXTsRGB> m_extsRGB;
     std::unique_ptr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     std::unique_ptr<EXTShaderTextureLOD> m_extShaderTextureLOD;

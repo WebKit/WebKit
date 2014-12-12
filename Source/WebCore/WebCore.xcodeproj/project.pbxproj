@@ -2312,7 +2312,8 @@
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		727AFED41A2EA6AE000442E8 /* EXTsRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */; };
 		72E417631A2E8D2F004C562A /* JSEXTsRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */; };
-		72E417651A2E8D50004C562A /* JSEXTsRGB.h in Headers */ = {isa = PBXBuildFile; fileRef = 72E417621A2E8D2F004C562A /* JSEXTsRGB.h */; };
+		72F1ADA21A3904DC00014E18 /* EXTFragDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */; };
+		72F1ADA51A390B9F00014E18 /* JSEXTFragDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F1ADA31A390B9F00014E18 /* JSEXTFragDepth.cpp */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
@@ -9494,6 +9495,11 @@
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTsRGB.idl; path = canvas/EXTsRGB.idl; sourceTree = "<group>"; };
 		72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTsRGB.cpp; sourceTree = "<group>"; };
 		72E417621A2E8D2F004C562A /* JSEXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTsRGB.h; sourceTree = "<group>"; };
+		72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTFragDepth.cpp; path = canvas/EXTFragDepth.cpp; sourceTree = "<group>"; };
+		72F1ADA01A3904C300014E18 /* EXTFragDepth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTFragDepth.h; path = canvas/EXTFragDepth.h; sourceTree = "<group>"; };
+		72F1ADA11A3904C300014E18 /* EXTFragDepth.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTFragDepth.idl; path = canvas/EXTFragDepth.idl; sourceTree = "<group>"; };
+		72F1ADA31A390B9F00014E18 /* JSEXTFragDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSEXTFragDepth.cpp; path = "JSEXTFragDepth.cpp"; sourceTree = "<group>"; };
+		72F1ADA41A390B9F00014E18 /* JSEXTFragDepth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSEXTFragDepth.h; path = "JSEXTFragDepth.h"; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
@@ -15820,6 +15826,9 @@
 				727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */,
 				727AFED21A2EA6A0000442E8 /* EXTsRGB.h */,
 				727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */,
+				72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */,
+				72F1ADA01A3904C300014E18 /* EXTFragDepth.h */,
+				72F1ADA11A3904C300014E18 /* EXTFragDepth.idl */,
 				7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */,
 				7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */,
 				E176580C180DF3A0005A96D1 /* OESElementIndexUint.idl */,
@@ -18722,6 +18731,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				72F1ADA31A390B9F00014E18 /* JSEXTFragDepth.cpp */,
+				72F1ADA41A390B9F00014E18 /* JSEXTFragDepth.h */,
 				72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */,
 				72E417621A2E8D2F004C562A /* JSEXTsRGB.h */,
 				31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */,
@@ -23488,7 +23499,6 @@
 				FD315FFC12B0267600C1A359 /* AudioBufferSourceNode.h in Headers */,
 				FD31607C12B026F700C1A359 /* AudioBus.h in Headers */,
 				FD31607E12B026F700C1A359 /* AudioChannel.h in Headers */,
-				72E417651A2E8D50004C562A /* JSEXTsRGB.h in Headers */,
 				FD31600512B0267600C1A359 /* AudioContext.h in Headers */,
 				FD31607F12B026F700C1A359 /* AudioDestination.h in Headers */,
 				070F549E17F2402700169E04 /* AudioDestinationConsumer.h in Headers */,
@@ -27364,6 +27374,7 @@
 				5F2DBBE9178E3C8100141486 /* CertificateInfoMac.mm in Sources */,
 				E1A8E56617552B2A007488E7 /* CFURLExtras.cpp in Sources */,
 				97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */,
+				72F1ADA21A3904DC00014E18 /* EXTFragDepth.cpp in Sources */,
 				FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */,
 				FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
@@ -29994,6 +30005,7 @@
 				29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm in Sources */,
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
+				72F1ADA51A390B9F00014E18 /* JSEXTFragDepth.cpp in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
 				A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */,
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,

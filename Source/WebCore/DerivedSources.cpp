@@ -42,6 +42,7 @@
 #include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
 #if ENABLE(WEBGL)
+#include "JSEXTFragDepth.cpp"
 #include "JSEXTShaderTextureLOD.cpp"
 #include "JSEXTTextureFilterAnisotropic.cpp"
 #include "JSEXTsRGB.cpp"

@@ -144,6 +144,14 @@ void Extensions3DOpenGLCommon::ensureEnabled(const String& name)
             ANGLEResources.EXT_shader_texture_lod = 1;
             compiler.setResources(ANGLEResources);
         }
+    } else if (name == "GL_EXT_frag_depth") {
+        // Enable support in ANGLE (if not enabled already)
+        ANGLEWebKitBridge& compiler = m_context->m_compiler;
+        ShBuiltInResources ANGLEResources = compiler.getResources();
+        if (!ANGLEResources.EXT_frag_depth) {
+            ANGLEResources.EXT_frag_depth = 1;
+            compiler.setResources(ANGLEResources);
+        }
     }
 }
 

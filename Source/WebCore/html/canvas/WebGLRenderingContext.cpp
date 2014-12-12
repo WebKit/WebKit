@@ -33,6 +33,7 @@
 #include "CachedImage.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
@@ -2462,7 +2463,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_extsRGB.get();
     }
-
+    if (equalIgnoringCase(name, "EXT_frag_depth")
+        && m_context->getExtensions()->supports("GL_EXT_frag_depth")) {
+        if (!m_extFragDepth) {
+            m_context->getExtensions()->ensureEnabled("GL_EXT_frag_depth");
+            m_extFragDepth = std::make_unique<EXTFragDepth>(this);
+        }
+        return m_extFragDepth.get();
+    }
     if (equalIgnoringCase(name, "EXT_shader_texture_lod")
         && (m_context->getExtensions()->supports("GL_EXT_shader_texture_lod") || m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))) {
         if (!m_extShaderTextureLOD) {
@@ -3081,6 +3089,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
 
     if (m_context->getExtensions()->supports("GL_EXT_sRGB"))
         result.append("EXT_sRGB");
+    if (m_context->getExtensions()->supports("GL_EXT_frag_depth"))
+        result.append("EXT_frag_depth");
     if (m_context->getExtensions()->supports("GL_OES_texture_float"))
         result.append("OES_texture_float");
     if (m_context->getExtensions()->supports("GL_OES_texture_float_linear"))

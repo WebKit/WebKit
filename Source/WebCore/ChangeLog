@@ -1,3 +1,41 @@
+2014-12-10  Roger Fong  <roger_fong@apple.com>
+
+        Implement frag depth as a WebGL 1 extension.
+        https://bugs.webkit.org/show_bug.cgi?id=133635.
+        <rdar://problem/19195381>
+
+        Reviewed by Dean Jackson.
+
+        Test:
+        webgl/1.0.3/conformance/extensions/ext-frag-depth.html
+
+        Spec for this extension outlined here:
+        http://www.khronos.org/registry/webgl/extensions/EXT_frag_depth/
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * html/canvas/EXTFragDepth.cpp: Added.
+        (WebCore::EXTFragDepth::EXTFragDepth):
+        (WebCore::EXTFragDepth::~EXTFragDepth):
+        (WebCore::EXTFragDepth::getName):
+        * html/canvas/EXTFragDepth.h: Added.
+        * html/canvas/EXTFragDepth.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::ensureEnabled):
+
 2014-12-11  Chris Dumez  <cdumez@apple.com>
 
         Optimize RenderElement::rendererForRootBackground() a bit
