@@ -1,5 +1,14 @@
 2014-12-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the iOS simulator build.
+
+        #include the declaration of malloc / free.
+
+        * bmalloc/Allocator.cpp:
+        * bmalloc/Deallocator.cpp:
+
+2014-12-11  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the build.
 
         * bmalloc.xcodeproj/project.pbxproj: Marked a header exported.

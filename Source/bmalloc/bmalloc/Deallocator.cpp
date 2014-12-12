@@ -32,6 +32,7 @@
 #include "PerProcess.h"
 #include "SmallChunk.h"
 #include <algorithm>
+#include <stdlib.h>
 #include <sys/mman.h>
 
 using namespace std;
