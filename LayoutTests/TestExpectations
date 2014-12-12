@@ -37,6 +37,8 @@ webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas-2x.html [ ImageOnlyFailur
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ ImageOnlyFailure ]
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/139590 animations/cross-fade-webkit-mask-image.html [ Pass Failure ]
+
 # The test frequently times out, and is just unsuccessful at detecting incorrect behavior when it passes.
 webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
 

@@ -1,3 +1,16 @@
+2014-12-12  Radu Stavila  <stavila@adobe.com>
+
+        animations/cross-fade-webkit-mask-image.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139590
+
+        Reviewed by Alexey Proskuryakov.
+
+        animations/cross-fade-webkit-mask-image.html became flaky after the way
+        masks are handled was changed in https://bugs.webkit.org/show_bug.cgi?id=139294.
+        Marking it flaky for now, pending investigation.
+
+        * TestExpectations:
+
 2014-12-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add support for SourceBuffer.mode.
