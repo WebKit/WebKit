@@ -1,3 +1,11 @@
+2014-12-12  Lucas Forschler  <lforschler@apple.com>
+
+        Update Apple owned build slaves after infrastructure update.
+        
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-12-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] REGRESSION(r175555) GTK API Tests run outside the JHBuild.
