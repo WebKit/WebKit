@@ -18987,8 +18987,8 @@
     <ClInclude Include="..\html\canvas\CanvasPathMethods.h" />
     <ClInclude Include="..\html\canvas\EXTShaderTextureLOD.h" />
     <ClInclude Include="..\html\canvas\EXTsRGB.h" />
-    <ClInclude Include="..\html\canvas\EXTFragDepth.h” />
-    <ClInclude Include="..\html\canvas\EXTBlendMinMax.h” />
+    <ClInclude Include="..\html\canvas\EXTFragDepth.h" />
+    <ClInclude Include="..\html\canvas\EXTBlendMinMax.h" />
     <ClInclude Include="..\html\canvas\EXTTextureFilterAnisotropic.h" />
     <ClInclude Include="..\html\canvas\OESElementIndexUint.h" />
     <ClInclude Include="..\html\canvas\OESStandardDerivatives.h" />
