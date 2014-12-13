@@ -1,3 +1,25 @@
+2014-12-12  Dean Jackson  <dino@apple.com>
+
+        [Media iOS] Inline video controls have an outlined scrubber
+        https://bugs.webkit.org/show_bug.cgi?id=139602
+        <rdar://problem/19184212>
+
+        Reviewed by Eric Carlson.
+
+        This is another change similar to https://bugs.webkit.org/show_bug.cgi?id=138378
+        where the specificity of pseduo elements had changed, and thus iOS
+        was inheriting some of the UA styles.
+
+        The fix is to add some more style rules to ensure that the timeline track
+        is drawn in white.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-timeline): Border rules not needed here.
+        (video::-webkit-media-controls-timeline::-webkit-slider-runnable-track): But are needed
+        here, along with some other things.
+        (audio::-webkit-media-controls-timeline::-webkit-slider-thumb): Now that the runnable
+        track has some style, we need to account for the change.
+
 2014-12-12  Anders Carlsson  <andersca@apple.com>
 
         Remove a workaround for a bug that was fixed in Mountain Lion

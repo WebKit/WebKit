@@ -276,26 +276,32 @@ audio::-webkit-media-controls-timeline {
     -webkit-flex: 1 1 0;
     height: 3px;
     margin: 0;
-
-    border-radius: 1.5px;
 }
 
 video::-webkit-media-controls-timeline {
     opacity: 0.75;
 }
 
+video::-webkit-media-controls-timeline::-webkit-slider-runnable-track {
+  height: 3px !important;
+  border-radius: 1.5px !important;
+  background-color: white !important;
+}
+
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     -webkit-appearance: none;
+    position: relative;
+    top: -6px;
     width: 16px;
     height: 16px;
     border-width: 0px !important;
     border-radius: 8px;
-    background-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><circle r="7.75" cy="8" cx="8" fill="white" stroke="rgba(0, 0, 0, .25)" stroke-width=".5"/></svg>');
+    background-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><circle r="7.75" cy="8" cx="8" fill="white" stroke="rgba(0, 0, 0, .25)" stroke-width=".5"/></svg>') !important;
     background-color: transparent !important;
     box-shadow: 0 3px 1px -1px rgba(0, 0, 0, .15);
 
-    /* rotateZ() forces the layer into compositing mode. Slider 
+    /* rotateZ() forces the layer into compositing mode. Slider
        thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
     -webkit-transform: rotateZ(0deg);
