@@ -800,9 +800,15 @@ void WebPageProxy::disableInspectorNodeSearch()
 }
 #endif
 
-void WebPageProxy::focusNextAssistedNode(bool isForward)
+void WebPageProxy::focusNextAssistedNode(bool isForward, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    process().send(Messages::WebPage::FocusNextAssistedNode(isForward), m_pageID);
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_process->throttler()));
+    process().send(Messages::WebPage::FocusNextAssistedNode(isForward, callbackID), m_pageID);
 }
 
 void WebPageProxy::setAssistedNodeValue(const String& value)

@@ -2125,13 +2125,14 @@ static inline bool hasAssistableElement(Node* startNode, Page& page, bool isForw
     return nextAssistableElement(startNode, page, isForward);
 }
 
-void WebPage::focusNextAssistedNode(bool isForward)
+void WebPage::focusNextAssistedNode(bool isForward, uint64_t callbackID)
 {
     Element* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, isForward);
     m_userIsInteracting = true;
     if (nextElement)
         nextElement->focus();
     m_userIsInteracting = false;
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)

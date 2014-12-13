@@ -1,3 +1,29 @@
+2014-12-12  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Predictions are not updated when using navigation buttons.
+        https://bugs.webkit.org/show_bug.cgi?id=139567
+        rdar://problem/19132585
+
+        Reviewed by Dan Bernstein.
+
+        When moving focus programmatically, we need to notify the keyboard so that it
+        can update the prediction bar.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView inputAssistantButtonItems]):
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _stopAssistingNode]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::focusNextAssistedNode):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::focusNextAssistedNode):
+
 2014-12-12  Timothy Horton  <timothy_horton@apple.com>
 
         TextIndicator (and other view-relative subwindows) is not dismissed on zoom gesture

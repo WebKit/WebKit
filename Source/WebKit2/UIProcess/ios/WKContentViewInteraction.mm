@@ -149,6 +149,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
+@interface UIWebFormAccessory (StagingToRemove)
+@property(nonatomic,retain) NSArray *buttonItems;
+@end
+
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
 - (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
@@ -193,6 +197,8 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
     else
         [[_contentView formAccessoryView] hideAutoFillButton];
+    if (UICurrentUserInterfaceIdiomIsPad())
+        [_contentView reloadInputViews];
 }
 
 - (void)invalidate
@@ -1144,10 +1150,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Phone:
     case InputType::Number:
     case InputType::NumberPad:
-        return YES;
+        return !UICurrentUserInterfaceIdiomIsPad();
     case InputType::ContentEditable:
     case InputType::TextArea:
-        return YES;
+        return !UICurrentUserInterfaceIdiomIsPad();
     case InputType::Select:
     case InputType::Date:
     case InputType::DateTime:
@@ -1170,6 +1176,15 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
     
     return _formAccessoryView.get();
+}
+
+- (NSArray *)inputAssistantButtonItems
+{
+    if (!_formAccessoryView) {
+        _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
+        [_formAccessoryView setDelegate:self];
+    }
+    return ([_formAccessoryView respondsToSelector:@selector(buttonItems)]) ? [_formAccessoryView buttonItems] : nil;
 }
 
 - (NSArray *)supportedPasteboardTypesForCurrentSelection
@@ -1967,7 +1982,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _inputPeripheral = nil;
 
     _didAccessoryTabInitiateFocus = YES; // Will be cleared in either -_displayFormNodeInputView or -cleanupInteraction.
-    _page->focusNextAssistedNode(isNext);
+    [self beginSelectionChange];
+    _page->focusNextAssistedNode(isNext, [self](CallbackBase::Error) {
+        [self endSelectionChange];
+        [self reloadInputViews];
+    });
+
 }
 
 - (void)accessoryAutoFill
@@ -2634,6 +2654,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 - (void)_startAssistingKeyboard
 {
     [self useSelectionAssistantWithMode:UIWebSelectionModeTextOnly];
+    [self reloadInputViews];
 }
 
 - (void)_stopAssistingKeyboard
@@ -2715,6 +2736,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     _inputPeripheral = nil;
 
     [self _stopAssistingKeyboard];
+    [_formAccessoryView hideAutoFillButton];
     [self reloadInputViews];
     [self _updateAccessory];
     // The name is misleading, but this actually clears the selection views and removes any selection.
