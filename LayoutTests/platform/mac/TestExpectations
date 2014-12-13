@@ -901,8 +901,8 @@ webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Fai
 [ MountainLion Mavericks ] fast/images/image-controls-basic.html [ WontFix ]
 
 # <rdar://problem/16696298>
-webkit.org/b/131886 [ MountainLion Yosemite ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
-webkit.org/b/131886 [ MountainLion Yosemite ] fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure ]
+webkit.org/b/131886 webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
+webkit.org/b/131886 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure Timeout ]
 
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
 
