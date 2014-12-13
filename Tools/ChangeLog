@@ -1,3 +1,16 @@
+2014-12-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] MiniBrowser's window_create may return NULL
+        https://bugs.webkit.org/show_bug.cgi?id=139585
+
+        Reviewed by Gyuyoung Kim.
+
+        Move NULL checking before using object which window_create
+        returns.
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+
 2014-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test http/tests/loading/307-after-303-after-post.html is flaky

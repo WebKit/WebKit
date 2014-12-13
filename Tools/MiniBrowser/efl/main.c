@@ -2422,18 +2422,16 @@ elm_main(int argc, char *argv[])
     if (window_size_string)
         parse_window_size(window_size_string, &window_width, &window_height);
 
-    if (args < argc) {
-        char *url = url_from_user_input(argv[args]);
-        window = window_create(NULL, 0, 0);
-        ewk_view_url_set(window->ewk_view, url);
-        free(url);
-    } else {
-        window = window_create(NULL, 0, 0);
-        ewk_view_url_set(window->ewk_view, DEFAULT_URL);
-    }
-
+    window = window_create(NULL, 0, 0);
     if (!window)
         return quit(EINA_FALSE, "ERROR: could not create browser window.\n");
+
+    if (args < argc) {
+        char *url = url_from_user_input(argv[args]);
+        ewk_view_url_set(window->ewk_view, url);
+        free(url);
+    } else
+        ewk_view_url_set(window->ewk_view, DEFAULT_URL);
 
     windows = eina_list_append(windows, window);
 
