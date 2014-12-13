@@ -1581,8 +1581,9 @@ private:
 #if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;
     std::unique_ptr<WebCore::RunLoopObserver> m_viewStateChangeDispatcher;
-    RefPtr<RefCounter::Count> m_preventProcessSuppression;
 #endif
+    RefPtr<RefCounter::Count> m_pageIsUserObservableCount;
+    RefPtr<RefCounter::Count> m_preventProcessSuppressionCount;
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 

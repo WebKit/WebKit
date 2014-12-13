@@ -1,3 +1,44 @@
+2014-12-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Split WebPageProxy::m_preventProcessSuppression to track pref/visibility separately
+        https://bugs.webkit.org/show_bug.cgi?id=139600
+
+        Reviewed by Geoff Garen.
+
+        Previously WebPageProxy::m_preventProcessSuppression would be set if either the page was visible
+        or its suppression was disabled by the pref. Instead track these separately. This will make the
+        user observability state applicable on iOS, too.
+
+        Add a new counter to WebContext, and split the counting in WebPageProxy.
+        ::updateProccessSuppressionState continues to track the pref change (which matches its name),
+        tracking of user observability changes moved to updateActivityToken (which we should further
+        merge with; it already tracks observability to control process state for iOS).
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::m_processSuppressionDisabledForPageCounter):
+            - added new RefCounter.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::processSuppressionDisabledForPageCount):
+            - added new RefCounter.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - no longer needs to call updateProccessSuppressionState (pref has not changed; handled by the call to updateActivityToken).
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+            - no longer needs to call updateProccessSuppressionState (pref has not changed; handled by the call to updateActivityToken).
+        (WebKit::WebPageProxy::updateActivityToken):
+            - this now also updated the user observability counter.
+        (WebKit::WebPageProxy::updateProccessSuppressionState):
+            - now only tracks whether this is disabled via the preference.
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+            - clear the user observability counter; thsi will be reset on reattach.
+        * UIProcess/WebPageProxy.h:
+            - added new RefCounter::Count.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::processSuppressionEnabled):
+            - processSuppressionEnabled is disabled if *neither*:
+                - there are user observable pages
+                - disabled by pref for any page.
+
 2014-12-12  Beth Dakin  <bdakin@apple.com>
 
         Need a fake mouse move after hiding data detectors UI

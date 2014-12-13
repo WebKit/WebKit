@@ -577,7 +577,6 @@ void WebPageProxy::reattachToWebProcess()
 
     updateViewState();
     updateActivityToken();
-    updateProccessSuppressionState();
 
 #if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);
@@ -1242,7 +1241,6 @@ void WebPageProxy::dispatchViewStateChange()
 
     // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
     updateActivityToken();
-    updateProccessSuppressionState();
 
     // If we've started the responsiveness timer as part of telling the web process to update the backing store
     // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
@@ -1268,6 +1266,11 @@ void WebPageProxy::dispatchViewStateChange()
 
 void WebPageProxy::updateActivityToken()
 {
+    if (m_viewState & ViewState::IsVisuallyIdle)
+        m_pageIsUserObservableCount = nullptr;
+    else if (!m_pageIsUserObservableCount)
+        m_pageIsUserObservableCount = m_process->context().userObservablePageCount();
+
 #if PLATFORM(IOS)
     if (!isViewVisible())
         m_activityToken = nullptr;
@@ -1278,12 +1281,10 @@ void WebPageProxy::updateActivityToken()
 
 void WebPageProxy::updateProccessSuppressionState()
 {
-#if PLATFORM(COCOA)
-    if ((m_viewState & ViewState::IsVisuallyIdle) && m_preferences->pageVisibilityBasedProcessSuppressionEnabled())
-        m_preventProcessSuppression = nullptr;
-    else if (!m_preventProcessSuppression)
-        m_preventProcessSuppression = m_process->context().userObservablePageCount();
-#endif
+    if (m_preferences->pageVisibilityBasedProcessSuppressionEnabled())
+        m_preventProcessSuppressionCount = nullptr;
+    else if (!m_preventProcessSuppressionCount)
+        m_preventProcessSuppressionCount = m_process->context().processSuppressionDisabledForPageCount();
 }
 
 void WebPageProxy::layerHostingModeDidChange()
@@ -4560,9 +4561,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 #if PLATFORM(IOS)
     m_activityToken = nullptr;
 #endif
-#if PLATFORM(COCOA)
-    m_preventProcessSuppression = nullptr;
-#endif
+    m_pageIsUserObservableCount = nullptr;
 
     m_isValid = false;
     m_isPageSuspended = false;

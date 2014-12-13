@@ -195,6 +195,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #endif
     , m_memoryCacheDisabled(false)
     , m_userObservablePageCounter([this]() { updateProcessSuppressionState(); })
+    , m_processSuppressionDisabledForPageCounter([this]() { updateProcessSuppressionState(); })
 {
     platformInitialize();
 

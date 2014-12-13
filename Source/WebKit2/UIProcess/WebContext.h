@@ -361,6 +361,11 @@ public:
         return m_userObservablePageCounter.count();
     }
 
+    PassRefPtr<RefCounter::Count> processSuppressionDisabledForPageCount()
+    {
+        return m_processSuppressionDisabledForPageCounter.count();
+    }
+
 private:
     void platformInitialize();
 
@@ -566,6 +571,7 @@ private:
     bool m_memoryCacheDisabled;
 
     RefCounter m_userObservablePageCounter;
+    RefCounter m_processSuppressionDisabledForPageCounter;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;

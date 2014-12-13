@@ -512,7 +512,7 @@ void WebContext::getPasteboardItemsCount(uint64_t& itemsCount)
 
 bool WebContext::processSuppressionEnabled() const
 {
-    return !m_userObservablePageCounter.value();
+    return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
 }
 
 bool WebContext::processSuppressionIsEnabledForAllContexts()
