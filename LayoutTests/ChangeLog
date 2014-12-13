@@ -1,5 +1,11 @@
 2014-12-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Mark two canvas tests that fail on a new Mac Pro locally.
+
+        * platform/mac/TestExpectations:
+
+2014-12-12  Alexey Proskuryakov  <ap@apple.com>
+
         Move expectations for test that hit !m_visibleDescendantStatusDirty assertion,
         because locally, this also happens in WK1.
 

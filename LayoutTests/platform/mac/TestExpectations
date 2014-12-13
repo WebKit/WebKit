@@ -1345,7 +1345,6 @@ webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-te
 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-svg-image.html [ Pass Failure ]
 webkit.org/b/81599 [ MountainLion ] canvas/philip/tests/2d.path.arc.scale.1.html [ Pass Failure ]
 webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-createPattern-fillRect-shadow.html [ Pass Failure ]
-webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
 webkit.org/b/81599 [ MountainLion ] fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 webkit.org/b/81599 [ MountainLion ] fast/canvas/set-colors.html [ Pass Failure ]
 webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
@@ -1354,3 +1353,7 @@ webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d
 webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
 webkit.org/b/93560 [ MountainLion ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
 webkit.org/b/93560 [ MountainLion ] canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Pass Failure ]
+
+# These seem to be like the above, but they fail locally on Yosemite with AMD graphics (Mac Pro Late 2013).
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
+fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
