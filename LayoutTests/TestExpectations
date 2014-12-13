@@ -322,3 +322,7 @@ webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Skip ]
 webkit.org/b/139548 [ MountainLion Mavericks ] fast/workers/worker-constructor.html [ Skip ]
 
 webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.html [ Pass Failure Timeout ]
+
+# Crashes in Debug builds, <rdar://problem/18216390>
+[ Debug ] fast/history/go-back-to-iframe-with-plugin.html [ Skip ]
+[ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]

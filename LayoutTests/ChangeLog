@@ -1,5 +1,13 @@
 2014-12-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Move expectations for test that hit !m_visibleDescendantStatusDirty assertion,
+        because locally, this also happens in WK1.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
+2014-12-12  Alexey Proskuryakov  <ap@apple.com>
+
         fast/images/animated-gif-body-outside-viewport.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=139599
 

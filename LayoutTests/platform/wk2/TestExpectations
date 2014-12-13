@@ -587,9 +587,6 @@ http/tests/loading/pdf-commit-load-callbacks.html
 # Times out unexpectedly.
 http/tests/security/feed-urls-from-remote.html
 
-# Crashes in Debug builds, <rdar://problem/18216390>
-[ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
-
 ### END OF (3) Unclassified failures
 ########################################
 
