@@ -1,3 +1,15 @@
+2014-12-12  Beth Dakin  <bdakin@apple.com>
+
+        Need a fake mouse move after hiding data detectors UI
+        https://bugs.webkit.org/show_bug.cgi?id=139608
+        -and corresponding-
+        rdar://problem/19221935
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dataDetectorsDidHideUI):
+
 2014-12-12  Anders Carlsson  <andersca@apple.com>
 
         Handle caches in WebsiteDataStore
