@@ -1,3 +1,19 @@
+2014-12-12  Mark Rowe  <mrowe@apple.com>
+
+        [Mac] Work around a bug in dsymutil on older OS versions
+        <https://webkit.org/b/139609> / <rdar://problem/16045763>
+
+        Older versions of dsymutil are unable to write out more than 2GB of symbols per architecture.
+        WebCore has recently passed that threshold. To work around this we will reduce the level of
+        symbols included in the dSYM bundles on the affected OS versions.
+
+        Reviewed by Geoff Garen.
+
+        * Configurations/Base.xcconfig: Include line tables only in the debug symbols for production
+        builds on OS X 10.8 and 10.9.
+        * Configurations/DebugRelease.xcconfig: Include full symbols in debug and release builds since they
+        do not make use of dSYMs.
+
 2014-12-12  Beth Dakin  <bdakin@apple.com>
 
         Need a fake mouse move after hiding data detectors UI
