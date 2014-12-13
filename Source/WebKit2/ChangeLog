@@ -1,3 +1,14 @@
+2014-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Handle caches in WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=139607
+        <rdar://problem/19107614>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessType):
+
 2014-12-12  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Predictions are not updated when using navigation buttons.

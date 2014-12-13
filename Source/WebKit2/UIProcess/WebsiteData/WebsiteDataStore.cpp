@@ -104,7 +104,8 @@ static ProcessAccessType computeNetworkProcessAccessType(WebsiteDataTypes dataTy
             processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
     }
 
-    // FIXME: Handle caches here too.
+    if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistantStore)
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
     return processAccessType;
 }
