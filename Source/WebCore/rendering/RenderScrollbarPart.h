@@ -35,7 +35,7 @@ class RenderScrollbar;
 
 class RenderScrollbarPart final : public RenderBlock {
 public:
-    RenderScrollbarPart(Document&, Ref<RenderStyle>&&, RenderScrollbar* = 0, ScrollbarPart = NoPart);
+    RenderScrollbarPart(Document&, Ref<RenderStyle>&&, RenderScrollbar* = nullptr, ScrollbarPart = NoPart);
     
     virtual ~RenderScrollbarPart();
 

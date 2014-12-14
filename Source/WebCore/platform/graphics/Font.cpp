@@ -215,10 +215,6 @@ struct FontGlyphsCacheKey {
 struct FontGlyphsCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FontGlyphsCacheEntry(FontGlyphsCacheKey&& k, Ref<FontGlyphs>&& g)
-        : key(WTF::move(k))
-        , glyphs(WTF::move(g))
-    { }
     FontGlyphsCacheKey key;
     Ref<FontGlyphs> glyphs;
 };
@@ -310,7 +306,7 @@ static Ref<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription& font
         return addResult.iterator->value->glyphs.get();
 
     std::unique_ptr<FontGlyphsCacheEntry>& newEntry = addResult.iterator->value;
-    newEntry = std::make_unique<FontGlyphsCacheEntry>(WTF::move(key), FontGlyphs::create(fontSelector));
+    newEntry = std::make_unique<FontGlyphsCacheEntry>({WTF::move(key), FontGlyphs::create(fontSelector)});
     Ref<FontGlyphs> glyphs = newEntry->glyphs.get();
 
     static const unsigned unreferencedPruneInterval = 50;

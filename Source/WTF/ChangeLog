@@ -1,5 +1,12 @@
 2014-12-14  Andreas Kling  <akling@apple.com>
 
+        Minor follow-up tweaks suggested by Darin on bug 139587.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+
+2014-12-14  Andreas Kling  <akling@apple.com>
+
         Replace PassRef with Ref/Ref&& across the board.
         <https://webkit.org/b/139587>
 

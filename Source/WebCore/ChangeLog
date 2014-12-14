@@ -1,5 +1,16 @@
 2014-12-14  Andreas Kling  <akling@apple.com>
 
+        Minor follow-up tweaks suggested by Darin on bug 139587.
+
+        * css/CSSFunctionValue.h:
+        (WebCore::CSSFunctionValue::create):
+        * platform/graphics/Font.cpp:
+        (WebCore::retrieveOrAddCachedFontGlyphs):
+        (WebCore::FontGlyphsCacheEntry::FontGlyphsCacheEntry): Deleted.
+        * rendering/RenderScrollbarPart.h:
+
+2014-12-14  Andreas Kling  <akling@apple.com>
+
         Replace PassRef with Ref/Ref&& across the board.
         <https://webkit.org/b/139587>
 

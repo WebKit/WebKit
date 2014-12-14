@@ -40,7 +40,7 @@ public:
         return adoptRef(*new CSSFunctionValue(function));
     }
 
-    static Ref<CSSFunctionValue> create(String name, PassRefPtr<CSSValueList> args)
+    static Ref<CSSFunctionValue> create(const String& name, PassRefPtr<CSSValueList> args)
     {
         return adoptRef(*new CSSFunctionValue(name, args));
     }
@@ -53,7 +53,7 @@ public:
 
 private:
     explicit CSSFunctionValue(CSSParserFunction*);
-    CSSFunctionValue(String, PassRefPtr<CSSValueList>);
+    CSSFunctionValue(const String& , PassRefPtr<CSSValueList>);
 
     String m_name;
     RefPtr<CSSValueList> m_args;
