@@ -38,7 +38,7 @@ PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName
     return adoptRef(new SVGTSpanElement(tagName, document));
 }
 
-RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
 }

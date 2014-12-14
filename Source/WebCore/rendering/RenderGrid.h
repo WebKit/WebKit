@@ -42,7 +42,7 @@ class GridItemWithSpan;
 
 class RenderGrid final : public RenderBlock {
 public:
-    RenderGrid(Element&, PassRef<RenderStyle>);
+    RenderGrid(Element&, Ref<RenderStyle>&&);
     virtual ~RenderGrid();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

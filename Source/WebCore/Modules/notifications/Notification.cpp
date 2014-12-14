@@ -98,7 +98,7 @@ Notification::~Notification()
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-PassRef<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
+Ref<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
     auto notification = adoptRef(*new Notification(title, body, iconURI, context, ec, provider));
     notification.get().suspendIfNeeded();
@@ -107,7 +107,7 @@ PassRef<Notification> Notification::create(const String& title, const String& bo
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-PassRef<Notification> Notification::create(ScriptExecutionContext& context, const String& title, const Dictionary& options)
+Ref<Notification> Notification::create(ScriptExecutionContext& context, const String& title, const Dictionary& options)
 {
     auto notification = adoptRef(*new Notification(context, title));
     String argument;

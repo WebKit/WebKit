@@ -81,7 +81,7 @@ const int defaultSize = 4;
 // widget, but I'm not sure this is right for the new control.
 const int baselineAdjustment = 7;
 
-RenderListBox::RenderListBox(HTMLSelectElement& element, PassRef<RenderStyle> style)
+RenderListBox::RenderListBox(HTMLSelectElement& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
     , m_optionsChanged(true)
     , m_scrollToRevealSelectionAfterLayout(false)

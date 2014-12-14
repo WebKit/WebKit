@@ -59,7 +59,7 @@ private:
     MeterInnerElement(Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 };
 
 inline PassRefPtr<MeterInnerElement> MeterInnerElement::create(Document& document)

@@ -90,7 +90,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
     return isURLAllowed() && style.display() != NONE;
 }
 
-RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderIFrame>(*this, WTF::move(style));
 }

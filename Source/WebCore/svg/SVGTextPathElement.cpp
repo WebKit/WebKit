@@ -126,7 +126,7 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
-RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGTextPath>(*this, WTF::move(style));
 }

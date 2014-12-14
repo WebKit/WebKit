@@ -43,7 +43,7 @@ static const SVGRenderStyle& defaultSVGStyle()
     return *style.get().get();
 }
 
-PassRef<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
+Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
 {
     return adoptRef(*new SVGRenderStyle(CreateDefault));
 }
@@ -92,7 +92,7 @@ inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
 {
 }
 
-PassRef<SVGRenderStyle> SVGRenderStyle::copy() const
+Ref<SVGRenderStyle> SVGRenderStyle::copy() const
 {
     return adoptRef(*new SVGRenderStyle(*this));
 }

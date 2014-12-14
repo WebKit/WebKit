@@ -75,7 +75,7 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
     MathMLElement::parseAttribute(name, value);
 }
 
-RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     if (hasTagName(MathMLNames::moTag))
         return createRenderer<RenderMathMLOperator>(*this, WTF::move(style));

@@ -48,7 +48,7 @@ public:
 private:
     virtual void addSearchResult() override;
     virtual void maxResultsAttributeChanged() override;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     virtual const AtomicString& formControlType() const override;
     virtual bool isSearchField() const override;
     virtual bool needsContainer() const override;

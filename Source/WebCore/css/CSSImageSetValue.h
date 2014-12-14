@@ -41,7 +41,7 @@ struct ResourceLoaderOptions;
 class CSSImageSetValue : public CSSValueList {
 public:
 
-    static PassRef<CSSImageSetValue> create()
+    static Ref<CSSImageSetValue> create()
     {
         return adoptRef(*new CSSImageSetValue());
     }

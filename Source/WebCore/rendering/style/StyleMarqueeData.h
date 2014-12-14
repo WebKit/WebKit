@@ -34,8 +34,8 @@ namespace WebCore {
 
 class StyleMarqueeData : public RefCounted<StyleMarqueeData> {
 public:
-    static PassRef<StyleMarqueeData> create() { return adoptRef(*new StyleMarqueeData); }
-    PassRef<StyleMarqueeData> copy() const;
+    static Ref<StyleMarqueeData> create() { return adoptRef(*new StyleMarqueeData); }
+    Ref<StyleMarqueeData> copy() const;
 
     bool operator==(const StyleMarqueeData& o) const;
     bool operator!=(const StyleMarqueeData& o) const

@@ -32,7 +32,7 @@ class CSSValueList;
 
 class CSSFontValue : public CSSValue {
 public:
-    static PassRef<CSSFontValue> create()
+    static Ref<CSSFontValue> create()
     {
         return adoptRef(*new CSSFontValue);
     }

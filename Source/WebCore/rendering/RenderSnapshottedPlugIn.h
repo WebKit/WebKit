@@ -36,7 +36,7 @@ class HTMLPlugInImageElement;
 
 class RenderSnapshottedPlugIn final : public RenderEmbeddedObject {
 public:
-    RenderSnapshottedPlugIn(HTMLPlugInImageElement&, PassRef<RenderStyle>);
+    RenderSnapshottedPlugIn(HTMLPlugInImageElement&, Ref<RenderStyle>&&);
     virtual ~RenderSnapshottedPlugIn();
 
     HTMLPlugInImageElement& plugInImageElement() const;

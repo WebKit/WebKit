@@ -42,7 +42,7 @@ inline StyleFilterData::StyleFilterData(const StyleFilterData& o)
 {
 }
 
-PassRef<StyleFilterData> StyleFilterData::copy() const
+Ref<StyleFilterData> StyleFilterData::copy() const
 {
     return adoptRef(*new StyleFilterData(*this));
 }

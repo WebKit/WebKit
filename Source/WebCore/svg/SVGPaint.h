@@ -43,41 +43,41 @@ public:
         SVG_PAINTTYPE_URI = 107
     };
 
-    static PassRef<SVGPaint> createUnknown()
+    static Ref<SVGPaint> createUnknown()
     {
         return adoptRef(*new SVGPaint(SVG_PAINTTYPE_UNKNOWN));
     }
 
-    static PassRef<SVGPaint> createNone()
+    static Ref<SVGPaint> createNone()
     {
         return adoptRef(*new SVGPaint(SVG_PAINTTYPE_NONE));
     }
 
-    static PassRef<SVGPaint> createCurrentColor()
+    static Ref<SVGPaint> createCurrentColor()
     {
         return adoptRef(*new SVGPaint(SVG_PAINTTYPE_CURRENTCOLOR));
     }
 
-    static PassRef<SVGPaint> createColor(const Color& color)
+    static Ref<SVGPaint> createColor(const Color& color)
     {
         auto paint = adoptRef(*new SVGPaint(SVG_PAINTTYPE_RGBCOLOR));
         paint.get().setColor(color);
         return paint;
     }
 
-    static PassRef<SVGPaint> createURI(const String& uri)
+    static Ref<SVGPaint> createURI(const String& uri)
     {
         return adoptRef(*new SVGPaint(SVG_PAINTTYPE_URI, uri));
     }
 
-    static PassRef<SVGPaint> createURIAndColor(const String& uri, const Color& color)
+    static Ref<SVGPaint> createURIAndColor(const String& uri, const Color& color)
     {
         auto paint = adoptRef(*new SVGPaint(SVG_PAINTTYPE_URI_RGBCOLOR, uri));
         paint.get().setColor(color);
         return paint;
     }
 
-    static PassRef<SVGPaint> createURIAndNone(const String& uri)
+    static Ref<SVGPaint> createURIAndNone(const String& uri)
     {
         return adoptRef(*new SVGPaint(SVG_PAINTTYPE_URI_NONE, uri));
     }
@@ -97,7 +97,7 @@ public:
 private:
     friend class ComputedStyleExtractor;
 
-    static PassRef<SVGPaint> create(const SVGPaintType& type, const String& uri, const Color& color)
+    static Ref<SVGPaint> create(const SVGPaintType& type, const String& uri, const Color& color)
     {
         auto paint = adoptRef(*new SVGPaint(type, uri));
         paint.get().setColor(color);

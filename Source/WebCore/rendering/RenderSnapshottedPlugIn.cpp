@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element, PassRef<RenderStyle> style)
+RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element, Ref<RenderStyle>&& style)
     : RenderEmbeddedObject(element, WTF::move(style))
     , m_snapshotResource(std::make_unique<RenderImageResource>())
     , m_isPotentialMouseActivation(false)

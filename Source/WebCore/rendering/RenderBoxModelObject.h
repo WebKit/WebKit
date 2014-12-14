@@ -251,8 +251,8 @@ public:
     void suspendAnimations(double time = 0);
 
 protected:
-    RenderBoxModelObject(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
-    RenderBoxModelObject(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderBoxModelObject(Element&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
+    RenderBoxModelObject(Document&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
 
     virtual void willBeDestroyed() override;
 

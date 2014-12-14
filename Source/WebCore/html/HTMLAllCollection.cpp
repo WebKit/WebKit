@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-PassRef<HTMLAllCollection> HTMLAllCollection::create(Document& document, CollectionType type)
+Ref<HTMLAllCollection> HTMLAllCollection::create(Document& document, CollectionType type)
 {
     return adoptRef(*new HTMLAllCollection(document, type));
 }

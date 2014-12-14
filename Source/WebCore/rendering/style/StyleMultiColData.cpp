@@ -63,7 +63,7 @@ inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
 {
 }
 
-PassRef<StyleMultiColData> StyleMultiColData::copy() const
+Ref<StyleMultiColData> StyleMultiColData::copy() const
 {
     return adoptRef(*new StyleMultiColData(*this));
 }

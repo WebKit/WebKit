@@ -93,7 +93,7 @@ struct SelectionIterator {
     }
 };
 
-RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
+RenderView::RenderView(Document& document, Ref<RenderStyle>&& style)
     : RenderBlockFlow(document, WTF::move(style))
     , m_frameView(*document.view())
     , m_selectionUnsplitStart(0)

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, PassRef<RenderStyle> style)
+RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, Ref<RenderStyle>&& style)
     : RenderTextControl(element, WTF::move(style))
 {
 }
@@ -87,7 +87,7 @@ int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-PassRef<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
+Ref<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
     auto textBlockStyle = RenderStyle::create();
     textBlockStyle.get().inheritFrom(startStyle);

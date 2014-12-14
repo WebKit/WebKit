@@ -117,8 +117,8 @@ namespace WebCore {
     // Inherited/Non-Inherited Style Datastructures
     class StyleFillData : public RefCounted<StyleFillData> {
     public:
-        static PassRef<StyleFillData> create() { return adoptRef(*new StyleFillData); }
-        PassRef<StyleFillData> copy() const;
+        static Ref<StyleFillData> create() { return adoptRef(*new StyleFillData); }
+        Ref<StyleFillData> copy() const;
 
         bool operator==(const StyleFillData&) const;
         bool operator!=(const StyleFillData& other) const
@@ -141,8 +141,8 @@ namespace WebCore {
 
     class StyleStrokeData : public RefCounted<StyleStrokeData> {
     public:
-        static PassRef<StyleStrokeData> create() { return adoptRef(*new StyleStrokeData); }
-        PassRef<StyleStrokeData> copy() const;
+        static Ref<StyleStrokeData> create() { return adoptRef(*new StyleStrokeData); }
+        Ref<StyleStrokeData> copy() const;
 
         bool operator==(const StyleStrokeData&) const;
         bool operator!=(const StyleStrokeData& other) const
@@ -171,8 +171,8 @@ namespace WebCore {
 
     class StyleStopData : public RefCounted<StyleStopData> {
     public:
-        static PassRef<StyleStopData> create() { return adoptRef(*new StyleStopData); }
-        PassRef<StyleStopData> copy() const;
+        static Ref<StyleStopData> create() { return adoptRef(*new StyleStopData); }
+        Ref<StyleStopData> copy() const;
 
         bool operator==(const StyleStopData&) const;
         bool operator!=(const StyleStopData& other) const
@@ -190,8 +190,8 @@ namespace WebCore {
 
     class StyleTextData : public RefCounted<StyleTextData> {
     public:
-        static PassRef<StyleTextData> create() { return adoptRef(*new StyleTextData); }
-        PassRef<StyleTextData> copy() const;
+        static Ref<StyleTextData> create() { return adoptRef(*new StyleTextData); }
+        Ref<StyleTextData> copy() const;
         
         bool operator==(const StyleTextData& other) const;
         bool operator!=(const StyleTextData& other) const
@@ -209,8 +209,8 @@ namespace WebCore {
     // Note: the rule for this class is, *no inheritance* of these props
     class StyleMiscData : public RefCounted<StyleMiscData> {
     public:
-        static PassRef<StyleMiscData> create() { return adoptRef(*new StyleMiscData); }
-        PassRef<StyleMiscData> copy() const;
+        static Ref<StyleMiscData> create() { return adoptRef(*new StyleMiscData); }
+        Ref<StyleMiscData> copy() const;
 
         bool operator==(const StyleMiscData&) const;
         bool operator!=(const StyleMiscData& other) const
@@ -232,8 +232,8 @@ namespace WebCore {
 
     class StyleShadowSVGData : public RefCounted<StyleShadowSVGData> {
     public:
-        static PassRef<StyleShadowSVGData> create() { return adoptRef(*new StyleShadowSVGData); }
-        PassRef<StyleShadowSVGData> copy() const;
+        static Ref<StyleShadowSVGData> create() { return adoptRef(*new StyleShadowSVGData); }
+        Ref<StyleShadowSVGData> copy() const;
 
         bool operator==(const StyleShadowSVGData&) const;
         bool operator!=(const StyleShadowSVGData& other) const
@@ -251,8 +251,8 @@ namespace WebCore {
     // Non-inherited resources
     class StyleResourceData : public RefCounted<StyleResourceData> {
     public:
-        static PassRef<StyleResourceData> create() { return adoptRef(*new StyleResourceData); }
-        PassRef<StyleResourceData> copy() const;
+        static Ref<StyleResourceData> create() { return adoptRef(*new StyleResourceData); }
+        Ref<StyleResourceData> copy() const;
 
         bool operator==(const StyleResourceData&) const;
         bool operator!=(const StyleResourceData& other) const
@@ -272,8 +272,8 @@ namespace WebCore {
     // Inherited resources
     class StyleInheritedResourceData : public RefCounted<StyleInheritedResourceData> {
     public:
-        static PassRef<StyleInheritedResourceData> create() { return adoptRef(*new StyleInheritedResourceData); }
-        PassRef<StyleInheritedResourceData> copy() const;
+        static Ref<StyleInheritedResourceData> create() { return adoptRef(*new StyleInheritedResourceData); }
+        Ref<StyleInheritedResourceData> copy() const;
 
         bool operator==(const StyleInheritedResourceData&) const;
         bool operator!=(const StyleInheritedResourceData& other) const
@@ -293,8 +293,8 @@ namespace WebCore {
     // Positioning and sizing properties.
     class StyleLayoutData : public RefCounted<StyleLayoutData> {
     public:
-        static PassRef<StyleLayoutData> create() { return adoptRef(*new StyleLayoutData); }
-        PassRef<StyleLayoutData> copy() const;
+        static Ref<StyleLayoutData> create() { return adoptRef(*new StyleLayoutData); }
+        Ref<StyleLayoutData> copy() const;
 
         bool operator==(const StyleLayoutData&) const;
         bool operator!=(const StyleLayoutData& other) const

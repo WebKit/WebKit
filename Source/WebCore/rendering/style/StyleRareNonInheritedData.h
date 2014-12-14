@@ -80,8 +80,8 @@ enum PageSizeType {
 // actually uses one of these properties.
 class StyleRareNonInheritedData : public RefCounted<StyleRareNonInheritedData> {
 public:
-    static PassRef<StyleRareNonInheritedData> create() { return adoptRef(*new StyleRareNonInheritedData); }
-    PassRef<StyleRareNonInheritedData> copy() const;
+    static Ref<StyleRareNonInheritedData> create() { return adoptRef(*new StyleRareNonInheritedData); }
+    Ref<StyleRareNonInheritedData> copy() const;
     ~StyleRareNonInheritedData();
     
     bool operator==(const StyleRareNonInheritedData&) const;

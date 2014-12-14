@@ -30,7 +30,7 @@
 
 namespace WebCore {
     
-StyleGeneratedImage::StyleGeneratedImage(PassRef<CSSImageGeneratorValue> value)
+StyleGeneratedImage::StyleGeneratedImage(Ref<CSSImageGeneratorValue>&& value)
     : m_imageGeneratorValue(WTF::move(value))
     , m_fixedSize(m_imageGeneratorValue->isFixedSize())
 {

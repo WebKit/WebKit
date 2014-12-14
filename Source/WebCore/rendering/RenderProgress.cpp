@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RenderProgress::RenderProgress(HTMLElement& element, PassRef<RenderStyle> style)
+RenderProgress::RenderProgress(HTMLElement& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
     , m_position(HTMLProgressElement::InvalidPosition)
     , m_animationStartTime(0)

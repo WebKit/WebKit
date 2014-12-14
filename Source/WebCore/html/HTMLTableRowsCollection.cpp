@@ -153,7 +153,7 @@ HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement& table)
 {
 }
 
-PassRef<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement& table, CollectionType type)
+Ref<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement& table, CollectionType type)
 {
     ASSERT_UNUSED(type, type == TableRows);
     return adoptRef(*new HTMLTableRowsCollection(table));

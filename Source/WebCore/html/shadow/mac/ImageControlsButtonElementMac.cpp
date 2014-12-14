@@ -44,7 +44,7 @@ namespace WebCore {
 
 class RenderImageControlsButton final : public RenderBlockFlow {
 public:
-    RenderImageControlsButton(HTMLElement&, PassRef<RenderStyle>);
+    RenderImageControlsButton(HTMLElement&, Ref<RenderStyle>&&);
     virtual ~RenderImageControlsButton();
 
 private:
@@ -55,7 +55,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
-RenderImageControlsButton::RenderImageControlsButton(HTMLElement& element, PassRef<RenderStyle> style)
+RenderImageControlsButton::RenderImageControlsButton(HTMLElement& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
 {
 }
@@ -125,7 +125,7 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event* event)
     HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> ImageControlsButtonElementMac::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderImageControlsButton>(*this, WTF::move(style));
 }

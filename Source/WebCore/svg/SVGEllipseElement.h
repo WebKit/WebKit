@@ -44,7 +44,7 @@ private:
 
     virtual bool selfHasRelativeLengths() const override { return true; };
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGEllipseElement)
         DECLARE_ANIMATED_LENGTH(Cx, cx)

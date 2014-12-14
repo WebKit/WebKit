@@ -34,7 +34,7 @@ class RenderSVGInlineText;
 
 class RenderSVGText final : public RenderSVGBlock {
 public:
-    RenderSVGText(SVGTextElement&, PassRef<RenderStyle>);
+    RenderSVGText(SVGTextElement&, Ref<RenderStyle>&&);
     virtual ~RenderSVGText();
 
     SVGTextElement& textElement() const;

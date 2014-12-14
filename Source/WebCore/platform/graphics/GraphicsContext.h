@@ -234,10 +234,10 @@ namespace WebCore {
         ColorSpace strokeColorSpace() const;
         WEBCORE_EXPORT void setStrokeColor(const Color&, ColorSpace);
 
-        void setStrokePattern(PassRef<Pattern>);
+        void setStrokePattern(Ref<Pattern>&&);
         Pattern* strokePattern() const;
 
-        void setStrokeGradient(PassRef<Gradient>);
+        void setStrokeGradient(Ref<Gradient>&&);
         Gradient* strokeGradient() const;
 
         WindRule fillRule() const;
@@ -246,10 +246,10 @@ namespace WebCore {
         ColorSpace fillColorSpace() const;
         WEBCORE_EXPORT void setFillColor(const Color&, ColorSpace);
 
-        void setFillPattern(PassRef<Pattern>);
+        void setFillPattern(Ref<Pattern>&&);
         Pattern* fillPattern() const;
 
-        WEBCORE_EXPORT void setFillGradient(PassRef<Gradient>);
+        WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&);
         Gradient* fillGradient() const;
 
         void setShadowsIgnoreTransforms(bool);

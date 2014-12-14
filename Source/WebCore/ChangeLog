@@ -1,3 +1,1083 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Replace PassRef with Ref/Ref&& across the board.
+        <https://webkit.org/b/139587>
+
+        Reviewed by Darin Adler.
+
+        * Modules/battery/BatteryManager.cpp:
+        (WebCore::BatteryManager::create):
+        * Modules/battery/BatteryManager.h:
+        * Modules/battery/BatteryStatus.cpp:
+        (WebCore::BatteryStatus::create):
+        * Modules/battery/BatteryStatus.h:
+        * Modules/gamepad/GamepadButton.h:
+        (WebCore::GamepadButton::create):
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::gamepadFromPlatformGamepad):
+        * Modules/gamepad/NavigatorGamepad.h:
+        * Modules/gamepad/deprecated/GamepadList.h:
+        (WebCore::GamepadList::create):
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::create):
+        * Modules/geolocation/Geolocation.h:
+        (WebCore::Geolocation::GeoNotifier::create):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setPrivateAndOpen):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::create):
+        (WebCore::SourceBuffer::SourceBuffer):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediastream/UserMediaClient.h:
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::requestPermission):
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::create):
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/plugins/PluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::createElementRenderer):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * Modules/proximity/DeviceProximityEvent.h:
+        (WebCore::DeviceProximityEvent::create):
+        * WebCore.exp.in:
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSAspectRatioValue.h:
+        (WebCore::CSSAspectRatioValue::create):
+        * css/CSSBorderImage.cpp:
+        (WebCore::createBorderImageValue):
+        * css/CSSBorderImage.h:
+        * css/CSSBorderImageSliceValue.h:
+        (WebCore::CSSBorderImageSliceValue::create):
+        * css/CSSCalculationValue.cpp:
+        (WebCore::determineCategory):
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcValue::CSSCalcValue):
+        (WebCore::CSSCalcValue::createCalculationValue):
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::create):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForImageSliceSide):
+        (WebCore::valueForNinePieceImageSlice):
+        (WebCore::valueForNinePieceImageQuad):
+        (WebCore::valueForNinePieceImageRepeat):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::zoomAdjustedPixelValue):
+        (WebCore::zoomAdjustedNumberValue):
+        (WebCore::zoomAdjustedPixelValueForLength):
+        (WebCore::valueForReflection):
+        (WebCore::createPositionListForLayer):
+        (WebCore::percentageOrZoomAdjustedValue):
+        (WebCore::autoOrZoomAdjustedValue):
+        (WebCore::getBorderRadiusCornerValues):
+        (WebCore::getBorderRadiusCornerValue):
+        (WebCore::getBorderRadiusShorthandValue):
+        (WebCore::matrixTransformValue):
+        (WebCore::computedTransform):
+        (WebCore::adjustLengthForZoom):
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        (WebCore::specifiedValueForGridTrackBreadth):
+        (WebCore::specifiedValueForGridTrackSize):
+        (WebCore::valueForGridTrackList):
+        (WebCore::valueForGridPosition):
+        (WebCore::createTransitionPropertyValue):
+        (WebCore::getTransitionPropertyValue):
+        (WebCore::scrollSnapDestination):
+        (WebCore::scrollSnapPoints):
+        (WebCore::scrollSnapCoordinates):
+        (WebCore::getDelayValue):
+        (WebCore::getDurationValue):
+        (WebCore::createTimingFunctionValue):
+        (WebCore::getTimingFunctionValue):
+        (WebCore::createLineBoxContainValue):
+        (WebCore::valueForFamily):
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        (WebCore::renderTextDecorationStyleFlagsToCSSValue):
+        (WebCore::renderTextDecorationSkipFlagsToCSSValue):
+        (WebCore::renderEmphasisPositionFlagsToCSSValue):
+        (WebCore::fillRepeatToCSSValue):
+        (WebCore::fillSourceTypeToCSSValue):
+        (WebCore::fillSizeToCSSValue):
+        (WebCore::altTextToCSSValue):
+        (WebCore::contentToCSSValue):
+        (WebCore::fontFamilyFromStyle):
+        (WebCore::lineHeightFromStyle):
+        (WebCore::fontSizeFromStyle):
+        (WebCore::fontStyleFromStyle):
+        (WebCore::fontVariantFromStyle):
+        (WebCore::fontWeightFromStyle):
+        (WebCore::CSSComputedStyleDeclaration::copyProperties):
+        (WebCore::shapePropertyValue):
+        (WebCore::ComputedStyleExtractor::copyProperties):
+        (WebCore::ComputedStyleExtractor::copyPropertiesInSet):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSCrossfadeValue.h:
+        (WebCore::CSSCrossfadeValue::create):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        * css/CSSCursorImageValue.h:
+        (WebCore::CSSCursorImageValue::create):
+        * css/CSSFilterImageValue.h:
+        (WebCore::CSSFilterImageValue::create):
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::create):
+        (WebCore::CSSFontFaceSrcValue::createLocal):
+        * css/CSSFontFeatureValue.h:
+        (WebCore::CSSFontFeatureValue::create):
+        * css/CSSFontValue.h:
+        (WebCore::CSSFontValue::create):
+        * css/CSSFunctionValue.h:
+        (WebCore::CSSFunctionValue::create):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSLinearGradientValue::create):
+        (WebCore::CSSLinearGradientValue::clone):
+        (WebCore::CSSRadialGradientValue::create):
+        (WebCore::CSSRadialGradientValue::clone):
+        * css/CSSGridTemplateAreasValue.h:
+        (WebCore::CSSGridTemplateAreasValue::create):
+        * css/CSSImageSetValue.h:
+        (WebCore::CSSImageSetValue::create):
+        * css/CSSImageValue.h:
+        (WebCore::CSSImageValue::create):
+        * css/CSSInheritedValue.h:
+        (WebCore::CSSInheritedValue::create):
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::createExplicit):
+        (WebCore::CSSInitialValue::createImplicit):
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::StyleKeyframe):
+        * css/CSSKeyframeRule.h:
+        (WebCore::StyleKeyframe::create):
+        * css/CSSKeyframesRule.h:
+        (WebCore::StyleRuleKeyframes::create):
+        (WebCore::StyleRuleKeyframes::copy):
+        * css/CSSLineBoxContainValue.h:
+        (WebCore::CSSLineBoxContainValue::create):
+        * css/CSSParser.cpp:
+        (WebCore::createPrimitiveValuePair):
+        (WebCore::CSSParser::parseInlineStyleDeclaration):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::createStyleProperties):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::createPrimitiveStringValue):
+        (WebCore::CSSParser::addFillValue):
+        (WebCore::CSSParser::addAnimationValue):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::createIdentifier):
+        (WebCore::CSSPrimitiveValue::createParserOperator):
+        (WebCore::CSSPrimitiveValue::createColor):
+        (WebCore::CSSPrimitiveValue::create):
+        (WebCore::CSSPrimitiveValue::createAllowingMarginQuirk):
+        * css/CSSReflectValue.h:
+        (WebCore::CSSReflectValue::create):
+        * css/CSSShadowValue.h:
+        (WebCore::CSSShadowValue::create):
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::create):
+        (WebCore::CSSStyleSheet::createInline):
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSCubicBezierTimingFunctionValue::create):
+        (WebCore::CSSStepsTimingFunctionValue::create):
+        * css/CSSUnicodeRangeValue.h:
+        (WebCore::CSSUnicodeRangeValue::create):
+        * css/CSSValue.cpp:
+        (WebCore::TextCloneCSSValue::create):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::createCommaSeparated):
+        (WebCore::CSSValueList::createSpaceSeparated):
+        (WebCore::CSSValueList::createSlashSeparated):
+        (WebCore::CSSValueList::createFromParserValueList):
+        (WebCore::CSSValueList::append):
+        (WebCore::CSSValueList::prepend):
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createIdentifierValue):
+        (WebCore::CSSValuePool::createColorValue):
+        (WebCore::CSSValuePool::createValue):
+        (WebCore::CSSValuePool::createFontFamilyValue):
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createInheritedValue):
+        (WebCore::CSSValuePool::createImplicitInitialValue):
+        (WebCore::CSSValuePool::createExplicitInitialValue):
+        (WebCore::CSSValuePool::createValue):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::copyProperties):
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/StyleProperties.cpp:
+        (WebCore::ImmutableStyleProperties::create):
+        (WebCore::StyleProperties::immutableCopyIfNeeded):
+        (WebCore::StyleProperties::copyBlockProperties):
+        (WebCore::StyleProperties::mutableCopy):
+        (WebCore::StyleProperties::copyPropertiesInSet):
+        (WebCore::MutableStyleProperties::create):
+        * css/StyleProperties.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::defaultStyleForElement):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::takeStyle):
+        (WebCore::StyleResolver::State::setParentStyle):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRule::StyleRule):
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRulePage::StyleRulePage):
+        (WebCore::StyleRuleFontFace::StyleRuleFontFace):
+        (WebCore::StyleRuleGroup::wrapperInsertRule):
+        (WebCore::StyleRuleViewport::StyleRuleViewport):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::copy):
+        (WebCore::StyleRuleFontFace::create):
+        (WebCore::StyleRuleFontFace::copy):
+        (WebCore::StyleRulePage::create):
+        (WebCore::StyleRulePage::copy):
+        (WebCore::StyleRuleMedia::create):
+        (WebCore::StyleRuleMedia::copy):
+        (WebCore::StyleRuleSupports::create):
+        (WebCore::StyleRuleSupports::copy):
+        (WebCore::StyleRuleRegion::create):
+        (WebCore::StyleRuleRegion::copy):
+        (WebCore::StyleRuleViewport::create):
+        (WebCore::StyleRuleViewport::copy):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::create):
+        * css/StyleRuleImport.h:
+        * css/StyleSheetContents.h:
+        (WebCore::StyleSheetContents::create):
+        (WebCore::StyleSheetContents::copy):
+        * css/WebKitCSSFilterValue.h:
+        (WebCore::WebKitCSSFilterValue::create):
+        * css/WebKitCSSResourceValue.h:
+        (WebCore::WebKitCSSResourceValue::create):
+        * css/WebKitCSSTransformValue.h:
+        (WebCore::WebKitCSSTransformValue::create):
+        * dom/ChildNodeList.h:
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::create):
+        * dom/ClassNodeList.h:
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * dom/Document.h:
+        * dom/DocumentSharedObjectPool.cpp:
+        (WebCore::DocumentSharedObjectPool::cachedShareableElementDataWithAttributes):
+        * dom/DocumentSharedObjectPool.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::addAuthorSheet):
+        (WebCore::DocumentStyleSheetCollection::addUserSheet):
+        * dom/DocumentStyleSheetCollection.h:
+        * dom/Element.cpp:
+        (WebCore::Element::createElementRenderer):
+        * dom/Element.h:
+        * dom/ElementData.cpp:
+        (WebCore::ShareableElementData::createWithAttributes):
+        (WebCore::UniqueElementData::create):
+        (WebCore::ElementData::makeUniqueCopy):
+        (WebCore::UniqueElementData::makeShareableCopy):
+        * dom/ElementData.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setComputedStyle):
+        * dom/NameNodeList.h:
+        * dom/NamedFlowCollection.cpp:
+        (WebCore::NamedFlowCollection::ensureFlowWithName):
+        * dom/NamedFlowCollection.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::ensureChildNodeList):
+        (WebCore::NodeListsNodeData::ensureEmptyChildNodeList):
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::addCacheWithQualifiedName):
+        (WebCore::NodeListsNodeData::addCachedCollection):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didRecalcStyle):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::create):
+        * dom/TagNodeList.h:
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::createInputRenderer):
+        * html/BaseButtonInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createInputRenderer):
+        * html/FileInputType.h:
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::create):
+        * html/HTMLAllCollection.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createElementRenderer):
+        * html/HTMLAppletElement.h:
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::createElementRenderer):
+        * html/HTMLBRElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::createElementRenderer):
+        * html/HTMLButtonElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createElementRenderer):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::create):
+        * html/HTMLCollection.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createElementRenderer):
+        * html/HTMLDetailsElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createElementRenderer):
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::createElementRenderer):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::create):
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::createElementRenderer):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::createElementRenderer):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::createElementRenderer):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createElementRenderer):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createElementRenderer):
+        * html/HTMLInputElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createElementRenderer):
+        * html/HTMLMeterElement.h:
+        * html/HTMLNameCollection.h:
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createElementRenderer):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createElementRenderer):
+        * html/HTMLProgressElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::createElementRenderer):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createElementRenderer):
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::create):
+        * html/HTMLTableRowsCollection.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createElementRenderer):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createElementRenderer):
+        * html/HTMLVideoElement.h:
+        * html/HTMLWBRElement.cpp:
+        (WebCore::HTMLWBRElement::createElementRenderer):
+        * html/HTMLWBRElement.h:
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::createInputRenderer):
+        * html/HiddenInputType.h:
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::createInputRenderer):
+        * html/ImageInputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::createInputRenderer):
+        * html/InputType.h:
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createInputRenderer):
+        * html/RangeInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::createInputRenderer):
+        * html/SearchInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createInputRenderer):
+        * html/TextFieldInputType.h:
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::createElementRenderer):
+        * html/shadow/DetailsMarkerControl.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineContainerElement::createElementRenderer):
+        (WebCore::MediaControlVolumeSliderContainerElement::createElementRenderer):
+        (WebCore::MediaControlTextTrackContainerElement::createElementRenderer):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterInnerElement::createElementRenderer):
+        * html/shadow/MeterShadowElement.h:
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressInnerElement::createElementRenderer):
+        * html/shadow/ProgressShadowElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::RenderSliderThumb):
+        (WebCore::SliderThumbElement::createElementRenderer):
+        (WebCore::SliderContainerElement::createElementRenderer):
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::createElementRenderer):
+        (WebCore::TextControlInnerTextElement::createElementRenderer):
+        * html/shadow/TextControlInnerElements.h:
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::RenderImageControlsButton::RenderImageControlsButton):
+        (WebCore::ImageControlsButtonElementMac::createElementRenderer):
+        * html/shadow/mac/ImageControlsButtonElementMac.h:
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::RenderImageControls::RenderImageControls):
+        (WebCore::ImageControlsRootElementMac::createElementRenderer):
+        * html/shadow/mac/ImageControlsRootElementMac.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::createElementRenderer):
+        * html/track/VTTCue.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::saveParsedStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore::CachedResourceLoader::create):
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createElementRenderer):
+        * mathml/MathMLInlineContainerElement.h:
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::createElementRenderer):
+        * mathml/MathMLMathElement.h:
+        * mathml/MathMLMencloseElement.cpp:
+        (WebCore::MathMLMencloseElement::createElementRenderer):
+        * mathml/MathMLMencloseElement.h:
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::createElementRenderer):
+        * mathml/MathMLSelectElement.h:
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer):
+        * mathml/MathMLTextElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::setStorageNamespaceProvider):
+        (WebCore::Page::setVisitedLinkStore):
+        * page/Page.h:
+        * page/UserMessageHandler.h:
+        (WebCore::UserMessageHandler::create):
+        * page/UserMessageHandlersNamespace.h:
+        (WebCore::UserMessageHandlersNamespace::create):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::addElementChangeToDispatch):
+        (WebCore::AnimationController::updateAnimations):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/CompositeAnimation.h:
+        * platform/CalculationValue.cpp:
+        (WebCore::CalculationValue::create):
+        * platform/CalculationValue.h:
+        * platform/Length.cpp:
+        (WebCore::CalculationValueMap::insert):
+        (WebCore::Length::Length):
+        * platform/Length.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::FontGlyphsCacheEntry::FontGlyphsCacheEntry):
+        (WebCore::retrieveOrAddCachedFontGlyphs):
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::create):
+        (WebCore::FontGlyphs::createForPlatformFont):
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::create):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/MediaSourcePrivateClient.h:
+        * platform/graphics/Pattern.cpp:
+        (WebCore::Pattern::create):
+        * platform/graphics/Pattern.h:
+        * platform/mac/SerializedPlatformRepresentationMac.h:
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::SerializedPlatformRepresentationMac::create):
+        * platform/mock/UserMediaClientMock.h:
+        (WebCore::UserMediaClientRequestNotifier::UserMediaClientRequestNotifier):
+        * rendering/ClipPathOperation.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::RenderBoxModelObject):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton):
+        * rendering/RenderButton.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::RenderDetailsMarker):
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::createFor):
+        (WebCore::RenderElement::setStyle):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setStyleInternal):
+        (WebCore::RenderElement::setAnimatableStyle):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::createForApplet):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::RenderFieldset):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::createFlowThreadStyle):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::RenderFrame):
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::RenderFrameBase):
+        * rendering/RenderFrameBase.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::RenderFrameSet):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::RenderFullScreen):
+        (WebCore::createFullScreenStyle):
+        (WebCore::RenderFullScreen::createPlaceholder):
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::RenderGrid):
+        * rendering/RenderGrid.h:
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::RenderHTMLCanvas):
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::RenderIFrame):
+        * rendering/RenderIFrame.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::RenderLayerModelObject):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::RenderLineBreak):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::RenderListMarker):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia):
+        * rendering/RenderMedia.h:
+        * rendering/RenderMediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer):
+        (WebCore::RenderMediaControlTimelineContainer::RenderMediaControlTimelineContainer):
+        (WebCore::RenderTextTrackContainerElement::RenderTextTrackContainerElement):
+        * rendering/RenderMediaControlElements.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        * rendering/RenderMeter.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::RenderMultiColumnFlowThread):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::RenderNamedFlowFragment):
+        (WebCore::RenderNamedFlowFragment::createStyle):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        * rendering/RenderProgress.h:
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::RenderQuote):
+        * rendering/RenderQuote.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderRegionSet.cpp:
+        (WebCore::RenderRegionSet::RenderRegionSet):
+        * rendering/RenderRegionSet.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::RenderReplica):
+        * rendering/RenderReplica.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::RenderRubyAsInline):
+        (WebCore::RenderRubyAsBlock::RenderRubyAsBlock):
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::RenderRubyBase):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::RenderRubyRun):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::RenderRubyText):
+        * rendering/RenderRubyText.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::RenderScrollbarPart):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::RenderSearchField):
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::RenderSlider):
+        * rendering/RenderSlider.h:
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::RenderSnapshottedPlugIn):
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::RenderTableCaption):
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::RenderTableCol):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::RenderTableRow):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderVTTCue.cpp:
+        (WebCore::RenderVTTCue::RenderVTTCue):
+        * rendering/RenderVTTCue.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo):
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::RenderWidget):
+        * rendering/RenderWidget.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::RenderMathMLBlock):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::RenderMathMLFenced):
+        * rendering/mathml/RenderMathMLFenced.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::RenderMathMLFraction):
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLMath.cpp:
+        (WebCore::RenderMathMLMath::RenderMathMLMath):
+        * rendering/mathml/RenderMathMLMath.h:
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::RenderMathMLMenclose):
+        * rendering/mathml/RenderMathMLMenclose.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRadicalOperator.cpp:
+        (WebCore::RenderMathMLRadicalOperator::RenderMathMLRadicalOperator):
+        * rendering/mathml/RenderMathMLRadicalOperator.h:
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::RenderMathMLRoot):
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::RenderMathMLRow):
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::RenderMathMLScripts):
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::RenderMathMLSpace):
+        * rendering/mathml/RenderMathMLSpace.h:
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        (WebCore::RenderMathMLSquareRoot::RenderMathMLSquareRoot):
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::RenderMathMLToken):
+        * rendering/mathml/RenderMathMLToken.h:
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::RenderMathMLUnderOver):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCircle::blend):
+        (WebCore::BasicShapeEllipse::blend):
+        (WebCore::BasicShapePolygon::blend):
+        (WebCore::BasicShapeInset::blend):
+        * rendering/style/BasicShapes.h:
+        * rendering/style/DataRef.h:
+        (WebCore::DataRef::DataRef):
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImageData::copy):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImageData::create):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::create):
+        (WebCore::RenderStyle::createDefaultStyle):
+        (WebCore::RenderStyle::createAnonymousStyleWithDisplay):
+        (WebCore::RenderStyle::clone):
+        (WebCore::RenderStyle::createStyleInheritingFromPseudoStyle):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::createDefaultStyle):
+        (WebCore::SVGRenderStyle::copy):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::create):
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleFillData::copy):
+        (WebCore::StyleStrokeData::copy):
+        (WebCore::StyleStopData::copy):
+        (WebCore::StyleTextData::copy):
+        (WebCore::StyleMiscData::copy):
+        (WebCore::StyleShadowSVGData::copy):
+        (WebCore::StyleResourceData::copy):
+        (WebCore::StyleInheritedResourceData::copy):
+        (WebCore::StyleLayoutData::copy):
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::StyleFillData::create):
+        (WebCore::StyleStrokeData::create):
+        (WebCore::StyleStopData::create):
+        (WebCore::StyleTextData::create):
+        (WebCore::StyleMiscData::create):
+        (WebCore::StyleShadowSVGData::create):
+        (WebCore::StyleResourceData::create):
+        (WebCore::StyleInheritedResourceData::create):
+        (WebCore::StyleLayoutData::create):
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::copy):
+        * rendering/style/StyleBackgroundData.h:
+        (WebCore::StyleBackgroundData::create):
+        * rendering/style/StyleBoxData.cpp:
+        (WebCore::StyleBoxData::copy):
+        * rendering/style/StyleBoxData.h:
+        (WebCore::StyleBoxData::create):
+        * rendering/style/StyleDeprecatedFlexibleBoxData.cpp:
+        (WebCore::StyleDeprecatedFlexibleBoxData::copy):
+        * rendering/style/StyleDeprecatedFlexibleBoxData.h:
+        (WebCore::StyleDeprecatedFlexibleBoxData::create):
+        * rendering/style/StyleFilterData.cpp:
+        (WebCore::StyleFilterData::copy):
+        * rendering/style/StyleFilterData.h:
+        (WebCore::StyleFilterData::create):
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::copy):
+        * rendering/style/StyleFlexibleBoxData.h:
+        (WebCore::StyleFlexibleBoxData::create):
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::copy):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::create):
+        * rendering/style/StyleGridItemData.cpp:
+        (WebCore::StyleGridItemData::copy):
+        * rendering/style/StyleGridItemData.h:
+        (WebCore::StyleGridItemData::create):
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::copy):
+        * rendering/style/StyleInheritedData.h:
+        (WebCore::StyleInheritedData::create):
+        * rendering/style/StyleMarqueeData.cpp:
+        (WebCore::StyleMarqueeData::copy):
+        * rendering/style/StyleMarqueeData.h:
+        (WebCore::StyleMarqueeData::create):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::copy):
+        * rendering/style/StyleMultiColData.h:
+        (WebCore::StyleMultiColData::create):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::copy):
+        * rendering/style/StyleRareInheritedData.h:
+        (WebCore::StyleRareInheritedData::create):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::copy):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::StyleRareNonInheritedData::create):
+        * rendering/style/StyleScrollSnapPoints.cpp:
+        (WebCore::StyleScrollSnapPoints::copy):
+        * rendering/style/StyleScrollSnapPoints.h:
+        (WebCore::StyleScrollSnapPoints::create):
+        * rendering/style/StyleSurroundData.cpp:
+        (WebCore::StyleSurroundData::copy):
+        * rendering/style/StyleSurroundData.h:
+        (WebCore::StyleSurroundData::create):
+        * rendering/style/StyleTransformData.cpp:
+        (WebCore::StyleTransformData::copy):
+        * rendering/style/StyleTransformData.h:
+        (WebCore::StyleTransformData::create):
+        * rendering/style/StyleVisualData.cpp:
+        (WebCore::StyleVisualData::copy):
+        * rendering/style/StyleVisualData.h:
+        (WebCore::StyleVisualData::create):
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::RenderSVGBlock):
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::RenderSVGEllipse):
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::RenderSVGForeignObject):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::RenderSVGGradientStop):
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::RenderSVGHiddenContainer):
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::RenderSVGInline):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::RenderSVGModelObject):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::RenderSVGPath):
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::RenderSVGRect):
+        * rendering/svg/RenderSVGRect.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::RenderSVGResourceClipper):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::RenderSVGResourceFilter):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::RenderSVGResourceGradient):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        (WebCore::RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient):
+        * rendering/svg/RenderSVGResourceLinearGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::RenderSVGResourceMarker):
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::RenderSVGResourceMasker):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::RenderSVGResourcePattern):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        (WebCore::RenderSVGResourceRadialGradient::RenderSVGResourceRadialGradient):
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::RenderSVGShape):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/RenderSVGTSpan.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::RenderSVGText):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::RenderSVGTextPath):
+        * rendering/svg/RenderSVGTextPath.h:
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::RenderSVGTransformableContainer):
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::RenderSVGViewportContainer):
+        * rendering/svg/RenderSVGViewportContainer.h:
+        * rendering/svg/SVGTextRunRenderingContext.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveForDocument.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::styleForElement):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createElementRenderer):
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::createElementRenderer):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::createElementRenderer):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::createElementRenderer):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGColor.h:
+        (WebCore::SVGColor::createFromString):
+        (WebCore::SVGColor::createFromColor):
+        (WebCore::SVGColor::createCurrentColor):
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::createElementRenderer):
+        * svg/SVGDefsElement.h:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::createElementRenderer):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::createElementRenderer):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::createElementRenderer):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFontFaceNameElement.cpp:
+        (WebCore::SVGFontFaceNameElement::srcValue):
+        * svg/SVGFontFaceNameElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue):
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::createElementRenderer):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::createElementRenderer):
+        * svg/SVGGElement.h:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::createElementRenderer):
+        * svg/SVGGraphicsElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::createElementRenderer):
+        * svg/SVGImageElement.h:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::toCSSPrimitiveValue):
+        * svg/SVGLength.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::createElementRenderer):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createElementRenderer):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::createElementRenderer):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPaint.h:
+        (WebCore::SVGPaint::createUnknown):
+        (WebCore::SVGPaint::createNone):
+        (WebCore::SVGPaint::createCurrentColor):
+        (WebCore::SVGPaint::createColor):
+        (WebCore::SVGPaint::createURI):
+        (WebCore::SVGPaint::createURIAndColor):
+        (WebCore::SVGPaint::createURIAndNone):
+        (WebCore::SVGPaint::create):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createElementRenderer):
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::createElementRenderer):
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::createElementRenderer):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::createElementRenderer):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createElementRenderer):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::createElementRenderer):
+        * svg/SVGStopElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::createElementRenderer):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::createElementRenderer):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefTargetEventListener::create):
+        (WebCore::SVGTRefElement::createElementRenderer):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::createElementRenderer):
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::createElementRenderer):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::createElementRenderer):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::createElementRenderer):
+        * svg/SVGUseElement.h:
+
 2014-12-13  Zalan Bujtas  <zalan@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=139597

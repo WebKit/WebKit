@@ -34,7 +34,7 @@ class RenderElement : public RenderObject {
 public:
     virtual ~RenderElement();
 
-    static RenderPtr<RenderElement> createFor(Element&, PassRef<RenderStyle>);
+    static RenderPtr<RenderElement> createFor(Element&, Ref<RenderStyle>&&);
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
@@ -43,9 +43,9 @@ public:
 
     void initializeStyle();
 
-    void setStyle(PassRef<RenderStyle>);
+    void setStyle(Ref<RenderStyle>&&);
     // Called to update a style that is allowed to trigger animations.
-    void setAnimatableStyle(PassRef<RenderStyle>);
+    void setAnimatableStyle(Ref<RenderStyle>&&);
 
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).
@@ -127,7 +127,7 @@ public:
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(PassRef<RenderStyle> style) { m_style = WTF::move(style); }
+    void setStyleInternal(Ref<RenderStyle>&& style) { m_style = WTF::move(style); }
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
@@ -201,8 +201,8 @@ protected:
         RenderBlockFlowFlag = 1 << 5,
     };
 
-    RenderElement(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
-    RenderElement(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderElement(Element&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
+    RenderElement(Document&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -235,7 +235,7 @@ protected:
     static void addControlStatesForRenderer(const RenderObject*, ControlStates*);
 
 private:
-    RenderElement(ContainerNode&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderElement(ContainerNode&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;
@@ -290,7 +290,7 @@ private:
     static bool s_noLongerAffectsParentBlock;
 };
 
-inline void RenderElement::setAnimatableStyle(PassRef<RenderStyle> style)
+inline void RenderElement::setAnimatableStyle(Ref<RenderStyle>&& style)
 {
     setStyle(animation().updateAnimations(*this, WTF::move(style)));
 }

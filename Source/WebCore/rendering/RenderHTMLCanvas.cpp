@@ -41,7 +41,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, PassRef<RenderStyle> style)
+RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, Ref<RenderStyle>&& style)
     : RenderReplaced(element, WTF::move(style), element.size())
 {
     // Actual size is not known yet, report the default intrinsic size.

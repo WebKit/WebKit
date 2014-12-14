@@ -284,7 +284,7 @@ HTMLElement* RangeInputType::sliderThumbElement() const
     return &typedSliderThumbElement();
 }
 
-RenderPtr<RenderElement> RangeInputType::createInputRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> RangeInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSlider>(element(), WTF::move(style));
 }

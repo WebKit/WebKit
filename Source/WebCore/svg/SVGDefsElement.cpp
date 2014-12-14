@@ -51,7 +51,7 @@ bool SVGDefsElement::isValid() const
     return SVGTests::isValid();
 }
 
-RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGHiddenContainer>(*this, WTF::move(style));
 }

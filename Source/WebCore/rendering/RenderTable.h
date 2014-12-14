@@ -44,8 +44,8 @@ enum SkipEmptySectionsValue { DoNotSkipEmptySections, SkipEmptySections };
 
 class RenderTable : public RenderBlock {
 public:
-    RenderTable(Element&, PassRef<RenderStyle>);
-    RenderTable(Document&, PassRef<RenderStyle>);
+    RenderTable(Element&, Ref<RenderStyle>&&);
+    RenderTable(Document&, Ref<RenderStyle>&&);
     virtual ~RenderTable();
 
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns

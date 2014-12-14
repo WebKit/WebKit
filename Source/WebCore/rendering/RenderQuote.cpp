@@ -31,7 +31,7 @@ using namespace WTF::Unicode;
 
 namespace WebCore {
 
-RenderQuote::RenderQuote(Document& document, PassRef<RenderStyle> style, QuoteType quote)
+RenderQuote::RenderQuote(Document& document, Ref<RenderStyle>&& style, QuoteType quote)
     : RenderInline(document, WTF::move(style))
     , m_type(quote)
     , m_depth(-1)

@@ -27,7 +27,7 @@
 
 namespace WebCore {
     
-RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElement& element, PassRef<RenderStyle> style)
+RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElement& element, Ref<RenderStyle>&& style)
     : RenderSVGContainer(element, WTF::move(style))
     , m_needsTransformUpdate(true)
     , m_didTransformToRootUpdate(false)

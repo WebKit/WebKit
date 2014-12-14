@@ -118,7 +118,7 @@ void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, 
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImage* styleImage, const float imageDevicePixelRatio)
+RenderImage::RenderImage(Element& element, Ref<RenderStyle>&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(element, WTF::move(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
     , m_needsToSetSizeForAltText(false)
@@ -134,7 +134,7 @@ RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style, StyleImag
         m_hasShadowControls = downcast<HTMLImageElement>(element).hasShadowControls();
 }
 
-RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style, StyleImage* styleImage)
+RenderImage::RenderImage(Document& document, Ref<RenderStyle>&& style, StyleImage* styleImage)
     : RenderReplaced(document, WTF::move(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
     , m_needsToSetSizeForAltText(false)

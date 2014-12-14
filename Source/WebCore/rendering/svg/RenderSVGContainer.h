@@ -40,7 +40,7 @@ public:
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
-    RenderSVGContainer(SVGElement&, PassRef<RenderStyle>);
+    RenderSVGContainer(SVGElement&, Ref<RenderStyle>&&);
 
     virtual const char* renderName() const override { return "RenderSVGContainer"; }
 

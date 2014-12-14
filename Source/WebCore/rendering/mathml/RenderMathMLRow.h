@@ -36,8 +36,8 @@ class RenderMathMLRoot;
 
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
-    RenderMathMLRow(Element&, PassRef<RenderStyle>);
-    RenderMathMLRow(Document&, PassRef<RenderStyle>);
+    RenderMathMLRow(Element&, Ref<RenderStyle>&&);
+    RenderMathMLRow(Document&, Ref<RenderStyle>&&);
 
     static RenderPtr<RenderMathMLRow> createAnonymousWithParentRenderer(RenderMathMLRoot&);
     void updateOperatorProperties();

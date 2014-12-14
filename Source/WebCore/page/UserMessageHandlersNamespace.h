@@ -44,7 +44,7 @@ class DOMWrapperWorld;
 
 class UserMessageHandlersNamespace : public RefCounted<UserMessageHandlersNamespace>, public FrameDestructionObserver {
 public:
-    static PassRef<UserMessageHandlersNamespace> create(Frame& frame)
+    static Ref<UserMessageHandlersNamespace> create(Frame& frame)
     {
         return adoptRef(*new UserMessageHandlersNamespace(frame));
     }

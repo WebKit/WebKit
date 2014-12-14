@@ -29,7 +29,7 @@
 #include "APIObject.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxy.h"
-#include <wtf/PassRef.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #if USE(CF)
@@ -42,7 +42,7 @@ struct BackForwardListState;
 
 class WebBackForwardList : public API::ObjectImpl<API::Object::Type::BackForwardList> {
 public:
-    static PassRef<WebBackForwardList> create(WebPageProxy& page)
+    static Ref<WebBackForwardList> create(WebPageProxy& page)
     {
         return adoptRef(*new WebBackForwardList(page));
     }

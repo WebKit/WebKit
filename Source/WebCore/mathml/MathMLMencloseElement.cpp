@@ -50,7 +50,7 @@ PassRefPtr<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedN
     return adoptRef(new MathMLMencloseElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(Ref<RenderStyle>&& style)
 {    
     return createRenderer<RenderMathMLMenclose>(*this, WTF::move(style));
 }

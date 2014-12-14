@@ -50,7 +50,7 @@ public:
     virtual JSC::JSObject* scriptObject() { return 0; }
 
     virtual bool willCreateRenderer() { return false; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) = 0;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&) = 0;
 
 protected:
     PluginReplacement() { }

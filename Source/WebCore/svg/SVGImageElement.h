@@ -49,7 +49,7 @@ private:
     virtual void didAttachRenderers() override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
     virtual const AtomicString& imageSourceURL() const override;
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;

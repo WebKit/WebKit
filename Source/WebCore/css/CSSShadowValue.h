@@ -32,7 +32,7 @@ class CSSPrimitiveValue;
 // Used for text-shadow and box-shadow
 class CSSShadowValue : public CSSValue {
 public:
-    static PassRef<CSSShadowValue> create(PassRefPtr<CSSPrimitiveValue> x,
+    static Ref<CSSShadowValue> create(PassRefPtr<CSSPrimitiveValue> x,
         PassRefPtr<CSSPrimitiveValue> y,
         PassRefPtr<CSSPrimitiveValue> blur,
         PassRefPtr<CSSPrimitiveValue> spread,

@@ -75,7 +75,7 @@ public:
     WeakPtr<RenderWidget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 protected:
-    RenderWidget(HTMLFrameOwnerElement&, PassRef<RenderStyle>);
+    RenderWidget(HTMLFrameOwnerElement&, Ref<RenderStyle>&&);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
     virtual void layout() override;

@@ -523,7 +523,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
 #endif
 }
 
-RenderPtr<RenderElement> SVGUseElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
 }

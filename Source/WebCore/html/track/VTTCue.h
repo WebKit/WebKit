@@ -64,7 +64,7 @@ public:
 protected:
     VTTCueBox(Document&, VTTCue&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override final;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override final;
 
     VTTCue& m_cue;
     int m_fontSizeFromCaptionUserPrefs;

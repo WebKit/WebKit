@@ -51,7 +51,7 @@ private:
 
     virtual bool isEnumeratable() const override { return true; }
     virtual bool supportsFocus() const override;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual const AtomicString& formControlType() const override;
     virtual bool computeWillValidate() const override { return false; }
     virtual void disabledAttributeChanged() override;

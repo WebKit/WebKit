@@ -49,7 +49,7 @@ CSSValuePool::CSSValuePool()
 {
 }
 
-PassRef<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
+Ref<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
 {
     if (!ident)
         return CSSPrimitiveValue::createIdentifier(ident);
@@ -60,21 +60,21 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
     return *m_identifierValueCache[ident];
 }
 
-PassRef<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ident)
+Ref<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ident)
 {
     return CSSPrimitiveValue::createIdentifier(ident);
 }
 
-PassRef<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
+Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
 {
     // These are the empty and deleted values of the hash table.
     if (rgbValue == Color::transparent)
-        return m_colorTransparent;
+        return m_colorTransparent.copyRef();
     if (rgbValue == Color::white)
-        return m_colorWhite;
+        return m_colorWhite.copyRef();
     // Just because it is common.
     if (rgbValue == Color::black)
-        return m_colorBlack;
+        return m_colorBlack.copyRef();
 
     // Remove one entry at random if the cache grows too large.
     const int maximumColorCacheSize = 512;
@@ -87,7 +87,7 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
     return *entry.iterator->value;
 }
 
-PassRef<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
+Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
 {
     ASSERT(std::isfinite(value));
 
@@ -118,7 +118,7 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveV
     return *cache[intValue];
 }
 
-PassRef<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)
+Ref<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)
 {
     RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add(familyName, nullptr).iterator->value;
     if (!value)

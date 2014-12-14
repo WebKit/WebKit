@@ -185,7 +185,7 @@ public:
     Vector<unsigned> growAboveMaxBreadthTrackIndexes;
 };
 
-RenderGrid::RenderGrid(Element& element, PassRef<RenderStyle> style)
+RenderGrid::RenderGrid(Element& element, Ref<RenderStyle>&& style)
     : RenderBlock(element, WTF::move(style), 0)
     , m_orderIterator(*this)
 {

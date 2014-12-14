@@ -45,7 +45,7 @@ inline StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
 {
 }
 
-PassRef<StyleMarqueeData> StyleMarqueeData::copy() const
+Ref<StyleMarqueeData> StyleMarqueeData::copy() const
 {
     return adoptRef(*new StyleMarqueeData(*this));
 }

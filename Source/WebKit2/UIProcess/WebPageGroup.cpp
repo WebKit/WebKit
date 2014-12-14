@@ -55,7 +55,7 @@ PassRefPtr<WebPageGroup> WebPageGroup::create(const String& identifier, bool vis
     return adoptRef(new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
 }
 
-PassRef<WebPageGroup> WebPageGroup::createNonNull(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
+Ref<WebPageGroup> WebPageGroup::createNonNull(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
 {
     return adoptRef(*new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
 }

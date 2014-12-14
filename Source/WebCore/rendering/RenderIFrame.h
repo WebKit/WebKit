@@ -34,7 +34,7 @@ class RenderView;
 
 class RenderIFrame final : public RenderFrameBase {
 public:
-    RenderIFrame(HTMLIFrameElement&, PassRef<RenderStyle>);
+    RenderIFrame(HTMLIFrameElement&, Ref<RenderStyle>&&);
 
     HTMLIFrameElement& iframeElement() const;
 

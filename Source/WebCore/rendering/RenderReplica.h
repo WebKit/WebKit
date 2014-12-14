@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderReplica final : public RenderBox {
 public:
-    RenderReplica(Document&, PassRef<RenderStyle>);
+    RenderReplica(Document&, Ref<RenderStyle>&&);
     virtual ~RenderReplica();
 
     virtual const char* renderName() const override { return "RenderReplica"; }

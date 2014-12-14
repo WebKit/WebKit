@@ -234,7 +234,7 @@ const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()
     return trackDisplayBoxShadowPseudoId;
 }
 
-RenderPtr<RenderElement> VTTCueBox::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> VTTCueBox::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderVTTCue>(*this, WTF::move(style));
 }

@@ -45,8 +45,8 @@ class SVGGraphicsElement;
 
 class RenderSVGShape : public RenderSVGModelObject {
 public:
-    RenderSVGShape(SVGGraphicsElement&, PassRef<RenderStyle>);
-    RenderSVGShape(SVGGraphicsElement&, PassRef<RenderStyle>, Path*, bool);
+    RenderSVGShape(SVGGraphicsElement&, Ref<RenderStyle>&&);
+    RenderSVGShape(SVGGraphicsElement&, Ref<RenderStyle>&&, Path*, bool);
     virtual ~RenderSVGShape();
 
     SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(RenderSVGModelObject::element()); }

@@ -46,17 +46,17 @@ class DeviceProximityEvent : public Event {
 public:
     ~DeviceProximityEvent() { }
 
-    static PassRef<DeviceProximityEvent> create()
+    static Ref<DeviceProximityEvent> create()
     {
         return adoptRef(*new DeviceProximityEvent());
     }
 
-    static PassRef<DeviceProximityEvent> create(const AtomicString& eventType, const double value, const double min, const double max)
+    static Ref<DeviceProximityEvent> create(const AtomicString& eventType, const double value, const double min, const double max)
     {
         return adoptRef(*new DeviceProximityEvent(eventType, value, min, max));
     }
 
-    static PassRef<DeviceProximityEvent> create(const AtomicString& type, const DeviceProximityEventInit& initializer)
+    static Ref<DeviceProximityEvent> create(const AtomicString& type, const DeviceProximityEventInit& initializer)
     {
         return adoptRef(*new DeviceProximityEvent(type, initializer));
     }

@@ -28,7 +28,7 @@ namespace WebCore {
 
 class CSSInheritedValue : public CSSValue {
 public:
-    static PassRef<CSSInheritedValue> create()
+    static Ref<CSSInheritedValue> create()
     {
         return adoptRef(*new CSSInheritedValue);
     }

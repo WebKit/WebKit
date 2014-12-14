@@ -35,7 +35,7 @@ public:
 private:
     SVGGElement(const QualifiedName&, Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
     virtual bool isValid() const override { return SVGTests::isValid(); }
 

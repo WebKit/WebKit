@@ -119,7 +119,7 @@ static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
 
 //=== ruby as inline object ===
 
-RenderRubyAsInline::RenderRubyAsInline(Element& element, PassRef<RenderStyle> style)
+RenderRubyAsInline::RenderRubyAsInline(Element& element, Ref<RenderStyle>&& style)
     : RenderInline(element, WTF::move(style))
 {
 }
@@ -225,7 +225,7 @@ void RenderRubyAsInline::removeChild(RenderObject& child)
 
 //=== ruby as block object ===
 
-RenderRubyAsBlock::RenderRubyAsBlock(Element& element, PassRef<RenderStyle> style)
+RenderRubyAsBlock::RenderRubyAsBlock(Element& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
 {
 }

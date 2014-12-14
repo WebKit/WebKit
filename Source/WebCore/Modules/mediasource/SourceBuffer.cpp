@@ -109,14 +109,14 @@ struct SourceBuffer::TrackBuffer {
     }
 };
 
-PassRef<SourceBuffer> SourceBuffer::create(PassRef<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
+Ref<SourceBuffer> SourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource* source)
 {
     RefPtr<SourceBuffer> sourceBuffer(adoptRef(new SourceBuffer(WTF::move(sourceBufferPrivate), source)));
     sourceBuffer->suspendIfNeeded();
     return sourceBuffer.releaseNonNull();
 }
 
-SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
+SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource* source)
     : ActiveDOMObject(source->scriptExecutionContext())
     , m_private(WTF::move(sourceBufferPrivate))
     , m_source(source)

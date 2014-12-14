@@ -53,13 +53,13 @@ static bool isInitialOrInherit(const String& value)
     return value.length() == 7 && (value == "initial" || value == "inherit");
 }
 
-PassRef<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
+Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
     void* slot = WTF::fastMalloc(sizeForImmutableStylePropertiesWithPropertyCount(count));
     return adoptRef(*new (NotNull, slot) ImmutableStyleProperties(properties, count, cssParserMode));
 }
 
-PassRef<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
+Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 {
     if (is<ImmutableStyleProperties>(*this))
         return downcast<ImmutableStyleProperties>(const_cast<StyleProperties&>(*this));
@@ -1107,7 +1107,7 @@ void MutableStyleProperties::clear()
 
 const unsigned numBlockProperties = WTF_ARRAY_LENGTH(blockProperties);
 
-PassRef<MutableStyleProperties> StyleProperties::copyBlockProperties() const
+Ref<MutableStyleProperties> StyleProperties::copyBlockProperties() const
 {
     return copyPropertiesInSet(blockProperties, numBlockProperties);
 }
@@ -1188,12 +1188,12 @@ bool StyleProperties::propertyMatches(CSSPropertyID propertyID, const CSSValue* 
     return propertyAt(foundPropertyIndex).value()->equals(*propertyValue);
 }
 
-PassRef<MutableStyleProperties> StyleProperties::mutableCopy() const
+Ref<MutableStyleProperties> StyleProperties::mutableCopy() const
 {
     return adoptRef(*new MutableStyleProperties(*this));
 }
 
-PassRef<MutableStyleProperties> StyleProperties::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
+Ref<MutableStyleProperties> StyleProperties::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
     Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
@@ -1250,12 +1250,12 @@ void StyleProperties::showStyle()
 }
 #endif
 
-PassRef<MutableStyleProperties> MutableStyleProperties::create(CSSParserMode cssParserMode)
+Ref<MutableStyleProperties> MutableStyleProperties::create(CSSParserMode cssParserMode)
 {
     return adoptRef(*new MutableStyleProperties(cssParserMode));
 }
 
-PassRef<MutableStyleProperties> MutableStyleProperties::create(const CSSProperty* properties, unsigned count)
+Ref<MutableStyleProperties> MutableStyleProperties::create(const CSSProperty* properties, unsigned count)
 {
     return adoptRef(*new MutableStyleProperties(properties, count));
 }

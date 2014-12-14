@@ -50,7 +50,7 @@ public:
     void expandToEncompassFlowThreadContentsIfNeeded();
 
 protected:
-    RenderRegionSet(Document&, PassRef<RenderStyle>, RenderFlowThread&);
+    RenderRegionSet(Document&, Ref<RenderStyle>&&, RenderFlowThread&);
 
 private:
     virtual void installFlowThread() override final;

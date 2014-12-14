@@ -61,7 +61,7 @@ public:
 private:
     SliderThumbElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
     virtual bool isDisabledFormControl() const override;
     virtual bool matchesReadWritePseudoClass() const override;
@@ -116,7 +116,7 @@ inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& docum
 
 class RenderSliderThumb final : public RenderBlockFlow {
 public:
-    RenderSliderThumb(SliderThumbElement&, PassRef<RenderStyle>);
+    RenderSliderThumb(SliderThumbElement&, Ref<RenderStyle>&&);
     void updateAppearance(RenderStyle* parentStyle);
 
 private:
@@ -131,7 +131,7 @@ public:
 
 private:
     SliderContainerElement(Document&);
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual const AtomicString& shadowPseudoId() const override;
 };
 

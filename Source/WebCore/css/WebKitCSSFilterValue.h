@@ -50,7 +50,7 @@ public:
         DropShadowFilterOperation
     };
 
-    static PassRef<WebKitCSSFilterValue> create(FilterOperationType type)
+    static Ref<WebKitCSSFilterValue> create(FilterOperationType type)
     {
         return adoptRef(*new WebKitCSSFilterValue(type));
     }

@@ -28,11 +28,11 @@
 
 #import <WebCore/LinkHash.h>
 #import <WebCore/VisitedLinkStore.h>
-#import <wtf/PassRef.h>
+#import <wtf/Ref.h>
 
 class WebVisitedLinkStore final : public WebCore::VisitedLinkStore {
 public:
-    static PassRef<WebVisitedLinkStore> create();
+    static Ref<WebVisitedLinkStore> create();
     virtual ~WebVisitedLinkStore();
 
     static void setShouldTrackVisitedLinks(bool);

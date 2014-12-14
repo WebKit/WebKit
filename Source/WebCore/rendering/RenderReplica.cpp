@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-RenderReplica::RenderReplica(Document& document, PassRef<RenderStyle> style)
+RenderReplica::RenderReplica(Document& document, Ref<RenderStyle>&& style)
     : RenderBox(document, WTF::move(style), 0)
 {
     // This is a hack. Replicas are synthetic, and don't pick up the attributes of the

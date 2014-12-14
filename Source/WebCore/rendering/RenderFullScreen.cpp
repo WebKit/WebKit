@@ -36,7 +36,7 @@ namespace WebCore {
 
 class RenderFullScreenPlaceholder final : public RenderBlockFlow {
 public:
-    RenderFullScreenPlaceholder(RenderFullScreen& owner, PassRef<RenderStyle> style)
+    RenderFullScreenPlaceholder(RenderFullScreen& owner, Ref<RenderStyle>&& style)
         : RenderBlockFlow(owner.document(), WTF::move(style))
         , m_owner(owner) 
     {
@@ -54,7 +54,7 @@ void RenderFullScreenPlaceholder::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
-RenderFullScreen::RenderFullScreen(Document& document, PassRef<RenderStyle> style)
+RenderFullScreen::RenderFullScreen(Document& document, Ref<RenderStyle>&& style)
     : RenderFlexibleBox(document, WTF::move(style))
     , m_placeholder(0)
 {
@@ -78,7 +78,7 @@ void RenderFullScreen::willBeDestroyed()
     RenderFlexibleBox::willBeDestroyed();
 }
 
-static PassRef<RenderStyle> createFullScreenStyle()
+static Ref<RenderStyle> createFullScreenStyle()
 {
     auto fullscreenStyle = RenderStyle::createDefaultStyle();
 
@@ -185,7 +185,7 @@ void RenderFullScreen::setPlaceholder(RenderBlock* placeholder)
     m_placeholder = placeholder;
 }
 
-void RenderFullScreen::createPlaceholder(PassRef<RenderStyle> style, const LayoutRect& frameRect)
+void RenderFullScreen::createPlaceholder(Ref<RenderStyle>&& style, const LayoutRect& frameRect)
 {
     if (style.get().width().isAuto())
         style.get().setWidth(Length(frameRect.width(), Fixed));

@@ -36,7 +36,7 @@ class StyleSheetContents;
 class StyleRuleImport : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRef<StyleRuleImport> create(const String& href, PassRefPtr<MediaQuerySet>);
+    static Ref<StyleRuleImport> create(const String& href, PassRefPtr<MediaQuerySet>);
 
     ~StyleRuleImport();
     

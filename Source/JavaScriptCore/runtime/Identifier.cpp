@@ -38,7 +38,7 @@ using WTF::ThreadSpecific;
 
 namespace JSC {
 
-PassRef<StringImpl> Identifier::add(VM* vm, const char* c)
+Ref<StringImpl> Identifier::add(VM* vm, const char* c)
 {
     ASSERT(c);
     ASSERT(c[0]);
@@ -48,12 +48,12 @@ PassRef<StringImpl> Identifier::add(VM* vm, const char* c)
     return *AtomicString::add(c);
 }
 
-PassRef<StringImpl> Identifier::add(ExecState* exec, const char* c)
+Ref<StringImpl> Identifier::add(ExecState* exec, const char* c)
 {
     return add(&exec->vm(), c);
 }
 
-PassRef<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
+Ref<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
 {
     if (length == 1) {
         UChar c = s[0];

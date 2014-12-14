@@ -65,7 +65,7 @@ inline StyleGridData::StyleGridData(const StyleGridData& o)
 {
 }
 
-PassRef<StyleGridData> StyleGridData::copy() const
+Ref<StyleGridData> StyleGridData::copy() const
 {
     return adoptRef(*new StyleGridData(*this));
 }

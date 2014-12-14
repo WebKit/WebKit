@@ -31,7 +31,7 @@ class RenderSVGResource;
 
 class SVGTextRunRenderingContext final : public TextRun::RenderingContext {
 public:
-    static PassRef<SVGTextRunRenderingContext> create(RenderObject& renderer)
+    static Ref<SVGTextRunRenderingContext> create(RenderObject& renderer)
     {
         return adoptRef(*new SVGTextRunRenderingContext(renderer));
     }

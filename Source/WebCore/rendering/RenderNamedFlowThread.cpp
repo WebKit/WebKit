@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderStyle> style, PassRef<WebKitNamedFlow> namedFlow)
+RenderNamedFlowThread::RenderNamedFlowThread(Document& document, Ref<RenderStyle>&& style, Ref<WebKitNamedFlow>&& namedFlow)
     : RenderFlowThread(document, WTF::move(style))
     , m_hasRegionsWithStyling(false)
     , m_dispatchRegionOversetChangeEvent(false)

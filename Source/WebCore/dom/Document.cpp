@@ -1903,7 +1903,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
     m_ignorePendingStylesheets = oldIgnore;
 }
 
-PassRef<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
+Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
 {
     ASSERT_ARG(element, &element->document() == this);
 

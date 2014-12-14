@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-PassRef<StyleRuleImport> StyleRuleImport::create(const String& href, PassRefPtr<MediaQuerySet> media)
+Ref<StyleRuleImport> StyleRuleImport::create(const String& href, PassRefPtr<MediaQuerySet> media)
 {
     return adoptRef(*new StyleRuleImport(href, media));
 }

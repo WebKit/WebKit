@@ -94,7 +94,7 @@ public:
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(CSSValueID ident, CSSParserValue&);
     bool parseDeclaration(MutableStyleProperties*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
-    static PassRef<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
+    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     std::unique_ptr<MediaQuery> parseMediaQuery(const String&);
 #if ENABLE(PICTURE_SIZES)
     std::unique_ptr<SourceSizeList> parseSizesAttribute(const String&);
@@ -138,8 +138,8 @@ public:
     bool parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool parseFillShorthand(CSSPropertyID, const CSSPropertyID* properties, int numProperties, bool important);
 
-    void addFillValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval);
-    void addAnimationValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval);
+    void addFillValue(RefPtr<CSSValue>& lval, Ref<CSSValue>&& rval);
+    void addAnimationValue(RefPtr<CSSValue>& lval, Ref<CSSValue>&& rval);
 
     PassRefPtr<CSSValue> parseAnimationDelay();
     PassRefPtr<CSSValue> parseAnimationDirection();
@@ -332,7 +332,7 @@ public:
 
     void clearProperties();
 
-    PassRef<ImmutableStyleProperties> createStyleProperties();
+    Ref<ImmutableStyleProperties> createStyleProperties();
 
     CSSParserContext m_context;
 
@@ -404,8 +404,8 @@ public:
     PassRefPtr<StyleRuleBase> createViewportRule();
 #endif
 
-    PassRef<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue&);
-    PassRef<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue&);
+    Ref<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue&);
+    Ref<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue&);
 
     static URL completeURL(const CSSParserContext&, const String& url);
 
@@ -507,7 +507,7 @@ private:
     bool parseGeneratedImage(CSSParserValueList&, RefPtr<CSSValue>&);
 
     bool parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, StyleSheetContents* contextStyleSheet);
-    PassRef<ImmutableStyleProperties> parseDeclaration(const String&, StyleSheetContents* contextStyleSheet);
+    Ref<ImmutableStyleProperties> parseDeclaration(const String&, StyleSheetContents* contextStyleSheet);
 
     PassRefPtr<CSSBasicShape> parseInsetRoundedCorners(PassRefPtr<CSSBasicShapeInset>, CSSParserValueList&);
 

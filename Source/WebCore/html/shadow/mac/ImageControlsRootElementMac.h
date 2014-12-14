@@ -40,7 +40,7 @@ public:
 private:
     ImageControlsRootElementMac(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 };
 
 } // namespace WebCore

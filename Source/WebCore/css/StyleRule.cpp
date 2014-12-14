@@ -101,7 +101,7 @@ void StyleRuleBase::destroy()
     ASSERT_NOT_REACHED();
 }
 
-PassRef<StyleRuleBase> StyleRuleBase::copy() const
+Ref<StyleRuleBase> StyleRuleBase::copy() const
 {
     switch (type()) {
     case Style:
@@ -137,7 +137,7 @@ PassRef<StyleRuleBase> StyleRuleBase::copy() const
     }
     CRASH();
     // HACK: EFL won't build without this (old GCC with crappy -Werror=return-type)
-    return PassRef<StyleRuleBase>(*static_cast<StyleRuleBase*>(nullptr));
+    return Ref<StyleRuleBase>(*static_cast<StyleRuleBase*>(nullptr));
 }
 
 PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
@@ -195,7 +195,7 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes();
 }
 
-StyleRule::StyleRule(int sourceLine, PassRef<StyleProperties> properties)
+StyleRule::StyleRule(int sourceLine, Ref<StyleProperties>&& properties)
     : StyleRuleBase(Style, sourceLine)
     , m_properties(WTF::move(properties))
 {
@@ -219,7 +219,7 @@ MutableStyleProperties& StyleRule::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-PassRef<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, PassRef<StyleProperties> properties)
+Ref<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectors.isEmpty());
     CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectors.size()));
@@ -257,7 +257,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     return rules;
 }
 
-StyleRulePage::StyleRulePage(PassRef<StyleProperties> properties)
+StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties)
     : StyleRuleBase(Page)
     , m_properties(WTF::move(properties))
 {
@@ -281,7 +281,7 @@ MutableStyleProperties& StyleRulePage::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-StyleRuleFontFace::StyleRuleFontFace(PassRef<StyleProperties> properties)
+StyleRuleFontFace::StyleRuleFontFace(Ref<StyleProperties>&& properties)
     : StyleRuleBase(FontFace, 0)
     , m_properties(WTF::move(properties))
 {
@@ -318,7 +318,7 @@ StyleRuleGroup::StyleRuleGroup(const StyleRuleGroup& o)
         m_childRules.uncheckedAppend(o.m_childRules[i]->copy());
 }
 
-void StyleRuleGroup::wrapperInsertRule(unsigned index, PassRef<StyleRuleBase> rule)
+void StyleRuleGroup::wrapperInsertRule(unsigned index, Ref<StyleRuleBase>&& rule)
 {
     m_childRules.insert(index, WTF::move(rule));
 }
@@ -371,7 +371,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-StyleRuleViewport::StyleRuleViewport(PassRef<StyleProperties> properties)
+StyleRuleViewport::StyleRuleViewport(Ref<StyleProperties>&& properties)
     : StyleRuleBase(Viewport, 0)
     , m_properties(WTF::move(properties))
 {

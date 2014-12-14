@@ -40,7 +40,7 @@ TEST(WTF, RefCounter)
     //
     // 1) RefCounter(std::function<void()>);
     // 2) ~RefCounter();
-    // 3) PassRef<Count> count() const;
+    // 3) Ref<Count> count() const;
     // 4) unsigned value() const;
     //
     // We'll test:

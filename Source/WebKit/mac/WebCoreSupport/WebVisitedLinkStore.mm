@@ -45,7 +45,7 @@ static HashSet<WebVisitedLinkStore*>& visitedLinkStores()
 }
 
 
-PassRef<WebVisitedLinkStore> WebVisitedLinkStore::create()
+Ref<WebVisitedLinkStore> WebVisitedLinkStore::create()
 {
     return adoptRef(*new WebVisitedLinkStore);
 }

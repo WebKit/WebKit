@@ -29,7 +29,7 @@ namespace WebCore {
 
 class RenderSVGResourceLinearGradient final : public RenderSVGResourceGradient {
 public:
-    RenderSVGResourceLinearGradient(SVGLinearGradientElement&, PassRef<RenderStyle>);
+    RenderSVGResourceLinearGradient(SVGLinearGradientElement&, Ref<RenderStyle>&&);
     virtual ~RenderSVGResourceLinearGradient();
 
     SVGLinearGradientElement& linearGradientElement() const { return downcast<SVGLinearGradientElement>(RenderSVGResourceGradient::gradientElement()); }

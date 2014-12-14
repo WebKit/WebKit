@@ -49,10 +49,10 @@ class RenderStyle;
 
 class RenderNamedFlowFragment final : public RenderRegion {
 public:
-    RenderNamedFlowFragment(Document&, PassRef<RenderStyle>);
+    RenderNamedFlowFragment(Document&, Ref<RenderStyle>&&);
     virtual ~RenderNamedFlowFragment();
 
-    static PassRef<RenderStyle> createStyle(const RenderStyle& parentStyle);
+    static Ref<RenderStyle> createStyle(const RenderStyle& parentStyle);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

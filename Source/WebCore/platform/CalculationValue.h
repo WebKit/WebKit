@@ -136,7 +136,7 @@ private:
 
 class CalculationValue : public RefCounted<CalculationValue> {
 public:
-    WEBCORE_EXPORT static PassRef<CalculationValue> create(std::unique_ptr<CalcExpressionNode>, CalculationPermittedValueRange);
+    WEBCORE_EXPORT static Ref<CalculationValue> create(std::unique_ptr<CalcExpressionNode>, CalculationPermittedValueRange);
     float evaluate(float maxValue) const;
 
     bool shouldClampToNonNegative() const { return m_shouldClampToNonNegative; }

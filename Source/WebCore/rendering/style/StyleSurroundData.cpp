@@ -39,7 +39,7 @@ inline StyleSurroundData::StyleSurroundData(const StyleSurroundData& o)
 {
 }
 
-PassRef<StyleSurroundData> StyleSurroundData::copy() const
+Ref<StyleSurroundData> StyleSurroundData::copy() const
 {
     return adoptRef(*new StyleSurroundData(*this));
 }

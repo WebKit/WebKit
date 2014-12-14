@@ -39,7 +39,7 @@ typedef Vector<RefPtr<Gamepad> > GamepadVector;
 
 class GamepadList : public RefCounted<GamepadList> {
 public:
-    static PassRef<GamepadList> create() { return adoptRef(*new GamepadList); }
+    static Ref<GamepadList> create() { return adoptRef(*new GamepadList); }
     ~GamepadList();
 
     void set(unsigned index, PassRefPtr<Gamepad>);

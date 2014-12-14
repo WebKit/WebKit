@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-RenderVTTCue::RenderVTTCue(VTTCueBox& element, PassRef<RenderStyle> style)
+RenderVTTCue::RenderVTTCue(VTTCueBox& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
     , m_cue(element.getCue())
 {

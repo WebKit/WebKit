@@ -73,7 +73,7 @@ inline NinePieceImageData::NinePieceImageData(const NinePieceImageData& other)
 {
 }
 
-PassRef<NinePieceImageData> NinePieceImageData::copy() const
+Ref<NinePieceImageData> NinePieceImageData::copy() const
 {
     return adoptRef(*new NinePieceImageData(*this));
 }

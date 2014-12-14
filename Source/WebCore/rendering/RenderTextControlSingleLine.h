@@ -32,11 +32,11 @@ class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl {
 public:
-    RenderTextControlSingleLine(HTMLInputElement&, PassRef<RenderStyle>);
+    RenderTextControlSingleLine(HTMLInputElement&, Ref<RenderStyle>&&);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
-    virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const override;
-    PassRef<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
+    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const override;
+    Ref<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
 
     void capsLockStateMayHaveChanged();
 
@@ -101,7 +101,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 
 class RenderTextControlInnerBlock final : public RenderBlockFlow {
 public:
-    RenderTextControlInnerBlock(Element& element, PassRef<RenderStyle> style)
+    RenderTextControlInnerBlock(Element& element, Ref<RenderStyle>&& style)
         : RenderBlockFlow(element, WTF::move(style))
     {
     }

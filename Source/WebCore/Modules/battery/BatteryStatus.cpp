@@ -26,12 +26,12 @@
 
 namespace WebCore {
 
-PassRef<BatteryStatus> BatteryStatus::create()
+Ref<BatteryStatus> BatteryStatus::create()
 {
     return adoptRef(*new BatteryStatus);
 }
 
-PassRef<BatteryStatus> BatteryStatus::create(bool charging, double chargingTime, double dischargingTime, double level)
+Ref<BatteryStatus> BatteryStatus::create(bool charging, double chargingTime, double dischargingTime, double level)
 {
     return adoptRef(*new BatteryStatus(charging, chargingTime, dischargingTime, level));
 }

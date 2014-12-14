@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSUnicodeRangeValue : public CSSValue {
 public:
-    static PassRef<CSSUnicodeRangeValue> create(UChar32 from, UChar32 to)
+    static Ref<CSSUnicodeRangeValue> create(UChar32 from, UChar32 to)
     {
         return adoptRef(*new CSSUnicodeRangeValue(from, to));
     }

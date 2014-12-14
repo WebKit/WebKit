@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-PassRef<ClassNodeList> ClassNodeList::create(ContainerNode& rootNode, const AtomicString& classNames)
+Ref<ClassNodeList> ClassNodeList::create(ContainerNode& rootNode, const AtomicString& classNames)
 {
     return adoptRef(*new ClassNodeList(rootNode, classNames));
 }

@@ -1,3 +1,18 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Replace PassRef with Ref/Ref&& across the board.
+        <https://webkit.org/b/139587>
+
+        Reviewed by Darin Adler.
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::add8):
+        * runtime/Identifier.h:
+        (JSC::Identifier::add):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::add):
+
 2014-12-12  Matthew Mirman  <mmirman@apple.com>
 
         shiftCountWithArrayStorage should exit to slow path if the object has a sparse map.

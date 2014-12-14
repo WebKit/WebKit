@@ -6607,7 +6607,7 @@ void RenderLayer::removeReflection()
     m_reflection = nullptr;
 }
 
-PassRef<RenderStyle> RenderLayer::createReflectionStyle()
+Ref<RenderStyle> RenderLayer::createReflectionStyle()
 {
     auto newStyle = RenderStyle::create();
     newStyle.get().inheritFrom(&renderer().style());

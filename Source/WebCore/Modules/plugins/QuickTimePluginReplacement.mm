@@ -133,7 +133,7 @@ QuickTimePluginReplacement::~QuickTimePluginReplacement()
     m_mediaElement = nullptr;
 }
 
-RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, PassRef<RenderStyle> style)
+RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, Ref<RenderStyle>&& style)
 {
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 

@@ -39,7 +39,7 @@ class QualifiedName {
 public:
     class QualifiedNameImpl : public RefCounted<QualifiedNameImpl> {
     public:
-        static PassRef<QualifiedNameImpl> create(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
+        static Ref<QualifiedNameImpl> create(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
         {
             return adoptRef(*new QualifiedNameImpl(prefix, localName, namespaceURI));
         }

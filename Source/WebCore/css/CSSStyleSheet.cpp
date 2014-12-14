@@ -75,23 +75,23 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 }
 #endif
 
-PassRef<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, CSSImportRule* ownerRule)
+Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, CSSImportRule* ownerRule)
 { 
     return adoptRef(*new CSSStyleSheet(WTF::move(sheet), ownerRule));
 }
 
-PassRef<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, Node* ownerNode)
+Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node* ownerNode)
 { 
     return adoptRef(*new CSSStyleSheet(WTF::move(sheet), ownerNode, false));
 }
 
-PassRef<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const String& encoding)
+Ref<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const String& encoding)
 {
     CSSParserContext parserContext(ownerNode.document(), baseURL, encoding);
     return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(baseURL.string(), parserContext), &ownerNode, true));
 }
 
-CSSStyleSheet::CSSStyleSheet(PassRef<StyleSheetContents> contents, CSSImportRule* ownerRule)
+CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* ownerRule)
     : m_contents(WTF::move(contents))
     , m_isInlineStylesheet(false)
     , m_isDisabled(false)
@@ -101,7 +101,7 @@ CSSStyleSheet::CSSStyleSheet(PassRef<StyleSheetContents> contents, CSSImportRule
     m_contents->registerClient(this);
 }
 
-CSSStyleSheet::CSSStyleSheet(PassRef<StyleSheetContents> contents, Node* ownerNode, bool isInlineStylesheet)
+CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node* ownerNode, bool isInlineStylesheet)
     : m_contents(WTF::move(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isDisabled(false)

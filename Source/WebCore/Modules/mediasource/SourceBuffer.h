@@ -61,7 +61,7 @@ class VideoTrackList;
 
 class SourceBuffer final : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public ScriptWrappable, public SourceBufferPrivateClient, public AudioTrackClient, public VideoTrackClient, public TextTrackClient {
 public:
-    static PassRef<SourceBuffer> create(PassRef<SourceBufferPrivate>, MediaSource*);
+    static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource*);
 
     static const AtomicString& segmentsKeyword();
     static const AtomicString& sequenceKeyword();
@@ -126,7 +126,7 @@ protected:
     virtual void derefEventTarget() override { deref(); }
 
 private:
-    SourceBuffer(PassRef<SourceBufferPrivate>, MediaSource*);
+    SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
 
     // SourceBufferPrivateClient
     virtual void sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString&) override;

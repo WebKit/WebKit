@@ -57,7 +57,7 @@ inline StyleFillData::StyleFillData(const StyleFillData& other)
 {
 }
 
-PassRef<StyleFillData> StyleFillData::copy() const
+Ref<StyleFillData> StyleFillData::copy() const
 {
     return adoptRef(*new StyleFillData(*this));
 }
@@ -104,7 +104,7 @@ inline StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
 {
 }
 
-PassRef<StyleStrokeData> StyleStrokeData::copy() const
+Ref<StyleStrokeData> StyleStrokeData::copy() const
 {
     return adoptRef(*new StyleStrokeData(*this));
 }
@@ -137,7 +137,7 @@ inline StyleStopData::StyleStopData(const StyleStopData& other)
 {
 }
 
-PassRef<StyleStopData> StyleStopData::copy() const
+Ref<StyleStopData> StyleStopData::copy() const
 {
     return adoptRef(*new StyleStopData(*this));
 }
@@ -159,7 +159,7 @@ inline StyleTextData::StyleTextData(const StyleTextData& other)
 {
 }
 
-PassRef<StyleTextData> StyleTextData::copy() const
+Ref<StyleTextData> StyleTextData::copy() const
 {
     return adoptRef(*new StyleTextData(*this));
 }
@@ -186,7 +186,7 @@ inline StyleMiscData::StyleMiscData(const StyleMiscData& other)
 {
 }
 
-PassRef<StyleMiscData> StyleMiscData::copy() const
+Ref<StyleMiscData> StyleMiscData::copy() const
 {
     return adoptRef(*new StyleMiscData(*this));
 }
@@ -209,7 +209,7 @@ inline StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
 {
 }
 
-PassRef<StyleShadowSVGData> StyleShadowSVGData::copy() const
+Ref<StyleShadowSVGData> StyleShadowSVGData::copy() const
 {
     return adoptRef(*new StyleShadowSVGData(*this));
 }
@@ -238,7 +238,7 @@ inline StyleResourceData::StyleResourceData(const StyleResourceData& other)
 {
 }
 
-PassRef<StyleResourceData> StyleResourceData::copy() const
+Ref<StyleResourceData> StyleResourceData::copy() const
 {
     return adoptRef(*new StyleResourceData(*this));
 }
@@ -265,7 +265,7 @@ inline StyleInheritedResourceData::StyleInheritedResourceData(const StyleInherit
 {
 }
 
-PassRef<StyleInheritedResourceData> StyleInheritedResourceData::copy() const
+Ref<StyleInheritedResourceData> StyleInheritedResourceData::copy() const
 {
     return adoptRef(*new StyleInheritedResourceData(*this));
 }
@@ -300,7 +300,7 @@ inline StyleLayoutData::StyleLayoutData(const StyleLayoutData& other)
 {
 }
 
-PassRef<StyleLayoutData> StyleLayoutData::copy() const
+Ref<StyleLayoutData> StyleLayoutData::copy() const
 {
     return adoptRef(*new StyleLayoutData(*this));
 }

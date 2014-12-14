@@ -54,7 +54,7 @@ private:
     virtual void handleMouseDownEvent(MouseEvent*) override;
 #endif
     virtual void handleKeydownEvent(KeyboardEvent*) override;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     virtual void createShadowSubtree() override;
     virtual Decimal parseToNumber(const String&, const Decimal&) const override;
     virtual String serialize(const Decimal&) const override;

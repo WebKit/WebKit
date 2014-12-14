@@ -181,7 +181,7 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderBlock::RenderBlock(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderBox(element, WTF::move(style), baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
@@ -192,7 +192,7 @@ RenderBlock::RenderBlock(Element& element, PassRef<RenderStyle> style, unsigned 
 {
 }
 
-RenderBlock::RenderBlock(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderBlock::RenderBlock(Document& document, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderBox(document, WTF::move(style), baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)

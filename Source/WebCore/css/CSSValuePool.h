@@ -44,18 +44,18 @@ class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
-    PassRef<CSSPrimitiveValue> createFontFamilyValue(const String&);
-    PassRef<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
-    PassRef<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }
-    PassRef<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue; }
-    PassRef<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
-    PassRef<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
-    PassRef<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
-    PassRef<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
-    PassRef<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }
-    PassRef<CSSPrimitiveValue> createValue(const Length& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
-    PassRef<CSSPrimitiveValue> createValue(const LengthSize& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
-    template<typename T> static PassRef<CSSPrimitiveValue> createValue(T value) { return CSSPrimitiveValue::create(value); }
+    Ref<CSSPrimitiveValue> createFontFamilyValue(const String&);
+    Ref<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.copyRef(); }
+    Ref<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.copyRef(); }
+    Ref<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.copyRef(); }
+    Ref<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
+    Ref<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
+    Ref<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
+    Ref<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
+    Ref<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }
+    Ref<CSSPrimitiveValue> createValue(const Length& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
+    Ref<CSSPrimitiveValue> createValue(const LengthSize& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
+    template<typename T> static Ref<CSSPrimitiveValue> createValue(T value) { return CSSPrimitiveValue::create(value); }
 
     void drain();
 

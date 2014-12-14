@@ -69,7 +69,7 @@ private:
 
     virtual void willAttachRenderers() override;
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual void toClipPath(Path&) override;
 
     void clearResourceReferences();

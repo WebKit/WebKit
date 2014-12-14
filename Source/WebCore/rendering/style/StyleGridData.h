@@ -43,8 +43,8 @@ typedef HashMap<unsigned, Vector<String>, WTF::IntHash<unsigned>, WTF::UnsignedW
 
 class StyleGridData : public RefCounted<StyleGridData> {
 public:
-    static PassRef<StyleGridData> create() { return adoptRef(*new StyleGridData); }
-    PassRef<StyleGridData> copy() const;
+    static Ref<StyleGridData> create() { return adoptRef(*new StyleGridData); }
+    Ref<StyleGridData> copy() const;
 
     bool operator==(const StyleGridData& o) const
     {

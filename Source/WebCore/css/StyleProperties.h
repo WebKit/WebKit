@@ -92,16 +92,16 @@ public:
     String getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;
 
-    PassRef<MutableStyleProperties> copyBlockProperties() const;
+    Ref<MutableStyleProperties> copyBlockProperties() const;
 
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, StyleSheetContents* contextStyleSheet) const;
 
-    WEBCORE_EXPORT PassRef<MutableStyleProperties> mutableCopy() const;
-    PassRef<ImmutableStyleProperties> immutableCopyIfNeeded() const;
+    WEBCORE_EXPORT Ref<MutableStyleProperties> mutableCopy() const;
+    Ref<ImmutableStyleProperties> immutableCopyIfNeeded() const;
 
-    PassRef<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
+    Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     
     String asText() const;
 
@@ -154,7 +154,7 @@ private:
 class ImmutableStyleProperties : public StyleProperties {
 public:
     WEBCORE_EXPORT ~ImmutableStyleProperties();
-    static PassRef<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
+    static Ref<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const { return m_arraySize; }
     bool isEmpty() const { return !propertyCount(); }
@@ -182,8 +182,8 @@ inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() co
 
 class MutableStyleProperties : public StyleProperties {
 public:
-    static PassRef<MutableStyleProperties> create(CSSParserMode = CSSQuirksMode);
-    static PassRef<MutableStyleProperties> create(const CSSProperty* properties, unsigned count);
+    static Ref<MutableStyleProperties> create(CSSParserMode = CSSQuirksMode);
+    static Ref<MutableStyleProperties> create(const CSSProperty* properties, unsigned count);
 
     WEBCORE_EXPORT ~MutableStyleProperties();
 

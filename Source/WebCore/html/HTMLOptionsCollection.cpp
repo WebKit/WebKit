@@ -31,7 +31,7 @@ HTMLOptionsCollection::HTMLOptionsCollection(HTMLSelectElement& select)
 {
 }
 
-PassRef<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& select, CollectionType)
+Ref<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& select, CollectionType)
 {
     return adoptRef(*new HTMLOptionsCollection(select));
 }

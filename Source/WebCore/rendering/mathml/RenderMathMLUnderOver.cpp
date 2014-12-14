@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
     
-RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, PassRef<RenderStyle> style)
+RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(element, WTF::move(style))
 {
     // Determine what kind of under/over expression we have by element name

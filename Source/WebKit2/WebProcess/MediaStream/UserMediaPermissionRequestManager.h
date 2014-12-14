@@ -23,7 +23,7 @@
 
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRef.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {

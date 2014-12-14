@@ -223,7 +223,7 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
         || InputType::shouldSubmitImplicitly(event);
 }
 
-RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderTextControlSingleLine>(element(), WTF::move(style));
 }

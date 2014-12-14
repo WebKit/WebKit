@@ -97,8 +97,8 @@ public:
     static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
     // Only to be used with string literals.
-    JS_EXPORT_PRIVATE static PassRef<StringImpl> add(VM*, const char*);
-    JS_EXPORT_PRIVATE static PassRef<StringImpl> add(ExecState*, const char*);
+    JS_EXPORT_PRIVATE static Ref<StringImpl> add(VM*, const char*);
+    JS_EXPORT_PRIVATE static Ref<StringImpl> add(ExecState*, const char*);
 
     void dump(PrintStream&) const;
 
@@ -111,12 +111,12 @@ private:
     static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
     static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
-    template <typename T> static PassRef<StringImpl> add(VM*, const T*, int length);
-    static PassRef<StringImpl> add8(VM*, const UChar*, int length);
+    template <typename T> static Ref<StringImpl> add(VM*, const T*, int length);
+    static Ref<StringImpl> add8(VM*, const UChar*, int length);
     template <typename T> ALWAYS_INLINE static bool canUseSingleCharacterString(T);
 
-    static PassRef<StringImpl> add(ExecState*, StringImpl*);
-    static PassRef<StringImpl> add(VM*, StringImpl*);
+    static Ref<StringImpl> add(ExecState*, StringImpl*);
+    static Ref<StringImpl> add(VM*, StringImpl*);
 
 #ifndef NDEBUG
     JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(ExecState*);
@@ -139,7 +139,7 @@ template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(UChar c)
 }
 
 template <typename T>
-PassRef<StringImpl> Identifier::add(VM* vm, const T* s, int length)
+Ref<StringImpl> Identifier::add(VM* vm, const T* s, int length)
 {
     if (length == 1) {
         T c = s[0];

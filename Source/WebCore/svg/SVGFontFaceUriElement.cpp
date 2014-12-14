@@ -54,7 +54,7 @@ SVGFontFaceUriElement::~SVGFontFaceUriElement()
         m_cachedFont->removeClient(this);
 }
 
-PassRef<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
+Ref<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
 {
     auto src = CSSFontFaceSrcValue::create(getAttribute(XLinkNames::hrefAttr));
     AtomicString value(fastGetAttribute(formatAttr));

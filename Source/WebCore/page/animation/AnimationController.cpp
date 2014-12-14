@@ -226,7 +226,7 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
     startUpdateStyleIfNeededDispatcher();
 }
 
-void AnimationControllerPrivate::addElementChangeToDispatch(PassRef<Element> element)
+void AnimationControllerPrivate::addElementChangeToDispatch(Ref<Element>&& element)
 {
     m_elementChangesToDispatch.append(WTF::move(element));
     ASSERT(!m_elementChangesToDispatch.last()->document().inPageCache());
@@ -522,20 +522,20 @@ void AnimationController::cancelAnimations(RenderElement& renderer)
         element->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
-PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& renderer, PassRef<RenderStyle> newStyle)
+Ref<RenderStyle> AnimationController::updateAnimations(RenderElement& renderer, Ref<RenderStyle>&& newStyle)
 {
     // Don't do anything if we're in the cache
     if (renderer.document().inPageCache())
-        return newStyle;
+        return WTF::move(newStyle);
 
     RenderStyle* oldStyle = renderer.hasInitializedStyle() ? &renderer.style() : nullptr;
 
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.get().animations() && !newStyle.get().transitions()))
-        return newStyle;
+        return WTF::move(newStyle);
 
     // Don't run transitions when printing.
     if (renderer.view().printing())
-        return newStyle;
+        return WTF::move(newStyle);
 
     // Fetch our current set of implicit animations from a hashtable.  We then compare them
     // against the animations in the style and make sure we're in sync.  If destination values

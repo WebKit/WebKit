@@ -34,8 +34,8 @@ static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 class RenderTableRow final : public RenderBox {
 public:
-    RenderTableRow(Element&, PassRef<RenderStyle>);
-    RenderTableRow(Document&, PassRef<RenderStyle>);
+    RenderTableRow(Element&, Ref<RenderStyle>&&);
+    RenderTableRow(Document&, Ref<RenderStyle>&&);
 
     RenderTableRow* nextRow() const;
     RenderTableRow* previousRow() const;

@@ -144,7 +144,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-RenderPtr<RenderElement> SVGRectElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGRectElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGRect>(*this, WTF::move(style));
 }

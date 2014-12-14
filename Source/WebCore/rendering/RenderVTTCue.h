@@ -40,7 +40,7 @@ class VTTCueBox;
 
 class RenderVTTCue final : public RenderBlockFlow {
 public:
-    RenderVTTCue(VTTCueBox&, PassRef<RenderStyle>);
+    RenderVTTCue(VTTCueBox&, Ref<RenderStyle>&&);
 
 private:
     virtual void layout() override;

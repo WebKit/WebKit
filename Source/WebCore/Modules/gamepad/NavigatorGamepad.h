@@ -53,7 +53,7 @@ public:
     void gamepadConnected(PlatformGamepad&);
     void gamepadDisconnected(PlatformGamepad&);
 
-    PassRef<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
+    Ref<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
 
 private:
     static const char* supplementName();

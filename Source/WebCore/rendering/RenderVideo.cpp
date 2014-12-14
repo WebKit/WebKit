@@ -48,7 +48,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderVideo::RenderVideo(HTMLVideoElement& element, PassRef<RenderStyle> style)
+RenderVideo::RenderVideo(HTMLVideoElement& element, Ref<RenderStyle>&& style)
     : RenderMedia(element, WTF::move(style))
 {
     setIntrinsicSize(calculateIntrinsicSize());

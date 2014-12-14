@@ -36,7 +36,7 @@ class HTMLVideoElement;
 
 class RenderVideo final : public RenderMedia {
 public:
-    RenderVideo(HTMLVideoElement&, PassRef<RenderStyle>);
+    RenderVideo(HTMLVideoElement&, Ref<RenderStyle>&&);
     virtual ~RenderVideo();
 
     HTMLVideoElement& videoElement() const;

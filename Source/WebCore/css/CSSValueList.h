@@ -34,19 +34,19 @@ public:
     typedef Vector<Ref<CSSValue>, 4>::iterator iterator;
     typedef Vector<Ref<CSSValue>, 4>::const_iterator const_iterator;
 
-    static PassRef<CSSValueList> createCommaSeparated()
+    static Ref<CSSValueList> createCommaSeparated()
     {
         return adoptRef(*new CSSValueList(CommaSeparator));
     }
-    static PassRef<CSSValueList> createSpaceSeparated()
+    static Ref<CSSValueList> createSpaceSeparated()
     {
         return adoptRef(*new CSSValueList(SpaceSeparator));
     }
-    static PassRef<CSSValueList> createSlashSeparated()
+    static Ref<CSSValueList> createSlashSeparated()
     {
         return adoptRef(*new CSSValueList(SlashSeparator));
     }
-    static PassRef<CSSValueList> createFromParserValueList(CSSParserValueList& list)
+    static Ref<CSSValueList> createFromParserValueList(CSSParserValueList& list)
     {
         return adoptRef(*new CSSValueList(list));
     }
@@ -62,8 +62,8 @@ public:
     iterator begin() { return m_values.begin(); }
     iterator end() { return m_values.end(); }
 
-    void append(PassRef<CSSValue>);
-    void prepend(PassRef<CSSValue>);
+    void append(Ref<CSSValue>&&);
+    void prepend(Ref<CSSValue>&&);
     bool removeAll(CSSValue*);
     bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();
@@ -89,12 +89,12 @@ private:
     Vector<Ref<CSSValue>, 4> m_values;
 };
 
-inline void CSSValueList::append(PassRef<CSSValue> value)
+inline void CSSValueList::append(Ref<CSSValue>&& value)
 {
     m_values.append(WTF::move(value));
 }
 
-inline void CSSValueList::prepend(PassRef<CSSValue> value)
+inline void CSSValueList::prepend(Ref<CSSValue>&& value)
 {
     m_values.insert(0, WTF::move(value));
 }

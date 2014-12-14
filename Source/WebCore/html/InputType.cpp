@@ -479,7 +479,7 @@ PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
     return element().form();
 }
 
-RenderPtr<RenderElement> InputType::createInputRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> InputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
     return RenderPtr<RenderElement>(RenderElement::createFor(element(), WTF::move(style)));
 }

@@ -55,7 +55,7 @@ private:
 
 class RenderFrameSet final : public RenderBox {
 public:
-    RenderFrameSet(HTMLFrameSetElement&, PassRef<RenderStyle>);
+    RenderFrameSet(HTMLFrameSetElement&, Ref<RenderStyle>&&);
     virtual ~RenderFrameSet();
 
     HTMLFrameSetElement& frameSetElement() const;

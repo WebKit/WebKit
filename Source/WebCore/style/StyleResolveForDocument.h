@@ -26,7 +26,7 @@
 #ifndef StyleResolveForDocument_h
 #define StyleResolveForDocument_h
 
-#include <wtf/PassRef.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ class RenderStyle;
 
 namespace Style {
 
-PassRef<RenderStyle> resolveForDocument(const Document&);
+Ref<RenderStyle> resolveForDocument(const Document&);
 
 }
 }

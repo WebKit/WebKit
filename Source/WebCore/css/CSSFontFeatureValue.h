@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSFontFeatureValue : public CSSValue {
 public:
-    static PassRef<CSSFontFeatureValue> create(const String& tag, int value)
+    static Ref<CSSFontFeatureValue> create(const String& tag, int value)
     {
         return adoptRef(*new CSSFontFeatureValue(tag, value));
     }

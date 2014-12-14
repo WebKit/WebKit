@@ -52,13 +52,13 @@ public:
     PassRefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
     // Helper methods for HTML editing.
-    PassRef<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
-    PassRef<MutableStyleProperties> copyProperties() const;
+    Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
+    Ref<MutableStyleProperties> copyProperties() const;
     PassRefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword() const;
     bool useFixedFontDefaultSize() const;
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
-    static PassRef<CSSValue> valueForFilter(const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
+    static Ref<CSSValue> valueForFilter(const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
 
 private:
     // The styled node is either the node passed into computedPropertyValue, or the
@@ -70,7 +70,7 @@ private:
     PassRefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout) const;
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
 
-    static PassRef<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
+    static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
 
     PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
@@ -115,7 +115,7 @@ private:
     virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) override;
     virtual String getPropertyValueInternal(CSSPropertyID) override;
     virtual bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) override;
-    virtual PassRef<MutableStyleProperties> copyProperties() const override;
+    virtual Ref<MutableStyleProperties> copyProperties() const override;
 
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 

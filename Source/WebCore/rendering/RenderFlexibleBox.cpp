@@ -66,7 +66,7 @@ struct RenderFlexibleBox::Violation {
 };
 
 
-RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> style)
+RenderFlexibleBox::RenderFlexibleBox(Element& element, Ref<RenderStyle>&& style)
     : RenderBlock(element, WTF::move(style), 0)
     , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
@@ -74,7 +74,7 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> styl
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Document& document, PassRef<RenderStyle> style)
+RenderFlexibleBox::RenderFlexibleBox(Document& document, Ref<RenderStyle>&& style)
     : RenderBlock(document, WTF::move(style), 0)
     , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-PassRef<BatteryManager> BatteryManager::create(Navigator* navigator)
+Ref<BatteryManager> BatteryManager::create(Navigator* navigator)
 {
     auto batteryManager = adoptRef(*new BatteryManager(navigator));
     batteryManager.get().suspendIfNeeded();

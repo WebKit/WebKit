@@ -45,7 +45,7 @@ namespace WebCore {
 // come before and after the span.
 class RenderMultiColumnSet final : public RenderRegionSet {
 public:
-    RenderMultiColumnSet(RenderFlowThread&, PassRef<RenderStyle>);
+    RenderMultiColumnSet(RenderFlowThread&, Ref<RenderStyle>&&);
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
     RenderMultiColumnFlowThread* multiColumnFlowThread() const { return static_cast<RenderMultiColumnFlowThread*>(flowThread()); }

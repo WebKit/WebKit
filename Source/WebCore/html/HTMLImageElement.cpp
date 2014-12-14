@@ -207,7 +207,7 @@ const AtomicString& HTMLImageElement::altText() const
     return fastGetAttribute(titleAttr);
 }
 
-RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     if (style.get().hasContent())
         return RenderElement::createFor(*this, WTF::move(style));

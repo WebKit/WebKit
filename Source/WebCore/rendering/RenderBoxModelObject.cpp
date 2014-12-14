@@ -172,12 +172,12 @@ bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Ima
     return view().imageQualityController().shouldPaintAtLowQuality(context, this, image, layer, size);
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderBoxModelObject::RenderBoxModelObject(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderLayerModelObject(element, WTF::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderBoxModelObject::RenderBoxModelObject(Document& document, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderLayerModelObject(document, WTF::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }

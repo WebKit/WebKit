@@ -428,7 +428,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     updateConversionData();
 }
 
-inline void StyleResolver::State::setStyle(PassRef<RenderStyle> style)
+inline void StyleResolver::State::setStyle(Ref<RenderStyle>&& style)
 {
     m_style = WTF::move(style);
     updateConversionData();
@@ -739,7 +739,7 @@ static inline bool isAtShadowBoundary(const Element* element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
+Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
     StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
@@ -811,7 +811,7 @@ PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyl
     return state.takeStyle();
 }
 
-PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
+Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     MatchResult result;
     result.addMatchedProperties(keyframe->properties());
@@ -985,7 +985,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
     return state.takeStyle();
 }
 
-PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
+Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
     m_state.initForStyleResolve(m_document, m_document.documentElement(), m_document.renderStyle());
 
@@ -1025,7 +1025,7 @@ PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     return m_state.takeStyle();
 }
 
-PassRef<RenderStyle> StyleResolver::defaultStyleForElement()
+Ref<RenderStyle> StyleResolver::defaultStyleForElement()
 {
     m_state.setStyle(RenderStyle::create());
     // Make sure our fonts are initialized if we don't inherit them from our parent style.

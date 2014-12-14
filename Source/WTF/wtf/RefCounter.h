@@ -57,7 +57,7 @@ public:
     WTF_EXPORT_PRIVATE RefCounter(std::function<void()> = []() { });
     WTF_EXPORT_PRIVATE ~RefCounter();
 
-    PassRef<Count> count() const
+    Ref<Count> count() const
     {
         return *m_count;
     }

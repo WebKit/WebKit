@@ -57,7 +57,7 @@ BatteryProvider::~BatteryProvider()
     WKBatteryManagerSetProvider(m_batteryManager.get(), 0);
 }
 
-PassRef<BatteryProvider> BatteryProvider::create(WKContextRef context)
+Ref<BatteryProvider> BatteryProvider::create(WKContextRef context)
 {
     ASSERT(context);
     return adoptRef(*new BatteryProvider(context));

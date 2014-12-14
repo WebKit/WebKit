@@ -470,7 +470,7 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     if (isOutermostSVGSVGElement())
         return createRenderer<RenderSVGRoot>(*this, WTF::move(style));

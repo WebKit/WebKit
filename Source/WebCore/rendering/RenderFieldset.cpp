@@ -34,7 +34,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFieldset::RenderFieldset(HTMLFieldSetElement& element, PassRef<RenderStyle> style)
+RenderFieldset::RenderFieldset(HTMLFieldSetElement& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
 {
 }

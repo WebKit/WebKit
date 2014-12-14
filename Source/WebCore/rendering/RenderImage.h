@@ -35,8 +35,8 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    RenderImage(Element&, PassRef<RenderStyle>, StyleImage* = nullptr, const float = 1.0f);
-    RenderImage(Document&, PassRef<RenderStyle>, StyleImage* = nullptr);
+    RenderImage(Element&, Ref<RenderStyle>&&, StyleImage* = nullptr, const float = 1.0f);
+    RenderImage(Document&, Ref<RenderStyle>&&, StyleImage* = nullptr);
     virtual ~RenderImage();
 
     RenderImageResource& imageResource() { return *m_imageResource; }

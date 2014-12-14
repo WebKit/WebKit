@@ -72,7 +72,7 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
     return supplement;
 }
 
-PassRef<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platformGamepad)
+Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platformGamepad)
 {
     unsigned index = platformGamepad.index();
     if (index >= m_gamepads.size() || !m_gamepads[index])

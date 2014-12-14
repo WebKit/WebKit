@@ -66,7 +66,7 @@ WebKitNamedFlow* NamedFlowCollection::flowByName(const String& flowName)
     return *it;
 }
 
-PassRef<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String& flowName)
+Ref<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String& flowName)
 {
     NamedFlowSet::iterator it = m_namedFlows.find<String, NamedFlowHashTranslator>(flowName);
     if (it != m_namedFlows.end()) {

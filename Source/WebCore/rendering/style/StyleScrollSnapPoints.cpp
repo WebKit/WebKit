@@ -64,7 +64,7 @@ inline StyleScrollSnapPoints::StyleScrollSnapPoints(const StyleScrollSnapPoints&
 {
 }
 
-PassRef<StyleScrollSnapPoints> StyleScrollSnapPoints::copy() const
+Ref<StyleScrollSnapPoints> StyleScrollSnapPoints::copy() const
 {
     return adoptRef(*new StyleScrollSnapPoints(*this));
 }

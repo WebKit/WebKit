@@ -65,7 +65,7 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& d
     ASSERT(hasTagName(summaryTag));
 }
 
-RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderBlockFlow>(*this, WTF::move(style));
 }

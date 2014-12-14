@@ -35,7 +35,7 @@ typedef int ExceptionCode;
 
 class HTMLOptionsCollection final : public HTMLCollection {
 public:
-    static PassRef<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
+    static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
     HTMLSelectElement& selectElement() { return downcast<HTMLSelectElement>(ownerNode()); }
     const HTMLSelectElement& selectElement() const { return downcast<HTMLSelectElement>(ownerNode()); }

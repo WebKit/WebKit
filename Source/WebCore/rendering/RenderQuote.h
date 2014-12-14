@@ -29,7 +29,7 @@ namespace WebCore {
 
 class RenderQuote final : public RenderInline {
 public:
-    RenderQuote(Document&, PassRef<RenderStyle>, QuoteType);
+    RenderQuote(Document&, Ref<RenderStyle>&&, QuoteType);
     virtual ~RenderQuote();
 
     void attachQuote();

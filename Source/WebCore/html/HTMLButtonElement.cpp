@@ -57,7 +57,7 @@ void HTMLButtonElement::setType(const AtomicString& type)
     setAttribute(typeAttr, type);
 }
 
-RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderButton>(*this, WTF::move(style));
 }

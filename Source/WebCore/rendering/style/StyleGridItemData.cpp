@@ -53,7 +53,7 @@ inline StyleGridItemData::StyleGridItemData(const StyleGridItemData& o)
 {
 }
 
-PassRef<StyleGridItemData> StyleGridItemData::copy() const
+Ref<StyleGridItemData> StyleGridItemData::copy() const
 {
     return adoptRef(*new StyleGridItemData(*this));
 }

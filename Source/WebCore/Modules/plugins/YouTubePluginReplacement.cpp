@@ -67,7 +67,7 @@ YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, co
         m_attributes.add(paramNames[i], paramValues[i]);
 }
 
-RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, PassRef<RenderStyle> style)
+RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlugInElement& plugin, Ref<RenderStyle>&& style)
 {
     ASSERT_UNUSED(plugin, m_parentElement == &plugin);
 

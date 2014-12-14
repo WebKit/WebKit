@@ -80,7 +80,7 @@ static HashMap<const RenderObject*, ControlStates*>& controlStatesRendererMap()
     return map;
 }
 
-inline RenderElement::RenderElement(ContainerNode& elementOrDocument, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderObject(elementOrDocument)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
@@ -97,12 +97,12 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, PassRef<Re
 {
 }
 
-RenderElement::RenderElement(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderElement::RenderElement(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(element), WTF::move(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderElement::RenderElement(Document& document, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(document), WTF::move(style), baseTypeFlags)
 {
 }
@@ -139,7 +139,7 @@ RenderElement::~RenderElement()
         view().removeRendererWithPausedImageAnimations(*this);
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<RenderStyle> style)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, Ref<RenderStyle>&& style)
 {
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
@@ -392,7 +392,7 @@ void RenderElement::initializeStyle()
     // have their parent set before getting a call to initializeStyle() :|
 }
 
-void RenderElement::setStyle(PassRef<RenderStyle> style)
+void RenderElement::setStyle(Ref<RenderStyle>&& style)
 {
     // FIXME: Should change RenderView so it can use initializeStyle too.
     // If we do that, we can assert m_hasInitializedStyle unconditionally,

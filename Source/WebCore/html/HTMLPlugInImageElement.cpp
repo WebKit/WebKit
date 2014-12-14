@@ -189,7 +189,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     return false;
 }
 
-RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     ASSERT(!document().inPageCache());
 

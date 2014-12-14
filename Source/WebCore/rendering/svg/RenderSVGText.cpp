@@ -53,7 +53,7 @@
 
 namespace WebCore {
 
-RenderSVGText::RenderSVGText(SVGTextElement& element, PassRef<RenderStyle> style)
+RenderSVGText::RenderSVGText(SVGTextElement& element, Ref<RenderStyle>&& style)
     : RenderSVGBlock(element, WTF::move(style))
     , m_needsReordering(false)
     , m_needsPositioningValuesUpdate(false)

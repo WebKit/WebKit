@@ -191,7 +191,7 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-static PassRef<CSSPrimitiveValue> createPrimitiveValuePair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
+static Ref<CSSPrimitiveValue> createPrimitiveValuePair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
 {
     return cssValuePool().createValue(Pair::create(first, second));
 }
@@ -1393,14 +1393,14 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
     m_selectorListForParseSelector = nullptr;
 }
 
-PassRef<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
+Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
 {
     CSSParserContext context = element->document().elementSheet().contents().parserContext();
     context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document().inQuirksMode());
     return CSSParser(context).parseDeclaration(string, &element->document().elementSheet().contents());
 }
 
-PassRef<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
+Ref<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
 
@@ -1411,7 +1411,7 @@ PassRef<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& stri
     if (m_hasFontFaceOnlyValues)
         deleteFontFaceOnlyValues();
 
-    PassRef<ImmutableStyleProperties> style = createStyleProperties();
+    Ref<ImmutableStyleProperties> style = createStyleProperties();
     clearProperties();
     return style;
 }
@@ -1506,7 +1506,7 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
     }
 }
 
-PassRef<ImmutableStyleProperties> CSSParser::createStyleProperties()
+Ref<ImmutableStyleProperties> CSSParser::createStyleProperties()
 {
     std::bitset<numCSSProperties> seenProperties;
     size_t unusedEntries = m_parsedProperties.size();
@@ -1704,7 +1704,7 @@ bool CSSParser::validUnit(CSSParserValue& value, Units unitflags, CSSParserMode 
     return b;
 }
 
-inline PassRef<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSParserValue& value)
+inline Ref<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSParserValue& value)
 {
     if (m_parsedCalculation) {
         ASSERT(isCalculation(value));
@@ -1724,7 +1724,7 @@ inline PassRef<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSPars
     return cssValuePool().createValue(value.fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value.unit));
 }
 
-inline PassRef<CSSPrimitiveValue> CSSParser::createPrimitiveStringValue(CSSParserValue& value)
+inline Ref<CSSPrimitiveValue> CSSParser::createPrimitiveStringValue(CSSParserValue& value)
 {
     ASSERT(value.unit == CSSPrimitiveValue::CSS_STRING || value.unit == CSSPrimitiveValue::CSS_IDENT);
     return cssValuePool().createValue(value.string, CSSPrimitiveValue::CSS_STRING);
@@ -3128,7 +3128,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     return false;
 }
 
-void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval)
+void CSSParser::addFillValue(RefPtr<CSSValue>& lval, Ref<CSSValue>&& rval)
 {
     if (!lval) {
         lval = WTF::move(rval);
@@ -3436,7 +3436,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
     return true;
 }
 
-void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval)
+void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, Ref<CSSValue>&& rval)
 {
     if (!lval) {
         lval = WTF::move(rval);

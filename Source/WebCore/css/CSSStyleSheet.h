@@ -49,9 +49,9 @@ typedef int ExceptionCode;
 
 class CSSStyleSheet final : public StyleSheet {
 public:
-    static PassRef<CSSStyleSheet> create(PassRef<StyleSheetContents>, CSSImportRule* ownerRule = 0);
-    static PassRef<CSSStyleSheet> create(PassRef<StyleSheetContents>, Node* ownerNode);
-    static PassRef<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
+    static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = 0);
+    static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node* ownerNode);
+    static Ref<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
 
@@ -118,8 +118,8 @@ public:
     void detachFromDocument() { m_ownerNode = nullptr; }
 
 private:
-    CSSStyleSheet(PassRef<StyleSheetContents>, CSSImportRule* ownerRule);
-    CSSStyleSheet(PassRef<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);
+    CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);
+    CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, bool isInlineStylesheet);
 
     virtual bool isCSSStyleSheet() const override { return true; }
     virtual String type() const override { return ASCIILiteral("text/css"); }

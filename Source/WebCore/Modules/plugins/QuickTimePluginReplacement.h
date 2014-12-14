@@ -54,7 +54,7 @@ public:
     virtual JSC::JSObject* scriptObject() override { return m_scriptObject; }
 
     virtual bool willCreateRenderer() override { return m_mediaElement; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&) override;
 
     HTMLVideoElement* parentElement() { return m_mediaElement.get(); }
 

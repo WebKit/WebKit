@@ -43,7 +43,7 @@ namespace WebCore {
 
 using namespace std;
 
-RenderRubyRun::RenderRubyRun(Document& document, PassRef<RenderStyle> style)
+RenderRubyRun::RenderRubyRun(Document& document, Ref<RenderStyle>&& style)
     : RenderBlockFlow(document, WTF::move(style))
 {
     setReplaced(true);

@@ -214,7 +214,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 {
 }
 
-PassRef<StyleRareInheritedData> StyleRareInheritedData::copy() const
+Ref<StyleRareInheritedData> StyleRareInheritedData::copy() const
 {
     return adoptRef(*new StyleRareInheritedData(*this));
 }

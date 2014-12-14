@@ -178,7 +178,7 @@ public:
     WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const LChar*, unsigned length);
     WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const UChar*, unsigned length);
     ALWAYS_INLINE static RefPtr<StringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); };
-    WTF_EXPORT_STRING_API static PassRef<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
     WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const UChar*);
     WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<StringImpl> add(StringImpl* string)
@@ -189,7 +189,7 @@ public:
         }
         return addSlowCase(*string);
     }
-    WTF_EXPORT_STRING_API static PassRef<StringImpl> addFromLiteralData(const char* characters, unsigned length);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> addFromLiteralData(const char* characters, unsigned length);
 #if USE(CF)
     WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(CFStringRef);
 #endif
@@ -214,8 +214,8 @@ private:
 
     String m_string;
     
-    WTF_EXPORT_STRING_API static PassRef<StringImpl> addSlowCase(StringImpl&);
-    WTF_EXPORT_STRING_API static PassRef<StringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> addSlowCase(StringImpl&);
+    WTF_EXPORT_STRING_API static Ref<StringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
 
     WTF_EXPORT_STRING_API static AtomicStringImpl* findSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);

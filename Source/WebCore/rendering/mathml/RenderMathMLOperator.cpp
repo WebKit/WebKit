@@ -1135,7 +1135,7 @@ static const UChar horizontalOperators[] = {
 
 }
 
-RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style)
+RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, Ref<RenderStyle>&& style)
     : RenderMathMLToken(element, WTF::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
@@ -1145,7 +1145,7 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<Rende
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderStyle> style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
+RenderMathMLOperator::RenderMathMLOperator(Document& document, Ref<RenderStyle>&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
     : RenderMathMLToken(document, WTF::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)

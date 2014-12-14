@@ -293,7 +293,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderElement* renderer, Rende
         m_keyframeAnimations.remove(animsToBeRemoved[j]);
 }
 
-PassRef<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, RenderStyle* currentStyle, RenderStyle& targetStyle)
+Ref<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, RenderStyle* currentStyle, RenderStyle& targetStyle)
 {
     RefPtr<RenderStyle> resultStyle;
 
@@ -322,7 +322,9 @@ PassRef<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, Render
             keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, resultStyle);
     }
 
-    return resultStyle ? resultStyle.releaseNonNull() : targetStyle;
+    if (resultStyle)
+        return resultStyle.releaseNonNull();
+    return targetStyle;
 }
 
 PassRefPtr<RenderStyle> CompositeAnimation::getAnimatedStyle() const

@@ -43,7 +43,7 @@ class Document;
 class CSSCrossfadeValue : public CSSImageGeneratorValue {
     friend class CrossfadeSubimageObserverProxy;
 public:
-    static PassRef<CSSCrossfadeValue> create(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue)
+    static Ref<CSSCrossfadeValue> create(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue)
     {
         return adoptRef(*new CSSCrossfadeValue(fromValue, toValue));
     }

@@ -38,7 +38,7 @@ PassRefPtr<SVGFontFaceNameElement> SVGFontFaceNameElement::create(const Qualifie
     return adoptRef(new SVGFontFaceNameElement(tagName, document));
 }
 
-PassRef<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const
+Ref<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const
 {
     return CSSFontFaceSrcValue::createLocal(fastGetAttribute(SVGNames::nameAttr));
 }

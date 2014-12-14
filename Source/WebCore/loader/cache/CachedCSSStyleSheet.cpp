@@ -170,7 +170,7 @@ PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(cons
     return m_parsedStyleSheetCache;
 }
 
-void CachedCSSStyleSheet::saveParsedStyleSheet(PassRef<StyleSheetContents> sheet)
+void CachedCSSStyleSheet::saveParsedStyleSheet(Ref<StyleSheetContents>&& sheet)
 {
     ASSERT(sheet.get().isCacheable());
 

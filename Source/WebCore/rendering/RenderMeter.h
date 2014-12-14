@@ -32,7 +32,7 @@ class HTMLMeterElement;
 
 class RenderMeter final : public RenderBlockFlow {
 public:
-    RenderMeter(HTMLElement&, PassRef<RenderStyle>);
+    RenderMeter(HTMLElement&, Ref<RenderStyle>&&);
     virtual ~RenderMeter();
 
     HTMLMeterElement* meterElement() const;

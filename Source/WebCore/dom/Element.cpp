@@ -1326,7 +1326,7 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE;
 }
 
-RenderPtr<RenderElement> Element::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> Element::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return RenderElement::createFor(*this, WTF::move(style));
 }

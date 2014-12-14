@@ -42,7 +42,7 @@ public:
     bool operator==(const CalcExpressionNode&) const { ASSERT_NOT_REACHED(); return false; }
 };
 
-static PassRef<WebCore::CalculationValue> createTestValue()
+static Ref<WebCore::CalculationValue> createTestValue()
 {
     auto node = std::make_unique<CalculationDeletionTestNode>();
     return WebCore::CalculationValue::create(WTF::move(node), WebCore::CalculationRangeAll);

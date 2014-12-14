@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-RenderRegion::RenderRegion(Element& element, PassRef<RenderStyle> style, RenderFlowThread* flowThread)
+RenderRegion::RenderRegion(Element& element, Ref<RenderStyle>&& style, RenderFlowThread* flowThread)
     : RenderBlockFlow(element, WTF::move(style))
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(nullptr)
@@ -56,7 +56,7 @@ RenderRegion::RenderRegion(Element& element, PassRef<RenderStyle> style, RenderF
 {
 }
 
-RenderRegion::RenderRegion(Document& document, PassRef<RenderStyle> style, RenderFlowThread* flowThread)
+RenderRegion::RenderRegion(Document& document, Ref<RenderStyle>&& style, RenderFlowThread* flowThread)
     : RenderBlockFlow(document, WTF::move(style))
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(nullptr)

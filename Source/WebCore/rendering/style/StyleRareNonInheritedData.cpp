@@ -192,7 +192,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 {
 }
 
-PassRef<StyleRareNonInheritedData> StyleRareNonInheritedData::copy() const
+Ref<StyleRareNonInheritedData> StyleRareNonInheritedData::copy() const
 {
     return adoptRef(*new StyleRareNonInheritedData(*this));
 }

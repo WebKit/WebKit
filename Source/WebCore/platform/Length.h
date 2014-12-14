@@ -52,7 +52,7 @@ public:
     Length(float value, LengthType, bool hasQuirk = false);
     Length(double value, LengthType, bool hasQuirk = false);
 
-    WEBCORE_EXPORT explicit Length(PassRef<CalculationValue>);
+    WEBCORE_EXPORT explicit Length(Ref<CalculationValue>&&);
 
     Length(const Length&);
     Length(Length&&);

@@ -43,7 +43,7 @@ PassRefPtr<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tag
     return adoptRef(new MathMLMathElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderMathMLMath>(*this, WTF::move(style));
 }

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class UserMessageHandler : public RefCounted<UserMessageHandler>, public FrameDestructionObserver {
 public:
-    static PassRef<UserMessageHandler> create(Frame& frame, UserMessageHandlerDescriptor& descriptor)
+    static Ref<UserMessageHandler> create(Frame& frame, UserMessageHandlerDescriptor& descriptor)
     {
         return adoptRef(*new UserMessageHandler(frame, descriptor));
     }

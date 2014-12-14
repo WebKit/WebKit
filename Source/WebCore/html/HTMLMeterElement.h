@@ -70,7 +70,7 @@ private:
 
     virtual bool supportLabels() const override { return true; }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual bool childShouldCreateRenderer(const Node&) const override;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
 

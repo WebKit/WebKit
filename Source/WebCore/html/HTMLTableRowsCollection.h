@@ -38,7 +38,7 @@ class HTMLTableRowElement;
 
 class HTMLTableRowsCollection final : public HTMLCollection {
 public:
-    static PassRef<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
+    static Ref<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
 
     HTMLTableElement& tableElement() { return downcast<HTMLTableElement>(ownerNode()); }
     const HTMLTableElement& tableElement() const { return downcast<HTMLTableElement>(ownerNode()); }

@@ -44,7 +44,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderListItem::RenderListItem(Element& element, PassRef<RenderStyle> style)
+RenderListItem::RenderListItem(Element& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
     , m_marker(nullptr)
     , m_hasExplicitValue(false)

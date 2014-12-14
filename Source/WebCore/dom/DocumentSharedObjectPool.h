@@ -39,7 +39,7 @@ class ShareableElementData;
 
 class DocumentSharedObjectPool {
 public:
-    PassRef<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
+    Ref<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
 
 private:
     typedef HashMap<unsigned, RefPtr<ShareableElementData>, AlreadyHashed> ShareableElementDataCache;

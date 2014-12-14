@@ -35,10 +35,10 @@ class TextRun;
 // For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject : public RenderWidget {
 public:
-    RenderEmbeddedObject(HTMLFrameOwnerElement&, PassRef<RenderStyle>);
+    RenderEmbeddedObject(HTMLFrameOwnerElement&, Ref<RenderStyle>&&);
     virtual ~RenderEmbeddedObject();
 
-    static RenderPtr<RenderEmbeddedObject> createForApplet(HTMLAppletElement&, PassRef<RenderStyle>);
+    static RenderPtr<RenderEmbeddedObject> createForApplet(HTMLAppletElement&, Ref<RenderStyle>&&);
 
     enum PluginUnavailabilityReason {
         PluginMissing,

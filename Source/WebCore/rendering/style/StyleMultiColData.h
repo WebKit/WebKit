@@ -37,8 +37,8 @@ namespace WebCore {
 
 class StyleMultiColData : public RefCounted<StyleMultiColData> {
 public:
-    static PassRef<StyleMultiColData> create() { return adoptRef(*new StyleMultiColData); }
-    PassRef<StyleMultiColData> copy() const;
+    static Ref<StyleMultiColData> create() { return adoptRef(*new StyleMultiColData); }
+    Ref<StyleMultiColData> copy() const;
     
     bool operator==(const StyleMultiColData& o) const;
     bool operator!=(const StyleMultiColData &o) const

@@ -53,7 +53,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, PassRef<RenderStyle> style)
+RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, Ref<RenderStyle>&& style)
     : RenderTextControl(element, WTF::move(style))
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextLogicalHeight(-1)
@@ -364,7 +364,7 @@ LayoutUnit RenderTextControlSingleLine::computeControlLogicalHeight(LayoutUnit l
     return lineHeight + nonContentHeight;
 }
 
-PassRef<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
+Ref<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
     auto textBlockStyle = RenderStyle::create();
     textBlockStyle.get().inheritFrom(startStyle);
@@ -387,7 +387,7 @@ PassRef<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const Ren
     return textBlockStyle;
 }
 
-PassRef<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const RenderStyle* startStyle) const
+Ref<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const RenderStyle* startStyle) const
 {
     auto innerBlockStyle = RenderStyle::create();
     innerBlockStyle.get().inheritFrom(startStyle);

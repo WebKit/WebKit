@@ -36,7 +36,7 @@ namespace WebCore {
 
 class UserMediaClientRequestNotifier : public MockNotifier {
 public:
-    UserMediaClientRequestNotifier(PassRef<UserMediaRequest> request, bool requestSuccess)
+    UserMediaClientRequestNotifier(Ref<UserMediaRequest>&& request, bool requestSuccess)
         : m_request(WTF::move(request))
         , m_requestSuccess(requestSuccess)
     {
@@ -60,7 +60,7 @@ public:
     public:
     virtual void pageDestroyed() override { }
 
-    virtual void requestPermission(PassRef<UserMediaRequest> request) override
+    virtual void requestPermission(Ref<UserMediaRequest>&& request) override
     {
         RefPtr<UserMediaClientRequestNotifier> notifier = adoptRef(new UserMediaClientRequestNotifier(WTF::move(request), true));
         m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));

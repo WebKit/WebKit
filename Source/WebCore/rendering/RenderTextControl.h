@@ -35,7 +35,7 @@ public:
     virtual ~RenderTextControl();
 
     WEBCORE_EXPORT HTMLTextFormControlElement& textFormControlElement() const;
-    virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
+    virtual Ref<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
 #if PLATFORM(IOS)
     bool canScroll() const;
@@ -45,7 +45,7 @@ public:
 #endif
 
 protected:
-    RenderTextControl(HTMLTextFormControlElement&, PassRef<RenderStyle>);
+    RenderTextControl(HTMLTextFormControlElement&, Ref<RenderStyle>&&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     TextControlInnerTextElement* innerTextElement() const;
@@ -93,7 +93,7 @@ private:
 // anymore.
 class RenderTextControlInnerContainer final : public RenderFlexibleBox {
 public:
-    explicit RenderTextControlInnerContainer(Element& element, PassRef<RenderStyle> style)
+    explicit RenderTextControlInnerContainer(Element& element, Ref<RenderStyle>&& style)
         : RenderFlexibleBox(element, WTF::move(style))
     { }
     virtual ~RenderTextControlInnerContainer() { }

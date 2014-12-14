@@ -43,7 +43,7 @@ protected:
     void childrenChanged(const ChildChange&);
 
 private:
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 };
     
 }

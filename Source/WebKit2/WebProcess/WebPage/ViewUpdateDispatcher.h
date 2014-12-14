@@ -30,14 +30,14 @@
 
 #include "VisibleContentRectUpdateInfo.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRef.h>
+#include <wtf/Ref.h>
 #include <wtf/TCSpinLock.h>
 
 namespace WebKit {
 
 class ViewUpdateDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static PassRef<ViewUpdateDispatcher> create();
+    static Ref<ViewUpdateDispatcher> create();
     ~ViewUpdateDispatcher();
 
     void initializeConnection(IPC::Connection*);

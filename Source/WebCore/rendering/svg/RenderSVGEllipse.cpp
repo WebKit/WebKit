@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, PassRef<RenderStyle> style)
+RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, Ref<RenderStyle>&& style)
     : RenderSVGShape(element, WTF::move(style))
     , m_usePathFallback(false)
 {

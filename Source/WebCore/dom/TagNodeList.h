@@ -33,13 +33,13 @@ namespace WebCore {
 // NodeList that limits to a particular tag.
 class TagNodeList final : public CachedLiveNodeList<TagNodeList> {
 public:
-    static PassRef<TagNodeList> create(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
+    static Ref<TagNodeList> create(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         ASSERT(namespaceURI != starAtom);
         return adoptRef(*new TagNodeList(rootNode, namespaceURI, localName));
     }
 
-    static PassRef<TagNodeList> create(ContainerNode& rootNode, const AtomicString& localName)
+    static Ref<TagNodeList> create(ContainerNode& rootNode, const AtomicString& localName)
     {
         return adoptRef(*new TagNodeList(rootNode, starAtom, localName));
     }
@@ -67,7 +67,7 @@ inline bool TagNodeList::elementMatches(Element& element) const
 
 class HTMLTagNodeList final : public CachedLiveNodeList<HTMLTagNodeList> {
 public:
-    static PassRef<HTMLTagNodeList> create(ContainerNode& rootNode, const AtomicString& localName)
+    static Ref<HTMLTagNodeList> create(ContainerNode& rootNode, const AtomicString& localName)
     {
         return adoptRef(*new HTMLTagNodeList(rootNode, localName));
     }

@@ -50,8 +50,8 @@ LengthSize defaultScrollSnapDestination();
 
 class StyleScrollSnapPoints : public RefCounted<StyleScrollSnapPoints> {
 public:
-    static PassRef<StyleScrollSnapPoints> create() { return adoptRef(*new StyleScrollSnapPoints); }
-    PassRef<StyleScrollSnapPoints> copy() const;
+    static Ref<StyleScrollSnapPoints> create() { return adoptRef(*new StyleScrollSnapPoints); }
+    Ref<StyleScrollSnapPoints> copy() const;
 
     ScrollSnapPoints xPoints;
     ScrollSnapPoints yPoints;

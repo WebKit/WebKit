@@ -35,12 +35,12 @@ struct CSSParserFunction;
 
 class CSSFunctionValue : public CSSValue {
 public:
-    static PassRef<CSSFunctionValue> create(CSSParserFunction* function)
+    static Ref<CSSFunctionValue> create(CSSParserFunction* function)
     {
         return adoptRef(*new CSSFunctionValue(function));
     }
 
-    static PassRef<CSSFunctionValue> create(String name, PassRefPtr<CSSValueList> args)
+    static Ref<CSSFunctionValue> create(String name, PassRefPtr<CSSValueList> args)
     {
         return adoptRef(*new CSSFunctionValue(name, args));
     }

@@ -49,7 +49,7 @@ inline StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
 {
 }
 
-PassRef<StyleFlexibleBoxData> StyleFlexibleBoxData::copy() const
+Ref<StyleFlexibleBoxData> StyleFlexibleBoxData::copy() const
 {
     return adoptRef(*new StyleFlexibleBoxData(*this));
 }

@@ -57,7 +57,7 @@ public:
 private:
     ProgressInnerElement(Document&);
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
     virtual bool rendererIsNeeded(const RenderStyle&) override;
 };
 

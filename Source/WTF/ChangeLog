@@ -1,3 +1,117 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Replace PassRef with Ref/Ref&& across the board.
+        <https://webkit.org/b/139587>
+
+        Reviewed by Darin Adler.
+
+        Kill the PassRef class and replace it by Ref/Ref&&.
+        Usage is simple:
+
+            - For locals and members, keep using Ref<T>.
+            - For return types, use Ref<T>.
+            - For (ownership-transferring) arguments, use Ref<T>&&.
+
+        When passing to a Ref&&, use WTF::move() to mobilize the value
+        at the call site, e.g:
+
+            void myFunction(Ref<Foo>&&);
+
+            Ref<Foo> myFoo(Foo::create());
+            myFunction(WTF::move(myFoo));
+            // 'myFoo' is invalid from this point forward.
+
+        As you can see, it works a lot like PassRefPtr, but unlike PassRefPtr
+        it won't surprise you by becoming null *unless* you WTF::move it.
+
+        I've also added a Ref::copyRef() for instances where you want to
+        return a Ref *without* transferring ownership, e.g code like:
+
+            Ref<Foo> foo() { return m_foo; }
+
+        ... now becomes ...
+
+            Ref<Foo> foo() { return m_foo.copyRef(); }
+
+        This makes it explicit that a refcount bump will occur.
+
+        Finally, do note that unlike last year's PassRef, Ref&& does not
+        require you to move it to avoid leaking; it will clean itself up.
+
+        * wtf/PassRef.h:
+        (WTF::adopted): Deleted.
+        (WTF::PassRef<T>::PassRef): Deleted.
+        (WTF::PassRef<T>::~PassRef): Deleted.
+        (WTF::PassRef<T>::get): Deleted.
+        (WTF::PassRef<T>::ptr): Deleted.
+        (WTF::PassRef<T>::leakRef): Deleted.
+        (WTF::adoptRef): Deleted.
+        (WTF::createRefCounted): Deleted.
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::PassRefPtr):
+        * wtf/Ref.h:
+        (WTF::adopted):
+        (WTF::Ref::~Ref):
+        (WTF::Ref::Ref):
+        (WTF::Ref::operator=):
+        (WTF::Ref::operator->):
+        (WTF::Ref::ptr):
+        (WTF::Ref::get):
+        (WTF::Ref::operator T&):
+        (WTF::Ref::operator const T&):
+        (WTF::Ref<T>::replace):
+        (WTF::adoptRef):
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::count):
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::releaseNonNull):
+        (WTF::RefPtr<T>::RefPtr):
+        (WTF::=):
+        * wtf/text/AtomicString.cpp:
+        (WTF::addToStringTable):
+        (WTF::AtomicString::add):
+        (WTF::AtomicString::addFromLiteralData):
+        (WTF::AtomicString::addSlowCase):
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+        (WTF::StringImpl::createWithoutCopying):
+        (WTF::StringImpl::createUninitializedInternal):
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        (WTF::StringImpl::createUninitialized):
+        (WTF::StringImpl::reallocateInternal):
+        (WTF::StringImpl::reallocate):
+        (WTF::StringImpl::createInternal):
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::create8BitIfPossible):
+        (WTF::StringImpl::substring):
+        (WTF::StringImpl::lower):
+        (WTF::StringImpl::upper):
+        (WTF::StringImpl::fill):
+        (WTF::StringImpl::foldCase):
+        (WTF::StringImpl::convertToASCIILowercase):
+        (WTF::StringImpl::stripMatchedCharacters):
+        (WTF::StringImpl::stripWhiteSpace):
+        (WTF::StringImpl::removeCharacters):
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        (WTF::StringImpl::simplifyWhiteSpace):
+        (WTF::StringImpl::replace):
+        (WTF::StringImpl::adopt):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::create8BitIfPossible):
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::createSubstringSharingImpl8):
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::createFromLiteral):
+        (WTF::StringImpl::createEmptyUnique):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::replace):
+        (WTF::StringImpl::constructInternal<LChar>):
+        (WTF::StringImpl::constructInternal<UChar>):
+        (WTF::StringImpl::isolatedCopy):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+
 2014-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Please disable the webkitFirstVersionWithInitConstructorSupport check on Apple TV

@@ -37,7 +37,7 @@ class CSSPrimitiveValue;
 
 class CSSReflectValue : public CSSValue {
 public:
-    static PassRef<CSSReflectValue> create(PassRefPtr<CSSPrimitiveValue> direction,
+    static Ref<CSSReflectValue> create(PassRefPtr<CSSPrimitiveValue> direction,
         PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)
     {
         return adoptRef(*new CSSReflectValue(direction, offset, mask));

@@ -55,7 +55,7 @@ static bool isPrescript(const RenderObject& renderObject)
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(Element& element, PassRef<RenderStyle> style)
+RenderMathMLScripts::RenderMathMLScripts(Element& element, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(element, WTF::move(style))
     , m_baseWrapper(0)
 {

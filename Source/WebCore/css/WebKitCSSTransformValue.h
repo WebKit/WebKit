@@ -60,7 +60,7 @@ public:
         Matrix3DTransformOperation
     };
 
-    static PassRef<WebKitCSSTransformValue> create(TransformOperationType type)
+    static Ref<WebKitCSSTransformValue> create(TransformOperationType type)
     {
         return adoptRef(*new WebKitCSSTransformValue(type));
     }

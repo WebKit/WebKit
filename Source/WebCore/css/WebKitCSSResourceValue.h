@@ -35,7 +35,7 @@ namespace WebCore {
 
 class WebKitCSSResourceValue : public CSSValue {
 public:
-    static PassRef<WebKitCSSResourceValue> create(PassRefPtr<CSSValue> resourceValue)
+    static Ref<WebKitCSSResourceValue> create(PassRefPtr<CSSValue> resourceValue)
     {
         return adoptRef(*new WebKitCSSResourceValue(resourceValue));
     }

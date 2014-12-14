@@ -403,13 +403,13 @@ public:
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
-    void setStorageNamespaceProvider(PassRef<StorageNamespaceProvider>);
+    void setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&&);
 
     UserContentController* userContentController() { return m_userContentController.get(); }
     void setUserContentController(UserContentController*);
 
     VisitedLinkStore& visitedLinkStore();
-    void setVisitedLinkStore(PassRef<VisitedLinkStore>);
+    void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
 
     WEBCORE_EXPORT SessionID sessionID() const;
     WEBCORE_EXPORT void setSessionID(SessionID);

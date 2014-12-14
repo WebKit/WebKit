@@ -60,8 +60,8 @@ struct Entry {
 
 class RenderMathMLOperator : public RenderMathMLToken {
 public:
-    RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>);
-    RenderMathMLOperator(Document&, PassRef<RenderStyle>, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
+    RenderMathMLOperator(MathMLElement&, Ref<RenderStyle>&&);
+    RenderMathMLOperator(Document&, Ref<RenderStyle>&&, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
 
     virtual void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     void stretchTo(LayoutUnit width);

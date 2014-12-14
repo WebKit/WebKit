@@ -35,7 +35,7 @@ class ScriptExecutionContext;
 class BatteryManager : public ActiveDOMObject, public RefCounted<BatteryManager>, public EventTarget {
 public:
     virtual ~BatteryManager();
-    static PassRef<BatteryManager> create(Navigator*);
+    static Ref<BatteryManager> create(Navigator*);
 
     // EventTarget implementation.
     virtual EventTargetInterface eventTargetInterface() const override { return BatteryManagerEventTargetInterfaceType; }

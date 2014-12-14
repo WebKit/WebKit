@@ -38,7 +38,7 @@ namespace WebCore {
 
 class RenderImageControls final : public RenderBlockFlow {
 public:
-    RenderImageControls(HTMLElement&, PassRef<RenderStyle>);
+    RenderImageControls(HTMLElement&, Ref<RenderStyle>&&);
     virtual ~RenderImageControls();
 
 private:
@@ -49,7 +49,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
-RenderImageControls::RenderImageControls(HTMLElement& element, PassRef<RenderStyle> style)
+RenderImageControls::RenderImageControls(HTMLElement& element, Ref<RenderStyle>&& style)
     : RenderBlockFlow(element, WTF::move(style))
 {
 }
@@ -102,7 +102,7 @@ ImageControlsRootElementMac::~ImageControlsRootElementMac()
 {
 }
 
-RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderImageControls>(*this, WTF::move(style));
 }

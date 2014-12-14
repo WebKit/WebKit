@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, PassRef<RenderStyle> style)
+RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, Ref<RenderStyle>&& style)
     : RenderSVGResourceContainer(element, WTF::move(style))
     , m_shouldCollectPatternAttributes(true)
 {

@@ -622,7 +622,7 @@ bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
     return controls() && HTMLElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderMedia>(*this, WTF::move(style));
 }

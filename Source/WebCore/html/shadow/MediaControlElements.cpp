@@ -310,7 +310,7 @@ void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
     }
 }
 
-RenderPtr<RenderElement> MediaControlTimelineContainerElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MediaControlTimelineContainerElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderMediaControlTimelineContainer>(*this, WTF::move(style));
 }
@@ -330,7 +330,7 @@ PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderCon
     return element.release();
 }
 
-RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderMediaVolumeSliderContainer>(*this, WTF::move(style));
 }
@@ -1088,7 +1088,7 @@ PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainer
     return element.release();
 }
 
-RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderTextTrackContainerElement>(*this, WTF::move(style));
 }

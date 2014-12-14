@@ -195,7 +195,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderPtr<RenderElement> FileInputType::createInputRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> FileInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderFileUploadControl>(element(), WTF::move(style));
 }

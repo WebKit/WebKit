@@ -945,13 +945,13 @@ Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
     return m_value.pair;
 }
 
-NEVER_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const char* suffix, unsigned suffixLength) const
+NEVER_INLINE Ref<StringImpl> CSSPrimitiveValue::formatNumberValue(const char* suffix, unsigned suffixLength) const
 {
     DecimalNumber decimal(m_value.num);
 
     unsigned bufferLength = decimal.bufferLengthForStringDecimal() + suffixLength;
     LChar* buffer;
-    PassRef<StringImpl> string = StringImpl::createUninitialized(bufferLength, buffer);
+    Ref<StringImpl> string = StringImpl::createUninitialized(bufferLength, buffer);
 
     unsigned length = decimal.toStringDecimal(buffer, bufferLength);
 
@@ -962,7 +962,7 @@ NEVER_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const char
 }
 
 template <unsigned characterCount>
-ALWAYS_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const char (&characters)[characterCount]) const
+ALWAYS_INLINE Ref<StringImpl> CSSPrimitiveValue::formatNumberValue(const char (&characters)[characterCount]) const
 {
     return formatNumberValue(characters, characterCount - 1);
 }

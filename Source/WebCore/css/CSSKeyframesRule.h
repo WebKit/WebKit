@@ -40,7 +40,7 @@ class CSSKeyframeRule;
 
 class StyleRuleKeyframes : public StyleRuleBase {
 public:
-    static PassRef<StyleRuleKeyframes> create() { return adoptRef(*new StyleRuleKeyframes()); }
+    static Ref<StyleRuleKeyframes> create() { return adoptRef(*new StyleRuleKeyframes()); }
     
     ~StyleRuleKeyframes();
     
@@ -55,7 +55,7 @@ public:
     
     int findKeyframeIndex(const String& key) const;
 
-    PassRef<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
+    Ref<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
 
 private:
     StyleRuleKeyframes();

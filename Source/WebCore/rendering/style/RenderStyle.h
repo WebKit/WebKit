@@ -482,13 +482,13 @@ private:
     ALWAYS_INLINE RenderStyle(const RenderStyle&);
 
 public:
-    static PassRef<RenderStyle> create();
-    static PassRef<RenderStyle> createDefaultStyle();
-    static PassRef<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
-    static PassRef<RenderStyle> clone(const RenderStyle*);
+    static Ref<RenderStyle> create();
+    static Ref<RenderStyle> createDefaultStyle();
+    static Ref<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
+    static Ref<RenderStyle> clone(const RenderStyle*);
 
     // Create a RenderStyle for generated content by inheriting from a pseudo style.
-    static PassRef<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
+    static Ref<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
 
     enum IsAtShadowBoundary {
         AtShadowBoundary,

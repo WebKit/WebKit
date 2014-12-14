@@ -292,7 +292,7 @@ NPObject* HTMLPlugInElement::getNPObject()
 
 #endif /* ENABLE(NETSCAPE_PLUGIN_API) */
 
-RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer())
         return m_pluginReplacement->createElementRenderer(*this, WTF::move(style));

@@ -1117,7 +1117,7 @@ String listMarkerText(EListStyleType type, int value)
     return builder.toString();
 }
 
-RenderListMarker::RenderListMarker(RenderListItem& listItem, PassRef<RenderStyle> style)
+RenderListMarker::RenderListMarker(RenderListItem& listItem, Ref<RenderStyle>&& style)
     : RenderBox(listItem.document(), WTF::move(style), 0)
     , m_listItem(listItem)
 {

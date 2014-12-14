@@ -60,7 +60,7 @@ private:
     String youTubeURL(const String& rawURL);
     
     virtual bool willCreateRenderer() override { return m_embedShadowElement; }
-    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, Ref<RenderStyle>&&) override;
     
     HTMLPlugInElement* m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;

@@ -37,8 +37,8 @@ enum ENinePieceImageRule {
 
 class NinePieceImageData : public RefCounted<NinePieceImageData> {
 public:
-    static PassRef<NinePieceImageData> create() { return adoptRef(*new NinePieceImageData); }
-    PassRef<NinePieceImageData> copy() const;
+    static Ref<NinePieceImageData> create() { return adoptRef(*new NinePieceImageData); }
+    Ref<NinePieceImageData> copy() const;
 
     bool operator==(const NinePieceImageData&) const;
     bool operator!=(const NinePieceImageData& o) const { return !(*this == o); }

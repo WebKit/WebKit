@@ -34,8 +34,8 @@ namespace WebCore {
 
 class StyleBoxData : public RefCounted<StyleBoxData> {
 public:
-    static PassRef<StyleBoxData> create() { return adoptRef(*new StyleBoxData); }
-    PassRef<StyleBoxData> copy() const;
+    static Ref<StyleBoxData> create() { return adoptRef(*new StyleBoxData); }
+    Ref<StyleBoxData> copy() const;
 
     bool operator==(const StyleBoxData& o) const;
     bool operator!=(const StyleBoxData& o) const

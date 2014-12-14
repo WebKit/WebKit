@@ -33,7 +33,7 @@ class HTMLFieldSetElement;
 
 class RenderFieldset final : public RenderBlockFlow {
 public:
-    RenderFieldset(HTMLFieldSetElement&, PassRef<RenderStyle>);
+    RenderFieldset(HTMLFieldSetElement&, Ref<RenderStyle>&&);
 
     enum FindLegendOption { IgnoreFloatingOrOutOfFlow, IncludeFloatingOrOutOfFlow };
     RenderBox* findLegend(FindLegendOption = IgnoreFloatingOrOutOfFlow) const;

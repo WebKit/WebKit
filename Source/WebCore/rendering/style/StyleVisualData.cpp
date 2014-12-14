@@ -52,7 +52,7 @@ inline StyleVisualData::StyleVisualData(const StyleVisualData& o)
 {
 }
 
-PassRef<StyleVisualData> StyleVisualData::copy() const
+Ref<StyleVisualData> StyleVisualData::copy() const
 {
     return adoptRef(*new StyleVisualData(*this));
 }

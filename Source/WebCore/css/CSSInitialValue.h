@@ -28,11 +28,11 @@ namespace WebCore {
 
 class CSSInitialValue : public CSSValue {
 public:
-    static PassRef<CSSInitialValue> createExplicit()
+    static Ref<CSSInitialValue> createExplicit()
     {
         return adoptRef(*new CSSInitialValue(/* implicit */ false));
     }
-    static PassRef<CSSInitialValue> createImplicit()
+    static Ref<CSSInitialValue> createImplicit()
     {
         return adoptRef(*new CSSInitialValue(/* implicit */ true));
     }

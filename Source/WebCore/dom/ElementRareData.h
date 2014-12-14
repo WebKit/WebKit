@@ -91,7 +91,7 @@ public:
     void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTF::move(attributeMap); }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
-    void setComputedStyle(PassRef<RenderStyle> computedStyle) { m_computedStyle = WTF::move(computedStyle); }
+    void setComputedStyle(Ref<RenderStyle>&& computedStyle) { m_computedStyle = WTF::move(computedStyle); }
 
     ClassList* classList() const { return m_classList.get(); }
     void setClassList(std::unique_ptr<ClassList> classList) { m_classList = WTF::move(classList); }

@@ -170,7 +170,7 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
 
-RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     // By default, any subclass is expected to do path-based drawing
     return createRenderer<RenderSVGPath>(*this, WTF::move(style));

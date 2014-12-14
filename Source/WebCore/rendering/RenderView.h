@@ -44,7 +44,7 @@ class RenderQuote;
 
 class RenderView final : public RenderBlockFlow, public SelectionSubtreeRoot {
 public:
-    RenderView(Document&, PassRef<RenderStyle>);
+    RenderView(Document&, Ref<RenderStyle>&&);
     virtual ~RenderView();
 
     WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, PassRef<RenderStyle> style)
+RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, Ref<RenderStyle>&& style)
     : RenderSVGContainer(element, WTF::move(style))
     , m_didTransformToRootUpdate(false)
     , m_isLayoutSizeChanged(false)

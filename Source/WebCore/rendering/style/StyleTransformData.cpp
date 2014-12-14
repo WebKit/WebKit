@@ -43,7 +43,7 @@ inline StyleTransformData::StyleTransformData(const StyleTransformData& o)
 {
 }
 
-PassRef<StyleTransformData> StyleTransformData::copy() const
+Ref<StyleTransformData> StyleTransformData::copy() const
 {
     return adoptRef(*new StyleTransformData(*this));
 }

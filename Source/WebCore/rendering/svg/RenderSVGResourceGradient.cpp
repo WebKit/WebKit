@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node, PassRef<RenderStyle> style)
+RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node, Ref<RenderStyle>&& style)
     : RenderSVGResourceContainer(node, WTF::move(style))
     , m_shouldCollectGradientAttributes(true)
 #if USE(CG)

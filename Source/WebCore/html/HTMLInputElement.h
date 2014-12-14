@@ -200,7 +200,7 @@ public:
     bool canHaveSelection() const;
 
     virtual bool rendererIsNeeded(const RenderStyle&) override final;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override final;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override final;
     virtual void willAttachRenderers() override final;
     virtual void didAttachRenderers() override final;
     virtual void didDetachRenderers() override final;

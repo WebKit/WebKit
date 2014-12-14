@@ -39,21 +39,21 @@ public:
         SVG_COLORTYPE_CURRENTCOLOR = 3
     };
 
-    static PassRef<SVGColor> createFromString(const String& rgbColor)
+    static Ref<SVGColor> createFromString(const String& rgbColor)
     {
         auto color = adoptRef(*new SVGColor(SVG_COLORTYPE_RGBCOLOR));
         color.get().setColor(colorFromRGBColorString(rgbColor));
         return color;
     }
 
-    static PassRef<SVGColor> createFromColor(const Color& rgbColor)
+    static Ref<SVGColor> createFromColor(const Color& rgbColor)
     {
         auto color = adoptRef(*new SVGColor(SVG_COLORTYPE_RGBCOLOR));
         color.get().setColor(rgbColor);
         return color;
     }
 
-    static PassRef<SVGColor> createCurrentColor()
+    static Ref<SVGColor> createCurrentColor()
     {
         return adoptRef(*new SVGColor(SVG_COLORTYPE_CURRENTCOLOR));
     }

@@ -66,7 +66,7 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
     return matrix;
 }
 
-RenderPtr<RenderElement> SVGTextElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGTextElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGText>(*this, WTF::move(style));
 }

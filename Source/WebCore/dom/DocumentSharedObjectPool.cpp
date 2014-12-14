@@ -43,7 +43,7 @@ inline bool hasSameAttributes(const Vector<Attribute>& attributes, ShareableElem
     return !memcmp(attributes.data(), elementData.m_attributeArray, attributes.size() * sizeof(Attribute));
 }
 
-PassRef<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
+Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
 {
     ASSERT(!attributes.isEmpty());
 

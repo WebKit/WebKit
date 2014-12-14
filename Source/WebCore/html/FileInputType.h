@@ -58,7 +58,7 @@ private:
     virtual bool valueMissing(const String&) const override;
     virtual String valueMissingText() const override;
     virtual void handleDOMActivateEvent(Event*) override;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     virtual bool canSetStringValue() const override;
     virtual bool canChangeFromAnotherType() const override;
     virtual FileList* files() override;

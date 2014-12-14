@@ -47,7 +47,7 @@ namespace WebCore {
 
 namespace Style {
 
-PassRef<RenderStyle> resolveForDocument(const Document& document)
+Ref<RenderStyle> resolveForDocument(const Document& document)
 {
     ASSERT(document.hasLivingRenderTree());
 

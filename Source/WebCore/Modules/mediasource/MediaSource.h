@@ -71,7 +71,7 @@ public:
     void streamEndedWithError(const AtomicString& error, ExceptionCode&);
 
     // MediaSourcePrivateClient
-    virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) override;
+    virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) override;
     virtual MediaTime duration() const override;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual void seekToTime(const MediaTime&) override;

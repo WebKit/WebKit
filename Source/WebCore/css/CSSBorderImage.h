@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-PassRef<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSValue> imageSlice, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat);
+Ref<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSValue> imageSlice, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat);
 
 } // namespace WebCore
 

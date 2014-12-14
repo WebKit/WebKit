@@ -761,7 +761,7 @@ bool HTMLInputElement::rendererIsNeeded(const RenderStyle& style)
     return m_inputType->rendererIsNeeded() && HTMLTextFormControlElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return m_inputType->createInputRenderer(WTF::move(style));
 }

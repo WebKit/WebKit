@@ -111,7 +111,7 @@ static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
         && (documentElementRenderer == bodyElementRenderer->parent());
 }
 
-RenderBox::RenderBox(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderBox::RenderBox(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderBoxModelObject(element, WTF::move(style), baseTypeFlags)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
@@ -120,7 +120,7 @@ RenderBox::RenderBox(Element& element, PassRef<RenderStyle> style, unsigned base
     setIsBox();
 }
 
-RenderBox::RenderBox(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+RenderBox::RenderBox(Document& document, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
     : RenderBoxModelObject(document, WTF::move(style), baseTypeFlags)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)

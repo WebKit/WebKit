@@ -41,7 +41,7 @@ inline StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o)
 {
 }
 
-PassRef<StyleBackgroundData> StyleBackgroundData::copy() const
+Ref<StyleBackgroundData> StyleBackgroundData::copy() const
 {
     return adoptRef(*new StyleBackgroundData(*this));
 }

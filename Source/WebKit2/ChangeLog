@@ -1,3 +1,31 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Replace PassRef with Ref/Ref&& across the board.
+        <https://webkit.org/b/139587>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::create):
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::create):
+        * UIProcess/WebBatteryManagerProxy.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::createNonNull):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/efl/BatteryProvider.cpp:
+        (BatteryProvider::create):
+        * UIProcess/efl/BatteryProvider.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldApplyStyle):
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::requestPermission):
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::create):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+
 2014-12-12  Gavin Barraclough  <barraclough@apple.com>
 
         Split WebPageProxy::m_preventProcessSuppression to track pref/visibility separately

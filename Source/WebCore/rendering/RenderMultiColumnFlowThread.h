@@ -38,7 +38,7 @@ class RenderMultiColumnSpannerPlaceholder;
 
 class RenderMultiColumnFlowThread final : public RenderFlowThread {
 public:
-    RenderMultiColumnFlowThread(Document&, PassRef<RenderStyle>);
+    RenderMultiColumnFlowThread(Document&, Ref<RenderStyle>&&);
     ~RenderMultiColumnFlowThread();
 
     virtual void removeFlowChildInfo(RenderObject*) override;

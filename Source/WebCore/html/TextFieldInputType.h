@@ -85,7 +85,7 @@ private:
     virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) override final;
     virtual void forwardEvent(Event*) override final;
     virtual bool shouldSubmitImplicitly(Event*) override final;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     virtual bool shouldUseInputMethod() const override;
 #if !PLATFORM(IOS)
     virtual String sanitizeValue(const String&) const override;

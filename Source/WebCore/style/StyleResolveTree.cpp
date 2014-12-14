@@ -253,7 +253,7 @@ static bool shouldCreateRenderer(const Element& element, const RenderElement& pa
     return true;
 }
 
-static PassRef<RenderStyle> styleForElement(Element& element, RenderStyle& inheritedStyle)
+static Ref<RenderStyle> styleForElement(Element& element, RenderStyle& inheritedStyle)
 {
     if (element.hasCustomStyleResolveCallbacks()) {
         if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle))

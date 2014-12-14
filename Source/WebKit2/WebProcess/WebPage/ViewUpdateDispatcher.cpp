@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-PassRef<ViewUpdateDispatcher> ViewUpdateDispatcher::create()
+Ref<ViewUpdateDispatcher> ViewUpdateDispatcher::create()
 {
     return adoptRef(*new ViewUpdateDispatcher);
 }

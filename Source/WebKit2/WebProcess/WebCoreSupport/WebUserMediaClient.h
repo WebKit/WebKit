@@ -34,7 +34,7 @@ public:
 
 private:
     virtual void pageDestroyed();
-    virtual void requestPermission(PassRef<WebCore::UserMediaRequest>) override;
+    virtual void requestPermission(Ref<WebCore::UserMediaRequest>&&) override;
     virtual void cancelRequest(WebCore::UserMediaRequest&) override;
 
     WebPage& m_page;

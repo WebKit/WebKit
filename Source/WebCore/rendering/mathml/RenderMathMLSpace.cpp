@@ -36,7 +36,7 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-RenderMathMLSpace::RenderMathMLSpace(MathMLTextElement& element, PassRef<RenderStyle> style)
+RenderMathMLSpace::RenderMathMLSpace(MathMLTextElement& element, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(element, WTF::move(style))
     , m_width(0)
     , m_height(0)

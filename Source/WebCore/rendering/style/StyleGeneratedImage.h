@@ -33,7 +33,7 @@ class CSSImageGeneratorValue;
 
 class StyleGeneratedImage final : public StyleImage {
 public:
-    static PassRefPtr<StyleGeneratedImage> create(PassRef<CSSImageGeneratorValue> value)
+    static PassRefPtr<StyleGeneratedImage> create(Ref<CSSImageGeneratorValue>&& value)
     {
         return adoptRef(new StyleGeneratedImage(WTF::move(value)));
     }
@@ -56,7 +56,7 @@ private:
     virtual PassRefPtr<Image> image(RenderElement*, const FloatSize&) const override;
     virtual bool knownToBeOpaque(const RenderElement*) const override;
 
-    StyleGeneratedImage(PassRef<CSSImageGeneratorValue>);
+    explicit StyleGeneratedImage(Ref<CSSImageGeneratorValue>&&);
     
     Ref<CSSImageGeneratorValue> m_imageGeneratorValue;
     FloatSize m_containerSize;

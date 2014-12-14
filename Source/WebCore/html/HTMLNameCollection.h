@@ -44,7 +44,7 @@ protected:
 
 class WindowNameCollection final : public HTMLNameCollection {
 public:
-    static PassRef<WindowNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
+    static Ref<WindowNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
         return adoptRef(*new WindowNameCollection(document, type, name));
     }
@@ -65,7 +65,7 @@ private:
 
 class DocumentNameCollection final : public HTMLNameCollection {
 public:
-    static PassRef<DocumentNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
+    static Ref<DocumentNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
         return adoptRef(*new DocumentNameCollection(document, type, name));
     }

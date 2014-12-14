@@ -39,9 +39,9 @@ public:
     bool hasReplacedLogicalHeight() const;
 
 protected:
-    RenderReplaced(Element&, PassRef<RenderStyle>);
-    RenderReplaced(Element&, PassRef<RenderStyle>, const LayoutSize& intrinsicSize);
-    RenderReplaced(Document&, PassRef<RenderStyle>, const LayoutSize& intrinsicSize);
+    RenderReplaced(Element&, Ref<RenderStyle>&&);
+    RenderReplaced(Element&, Ref<RenderStyle>&&, const LayoutSize& intrinsicSize);
+    RenderReplaced(Document&, Ref<RenderStyle>&&, const LayoutSize& intrinsicSize);
 
     virtual void layout() override;
 

@@ -139,7 +139,7 @@ private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
     virtual bool canContainRangeEndPoint() const override;
     virtual bool canStartSelection() const override;

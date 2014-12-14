@@ -39,11 +39,11 @@ class SVGFontFaceElement;
 
 class CSSFontFaceSrcValue : public CSSValue {
 public:
-    static PassRef<CSSFontFaceSrcValue> create(const String& resource)
+    static Ref<CSSFontFaceSrcValue> create(const String& resource)
     {
         return adoptRef(*new CSSFontFaceSrcValue(resource, false));
     }
-    static PassRef<CSSFontFaceSrcValue> createLocal(const String& resource)
+    static Ref<CSSFontFaceSrcValue> createLocal(const String& resource)
     {
         return adoptRef(*new CSSFontFaceSrcValue(resource, true));
     }

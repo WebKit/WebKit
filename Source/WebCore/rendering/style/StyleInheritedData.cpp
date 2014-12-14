@@ -56,7 +56,7 @@ inline StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
 {
 }
 
-PassRef<StyleInheritedData> StyleInheritedData::copy() const
+Ref<StyleInheritedData> StyleInheritedData::copy() const
 {
     return adoptRef(*new StyleInheritedData(*this));
 }

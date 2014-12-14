@@ -68,7 +68,7 @@ friend class ImageLoader;
 friend class ResourceCacheValidationSuppressor;
 
 public:
-    static PassRef<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(*new CachedResourceLoader(documentLoader)); }
+    static Ref<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(*new CachedResourceLoader(documentLoader)); }
     ~CachedResourceLoader();
 
     CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&);

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, PassRef<RenderStyle> style)
+RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, Ref<RenderStyle>&& style)
     : RenderRegion(document, WTF::move(style), nullptr)
     , m_hasCustomRegionStyle(false)
     , m_hasAutoLogicalHeight(false)
@@ -57,7 +57,7 @@ RenderNamedFlowFragment::~RenderNamedFlowFragment()
 {
 }
 
-PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& parentStyle)
+Ref<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& parentStyle)
 {
     auto style = RenderStyle::createAnonymousStyleWithDisplay(&parentStyle, BLOCK);
 

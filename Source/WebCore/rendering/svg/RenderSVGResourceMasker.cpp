@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, PassRef<RenderStyle> style)
+RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, Ref<RenderStyle>&& style)
     : RenderSVGResourceContainer(element, WTF::move(style))
 {
 }

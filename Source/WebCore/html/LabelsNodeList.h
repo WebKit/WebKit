@@ -32,7 +32,7 @@ namespace WebCore {
 
 class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList> {
 public:
-    static PassRef<LabelsNodeList> create(LabelableElement& forNode, const AtomicString&)
+    static Ref<LabelsNodeList> create(LabelableElement& forNode, const AtomicString&)
     {
         return adoptRef(*new LabelsNodeList(forNode));
     }

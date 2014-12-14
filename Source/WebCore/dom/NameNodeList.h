@@ -33,7 +33,7 @@ namespace WebCore {
 // NodeList which lists all Nodes in a Element with a given "name" attribute
 class NameNodeList final : public CachedLiveNodeList<NameNodeList> {
 public:
-    static PassRef<NameNodeList> create(ContainerNode& rootNode, const AtomicString& name)
+    static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomicString& name)
     {
         return adoptRef(*new NameNodeList(rootNode, name));
     }

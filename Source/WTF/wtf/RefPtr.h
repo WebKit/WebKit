@@ -50,7 +50,7 @@ namespace WTF {
         // See comments in PassRefPtr.h for an explanation of why this takes a const reference.
         template<typename U> RefPtr(const PassRefPtr<U>&);
 
-        template<typename U> RefPtr(PassRef<U>&&);
+        template<typename U> RefPtr(Ref<U>&&);
 
         // Hash table deleted values, which are only constructed and never copied or destroyed.
         RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
@@ -62,7 +62,7 @@ namespace WTF {
         
         void clear();
         PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = nullptr; return tmp; }
-        PassRef<T> releaseNonNull() { ASSERT(m_ptr); PassRef<T> tmp = adoptRef(*m_ptr); m_ptr = nullptr; return tmp; }
+        Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
 
         T* leakRef() WARN_UNUSED_RETURN;
 
@@ -82,7 +82,7 @@ namespace WTF {
         template<typename U> RefPtr& operator=(const PassRefPtr<U>&);
         RefPtr& operator=(RefPtr&&);
         template<typename U> RefPtr& operator=(RefPtr<U>&&);
-        template<typename U> RefPtr& operator=(PassRef<U>);
+        template<typename U> RefPtr& operator=(Ref<U>&&);
 
         void swap(RefPtr&);
 
@@ -97,7 +97,7 @@ namespace WTF {
     {
     }
 
-    template<typename T> template<typename U> inline RefPtr<T>::RefPtr(PassRef<U>&& reference)
+    template<typename T> template<typename U> inline RefPtr<T>::RefPtr(Ref<U>&& reference)
         : m_ptr(&reference.leakRef())
     {
     }
@@ -167,7 +167,7 @@ namespace WTF {
         return *this;
     }
 
-    template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(PassRef<U> reference)
+    template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(Ref<U>&& reference)
     {
         RefPtr ptr = WTF::move(reference);
         swap(ptr);

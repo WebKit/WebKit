@@ -1,3 +1,16 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Replace PassRef with Ref/Ref&& across the board.
+        <https://webkit.org/b/139587>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldApplyStyle):
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::create):
+
 2014-12-11  Dan Bernstein  <mitz@apple.com>
 
         Fix a leak introduced in r177199.

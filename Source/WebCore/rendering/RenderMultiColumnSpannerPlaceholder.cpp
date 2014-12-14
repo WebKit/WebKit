@@ -43,7 +43,7 @@ RenderMultiColumnSpannerPlaceholder* RenderMultiColumnSpannerPlaceholder::create
     return placeholder;
 }
 
-RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread* flowThread, RenderBox* spanner, PassRef<RenderStyle> style)
+RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread* flowThread, RenderBox* spanner, Ref<RenderStyle>&& style)
     : RenderBox(flowThread->document(), WTF::move(style), RenderBoxModelObjectFlag)
     , m_spanner(spanner)
     , m_flowThread(flowThread)

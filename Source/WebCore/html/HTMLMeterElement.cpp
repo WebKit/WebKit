@@ -57,7 +57,7 @@ RefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, 
     return meter;
 }
 
-RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     if (!document().page()->theme().supportsMeter(style.get().appearance()))
         return RenderElement::createFor(*this, WTF::move(style));

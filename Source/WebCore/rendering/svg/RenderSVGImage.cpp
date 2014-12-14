@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-RenderSVGImage::RenderSVGImage(SVGImageElement& element, PassRef<RenderStyle> style)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element, Ref<RenderStyle>&& style)
     : RenderSVGModelObject(element, WTF::move(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)

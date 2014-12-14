@@ -44,7 +44,7 @@ HTMLWBRElement::HTMLWBRElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(wbrTag));
 }
 
-RenderPtr<RenderElement> HTMLWBRElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLWBRElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderLineBreak>(*this, WTF::move(style));
 }

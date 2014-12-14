@@ -190,7 +190,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGResourceFilter>(*this, WTF::move(style));
 }

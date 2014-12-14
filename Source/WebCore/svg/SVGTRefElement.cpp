@@ -57,7 +57,7 @@ PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, 
 
 class SVGTRefTargetEventListener : public EventListener {
 public:
-    static PassRef<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
+    static Ref<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
     {
         return adoptRef(*new SVGTRefTargetEventListener(trefElement));
     }
@@ -218,7 +218,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     return createRenderer<RenderSVGInline>(*this, WTF::move(style));
 }

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-StyleKeyframe::StyleKeyframe(PassRef<StyleProperties> properties)
+StyleKeyframe::StyleKeyframe(Ref<StyleProperties>&& properties)
     : m_properties(WTF::move(properties))
 {
 }

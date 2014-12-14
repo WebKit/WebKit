@@ -36,13 +36,13 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLToken::RenderMathMLToken(Element& element, PassRef<RenderStyle> style)
+RenderMathMLToken::RenderMathMLToken(Element& element, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(element, WTF::move(style))
     , m_containsElement(false)
 {
 }
 
-RenderMathMLToken::RenderMathMLToken(Document& document, PassRef<RenderStyle> style)
+RenderMathMLToken::RenderMathMLToken(Document& document, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(document, WTF::move(style))
     , m_containsElement(false)
 {

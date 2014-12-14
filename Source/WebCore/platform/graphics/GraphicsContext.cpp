@@ -335,25 +335,25 @@ const GraphicsContextState& GraphicsContext::state() const
     return m_state;
 }
 
-void GraphicsContext::setStrokePattern(PassRef<Pattern> pattern)
+void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
 {
     m_state.strokeGradient.clear();
     m_state.strokePattern = WTF::move(pattern);
 }
 
-void GraphicsContext::setFillPattern(PassRef<Pattern> pattern)
+void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
 {
     m_state.fillGradient.clear();
     m_state.fillPattern = WTF::move(pattern);
 }
 
-void GraphicsContext::setStrokeGradient(PassRef<Gradient> gradient)
+void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient)
 {
     m_state.strokeGradient = WTF::move(gradient);
     m_state.strokePattern.clear();
 }
 
-void GraphicsContext::setFillGradient(PassRef<Gradient> gradient)
+void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient)
 {
     m_state.fillGradient = WTF::move(gradient);
     m_state.fillPattern.clear();

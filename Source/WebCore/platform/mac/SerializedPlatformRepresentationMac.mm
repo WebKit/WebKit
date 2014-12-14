@@ -71,7 +71,7 @@ SerializedPlatformRepresentationMac::~SerializedPlatformRepresentationMac()
 {
 }
 
-PassRef<SerializedPlatformRepresentation> SerializedPlatformRepresentationMac::create(id nativeValue)
+Ref<SerializedPlatformRepresentation> SerializedPlatformRepresentationMac::create(id nativeValue)
 {
     return adoptRef(*new SerializedPlatformRepresentationMac(nativeValue));
 }

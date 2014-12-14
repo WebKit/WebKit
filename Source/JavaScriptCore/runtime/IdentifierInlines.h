@@ -55,14 +55,14 @@ inline Identifier::Identifier(ExecState* exec, const AtomicString& string)
 #endif
 }
 
-inline PassRef<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
+inline Ref<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 {
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
 #endif
     return *AtomicString::addWithStringTableProvider(*exec, r);
 }
-inline PassRef<StringImpl> Identifier::add(VM* vm, StringImpl* r)
+inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
 {
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(vm);

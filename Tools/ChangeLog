@@ -1,3 +1,21 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Replace PassRef with Ref/Ref&& across the board.
+        <https://webkit.org/b/139587>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/Ref.cpp:
+        (TestWebKitAPI::passWithRef):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::passWithPassRef): Deleted.
+        * TestWebKitAPI/Tests/WTF/RefCounter.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        (TestWebKitAPI::createTestValue):
+
 2014-12-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] MiniBrowser's window_create may return NULL

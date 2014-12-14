@@ -111,7 +111,7 @@ const AtomicString& MediaSource::endedKeyword()
     return ended;
 }
 
-void MediaSource::setPrivateAndOpen(PassRef<MediaSourcePrivate> mediaSourcePrivate)
+void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate)
 {
     ASSERT(!m_private);
     ASSERT(m_mediaElement);

@@ -39,7 +39,7 @@ namespace WebCore {
 class SerializedPlatformRepresentationMac : public SerializedPlatformRepresentation {
 public:
     virtual ~SerializedPlatformRepresentationMac();
-    static PassRef<SerializedPlatformRepresentation> create(id);
+    static Ref<SerializedPlatformRepresentation> create(id);
 
     virtual JSC::JSValue deserialize(JSC::ExecState*) const override;
     virtual PassRefPtr<ArrayBuffer> data() const override;

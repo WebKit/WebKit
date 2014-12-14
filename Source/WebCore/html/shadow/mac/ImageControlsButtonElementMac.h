@@ -42,7 +42,7 @@ private:
     ImageControlsButtonElementMac(Document&);
 
     virtual void defaultEventHandler(Event*) override;
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
     virtual bool isImageControlsButtonElement() const override { return true; }
 };

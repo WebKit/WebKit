@@ -67,7 +67,7 @@ inline StyleBoxData::StyleBoxData(const StyleBoxData& o)
 {
 }
 
-PassRef<StyleBoxData> StyleBoxData::copy() const
+Ref<StyleBoxData> StyleBoxData::copy() const
 {
     return adoptRef(*new StyleBoxData(*this));
 }

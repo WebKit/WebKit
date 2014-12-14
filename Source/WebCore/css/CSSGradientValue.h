@@ -134,7 +134,7 @@ protected:
 class CSSLinearGradientValue : public CSSGradientValue {
 public:
 
-    static PassRef<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSLinearGradient)
+    static Ref<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSLinearGradient)
     {
         return adoptRef(*new CSSLinearGradientValue(repeat, gradientType));
     }
@@ -146,7 +146,7 @@ public:
     // Create the gradient for a given size.
     PassRefPtr<Gradient> createGradient(RenderElement&, const FloatSize&);
 
-    PassRef<CSSLinearGradientValue> clone() const
+    Ref<CSSLinearGradientValue> clone() const
     {
         return adoptRef(*new CSSLinearGradientValue(*this));
     }
@@ -170,12 +170,12 @@ private:
 
 class CSSRadialGradientValue : public CSSGradientValue {
 public:
-    static PassRef<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSRadialGradient)
+    static Ref<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSRadialGradient)
     {
         return adoptRef(*new CSSRadialGradientValue(repeat, gradientType));
     }
 
-    PassRef<CSSRadialGradientValue> clone() const
+    Ref<CSSRadialGradientValue> clone() const
     {
         return adoptRef(*new CSSRadialGradientValue(*this));
     }

@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-RenderFrame::RenderFrame(HTMLFrameElement& frame, PassRef<RenderStyle> style)
+RenderFrame::RenderFrame(HTMLFrameElement& frame, Ref<RenderStyle>&& style)
     : RenderFrameBase(frame, WTF::move(style))
 {
 }

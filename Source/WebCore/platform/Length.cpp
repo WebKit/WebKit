@@ -157,7 +157,7 @@ class CalculationValueMap {
 public:
     CalculationValueMap();
 
-    unsigned insert(PassRef<CalculationValue>);
+    unsigned insert(Ref<CalculationValue>&&);
     void ref(unsigned handle);
     void deref(unsigned handle);
 
@@ -192,7 +192,7 @@ inline CalculationValueMap::CalculationValueMap()
 {
 }
     
-inline unsigned CalculationValueMap::insert(PassRef<CalculationValue> value)
+inline unsigned CalculationValueMap::insert(Ref<CalculationValue>&& value)
 {
     ASSERT(m_nextAvailableHandle);
 
@@ -243,7 +243,7 @@ static CalculationValueMap& calculationValues()
     return map;
 }
 
-Length::Length(PassRef<CalculationValue> value)
+Length::Length(Ref<CalculationValue>&& value)
     : m_hasQuirk(false)
     , m_type(Calculated)
     , m_isFloat(false)

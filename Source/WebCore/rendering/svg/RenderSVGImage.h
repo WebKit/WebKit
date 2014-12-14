@@ -36,7 +36,7 @@ class SVGImageElement;
 
 class RenderSVGImage final : public RenderSVGModelObject {
 public:
-    RenderSVGImage(SVGImageElement&, PassRef<RenderStyle>);
+    RenderSVGImage(SVGImageElement&, Ref<RenderStyle>&&);
     virtual ~RenderSVGImage();
 
     SVGImageElement& imageElement() const;

@@ -96,7 +96,7 @@ private:
 
 class ShapeClipPathOperation final : public ClipPathOperation {
 public:
-    static PassRefPtr<ShapeClipPathOperation> create(PassRef<BasicShape> shape)
+    static PassRefPtr<ShapeClipPathOperation> create(Ref<BasicShape>&& shape)
     {
         return adoptRef(new ShapeClipPathOperation(WTF::move(shape)));
     }
@@ -122,7 +122,7 @@ private:
         return m_shape.ptr() == shapeClip.m_shape.ptr();
     }
 
-    explicit ShapeClipPathOperation(PassRef<BasicShape> shape)
+    explicit ShapeClipPathOperation(Ref<BasicShape>&& shape)
         : ClipPathOperation(Shape)
         , m_shape(WTF::move(shape))
         , m_referenceBox(BoxMissing)

@@ -39,7 +39,7 @@ public:
     ~UserMediaController();
 
     UserMediaClient* client() const { return m_client; }
-    void requestPermission(PassRef<UserMediaRequest>);
+    void requestPermission(Ref<UserMediaRequest>&&);
     void cancelRequest(UserMediaRequest&);
 
     static const char* supplementName();
@@ -49,7 +49,7 @@ private:
     UserMediaClient* m_client;
 };
 
-inline void UserMediaController::requestPermission(PassRef<UserMediaRequest> request)
+inline void UserMediaController::requestPermission(Ref<UserMediaRequest>&& request)
 {
     m_client->requestPermission(WTF::move(request));
 }

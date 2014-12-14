@@ -39,7 +39,7 @@ class RenderRubyRun;
 
 class RenderRubyBase final : public RenderBlockFlow {
 public:
-    RenderRubyBase(Document&, PassRef<RenderStyle>);
+    RenderRubyBase(Document&, Ref<RenderStyle>&&);
     virtual ~RenderRubyBase();
     
     virtual const char* renderName() const override { return "RenderRubyBase (anonymous)"; }

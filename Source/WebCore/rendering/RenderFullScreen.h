@@ -34,13 +34,13 @@ namespace WebCore {
 
 class RenderFullScreen final : public RenderFlexibleBox {
 public:
-    RenderFullScreen(Document&, PassRef<RenderStyle>);
+    RenderFullScreen(Document&, Ref<RenderStyle>&&);
 
     virtual const char* renderName() const override { return "RenderFullScreen"; }
 
     void setPlaceholder(RenderBlock*);
     RenderBlock* placeholder() { return m_placeholder; }
-    void createPlaceholder(PassRef<RenderStyle>, const LayoutRect& frameRect);
+    void createPlaceholder(Ref<RenderStyle>&&, const LayoutRect& frameRect);
 
     static RenderFullScreen* wrapRenderer(RenderObject*, RenderElement*, Document&);
     void unwrapRenderer(bool& requiresRenderTreeRebuild);

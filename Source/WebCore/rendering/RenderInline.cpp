@@ -51,13 +51,13 @@
 
 namespace WebCore {
 
-RenderInline::RenderInline(Element& element, PassRef<RenderStyle> style)
+RenderInline::RenderInline(Element& element, Ref<RenderStyle>&& style)
     : RenderBoxModelObject(element, WTF::move(style), RenderInlineFlag)
 {
     setChildrenInline(true);
 }
 
-RenderInline::RenderInline(Document& document, PassRef<RenderStyle> style)
+RenderInline::RenderInline(Document& document, Ref<RenderStyle>&& style)
     : RenderBoxModelObject(document, WTF::move(style), RenderInlineFlag)
 {
     setChildrenInline(true);

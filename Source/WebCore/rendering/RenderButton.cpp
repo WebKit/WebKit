@@ -37,7 +37,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderButton::RenderButton(HTMLFormControlElement& element, PassRef<RenderStyle> style)
+RenderButton::RenderButton(HTMLFormControlElement& element, Ref<RenderStyle>&& style)
     : RenderFlexibleBox(element, WTF::move(style))
     , m_buttonText(0)
     , m_inner(0)

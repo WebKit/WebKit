@@ -120,7 +120,7 @@ TEST(WTF_RefPtr, AssignPassRefToRefPtr)
 {
     DerivedRefLogger a("a");
     {
-        PassRef<RefLogger> passRef(a);
+        Ref<RefLogger> passRef(a);
         RefPtr<RefLogger> ptr = WTF::move(passRef);
         ASSERT_EQ(&a, ptr.get());
         ptr.release();

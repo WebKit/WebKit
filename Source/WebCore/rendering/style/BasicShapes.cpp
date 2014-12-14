@@ -118,7 +118,7 @@ void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
     ));
 }
 
-PassRef<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress) const
 {
     ASSERT(type() == other.type());
     const auto& otherCircle = downcast<BasicShapeCircle>(other);
@@ -157,7 +157,7 @@ void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
         radiusY * 2));
 }
 
-PassRef<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progress) const
 {
     ASSERT(type() == other.type());
     const auto& otherEllipse = downcast<BasicShapeEllipse>(other);
@@ -197,7 +197,7 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
     path.closeSubpath();
 }
 
-PassRef<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progress) const
 {
     ASSERT(type() == other.type());
 
@@ -246,7 +246,7 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
     path.addRoundedRect(r);
 }
 
-PassRef<BasicShape> BasicShapeInset::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapeInset::blend(const BasicShape& other, double progress) const
 {
     ASSERT(type() == other.type());
 

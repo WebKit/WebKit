@@ -346,7 +346,7 @@ bool HTMLSelectElement::canSelectAll() const
     return !usesMenuList();
 }
 
-RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
 #if !PLATFORM(IOS)
     if (usesMenuList())

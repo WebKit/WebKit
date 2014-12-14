@@ -39,7 +39,7 @@ namespace WebCore {
 
 class ClassNodeList final : public CachedLiveNodeList<ClassNodeList> {
 public:
-    static PassRef<ClassNodeList> create(ContainerNode&, const AtomicString& classNames);
+    static Ref<ClassNodeList> create(ContainerNode&, const AtomicString& classNames);
 
     virtual ~ClassNodeList();
 

@@ -47,7 +47,7 @@ private:
     virtual bool isFormDataAppendable() const override;
     virtual bool appendFormData(FormDataList&, bool) const override;
     virtual bool supportsValidation() const override;
-    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
+    virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     virtual void handleDOMActivateEvent(Event*) override;
     virtual void altAttributeChanged() override;
     virtual void srcAttributeChanged() override;

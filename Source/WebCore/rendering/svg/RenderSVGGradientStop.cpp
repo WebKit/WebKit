@@ -31,7 +31,7 @@ namespace WebCore {
     
 using namespace SVGNames;
 
-RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, PassRef<RenderStyle> style)
+RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, Ref<RenderStyle>&& style)
     : RenderElement(element, WTF::move(style), 0)
 {
 }

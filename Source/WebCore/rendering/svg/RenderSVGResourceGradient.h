@@ -52,7 +52,7 @@ public:
     virtual FloatRect resourceBoundingBox(const RenderObject&) override final { return FloatRect(); }
 
 protected:
-    RenderSVGResourceGradient(SVGGradientElement&, PassRef<RenderStyle>);
+    RenderSVGResourceGradient(SVGGradientElement&, Ref<RenderStyle>&&);
 
     void element() const = delete;
 

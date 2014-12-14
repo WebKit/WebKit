@@ -57,7 +57,7 @@ RefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tag
     return progress;
 }
 
-RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(Ref<RenderStyle>&& style)
 {
     if (!style.get().hasAppearance())
         return RenderElement::createFor(*this, WTF::move(style));

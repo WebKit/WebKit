@@ -60,7 +60,7 @@ private:
 
 class HTMLCollection : public ScriptWrappable, public RefCounted<HTMLCollection> {
 public:
-    static PassRef<HTMLCollection> create(ContainerNode& base, CollectionType);
+    static Ref<HTMLCollection> create(ContainerNode& base, CollectionType);
     virtual ~HTMLCollection();
 
     // DOM API

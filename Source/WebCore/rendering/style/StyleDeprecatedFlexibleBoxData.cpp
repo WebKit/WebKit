@@ -49,7 +49,7 @@ inline StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const Styl
 {
 }
 
-PassRef<StyleDeprecatedFlexibleBoxData> StyleDeprecatedFlexibleBoxData::copy() const
+Ref<StyleDeprecatedFlexibleBoxData> StyleDeprecatedFlexibleBoxData::copy() const
 {
     return adoptRef(*new StyleDeprecatedFlexibleBoxData(*this));
 }

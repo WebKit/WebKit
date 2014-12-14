@@ -36,7 +36,7 @@ class HTMLImageElement;
 
 class HTMLFormControlsCollection final : public HTMLCollection {
 public:
-    static PassRef<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
+    static Ref<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
     virtual ~HTMLFormControlsCollection();
 
 private:

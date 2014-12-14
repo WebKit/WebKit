@@ -39,7 +39,7 @@ const char* WebBatteryManagerProxy::supplementName()
     return "WebBatteryManagerProxy";
 }
 
-PassRef<WebBatteryManagerProxy> WebBatteryManagerProxy::create(WebContext* context)
+Ref<WebBatteryManagerProxy> WebBatteryManagerProxy::create(WebContext* context)
 {
     return adoptRef(*new WebBatteryManagerProxy(context));
 }

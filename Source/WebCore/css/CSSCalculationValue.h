@@ -95,13 +95,13 @@ public:
     bool isNegative() const { return m_expression->doubleValue() < 0; }
     double computeLengthPx(const CSSToLengthConversionData&) const;
 
-    PassRef<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
+    Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
 
     String customCSSText() const;
     bool equals(const CSSCalcValue&) const;
 
 private:
-    CSSCalcValue(PassRef<CSSCalcExpressionNode>, bool shouldClampToNonNegative);
+    CSSCalcValue(Ref<CSSCalcExpressionNode>&&, bool shouldClampToNonNegative);
 
     double clampToPermittedRange(double) const;
 
@@ -109,14 +109,14 @@ private:
     const bool m_shouldClampToNonNegative;
 };
 
-inline CSSCalcValue::CSSCalcValue(PassRef<CSSCalcExpressionNode> expression, bool shouldClampToNonNegative)
+inline CSSCalcValue::CSSCalcValue(Ref<CSSCalcExpressionNode>&& expression, bool shouldClampToNonNegative)
     : CSSValue(CalculationClass)
     , m_expression(WTF::move(expression))
     , m_shouldClampToNonNegative(shouldClampToNonNegative)
 {
 }
 
-inline PassRef<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConversionData& conversionData) const
+inline Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConversionData& conversionData) const
 {
     return CalculationValue::create(m_expression->createCalcExpression(conversionData),
         m_shouldClampToNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);

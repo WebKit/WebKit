@@ -293,7 +293,7 @@ StyleSheetContents* PropertySetCSSStyleDeclaration::contextStyleSheet() const
     return cssStyleSheet ? &cssStyleSheet->contents() : 0;
 }
 
-PassRef<MutableStyleProperties> PropertySetCSSStyleDeclaration::copyProperties() const
+Ref<MutableStyleProperties> PropertySetCSSStyleDeclaration::copyProperties() const
 {
     return m_propertySet->mutableCopy();
 }

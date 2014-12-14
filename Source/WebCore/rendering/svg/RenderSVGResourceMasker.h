@@ -37,7 +37,7 @@ struct MaskerData {
 
 class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceMasker(SVGMaskElement&, PassRef<RenderStyle>);
+    RenderSVGResourceMasker(SVGMaskElement&, Ref<RenderStyle>&&);
     virtual ~RenderSVGResourceMasker();
 
     SVGMaskElement& maskElement() const { return downcast<SVGMaskElement>(RenderSVGResourceContainer::element()); }

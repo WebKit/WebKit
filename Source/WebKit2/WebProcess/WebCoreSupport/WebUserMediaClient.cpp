@@ -40,7 +40,7 @@ void WebUserMediaClient::pageDestroyed()
     delete this;
 }
 
-void WebUserMediaClient::requestPermission(PassRef<UserMediaRequest> prRequest)
+void WebUserMediaClient::requestPermission(Ref<UserMediaRequest>&& prRequest)
 {
     UserMediaRequest& request = prRequest.leakRef();
     m_page.userMediaPermissionRequestManager().startRequest(request);

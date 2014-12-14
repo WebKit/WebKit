@@ -55,12 +55,12 @@ namespace WebCore {
 // In order to accept invalid markup and to handle <mroot> and <msqrt> consistently, we will allow any number of children in the BaseWrapper of <mroot> too.
 // We will allow the IndexWrapper to be empty and it will always contain the last child of the <mroot> if there are at least 2 elements.
 
-RenderMathMLRoot::RenderMathMLRoot(Element& element, PassRef<RenderStyle> style)
+RenderMathMLRoot::RenderMathMLRoot(Element& element, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(element, WTF::move(style))
 {
 }
 
-RenderMathMLRoot::RenderMathMLRoot(Document& document, PassRef<RenderStyle> style)
+RenderMathMLRoot::RenderMathMLRoot(Document& document, Ref<RenderStyle>&& style)
     : RenderMathMLBlock(document, WTF::move(style))
 {
 }
