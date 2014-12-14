@@ -53,7 +53,7 @@ public:
 
 private:
     explicit CSSFunctionValue(CSSParserFunction*);
-    CSSFunctionValue(const String& , PassRefPtr<CSSValueList>);
+    CSSFunctionValue(const String&, PassRefPtr<CSSValueList>);
 
     String m_name;
     RefPtr<CSSValueList> m_args;

@@ -40,7 +40,7 @@ CSSFunctionValue::CSSFunctionValue(CSSParserFunction* function)
         m_args = CSSValueList::createFromParserValueList(*function->args);
 }
 
-CSSFunctionValue::CSSFunctionValue(String name, PassRefPtr<CSSValueList> args)
+CSSFunctionValue::CSSFunctionValue(const String& name, PassRefPtr<CSSValueList> args)
     : CSSValue(FunctionClass)
     , m_name(name)
     , m_args(args)
