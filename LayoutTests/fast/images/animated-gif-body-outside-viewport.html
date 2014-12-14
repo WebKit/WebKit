@@ -5,26 +5,22 @@
 </head>
 <body style="background-image: url('resources/animated.gif'); background-repeat: repeat; position: relative; left: 0px; top: 700px; width: 200px; height: 200px" onload="runTest()">
 <script>
+description("Make sure the background image of a body element that is outside the viewport is not animated");
 jsTestIsAsync = true;
 
-function checkBackgroundAnimated() {
-  isBackgroundAnimated = !internals.hasPausedImageAnimations(document.body);
-  shouldBeTrue("isBackgroundAnimated");
-  finishJSTest();
+function isBackgroundAnimated()
+{
+  return !internals.hasPausedImageAnimations(document.body);
 }
 
-function checkBackgroundNotAnimated() {
-  isBackgroundAnimated = !internals.hasPausedImageAnimations(document.body);
-  description("Make sure the background image of a body element that is outside the viewport is not animated");
-  shouldBeFalse("isBackgroundAnimated");
-
+function scrollDown() {
   debug("Scroll down so that the body becomes visible.");
   window.scrollBy(0, 600);
-  setTimeout(checkBackgroundAnimated, 0);
+  shouldBecomeEqual("isBackgroundAnimated()", "true", finishJSTest);
 }
 
 function imageLoaded() {
-  setTimeout(checkBackgroundNotAnimated, 200);
+  shouldBecomeEqual("isBackgroundAnimated()", "false", scrollDown);
 }
 
 function runTest() {

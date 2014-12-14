@@ -3,9 +3,9 @@ Make sure the background image of a body element that is outside the viewport is
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS isBackgroundAnimated is false
+PASS isBackgroundAnimated() became false
 Scroll down so that the body becomes visible.
-PASS isBackgroundAnimated is true
+PASS isBackgroundAnimated() became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

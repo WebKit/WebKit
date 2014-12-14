@@ -1,3 +1,18 @@
+2014-12-14  Chris Dumez  <cdumez@apple.com>
+
+        fast/images/animated-gif-body-outside-viewport.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139599
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update fast/images/animated-gif-body-outside-viewport.html to use
+        shouldBecomeEqual() instead of a setTimeout() + shouldBe() to fix
+        the flakiness.
+
+        * fast/images/animated-gif-body-outside-viewport-expected.txt:
+        * fast/images/animated-gif-body-outside-viewport.html:
+        * platform/mac-wk1/TestExpectations:
+
 2014-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r160182): Fragment parser doesn't close a form element with a close tag
