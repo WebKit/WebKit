@@ -1,3 +1,18 @@
+2014-12-13  Zalan Bujtas  <zalan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=139597
+        rdar://problem/19237334
+        Fixed positioned pseudo content does not get composited.
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that adjustRenderStyle() can access to settings even when Element* is null. 
+
+        Test: compositing/fixed-positioned-pseudo-content-no-compositing.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+
 2014-12-12  Mark Rowe  <mrowe@apple.com>
 
         [Mac] Work around a bug in dsymutil on older OS versions
