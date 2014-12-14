@@ -144,7 +144,6 @@ public:
     HTMLStackItem* currentStackItem() const { return m_openElements.topStackItem(); }
     HTMLStackItem* oneBelowTop() const { return m_openElements.oneBelowTop(); }
     Document& ownerDocumentForCurrentNode();
-    bool insideTemplateElement();
     HTMLElementStack* openElements() const { return &m_openElements; }
     HTMLFormattingElementList* activeFormattingElements() const { return &m_activeFormattingElements; }
     bool currentIsRootNode() { return m_openElements.topNode() == m_openElements.rootNode(); }

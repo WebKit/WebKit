@@ -1,3 +1,23 @@
+2014-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r160182): Fragment parser doesn't close a form element with a close tag
+        https://bugs.webkit.org/show_bug.cgi?id=139561
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by us not setting the form pointer in insertHTMLFormElement.
+        Since we already avoid associating a form inside HTMLConstructionSite::createHTMLElement,
+        we didn't need this code at all.
+
+        Fixed the bug by partially reverting r160182.
+
+        Test: fast/dom/dom-parse-close-form.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        (WebCore::HTMLConstructionSite::insideTemplateElement): Deleted.
+        * html/parser/HTMLConstructionSite.h:
+
 2014-12-14  Andreas Kling  <akling@apple.com>
 
         Fix build even more. Not a strong performance here.
