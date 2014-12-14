@@ -41,9 +41,9 @@ class RTCDTMFToneChangeEvent : public Event {
 public:
     virtual ~RTCDTMFToneChangeEvent();
 
-    static PassRefPtr<RTCDTMFToneChangeEvent> create();
-    static PassRefPtr<RTCDTMFToneChangeEvent> create(const String& tone);
-    static PassRefPtr<RTCDTMFToneChangeEvent> create(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer);
+    static Ref<RTCDTMFToneChangeEvent> create();
+    static Ref<RTCDTMFToneChangeEvent> create(const String& tone);
+    static Ref<RTCDTMFToneChangeEvent> create(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer);
 
     const String& tone() const;
 

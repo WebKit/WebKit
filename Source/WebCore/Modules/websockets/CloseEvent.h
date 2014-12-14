@@ -50,19 +50,19 @@ struct CloseEventInit : public EventInit {
 
 class CloseEvent : public Event {
 public:
-    static PassRefPtr<CloseEvent> create()
+    static Ref<CloseEvent> create()
     {
-        return adoptRef(new CloseEvent());
+        return adoptRef(*new CloseEvent());
     }
 
-    static PassRefPtr<CloseEvent> create(bool wasClean, unsigned short code, const String& reason)
+    static Ref<CloseEvent> create(bool wasClean, unsigned short code, const String& reason)
     {
-        return adoptRef(new CloseEvent(wasClean, code, reason));
+        return adoptRef(*new CloseEvent(wasClean, code, reason));
     }
 
-    static PassRefPtr<CloseEvent> create(const AtomicString& type, const CloseEventInit& initializer)
+    static Ref<CloseEvent> create(const AtomicString& type, const CloseEventInit& initializer)
     {
-        return adoptRef(new CloseEvent(type, initializer));
+        return adoptRef(*new CloseEvent(type, initializer));
     }
 
     bool wasClean() const { return m_wasClean; }

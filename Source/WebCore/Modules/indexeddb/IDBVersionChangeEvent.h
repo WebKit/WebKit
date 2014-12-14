@@ -38,9 +38,9 @@ namespace WebCore {
 
 class IDBVersionChangeEvent : public Event {
 public:
-    static PassRefPtr<IDBVersionChangeEvent> create(unsigned long long oldVersion = 0, unsigned long long newVersion = 0, IndexedDB::VersionNullness newVersionNullness = IndexedDB::VersionNullness::Null, const AtomicString& eventType = AtomicString())
+    static Ref<IDBVersionChangeEvent> create(unsigned long long oldVersion = 0, unsigned long long newVersion = 0, IndexedDB::VersionNullness newVersionNullness = IndexedDB::VersionNullness::Null, const AtomicString& eventType = AtomicString())
     {
-        return adoptRef(new IDBVersionChangeEvent(oldVersion, newVersion, newVersionNullness, eventType));
+        return adoptRef(*new IDBVersionChangeEvent(oldVersion, newVersion, newVersionNullness, eventType));
     }
 
     virtual ~IDBVersionChangeEvent();

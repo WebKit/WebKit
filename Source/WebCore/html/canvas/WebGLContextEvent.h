@@ -38,17 +38,17 @@ struct WebGLContextEventInit : public EventInit {
 
 class WebGLContextEvent final : public Event {
 public:
-    static PassRefPtr<WebGLContextEvent> create()
+    static Ref<WebGLContextEvent> create()
     {
-        return adoptRef(new WebGLContextEvent);
+        return adoptRef(*new WebGLContextEvent);
     }
-    static PassRefPtr<WebGLContextEvent> create(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage)
+    static Ref<WebGLContextEvent> create(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage)
     {
-        return adoptRef(new WebGLContextEvent(type, canBubble, cancelable, statusMessage));
+        return adoptRef(*new WebGLContextEvent(type, canBubble, cancelable, statusMessage));
     }
-    static PassRefPtr<WebGLContextEvent> create(const AtomicString& type, const WebGLContextEventInit& initializer)
+    static Ref<WebGLContextEvent> create(const AtomicString& type, const WebGLContextEventInit& initializer)
     {
-        return adoptRef(new WebGLContextEvent(type, initializer));
+        return adoptRef(*new WebGLContextEvent(type, initializer));
     }
     virtual ~WebGLContextEvent();
 

@@ -44,9 +44,9 @@ class MediaStreamTrackEvent : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 
-    static PassRefPtr<MediaStreamTrackEvent> create();
-    static PassRefPtr<MediaStreamTrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack>);
-    static PassRefPtr<MediaStreamTrackEvent> create(const AtomicString& type, const MediaStreamTrackEventInit& initializer);
+    static Ref<MediaStreamTrackEvent> create();
+    static Ref<MediaStreamTrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack>);
+    static Ref<MediaStreamTrackEvent> create(const AtomicString& type, const MediaStreamTrackEventInit& initializer);
 
     MediaStreamTrack* track() const;
 

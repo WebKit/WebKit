@@ -41,10 +41,10 @@ struct UIRequestEventInit : public UIEventInit {
 
 class UIRequestEvent : public UIEvent {
 public:
-    static PassRefPtr<UIRequestEvent> create();
-    static PassRefPtr<UIRequestEvent> create(const AtomicString& type, bool bubbles, bool cancelable, PassRefPtr<AbstractView>, int detail, PassRefPtr<EventTarget> receiver);
+    static Ref<UIRequestEvent> create();
+    static Ref<UIRequestEvent> create(const AtomicString& type, bool bubbles, bool cancelable, PassRefPtr<AbstractView>, int detail, PassRefPtr<EventTarget> receiver);
     
-    static PassRefPtr<UIRequestEvent> create(const AtomicString& eventType, const UIRequestEventInit&);
+    static Ref<UIRequestEvent> create(const AtomicString& eventType, const UIRequestEventInit&);
     
     virtual ~UIRequestEvent();
     

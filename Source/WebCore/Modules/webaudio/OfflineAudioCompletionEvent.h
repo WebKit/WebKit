@@ -36,8 +36,8 @@ class AudioBuffer;
     
 class OfflineAudioCompletionEvent : public Event {
 public:
-    static PassRefPtr<OfflineAudioCompletionEvent> create();
-    static PassRefPtr<OfflineAudioCompletionEvent> create(PassRefPtr<AudioBuffer> renderedBuffer);
+    static Ref<OfflineAudioCompletionEvent> create();
+    static Ref<OfflineAudioCompletionEvent> create(PassRefPtr<AudioBuffer> renderedBuffer);
     
     virtual ~OfflineAudioCompletionEvent();
 

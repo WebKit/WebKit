@@ -35,8 +35,8 @@ namespace WebCore {
     
 class SpeechSynthesisEvent : public Event {
 public:
-    static PassRefPtr<SpeechSynthesisEvent> create();
-    static PassRefPtr<SpeechSynthesisEvent> create(const AtomicString& type, unsigned long charIndex, float elapsedTime, const String& name);
+    static Ref<SpeechSynthesisEvent> create();
+    static Ref<SpeechSynthesisEvent> create(const AtomicString& type, unsigned long charIndex, float elapsedTime, const String& name);
     
     unsigned long charIndex() const { return m_charIndex; }
     float elapsedTime() const { return m_elapsedTime; }

@@ -32,34 +32,34 @@
 
 namespace WebCore {
 
-PassRefPtr<TextEvent> TextEvent::create()
+Ref<TextEvent> TextEvent::create()
 {
-    return adoptRef(new TextEvent);
+    return adoptRef(*new TextEvent);
 }
 
-PassRefPtr<TextEvent> TextEvent::create(PassRefPtr<AbstractView> view, const String& data, TextEventInputType inputType)
+Ref<TextEvent> TextEvent::create(PassRefPtr<AbstractView> view, const String& data, TextEventInputType inputType)
 {
-    return adoptRef(new TextEvent(view, data, inputType));
+    return adoptRef(*new TextEvent(view, data, inputType));
 }
 
-PassRefPtr<TextEvent> TextEvent::createForPlainTextPaste(PassRefPtr<AbstractView> view, const String& data, bool shouldSmartReplace)
+Ref<TextEvent> TextEvent::createForPlainTextPaste(PassRefPtr<AbstractView> view, const String& data, bool shouldSmartReplace)
 {
-    return adoptRef(new TextEvent(view, data, 0, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
+    return adoptRef(*new TextEvent(view, data, 0, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
 
-PassRefPtr<TextEvent> TextEvent::createForFragmentPaste(PassRefPtr<AbstractView> view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+Ref<TextEvent> TextEvent::createForFragmentPaste(PassRefPtr<AbstractView> view, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
-    return adoptRef(new TextEvent(view, "", data, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
+    return adoptRef(*new TextEvent(view, "", data, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
 }
 
-PassRefPtr<TextEvent> TextEvent::createForDrop(PassRefPtr<AbstractView> view, const String& data)
+Ref<TextEvent> TextEvent::createForDrop(PassRefPtr<AbstractView> view, const String& data)
 {
-    return adoptRef(new TextEvent(view, data, TextEventInputDrop));
+    return adoptRef(*new TextEvent(view, data, TextEventInputDrop));
 }
 
-PassRefPtr<TextEvent> TextEvent::createForDictation(PassRefPtr<AbstractView> view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
+Ref<TextEvent> TextEvent::createForDictation(PassRefPtr<AbstractView> view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
 {
-    return adoptRef(new TextEvent(view, data, dictationAlternatives));
+    return adoptRef(*new TextEvent(view, data, dictationAlternatives));
 }
 
 TextEvent::TextEvent()

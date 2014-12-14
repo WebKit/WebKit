@@ -37,19 +37,19 @@ MediaStreamEventInit::MediaStreamEventInit()
 {
 }
 
-PassRefPtr<MediaStreamEvent> MediaStreamEvent::create()
+Ref<MediaStreamEvent> MediaStreamEvent::create()
 {
-    return adoptRef(new MediaStreamEvent);
+    return adoptRef(*new MediaStreamEvent);
 }
 
-PassRefPtr<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
+Ref<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
 {
-    return adoptRef(new MediaStreamEvent(type, canBubble, cancelable, stream));
+    return adoptRef(*new MediaStreamEvent(type, canBubble, cancelable, stream));
 }
 
-PassRefPtr<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, const MediaStreamEventInit& initializer)
+Ref<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, const MediaStreamEventInit& initializer)
 {
-    return adoptRef(new MediaStreamEvent(type, initializer));
+    return adoptRef(*new MediaStreamEvent(type, initializer));
 }
 
 MediaStreamEvent::MediaStreamEvent()

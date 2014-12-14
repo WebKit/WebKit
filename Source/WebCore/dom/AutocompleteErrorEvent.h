@@ -38,19 +38,19 @@ struct AutocompleteErrorEventInit : public EventInit {
 
 class AutocompleteErrorEvent final : public Event {
 public:
-    static PassRefPtr<AutocompleteErrorEvent> create()
+    static Ref<AutocompleteErrorEvent> create()
     {
         return adoptRef(new AutocompleteErrorEvent);
     }
 
-    static PassRefPtr<AutocompleteErrorEvent> create(const String& reason)
+    static Ref<AutocompleteErrorEvent> create(const String& reason)
     {
-        return adoptRef(new AutocompleteErrorEvent(reason));
+        return adoptRef(*new AutocompleteErrorEvent(reason));
     }
 
-    static PassRefPtr<AutocompleteErrorEvent> create(const AtomicString& eventType, const AutocompleteErrorEventInit& initializer)
+    static Ref<AutocompleteErrorEvent> create(const AtomicString& eventType, const AutocompleteErrorEventInit& initializer)
     {
-        return adoptRef(new AutocompleteErrorEvent(eventType, initializer));
+        return adoptRef(*new AutocompleteErrorEvent(eventType, initializer));
     }
 
     const String& reason() const { return m_reason; }

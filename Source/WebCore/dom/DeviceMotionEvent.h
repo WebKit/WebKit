@@ -35,13 +35,13 @@ class DeviceMotionData;
 class DeviceMotionEvent final : public Event {
 public:
     virtual ~DeviceMotionEvent();
-    static PassRefPtr<DeviceMotionEvent> create()
+    static Ref<DeviceMotionEvent> create()
     {
-        return adoptRef(new DeviceMotionEvent);
+        return adoptRef(*new DeviceMotionEvent);
     }
-    static PassRefPtr<DeviceMotionEvent> create(const AtomicString& eventType, DeviceMotionData* deviceMotionData)
+    static Ref<DeviceMotionEvent> create(const AtomicString& eventType, DeviceMotionData* deviceMotionData)
     {
-        return adoptRef(new DeviceMotionEvent(eventType, deviceMotionData));
+        return adoptRef(*new DeviceMotionEvent(eventType, deviceMotionData));
     }
 
     void initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceMotionData*);

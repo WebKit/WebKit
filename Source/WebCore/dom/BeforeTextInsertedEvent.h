@@ -34,9 +34,9 @@ class BeforeTextInsertedEvent final : public Event {
 public:
     virtual ~BeforeTextInsertedEvent();
 
-    static PassRefPtr<BeforeTextInsertedEvent> create(const String& text)
+    static Ref<BeforeTextInsertedEvent> create(const String& text)
     {
-        return adoptRef(new BeforeTextInsertedEvent(text));
+        return adoptRef(*new BeforeTextInsertedEvent(text));
     }
 
     virtual EventInterface eventInterface() const override;

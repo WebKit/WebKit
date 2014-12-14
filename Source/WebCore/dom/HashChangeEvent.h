@@ -37,19 +37,19 @@ struct HashChangeEventInit : public EventInit {
 
 class HashChangeEvent final : public Event {
 public:
-    static PassRefPtr<HashChangeEvent> create()
+    static Ref<HashChangeEvent> create()
     {
-        return adoptRef(new HashChangeEvent);
+        return adoptRef(*new HashChangeEvent);
     }
 
-    static PassRefPtr<HashChangeEvent> create(const String& oldURL, const String& newURL)
+    static Ref<HashChangeEvent> create(const String& oldURL, const String& newURL)
     {
-        return adoptRef(new HashChangeEvent(oldURL, newURL));
+        return adoptRef(*new HashChangeEvent(oldURL, newURL));
     }
 
-    static PassRefPtr<HashChangeEvent> create(const AtomicString& type, const HashChangeEventInit& initializer)
+    static Ref<HashChangeEvent> create(const AtomicString& type, const HashChangeEventInit& initializer)
     {
-        return adoptRef(new HashChangeEvent(type, initializer));
+        return adoptRef(*new HashChangeEvent(type, initializer));
     }
 
     void initHashChangeEvent(const AtomicString& eventType, bool canBubble, bool cancelable, const String& oldURL, const String& newURL)

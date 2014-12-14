@@ -42,14 +42,14 @@ class CustomEvent final : public Event {
 public:
     virtual ~CustomEvent();
 
-    static PassRefPtr<CustomEvent> create()
+    static Ref<CustomEvent> create()
     {
-        return adoptRef(new CustomEvent);
+        return adoptRef(*new CustomEvent);
     }
 
-    static PassRefPtr<CustomEvent> create(const AtomicString& type, const CustomEventInit& initializer)
+    static Ref<CustomEvent> create(const AtomicString& type, const CustomEventInit& initializer)
     {
-        return adoptRef(new CustomEvent(type, initializer));
+        return adoptRef(*new CustomEvent(type, initializer));
     }
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& detail);

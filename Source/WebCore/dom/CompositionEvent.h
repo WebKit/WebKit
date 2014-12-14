@@ -39,19 +39,19 @@ struct CompositionEventInit : UIEventInit {
 
 class CompositionEvent final : public UIEvent {
 public:
-    static PassRefPtr<CompositionEvent> create()
+    static Ref<CompositionEvent> create()
     {
-        return adoptRef(new CompositionEvent);
+        return adoptRef(*new CompositionEvent);
     }
 
-    static PassRefPtr<CompositionEvent> create(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data)
+    static Ref<CompositionEvent> create(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data)
     {
-        return adoptRef(new CompositionEvent(type, view, data));
+        return adoptRef(*new CompositionEvent(type, view, data));
     }
 
-    static PassRefPtr<CompositionEvent> create(const AtomicString& type, const CompositionEventInit& initializer)
+    static Ref<CompositionEvent> create(const AtomicString& type, const CompositionEventInit& initializer)
     {
-        return adoptRef(new CompositionEvent(type, initializer));
+        return adoptRef(*new CompositionEvent(type, initializer));
     }
 
     virtual ~CompositionEvent();

@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-PassRefPtr<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create()
+Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create()
 {
-    return adoptRef(new OfflineAudioCompletionEvent);
+    return adoptRef(*new OfflineAudioCompletionEvent);
 }
 
-PassRefPtr<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(PassRefPtr<AudioBuffer> renderedBuffer)
+Ref<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(PassRefPtr<AudioBuffer> renderedBuffer)
 {
-    return adoptRef(new OfflineAudioCompletionEvent(renderedBuffer));
+    return adoptRef(*new OfflineAudioCompletionEvent(renderedBuffer));
 }
 
 OfflineAudioCompletionEvent::OfflineAudioCompletionEvent()

@@ -46,17 +46,17 @@ public:
         BOTH       = 2
     };
 
-    static PassRefPtr<OverflowEvent> create()
+    static Ref<OverflowEvent> create()
     {
-        return adoptRef(new OverflowEvent);
+        return adoptRef(*new OverflowEvent);
     }
-    static PassRefPtr<OverflowEvent> create(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
+    static Ref<OverflowEvent> create(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
     {
-        return adoptRef(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow));
+        return adoptRef(*new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow));
     }
-    static PassRefPtr<OverflowEvent> create(const AtomicString& type, const OverflowEventInit& initializer)
+    static Ref<OverflowEvent> create(const AtomicString& type, const OverflowEventInit& initializer)
     {
-        return adoptRef(new OverflowEvent(type, initializer));
+        return adoptRef(*new OverflowEvent(type, initializer));
     }
 
     void initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow);

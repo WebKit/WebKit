@@ -44,9 +44,9 @@ class SerializedScriptValue;
 class PopStateEvent final : public Event {
 public:
     virtual ~PopStateEvent();
-    static PassRefPtr<PopStateEvent> create();
-    static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
-    static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
+    static Ref<PopStateEvent> create();
+    static Ref<PopStateEvent> create(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
+    static Ref<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
 
     PassRefPtr<SerializedScriptValue> serializedState() const { return m_serializedState; }
     const Deprecated::ScriptValue& state() const { return m_state; }

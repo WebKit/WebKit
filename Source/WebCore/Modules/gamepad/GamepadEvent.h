@@ -45,19 +45,19 @@ class GamepadEvent : public Event {
 public:
     ~GamepadEvent() { }
 
-    static PassRefPtr<GamepadEvent> create()
+    static Ref<GamepadEvent> create()
     {
-        return adoptRef(new GamepadEvent);
+        return adoptRef(*new GamepadEvent);
     }
 
-    static PassRefPtr<GamepadEvent> create(const AtomicString& eventType, Gamepad& gamepad)
+    static Ref<GamepadEvent> create(const AtomicString& eventType, Gamepad& gamepad)
     {
-        return adoptRef(new GamepadEvent(eventType, gamepad));
+        return adoptRef(*new GamepadEvent(eventType, gamepad));
     }
 
-    static PassRefPtr<GamepadEvent> create(const AtomicString& eventType, const GamepadEventInit& initializer)
+    static Ref<GamepadEvent> create(const AtomicString& eventType, const GamepadEventInit& initializer)
     {
-        return adoptRef(new GamepadEvent(eventType, initializer));
+        return adoptRef(*new GamepadEvent(eventType, initializer));
     }
 
     Gamepad* gamepad() const { return m_gamepad.get(); }

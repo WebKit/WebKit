@@ -32,20 +32,20 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create()
+Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create()
 {
-    return adoptRef(new RTCDTMFToneChangeEvent);
+    return adoptRef(*new RTCDTMFToneChangeEvent);
 }
 
-PassRefPtr<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const String& tone)
+Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const String& tone)
 {
-    return adoptRef(new RTCDTMFToneChangeEvent(tone));
+    return adoptRef(*new RTCDTMFToneChangeEvent(tone));
 }
 
-PassRefPtr<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer)
+Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer)
 {
     ASSERT_UNUSED(type, type == eventNames().tonechangeEvent);
-    return adoptRef(new RTCDTMFToneChangeEvent(initializer));
+    return adoptRef(*new RTCDTMFToneChangeEvent(initializer));
 }
 
 RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent()

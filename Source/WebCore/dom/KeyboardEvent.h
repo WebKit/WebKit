@@ -57,19 +57,19 @@ public:
         // DOM_KEY_LOCATION_JOYSTICK   = 0x05
     };
         
-    static PassRefPtr<KeyboardEvent> create()
+    static Ref<KeyboardEvent> create()
     {
-        return adoptRef(new KeyboardEvent);
+        return adoptRef(*new KeyboardEvent);
     }
 
-    static PassRefPtr<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, AbstractView* view)
+    static Ref<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, AbstractView* view)
     {
-        return adoptRef(new KeyboardEvent(platformEvent, view));
+        return adoptRef(*new KeyboardEvent(platformEvent, view));
     }
 
-    static PassRefPtr<KeyboardEvent> create(const AtomicString& type, const KeyboardEventInit& initializer)
+    static Ref<KeyboardEvent> create(const AtomicString& type, const KeyboardEventInit& initializer)
     {
-        return adoptRef(new KeyboardEvent(type, initializer));
+        return adoptRef(*new KeyboardEvent(type, initializer));
     }
 
     virtual ~KeyboardEvent();

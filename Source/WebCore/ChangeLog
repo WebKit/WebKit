@@ -1,3 +1,110 @@
+2014-12-14  Andreas Kling  <akling@apple.com>
+
+        Event construction helpers should return Ref instead of PassRefPtr.
+        <https://webkit.org/b/139625>
+
+        Reviewed by Antti Koivisto.
+
+        Change all the FooEvent::create() construction helpers to return Ref<FooEvent>
+        instead of PassRefPtr<FooEvent>.
+
+        This allows the compiler to omit null checks at each call site, since we know
+        that these functions always return valid objects.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.h:
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::create):
+        * Modules/encryptedmedia/MediaKeyMessageEvent.h:
+        (WebCore::MediaKeyMessageEvent::create):
+        * Modules/encryptedmedia/MediaKeyNeededEvent.h:
+        (WebCore::MediaKeyNeededEvent::create):
+        * Modules/gamepad/GamepadEvent.h:
+        (WebCore::GamepadEvent::create):
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        (WebCore::IDBVersionChangeEvent::create):
+        * Modules/indieui/UIRequestEvent.cpp:
+        (WebCore::UIRequestEvent::create):
+        * Modules/indieui/UIRequestEvent.h:
+        * Modules/mediastream/MediaStreamEvent.cpp:
+        (WebCore::MediaStreamEvent::create):
+        * Modules/mediastream/MediaStreamEvent.h:
+        * Modules/mediastream/MediaStreamTrackEvent.cpp:
+        (WebCore::MediaStreamTrackEvent::create):
+        * Modules/mediastream/MediaStreamTrackEvent.h:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        (WebCore::RTCDTMFToneChangeEvent::create):
+        * Modules/mediastream/RTCDTMFToneChangeEvent.h:
+        * Modules/mediastream/RTCDataChannelEvent.cpp:
+        (WebCore::RTCDataChannelEvent::create):
+        * Modules/mediastream/RTCDataChannelEvent.h:
+        * Modules/mediastream/RTCIceCandidateEvent.cpp:
+        (WebCore::RTCIceCandidateEvent::create):
+        * Modules/mediastream/RTCIceCandidateEvent.h:
+        * Modules/speech/SpeechSynthesisEvent.cpp:
+        (WebCore::SpeechSynthesisEvent::create):
+        * Modules/speech/SpeechSynthesisEvent.h:
+        * Modules/webaudio/AudioProcessingEvent.cpp:
+        (WebCore::AudioProcessingEvent::create):
+        * Modules/webaudio/AudioProcessingEvent.h:
+        * Modules/webaudio/OfflineAudioCompletionEvent.cpp:
+        (WebCore::OfflineAudioCompletionEvent::create):
+        * Modules/webaudio/OfflineAudioCompletionEvent.h:
+        * Modules/websockets/CloseEvent.h:
+        (WebCore::CloseEvent::create):
+        * dom/AnimationEvent.h:
+        * dom/AutocompleteErrorEvent.h:
+        * dom/BeforeLoadEvent.h:
+        * dom/BeforeTextInsertedEvent.h:
+        * dom/BeforeUnloadEvent.h:
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.h:
+        * dom/CustomEvent.h:
+        * dom/DeviceMotionEvent.h:
+        * dom/DeviceOrientationEvent.h:
+        * dom/ErrorEvent.h:
+        * dom/Event.h:
+        (WebCore::Event::create):
+        * dom/FocusEvent.h:
+        * dom/HashChangeEvent.h:
+        * dom/KeyboardEvent.h:
+        * dom/MessageEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::SimulatedMouseEvent::create):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::create):
+        * dom/MutationEvent.h:
+        * dom/OverflowEvent.h:
+        * dom/PageTransitionEvent.h:
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::create):
+        * dom/PopStateEvent.h:
+        * dom/ProgressEvent.h:
+        (WebCore::ProgressEvent::create):
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::create):
+        (WebCore::TextEvent::createForPlainTextPaste):
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::createForDrop):
+        (WebCore::TextEvent::createForDictation):
+        * dom/TextEvent.h:
+        * dom/TouchEvent.h:
+        * dom/TransitionEvent.h:
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create):
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitTransitionEvent.h:
+        * dom/WheelEvent.h:
+        * html/MediaKeyEvent.h:
+        * html/canvas/WebGLContextEvent.h:
+        * html/track/TrackEvent.h:
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::create):
+        * storage/StorageEvent.h:
+        * svg/SVGZoomEvent.h:
+        (WebCore::SVGZoomEvent::create):
+        * xml/XMLHttpRequestProgressEvent.h:
+        (WebCore::XMLHttpRequestProgressEvent::create):
+
 2014-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r160182): Fragment parser doesn't close a form element with a close tag

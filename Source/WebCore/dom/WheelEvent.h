@@ -54,19 +54,19 @@ public:
         DOM_DELTA_PAGE
     };
 
-    static PassRefPtr<WheelEvent> create()
+    static Ref<WheelEvent> create()
     {
-        return adoptRef(new WheelEvent);
+        return adoptRef(*new WheelEvent);
     }
 
-    static PassRefPtr<WheelEvent> create(const AtomicString& type, const WheelEventInit& initializer)
+    static Ref<WheelEvent> create(const AtomicString& type, const WheelEventInit& initializer)
     {
-        return adoptRef(new WheelEvent(type, initializer));
+        return adoptRef(*new WheelEvent(type, initializer));
     }
 
-    static PassRefPtr<WheelEvent> create(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
+    static Ref<WheelEvent> create(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
     {
-        return adoptRef(new WheelEvent(event, view));
+        return adoptRef(*new WheelEvent(event, view));
     }
 
     void initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView>,

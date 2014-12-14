@@ -64,19 +64,19 @@ PopStateEvent::~PopStateEvent()
 {
 }
 
-PassRefPtr<PopStateEvent> PopStateEvent::create()
+Ref<PopStateEvent> PopStateEvent::create()
 {
-    return adoptRef(new PopStateEvent);
+    return adoptRef(*new PopStateEvent);
 }
 
-PassRefPtr<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> serializedState, PassRefPtr<History> history)
+Ref<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> serializedState, PassRefPtr<History> history)
 {
-    return adoptRef(new PopStateEvent(serializedState, history));
+    return adoptRef(*new PopStateEvent(serializedState, history));
 }
 
-PassRefPtr<PopStateEvent> PopStateEvent::create(const AtomicString& type, const PopStateEventInit& initializer)
+Ref<PopStateEvent> PopStateEvent::create(const AtomicString& type, const PopStateEventInit& initializer)
 {
-    return adoptRef(new PopStateEvent(type, initializer));
+    return adoptRef(*new PopStateEvent(type, initializer));
 }
 
 EventInterface PopStateEvent::eventInterface() const

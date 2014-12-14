@@ -53,33 +53,33 @@ struct MessageEventInit : public EventInit {
 
 class MessageEvent final : public Event {
 public:
-    static PassRefPtr<MessageEvent> create()
+    static Ref<MessageEvent> create()
     {
-        return adoptRef(new MessageEvent);
+        return adoptRef(*new MessageEvent);
     }
-    static PassRefPtr<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, const Deprecated::ScriptValue& data = Deprecated::ScriptValue(), const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
+    static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, const Deprecated::ScriptValue& data = Deprecated::ScriptValue(), const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
     {
-        return adoptRef(new MessageEvent(data, origin, lastEventId, source, WTF::move(ports)));
+        return adoptRef(*new MessageEvent(data, origin, lastEventId, source, WTF::move(ports)));
     }
-    static PassRefPtr<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
+    static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
     {
-        return adoptRef(new MessageEvent(data, origin, lastEventId, source, WTF::move(ports)));
+        return adoptRef(*new MessageEvent(data, origin, lastEventId, source, WTF::move(ports)));
     }
-    static PassRefPtr<MessageEvent> create(const String& data, const String& origin = String())
+    static Ref<MessageEvent> create(const String& data, const String& origin = String())
     {
-        return adoptRef(new MessageEvent(data, origin));
+        return adoptRef(*new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(PassRefPtr<Blob> data, const String& origin = String())
+    static Ref<MessageEvent> create(PassRefPtr<Blob> data, const String& origin = String())
     {
-        return adoptRef(new MessageEvent(data, origin));
+        return adoptRef(*new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(PassRefPtr<ArrayBuffer> data, const String& origin = String())
+    static Ref<MessageEvent> create(PassRefPtr<ArrayBuffer> data, const String& origin = String())
     {
-        return adoptRef(new MessageEvent(data, origin));
+        return adoptRef(*new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(const AtomicString& type, const MessageEventInit& initializer)
+    static Ref<MessageEvent> create(const AtomicString& type, const MessageEventInit& initializer)
     {
-        return adoptRef(new MessageEvent(type, initializer));
+        return adoptRef(*new MessageEvent(type, initializer));
     }
     virtual ~MessageEvent();
 

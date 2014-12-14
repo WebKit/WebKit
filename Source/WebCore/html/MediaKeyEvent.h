@@ -49,14 +49,14 @@ class MediaKeyEvent final : public Event {
 public:
     virtual ~MediaKeyEvent();
 
-    static PassRefPtr<MediaKeyEvent> create()
+    static Ref<MediaKeyEvent> create()
     {
-        return adoptRef(new MediaKeyEvent);
+        return adoptRef(*new MediaKeyEvent);
     }
 
-    static PassRefPtr<MediaKeyEvent> create(const AtomicString& type, const MediaKeyEventInit& initializer)
+    static Ref<MediaKeyEvent> create(const AtomicString& type, const MediaKeyEventInit& initializer)
     {
-        return adoptRef(new MediaKeyEvent(type, initializer));
+        return adoptRef(*new MediaKeyEvent(type, initializer));
     }
 
     virtual EventInterface eventInterface() const override;

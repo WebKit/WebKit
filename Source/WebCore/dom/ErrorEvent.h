@@ -47,17 +47,17 @@ struct ErrorEventInit : public EventInit {
 
 class ErrorEvent final : public Event {
 public:
-    static PassRefPtr<ErrorEvent> create()
+    static Ref<ErrorEvent> create()
     {
-        return adoptRef(new ErrorEvent);
+        return adoptRef(*new ErrorEvent);
     }
-    static PassRefPtr<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
+    static Ref<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
     {
-        return adoptRef(new ErrorEvent(message, fileName, lineNumber, columnNumber));
+        return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber));
     }
-    static PassRefPtr<ErrorEvent> create(const AtomicString& type, const ErrorEventInit& initializer)
+    static Ref<ErrorEvent> create(const AtomicString& type, const ErrorEventInit& initializer)
     {
-        return adoptRef(new ErrorEvent(type, initializer));
+        return adoptRef(*new ErrorEvent(type, initializer));
     }
     virtual ~ErrorEvent();
 

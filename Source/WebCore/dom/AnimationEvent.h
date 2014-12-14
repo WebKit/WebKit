@@ -39,17 +39,17 @@ struct AnimationEventInit : public EventInit {
 
 class AnimationEvent final : public Event {
 public:
-    static PassRefPtr<AnimationEvent> create()
+    static Ref<AnimationEvent> create()
     {
-        return adoptRef(new AnimationEvent);
+        return adoptRef(*new AnimationEvent);
     }
-    static PassRefPtr<AnimationEvent> create(const AtomicString& type, const String& animationName, double elapsedTime)
+    static Ref<AnimationEvent> create(const AtomicString& type, const String& animationName, double elapsedTime)
     {
-        return adoptRef(new AnimationEvent(type, animationName, elapsedTime));
+        return adoptRef(*new AnimationEvent(type, animationName, elapsedTime));
     }
-    static PassRefPtr<AnimationEvent> create(const AtomicString& type, const AnimationEventInit& initializer)
+    static Ref<AnimationEvent> create(const AtomicString& type, const AnimationEventInit& initializer)
     {
-        return adoptRef(new AnimationEvent(type, initializer));
+        return adoptRef(*new AnimationEvent(type, initializer));
     }
 
     virtual ~AnimationEvent();

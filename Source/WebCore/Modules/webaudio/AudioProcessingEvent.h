@@ -36,8 +36,8 @@ class AudioBuffer;
     
 class AudioProcessingEvent : public Event {
 public:
-    static PassRefPtr<AudioProcessingEvent> create();
-    static PassRefPtr<AudioProcessingEvent> create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime);
+    static Ref<AudioProcessingEvent> create();
+    static Ref<AudioProcessingEvent> create(PassRefPtr<AudioBuffer> inputBuffer, PassRefPtr<AudioBuffer> outputBuffer, double playbackTime);
     
     virtual ~AudioProcessingEvent();
 

@@ -83,18 +83,18 @@ public:
         CHANGE              = 32768
     };
 
-    static PassRefPtr<Event> create()
+    static Ref<Event> create()
     {
-        return adoptRef(new Event);
+        return adoptRef(*new Event);
     }
-    WEBCORE_EXPORT static PassRefPtr<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
+    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
     {
-        return adoptRef(new Event(type, canBubble, cancelable));
+        return adoptRef(*new Event(type, canBubble, cancelable));
     }
 
-    static PassRefPtr<Event> create(const AtomicString& type, const EventInit& initializer)
+    static Ref<Event> create(const AtomicString& type, const EventInit& initializer)
     {
-        return adoptRef(new Event(type, initializer));
+        return adoptRef(*new Event(type, initializer));
     }
 
     virtual ~Event();
