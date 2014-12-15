@@ -1,5 +1,14 @@
 2014-12-14  Alexey Proskuryakov  <ap@apple.com>
 
+        svg/filters/svg-deeply-nested-crash.html is slow in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=139638
+
+        Marked it as such. Also, added [ Debug ] to other tests that are slow in debug only.
+
+        * TestExpectations:
+
+2014-12-14  Alexey Proskuryakov  <ap@apple.com>
+
         jquery/manipulation.html is very slow in debug builds, frequently timing out
         https://bugs.webkit.org/show_bug.cgi?id=61932
 
