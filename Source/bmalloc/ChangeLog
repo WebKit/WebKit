@@ -1,3 +1,38 @@
+2014-12-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Safari crashes when you set Malloc environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=139656
+
+        Reviewed by Michael Saboff.
+
+        I forgot to cover the realloc() case. Whoops. (OoPS?)
+
+        This time around, I ran the full MallocBench test suite in Malloc=1
+        mode, and it passed.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate):
+        * bmalloc/Allocator.h: Pushed realloc() logic down into the allocator.
+        It needs to be down there so that we can do the short-circuiting check
+        for whether bmalloc is enabled first.
+
+        Also added the check.
+
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::scavenge):
+        (bmalloc::Cache::Cache):
+        (bmalloc::Cache::reallocateSlowCaseNullCache):
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::deallocator):
+        (bmalloc::Cache::reallocate): Ditto.
+
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::free):
+        (bmalloc::api::realloc): Ditto.
+
+        (bmalloc::api::scavenge): Pushed this down into Cache to match the
+        surrounding functions.
+
 2014-12-11  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc should support system memory analysis tools (part 2)

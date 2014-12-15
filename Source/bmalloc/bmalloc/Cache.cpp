@@ -40,16 +40,23 @@ void Cache::operator delete(void* p, size_t size)
     vmDeallocate(p, vmSize(size));
 }
 
+void Cache::scavenge()
+{
+    Cache* cache = PerThread<Cache>::getFastCase();
+    if (!cache)
+        return;
+
+    cache->allocator().scavenge();
+    cache->deallocator().scavenge();
+
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
+    PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
+}
+
 Cache::Cache()
     : m_deallocator(PerProcess<Heap>::get())
     , m_allocator(PerProcess<Heap>::get(), m_deallocator)
 {
-}
-    
-void Cache::scavenge()
-{
-    m_allocator.scavenge();
-    m_deallocator.scavenge();
 }
 
 NO_INLINE void* Cache::allocateSlowCaseNullCache(size_t size)
@@ -60,6 +67,11 @@ NO_INLINE void* Cache::allocateSlowCaseNullCache(size_t size)
 NO_INLINE void Cache::deallocateSlowCaseNullCache(void* object)
 {
     PerThread<Cache>::getSlowCase()->deallocator().deallocate(object);
+}
+
+NO_INLINE void* Cache::reallocateSlowCaseNullCache(void* object, size_t newSize)
+{
+    return PerThread<Cache>::getSlowCase()->allocator().reallocate(object, newSize);
 }
 
 } // namespace bmalloc

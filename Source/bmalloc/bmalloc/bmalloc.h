@@ -24,11 +24,6 @@
  */
 
 #include "Cache.h"
-#include "Heap.h"
-#include "LargeChunk.h"
-#include "PerProcess.h"
-#include "XLargeChunk.h"
-#include "Sizes.h"
 
 namespace bmalloc {
 namespace api {
@@ -40,51 +35,17 @@ inline void* malloc(size_t size)
 
 inline void free(void* object)
 {
-    return Cache::deallocate(object);
+    Cache::deallocate(object);
 }
 
 inline void* realloc(void* object, size_t newSize)
 {
-    void* result = Cache::allocate(newSize);
-    if (!object)
-        return result;
-
-    size_t oldSize = 0;
-    switch(objectType(object)) {
-    case Small: {
-        SmallPage* page = SmallPage::get(SmallLine::get(object));
-        oldSize = objectSize(page->sizeClass());
-        break;
-    }
-    case Medium: {
-        MediumPage* page = MediumPage::get(MediumLine::get(object));
-        oldSize = objectSize(page->sizeClass());
-        break;
-    }
-    case Large: {
-        BeginTag* beginTag = LargeChunk::beginTag(object);
-        oldSize = beginTag->size();
-        break;
-    }
-    case XLarge: {
-        XLargeChunk* chunk = XLargeChunk::get(object);
-        oldSize = chunk->size();
-        break;
-    }
-    }
-
-    size_t copySize = std::min(oldSize, newSize);
-    memcpy(result, object, copySize);
-    Cache::deallocate(object);
-    return result;
+    return Cache::reallocate(object, newSize);
 }
     
 inline void scavenge()
 {
-    PerThread<Cache>::get()->scavenge();
-    
-    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
+    Cache::scavenge();
 }
 
 } // namespace api

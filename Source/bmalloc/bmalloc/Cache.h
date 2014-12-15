@@ -41,17 +41,18 @@ public:
 
     static void* allocate(size_t);
     static void deallocate(void*);
+    static void* reallocate(void*, size_t);
+    static void scavenge();
 
     Cache();
 
     Allocator& allocator() { return m_allocator; }
     Deallocator& deallocator() { return m_deallocator; }
-    
-    void scavenge();
 
 private:
     static void* allocateSlowCaseNullCache(size_t);
     static void deallocateSlowCaseNullCache(void*);
+    static void* reallocateSlowCaseNullCache(void*, size_t);
 
     Deallocator m_deallocator;
     Allocator m_allocator;
@@ -71,6 +72,14 @@ inline void Cache::deallocate(void* object)
     if (!cache)
         return deallocateSlowCaseNullCache(object);
     return cache->deallocator().deallocate(object);
+}
+
+inline void* Cache::reallocate(void* object, size_t newSize)
+{
+    Cache* cache = PerThread<Cache>::getFastCase();
+    if (!cache)
+        return reallocateSlowCaseNullCache(object, newSize);
+    return cache->allocator().reallocate(object, newSize);
 }
 
 } // namespace bmalloc
