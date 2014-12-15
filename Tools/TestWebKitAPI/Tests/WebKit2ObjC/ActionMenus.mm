@@ -436,7 +436,8 @@ static NSPoint windowPointForTarget(TargetType target)
 
 // FIXME: Ideally, each of these would be able to run as its own subtest in a suite, sharing a WKView (for performance reasons),
 // but we cannot because run-api-tests explicitly runs each test in a separate process. So, we use a single test for many tests instead.
-TEST(WebKit2, ActionMenusTest)
+// FIXME: Temporarily disabled.
+TEST(WebKit2, DISABLED_ActionMenusTest)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ActionMenusTest"));
 

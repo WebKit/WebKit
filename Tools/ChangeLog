@@ -1,3 +1,16 @@
+2014-12-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Implement Data Detectors immediate actions for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=139617
+        <rdar://problem/19198539>
+
+        Reviewed by Beth Dakin.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        (TestWebKitAPI::TEST):
+        Temporarily disable the action menu tests while the
+        underlying code is in flux.
+
 2014-12-14  Andreas Kling  <akling@apple.com>
 
         Replace PassRef with Ref/Ref&& across the board.
