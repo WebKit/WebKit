@@ -229,9 +229,9 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_symbolTable);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionDecls.begin(), end = thisObject->m_functionDecls.end(); ptr != end; ++ptr)
-        visitor.append(WTF::getPtr(ptr));
+        visitor.append(ptr);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
-        visitor.append(WTF::getPtr(ptr));
+        visitor.append(ptr);
     visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
     if (thisObject->m_rareData) {
         for (size_t i = 0, end = thisObject->m_rareData->m_regexps.size(); i != end; i++)

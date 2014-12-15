@@ -1442,8 +1442,8 @@ public:
     {
         if (buffer.isEmpty())
             return String();
-        const uint8_t* ptr = getPtr(buffer.begin());
-        const uint8_t* end = getPtr(buffer.end());
+        const uint8_t* ptr = buffer.begin();
+        const uint8_t* end = buffer.end();
         uint32_t version;
         if (!readLittleEndian(ptr, end, version) || version > CurrentVersion)
             return String();

@@ -223,7 +223,7 @@ class YarrGenerator : private MacroAssembler {
         if (charClass->m_ranges.size()) {
             unsigned matchIndex = 0;
             JumpList failures;
-            matchCharacterClassRange(character, failures, matchDest, charClass->m_ranges.data(), charClass->m_ranges.size(), &matchIndex, charClass->m_matches.data(), charClass->m_matches.size());
+            matchCharacterClassRange(character, failures, matchDest, charClass->m_ranges.begin(), charClass->m_ranges.size(), &matchIndex, charClass->m_matches.begin(), charClass->m_matches.size());
             while (matchIndex < charClass->m_matches.size())
                 matchDest.append(branch32(Equal, character, Imm32((unsigned short)charClass->m_matches[matchIndex++])));
 

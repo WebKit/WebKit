@@ -145,7 +145,7 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     // always use ImageSource::clear(true, ...) to completely free the memory in
     // this case.
     clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size() - 1);
-    const auto end = m_frameBufferCache.begin() + clearBeforeFrame;
+    const Vector<ImageFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
 
     // We need to preserve frames such that:
     //   * We don't clear |end|
@@ -165,14 +165,14 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     //   * If the frame is partial, we're decoding it, so don't clear it; if it
     //     has a disposal method other than DisposeOverwritePrevious, stop
     //     scanning, as we'll only need this frame when decoding the next one.
-    auto i = end;
+    Vector<ImageFrame>::iterator i(end);
     for (; (i != m_frameBufferCache.begin()) && ((i->status() == ImageFrame::FrameEmpty) || (i->disposalMethod() == ImageFrame::DisposeOverwritePrevious)); --i) {
         if ((i->status() == ImageFrame::FrameComplete) && (i != end))
             i->clearPixelData();
     }
 
     // Now |i| holds the last frame we need to preserve; clear prior frames.
-    for (auto j = m_frameBufferCache.begin(); j != i; ++j) {
+    for (Vector<ImageFrame>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
         ASSERT(j->status() != ImageFrame::FramePartial);
         if (j->status() != ImageFrame::FrameEmpty)
             j->clearPixelData();

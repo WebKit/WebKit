@@ -59,7 +59,7 @@ cairo_pattern_t* Gradient::platformGradient(float globalAlpha)
     else
         m_gradient = cairo_pattern_create_linear(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
 
-    auto stopIterator = m_stops.begin();
+    Vector<ColorStop>::iterator stopIterator = m_stops.begin();
     while (stopIterator != m_stops.end()) {
         cairo_pattern_add_color_stop_rgba(m_gradient, stopIterator->stop,
                                           stopIterator->red, stopIterator->green, stopIterator->blue,

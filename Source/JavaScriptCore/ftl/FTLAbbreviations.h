@@ -120,7 +120,7 @@ static inline LValue mdString(LContext context, const char* string, unsigned len
 static inline LValue mdString(LContext context, const char* string) { return mdString(context, string, std::strlen(string)); }
 static inline LValue mdNode(LContext context, LValue* args, unsigned numArgs) { return llvm->MDNodeInContext(context, args, numArgs); }
 template<typename VectorType>
-static inline LValue mdNode(LContext context, const VectorType& vector) { return mdNode(context, const_cast<LValue*>(vector.data()), vector.size()); }
+static inline LValue mdNode(LContext context, const VectorType& vector) { return mdNode(context, const_cast<LValue*>(vector.begin()), vector.size()); }
 static inline LValue mdNode(LContext context) { return mdNode(context, 0, 0); }
 static inline LValue mdNode(LContext context, LValue arg1) { return mdNode(context, &arg1, 1); }
 static inline LValue mdNode(LContext context, LValue arg1, LValue arg2)
@@ -288,7 +288,7 @@ static inline LValue buildCall(LBuilder builder, LValue function, const LValue* 
 template<typename VectorType>
 inline LValue buildCall(LBuilder builder, LValue function, const VectorType& vector)
 {
-    return buildCall(builder, function, vector.data(), vector.size());
+    return buildCall(builder, function, vector.begin(), vector.size());
 }
 static inline LValue buildCall(LBuilder builder, LValue function)
 {

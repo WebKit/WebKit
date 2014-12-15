@@ -470,9 +470,6 @@
     <ClInclude Include="..\wtf\HexNumber.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\IndexedIterator.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\IteratorAdaptors.h">
       <Filter>wtf</Filter>
     </ClInclude>

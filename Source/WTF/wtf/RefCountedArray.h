@@ -83,7 +83,7 @@ public:
         Header::fromPayload(m_data)->refCount = 1;
         Header::fromPayload(m_data)->length = other.size();
         ASSERT(Header::fromPayload(m_data)->length == other.size());
-        VectorTypeOperations<T>::uninitializedCopy(getPtr(other.begin()), getPtr(other.end()), m_data);
+        VectorTypeOperations<T>::uninitializedCopy(other.begin(), other.end(), m_data);
     }
     
     RefCountedArray& operator=(const RefCountedArray& other)
