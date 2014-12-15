@@ -250,6 +250,7 @@ using namespace WebCore;
         return nil;
 
     [actionContext setAltMode:YES];
+    [actionContext setImmediate:YES];
     if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
         if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
             return nil;
