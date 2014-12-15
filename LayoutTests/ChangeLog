@@ -1,5 +1,11 @@
 2014-12-14  Alexey Proskuryakov  <ap@apple.com>
 
+        Add some more slow tests to TestExpectations.
+
+        * TestExpectations:
+
+2014-12-14  Alexey Proskuryakov  <ap@apple.com>
+
         svg/filters/svg-deeply-nested-crash.html is slow in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=139638
 

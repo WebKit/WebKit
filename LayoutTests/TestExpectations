@@ -331,6 +331,11 @@ webkit.org/b/139548 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 webkit.org/b/139634 [ Debug ] fast/selectors/matches-backtracking.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/nth-child-of-register-requirement.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/not-backtracking.html [ Slow ]
+
 webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Slow ]
 
 webkit.org/b/139638 [ Debug ] svg/filters/svg-deeply-nested-crash.html [ Slow ]
+
+webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ Slow ]
+
+webkit.org/b/139640 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
