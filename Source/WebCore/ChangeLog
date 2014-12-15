@@ -1,3 +1,30 @@
+2014-12-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Unify the various serialization of selector list
+        https://bugs.webkit.org/show_bug.cgi?id=139606
+
+        Reviewed by Andreas Kling.
+
+        There were code in various place to build a string from the selectors contained
+        in a selecor list.
+
+        This patch adds a single function to do that: buildSelectorsText(). All the call sites
+        were modified to use it.
+
+        The serialization of :-webkit-any() gets fixed as a result.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::appendSelectorList): Deleted.
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::selectorsText):
+        (WebCore::CSSSelectorList::buildSelectorsText):
+        * css/CSSSelectorList.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::generateSelectorText):
+        * css/WebKitCSSRegionRule.cpp:
+        (WebCore::WebKitCSSRegionRule::cssText):
+
 2014-12-15  Antti Koivisto  <antti@apple.com>
 
         Try to fix iOS build.

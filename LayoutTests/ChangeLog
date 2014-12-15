@@ -1,3 +1,27 @@
+2014-12-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Unify the various serialization of selector list
+        https://bugs.webkit.org/show_bug.cgi?id=139606
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        * fast/css/parsing-css-matches-1-expected.txt:
+        * fast/css/parsing-css-matches-1.html:
+        * fast/css/parsing-css-matches-2-expected.txt:
+        * fast/css/parsing-css-matches-2.html:
+        * fast/css/parsing-css-matches-4-expected.txt:
+        * fast/css/parsing-css-matches-4.html:
+        * fast/css/parsing-css-not-1-expected.txt:
+        * fast/css/parsing-css-not-1.html:
+        * fast/css/parsing-css-not-2-expected.txt:
+        * fast/css/parsing-css-not-2.html:
+        * fast/css/parsing-css-not-4-expected.txt:
+        * fast/css/parsing-css-not-4.html:
+
 2014-12-15  Javier Fernandez  <jfernandez@igalia.com>
 
         Floats Don't Overhang Their Block Formatting Contex

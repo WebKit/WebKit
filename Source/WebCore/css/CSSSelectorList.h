@@ -64,6 +64,7 @@ public:
     bool hasInvalidSelector() const;
 
     String selectorsText() const;
+    void buildSelectorsText(StringBuilder&) const;
 
     unsigned componentCount() const;
 

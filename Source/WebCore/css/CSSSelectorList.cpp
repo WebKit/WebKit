@@ -122,14 +122,18 @@ void CSSSelectorList::deleteSelectors()
 String CSSSelectorList::selectorsText() const
 {
     StringBuilder result;
-
-    for (const CSSSelector* s = first(); s; s = next(s)) {
-        if (s != first())
-            result.appendLiteral(", ");
-        result.append(s->selectorText());
-    }
-
+    buildSelectorsText(result);
     return result.toString();
+}
+
+void CSSSelectorList::buildSelectorsText(StringBuilder& stringBuilder) const
+{
+    const CSSSelector* firstSubSelector = first();
+    for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        if (subSelector != firstSubSelector)
+            stringBuilder.appendLiteral(", ");
+        stringBuilder.append(subSelector->selectorText());
+    }
 }
 
 template <typename Functor>

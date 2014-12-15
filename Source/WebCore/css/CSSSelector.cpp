@@ -357,16 +357,6 @@ static void appendArgumentList(StringBuilder& str, const Vector<AtomicString>& a
 }
 #endif
 
-static void appendSelectorList(StringBuilder& str, const CSSSelectorList* selectorList)
-{
-    const CSSSelector* firstSubSelector = selectorList->first();
-    for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-        if (subSelector != firstSubSelector)
-            str.appendLiteral(", ");
-        str.append(subSelector->selectorText());
-    }
-}
-
 String CSSSelector::selectorText(const String& rightSide) const
 {
     StringBuilder str;
@@ -398,12 +388,7 @@ String CSSSelector::selectorText(const String& rightSide) const
 #endif
             case CSSSelector::PseudoClassAny: {
                 str.appendLiteral(":-webkit-any(");
-                const CSSSelector* firstSubSelector = cs->selectorList()->first();
-                for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                    if (subSelector != firstSubSelector)
-                        str.append(',');
-                    str.append(subSelector->selectorText());
-                }
+                cs->selectorList()->buildSelectorsText(str);
                 str.append(')');
                 break;
             }
@@ -527,7 +512,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassNot:
                 str.appendLiteral(":not(");
-                appendSelectorList(str, cs->selectorList());
+                cs->selectorList()->buildSelectorsText(str);
                 str.append(')');
                 break;
             case CSSSelector::PseudoClassNthChild:
@@ -535,7 +520,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(cs->argument());
                 if (const CSSSelectorList* selectorList = cs->selectorList()) {
                     str.appendLiteral(" of ");
-                    appendSelectorList(str, selectorList);
+                    selectorList->buildSelectorsText(str);
                 }
                 str.append(')');
                 break;
@@ -544,7 +529,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(cs->argument());
                 if (const CSSSelectorList* selectorList = cs->selectorList()) {
                     str.appendLiteral(" of ");
-                    appendSelectorList(str, selectorList);
+                    selectorList->buildSelectorsText(str);
                 }
                 str.append(')');
                 break;
@@ -567,7 +552,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassMatches: {
                 str.appendLiteral(":matches(");
-                appendSelectorList(str, cs->selectorList());
+                cs->selectorList()->buildSelectorsText(str);
                 str.append(')');
                 break;
             }

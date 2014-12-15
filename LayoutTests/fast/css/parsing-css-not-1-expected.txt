@@ -100,12 +100,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":not(a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a + b > c ~ d e + g)"
-PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":not(:not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:not(:link))"

@@ -118,12 +118,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(*, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(*, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(*, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(*, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(*, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(*, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :not(:link))"
@@ -250,12 +250,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(foobar, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(foobar, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(foobar, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(foobar, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :not(:link))"
@@ -382,12 +382,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(#id, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(#id, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(#id, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(#id, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(#id, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :not(:link))"
@@ -514,12 +514,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(.class, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(.class, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :not(:link))"
@@ -646,12 +646,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:first-child, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:first-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(:first-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:first-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:first-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(:first-child, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :not(:link))"
@@ -778,12 +778,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:last-child, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(:last-child, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :not(:link))"
@@ -910,12 +910,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:visited, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:visited, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(:visited, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:visited, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:visited, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(:visited, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :not(:link))"
@@ -1042,12 +1042,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::first-letter, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(::first-letter, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :not(:link))"
@@ -1174,12 +1174,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::first-line, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(::first-line, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(::first-line, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(::first-line, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :not(:link))"
@@ -1306,12 +1306,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::before, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(::before, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(::before, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(::before, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :not(:link))"
@@ -1438,12 +1438,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::after, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(::after, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(::after, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(::after, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :not(:link))"
@@ -1570,12 +1570,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(foobar#id.class, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(foobar#id.class, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :not(:link))"
@@ -1702,12 +1702,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(.class:not(.notclass), a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(.class:not(.notclass), :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(.class:not(.notclass), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(.class:not(.notclass), :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class:not(.notclass), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(.class:not(.notclass), :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :not(:link))"
@@ -1834,12 +1834,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(#id:empty, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(#id:empty, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :not(:link))"
@@ -1966,12 +1966,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a > b, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(a > b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(a > b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(a > b, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a > b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(a > b, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :not(:link))"
@@ -2098,12 +2098,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a b, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(a b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(a b, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(a b, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :not(:link))"
@@ -2230,12 +2230,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a + b, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(a + b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(a + b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(a + b, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a + b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(a + b, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :not(:link))"
@@ -2362,12 +2362,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a ~ b, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(a ~ b, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :not(:link))"
@@ -2494,12 +2494,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a + b > c ~ d e + g, a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(a + b > c ~ d e + g, :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(a + b > c ~ d e + g, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(a + b > c ~ d e + g, :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(a + b > c ~ d e + g, :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :not(:link))"
@@ -2512,138 +2512,138 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a + b > c ~ d e + g, :nth-child(even of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), *)") did not throw exception.
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), *)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), *    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), *)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), *    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), *)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), *)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :first-child)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :first-child)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :first-child)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :first-child    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :first-child)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :first-child)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :last-child)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :last-child)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :last-child)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :last-child    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :last-child)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :last-child)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :visited)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :visited)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :visited)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :visited)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :visited)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-letter)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-letter)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-line)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::first-line)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::before)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::before)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::after)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), ::after)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar#id.class)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar#id.class)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar#id.class    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), foobar#id.class)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar#id.class)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class:not(.notclass))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class:not(.notclass))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class:not(.notclass))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class:not(.notclass)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), .class:not(.notclass))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), .class:not(.notclass))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id:empty)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id:empty)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id:empty)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id:empty    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), #id:empty)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), #id:empty)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a > b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a > b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a > b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a > b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a > b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a > b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a ~ b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a ~ b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a ~ b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a ~ b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a ~ b)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a ~ b)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b > c ~ d e + g)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :not(:link))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :not(:link))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :not(:link))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :nth-child(even of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :not(:link))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector,#tama,#hanayo,#midoriko), :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c))"
 PASS document.querySelector(":matches(:not(:link), *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), *)"
@@ -2758,12 +2758,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:not(:link), a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:not(:link), :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(:not(:link), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:not(:link), :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:not(:link), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(:not(:link), :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :not(:link))"
@@ -2890,12 +2890,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:nth-child(even of a, b, c), a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :-webkit-any(.selector,#tama,#hanayo,#midoriko))") did not throw exception.
+PASS document.querySelector(":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :-webkit-any(.selector,#tama,#hanayo,#midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :-webkit-any(.selector,#tama,#hanayo,#midoriko))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
 PASS document.querySelector(":matches(:nth-child(even of a, b, c), :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :not(:link))"
