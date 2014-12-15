@@ -523,7 +523,9 @@ LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
     if (is<Document>(*node))
         return frameRectInAbsoluteCoordinates(downcast<Document>(*node).frame());
 
-    LayoutRect rect = rectToAbsoluteCoordinates(node->document().frame(), rendererBoundingBox(*node));
+    LayoutRect rect;
+    if (RenderObject* renderer = node->renderer())
+        rect = rectToAbsoluteCoordinates(node->document().frame(), renderer->absoluteBoundingBoxRect());
 
     // For authors that use border instead of outline in their CSS, we compensate by ignoring the border when calculating
     // the rect of the focused element.

@@ -304,8 +304,6 @@ private:
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
 
-LayoutRect rendererAnchorRect(const ContainerNode&);
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ContainerNode)

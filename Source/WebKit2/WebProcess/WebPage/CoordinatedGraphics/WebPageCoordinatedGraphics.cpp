@@ -55,7 +55,9 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
     if (!node)
         return;
 
-    IntRect zoomableArea = rendererBoundingBox(*node);
+    IntRect zoomableArea;
+    if (RenderObject* renderer = node->renderer())
+        zoomableArea = renderer->absoluteBoundingBoxRect();
 
     while (true) {
         bool found = !node->isTextNode() && !node->isShadowRoot();
@@ -71,7 +73,8 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
             break;
 
         node = node->parentNode();
-        zoomableArea.unite(rendererBoundingBox(*node));
+        if (RenderObject* renderer = node.renderer())
+            zoomableArea.unite(renderer->absoluteBoundingBoxRect());
     }
 
     if (node->document().frame() && node->document().frame()->view()) {

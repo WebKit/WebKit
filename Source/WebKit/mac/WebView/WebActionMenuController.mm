@@ -256,7 +256,11 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!view)
         return IntRect();
 
-    return view->contentsToWindow(rendererBoundingBox(*node));
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return IntRect();
+
+    return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
 }
 
 - (NSArray *)_defaultMenuItemsForLink

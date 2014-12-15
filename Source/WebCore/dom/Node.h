@@ -739,8 +739,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-WEBCORE_EXPORT IntRect rendererBoundingBox(const Node&);
-
 } // namespace WebCore
 
 #ifndef NDEBUG

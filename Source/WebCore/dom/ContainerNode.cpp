@@ -910,11 +910,4 @@ RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);
 }
 
-LayoutRect rendererAnchorRect(const ContainerNode& node)
-{
-    if (RenderElement* renderer = node.renderer())
-        return renderer->anchorRect();
-    return LayoutRect();
-}
-
 } // namespace WebCore
