@@ -2349,6 +2349,14 @@
             "sadrulhc"
          ]
       },
+      "Said Abou-Hallawa" : {
+         "emails" : [
+            "sabouhallawa@apple.com"
+         ],
+         "nicks" : [
+            "sabouhallawa"
+         ]
+      },
       "Sami Ky\u00f6stil\u00e4" : {
          "emails" : [
             "skyostil@chromium.org"
@@ -3274,14 +3282,6 @@
          ],
          "nicks" : [
             "rmondello"
-         ]
-      },
-      "Said Abou-Hallawa" : {
-         "emails" : [
-            "sabouhallawa@apple.com"
-         ],
-         "nicks" : [
-            "sabouhallawa"
          ]
       },
       "Tab Atkins" : {

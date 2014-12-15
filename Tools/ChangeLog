@@ -1,5 +1,11 @@
 2014-12-15  Timothy Horton  <timothy_horton@apple.com>
 
+        Move Said to the committers section.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2014-12-15  Timothy Horton  <timothy_horton@apple.com>
+
         Implement Data Detectors immediate actions for WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=139617
         <rdar://problem/19198539>
