@@ -52,13 +52,10 @@ public:
     virtual void didFinishLastTransaction() override;
 
 private:
-    // WebCore::HysteresisActivity
-    friend class WebCore::HysteresisActivity<WebSQLiteDatabaseTracker>;
-    void started();
-    void stopped();
+    void hysteresisUpdated(WebCore::HysteresisState);
 
     WebProcess* m_process;
-    WebCore::HysteresisActivity<WebSQLiteDatabaseTracker> m_hysteresis;
+    WebCore::HysteresisActivity m_hysteresis;
 };
 
 } // namespace WebKit

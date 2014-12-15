@@ -44,7 +44,7 @@ const char* WebSQLiteDatabaseTracker::supplementName()
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(WebProcess* process)
     : m_process(process)
-    , m_hysteresis(*this)
+    , m_hysteresis([this](HysteresisState state) { hysteresisUpdated(state); })
 {
 }
 
@@ -67,14 +67,9 @@ void WebSQLiteDatabaseTracker::didFinishLastTransaction()
     });
 }
 
-void WebSQLiteDatabaseTracker::started()
+void WebSQLiteDatabaseTracker::hysteresisUpdated(HysteresisState state)
 {
-    m_process->parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(true), 0);
-}
-
-void WebSQLiteDatabaseTracker::stopped()
-{
-    m_process->parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(false), 0);
+    m_process->parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(state == HysteresisState::Started), 0);
 }
 
 } // namespace WebKit

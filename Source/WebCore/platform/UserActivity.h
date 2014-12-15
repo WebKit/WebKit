@@ -39,7 +39,7 @@ namespace WebCore {
 // The UserActivity type is used to indicate to the operating system that
 // a user initiated or visible action is taking place, and as such that
 // resources should be allocated to the process accordingly.
-class UserActivity : public HysteresisActivity<UserActivity> {
+class UserActivity : public HysteresisActivity {
 public:
     class Impl {
     public:
@@ -58,10 +58,7 @@ public:
     WEBCORE_EXPORT explicit UserActivity(const char* description);
 
 private:
-    friend class HysteresisActivity<UserActivity>;
-
-    WEBCORE_EXPORT void started();
-    void stopped();
+    void hysteresisUpdated(HysteresisState);
 
     Impl m_impl;
 };

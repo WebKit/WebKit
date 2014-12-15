@@ -30,7 +30,7 @@ namespace WebCore {
 
 PageThrottler::PageThrottler(ViewState::Flags viewState)
     : m_viewState(viewState)
-    , m_hysteresis(*this)
+    , m_hysteresis([this](HysteresisState) { updateUserActivity(); })
     , m_pageActivityCounter([this]() { pageActivityCounterValueDidChange(); })
 {
     updateUserActivity();
@@ -60,8 +60,8 @@ void PageThrottler::pageActivityCounterValueDidChange()
     else
         m_hysteresis.stop();
 
-    // If the counter is nonzero, state must be Started; if the counter is zero, state may be Waiting or Stopped.
-    ASSERT(!!m_pageActivityCounter.value() == (m_hysteresis.state() == HysteresisState::Started));
+    // If the counter is nonzero, state cannot be Stopped.
+    ASSERT(!(m_pageActivityCounter.value() && m_hysteresis.state() == HysteresisState::Stopped));
 }
 
 void PageThrottler::updateUserActivity()
@@ -83,16 +83,6 @@ void PageThrottler::setViewState(ViewState::Flags viewState)
 
     if (changed & ViewState::IsVisuallyIdle)
         updateUserActivity();
-}
-
-void PageThrottler::started()
-{
-    updateUserActivity();
-}
-
-void PageThrottler::stopped()
-{
-    updateUserActivity();
 }
 
 }

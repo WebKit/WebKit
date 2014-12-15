@@ -1,3 +1,51 @@
+2014-12-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Change HysteresisActivity to use a lambda
+        https://bugs.webkit.org/show_bug.cgi?id=139636
+
+        Reviewed by Darin Adler.
+
+        The current implementation provides notifications via callbacks to a delegate. Using a delegate
+        with callbacks is limiting a number of ways. The callback names are very ambiguous, the callbacks
+        must either be on a separate object (more boilerplate), or the callback must be public for
+        HysteresisActivity to call them, or friends get involved. Without the boilerplate of extra
+        delegate objects it's hard to scale use of these objects – a single object can't serve as a
+        delegate for multiple HysteresisActivity members.
+
+        Instead, make HysteresisActivity take a lambda to callback on state change. To simplify, changed
+        HysteresisState to only track Started/Stopped states (removed WillStopPendingTimeout).
+
+        * WebCore.exp.in:
+            - removed exports of deleted functions.
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - m_hysteresis lambda calls updateUserActivity.
+        (WebCore::PageThrottler::pageActivityCounterValueDidChange):
+            - ASSERT updated due to removal of WillStopPendingTimeout state.
+        (WebCore::PageThrottler::started): Deleted.
+        (WebCore::PageThrottler::stopped): Deleted.
+            - functionality replaced by lambda.
+        * page/PageThrottler.h:
+            - HysteresisActivity is no longer templated on delegate type, removed function declarations & friend.
+        * platform/HysteresisActivity.h:
+        (WebCore::HysteresisActivity::HysteresisActivity):
+            - HysteresisActivity takes a lambda, not a delegate.
+        (WebCore::HysteresisActivity::start):
+            - delegate call -> callback.
+        (WebCore::HysteresisActivity::state):
+            - simplified to remove WillStopPendingTimeout.
+        (WebCore::HysteresisActivity::hysteresisTimerFired):
+            - delegate call -> callback.
+        * platform/UserActivity.cpp:
+        (WebCore::UserActivity::UserActivity):
+            - HysteresisActivity lambda calls hysteresisUpdated.
+        (WebCore::UserActivity::hysteresisUpdated):
+        (WebCore::UserActivity::started): Deleted.
+        (WebCore::UserActivity::stopped): Deleted.
+            - started/stopped -> hysteresisUpdated.
+        * platform/UserActivity.h:
+            - started/stopped -> hysteresisUpdated, removed friend.
+
 2014-12-15  Antti Koivisto  <antti@apple.com>
 
         WebKit level persistent caching

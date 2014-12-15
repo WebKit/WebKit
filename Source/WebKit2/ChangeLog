@@ -1,3 +1,30 @@
+2014-12-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Change HysteresisActivity to use a lambda
+        https://bugs.webkit.org/show_bug.cgi?id=139636
+
+        Reviewed by Darin Adler.
+
+        The current implementation provides notifications via callbacks to a delegate. Using a delegate
+        with callbacks is limiting a number of ways. The callback names are very ambiguous, the callbacks
+        must either be on a separate object (more boilerplate), or the callback must be public for
+        HysteresisActivity to call them, or friends get involved. Without the boilerplate of extra
+        delegate objects it's hard to scale use of these objects – a single object can't serve as a
+        delegate for multiple HysteresisActivity members.
+
+        Instead, make HysteresisActivity take a lambda to callback on state change. To simplify, changed
+        HysteresisState to only track Started/Stopped states (removed WillStopPendingTimeout).
+
+        * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+            - HysteresisActivity now takes a lambda, not a delegate.
+        (WebKit::WebSQLiteDatabaseTracker::hysteresisUpdated):
+        (WebKit::WebSQLiteDatabaseTracker::started): Deleted.
+        (WebKit::WebSQLiteDatabaseTracker::stopped): Deleted.
+            - started/stopped merged into hysteresisUpdated
+        * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.h:
+            - HysteresisActivity is no longer templated on delegate type, changed function declarations.
+
 2014-12-15  Antti Koivisto  <antti@apple.com>
 
         WebKit level persistent caching

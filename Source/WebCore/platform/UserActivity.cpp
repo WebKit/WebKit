@@ -45,19 +45,17 @@ void UserActivity::Impl::endActivity()
 #endif
 
 UserActivity::UserActivity(const char* description)
-    : HysteresisActivity<UserActivity>(*this)
+    : HysteresisActivity([this](HysteresisState state) { hysteresisUpdated(state); })
     , m_impl(description)
 {
 }
 
-void UserActivity::started()
+void UserActivity::hysteresisUpdated(HysteresisState state)
 {
-    m_impl.beginActivity();
-}
-
-void UserActivity::stopped()
-{
-    m_impl.endActivity();
+    if (state == HysteresisState::Started)
+        m_impl.beginActivity();
+    else
+        m_impl.endActivity();
 }
 
 } // namespace WebCore

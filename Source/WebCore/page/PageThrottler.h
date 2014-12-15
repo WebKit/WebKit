@@ -51,15 +51,10 @@ public:
 
 private:
     void pageActivityCounterValueDidChange();
-
     void updateUserActivity();
 
-    friend class HysteresisActivity<PageThrottler>;
-    WEBCORE_EXPORT void started();
-    void stopped();
-
     ViewState::Flags m_viewState;
-    HysteresisActivity<PageThrottler> m_hysteresis;
+    HysteresisActivity m_hysteresis;
     std::unique_ptr<UserActivity::Impl> m_activity;
     RefCounter m_pageActivityCounter;
 };
