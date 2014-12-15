@@ -122,8 +122,8 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override;
     virtual bool isMouseFocusable() const override;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override final;
-    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override final;
+    virtual void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) override final;
+    virtual void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override final;
     
     virtual bool canStartSelection() const override { return false; }
 

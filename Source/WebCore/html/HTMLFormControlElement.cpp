@@ -500,9 +500,9 @@ bool HTMLFormControlElement::validationMessageShadowTreeContains(const Node& nod
     return m_validationMessage && m_validationMessage->shadowTreeContains(node);
 }
 
-void HTMLFormControlElement::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
+void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 {
-    HTMLElement::dispatchBlurEvent(newFocusedElement);
+    HTMLElement::dispatchBlurEvent(WTF::move(newFocusedElement));
     hideVisibleValidationMessage();
 }
 

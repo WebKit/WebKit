@@ -49,9 +49,9 @@ FocusEvent::FocusEvent()
 {
 }
 
-FocusEvent::FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, int detail, PassRefPtr<EventTarget> relatedTarget)
-    : UIEvent(type, canBubble, cancelable, view, detail)
-    , m_relatedTarget(relatedTarget)
+FocusEvent::FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<AbstractView>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
+    : UIEvent(type, canBubble, cancelable, WTF::move(view), detail)
+    , m_relatedTarget(WTF::move(relatedTarget))
 {
 }
 

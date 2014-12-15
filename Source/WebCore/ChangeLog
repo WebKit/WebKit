@@ -1,3 +1,37 @@
+2014-12-15  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from FocusEvent code.
+        <https://webkit.org/b/139647>
+
+        Reviewed by Anders Carlsson.
+
+        Convert FocusEvent-related code from using PassRefPtr to using RefPtr&& instead.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchFocusInEvent):
+        (WebCore::Element::dispatchFocusOutEvent):
+        (WebCore::Element::dispatchFocusEvent):
+        (WebCore::Element::dispatchBlurEvent):
+        * dom/Element.h:
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::FocusEvent):
+        * dom/FocusEvent.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchBlurEvent):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+        (WebCore::HTMLTextFormControlElement::dispatchBlurEvent):
+        * html/HTMLTextFormControlElement.h:
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedElement):
+
 2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Codepoints not associated with languages are drawn as boxes

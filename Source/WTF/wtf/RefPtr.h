@@ -88,6 +88,8 @@ namespace WTF {
 
         static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
 
+        RefPtr copyRef() WARN_UNUSED_RETURN { return RefPtr(m_ptr); }
+
     private:
         T* m_ptr;
     };

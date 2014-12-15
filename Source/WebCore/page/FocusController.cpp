@@ -127,10 +127,10 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
     }
 
     if (!focused && document->focusedElement())
-        document->focusedElement()->dispatchBlurEvent(0);
+        document->focusedElement()->dispatchBlurEvent(nullptr);
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
     if (focused && document->focusedElement())
-        document->focusedElement()->dispatchFocusEvent(0, FocusDirectionNone);
+        document->focusedElement()->dispatchFocusEvent(nullptr, FocusDirectionNone);
 }
 
 static inline bool hasCustomFocusLogic(Element& element)

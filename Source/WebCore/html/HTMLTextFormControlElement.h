@@ -126,8 +126,8 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) override final;
-    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) override final;
+    virtual void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) override final;
+    virtual void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override final;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 
     unsigned indexForPosition(const Position&) const;
