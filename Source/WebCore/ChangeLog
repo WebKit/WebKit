@@ -1,3 +1,31 @@
+2014-12-15  Javier Fernandez  <jfernandez@igalia.com>
+
+        Floats Don't Overhang Their Block Formatting Contex
+        https://bugs.webkit.org/show_bug.cgi?id=139476
+
+        Reviewed by David Hyatt.
+
+        From Blink r172530 by <robhogan@gmail.com>
+
+        Floats Don't Overhang Their Block Formatting Context Per
+        http://www.w3.org/TR/CSS2/visuren.html#float-position: "References
+        to [the elements] in the [rules that govern the behaviour of
+        floats] refer only to other elements in the same block formatting
+        context as the float."
+
+        This means we don't need to look for intruding or overhanging
+        floats in boxes that establish a new block formatting
+        context. Even that we don't have a test breaking this rule it
+        seems we are doing unnecessary work in
+        rebuildFloatsFromIntruding() so make sure we avoid adding floats
+        from different block formatting contexts.
+
+        Test:
+        fast/block/float/floats-do-not-overhang-from-block-formatting-context.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addIntrudingFloats):
+
 2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed build fix after r177301

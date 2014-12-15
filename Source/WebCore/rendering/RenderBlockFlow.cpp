@@ -2668,6 +2668,10 @@ void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* prev, LayoutUnit logic
 {
     ASSERT(!avoidsFloats());
 
+    // If we create our own block formatting context then our contents don't interact with floats outside it, even those from our parent.
+    if (createsNewFormattingContext())
+        return;
+
     // If the parent or previous sibling doesn't have any floats to add, don't bother.
     if (!prev->m_floatingObjects)
         return;
