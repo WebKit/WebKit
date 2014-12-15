@@ -166,8 +166,8 @@ clear
 clip [Custom=All]
 -webkit-clip-path [Converter=ClipPath]
 content [LegacyStyleBuilder]
-counter-increment [LegacyStyleBuilder]
-counter-reset [LegacyStyleBuilder]
+counter-increment [Custom=All]
+counter-reset [Custom=All]
 cursor [Inherited, LegacyStyleBuilder]
 #if defined(ENABLE_CURSOR_VISIBILITY) && ENABLE_CURSOR_VISIBILITY
 -webkit-cursor-visibility [Inherited, TypeName=CursorVisibility]

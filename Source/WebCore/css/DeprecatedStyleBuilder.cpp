@@ -626,72 +626,6 @@ public:
     }
 };
 
-enum CounterBehavior {Increment = 0, Reset};
-template <CounterBehavior counterBehavior>
-class ApplyPropertyCounter {
-public:
-    static void emptyFunction(CSSPropertyID, StyleResolver*) { }
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        CounterDirectiveMap& map = styleResolver->style()->accessCounterDirectives();
-        CounterDirectiveMap& parentMap = styleResolver->parentStyle()->accessCounterDirectives();
-
-        typedef CounterDirectiveMap::iterator Iterator;
-        Iterator end = parentMap.end();
-        for (Iterator it = parentMap.begin(); it != end; ++it) {
-            CounterDirectives& directives = map.add(it->key, CounterDirectives()).iterator->value;
-            if (counterBehavior == Reset) {
-                directives.inheritReset(it->value);
-            } else {
-                directives.inheritIncrement(it->value);
-            }
-        }
-    }
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        bool setCounterIncrementToNone = counterBehavior == Increment && is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).getValueID() == CSSValueNone;
-
-        if (!is<CSSValueList>(*value) && !setCounterIncrementToNone)
-            return;
-
-        CounterDirectiveMap& map = styleResolver->style()->accessCounterDirectives();
-        typedef CounterDirectiveMap::iterator Iterator;
-
-        Iterator end = map.end();
-        for (Iterator it = map.begin(); it != end; ++it)
-            if (counterBehavior == Reset)
-                it->value.clearReset();
-            else
-                it->value.clearIncrement();
-        
-        if (setCounterIncrementToNone)
-            return;
-        
-        CSSValueList& list = downcast<CSSValueList>(*value);
-        int length = list.length();
-        for (int i = 0; i < length; ++i) {
-            CSSValue* currValue = list.itemWithoutBoundsCheck(i);
-            if (!is<CSSPrimitiveValue>(*currValue))
-                continue;
-
-            Pair* pair = downcast<CSSPrimitiveValue>(*currValue).getPairValue();
-            if (!pair || !pair->first() || !pair->second())
-                continue;
-
-            AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
-            int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
-            CounterDirectives& directives = map.add(identifier, CounterDirectives()).iterator->value;
-            if (counterBehavior == Reset) {
-                directives.setResetValue(value);
-            } else {
-                directives.addIncrementValue(value);
-            }
-        }
-    }
-    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &emptyFunction, &applyValue); }
-};
-
-
 class ApplyPropertyCursor {
 public:
     static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
@@ -884,8 +818,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyBorderRightColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::setVisitedLinkBorderRightColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyBorderTopColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::setVisitedLinkBorderTopColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyColor, ApplyPropertyColor<InheritFromParent, &RenderStyle::color, &RenderStyle::setColor, &RenderStyle::setVisitedLinkColor, &RenderStyle::invalidColor, RenderStyle::initialColor>::createHandler());
-    setPropertyHandler(CSSPropertyCounterIncrement, ApplyPropertyCounter<Increment>::createHandler());
-    setPropertyHandler(CSSPropertyCounterReset, ApplyPropertyCounter<Reset>::createHandler());
     setPropertyHandler(CSSPropertyCursor, ApplyPropertyCursor::createHandler());
     setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());

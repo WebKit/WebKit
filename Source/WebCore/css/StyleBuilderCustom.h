@@ -134,6 +134,13 @@ public:
     static void applyInheritWebkitTextEmphasisStyle(StyleResolver&);
     static void applyValueWebkitTextEmphasisStyle(StyleResolver&, CSSValue&);
 
+    static void applyInitialCounterIncrement(StyleResolver&) { }
+    static void applyInheritCounterIncrement(StyleResolver&);
+    static void applyValueCounterIncrement(StyleResolver&, CSSValue&);
+    static void applyInitialCounterReset(StyleResolver&) { }
+    static void applyInheritCounterReset(StyleResolver&);
+    static void applyValueCounterReset(StyleResolver&, CSSValue&);
+
 private:
     static void resetEffectiveZoom(StyleResolver&);
     static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
@@ -146,6 +153,12 @@ private:
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(StyleResolver&, CSSValue&);
     static bool isValidDisplayValue(StyleResolver&, EDisplay);
+
+    enum CounterBehavior {Increment = 0, Reset};
+    template <CounterBehavior counterBehavior>
+    static void applyInheritCounter(StyleResolver&);
+    template <CounterBehavior counterBehavior>
+    static void applyValueCounter(StyleResolver&, CSSValue&);
 };
 
 inline void StyleBuilderCustom::applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
@@ -1098,6 +1111,73 @@ inline void StyleBuilderCustom::applyValueWebkitTextEmphasisStyle(StyleResolver&
         styleResolver.style()->setTextEmphasisFill(TextEmphasisFillFilled);
         styleResolver.style()->setTextEmphasisMark(primitiveValue);
     }
+}
+
+template <StyleBuilderCustom::CounterBehavior counterBehavior>
+inline void StyleBuilderCustom::applyInheritCounter(StyleResolver& styleResolver)
+{
+    CounterDirectiveMap& map = styleResolver.style()->accessCounterDirectives();
+    for (auto& keyValue : styleResolver.parentStyle()->accessCounterDirectives()) {
+        CounterDirectives& directives = map.add(keyValue.key, CounterDirectives()).iterator->value;
+        if (counterBehavior == Reset)
+            directives.inheritReset(keyValue.value);
+        else
+            directives.inheritIncrement(keyValue.value);
+    }
+}
+
+template <StyleBuilderCustom::CounterBehavior counterBehavior>
+inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, CSSValue& value)
+{
+    bool setCounterIncrementToNone = counterBehavior == Increment && is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone;
+
+    if (!is<CSSValueList>(value) && !setCounterIncrementToNone)
+        return;
+
+    CounterDirectiveMap& map = styleResolver.style()->accessCounterDirectives();
+    for (auto& keyValue : map) {
+        if (counterBehavior == Reset)
+            keyValue.value.clearReset();
+        else
+            keyValue.value.clearIncrement();
+    }
+
+    if (setCounterIncrementToNone)
+        return;
+
+    for (auto& item : downcast<CSSValueList>(value)) {
+        Pair* pair = downcast<CSSPrimitiveValue>(item.get()).getPairValue();
+        if (!pair || !pair->first() || !pair->second())
+            continue;
+
+        AtomicString identifier = pair->first()->getStringValue();
+        int value = pair->second()->getIntValue();
+        CounterDirectives& directives = map.add(identifier, CounterDirectives()).iterator->value;
+        if (counterBehavior == Reset)
+            directives.setResetValue(value);
+        else
+            directives.addIncrementValue(value);
+    }
+}
+
+inline void StyleBuilderCustom::applyInheritCounterIncrement(StyleResolver& styleResolver)
+{
+    applyInheritCounter<Increment>(styleResolver);
+}
+
+inline void StyleBuilderCustom::applyValueCounterIncrement(StyleResolver& styleResolver, CSSValue& value)
+{
+    applyValueCounter<Increment>(styleResolver, value);
+}
+
+inline void StyleBuilderCustom::applyInheritCounterReset(StyleResolver& styleResolver)
+{
+    applyInheritCounter<Reset>(styleResolver);
+}
+
+inline void StyleBuilderCustom::applyValueCounterReset(StyleResolver& styleResolver, CSSValue& value)
+{
+    applyValueCounter<Reset>(styleResolver, value);
 }
 
 } // namespace WebCore
