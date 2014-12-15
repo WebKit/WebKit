@@ -26,40 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This file intentionally calls objc_finalizeOnMainThread, which is deprecated.
-// According to http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Diagnostic-Pragmas.html#Diagnostic-Pragmas
-// we need to place this directive before any data or functions are defined.
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include "config.h"
 #include "WebCoreObjCExtras.h"
 
-#include <objc/objc-auto.h>
 #include <utility>
 #include <wtf/Assertions.h>
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/ObjcRuntimeExtras.h>
 #include <wtf/Threading.h>
-
-void WebCoreObjCFinalizeOnMainThread(Class cls)
-{
-    // This method relies on threading being initialized by the caller, otherwise
-    // WebCoreObjCScheduleDeallocateOnMainThread will crash.
-#ifndef DONT_FINALIZE_ON_MAIN_THREAD
-    objc_finalizeOnMainThread(cls);
-#else
-    UNUSED_PARAM(cls);
-#endif
-}
-
-static void deallocCallback(Class cls, id object)
-{
-    Method method = class_getInstanceMethod(cls, @selector(dealloc));
-
-    IMP imp = method_getImplementation(method);
-    wtfCallIMP<void>(imp, object, @selector(dealloc));
-}
 
 bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
 {
@@ -68,7 +42,12 @@ bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
     if (isMainThread())
         return false;
 
-    callOnMainThread(bind(deallocCallback, cls, object));
+    callOnMainThread([cls, object] {
+        Method method = class_getInstanceMethod(cls, @selector(dealloc));
+        IMP imp = method_getImplementation(method);
+        wtfCallIMP<void>(imp, object, @selector(dealloc));
+    });
+
     return true;
 }
 

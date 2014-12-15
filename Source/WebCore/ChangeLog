@@ -1,3 +1,26 @@
+2014-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the DONT_FINALIZE_ON_MAIN_THREAD #define
+        https://bugs.webkit.org/show_bug.cgi?id=139613
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        Update symbols.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove -Wno-deprecated-declarations from the WebCoreObjCExtras.mm build flags.
+
+        * platform/mac/WebCoreObjCExtras.h:
+        If OBJC_NO_GC is defined to 1, just make WebCoreObjCFinalizeOnMainThread a no-op inline function.
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCFinalizeOnMainThread):
+        Move this to the .h file for easier inlining.
+
+        (WebCoreObjCScheduleDeallocateOnMainThread):
+        Use a lambda.
+
 2014-12-15  Gavin Barraclough  <barraclough@apple.com>
 
         Separate counted and hysteresis activities in PageThrottler

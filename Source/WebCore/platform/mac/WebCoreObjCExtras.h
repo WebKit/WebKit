@@ -26,19 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebCoreObjCExtras_h
+#define WebCoreObjCExtras_h
+
 #include <CoreFoundation/CFBase.h>
-#include <objc/objc.h>
+#include <objc/objc-auto.h>
 
-#ifdef __cplusplus
-extern "C" {
+inline void WebCoreObjCFinalizeOnMainThread(Class cls)
+{
+#ifndef OBJC_NO_GC
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // This method relies on threading being initialized by the caller, otherwise
+    // WebCoreObjCScheduleDeallocateOnMainThread will crash.
+    objc_finalizeOnMainThread(cls);
+#pragma clang diagnostic pop
+#else
+    UNUSED_PARAM(cls);
 #endif
-
-WEBCORE_EXPORT void WebCoreObjCFinalizeOnMainThread(Class cls);
+}
 
 // The 'Class' that should be passed in here is the class of the
 // object that implements the dealloc method that this function is called from.
 WEBCORE_EXPORT bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id);
 
-#ifdef __cplusplus
-}
-#endif
+#endif // WebCoreObjCExtras_h
