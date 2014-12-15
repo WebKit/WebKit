@@ -390,7 +390,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
         if (_hitTestResult.detectedDataTextIndicator)
-            _page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false);
+            page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false);
         page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
     } interactionStoppedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));

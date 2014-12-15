@@ -44,6 +44,7 @@ enum class ImmediateActionState {
 };
 }
 
+@class DDActionContext;
 @class WKPagePreviewViewController;
 @class WKView;
 
@@ -60,6 +61,9 @@ enum class ImmediateActionState {
 
     NSPoint _eventLocationInView;
 
+    BOOL _hasActivatedActionContext;
+    RetainPtr<DDActionContext> _currentActionContext;
+
 #if WK_API_ENABLED
     RetainPtr<NSPopover> _previewPopover;
     String _previewPopoverOriginalURL;
@@ -71,9 +75,11 @@ enum class ImmediateActionState {
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)willDestroyView:(WKView *)view;
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
+- (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
 
 #if WK_API_ENABLED
 - (void)setPreviewTitle:(NSString *)previewTitle;
+- (void)hidePreview;
 #endif // WK_API_ENABLED
 
 @end
