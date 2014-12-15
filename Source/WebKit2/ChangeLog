@@ -1,3 +1,41 @@
+2014-12-15  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Add initial implementation of ThreadSafeCoordinatedSurface, ThreadedCompositor, and SimpleViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=118383
+
+        Reviewed by Martin Robinson.
+
+        Implements an initial version of the Threaded Compositor.
+
+        Threaded Compositor is a variant of Coordinated Graphics implementation.
+        Basic structure of the implementaion is simliar, thus, Threaded
+        Compositor reuses lots of classes from Coordinated Graphics. However,
+        instead of compositing on UI Process, Threaded Compositor performs
+        compositing on a dedicate thread of Web Process.
+
+        No new test, because it is in experimental stage.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        Removed a assertion not to force its creation in the main thread. In
+        the Threaded Compositor, it can be created in the dedicated thread.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp: Added.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.h: Added.
+        Implements a surface using ImageBuffer as a backend to use in the Web
+        Process.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h: Added.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp: Added.
+        Implements a compositor which runs on the created thread. It owns
+        SimpleViewportController and CoordinatedGraphicsScene to render scene on the
+        actual surface.
+
+        * Shared/CoordinatedGraphics/SimpleViewportController.cpp: Added.
+        * Shared/CoordinatedGraphics/SimpleViewportController.h: Added.
+        This class is responsible to handle scale factor and scrolling position
+        with a simplifed logic in the compositing thread.
+
 2014-12-14  Andreas Kling  <akling@apple.com>
 
         Replace PassRef with Ref/Ref&& across the board.

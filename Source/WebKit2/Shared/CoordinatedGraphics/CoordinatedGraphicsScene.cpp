@@ -54,7 +54,6 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
     , m_rootLayerID(InvalidCoordinatedLayerID)
     , m_viewBackgroundColor(Color::white)
 {
-    ASSERT(isMainThread());
 }
 
 CoordinatedGraphicsScene::~CoordinatedGraphicsScene()
