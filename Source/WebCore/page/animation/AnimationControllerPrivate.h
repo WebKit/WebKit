@@ -97,8 +97,6 @@ public:
 
     double beginAnimationUpdateTime();
     void setBeginAnimationUpdateTime(double t) { m_beginAnimationUpdateTime = t; }
-    
-    void beginAnimationUpdate();
     void endAnimationUpdate();
     void receivedStartTimeResponse(double);
     
@@ -143,9 +141,6 @@ private:
     typedef HashSet<RefPtr<AnimationBase>> WaitingAnimationsSet;
     WaitingAnimationsSet m_animationsWaitingForStyle;
     WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
-
-    int m_beginAnimationUpdateCount;
-
     bool m_waitingForAsyncStartNotification;
     bool m_isSuspended;
 

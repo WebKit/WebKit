@@ -1153,8 +1153,7 @@ void FrameView::layout(bool allowSubtree)
         return;
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLayout(&frame());
-    AnimationUpdateBlock animationUpdateBlock(&frame().animation());
-    
+
     if (!allowSubtree && m_layoutRoot) {
         m_layoutRoot->markContainingBlocksForLayout(false);
         m_layoutRoot = 0;
@@ -3938,8 +3937,6 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     // it is also incorrect, since if two frames overlap, the first could be excluded from the dirty
     // region but then become included later by the second frame adding rects to the dirty region
     // when it lays out.
-
-    AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
     frame().document()->updateStyleIfNeeded();
 

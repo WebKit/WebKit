@@ -82,6 +82,7 @@ public:
 
 private:
     const std::unique_ptr<AnimationControllerPrivate> m_data;
+    int m_beginAnimationUpdateCount;
 };
 
 class AnimationUpdateBlock {
