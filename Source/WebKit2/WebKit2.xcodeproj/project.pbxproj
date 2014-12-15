@@ -8768,8 +8768,6 @@
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Plugin.32.xpc",
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Plugin.64.xpc",
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Plugin.Development.xpc",
-				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.OfflineStorage.xpc",
-				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.OfflineStorage.Development.xpc",
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Databases.xpc",
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Databases.Development.xpc",
 			);
@@ -8782,8 +8780,6 @@
 				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.Plugin.32.xpc",
 				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.Plugin.64.xpc",
 				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.Plugin.Development.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.OfflineStorage.xpc",
-				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.OfflineStorage.Development.xpc",
 				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.Databases.xpc",
 				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit.framework/XPCServices/com.apple.WebKit.Databases.Development.xpc",
 			);

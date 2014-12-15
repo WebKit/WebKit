@@ -1,3 +1,13 @@
+2014-12-15  David Kilzer  <ddkilzer@apple.com>
+
+        Remove last references to OfflineStorage process
+        <http://webkit.org/b/139648>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Remove last references to
+        the OfflineStorage process.  See r154251 and r154256.
+
 2014-12-15  Gavin Barraclough  <barraclough@apple.com>
 
         Change HysteresisActivity to use a lambda
