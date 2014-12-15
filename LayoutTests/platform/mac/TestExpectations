@@ -1354,5 +1354,3 @@ webkit.org/b/93560 [ MountainLion ] canvas/philip/tests/2d.gradient.interpolate.
 # These seem to be like the above, but they fail locally on Yosemite with AMD graphics (Mac Pro Late 2013).
 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
 fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
-
-webkit.org/b/139548 [ MountainLion Mavericks ] fast/workers/worker-constructor.html [ Skip ]

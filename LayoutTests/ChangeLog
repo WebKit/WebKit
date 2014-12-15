@@ -1,5 +1,15 @@
 2014-12-14  Alexey Proskuryakov  <ap@apple.com>
 
+        Tests with infinite recursion frequently crash
+        https://bugs.webkit.org/show_bug.cgi?id=139548
+
+        Added another affected test, generalized expectations to be cross-platform.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-12-14  Alexey Proskuryakov  <ap@apple.com>
+
         Mac test expectations gardening.
 
         Fixed lint failures, moved a flakiness expectation that was overriding a Skip.
