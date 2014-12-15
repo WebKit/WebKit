@@ -163,7 +163,6 @@ protected:
 #endif
         SVGColorClass,
         SVGPaintClass,
-        WebKitCSSResourceClass,
 
         // List class types must appear after ValueListClass.
         ValueListClass,
@@ -175,6 +174,7 @@ protected:
 #if ENABLE(CSS_GRID_LAYOUT)
         GridLineNamesClass,
 #endif
+        WebKitCSSResourceClass
 
         // Do not append non-list class types here.
     };

@@ -4394,6 +4394,14 @@ bool FrameView::isFlippedDocument() const
     return renderView->style().isFlippedBlocksWritingMode();
 }
 
+bool FrameView::containsSVGDocument() const
+{
+    if (frame().document())
+        return frame().document()->isSVGDocument();
+    
+    return false;
+}
+
 void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
 {
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {

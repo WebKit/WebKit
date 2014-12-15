@@ -118,8 +118,6 @@ RenderElement::~RenderElement()
         for (const FillLayer* maskLayer = m_style->maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
             if (StyleImage* maskImage = maskLayer->image())
                 maskImage->removeClient(this);
-            else if (maskLayer->maskImage().get())
-                maskLayer->maskImage()->removeRendererImageClient(this);
         }
 
         if (StyleImage* borderImage = m_style->borderImage().image())
@@ -325,22 +323,18 @@ inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff)
 void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
 {
     // Optimize the common case
-    if (oldLayers && !oldLayers->next() && newLayers && !newLayers->next() && oldLayers->image() == newLayers->image() && oldLayers->maskImage() == newLayers->maskImage())
+    if (oldLayers && !oldLayers->next() && newLayers && !newLayers->next() && (oldLayers->image() == newLayers->image()))
         return;
     
     // Go through the new layers and addClients first, to avoid removing all clients of an image.
     for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
-        if (StyleImage* image = currNew->image())
-            image->addClient(this);
-        else if (currNew->maskImage().get())
-            currNew->maskImage()->addRendererImageClient(this);
+        if (currNew->image())
+            currNew->image()->addClient(this);
     }
 
     for (const FillLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
-        if (StyleImage* image = currOld->image())
-            image->removeClient(this);
-        else if (currOld->maskImage().get())
-            currOld->maskImage()->removeRendererImageClient(this);
+        if (currOld->image())
+            currOld->image()->removeClient(this);
     }
 }
 
