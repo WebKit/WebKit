@@ -314,8 +314,6 @@ public:
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
-    static bool processSuppressionIsEnabledForAllContexts();
-    static bool processSuppressionPreferenceIsEnabledForAllContexts();
 #endif
 
     void windowServerConnectionStateChanged();
@@ -346,7 +344,7 @@ public:
     static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
 
 #if PLATFORM(COCOA)
-    void updateProcessSuppressionState() const;
+    void updateProcessSuppressionState();
 
     NSMutableDictionary *ensureBundleParameters();
     NSMutableDictionary *bundleParameters() { return m_bundleParameters.get(); }
@@ -575,6 +573,7 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
+    RefPtr<RefCounter::Count> m_pluginProcessManagerProcessSuppressionDisabledCount;
 #endif
 };
 

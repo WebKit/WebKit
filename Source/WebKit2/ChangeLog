@@ -1,3 +1,58 @@
+2014-12-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Simplify tracking of process suppression disabled for PluginProcessManager
+        https://bugs.webkit.org/show_bug.cgi?id=139611
+
+        Reviewed by Darin Adler.
+
+        Previously if process suppression state changed for any context we would
+        iterate over all contexts to recompute.
+
+        There was also an inconsistency in the code. When plugin processes are
+        created they called processSuppressionIsEnabledForAllContexts(), which
+        checked WebContext::processSuppressionEnabled(), which in turn checks
+        two things - whether any page is currently visible, and whether the
+        suppression is currently disabled for any page. However when updating
+        process supression state we would call
+        processSuppressionPreferenceIsEnabledForAllContexts(), which would just
+        check the value of the key from the context's default PageGroup.
+
+        We shouldn't be taking visibility into account (this is handled from the
+        content, where we know which pages have instances of which plugins), but
+        we should be checking the current pref value of each page.
+
+        We already track in each context whether any page has teh pref set to
+        disable throttling; add a counter to the shared PluginProcessManager to
+        coallesce across all contexts.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::PluginProcessManager):
+            - added m_processSuppressionDisabledForPageCounter, m_processSuppressionEnabled.
+        * UIProcess/Plugins/PluginProcessManager.h:
+        (WebKit::PluginProcessManager::processSuppressionDisabledForPageCount):
+            - accessor for WebContext to increment count.
+        (WebKit::PluginProcessManager::processSuppressionEnabled):
+            - accessor for PluginProcessProxy.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+            - get initial supression state from the PluginProcessManager, not WebContext.
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::updateProcessSuppressionState):
+        (WebKit::PluginProcessManager::setProcessSuppressionEnabled): Deleted.
+            - setProcessSuppressionEnabled -> updateProcessSuppressionState
+              rather than WebContext setting suppression state, PluginProcessManager detects
+              when this may need to change & determines a new value for itself.
+        * UIProcess/WebContext.h:
+            - removed processSuppressionIsEnabledForAllContexts, processSuppressionPreferenceIsEnabledForAllContexts
+              updateProcessSuppressionState is no longer const (updates m_pluginProcessManagerProcessSuppressionDisabledCount).
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::updateProcessSuppressionState):
+            - instead of explicitly recomputing plugin throttling state from Within the WebContext, just update
+              m_pluginProcessManagerProcessSuppressionDisabledCount to count a RefCounter on the shared PluginProcessManager.
+        (WebKit::WebContext::processSuppressionIsEnabledForAllContexts): Deleted.
+        (WebKit::WebContext::processSuppressionPreferenceIsEnabledForAllContexts): Deleted.
+            - removed.
+
 2014-12-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use API::LoaderClient instead of WKPageLoaderClient

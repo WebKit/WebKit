@@ -103,14 +103,18 @@ static void registerUserDefaultsIfNeeded()
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
 }
 
-void WebContext::updateProcessSuppressionState() const
+void WebContext::updateProcessSuppressionState()
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess && m_networkProcess)
         m_networkProcess->setProcessSuppressionEnabled(processSuppressionEnabled());
 #endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginProcessManager::shared().setProcessSuppressionEnabled(processSuppressionPreferenceIsEnabledForAllContexts());
+    if (!m_processSuppressionDisabledForPageCounter.value())
+        m_pluginProcessManagerProcessSuppressionDisabledCount = nullptr;
+    else if (!m_pluginProcessManagerProcessSuppressionDisabledCount)
+        m_pluginProcessManagerProcessSuppressionDisabledCount = PluginProcessManager::shared().processSuppressionDisabledForPageCount();
 #endif
 }
 
@@ -515,24 +519,6 @@ bool WebContext::processSuppressionEnabled() const
     return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
 }
 
-bool WebContext::processSuppressionIsEnabledForAllContexts()
-{
-    for (const auto* context : WebContext::allContexts()) {
-        if (!context->processSuppressionEnabled())
-            return false;
-    }
-    return true;
-}
-
-bool WebContext::processSuppressionPreferenceIsEnabledForAllContexts()
-{
-    for (const auto* context : WebContext::allContexts()) {
-        if (!context->m_defaultPageGroup->preferences().store().getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey()))
-            return false;
-    }
-    return true;
-}
-    
 void WebContext::registerNotificationObservers()
 {
 #if !PLATFORM(IOS)

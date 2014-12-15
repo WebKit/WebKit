@@ -43,6 +43,9 @@ PluginProcessManager& PluginProcessManager::shared()
 }
 
 PluginProcessManager::PluginProcessManager()
+#if PLATFORM(COCOA)
+    : m_processSuppressionDisabledForPageCounter([this]() { updateProcessSuppressionState(); })
+#endif
 {
 }
 

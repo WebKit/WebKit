@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounter.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -64,7 +65,9 @@ public:
     void clearSiteData(const PluginModuleInfo&, WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
 #if PLATFORM(COCOA)
-    void setProcessSuppressionEnabled(bool);
+    inline PassRefPtr<RefCounter::Count> processSuppressionDisabledForPageCount();
+    inline bool processSuppressionEnabled() const;
+    void updateProcessSuppressionState();
 #endif
 
 private:
@@ -76,7 +79,22 @@ private:
     HashSet<uint64_t> m_knownTokens;
 
     Vector<RefPtr<PluginProcessProxy>> m_pluginProcesses;
+
+#if PLATFORM(COCOA)
+    RefCounter m_processSuppressionDisabledForPageCounter;
+    bool m_processSuppressionEnabled { true };
+#endif
 };
+
+inline PassRefPtr<RefCounter::Count> PluginProcessManager::processSuppressionDisabledForPageCount()
+{
+    return m_processSuppressionDisabledForPageCounter.count();
+}
+
+inline bool PluginProcessManager::processSuppressionEnabled() const
+{
+    return m_processSuppressionEnabled;
+}
 
 } // namespace WebKit
 
