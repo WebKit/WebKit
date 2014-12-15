@@ -206,7 +206,7 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
 {
     if (!element().renderer())
         return IntRect();
-    element().document().view()->contentsToRootView(element().renderer()->absoluteBoundingBoxRect());
+    return element().document().view()->contentsToRootView(element().renderer()->absoluteBoundingBoxRect());
 }
 
 Color ColorInputType::currentColor()

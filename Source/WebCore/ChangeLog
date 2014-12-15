@@ -1,3 +1,10 @@
+2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed build fix after r177301
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::elementRectRelativeToRootView):
+
 2014-12-15  Timothy Horton  <timothy_horton@apple.com>
 
         Implement Data Detectors immediate actions for WebKit2
