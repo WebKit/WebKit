@@ -27,16 +27,22 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#import "DOMElementInternal.h"
+#import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/DataDetection.h>
+#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextIndicator.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
 
@@ -66,11 +72,28 @@ using namespace WebCore;
 {
     _webView = nil;
     _immediateActionRecognizer = nil;
+    _currentActionContext = nil;
+}
+
+- (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event
+{
+    [self _clearImmediateActionState];
+}
+
+- (void)_cancelImmediateAction
+{
+    // Reset the recognizer by turning it off and on again.
+    _immediateActionRecognizer.enabled = NO;
+    _immediateActionRecognizer.enabled = YES;
+
+    [self _clearImmediateActionState];
 }
 
 - (void)_clearImmediateActionState
 {
     _type = WebImmediateActionNone;
+    _currentActionContext = nil;
+    _immediateActionRecognizer.animationController = nil;
 }
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
@@ -95,6 +118,17 @@ using namespace WebCore;
     NSPoint locationInDocumentView = [immediateActionRecognizer locationInView:documentView];
     [self performHitTestAtPoint:locationInDocumentView];
     [self _updateImmediateActionItem];
+
+    if (!_immediateActionRecognizer.animationController) {
+        [self _cancelImmediateAction];
+        return;
+    }
+
+    if (_currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+            [self _cancelImmediateAction];
+    }
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -123,12 +157,8 @@ using namespace WebCore;
 
 #pragma mark Immediate actions
 
-- (void)_updateImmediateActionItem
+- (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
-    _type = WebImmediateActionNone;
-    _immediateActionRecognizer.animationController = nil;
-    id <NSImmediateActionAnimationController> defaultAnimationController = nil;
-
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];
     if (url && WebCore::protocolIsInHTTPFamily(absoluteURLString)) {
@@ -137,8 +167,25 @@ using namespace WebCore;
         RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
         [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
         [qlPreviewLinkItem setDelegate:self];
-        defaultAnimationController = (id <NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
+        return (id <NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
     }
+
+    Node* node = _hitTestResult.innerNode();
+    if ((node && node->isTextNode()) || _hitTestResult.isOverTextInsideFormControlElement()) {
+        if (NSMenuItem *immediateActionItem = [self _menuItemForDataDetectedText]) {
+            _type = WebImmediateActionDataDetectedItem;
+            return (id<NSImmediateActionAnimationController>)immediateActionItem;
+        }
+    }
+
+    return nil;
+}
+
+- (void)_updateImmediateActionItem
+{
+    _type = WebImmediateActionNone;
+
+    id <NSImmediateActionAnimationController> defaultAnimationController = [self _defaultAnimationController];
 
     // Allow clients the opportunity to override the default immediate action.
     id customClientAnimationController = nil;
@@ -147,8 +194,10 @@ using namespace WebCore;
         customClientAnimationController = [[_webView UIDelegate] _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
     }
 
-    if (customClientAnimationController == [NSNull null])
+    if (customClientAnimationController == [NSNull null]) {
+        [self _cancelImmediateAction];
         return;
+    }
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
     else
@@ -173,6 +222,80 @@ using namespace WebCore;
 - (NSRectEdge)menuItem:(NSMenuItem *)menuItem preferredEdgeForPoint:(NSPoint)point
 {
     return NSMaxYEdge;
+}
+
+#pragma mark Data Detectors actions
+
+- (NSMenuItem *)_menuItemForDataDetectedText
+{
+    RefPtr<Range> detectedDataRange;
+    FloatRect detectedDataBoundingBox;
+    RetainPtr<DDActionContext> actionContext;
+
+    if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
+        RetainPtr<WebElementDictionary> hitTestDictionary = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]);
+
+        DOMRange *customDataDetectorsRange;
+        actionContext = [[_webView UIDelegate] _webView:_webView actionContextForHitTestResult:hitTestDictionary.get() range:&customDataDetectorsRange];
+
+        if (actionContext && customDataDetectorsRange)
+            detectedDataRange = core(customDataDetectorsRange);
+    }
+
+    // If the client didn't give us an action context, try to scan around the hit point.
+    if (!actionContext || !detectedDataRange)
+        actionContext = DataDetection::detectItemAroundHitTestResult(_hitTestResult, detectedDataBoundingBox, detectedDataRange);
+
+    if (!actionContext || !detectedDataRange)
+        return nil;
+
+    [actionContext setAltMode:YES];
+    if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
+        if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
+            return nil;
+    }
+
+    _currentDetectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::BounceAndCrossfade);
+
+    _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
+    } interactionChangedHandler:^() {
+        [self _showTextIndicator];
+    } interactionStoppedHandler:^() {
+        [self _hideTextIndicator];
+    }];
+    _currentDetectedDataRange = detectedDataRange;
+
+    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedDataBoundingBox]];
+
+    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    if (menuItems.count != 1)
+        return nil;
+
+    if (_currentDetectedDataTextIndicator)
+        _currentDetectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
+    return menuItems.lastObject;
+}
+
+#pragma mark Text Indicator
+
+- (void)_showTextIndicator
+{
+    if (_isShowingTextIndicator)
+        return;
+
+    if (_type == WebImmediateActionDataDetectedItem && _currentDetectedDataTextIndicator) {
+        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO animationCompletionHandler:^ { }];
+        _isShowingTextIndicator = YES;
+    }
+}
+
+- (void)_hideTextIndicator
+{
+    if (!_isShowingTextIndicator)
+        return;
+
+    [_webView _clearTextIndicator];
+    _isShowingTextIndicator = NO;
 }
 
 @end

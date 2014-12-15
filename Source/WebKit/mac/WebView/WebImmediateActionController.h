@@ -30,7 +30,13 @@
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
 
+@class DDActionContext;
 @class WebView;
+
+namespace WebCore {
+class Range;
+class TextIndicator;
+}
 
 @interface WebImmediateActionController : NSObject <NSImmediateActionGestureRecognizerDelegate> {
 @private
@@ -38,10 +44,18 @@
     WebImmediateActionType _type;
     WebCore::HitTestResult _hitTestResult;
     NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
+
+    RetainPtr<DDActionContext> _currentActionContext;
+    RefPtr<WebCore::Range> _currentDetectedDataRange;
+    RefPtr<WebCore::TextIndicator> _currentDetectedDataTextIndicator;
+    BOOL _isShowingTextIndicator;
+    BOOL _hasActivatedActionContext;
 }
 
 - (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)webViewClosed;
+
+- (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event;
 
 @end
 
