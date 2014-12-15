@@ -1,3 +1,25 @@
+2014-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-text-decoration-skip' to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139633
+
+        Reviewed by Darin Adler.
+
+        Move '-webkit-text-decoration-skip' to the new StyleBuilder by
+        introducing a new TextDecorationSkip converter.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::valueToDecorationSkip): Deleted.
+        (WebCore::ApplyPropertyTextDecorationSkip::applyValue): Deleted.
+        (WebCore::ApplyPropertyTextDecorationSkip::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::valueToDecorationSkip):
+        (WebCore::StyleBuilderConverter::convertTextDecorationSkip):
+
 2014-12-15  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Prevent SourceBuffer monitoring algorithm from triggering a HAVE_NOTHING to HAVE_METADATA transition.

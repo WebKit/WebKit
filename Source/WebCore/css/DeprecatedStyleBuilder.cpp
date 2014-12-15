@@ -670,50 +670,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-static TextDecorationSkip valueToDecorationSkip(CSSPrimitiveValue& primitiveValue)
-{
-    ASSERT(primitiveValue.isValueID());
-
-    switch (primitiveValue.getValueID()) {
-    case CSSValueAuto:
-        return TextDecorationSkipAuto;
-    case CSSValueNone:
-        return TextDecorationSkipNone;
-    case CSSValueInk:
-        return TextDecorationSkipInk;
-    case CSSValueObjects:
-        return TextDecorationSkipObjects;
-    default:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return TextDecorationSkipNone;
-}
-
-class ApplyPropertyTextDecorationSkip {
-public:
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (is<CSSPrimitiveValue>(*value)) {
-            styleResolver->style()->setTextDecorationSkip(valueToDecorationSkip(downcast<CSSPrimitiveValue>(*value)));
-            return;
-        }
-
-        TextDecorationSkip skip = RenderStyle::initialTextDecorationSkip();
-        if (is<CSSValueList>(*value)) {
-            for (auto& currentValue : downcast<CSSValueList>(*value))
-                skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get()));
-        }
-        styleResolver->style()->setTextDecorationSkip(skip);
-    }
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyDefaultBase<TextDecorationSkip, &RenderStyle::textDecorationSkip, TextDecorationSkip, &RenderStyle::setTextDecorationSkip, TextDecorationSkip, &RenderStyle::initialTextDecorationSkip>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
 template <typename T,
           T (Animation::*getterFunction)() const,
           void (Animation::*setterFunction)(T),
@@ -827,7 +783,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyOrphans, ApplyPropertyAuto<short, &RenderStyle::orphans, &RenderStyle::setOrphans, &RenderStyle::hasAutoOrphans, &RenderStyle::setHasAutoOrphans>::createHandler());
     setPropertyHandler(CSSPropertyOutlineColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::setVisitedLinkOutlineColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor, &RenderStyle::color>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitTextDecorationSkip, ApplyPropertyTextDecorationSkip::createHandler());
     setPropertyHandler(CSSPropertyTextRendering, ApplyPropertyFont<TextRenderingMode, &FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering>::createHandler());
 
     setPropertyHandler(CSSPropertyAnimationDelay, ApplyPropertyAnimation<double, &Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSToStyleMap::mapAnimationDelay, &RenderStyle::accessAnimations, &RenderStyle::animations>::createHandler());

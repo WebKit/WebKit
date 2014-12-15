@@ -73,10 +73,12 @@ public:
     static IntSize convertInitialLetter(StyleResolver&, CSSValue&);
     static float convertTextStrokeWidth(StyleResolver&, CSSValue&);
     static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
+    static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
     static TextEmphasisPosition valueToEmphasisPosition(CSSPrimitiveValue&);
+    static TextDecorationSkip valueToDecorationSkip(const CSSPrimitiveValue&);
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -550,6 +552,38 @@ inline LineBoxContain StyleBuilderConverter::convertLineBoxContain(StyleResolver
     }
 
     return downcast<CSSLineBoxContainValue>(value).value();
+}
+
+inline TextDecorationSkip StyleBuilderConverter::valueToDecorationSkip(const CSSPrimitiveValue& primitiveValue)
+{
+    ASSERT(primitiveValue.isValueID());
+
+    switch (primitiveValue.getValueID()) {
+    case CSSValueAuto:
+        return TextDecorationSkipAuto;
+    case CSSValueNone:
+        return TextDecorationSkipNone;
+    case CSSValueInk:
+        return TextDecorationSkipInk;
+    case CSSValueObjects:
+        return TextDecorationSkipObjects;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TextDecorationSkipNone;
+}
+
+inline TextDecorationSkip StyleBuilderConverter::convertTextDecorationSkip(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value))
+        return valueToDecorationSkip(downcast<CSSPrimitiveValue>(value));
+
+    TextDecorationSkip skip = RenderStyle::initialTextDecorationSkip();
+    for (auto& currentValue : downcast<CSSValueList>(value))
+        skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get()));
+    return skip;
 }
 
 
