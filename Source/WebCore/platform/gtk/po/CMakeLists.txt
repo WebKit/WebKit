@@ -25,6 +25,7 @@ add_custom_command(
             --package-name="webkitgtk"
             --keyword=_
             --keyword=N_
+            --from-code=UTF-8
             -o ${pot_file}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
 )

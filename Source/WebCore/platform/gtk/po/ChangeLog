@@ -1,3 +1,12 @@
+2014-12-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] build fails with error: xgettext: Non-ASCII string at ../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131.
+        https://bugs.webkit.org/show_bug.cgi?id=139620
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Pass --from-code=UTF-8 to xgettext.
+
 2014-12-12  Shankar Prasad  <svenkate@redhat.com>
 
         [kn] Kannada Translation for webkit - Updated
