@@ -50,12 +50,11 @@ public:
     PageActivityAssertionToken pageLoadActivityToken();
 
 private:
-    void pageActivityCounterValueDidChange();
     void updateUserActivity();
 
     ViewState::Flags m_viewState;
     HysteresisActivity m_hysteresis;
-    std::unique_ptr<UserActivity::Impl> m_activity;
+    std::unique_ptr<UserActivity> m_activity;
     RefCounter m_pageActivityCounter;
 };
 

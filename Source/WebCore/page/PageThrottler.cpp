@@ -31,15 +31,14 @@ namespace WebCore {
 PageThrottler::PageThrottler(ViewState::Flags viewState)
     : m_viewState(viewState)
     , m_hysteresis([this](HysteresisState) { updateUserActivity(); })
-    , m_pageActivityCounter([this]() { pageActivityCounterValueDidChange(); })
+    , m_pageActivityCounter([this]() { updateUserActivity(); })
 {
-    updateUserActivity();
 }
 
 void PageThrottler::createUserActivity()
 {
     ASSERT(!m_activity);
-    m_activity = std::make_unique<UserActivity::Impl>("Page is active.");
+    m_activity = std::make_unique<UserActivity>("Page is active.");
     updateUserActivity();
 }
 
@@ -53,27 +52,16 @@ PageActivityAssertionToken PageThrottler::pageLoadActivityToken()
     return m_pageActivityCounter.count();
 }
 
-void PageThrottler::pageActivityCounterValueDidChange()
-{
-    if (m_pageActivityCounter.value())
-        m_hysteresis.start();
-    else
-        m_hysteresis.stop();
-
-    // If the counter is nonzero, state cannot be Stopped.
-    ASSERT(!(m_pageActivityCounter.value() && m_hysteresis.state() == HysteresisState::Stopped));
-}
-
 void PageThrottler::updateUserActivity()
 {
     if (!m_activity)
         return;
 
     // Allow throttling if there is no page activity, and the page is visually idle.
-    if (m_hysteresis.state() == HysteresisState::Stopped && m_viewState & ViewState::IsVisuallyIdle)
-        m_activity->endActivity();
+    if (!m_pageActivityCounter.value() && m_hysteresis.state() == HysteresisState::Stopped && m_viewState & ViewState::IsVisuallyIdle)
+        m_activity->stop();
     else
-        m_activity->beginActivity();
+        m_activity->start();
 }
 
 void PageThrottler::setViewState(ViewState::Flags viewState)
