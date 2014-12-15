@@ -1,3 +1,16 @@
+2014-12-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [GTK] Remove GamepadDeviceGtk::create()
+        https://bugs.webkit.org/show_bug.cgi?id=139637
+
+        Reviewed by Carlos Garcia Campos.
+
+        std::make_unique<> can replace GamepadDeviceGtk::create() factory function.
+
+        * platform/gtk/GamepadsGtk.cpp: Add "explicit" to GamepadsGtk constructor.
+        (WebCore::GamepadsGtk::registerDevice):
+        (WebCore::GamepadDeviceGtk::create): Deleted.
+
 2014-12-15  Chris Dumez  <cdumez@apple.com>
 
         Move 'counter-increment' / 'counter-reset' to the new StyleBuilder
