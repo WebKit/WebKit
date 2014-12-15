@@ -1,3 +1,31 @@
+2014-12-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use API::LoaderClient instead of WKPageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=139583
+
+        Reviewed by Gustavo Noronha Silva.
+
+        It simplifies the code and it will make easier to implement new
+        loader client methods.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (webkitBackForwardListChanged):
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (LoaderClient::LoaderClient):
+        (attachLoaderClientToView):
+        (didStartProvisionalLoadForFrame): Deleted.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Deleted.
+        (didFailProvisionalLoadWithErrorForFrame): Deleted.
+        (didCommitLoadForFrame): Deleted.
+        (didFinishLoadForFrame): Deleted.
+        (didFailLoadWithErrorForFrame): Deleted.
+        (didDisplayInsecureContentForFrame): Deleted.
+        (didRunInsecureContentForFrame): Deleted.
+        (didChangeBackForwardList): Deleted.
+        (didReceiveAuthenticationChallengeInFrame): Deleted.
+        (processDidCrash): Deleted.
+
 2014-12-15  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Add initial implementation of ThreadSafeCoordinatedSurface, ThreadedCompositor, and SimpleViewportController
