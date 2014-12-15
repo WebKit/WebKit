@@ -145,10 +145,10 @@ static const unsigned webViewCloseTimeout = 60;
 
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
-    if (_ignoreNextInspectedViewFrameDidChange)
+    if (_ignoreNextInspectedViewFrameDidChange) {
+        _ignoreNextInspectedViewFrameDidChange = NO;
         return;
-
-    _ignoreNextInspectedViewFrameDidChange = NO;
+    }
 
     // Resizing the views while inside this notification can lead to bad results when entering
     // or exiting full screen. To avoid that we need to perform the work after a delay. We only

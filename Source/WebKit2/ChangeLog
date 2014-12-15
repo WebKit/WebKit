@@ -1,3 +1,16 @@
+2014-12-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Docked inspector repositioned incorrectly when dragging frame borders
+        https://bugs.webkit.org/show_bug.cgi?id=139415
+
+        Reviewed by Joseph Pecoraro.
+
+        The _ignoreNextInspectedViewFrameDidChange flag wasn't set back to NO after
+        being tested by inspectedViewFrameDidChange.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectedViewFrameDidChange:]):
+
 2014-12-15  Gavin Barraclough  <barraclough@apple.com>
 
         Simplify tracking of process suppression disabled for PluginProcessManager
