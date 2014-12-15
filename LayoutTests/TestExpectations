@@ -317,10 +317,9 @@ webkit.org/b/138676 imported/w3c/canvas/canvas_transformations_scale_001.htm [ S
 
 webkit.org/b/137316 fast/multicol/newmulticol/spanner-crash.html [ Skip ]
 
-webkit.org/b/139548 [ MountainLion Mavericks ] fast/workers/worker-constructor.html [ Skip ]
-
 webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.html [ Pass Failure Timeout ]
 
-# Crashes in Debug builds, <rdar://problem/18216390>
+# Debug assertions are tracked as <rdar://problem/18216390>.
 [ Debug ] fast/history/go-back-to-iframe-with-plugin.html [ Skip ]
 [ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
+webkit.org/b/121628 [ Release ] fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure ]

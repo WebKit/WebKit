@@ -1,3 +1,12 @@
+2014-12-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac test expectations gardening.
+
+        Fixed lint failures, moved a flakiness expectation that was overriding a Skip.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-12-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177223 and r177226.
