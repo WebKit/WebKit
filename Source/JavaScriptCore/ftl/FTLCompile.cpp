@@ -98,6 +98,8 @@ static uint8_t* mmAllocateDataSection(
         if (!strcmp(sectionName, SECTION_NAME("compact_unwind"))) {
 #elif OS(LINUX)
         if (!strcmp(sectionName, SECTION_NAME("eh_frame"))) {
+#else
+#error "Unrecognized OS"
 #endif
             state.unwindDataSection = section->base();
             state.unwindDataSectionSize = size;
@@ -625,8 +627,14 @@ void compile(State& state, Safepoint::Result& safepointResult)
         LLVMExecutionEngineRef engine;
         
         if (isARM64())
+#if OS(DARWIN)
             llvm->SetTarget(state.module, "arm64-apple-ios");
-        
+#elif OS(LINUX)
+            llvm->SetTarget(state.module, "aarch64-linux-gnu");
+#else
+#error "Unrecognized OS"
+#endif
+
         if (llvm->CreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
             dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
             CRASH();

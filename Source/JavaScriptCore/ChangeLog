@@ -1,3 +1,18 @@
+2014-12-15  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        [EFL] FTL JIT not working on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=139295
+
+        Reviewed by Michael Saboff.
+
+        Added the missing code for stack unwinding and some additional small fixes
+        to get FTL working correctly.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLUnwindInfo.cpp:
+        (JSC::FTL::UnwindInfo::parse):
+
 2014-12-15  Oliver Hunt  <oliver@apple.com>
 
         Make sure range based iteration of Vector<> still receives bounds checking

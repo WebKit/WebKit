@@ -1,0 +1,13 @@
+diff --git a/lib/Target/AArch64/AArch64AsmPrinter.cpp b/lib/Target/AArch64/AArch64AsmPrinter.cpp
+index 8bee4f5..bfbbaac 100644
+--- a/lib/Target/AArch64/AArch64AsmPrinter.cpp
++++ b/lib/Target/AArch64/AArch64AsmPrinter.cpp
+@@ -154,6 +154,8 @@ void AArch64AsmPrinter::EmitEndOfAsmFile(Module &M) {
+       }
+       Stubs.clear();
+     }
++
++    SM.serializeToStackMapSection();
+   }
+ 
+ }

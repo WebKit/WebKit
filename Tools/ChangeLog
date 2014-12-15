@@ -1,3 +1,16 @@
+2014-12-15  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        [EFL] FTL JIT not working on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=139295
+
+        Reviewed by Michael Saboff.
+
+        Added patches for llvm to add ARM64 support for FTL JIT
+
+        * efl/jhbuild.modules:
+        * efl/patches/llvm-elf-add-stackmaps-arm64.patch: Added.
+        * efl/patches/llvm-elf-allow-fde-references-outside-the-2gb-range-arm64.patch: Added.
+
 2014-12-15  Timothy Horton  <timothy_horton@apple.com>
 
         Move Said to the committers section.
