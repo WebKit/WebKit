@@ -27,11 +27,7 @@
 #ifndef StyleBuilderCustom_h
 #define StyleBuilderCustom_h
 
-#include "BasicShapeFunctions.h"
 #include "CSSAspectRatioValue.h"
-#include "CSSImageGeneratorValue.h"
-#include "CSSImageSetValue.h"
-#include "CSSImageValue.h"
 #include "CSSShadowValue.h"
 #include "Frame.h"
 #include "LocaleToScriptMapping.h"
@@ -52,10 +48,6 @@ public:
     static void applyInitialZoom(StyleResolver&);
     static void applyInheritZoom(StyleResolver&);
     static void applyValueZoom(StyleResolver&, CSSValue&);
-
-#if ENABLE(CSS_SHAPES)
-    static void applyValueWebkitShapeOutside(StyleResolver&, CSSValue&);
-#endif // ENABLE(CSS_SHAPES)
 
     static void applyValueVerticalAlign(StyleResolver&, CSSValue&);
 
@@ -236,42 +228,6 @@ inline void StyleBuilderCustom::applyValueZoom(StyleResolver& styleResolver, CSS
             styleResolver.setZoom(number);
     }
 }
-
-#if ENABLE(CSS_SHAPES)
-inline void StyleBuilderCustom::applyValueWebkitShapeOutside(StyleResolver& styleResolver, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        // FIXME: Shouldn't this be CSSValueNone?
-        // http://www.w3.org/TR/css-shapes/#shape-outside-property
-        if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
-            styleResolver.style()->setShapeOutside(nullptr);
-    } if (is<CSSImageValue>(value) || is<CSSImageGeneratorValue>(value) || is<CSSImageSetValue>(value)) {
-        RefPtr<ShapeValue> shape = ShapeValue::createImageValue(styleResolver.styleImage(CSSPropertyWebkitShapeOutside, value));
-        styleResolver.style()->setShapeOutside(shape.release());
-    } else if (is<CSSValueList>(value)) {
-        RefPtr<BasicShape> shape;
-        CSSBoxType referenceBox = BoxMissing;
-        for (auto& currentValue : downcast<CSSValueList>(value)) {
-            CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
-            if (primitiveValue.isShape())
-                shape = basicShapeForValue(styleResolver.state().cssToLengthConversionData(), primitiveValue.getShapeValue());
-            else if (primitiveValue.getValueID() == CSSValueContentBox
-                || primitiveValue.getValueID() == CSSValueBorderBox
-                || primitiveValue.getValueID() == CSSValuePaddingBox
-                || primitiveValue.getValueID() == CSSValueMarginBox)
-                referenceBox = CSSBoxType(primitiveValue);
-            else
-                return;
-        }
-
-        if (shape)
-            styleResolver.style()->setShapeOutside(ShapeValue::createShapeValue(shape.release(), referenceBox));
-        else if (referenceBox != BoxMissing)
-            styleResolver.style()->setShapeOutside(ShapeValue::createBoxShapeValue(referenceBox));
-    }
-}
-#endif // ENABLE(CSS_SHAPES)
-
 inline Length StyleBuilderCustom::mmLength(double mm)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM));

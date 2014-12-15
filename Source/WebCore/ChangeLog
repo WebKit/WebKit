@@ -1,3 +1,27 @@
+2014-12-15  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Fix StyleBuilder code to use CSSValueNone to match spec and other code
+        https://bugs.webkit.org/show_bug.cgi?id=139601
+
+        Reviewed by Chris Dumez.
+
+        Change the code to properly use CSSValueNone instead of CSSValueAuto.
+        Asserts have been added to catch similar errors in the future.
+        In doing this change, it became apparent that there is nothing
+        special about the shape-outside property that requires custom code, so
+        it was changed to use a standard converter function. 
+
+        No change observable via LayoutTests.
+
+        * css/CSSPropertyNames.in: Use a converter instead of custom code.
+        * css/StyleBuilderConverter.h:
+        (WebCore::isImageShape): Helper function so that isImageSetValue can
+            be properly guarded.
+        (WebCore::StyleBuilderConverter::convertShapeValue): Format as a
+            converter instead of custom code.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueWebkitShapeOutside): Deleted.
+
 2014-12-15  Oliver Hunt  <oliver@apple.com>
 
         Make sure range based iteration of Vector<> still receives bounds checking

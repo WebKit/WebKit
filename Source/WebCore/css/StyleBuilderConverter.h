@@ -29,6 +29,9 @@
 
 #include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
+#include "CSSImageGeneratorValue.h"
+#include "CSSImageSetValue.h"
+#include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
 #include "Length.h"
@@ -74,6 +77,7 @@ public:
     static float convertTextStrokeWidth(StyleResolver&, CSSValue&);
     static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
     static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, CSSValue&);
+    static PassRefPtr<ShapeValue> convertShapeValue(StyleResolver&, CSSValue&);
 
 private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
@@ -586,6 +590,53 @@ inline TextDecorationSkip StyleBuilderConverter::convertTextDecorationSkip(Style
     return skip;
 }
 
+#if ENABLE(CSS_SHAPES)
+static inline bool isImageShape(const CSSValue& value)
+{
+    return is<CSSImageValue>(value)
+#if ENABLE(CSS_IMAGE_SET)
+        || is<CSSImageSetValue>(value)
+#endif 
+        || is<CSSImageGeneratorValue>(value);
+}
+
+inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        return nullptr;
+    }
+
+    if (isImageShape(value))
+        return ShapeValue::createImageValue(styleResolver.styleImage(CSSPropertyWebkitShapeOutside, value));
+
+    RefPtr<BasicShape> shape;
+    CSSBoxType referenceBox = BoxMissing;
+    for (auto& currentValue : downcast<CSSValueList>(value)) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
+        if (primitiveValue.isShape())
+            shape = basicShapeForValue(styleResolver.state().cssToLengthConversionData(), primitiveValue.getShapeValue());
+        else if (primitiveValue.getValueID() == CSSValueContentBox
+            || primitiveValue.getValueID() == CSSValueBorderBox
+            || primitiveValue.getValueID() == CSSValuePaddingBox
+            || primitiveValue.getValueID() == CSSValueMarginBox)
+            referenceBox = primitiveValue;
+        else {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+    }
+
+    if (shape)
+        return ShapeValue::createShapeValue(shape.release(), referenceBox);
+
+    if (referenceBox != BoxMissing)
+        return ShapeValue::createBoxShapeValue(referenceBox);
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#endif // ENABLE(CSS_SHAPES)
 
 } // namespace WebCore
 

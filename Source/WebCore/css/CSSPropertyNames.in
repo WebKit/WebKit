@@ -536,7 +536,7 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-region-break-inside [TypeName=EPageBreak, Initial=initialPageBreak]
 #endif
 #if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
--webkit-shape-outside [Custom=Value]
+-webkit-shape-outside [Converter=ShapeValue]
 -webkit-shape-margin [Converter=Length]
 -webkit-shape-image-threshold [Converter=Number<float>]
 #endif
