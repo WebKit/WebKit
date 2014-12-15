@@ -1,3 +1,9 @@
+2014-12-15  Antti Koivisto  <antti@apple.com>
+
+        Try to fix iOS build.
+
+        * WebCore.exp.in:
+
 2014-12-15  Javier Fernandez  <jfernandez@igalia.com>
 
         Floats Don't Overhang Their Block Formatting Contex
