@@ -31,6 +31,7 @@
 #include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardController.h"
+#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -52,6 +53,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
@@ -102,6 +104,7 @@
 #include "ViewportArguments.h"
 #include "WebConsoleAgent.h"
 #include "WorkerThread.h"
+#include "XMLHttpRequest.h"
 #include <bytecode/CodeBlock.h>
 #include <inspector/InspectorAgentBase.h>
 #include <inspector/InspectorValues.h>
@@ -384,6 +387,30 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
     return resource && resource->status() == CachedResource::Cached;
 }
 
+String Internals::xhrResponseSource(XMLHttpRequest* xhr)
+{
+    if (!xhr)
+        return "Null xhr";
+    if (xhr->resourceResponse().isNull())
+        return "Null response";
+    switch (xhr->resourceResponse().source()) {
+    case ResourceResponse::Source::Unknown:
+        return "Unknown";
+    case ResourceResponse::Source::Network:
+        return "Network";
+    case ResourceResponse::Source::DiskCache:
+        return "Disk cache";
+    case ResourceResponse::Source::DiskCacheAfterValidation:
+        return "Disk cache after validation";
+    }
+    ASSERT_NOT_REACHED();
+    return "Error";
+}
+
+void Internals::clearMemoryCache()
+{
+    memoryCache().evictResources();
+}
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
 {

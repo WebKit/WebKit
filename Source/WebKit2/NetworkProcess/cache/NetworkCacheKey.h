@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#ifndef NetworkCacheKey_h
+#define NetworkCacheKey_h
 
-#include <wtf/Assertions.h>
+#if ENABLE(NETWORK_CACHE)
+
 #include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX WebKit2Log
-#endif
 
 namespace WebKit {
 
-#define WEBKIT2_LOG_CHANNELS(M) \
-    M(ContextMenu) \
-    M(IconDatabase) \
-    M(InspectorServer) \
-    M(KeyHandling) \
-    M(Network) \
-    M(NetworkScheduling) \
-    M(Plugins) \
-    M(RemoteLayerTree) \
-    M(SessionState) \
-    M(StorageAPI) \
-    M(TextInput) \
-    M(View) \
-    M(IDB) \
-    M(NetworkCache) \
-    M(NetworkCacheStorage) \
+class NetworkCacheEncoder;
+class NetworkCacheDecoder;
 
-#define DECLARE_LOG_CHANNEL(name) \
-    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+class NetworkCacheKey {
+public:
+    typedef unsigned HashType;
 
-WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+    NetworkCacheKey() { }
+    NetworkCacheKey(const NetworkCacheKey&);
+    NetworkCacheKey(NetworkCacheKey&&);
+    NetworkCacheKey(const String& method, const String& partition, const String& identifier);
 
-#undef DECLARE_LOG_CHANNEL
+    const String& method() const { return m_method; }
+    const String& partition() const { return m_partition; }
+    const String& identifier() const { return m_identifier; }
+    HashType hash() const { return m_hash; }
 
-void initializeLogChannelsIfNecessary(void);
-String logLevelString();
+    String hashAsString() const;
+    static bool stringToHash(const String&, HashType&);
 
-} // namespace WebKit
+    void encode(NetworkCacheEncoder&) const;
+    static bool decode(NetworkCacheDecoder&, NetworkCacheKey&);
 
-#endif // !LOG_DISABLED
+    bool operator==(const NetworkCacheKey&) const;
+    bool operator!=(const NetworkCacheKey& other) const { return !(*this == other); }
 
-#endif // Logging_h
+private:
+    HashType computeHash() const;
+    void operator=(const NetworkCacheKey&) = delete;
+
+    String m_method;
+    String m_partition;
+    String m_identifier;
+    HashType m_hash;
+};
+
+}
+
+#endif
+#endif

@@ -1,3 +1,39 @@
+2014-12-15  Antti Koivisto  <antti@apple.com>
+
+        WebKit level persistent caching
+        https://bugs.webkit.org/show_bug.cgi?id=30322
+
+        Reviewed by Sam Weinig.
+
+        Test: http/tests/cache/disk-cache-validation.html
+
+        * WebCore.exp.in:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::source):
+        (WebCore::ResourceResponseBase::setSource):
+        (WebCore::ResourceResponseBase::wasCached): Deleted.
+        (WebCore::ResourceResponseBase::setWasCached): Deleted.
+
+            Replace wasCached bit with Source enum.
+            This is useful for testing.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::containsCertificateInfo):
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+        * testing/Internals.cpp:
+        (WebCore::Internals::xhrResponseSource):
+        (WebCore::Internals::clearMemoryCache):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+            Testing support.
+
+        * xml/XMLHttpRequest.h:
+
 2014-12-15  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from FocusEvent code.

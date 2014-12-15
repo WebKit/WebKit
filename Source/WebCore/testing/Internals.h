@@ -62,6 +62,7 @@ class SerializedScriptValue;
 class SourceBuffer;
 class TimeRanges;
 class TypeConversions;
+class XMLHttpRequest;
 
 typedef int ExceptionCode;
 
@@ -82,6 +83,8 @@ public:
 
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);
+    String xhrResponseSource(XMLHttpRequest*);
+    void clearMemoryCache();
 
     PassRefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node*, ExceptionCode&) const;
 

@@ -94,6 +94,7 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
 
     void includeCertificateInfo() const;
+    bool containsCertificateInfo() const { return m_includesCertificateInfo; }
     CertificateInfo certificateInfo() const;
     
     // These functions return parsed values of the corresponding response headers.
@@ -114,8 +115,9 @@ public:
     bool connectionReused() const;
     void setConnectionReused(bool);
 
-    bool wasCached() const;
-    void setWasCached(bool);
+    enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation };
+    Source source() const;
+    void setSource(Source);
 
     ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
 
@@ -172,7 +174,6 @@ private:
     mutable double m_lastModified;
 
 public:
-    bool m_wasCached : 1;
     bool m_connectionReused : 1;
 
     bool m_isNull : 1;
@@ -191,6 +192,8 @@ private:
     mutable bool m_cacheControlContainsNoCache : 1;
     mutable bool m_cacheControlContainsNoStore : 1;
     mutable bool m_cacheControlContainsMustRevalidate : 1;
+
+    Source m_source;
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
@@ -216,6 +219,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_includesCertificateInfo;
     if (m_includesCertificateInfo)
         encoder << m_certificateInfo;
+    encoder.encodeEnum(m_source);
 }
 
 template<class Decoder>
@@ -256,6 +260,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         if (!decoder.decode(response.m_certificateInfo))
             return false;
     }
+    if (!decoder.decodeEnum(response.m_source))
+        return false;
     response.m_isNull = false;
 
     return true;

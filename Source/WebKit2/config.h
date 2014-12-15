@@ -92,3 +92,9 @@
 #define HAVE_SEC_ACCESS_CONTROL 1
 #endif
 #endif
+
+#ifndef ENABLE_NETWORK_CACHE
+#if PLATFORM(MAC) && ENABLE(NETWORK_PROCESS)
+#define ENABLE_NETWORK_CACHE 0
+#endif
+#endif

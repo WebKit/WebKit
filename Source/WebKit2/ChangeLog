@@ -1,3 +1,61 @@
+2014-12-15  Antti Koivisto  <antti@apple.com>
+
+        WebKit level persistent caching
+        https://bugs.webkit.org/show_bug.cgi?id=30322
+
+        Reviewed by Sam Weinig.
+
+        We can improve performance and open new optimization possibilities by bringing network caching into WebKit.
+
+        This patch implements an experimental HTTP cache living in the network process.
+
+        The main classes are:
+
+        NetworkCache
+            - Implements HTTP cache validation logic including Vary header
+            - Initially non-range GET only
+            - Fast serialization using WebKit types (ResourcesResponse etc) instead of native network layer types
+
+        NetworkCacheKey
+            - Unique identifier for cache entries
+            - Keyed on method/partition/URL
+
+        NetworkCacheStorage
+            - Storage backend
+            - dispatch-IO based implementation (generic posix implementation wouldn't be difficult)
+            - File system only (no SQLite or similar)
+            - One file per resource containing both header and body data
+            - Zero persistent global metadata
+            - Bloom filter for fast fail
+
+        NetworkCacheEncoder/Decoder
+            - Serializisation support with integrity verification.
+
+        The code is behind the NETWORK_CACHE feature flag and requires network process to be enabled to use.
+
+        This patch does not enable the feature yet by default.
+
+        Test: http/tests/cache/disk-cache-validation.html
+
+        * NetworkProcess/cache/NetworkCache.cpp: Added.
+        * NetworkProcess/cache/NetworkCache.h: Added.
+        * NetworkProcess/cache/NetworkCacheKey.cpp: Added.
+        * NetworkProcess/cache/NetworkCacheKey.h: Added.
+        * NetworkProcess/cache/NetworkCacheStorage.h: Added.
+        * NetworkProcess/cache/NetworkCacheStorage.mm: Added.
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins):
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::tryGetShareableHandleFromCFData):
+        * Platform/Logging.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * config.h:
+
 2014-12-15  Gavin Barraclough  <barraclough@apple.com>
 
         Simplify tracking of process suppression disabled for PluginProcessManager

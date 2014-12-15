@@ -241,7 +241,7 @@ static PassRefPtr<Inspector::Protocol::Network::Response> buildObjectForResource
         .setConnectionReused(response.connectionReused())
         .setConnectionId(response.connectionID());
 
-    responseObject->setFromDiskCache(response.wasCached());
+    responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
     responseObject->setTiming(buildObjectForTiming(response.resourceLoadTiming(), loader));
 
     return responseObject;

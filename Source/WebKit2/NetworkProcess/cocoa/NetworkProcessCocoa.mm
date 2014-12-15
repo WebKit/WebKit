@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "SandboxExtension.h"
@@ -62,6 +63,13 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
+#if ENABLE(NETWORK_CACHE)
+        if (NetworkCache::shared().initialize(m_diskCacheDirectory)) {
+            NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil];
+            [NSURLCache setSharedURLCache:URLCache];
+            return;
+        }
+#endif
 #if PLATFORM(IOS)
         [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
             _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
@@ -127,6 +135,12 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
         pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
+#if ENABLE(NETWORK_CACHE)
+    if (NetworkCache::shared().isEnabled()) {
+        NetworkCache::shared().setMaximumSize(urlCacheDiskCapacity);
+        return;
+    }
+#endif
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
     if (!m_diskCacheIsDisabledForTesting)
@@ -135,6 +149,10 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
 
 void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
+#if ENABLE(NETWORK_CACHE)
+    NetworkCache::shared().clear();
+#endif
+
     if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = dispatch_group_create();
 

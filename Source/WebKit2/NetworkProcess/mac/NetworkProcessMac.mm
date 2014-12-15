@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) && ENABLE(NETWORK_PROCESS)
 
+#import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "ResourceCachesToClear.h"

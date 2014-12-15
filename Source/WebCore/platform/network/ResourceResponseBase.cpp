@@ -54,7 +54,6 @@ ResourceResponseBase::ResourceResponseBase()
     , m_date(0)
     , m_expires(0)
     , m_lastModified(0)
-    , m_wasCached(false)
     , m_connectionReused(false)
     , m_isNull(true)
     , m_haveParsedCacheControlHeader(false)
@@ -65,6 +64,7 @@ ResourceResponseBase::ResourceResponseBase()
     , m_cacheControlContainsNoCache(false)
     , m_cacheControlContainsNoStore(false)
     , m_cacheControlContainsMustRevalidate(false)
+    , m_source(Source::Unknown)
 {
 }
 
@@ -81,7 +81,6 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_date(0)
     , m_expires(0)
     , m_lastModified(0)
-    , m_wasCached(false)
     , m_connectionReused(false)
     , m_isNull(false)
     , m_haveParsedCacheControlHeader(false)
@@ -92,6 +91,7 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_cacheControlContainsNoCache(false)
     , m_cacheControlContainsNoStore(false)
     , m_cacheControlContainsMustRevalidate(false)
+    , m_source(Source::Unknown)
 {
 }
 
@@ -517,16 +517,16 @@ bool ResourceResponseBase::isAttachment() const
     return equalIgnoringCase(value, "attachment");
 }
   
-bool ResourceResponseBase::wasCached() const
+ResourceResponseBase::Source ResourceResponseBase::source() const
 {
     lazyInit(AllFields);
 
-    return m_wasCached;
+    return m_source;
 }
 
-void ResourceResponseBase::setWasCached(bool value)
+void ResourceResponseBase::setSource(Source source)
 {
-    m_wasCached = value;
+    m_source = source;
 }
 
 bool ResourceResponseBase::connectionReused() const

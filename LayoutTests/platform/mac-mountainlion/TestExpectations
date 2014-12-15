@@ -1,0 +1,2 @@
+# Disk cache requires NetworkProcess
+http/tests/cache/disk-cache-validation.html

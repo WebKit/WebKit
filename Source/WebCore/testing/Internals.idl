@@ -42,6 +42,8 @@ enum PageOverlayType {
     [RaisesException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
+    DOMString xhrResponseSource(XMLHttpRequest xhr);
+    void clearMemoryCache();
 
     [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 

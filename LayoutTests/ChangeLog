@@ -1,3 +1,29 @@
+2014-12-15  Antti Koivisto  <antti@apple.com>
+
+        WebKit level persistent caching
+        https://bugs.webkit.org/show_bug.cgi?id=30322
+
+        Reviewed by Sam Weinig.
+
+        Add a cache validation test. The test generates large number of validation header permutations.
+
+        * TestExpectations: Skipped until the feature is enabled.
+        * http/tests/cache/disk-cache-validation-expected.txt: Added.
+        * http/tests/cache/disk-cache-validation.html: Added.
+        * http/tests/cache/resources/cache-test.js: Added.
+        (getServerDate):
+        (makeHeaderValue):
+        (generateTestURL):
+        (loadResource):
+        (loadResources):
+        (printResults):
+        (runTests):
+        (mergeFields):
+        (generateTests):
+        * http/tests/cache/resources/generate-response.cgi: Added.
+        * platform/mac-mountainlion/TestExpectations: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Codepoints not associated with languages are drawn as boxes

@@ -41,9 +41,9 @@ NetworkCacheEncoder::~NetworkCacheEncoder()
 
 uint8_t* NetworkCacheEncoder::grow(size_t size)
 {
-    uint8_t* position = m_buffer.data() + m_buffer.size();
+    size_t newPosition = m_buffer.size();
     m_buffer.grow(m_buffer.size() + size);
-    return position;
+    return m_buffer.data() + newPosition;
 }
 
 void NetworkCacheEncoder::updateChecksumForData(unsigned& checksum, const uint8_t* data, size_t size)
