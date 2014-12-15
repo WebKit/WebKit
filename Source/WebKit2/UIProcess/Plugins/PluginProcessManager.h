@@ -86,6 +86,7 @@ private:
 #endif
 };
 
+#if PLATFORM(COCOA)
 inline PassRefPtr<RefCounter::Count> PluginProcessManager::processSuppressionDisabledForPageCount()
 {
     return m_processSuppressionDisabledForPageCounter.count();
@@ -95,6 +96,7 @@ inline bool PluginProcessManager::processSuppressionEnabled() const
 {
     return m_processSuppressionEnabled;
 }
+#endif
 
 } // namespace WebKit
 
