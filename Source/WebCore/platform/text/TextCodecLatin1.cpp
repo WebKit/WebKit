@@ -27,7 +27,6 @@
 #include "TextCodecLatin1.h"
 
 #include "TextCodecASCIIFastPath.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/WTFString.h>

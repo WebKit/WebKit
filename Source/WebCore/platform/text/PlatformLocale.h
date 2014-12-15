@@ -28,7 +28,6 @@
 
 #include "DateComponents.h"
 #include "Language.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,8 +40,8 @@ class Locale {
     WTF_MAKE_NONCOPYABLE(Locale);
 
 public:
-    static PassOwnPtr<Locale> create(const AtomicString& localeIdentifier);
-    static PassOwnPtr<Locale> createDefault();
+    static std::unique_ptr<Locale> create(const AtomicString& localeIdentifier);
+    static std::unique_ptr<Locale> createDefault();
 
     // Converts the specified number string to another number string localized
     // for this Locale locale. The input string must conform to HTML
@@ -150,7 +149,7 @@ private:
     bool m_hasLocaleData;
 };
 
-inline PassOwnPtr<Locale> Locale::createDefault()
+inline std::unique_ptr<Locale> Locale::createDefault()
 {
     return Locale::create(defaultLanguage());
 }

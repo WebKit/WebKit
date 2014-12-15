@@ -129,9 +129,9 @@ static UINT getCodePage(const char* name)
     return i == charsets.end() ? CP_ACP : i->value.m_codePage;
 }
 
-static PassOwnPtr<TextCodec> newTextCodecWin(const TextEncoding& encoding, const void*)
+static std::unique_ptr<TextCodec> newTextCodecWin(const TextEncoding& encoding, const void*)
 {
-    return adoptPtr(new TextCodecWin(getCodePage(encoding.name())));
+    return std::make_unique<TextCodecWin>(getCodePage(encoding.name()));
 }
 
 TextCodecWin::TextCodecWin(UINT codePage)

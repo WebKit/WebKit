@@ -44,7 +44,7 @@ struct DateFormatToken;
 
 class LocaleWin : public Locale {
 public:
-    static PassOwnPtr<LocaleWin> create(LCID);
+    explicit LocaleWin(LCID);
     ~LocaleWin();
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() override;
@@ -64,7 +64,6 @@ public:
 #endif
 
 private:
-    explicit LocaleWin(LCID);
     String getLocaleInfoString(LCTYPE);
     void getLocaleInfo(LCTYPE, DWORD&);
     void ensureShortMonthLabels();

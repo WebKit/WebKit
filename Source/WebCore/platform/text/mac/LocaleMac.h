@@ -47,7 +47,7 @@ class DateComponents;
 
 class LocaleMac : public Locale {
 public:
-    static PassOwnPtr<LocaleMac> create(NSLocale*);
+    explicit LocaleMac(NSLocale*);
     ~LocaleMac();
 
 #if PLATFORM(IOS)
@@ -70,7 +70,6 @@ public:
 #endif
 
 private:
-    explicit LocaleMac(NSLocale*);
     RetainPtr<NSDateFormatter> shortDateFormatter();
     virtual void initializeLocaleData() override;
 

@@ -36,7 +36,6 @@
 #include <unicode/udat.h>
 #include <unicode/unum.h>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,7 +45,7 @@ namespace WebCore {
 // and LocalizedNumberICUTest.cpp.
 class LocaleICU : public Locale {
 public:
-    static PassOwnPtr<LocaleICU> create(const char* localeString);
+    explicit LocaleICU(const char*);
     virtual ~LocaleICU();
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
@@ -65,7 +64,6 @@ public:
 #endif
 
 private:
-    explicit LocaleICU(const char*);
     String decimalSymbol(UNumberFormatSymbol);
     String decimalTextAttribute(UNumberFormatTextAttribute);
     virtual void initializeLocaleData() override;
@@ -77,7 +75,7 @@ private:
     UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    PassOwnPtr<Vector<String> > createLabelVector(const UDateFormat*, UDateFormatSymbolType, int32_t startIndex, int32_t size);
+    std::unique_ptr<Vector<String>> createLabelVector(const UDateFormat*, UDateFormatSymbolType, int32_t startIndex, int32_t size);
     void initializeDateTimeFormat();
 #endif
 
@@ -88,7 +86,7 @@ private:
     bool m_didCreateShortDateFormat;
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    OwnPtr<Vector<String> > m_monthLabels;
+    std::unique_ptr<Vector<String>> m_monthLabels;
     String m_dateFormat;
     String m_monthFormat;
     String m_shortMonthFormat;

@@ -1,3 +1,47 @@
+2014-12-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move WebCore/platform/text to std::unique_ptr 
+        https://bugs.webkit.org/show_bug.cgi?id=139395
+
+        Reviewed by Darin Adler.
+
+        As a step to use std::unique_ptr<>, this patch replaces OwnPtr|PassOwnPtr with
+        std::unique_ptr<> | std::make_unique<>.
+
+        * dom/Document.h:
+        * platform/text/LineBreakIteratorPoolICU.h:
+        (WebCore::LineBreakIteratorPool::LineBreakIteratorPool):
+        (WebCore::LineBreakIteratorPool::create): Deleted.
+        * platform/text/LocaleICU.cpp:
+        (WebCore::Locale::create):
+        (WebCore::LocaleICU::createLabelVector):
+        (WebCore::createFallbackMonthLabels):
+        (WebCore::createFallbackAMPMLabels):
+        (WebCore::LocaleICU::initializeDateTimeFormat):
+        (WebCore::LocaleICU::shortMonthLabels):
+        (WebCore::LocaleICU::create): Deleted.
+        (WebCore::LocaleICU::standAloneMonthLabels): Deleted.
+        (WebCore::LocaleICU::shortStandAloneMonthLabels): Deleted.
+        * platform/text/LocaleICU.h:
+        * platform/text/LocaleNone.cpp:
+        (WebCore::Locale::create):
+        * platform/text/PlatformLocale.h:
+        (WebCore::Locale::createDefault):
+        * platform/text/TextCodecLatin1.cpp:
+        * platform/text/TextCodecUTF16.cpp:
+        * platform/text/TextEncoding.cpp:
+        * platform/text/mac/LocaleMac.h:
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::Locale::create):
+        (WebCore::LocaleMac::create):
+        * platform/text/mac/TextCodecMac.cpp:
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::Locale::create):
+        (WebCore::LocaleWin::create):
+        * platform/text/win/LocaleWin.h:
+        * platform/text/win/TextCodecWin.cpp:
+        (WebCore::newTextCodecWin):
+
 2014-12-15  Xavier Claessens  <xavier.claessens@collabora.com>
 
         [GStreamer] the webkitwebsrc element can stale

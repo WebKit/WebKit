@@ -31,7 +31,6 @@
 #include <unicode/ubrk.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -42,13 +41,13 @@ namespace WebCore {
 class LineBreakIteratorPool {
     WTF_MAKE_NONCOPYABLE(LineBreakIteratorPool);
 public:
+    LineBreakIteratorPool() { }
+
     static LineBreakIteratorPool& sharedPool()
     {
         static WTF::ThreadSpecific<LineBreakIteratorPool>* pool = new WTF::ThreadSpecific<LineBreakIteratorPool>;
         return **pool;
     }
-
-    static PassOwnPtr<LineBreakIteratorPool> create() { return adoptPtr(new LineBreakIteratorPool); }
 
     static String makeLocaleWithBreakKeyword(const AtomicString& locale, LineBreakIteratorMode mode)
     {
@@ -113,8 +112,6 @@ public:
     }
 
 private:
-    LineBreakIteratorPool() { }
-
     static const size_t capacity = 4;
 
     typedef std::pair<AtomicString, TextBreakIterator*> Entry;

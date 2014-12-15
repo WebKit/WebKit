@@ -36,7 +36,6 @@
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include <wtf/DateMath.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -67,9 +66,9 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
      return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);
 }
 
-PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
+std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
 {
-    return LocaleMac::create(determineLocale(locale.string()).get());
+    return std::make_unique<LocaleMac>(determineLocale(locale.string()).get());
 }
 
 static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCalendar* calendar, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
@@ -102,11 +101,6 @@ LocaleMac::LocaleMac(NSLocale* locale)
 
 LocaleMac::~LocaleMac()
 {
-}
-
-PassOwnPtr<LocaleMac> LocaleMac::create(NSLocale* locale)
-{
-    return adoptPtr(new LocaleMac(locale));
 }
 
 RetainPtr<NSDateFormatter> LocaleMac::shortDateFormatter()

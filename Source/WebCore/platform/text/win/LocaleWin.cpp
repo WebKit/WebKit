@@ -40,8 +40,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -146,20 +144,15 @@ static LCID LCIDFromLocale(const AtomicString& locale)
     return lcid;
 }
 
-PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
+std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
 {
-    return LocaleWin::create(LCIDFromLocale(locale));
+    return std::make_unique<LocaleWin>(LCIDFromLocale(locale));
 }
 
 inline LocaleWin::LocaleWin(LCID lcid)
     : m_lcid(lcid)
     , m_didInitializeNumberData(false)
 {
-}
-
-PassOwnPtr<LocaleWin> LocaleWin::create(LCID lcid)
-{
-    return adoptPtr(new LocaleWin(lcid));
 }
 
 LocaleWin::~LocaleWin()

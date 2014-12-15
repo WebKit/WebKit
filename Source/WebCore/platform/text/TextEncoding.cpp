@@ -31,7 +31,6 @@
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
 #include <unicode/unorm.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>

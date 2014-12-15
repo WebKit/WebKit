@@ -33,7 +33,6 @@
 #include "CharsetData.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>

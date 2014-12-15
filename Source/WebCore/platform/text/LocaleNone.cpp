@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PlatformLocale.h"
 #include <wtf/DateMath.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -56,9 +55,9 @@ private:
 #endif
 };
 
-PassOwnPtr<Locale> Locale::create(const AtomicString&)
+std::unique_ptr<Locale> Locale::create(const AtomicString&)
 {
-    return adoptPtr(new LocaleNone());
+    return std::make_unique<LocaleNone>();
 }
 
 LocaleNone::~LocaleNone()
