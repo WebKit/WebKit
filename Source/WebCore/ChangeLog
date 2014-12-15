@@ -1,3 +1,14 @@
+2014-12-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Implement Data Detectors immediate actions for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=139617
+        <rdar://problem/19198539>
+
+        Reviewed by Beth Dakin.
+
+        * platform/spi/mac/DataDetectorsSPI.h:
+        Add some new SPI.
+
 2014-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168217): Images are cropped out during animation at jetblue.com

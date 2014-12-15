@@ -454,6 +454,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
         return nil;
 
     actionContext.altMode = YES;
+    actionContext.immediate = YES;
     if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
         if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
             return nil;

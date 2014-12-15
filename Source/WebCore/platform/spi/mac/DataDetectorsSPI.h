@@ -71,6 +71,7 @@ SOFT_LINK_CLASS(DataDetectors, DDActionContext)
 @property (retain) NSArray *allResults;
 @property (retain) __attribute__((NSObject)) DDResultRef mainResult;
 @property (assign) BOOL altMode;
+@property (assign) BOOL immediate;
 
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
 
