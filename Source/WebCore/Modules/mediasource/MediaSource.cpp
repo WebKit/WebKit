@@ -246,6 +246,13 @@ void MediaSource::monitorSourceBuffers()
         return;
     }
 
+    // http://w3c.github.io/media-source/#buffer-monitoring, change from 11 December 2014
+    // ↳ If the the HTMLMediaElement.readyState attribute equals HAVE_NOTHING:
+    if (mediaElement()->readyState() == HTMLMediaElement::HAVE_NOTHING) {
+        // 1. Abort these steps.
+        return;
+    }
+
     // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
     // playback position:
     auto begin = m_activeSourceBuffers->begin();

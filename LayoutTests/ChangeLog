@@ -1,3 +1,16 @@
+2014-12-15  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Prevent SourceBuffer monitoring algorithm from triggering a HAVE_NOTHING to HAVE_METADATA transition.
+        https://bugs.webkit.org/show_bug.cgi?id=139444
+
+        Reviewed by Jer Noble.
+
+        Added test to check how many active SourceBuffers exist when loadedmetadata fires,
+        according to spec 3.5.7, this should be equal to number of sourcebuffers.
+
+        * media/media-source/media-source-loadedmetada-with-two-sourcebuffers-expected.txt: Added.
+        * media/media-source/media-source-loadedmetada-with-two-sourcebuffers.html: Added.
+
 2014-12-14  Alexey Proskuryakov  <ap@apple.com>
 
         Add some more slow tests to TestExpectations.

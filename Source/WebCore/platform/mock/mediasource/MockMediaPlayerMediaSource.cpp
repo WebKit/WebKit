@@ -57,6 +57,7 @@ static HashSet<String> mimeTypeCache()
     if (!isInitialized) {
         isInitialized = true;
         cache.add(ASCIILiteral("video/mock"));
+        cache.add(ASCIILiteral("audio/mock"));
     }
 
     return cache;
