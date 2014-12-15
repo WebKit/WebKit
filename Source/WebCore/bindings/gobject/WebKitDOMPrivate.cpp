@@ -108,7 +108,6 @@ WebKitDOMNode* wrap(Node* node)
     case Node::DOCUMENT_FRAGMENT_NODE:
         return WEBKIT_DOM_NODE(wrapDocumentFragment(static_cast<DocumentFragment*>(node)));
     case Node::ENTITY_NODE:
-    case Node::NOTATION_NODE:
     case Node::XPATH_NAMESPACE_NODE:
         break;
     }

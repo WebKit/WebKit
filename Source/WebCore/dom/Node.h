@@ -138,8 +138,10 @@ public:
         DOCUMENT_NODE = 9,
         DOCUMENT_TYPE_NODE = 10,
         DOCUMENT_FRAGMENT_NODE = 11,
-        NOTATION_NODE = 12,
         XPATH_NAMESPACE_NODE = 13,
+    };
+    enum DeprecatedNodeType {
+        NOTATION_NODE = 12,
     };
     enum DocumentPosition {
         DOCUMENT_POSITION_EQUIVALENT = 0x00,

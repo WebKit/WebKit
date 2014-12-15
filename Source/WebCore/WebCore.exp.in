@@ -2269,7 +2269,6 @@ __ZN7WebCore36initializeLoggingChannelsIfNecessaryEv
 .objc_class_name_DOMNodeFilter
 .objc_class_name_DOMNodeIterator
 .objc_class_name_DOMNodeList
-.objc_class_name_DOMNotation
 .objc_class_name_DOMObject
 .objc_class_name_DOMProcessingInstruction
 .objc_class_name_DOMRGBColor

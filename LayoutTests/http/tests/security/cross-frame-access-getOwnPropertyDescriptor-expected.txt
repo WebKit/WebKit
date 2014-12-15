@@ -145,7 +145,6 @@ PASS: canGetDescriptor(targetWindow, 'Image') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'MutationEvent') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'Node') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'NodeFilter') should be 'false' and is.
-PASS: canGetDescriptor(targetWindow, 'Notation') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'Option') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'ProcessingInstruction') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'Range') should be 'false' and is.

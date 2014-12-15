@@ -278,7 +278,6 @@
 #include "JSNodeFilter.cpp"
 #include "JSNodeIterator.cpp"
 #include "JSNodeList.cpp"
-#include "JSNotation.cpp"
 #include "JSNotificationCenter.cpp"
 #include "JSNotification.cpp"
 #include "JSOverflowEvent.cpp"

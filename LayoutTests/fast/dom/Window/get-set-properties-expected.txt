@@ -159,8 +159,6 @@ PASS: canGet('Node') should be 'true' and is.
 PASS: canSet('Node') should be 'true' and is.
 PASS: canGet('NodeFilter') should be 'true' and is.
 PASS: canSet('NodeFilter') should be 'true' and is.
-PASS: canGet('Notation') should be 'true' and is.
-PASS: canSet('Notation') should be 'true' and is.
 PASS: canGet('Option') should be 'true' and is.
 PASS: canSet('Option') should be 'true' and is.
 PASS: canGet('ProcessingInstruction') should be 'true' and is.

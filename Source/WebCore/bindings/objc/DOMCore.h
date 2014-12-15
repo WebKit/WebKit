@@ -39,7 +39,6 @@
 #import <WebCore/DOMNamedNodeMap.h>
 #import <WebCore/DOMNode.h>
 #import <WebCore/DOMNodeList.h>
-#import <WebCore/DOMNotation.h>
 #import <WebCore/DOMObject.h>
 #import <WebCore/DOMProcessingInstruction.h>
 #import <WebCore/DOMText.h>

@@ -184,7 +184,6 @@ CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from access
 CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 ALERT: PASS: window.Attr should be '[object AttrConstructor]' and is.
 ALERT: PASS: window.CDATASection should be '[object CDATASectionConstructor]' and is.
 ALERT: PASS: window.CharacterData should be '[object CharacterDataConstructor]' and is.
@@ -262,7 +261,6 @@ ALERT: PASS: window.HTMLUListElement should be '[object HTMLUListElementConstruc
 ALERT: PASS: window.MutationEvent should be '[object MutationEventConstructor]' and is.
 ALERT: PASS: window.Node should be '[object NodeConstructor]' and is.
 ALERT: PASS: window.NodeFilter should be '[object NodeFilterConstructor]' and is.
-ALERT: PASS: window.Notation should be '[object NotationConstructor]' and is.
 ALERT: PASS: window.ProcessingInstruction should be '[object ProcessingInstructionConstructor]' and is.
 ALERT: PASS: window.Range should be '[object RangeConstructor]' and is.
 ALERT: PASS: window.RangeError should be 'function RangeError() {    [native code]}' and is.

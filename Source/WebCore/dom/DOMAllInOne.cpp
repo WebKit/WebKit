@@ -104,7 +104,6 @@
 #include "NodeFilterCondition.cpp"
 #include "NodeIterator.cpp"
 #include "NodeRenderingTraversal.cpp"
-#include "Notation.cpp"
 #include "OverflowEvent.cpp"
 #include "PageTransitionEvent.cpp"
 #include "PendingScript.cpp"

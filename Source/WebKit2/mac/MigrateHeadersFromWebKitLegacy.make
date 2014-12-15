@@ -141,7 +141,6 @@ WEBKIT_PUBLIC_HEADERS = \
     DOMNodeFilter.h \
     DOMNodeIterator.h \
     DOMNodeList.h \
-    DOMNotation.h \
     DOMObject.h \
     DOMOverflowEvent.h \
     DOMProcessingInstruction.h \

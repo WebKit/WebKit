@@ -990,7 +990,6 @@ RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& 
         return newFragment.release();
     }
     case ENTITY_NODE:
-    case NOTATION_NODE:
         // FIXME: It should be possible to import these node types, however in DOM3 the DocumentType is readonly, so there isn't much sense in doing that.
         // Ability to add these imported nodes to a DocumentType will be considered for addition to a future release of the DOM.
     case DOCUMENT_NODE:
@@ -1019,7 +1018,6 @@ RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
 
     switch (source->nodeType()) {
     case ENTITY_NODE:
-    case NOTATION_NODE:
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
     case XPATH_NAMESPACE_NODE:
@@ -3084,7 +3082,6 @@ bool Document::childTypeAllowed(NodeType type) const
     case DOCUMENT_NODE:
     case ENTITY_NODE:
     case ENTITY_REFERENCE_NODE:
-    case NOTATION_NODE:
     case TEXT_NODE:
     case XPATH_NAMESPACE_NODE:
         return false;
@@ -3143,7 +3140,6 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
             case DOCUMENT_NODE:
             case ENTITY_NODE:
             case ENTITY_REFERENCE_NODE:
-            case NOTATION_NODE:
             case TEXT_NODE:
             case XPATH_NAMESPACE_NODE:
                 return false;
@@ -3166,7 +3162,6 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
         case DOCUMENT_NODE:
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
-        case NOTATION_NODE:
         case TEXT_NODE:
         case XPATH_NAMESPACE_NODE:
             return false;

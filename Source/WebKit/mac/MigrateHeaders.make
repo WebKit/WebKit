@@ -156,7 +156,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMNodeFilter.h \
     $(PRIVATE_HEADERS_DIR)/DOMNodeIterator.h \
     $(PRIVATE_HEADERS_DIR)/DOMNodeList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNotation.h \
     $(PRIVATE_HEADERS_DIR)/DOMObject.h \
     $(PRIVATE_HEADERS_DIR)/DOMOverflowEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMPrivate.h \

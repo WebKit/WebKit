@@ -3297,9 +3297,6 @@
     <ClCompile Include="..\dom\NodeTraversal.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\Notation.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\OverflowEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -5774,9 +5771,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSNodeList.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSNotation.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSNotification.cpp">
@@ -10422,9 +10416,6 @@
     <ClInclude Include="..\dom\NodeTraversal.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\Notation.h">
-      <Filter>dom</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\OverflowEvent.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -13722,9 +13713,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSNodeList.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSNotation.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSNotification.h">

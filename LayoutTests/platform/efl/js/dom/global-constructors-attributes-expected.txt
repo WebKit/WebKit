@@ -893,11 +893,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'NodeList').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'NodeList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'NodeList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'NodeList').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'Notation').value is Notation
-PASS Object.getOwnPropertyDescriptor(global, 'Notation').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Notation').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Notation').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'Notation').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'OfflineAudioCompletionEvent').value is OfflineAudioCompletionEvent
 PASS Object.getOwnPropertyDescriptor(global, 'OfflineAudioCompletionEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'OfflineAudioCompletionEvent').hasOwnProperty('set') is false

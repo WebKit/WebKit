@@ -56,12 +56,10 @@
 #include "JSEventListener.h"
 #include "JSHTMLElement.h"
 #include "JSHTMLElementWrapperFactory.h"
-#include "JSNotation.h"
 #include "JSProcessingInstruction.h"
 #include "JSSVGElementWrapperFactory.h"
 #include "JSText.h"
 #include "Node.h"
-#include "Notation.h"
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
 #include "SVGElement.h"
@@ -222,9 +220,6 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             return toJS(exec, globalObject, downcast<Document>(node));
         case Node::DOCUMENT_TYPE_NODE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentType, node);
-            break;
-        case Node::NOTATION_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, Notation, node);
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentFragment, node);

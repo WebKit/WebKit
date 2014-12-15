@@ -405,7 +405,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/NodeFilter.idl
     dom/NodeIterator.idl
     dom/NodeList.idl
-    dom/Notation.idl
     dom/OverflowEvent.idl
     dom/PageTransitionEvent.idl
     dom/PopStateEvent.idl
@@ -1391,7 +1390,6 @@ set(WebCore_SOURCES
     dom/NodeRareData.cpp
     dom/NodeRenderingTraversal.cpp
     dom/NodeTraversal.cpp
-    dom/Notation.cpp
     dom/OverflowEvent.cpp
     dom/PageTransitionEvent.cpp
     dom/PendingScript.cpp

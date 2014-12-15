@@ -252,8 +252,6 @@ PASS win['NodeFilter'] == '[object NodeFilterConstructor]' is true
 PASS win['NodeFilter'] == '[object NodeFilterConstructor]' is true
 PASS win['NodeList'] == '[object NodeListConstructor]' is true
 PASS win['NodeList'] == '[object NodeListConstructor]' is true
-PASS win['Notation'] == '[object NotationConstructor]' is true
-PASS win['Notation'] == '[object NotationConstructor]' is true
 PASS win['OverflowEvent'] == '[object OverflowEventConstructor]' is true
 PASS win['OverflowEvent'] == '[object OverflowEventConstructor]' is true
 PASS win['ProcessingInstruction'] == '[object ProcessingInstructionConstructor]' is true

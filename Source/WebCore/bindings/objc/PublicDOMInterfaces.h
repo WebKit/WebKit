@@ -318,11 +318,6 @@
 - (DOMNode *)item:(unsigned)index;
 @end
 
-@interface DOMNotation : DOMNode 10_4
-@property (readonly, copy) NSString *publicId;
-@property (readonly, copy) NSString *systemId;
-@end
-
 @interface DOMProcessingInstruction : DOMCharacterData 10_4
 @property (readonly, copy) NSString *target;
 @property (readonly, strong) DOMStyleSheet *sheet WEBKIT_AVAILABLE_MAC(10_4);
