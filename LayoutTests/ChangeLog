@@ -1,5 +1,15 @@
 2014-12-14  Alexey Proskuryakov  <ap@apple.com>
 
+        jquery/manipulation.html is very slow in debug builds, frequently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=61932
+
+        Several fast/selectors tests are very slow in debug
+        https://bugs.webkit.org/show_bug.cgi?id=139634
+
+        * TestExpectations: Mark them as slow
+
+2014-12-14  Alexey Proskuryakov  <ap@apple.com>
+
         Tests with infinite recursion frequently crash
         https://bugs.webkit.org/show_bug.cgi?id=139548
 

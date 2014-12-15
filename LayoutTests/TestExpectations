@@ -327,3 +327,8 @@ webkit.org/b/121628 [ Release ] fast/history/history-back-while-pdf-in-pagecache
 # Catching infinite recursion is broken.
 webkit.org/b/139548 fast/workers/worker-constructor.html [ Skip ]
 webkit.org/b/139548 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Skip ]
+
+webkit.org/b/139634 fast/selectors/matches-backtracking.html [ Slow ]
+webkit.org/b/139634 fast/selectors/nth-child-of-register-requirement.html [ Slow ]
+webkit.org/b/139634 fast/selectors/not-backtracking.html [ Slow ]
+webkit.org/b/61932 jquery/manipulation.html [ Slow ]
