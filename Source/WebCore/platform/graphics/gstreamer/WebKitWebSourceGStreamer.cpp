@@ -124,6 +124,7 @@ struct _WebKitWebSrcPrivate {
 
     guint64 requestedOffset;
 
+    gboolean pendingStart;
     GThreadSafeMainLoopSource startSource;
     GThreadSafeMainLoopSource stopSource;
     GThreadSafeMainLoopSource needDataSource;
@@ -364,7 +365,8 @@ static void removeTimeoutSources(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-    priv->startSource.cancel();
+    if (!priv->pendingStart)
+        priv->startSource.cancel();
     priv->needDataSource.cancel();
     priv->enoughDataSource.cancel();
     priv->seekSource.cancel();
@@ -436,6 +438,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
+    priv->pendingStart = FALSE;
     priv->didPassAccessControlCheck = false;
 
     if (!priv->uri) {
@@ -540,12 +543,14 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
+        priv->pendingStart = TRUE;
         gst_object_ref(src);
         priv->startSource.schedule("[WebKit] webKitWebSrcStart", std::function<void()>(std::bind(webKitWebSrcStart, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
         break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
+        priv->pendingStart = FALSE;
         // cancel pending sources
         removeTimeoutSources(src);
         gst_object_ref(src);
