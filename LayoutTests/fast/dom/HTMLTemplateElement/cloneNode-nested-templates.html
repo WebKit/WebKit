@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<template id="outerTemplate"><template id="innerTemplate"><span>Contents</span></template></template>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description('Test that template contents are not cloned when the template element is cloned');
+
+if (!window.HTMLTemplateElement)
+    testFailed('This test requires ENABLE(TEMPLATE_ELEMENT)');
+
+var outerTemplate = document.getElementById('outerTemplate');
+evalAndLog('clonedOuterTemplate = outerTemplate.cloneNode(true)');
+shouldNotBe('clonedOuterTemplate.content', 'outerTemplate.content');
+shouldBe('clonedOuterTemplate.content.childNodes.length', '1');
+evalAndLog('innerTemplate = outerTemplate.content.firstChild');
+evalAndLog('clonedInnerTemplate = clonedOuterTemplate.content.firstChild');
+shouldBe('clonedInnerTemplate.outerHTML', 'innerTemplate.outerHTML');
+shouldNotBe('clonedInnerTemplate.content', 'innerTemplate.content');
+shouldBe('innerTemplate.content.childNodes.length', '1');
+shouldBe('clonedInnerTemplate.content.childNodes.length', '1');
+shouldBe('innerTemplate.content.firstChild.outerHTML', 'clonedInnerTemplate.content.firstChild.outerHTML');
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2014-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        cloneNode(true) does not clone nested template elements' contents
+        https://bugs.webkit.org/show_bug.cgi?id=137755
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        * fast/dom/HTMLTemplateElement/cloneNode-nested-templates-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/cloneNode-nested-templates.html: Added.
+
 2014-12-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Unify the various serialization of selector list

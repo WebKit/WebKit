@@ -289,9 +289,17 @@ DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, load);
 
-RefPtr<Node> Element::cloneNode(bool deep)
+RefPtr<Node> Element::cloneNodeInternal(CloningOperation type)
 {
-    return deep ? cloneElementWithChildren() : cloneElementWithoutChildren();
+    switch (type) {
+    case CloningOperation::OnlySelf:
+    case CloningOperation::SelfWithTemplateContent:
+        return cloneElementWithoutChildren();
+    case CloningOperation::Everything:
+        return cloneElementWithChildren();
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 RefPtr<Element> Element::cloneElementWithChildren()

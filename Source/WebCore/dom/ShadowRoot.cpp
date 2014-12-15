@@ -131,6 +131,11 @@ void ShadowRoot::childrenChanged(const ChildChange& change)
     invalidateDistribution();
 }
 
+RefPtr<Node> ShadowRoot::cloneNodeInternal(CloningOperation)
+{
+    return nullptr; // ShadowRoots should never be cloned.
+}
+
 void ShadowRoot::removeAllEventListeners()
 {
     DocumentFragment::removeAllEventListeners();

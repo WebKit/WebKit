@@ -76,8 +76,7 @@ private:
     virtual bool childTypeAllowed(NodeType) const override;
     virtual void childrenChanged(const ChildChange&) override;
 
-    // ShadowRoots should never be cloned.
-    virtual RefPtr<Node> cloneNode(bool) override { return 0; }
+    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !hostElement(); }

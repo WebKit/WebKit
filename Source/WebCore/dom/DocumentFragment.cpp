@@ -71,11 +71,17 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-RefPtr<Node> DocumentFragment::cloneNode(bool deep)
+RefPtr<Node> DocumentFragment::cloneNodeInternal(CloningOperation type)
 {
     RefPtr<DocumentFragment> clone = create(document());
-    if (deep)
+    switch (type) {
+    case CloningOperation::OnlySelf:
+    case CloningOperation::SelfWithTemplateContent:
+        break;
+    case CloningOperation::Everything:
         cloneChildNodes(clone.get());
+        break;
+    }
     return clone;
 }
 

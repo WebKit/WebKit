@@ -46,7 +46,7 @@ Node::NodeType CDATASection::nodeType() const
     return CDATA_SECTION_NODE;
 }
 
-RefPtr<Node> CDATASection::cloneNode(bool /*deep*/)
+RefPtr<Node> CDATASection::cloneNodeInternal(CloningOperation)
 {
     return create(document(), data());
 }

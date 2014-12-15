@@ -632,7 +632,7 @@ private:
 
     // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
     // are used instead.
-    virtual RefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
     virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren();
 
     void addShadowRoot(PassRefPtr<ShadowRoot>);

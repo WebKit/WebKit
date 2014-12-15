@@ -80,7 +80,7 @@ private:
 
     virtual String nodeValue() const override { return value(); }
     virtual void setNodeValue(const String&, ExceptionCode&) override;
-    virtual RefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
 
     virtual bool isAttributeNode() const override { return true; }
     virtual bool childTypeAllowed(NodeType) const override;

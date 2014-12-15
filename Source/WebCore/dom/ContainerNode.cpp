@@ -769,7 +769,7 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
     ExceptionCode ec = 0;
     for (Node* child = firstChild(); child && !ec; child = child->nextSibling()) {
-        RefPtr<Node> clonedChild = child->cloneNode(false);
+        RefPtr<Node> clonedChild = child->cloneNodeInternal(CloningOperation::SelfWithTemplateContent);
         clone->appendChild(clonedChild, ec);
 
         if (!ec && is<ContainerNode>(child))

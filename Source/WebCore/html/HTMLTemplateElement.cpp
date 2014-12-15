@@ -68,12 +68,19 @@ DocumentFragment* HTMLTemplateElement::content() const
     return m_content.get();
 }
 
-RefPtr<Node> HTMLTemplateElement::cloneNode(bool deep)
+RefPtr<Node> HTMLTemplateElement::cloneNodeInternal(CloningOperation type)
 {
-    if (!deep)
+    RefPtr<Node> clone;
+    switch (type) {
+    case CloningOperation::OnlySelf:
         return cloneElementWithoutChildren();
-
-    RefPtr<Node> clone = cloneElementWithChildren();
+    case CloningOperation::SelfWithTemplateContent:
+        clone = cloneElementWithoutChildren();
+        break;
+    case CloningOperation::Everything:
+        clone = cloneElementWithChildren();
+        break;
+    }
     if (m_content)
         content()->cloneChildNodes(downcast<HTMLTemplateElement>(clone.get())->content());
     return clone.release();

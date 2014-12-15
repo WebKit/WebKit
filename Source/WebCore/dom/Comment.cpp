@@ -51,7 +51,7 @@ Node::NodeType Comment::nodeType() const
     return COMMENT_NODE;
 }
 
-RefPtr<Node> Comment::cloneNode(bool /*deep*/)
+RefPtr<Node> Comment::cloneNodeInternal(CloningOperation)
 {
     return create(document(), data());
 }

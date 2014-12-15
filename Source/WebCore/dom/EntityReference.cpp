@@ -46,7 +46,7 @@ Node::NodeType EntityReference::nodeType() const
     return ENTITY_REFERENCE_NODE;
 }
 
-RefPtr<Node> EntityReference::cloneNode(bool)
+RefPtr<Node> EntityReference::cloneNodeInternal(CloningOperation)
 {
     return create(document(), m_entityName);
 }

@@ -51,7 +51,7 @@ Node::NodeType DocumentType::nodeType() const
     return DOCUMENT_TYPE_NODE;
 }
 
-RefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
+RefPtr<Node> DocumentType::cloneNodeInternal(CloningOperation)
 {
     return create(document(), m_name, m_publicId, m_systemId);
 }

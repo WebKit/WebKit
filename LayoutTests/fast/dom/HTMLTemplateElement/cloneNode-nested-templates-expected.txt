@@ -1,0 +1,19 @@
+Test that template contents are not cloned when the template element is cloned
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+clonedOuterTemplate = outerTemplate.cloneNode(true)
+PASS clonedOuterTemplate.content is not outerTemplate.content
+PASS clonedOuterTemplate.content.childNodes.length is 1
+innerTemplate = outerTemplate.content.firstChild
+clonedInnerTemplate = clonedOuterTemplate.content.firstChild
+PASS clonedInnerTemplate.outerHTML is innerTemplate.outerHTML
+PASS clonedInnerTemplate.content is not innerTemplate.content
+PASS innerTemplate.content.childNodes.length is 1
+PASS clonedInnerTemplate.content.childNodes.length is 1
+PASS innerTemplate.content.firstChild.outerHTML is clonedInnerTemplate.content.firstChild.outerHTML
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -79,7 +79,7 @@ Node::NodeType ProcessingInstruction::nodeType() const
     return PROCESSING_INSTRUCTION_NODE;
 }
 
-RefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
+RefPtr<Node> ProcessingInstruction::cloneNodeInternal(CloningOperation)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?

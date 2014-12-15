@@ -3183,12 +3183,18 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     return true;
 }
 
-RefPtr<Node> Document::cloneNode(bool deep)
+RefPtr<Node> Document::cloneNodeInternal(CloningOperation type)
 {
     RefPtr<Document> clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);
-    if (deep)
+    switch (type) {
+    case CloningOperation::OnlySelf:
+    case CloningOperation::SelfWithTemplateContent:
+        break;
+    case CloningOperation::Everything:
         cloneChildNodes(clone.get());
+        break;
+    }
     return clone;
 }
 

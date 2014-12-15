@@ -1,3 +1,60 @@
+2014-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        cloneNode(true) does not clone nested template elements' contents
+        https://bugs.webkit.org/show_bug.cgi?id=137755
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by cloneChildNodes not copying template element's content.
+
+        Fixed the bug by adding the third behavior (CloneContent) to the polymorphic
+        cloneNodeInternal, which copies template element's content but not its children,
+        in addition to the existing CloneSelf (deep=false) and CloneChildren (deep=true).
+
+        Test: fast/dom/HTMLTemplateElement/cloneNode-nested-templates.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::cloneNodeInternal): Renamed from cloneNode.
+        * dom/Attr.h:
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::cloneNodeInternal): Renamed from cloneNode.
+        * dom/CDATASection.h:
+        * dom/Comment.cpp:
+        (WebCore::Comment::cloneNodeInternal): Renamed from cloneNode.
+        * dom/Comment.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes): Calls cloneNode with CloneContent.
+        * dom/Document.cpp:
+        (WebCore::Document::cloneNodeInternal): Renamed from cloneNode.
+        * dom/Document.h:
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::cloneNodeInternal): Renamed from cloneNode.
+        * dom/DocumentFragment.h:
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::cloneNodeInternal): Renamed from cloneNode.
+        * dom/DocumentType.h:
+        * dom/Element.cpp:
+        (WebCore::Element::cloneNodeInternal): Renamed from cloneNode.
+        * dom/Element.h:
+        * dom/EntityReference.cpp:
+        (WebCore::EntityReference::cloneNodeInternal): Renamed from cloneNode.
+        * dom/EntityReference.h:
+        * dom/Node.h:
+        (WebCore::Node::cloneNode): Added. It calls cloneNodeInternal with CloneSelf or CloneChildren.
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::cloneNodeInternal): Renamed from cloneNode.
+        * dom/ProcessingInstruction.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::cloneNodeInternal): Renamed from cloneNode. Also moved from ShadowRoot.h.
+        * dom/ShadowRoot.h:
+        * dom/Text.cpp:
+        (WebCore::Text::cloneNodeInternal): Renamed from cloneNode.
+        * dom/Text.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::cloneNodeInternal): Renamed from cloneNode. This is the only
+        function in which CloneContent results in a different behavior from CloneSelf.
+        * html/HTMLTemplateElement.h:
+
 2014-12-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Unify the various serialization of selector list

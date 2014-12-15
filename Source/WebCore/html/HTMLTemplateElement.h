@@ -50,7 +50,7 @@ public:
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);
 
-    virtual RefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
     virtual void didMoveToNewDocument(Document* oldDocument) override;
 
     mutable RefPtr<TemplateContentDocumentFragment> m_content;

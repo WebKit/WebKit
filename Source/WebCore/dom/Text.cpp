@@ -169,7 +169,7 @@ Node::NodeType Text::nodeType() const
     return TEXT_NODE;
 }
 
-RefPtr<Node> Text::cloneNode(bool /*deep*/)
+RefPtr<Node> Text::cloneNodeInternal(CloningOperation)
 {
     return create(document(), data());
 }

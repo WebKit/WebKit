@@ -35,7 +35,7 @@ private:
 
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
-    virtual RefPtr<Node> cloneNode(bool deep) override;
+    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
 
     String m_entityName;
 };
