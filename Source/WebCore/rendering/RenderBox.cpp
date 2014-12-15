@@ -1577,8 +1577,8 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
         context->beginTransparencyLayer(1);
     }
 
-    Vector<const FillLayer*>::const_reverse_iterator topLayer = layers.rend();
-    for (Vector<const FillLayer*>::const_reverse_iterator it = layers.rbegin(); it != topLayer; ++it)
+    auto topLayer = layers.rend();
+    for (auto it = layers.rbegin(); it != topLayer; ++it)
         paintFillLayer(paintInfo, c, *it, rect, bleedAvoidance, op, backgroundObject, baseBgColorUsage);
 
     if (shouldDrawBackgroundInSeparateBuffer)

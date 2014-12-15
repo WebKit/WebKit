@@ -28,6 +28,8 @@
 #include <utility>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/GetPtr.h>
+#include <wtf/IndexedIterator.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
@@ -553,14 +555,17 @@ template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = Crash
 class Vector : private VectorBuffer<T, inlineCapacity> {
     WTF_MAKE_FAST_ALLOCATED;
 private:
+
     typedef VectorBuffer<T, inlineCapacity> Base;
     typedef VectorTypeOperations<T> TypeOperations;
+    typedef IndexedIteratorSelector<Vector, OverflowHandler> IteratorSelector;
 
 public:
     typedef T ValueType;
 
-    typedef T* iterator;
-    typedef const T* const_iterator;
+    typedef typename IteratorSelector::iterator iterator;
+    typedef typename IteratorSelector::const_iterator const_iterator;
+
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -573,14 +578,14 @@ public:
         : Base(size, size)
     {
         if (begin())
-            TypeOperations::initialize(begin(), end());
+            TypeOperations::initialize(getPtr(begin()), getPtr(end()));
     }
 
     Vector(size_t size, const T& val)
         : Base(size, size)
     {
         if (begin())
-            TypeOperations::uninitializedFill(begin(), end(), val);
+            TypeOperations::uninitializedFill(getPtr(begin()), getPtr(end()), val);
     }
 
     Vector(std::initializer_list<T> initializerList)
@@ -644,10 +649,10 @@ public:
     const T* data() const { return Base::buffer(); }
     static ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
 
-    iterator begin() { return data(); }
-    iterator end() { return begin() + m_size; }
-    const_iterator begin() const { return data(); }
-    const_iterator end() const { return begin() + m_size; }
+    iterator begin() { return IteratorSelector::makeIterator(*this, data()); }
+    iterator end() { return begin() + size(); }
+    const_iterator begin() const { return IteratorSelector::makeConstIterator(*this, data()); }
+    const_iterator end() const { return begin() + size(); }
 
     reverse_iterator rbegin() { return reverse_iterator(end()); }
     reverse_iterator rend() { return reverse_iterator(begin()); }
@@ -682,6 +687,7 @@ public:
 
     void clear() { shrinkCapacity(0); }
 
+    void append(const_iterator, size_t);
     template<typename U> void append(const U*, size_t);
     template<typename U> void append(U&&);
     template<typename U> void uncheckedAppend(U&& val);
@@ -745,7 +751,7 @@ Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector& other)
     : Base(other.capacity(), other.size())
 {
     if (begin())
-        TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+        TypeOperations::uninitializedCopy(getPtr(other.begin()), getPtr(other.end()), getPtr(begin()));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
@@ -754,7 +760,7 @@ Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector<T, otherCapacity
     : Base(other.capacity(), other.size())
 {
     if (begin())
-        TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+        TypeOperations::uninitializedCopy(getPtr(other.begin()), getPtr(other.end()), getPtr(begin()));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
@@ -771,8 +777,8 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
         ASSERT(begin());
     }
     
-    std::copy(other.begin(), other.begin() + size(), begin());
-    TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
+    std::copy(getPtr(other.begin()), getPtr(other.begin() + size()), getPtr(begin()));
+    TypeOperations::uninitializedCopy(getPtr(other.begin() + size()), getPtr(other.end()), getPtr(end()));
     m_size = other.size();
 
     return *this;
@@ -796,9 +802,9 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
         reserveCapacity(other.size());
         ASSERT(begin());
     }
-    
-    std::copy(other.begin(), other.begin() + size(), begin());
-    TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
+
+    std::copy(getPtr(other.begin()), getPtr(other.begin() + size()), getPtr(begin()));
+    TypeOperations::uninitializedCopy(getPtr(other.begin() + size()), getPtr(other.end()), getPtr(end()));
     m_size = other.size();
 
     return *this;
@@ -858,8 +864,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::fill(const T& val, size_t newSi
         ASSERT(begin());
     }
     
-    std::fill(begin(), end(), val);
-    TypeOperations::uninitializedFill(end(), begin() + newSize, val);
+    std::fill(getPtr(begin()), getPtr(end()), val);
+    TypeOperations::uninitializedFill(getPtr(end()), getPtr(begin()) + newSize, val);
     m_size = newSize;
 }
 
@@ -880,13 +886,13 @@ void Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newMinCap
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 T* Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newMinCapacity, T* ptr)
 {
-    if (ptr < begin() || ptr >= end()) {
+    if (ptr < getPtr(begin()) || ptr >= getPtr(end())) {
         expandCapacity(newMinCapacity);
         return ptr;
     }
     size_t index = ptr - begin();
     expandCapacity(newMinCapacity);
-    return begin() + index;
+    return getPtr(begin() + index);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
@@ -898,15 +904,15 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryExpandCapacity(size_t newMin
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 const T* Vector<T, inlineCapacity, OverflowHandler>::tryExpandCapacity(size_t newMinCapacity, const T* ptr)
 {
-    if (ptr < begin() || ptr >= end()) {
+    if (ptr < getPtr(begin()) || ptr >= getPtr(end())) {
         if (!tryExpandCapacity(newMinCapacity))
             return 0;
         return ptr;
     }
-    size_t index = ptr - begin();
+    size_t index = (ptr - begin());
     if (!tryExpandCapacity(newMinCapacity))
         return 0;
-    return begin() + index;
+    return getPtr(begin()) + index;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
@@ -920,12 +926,12 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler>
 inline void Vector<T, inlineCapacity, OverflowHandler>::resize(size_t size)
 {
     if (size <= m_size)
-        TypeOperations::destruct(begin() + size, end());
+        TypeOperations::destruct(getPtr(begin()) + size, getPtr(end()));
     else {
         if (size > capacity())
             expandCapacity(size);
         if (begin())
-            TypeOperations::initialize(end(), begin() + size);
+            TypeOperations::initialize(getPtr(end()), getPtr(begin()) + size);
     }
     
     m_size = size;
@@ -942,7 +948,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler>
 void Vector<T, inlineCapacity, OverflowHandler>::shrink(size_t size)
 {
     ASSERT(size <= m_size);
-    TypeOperations::destruct(begin() + size, end());
+    TypeOperations::destruct(getPtr(begin()) + size, getPtr(end()));
     m_size = size;
 }
 
@@ -953,7 +959,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::grow(size_t size)
     if (size > capacity())
         expandCapacity(size);
     if (begin())
-        TypeOperations::initialize(end(), begin() + size);
+        TypeOperations::initialize(getPtr(end()), getPtr(begin()) + size);
     m_size = size;
 }
 
@@ -962,11 +968,11 @@ void Vector<T, inlineCapacity, OverflowHandler>::reserveCapacity(size_t newCapac
 {
     if (newCapacity <= capacity())
         return;
-    T* oldBuffer = begin();
-    T* oldEnd = end();
+    T* oldBuffer = getPtr(begin());
+    T* oldEnd = getPtr(end());
     Base::allocateBuffer(newCapacity);
     ASSERT(begin());
-    TypeOperations::move(oldBuffer, oldEnd, begin());
+    TypeOperations::move(oldBuffer, oldEnd, getPtr(begin()));
     Base::deallocateBuffer(oldBuffer);
 }
 
@@ -975,12 +981,12 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryReserveCapacity(size_t newCa
 {
     if (newCapacity <= capacity())
         return true;
-    T* oldBuffer = begin();
-    T* oldEnd = end();
+    T* oldBuffer = getPtr(begin());
+    T* oldEnd = getPtr(end());
     if (!Base::tryAllocateBuffer(newCapacity))
         return false;
     ASSERT(begin());
-    TypeOperations::move(oldBuffer, oldEnd, begin());
+    TypeOperations::move(oldBuffer, oldEnd, getPtr(begin()));
     Base::deallocateBuffer(oldBuffer);
     return true;
 }
@@ -1003,17 +1009,17 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrinkCapacity(size_t newCapaci
     if (newCapacity < size()) 
         shrink(newCapacity);
 
-    T* oldBuffer = begin();
+    T* oldBuffer = getPtr(begin());
     if (newCapacity > 0) {
         if (Base::shouldReallocateBuffer(newCapacity)) {
             Base::reallocateBuffer(newCapacity);
             return;
         }
 
-        T* oldEnd = end();
+        T* oldEnd = getPtr(end());
         Base::allocateBuffer(newCapacity);
         if (begin() != oldBuffer)
-            TypeOperations::move(oldBuffer, oldEnd, begin());
+            TypeOperations::move(oldBuffer, oldEnd, getPtr(begin()));
     }
 
     Base::deallocateBuffer(oldBuffer);
@@ -1033,9 +1039,15 @@ void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t da
     }
     if (newSize < m_size)
         CRASH();
-    T* dest = end();
+    T* dest = getPtr(end());
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
     m_size = newSize;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+void Vector<T, inlineCapacity, OverflowHandler>::append(const_iterator data, size_t dataSize)
+{
+    append(getPtr(data), dataSize);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
@@ -1050,7 +1062,7 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryAppend(const U* data, size_t
     }
     if (newSize < m_size)
         return false;
-    T* dest = end();
+    T* dest = getPtr(end());
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
     m_size = newSize;
     return true;
@@ -1060,7 +1072,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler> template<t
 ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler>::append(U&& value)
 {
     if (size() != capacity()) {
-        new (NotNull, end()) T(std::forward<U>(value));
+        new (NotNull, getPtr(end())) T(std::forward<U>(value));
         ++m_size;
         return;
     }
@@ -1077,7 +1089,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
     ptr = expandCapacity(size() + 1, ptr);
     ASSERT(begin());
 
-    new (NotNull, end()) T(std::forward<U>(*ptr));
+    new (NotNull, getPtr(end())) T(std::forward<U>(*ptr));
     ++m_size;
 }
 
@@ -1090,14 +1102,14 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(U&& valu
     ASSERT(size() < capacity());
 
     auto ptr = std::addressof(value);
-    new (NotNull, end()) T(std::forward<U>(*ptr));
+    new (NotNull, getPtr(end())) T(std::forward<U>(*ptr));
     ++m_size;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t otherCapacity>
 inline void Vector<T, inlineCapacity, OverflowHandler>::appendVector(const Vector<U, otherCapacity>& val)
 {
-    append(val.begin(), val.size());
+    append(getPtr(val.begin()), val.size());
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
@@ -1111,8 +1123,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
     }
     if (newSize < m_size)
         CRASH();
-    T* spot = begin() + position;
-    TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
+    T* spot = getPtr(begin()) + position;
+    TypeOperations::moveOverlapping(spot, getPtr(end()), spot + dataSize);
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], spot);
     m_size = newSize;
 }
@@ -1128,8 +1140,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, 
         ASSERT(begin());
     }
 
-    T* spot = begin() + position;
-    TypeOperations::moveOverlapping(spot, end(), spot + 1);
+    T* spot = getPtr(begin()) + position;
+    TypeOperations::moveOverlapping(spot, getPtr(end()), spot + 1);
     new (NotNull, spot) T(std::forward<U>(*ptr));
     ++m_size;
 }
@@ -1137,16 +1149,16 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t c>
 inline void Vector<T, inlineCapacity, OverflowHandler>::insertVector(size_t position, const Vector<U, c>& val)
 {
-    insert(position, val.begin(), val.size());
+    insert(position, getPtr(val.begin()), val.size());
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position < size());
-    T* spot = begin() + position;
+    T* spot = getPtr(begin()) + position;
     spot->~T();
-    TypeOperations::moveOverlapping(spot + 1, end(), spot);
+    TypeOperations::moveOverlapping(spot + 1, getPtr(end()), spot);
     --m_size;
 }
 
@@ -1155,10 +1167,10 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position, 
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
     ASSERT_WITH_SECURITY_IMPLICATION(position + length <= size());
-    T* beginSpot = begin() + position;
+    T* beginSpot = getPtr(begin()) + position;
     T* endSpot = beginSpot + length;
     TypeOperations::destruct(beginSpot, endSpot); 
-    TypeOperations::moveOverlapping(endSpot, end(), beginSpot);
+    TypeOperations::moveOverlapping(endSpot, getPtr(end()), beginSpot);
     m_size -= length;
 }
 

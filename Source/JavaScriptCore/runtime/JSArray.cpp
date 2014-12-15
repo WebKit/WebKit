@@ -351,7 +351,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
             // properties, so we have to perform deletion with caution, if not we can
             // delete values in any order.
             if (map->sparseMode()) {
-                qsort(keys.begin(), keys.size(), sizeof(unsigned), compareKeysForQSort);
+                qsort(keys.data(), keys.size(), sizeof(unsigned), compareKeysForQSort);
                 unsigned i = keys.size();
                 while (i) {
                     unsigned index = keys[--i];
@@ -1190,13 +1190,13 @@ void JSArray::sortCompactedVector(ExecState* exec, ContiguousData<StorageType> d
         
 #if HAVE(MERGESORT)
     if (isSortingPrimitiveValues)
-        qsort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
+        qsort(values.data(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
     else
-        mergesort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
+        mergesort(values.data(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
 #else
     // FIXME: The qsort library function is likely to not be a stable sort.
     // ECMAScript-262 does not specify a stable sort, but in practice, browsers perform a stable sort.
-    qsort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
+    qsort(values.data(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
 #endif
     
     // If the toString function changed the length of the array or vector storage,

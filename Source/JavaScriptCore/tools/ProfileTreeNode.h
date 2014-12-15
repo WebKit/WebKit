@@ -86,7 +86,7 @@ private:
         Vector<MapEntry*> entries;
         for (Map::iterator it = m_children->begin(); it != m_children->end(); ++it)
             entries.append(&*it);
-        qsort(entries.begin(), entries.size(), sizeof(MapEntry*), compareEntries);
+        qsort(entries.data(), entries.size(), sizeof(MapEntry*), compareEntries);
 
         // Iterate over the children in sample-frequency order.
         for (size_t e = 0; e < entries.size(); ++e) {

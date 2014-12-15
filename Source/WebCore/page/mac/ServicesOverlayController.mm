@@ -542,7 +542,7 @@ void ServicesOverlayController::buildSelectionHighlight()
 
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();
-            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
+            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.data(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
             
             newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, selectionRange));
         }

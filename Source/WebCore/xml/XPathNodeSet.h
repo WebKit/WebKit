@@ -64,8 +64,8 @@ namespace WebCore {
             void markSubtreesDisjoint(bool disjoint) { m_subtreesAreDisjoint = disjoint; }
             bool subtreesAreDisjoint() const { return m_subtreesAreDisjoint || m_nodes.size() < 2; }
 
-            const RefPtr<Node>* begin() const { return m_nodes.begin(); }
-            const RefPtr<Node>* end() const { return m_nodes.end(); }
+            const Vector<RefPtr<Node>>::iterator begin() const { return m_nodes.begin(); }
+            const Vector<RefPtr<Node>>::iterator end() const { return m_nodes.end(); }
 
         private:
             void traversalSort() const;

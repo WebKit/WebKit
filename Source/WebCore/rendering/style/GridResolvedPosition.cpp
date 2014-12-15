@@ -295,7 +295,7 @@ static inline unsigned firstNamedGridLineBeforePosition(unsigned position, const
     // already converted to an index in our grid representation (ie one was removed from the grid line to account for
     // the side).
     unsigned firstLineBeforePositionIndex = 0;
-    const unsigned* firstLineBeforePosition = std::lower_bound(gridLines.begin(), gridLines.end(), position);
+    auto firstLineBeforePosition = std::lower_bound(gridLines.begin(), gridLines.end(), position);
     if (firstLineBeforePosition != gridLines.end()) {
         if (*firstLineBeforePosition > position && firstLineBeforePosition != gridLines.begin())
             --firstLineBeforePosition;
@@ -316,9 +316,8 @@ std::unique_ptr<GridSpan> GridResolvedPosition::resolveRowStartColumnStartNamedG
 
 std::unique_ptr<GridSpan> GridResolvedPosition::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(const GridResolvedPosition& resolvedOppositePosition, const GridPosition& position, const Vector<unsigned>& gridLines)
 {
-    ASSERT(gridLines.size());
     unsigned firstLineAfterOppositePositionIndex = gridLines.size() - 1;
-    const unsigned* firstLineAfterOppositePosition = std::upper_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
+    auto firstLineAfterOppositePosition = std::upper_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
     if (firstLineAfterOppositePosition != gridLines.end())
         firstLineAfterOppositePositionIndex = firstLineAfterOppositePosition - gridLines.begin();
 

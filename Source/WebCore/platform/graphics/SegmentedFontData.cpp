@@ -39,8 +39,8 @@ SegmentedFontData::~SegmentedFontData()
 
 const SimpleFontData* SegmentedFontData::fontDataForCharacter(UChar32 c) const
 {
-    Vector<FontDataRange>::const_iterator end = m_ranges.end();
-    for (Vector<FontDataRange>::const_iterator it = m_ranges.begin(); it != end; ++it) {
+    auto end = m_ranges.end();
+    for (auto it = m_ranges.begin(); it != end; ++it) {
         if (it->from() <= c && it->to() >= c)
             return it->fontData().get();
     }
@@ -49,8 +49,8 @@ const SimpleFontData* SegmentedFontData::fontDataForCharacter(UChar32 c) const
 
 bool SegmentedFontData::containsCharacter(UChar32 c) const
 {
-    Vector<FontDataRange>::const_iterator end = m_ranges.end();
-    for (Vector<FontDataRange>::const_iterator it = m_ranges.begin(); it != end; ++it) {
+    auto end = m_ranges.end();
+    for (auto it = m_ranges.begin(); it != end; ++it) {
         if (c >= it->from() && c <= it->to())
             return true;
     }
@@ -76,8 +76,8 @@ bool SegmentedFontData::isCustomFont() const
 
 bool SegmentedFontData::isLoading() const
 {
-    Vector<FontDataRange>::const_iterator end = m_ranges.end();
-    for (Vector<FontDataRange>::const_iterator it = m_ranges.begin(); it != end; ++it) {
+    auto end = m_ranges.end();
+    for (auto it = m_ranges.begin(); it != end; ++it) {
         if (it->fontData()->isLoading())
             return true;
     }
