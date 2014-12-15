@@ -1,3 +1,22 @@
+2014-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        PutLocalSinkingPhase has an invalid assertion about incoming values, because both liveness and deferral analyses are conservative
+        https://bugs.webkit.org/show_bug.cgi?id=139630
+
+        Reviewed by Oliver Hunt.
+        
+        Replaces a faulty assertion with code to handle an awesome special case. Also adds a lot of
+        comments that reconstruct my reasoning about this code. I had to work hard to remember how
+        deferral worked so I wrote my discoveries down.
+
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertBottomConstantForUse):
+        * dfg/DFGPutLocalSinkingPhase.cpp:
+        * tests/stress/put-local-conservative.js: Added.
+        (foo):
+        (.result):
+        (bar):
+
 2014-12-14  Andreas Kling  <akling@apple.com>
 
         Replace PassRef with Ref/Ref&& across the board.

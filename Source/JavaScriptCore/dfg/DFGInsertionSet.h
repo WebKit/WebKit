@@ -115,7 +115,16 @@ public:
     {
         return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
     }
-
+    
+    Edge insertBottomConstantForUse(size_t index, NodeOrigin origin, UseKind useKind)
+    {
+        if (isDouble(useKind))
+            return insertConstantForUse(index, origin, jsNumber(PNaN), useKind);
+        if (useKind == Int52RepUse)
+            return insertConstantForUse(index, origin, jsNumber(0), useKind);
+        return insertConstantForUse(index, origin, jsUndefined(), useKind);
+    }
+    
     Node* insertOutOfOrder(const Insertion& insertion)
     {
         size_t targetIndex = insertion.index();

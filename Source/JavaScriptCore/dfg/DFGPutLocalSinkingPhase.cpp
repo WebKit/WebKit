@@ -214,7 +214,50 @@ public:
         
         // Next identify where we would want to sink PutLocals to. We say that there is a deferred
         // flush if we had a PutLocal with a given VariableAccessData* but it hasn't been
-        // materialized yet.
+        // materialized yet. Deferrals have the following lattice; but it's worth noting that the
+        // TOP part of the lattice serves an entirely different purpose than the rest of the lattice:
+        // it just means that we're in a region of code where nobody should have been relying on the
+        // value. The rest of the lattice means that we either have a PutLocal that is deferred (i.e.
+        // still needs to be executed) or there isn't one (because we've alraedy executed it).
+        //
+        // Bottom:
+        //     Instantiated as VariableDeferral(). 
+        //     Means that all previous PutLocals have been executed so there is nothing deferred.
+        //     During merging this is subordinate to the other kinds of deferrals, because it
+        //     represents the fact that we've already executed all necessary PutLocals. This implies
+        //     that there *had* been some PutLocals that we should have executed.
+        //
+        // Top:
+        //     Instantiated as VariableDeferral::conflict().
+        //     Represents the fact that we know, via forward flow, that there isn't any value in the
+        //     given local that anyone should have been relying on. This comes into play at the
+        //     prologue (because in SSA form at the prologue no local has any value) or when we merge
+        //     deferrals for different VariableAccessData*'s. A VAD encompasses a lexical scope in
+        //     which the local has some semantic meaning; if we had stores from different lexical
+        //     scopes that got merged together then we know that we're not in either scope anymore.
+        //     Note that this is all approximate and only precise enough to later answer questions
+        //     pertinent to sinking. For example, this doesn't always detect when a local is no
+        //     longer semantically relevant - we may well have a deferral from inside some inlined
+        //     call survive outside of that inlined code, and this is generally OK. In the worst case
+        //     it means that we might think that a deferral that is actually dead must still be
+        //     executed. But we usually catch that with liveness. Liveness doesn't always catch it
+        //     because liveness is conservative.
+        //
+        //     What Top does give us is detects situations where we both don't need to care about a
+        //     deferral and there is no way that we could reason about it anyway. If we merged
+        //     deferrals for different variables then we wouldn't know the format to use. So, we
+        //     use Top in that case because that's also a case where we know that we can ignore the
+        //     deferral.
+        //
+        // Deferral with a concrete VariableAccessData*:
+        //     Instantiated as VariableDeferral(someVariableAccessData)
+        //     Represents the fact that the original code would have done a PutLocal but we haven't
+        //     identified an operation that would have observed that PutLocal.
+        //
+        // This code has some interesting quirks because of the fact that neither liveness nor
+        // deferrals are very precise. They are only precise enough to be able to correctly tell us
+        // when we may [sic] need to execute PutLocals. This means that they may report the need to
+        // execute a PutLocal in cases where we actually don't really need it, and that's totally OK.
         BlockMap<Operands<VariableDeferral>> deferredAtHead(m_graph);
         BlockMap<Operands<VariableDeferral>> deferredAtTail(m_graph);
         
@@ -465,7 +508,34 @@ public:
                     FlushFormat format = variableDeferral.variable()->flushFormat();
                     UseKind useKind = useKindFor(format);
                     Node* incoming = mapping.operand(operand);
-                    DFG_ASSERT(m_graph, nullptr, incoming);
+                    if (!incoming) {
+                        // This can totally happen, see tests/stress/put-local-conservative.js.
+                        // This arises because deferral and liveness are both conservative.
+                        // Conservative liveness means that a load from a *different* closure
+                        // variable may lead us to believe that our local is live. Conservative
+                        // deferral may lead us to believe that the local doesn't have a top deferral
+                        // because someone has done something that would have forced it to be
+                        // materialized. The basic pattern is:
+                        //
+                        // GetClosureVar(loc42) // loc42's deferral is now bottom
+                        // if (predicate1)
+                        //     PutClosureVar(loc42) // prevent GCSE of our GetClosureVar's
+                        // if (predicate2)
+                        //     PutLocal(loc42) // we now have a concrete deferral
+                        // // we still have the concrete deferral because we merged with bottom
+                        // GetClosureVar(loc42) // force materialization
+                        //
+                        // We will have a Phi with no incoming value form the basic block that
+                        // bypassed the PutLocal.
+                        
+                        // Note: we sort of could have used the equivalent of LLVM's undef here. The
+                        // point is that it's OK to just leave random bits in the local if we're
+                        // coming down this path. But, we don't have a way of saying that in our IR
+                        // right now and anyway it probably doesn't matter that much.
+                        
+                        incoming = insertionSet.insertBottomConstantForUse(
+                            upsilonInsertionPoint, upsilonOrigin, useKind).node();
+                    }
                     
                     insertionSet.insertNode(
                         upsilonInsertionPoint, SpecNone, Upsilon, upsilonOrigin,
