@@ -1177,21 +1177,23 @@ fast/forms/validation-message-on-range.html
 fast/forms/validation-message-on-textarea.html
 
 # Web Timing is not enabled.
-webkit.org/b/42435 fast/dom/Window/window-properties-performance.html [ Failure ]
 webkit.org/b/42435 fast/dom/Window/web-timing-minimal-performance-now.html [ Timeout Failure ]
+webkit.org/b/42435 fast/dom/Window/window-properties-performance.html [ Failure ]
 webkit.org/b/42435 fast/dom/navigation-type-back-forward.html [ Failure ]
 webkit.org/b/42435 fast/dom/navigation-type-navigate.html [ Failure ]
 webkit.org/b/42435 fast/dom/navigation-type-reload.html [ Failure ]
-webkit.org/b/42435 fast/dom/webtiming.html [ Failure ]
 webkit.org/b/42435 fast/dom/webtiming-document-open.html [ Failure ]
 webkit.org/b/42435 fast/dom/webtiming-navigate-within-document.html [ Failure ]
-webkit.org/b/42435 http/tests/misc/webtiming-origins.html [ Failure ]
+webkit.org/b/42435 fast/dom/webtiming.html [ Failure ]
+webkit.org/b/42435 fast/performance/ [ Failure ]
+webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-and-back1.html [ Failure ]
+webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-redirect.php [ Failure ]
+webkit.org/b/42435 http/tests/misc/webtiming-no-origin.html [ Failure ]
 webkit.org/b/42435 http/tests/misc/webtiming-one-redirect.php [ Failure ]
 webkit.org/b/42435 http/tests/misc/webtiming-slow-load.php [ Failure ]
 webkit.org/b/42435 http/tests/misc/webtiming-ssl.php [ Failure ]
 webkit.org/b/42435 http/tests/misc/webtiming-two-redirects.php [ Failure ]
 webkit.org/b/42435 http/tests/w3c/webperf [ Failure ]
-webkit.org/b/42435 fast/performance/ [ Failure ]
 
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1 [ Timeout Crash Pass Failure ]
