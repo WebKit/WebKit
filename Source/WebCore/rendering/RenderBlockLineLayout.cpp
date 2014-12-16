@@ -441,8 +441,8 @@ static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection,
 
 void RenderBlockFlow::setMarginsForRubyRun(BidiRun* run, RenderRubyRun& renderer, RenderObject* previousObject, const LineInfo& lineInfo)
 {
-    int startOverhang;
-    int endOverhang;
+    float startOverhang;
+    float endOverhang;
     RenderObject* nextObject = 0;
     for (BidiRun* runWithNextObject = run->next(); runWithNextObject; runWithNextObject = runWithNextObject->next()) {
         if (!runWithNextObject->renderer().isOutOfFlowPositioned() && !runWithNextObject->box()->isLineBreak()) {

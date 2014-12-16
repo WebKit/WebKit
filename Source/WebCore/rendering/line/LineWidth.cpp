@@ -129,14 +129,14 @@ void LineWidth::commit()
 
 void LineWidth::applyOverhang(RenderRubyRun* rubyRun, RenderObject* startRenderer, RenderObject* endRenderer)
 {
-    int startOverhang;
-    int endOverhang;
+    float startOverhang;
+    float endOverhang;
     rubyRun->getOverhang(m_isFirstLine, startRenderer, endRenderer, startOverhang, endOverhang);
 
-    startOverhang = std::min<int>(startOverhang, m_committedWidth);
+    startOverhang = std::min(startOverhang, m_committedWidth);
     m_availableWidth += startOverhang;
 
-    endOverhang = std::max(std::min<int>(endOverhang, m_availableWidth - currentWidth()), 0);
+    endOverhang = std::max(std::min(endOverhang, m_availableWidth - currentWidth()), 0.0f);
     m_availableWidth += endOverhang;
     m_overhangWidth += startOverhang + endOverhang;
 }
