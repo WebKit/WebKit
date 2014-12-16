@@ -1,4 +1,25 @@
 =================
+WebKitGTK+  2.7.3
+=================
+
+What's new in WebKitGTK+ 2.7.3?
+
+  - Add API to support HTML5 notifications.
+  - Add UserMedia Permission Request API.
+  - GObject DOM bindings API now correctly returns NULL intead of empty strings to be
+    able to differentiate between not present and present but empty.
+  - Add support for text-decoration-skip.
+  - Improve the HTTP authentication dialog.
+  - Expose the ID attribute of Meter and Option elements to accessibility.
+  - Use latin1 instead of UTF-8 for HTTP header values.
+  - Update NavigationItemProbes inspector icon.
+  - Add video/mp2t as alternative mimetype for MPEG TS.
+  - Add application/x-mpegurl and video/flv to the list of supported mimetypes.
+  - Add SCHEDULING query support to HTTP media source element.
+  - Fix deadlock when shutting down AudioDestination.
+  - Translation updates: Kannada, Assamese
+
+=================
 WebKitGTK+  2.7.2
 =================
 

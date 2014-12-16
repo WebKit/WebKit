@@ -1,3 +1,9 @@
+2014-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.3 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-12-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Null dereference performing a "TapAndAHalf" gesture in Google search field
