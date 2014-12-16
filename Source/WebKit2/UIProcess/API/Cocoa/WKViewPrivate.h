@@ -136,6 +136,6 @@
 - (BOOL)_shouldUseStandardQuickLookPreview;
 #endif
 
-- (void)_dismissActionMenuPopovers;
+- (void)_dismissContentRelativeChildWindows;
 
 @end

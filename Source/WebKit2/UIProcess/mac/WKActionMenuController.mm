@@ -59,8 +59,6 @@ using namespace WebKit;
 @interface WKActionMenuController () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 - (void)_updateActionMenuItems;
 - (BOOL)_canAddMediaToPhotos;
-- (void)_showTextIndicator;
-- (void)_hideTextIndicator;
 - (void)_clearActionMenuState;
 @end
 
@@ -102,7 +100,7 @@ using namespace WebKit;
     if (menu != _wkView.actionMenu)
         return;
 
-    [self dismissActionMenuPopovers];
+    [_wkView _dismissContentRelativeChildWindows];
 
     _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
 
@@ -179,37 +177,6 @@ using namespace WebKit;
     _userData = userData;
 
     [self _updateActionMenuItems];
-}
-
-- (void)dismissActionMenuPopovers
-{
-    DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
-    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
-        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
-
-    [self _hideTextIndicator];
-}
-
-#pragma mark Text Indicator
-
-- (void)_showTextIndicator
-{
-    if (_isShowingTextIndicator)
-        return;
-
-    if (_hitTestResult.detectedDataTextIndicator) {
-        _page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false);
-        _isShowingTextIndicator = YES;
-    }
-}
-
-- (void)_hideTextIndicator
-{
-    if (!_isShowingTextIndicator)
-        return;
-
-    _page->clearTextIndicator();
-    _isShowingTextIndicator = NO;
 }
 
 #pragma mark Link actions
@@ -422,11 +389,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
-        [self _showTextIndicator];
+        if (_hitTestResult.detectedDataTextIndicator)
+            _page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false);
         page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
     } interactionStoppedHandler:^() {
-        [self _hideTextIndicator];
         page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));
+        page->clearTextIndicator();
     }];
 
     [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];

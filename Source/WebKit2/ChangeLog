@@ -1,5 +1,78 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177242. <rdar://problem/19226350>
+
+    2014-12-12  Timothy Horton  <timothy_horton@apple.com>
+
+            TextIndicator (and other view-relative subwindows) is not dismissed on zoom gesture
+            https://bugs.webkit.org/show_bug.cgi?id=139580
+            <rdar://problem/19226350>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::dismissContentRelativeChildWindows):
+            (WebKit::PageClientImpl::dismissDictionaryLookupPanel): Deleted.
+            (WebKit::PageClientImpl::dismissActionMenuPopovers): Deleted.
+            Merge dismissDictionaryLookupPanel and dismissActionMenuPopovers into
+            _dismissContentRelativeChildWindows, which also dismisses TextIndicator and the
+            text correction panel. Dismissal of any child windows which are anchored to
+            the page content now bottlenecks through this function.
+
+            (WebKit::PageClientImpl::navigationGestureDidBegin):
+            Dismiss all anchored subwindows when starting a navigation gesture, not
+            just TextIndicator and action menu popovers.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView scrollWheel:]):
+            No need to dismiss TextIndicator here; we've got this covered in the more-inclusive
+            WebPageProxy::pageDidScroll, and will now dismiss more things.
+
+            (-[WKView mouseDown:]):
+            Dismiss more things.
+
+            (-[WKView viewDidMoveToWindow]):
+            Dismiss more things.
+
+            (-[WKView _dismissContentRelativeChildWindows]):
+            The aforementioned combined dismissal function.
+
+            (-[WKView magnifyWithEvent:]):
+            (-[WKView smartMagnifyWithEvent:]):
+            (-[WKView setMagnification:centeredAtPoint:]):
+            (-[WKView setMagnification:]):
+            Any time the page magnification changes, dismiss all the things.
+
+            * UIProcess/API/mac/WKViewPrivate.h:
+            Expose _dismissContentRelativeChildWindows instead of _dismissActionMenuPopovers;
+            for all existing clients, it makes more sense to dismiss all view-relative subwindows
+            than just a subset of them.
+            
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            (WebKit::WebPageProxy::pageDidScroll):
+            (WebKit::WebPageProxy::resetStateAfterProcessExited):
+            Make use of dismissAnchoredSubwindows.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            Dismiss more things.
+
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            (-[WKActionMenuController dismissActionMenuPopovers]): Deleted.
+            dismissActionMenuPopovers is folded into WKView's _dismissContentRelativeChildWindows.
+
+            (-[WKActionMenuController _showTextIndicator]): Deleted.
+            (-[WKActionMenuController _hideTextIndicator]): Deleted.
+            Fold _showTextIndicator and _hideTextIndicator into their only callers.
+            _isShowingTextIndicator was never necessary, because it's OK to change
+            the current TextIndicator at any time, and a newer one is always more relevant.
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177192. <rdar://problem/19225448>
 
     2014-12-11  Beth Dakin  <bdakin@apple.com>
