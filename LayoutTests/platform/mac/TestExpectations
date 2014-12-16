@@ -69,7 +69,7 @@ fast/media/print-restores-previous-mediatype.html
 fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 fast/media/media-query-list-02.html [ Failure ]
 fast/media/media-query-list-03.html [ Failure ]
-fast/media/media-query-list-04.html [ Timeout ]
+fast/media/media-query-list-04.html [ Failure Timeout ]
 fast/media/media-query-list-05.html [ Failure ]
 fast/media/media-query-list-06.html [ Failure ]
 
@@ -322,7 +322,7 @@ fast/events/constructors/device-proximity-event-constructor.html
 
 webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
-webkit.org/b/81618 fast/workers/storage/use-same-database-in-page-and-workers.html [ Pass Failure ]
+webkit.org/b/81618 fast/workers/storage/use-same-database-in-page-and-workers.html [ Pass Timeout ]
 
 # Has failed since its introduction in r105826.
 webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]

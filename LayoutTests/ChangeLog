@@ -1,3 +1,10 @@
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
+        More expectations updated to Timeout.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-12-16  Myles C. Maxfield  <litherum@gmail.com>
 
         Ruby does not preserve expansion opportunities from enclosing context
