@@ -1,3 +1,14 @@
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
+        Merged r177114. <rdar://problem/19198539>
+
+    2014-12-10  Beth Dakin  <bdakin@apple.com>
+
+            Speculative build fix.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView initWithFrame:context:configuration:webView:]):
+
 2014-12-15  Dana Burkart  <dburkart@apple.com>
 
         Merged r177113. <rdar://problem/19198539>
