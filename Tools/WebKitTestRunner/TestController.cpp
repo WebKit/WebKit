@@ -70,11 +70,12 @@ const unsigned TestController::viewHeight = 600;
 const unsigned TestController::w3cSVGViewWidth = 480;
 const unsigned TestController::w3cSVGViewHeight = 360;
 
-// defaultLongTimeout + defaultShortTimeout should be less than 80,
+// defaultLongTimeout + defaultShortTimeout should be less than 35,
 // the default timeout value of the test harness so we can detect an
 // unresponsive web process.
-static const double defaultLongTimeout = 60;
-static const double defaultShortTimeout = 15;
+// These values are only used by ports that don't have --timeout option passed to WebKitTestRunner.
+static const double defaultLongTimeout = 25;
+static const double defaultShortTimeout = 5;
 static const double defaultNoTimeout = -1;
 
 static WKURLRef blankURL()
@@ -110,7 +111,6 @@ TestController::TestController(int argc, const char* argv[])
     , m_noTimeout(defaultNoTimeout)
     , m_useWaitToDumpWatchdogTimer(true)
     , m_forceNoTimeout(false)
-    , m_timeout(0)
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
@@ -192,11 +192,6 @@ static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, W
 static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo)
 {
     TestController::shared().handleUserMediaPermissionRequest(permissionRequest);
-}
-
-int TestController::getCustomTimeout()
-{
-    return m_timeout;
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
@@ -978,9 +973,6 @@ void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
             break;
         case LongTimeout:
             timeout = m_longTimeout;
-            break;
-        case CustomTimeout:
-            timeout = m_timeout;
             break;
         case NoTimeout:
         default:

@@ -646,8 +646,6 @@ void TestRunner::setWindowIsKey(bool windowIsKey)
     [[mainFrame webView] _updateActiveState];
 }
 
-static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
-
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 {
     gTestRunner->waitToDumpWatchdogTimerFired();
@@ -656,8 +654,8 @@ static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
-    if (m_waitToDump && shouldSetWaitToDumpWatchdog())
-        setWaitToDumpWatchdog(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 0, 0, 0, waitUntilDoneWatchdogFired, NULL));
+    if (m_waitToDump && m_timeout && shouldSetWaitToDumpWatchdog())
+        setWaitToDumpWatchdog(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + m_timeout / 1000.0, 0, 0, 0, waitUntilDoneWatchdogFired, NULL));
 }
 
 int TestRunner::windowCount()

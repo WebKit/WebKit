@@ -263,7 +263,7 @@ public:
 
     bool callShouldCloseOnWebView();
 
-    void setCustomTimeout(int duration);
+    void setCustomTimeout(int duration) { m_timeout = duration; }
 
     // Work queue.
     void queueBackNavigation(unsigned howFarBackward);
@@ -280,8 +280,6 @@ public:
     JSValueRef neverInlineFunction(JSValueRef theFunction);
 
 private:
-    static const double waitToDumpWatchdogTimerInterval;
-
     TestRunner();
 
     void platformInitialize();

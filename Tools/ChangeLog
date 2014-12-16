@@ -1,3 +1,78 @@
+2014-12-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Sort out timeout implementations in DRT and WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=139671
+
+        Reviewed by Simon Fraser.
+
+        Test timeout implementation had many deficiencies, please see the bug for details.
+        Most notably, we shouldn't have the tool confused about timeouts vs. failures, and
+        [ Slow ] modifiers should work a lot better.
+
+        * DumpRenderTree/TestRunner.cpp: (TestRunner::TestRunner):
+        * DumpRenderTree/TestRunner.h: (TestRunner::setCustomTimeout):
+        * DumpRenderTree/mac/DumpRenderTree.mm: (runTest):
+        * DumpRenderTree/mac/TestRunnerMac.mm: (TestRunner::setWaitToDump):
+        DumpRenderTree already read the --timeout option from command line, and webkitpy
+        was already configured to pass it on Mac and iOS. Let's actually use it.
+        TestCommand already had the same 30 second default, so this doesn't change behavior
+        when DRT is ran manually without the option.
+        Windows DumpRenderTree will need to be fixed separately (that's easy).
+
+        * DumpRenderTree/TestRunner.cpp: (TestRunner::waitToDumpWatchdogTimerFired()):
+        Don't print the timeout message to stdout to match WebKitTestRunner. It would be
+        slightly better to use stderr in both, as this is an out of band message, but
+        that's a larger refactoring, and the difference is minimal in practice.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Ensure that script and tool timeouts are substantially
+        different. We want the tool to reliably detect timeouts that can be detected, and
+        not race with the script for that.
+
+        * Scripts/webkitpy/port/base.py: (Port.default_timeout_ms): Don't make WebKit2
+        timeout longer than WebKit1 one, I doubt that this is necessary. Now that the value
+        is honored inmore cases, that could make tests run slower.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__):
+        (Driver.run_test):
+        (Driver.cmd_line):
+        (Driver._check_for_driver_timeout):
+        Detect tests that have the timeout output, and make these have the proper Timeout result.
+
+        * Scripts/webkitpy/port/ios.py: (IOSSimulatorPort.default_timeout_ms): Remove an
+        incorrect recent change - 80 * 1000 is 80 seconds, not 80 milliseconds.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCustomTimeout): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::setCustomTimeout):
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        Updated to use a timeout passed from UI process, which used to be ignored.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::runUntil):
+        (WTR::TestController::getCustomTimeout): Deleted.
+        * WebKitTestRunner/TestController.h:
+        Delete unused m_timeout. First, it was always 0, and second, we don't need it at all.
+        Changed default message timeouts to match new run-webkit-tests timeout. These don't
+        affect ports where timeout is passed per test (shouldn't they all be like that?).
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::setCustomTimeout): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::setCustomTimeout):
+        (WTR::TestInvocation::customTimeout):
+        Ditto.
+
 2014-12-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Add logging domain for MiniBrowser

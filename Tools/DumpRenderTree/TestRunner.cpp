@@ -115,6 +115,7 @@ TestRunner::TestRunner(const std::string& testURL, const std::string& expectedPi
     , m_testURL(testURL)
     , m_expectedPixelHash(expectedPixelHash)
     , m_titleTextDirection("ltr")
+    , m_timeout(0)
 {
 }
 
@@ -2257,7 +2258,6 @@ void TestRunner::ignoreLegacyWebNotificationPermissionRequests()
 void TestRunner::waitToDumpWatchdogTimerFired()
 {
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-    fprintf(stderr, "%s", message);
     fprintf(stdout, "%s", message);
     notifyDone();
 }

@@ -68,14 +68,12 @@ public:
     bool shouldUseRemoteLayerTree() const { return m_shouldUseRemoteLayerTree; }
     
     // Runs the run loop until `done` is true or the timeout elapses.
-    enum TimeoutDuration { ShortTimeout, LongTimeout, NoTimeout, CustomTimeout };
+    enum TimeoutDuration { ShortTimeout, LongTimeout, NoTimeout };
     bool useWaitToDumpWatchdogTimer() { return m_useWaitToDumpWatchdogTimer; }
     void runUntil(bool& done, TimeoutDuration);
     void notifyDone();
     
     void configureViewForTest(const TestInvocation&);
-
-    int getCustomTimeout();
     
     bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }
     void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
@@ -230,8 +228,6 @@ private:
     double m_noTimeout;
     bool m_useWaitToDumpWatchdogTimer;
     bool m_forceNoTimeout;
-
-    int m_timeout;
 
     bool m_didPrintWebProcessCrashedMessage;
     bool m_shouldExitWhenWebProcessCrashes;

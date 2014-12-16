@@ -137,6 +137,8 @@ class Driver(object):
         self._crashed_process_name = None
         self._crashed_pid = None
 
+        self._driver_timed_out = False
+
         # WebKitTestRunner can report back subprocesses that became unresponsive
         # This could mean they crashed.
         self._subprocess_was_unresponsive = False
@@ -172,6 +174,7 @@ class Driver(object):
         start_time = time.time()
         self.start(driver_input.should_run_pixel_test, driver_input.args)
         test_begin_time = time.time()
+        self._driver_timed_out = False
         self.error_from_test = str()
         self.err_seen_eof = False
 
@@ -184,6 +187,7 @@ class Driver(object):
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
+        driver_timed_out = self._driver_timed_out
         pid = self._server_process.pid()
 
         if stop_when_done or crashed or timed_out:
@@ -213,7 +217,7 @@ class Driver(object):
 
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
-            timeout=timed_out, error=self.error_from_test,
+            timeout=timed_out or driver_timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
 
@@ -349,7 +353,6 @@ class Driver(object):
             cmd.append('--threaded')
         if self._no_timeout:
             cmd.append('--no-timeout')
-        # FIXME: We need to pass --timeout=SECONDS to WebKitTestRunner for WebKit2.
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         cmd.extend(self._port.additional_drt_flag())
@@ -358,6 +361,10 @@ class Driver(object):
 
         cmd.append('-')
         return cmd
+
+    def _check_for_driver_timeout(self, out_line):
+        if out_line == "FAIL: Timed out waiting for notifyDone to be called":
+            self._driver_timed_out = True
 
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":
