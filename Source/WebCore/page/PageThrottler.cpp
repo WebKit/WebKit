@@ -30,8 +30,10 @@ namespace WebCore {
 
 PageThrottler::PageThrottler(ViewState::Flags viewState)
     : m_viewState(viewState)
-    , m_hysteresis([this](HysteresisState) { updateUserActivity(); })
-    , m_pageActivityCounter([this]() { updateUserActivity(); })
+    , m_userInputHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::UserInputActivity, state == HysteresisState::Started); })
+    , m_audiblePluginHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::AudiblePlugin, state == HysteresisState::Started); })
+    , m_mediaActivityCounter([this]() { setActivityFlag(PageActivityState::MediaActivity, m_mediaActivityCounter.value()); })
+    , m_pageLoadActivityCounter([this]() { setActivityFlag(PageActivityState::PageLoadActivity, m_pageLoadActivityCounter.value()); })
 {
 }
 
@@ -44,12 +46,12 @@ void PageThrottler::createUserActivity()
 
 PageActivityAssertionToken PageThrottler::mediaActivityToken()
 {
-    return m_pageActivityCounter.count();
+    return m_mediaActivityCounter.count();
 }
 
 PageActivityAssertionToken PageThrottler::pageLoadActivityToken()
 {
-    return m_pageActivityCounter.count();
+    return m_pageLoadActivityCounter.count();
 }
 
 void PageThrottler::updateUserActivity()
@@ -58,10 +60,25 @@ void PageThrottler::updateUserActivity()
         return;
 
     // Allow throttling if there is no page activity, and the page is visually idle.
-    if (!m_pageActivityCounter.value() && m_hysteresis.state() == HysteresisState::Stopped && m_viewState & ViewState::IsVisuallyIdle)
+    if (!m_activityState && m_viewState & ViewState::IsVisuallyIdle)
         m_activity->stop();
     else
         m_activity->start();
+}
+
+void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)
+{
+    PageActivityState::Flags activityState = m_activityState;
+    if (value)
+        activityState |= flag;
+    else
+        activityState &= ~flag;
+
+    if (m_activityState == activityState)
+        return;
+    m_activityState = activityState;
+
+    updateUserActivity();
 }
 
 void PageThrottler::setViewState(ViewState::Flags viewState)

@@ -1,3 +1,28 @@
+2014-12-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Introduce PageActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=139687
+
+        Reviewed by Anders Carlsson.
+
+        Add a bitfield to track each of the activities on the page separately.
+        Split the hysteresis & counters so we can track these separately.
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - initialze new hysteresis, counters; closures call setActivityFlag.
+        (WebCore::PageThrottler::mediaActivityToken):
+        (WebCore::PageThrottler::pageLoadActivityToken):
+            - split m_pageActivityCounter -> m_mediaActivityCounter, m_pageLoadActivityCounter.
+        (WebCore::PageThrottler::updateUserActivity):
+            - use m_activityState to check for activity.
+        (WebCore::PageThrottler::setActivityFlag):
+            - helper to clear/set a bit in m_activityState, and call updateUserActivity as necessary.
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::didReceiveUserInput):
+        (WebCore::PageThrottler::pluginDidEvaluateWhileAudioIsPlaying):
+            - split m_hysteresis -> m_userInputHysteresis, m_audiblePluginHysteresis
+
 2014-12-16  Myles C. Maxfield  <litherum@gmail.com>
 
         Ruby does not preserve expansion opportunities from enclosing context
