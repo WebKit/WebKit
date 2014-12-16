@@ -1,0 +1,29 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+  <title>Testcase to scaling from zero</title>
+
+  <g id="g" transform="scale(0)">
+    <text x="100" y="50" font-size="50" text-anchor="middle">ABC</text>
+  </g>
+  <script>
+    function doTest() {
+      // Force frame construction
+      document.documentElement.getBoundingClientRect();
+
+      // A dynamic change
+      document.getElementById("g").removeAttribute("transform");
+      
+      document.documentElement.removeAttribute("class");
+      if (window.testRunner)
+          testRunner.notifyDone();
+    }
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    setTimeout(doTest, 100);
+  </script>
+</svg>

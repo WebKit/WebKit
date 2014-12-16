@@ -1,0 +1,18 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+    <title>Testcase for elements referencing an objectBoundingBox pattern</title>
+
+    <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=338596 -->
+
+    <defs>
+        <pattern id="test" width="100%" height="100%" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox">
+            <rect x="0" y="0" width="1" height="1" fill="lime"/>
+        </pattern>
+    </defs>
+
+    <rect x="20" y="20" width="200" height="200" fill="url(#test)"/>
+</svg>

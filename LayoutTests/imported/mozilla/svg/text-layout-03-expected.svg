@@ -1,0 +1,13 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Reference to check that nodes without text don't affect whitespace handling</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=617737 -->
+
+  <g text-anchor="end" font-size="30">
+    <text x="100" y="75">ABC </text>
+  </g>
+</svg>

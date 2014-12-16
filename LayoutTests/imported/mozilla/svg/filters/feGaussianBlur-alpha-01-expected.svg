@@ -1,0 +1,20 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+  <title>SourceAlpha pseudo input reference</title>
+
+  <defs>
+    <filter id="blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <g fill-opacity="0.6" stroke="black" fill="black" stroke-width="3" filter="url(#blur)">
+    <circle cx="98" cy="85" r="25"/>
+    <circle cx="80" cy="110" r="25"/>
+    <circle cx="116" cy="110" r="25"/>
+  </g>
+</svg>

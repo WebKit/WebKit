@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <use xlink:href="resources/blueRect10x10.svg#root"
+       transform="rotate(90 50 50)"/>
+</svg>

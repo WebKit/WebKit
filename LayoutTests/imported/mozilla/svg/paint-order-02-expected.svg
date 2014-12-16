@@ -1,0 +1,36 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Reference for paint-order-02.svg</title>
+  <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=828805 -->
+
+  <linearGradient id="gold">
+    <stop stop-color="gold"/>
+  </linearGradient>
+
+  <linearGradient id="black">
+    <stop stop-color="black"/>
+  </linearGradient>
+
+  <g fill="url(#gold)" stroke="url(#black)" stroke-width="8" paint-order="stroke">
+    <ellipse cx="50" cy="50" rx="40" ry="20" fill="none"/>
+    <ellipse cx="50" cy="50" rx="40" ry="20" stroke="none"/>
+
+    <path d="M 50,100 h 40 v 30 z" fill="none"/>
+    <path d="M 50,100 h 40 v 30 z" stroke="none"/>
+
+    <polygon points="50,150 90,150 90,180" fill="none"/>
+    <polygon points="50,150 90,150 90,180" stroke="none"/>
+
+    <polyline points="50,200 90,200 90,230" fill="none"/>
+    <polyline points="50,200 90,200 90,230" stroke="none"/>
+
+    <rect x="50" y="250" width="80" height="30" r="16" fill="none"/>
+    <rect x="50" y="250" width="80" height="30" r="16" stroke="none"/>
+
+    <text x="50" y="350" font-size="80" stroke-width="4"><tspan fill="none">hello</tspan> <tspan stroke="none">there</tspan></text>
+    <text x="50" y="350" font-size="80" stroke-width="4"><tspan stroke="none">hello</tspan> <tspan fill="none">there</tspan></text>
+  </g>
+</svg>

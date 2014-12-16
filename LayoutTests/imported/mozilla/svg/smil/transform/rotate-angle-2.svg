@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     onload="setTimeAndSnapshot(101, true)">
+  <script xlink:href="../smil-util.js" type="text/javascript"/>
+  <g transform="translate(44 0) rotate(90 6 50)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="0 6 50" begin="100s" dur="4s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(144 0)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0,6,50" to="90 6 50" begin="100s" dur="1s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(244,0)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="180,6,50" begin="100s" dur="2s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(44,100)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0,6,50" to="270,6,50" begin="100s" dur="3s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(144,100)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="360 6 50" begin="100s" dur="4s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(244,100)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="540 6 50" begin="100s" dur="6s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(44,200)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="3600 6 50" begin="100s" dur="40s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(144,200)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="-270 6 50" begin="100s" dur="1s" fill="freeze"/>
+    </path>
+  </g>
+  <g transform="translate(244,200)">
+    <path d="M4 100h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0 6 50" to="-540 6 50" begin="100s" dur="2s" fill="freeze"/>
+    </path>
+  </g>
+</svg>

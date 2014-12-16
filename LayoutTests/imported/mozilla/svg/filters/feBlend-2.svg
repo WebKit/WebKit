@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+
+<filter id="f1" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+  <feFlood flood-color="#ff0000" result="flood" x="0" y="0" width="100" height="100"/>
+  <feBlend mode="normal" in="SourceGraphic" in2="flood"/>
+</filter>
+<rect x="0" y="0" width="100" height="100" fill="#00ff00" filter="url(#f1)"/>
+
+</svg>

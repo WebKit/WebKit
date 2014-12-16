@@ -1,0 +1,14 @@
+<html>
+<!-- Simple test to make sure we can display content outside of an SVG viewbox,
+     if appropriate given the SVG image & our <img> dimensions.  In this case,
+     we have a perfect-square viewBox, but our img elements are long
+     rectangles, so they should end up sampling some content off of one side or
+     the other of the viewBox.  -->
+<body>
+  <img src="resources/content-outside-viewBox-1-helper.svg" height="10" width="100"
+       style="border: 1px solid blue">
+  <br/>
+  <img src="resources/content-outside-viewBox-1-helper.svg" height="100" width="10"
+       style="border: 1px solid purple ">
+</body>
+</html>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Test that paint servers inside a failing conditional attribute subtree work</title>
+  <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=614265 -->
+
+  <g>
+    <linearGradient id="g">
+      <stop stop-color="lime" offset="0"/>
+      <stop stop-color="lime" offset="1"/>
+    </linearGradient>
+  </g>
+  <rect width="100%" height="100%" fill="url(#g) red"/>
+</svg>

@@ -1,0 +1,11 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Reference to check whitespace handling</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=717870 -->
+
+  <text x="10" y="50" font-size="50">A B</text>
+</svg>

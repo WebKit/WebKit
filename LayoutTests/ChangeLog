@@ -1,3 +1,16 @@
+2014-12-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Import Mozilla test suite for SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=139456.
+
+        Reviewed by Dean Jackson.
+
+        This is only a part of the test suite. The rest of the tests will be submitted
+        later as they are investigated and the failures are reduced.
+
+        * TestExpectations:
+        * imported/mozilla: Added.
+
 2014-12-15  Jer Noble  <jer.noble@apple.com>
 
         Switching src of <video> with clipping layer results in empty black square.

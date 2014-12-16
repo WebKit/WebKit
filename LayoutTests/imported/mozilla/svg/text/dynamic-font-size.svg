@@ -1,0 +1,20 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <text x="100" y="100" style="font: 32px sans-serif"><tspan>hello</tspan> there</text>
+  <script>
+    function f() {
+      document.getElementsByTagName("text")[0].style.fontSize = "16px";
+      document.documentElement.removeAttribute("class");
+      if (window.testRunner)
+          testRunner.notifyDone();
+    }
+    
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    setTimeout(f, 100);
+  </script>
+</svg>

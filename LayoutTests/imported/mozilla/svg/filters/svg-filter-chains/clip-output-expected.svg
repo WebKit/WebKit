@@ -1,0 +1,26 @@
+<svg id="svg-root"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <g id="testmeta">
+    <title>SVG Filter Chains: Clip Filter Output</title>
+    <link rel="copyright"
+          href="http://www.w3.org/Graphics/SVG/Test/Copyright"/>
+    <link rel="license"
+          href="http://www.w3.org/Consortium/Legal/2008/03-bsd-license.html"/>
+    <link rel="author"
+          title="Max Vujovic"
+          href="mailto:mvujovic@adobe.com"/>
+    <link rel="help"
+          href="http://dev.w3.org/fxtf/filters/#FilterPrimitiveSubRegion"/>
+    <metadata class="flags">namespace svg</metadata>
+  </g>
+
+  <g id="test-body-content">
+    <filter id="hue-rotate">
+      <!-- Turn the red square green. -->
+      <feColorMatrix type="hueRotate" values="90" style="color-interpolation-filters:sRGB"/>
+    </filter>
+    <rect x="0" y="0" width="100" height="100" filter="url(#hue-rotate)" fill="red"/>
+  </g>
+</svg>

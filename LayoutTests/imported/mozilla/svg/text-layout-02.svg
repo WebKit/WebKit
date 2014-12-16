@@ -1,0 +1,21 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     font-family="monospace" font-size="20" xml:space="preserve">
+
+  <title>Testcase to check that a single rotate value works for text</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=521636 -->
+
+  <defs>
+    <path id="h1" d="M 30,150 h 100"/>
+  </defs>
+
+  <text x="20" y="20" rotate="90">TEST1</text>
+
+  <text><textPath xlink:href="#h1"><tspan rotate="90">TE</tspan>ST4</textPath></text>
+
+</svg>

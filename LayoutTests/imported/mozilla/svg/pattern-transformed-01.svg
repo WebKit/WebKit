@@ -1,0 +1,28 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=773595 -->
+
+  <pattern x="0" y="0" width="1" height="1" id="pattern">
+    <rect width="240" height="240" fill="red"/>
+    <rect width="240" height="240" fill="url(#gradient)"/>
+  </pattern>
+
+  <linearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
+    <stop offset="0%" stop-color="black" stop-opacity="1"/>
+    <stop offset="100%" stop-color="black" stop-opacity="0"/>
+  </linearGradient>
+
+  <circle r="120" cx="120" cy="0" fill="url(#pattern)"
+      transform="translate(0,120)"/>
+
+  <path
+      transform="translate(0,120)"
+      d="M 480 0 A 120 120 0 0 0 240 0 A 120 120 0 0 0 480 0"
+      fill="url(#pattern)"/>
+
+</svg>
+

@@ -1,0 +1,18 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:svg="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+<body style="margin:0">
+  <div style="clip-path: url(clipPath-html-03.xhtml#c1); width:500px; height:200px; background:lime;">
+    <div style="height:200px;"/>
+    <div style="height:200px; background:blue;"/>
+  </div>
+  <svg:svg height="0">
+    <!-- use an empty g to force clipPath-html-03.xhtml to load before onload -->
+    <svg:use xlink:href="clipPath-html-03.xhtml#empty" />
+  </svg:svg>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Testing that dynamic changes to the element for a given ID are reflected in 'use'</title>
+
+  <use id="u1" x="10%" xlink:href="#r1"/>
+  <script>
+    // force frame construction; test that parsing "r1" after frame construction
+    // is still bound to "u1" eventually
+    var rect = document.getElementById("u1").getBoundingClientRect();
+  </script>
+  <rect width="11%" height="100%" fill="lime" id="r1"/>
+
+  <rect width="11%" height="100%" fill="lime" id="x"/>
+  <use id="u2" x="20%" xlink:href="#r2"/>
+  <script>
+    var rect = document.getElementById("u2").getBoundingClientRect();
+    // check that changing an id to "r2" lets u2 find it
+    var r2 = document.getElementById("x");
+    r2.setAttribute("id", "r2");
+  </script>
+
+  <rect width="10%" height="100%" fill="red" id="r3"/>
+  <rect width="11%" height="100%" fill="lime" id="r3"/>
+  <use id="u3" x="30%" xlink:href="#r3"/>
+  <script>
+    var rect = document.getElementById("u3").getBoundingClientRect();
+    // check that removing the bad r3 lets u3 find the good one
+    var r3 = document.getElementById("r3");
+    r3.parentNode.removeChild(r3);
+  </script>
+
+  <rect width="10%" height="100%" fill="red" id="r4"/>
+  <rect width="11%" height="100%" fill="lime" id="r4"/>
+  <use id="u4" x="40%" xlink:href="#r4"/>
+  <script>
+    var rect = document.getElementById("u4").getBoundingClientRect();
+    // check that renaming the bad r4 lets u4 find the good one
+    var r4 = document.getElementById("r4");
+    r4.removeAttribute("id");
+  </script>
+
+  <rect width="10%" height="100%" fill="red" id="r5"/>
+  <use id="u5" x="50%" xlink:href="#r5"/>
+  <script>
+    var rect = document.getElementById("u5").getBoundingClientRect();
+    // check that changing u5's reference works
+    var u5 = document.getElementById("u5");
+    u5.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#r1");
+  </script>
+
+  <rect width="10%" height="100%" fill="red" id="r6"/>
+  <rect width="11%" height="100%" fill="lime" id="r6-2"/>
+  <use id="u6" x="60%" xlink:href="#r6"/>
+  <script>
+    var rect = document.getElementById("u6").getBoundingClientRect();
+    // check that inserting a good element before the bad r6 works
+    var r6 = document.getElementById("r6-2");
+    r6.parentNode.removeChild(r6);
+    r6.setAttribute("id", "r6");
+    document.documentElement.insertBefore(r6, document.documentElement.firstChild);
+  </script>
+
+  <rect width="11%" height="100%" fill="lime" id="r7"/>
+  <rect width="10%" height="100%" fill="red" id="r7-2"/>
+  <use id="u7" x="70%" xlink:href="#r7"/>
+  <script>
+    var rect = document.getElementById("u7").getBoundingClientRect();
+    // check that inserting a bad element after a good one doesn't break anything
+    var r7 = document.getElementById("r7-2");
+    r7.parentNode.removeChild(r7);
+    r7.setAttribute("id", "r7");
+    document.documentElement.appendChild(r7);
+  </script>
+
+  <rect width="11%" height="100%" fill="lime" id="r8-2"/>
+  <rect width="10%" height="100%" fill="red" id="r8"/>
+  <use id="u8" x="80%" xlink:href="#r8"/>
+  <script>
+    var rect = document.getElementById("u8").getBoundingClientRect();
+    // check that renaming a good element to r8 works
+    var r8 = document.getElementById("r8-2");
+    r8.setAttribute("id", "r8");
+  </script>
+
+  <rect width="11%" height="100%" fill="lime"/>
+  <rect x="90%" width="11%" height="100%" fill="lime"/>
+</svg>

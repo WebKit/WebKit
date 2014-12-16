@@ -1,0 +1,10 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200">
+  <g transform="translate(100,100)" style="font: 16px sans-serif">
+    <text x="110">אב</text>
+    <text x="320" dx="0 0 0 30"><tspan visibility="hidden">אב</tspan>גדה</text>
+  </g>
+</svg>

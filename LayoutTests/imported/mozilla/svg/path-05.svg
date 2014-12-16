@@ -1,0 +1,26 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     shape-rendering="crispEdges">
+
+  <title>Testcase for path arc handling</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=657862 -->
+
+  <rect width="100%" height="100%" fill="lime"/>
+
+  <!-- Check that arc paints over entire circle: -->
+
+  <circle cx="100" cy="100" r="79" fill="red"/>
+  <path d="M20,100 A80,80 0,0,1 180,100 A80,80 0,0,1 20,100" fill="lime"/>
+
+  <!-- Check that arc does not paint outside circle: -->
+
+  <g transform="translate(200,0)">
+    <path d="M20,100 A80,80 0,0,1 180,100 A80,80 0,0,1 20,100" fill="red"/>
+    <circle cx="100" cy="100" r="81" fill="lime"/>
+  </g>
+
+</svg>

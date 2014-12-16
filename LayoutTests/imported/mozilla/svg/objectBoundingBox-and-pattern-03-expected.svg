@@ -1,0 +1,9 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <title>Reference for re-using an objectBoundingBox pattern with a &lt;g&gt;
+  child</title>
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=615788-->
+ <rect fill="blue" stroke="red" stroke-width="3"
+  width="100" height="100"/>
+ <rect fill="blue" stroke="red" stroke-width="3"
+  y="100" width="200" height="100"/>
+</svg>

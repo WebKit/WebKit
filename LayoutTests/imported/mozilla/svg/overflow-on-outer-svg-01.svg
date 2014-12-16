@@ -1,0 +1,11 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/licenses/publicdomain/
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     style="overflow:visible;"
+     width="100" height="100">
+  <title>Test that we always clip root-&lt;svg&gt; regardless of 'overflow'</title>
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=378923 -->
+  <rect width="100%" height="100%" fill="blue"/>
+</svg>

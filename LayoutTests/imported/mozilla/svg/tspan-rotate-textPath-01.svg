@@ -1,0 +1,20 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Testcase for tspan with ancestor rotate attribute and textPath</title>
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=333698 -->
+  <defs>
+    <path id="path" d="M 50 20 l 50 10 l 50 -10" fill="none" stroke="black"/>
+  </defs>
+  <g>
+    <use xlink:href="#path"/>
+    <text rotate="90 45 -45 180"><textPath xlink:href="#path"><tspan><tspan>a</tspan>b<tspan>cde</tspan>f</tspan></textPath></text>
+  </g>
+  <g transform="translate(0, 50)">
+    <use xlink:href="#path"/>
+    <text rotate="90 45 -45 180"><textPath xlink:href="#path" startOffset="33%"><tspan><tspan>a</tspan>b<tspan>cde</tspan>f</tspan></textPath></text>
+  </g>
+</svg>

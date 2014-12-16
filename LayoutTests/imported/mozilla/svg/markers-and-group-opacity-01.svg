@@ -1,0 +1,17 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+  <title>Test that markers are affected by group opacity on the marked element</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=524104 -->
+
+  <marker id="mark" markerUnits="userSpaceOnUse" markerContentUnits="userSpaceOnUse" markerWidth="100%" markerHeight="200%" refX="0" refY="0">
+    <rect width="100%" height="200%" fill="blue"/>
+  </marker>
+
+  <line x1="0" y1="-1" x2="1" y2="-1" fill="none" stroke="black" opacity=".5" marker-start="url(#mark)"/>
+
+</svg>

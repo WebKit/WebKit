@@ -1,0 +1,63 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Test that marker orientation is correct at the end of arcs</title>
+  <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=769115 -->
+
+  <marker id="m1" markerWidth="40" markerHeight="40" refX="20" refY="20"
+          markerUnits="userSpaceOnUse" orient="auto" fill="blue">
+    <rect x="5" y="15" width="22" height="10"/>
+    <path d="M 25,10 35,20 25,30 z"/>
+  </marker>
+
+  <marker id="m2" markerWidth="40" markerHeight="40" refX="20" refY="20"
+          markerUnits="userSpaceOnUse" orient="auto" fill="red">
+    <rect x="5" y="15" width="22" height="10"/>
+    <path d="M 25,10 35,20 25,30 z"/>
+  </marker>
+
+  <g fill="none">
+    <!-- arcs that go from the left of the circle to... -->
+    <g marker-end="url(#m2)">
+      <!-- ...90 degrees anti-clockwise -->
+      <path d="M100,100 A 50,50 0 1 0 150,50" marker-start="url(#m1)"/>
+      <!-- ...180 degrees anti-clockwise -->
+      <path d="M100,100 A 50,50 0 0 0 200,100"/>
+      <!-- ...270 degrees anti-clockwise -->
+      <path d="M100,100 A 50,50 0 0 0 150,150"/>
+    </g>
+
+    <!-- arcs that go from the left of the circle to... -->
+    <g marker-end="url(#m2)" transform="translate(250,0)">
+      <!-- ...90 degrees clockwise -->
+      <path d="M100,100 A 50,50 0 0 1 150,50" marker-start="url(#m1)"/>
+      <!-- ...180 degrees clockwise -->
+      <path d="M100,100 A 50,50 0 1 1 200,100"/>
+      <!-- ...270 degrees clockwise -->
+      <path d="M100,100 A 50,50 0 1 1 150,150"/>
+    </g>
+
+    <!-- arcs that go from the right of the circle to... -->
+    <g marker-end="url(#m2)" transform="translate(0,250)">
+      <!-- ...90 degrees anti-clockwise -->
+      <path d="M200,100 A 50,50 0 0 1 150,150" marker-start="url(#m1)"/>
+      <!-- ...180 degrees anti-clockwise -->
+      <path d="M200,100 A 50,50 0 0 1 100,100"/>
+      <!-- ...270 degrees anti-clockwise -->
+      <path d="M200,100 A 50,50 0 1 1 150,50"/>
+    </g>
+
+    <!-- arcs that go from the right of the circle to... -->
+    <g marker-end="url(#m2)" transform="translate(250,250)">
+      <!-- ...90 degrees anti-clockwise -->
+      <path d="M200,100 A 50,50 0 0 0 150,50" marker-start="url(#m1)"/>
+      <!-- ...180 degrees anti-clockwise -->
+      <path d="M200,100 A 50,50 0 1 0 100,100"/>
+      <!-- ...270 degrees anti-clockwise -->
+      <path d="M200,100 A 50,50 0 1 0 150,150"/>
+    </g>
+  </g>
+
+</svg>

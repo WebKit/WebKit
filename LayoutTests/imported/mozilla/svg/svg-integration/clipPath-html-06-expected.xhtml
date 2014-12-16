@@ -1,0 +1,24 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:svg="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+<head>
+<style>
+.unit { display:inline-block; width:100px; height:10px; }
+</style>
+</head>
+<body style="margin:0">
+  <span style="clip-path: url(clipPath-html-06.xhtml#c1);">
+    <span class="unit" style="background:lime;"></span>
+    <div style="height:200px; width:100px;"/>
+    <span class="unit" style="background:lime;"></span>
+  </span>
+  <svg:svg height="0" style="display: block">
+    <!-- use an empty g to force clipPath-html-06.xhtml to load before onload -->
+    <svg:use xlink:href="clipPath-html-06.xhtml#empty" />
+  </svg:svg>
+</body>
+</html>

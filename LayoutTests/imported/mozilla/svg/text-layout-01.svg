@@ -1,0 +1,36 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     font-family="monospace" font-size="20" xml:space="preserve">
+
+  <title>Testcase to check that dx, dy works for text</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=388547 -->
+
+  <defs>
+    <path id="h1" d="M 30,150 h 100"/>
+    <path id="h2" d="M 30,200 h 100"/>
+    <path id="h3" d="M 220,200 h 100"/>
+  </defs>
+
+  <text x="20" y="20" dx="10" dy="10">TEST1</text>
+
+  <text x="30" y="60" dx="0, 0, 10" dy="0, 10, 10">TEST2</text>
+
+  <text x="30" y="100">T<tspan dx="0, 10" dy="10, 10">EST</tspan>3</text>
+
+  <text><textPath xlink:href="#h1"><tspan dy="10, -10">TE</tspan>ST4</textPath></text>
+
+  <text><textPath xlink:href="#h2"><tspan dx="10">TE</tspan>ST5</textPath></text>
+
+  <text x="220, 240, 260, 280" y="30">TEST6</text>
+
+  <text x="220, 220, 220, 220, 220" y="70, 90, 110, 130, 150">TEST7</text>
+  
+  <text><textPath xlink:href="#h3"><tspan dx="0,1000,-1000">TES</tspan>T8</textPath></text>
+
+  <text x="150" y="100" rotate="45">A</text>
+</svg>
