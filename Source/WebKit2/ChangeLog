@@ -1,3 +1,13 @@
+2014-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        Disable TextIndication for Lookup immediate actions
+        https://bugs.webkit.org/show_bug.cgi?id=139684
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _animationControllerForText]):
+
 2014-12-16  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKWebProcessPlugInLoadDelegate can’t tell what type of same-document navigation has happened
