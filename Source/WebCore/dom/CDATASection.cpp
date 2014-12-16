@@ -46,9 +46,9 @@ Node::NodeType CDATASection::nodeType() const
     return CDATA_SECTION_NODE;
 }
 
-RefPtr<Node> CDATASection::cloneNodeInternal(CloningOperation)
+RefPtr<Node> CDATASection::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    return create(document(), data());
+    return create(targetDocument, data());
 }
 
 bool CDATASection::childTypeAllowed(NodeType) const

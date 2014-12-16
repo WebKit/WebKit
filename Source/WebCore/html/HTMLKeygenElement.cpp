@@ -58,9 +58,9 @@ protected:
     }
 
 private:
-    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override
     {
-        return create(document());
+        return create(targetDocument);
     }
 };
 

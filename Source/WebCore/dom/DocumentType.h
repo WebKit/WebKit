@@ -52,7 +52,7 @@ private:
     virtual URL baseURI() const override;
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
-    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
+    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     String m_name;
     String m_publicId;

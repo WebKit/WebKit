@@ -58,7 +58,7 @@ private:
 
     virtual String nodeName() const override;
     virtual NodeType nodeType() const override;
-    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
+    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;

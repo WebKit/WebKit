@@ -51,9 +51,9 @@ Node::NodeType Comment::nodeType() const
     return COMMENT_NODE;
 }
 
-RefPtr<Node> Comment::cloneNodeInternal(CloningOperation)
+RefPtr<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    return create(document(), data());
+    return create(targetDocument, data());
 }
 
 bool Comment::childTypeAllowed(NodeType) const

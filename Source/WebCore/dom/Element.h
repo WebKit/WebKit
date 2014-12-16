@@ -267,8 +267,8 @@ public:
 
     virtual String nodeName() const override;
 
-    RefPtr<Element> cloneElementWithChildren();
-    RefPtr<Element> cloneElementWithoutChildren();
+    RefPtr<Element> cloneElementWithChildren(Document&);
+    RefPtr<Element> cloneElementWithoutChildren(Document&);
 
     void normalizeAttributes();
     String nodeNamePreservingCase() const;
@@ -632,8 +632,8 @@ private:
 
     // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
     // are used instead.
-    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
-    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren();
+    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
     void addShadowRoot(PassRefPtr<ShadowRoot>);
     void removeShadowRoot();

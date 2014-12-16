@@ -923,78 +923,32 @@ RefPtr<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
 
 RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& ec)
 {
-    ec = 0;
-    
     if (!importedNode) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
 
     switch (importedNode->nodeType()) {
+    case ELEMENT_NODE:
     case TEXT_NODE:
-        return createTextNode(importedNode->nodeValue());
     case CDATA_SECTION_NODE:
-        return createCDATASection(importedNode->nodeValue(), ec);
     case ENTITY_REFERENCE_NODE:
-        return createEntityReference(importedNode->nodeName(), ec);
     case PROCESSING_INSTRUCTION_NODE:
-        return createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue(), ec);
     case COMMENT_NODE:
-        return createComment(importedNode->nodeValue());
-    case ELEMENT_NODE: {
-        Element& oldElement = downcast<Element>(*importedNode);
-        // FIXME: The following check might be unnecessary. Is it possible that
-        // oldElement has mismatched prefix/namespace?
-        if (!hasValidNamespaceForElements(oldElement.tagQName())) {
-            ec = NAMESPACE_ERR;
-            return nullptr;
-        }
+    case DOCUMENT_FRAGMENT_NODE:
+        return importedNode->cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf);
 
-        RefPtr<Element> newElement = createElement(oldElement.tagQName(), false);
-        newElement->cloneDataFromElement(oldElement);
-
-        if (deep) {
-            for (Node* oldChild = oldElement.firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
-                RefPtr<Node> newChild = importNode(oldChild, true, ec);
-                if (ec)
-                    return nullptr;
-                newElement->appendChild(newChild.release(), ec);
-                if (ec)
-                    return nullptr;
-            }
-        }
-
-        return newElement.release();
-    }
     case ATTRIBUTE_NODE:
+        // FIXME: This will "Attr::normalize" child nodes of Attr.
         return Attr::create(*this, QualifiedName(nullAtom, downcast<Attr>(*importedNode).name(), nullAtom), downcast<Attr>(*importedNode).value());
-    case DOCUMENT_FRAGMENT_NODE: {
-        if (importedNode->isShadowRoot()) {
-            // ShadowRoot nodes should not be explicitly importable.
-            // Either they are imported along with their host node, or created implicitly.
-            break;
-        }
-        DocumentFragment& oldFragment = downcast<DocumentFragment>(*importedNode);
-        RefPtr<DocumentFragment> newFragment = createDocumentFragment();
-        if (deep) {
-            for (Node* oldChild = oldFragment.firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
-                RefPtr<Node> newChild = importNode(oldChild, true, ec);
-                if (ec)
-                    return nullptr;
-                newFragment->appendChild(newChild.release(), ec);
-                if (ec)
-                    return nullptr;
-            }
-        }
-        
-        return newFragment.release();
-    }
+
+    case DOCUMENT_NODE: // Can't import a document into another document.
+    case DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
+        break;
+
     case ENTITY_NODE:
-        // FIXME: It should be possible to import these node types, however in DOM3 the DocumentType is readonly, so there isn't much sense in doing that.
-        // Ability to add these imported nodes to a DocumentType will be considered for addition to a future release of the DOM.
-    case DOCUMENT_NODE:
-    case DOCUMENT_TYPE_NODE:
     case XPATH_NAMESPACE_NODE:
+        ASSERT_NOT_REACHED(); // These two types of DOM nodes are not implemented.
         break;
     }
     ec = NOT_SUPPORTED_ERR;
@@ -3207,7 +3161,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     return true;
 }
 
-RefPtr<Node> Document::cloneNodeInternal(CloningOperation type)
+RefPtr<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
 {
     RefPtr<Document> clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);

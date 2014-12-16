@@ -1,3 +1,113 @@
+2014-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Nested template contents are not cloned by document.importNode
+        https://bugs.webkit.org/show_bug.cgi?id=137619
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by Document.importNode not cloning HTMLTemplateElement's content.
+
+        Fixed the bug by sharing code between Document::importNode and Node::cloneNode by
+        generalizing Node::cloneNodeInternal, added in r177314, by taking the owner document
+        as an argument. The most of code changes are the result of adding this argument.
+
+        Document::importNode is the only function in which the actual logic changes.
+        Note that the code to import TEXT_NODE, CDATA_SECTION_NODE, ENTITY_REFERENCE_NODE,
+        PROCESSING_INSTRUCTION_NODE and COMMENT_NODE nodes are identical to that of cloneNode.
+
+        This patch removes the call to hasValidNamespaceForElements in ELEMENT_NODE but this
+        should not introduce an observable behavior change since all instantiated elements
+        should have a valid namespace in the first place.
+
+        Because DOCUMENT_NODE and DOCUMENT_TYPE_NODE cannot be imported and DOCUMENT_TYPE_NODE
+        can only appear as a direct child of DOCUMENT_NODE, neither nodes nor unimplemented
+        XPATH_NAMESPACE_NODE and XPATH_NAMESPACE_NODE can appear inside the recursive calls
+        for ELEMENT_NODE and DOCUMENT_FRAGMENT_NODE nodes.
+
+        While importNode behaves differently from cloneNode for ATTRIBUTE_NODE, namely that
+        it merges all of its child nodes, this behavior isn't present when recursing inside
+        ELEMENT_NODE and DOCUMENT_FRAGMENT_NODE since we are using cloneDataFromElement.
+
+        Thus there should be no observable behavior changes for DOCUMENT_FRAGMENT_NODE and
+        ELEMENT_NODE nodes either.
+
+        Test: fast/dom/HTMLTemplateElement/importNode-nested-templates.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::cloneNodeInternal):
+        * dom/Attr.h:
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::cloneNodeInternal):
+        * dom/CDATASection.h:
+        * dom/Comment.cpp:
+        (WebCore::Comment::cloneNodeInternal):
+        * dom/Comment.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        (WebCore::Document::cloneNodeInternal):
+        * dom/Document.h:
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::cloneNodeInternal):
+        * dom/DocumentFragment.h:
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::cloneNodeInternal):
+        * dom/DocumentType.h:
+        * dom/Element.cpp:
+        (WebCore::Element::cloneNodeInternal):
+        (WebCore::Element::cloneElementWithChildren):
+        (WebCore::Element::cloneElementWithoutChildren):
+        (WebCore::Element::cloneElementWithoutAttributesAndChildren):
+        * dom/Element.h:
+        * dom/EntityReference.cpp:
+        (WebCore::EntityReference::cloneNodeInternal):
+        * dom/EntityReference.h:
+        * dom/Node.h:
+        (WebCore::Node::cloneNode):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::cloneNodeInternal):
+        * dom/ProcessingInstruction.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::cloneNodeInternal):
+        * dom/ShadowRoot.h:
+        * dom/Text.cpp:
+        (WebCore::Text::cloneNodeInternal):
+        * dom/Text.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock):
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doApply):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText):
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::cloneElementWithoutAttributesAndChildren):
+        * html/HTMLScriptElement.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::cloneNodeInternal):
+        * html/HTMLTemplateElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::cloneElementWithoutAttributesAndChildren):
+        * html/shadow/SliderThumbElement.h:
+        * html/track/WebVTTElement.cpp:
+        (WebCore::WebVTTElement::cloneElementWithoutAttributesAndChildren):
+        * html/track/WebVTTElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::cloneElementWithoutAttributesAndChildren):
+        * svg/SVGScriptElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+
 2014-12-16  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Document.contentType implementation

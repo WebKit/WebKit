@@ -598,9 +598,9 @@ const AtomicString& SliderThumbElement::shadowPseudoId() const
     }
 }
 
-RefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren()
+RefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    return create(document());
+    return create(targetDocument);
 }
 
 // --------------------------------

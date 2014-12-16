@@ -765,11 +765,12 @@ void ContainerNode::childrenChanged(const ChildChange& change)
     invalidateNodeListAndCollectionCachesInAncestors();
 }
 
-void ContainerNode::cloneChildNodes(ContainerNode *clone)
+void ContainerNode::cloneChildNodes(ContainerNode* clone)
 {
     ExceptionCode ec = 0;
+    Document& targetDocument = clone->document();
     for (Node* child = firstChild(); child && !ec; child = child->nextSibling()) {
-        RefPtr<Node> clonedChild = child->cloneNodeInternal(CloningOperation::SelfWithTemplateContent);
+        RefPtr<Node> clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
         clone->appendChild(clonedChild, ec);
 
         if (!ec && is<ContainerNode>(child))

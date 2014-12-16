@@ -46,7 +46,7 @@ public:
     static PassRefPtr<WebVTTElement> create(const WebVTTNodeType, Document&);
     PassRefPtr<HTMLElement> createEquivalentHTMLElement(Document&);
 
-    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
 
     void setWebVTTNodeType(WebVTTNodeType type) { m_webVTTNodeType = static_cast<unsigned>(type); }
     WebVTTNodeType webVTTNodeType() const { return static_cast<WebVTTNodeType>(m_webVTTNodeType); }

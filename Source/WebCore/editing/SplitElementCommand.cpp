@@ -70,7 +70,7 @@ void SplitElementCommand::executeApply()
     
 void SplitElementCommand::doApply()
 {
-    m_element1 = m_element2->cloneElementWithoutChildren();
+    m_element1 = m_element2->cloneElementWithoutChildren(document());
     
     executeApply();
 }

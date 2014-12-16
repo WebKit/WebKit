@@ -64,7 +64,7 @@ private:
 
     virtual void dispatchLoadEvent() override;
 
-    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
+    virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
 };
 
 } //namespace

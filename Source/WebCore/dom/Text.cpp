@@ -169,9 +169,9 @@ Node::NodeType Text::nodeType() const
     return TEXT_NODE;
 }
 
-RefPtr<Node> Text::cloneNodeInternal(CloningOperation)
+RefPtr<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    return create(document(), data());
+    return create(targetDocument, data());
 }
 
 static bool isSVGShadowText(Text* text)

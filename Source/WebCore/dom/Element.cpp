@@ -289,29 +289,29 @@ DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, load);
 
-RefPtr<Node> Element::cloneNodeInternal(CloningOperation type)
+RefPtr<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:
-        return cloneElementWithoutChildren();
+        return cloneElementWithoutChildren(targetDocument);
     case CloningOperation::Everything:
-        return cloneElementWithChildren();
+        return cloneElementWithChildren(targetDocument);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-RefPtr<Element> Element::cloneElementWithChildren()
+RefPtr<Element> Element::cloneElementWithChildren(Document& targetDocument)
 {
-    RefPtr<Element> clone = cloneElementWithoutChildren();
+    RefPtr<Element> clone = cloneElementWithoutChildren(targetDocument);
     cloneChildNodes(clone.get());
     return clone.release();
 }
 
-RefPtr<Element> Element::cloneElementWithoutChildren()
+RefPtr<Element> Element::cloneElementWithoutChildren(Document& targetDocument)
 {
-    RefPtr<Element> clone = cloneElementWithoutAttributesAndChildren();
+    RefPtr<Element> clone = cloneElementWithoutAttributesAndChildren(targetDocument);
     // This will catch HTML elements in the wrong namespace that are not correctly copied.
     // This is a sanity check as HTML overloads some of the DOM methods.
     ASSERT(isHTMLElement() == clone->isHTMLElement());
@@ -320,9 +320,9 @@ RefPtr<Element> Element::cloneElementWithoutChildren()
     return clone.release();
 }
 
-RefPtr<Element> Element::cloneElementWithoutAttributesAndChildren()
+RefPtr<Element> Element::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    return document().createElement(tagQName(), false);
+    return targetDocument.createElement(tagQName(), false);
 }
 
 RefPtr<Attr> Element::detachAttribute(unsigned index)

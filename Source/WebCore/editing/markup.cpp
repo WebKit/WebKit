@@ -798,7 +798,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range& context, const String
             fillContainerFromString(fragment.get(), s);
         } else {
             if (useClonesOfEnclosingBlock)
-                element = block->cloneElementWithoutChildren();
+                element = block->cloneElementWithoutChildren(document);
             else
                 element = createDefaultParagraphElement(document);
             fillContainerFromString(element.get(), s);

@@ -136,7 +136,7 @@ PassRefPtr<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock
     // Make clones of ancestors in between the start node and the start block.
     RefPtr<Element> parent = blockToInsert;
     for (size_t i = ancestors.size(); i != 0; --i) {
-        RefPtr<Element> child = ancestors[i - 1]->cloneElementWithoutChildren();
+        RefPtr<Element> child = ancestors[i - 1]->cloneElementWithoutChildren(document());
         // It should always be okay to remove id from the cloned elements, since the originals are not deleted.
         child->removeAttribute(idAttr);
         appendNode(child, parent);
@@ -207,7 +207,7 @@ void InsertParagraphSeparatorCommand::doApply()
     } else if (shouldUseDefaultParagraphElement(startBlock.get())) 
         blockToInsert = createDefaultParagraphElement(document());
     else
-        blockToInsert = startBlock->cloneElementWithoutChildren();
+        blockToInsert = startBlock->cloneElementWithoutChildren(document());
 
     //---------------------------------------------------------------------
     // Handle case when position is in the last visible position in its block,

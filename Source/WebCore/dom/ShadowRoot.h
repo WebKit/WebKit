@@ -76,7 +76,7 @@ private:
     virtual bool childTypeAllowed(NodeType) const override;
     virtual void childrenChanged(const ChildChange&) override;
 
-    virtual RefPtr<Node> cloneNodeInternal(CloningOperation) override;
+    virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !hostElement(); }

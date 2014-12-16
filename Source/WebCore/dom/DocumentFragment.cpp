@@ -71,9 +71,9 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-RefPtr<Node> DocumentFragment::cloneNodeInternal(CloningOperation type)
+RefPtr<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
-    RefPtr<DocumentFragment> clone = create(document());
+    RefPtr<DocumentFragment> clone = create(targetDocument);
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:

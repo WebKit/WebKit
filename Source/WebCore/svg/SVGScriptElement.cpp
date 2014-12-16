@@ -192,9 +192,9 @@ bool SVGScriptElement::hasSourceAttribute() const
     return hasAttribute(XLinkNames::hrefAttr);
 }
 
-RefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren()
+RefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    return adoptRef(new SVGScriptElement(tagQName(), document(), false, alreadyStarted()));
+    return adoptRef(new SVGScriptElement(tagQName(), targetDocument, false, alreadyStarted()));
 }
 
 #ifndef NDEBUG

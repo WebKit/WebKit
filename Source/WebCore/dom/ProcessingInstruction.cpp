@@ -79,11 +79,11 @@ Node::NodeType ProcessingInstruction::nodeType() const
     return PROCESSING_INSTRUCTION_NODE;
 }
 
-RefPtr<Node> ProcessingInstruction::cloneNodeInternal(CloningOperation)
+RefPtr<Node> ProcessingInstruction::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(document(), m_target, data());
+    return create(targetDocument, m_target, data());
 }
 
 void ProcessingInstruction::checkStyleSheet()
