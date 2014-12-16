@@ -1,3 +1,60 @@
+2014-12-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add logging domain for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=139642
+
+        Reviewed by Gyuyoung Kim.
+
+        Similarly to EWebKit2, provide logging facility for MiniBrowser
+        based on Eina Log module to have a convenient way to display
+        all/subset/none messages for EFL based libraries and MiniBrowser.
+
+        Usage:
+        1. Disable all messages:
+           EINA_LOG_LEVEL=0 ./Tools/Scripts/run-launcher --efl
+
+        2. Enable all messages:
+           EINA_LOG_LEVEL=7 ./Tools/Scripts/run-launcher --efl
+
+        3. Enable MiniBrowser and EWebkit2 messages only:
+           EINA_LOG_LEVELS="minibrowser:7,ewebkit2:7" ./Tools/Scripts/run-launcher --efl
+
+        More information and examples you can find here:
+        http://docs.enlightenment.org/auto/eet/tutorial_log_page.html
+
+        * MiniBrowser/efl/main.c:
+        (on_mouse_wheel):
+        (on_window_resize):
+        (save_page_contents_callback):
+        (script_execute_callback):
+        (on_key_down):
+        (on_download_request):
+        (on_download_finished):
+        (on_download_failed):
+        (quit):
+        (on_refresh_button_clicked):
+        (on_stop_button_clicked):
+        (navigation_button_longpress_process):
+        (on_popup_menu_item_clicked):
+        (popup_menu_populate):
+        (on_popup_menu_show):
+        (on_window_create):
+        (context_menu_item_selected_cb):
+        (context_menu_populate):
+        (on_context_menu_show):
+        (on_context_menu_hide):
+        (on_navigation_policy_decision):
+        (window_create):
+        (parse_cookies_policy):
+        (elm_main):
+        (has_scheme):
+        (list_item_label_get):
+        (on_popup_menu_hide):
+        (on_window_close):
+        (on_home_button_clicked):
+        Replace locally info() macro with newly introduced
+        one which uses Eina Log module. There is no logic change.
+
 2014-12-15  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [EFL] FTL JIT not working on ARM64
