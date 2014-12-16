@@ -105,7 +105,7 @@
 #define USE_BMALLOC 1
 #endif
 
-#if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) && defined(NDEBUG)
+#if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
 #define FORCE_SYSTEM_MALLOC 0
 #else
 #define FORCE_SYSTEM_MALLOC 1
