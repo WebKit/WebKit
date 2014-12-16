@@ -219,7 +219,7 @@ fast/events/drag-dataTransferItemList.html
 fast/events/drag-dataTransferItemList-file-handling.html
 
 # Replacement text for misspelling is not given from NSSpellChecker.
-webkit.org/b/77934 editing/spelling/spelling-marker-description.html [ Failure ]
+webkit.org/b/77934 editing/spelling/spelling-marker-description.html [ Timeout ]
 
 # Custom MIME type support in DataTransfer is not yet implemented.
 editing/pasteboard/clipboard-customData.html
@@ -343,11 +343,11 @@ webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 webkit.org/b/82805 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html [ Pass Failure ]
-webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html [ Pass Timeout ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html [ Pass Failure ]
-webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Failure Pass ]
-webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html [ Failure Pass ]
-webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html [ Pass Failure ]
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Pass Timeout ]
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html [ Pass Failure ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html [ Pass Timeout ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html [ Pass Failure ]
 
 webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
@@ -704,7 +704,7 @@ webkit.org/b/105777 platform/mac/editing/spelling/autocorrection-in-textarea.htm
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ] 
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout ] 
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
@@ -1155,15 +1155,13 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outsid
 webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
 
-# Always times out.
-webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
-
 # REGRESSION(r156546): 7 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
-webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Failure ]
+webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Timeout ]
 webkit.org/b/122021 [ Mavericks+ ] media/track/track-in-band-mode.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
+webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
+webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
 # --- End media tests ---
 
@@ -1260,7 +1258,7 @@ webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html
 [ Yosemite+ ] media/media-source/media-source-play.html [ Failure ]
 
 # This test times out.
-[ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Failure ]
+[ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Skip ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17748495>)
 # Some of these failures already have individual bugs, others are covered by this one.
