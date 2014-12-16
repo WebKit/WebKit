@@ -47,6 +47,7 @@
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
