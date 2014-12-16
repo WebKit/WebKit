@@ -136,8 +136,7 @@ private:
     virtual void makeFirstResponder();
     
     virtual void didPerformDictionaryLookup(const DictionaryPopupInfo&);
-    virtual void dismissDictionaryLookupPanel();
-    virtual void dismissActionMenuPopovers();
+    virtual void dismissContentRelativeChildWindows();
 
     virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText);

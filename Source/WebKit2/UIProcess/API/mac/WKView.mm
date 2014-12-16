@@ -79,6 +79,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
 #import <WebCore/FloatRect.h>
@@ -1192,9 +1193,6 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     if (_data->_ignoresAllEvents)
         return;
 
-    // Work around <rdar://problem/19086993> by always clearing the active text indicator on scroll.
-    [self _setTextIndicator:nullptr fadeOut:NO];
-
     if (_data->_allowsBackForwardNavigationGestures) {
         [self _ensureGestureController];
         if (_data->_gestureController->handleScrollWheelEvent(event))
@@ -1243,8 +1241,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
 
-    // Work around <rdar://problem/19086993> by always clearing the active text indicator on mouseDown.
-    [self _setTextIndicator:nullptr fadeOut:NO];
+    [self _dismissContentRelativeChildWindows];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController wkView:self willHandleMouseDown:event];
 #endif
@@ -2580,9 +2577,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
 
-        if (getLULookupDefinitionModuleClass())
-            [getLULookupDefinitionModuleClass() hideDefinition];
-        [self _dismissActionMenuPopovers];
+        [self _dismissContentRelativeChildWindows];
     }
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
@@ -4200,6 +4195,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return;
     }
 
+    [self _dismissContentRelativeChildWindows];
+
     [self _ensureGestureController];
 
     _data->_gestureController->handleMagnificationGesture(event.magnification, [self convertPoint:event.locationInWindow fromView:nil]);
@@ -4211,6 +4208,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [super smartMagnifyWithEvent:event];
         return;
     }
+
+    [self _dismissContentRelativeChildWindows];
 
     [self _ensureGestureController];
 
@@ -4229,11 +4228,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point
 {
+    [self _dismissContentRelativeChildWindows];
+
     _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(point));
 }
 
 - (void)setMagnification:(double)magnification
 {
+    [self _dismissContentRelativeChildWindows];
+
     FloatPoint viewCenter(NSMidX([self bounds]), NSMidY([self bounds]));
     _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(viewCenter));
 }
@@ -4308,11 +4311,19 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return nil;
 }
 
-- (void)_dismissActionMenuPopovers
+- (void)_dismissContentRelativeChildWindows
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_actionMenuController dismissActionMenuPopovers];
-#endif
+    // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
+    if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
+        [lookupDefinitionModuleClass hideDefinition];
+
+    DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
+    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
+        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+
+    [self _setTextIndicator:nullptr fadeOut:NO];
+
+    static_cast<PageClient&>(*_data->_pageClient).dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 }
 
 - (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize

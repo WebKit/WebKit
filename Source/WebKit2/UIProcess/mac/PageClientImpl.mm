@@ -568,19 +568,9 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
         [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 }
 
-void PageClientImpl::dismissDictionaryLookupPanel()
+void PageClientImpl::dismissContentRelativeChildWindows()
 {
-    if (!getLULookupDefinitionModuleClass())
-        return;
-
-    // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
-    [getLULookupDefinitionModuleClass() hideDefinition];
-    setTextIndicator(nil, false);
-}
-
-void PageClientImpl::dismissActionMenuPopovers()
-{
-    [m_wkView _dismissActionMenuPopovers];
+    [m_wkView _dismissContentRelativeChildWindows];
 }
 
 void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
@@ -709,9 +699,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::navigationGestureDidBegin()
 {
-    // Hide the text indicator and action menu popovers if they are visible.
-    setTextIndicator(nullptr, false);
-    dismissActionMenuPopovers();
+    dismissContentRelativeChildWindows();
 
 #if WK_API_ENABLED
     if (m_webView)
