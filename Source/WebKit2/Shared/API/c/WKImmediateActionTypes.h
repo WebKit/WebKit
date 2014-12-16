@@ -35,6 +35,7 @@ extern "C" {
 enum {
     kWKImmediateActionNone = 0,
     kWKImmediateActionLinkPreview,
+    kWKImmediateActionDataDetectedItem,
 };
 typedef uint32_t _WKImmediateActionType;
 

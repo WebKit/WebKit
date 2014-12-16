@@ -35,6 +35,7 @@
 #import "WebPageProxy.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
+#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
@@ -78,14 +79,36 @@ using namespace WebKit;
     _wkView = nil;
     _hitTestResult = ActionMenuHitTestResult();
     _immediateActionRecognizer = nil;
+    _currentActionContext = nil;
+}
+
+- (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event
+{
+    [self _clearImmediateActionState];
+}
+
+- (void)_cancelImmediateAction
+{
+    // Reset the recognizer by turning it off and on again.
+    _immediateActionRecognizer.enabled = NO;
+    _immediateActionRecognizer.enabled = YES;
+
+    [self _clearImmediateActionState];
 }
 
 - (void)_clearImmediateActionState
 {
+    if (_currentActionContext && _hasActivatedActionContext) {
+        [getDDActionsManagerClass() didUseActions];
+        _hasActivatedActionContext = NO;
+    }
+
     _state = ImmediateActionState::None;
     _hitTestResult = ActionMenuHitTestResult();
     _type = kWKImmediateActionNone;
+    _currentActionContext = nil;
     _userData = nil;
+    _immediateActionRecognizer.animationController = nil;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
@@ -105,6 +128,8 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    [_wkView _dismissContentRelativeChildWindows];
+
     _eventLocationInView = [immediateActionRecognizer locationInView:immediateActionRecognizer.view];
     _page->performActionMenuHitTestAtLocation(_eventLocationInView);
 
@@ -117,9 +142,10 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    ASSERT(_state != ImmediateActionState::None);
+    if (_state == ImmediateActionState::None)
+        return;
 
-    // FIXME: We need to be able to cancel this if the gesture recognizer goes away.
+    // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == ImmediateActionState::Pending) {
         if (auto* connection = _page->process().connection()) {
@@ -131,6 +157,17 @@ using namespace WebKit;
 
     if (_state != ImmediateActionState::Ready)
         [self _updateImmediateActionItem];
+
+    if (!_immediateActionRecognizer.animationController) {
+        [self _cancelImmediateAction];
+        return;
+    }
+
+    if (_currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+            [self _cancelImmediateAction];
+    }
 }
 
 - (void)immediateActionRecognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -162,16 +199,12 @@ using namespace WebKit;
 
 #pragma mark Immediate actions
 
-- (void)_updateImmediateActionItem
+- (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
 
-    _type = kWKImmediateActionNone;
-    _immediateActionRecognizer.animationController = nil;
-    id <NSImmediateActionAnimationController> defaultAnimationController = nil;
-
     if (!hitTestResult)
-        return;
+        return nil;
 
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
     if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
@@ -186,18 +219,39 @@ using namespace WebKit;
                 [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
                 [qlPreviewLinkItem setDelegate:self];
             }
-            defaultAnimationController = (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
-        } else {
+            return (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
+        }
+
 #if WK_API_ENABLED
-            [self _createPreviewPopoverIfNeededForURL:absoluteLinkURL];
-            defaultAnimationController = (id<NSImmediateActionAnimationController>)_previewPopover.get();
+        [self _createPreviewPopoverIfNeededForURL:absoluteLinkURL];
+        return (id<NSImmediateActionAnimationController>)_previewPopover.get();
+#else
+        return nil;
 #endif // WK_API_ENABLED
+    }
+
+    if (hitTestResult->isTextNode() || hitTestResult->isOverTextInsideFormControlElement()) {
+        if (NSMenuItem *immediateActionItem = [self _menuItemForDataDetectedText]) {
+            _type = kWKImmediateActionDataDetectedItem;
+            return (id<NSImmediateActionAnimationController>)immediateActionItem;
         }
     }
 
+    return nil;
+}
+
+- (void)_updateImmediateActionItem
+{
+    _type = kWKImmediateActionNone;
+
+    id <NSImmediateActionAnimationController> defaultAnimationController = [self _defaultAnimationController];
+
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     id customClientAnimationController = [_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:_type userData:toAPI(_userData.get())];
-    if (customClientAnimationController == [NSNull null])
+    if (customClientAnimationController == [NSNull null]) {
+        [self _cancelImmediateAction];
         return;
+    }
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
     else
@@ -236,7 +290,7 @@ using namespace WebKit;
     [_previewPopover setDelegate:self];
 }
 
-- (void)_clearPreviewPopover
+- (void)hidePreview
 {
     if (_previewViewController) {
         _previewViewController->_delegate = nil;
@@ -257,7 +311,7 @@ using namespace WebKit;
 
 - (void)popoverWillClose:(NSNotification *)notification
 {
-    [self _clearPreviewPopover];
+    [self hidePreview];
 }
 
 static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSpace)
@@ -389,6 +443,45 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 - (NSRectEdge)menuItem:(NSMenuItem *)menuItem preferredEdgeForPoint:(NSPoint)point
 {
     return NSMaxYEdge;
+}
+
+#pragma mark Data Detectors actions
+
+- (NSMenuItem *)_menuItemForDataDetectedText
+{
+    DDActionContext *actionContext = _hitTestResult.actionContext.get();
+    if (!actionContext)
+        return nil;
+
+    actionContext.altMode = YES;
+    if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
+        if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
+            return nil;
+    }
+
+    RefPtr<WebPageProxy> page = _page;
+    PageOverlay::PageOverlayID overlayID = _hitTestResult.detectedDataOriginatingPageOverlay;
+    _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+        page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
+    } interactionChangedHandler:^() {
+        if (_hitTestResult.detectedDataTextIndicator)
+            page->setTextIndicator(_hitTestResult.detectedDataTextIndicator->data(), false);
+        page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
+    } interactionStoppedHandler:^() {
+        page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));
+        page->clearTextIndicator();
+    }];
+
+    [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];
+
+    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+
+    if (menuItems.count != 1)
+        return nil;
+
+    if (_hitTestResult.detectedDataTextIndicator)
+        _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
+    return menuItems.lastObject;
 }
 
 @end
