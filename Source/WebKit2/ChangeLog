@@ -1,3 +1,14 @@
+2014-12-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r177230. rdar://problem/19208291
+
+    2014-12-12  Mark Rowe  <mrowe@apple.com>
+
+            Fix the 32-bit build.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setPreviewTitle:]):
+
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
         Merged r177323. <rdar://problem/19198414>

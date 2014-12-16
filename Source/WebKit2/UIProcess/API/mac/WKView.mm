@@ -4344,7 +4344,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_setPreviewTitle:(NSString *)previewTitle
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
     [_data->_immediateActionController setPreviewTitle:previewTitle];
 #endif
 }
