@@ -234,10 +234,10 @@ webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html 
 webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
 
 # [WK2] Media elements never fail to load
-webkit.org/b/117767 media/W3C/audio/error/error_onerror_called_on_bogus_source.html [ Failure ]
-webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.html [ Failure ]
-webkit.org/b/117767 media/broken-video.html [ Failure ]
-webkit.org/b/117767 media/event-attributes.html [ Failure ]
+webkit.org/b/117767 media/W3C/audio/error/error_onerror_called_on_bogus_source.html [ Timeout ]
+webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.html [ Timeout ]
+webkit.org/b/117767 media/broken-video.html [ Timeout ]
+webkit.org/b/117767 media/event-attributes.html [ Timeout ]
 
 webkit.org/b/117962 media/video-played-collapse.html [ Pass Failure ]
 webkit.org/b/81604 media/video-loop.html [ Pass Failure ]
@@ -347,7 +347,7 @@ webkit.org/b/133227 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pas
 
 webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 
-fast/dom/frame-loading-via-document-write.html [ Failure ]
+fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
 ### END OF (3) Unclassified failures
 ########################################

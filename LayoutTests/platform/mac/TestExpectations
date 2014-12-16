@@ -69,7 +69,7 @@ fast/media/print-restores-previous-mediatype.html
 fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 fast/media/media-query-list-02.html [ Failure ]
 fast/media/media-query-list-03.html [ Failure ]
-fast/media/media-query-list-04.html [ Failure ]
+fast/media/media-query-list-04.html [ Timeout ]
 fast/media/media-query-list-05.html [ Failure ]
 fast/media/media-query-list-06.html [ Failure ]
 
@@ -226,7 +226,7 @@ editing/pasteboard/clipboard-customData.html
 fast/events/drag-customData.html
 
 # Need to implement WebGeolocationRequest::cancelPermissionRequest on mac.
-webkit.org/b/55944 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Failure ]
+webkit.org/b/55944 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Failure Timeout ]
 
 webkit.org/b/103435 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 
@@ -533,7 +533,7 @@ plugins/form-value.html
 # WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
 plugins/npruntime/invoke-failure.html
 
-webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Failure ]
+webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
 
 [ MountainLion Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
@@ -1159,7 +1159,7 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-tra
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Timeout ]
 webkit.org/b/122021 [ Mavericks+ ] media/track/track-in-band-mode.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Skip ]
+webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
@@ -1258,7 +1258,7 @@ webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html
 [ Yosemite+ ] media/media-source/media-source-play.html [ Failure ]
 
 # This test times out.
-[ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Skip ]
+[ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Timeout ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17748495>)
 # Some of these failures already have individual bugs, others are covered by this one.

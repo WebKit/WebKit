@@ -1,5 +1,15 @@
 2014-12-16  Alexey Proskuryakov  <ap@apple.com>
 
+        More expectations updated to Timeout.
+
+        Also, undone some accidental skips. It may be right to skip tests that always time
+        out, but let's do that intentionally, and with a review.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
         Update some test expectations from Failure to Timeout, which is now correctly detected.
 
         * platform/mac/TestExpectations:
