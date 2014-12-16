@@ -204,12 +204,14 @@
 #import "WebActionMenuController.h"
 #import "WebContextMenuClient.h"
 #import "WebFullScreenController.h"
+#import "WebImmediateActionController.h"
 #import "WebNSEventExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
 #import <WebCore/LookupSPI.h>
+#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
@@ -894,6 +896,13 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         self.actionMenu = actionMenu.get();
         _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
         self.actionMenu.autoenablesItems = NO;
+    }
+
+    if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
+        RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
+        _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self];
+        [recognizer setDelegate:_private->immediateActionController];
+        [self addGestureRecognizer:recognizer.get()];
     }
 #endif
 
@@ -1745,6 +1754,7 @@ static bool fastDocumentTeardownEnabled()
 #endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_private->actionMenuController webViewClosed];
+    [_private->immediateActionController webViewClosed];
 #endif
 
 #if !PLATFORM(IOS)

@@ -144,6 +144,10 @@ typedef enum {
     WebActionMenuTelLink
 } WebActionMenuType;
 
+typedef enum {
+    WebImmediateActionNone = 0,
+} WebImmediateActionType;
+
 // Message Sources.
 extern NSString *WebConsoleMessageXMLMessageSource;
 extern NSString *WebConsoleMessageJSMessageSource;
