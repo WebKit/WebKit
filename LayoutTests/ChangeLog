@@ -1,3 +1,21 @@
+2014-12-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r176399. rdar://problem/19267545
+
+    2014-11-20  Mark Lam  <mark.lam@apple.com>
+
+            WTFCrashWithSecurityImplication under SpeculativeJIT::compile() when loading a page from theblaze.com.
+            <https://webkit.org/b/137642>
+
+            Reviewed by Filip Pizlo.
+
+            * js/dfg-inline-identity-expected.txt: Added.
+            * js/dfg-inline-identity.html: Added.
+            * js/script-tests/dfg-inline-identity.js: Added.
+            (o.toKey):
+            (foo):
+            (test):
+
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r176972. <rdar://problem/19196762>
