@@ -933,6 +933,9 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     if (m_contentsLayer && platformLayer == m_contentsLayer->platformLayer())
         return;
 
+    if (m_contentsClippingLayer && m_contentsLayer)
+        m_contentsLayer->removeFromSuperlayer();
+
     // FIXME: The passed in layer might be a raw layer or an externally created
     // PlatformCALayer. To determine this we attempt to get the
     // PlatformCALayer pointer. If this returns a null pointer we assume it's
@@ -943,6 +946,9 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(platformLayer);
     m_contentsLayer = platformLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(platformLayer, this)) : nullptr;
     m_contentsLayerPurpose = platformLayer ? purpose : NoContentsLayer;
+
+    if (m_contentsClippingLayer && m_contentsLayer)
+        m_contentsClippingLayer->appendSublayer(*m_contentsLayer);
 
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);

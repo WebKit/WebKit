@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Replacing Contents Clipped</title>
+    <script src="../../media/media-file.js"></script>
+    <script>
+    var callback;
+    var video;
+
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+        window.testRunner.waitUntilDone();
+    }
+
+    function runTest() {
+        video = document.getElementsByTagName('video')[0];
+        video.addEventListener('canplaythrough', canplaythrough);
+        callback = switchSrc;
+        video.src = findMediaFile('video', '../../media/content/counting');
+        video.load();
+    }
+
+    function canplaythrough() {
+        if (callback)
+            callback();
+    }
+
+    function switchSrc() {
+        callback = endTest;
+        video.src = findMediaFile('video', '../../media/content/test');
+        video.load();
+    }
+
+    function endTest() {
+        if (window.testRunner)
+            setTimeout(function() { testRunner.notifyDone(); }, 150);
+    }
+    </script>
+    <style>
+    video { 
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+    </style>
+</head>
+<body onload="runTest()">
+    <button onclick="runTest()">run test</button><br>
+    <video></video>
+</body>
