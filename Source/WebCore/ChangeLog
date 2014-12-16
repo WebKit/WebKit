@@ -1,3 +1,15 @@
+2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Cherokee language is drawn as boxes
+        https://bugs.webkit.org/show_bug.cgi?id=139706
+
+        Reviewed by Simon Fraser.
+
+        Test: platform/ios-simulator/fast/text/cherokee.html
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::languageSpecificFallbackFont):
+
 2014-12-16  Enrica Casucci  <enrica@apple.com>
 
         Fix iOS builders for 8.0
