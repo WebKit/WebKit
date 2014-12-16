@@ -1,3 +1,17 @@
+2014-12-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WTF fails to build with public SDK due to missing header CPAggregateDictionary.h
+        https://bugs.webkit.org/show_bug.cgi?id=139695
+
+        Reviewed by Chris Dumez.
+
+        Add USE(APPLE_INTERNAL_SDK)-guard around iOS-specific feature counter implementation
+        as we are only interested in counting features in builds of iOS WebKit that were built
+        with the Apple Internal SDK.
+
+        * wtf/FeatureCounter.cpp:
+        * wtf/ios/FeatureCounter.mm:
+
 2014-12-16  Geoffrey Garen  <ggaren@apple.com>
 
         Enable FastMalloc in debug builds

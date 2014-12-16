@@ -28,7 +28,7 @@
 
 namespace WTF {
 
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS) || !USE(APPLE_INTERNAL_SDK)
 
 void incrementFeatureCounterKey(const char* const key)
 {

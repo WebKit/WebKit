@@ -26,7 +26,7 @@
 #import "config.h"
 #import "FeatureCounter.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
 #import <AppSupport/CPAggregateDictionary.h>
 
 namespace WTF {
@@ -45,4 +45,4 @@ void setFeatureCounterKey(const char* const key, int64_t value)
 
 } // namespace WTF
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
