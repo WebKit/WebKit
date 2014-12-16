@@ -118,7 +118,7 @@ namespace WebCore {
         // FIXME: This method seems to violate the encapsulation of this class.
         WEBCORE_EXPORT void setResponseMIMEType(const String&);
 #endif
-
+        const String& currentContentType() const;
         void replaceRequestURLForSameDocumentNavigation(const URL&);
         bool isStopping() const { return m_isStopping; }
         void stopLoading();

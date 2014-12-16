@@ -206,7 +206,8 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
         return nullptr;
 
     if (!m_createdDocument) {
-        bool isHTML = equalIgnoringCase(responseMIMEType(), "text/html");
+        String mimeType = responseMIMEType();
+        bool isHTML = equalIgnoringCase(mimeType, "text/html");
 
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
@@ -222,6 +223,8 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
             // FIXME: Set Last-Modified.
             m_responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
             m_responseDocument->setSecurityOrigin(securityOrigin());
+            m_responseDocument->overrideMIMEType(mimeType);
+
             if (!m_responseDocument->wellFormed())
                 m_responseDocument = 0;
         }

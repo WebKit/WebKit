@@ -465,6 +465,9 @@ public:
 
     String suggestedMIMEType() const;
 
+    void overrideMIMEType(const String&);
+    String contentType() const;
+
     String contentLanguage() const { return m_contentLanguage; }
     void setContentLanguage(const String&);
 
@@ -1407,6 +1410,9 @@ private:
     String m_documentURI;
 
     String m_baseTarget;
+
+    // MIME type of the document in case it was cloned or created by XHR.
+    String m_overriddenMIMEType;
 
     std::unique_ptr<DOMImplementation> m_implementation;
 

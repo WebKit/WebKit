@@ -1283,6 +1283,11 @@ const String& DocumentLoader::responseMIMEType() const
     return m_response.mimeType();
 }
 
+const String& DocumentLoader::currentContentType() const
+{
+    return m_writer.mimeType();
+}
+
 #if PLATFORM(IOS)
 // FIXME: This method seems to violate the encapsulation of this class.
 void DocumentLoader::setResponseMIMEType(const String& responseMimeType)

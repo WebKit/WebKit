@@ -1376,6 +1376,26 @@ String Document::suggestedMIMEType() const
     return String();
 }
 
+void Document::overrideMIMEType(const String& mimeType)
+{
+    m_overriddenMIMEType = mimeType;
+}
+
+String Document::contentType() const
+{
+    if (!m_overriddenMIMEType.isNull())
+        return m_overriddenMIMEType;
+
+    if (DocumentLoader* documentLoader = loader())
+        return documentLoader->currentContentType();
+
+    String mimeType = suggestedMIMEType();
+    if (!mimeType.isNull())
+        return mimeType;
+
+    return ASCIILiteral("application/xml");
+}
+
 Node* Document::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
 {
     if (!frame() || !view())
@@ -3216,6 +3236,7 @@ void Document::cloneDataFromDocument(const Document& other)
 
     setCompatibilityMode(other.m_compatibilityMode);
     setSecurityOrigin(other.securityOrigin());
+    overrideMIMEType(other.contentType());
     setDecoder(other.decoder());
 }
 

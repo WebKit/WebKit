@@ -105,6 +105,8 @@
     [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle([Default=Undefined] optional Element element,
                                                         [Default=Undefined] optional DOMString pseudoElement);
 
+    readonly attribute DOMString contentType;
+
     // DOM Level 3 XPath (XPathEvaluator interface)
     [ObjCLegacyUnnamedParameters, RaisesException] XPathExpression createExpression([Default=Undefined] optional DOMString expression,
                                                     [Default=Undefined] optional XPathNSResolver resolver);

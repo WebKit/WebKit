@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>document.contentType</title>
+<link rel="help" href="http://dom.spec.whatwg.org/#dom-document-contenttype">
+<script src="/js-test-resources/js-test-pre.js"></script>
+<body>
+<p>
+<iframe data-mimetype="text/css" src="resources/dummy.css"></iframe>
+<iframe data-mimetype="application/x-javascript" src="resources/dummy.js"></iframe>
+<iframe data-mimetype="text/html" src="resources/dummy.html"></iframe>
+<iframe data-mimetype="text/html" src="resources/send-mime-type.php"></iframe>
+<iframe data-mimetype="text/xml" src="resources/send-mime-type.php?m=text/xml"></iframe>
+<iframe data-mimetype="text/xml" src="resources/send-mime-type.php?m=text/xml;charset=utf-8"></iframe>
+<iframe data-mimetype="text/html" src="javascript:&quot;hello world&quot;;"></iframe>
+<iframe data-mimetype="text/html" src="about:blank"></iframe>
+<iframe data-mimetype="text/plain" src="resources/dummy.txt"></iframe>
+<iframe data-mimetype="application/xml" src="resources/dummy.xml"></iframe>
+<iframe data-mimetype="image/bmp" src="resources/square20.bmp"></iframe>
+<iframe data-mimetype="image/gif" src="resources/square20.gif"></iframe>
+<iframe data-mimetype="image/jpeg" src="resources/square20.jpg"></iframe>
+<iframe data-mimetype="image/png" src="resources/square20.png"></iframe>
+</p>
+<script>
+var iframes;
+window.onload = function() {
+    iframes = document.getElementsByTagName('iframe');
+    for (var k = 0; iframes[k]; k++) {
+        shouldBeEqualToString('iframes[' + k + '].contentDocument.contentType',
+                              iframes[k].dataset.mimetype);
+        shouldBeEqualToString('iframes[' + k + '].contentDocument.cloneNode(false).contentType',
+                              iframes[k].dataset.mimetype);
+    }
+    wasPostTestScriptParsed = true;
+
+    finishJSTest();
+};
+</script>
+<body>

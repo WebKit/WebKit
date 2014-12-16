@@ -1,3 +1,44 @@
+2014-12-16  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Document.contentType implementation
+        https://bugs.webkit.org/show_bug.cgi?id=132269
+
+        Reviewed by Darin Adler.
+
+        Chromium merge from https://codereview.chromium.org/151653004
+
+        * fast/dom/Document/clone-node-expected.txt:
+        * fast/dom/Document/clone-node.html:
+        * fast/dom/HTMLDocument/clone-node-quirks-mode-expected.txt:
+        * fast/dom/HTMLDocument/clone-node-quirks-mode.html:
+        * fast/dom/document-contentType-DOMParser-expected.txt: Added.
+        * fast/dom/document-contentType-DOMParser.html: Added.
+        * fast/dom/document-contentType-createDocument-expected.txt: Added.
+        * fast/dom/document-contentType-createDocument.html: Added.
+        * fast/dom/document-contentType-data-uri-expected.txt: Added.
+        * fast/dom/document-contentType-data-uri.html: Added.
+        * fast/xsl/xslt-contentType-expected.txt: Added.
+        * fast/xsl/xslt-contentType.html: Added.
+        * http/tests/dom/document-contentType-expected.txt: Added.
+        * http/tests/dom/document-contentType-meta-expected.txt: Added.
+        * http/tests/dom/document-contentType-meta.html: Added.
+        * http/tests/dom/document-contentType-xhr-expected.txt: Added.
+        * http/tests/dom/document-contentType-xhr.html: Added.
+        * http/tests/dom/document-contentType.html: Added.
+        * http/tests/dom/resources/dummy.css: Added.
+        (body):
+        * http/tests/dom/resources/dummy.html: Added.
+        * http/tests/dom/resources/dummy.js: Added.
+        * http/tests/dom/resources/dummy.txt: Added.
+        * http/tests/dom/resources/dummy.xml: Added.
+        * http/tests/dom/resources/send-mime-type.php: Added.
+        * http/tests/dom/resources/square20.bmp: Added.
+        * http/tests/dom/resources/square20.gif: Added.
+        * http/tests/dom/resources/square20.jpg: Added.
+        * http/tests/dom/resources/square20.png: Added.
+        * resources/js-test.js:
+        (shouldBeEqualToNumber):
+
 2014-12-16  Alexey Proskuryakov  <ap@apple.com>
 
         media/track/track-language-preference.html and media/track/track-prefer-captions.html time out on Mac

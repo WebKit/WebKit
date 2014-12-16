@@ -76,7 +76,7 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
 
     RefPtr<Document> result;
     if (sourceMIMEType == "text/plain") {
-        result = Document::create(frame, sourceIsDocument ? ownerDocument->url() : URL());
+        result = Document::createXHTML(frame, sourceIsDocument ? ownerDocument->url() : URL());
         transformTextStringToXHTMLDocumentString(documentSource);
     } else
         result = DOMImplementation::createDocument(sourceMIMEType, frame, sourceIsDocument ? ownerDocument->url() : URL());

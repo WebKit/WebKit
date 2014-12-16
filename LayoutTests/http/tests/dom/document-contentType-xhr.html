@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<title>document.contentType</title>
+<link rel="help" href="http://dom.spec.whatwg.org/#dom-document-contenttype">
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+var toTest = [
+    { mimeType: "text/html", uri: "resources/send-mime-type.php?m=text/html" },
+    { mimeType: "text/xml", uri: "resources/send-mime-type.php?m=text/xml" },
+    { mimeType: "application/xml", uri: "resources/send-mime-type.php?m=application/xml" },
+    { mimeType: "text/html", uri: "resources/send-mime-type.php?m=text/html;charset=utf-8" },
+    { mimeType: "text/xml", uri: "resources/send-mime-type.php?m=text/xml;charset=utf-8" },
+    { mimeType: "application/xml", uri: "resources/send-mime-type.php?m=application/xml;charset=utf-8" }
+];
+
+function onrequestload(expectedMimeType) {
+    shouldBeEqualToNumber('xhr.status', 200);
+
+    if (xhr.responseXML)
+        shouldBeEqualToString('xhr.responseXML.contentType', expectedMimeType);
+    else
+        testFailed("Null document for mime-type " + expectedMimeType);
+
+    stepTest();
+}
+
+var xhr;
+var testCounter = 0;
+
+function stepTest() {
+    if (testCounter != 6) {
+        var test = toTest[testCounter++];
+
+        xhr = new XMLHttpRequest();
+        xhr.responseType = 'document';
+        xhr.onload = function () { onrequestload(test.mimeType); };
+        xhr.open('GET', test.uri, true);
+        xhr.send(); 
+    } else {
+        finishJSTest();
+    }
+}
+</script>
+
+<body onload="stepTest();">
+</body>

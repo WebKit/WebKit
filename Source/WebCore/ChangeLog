@@ -1,3 +1,34 @@
+2014-12-16  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Document.contentType implementation
+        https://bugs.webkit.org/show_bug.cgi?id=132269
+
+        Reviewed by Darin Adler.
+
+        Chromium merge from https://codereview.chromium.org/151653004
+
+        Tests: fast/dom/document-contentType-DOMParser.html
+               fast/dom/document-contentType-createDocument.html
+               fast/dom/document-contentType-data-uri.html
+               fast/xsl/xslt-contentType.html
+               http/tests/dom/document-contentType-meta.html
+               http/tests/dom/document-contentType-xhr.html
+               http/tests/dom/document-contentType.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::overrideMIMEType):
+        (WebCore::Document::contentType):
+        (WebCore::Document::cloneDataFromDocument):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::currentContentType):
+        * loader/DocumentLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2014-12-16  Anders Carlsson  <andersca@apple.com>
 
         Put some common code in StorageNamespaceProvider

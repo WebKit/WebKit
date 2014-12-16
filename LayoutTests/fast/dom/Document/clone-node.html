@@ -14,10 +14,12 @@ var doc = document.implementation.createDocument('', 'root', null);
 shouldBe('doc.cloneNode(false).__proto__', 'Document.prototype');
 shouldBeEqualToString('className(doc.cloneNode(false))', 'Document');
 shouldBeEqualToString('doc.cloneNode(true).documentElement.localName', 'root');
+shouldBeEqualToString('doc.cloneNode(true).contentType', 'application/xml');
 shouldBeEqualToString('document.cloneNode(true).compatMode', 'CSS1Compat');
 shouldBe('document.cloneNode(false).URL', 'document.URL');
 shouldBe('document.cloneNode(false).baseURI', 'document.baseURI');
 shouldBe('document.cloneNode(false).characterSet', 'document.characterSet');
+shouldBeEqualToString('document.cloneNode(true).contentType', 'text/html');
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
