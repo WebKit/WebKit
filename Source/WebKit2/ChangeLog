@@ -1,3 +1,31 @@
+2014-12-16  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Add a progress indicator to the preview popover
+        https://bugs.webkit.org/show_bug.cgi?id=139699
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPreviewLoading:]):
+        Wrap -[WKImmediateActionController setPreviewLoading:].
+
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _createPreviewPopoverIfNeededForURL:]):
+        Flag the preview view controller as loading before beginning the load.
+        (-[WKImmediateActionController setPreviewLoading:]):
+        Wrap -[WKPagePreviewViewController setLoading:].
+
+        * UIProcess/mac/WKPagePreviewViewController.h:
+        * UIProcess/mac/WKPagePreviewViewController.mm:
+        (-[WKPagePreviewViewController setLoading:]):
+        Toggle the progress indicator animation state.
+        (-[WKPagePreviewViewController isLoading]):
+        Accessor.
+        (-[WKPagePreviewViewController loadView]):
+        Create and center an indeterminate progress indicator that won't scale with the preview content.
+
 2014-12-16  Enrica Casucci  <enrica@apple.com>
 
         Fix iOS builders for 8.0
