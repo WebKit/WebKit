@@ -56,6 +56,7 @@
 #import "WebProtectionSpace.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKSameDocumentNavigationTypeInternal.h"
 #import <WebCore/Credential.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -619,23 +620,6 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, 
 
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
     [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:errorWithRecoveryAttempter.get()];
-}
-
-static _WKSameDocumentNavigationType toWKSameDocumentNavigationType(SameDocumentNavigationType navigationType)
-{
-    switch (navigationType) {
-    case SameDocumentNavigationAnchorNavigation:
-        return _WKSameDocumentNavigationTypeAnchorNavigation;
-    case SameDocumentNavigationSessionStatePush:
-        return _WKSameDocumentNavigationTypeSessionStatePush;
-    case SameDocumentNavigationSessionStateReplace:
-        return _WKSameDocumentNavigationTypeSessionStateReplace;
-    case SameDocumentNavigationSessionStatePop:
-        return _WKSameDocumentNavigationTypeSessionStatePop;
-    }
-
-    ASSERT_NOT_REACHED();
-    return _WKSameDocumentNavigationTypeAnchorNavigation;
 }
 
 void NavigationState::LoaderClient::didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, SameDocumentNavigationType navigationType, API::Object*)

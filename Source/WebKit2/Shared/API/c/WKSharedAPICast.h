@@ -804,6 +804,28 @@ inline WKSameDocumentNavigationType toAPI(SameDocumentNavigationType type)
     return wkType;
 }
 
+inline SameDocumentNavigationType toSameDocumentNavigationType(WKSameDocumentNavigationType wkType)
+{
+    SameDocumentNavigationType type = SameDocumentNavigationAnchorNavigation;
+
+    switch (wkType) {
+    case kWKSameDocumentNavigationAnchorNavigation:
+        type = SameDocumentNavigationAnchorNavigation;
+        break;
+    case kWKSameDocumentNavigationSessionStatePush:
+        type = SameDocumentNavigationSessionStatePush;
+        break;
+    case kWKSameDocumentNavigationSessionStateReplace:
+        type = SameDocumentNavigationSessionStateReplace;
+        break;
+    case kWKSameDocumentNavigationSessionStatePop:
+        type = SameDocumentNavigationSessionStatePop;
+        break;
+    }
+    
+    return type;
+}
+
 inline WKLayoutMilestones toWKLayoutMilestones(WebCore::LayoutMilestones milestones)
 {
     unsigned wkMilestones = 0;

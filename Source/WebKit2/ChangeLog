@@ -1,3 +1,32 @@
+2014-12-16  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKWebProcessPlugInLoadDelegate can’t tell what type of same-document navigation has happened
+        https://bugs.webkit.org/show_bug.cgi?id=139669
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/_WKSameDocumentNavigationType.h: Added. Moved the
+        _WKSameDocumentNavigationType type definition here from WKNavigationDelegatePrivate.h.
+        * Shared/API/Cocoa/_WKSameDocumentNavigationTypeInternal.h: Added.
+        (WebKit::toWKSameDocumentNavigationType): Moved from NavigationState.mm.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toSameDocumentNavigationType): Added this conversion helper.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Added #import.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::toWKSameDocumentNavigationType): Deleted.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for added headers.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h: Declared new
+        delegate method that take a navigation type parameter.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didSameDocumentNavigationForFrame): Changed to call the new delegate method, passing the
+        navigation type.
+
 2014-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.3 release.
