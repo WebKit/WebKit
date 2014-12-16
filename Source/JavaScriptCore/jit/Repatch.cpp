@@ -1224,7 +1224,7 @@ static void emitPutTransitionStub(
             structure);
 }
 
-static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     if (Options::forceICFailure())
         return GiveUpOnCache;
@@ -1235,10 +1235,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
     if (!baseValue.isCell())
         return GiveUpOnCache;
     JSCell* baseCell = baseValue.asCell();
-    
-    if (baseCell->structure(*vm)->id() != structure->id())
-        return GiveUpOnCache;
-
+    Structure* structure = baseCell->structure(*vm);
     Structure* oldStructure = structure->previousID();
     
     if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
@@ -1336,11 +1333,11 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
     return GiveUpOnCache;
 }
 
-void repatchPutByID(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+void repatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
-    if (tryCachePutByID(exec, baseValue, structure, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
+    if (tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 

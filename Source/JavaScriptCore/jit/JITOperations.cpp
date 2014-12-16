@@ -273,15 +273,14 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
     PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
-
-    Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;
+    
     baseValue.put(exec, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
     if (stubInfo->seen)
-        repatchPutByID(exec, baseValue, structure, ident, slot, *stubInfo, NotDirect);
+        repatchPutByID(exec, baseValue, ident, slot, *stubInfo, NotDirect);
     else
         stubInfo->seen = true;
 }
@@ -297,15 +296,14 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
     PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
-
-    Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;    
+    
     baseValue.put(exec, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
     if (stubInfo->seen)
-        repatchPutByID(exec, baseValue, structure, ident, slot, *stubInfo, NotDirect);
+        repatchPutByID(exec, baseValue, ident, slot, *stubInfo, NotDirect);
     else
         stubInfo->seen = true;
 }
@@ -322,14 +320,13 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
     PutPropertySlot slot(baseObject, true, exec->codeBlock()->putByIdContext());
     
-    Structure* structure = baseObject->structure(*vm);
     baseObject->putDirect(exec->vm(), ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
     if (stubInfo->seen)
-        repatchPutByID(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
+        repatchPutByID(exec, baseObject, ident, slot, *stubInfo, Direct);
     else
         stubInfo->seen = true;
 }
@@ -346,14 +343,13 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
     PutPropertySlot slot(baseObject, false, exec->codeBlock()->putByIdContext());
     
-    Structure* structure = baseObject->structure(*vm);
     baseObject->putDirect(exec->vm(), ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
     if (stubInfo->seen)
-        repatchPutByID(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
+        repatchPutByID(exec, baseObject, ident, slot, *stubInfo, Direct);
     else
         stubInfo->seen = true;
 }
