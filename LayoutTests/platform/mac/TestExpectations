@@ -1019,8 +1019,8 @@ webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlay
 webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-stream.html [ WontFix ]
 webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure ]
 webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
-webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Failure ]
-webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failure ]
+webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Timeout ]
+webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Timeout ]
 webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
 [ MountainLion ] media/video-playbackrate.html [ Pass Failure Timeout ]
 
@@ -1048,7 +1048,7 @@ webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
 webkit.org/b/112659 media/video-playing-and-pause.html [ Pass Failure ]
 webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
-webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
+webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Timeout ]
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/121803 media/video-object-fit.html [ Pass ImageOnlyFailure ]
@@ -1145,8 +1145,8 @@ webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.htm
 
 webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
 
-# Imports from platform/mac/Skipped
-media/media-document-audio-repaint.html [ Failure ]
+[ MountainLion ] media/media-document-audio-repaint.html [ Timeout ]
+[ Mavericks+ ] media/media-document-audio-repaint.html [ Failure ]
 webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
