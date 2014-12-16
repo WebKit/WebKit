@@ -1,3 +1,15 @@
+2014-12-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Immediate action popovers can get stuck open
+        https://bugs.webkit.org/show_bug.cgi?id=139709
+        <rdar://problem/19270279>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _clearImmediateActionState]):
+        Don't clear the animation controller; it breaks things and was unnecessary.
+
 2014-12-16  Tim Horton  <timothy_horton@apple.com>
 
         Disable TextIndication for Lookup immediate actions
