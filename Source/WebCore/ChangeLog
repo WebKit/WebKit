@@ -1,3 +1,14 @@
+2014-12-16  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Compiling WebCore fails because of invalid project file.
+        https://bugs.webkit.org/show_bug.cgi?id=139686
+
+        Reviewed by Alex Christensen.
+
+        A WebCore project file contains illegal characters.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2014-12-16  Gavin Barraclough  <barraclough@apple.com>
 
         Introduce PageActivityState

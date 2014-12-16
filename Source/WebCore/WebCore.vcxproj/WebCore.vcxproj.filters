@@ -15266,16 +15266,16 @@
     <ClInclude Include="..\html\canvas\EXTsRGB.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTFragDepth.h”>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTFragDepth.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\canvas\EXTFragDepth.h”>
+    <ClInclude Include="..\html\canvas\EXTFragDepth.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTBlendMinMax.h”>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTBlendMinMax.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\canvas\EXTBlendMinMax.h”>
+    <ClInclude Include="..\html\canvas\EXTBlendMinMax.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
   </ItemGroup>
