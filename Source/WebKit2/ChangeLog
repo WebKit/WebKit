@@ -1,5 +1,45 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177180. <rdar://problem/19208291>
+
+    2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
+            Move the preview popover to WKImmediateActionController
+            https://bugs.webkit.org/show_bug.cgi?id=139560
+            <rdar://problem/19208291>
+
+            Reviewed by Beth Dakin.
+
+            * Shared/API/c/WKImmediateActionTypes.h:
+            Add a link preview type.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            Pass the gesture recognizer to the WKImmediateActionController.
+
+            (-[WKView _setPreviewTitle:]):
+            Forward preview title changes to the WKImmediateActionController,
+            because that's where the preview popover lives now.
+
+            * UIProcess/mac/WKActionMenuController.h:
+            * UIProcess/mac/WKActionMenuController.mm:
+            Move WKPagePreviewViewController into its own file.
+            Move page preview popover related code to WKImmediateActionController.
+
+            * UIProcess/mac/WKImmediateActionController.h:
+            * UIProcess/mac/WKImmediateActionController.mm:
+            Compare the gesture recognizers directly instead of their views, for accuracy.
+            Move page preview popover related code in from WKActionMenuController.
+            Some of this should eventually move to WKPagePreviewViewController, but
+            for now for ease of transition we will move it here.
+
+            * UIProcess/mac/WKPagePreviewViewController.h: Added.
+            * UIProcess/mac/WKPagePreviewViewController.mm: Added.
+            * WebKit2.xcodeproj/project.pbxproj:
+            Move WKPagePreviewViewController into its own file.
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177116. <rdar://problem/19198539>
 
     2014-12-10  Beth Dakin  <bdakin@apple.com>
