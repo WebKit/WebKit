@@ -147,7 +147,7 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
             return nullptr;
 
         if (!verifyVaryingRequestHeaders(varyingRequestHeaders, request)) {
-            LOG(NetworkCache, "(NetworkProcess) varying header mistmatch\n");
+            LOG(NetworkCache, "(NetworkProcess) varying header mismatch\n");
             return nullptr;
         }
     }

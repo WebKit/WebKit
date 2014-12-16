@@ -32,9 +32,11 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/BloomFilter.h>
 #include <wtf/Deque.h>
-#include <wtf/OSObjectPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/OSObjectPtr.h>
+#endif
 
 namespace WebCore {
 class SharedBuffer;

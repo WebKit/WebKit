@@ -1,3 +1,17 @@
+2014-12-16  Antti Koivisto  <antti@apple.com>
+
+        WebKit level persistent caching
+        https://bugs.webkit.org/show_bug.cgi?id=30322
+
+        Minor cleanups based on comments by Joseph Pecoraro.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::decodeStorageEntry):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+
 2014-12-15  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         Build fix after r177301.

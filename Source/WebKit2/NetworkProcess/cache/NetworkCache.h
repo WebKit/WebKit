@@ -31,9 +31,6 @@
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
 #include <Webcore/ResourceResponse.h>
-#include <wtf/BloomFilter.h>
-#include <wtf/Deque.h>
-#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -70,10 +67,6 @@ public:
     void clear();
 
 private:
-    String fileNameForURL(const WebCore::URL&);
-    String directoryPathForCachePartition(const String&);
-    String filePathForRequest(const WebCore::ResourceRequest&);
-
     std::unique_ptr<NetworkCacheStorage> m_storage;
 };
 
