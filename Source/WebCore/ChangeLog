@@ -1,3 +1,45 @@
+2014-12-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Move Mac process suppression from WebCore to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=139705
+
+        Reviewed by Geoff Garen.
+
+        Currently PageThrottler constructs the PageActivityState, holds a copy of the ViewState,
+        and an optional UserActivity.
+
+        Instead, still construct the PageActivityState but just pass this out via the Page to WebPage.
+        Logic From PageThrottler::updateUserActivity merged into WebPage::updateUserActivity.
+
+        * WebCore.exp.in:
+            - removed createUserActivity.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::setPageActivityState):
+            - added to propagate PageActivityState to WebPage.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+            - PageThrottler constructor now takes a Page&.
+        (WebCore::Page::setViewState):
+            - no longer necessary to pass this to PageThrottler.
+        (WebCore::Page::setPageActivityState):
+            - added to propagate PageActivityState to WebPage.
+        (WebCore::Page::enablePageThrottler): Deleted.
+            - PageThrottler no longer has a UserActivity.
+        * page/Page.h:
+        (WebCore::Page::pageThrottler):
+            - added setPageActivityState, removed enablePageThrottler.
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - removed m_viewState, added m_page.
+        (WebCore::PageThrottler::setActivityFlag):
+            - propagate PageActivityState via Page to WebPage.
+        (WebCore::PageThrottler::createUserActivity): Deleted.
+        (WebCore::PageThrottler::updateUserActivity): Deleted.
+        (WebCore::PageThrottler::setViewState): Deleted.
+            - removed; PageThrottler no longer has a PageThrottler or UserActivity.
+        * page/PageThrottler.h:
+            - removed createUserActivity, setViewState, m_viewState, m_activity; added m_page.
+
 2014-12-16  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r177375; explicitly cast to NSUInteger.

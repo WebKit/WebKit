@@ -440,7 +440,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setViewState(m_viewState);
     if (!isVisible())
         m_page->setIsPrerender();
-    m_page->enablePageThrottler();
+    updateUserActivity();
 
     updateIsInWindow(true);
 
@@ -512,10 +512,20 @@ void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
         setLayerHostingMode(static_cast<unsigned>(parameters.layerHostingMode));
 }
 
+void WebPage::setPageActivityState(PageActivityState::Flags activityState)
+{
+    PageActivityState::Flags changed = m_activityState ^ activityState;
+    m_activityState = activityState;
+
+    if (changed)
+        updateUserActivity();
+}
+
 void WebPage::updateUserActivity()
 {
-    // If process suppression is disabled, then start the activity to prevent AppNap.
-    if (!m_processSuppressionEnabled)
+    // Start the activity to prevent AppNap if the page activity is in progress,
+    // the page is visible and non-idle, or process suppression is disabled.
+    if (m_activityState || !(m_viewState & ViewState::IsVisuallyIdle) || !m_processSuppressionEnabled)
         m_userActivity.start();
     else
         m_userActivity.stop();
@@ -2328,6 +2338,9 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
     ViewState::Flags changed = m_viewState ^ viewState;
     m_viewState = viewState;
 
+    if (changed)
+        updateUserActivity();
+
     m_page->setViewState(viewState);
     for (auto* pluginView : m_pluginViews)
         pluginView->viewStateDidChange(changed);
@@ -2888,8 +2901,11 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setServiceControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey()));
 #endif
 
-    m_processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
-    updateUserActivity();
+    bool processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
+    if (m_processSuppressionEnabled != processSuppressionEnabled) {
+        m_processSuppressionEnabled = processSuppressionEnabled;
+        updateUserActivity();
+    }
 
     platformPreferencesDidChange(store);
 

@@ -31,6 +31,7 @@
 #include "HTMLMediaElement.h"
 #include "HostWindow.h"
 #include "LayerFlushThrottleState.h"
+#include "PageThrottler.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RenderEmbeddedObject.h"
@@ -432,6 +433,7 @@ public:
     virtual bool shouldUseTiledBackingForFrameView(const FrameView*) const { return false; }
 
     virtual void isPlayingAudioDidChange(bool) { }
+    virtual void setPageActivityState(PageActivityState::Flags) { }
 
 #if ENABLE(SUBTLE_CRYPTO)
     virtual bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }

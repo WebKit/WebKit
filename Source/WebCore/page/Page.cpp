@@ -196,7 +196,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_alternativeTextClient(pageConfiguration.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_pageThrottler(m_viewState)
+    , m_pageThrottler(*this)
     , m_consoleClient(std::make_unique<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))
@@ -1260,11 +1260,6 @@ void Page::resumeAnimatingImages()
         view->resumeVisibleImageAnimationsIncludingSubframes();
 }
 
-void Page::enablePageThrottler()
-{
-    m_pageThrottler.createUserActivity();
-}
-
 void Page::setViewState(ViewState::Flags viewState)
 {
     ViewState::Flags changed = m_viewState ^ viewState;
@@ -1275,7 +1270,6 @@ void Page::setViewState(ViewState::Flags viewState)
 
     m_viewState = viewState;
     m_focusController->setViewState(viewState);
-    m_pageThrottler.setViewState(viewState);
 
     if (changed & ViewState::IsVisible)
         setIsVisibleInternal(viewState & ViewState::IsVisible);
@@ -1286,6 +1280,11 @@ void Page::setViewState(ViewState::Flags viewState)
 
     for (auto* observer : m_viewStateChangeObservers)
         observer->viewStateDidChange(oldViewState, m_viewState);
+}
+
+void Page::setPageActivityState(PageActivityState::Flags activityState)
+{
+    chrome().client().setPageActivityState(activityState);
 }
 
 void Page::setIsVisible(bool isVisible)

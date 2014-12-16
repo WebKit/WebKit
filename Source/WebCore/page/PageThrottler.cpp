@@ -26,22 +26,17 @@
 #include "config.h"
 #include "PageThrottler.h"
 
+#include "Page.h"
+
 namespace WebCore {
 
-PageThrottler::PageThrottler(ViewState::Flags viewState)
-    : m_viewState(viewState)
+PageThrottler::PageThrottler(Page& page)
+    : m_page(page)
     , m_userInputHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::UserInputActivity, state == HysteresisState::Started); })
     , m_audiblePluginHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::AudiblePlugin, state == HysteresisState::Started); })
     , m_mediaActivityCounter([this]() { setActivityFlag(PageActivityState::MediaActivity, m_mediaActivityCounter.value()); })
     , m_pageLoadActivityCounter([this]() { setActivityFlag(PageActivityState::PageLoadActivity, m_pageLoadActivityCounter.value()); })
 {
-}
-
-void PageThrottler::createUserActivity()
-{
-    ASSERT(!m_activity);
-    m_activity = std::make_unique<UserActivity>("Page is active.");
-    updateUserActivity();
 }
 
 PageActivityAssertionToken PageThrottler::mediaActivityToken()
@@ -52,18 +47,6 @@ PageActivityAssertionToken PageThrottler::mediaActivityToken()
 PageActivityAssertionToken PageThrottler::pageLoadActivityToken()
 {
     return m_pageLoadActivityCounter.count();
-}
-
-void PageThrottler::updateUserActivity()
-{
-    if (!m_activity)
-        return;
-
-    // Allow throttling if there is no page activity, and the page is visually idle.
-    if (!m_activityState && m_viewState & ViewState::IsVisuallyIdle)
-        m_activity->stop();
-    else
-        m_activity->start();
 }
 
 void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)
@@ -78,16 +61,7 @@ void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)
         return;
     m_activityState = activityState;
 
-    updateUserActivity();
-}
-
-void PageThrottler::setViewState(ViewState::Flags viewState)
-{
-    ViewState::Flags changed = m_viewState ^ viewState;
-    m_viewState = viewState;
-
-    if (changed & ViewState::IsVisuallyIdle)
-        updateUserActivity();
+    m_page.setPageActivityState(m_activityState);
 }
 
 }

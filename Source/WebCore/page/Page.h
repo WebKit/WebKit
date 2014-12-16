@@ -291,6 +291,7 @@ public:
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setViewState(ViewState::Flags);
+    void setPageActivityState(PageActivityState::Flags);
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();
     bool isVisible() const { return m_viewState & ViewState::IsVisible; }
@@ -382,7 +383,6 @@ public:
     void resetSeenMediaEngines();
 
     PageThrottler& pageThrottler() { return m_pageThrottler; }
-    WEBCORE_EXPORT void enablePageThrottler();
 
     PageConsoleClient& console() { return *m_consoleClient; }
 

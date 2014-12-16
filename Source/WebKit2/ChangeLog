@@ -1,3 +1,35 @@
+2014-12-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Move Mac process suppression from WebCore to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=139705
+
+        Reviewed by Geoff Garen.
+
+        Currently PageThrottler constructs the PageActivityState, holds a copy of the ViewState,
+        and an optional UserActivity.
+
+        Instead, still construct the PageActivityState but just pass this out via the Page to WebPage.
+        Logic From PageThrottler::updateUserActivity merged into WebPage::updateUserActivity.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setPageActivityState):
+            - added to propagate PageActivityState to WebPage.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+            - added setPageActivityState to propagate PageActivityState to WebPage.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - calls to updateUserActivity.
+        (WebKit::WebPage::setPageActivityState):
+            - calls to updateUserActivity.
+        (WebKit::WebPage::updateUserActivity):
+            - incorporate logic from PageThrottler::updateUserActivity.
+        (WebKit::WebPage::setViewState):
+            - calls to updateUserActivity.
+        (WebKit::WebPage::updatePreferences):
+            - calls to updateUserActivity.
+        * WebProcess/WebPage/WebPage.h:
+            - added setPageActivityState, m_activityState.
+
 2014-12-16  Anders Carlsson  <andersca@apple.com>
 
         More StorageManager modernization

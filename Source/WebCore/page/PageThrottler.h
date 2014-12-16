@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class Page;
+
 typedef RefPtr<RefCounter::Count> PageActivityAssertionToken;
 
 struct PageActivityState {
@@ -53,10 +55,7 @@ struct PageActivityState {
 class PageThrottler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageThrottler(ViewState::Flags);
-
-    void createUserActivity();
-    void setViewState(ViewState::Flags);
+    PageThrottler(Page&);
 
     void didReceiveUserInput() { m_userInputHysteresis.impulse(); }
     void pluginDidEvaluateWhileAudioIsPlaying() { m_audiblePluginHysteresis.impulse(); }
@@ -64,16 +63,14 @@ public:
     PageActivityAssertionToken pageLoadActivityToken();
 
 private:
-    void updateUserActivity();
     void setActivityFlag(PageActivityState::Flags, bool);
 
-    ViewState::Flags m_viewState;
+    Page& m_page;
     PageActivityState::Flags m_activityState { PageActivityState::NoFlags };
     HysteresisActivity m_userInputHysteresis;
     HysteresisActivity m_audiblePluginHysteresis;
     RefCounter m_mediaActivityCounter;
     RefCounter m_pageLoadActivityCounter;
-    std::unique_ptr<UserActivity> m_activity;
 };
 
 }

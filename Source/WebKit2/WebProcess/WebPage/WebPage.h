@@ -861,6 +861,8 @@ public:
     void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
     bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
 
+    void setPageActivityState(WebCore::PageActivityState::Flags);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1315,6 +1317,7 @@ private:
     bool m_useAsyncScrolling;
 
     WebCore::ViewState::Flags m_viewState;
+    WebCore::PageActivityState::Flags m_activityState;
 
     bool m_processSuppressionEnabled;
     UserActivity m_userActivity;
