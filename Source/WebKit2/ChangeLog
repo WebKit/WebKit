@@ -1,5 +1,52 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177323. <rdar://problem/19198414>
+
+    2014-12-15  Beth Dakin  <bdakin@apple.com>
+
+            Make lookup an immediate action instead of an action menu item
+            https://bugs.webkit.org/show_bug.cgi?id=139661
+            -and corresponding-
+            rdar://problem/19198414
+
+            Reviewed by Tim Horton.
+
+            New type.
+            * Shared/API/c/WKImmediateActionTypes.h:
+
+            ActionMenuHitTestResult now includes a DictionaryPopupInfo.
+            * Shared/mac/ActionMenuHitTestResult.h:
+            * Shared/mac/ActionMenuHitTestResult.mm:
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+
+            Remove all lookup menu items.
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController _defaultMenuItemsForText]):
+            (-[WKActionMenuController _defaultMenuItemsForEditableText]):
+            (-[WKActionMenuController _defaultMenuItemsForEditableTextWithSuggestions]):
+            (-[WKActionMenuController _createActionMenuItemForTag:]):
+            (-[WKActionMenuController _lookupText:]): Deleted.
+
+            Set the defaultAnimationController to the lookup-provided animation controller 
+            when appropriate.
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _defaultAnimationController]):
+            (-[WKImmediateActionController _animationControllerForText]):
+
+            Re-factor performDictionaryLookupForRange() so that most of the work is done in a 
+            new function called dictionaryPopupInfoForRange(). This was that code can be used 
+            for both performing a dictionary lookup and just getting the DictionaryPopupInfo 
+            for the ActionMenuHitTest.
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::dictionaryPopupInfoForRange):
+            (WebKit::WebPage::performDictionaryLookupForRange):
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            (WebKit::WebPage::lookupTextAtLocation):
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177303. <rdar://problem/19198539>
 
     2014-12-15  Timothy Horton  <timothy_horton@apple.com>
