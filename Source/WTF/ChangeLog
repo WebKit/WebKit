@@ -1,3 +1,16 @@
+2014-12-16  Anders Carlsson  <andersca@apple.com>
+
+        RefPtr::copyRef should be const
+        https://bugs.webkit.org/show_bug.cgi?id=139689
+
+        Reviewed by Andreas Kling.
+
+        copyRef() doesn't modify the original object so it should be const.
+        Also, add a && qualified overload and mark it deleted so that calls to copyRef() where
+        the object is an rvalue will fail to compile.
+
+        * wtf/RefPtr.h:
+
 2014-12-15  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Add feature counting support
