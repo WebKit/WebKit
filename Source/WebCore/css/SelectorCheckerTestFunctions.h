@@ -121,13 +121,24 @@ ALWAYS_INLINE bool isWindowInactive(const Element* element)
 }
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
+inline bool equalIgnoringASCIICase(const String& a, const String& b)
+{
+    if (a.length() != b.length()) 
+        return false;
+    for (size_t i = 0; i < a.length(); ++i) {
+        if (toASCIILower(a[i]) != toASCIILower(b[i]))
+            return false;
+    }
+    return true;
+}
+
 inline bool containslanguageSubtagMatchingRange(const Vector<String>& languageSubtags, const String& range, size_t& position)
 {
     for (size_t languageSubtagIndex = position; languageSubtagIndex < languageSubtags.size(); ++languageSubtagIndex) {
         const String& currentLanguageSubtag = languageSubtags[languageSubtagIndex];
-        if (currentLanguageSubtag.length() == 1)
+        if (currentLanguageSubtag.length() == 1 && range != "*")
             return false;
-        if (equalIgnoringCase(range, currentLanguageSubtag)) {
+        if (equalIgnoringASCIICase(range, currentLanguageSubtag) || range == "*") {
             position = languageSubtagIndex + 1;
             return true;
         }
@@ -158,7 +169,10 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicSt
     language.string().split('-', true, languageSubtags);
 
     for (const AtomicString& range : ranges) {
-        if (equalIgnoringCase(language, range) && !language.contains('-'))
+        if (range == "*")
+            return true;
+
+        if (equalIgnoringASCIICase(language, range) && !language.contains('-'))
             return true;
 
         range.string().split('-', true, rangeSubtags);
@@ -166,7 +180,8 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicSt
         if (rangeSubtags.size() > languageSubtags.size()) 
             continue;
 
-        if (!equalIgnoringCase(rangeSubtags.first(), languageSubtags.first())) 
+        const String& firstRangeSubtag = rangeSubtags.first();
+        if (!equalIgnoringASCIICase(firstRangeSubtag, languageSubtags.first()) && firstRangeSubtag != "*") 
             continue;
 
         size_t lastMatchedLanguageSubtagIndex = 1;

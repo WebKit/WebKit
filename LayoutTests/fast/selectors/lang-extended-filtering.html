@@ -37,8 +37,26 @@
     <div lang="cocoa-1-bar"></div>
     <div lang="cocoa-a-bar"></div>
 
+    <div lang="a"></div>
+    <div lang="a-fr-lang"></div>
+    <div lang="b-fr-lang"></div>
+
+    <div lang="de-CH"></div>
+    <div lang="it-CH"></div>
+    <div lang="fr-CH"></div>
+    <div lang="rm-CH"></div>
+    <div lang="es-CH"></div>
+
+    <div lang="es1-KK-aa-bb-cc-dd"></div>
+    <div lang="es2-KL-aa-bb-cc-dd"></div>
+    <div lang="es3-KM-aa-bb-cc-dd"></div>
+
+    <div lang="fooÉ"></div>
+    <div lang="foöÉ-bÁr"></div>
+    <div lang="foöÉbÁr"></div>
+
     <script>
-    description('Verify selector specifying extended filetring of :lang() pseudo class');
+    description('Verify selector specifying extended filtering of :lang() pseudo class');
 
     shouldBe('document.querySelectorAll(":lang(en)").length', '3');
     shouldBe('document.querySelectorAll(":lang(en-)").length', '2');
@@ -138,9 +156,87 @@
 
     debug('');
 
+    shouldBe('document.querySelectorAll(":lang(\\\\*)").length', '35');
+    shouldBe('document.querySelectorAll(":lang(*-CH)").length', '5');
+
+    debug('');  
+
+    shouldBe('document.querySelectorAll(":lang(a)").length', '2');
+    shouldBe('document.querySelectorAll(":lang(a-\\\\*)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(*-fr-\\\\*)").length', '2');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-lang)").length', '2');   
+
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-aa-bb-cc-dd)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-bb-cc-dd)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-\\\\*-cc-dd)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-\\\\*-\\\\*-dd)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-\\\\*-\\\\*-\\\\*)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-aa-\\\\*-cc-\\\\*)").length', '3');
+    shouldBe('document.querySelectorAll(":lang(*-\\\\*-\\\\*-bb-\\\\*)").length', '3');
+
+    shouldBe('document.querySelectorAll(":lang(fooÉ)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(fOOÉ)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(FoOÉ)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(FOOÉ)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(fooé)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FOOé)").length', '0');
+
+    shouldBe('document.querySelectorAll(":lang(foöÉ-bÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(FoöÉ-bÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-bÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(FOòÉ-bÁr)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FOòę-bÁr)").length', '0');
+
+    shouldBe('document.querySelectorAll(":lang(foöÉ-\\\\*)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(\\\\*-bÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(\\\\*-BÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(\\\\*-BÁR)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(\\\\*-Bár)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(\\\\*-báR)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(\\\\*-BáR)").length', '0');
+
+    debug('');
+
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-BÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-BÁ)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-B)").length', '0');
+
+    shouldBe('document.querySelectorAll(":lang(f-BÁr)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fO-BÁr)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fOö-BÁr)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-BÁr1)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-BÁr12)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FOöÉ-BÁr123)").length', '0');
+
+    shouldBe('document.querySelectorAll(":lang(F-Xe)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(Fr-Xe)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xe)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xen)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xeno)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xenom)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xenomo)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xenomor)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xenomorp)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fr-Xènömòrph)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(FR-XENOMORPH)").length', '1');
+
+    shouldBe('document.querySelectorAll(":lang(foöÉbÁr)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(foöÉbÁ)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(foöÉb)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(foöÉ)").length', '1');
+    shouldBe('document.querySelectorAll(":lang(foö)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(fo)").length', '0');
+    shouldBe('document.querySelectorAll(":lang(f)").length', '0');
+
+    debug('');
+
+    shouldThrow('document.querySelectorAll(":lang(*)").length');
+    shouldThrow('document.querySelectorAll(":lang(*foöÉ)").length');
     shouldThrow('document.querySelectorAll(":lang(--en--)").length');
     shouldThrow('document.querySelectorAll(":lang(---en---)").length');
     shouldThrow('document.querySelectorAll(":lang(en us- de- fr-).length")');
+    shouldThrow('document.querySelectorAll(":lang(-\\\\* \\\\*-)").length');
+
     </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>

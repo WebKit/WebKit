@@ -1,4 +1,4 @@
-Verify selector specifying extended filetring of :lang() pseudo class
+Verify selector specifying extended filtering of :lang() pseudo class
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -79,9 +79,73 @@ PASS document.querySelectorAll(":lang(id---, id----)").length is 0
 PASS document.querySelectorAll(":lang(tic-tac-toe)").length is 1
 PASS document.querySelectorAll(":lang(tic-toe-tac)").length is 0
 
+PASS document.querySelectorAll(":lang(\\*)").length is 35
+PASS document.querySelectorAll(":lang(*-CH)").length is 5
+
+PASS document.querySelectorAll(":lang(a)").length is 2
+PASS document.querySelectorAll(":lang(a-\\*)").length is 1
+PASS document.querySelectorAll(":lang(*-fr-\\*)").length is 2
+PASS document.querySelectorAll(":lang(*-\\*-lang)").length is 2
+PASS document.querySelectorAll(":lang(*-\\*-aa-bb-cc-dd)").length is 3
+PASS document.querySelectorAll(":lang(*-\\*-\\*-bb-cc-dd)").length is 3
+PASS document.querySelectorAll(":lang(*-\\*-\\*-\\*-cc-dd)").length is 3
+PASS document.querySelectorAll(":lang(*-\\*-\\*-\\*-\\*-dd)").length is 3
+PASS document.querySelectorAll(":lang(*-\\*-\\*-\\*-\\*-\\*)").length is 3
+PASS document.querySelectorAll(":lang(*-\\*-aa-\\*-cc-\\*)").length is 3
+PASS document.querySelectorAll(":lang(*-\\*-\\*-bb-\\*)").length is 3
+PASS document.querySelectorAll(":lang(fooÃ‰)").length is 1
+PASS document.querySelectorAll(":lang(fOOÃ‰)").length is 1
+PASS document.querySelectorAll(":lang(FoOÃ‰)").length is 1
+PASS document.querySelectorAll(":lang(FOOÃ‰)").length is 1
+PASS document.querySelectorAll(":lang(fooÃ©)").length is 0
+PASS document.querySelectorAll(":lang(FOOÃ©)").length is 0
+PASS document.querySelectorAll(":lang(foÃ¶Ã‰-bÃr)").length is 1
+PASS document.querySelectorAll(":lang(FoÃ¶Ã‰-bÃr)").length is 1
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-bÃr)").length is 1
+PASS document.querySelectorAll(":lang(FOÃ²Ã‰-bÃr)").length is 0
+PASS document.querySelectorAll(":lang(FOÃ²Ä™-bÃr)").length is 0
+PASS document.querySelectorAll(":lang(foÃ¶Ã‰-\\*)").length is 1
+PASS document.querySelectorAll(":lang(\\*-bÃr)").length is 1
+PASS document.querySelectorAll(":lang(\\*-BÃr)").length is 1
+PASS document.querySelectorAll(":lang(\\*-BÃR)").length is 1
+PASS document.querySelectorAll(":lang(\\*-BÃ¡r)").length is 0
+PASS document.querySelectorAll(":lang(\\*-bÃ¡R)").length is 0
+PASS document.querySelectorAll(":lang(\\*-BÃ¡R)").length is 0
+
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-BÃr)").length is 1
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-BÃ)").length is 0
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-B)").length is 0
+PASS document.querySelectorAll(":lang(f-BÃr)").length is 0
+PASS document.querySelectorAll(":lang(fO-BÃr)").length is 0
+PASS document.querySelectorAll(":lang(fOÃ¶-BÃr)").length is 0
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-BÃr1)").length is 0
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-BÃr12)").length is 0
+PASS document.querySelectorAll(":lang(FOÃ¶Ã‰-BÃr123)").length is 0
+PASS document.querySelectorAll(":lang(F-Xe)").length is 0
+PASS document.querySelectorAll(":lang(Fr-Xe)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xe)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xen)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xeno)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xenom)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xenomo)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xenomor)").length is 0
+PASS document.querySelectorAll(":lang(fr-Xenomorp)").length is 0
+PASS document.querySelectorAll(":lang(fr-XÃ¨nÃ¶mÃ²rph)").length is 0
+PASS document.querySelectorAll(":lang(FR-XENOMORPH)").length is 1
+PASS document.querySelectorAll(":lang(foÃ¶Ã‰bÃr)").length is 1
+PASS document.querySelectorAll(":lang(foÃ¶Ã‰bÃ)").length is 0
+PASS document.querySelectorAll(":lang(foÃ¶Ã‰b)").length is 0
+PASS document.querySelectorAll(":lang(foÃ¶Ã‰)").length is 1
+PASS document.querySelectorAll(":lang(foÃ¶)").length is 0
+PASS document.querySelectorAll(":lang(fo)").length is 0
+PASS document.querySelectorAll(":lang(f)").length is 0
+
+PASS document.querySelectorAll(":lang(*)").length threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang(*foÃ¶Ã‰)").length threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.querySelectorAll(":lang(--en--)").length threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.querySelectorAll(":lang(---en---)").length threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.querySelectorAll(":lang(en us- de- fr-).length") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelectorAll(":lang(-\\* \\*-)").length threw exception Error: SyntaxError: DOM Exception 12.
 PASS successfullyParsed is true
 
 TEST COMPLETE

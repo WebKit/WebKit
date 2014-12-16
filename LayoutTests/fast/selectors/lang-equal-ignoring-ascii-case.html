@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="a" lang="aà"></div>
+    <div id="c" lang="cč"></div>
+    <div id="e" lang="eê"></div>
+    <div id="i" lang="iį"></div>
+    <div id="u" lang="uû"></div>
+    <div id="o" lang="oø"></div>
+<script>
+description('Verify :lang()\'s equal ignoring ascii case');
+
+shouldBe("document.querySelector(':lang(Aà)')", "document.getElementById('a')");
+shouldBeNull("document.querySelector(':lang(aÀ)')");
+shouldBeNull("document.querySelector(':lang(AÀ)')");
+
+shouldBe("document.querySelector(':lang(Cč)')", "document.getElementById('c')");
+shouldBeNull("document.querySelector(':lang(cČ)')");
+shouldBeNull("document.querySelector(':lang(CČ)')");
+
+shouldBe("document.querySelector(':lang(eê)')", "document.getElementById('e')");
+shouldBeNull("document.querySelector(':lang(eÊ)')");
+shouldBeNull("document.querySelector(':lang(EÊ)')");
+
+shouldBe("document.querySelector(':lang(Iį)')", "document.getElementById('i')");
+shouldBeNull("document.querySelector(':lang(iĮ)')");
+shouldBeNull("document.querySelector(':lang(IĮ)')");
+
+shouldBe("document.querySelector(':lang(uû)')", "document.getElementById('u')");
+shouldBeNull("document.querySelector(':lang(uÛ)')");
+shouldBeNull("document.querySelector(':lang(UÛ)')");
+
+shouldBe("document.querySelector(':lang(oø)')", "document.getElementById('o')");
+shouldBeNull("document.querySelector(':lang(oØ)')");
+shouldBeNull("document.querySelector(':lang(OØ)')");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
