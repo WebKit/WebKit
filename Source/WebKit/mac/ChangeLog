@@ -1,5 +1,17 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177326. <rdar://problem/19198414>
+
+    2014-12-15  Beth Dakin  <bdakin@apple.com>
+
+            Speculative build fix.
+
+            * WebView/WebView.mm:
+            (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+            * WebView/WebViewInternal.h:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177323. <rdar://problem/19198414>
 
     2014-12-15  Beth Dakin  <bdakin@apple.com>
