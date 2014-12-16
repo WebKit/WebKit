@@ -1,3 +1,18 @@
+2014-12-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CSSStyleDeclarationTextEditor fails to update if computed properties changed from empty to non-empty
+        https://bugs.webkit.org/show_bug.cgi?id=139610
+
+        Reviewed by Timothy Hatcher.
+
+        The CSSStyleDeclarationTextEditor for Computed Style Properties always has
+        empty DOMNodeStyles text. However we would not reset contents if properties
+        changed and the actualy content was empty. So once empty, we could never
+        recover. In fact, we should always refresh for Computed Styles.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._propertiesChanged):
+
 2014-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Hide Compositing Borders Button if backend returns an error that it is unsupported

@@ -726,7 +726,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             return;
 
         // Reset the content if the text is different and we are not focused.
-        if (!this.focused && this._style.text !== this._formattedContent()) {
+        if (!this.focused && (!this._style.text || this._style.text !== this._formattedContent())) {
             this._resetContent();
             return;
         }
