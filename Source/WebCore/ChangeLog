@@ -1,5 +1,193 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177303. <rdar://problem/19198539>
+
+    2014-12-15  Timothy Horton  <timothy_horton@apple.com>
+
+            Implement Data Detectors immediate actions for WebKit2
+            https://bugs.webkit.org/show_bug.cgi?id=139617
+            <rdar://problem/19198539>
+
+            Reviewed by Beth Dakin.
+
+            * platform/spi/mac/DataDetectorsSPI.h:
+            Add some new SPI.
+
+    2014-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r168217): Images are cropped out during animation at jetblue.com
+            https://bugs.webkit.org/show_bug.cgi?id=136410
+            rdar://problem/18188533
+
+            Reviewed by Dean Jackson.
+            
+            During GraphicsLayer flushing, for tiled layers we can compute a visible rect using
+            the current state of an animation, which is obtained via the AnimationController.
+            If that animation was running in a subframe, AnimationController could use a stale
+            beginAnimationUpdateTime since no-one called its beginAnimationUpdate(). That
+            resulted in an incorrect computation of the visible rect, resulting in missing tiles.
+            
+            There are two parts to this fix. First, add an assertion that beginAnimationUpdateTime()
+            is being called inside an animation update block. This required moving m_beginAnimationUpdateCount
+            into AnimationControllerPrivate, and changes to endAnimationUpdate().
+            
+            The second is adding a AnimationUpdateBlock to getAnimatedStyleForRenderer(), which
+            can be called outside of style resolution. We also need some in other API functions.
+            
+            Testing revealed that layout can call via layoutOverflowRectForPropagation(), suggesting
+            that we should have an animation batch inside FrameView::layout(). In addition, a single
+            resolveStyle/layout should use the same animationBeginTime, so we add a batch to 
+            updateLayoutAndStyleIfNeededRecursive().
+            
+            Identical to the patch that was rolled out in r177269 with the addition of a 
+            Ref<Frame> protector(m_frame) in AnimationControllerPrivate::animationTimerFired()
+            that ensures that the AnimationControllerPrivate is kept alive for the scope of
+            the AnimationPrivateUpdateBlock, when a transitionEnd event destroys an iframe.
+            
+            No test because it's timing-dependent. Existing tests exercise the new assertion.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::computeRenderStyleForProperty):
+            * page/FrameView.cpp:
+            (WebCore::FrameView::layout):
+            (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+            * page/animation/AnimationController.cpp:
+            (WebCore::AnimationPrivateUpdateBlock::AnimationPrivateUpdateBlock):
+            (WebCore::AnimationPrivateUpdateBlock::~AnimationPrivateUpdateBlock):
+            (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+            (WebCore::AnimationControllerPrivate::animationTimerFired):
+            (WebCore::AnimationControllerPrivate::suspendAnimationsForDocument):
+            (WebCore::AnimationControllerPrivate::resumeAnimationsForDocument):
+            (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+            (WebCore::AnimationControllerPrivate::beginAnimationUpdate):
+            (WebCore::AnimationControllerPrivate::endAnimationUpdate):
+            (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+            (WebCore::AnimationController::AnimationController):
+            (WebCore::AnimationController::notifyAnimationStarted):
+            (WebCore::AnimationController::pauseAnimationAtTime):
+            (WebCore::AnimationController::pauseTransitionAtTime):
+            (WebCore::AnimationController::resumeAnimationsForDocument):
+            (WebCore::AnimationController::startAnimationsIfNotSuspended):
+            (WebCore::AnimationController::beginAnimationUpdate):
+            (WebCore::AnimationController::endAnimationUpdate):
+            * page/animation/AnimationController.h:
+            * page/animation/AnimationControllerPrivate.h:
+
+    2014-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r168217): Images are cropped out during animation at jetblue.com
+            https://bugs.webkit.org/show_bug.cgi?id=136410
+
+            Reviewed by Dean Jackson.
+
+            We were hitting the new assertion under Page::setPageScaleFactor(), which
+            calls recalcStyle(), so move the AnimationUpdateBlock from updateStyleIfNeeded()
+            to recalcStyle().
+
+            * dom/Document.cpp:
+            (WebCore::Document::recalcStyle):
+            (WebCore::Document::updateStyleIfNeeded):
+
+    2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Addressing post-review comments in r177035
+            https://bugs.webkit.org/show_bug.cgi?id=139557
+
+            Reviewed by Darin Adler.
+
+            This patch deletes the helper functions rendererBoundingBox() and rendererAnchorRect() and
+            migrates callers to using renderers directly.
+
+            It also improves the comment in RenderElement.h regarding RenderElement::anchorRect().
+
+            No new tests because this is simply refactoring.
+
+            * WebCore.exp.in: Delete exported symbol for rendererBoundingBox()
+            * accessibility/AccessibilitySlider.cpp:
+            (WebCore::AccessibilitySliderThumb::elementRect): Migrate off rendererBoundingBox()
+            * dom/ContainerNode.cpp:
+            (WebCore::rendererAnchorRect): Deleted.
+            * dom/ContainerNode.h:
+            * dom/Node.cpp:
+            (WebCore::rendererBoundingBox): Deleted.
+            * dom/Node.h:
+            * html/ColorInputType.cpp:
+            (WebCore::ColorInputType::elementRectRelativeToRootView): Migrate off rendererBoundingBox().
+            * html/HTMLInputElement.cpp:
+            (WebCore::HTMLInputElement::setupDateTimeChooserParameters): Ditto.
+            * html/ValidationMessage.cpp:
+            (WebCore::ValidationMessage::buildBubbleTree): Ditto.
+            * page/FrameView.cpp:
+            (WebCore::FrameView::scrollElementToRect): Migrate off rendererAnchorRect().
+            (WebCore::FrameView::scrollToAnchor): Ditto.
+            * page/SpatialNavigation.cpp:
+            (WebCore::nodeRectInAbsoluteCoordinates): Migrate off rendererBoundingBox().
+            * rendering/RenderElement.h:
+
+    2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Delete Notation because we don't use it
+            https://bugs.webkit.org/show_bug.cgi?id=139171
+
+            Reviewed by Kent Tamura.
+
+            No tests because this is un-exposing something that never gets instantiated.
+
+            * CMakeLists.txt:
+            * DerivedSources.cpp:
+            * DerivedSources.make:
+            * WebCore.exp.in:
+            * WebCore.order:
+            * WebCore.vcxproj/WebCore.vcxproj:
+            * WebCore.vcxproj/WebCore.vcxproj.filters:
+            * WebCore.xcodeproj/project.pbxproj:
+            * bindings/gobject/WebKitDOMNodeFilter.h:
+            * bindings/gobject/WebKitDOMNodeFilter.symbols:
+            * bindings/gobject/WebKitDOMPrivate.cpp:
+            (WebKit::wrap):
+            * bindings/gobject/webkitdom.symbols:
+            * bindings/js/JSNodeCustom.cpp:
+            (WebCore::createWrapperInline):
+            * bindings/objc/DOM.mm:
+            (kitClass):
+            * bindings/objc/DOMCore.h:
+            * bindings/objc/PublicDOMInterfaces.h:
+            * dom/DOMAllInOne.cpp:
+            * dom/Document.cpp:
+            (WebCore::Document::importNode):
+            (WebCore::Document::adoptNode):
+            (WebCore::Document::childTypeAllowed):
+            (WebCore::Document::canReplaceChild):
+            * dom/Node.cpp:
+            (WebCore::Node::dumpStatistics):
+            (WebCore::Node::isDefaultNamespace):
+            (WebCore::Node::lookupPrefix):
+            (WebCore::Node::lookupNamespaceURI):
+            (WebCore::appendTextContent):
+            (WebCore::Node::setTextContent):
+            * dom/Node.h:
+            * dom/Node.idl:
+            * dom/NodeFilter.h:
+            * dom/NodeFilter.idl:
+            * dom/Notation.cpp: Removed.
+            * dom/Notation.h: Removed.
+            * dom/Notation.idl: Removed.
+            * dom/Range.cpp:
+            (WebCore::lengthOfContentsInNode):
+            (WebCore::Range::processContentsBetweenOffsets):
+            (WebCore::Range::insertNode):
+            (WebCore::Range::checkNodeWOffset):
+            (WebCore::Range::checkNodeBA):
+            (WebCore::Range::selectNode):
+            (WebCore::Range::selectNodeContents):
+            (WebCore::Range::surroundContents):
+            * editing/MarkupAccumulator.cpp:
+            (WebCore::MarkupAccumulator::appendStartMarkup):
+            * xml/XPathUtil.cpp:
+            (WebCore::XPath::isValidContextNode):
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177183. <rdar://problem/19208291>
 
     2014-12-11  Timothy Horton  <timothy_horton@apple.com>
