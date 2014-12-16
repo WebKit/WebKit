@@ -25,6 +25,7 @@
 
 #import <WebKit/WKActionMenuTypes.h>
 #import <WebKit/WKBase.h>
+#import <WebKit/WKImmediateActionTypes.h>
 #import <WebKit/WKView.h>
 
 @interface WKView (Private)
@@ -122,6 +123,10 @@
 
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems;
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems userData:(WKTypeRef)userData;
+
+// Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to
+// do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
+- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKImmediateActionType)type userData:(WKTypeRef)userData;
 
 - (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
 - (NSString *)_titleForPreviewOfURL:(NSURL *)url;

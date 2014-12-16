@@ -4303,6 +4303,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return [self _actionMenuItemsForHitTestResult:hitTestResult withType:type defaultActionMenuItems:defaultMenuItems];
 }
 
+- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKImmediateActionType)type userData:(WKTypeRef)userData
+{
+    return nil;
+}
+
 - (void)_dismissActionMenuPopovers
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

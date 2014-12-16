@@ -1088,7 +1088,7 @@
 		909854EE12BC4E18000AD080 /* WebMemorySampler.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */; };
 		9321D5861A38EE3C008052BE /* WKImmediateActionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5851A38EE3C008052BE /* WKImmediateActionController.h */; };
 		9321D5881A38EE74008052BE /* WKImmediateActionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9321D5871A38EE74008052BE /* WKImmediateActionController.mm */; };
-		9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5891A38F196008052BE /* WKImmediateActionTypes.h */; };
+		9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5891A38F196008052BE /* WKImmediateActionTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */; };
