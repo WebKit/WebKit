@@ -1,3 +1,9 @@
+2014-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Add FeatureCounterKeys.h to the Xcode project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-12-16  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r163928): Animated GIFs are not resumed when translated into view using -webkit-transform
