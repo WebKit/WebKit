@@ -38,6 +38,8 @@ namespace WebCore {
 
 RenderRubyBase::RenderRubyBase(Document& document, Ref<RenderStyle>&& style)
     : RenderBlockFlow(document, WTF::move(style))
+    , m_initialOffset(0)
+    , m_isAfterExpansion(true)
 {
     setInline(false);
 }
@@ -141,6 +143,12 @@ ETextAlign RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) co
 
 void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
 {
+    if (rubyRun()->hasOverrideWidth() && firstRootBox() && !firstRootBox()->nextRootBox()) {
+        logicalLeft += m_initialOffset;
+        logicalWidth -= 2 * m_initialOffset;
+        return;
+    }
+
     LayoutUnit maxPreferredLogicalWidth = rubyRun() && rubyRun()->hasOverrideWidth() ? rubyRun()->overrideLogicalContentWidth() : this->maxPreferredLogicalWidth();
     if (maxPreferredLogicalWidth >= logicalWidth)
         return;

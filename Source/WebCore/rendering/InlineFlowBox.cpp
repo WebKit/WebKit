@@ -179,6 +179,14 @@ void InlineFlowBox::removeChild(InlineBox* child)
     if (!isDirty())
         dirtyLineBoxes();
 
+    if (child->prevLeafChild() && is<InlineTextBox>(child->prevLeafChild())) {
+        if (is<InlineTextBox>(child))
+            downcast<InlineTextBox>(child->prevLeafChild())->renderer().setContentIsKnownToFollow(downcast<InlineTextBox>(child)->renderer().contentIsKnownToFollow());
+        // FIXME: Handle the case where we remove the last inline box, and it's not a text box. If we're trying to share
+        // expansion opportunites both inside and outside a replaced element (such as for ruby bases), we need to search
+        // outside the current inline box tree to determine if there is content that follows the new last inline item.
+    }
+
     root().childRemoved(child);
 
     if (child == m_firstChild)
@@ -373,6 +381,7 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
 
 float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, InlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing)
 {
+    float totalExpansion = 0;
     for (InlineBox* child = firstChild; child && child != lastChild; child = child->nextOnLine()) {
         if (is<RenderText>(child->renderer())) {
             auto& textBox = downcast<InlineTextBox>(*child);
@@ -386,6 +395,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
             if (knownToHaveNoOverflow())
                 minLogicalLeft = std::min(logicalLeft, minLogicalLeft);
             logicalLeft += textBox.logicalWidth();
+            totalExpansion += textBox.expansion();
             if (knownToHaveNoOverflow())
                 maxLogicalRight = std::max(logicalLeft, maxLogicalRight);
         } else {
@@ -405,6 +415,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
                 if (knownToHaveNoOverflow())
                     minLogicalLeft = std::min(logicalLeft, minLogicalLeft);
                 logicalLeft = flow.placeBoxesInInlineDirection(logicalLeft, needsWordSpacing);
+                totalExpansion += flow.expansion();
                 if (knownToHaveNoOverflow())
                     maxLogicalRight = std::max(logicalLeft, maxLogicalRight);
                 logicalLeft += flow.marginLogicalRight();
@@ -427,6 +438,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
             }
         }
     }
+    setExpansionWithoutGrowing(totalExpansion);
     return logicalLeft;
 }
 

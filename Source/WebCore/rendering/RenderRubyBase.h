@@ -46,6 +46,17 @@ public:
     
     RenderRubyRun* rubyRun() const;
 
+    void setIsAfterExpansion(bool isAfterExpansion) { m_isAfterExpansion = isAfterExpansion; }
+    bool isAfterExpansion() { return m_isAfterExpansion; }
+
+    void setInitialOffset(float initialOffset) { m_initialOffset = initialOffset; }
+
+    void reset()
+    {
+        m_initialOffset = 0;
+        m_isAfterExpansion = true;
+    }
+
 private:
     virtual bool isRubyBase() const override { return true; }
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
@@ -59,6 +70,9 @@ private:
 
     // Allow RenderRubyRun to manipulate the children within ruby bases.
     friend class RenderRubyRun;
+
+    float m_initialOffset;
+    unsigned m_isAfterExpansion : 1;
 };
 
 } // namespace WebCore
