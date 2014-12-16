@@ -4,6 +4,12 @@
 
         * platform/spi/mac/LookupSPI.h:
 
+2014-12-15  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * platform/spi/mac/LookupSPI.h:
+
 2014-12-15  Jer Noble  <jer.noble@apple.com>
 
         Switching src of <video> with clipping layer results in empty black square.
