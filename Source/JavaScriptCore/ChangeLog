@@ -1,3 +1,32 @@
+2014-12-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r176399. rdar://problem/19267545
+
+    2014-11-19  Mark Lam  <mark.lam@apple.com>
+
+            WTFCrashWithSecurityImplication under SpeculativeJIT::compile() when loading a page from theblaze.com.
+            <https://webkit.org/b/137642>
+
+            Reviewed by Filip Pizlo.
+
+            In the DFG, we have a ConstantFolding phase that occurs after all LocalCSE
+            phases have already transpired.  Hence, Identity nodes introduced in the
+            ConstantFolding phase will be left in the node graph.  Subsequently, the
+            DFG code generator asserts that CSE phases have consumed all Identity nodes.
+            This turns out to not be true.  Hence, the crash.  We fix this by teaching
+            the DFG code generator to emit code for Identity nodes.
+
+            Unlike the DFG, the FTL does not have this issue.  That is because the FTL
+            plan has GlobalCSE phases that come after ConstantFolding and any other
+            phases that can generate Identity nodes.  Hence, for the FTL, it is true that
+            CSE will consume all Identity nodes, and the code generator should not see any
+            Identity nodes.
+
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+
 2014-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r176972. <rdar://problem/19196762>

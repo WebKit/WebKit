@@ -1688,7 +1688,26 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Identity: {
-        RELEASE_ASSERT_NOT_REACHED();
+        speculate(node, node->child1());
+        switch (node->child1().useKind()) {
+        case DoubleRepUse:
+        case DoubleRepRealUse: {
+            SpeculateDoubleOperand op(this, node->child1());
+            doubleResult(op.fpr(), node);
+            break;
+        }
+        case Int52RepUse: 
+        case MachineIntUse:
+        case DoubleRepMachineIntUse: {
+            RELEASE_ASSERT_NOT_REACHED();   
+            break;
+        }
+        default: {
+            JSValueOperand op(this, node->child1());
+            jsValueResult(op.tagGPR(), op.payloadGPR(), node);
+            break;
+        }
+        } // switch
         break;
     }
 
