@@ -29,7 +29,6 @@
 #include "Connection.h"
 #include <chrono>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
@@ -48,7 +47,7 @@ class WebProcessProxy;
 
 class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static PassRefPtr<StorageManager> create(const String& localStorageDirectory);
+    static RefPtr<StorageManager> create(const String& localStorageDirectory);
     ~StorageManager();
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes);

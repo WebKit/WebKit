@@ -46,7 +46,7 @@ namespace WebKit {
 
 class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
 public:
-    static RefPtr<StorageArea> create(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
+    static RefPtr<StorageArea> create(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
     ~StorageArea();
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
@@ -54,7 +54,7 @@ public:
     void addListener(IPC::Connection*, uint64_t storageMapID);
     void removeListener(IPC::Connection*, uint64_t storageMapID);
 
-    PassRefPtr<StorageArea> clone() const;
+    RefPtr<StorageArea> clone() const;
 
     void setItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
     void removeItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
@@ -64,7 +64,7 @@ public:
     void clear();
 
 private:
-    explicit StorageArea(LocalStorageNamespace*, PassRefPtr<SecurityOrigin>, unsigned quotaInBytes);
+    explicit StorageArea(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
 
     void openDatabaseAndImportItemsIfNeeded();
 
@@ -84,12 +84,12 @@ private:
 
 class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace> {
 public:
-    static PassRefPtr<LocalStorageNamespace> create(StorageManager*, uint64_t storageManagerID);
+    static RefPtr<LocalStorageNamespace> create(StorageManager*, uint64_t storageManagerID);
     ~LocalStorageNamespace();
 
     StorageManager* storageManager() const { return m_storageManager; }
 
-    PassRefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin>);
+    RefPtr<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
     void didDestroyStorageArea(StorageArea*);
 
     void clearStorageAreasMatchingOrigin(SecurityOrigin*);
@@ -117,13 +117,13 @@ public:
     {
     }
 
-    RefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
+    RefPtr<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
     {
-        auto& slot = m_storageAreaMap.add(securityOrigin.get(), nullptr).iterator->value;
+        auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
         if (slot)
             return slot;
 
-        auto storageArea = StorageArea::create(nullptr, securityOrigin, m_quotaInBytes);
+        auto storageArea = StorageArea::create(nullptr, WTF::move(securityOrigin), m_quotaInBytes);
         slot = storageArea.get();
 
         return storageArea;
@@ -154,15 +154,15 @@ private:
     HashMap<RefPtr<SecurityOrigin>, StorageArea*> m_storageAreaMap;
 };
 
-RefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, PassRefPtr<SecurityOrigin> securityOrigin, unsigned quotaInBytes)
+RefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageArea(localStorageNamespace, securityOrigin, quotaInBytes));
+    return adoptRef(new StorageArea(localStorageNamespace, WTF::move(securityOrigin), quotaInBytes));
 }
 
-StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, PassRefPtr<SecurityOrigin> securityOrigin, unsigned quotaInBytes)
+StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
     : m_localStorageNamespace(localStorageNamespace)
     , m_didImportItemsFromDatabase(false)
-    , m_securityOrigin(securityOrigin)
+    , m_securityOrigin(WTF::move(securityOrigin))
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
@@ -191,14 +191,14 @@ void StorageManager::StorageArea::removeListener(IPC::Connection* connection, ui
     m_eventListeners.remove(std::make_pair(connection, storageMapID));
 }
 
-PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
+RefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
 {
     ASSERT(!m_localStorageNamespace);
 
-    RefPtr<StorageArea> storageArea = StorageArea::create(0, m_securityOrigin, m_quotaInBytes);
+    auto storageArea = StorageArea::create(0, m_securityOrigin.copyRef(), m_quotaInBytes);
     storageArea->m_storageMap = m_storageMap;
 
-    return storageArea.release();
+    return storageArea;
 }
 
 void StorageManager::StorageArea::setItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
@@ -298,7 +298,7 @@ void StorageManager::StorageArea::dispatchEvents(IPC::Connection* sourceConnecti
     }
 }
 
-PassRefPtr<StorageManager::LocalStorageNamespace> StorageManager::LocalStorageNamespace::create(StorageManager* storageManager, uint64_t storageNamespaceID)
+RefPtr<StorageManager::LocalStorageNamespace> StorageManager::LocalStorageNamespace::create(StorageManager* storageManager, uint64_t storageNamespaceID)
 {
     return adoptRef(new LocalStorageNamespace(storageManager, storageNamespaceID));
 }
@@ -317,13 +317,13 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(m_storageAreaMap.isEmpty());
 }
 
-PassRefPtr<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
+RefPtr<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
 {
     auto result = m_storageAreaMap.add(securityOrigin, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
-    RefPtr<StorageArea> storageArea = StorageArea::create(this, result.iterator->key, m_quotaInBytes);
+    RefPtr<StorageArea> storageArea = StorageArea::create(this, result.iterator->key.copyRef(), m_quotaInBytes);
     result.iterator->value = storageArea.get();
 
     return storageArea.release();
@@ -357,7 +357,7 @@ void StorageManager::LocalStorageNamespace::clearAllStorageAreas()
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
 public:
-    static PassRefPtr<SessionStorageNamespace> create(IPC::Connection* allowedConnection, unsigned quotaInBytes);
+    static RefPtr<SessionStorageNamespace> create(IPC::Connection* allowedConnection, unsigned quotaInBytes);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
@@ -365,7 +365,7 @@ public:
     IPC::Connection* allowedConnection() const { return m_allowedConnection.get(); }
     void setAllowedConnection(IPC::Connection*);
 
-    PassRefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin>);
+    RefPtr<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
@@ -378,7 +378,7 @@ private:
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>> m_storageAreaMap;
 };
 
-PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(IPC::Connection* allowedConnection, unsigned quotaInBytes)
+RefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(IPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
     return adoptRef(new SessionStorageNamespace(allowedConnection, quotaInBytes));
 }
@@ -400,11 +400,11 @@ void StorageManager::SessionStorageNamespace::setAllowedConnection(IPC::Connecti
     m_allowedConnection = allowedConnection;
 }
 
-PassRefPtr<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
+RefPtr<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
 {
     auto result = m_storageAreaMap.add(securityOrigin, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = StorageArea::create(0, result.iterator->key, m_quotaInBytes);
+        result.iterator->value = StorageArea::create(0, result.iterator->key.copyRef(), m_quotaInBytes);
 
     return result.iterator->value;
 }
@@ -417,7 +417,7 @@ void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& n
         newSessionStorageNamespace.m_storageAreaMap.add(it->key, it->value->clone());
 }
 
-PassRefPtr<StorageManager> StorageManager::create(const String& localStorageDirectory)
+RefPtr<StorageManager> StorageManager::create(const String& localStorageDirectory)
 {
     return adoptRef(new StorageManager(localStorageDirectory));
 }
