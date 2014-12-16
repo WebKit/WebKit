@@ -900,7 +900,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
-        _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self];
+        _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self recognizer:recognizer.get()];
         [recognizer setDelegate:_private->immediateActionController];
         [self addGestureRecognizer:recognizer.get()];
     }

@@ -37,9 +37,10 @@
     WebView *_webView;
     WebImmediateActionType _type;
     WebCore::HitTestResult _hitTestResult;
+    NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
 }
 
-- (instancetype)initWithWebView:(WebView *)webView;
+- (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)webViewClosed;
 
 @end

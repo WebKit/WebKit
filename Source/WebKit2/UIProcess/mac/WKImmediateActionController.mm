@@ -77,6 +77,7 @@ using namespace WebKit;
     _page = nullptr;
     _wkView = nil;
     _hitTestResult = ActionMenuHitTestResult();
+    _immediateActionRecognizer = nil;
 }
 
 - (void)_clearImmediateActionState
