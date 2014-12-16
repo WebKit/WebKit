@@ -314,7 +314,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     ASSERT(priv->provider);
     if (!priv->provider || !priv->bus) {
         GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without provider or bus"));
-        gst_task_pause(src->priv->task.get());
+        gst_task_stop(src->priv->task.get());
         return;
     }
 
@@ -339,8 +339,11 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
                 g_free(buffer);
                 channelBufferList = g_slist_delete_link(channelBufferList, channelBufferList);
             }
-            GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
-            gst_task_pause(src->priv->task.get());
+
+            // FLUSHING and EOS are not errors.
+            if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
+                GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
+            gst_task_stop(src->priv->task.get());
             return;
         }
 
@@ -359,6 +362,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     GSList* sourcesIt = priv->sources;
     GSList* buffersIt = channelBufferList;
 
+    GstFlowReturn ret = GST_FLOW_OK;
     for (i = 0; sourcesIt && buffersIt; sourcesIt = g_slist_next(sourcesIt), buffersIt = g_slist_next(buffersIt), ++i) {
         GstElement* appsrc = static_cast<GstElement*>(sourcesIt->data);
         AudioSrcBuffer* buffer = static_cast<AudioSrcBuffer*>(buffersIt->data);
@@ -368,11 +372,16 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
         gst_buffer_unmap(channelBuffer, &buffer->info);
         g_free(buffer);
 
-        GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(appsrc), channelBuffer);
-        if (ret != GST_FLOW_OK) {
-            GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to push buffer on %s flow: %s", GST_OBJECT_NAME(appsrc), gst_flow_get_name(ret)));
-            gst_task_pause(src->priv->task.get());
-        }
+        if (ret == GST_FLOW_OK) {
+            ret = gst_app_src_push_buffer(GST_APP_SRC(appsrc), channelBuffer);
+            if (ret != GST_FLOW_OK) {
+                // FLUSHING and EOS are not errors.
+                if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
+                    GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to push buffer on %s flow: %s", GST_OBJECT_NAME(appsrc), gst_flow_get_name(ret)));
+                gst_task_stop(src->priv->task.get());
+            }
+        } else
+            gst_buffer_unref(channelBuffer);
     }
 
     g_slist_free(channelBufferList);
@@ -417,6 +426,9 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
+#if GST_CHECK_VERSION(1, 4, 0)
+        gst_buffer_pool_set_flushing(src->priv->pool, TRUE);
+#endif
         if (!gst_task_join(src->priv->task.get()))
             returnValue = GST_STATE_CHANGE_FAILURE;
         gst_buffer_pool_set_active(src->priv->pool, FALSE);
