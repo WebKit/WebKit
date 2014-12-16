@@ -1,5 +1,16 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177183. <rdar://problem/19208291>
+
+    2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * WebView/WebImmediateActionController.h:
+            * WebView/WebImmediateActionController.mm:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177131. <rdar://problem/19198539>
 
     2014-12-10  Beth Dakin  <bdakin@apple.com>
