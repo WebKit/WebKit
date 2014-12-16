@@ -1,3 +1,24 @@
+2014-12-16  Matthew Mirman  <mmirman@apple.com>
+
+        Fixes operationPutByIdOptimizes such that they check that the put didn't
+        change the structure of the object who's property access is being
+        cached.
+        https://bugs.webkit.org/show_bug.cgi?id=139500
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITOperations.cpp:
+        (JSC::operationPutByIdStrictOptimize): saved the structure before the put.
+        (JSC::operationPutByIdNonStrictOptimize): ditto.
+        (JSC::operationPutByIdDirectStrictOptimize): ditto.
+        (JSC::operationPutByIdDirectNonStrictOptimize): ditto.
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID): Added argument for the old structure
+        (JSC::repatchPutByID): Added argument for the old structure
+        * jit/Repatch.h:
+        * tests/stress/put-by-id-build-list-order-recurse.js: 
+        Added test that fails without this patch.
+
 2014-12-15  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Add feature counting support
