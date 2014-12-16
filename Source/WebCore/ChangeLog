@@ -1,5 +1,21 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177323. <rdar://problem/19198414>
+
+    2014-12-15  Beth Dakin  <bdakin@apple.com>
+
+            Make lookup an immediate action instead of an action menu item
+            https://bugs.webkit.org/show_bug.cgi?id=139661
+            -and corresponding-
+            rdar://problem/19198414
+
+            Reviewed by Tim Horton.
+
+            New SPI.
+            * platform/spi/mac/LookupSPI.h:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177303. <rdar://problem/19198539>
 
     2014-12-15  Timothy Horton  <timothy_horton@apple.com>

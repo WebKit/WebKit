@@ -8656,6 +8656,33 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
         [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:dictionaryPopupInfo.options.get()];
 }
 
+- (id)_animationControllerForDictionaryLookupPopupInfo:(const DictionaryPopupInfo&)dictionaryPopupInfo
+{
+    if (!dictionaryPopupInfo.attributedString)
+        return nil;
+
+    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+
+    // Convert to screen coordinates.
+    textBaselineOrigin = [self.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    if (canLoadLUTermOptionDisableSearchTermIndicator() && canLoadLUNotificationPopoverWillClose()) {
+        if (!_private->hasInitializedLookupObserver) {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+            _private->hasInitializedLookupObserver = YES;
+        }
+
+        RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([dictionaryPopupInfo.options mutableCopy]);
+        if (!mutableOptions)
+            mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
+        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+        [self _setTextIndicator:dictionaryPopupInfo.textIndicator.get() fadeOut:NO animationCompletionHandler:[] { }];
+        return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+    }
+
+    return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:dictionaryPopupInfo.options.get()];
+}
+
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
     [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:[] { }];

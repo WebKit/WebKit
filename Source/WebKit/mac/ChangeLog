@@ -1,5 +1,44 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177323. <rdar://problem/19198414>
+
+    2014-12-15  Beth Dakin  <bdakin@apple.com>
+
+            Make lookup an immediate action instead of an action menu item
+            https://bugs.webkit.org/show_bug.cgi?id=139661
+            -and corresponding-
+            rdar://problem/19198414
+
+            Reviewed by Tim Horton.
+
+            Remove the lookup menu items and non-unused static function associated with 
+            lookup.
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItemsForText]):
+            (-[WebActionMenuController _defaultMenuItemsForEditableText]):
+            (-[WebActionMenuController _defaultMenuItemsForEditableTextWithSuggestions]):
+            (-[WebActionMenuController _createActionMenuItemForTag:]):
+            (-[WebActionMenuController _lookupText:]): Deleted.
+            (performDictionaryLookupForSelection): Deleted.
+            (performDictionaryLookupForRange): Deleted.
+
+            Set the defaultAnimationController to the lookup-provided animation controller 
+            when appropriate.
+            * WebView/WebImmediateActionController.mm:
+            (-[WebImmediateActionController _defaultAnimationController]):
+            (dictionaryPopupInfoForRange):
+            (-[WebImmediateActionController _animationControllerForText]):
+
+            New type.
+            * WebView/WebUIDelegatePrivate.h:
+
+            New function to get the lookup animation controller.
+            * WebView/WebView.mm:
+            (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+            * WebView/WebViewInternal.h:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177304. <rdar://problem/19198539>
 
     2014-12-15  Timothy Horton  <timothy_horton@apple.com>

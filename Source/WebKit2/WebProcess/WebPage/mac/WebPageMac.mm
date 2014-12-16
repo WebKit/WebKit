@@ -506,10 +506,11 @@ void WebPage::performDictionaryLookupOfCurrentSelection()
     performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
 
-void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame* frame, Range& range, NSDictionary **options, TextIndicatorPresentationTransition presentationTransition)
 {
+    DictionaryPopupInfo dictionaryPopupInfo;
     if (range.text().stripWhiteSpace().isEmpty())
-        return;
+        return dictionaryPopupInfo;
     
     RenderObject* renderer = range.startContainer()->renderer();
     const RenderStyle& style = renderer->style();
@@ -517,13 +518,12 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDict
     Vector<FloatQuad> quads;
     range.textQuads(quads);
     if (quads.isEmpty())
-        return;
+        return dictionaryPopupInfo;
 
     IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
-    DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().ascent() * pageScaleFactor()));
-    dictionaryPopupInfo.options = (CFDictionaryRef)options;
+    dictionaryPopupInfo.options = (CFDictionaryRef)*options;
 
     NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
 
@@ -545,11 +545,17 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDict
 
     RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, presentationTransition);
     if (!textIndicator)
-        return;
+        return dictionaryPopupInfo;
 
     dictionaryPopupInfo.textIndicator = textIndicator->data();
     dictionaryPopupInfo.attributedString.string = scaledNSAttributedString;
 
+    return dictionaryPopupInfo;
+}
+
+void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, range, &options, presentationTransition);
     send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
 }
 
@@ -984,8 +990,16 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
     actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
 
-    RefPtr<WebCore::Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates);
+    NSDictionary *options = nil;
+    RefPtr<WebCore::Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates, &options);
     actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
+    if (lookupRange) {
+        if (Node* node = hitTestResult.innerNode()) {
+            if (Frame* hitTestResultFrame = node->document().frame())
+                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, TextIndicatorPresentationTransition::Bounce);
+        }
+    }
+
     m_lastActionMenuRangeForSelection = lookupRange;
     m_lastActionMenuHitTestResult = hitTestResult;
 
@@ -1047,7 +1061,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCooordinates)
+PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCooordinates, NSDictionary **options)
 {
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
@@ -1055,8 +1069,7 @@ PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInVi
 
     IntPoint point = roundedIntPoint(locationInViewCooordinates);
     HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
-    NSDictionary *options = nil;
-    return rangeForDictionaryLookupAtHitTestResult(result, &options);
+    return rangeForDictionaryLookupAtHitTestResult(result, options);
 }
 
 void WebPage::selectLastActionMenuRange()
