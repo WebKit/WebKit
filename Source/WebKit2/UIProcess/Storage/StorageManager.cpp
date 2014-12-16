@@ -319,12 +319,12 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
 
 Ref<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
 {
-    auto result = m_storageAreaMap.add(securityOrigin, nullptr);
-    if (!result.isNewEntry)
-        return *result.iterator->value;
+    auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
+    if (slot)
+        return *slot;
 
-    auto storageArea = StorageArea::create(this, result.iterator->key.copyRef(), m_quotaInBytes);
-    result.iterator->value = &storageArea.get();
+    auto storageArea = StorageArea::create(this, WTF::move(securityOrigin), m_quotaInBytes);
+    slot = &storageArea.get();
 
     return storageArea;
 }
@@ -365,7 +365,7 @@ public:
     IPC::Connection* allowedConnection() const { return m_allowedConnection.get(); }
     void setAllowedConnection(IPC::Connection*);
 
-    RefPtr<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
+    Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
@@ -400,13 +400,13 @@ void StorageManager::SessionStorageNamespace::setAllowedConnection(IPC::Connecti
     m_allowedConnection = allowedConnection;
 }
 
-RefPtr<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
+Ref<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
 {
-    auto result = m_storageAreaMap.add(securityOrigin, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = StorageArea::create(0, result.iterator->key.copyRef(), m_quotaInBytes);
+    auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
+    if (!slot)
+        slot = StorageArea::create(0, WTF::move(securityOrigin), m_quotaInBytes);
 
-    return result.iterator->value;
+    return *slot;
 }
 
 void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorageNamespace)
@@ -587,7 +587,8 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection* connection,
 void StorageManager::createSessionStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     // FIXME: This should be a message check.
-    ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
+    ASSERT(m_sessionStorageNamespaces.isValidKey(storageNamespaceID));
+
     SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
     if (!sessionStorageNamespace) {
         // We're getting an incoming message from the web process that's for session storage for a web page
@@ -595,23 +596,21 @@ void StorageManager::createSessionStorageMap(IPC::Connection* connection, uint64
         return;
     }
 
-    std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
+    // FIXME: This should be a message check.
+    ASSERT(m_storageAreasByConnection.isValidKey({ connection, storageMapID }));
+
+    auto& slot = m_storageAreasByConnection.add({ connection, storageMapID }, nullptr).iterator->value;
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
-
-    HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::AddResult result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
-
-    // FIXME: This should be a message check.
-    ASSERT(result.isNewEntry);
+    ASSERT(!slot);
 
     // FIXME: This should be a message check.
     ASSERT(connection == sessionStorageNamespace->allowedConnection());
 
-    RefPtr<StorageArea> storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
+    auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
     storageArea->addListener(connection, storageMapID);
 
-    result.iterator->value = storageArea.release();
+    slot = WTF::move(storageArea);
 }
 
 void StorageManager::destroyStorageMap(IPC::Connection* connection, uint64_t storageMapID)
@@ -619,9 +618,9 @@ void StorageManager::destroyStorageMap(IPC::Connection* connection, uint64_t sto
     std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
+    ASSERT(m_storageAreasByConnection.isValidKey(connectionAndStorageMapIDPair));
 
-    HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::iterator it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
+    auto it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
     if (it == m_storageAreasByConnection.end()) {
         // The connection has been removed because the last page was closed.
         return;
@@ -753,22 +752,23 @@ void StorageManager::invalidateConnectionInternal(IPC::Connection* connection)
 StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection* connection, uint64_t storageMapID) const
 {
     std::pair<IPC::Connection*, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
-    if (!HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair))
-        return 0;
+
+    if (!m_storageAreasByConnection.isValidKey(connectionAndStorageMapIDPair))
+        return nullptr;
 
     return m_storageAreasByConnection.get(connectionAndStorageMapIDPair);
 }
 
 StorageManager::LocalStorageNamespace* StorageManager::getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID)
 {
-    if (!HashMap<uint64_t, RefPtr<LocalStorageNamespace>>::isValidKey(storageNamespaceID))
+    if (!m_localStorageNamespaces.isValidKey(storageNamespaceID))
         return 0;
 
-    HashMap<uint64_t, RefPtr<LocalStorageNamespace>>::AddResult result = m_localStorageNamespaces.add(storageNamespaceID, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = LocalStorageNamespace::create(this, storageNamespaceID);
+    auto& slot = m_localStorageNamespaces.add(storageNamespaceID, nullptr).iterator->value;
+    if (!slot)
+        slot = LocalStorageNamespace::create(this, storageNamespaceID);
 
-    return result.iterator->value.get();
+    return slot.get();
 }
 
 StorageManager::TransientLocalStorageNamespace* StorageManager::getOrCreateTransientLocalStorageNamespace(uint64_t storageNamespaceID, WebCore::SecurityOrigin& topLevelOrigin)
