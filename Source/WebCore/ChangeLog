@@ -1,3 +1,17 @@
+2014-12-16  Enrica Casucci  <enrica@apple.com>
+
+        Fix iOS builders for 8.0
+        https://bugs.webkit.org/show_bug.cgi?id=139495
+
+        Reviewed by Jer Noble
+
+        * WebCore.exp.in:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController enterFullscreen:mode:]):
+        (-[WebVideoFullscreenController requestHideAndExitFullscreen]):
+        (-[WebVideoFullscreenController enterFullscreen:]): Deleted.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+
 2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Ruby overhang uses ints instead of floats

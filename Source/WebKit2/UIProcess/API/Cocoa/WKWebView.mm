@@ -243,10 +243,14 @@ static int32_t deviceOrientation()
 
 - (BOOL)_mayAutomaticallyShowVideoOptimized
 {
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED <= 80200)
+    return false;
+#else
     if (!_page || !_page->videoFullscreenManager())
         return false;
 
     return _page->videoFullscreenManager()->mayAutomaticallyShowVideoOptimized();
+#endif
 }
 
 #endif
