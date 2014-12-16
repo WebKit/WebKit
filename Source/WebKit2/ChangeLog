@@ -1,3 +1,20 @@
+2014-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Use Ref in StorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=139698
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::TransientLocalStorageNamespace::create):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::StorageManager::StorageArea::create):
+        (WebKit::StorageManager::StorageArea::clone):
+        (WebKit::StorageManager::LocalStorageNamespace::create):
+        (WebKit::StorageManager::SessionStorageNamespace::create):
+        (WebKit::StorageManager::create):
+        * UIProcess/Storage/StorageManager.h:
+
 2014-12-16  Gavin Barraclough  <barraclough@apple.com>
 
         Split UserActivity from disabled flag in WebPage

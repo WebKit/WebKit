@@ -46,7 +46,7 @@ namespace WebKit {
 
 class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
 public:
-    static RefPtr<StorageArea> create(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
+    static Ref<StorageArea> create(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
     ~StorageArea();
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
@@ -54,7 +54,7 @@ public:
     void addListener(IPC::Connection*, uint64_t storageMapID);
     void removeListener(IPC::Connection*, uint64_t storageMapID);
 
-    RefPtr<StorageArea> clone() const;
+    Ref<StorageArea> clone() const;
 
     void setItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
     void removeItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
@@ -84,7 +84,7 @@ private:
 
 class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace> {
 public:
-    static RefPtr<LocalStorageNamespace> create(StorageManager*, uint64_t storageManagerID);
+    static Ref<LocalStorageNamespace> create(StorageManager*, uint64_t storageManagerID);
     ~LocalStorageNamespace();
 
     StorageManager* storageManager() const { return m_storageManager; }
@@ -108,23 +108,23 @@ private:
 
 class StorageManager::TransientLocalStorageNamespace : public ThreadSafeRefCounted<TransientLocalStorageNamespace> {
 public:
-    static RefPtr<TransientLocalStorageNamespace> create()
+    static Ref<TransientLocalStorageNamespace> create()
     {
-        return adoptRef(new TransientLocalStorageNamespace());
+        return adoptRef(*new TransientLocalStorageNamespace());
     }
 
     ~TransientLocalStorageNamespace()
     {
     }
 
-    RefPtr<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
+    Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
     {
         auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
         if (slot)
-            return slot;
+            return *slot;
 
         auto storageArea = StorageArea::create(nullptr, WTF::move(securityOrigin), m_quotaInBytes);
-        slot = storageArea.get();
+        slot = &storageArea.get();
 
         return storageArea;
     }
@@ -154,9 +154,9 @@ private:
     HashMap<RefPtr<SecurityOrigin>, StorageArea*> m_storageAreaMap;
 };
 
-RefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
+Ref<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
 {
-    return adoptRef(new StorageArea(localStorageNamespace, WTF::move(securityOrigin), quotaInBytes));
+    return adoptRef(*new StorageArea(localStorageNamespace, WTF::move(securityOrigin), quotaInBytes));
 }
 
 StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
@@ -191,7 +191,7 @@ void StorageManager::StorageArea::removeListener(IPC::Connection* connection, ui
     m_eventListeners.remove(std::make_pair(connection, storageMapID));
 }
 
-RefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
+Ref<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
 {
     ASSERT(!m_localStorageNamespace);
 
@@ -298,9 +298,9 @@ void StorageManager::StorageArea::dispatchEvents(IPC::Connection* sourceConnecti
     }
 }
 
-RefPtr<StorageManager::LocalStorageNamespace> StorageManager::LocalStorageNamespace::create(StorageManager* storageManager, uint64_t storageNamespaceID)
+Ref<StorageManager::LocalStorageNamespace> StorageManager::LocalStorageNamespace::create(StorageManager* storageManager, uint64_t storageNamespaceID)
 {
-    return adoptRef(new LocalStorageNamespace(storageManager, storageNamespaceID));
+    return adoptRef(*new LocalStorageNamespace(storageManager, storageNamespaceID));
 }
 
 // FIXME: The quota value is copied from GroupSettings.cpp.
@@ -357,7 +357,7 @@ void StorageManager::LocalStorageNamespace::clearAllStorageAreas()
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
 public:
-    static RefPtr<SessionStorageNamespace> create(IPC::Connection* allowedConnection, unsigned quotaInBytes);
+    static Ref<SessionStorageNamespace> create(IPC::Connection* allowedConnection, unsigned quotaInBytes);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
@@ -378,9 +378,9 @@ private:
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>> m_storageAreaMap;
 };
 
-RefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(IPC::Connection* allowedConnection, unsigned quotaInBytes)
+Ref<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(IPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
-    return adoptRef(new SessionStorageNamespace(allowedConnection, quotaInBytes));
+    return adoptRef(*new SessionStorageNamespace(allowedConnection, quotaInBytes));
 }
 
 StorageManager::SessionStorageNamespace::SessionStorageNamespace(IPC::Connection* allowedConnection, unsigned quotaInBytes)
@@ -417,9 +417,9 @@ void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& n
         newSessionStorageNamespace.m_storageAreaMap.add(it->key, it->value->clone());
 }
 
-RefPtr<StorageManager> StorageManager::create(const String& localStorageDirectory)
+Ref<StorageManager> StorageManager::create(const String& localStorageDirectory)
 {
-    return adoptRef(new StorageManager(localStorageDirectory));
+    return adoptRef(*new StorageManager(localStorageDirectory));
 }
 
 StorageManager::StorageManager(const String& localStorageDirectory)

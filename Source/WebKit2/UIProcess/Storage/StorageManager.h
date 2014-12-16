@@ -47,7 +47,7 @@ class WebProcessProxy;
 
 class StorageManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static RefPtr<StorageManager> create(const String& localStorageDirectory);
+    static Ref<StorageManager> create(const String& localStorageDirectory);
     ~StorageManager();
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes);
