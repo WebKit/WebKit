@@ -1,3 +1,40 @@
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
+        Merged r177131. <rdar://problem/19198539>
+
+    2014-12-10  Beth Dakin  <bdakin@apple.com>
+
+            WK1: Add initial support for immediate actions
+            https://bugs.webkit.org/show_bug.cgi?id=139522
+
+            Reviewed by Dan Bernstein.
+
+            This basic implementation of the controller will use the delegate methods to 
+            perform and cache a HitTest when relevant. Future patches will patch 
+            _updateImmediateActionItem to use the HitTestResult to determine if there is any 
+            immediate action that should be taken.
+            * WebView/WebImmediateActionController.h: Added.
+            * WebView/WebImmediateActionController.mm: Added.
+            (-[WebImmediateActionController webViewClosed]):
+            (-[WebImmediateActionController _clearImmediateActionState]):
+            (-[WebImmediateActionController performHitTestAtPoint:]):
+            (-[WebImmediateActionController immediateActionRecognizerWillPrepare:]):
+            (-[WebImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+            (-[WebImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+            (-[WebImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+            (-[WebImmediateActionController _updateImmediateActionItem]):
+
+            New enum for immediate action types.
+            * WebView/WebUIDelegatePrivate.h:
+
+            Create an NSImmediateActionGestureRecognizer if possible and a controller.
+            * WebView/WebView.mm:
+            (-[WebView _commonInitializationWithFrameName:groupName:]):
+            (-[WebView _close]):
+            * WebView/WebViewData.h:
+            * WebView/WebViewData.mm:
+            (-[WebViewPrivate dealloc]):
+
 2014-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177132. rdar://problem/19213620

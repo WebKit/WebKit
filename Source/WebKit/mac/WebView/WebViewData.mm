@@ -147,6 +147,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     [currentNodeHighlight release];
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [actionMenuController release];
+    [immediateActionController release];
 #endif
     [hostWindow release];
     [policyDelegateForwarder release];
