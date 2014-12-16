@@ -1,5 +1,35 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177192. <rdar://problem/19225448>
+
+    2014-12-11  Beth Dakin  <bdakin@apple.com>
+
+            WK2: Need new SPI for Webkit clients to override default immediate action
+            https://bugs.webkit.org/show_bug.cgi?id=139564
+            -and corresponding-
+            rdar://problem/19225448
+
+            Reviewed by Tim Horton.
+
+            New SPI _immediateActionAnimationControllerForHitTestResult:withType:userData:
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _immediateActionAnimationControllerForHitTestResult:withType:userData:]):
+
+            Keep at ivar for the userData so that it can be passed to the new SPI.
+            * UIProcess/mac/WKImmediateActionController.h:
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            (-[WKImmediateActionController didPerformActionMenuHitTest:userData:]):
+
+            Always give the SPI a chance to override the animationController.
+            (-[WKImmediateActionController _updateImmediateActionItem]):
+
+            Need to mark WKImmediateActionTypes.h as Private.
+            * WebKit2.xcodeproj/project.pbxproj:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177186. <rdar://problem/19208291>
 
     2014-12-11  Timothy Horton  <timothy_horton@apple.com>
