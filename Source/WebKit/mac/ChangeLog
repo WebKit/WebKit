@@ -1,5 +1,18 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177201. <rdar://problem/19225448>
+
+    2014-12-11  Dan Bernstein  <mitz@apple.com>
+
+            Fix a leak introduced in r177199.
+
+            Reviewed by Anders Carlsson.
+
+            * WebView/WebImmediateActionController.mm:
+            (-[WebImmediateActionController _updateImmediateActionItem]):
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177199. <rdar://problem/19225448>
 
     2014-12-11  Beth Dakin  <bdakin@apple.com>
