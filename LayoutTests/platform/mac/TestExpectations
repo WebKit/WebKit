@@ -1046,8 +1046,6 @@ webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
 webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
 webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
-webkit.org/b/112492 media/track/track-language-preference.html [ Pass Failure Timeout ]
-webkit.org/b/112492 media/track/track-prefer-captions.html [ Pass Failure Timeout ]
 webkit.org/b/112659 media/video-playing-and-pause.html [ Pass Failure ]
 webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
@@ -1083,6 +1081,10 @@ webkit.org/b/138798 [ MountainLion ] media/track/track-cues-sorted-before-dispat
 
 # Skipped while Eric Carlson works on a fix.
 webkit.org/b/28221 media/audio-delete-while-step-button-clicked.html [ Failure ]
+
+# These tests always time out.
+webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
+webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
 webkit.org/b/136708 http/tests/media/video-play-stall-seek.html
 webkit.org/b/136708 http/tests/media/video-play-stall.html

@@ -1,3 +1,12 @@
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
+        media/track/track-language-preference.html and media/track/track-prefer-captions.html time out on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=112492
+
+        Skip these, as they time out every time.
+
+        * platform/mac/TestExpectations:
+
 2014-12-16  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r163928): Animated GIFs are not resumed when translated into view using -webkit-transform
