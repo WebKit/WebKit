@@ -37,6 +37,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/SoftLinking.h>
@@ -44,6 +45,7 @@
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
 SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
+SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSString *)
 
 using namespace WebCore;
 using namespace WebKit;
@@ -234,6 +236,11 @@ using namespace WebKit;
         if (NSMenuItem *immediateActionItem = [self _menuItemForDataDetectedText]) {
             _type = kWKImmediateActionDataDetectedItem;
             return (id<NSImmediateActionAnimationController>)immediateActionItem;
+        }
+
+        if (id<NSImmediateActionAnimationController> textAnimationController = [self _animationControllerForText]) {
+            _type = kWKImmediateActionLookupText;
+            return textAnimationController;
         }
     }
 
@@ -483,6 +490,34 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     if (_hitTestResult.detectedDataTextIndicator)
         _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
     return menuItems.lastObject;
+}
+
+#pragma mark Text action
+
+- (id<NSImmediateActionAnimationController>)_animationControllerForText
+{
+    if (_state != ImmediateActionState::Ready)
+        return nil;
+
+    if (!getLULookupDefinitionModuleClass())
+        return nil;
+
+    DictionaryPopupInfo dictionaryPopupInfo = _hitTestResult.dictionaryPopupInfo;
+    if (!dictionaryPopupInfo.attributedString.string)
+        return nil;
+
+    // Convert baseline to screen coordinates.
+    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+    textBaselineOrigin = [_wkView convertPoint:textBaselineOrigin toView:nil];
+    textBaselineOrigin = [_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
+    if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
+        [_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO animationCompletionHandler:[]{ }];
+        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+        return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+    }
+    return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 }
 
 @end

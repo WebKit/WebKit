@@ -68,6 +68,8 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
         if (hasTextIndicator)
             encoder << detectedDataTextIndicator->data();
     }
+
+    encoder << dictionaryPopupInfo;
 }
 
 bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHitTestResult& actionMenuHitTestResult)
@@ -129,6 +131,9 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
             actionMenuHitTestResult.detectedDataTextIndicator = WebCore::TextIndicator::create(indicatorData);
         }
     }
+
+    if (!decoder.decode(actionMenuHitTestResult.dictionaryPopupInfo))
+        return false;
 
     return true;
 }

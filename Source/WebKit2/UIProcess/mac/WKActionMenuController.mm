@@ -41,7 +41,6 @@
 #import <ImageKit/ImageKit.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
@@ -408,20 +407,18 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (NSArray *)_defaultMenuItemsForText
 {
     RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
-    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
     RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
     [pasteItem setEnabled:NO];
 
-    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
+    return @[ copyTextItem.get(), [NSMenuItem separatorItem], pasteItem.get() ];
 }
 
 - (NSArray *)_defaultMenuItemsForEditableText
 {
     RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
-    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
     RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
 
-    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get() ];
+    return @[ copyTextItem.get(), [NSMenuItem separatorItem], pasteItem.get() ];
 }
 
 - (NSArray *)_defaultMenuItemsForEditableTextWithSuggestions
@@ -448,13 +445,12 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     }
 
     RetainPtr<NSMenuItem> copyTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagCopyText];
-    RetainPtr<NSMenuItem> lookupTextItem = [self _createActionMenuItemForTag:kWKContextActionItemTagLookupText];
     RetainPtr<NSMenuItem> pasteItem = [self _createActionMenuItemForTag:kWKContextActionItemTagPaste];
     RetainPtr<NSMenuItem> textSuggestionsItem = [self _createActionMenuItemForTag:kWKContextActionItemTagTextSuggestions];
 
     [textSuggestionsItem setSubmenu:spellingSubMenu.get()];
 
-    return @[ copyTextItem.get(), lookupTextItem.get(), pasteItem.get(), textSuggestionsItem.get() ];
+    return @[ copyTextItem.get(), [NSMenuItem separatorItem], pasteItem.get(), textSuggestionsItem.get() ];
 }
 
 - (void)_copySelection:(id)sender
@@ -465,11 +461,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 - (void)_paste:(id)sender
 {
     _page->executeEditCommand("paste");
-}
-
-- (void)_lookupText:(id)sender
-{
-    _page->performDictionaryLookupOfCurrentSelection();
 }
 
 - (void)_changeSelectionToSuggestion:(id)sender
@@ -625,13 +616,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         title = WEB_UI_STRING_KEY("Copy", "Copy (text action menu item)", "text action menu item");
         image = [NSImage imageNamed:@"NSActionMenuCopy"];
         enabled = hitTestResult->allowsCopy();
-        break;
-
-    case kWKContextActionItemTagLookupText:
-        selector = @selector(_lookupText:);
-        title = WEB_UI_STRING_KEY("Look Up", "Look Up (action menu item)", "action menu item");
-        image = [NSImage imageNamed:@"NSActionMenuLookup"];
-        enabled = getLULookupDefinitionModuleClass() && hitTestResult->allowsCopy();
         break;
 
     case kWKContextActionItemTagPaste:

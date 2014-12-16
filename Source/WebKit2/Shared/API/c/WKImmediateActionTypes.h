@@ -36,6 +36,7 @@ enum {
     kWKImmediateActionNone = 0,
     kWKImmediateActionLinkPreview,
     kWKImmediateActionDataDetectedItem,
+    kWKImmediateActionLookupText,
 };
 typedef uint32_t _WKImmediateActionType;
 

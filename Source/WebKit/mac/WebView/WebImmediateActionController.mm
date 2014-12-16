@@ -30,6 +30,7 @@
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "DictionaryPopupInfo.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
@@ -38,9 +39,15 @@
 #import "WebViewInternal.h"
 #import <WebCore/DataDetection.h>
 #import <WebCore/DataDetectorsSPI.h>
+#import <WebCore/DictionaryLookup.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/HTMLConverter.h>
+#import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
+#import <WebCore/Page.h>
+#import <WebCore/RenderObject.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <objc/objc-class.h>
@@ -176,6 +183,11 @@ using namespace WebCore;
             _type = WebImmediateActionDataDetectedItem;
             return (id<NSImmediateActionAnimationController>)immediateActionItem;
         }
+
+        if (id<NSImmediateActionAnimationController> defaultTextController = [self _animationControllerForText]) {
+            _type = WebImmediateActionText;
+            return defaultTextController;
+        }
     }
 
     return nil;
@@ -275,6 +287,71 @@ using namespace WebCore;
     if (_currentDetectedDataTextIndicator)
         _currentDetectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
     return menuItems.lastObject;
+}
+
+#pragma mark Text action
+
+static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo popupInfo;
+    if (range.text().stripWhiteSpace().isEmpty())
+        return popupInfo;
+    
+    RenderObject* renderer = range.startContainer()->renderer();
+    const RenderStyle& style = renderer->style();
+
+    Vector<FloatQuad> quads;
+    range.textQuads(quads);
+    if (quads.isEmpty())
+        return popupInfo;
+
+    IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+
+    popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().descent() * frame->page()->pageScaleFactor()));
+    popupInfo.options = options;
+
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
+    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
+
+        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font) {
+            font = [fontManager convertFont:font toSize:[font pointSize] * frame->page()->pageScaleFactor()];
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+        }
+
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    popupInfo.attributedString = scaledNSAttributedString.get();
+    popupInfo.textIndicator = TextIndicator::createWithRange(range, presentationTransition);
+    return popupInfo;
+}
+
+- (id<NSImmediateActionAnimationController>)_animationControllerForText
+{
+    if (!getLULookupDefinitionModuleClass())
+        return nil;
+
+    Node* node = _hitTestResult.innerNode();
+    if (!node)
+        return nil;
+
+    Frame* frame = node->document().frame();
+    if (!frame)
+        return nil;
+
+    NSDictionary *options = nil;
+    RefPtr<Range> dictionaryRange = rangeForDictionaryLookupAtHitTestResult(_hitTestResult, &options);
+
+    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, TextIndicatorPresentationTransition::Bounce);
+    if (!dictionaryPopupInfo.attributedString)
+        return nil;
+
+    return [_webView _animationControllerForDictionaryLookupPopupInfo:dictionaryPopupInfo];
 }
 
 #pragma mark Text Indicator
