@@ -45,24 +45,22 @@
 webkit.org/b/101773 fast/repaint/body-background-image.html [ ImageOnlyFailure Pass ]
 
 # AX tests that require hit testing do not work in WK2.
-# <https://bugs.webkit.org/show_bug.cgi?id=71298>
-accessibility/loading-iframe-updates-axtree.html
-platform/mac/accessibility/html-slider-indicator.html
-platform/mac/accessibility/listbox-hit-test.html
-platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
+webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
+webkit.org/b/71298 platform/mac/accessibility/html-slider-indicator.html
+webkit.org/b/71298 platform/mac/accessibility/listbox-hit-test.html
+webkit.org/b/71298 platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
 
-# Some compositing tests flakey
-# <https://bugs.webkit.org/show_bug.cgi?id=48354>
-compositing/iframes/iframe-size-from-zero.html
-compositing/iframes/iframe-src-change.html
+# This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
+webkit.org/b/48354 compositing/iframes/iframe-src-change.html [ Pass Failure ]
 
-# Flakey on Snow Leopard Intel WebKit2 Release Tests
-# https://bugs.webkit.org/show_bug.cgi?id=58183
-editing/execCommand/convert-style-elements-to-spans.html
+# Perhaps this test just needs new expectations?
+webkit.org/b/48354 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 
-# Flakey on Snow Leopard Intel WebKit2 Release Tests
-# https://bugs.webkit.org/show_bug.cgi?id=60648
-fast/frames/flattening/frameset-flattening-subframesets.html
+# This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
+webkit.org/b/58183 editing/execCommand/convert-style-elements-to-spans.html [ Pass Failure ]
+
+# This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
+webkit.org/b/60648 fast/frames/flattening/frameset-flattening-subframesets.html [ Pass Failure ]
 
 # WebKitTestRunner needs overridePreference for non-boolean values
 # (zero-font-size.html passes because overridePreference does not work)
@@ -70,19 +68,16 @@ webkit.org/b/42197 fast/harness/override-preferences-2.html [ Failure ]
 webkit.org/b/42197 fast/text/zero-font-size.html [ Pass ]
 
 # setIconDatabaseEnabled not implemented in WebKitTestRunner.
-# https://bugs.webkit.org/show_bug.cgi?id=115809
-webarchive/test-link-rel-icon-beforeload.html [ Skip ]
+webkit.org/b/115809 webarchive/test-link-rel-icon-beforeload.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=82665
-http/tests/webarchive/test-css-url-encoding.html [ Skip ]
-http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Skip ]
-http/tests/webarchive/test-css-url-encoding-utf-8.html [ Skip ]
-webarchive/test-css-url-resources-in-stylesheets.html [ Skip ]
-webarchive/test-css-url-resources-inline-styles.html [ Skip ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Skip ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Skip ]
+webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Skip ]
+webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Skip ]
+webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Skip ]
 
-# Fails on WebKit2
-# <https://bugs.webkit.org/show_bug.cgi?id=96741>
-fast/loader/recursive-before-unload-crash.html
+# This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
+webkit.org/b/96741 fast/loader/recursive-before-unload-crash.html [ Pass Failure ]
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>

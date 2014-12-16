@@ -1,5 +1,13 @@
 2014-12-16  Alexey Proskuryakov  <ap@apple.com>
 
+        WebKit2 test expectations gardening.
+
+        Update syntax, unskip some tests that were skipped before we had expectations.
+
+        * platform/wk2/TestExpectations:
+
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
         media/video-controls-toggling.html always times out
         https://bugs.webkit.org/show_bug.cgi?id=116266
 
