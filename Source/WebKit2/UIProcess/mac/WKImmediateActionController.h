@@ -77,10 +77,9 @@ enum class ImmediateActionState {
 - (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
 - (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
 
-- (void)setPreviewTitle:(NSString *)previewTitle;
-
 #if WK_API_ENABLED
 - (void)hidePreview;
+- (void)setPreviewTitle:(NSString *)previewTitle;
 #endif // WK_API_ENABLED
 
 @end

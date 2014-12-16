@@ -1,5 +1,14 @@
 2014-12-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Build Fix.
+
+        Reviewed by Dana Burkart.
+
+        * UIProcess/mac/WKImmediateActionController.h:
+        Hide the method declaration for setPreviewTitle: into an WK_API_ENABLED ifdef
+
+2014-12-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177371. rdar://problem/19266902
 
     2014-12-16  Tim Horton  <timothy_horton@apple.com>
