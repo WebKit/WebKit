@@ -490,6 +490,8 @@ webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure 
 [ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
 
+[ Yosemite ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
+
 # Skip 1.0.3 tests for now, to be unskipped when we get closer to conformance
 webgl/1.0.3/conformance/attribs [ Skip ]
 webgl/1.0.3/conformance/buffers [ Skip ]
@@ -827,9 +829,8 @@ webkit.org/b/123029 [ Debug ] platform/mac/editing/attributed-string [ Pass Cras
 
 webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Failure ]
 
-# GL Scissors don't work properly in Mountain Lion.
 webkit.org/b/126455 [ MountainLion ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
-webkit.org/b/126586 [ Mavericks Debug ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
+webkit.org/b/126586 [ Mavericks+ ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
 
 webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
 

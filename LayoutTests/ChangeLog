@@ -1,3 +1,13 @@
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
+        More test gardening.
+
+        Fix syntax of one entry, extend two flakiness entries to cover Yosemite, where
+        these tests recently failed.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Ruby overhang uses ints instead of floats

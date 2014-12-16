@@ -242,7 +242,7 @@ webkit.org/b/117767 media/event-attributes.html [ Timeout ]
 [ MountainLion ] media/video-played-collapse.html [ Timeout ]
 webkit.org/b/117962 [ Mavericks+ ] media/video-played-collapse.html [ Pass Failure ]
 
-[ MounatainLion ] webkit.org/b/81604 media/video-loop.html [ Pass Timeout ]
+webkit.org/b/81604 [ MountainLion ] media/video-loop.html [ Pass Timeout ]
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFailure ]
 
