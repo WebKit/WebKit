@@ -1,3 +1,15 @@
+2014-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Clicking on the expand object arrow should always expand an object
+        https://bugs.webkit.org/show_bug.cgi?id=139382
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype._click): Deleted.
+        stopPropagation was preventing the object expansion from happening as expecting.
+
 2014-12-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSSStyleDeclarationTextEditor fails to update if computed properties changed from empty to non-empty

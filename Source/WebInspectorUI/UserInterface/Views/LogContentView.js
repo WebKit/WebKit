@@ -40,7 +40,6 @@ WebInspector.LogContentView = function(representedObject)
     this.messagesElement.addEventListener("focus", this._didFocus.bind(this));
     this.messagesElement.addEventListener("blur", this._didBlur.bind(this));
     this.messagesElement.addEventListener("keydown", this._keyDown.bind(this));
-    this.messagesElement.addEventListener("click", this._click.bind(this), true);
     this.messagesElement.addEventListener("dragstart", this._ondragstart.bind(this), true);
     this.element.appendChild(this.messagesElement);
 
@@ -411,7 +410,6 @@ WebInspector.LogContentView.prototype = {
             var message = wrapper.messageElement;
             if (this._targetInMessageCanBeSelected(event.target, message)) {
                 var sameWrapper = wrapper === this._mouseDownWrapper;
-                this._mouseInteractionShouldPreventClickPropagation = !this._isMessageSelected(message);
                 this._updateMessagesSelection(message, sameWrapper ? this._mouseDownCommandKey : false, sameWrapper ? this._mouseDownShiftKey : true);
             }
         } else if (!selection.isCollapsed) {
@@ -429,15 +427,6 @@ WebInspector.LogContentView.prototype = {
         delete this._mouseDownWrapper;
         delete this._mouseDownShiftKey;
         delete this._mouseDownCommandKey;
-    },
-
-    _click: function(event)
-    {
-        if (!this._mouseInteractionShouldPreventClickPropagation)
-            return;
-
-        event.stopPropagation();
-        delete this._mouseInteractionShouldPreventClickPropagation;
     },
 
     _ondragstart: function(event)
