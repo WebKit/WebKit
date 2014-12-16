@@ -1244,6 +1244,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     [self _dismissContentRelativeChildWindows];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController wkView:self willHandleMouseDown:event];
+    [_data->_immediateActionController wkView:self willHandleMouseDown:event];
 #endif
     [self mouseDownInternal:event];
 }
@@ -3609,13 +3610,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if ([self respondsToSelector:@selector(setActionMenu:)]) {
+    // FIXME: Temporarily disable action menu installation.
+    /*if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
         self.actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
         self.actionMenu.delegate = _data->_actionMenuController.get();
         self.actionMenu.autoenablesItems = NO;
-    }
+    }*/
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
@@ -4320,6 +4322,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
     if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
         [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+    [_data->_immediateActionController hidePreview];
+#endif
 
     [self _setTextIndicator:nullptr fadeOut:NO];
 
