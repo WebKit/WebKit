@@ -329,7 +329,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_scrollPinningBehavior(DoNotPin)
     , m_useAsyncScrolling(false)
     , m_viewState(parameters.viewState)
-    , m_processSuppressionDisabledByWebPreference("Process suppression is disabled.")
+    , m_processSuppressionEnabled(true)
+    , m_userActivity("Process suppression disabled for page.")
     , m_pendingNavigationID(0)
 #if ENABLE(WEBGL)
     , m_systemWebGLPolicy(WebGLAllowCreation)
@@ -509,6 +510,15 @@ void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
         setViewState(parameters.viewState, false, Vector<uint64_t>());
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(static_cast<unsigned>(parameters.layerHostingMode));
+}
+
+void WebPage::updateUserActivity()
+{
+    // If process suppression is disabled, then start the activity to prevent AppNap.
+    if (!m_processSuppressionEnabled)
+        m_userActivity.start();
+    else
+        m_userActivity.stop();
 }
 
 WebPage::~WebPage()
@@ -2878,10 +2888,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setServiceControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey()));
 #endif
 
-    if (store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey()))
-        m_processSuppressionDisabledByWebPreference.stop();
-    else
-        m_processSuppressionDisabledByWebPreference.start();
+    m_processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
+    updateUserActivity();
 
     platformPreferencesDidChange(store);
 

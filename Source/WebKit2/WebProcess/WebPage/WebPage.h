@@ -931,6 +931,8 @@ private:
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 
+    void updateUserActivity();
+
     void mouseEvent(const WebMouseEvent&);
     void mouseEventSyncForTesting(const WebMouseEvent&, bool&);
     void wheelEventSyncForTesting(const WebWheelEvent&, bool&);
@@ -1314,7 +1316,8 @@ private:
 
     WebCore::ViewState::Flags m_viewState;
 
-    UserActivity m_processSuppressionDisabledByWebPreference;
+    bool m_processSuppressionEnabled;
+    UserActivity m_userActivity;
 
     uint64_t m_pendingNavigationID;
 

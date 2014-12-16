@@ -1,3 +1,22 @@
+2014-12-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Split UserActivity from disabled flag in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=139696
+
+        Reviewed by Geoffrey Garen.
+
+        In preparation for other things driving the UserActivity.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - initialize new members.
+        (WebKit::WebPage::updateUserActivity):
+            - start/stop the m_userActivity, based on m_processSupressionEnabled
+        (WebKit::WebPage::updatePreferences):
+            - call updateUserActivity to account for m_processSupressionEnabled changes.
+        * WebProcess/WebPage/WebPage.h:
+            - split m_processSuppressionDisabledByWebPreference -> m_processSupressionEnabled, m_userActivity.
+
 2014-12-16  Anders Carlsson  <andersca@apple.com>
 
         Get rid of PassRefPtr inside StorageManager
