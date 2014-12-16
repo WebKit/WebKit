@@ -1155,13 +1155,15 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outsid
 webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
 
+# Always times out.
+webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
+
 # REGRESSION(r156546): 7 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Failure ]
 webkit.org/b/122021 [ Mavericks+ ] media/track/track-in-band-mode.html [ Failure ]
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
-webkit.org/b/122021 media/video-controls-toggling.html [ Failure ]
 webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
 # --- End media tests ---
 

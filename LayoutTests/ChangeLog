@@ -1,3 +1,12 @@
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
+        media/video-controls-toggling.html always times out
+        https://bugs.webkit.org/show_bug.cgi?id=116266
+
+        Skip it.
+
+        * platform/mac/TestExpectations:
+
 2014-12-16  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Document.contentType implementation
