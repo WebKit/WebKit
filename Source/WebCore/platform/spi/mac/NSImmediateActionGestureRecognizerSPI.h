@@ -33,6 +33,8 @@
 
 #else
 
+@class NSImmediateActionGestureRecognizer;
+
 @protocol NSImmediateActionAnimationController <NSObject>
 @optional
 
