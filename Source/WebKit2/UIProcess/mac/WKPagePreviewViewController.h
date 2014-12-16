@@ -23,58 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKImmediateActionController_h
-#define WKImmediateActionController_h
+#ifndef WKPagePreviewViewController_h
+#define WKPagePreviewViewController_h
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#import "ActionMenuHitTestResult.h"
-#import "WKImmediateActionTypes.h"
 #import <wtf/RetainPtr.h>
 
-namespace WebKit {
-class WebPageProxy;
-
-enum class ImmediateActionState {
-    None = 0,
-    Pending,
-    TimedOut,
-    Ready
-};
-}
-
-@class NSImmediateActionGestureRecognizer;
+@class NSString;
+@class NSTextField;
+@class NSURL;
+@class NSView;
 @class WKPagePreviewViewController;
-@class WKView;
 
-@interface WKImmediateActionController : NSObject <NSGestureRecognizerDelegate> {
-@private
-    WebKit::WebPageProxy *_page;
-    WKView *_wkView;
+@protocol WKPagePreviewViewControllerDelegate <NSObject>
+- (NSView *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
+- (NSString *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController titleForPreviewOfURL:(NSURL *)url;
+- (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController;
+@end
 
-    WebKit::ImmediateActionState _state;
-    WebKit::ActionMenuHitTestResult _hitTestResult;
-    _WKImmediateActionType _type;
-    NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
-
-    NSPoint _eventLocationInView;
-
-#if WK_API_ENABLED
-    RetainPtr<NSPopover> _previewPopover;
-    String _previewPopoverOriginalURL;
-    NSRect _popoverOriginRect;
-    RetainPtr<WKPagePreviewViewController> _previewViewController;
-#endif
+@interface WKPagePreviewViewController : NSViewController {
+@public
+    NSSize _mainViewSize;
+    RetainPtr<NSURL> _url;
+    RetainPtr<NSView> _previewView;
+    RetainPtr<NSTextField> _titleTextField;
+    RetainPtr<NSString> _previewTitle;
+    id <WKPagePreviewViewControllerDelegate> _delegate;
+    CGFloat _popoverToViewScale;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
-- (void)willDestroyView:(WKView *)view;
-- (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
+@property (nonatomic, copy) NSString *previewTitle;
 
-- (void)setPreviewTitle:(NSString *)previewTitle;
+- (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
+
++ (NSSize)previewPadding;
 
 @end
 
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#endif // WKImmediateActionController_h
+#endif // WKPagePreviewViewController_h

@@ -3624,7 +3624,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
-        _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self]);
+        _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:recognizer.get()]);
         [recognizer setDelegate:_data->_immediateActionController.get()];
         [self addGestureRecognizer:recognizer.get()];
     }
@@ -4323,7 +4323,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_setPreviewTitle:(NSString *)previewTitle
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_actionMenuController setPreviewTitle:previewTitle];
+    [_data->_immediateActionController setPreviewTitle:previewTitle];
 #endif
 }
 

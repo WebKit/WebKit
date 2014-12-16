@@ -1,5 +1,47 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177180. <rdar://problem/19208291>
+
+    2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
+            Move the preview popover to WKImmediateActionController
+            https://bugs.webkit.org/show_bug.cgi?id=139560
+            <rdar://problem/19208291>
+
+            Reviewed by Beth Dakin.
+
+            * platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+            Add some requisite SPI.
+
+    2014-12-11  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Crash in -[WebVideoFullscreenHUDWindowController playing] in WK1 clients without FULLSCREEN_API enabled.
+            https://bugs.webkit.org/show_bug.cgi?id=139546
+
+            Reviewed by Eric Carlson.
+
+            Finish the work started by r173230 and rename mediaElement -> videoElement in WebVideoFullscreenHUDWindowController.
+
+            * platform/mac/WebVideoFullscreenHUDWindowController.h:
+            * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+            (-[WebVideoFullscreenHUDWindowController endScrubbing]):
+            (-[WebVideoFullscreenHUDWindowController timelinePositionChanged:]):
+            (-[WebVideoFullscreenHUDWindowController currentTime]):
+            (-[WebVideoFullscreenHUDWindowController setCurrentTime:]):
+            (-[WebVideoFullscreenHUDWindowController duration]):
+            (-[WebVideoFullscreenHUDWindowController decrementVolume]):
+            (-[WebVideoFullscreenHUDWindowController incrementVolume]):
+            (-[WebVideoFullscreenHUDWindowController volume]):
+            (-[WebVideoFullscreenHUDWindowController setVolume:]):
+            (-[WebVideoFullscreenHUDWindowController playing]):
+            (-[WebVideoFullscreenHUDWindowController setPlaying:]):
+            (-[WebVideoFullscreenHUDWindowController remainingTimeText]):
+            (-[WebVideoFullscreenHUDWindowController elapsedTimeText]):
+            (-[WebVideoFullscreenHUDWindowController rewind:]):
+            (-[WebVideoFullscreenHUDWindowController fastForward:]):
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177124. <rdar://problem/19198539>
 
     2014-12-10  Beth Dakin  <bdakin@apple.com>
