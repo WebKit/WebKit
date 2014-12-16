@@ -58,6 +58,7 @@
 #import "WKActionMenuController.h"
 #import "WKActionMenuItemTypes.h"
 #import "WKFullScreenWindowController.h"
+#import "WKImmediateActionController.h"
 #import "WKPrintingView.h"
 #import "WKProcessPoolInternal.h"
 #import "WKStringCF.h"
@@ -87,6 +88,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LookupSPI.h>
+#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
@@ -260,6 +262,7 @@ struct WKViewInterpretKeyEventsParameters {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     BOOL _automaticallyAdjustsContentInsets;
     RetainPtr<WKActionMenuController> _actionMenuController;
+    RetainPtr<WKImmediateActionController> _immediateActionController;
 #endif
 
 #if WK_API_ENABLED
@@ -313,6 +316,7 @@ struct WKViewInterpretKeyEventsParameters {
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_actionMenuController willDestroyView:self];
+    [_data->_immediateActionController willDestroyView:self];
 #endif
 
     _data->_page->close();
@@ -3617,6 +3621,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         self.actionMenu.delegate = _data->_actionMenuController.get();
         self.actionMenu.autoenablesItems = NO;
     }
+
+    if (NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
+        RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([[NSImmediateActionGestureRecognizer alloc] initWithTarget:nil action:NULL]);
+        _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self]);
+        [recognizer setDelegate:_data->_immediateActionController.get()];
+        [self addGestureRecognizer:recognizer.get()];
+    }
 #endif
 
     return self;
@@ -3751,6 +3762,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
 {
     [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
+    [_data->_immediateActionController didPerformActionMenuHitTest:hitTestResult userData:userData];
 }
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

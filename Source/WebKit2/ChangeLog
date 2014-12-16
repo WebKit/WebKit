@@ -1,3 +1,49 @@
+2014-12-15  Dana Burkart  <dburkart@apple.com>
+
+        Merged r177113. <rdar://problem/19198539>
+
+    2014-12-10  Beth Dakin  <bdakin@apple.com>
+
+            WK2: Add initial support for immediate actions
+            https://bugs.webkit.org/show_bug.cgi?id=139511
+
+            Reviewed by Tim Horton.
+
+            New enum to track immediate action types as we add them.
+            * Shared/API/c/WKImmediateActionTypes.h: Added.
+
+            Create an NSImmediateActionGestureRecognizer if possible and a controller.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView dealloc]):
+            (-[WKView initWithFrame:context:configuration:webView:]):
+            (-[WKView _didPerformActionMenuHitTest:userData:]):
+
+            This basic implementation of the controller will use the delegate methods to 
+            perform an ActionMenuHitTest when relevant. Future patches will patch 
+            _updateImmediateActionItem to use the hit test result to determine if there is any 
+            immediate action that should be taken.
+            * UIProcess/mac/WKImmediateActionController.h: Added.
+            * UIProcess/mac/WKImmediateActionController.mm: Added.
+            (-[WKImmediateActionController willDestroyView:]):
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            (-[WKImmediateActionController didPerformActionMenuHitTest:userData:]):
+
+            Does much of the work done in Action Menu’s prepareForMenu.
+            (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+
+            Does much of the work done in Action Menu’s menuNeedsUpdate.
+            (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+
+            Does much of the work done in Action Menu’s didCloseMenu.
+            (-[WKImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+
+            Does much of the work done in Action Menu’s willOpenMenu.
+            (-[WKImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+
+            To be filled in.
+            (-[WKImmediateActionController _updateImmediateActionItem]):
+            * WebKit2.xcodeproj/project.pbxproj:
+
 2014-12-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177253. rdar://problem/19221935
