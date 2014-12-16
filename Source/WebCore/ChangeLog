@@ -1,5 +1,30 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177325. <rdar://problem/19198414>
+
+    2014-12-15  Beth Dakin  <bdakin@apple.com>
+
+            Speculative build fix.
+
+            * platform/spi/mac/LookupSPI.h:
+
+    2014-12-15  Jer Noble  <jer.noble@apple.com>
+
+            Switching src of <video> with clipping layer results in empty black square.
+            https://bugs.webkit.org/show_bug.cgi?id=139650
+
+            Reviewed by Simon Fraser.
+
+            Test: compositing/video-clip-change-src.html
+
+            When the contentsLayer changes after a contentsClippingLayer has already been created, make sure to parent the
+            new contentsLayer, as updateRects() will only reparent when first creating a contentsClippingLayer.
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::setContentsToPlatformLayer):
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177323. <rdar://problem/19198414>
 
     2014-12-15  Beth Dakin  <bdakin@apple.com>
