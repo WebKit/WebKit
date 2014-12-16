@@ -1,5 +1,27 @@
 2014-12-16  Anders Carlsson  <andersca@apple.com>
 
+        Put some common code in StorageNamespaceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=139682
+
+        Reviewed by Tim Horton.
+
+        We have code in two places that gets the local storage area from a given document,
+        choosing either the local storage namespace or the transient local storage namespace.
+        Move it to StorageNamespaceProvider::localStorageArea.
+
+        * bindings/js/ScriptController.cpp:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage):
+        * page/Navigator.cpp:
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        (WebCore::StorageNamespaceProvider::localStorageNamespace):
+        * storage/StorageNamespaceProvider.h:
+
+2014-12-16  Anders Carlsson  <andersca@apple.com>
+
         Add FeatureCounterKeys.h to the Xcode project.
 
         * WebCore.xcodeproj/project.pbxproj:

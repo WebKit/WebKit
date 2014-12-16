@@ -45,7 +45,6 @@
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
 #include "Storage.h"
-#include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "VoidCallback.h"
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -201,14 +200,7 @@ PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& e
         return nullptr;
     }
 
-    Page* page = m_pageAgent->page();
-    Document* document = targetFrame->document();
-    if (isLocalStorage) {
-        if (document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
-            return page->storageNamespaceProvider().localStorageNamespace().storageArea(document->securityOrigin());
-        return page->storageNamespaceProvider().transientLocalStorageNamespace(*document->topOrigin()).storageArea(document->securityOrigin());
-    }
-    return page->sessionStorage()->storageArea(document->securityOrigin());
+    return m_pageAgent->page()->storageNamespaceProvider().localStorageArea(*targetFrame->document());
 }
 
 } // namespace WebCore

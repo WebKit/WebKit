@@ -34,8 +34,10 @@
 
 namespace WebCore {
 
+class Document;
 class Page;
 class SecurityOrigin;
+class StorageArea;
 class StorageNamespace;
 
 class StorageNamespaceProvider : public RefCounted<StorageNamespaceProvider> {
@@ -44,8 +46,7 @@ public:
     virtual ~StorageNamespaceProvider();
 
     virtual RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
-    StorageNamespace& localStorageNamespace();
-    StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&);
+    RefPtr<StorageArea> localStorageArea(Document&);
 
     void addPage(Page&);
     void removePage(Page&);
@@ -54,6 +55,9 @@ protected:
     StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }
 
 private:
+    StorageNamespace& localStorageNamespace();
+    StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&);
+
     virtual RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned quota) = 0;
     virtual RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota) = 0;
 

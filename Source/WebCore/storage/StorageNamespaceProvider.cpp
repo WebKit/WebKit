@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StorageNamespaceProvider.h"
 
+#include "Document.h"
+#include "StorageArea.h"
 #include "StorageNamespace.h"
 
 namespace WebCore {
@@ -54,6 +56,13 @@ void StorageNamespaceProvider::removePage(Page& page)
     ASSERT(m_pages.contains(&page));
 
     m_pages.remove(&page);
+}
+
+RefPtr<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
+{
+    auto& storageNamespace = document.securityOrigin()->canAccessLocalStorage(document.topOrigin()) ? localStorageNamespace() : transientLocalStorageNamespace(*document.topOrigin());
+
+    return storageNamespace.storageArea(document.securityOrigin());
 }
 
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace()

@@ -37,7 +37,6 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "StorageNamespace.h"
 #include <wtf/HashSet.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>

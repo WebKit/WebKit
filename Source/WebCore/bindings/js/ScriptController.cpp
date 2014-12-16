@@ -43,7 +43,6 @@
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
-#include "StorageNamespace.h"
 #include "UserGestureIndicator.h"
 #include "WebCoreJSClientData.h"
 #include "npruntime_impl.h"

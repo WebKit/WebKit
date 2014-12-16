@@ -856,12 +856,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     if (!page->settings().localStorageEnabled())
         return nullptr;
 
-    RefPtr<StorageArea> storageArea;
-
-    if (document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
-        storageArea = page->storageNamespaceProvider().localStorageNamespace().storageArea(document->securityOrigin());
-    else
-        storageArea = page->storageNamespaceProvider().transientLocalStorageNamespace(*document->topOrigin()).storageArea(document->securityOrigin());
+    RefPtr<StorageArea> storageArea = page->storageNamespaceProvider().localStorageArea(*document);
 
     if (!storageArea->canAccessStorage(m_frame)) {
         ec = SECURITY_ERR;
