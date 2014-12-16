@@ -1164,6 +1164,8 @@ webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
+
+webkit.org/b/139708 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
 # --- End media tests ---
 
 # CSS Font Loading is only enabled on Mac, and tests are not run by default

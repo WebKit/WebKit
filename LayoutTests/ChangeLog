@@ -1,5 +1,12 @@
 2014-12-16  Alexey Proskuryakov  <ap@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=139708
+        http/tests/media/video-buffered-range-contains-currentTime.html frequently times out
+
+        * platform/mac/TestExpectations: Added an expectation.
+
+2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
         More test gardening.
 
         Fix syntax of one entry, extend two flakiness entries to cover Yosemite, where
