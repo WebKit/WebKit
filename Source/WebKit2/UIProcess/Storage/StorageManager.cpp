@@ -89,7 +89,7 @@ public:
 
     StorageManager* storageManager() const { return m_storageManager; }
 
-    RefPtr<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
+    Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
     void didDestroyStorageArea(StorageArea*);
 
     void clearStorageAreasMatchingOrigin(SecurityOrigin*);
@@ -317,16 +317,16 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(m_storageAreaMap.isEmpty());
 }
 
-RefPtr<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
+Ref<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
 {
     auto result = m_storageAreaMap.add(securityOrigin, nullptr);
     if (!result.isNewEntry)
-        return result.iterator->value;
+        return *result.iterator->value;
 
-    RefPtr<StorageArea> storageArea = StorageArea::create(this, result.iterator->key.copyRef(), m_quotaInBytes);
-    result.iterator->value = storageArea.get();
+    auto storageArea = StorageArea::create(this, result.iterator->key.copyRef(), m_quotaInBytes);
+    result.iterator->value = &storageArea.get();
 
-    return storageArea.release();
+    return storageArea;
 }
 
 void StorageManager::LocalStorageNamespace::didDestroyStorageArea(StorageArea* storageArea)
