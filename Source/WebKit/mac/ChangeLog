@@ -1,5 +1,42 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177186. <rdar://problem/19208291>
+
+    2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
+            Move the preview popover to WebImmediateActionController
+            https://bugs.webkit.org/show_bug.cgi?id=139563
+            <rdar://problem/19208291>
+
+            Reviewed by Beth Dakin.
+
+            * WebView/WebActionMenuController.mm:
+            (-[WebActionMenuController _defaultMenuItemsForLink]):
+            (-[WebActionMenuController menuItem:viewAtScreenPoint:]): Deleted.
+            (-[WebActionMenuController menuItem:previewItemAtPoint:]): Deleted.
+            (-[WebActionMenuController menuItem:preferredEdgeForPoint:]): Deleted.
+            * WebView/WebImmediateActionController.h:
+            * WebView/WebImmediateActionController.mm:
+            (-[WebImmediateActionController webViewClosed]):
+            (-[WebImmediateActionController immediateActionRecognizerWillPrepare:]):
+            (-[WebImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+            (-[WebImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+            (-[WebImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+            (-[WebImmediateActionController _updateImmediateActionItem]):
+            (-[WebImmediateActionController menuItem:viewAtScreenPoint:]):
+            (-[WebImmediateActionController menuItem:previewItemAtPoint:]):
+            (-[WebImmediateActionController menuItem:preferredEdgeForPoint:]):
+            Move page preview popover related code to WebImmediateActionController.
+
+            * WebView/WebUIDelegatePrivate.h:
+            Add a link preview type.
+
+            * WebView/WebView.mm:
+            (-[WebView _commonInitializationWithFrameName:groupName:]):
+            Pass the gesture recognizer to the WebImmediateActionController.
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177183. <rdar://problem/19208291>
 
     2014-12-11  Timothy Horton  <timothy_horton@apple.com>

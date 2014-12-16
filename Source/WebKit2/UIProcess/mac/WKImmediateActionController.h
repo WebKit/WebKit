@@ -44,7 +44,6 @@ enum class ImmediateActionState {
 };
 }
 
-@class NSImmediateActionGestureRecognizer;
 @class WKPagePreviewViewController;
 @class WKView;
 

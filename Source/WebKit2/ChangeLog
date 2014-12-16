@@ -1,5 +1,24 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177186. <rdar://problem/19208291>
+
+    2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
+            Move the preview popover to WebImmediateActionController
+            https://bugs.webkit.org/show_bug.cgi?id=139563
+            <rdar://problem/19208291>
+
+            Reviewed by Beth Dakin.
+
+            * UIProcess/mac/WKImmediateActionController.h:
+            Remove an unnecessary forward declaration.
+
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController willDestroyView:]):
+            Clear the immediate action recognizer when the view goes away.
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177183. <rdar://problem/19208291>
 
     2014-12-11  Timothy Horton  <timothy_horton@apple.com>

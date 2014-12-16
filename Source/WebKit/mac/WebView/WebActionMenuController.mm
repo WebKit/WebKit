@@ -72,14 +72,8 @@
 #import <objc/objc-class.h>
 #import <objc/objc.h>
 
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
-SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
-
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, ImageKit)
 SOFT_LINK_CLASS(ImageKit, IKSlideshow)
-
-@interface WebActionMenuController () <QLPreviewMenuItemDelegate>
-@end
 
 using namespace WebCore;
 
@@ -269,20 +263,9 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 - (NSArray *)_defaultMenuItemsForLink
 {
     RetainPtr<NSMenuItem> openLinkItem = [self _createActionMenuItemForTag:WebActionMenuItemTagOpenLinkInDefaultBrowser];
-
-    BOOL shouldUseStandardQuickLookPreview = [NSMenuItem respondsToSelector:@selector(standardQuickLookMenuItem)];
-    RetainPtr<NSMenuItem> previewLinkItem;
-    RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem;
-    if (shouldUseStandardQuickLookPreview) {
-        qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
-        [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
-        [qlPreviewLinkItem setDelegate:self];
-    } else
-        previewLinkItem = [NSMenuItem separatorItem];
-
     RetainPtr<NSMenuItem> readingListItem = [self _createActionMenuItemForTag:WebActionMenuItemTagAddLinkToSafariReadingList];
 
-    return @[ openLinkItem.get(), shouldUseStandardQuickLookPreview ? qlPreviewLinkItem.get() : previewLinkItem.get(), [NSMenuItem separatorItem], readingListItem.get() ];
+    return @[ openLinkItem.get(), [NSMenuItem separatorItem], [NSMenuItem separatorItem], readingListItem.get() ];
 }
 
 #pragma mark mailto: and tel: Link actions
@@ -720,26 +703,6 @@ static DictionaryPopupInfo performDictionaryLookupForRange(Frame* frame, Range& 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
 {
     return _webView.window;
-}
-
-#pragma mark QLPreviewMenuItemDelegate implementation
-
-- (NSView *)menuItem:(NSMenuItem *)menuItem viewAtScreenPoint:(NSPoint)screenPoint
-{
-    return _webView;
-}
-
-- (id<QLPreviewItem>)menuItem:(NSMenuItem *)menuItem previewItemAtPoint:(NSPoint)point
-{
-    if (!_webView)
-        return nil;
-
-    return _hitTestResult.absoluteLinkURL();
-}
-
-- (NSRectEdge)menuItem:(NSMenuItem *)menuItem preferredEdgeForPoint:(NSPoint)point
-{
-    return NSMaxYEdge;
 }
 
 #pragma mark Menu Items
