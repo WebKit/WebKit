@@ -1,5 +1,15 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177182. <rdar://problem/19208291>
+
+    2014-12-11  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177180. <rdar://problem/19208291>
 
     2014-12-11  Timothy Horton  <timothy_horton@apple.com>
