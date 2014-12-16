@@ -3174,6 +3174,7 @@
 		931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */; };
 		931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D72F515FE695300C4C07E /* LayoutMilestones.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9321D5901A390704008052BE /* NSImmediateActionGestureRecognizerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
 		932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 932871BF0B20DEB70049035A /* PlatformMenuDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10335,6 +10336,7 @@
 		931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateTree.cpp; sourceTree = "<group>"; };
 		931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateTree.h; sourceTree = "<group>"; };
 		931D72F515FE695300C4C07E /* LayoutMilestones.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutMilestones.h; sourceTree = "<group>"; };
+		9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSImmediateActionGestureRecognizerSPI.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
 		932AD70317EFA2C30038F8FF /* MainFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainFrame.cpp; sourceTree = "<group>"; };
@@ -17652,6 +17654,7 @@
 			children = (
 				2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */,
 				2D413F601A187A3F0041A521 /* LookupSPI.h */,
+				9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */,
 				937F4CCD1A2D4B0100BB39F5 /* NSMenuSPI.h */,
 				2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */,
 				2DCB837819F99BBA00A7FBE4 /* NSSharingServiceSPI.h */,
@@ -25357,6 +25360,7 @@
 				1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */,
 				A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */,
 				265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */,
+				9321D5901A390704008052BE /* NSImmediateActionGestureRecognizerSPI.h in Headers */,
 				316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
