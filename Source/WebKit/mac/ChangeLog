@@ -1,5 +1,25 @@
 2014-12-16  Dana Burkart  <dburkart@apple.com>
 
+        Merged r177199. <rdar://problem/19225448>
+
+    2014-12-11  Beth Dakin  <bdakin@apple.com>
+
+            WK1: Need new SPI for Webkit clients to override default immediate action
+            https://bugs.webkit.org/show_bug.cgi?id=139568
+            -and corresponding-
+            rdar://problem/19225448
+
+            Reviewed by Dan Bernstein.
+
+            Call SPI giving clients a chance to override the default behavior.
+            * WebView/WebImmediateActionController.mm:
+            (-[WebImmediateActionController _updateImmediateActionItem]):
+
+            New SPI.
+            * WebView/WebUIDelegatePrivate.h:
+
+2014-12-16  Dana Burkart  <dburkart@apple.com>
+
         Merged r177186. <rdar://problem/19208291>
 
     2014-12-11  Timothy Horton  <timothy_horton@apple.com>
