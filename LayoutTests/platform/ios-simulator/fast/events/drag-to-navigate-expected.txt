@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 6: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(["resources/file-for-drag-to-navigate.html"])')
-FAIL: Timed out waiting for notifyDone to be called
-FAIL

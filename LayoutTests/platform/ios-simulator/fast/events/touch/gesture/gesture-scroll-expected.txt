@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 98: TypeError: undefined is not a function (evaluating 'eventSender.gestureScrollBegin(95, 12)')
-FAIL: Timed out waiting for notifyDone to be called
-This tests scroll gesture events. Square is (mostly) green on pass
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-first gesture
-

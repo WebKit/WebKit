@@ -1,0 +1,9 @@
+Test for http://webkit.org/b/131974 REGRESSION (r151839): Subframe keeps getting mousemove events with the same coordinates after hiding a hovered element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

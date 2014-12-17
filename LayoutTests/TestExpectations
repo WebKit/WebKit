@@ -437,3 +437,6 @@ webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-06.svg [ Ima
 webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-07.svg [ ImageOnlyFailure ]
 webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-08.svg [ ImageOnlyFailure ]
 webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-09.svg [ ImageOnlyFailure ]
+
+webkit.org/b/110546 [ Debug ] fast/parser/document-write-fighting-eof.html [ Skip ]
+webkit.org/b/110546 [ Debug ] fast/parser/document-write-partial-entity-before-load.html [ Skip ]

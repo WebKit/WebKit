@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 470x19
+          text run at (0,0) width 470: "In this test you should see two identical blue squares, each 50px by 50px."
+      RenderBlock {DIV} at (0,36) size 784x100
+        RenderImage {IMG} at (0,0) size 50x50
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,136) size 784x70
+        RenderBR {BR} at (0,0) size 0x19
+        RenderImage {IMG} at (0,20) size 50x50
+        RenderText {#text} at (0,0) size 0x0

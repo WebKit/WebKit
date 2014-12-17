@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderMenuList {SELECT} at (2,2) size 58x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 46x14
+          RenderText at (0,0) size 26x14
+            text run at (0,0) width 26: "Hello"
+      RenderText {#text} at (62,1) size 4x19
+        text run at (62,1) width 4: " "
+      RenderMenuList {SELECT} at (68,2) size 77x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 65x14
+          RenderText at (0,0) size 45x14
+            text run at (0,0) width 45: "Goodbye"
+      RenderText {#text} at (0,0) size 0x0

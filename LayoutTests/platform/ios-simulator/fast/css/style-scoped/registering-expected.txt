@@ -1,7 +1,0 @@
-Test [un]registering a <style scoped> element from its parent
-
-windows.internals.numberOfScopedHTMLStyleChildren not found!
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

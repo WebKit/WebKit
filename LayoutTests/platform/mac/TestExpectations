@@ -717,9 +717,6 @@ webkit.org/b/110186 inspector-protocol/page/javascriptDialogEvents.html [ Skip ]
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
-webkit.org/b/110546 [ Debug ] fast/parser/document-write-fighting-eof.html [ Skip ]
-webkit.org/b/110546 [ Debug ] fast/parser/document-write-partial-entity-before-load.html [ Skip ]
-
 webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Slow ]
 webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Slow ]
 webkit.org/b/111647 [ Debug ] sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Slow ]

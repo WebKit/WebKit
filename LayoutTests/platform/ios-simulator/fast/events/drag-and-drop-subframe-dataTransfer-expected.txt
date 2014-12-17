@@ -1,4 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-Dragging this iframe onto a drop target should not expose its contents.
-→  ←
-

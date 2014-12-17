@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderTable {TABLE} at (0,0) size 154x70 [border: none]
+        RenderTableSection {TBODY} at (0,0) size 153x69
+          RenderTableRow {TR} at (0,0) size 153x23
+            RenderTableCell {TD} at (0,0) size 77x23 [border: (1px solid #808080) none none (1px none #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 74x19
+                text run at (2,2) width 74: "Row1 cell1"
+            RenderTableCell {TD} at (77,0) size 76x23 [border: (1px solid #808080) none none none] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 74x19
+                text run at (1,2) width 74: "Row1 cell2"
+          RenderTableRow {TR} at (0,23) size 153x23
+            RenderTableCell {TD} at (0,23) size 77x23 [border: (1px solid #808080) none none (1px none #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 74x19
+                text run at (2,2) width 74: "Row2 cell1"
+            RenderTableCell {TD} at (77,23) size 76x23 [border: (1px solid #808080) none none none] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 74x19
+                text run at (1,2) width 74: "Row2 cell2"
+          RenderTableRow {TR} at (0,46) size 153x23
+            RenderTableCell {TD} at (0,46) size 77x23 [border: (1px solid #808080) none none (1px none #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 74x19
+                text run at (2,2) width 74: "Row3 cell1"
+            RenderTableCell {TD} at (77,46) size 76x23 [border: (1px solid #808080) none none none] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 74x19
+                text run at (1,2) width 74: "Row3 cell2"
+      RenderBlock {P} at (0,86) size 784x20
+        RenderText {#text} at (0,0) size 762x19
+          text run at (0,0) width 762: "The rules attribute is first set dynamically to cols, then to rows, so the table should show only row borders. Bug 14848."

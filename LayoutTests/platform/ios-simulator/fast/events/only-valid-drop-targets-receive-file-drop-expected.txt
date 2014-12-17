@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 20: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(['test'])')
-FAIL: Timed out waiting for notifyDone to be called
-To run this test manually, drag a file to one of the two boxes below.
-
-Dropping in drop target 1 should result in a drop event.
-Dropping in drop target 2 should NOT result in a drop event (page will navigate).
-Starting drag...
-

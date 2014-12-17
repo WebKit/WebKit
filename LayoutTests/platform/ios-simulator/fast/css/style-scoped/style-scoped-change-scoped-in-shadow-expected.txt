@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
-PASS window.internals is defined.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-test a scoped style in shadow subtree.
-

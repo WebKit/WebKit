@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 15: TypeError: undefined is not a function (evaluating 'b.webkitCreateShadowRoot()')
-Tests that
-
-FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-
-TEST COMPLETE
-AAA
-BBB
-DDD

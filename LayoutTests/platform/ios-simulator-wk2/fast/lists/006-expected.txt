@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {OL} at (0,0) size 784x40
+        RenderListItem {LI} at (40,0) size 744x40
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "1"
+            RenderInline {I} at (0,0) size 77x19
+              RenderInline {U} at (0,0) size 77x19
+                RenderText {#text} at (0,0) size 77x19
+                  text run at (0,0) width 77: "Hello world"
+            RenderText {#text} at (0,0) size 0x0
+          RenderBlock {OL} at (0,20) size 744x20
+            RenderListItem {LI} at (40,0) size 704x20
+              RenderListMarker at (-21,0) size 16x19: "1"
+              RenderText {#text} at (0,0) size 59x19
+                text run at (0,0) width 59: "Goodbye"

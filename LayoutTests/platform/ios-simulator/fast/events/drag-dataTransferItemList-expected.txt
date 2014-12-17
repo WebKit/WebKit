@@ -1,9 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-To manually test, drag 'Drag Me' to 'Drop Here' and drop. Several lines that say 'PASS' should appear below.
-
-Drag Me
-Drop Here
-Drag handler: 
-Drop handler: 
-Running test with Legacy drag handler and Legacy drop handler
-

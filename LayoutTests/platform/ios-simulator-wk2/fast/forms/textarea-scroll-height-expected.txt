@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (200,185) size 4x19
+        text run at (200,185) width 4: " "
+      RenderText {#text} at (204,185) size 52x19
+        text run at (204,185) width 52: "183 340"
+layer at (8,8) size 200x200 clip at (9,9) size 183x198 scrollHeight 340
+  RenderTextControl {TEXTAREA} at (0,0) size 200x200 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 179x336
+      RenderText {#text} at (3,0) size 76x322
+        text run at (3,0) width 76: "Lots of content."
+        text run at (78,0) width 1: " "
+        text run at (3,14) width 76: "Lots of content."
+        text run at (78,14) width 1: " "
+        text run at (3,28) width 76: "Lots of content."
+        text run at (78,28) width 1: " "
+        text run at (3,42) width 76: "Lots of content."
+        text run at (78,42) width 1: " "
+        text run at (3,56) width 0: " "
+        text run at (3,70) width 76: "Lots of content."
+        text run at (78,70) width 1: " "
+        text run at (3,84) width 76: "Lots of content."
+        text run at (78,84) width 1: " "
+        text run at (3,98) width 0: " "
+        text run at (3,112) width 76: "Lots of content."
+        text run at (78,112) width 1: " "
+        text run at (3,126) width 76: "Lots of content."
+        text run at (78,126) width 1: " "
+        text run at (3,140) width 0: " "
+        text run at (3,154) width 76: "Lots of content."
+        text run at (78,154) width 1: " "
+        text run at (3,168) width 76: "Lots of content."
+        text run at (78,168) width 1: " "
+        text run at (3,182) width 0: " "
+        text run at (3,196) width 76: "Lots of content."
+        text run at (78,196) width 1: " "
+        text run at (3,210) width 76: "Lots of content."
+        text run at (78,210) width 1: " "
+        text run at (3,224) width 0: " "
+        text run at (3,238) width 76: "Lots of content."
+        text run at (78,238) width 1: " "
+        text run at (3,252) width 76: "Lots of content."
+        text run at (78,252) width 1: " "
+        text run at (3,266) width 0: " "
+        text run at (3,280) width 76: "Lots of content."
+        text run at (78,280) width 1: " "
+        text run at (3,294) width 76: "Lots of content."
+        text run at (78,294) width 1: " "
+        text run at (3,308) width 0: " "
+      RenderBR {BR} at (3,322) size 0x14

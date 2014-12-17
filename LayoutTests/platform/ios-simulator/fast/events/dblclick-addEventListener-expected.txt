@@ -1,3 +1,0 @@
-FAILURE, no dblclick recieved
-
-Double-click above to test.

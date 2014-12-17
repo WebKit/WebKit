@@ -1,6 +1,0 @@
-
-FAIL frame.contentDocument.body.scrollTop + frame.clientHeight should be 2127. Was 400.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

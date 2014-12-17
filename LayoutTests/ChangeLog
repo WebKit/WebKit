@@ -1,5 +1,19 @@
 2014-12-16  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Update expected results for LayoutTests/fast
+
+        * TestExpectations: Added entries fast/parser/document-write-fighting-eof.html and fast/parser/document-write-partial-entity-before-load.html
+        and removed these entries from the GTK, Mac, and Windows-specific TestExpectation files. These tests are known to fail in debug builds on
+        all ports. See http://webkit.org/b/110546 for more details.
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        [...]
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2014-12-16  Daniel Bates  <dabates@apple.com>
+
         [iOS] Update expected results for LayoutTests/http
 
         * platform/ios-simulator-wk2/TestExpectations:

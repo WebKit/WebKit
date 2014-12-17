@@ -1,8 +1,0 @@
-original scroll x for RTL page : Success
-horizontal scroll: : Failure, actual: -3210; expected: -1000
-continuously call window.scrollX : Failure, actual: -3210; expected: -1000
-zoom in and out preserve scroll position: Failure, actual: -2541; expected: -1000
-resize preserves scroll position: Failure, actual: -3021; expected: -1000
-KeyDown HOME move x-scroll position to right for RTL page: -3021
-KeyDown END move x-scroll position to right for RTL page: -3021
-selectAll selects all document: Success

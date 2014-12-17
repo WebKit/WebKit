@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 24: TypeError: undefined is not a function (evaluating 'internals.settings.setTouchDragDropEnabled(true)')
-FAIL: Timed out waiting for notifyDone to be called
-
-This test checks that a long press gesture on a draggable element in an iframe starts a drag/drop session.
-
-Testing
-FAIL

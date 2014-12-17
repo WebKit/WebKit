@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 58: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(['test.txt'])')
-FAIL: Timed out waiting for notifyDone to be called
-To manually test, select a text file for the file input element, and then drag 'Drag Me' to 'Drop Here' and drop. Several lines that say 'PASS' should appear below. 
-
-Drag Me
-Drop Here
-

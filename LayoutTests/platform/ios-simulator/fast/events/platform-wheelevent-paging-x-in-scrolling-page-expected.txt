@@ -1,3 +1,0 @@
-PASS document.body.scrollTop is window.expectedScrollTop
-FAIL document.body.scrollLeft should be 700. Was 0.
-
