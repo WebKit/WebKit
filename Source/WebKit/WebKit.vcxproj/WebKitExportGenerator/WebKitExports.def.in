@@ -166,7 +166,6 @@ EXPORTS
         symbolWithPointer(?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z, ?absoluteBoundingBoxRect@RenderObject@WebCore@@QEBA?AVIntRect@2@_N@Z)
         symbolWithPointer(?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ, ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QEBA?AVIntRect@2@XZ)
         symbolWithPointer(?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ, ?description@DocumentMarker@WebCore@@QEBAAEBVString@WTF@@XZ)
-        symbolWithPointer(?addSlowCase@AtomicString@WTF@@CA?AV?$PassRef@VStringImpl@WTF@@@2@AAVStringImpl@2@@Z, ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRef@VStringImpl@WTF@@@2@AEAVStringImpl@2@@Z)
         symbolWithPointer(?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z, ?cacheDOMStructure@WebCore@@YAPEAVStructure@JSC@@PEAVJSDOMGlobalObject@1@PEAV23@PEBUClassInfo@3@@Z)
         symbolWithPointer(?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z, ?childItemWithTarget@HistoryItem@WebCore@@QEBAPEAV12@AEBVString@WTF@@@Z)
         symbolWithPointer(?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z, ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@AEAVDocument@2@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z)
@@ -394,16 +393,17 @@ EXPORTS
         symbolWithPointer(?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ, ?mayFillWithSolidColor@BitmapImage@WebCore@@MEAA_NXZ)
         symbolWithPointer(?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ, ?solidColor@BitmapImage@WebCore@@MEBA?AVColor@2@XZ)
         symbolWithPointer(?frameOrientationAtIndex@BitmapImage@WebCore@@IAE?AVImageOrientation@2@I@Z, ?frameOrientationAtIndex@BitmapImage@WebCore@@IEAA?AVImageOrientation@2@_K@Z)
-        symbolWithPointer(?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRef@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRef@VStyleSheetContents@WebCore@@@WTF@@@Z)
+        symbolWithPointer(?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEX$$QAV?$Ref@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRef@VStyleSheetContents@WebCore@@@WTF@@@Z)
         symbolWithPointer(?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z, ?parseString@StyleSheetContents@WebCore@@QEAA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?emptyString@WTF@@YAABVString@1@XZ, ?emptyString@WTF@@YAAEBVString@1@XZ)
         symbolWithPointer(?invalidate@URL@WebCore@@AAEXXZ, ?invalidate@URL@WebCore@@AEAAXXZ)
         symbolWithPointer(??0StyleSheetContents@WebCore@@AAE@PAVStyleRuleImport@1@ABVString@WTF@@ABUCSSParserContext@1@@Z, ??0StyleSheetContents@WebCore@@AEAA@PEAVStyleRuleImport@1@AEBVString@WTF@@AEBUCSSParserContext@1@@Z)
-        symbolWithPointer(?addUserSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRef@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addUserSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRef@VStyleSheetContents@WebCore@@@WTF@@@Z)
+        symbolWithPointer(?addUserSheet@DocumentStyleSheetCollection@WebCore@@QAEX$$QAV?$Ref@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addUserSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRef@VStyleSheetContents@WebCore@@@WTF@@@Z)
         symbolWithPointer(??1StyleSheetContents@WebCore@@QAE@XZ, ??1StyleSheetContents@WebCore@@QEAA@XZ)
         symbolWithPointer(?pauseAnimationAtTime@AnimationController@WebCore@@QAE_NPAVRenderElement@2@ABVAtomicString@WTF@@N@Z, ?pauseAnimationAtTime@AnimationController@WebCore@@QEAA_NPEAVRenderElement@2@AEBVAtomicString@WTF@@N@Z)
         symbolWithPointer(?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderElement@2@ABVString@WTF@@N@Z, ?pauseTransitionAtTime@AnimationController@WebCore@@QEAA_NPEAVRenderElement@2@AEBVString@WTF@@N@Z)
         symbolWithPointer(?memoryCache@WebCore@@YAAAVMemoryCache@1@XZ, ?memoryCache@WebCore@@YAAEAVMemoryCache@1@XZ)
+        ?evictResources@MemoryCache@WebCore@@QAEXXZ
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@@Z)
         symbolWithPointer(?nonFastScrollableRects@Page@WebCore@@QAE?AV?$PassRefPtr@VClientRectList@WebCore@@@WTF@@PBVFrame@2@@Z, ?nonFastScrollableRects@Page@WebCore@@QEAA?AV?$PassRefPtr@VClientRectList@WebCore@@@WTF@@PEBVFrame@2@@Z)
         symbolWithPointer(?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z, ?numberOfActiveAnimations@AnimationController@WebCore@@QEBAIPEAVDocument@2@@Z)
@@ -508,3 +508,5 @@ EXPORTS
         symbolWithPointer(?viewOverlayRootLayer@PageOverlayController@WebCore@@QAEAAVGraphicsLayer@2@XZ, ?viewOverlayRootLayer@PageOverlayController@WebCore@@QEAAAEAVGraphicsLayer@2@XZ)
         symbolWithPointer(?installPageOverlay@PageOverlayController@WebCore@@QAEXV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@W4FadeMode@PageOverlay@2@@Z, ?installPageOverlay@PageOverlayController@WebCore@@QEAAXV?$PassRefPtr@VPageOverlay@WebCore@@@WTF@@W4FadeMode@PageOverlay@2@@Z)
         symbolWithPointer(?uninstallPageOverlay@PageOverlayController@WebCore@@QAEXPAVPageOverlay@2@W4FadeMode@32@@Z, ?uninstallPageOverlay@PageOverlayController@WebCore@@QEAAXPEAVPageOverlay@2@W4FadeMode@32@@Z)
+        ?source@ResourceResponseBase@WebCore@@QBE?AW4Source@12@XZ
+        ?toWrapped@JSXMLHttpRequest@WebCore@@SAPAVXMLHttpRequest@2@VJSValue@JSC@@@Z
