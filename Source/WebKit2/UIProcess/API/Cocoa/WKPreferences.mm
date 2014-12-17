@@ -113,6 +113,16 @@
     _preferences->setTelephoneNumberParsingEnabled(telephoneNumberDetectionIsEnabled);
 }
 
+- (BOOL)_featureCounterEnabled
+{
+    return _preferences->featureCounterEnabled();
+}
+
+- (void)_setFeatureCounterEnabled:(BOOL)featureCounterEnabled
+{
+    _preferences->setFeatureCounterEnabled(featureCounterEnabled);
+}
+
 static WebCore::SecurityOrigin::StorageBlockingPolicy toStorageBlockingPolicy(_WKStorageBlockingPolicy policy)
 {
     switch (policy) {

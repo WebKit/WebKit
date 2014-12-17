@@ -23,26 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FeatureCounter.h"
+#ifndef FeatureCounter_h
+#define FeatureCounter_h
 
-#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
-#import <AppSupport/CPAggregateDictionary.h>
+#include "FeatureCounterKeys.h"
 
-namespace WTF {
+namespace WebCore {
 
-void incrementFeatureCounterKey(const char* const key)
-{
-    NSString *nsKey = [[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<char*>(key)) length:strlen(key) freeWhenDone:NO];
-    [[CPAggregateDictionary sharedAggregateDictionary] incrementKey:nsKey];
-}
+class Page;
 
-void setFeatureCounterKey(const char* const key, int64_t value)
-{
-    NSString *nsKey = [[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<char*>(key)) length:strlen(key) freeWhenDone:NO];
-    [[CPAggregateDictionary sharedAggregateDictionary] setValue:value forScalarKey:nsKey];
-}
+class FeatureCounter {
+public:
+    static void incrementKey(Page*, const char* const key);
+    static void setKey(Page*, const char* const key, int64_t value);
 
-} // namespace WTF
+private:
+    static bool shouldUseForPage(Page*);
+};
 
-#endif // PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+} // namespace WebCore
+
+#define FEATURE_COUNTER_INCREMENT_KEY(page, key)   WebCore::FeatureCounter::incrementKey(page, key)
+#define FEATURE_COUNTER_SET_KEY(page, key, value)  WebCore::FeatureCounter::setKey(page, key, value)
+
+#endif // FeatureCounter_h

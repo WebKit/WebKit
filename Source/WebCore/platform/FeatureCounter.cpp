@@ -26,21 +26,42 @@
 #include "config.h"
 #include "FeatureCounter.h"
 
-namespace WTF {
+#include "Page.h"
+#include "Settings.h"
+
+namespace WebCore {
+
+bool FeatureCounter::shouldUseForPage(Page* page)
+{
+    if (!page)
+        return false;
+
+    // Log only if the setting is enabled.
+    if (!page->settings().featureCounterEnabled())
+        return false;
+
+    // Do not log if this is a private session.
+    if (page->usesEphemeralSession())
+        return false;
+
+    return true;
+}
 
 #if !PLATFORM(IOS) || !USE(APPLE_INTERNAL_SDK)
 
-void incrementFeatureCounterKey(const char* const key)
+void FeatureCounter::incrementKey(Page* page, const char* const key)
 {
+    UNUSED_PARAM(page);
     UNUSED_PARAM(key);
 }
 
-void setFeatureCounterKey(const char* const key, int64_t value)
+void FeatureCounter::setKey(Page* page, const char* const key, int64_t value)
 {
+    UNUSED_PARAM(page);
     UNUSED_PARAM(key);
     UNUSED_PARAM(value);
 }
 
 #endif
 
-} // namespace WTF
+} // namespace WebCore

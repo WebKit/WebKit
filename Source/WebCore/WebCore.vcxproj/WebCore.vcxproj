@@ -7403,6 +7403,7 @@
     <ClCompile Include="..\platform\DisplaySleepDisabler.cpp" />
     <ClCompile Include="..\platform\DragData.cpp" />
     <ClCompile Include="..\platform\DragImage.cpp" />
+    <ClCompile Include="..\platform\FeatureCounter.cpp" />
     <ClCompile Include="..\platform\FileChooser.cpp" />
     <ClCompile Include="..\platform\FileStream.cpp" />
     <ClCompile Include="..\platform\FileSystem.cpp" />
@@ -19370,6 +19371,7 @@
     <ClInclude Include="..\platform\DragData.h" />
     <ClInclude Include="..\platform\DragImage.h" />
     <ClInclude Include="..\platform\EventLoop.h" />
+    <ClInclude Include="..\platform\FeatureCounter.h" />
     <ClInclude Include="..\platform\FileChooser.h" />
     <ClInclude Include="..\platform\FileMetadata.h" />
     <ClInclude Include="..\platform\FileStream.h" />

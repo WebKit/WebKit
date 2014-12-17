@@ -77,6 +77,7 @@ javaScriptExperimentsEnabled initial=false
 scriptMarkupEnabled initial=true
 needsSiteSpecificQuirks initial=false
 domTimersThrottlingEnabled initial=true
+featureCounterEnabled initial=false
 webArchiveDebugModeEnabled initial=false, conditional=WEB_ARCHIVE
 localFileContentSniffingEnabled initial=false
 offlineWebApplicationCacheEnabled initial=false

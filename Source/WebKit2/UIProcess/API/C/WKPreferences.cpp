@@ -589,6 +589,16 @@ bool WKPreferencesGetDOMTimersThrottlingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->domTimersThrottlingEnabled();
 }
 
+void WKPreferencesSetFeatureCounterEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setFeatureCounterEnabled(enabled);
+}
+
+bool WKPreferencesGetFeatureCounterEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->featureCounterEnabled();
+}
+
 void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setWebArchiveDebugModeEnabled(enabled);

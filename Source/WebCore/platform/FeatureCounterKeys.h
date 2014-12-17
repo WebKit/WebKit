@@ -26,8 +26,6 @@
 #ifndef FeatureCounterKeys_h
 #define FeatureCounterKeys_h
 
-#include <wtf/FeatureCounter.h>
-
 namespace WebCore {
 
 // Page cache.
