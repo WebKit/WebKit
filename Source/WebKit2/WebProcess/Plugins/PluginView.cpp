@@ -1616,11 +1616,6 @@ void PluginView::protectPluginFromDestruction()
         ref();
 }
 
-static void derefPluginView(PluginView* pluginView)
-{
-    pluginView->deref();
-}
-
 void PluginView::unprotectPluginFromDestruction()
 {
     if (m_isBeingDestroyed)
@@ -1631,10 +1626,14 @@ void PluginView::unprotectPluginFromDestruction()
     // for example, may crash if the plug-in is destroyed and we return to code for
     // the destroyed object higher on the stack. To prevent this, if the plug-in has
     // only one remaining reference, call deref() asynchronously.
-    if (hasOneRef())
-        RunLoop::main().dispatch(bind(derefPluginView, this));
-    else
-        deref();
+    if (hasOneRef()) {
+        RunLoop::main().dispatch([this] {
+            deref();
+        });
+        return;
+    }
+
+    deref();
 }
 
 void PluginView::didFinishLoad(WebFrame* webFrame)

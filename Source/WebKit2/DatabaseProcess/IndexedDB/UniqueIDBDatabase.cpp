@@ -166,16 +166,16 @@ void UniqueIDBDatabase::didShutdownBackingStore(UniqueIDBDatabaseShutdownType ty
     RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
 
     // Empty out remaining main thread tasks.
-    while (performNextMainThreadTaskWithoutAdoptRef()) {
+    while (performNextMainThreadTask()) {
     }
 
     // No more requests will be handled, so abort all outstanding requests.
-    for (const auto& it : m_pendingMetadataRequests)
-        it->requestAborted();
-    for (const auto& it : m_pendingTransactionRequests)
-        it.value->requestAborted();
-    for (const auto& it : m_pendingDatabaseTasks)
-        it.value->requestAborted();
+    for (const auto& request : m_pendingMetadataRequests)
+        request->requestAborted();
+    for (const auto& request : m_pendingTransactionRequests.values())
+        request->requestAborted();
+    for (const auto& request : m_pendingDatabaseTasks.values())
+        request->requestAborted();
 
     m_pendingMetadataRequests.clear();
     m_pendingTransactionRequests.clear();
@@ -1148,23 +1148,16 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, Data
 
     m_mainThreadTasks.append(WTF::move(task));
 
-    // Balanced by an adoptRef() in ::performNextMainThreadTask
-    ref();
-    RunLoop::main().dispatch(bind(&UniqueIDBDatabase::performNextMainThreadTask, this));
+    RefPtr<UniqueIDBDatabase> database(this);
+    RunLoop::main().dispatch([database] {
+        database->performNextMainThreadTask();
+    });
 }
 
-void UniqueIDBDatabase::performNextMainThreadTask()
+bool UniqueIDBDatabase::performNextMainThreadTask()
 {
     ASSERT(RunLoop::isMain());
 
-    // Balanced by a ref() in ::postMainThreadTask
-    RefPtr<UniqueIDBDatabase> protector(adoptRef(this));
-
-    performNextMainThreadTaskWithoutAdoptRef();
-}
-
-bool UniqueIDBDatabase::performNextMainThreadTaskWithoutAdoptRef()
-{
     bool moreTasks;
 
     std::unique_ptr<AsyncTask> task;
@@ -1195,7 +1188,10 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, Databa
 
     m_databaseTasks.append(WTF::move(task));
 
-    DatabaseProcess::shared().queue().dispatch(bind(&UniqueIDBDatabase::performNextDatabaseTask, this));
+    RefPtr<UniqueIDBDatabase> database(this);
+    DatabaseProcess::shared().queue().dispatch([database] {
+        database->performNextDatabaseTask();
+    });
 }
 
 void UniqueIDBDatabase::performNextDatabaseTask()

@@ -156,7 +156,9 @@ void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
 
     m_databaseTasks.append(WTF::move(task));
 
-    m_queue->dispatch(bind(&DatabaseProcess::performNextDatabaseTask, this));
+    m_queue->dispatch([this] {
+        performNextDatabaseTask();
+    });
 }
 
 void DatabaseProcess::performNextDatabaseTask()

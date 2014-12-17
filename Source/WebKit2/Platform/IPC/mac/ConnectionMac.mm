@@ -361,7 +361,11 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
 void Connection::initializeDeadNameSource()
 {
     m_deadNameSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, 0, m_connectionQueue->dispatchQueue());
-    dispatch_source_set_event_handler(m_deadNameSource, bind(&Connection::connectionDidClose, this));
+
+    RefPtr<Connection> connection(this);
+    dispatch_source_set_event_handler(m_deadNameSource, [connection] {
+        connection->connectionDidClose();
+    });
 
     mach_port_t sendPort = m_sendPort;
     dispatch_source_set_cancel_handler(m_deadNameSource, ^{
