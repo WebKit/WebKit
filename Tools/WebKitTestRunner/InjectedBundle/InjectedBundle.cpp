@@ -266,8 +266,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);
 
-    if (m_timeout > 0)
-        m_testRunner->setCustomTimeout(m_timeout);
+    m_testRunner->setCustomTimeout(m_timeout);
 
     page()->prepare();
 

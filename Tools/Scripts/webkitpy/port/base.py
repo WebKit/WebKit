@@ -131,8 +131,6 @@ class Port(object):
         return []
 
     def supports_per_test_timeout(self):
-        # FIXME: Make per-test timeouts unconditional once all ports' DumpRenderTrees support that.
-        # Windows DumpRenderTree may be the only one remaining to be fixed at this time.
         return False
 
     def default_pixel_tests(self):
@@ -140,7 +138,7 @@ class Port(object):
         return False
 
     def default_timeout_ms(self):
-        return 30 * 1000
+        return 35 * 1000
 
     def driver_stop_timeout(self):
         """ Returns the amount of time in seconds to wait before killing the process in driver.stop()."""

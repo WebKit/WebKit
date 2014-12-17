@@ -60,7 +60,13 @@ class SingleTestRunner(object):
         self._should_run_pixel_test = test_input.should_run_pixel_test
         self._reference_files = test_input.reference_files
         self._stop_when_done = stop_when_done
+
         self._timeout = test_input.timeout
+        if self._timeout > 5000:
+            # Timeouts are detected by both script and tool; tool detected timeouts are
+            # better, because they contain partial output. Give the tool some time to
+            # report the timeout instead of being killed.
+            self._timeout = int(self._timeout) - 5000
 
         if self._reference_files:
             # Detect and report a test which has a wrong combination of expectation files.
