@@ -1,3 +1,16 @@
+2014-12-16  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: Preview popovers obscure the link, look wrong
+        https://bugs.webkit.org/show_bug.cgi?id=139711
+        -and corresponding-
+        rdar://problem/19271854
+
+        Reviewed by Tim Horton.
+
+        New SPI.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/spi/mac/NSPopoverSPI.h: Added.
+
 2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Cherokee language is drawn as boxes

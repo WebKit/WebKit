@@ -39,6 +39,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
+#import <WebCore/NSPopoverSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/URL.h>
@@ -225,6 +226,8 @@ using namespace WebKit;
 
 #if WK_API_ENABLED
         [self _createPreviewPopoverIfNeededForURL:absoluteLinkURL];
+        if (id<NSImmediateActionAnimationController> previewController = [self _animationControllerForCustomPreview])
+            return previewController;
         return (id<NSImmediateActionAnimationController>)_previewPopover.get();
 #else
         return nil;
@@ -414,6 +417,18 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     }
     
     return computedTargetSize;
+}
+
+- (id<NSImmediateActionAnimationController>)_animationControllerForCustomPreview
+{
+    Class nsPopoverAnimationControllerClass = NSClassFromString(@"NSPopoverAnimationController");
+    if (!nsPopoverAnimationControllerClass)
+        return nil;
+    NSPopoverAnimationController *popoverController = [NSPopoverAnimationController popoverAnimationControllerWithPopover:_previewPopover.get()];
+    popoverController.preferredEdge = NSMaxYEdge;
+    popoverController.anchorView = _wkView;
+    popoverController.positioningRect = _popoverOriginRect;
+    return popoverController;
 }
 
 #pragma mark WKPagePreviewViewControllerDelegate
