@@ -110,7 +110,6 @@ using namespace WebKit;
     _type = kWKImmediateActionNone;
     _currentActionContext = nil;
     _userData = nil;
-    _immediateActionRecognizer.animationController = nil;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData

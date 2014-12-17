@@ -101,7 +101,6 @@ using namespace WebCore;
 {
     _type = WebImmediateActionNone;
     _currentActionContext = nil;
-    _immediateActionRecognizer.animationController = nil;
 }
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
