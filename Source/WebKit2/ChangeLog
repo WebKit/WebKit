@@ -1,3 +1,30 @@
+2014-12-17  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r176133.
+
+    2014-11-14  Dan Bernstein  <mitz@apple.com>
+
+            Add some tracing to help investigating <rdar://problem/18905383> [iOS] Crash due to null m_webPageProxyForBackForwardListForCurrentSwipe in ViewGestureController::endSwipeGesture
+            https://bugs.webkit.org/show_bug.cgi?id=138750
+
+            Reviewed by Tim Horton.
+
+            Emit trace messages at various points, and log them prior to crashing if the error condition
+            occurs. Otherwise, clear the trace messages.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::addLogEntry): Helper function that adds a message, including a time stamp and a
+            backtrace, to m_logEntries.
+            (WebKit::dumpLogEntries): Helper function that logs everything in m_logEntries.
+            (WebKit::ViewGestureController::beginSwipeGesture): Add a log entry.
+            (WebKit::ViewGestureController::endSwipeGesture): If
+            m_webPageProxyForBackForwardListForCurrentSwipe is null, dump the log entries just before
+            crashing. Otherwise, clear m_logEntries.
+            (WebKit::ViewGestureController::willCommitPostSwipeTransitionLayerTree): Add a log entry.
+            (WebKit::ViewGestureController::removeSwipeSnapshot): Add a log entry.
+            * UIProcess/mac/ViewGestureController.h: Defined ENABLE_VIEW_GESTURE_CONTROLLER_TRACING,
+            and added m_logEntries member variable.
+
 2014-11-03  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173851.
