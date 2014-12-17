@@ -1,5 +1,12 @@
 2014-12-16  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build fix.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _animationControllerForCustomPreview]):
+
+2014-12-16  Beth Dakin  <bdakin@apple.com>
+
         REGRESSION: Preview popovers obscure the link, look wrong
         https://bugs.webkit.org/show_bug.cgi?id=139711
         -and corresponding-
