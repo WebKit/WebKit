@@ -1,3 +1,14 @@
+2014-12-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct DebugSuffix builds under MSBuild
+        https://bugs.webkit.org/show_bug.cgi?id=139733
+        <rdar://problem/19276880>
+
+        Reviewed by Simon Fraser.
+
+        * WebKit.vcxproj/WebKit.proj: Make sure to use the '_debug' suffix
+        when building the DebugSuffix target.
+
 2014-12-17  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Link errors.

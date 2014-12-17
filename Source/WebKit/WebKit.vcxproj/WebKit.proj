@@ -4,9 +4,11 @@
   <!-- normalize configuration case -->
   <PropertyGroup Condition="'$(CONFIGURATION)'=='Release'">
 	<CONFIG>Production</CONFIG>
+    <DebugSuffix></DebugSuffix>
   </PropertyGroup>
   <PropertyGroup Condition="'$(CONFIGURATION)'=='Debug'">
 	<CONFIG>DebugSuffix</CONFIG>
+    <DebugSuffix>_debug</DebugSuffix>
   </PropertyGroup>
 
   <!-- Wrapper to build WebKit for both win32 and x64. -->
@@ -77,10 +79,10 @@
     <CreateItem Include="$(ConfigurationBuildDir)\bin64\*">
       <Output TaskParameter="Include" ItemName="Bin64Files" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\bin32\WebKit.dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\WebKit$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\bin64\WebKit.dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\WebKit$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin64DLLFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\bin32\*.resources">
