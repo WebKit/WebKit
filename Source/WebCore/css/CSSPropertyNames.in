@@ -168,7 +168,7 @@ clip [Custom=All]
 content [LegacyStyleBuilder]
 counter-increment [Custom=All]
 counter-reset [Custom=All]
-cursor [Inherited, LegacyStyleBuilder]
+cursor [Inherited, Custom=All]
 #if defined(ENABLE_CURSOR_VISIBILITY) && ENABLE_CURSOR_VISIBILITY
 -webkit-cursor-visibility [Inherited, TypeName=CursorVisibility]
 #endif

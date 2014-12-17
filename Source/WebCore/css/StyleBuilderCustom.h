@@ -28,7 +28,9 @@
 #define StyleBuilderCustom_h
 
 #include "CSSAspectRatioValue.h"
+#include "CSSCursorImageValue.h"
 #include "CSSShadowValue.h"
+#include "CursorList.h"
 #include "Frame.h"
 #include "LocaleToScriptMapping.h"
 #include "Rect.h"
@@ -132,6 +134,10 @@ public:
     static void applyInitialCounterReset(StyleResolver&) { }
     static void applyInheritCounterReset(StyleResolver&);
     static void applyValueCounterReset(StyleResolver&, CSSValue&);
+
+    static void applyInitialCursor(StyleResolver&);
+    static void applyInheritCursor(StyleResolver&);
+    static void applyValueCursor(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1134,6 +1140,45 @@ inline void StyleBuilderCustom::applyInheritCounterReset(StyleResolver& styleRes
 inline void StyleBuilderCustom::applyValueCounterReset(StyleResolver& styleResolver, CSSValue& value)
 {
     applyValueCounter<Reset>(styleResolver, value);
+}
+
+inline void StyleBuilderCustom::applyInitialCursor(StyleResolver& styleResolver)
+{
+    styleResolver.style()->clearCursorList();
+    styleResolver.style()->setCursor(RenderStyle::initialCursor());
+}
+
+inline void StyleBuilderCustom::applyInheritCursor(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setCursor(styleResolver.parentStyle()->cursor());
+    styleResolver.style()->setCursorList(styleResolver.parentStyle()->cursors());
+}
+
+inline void StyleBuilderCustom::applyValueCursor(StyleResolver& styleResolver, CSSValue& value)
+{
+    styleResolver.style()->clearCursorList();
+    if (is<CSSPrimitiveValue>(value)) {
+        ECursor cursor = downcast<CSSPrimitiveValue>(value);
+        if (styleResolver.style()->cursor() != cursor)
+            styleResolver.style()->setCursor(cursor);
+        return;
+    }
+
+    styleResolver.style()->setCursor(CursorAuto);
+    auto& list = downcast<CSSValueList>(value);
+    for (auto& item : list) {
+        if (is<CSSCursorImageValue>(item.get())) {
+            auto& image = downcast<CSSCursorImageValue>(item.get());
+            if (image.updateIfSVGCursorIsUsed(styleResolver.element())) // Elements with SVG cursors are not allowed to share style.
+                styleResolver.style()->setUnique();
+            styleResolver.style()->addCursor(styleResolver.styleImage(CSSPropertyCursor, image), image.hotSpot());
+            continue;
+        }
+
+        styleResolver.style()->setCursor(downcast<CSSPrimitiveValue>(item.get()));
+        ASSERT_WITH_MESSAGE(item.ptr() == list.item(list.length() - 1), "Cursor ID fallback should always be last in the list");
+        return;
+    }
 }
 
 } // namespace WebCore

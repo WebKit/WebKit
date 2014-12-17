@@ -1,3 +1,27 @@
+2014-12-16  Chris Dumez  <cdumez@apple.com>
+
+        Move 'cursor' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139660
+
+        Reviewed by Benjamin Poulain.
+
+        Move 'cursor' CSS property to the new StyleBuilder by using
+        custom code.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyCursor::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyCursor::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyCursor::applyValue): Deleted.
+        (WebCore::ApplyPropertyCursor::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialCursor):
+        (WebCore::StyleBuilderCustom::applyInheritCursor):
+        (WebCore::StyleBuilderCustom::applyValueCursor):
+
 2014-12-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Animating HTML elements leaves trails when embedded to a subpxiel positioned iframe.
