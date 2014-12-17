@@ -179,7 +179,13 @@ class Driver(object):
         self.err_seen_eof = False
 
         command = self._command_from_driver_input(driver_input)
-        deadline = test_begin_time + int(driver_input.timeout) / 1000.0
+
+        # Certain timeouts are detected by the tool itself; tool detection is better,
+        # because results contain partial output in this case. Make script timeout longer
+        # by 5 seconds to avoid racing for which timeout is detected first.
+        # FIXME: It's not the job of the driver to decide what the timeouts should be.
+        # Move the additional timeout to driver_input.
+        deadline = test_begin_time + int(driver_input.timeout) / 1000.0 + 5
 
         self._server_process.write(command)
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
@@ -363,7 +369,7 @@ class Driver(object):
         return cmd
 
     def _check_for_driver_timeout(self, out_line):
-        if out_line == "FAIL: Timed out waiting for notifyDone to be called":
+        if out_line == "FAIL: Timed out waiting for notifyDone to be called\n":
             self._driver_timed_out = True
 
     def _check_for_driver_crash(self, error_line):
@@ -484,6 +490,7 @@ class Driver(object):
                 err_line, self.err_seen_eof = self._strip_eof(err_line)
 
             if out_line:
+                self._check_for_driver_timeout(out_line)
                 if out_line[-1] != "\n":
                     _log.error("Last character read from DRT stdout line was not a newline!  This indicates either a NRWT or DRT bug.")
                 content_length_before_header_check = block._content_length

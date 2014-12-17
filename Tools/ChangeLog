@@ -1,3 +1,35 @@
+2014-12-17  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r177363): Gtk and Efl testing is broken
+        https://bugs.webkit.org/show_bug.cgi?id=139734
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Remove timeout adjustment from here, because it
+        affected both script and tool timeout. This is still the right place for this logic,
+        but it would be a larger refactoring than I can do right now.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.supports_per_test_timeout): Added a FIXME.
+        (Port.default_timeout_ms): Now that the effective timeout is longer, change this
+        to avoid making tests take more time.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.run_test): Adjust script timeout here.
+        (Driver._check_for_driver_timeout): Fix the timeout detection.
+        (Driver._read_block): Actually use the timeout detection code.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp: (WTR::InjectedBundle::beginTesting):
+        Use TestRunner default timeout when there isn't a timeout passed from command line for the test.
+
+        * Scripts/webkitpy/port/port_testcase.py: (PortTestCase.test_default_timeout_ms):
+        Update results for the new default.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_hung_thread): Restore a test that I previously deleted, it was
+        actually a good one.
+
 2014-12-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177456.

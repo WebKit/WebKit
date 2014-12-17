@@ -266,6 +266,13 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         details, _, _ = logging_run(['--full-results-html'])
         self.assertEqual(details.exit_code, 0)
 
+    def test_hung_thread(self):
+        details, err, _ = logging_run(['--run-singly', '--time-out-ms=50', 'failures/expected/hang.html'], tests_included=True)
+        # Note that hang.html is marked as WontFix and all WontFix tests are
+        # expected to Pass, so that actually running them generates an "unexpected" error.
+        self.assertEqual(details.exit_code, 1)
+        self.assertNotEmpty(err)
+
     def test_keyboard_interrupt(self):
         # Note that this also tests running a test marked as SKIP if
         # you specify it explicitly.
