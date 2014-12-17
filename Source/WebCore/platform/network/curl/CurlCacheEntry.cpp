@@ -174,7 +174,7 @@ bool CurlCacheEntry::loadResponseHeaders()
 void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
 {
     response.setHTTPStatusCode(304);
-    response.setWasCached(true);
+    response.setSource(ResourceResponseBase::Source::DiskCache);
 
     // Integrate the headers in the response with the cached ones.
     HTTPHeaderMap::const_iterator it = m_cachedResponse.httpHeaderFields().begin();
