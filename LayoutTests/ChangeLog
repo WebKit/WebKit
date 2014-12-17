@@ -1,3 +1,13 @@
+2014-12-16  Shivakumar JM  <shiva.jm@samsung.com>
+
+        text node should not be created, On setting document.title to the empty string.
+        https://bugs.webkit.org/show_bug.cgi?id=139121
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Document/document-set-title-no-child-expected.txt: Added.
+        * fast/dom/Document/document-set-title-no-child.html: Added.
+
 2014-12-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Update expected results for LayoutTests/fast

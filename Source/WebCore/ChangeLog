@@ -1,3 +1,18 @@
+2014-12-16  Shivakumar JM  <shiva.jm@samsung.com>
+
+        text node should not be created, On setting document.title to the empty string.
+        https://bugs.webkit.org/show_bug.cgi?id=139121
+
+        Reviewed by Darin Adler.
+
+        Do not create text node, On setting document.title to the empty string as in spec.
+        I have confirmed this matches the behavior of Firefox and Chrome.
+
+        Test: fast/dom/Document/document-set-title-no-child.html
+
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::setText):
+
 2014-12-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move WebCore/platform/graphics/surfaces to std::unique_ptr
