@@ -49,7 +49,7 @@ static void didCloseOnConnectionWorkQueue(IPC::Connection*)
     // the process will exit forcibly.
     auto watchdogDelay = std::chrono::seconds(10);
 
-    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, []{
+    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
         // We use _exit here since the watchdog callback is called from another thread and we don't want
         // global destructors or atexit handlers to be called from this thread while the main thread is busy
         // doing its thing.

@@ -1257,7 +1257,7 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
 }
 #endif
 
-void WebProcess::getOrigins(WKOriginDataTypes types, std::function<void(const Vector<SecurityOriginData>&)> completion)
+void WebProcess::getOrigins(WKOriginDataTypes types, std::function<void (const Vector<SecurityOriginData>&)> completion)
 {
     if (!(types & kWKMediaKeyStorageOriginData)) {
         completion(Vector<SecurityOriginData>());
@@ -1273,7 +1273,7 @@ void WebProcess::getOrigins(WKOriginDataTypes types, std::function<void(const Ve
     completion(manager->getMediaKeyOrigins());
 }
 
-void WebProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void()> completion)
+void WebProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void ()> completion)
 {
     if (!(types & kWKMediaKeyStorageOriginData)) {
         completion();
@@ -1290,7 +1290,7 @@ void WebProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityO
     completion();
 }
 
-void WebProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void()> completion)
+void WebProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void ()> completion)
 {
     if (!(types & kWKMediaKeyStorageOriginData)) {
         completion();
@@ -1307,7 +1307,7 @@ void WebProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, doub
     completion();
 }
 
-void WebProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void()> completion)
+void WebProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void ()> completion)
 {
     if (!(types & kWKMediaKeyStorageOriginData)) {
         completion();

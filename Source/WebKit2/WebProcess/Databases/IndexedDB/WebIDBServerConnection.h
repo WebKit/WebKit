@@ -61,30 +61,30 @@ public:
 
     // Transaction-level operations
     virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, WebCore::IndexedDB::TransactionMode, BoolCallbackFunction successCallback) override;
-    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void beginTransaction(int64_t transactionID, std::function<void ()> completionCallback) override;
     virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) override;
-    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void resetTransaction(int64_t transactionID, std::function<void ()> completionCallback) override;
     virtual bool resetTransactionSync(int64_t transactionID) override;
-    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual void rollbackTransaction(int64_t transactionID, std::function<void ()> completionCallback) override;
     virtual bool rollbackTransactionSync(int64_t transactionID) override;
 
-    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>>& indexKeys, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>>& indexKeys, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
-    virtual void createObjectStore(WebCore::IDBTransactionBackend&, const WebCore::CreateObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void createIndex(WebCore::IDBTransactionBackend&, const WebCore::CreateIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void deleteIndex(WebCore::IDBTransactionBackend&, const WebCore::DeleteIndexOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void get(WebCore::IDBTransactionBackend&, const WebCore::GetOperation&, std::function<void(const WebCore::IDBGetResult&, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void put(WebCore::IDBTransactionBackend&, const WebCore::PutOperation&, std::function<void(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void openCursor(WebCore::IDBTransactionBackend&, const WebCore::OpenCursorOperation&, std::function<void(int64_t, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void count(WebCore::IDBTransactionBackend&, const WebCore::CountOperation&, std::function<void(int64_t, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void deleteRange(WebCore::IDBTransactionBackend&, const WebCore::DeleteRangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void clearObjectStore(WebCore::IDBTransactionBackend&, const WebCore::ClearObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void deleteObjectStore(WebCore::IDBTransactionBackend&, const WebCore::DeleteObjectStoreOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void changeDatabaseVersion(WebCore::IDBTransactionBackend&, const WebCore::IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void createObjectStore(WebCore::IDBTransactionBackend&, const WebCore::CreateObjectStoreOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void createIndex(WebCore::IDBTransactionBackend&, const WebCore::CreateIndexOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteIndex(WebCore::IDBTransactionBackend&, const WebCore::DeleteIndexOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void get(WebCore::IDBTransactionBackend&, const WebCore::GetOperation&, std::function<void (const WebCore::IDBGetResult&, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void put(WebCore::IDBTransactionBackend&, const WebCore::PutOperation&, std::function<void (PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void openCursor(WebCore::IDBTransactionBackend&, const WebCore::OpenCursorOperation&, std::function<void (int64_t, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void count(WebCore::IDBTransactionBackend&, const WebCore::CountOperation&, std::function<void (int64_t, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteRange(WebCore::IDBTransactionBackend&, const WebCore::DeleteRangeOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void clearObjectStore(WebCore::IDBTransactionBackend&, const WebCore::ClearObjectStoreOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void deleteObjectStore(WebCore::IDBTransactionBackend&, const WebCore::DeleteObjectStoreOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void changeDatabaseVersion(WebCore::IDBTransactionBackend&, const WebCore::IDBDatabaseBackend::VersionChangeOperation&, std::function<void (PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     // Cursor-level operations
-    virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
-    virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void cursorAdvance(WebCore::IDBCursorBackend&, const WebCore::CursorAdvanceOperation&, std::function<void (PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
+    virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void (PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     // Message handlers.
     void didReceiveWebIDBServerConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);

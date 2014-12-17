@@ -287,10 +287,10 @@ private:
     void didReceiveWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     // WebOriginDataManagerSupplement
-    virtual void getOrigins(WKOriginDataTypes, std::function<void(const Vector<SecurityOriginData>&)> completion) override;
-    virtual void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, std::function<void()> completion) override;
-    virtual void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void()> completion) override;
-    virtual void deleteAllEntries(WKOriginDataTypes, std::function<void()> completion) override;
+    virtual void getOrigins(WKOriginDataTypes, std::function<void (const Vector<SecurityOriginData>&)> completion) override;
+    virtual void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, std::function<void ()> completion) override;
+    virtual void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void ()> completion) override;
+    virtual void deleteAllEntries(WKOriginDataTypes, std::function<void ()> completion) override;
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

@@ -74,14 +74,14 @@ using namespace WebCore;
 @end
 
 @interface WKSelectionHandlerWrapper : NSObject {
-    std::function<void()> _selectionHandler;
+    std::function<void ()> _selectionHandler;
 }
-- (id)initWithSelectionHandler:(std::function<void()>)selectionHandler;
+- (id)initWithSelectionHandler:(std::function<void ()>)selectionHandler;
 - (void)executeSelectionHandler;
 @end
 
 @implementation WKSelectionHandlerWrapper
-- (id)initWithSelectionHandler:(std::function<void()>)selectionHandler
+- (id)initWithSelectionHandler:(std::function<void ()>)selectionHandler
 {
     self = [super init];
     if (!self)
@@ -308,7 +308,7 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
             [menuItem setEnabled:items[i].enabled()];
             [menuItem setState:items[i].checked() ? NSOnState : NSOffState];
 
-            if (std::function<void()> selectionHandler = items[i].selectionHandler()) {
+            if (std::function<void ()> selectionHandler = items[i].selectionHandler()) {
                 WKSelectionHandlerWrapper *wrapper = [[WKSelectionHandlerWrapper alloc] initWithSelectionHandler:selectionHandler];
                 [menuItem setRepresentedObject:wrapper];
                 [wrapper release];

@@ -280,7 +280,7 @@ void DatabaseProcess::deleteAllIndexedDatabaseEntries()
         removeAllDatabasesForOriginPath(originPath, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
 }
 
-void DatabaseProcess::getOrigins(WKOriginDataTypes types, std::function<void(const Vector<SecurityOriginData>&)> completion)
+void DatabaseProcess::getOrigins(WKOriginDataTypes types, std::function<void (const Vector<SecurityOriginData>&)> completion)
 {
     if (!(types & kWKWebSQLDatabaseOriginData)) {
         completion(Vector<SecurityOriginData>());
@@ -292,7 +292,7 @@ void DatabaseProcess::getOrigins(WKOriginDataTypes types, std::function<void(con
     }));
 }
 
-void DatabaseProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void()> completion)
+void DatabaseProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void ()> completion)
 {
     if (!(types & kWKWebSQLDatabaseOriginData)) {
         completion();
@@ -305,7 +305,7 @@ void DatabaseProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const Secu
     }));
 }
 
-void DatabaseProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void()> completion)
+void DatabaseProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void ()> completion)
 {
     if (!(types & kWKWebSQLDatabaseOriginData)) {
         completion();
@@ -318,7 +318,7 @@ void DatabaseProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types,
     }));
 }
 
-void DatabaseProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void()> completion)
+void DatabaseProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void ()> completion)
 {
     if (!(types & kWKWebSQLDatabaseOriginData)) {
         completion();

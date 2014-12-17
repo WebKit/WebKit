@@ -63,7 +63,7 @@ static BlockingResponseMap<SecItemResponseData>& responseMap()
     static std::once_flag onceFlag;
     static LazyNeverDestroyed<BlockingResponseMap<SecItemResponseData>> responseMap;
 
-    std::call_once(onceFlag, []{
+    std::call_once(onceFlag, [] {
         responseMap.construct();
     });
 

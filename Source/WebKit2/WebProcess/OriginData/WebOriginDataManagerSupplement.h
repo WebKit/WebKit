@@ -37,10 +37,10 @@ public:
     WebOriginDataManagerSupplement() { }
     virtual ~WebOriginDataManagerSupplement() { }
 
-    virtual void getOrigins(WKOriginDataTypes, std::function<void(const Vector<SecurityOriginData>&)> completion) = 0;
-    virtual void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, std::function<void()> completion) = 0;
-    virtual void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void()> completion) = 0;
-    virtual void deleteAllEntries(WKOriginDataTypes, std::function<void()> completion) = 0;
+    virtual void getOrigins(WKOriginDataTypes, std::function<void (const Vector<SecurityOriginData>&)> completion) = 0;
+    virtual void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, std::function<void ()> completion) = 0;
+    virtual void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void ()> completion) = 0;
+    virtual void deleteAllEntries(WKOriginDataTypes, std::function<void ()> completion) = 0;
 };
 
 }

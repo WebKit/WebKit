@@ -76,32 +76,32 @@ public:
     void registerConnection(DatabaseProcessIDBConnection&);
     void unregisterConnection(DatabaseProcessIDBConnection&);
 
-    void deleteDatabase(std::function<void(bool)> successCallback);
+    void deleteDatabase(std::function<void (bool)> successCallback);
 
-    void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
+    void getOrEstablishIDBDatabaseMetadata(std::function<void (bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
 
-    void openTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode, std::function<void(bool)> successCallback);
-    void beginTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
-    void commitTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
-    void resetTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
-    void rollbackTransaction(const IDBIdentifier& transactionIdentifier, std::function<void(bool)> successCallback);
+    void openTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode, std::function<void (bool)> successCallback);
+    void beginTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback);
+    void commitTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback);
+    void resetTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback);
+    void rollbackTransaction(const IDBIdentifier& transactionIdentifier, std::function<void (bool)> successCallback);
 
-    void changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void(bool)> successCallback);
-    void createObjectStore(const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&, std::function<void(bool)> successCallback);
-    void deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void(bool)> successCallback);
-    void clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void(bool)> successCallback);
-    void createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata&, std::function<void(bool)> successCallback);
-    void deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, std::function<void(bool)> successCallback);
+    void changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void (bool)> successCallback);
+    void createObjectStore(const IDBIdentifier& transactionIdentifier, const WebCore::IDBObjectStoreMetadata&, std::function<void (bool)> successCallback);
+    void deleteObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void (bool)> successCallback);
+    void clearObjectStore(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, std::function<void (bool)> successCallback);
+    void createIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBIndexMetadata&, std::function<void (bool)> successCallback);
+    void deleteIndex(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, std::function<void (bool)> successCallback);
 
-    void putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys, std::function<void(const WebCore::IDBKeyData&, uint32_t, const String&)> callback);
-    void getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType, std::function<void(const WebCore::IDBGetResult&, uint32_t, const String&)> callback);
+    void putRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyData&, const IPC::DataReference& value, int64_t putMode, const Vector<int64_t>& indexIDs, const Vector<Vector<WebCore::IDBKeyData>>& indexKeys, std::function<void (const WebCore::IDBKeyData&, uint32_t, const String&)> callback);
+    void getRecord(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, WebCore::IndexedDB::CursorType, std::function<void (const WebCore::IDBGetResult&, uint32_t, const String&)> callback);
 
-    void openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&, std::function<void(int64_t, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
-    void cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void(const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
-    void cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, std::function<void(const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
+    void openCursor(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, WebCore::IndexedDB::CursorDirection, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackend::TaskType, const WebCore::IDBKeyRangeData&, std::function<void (int64_t, const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
+    void cursorAdvance(const IDBIdentifier& cursorIdentifier, uint64_t count, std::function<void (const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
+    void cursorIterate(const IDBIdentifier& cursorIdentifier, const WebCore::IDBKeyData&, std::function<void (const WebCore::IDBKeyData&, const WebCore::IDBKeyData&, PassRefPtr<WebCore::SharedBuffer>, uint32_t, const String&)> callback);
 
-    void count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, std::function<void(int64_t, uint32_t, const String&)> callback);
-    void deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&, std::function<void(uint32_t, const String&)> callback);
+    void count(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyRangeData&, std::function<void (int64_t, uint32_t, const String&)> callback);
+    void deleteRange(const IDBIdentifier& transactionIdentifier, int64_t objectStoreID, const WebCore::IDBKeyRangeData&, std::function<void (uint32_t, const String&)> callback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -133,7 +133,7 @@ private:
     // Returns true if this origin can use the same databases as the given origin.
     bool canShareDatabases(const SecurityOriginData&, const SecurityOriginData&) const;
 
-    void postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<AsyncTask>, std::function<void(bool)> successCallback);
+    void postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<AsyncTask>, std::function<void (bool)> successCallback);
     
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();

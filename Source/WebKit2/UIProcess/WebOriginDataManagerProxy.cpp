@@ -86,7 +86,7 @@ void WebOriginDataManagerProxy::derefWebContextSupplement()
 
 class CallbackSynchronizer : public RefCounted<CallbackSynchronizer> {
 public:
-    static PassRefPtr<CallbackSynchronizer> create(const std::function<void(const CallbackBase::Error&)>& callback)
+    static PassRefPtr<CallbackSynchronizer> create(const std::function<void (const CallbackBase::Error&)>& callback)
     {
         return adoptRef(new CallbackSynchronizer(callback));
     }
@@ -116,7 +116,7 @@ public:
     }
 
 protected:
-    CallbackSynchronizer(const std::function<void(const CallbackBase::Error&)>& callback)
+    CallbackSynchronizer(const std::function<void (const CallbackBase::Error&)>& callback)
         : m_count(0)
         , m_callback(callback)
         , m_error(CallbackBase::Error::None)
@@ -125,7 +125,7 @@ protected:
     }
 
     unsigned m_count;
-    std::function<void(const CallbackBase::Error&)> m_callback;
+    std::function<void (const CallbackBase::Error&)> m_callback;
     CallbackBase::Error m_error;
 };
 

@@ -67,7 +67,7 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuAction action
 {
 }
 
-WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item, std::function<void()> selectionHandler)
+WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item, std::function<void ()> selectionHandler)
     : m_type(item.type())
     , m_action(item.action())
     , m_title(item.title())

@@ -1,5 +1,97 @@
 2014-12-16  Anders Carlsson  <andersca@apple.com>
 
+        Fix lambda and std::function formatting
+        https://bugs.webkit.org/show_bug.cgi?id=139719
+
+        Reviewed by Sam Weinig.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getOrigins):
+        (WebKit::DatabaseProcess::deleteEntriesForOrigin):
+        (WebKit::DatabaseProcess::deleteEntriesModifiedBetweenDates):
+        (WebKit::DatabaseProcess::deleteAllEntries):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::deleteDatabase):
+        (WebKit::UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::UniqueIDBDatabase::openTransaction):
+        (WebKit::UniqueIDBDatabase::beginTransaction):
+        (WebKit::UniqueIDBDatabase::commitTransaction):
+        (WebKit::UniqueIDBDatabase::resetTransaction):
+        (WebKit::UniqueIDBDatabase::rollbackTransaction):
+        (WebKit::UniqueIDBDatabase::postTransactionOperation):
+        (WebKit::UniqueIDBDatabase::changeDatabaseVersion):
+        (WebKit::UniqueIDBDatabase::createObjectStore):
+        (WebKit::UniqueIDBDatabase::deleteObjectStore):
+        (WebKit::UniqueIDBDatabase::clearObjectStore):
+        (WebKit::UniqueIDBDatabase::createIndex):
+        (WebKit::UniqueIDBDatabase::deleteIndex):
+        (WebKit::UniqueIDBDatabase::putRecord):
+        (WebKit::UniqueIDBDatabase::getRecord):
+        (WebKit::UniqueIDBDatabase::openCursor):
+        (WebKit::UniqueIDBDatabase::cursorAdvance):
+        (WebKit::UniqueIDBDatabase::cursorIterate):
+        (WebKit::UniqueIDBDatabase::count):
+        (WebKit::UniqueIDBDatabase::deleteRange):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::store):
+        * Shared/AsyncTask.h:
+        (WebKit::AsyncTask::AsyncTask):
+        * Shared/ChildProcess.cpp:
+        (WebKit::didCloseOnConnectionWorkQueue):
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData):
+        * Shared/WebContextMenuItemData.h:
+        (WebKit::WebContextMenuItemData::selectionHandler):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::responseMap):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::PluginProcessManager):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::m_processSuppressionDisabledForPageCounter):
+        * UIProcess/WebOriginDataManagerProxy.cpp:
+        (WebKit::CallbackSynchronizer::create):
+        (WebKit::CallbackSynchronizer::CallbackSynchronizer):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKSelectionHandlerWrapper initWithSelectionHandler:]):
+        (WebKit::nsMenuItemVector):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::deleteDatabase):
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::openTransaction):
+        (WebKit::WebIDBServerConnection::beginTransaction):
+        (WebKit::WebIDBServerConnection::commitTransaction):
+        (WebKit::WebIDBServerConnection::resetTransaction):
+        (WebKit::WebIDBServerConnection::rollbackTransaction):
+        (WebKit::WebIDBServerConnection::setIndexKeys):
+        (WebKit::WebIDBServerConnection::createObjectStore):
+        (WebKit::WebIDBServerConnection::createIndex):
+        (WebKit::WebIDBServerConnection::deleteIndex):
+        (WebKit::WebIDBServerConnection::get):
+        (WebKit::WebIDBServerConnection::put):
+        (WebKit::WebIDBServerConnection::count):
+        (WebKit::WebIDBServerConnection::deleteRange):
+        (WebKit::WebIDBServerConnection::clearObjectStore):
+        (WebKit::WebIDBServerConnection::deleteObjectStore):
+        (WebKit::WebIDBServerConnection::changeDatabaseVersion):
+        (WebKit::WebIDBServerConnection::openCursor):
+        (WebKit::WebIDBServerConnection::cursorAdvance):
+        (WebKit::WebIDBServerConnection::cursorIterate):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/OriginData/WebOriginDataManagerSupplement.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getOrigins):
+        (WebKit::WebProcess::deleteEntriesForOrigin):
+        (WebKit::WebProcess::deleteEntriesModifiedBetweenDates):
+        (WebKit::WebProcess::deleteAllEntries):
+        * WebProcess/WebProcess.h:
+
+2014-12-16  Anders Carlsson  <andersca@apple.com>
+
         Get rid of a couple of binds in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=139717
 

@@ -194,8 +194,8 @@ WebContext::WebContext(WebContextConfiguration configuration)
     , m_ignoreTLSErrors(true)
 #endif
     , m_memoryCacheDisabled(false)
-    , m_userObservablePageCounter([this]() { updateProcessSuppressionState(); })
-    , m_processSuppressionDisabledForPageCounter([this]() { updateProcessSuppressionState(); })
+    , m_userObservablePageCounter([this] { updateProcessSuppressionState(); })
+    , m_processSuppressionDisabledForPageCounter([this] { updateProcessSuppressionState(); })
 {
     platformInitialize();
 
