@@ -291,7 +291,11 @@ void WebInspectorProxy::closeTimerFired()
     if (m_isAttached || m_inspectorWindow)
         return;
 
-    m_inspectorView = nil;
+    if (m_inspectorView) {
+        WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
+        inspectorPage->close();
+        m_inspectorView = nil;
+    }
 
     [m_inspectorProxyObjCAdapter close];
     m_inspectorProxyObjCAdapter = nil;
@@ -542,6 +546,13 @@ void WebInspectorProxy::platformDidClose()
     }
 
     m_closeTimer.startOneShot(webViewCloseTimeout);
+}
+
+void WebInspectorProxy::platformInvalidate()
+{
+    m_closeTimer.stop();
+
+    closeTimerFired();
 }
 
 void WebInspectorProxy::platformHide()

@@ -157,6 +157,7 @@ private:
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();
     void platformDidClose();
+    void platformInvalidate();
     void platformBringToFront();
     void platformHide();
     bool platformIsFront();

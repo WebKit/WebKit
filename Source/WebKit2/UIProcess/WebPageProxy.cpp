@@ -4219,6 +4219,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (!m_keyEventQueue.isEmpty())
             m_process->send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()), m_pageID);
 
+        // The call to doneWithKeyEvent may close this WebPage.
+        // Protect against this being destroyed.
+        Ref<WebPageProxy> protect(*this);
+
         m_pageClient.doneWithKeyEvent(event, handled);
         if (handled)
             break;

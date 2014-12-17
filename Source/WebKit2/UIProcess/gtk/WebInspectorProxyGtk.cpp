@@ -168,6 +168,10 @@ void WebInspectorProxy::platformDidClose()
     m_inspectorView = 0;
 }
 
+void WebInspectorProxy::platformInvalidate()
+{
+}
+
 void WebInspectorProxy::platformHide()
 {
     notImplemented();
