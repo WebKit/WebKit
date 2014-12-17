@@ -179,7 +179,13 @@ class Driver(object):
         self.err_seen_eof = False
 
         command = self._command_from_driver_input(driver_input)
-        deadline = test_begin_time + int(driver_input.timeout) / 1000.0
+
+        # Certain timeouts are detected by the tool itself; tool detection is better,
+        # because results contain partial output in this case. Make script timeout longer
+        # by 5 seconds to avoid racing for which timeout is detected first.
+        # FIXME: It's not the job of the driver to decide what the timeouts should be.
+        # Move the additional timeout to driver_input.
+        deadline = test_begin_time + int(driver_input.timeout) / 1000.0 + 5
 
         self._server_process.write(command)
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
