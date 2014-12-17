@@ -99,7 +99,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
     , m_startMode(startMode)
     , m_contentSecurityPolicy(contentSecurityPolicy.isolatedCopy())
     , m_contentSecurityPolicyType(contentSecurityPolicyType)
-    , m_topOrigin(topOrigin ? topOrigin->isolatedCopy() : 0)
+    , m_topOrigin(topOrigin ? &topOrigin->isolatedCopy().get() : nullptr)
 {
     if (!settings)
         return;

@@ -488,8 +488,7 @@ String HTMLAnchorElement::search() const
 
 String HTMLAnchorElement::origin() const
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(href());
-    return origin->toString();
+    return SecurityOrigin::create(href()).get().toString();
 }
 
 void HTMLAnchorElement::setSearch(const String& value)

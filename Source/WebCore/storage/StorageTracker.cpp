@@ -476,7 +476,7 @@ void StorageTracker::syncDeleteAllOrigins()
 
 void StorageTracker::deleteOriginWithIdentifier(const String& originIdentifier)
 {
-    deleteOrigin(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier).get());
+    deleteOrigin(&SecurityOrigin::createFromDatabaseIdentifier(originIdentifier).get());
 }
 
 void StorageTracker::deleteOrigin(SecurityOrigin* origin)

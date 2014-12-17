@@ -490,8 +490,8 @@ bool ApplicationCacheHost::isApplicationCacheBlockedForRequest(const ResourceReq
     if (frame->isMainFrame())
         return false;
 
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(request.url());
-    return !origin->canAccessApplicationCache(frame->document()->topOrigin());
+    Ref<SecurityOrigin> origin(SecurityOrigin::create(request.url()));
+    return !origin.get().canAccessApplicationCache(frame->document()->topOrigin());
 }
 
 }  // namespace WebCore

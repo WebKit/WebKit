@@ -1567,10 +1567,8 @@ void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>
     // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
     // The current schema doesn't allow for a more efficient way of building this list.
     size_t count = urls.size();
-    for (size_t i = 0; i < count; ++i) {
-        RefPtr<SecurityOrigin> origin = SecurityOrigin::create(urls[i]);
-        origins.add(origin);
-    }
+    for (size_t i = 0; i < count; ++i)
+        origins.add(SecurityOrigin::create(urls[i]));
 }
 
 void ApplicationCacheStorage::deleteAllEntries()

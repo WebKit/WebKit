@@ -1,3 +1,20 @@
+2014-12-16  Andreas Kling  <akling@apple.com>
+
+        Use Ref for SecurityOrigin.
+        <https://webkit.org/b/139710>
+
+        Reviewed by Anders Carlsson.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::databaseFilenameIdentifier):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::deleteEntriesForOrigin):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::WebIDBServerConnection):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addOriginAccessWhitelistEntry):
+        (WebKit::InjectedBundle::removeOriginAccessWhitelistEntry):
+
 2014-12-16  Anders Carlsson  <andersca@apple.com>
 
         Remove deprecated StorageNamespaceImpl overloads

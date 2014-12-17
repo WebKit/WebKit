@@ -376,7 +376,7 @@ void DefaultSharedWorkerRepository::documentDetached(Document* document)
 void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> worker, std::unique_ptr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
 {
     MutexLocker lock(m_lock);
-    ASSERT(worker->scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(url).get()));
+    ASSERT(worker->scriptExecutionContext()->securityOrigin()->canAccess(&SecurityOrigin::create(url).get()));
     // Fetch a proxy corresponding to this SharedWorker.
     RefPtr<SharedWorkerProxy> proxy = getProxy(name, url);
 

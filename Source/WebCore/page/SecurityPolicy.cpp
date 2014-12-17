@@ -121,8 +121,8 @@ bool SecurityPolicy::isAccessWhiteListed(const SecurityOrigin* activeOrigin, con
 
 bool SecurityPolicy::isAccessToURLWhiteListed(const SecurityOrigin* activeOrigin, const URL& url)
 {
-    RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
-    return isAccessWhiteListed(activeOrigin, targetOrigin.get());
+    Ref<SecurityOrigin> targetOrigin(SecurityOrigin::create(url));
+    return isAccessWhiteListed(activeOrigin, &targetOrigin.get());
 }
 
 void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)

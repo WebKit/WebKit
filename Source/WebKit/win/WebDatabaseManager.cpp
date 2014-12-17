@@ -382,7 +382,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::setQuota(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseManager::manager().setQuota(SecurityOrigin::createFromString(origin).get(), quota);
+    DatabaseManager::manager().setQuota(SecurityOrigin::createFromString(origin).ptr(), quota);
 
     return S_OK;
 }

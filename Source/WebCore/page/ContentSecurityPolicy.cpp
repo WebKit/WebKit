@@ -1583,7 +1583,7 @@ static String stripURLForUseInReport(Document& document, const URL& url)
         return String();
     if (!url.isHierarchical() || url.protocolIs("file"))
         return url.protocol();
-    return document.securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url)->toString();
+    return document.securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url).get().toString();
 }
 
 #if ENABLE(CSP_NEXT)

@@ -1,3 +1,16 @@
+2014-12-16  Andreas Kling  <akling@apple.com>
+
+        Use Ref for SecurityOrigin.
+        <https://webkit.org/b/139710>
+
+        Reviewed by Anders Carlsson.
+
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::setQuota):
+        * WebView.cpp:
+        (WebView::addOriginAccessWhitelistEntry):
+        (WebView::removeOriginAccessWhitelistEntry):
+
 2014-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (Async Text Input): Text input method state is not reset when reloading a page

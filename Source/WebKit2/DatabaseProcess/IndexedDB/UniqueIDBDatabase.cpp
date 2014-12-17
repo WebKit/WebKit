@@ -93,8 +93,8 @@ String UniqueIDBDatabase::filenameForDatabaseName() const
 
 String UniqueIDBDatabase::databaseFilenameIdentifier(const SecurityOriginData& originData) const
 {
-    RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
-    return securityOrigin->databaseIdentifier();
+    Ref<SecurityOrigin> securityOrigin(SecurityOrigin::create(originData.protocol, originData.host, originData.port));
+    return securityOrigin.get().databaseIdentifier();
 }
 
 bool UniqueIDBDatabase::canShareDatabases(const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin) const

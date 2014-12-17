@@ -516,8 +516,8 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     if (!redirectResponse.isNull()) {
         // If the redirecting url is not allowed to display content from the target origin,
         // then block the redirect.
-        RefPtr<SecurityOrigin> redirectingOrigin = SecurityOrigin::create(redirectResponse.url());
-        if (!redirectingOrigin->canDisplay(newRequest.url())) {
+        Ref<SecurityOrigin> redirectingOrigin(SecurityOrigin::create(redirectResponse.url()));
+        if (!redirectingOrigin.get().canDisplay(newRequest.url())) {
             FrameLoader::reportLocalLoadFailed(m_frame, newRequest.url().string());
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return;

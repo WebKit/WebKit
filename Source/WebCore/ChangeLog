@@ -1,3 +1,51 @@
+2014-12-16  Andreas Kling  <akling@apple.com>
+
+        Use Ref for SecurityOrigin.
+        <https://webkit.org/b/139710>
+
+        Reviewed by Anders Carlsson.
+
+        Make SecurityOrigin::create*() return Ref<SecurityOrigin>.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::origin):
+        * loader/DocumentLoadTiming.cpp:
+        (WebCore::DocumentLoadTiming::addRedirect):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendPing):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::isApplicationCacheBlockedForRequest):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::getOriginsWithCache):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::stripURLForUseInReport):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage):
+        * page/SecurityOrigin.cpp:
+        (WebCore::getCachedOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::createUnique):
+        (WebCore::SecurityOrigin::isolatedCopy):
+        (WebCore::SecurityOrigin::canRequest):
+        (WebCore::SecurityOrigin::createFromString):
+        (WebCore::SecurityOrigin::maybeCreateFromDatabaseIdentifier):
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+        * page/SecurityOrigin.h:
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::isAccessToURLWhiteListed):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin):
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::deleteOriginWithIdentifier):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::DefaultSharedWorkerRepository::connectToWorker):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+
 2014-12-16  Chris Dumez  <cdumez@apple.com>
 
         Move 'cursor' CSS property to the new StyleBuilder

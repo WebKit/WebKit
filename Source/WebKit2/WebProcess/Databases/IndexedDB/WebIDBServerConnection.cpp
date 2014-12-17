@@ -62,8 +62,8 @@ PassRefPtr<WebIDBServerConnection> WebIDBServerConnection::create(const String& 
 WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
     : m_serverConnectionIdentifier(generateServerConnectionIdentifier())
     , m_databaseName(databaseName)
-    , m_openingOrigin(*openingOrigin.isolatedCopy())
-    , m_mainFrameOrigin(*mainFrameOrigin.isolatedCopy())
+    , m_openingOrigin(openingOrigin.isolatedCopy())
+    , m_mainFrameOrigin(mainFrameOrigin.isolatedCopy())
 {
     send(Messages::DatabaseToWebProcessConnection::EstablishIDBConnection(m_serverConnectionIdentifier));
     send(Messages::DatabaseProcessIDBConnection::EstablishConnection(databaseName, SecurityOriginData::fromSecurityOrigin(&openingOrigin), SecurityOriginData::fromSecurityOrigin(&mainFrameOrigin)));

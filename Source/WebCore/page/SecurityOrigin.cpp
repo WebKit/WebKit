@@ -74,11 +74,11 @@ URL SecurityOrigin::extractInnerURL(const URL& url)
     return URL(ParsedURLString, decodeURLEscapeSequences(url.path()));
 }
 
-static PassRefPtr<SecurityOrigin> getCachedOrigin(const URL& url)
+static RefPtr<SecurityOrigin> getCachedOrigin(const URL& url)
 {
     if (url.protocolIs("blob"))
         return ThreadableBlobRegistry::getCachedOrigin(url);
-    return 0;
+    return nullptr;
 }
 
 static bool shouldTreatAsUniqueOrigin(const URL& url)
@@ -163,14 +163,13 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
 {
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::create(const URL& url)
+Ref<SecurityOrigin> SecurityOrigin::create(const URL& url)
 {
-    RefPtr<SecurityOrigin> cachedOrigin = getCachedOrigin(url);
-    if (cachedOrigin.get())
-        return cachedOrigin;
+    if (RefPtr<SecurityOrigin> cachedOrigin = getCachedOrigin(url))
+        return cachedOrigin.releaseNonNull();
 
     if (shouldTreatAsUniqueOrigin(url)) {
-        RefPtr<SecurityOrigin> origin = adoptRef(new SecurityOrigin());
+        Ref<SecurityOrigin> origin(adoptRef(*new SecurityOrigin));
 
         if (url.protocolIs("file")) {
             // Unfortunately, we can't represent all unique origins exactly
@@ -180,25 +179,25 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::create(const URL& url)
             origin->m_needsDatabaseIdentifierQuirkForFiles = true;
         }
 
-        return origin.release();
+        return origin;
     }
 
     if (shouldUseInnerURL(url))
-        return adoptRef(new SecurityOrigin(extractInnerURL(url)));
+        return adoptRef(*new SecurityOrigin(extractInnerURL(url)));
 
-    return adoptRef(new SecurityOrigin(url));
+    return adoptRef(*new SecurityOrigin(url));
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::createUnique()
+Ref<SecurityOrigin> SecurityOrigin::createUnique()
 {
-    RefPtr<SecurityOrigin> origin = adoptRef(new SecurityOrigin());
-    ASSERT(origin->isUnique());
-    return origin.release();
+    Ref<SecurityOrigin> origin(adoptRef(*new SecurityOrigin));
+    ASSERT(origin.get().isUnique());
+    return origin;
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::isolatedCopy() const
+Ref<SecurityOrigin> SecurityOrigin::isolatedCopy() const
 {
-    return adoptRef(new SecurityOrigin(this));
+    return adoptRef(*new SecurityOrigin(this));
 }
 
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)
@@ -289,17 +288,17 @@ bool SecurityOrigin::canRequest(const URL& url) const
     if (isUnique())
         return false;
 
-    RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
+    Ref<SecurityOrigin> targetOrigin(SecurityOrigin::create(url));
 
     if (targetOrigin->isUnique())
         return false;
 
     // We call isSameSchemeHostPort here instead of canAccess because we want
     // to ignore document.domain effects.
-    if (isSameSchemeHostPort(targetOrigin.get()))
+    if (isSameSchemeHostPort(&targetOrigin.get()))
         return true;
 
-    if (SecurityPolicy::isAccessWhiteListed(this, targetOrigin.get()))
+    if (SecurityPolicy::isAccessWhiteListed(this, &targetOrigin.get()))
         return true;
 
     return false;
@@ -488,14 +487,14 @@ String SecurityOrigin::toRawString() const
     return result.toString();
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
+Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 {
     return SecurityOrigin::create(URL(URL(), originString));
 }
 
 static const char separatorCharacter = '_';
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::maybeCreateFromDatabaseIdentifier(const String& databaseIdentifier)
+RefPtr<SecurityOrigin> SecurityOrigin::maybeCreateFromDatabaseIdentifier(const String& databaseIdentifier)
 { 
     // Make sure there's a first separator
     size_t separator1 = databaseIdentifier.find(separatorCharacter);
@@ -530,15 +529,14 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::maybeCreateFromDatabaseIdentifier(con
     return create(URL(URL(), protocol + "://" + host + ":" + String::number(port) + "/"));
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
+Ref<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
 {
-    RefPtr<SecurityOrigin> origin = maybeCreateFromDatabaseIdentifier(databaseIdentifier);
-    if (origin)
-        return origin.release();
+    if (RefPtr<SecurityOrigin> origin = maybeCreateFromDatabaseIdentifier(databaseIdentifier))
+        return origin.releaseNonNull();
     return create(URL());
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, int port)
+Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, int port)
 {
     if (port < 0 || port > MaxAllowedPort)
         return createUnique();

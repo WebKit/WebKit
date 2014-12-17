@@ -2008,9 +2008,9 @@ bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const
     if (!m_avAsset || [m_avAsset statusOfValueForKey:@"resolvedURL" error:nullptr] != AVKeyValueStatusLoaded)
         return false;
     
-    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(resolvedURL());
-    RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(assetURL());
-    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
+    Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::create(resolvedURL()));
+    Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(assetURL()));
+    return resolvedOrigin.get().isSameSchemeHostPort(&requestedOrigin.get());
 }
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)

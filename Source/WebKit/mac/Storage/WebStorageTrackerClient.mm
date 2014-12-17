@@ -66,7 +66,7 @@ void WebStorageTrackerClient::dispatchDidModifyOrigin(PassRefPtr<SecurityOrigin>
 
 void WebStorageTrackerClient::dispatchDidModifyOrigin(const String& originIdentifier)
 {
-    PassRefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
 
     if (!isMainThread()) {
         // leakRef is balanced by adoptRef in dispatchDidModifyOriginOnMainThread.
