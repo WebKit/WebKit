@@ -51,22 +51,22 @@ void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* texture
 {
     updateContentsFromImageIfNeeded(textureMapper);
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    for (size_t i = 0; i < m_tiles.size(); ++i)
-        m_tiles[i].paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect(), m_tiles[i].rect()));
+    for (auto& tile : m_tiles)
+        tile.paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect(), tile.rect()));
 }
 
 void TextureMapperTiledBackingStore::drawBorder(TextureMapper* textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    for (size_t i = 0; i < m_tiles.size(); ++i)
-        textureMapper->drawBorder(borderColor, borderWidth, m_tiles[i].rect(), adjustedTransform);
+    for (auto& tile : m_tiles)
+        textureMapper->drawBorder(borderColor, borderWidth, tile.rect(), adjustedTransform);
 }
 
 void TextureMapperTiledBackingStore::drawRepaintCounter(TextureMapper* textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    for (size_t i = 0; i < m_tiles.size(); ++i)
-        textureMapper->drawNumber(repaintCount, borderColor, m_tiles[i].rect().location(), adjustedTransform);
+    for (auto& tile : m_tiles)
+        textureMapper->drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
 }
 
 void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize, bool hasAlpha)
@@ -112,50 +112,52 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
     }
 
     // Recycle removable tiles to be used for newly requested tiles.
-    for (size_t i = 0; i < tileRectsToAdd.size(); ++i) {
+    for (auto& rect : tileRectsToAdd) {
         if (!tileIndicesToRemove.isEmpty()) {
             // We recycle an existing tile for usage with a new tile rect.
             TextureMapperTile& tile = m_tiles[tileIndicesToRemove.last()];
             tileIndicesToRemove.removeLast();
-            tile.setRect(tileRectsToAdd[i]);
+            tile.setRect(rect);
 
             if (tile.texture())
                 tile.texture()->reset(enclosingIntRect(tile.rect()).size(), hasAlpha ? BitmapTexture::SupportsAlpha : 0);
             continue;
         }
 
-        m_tiles.append(TextureMapperTile(tileRectsToAdd[i]));
+        m_tiles.append(TextureMapperTile(rect));
     }
 
     // Remove unnecessary tiles, if they weren't recycled.
     // We use a threshold to make sure we don't create/destroy tiles too eagerly.
-    for (size_t i = 0; i < tileIndicesToRemove.size() && m_tiles.size() > TileEraseThreshold; ++i)
-        m_tiles.remove(tileIndicesToRemove[i]);
+    for (auto& index : tileIndicesToRemove) {
+        if (m_tiles.size() <= TileEraseThreshold)
+            break;
+        m_tiles.remove(index);
+    }
 }
 
 void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
     createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), !image->currentFrameKnownToBeOpaque());
-    for (size_t i = 0; i < m_tiles.size(); ++i)
-        m_tiles[i].updateContents(textureMapper, image, dirtyRect, updateContentsFlag);
+    for (auto& tile : m_tiles)
+        tile.updateContents(textureMapper, image, dirtyRect, updateContentsFlag);
 }
 
 void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
     createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), true);
-    for (size_t i = 0; i < m_tiles.size(); ++i)
-        m_tiles[i].updateContents(textureMapper, sourceLayer, dirtyRect, updateContentsFlag);
+    for (auto& tile : m_tiles)
+        tile.updateContents(textureMapper, sourceLayer, dirtyRect, updateContentsFlag);
 }
 
 PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
 {
-    for (size_t i = 0; i < m_tiles.size(); ++i) {
-        RefPtr<BitmapTexture> texture = m_tiles[i].texture();
-        if (texture)
+    for (const auto& tile : m_tiles) {
+        if (auto texture = tile.texture())
             return texture;
     }
 
-    return PassRefPtr<BitmapTexture>();
+    return nullptr;
 }
 
 } // namespace WebCore

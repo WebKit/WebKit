@@ -94,15 +94,14 @@ public:
 
         ~SharedGLData()
         {
-            GLContextDataMap::const_iterator end = glContextDataMap().end();
-            GLContextDataMap::iterator it;
-            for (it = glContextDataMap().begin(); it != end; ++it) {
-                if (it->value == this)
-                    break;
+            for (auto it = glContextDataMap().begin(), end = glContextDataMap().end(); it != end; ++it) {
+                if (it->value == this) {
+                    glContextDataMap().remove(it);
+                    return;
+                }
             }
 
-            ASSERT(it != end);
-            glContextDataMap().remove(it);
+            ASSERT_NOT_REACHED();
         }
     };
 
@@ -159,9 +158,8 @@ Platform3DObject TextureMapperGLData::getStaticVBO(GC3Denum target, GC3Dsizeiptr
 
 TextureMapperGLData::~TextureMapperGLData()
 {
-    HashMap<const void*, Platform3DObject>::iterator end = vbos.end();
-    for (HashMap<const void*, Platform3DObject>::iterator it = vbos.begin(); it != end; ++it)
-        context->deleteBuffer(it->value);
+    for (auto& entry : vbos)
+        context->deleteBuffer(entry.value);
 }
 
 void TextureMapperGL::ClipStack::reset(const IntRect& rect, TextureMapperGL::ClipStack::YAxisMode mode)

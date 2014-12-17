@@ -1,3 +1,30 @@
+2014-12-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Sprinkle range-based for-loops where still possible
+        https://bugs.webkit.org/show_bug.cgi?id=138752
+
+        Reviewed by Chris Dumez.
+
+        Apply range-based for-loops where possible in the TextureMapper,
+        TextureMapperGL and TextureMapperTiledBackingStore classes.
+
+        Also prettify the loop in SharedGLData destructor and return
+        nullptr instead of explicitly constructing the empty PassRefPtr
+        object in TextureMapperTiledBackingStore::texture().
+
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::BitmapTexturePool::acquireTexture):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::~SharedGLData):
+        (WebCore::TextureMapperGLData::~TextureMapperGLData):
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        (WebCore::TextureMapperTiledBackingStore::paintToTextureMapper):
+        (WebCore::TextureMapperTiledBackingStore::drawBorder):
+        (WebCore::TextureMapperTiledBackingStore::drawRepaintCounter):
+        (WebCore::TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        (WebCore::TextureMapperTiledBackingStore::texture):
+
 2014-12-17  Radu Stavila  <stavila@adobe.com>
 
         The SVGDocument of an SVGImage should not perform any additional actions when the SVGImage is being destroyed
