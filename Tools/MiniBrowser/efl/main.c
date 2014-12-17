@@ -985,7 +985,7 @@ static int
 quit(Eina_Bool success, const char *msg)
 {
     if (msg)
-        success ? INFO(msg) : ERROR(msg);
+        success ? INFO("%s", msg) : ERROR("%s", msg);
 
     eina_log_domain_unregister(_log_domain_id);
     ewk_shutdown();

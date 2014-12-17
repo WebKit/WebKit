@@ -1,3 +1,16 @@
+2014-12-17  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL]Fix build warning in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=139723
+
+        Reviewed by Darin Adler.
+
+        The warning is caused by the compiler wanting the first argument to be a
+        string literal, not a dynamically created string.
+
+        * MiniBrowser/efl/main.c:
+        (quit):
+
 2014-12-16  Sam Weinig  <sam@webkit.org>
 
         TestWebKitAPI should use a static lib to support both Mac and iOS cleanly
