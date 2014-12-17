@@ -28,6 +28,10 @@
 OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-exported_symbol -Wl,_initializeAndGetJSCLLVMAPI -Wl,-all_load;
 
 LLVM_LIBS_ios = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils;
+LLVM_LIBS_ios_8_0 = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMTableGen -lLLVMInstrumentation -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMARM64Disassembler -lLLVMARM64CodeGen -lLLVMARM64AsmParser -lLLVMARM64Desc -lLLVMARM64Info -lLLVMARM64AsmPrinter -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lprotobuf;
+LLVM_LIBS_ios[sdk=iphoneos8.0*] = $(LLVM_LIBS_ios_8_0);
+LLVM_LIBS_ios[sdk=iphoneos8.1*] = $(LLVM_LIBS_ios_8_0);
+LLVM_LIBS_ios[sdk=iphoneos8.2*] = $(LLVM_LIBS_ios_8_0);
 LLVM_LIBS_macosx   = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lLLVMX86Disassembler     -lLLVMX86CodeGen     -lLLVMX86AsmParser     -lLLVMX86Desc     -lLLVMX86Info     -lLLVMX86AsmPrinter     -lLLVMX86Utils;
 
 LLVM_LIBRARY_PATHS[sdk=iphoneos*] = "$(BUILT_PRODUCTS_DIR)/usr/local/lib" /usr/local/lib;
