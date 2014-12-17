@@ -725,3 +725,245 @@ webarchive/test-css-import.html [ Failure ]
 webarchive/test-link-href.html [ Failure ]
 webarchive/test-link-rel-icon-beforeload.html [ Failure ]
 webarchive/test-script-src.html [ Failure ]
+
+# HTTP tests that fail:
+http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
+http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
+http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
+http/tests/dom/document-contentType-xhr.html [ Failure ]
+http/tests/dom/document-contentType.html [ Failure ]
+http/tests/download/basic-ascii.html [ Failure ]
+http/tests/download/inherited-encoding-form-submission-result.html [ Failure ]
+http/tests/download/literal-utf-8.html [ Failure ]
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
+http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
+http/tests/history/back-with-fragment-change.php [ Failure ]
+http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
+http/tests/loading/bad-scheme-subframe.html [ Failure ]
+http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
+http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
+http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
+http/tests/loading/promote-img-preload-priority.html [ Failure ]
+http/tests/loading/sizes/preload-image-sizes.html [ Failure ]
+http/tests/local/drag-over-remote-content.html [ Failure ]
+http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
+http/tests/local/fileapi/file-last-modified.html [ Failure ]
+http/tests/local/fileapi/send-dragged-file.html [ Failure ]
+http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
+http/tests/local/formdata/form-data-with-unknown-file-extension.html [ Failure ]
+http/tests/local/formdata/send-form-data-with-filename.html [ Failure ]
+http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
+http/tests/local/formdata/send-form-data.html [ Failure ]
+http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+http/tests/local/link-stylesheet-load-order.html [ Failure ]
+http/tests/misc/401-alternative-content.php [ Failure ]
+http/tests/misc/DOMContentLoaded-event.html [ Failure ]
+http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
+http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
+http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
+http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
+http/tests/misc/bubble-drag-events.html [ Failure ]
+http/tests/misc/copy-resolves-urls.html [ Failure ]
+http/tests/misc/favicon-as-image.html [ Failure ]
+http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
+http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
+http/tests/misc/iframe404.html [ Failure ]
+http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
+http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
+http/tests/misc/redirect-to-external-url.html [ Failure ]
+http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
+http/tests/misc/submit-post-keygen.html [ Failure ]
+http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
+http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
+http/tests/multipart/policy-ignore-crash.php [ Failure ]
+http/tests/navigation/anchor-frames-gbk.html [ Failure ]
+http/tests/navigation/anchor-frames-same-origin.html [ Failure ]
+http/tests/navigation/anchor-frames.html [ Failure ]
+http/tests/navigation/anchor-subframeload.html [ Failure ]
+http/tests/navigation/error404-subframeload.html [ Failure ]
+http/tests/navigation/javascriptlink-subframeload.html [ Failure ]
+http/tests/navigation/metaredirect-subframeload.html [ Failure ]
+http/tests/navigation/redirect302-subframeload.html [ Failure ]
+http/tests/navigation/relativeanchor-frames.html [ Failure ]
+http/tests/navigation/reload-subframe-object.html [ Failure ]
+http/tests/navigation/response204.html [ Failure ]
+http/tests/navigation/success200-subframeload.html [ Failure ]
+http/tests/navigation/timerredirect-subframeload.html [ Failure ]
+http/tests/security/401-logout/401-logout.php [ Failure ]
+http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
+http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Failure ]
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Failure ]
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Failure ]
+http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
+http/tests/security/cross-frame-access-put.html [ Failure ]
+http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
+http/tests/security/cross-origin-plugin.html [ Failure ]
+http/tests/security/cross-origin-shared-worker-allowed.html [ Failure ]
+http/tests/security/cross-origin-shared-worker.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
+http/tests/security/drag-drop-local-file.html [ Failure ]
+http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
+http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
+http/tests/security/isolatedWorld/events.html [ Failure ]
+http/tests/security/listener/xss-window-onclick-addEventListener.html [ Failure ]
+http/tests/security/listener/xss-window-onclick-shortcut.html [ Failure ]
+http/tests/security/local-user-CSS-from-remote.html [ Failure ]
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
+http/tests/security/no-referrer.html [ Failure ]
+http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
+http/tests/security/same-origin-shared-worker-blocked.html [ Failure ]
+http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
+http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
+http/tests/security/storage-blocking-loosened-shared-worker.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-shared-worker.html [ Failure ]
+http/tests/uri/css-href.php [ Failure ]
+http/tests/css/vertical-align-baseline-after-image-load-2.html [ ImageOnlyFailure ]
+http/tests/css/vertical-align-baseline-after-image-load-3.html [ ImageOnlyFailure ]
+http/tests/css/vertical-align-baseline-after-image-load.html [ ImageOnlyFailure ]
+http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
+
+# HTTP tests that assert:
+http/tests/appcache/crash-when-navigating-away-then-back.html
+http/tests/cache/display-image-unset-allows-cached-image-load.html
+http/tests/cache/history-only-cached-subresource-loads.html
+http/tests/inspector-protocol/access-inspected-object.html
+http/tests/inspector-protocol/loading-iframe-document-node.html
+http/tests/misc/iframe-reparenting-id-collision.html
+http/tests/misc/set-window-opener-to-null.html
+http/tests/misc/slow-preload-cancel.html
+http/tests/navigation/new-window-redirect-history.html
+http/tests/navigation/target-frame-from-window.html
+http/tests/plugins/plugin-document-has-focus.html
+http/tests/security/aboutBlank/security-context-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
+http/tests/security/frameNavigation/cross-origin-opener.html
+http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html
+http/tests/security/frameNavigation/not-opener.html
+http/tests/security/frameNavigation/opener.html
+http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
+http/tests/security/inactive-document-with-empty-security-origin.html
+http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
+http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
+http/tests/security/mixedContent/insecure-css-in-main-frame.html
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-image-in-main-frame.html
+http/tests/security/mixedContent/insecure-xhr-in-main-frame.html
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
+http/tests/security/originHeader/origin-header-for-empty.html
+http/tests/security/popup-allowed-by-sandbox-is-sandboxed-control.html
+http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html
+http/tests/security/popup-allowed-by-sandbox-when-allowed.html
+http/tests/security/popup-blocked-from-fake-event.html
+http/tests/security/popup-blocked-from-window-open.html
+http/tests/security/referrer-policy-window-open.html
+http/tests/security/window-events-clear-domain.html
+http/tests/security/window-events-clear-port.html
+http/tests/security/window-events-pass.html
+http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html
+http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
+http/tests/security/xssAuditor/link-opens-new-window.html
+http/tests/webarchive/test-css-url-encoding-shift-jis.html
+http/tests/webarchive/test-css-url-encoding-utf-8.html
+http/tests/webarchive/test-css-url-encoding.html
+http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
+http/tests/xmlhttprequest/close-window.html
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
+# HTTP tests that time out:
+http/tests/appcache/auth.html
+http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
+http/tests/cache/subresource-expiration-1.html
+http/tests/cache/subresource-expiration-2.html
+http/tests/canvas/webgl/origin-clean-conformance.html
+http/tests/download/default-encoding.html
+http/tests/download/inherited-encoding.html
+http/tests/loading/cross-origin-XHR-willLoadRequest.html
+http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html
+http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html
+http/tests/local/blob/send-hybrid-blob.html
+http/tests/local/fileapi/upload-zip-bundle-as-blob.html
+http/tests/local/formdata/send-form-data-constructed-from-form.html
+http/tests/local/formdata/send-form-data-with-empty-file-filename.html
+http/tests/local/formdata/upload-events.html
+http/tests/misc/acid3.html
+http/tests/misc/isindex-with-no-form.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
+http/tests/misc/prefetch-purpose.html
+http/tests/navigation/document-location-click-timeout.html
+http/tests/navigation/document-location-click.html
+http/tests/navigation/document-location-mouseover.html
+http/tests/navigation/javascriptlink-basic.html
+http/tests/navigation/javascriptlink-frames.html
+http/tests/navigation/javascriptlink-goback.html
+http/tests/navigation/navigation-interrupted-by-fragment.html
+http/tests/navigation/no-referrer-reset.html
+http/tests/navigation/no-referrer-same-window.html
+http/tests/navigation/no-referrer-subframe.html
+http/tests/navigation/no-referrer-target-blank.html
+http/tests/navigation/ping-cookie.html
+http/tests/navigation/ping-cross-origin-from-https.html
+http/tests/navigation/ping-cross-origin.html
+http/tests/navigation/ping-same-origin.html
+http/tests/navigation/redirect-preserves-referrer.html
+http/tests/navigation/redirect-to-random-url-versus-memory-cache.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh.html
+http/tests/navigation/scrollstate-after-location-reload.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/contentSecurityPolicy/media-src-allowed.html
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html
+http/tests/security/dataTransfer-set-data-file-url.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+http/tests/security/isolatedWorld/userGestureEvents.html
+http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
+http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
+http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
+http/tests/security/referrer-policy-redirect-link.html
+http/tests/security/referrer-policy-rel-noreferrer.html
+http/tests/security/video-cross-origin-accessfailure.html
+http/tests/security/video-cross-origin-accesssameorigin.html
+http/tests/security/video-cross-origin-readback.html
+http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
+http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html
+http/tests/websocket/tests/hybi/workers/shared-worker-simple.html
+http/tests/workers/shared-worker-importScripts.html
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
+http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html
+http/tests/xmlhttprequest/workers/shared-worker-close.html
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+http/tests/xmlhttprequest/workers/shared-worker-methods.html
+http/tests/xmlhttprequest/workers/shared-worker-referer.html
+http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html
+
+# HTTP tests that are flaky:
+http/tests/cache/iframe-304-crash.html [ Failure Pass ]
+http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
+http/tests/navigation/forward-and-cancel.html [ Failure Pass ]
+http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure Pass ]
+http/tests/webarchive/cross-origin-stylesheet-crash.html [ Failure Pass ]
+http/tests/webarchive/test-preload-resources.html [ Failure Pass ]
+http/tests/workers/shared-worker-invalid-url.html [ Failure Pass ]
+http/tests/workers/shared-worker-redirect.html [ Failure Pass ]
+http/tests/xmlhttprequest/event-listener-gc.html [ Failure Pass ]
+

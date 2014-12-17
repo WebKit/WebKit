@@ -1,3 +1,32 @@
+2014-12-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update expected results for LayoutTests/http
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/http/tests/loading/simple-subframe-expected.txt: Added.
+        * platform/ios-simulator/http/tests/local/file-url-sent-as-referer-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/acid2-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/acid2-pixel-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/error404-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/favicon-as-image-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/frame-access-during-load-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/generated-content-inside-table-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/iframe404-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/location-replace-crossdomain-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/slow-loading-image-in-pattern-expected.txt: Added.
+        * platform/ios-simulator/http/tests/misc/slow-loading-mask-expected.txt: Added.
+        * platform/ios-simulator/http/tests/multipart/invalid-image-data-expected.txt: Added.
+        * platform/ios-simulator/http/tests/multipart/invalid-image-data-standalone-expected.txt: Added.
+        * platform/ios-simulator/http/tests/navigation/error404-basic-expected.txt: Added.
+        * platform/ios-simulator/http/tests/navigation/error404-goback-expected.txt: Added.
+        * platform/ios-simulator/http/tests/navigation/error404-subframeload-expected.txt: Added.
+        * platform/ios-simulator/http/tests/navigation/javascriptlink-frames-expected.txt: Added.
+        * platform/ios-simulator/http/tests/navigation/postredirect-basic-expected.txt: Added.
+        * platform/ios-simulator/http/tests/navigation/postredirect-goback1-expected.txt: Added.
+        * platform/ios-simulator/http/tests/uri/css-href-expected.txt: Added.
+
 2014-12-16  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Animating HTML elements leaves trails when embedded to a subpxiel positioned iframe.

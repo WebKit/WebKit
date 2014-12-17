@@ -17,6 +17,7 @@ http/tests/fullscreen
 # Skip WebGL tests in iOS Simulator
 webgl
 fast/canvas/webgl
+http/tests/webgl
 
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/
@@ -27,16 +28,36 @@ printing
 
 # Not supported on iOS
 batterystatus
-compositing/plugins
 gamepad
 java
 mhtml
-plugins
 proximity
-pointer-lock
 touchadjustment
 vibration
 webaudio
+http/tests/notifications
+
+# Plugins are not supported on iOS
+plugins
+compositing/plugins
+http/tests/plugins
+
+# Pointer-lock not supported on iOS
+pointer-lock
+http/tests/pointer-lock
+
+# FIXME: Media tests not supported on iOS
+media
+http/tests/media
+
+# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
+webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1
+
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+webkit.org/b/136452 http/tests/security/contentTypeOptions
+
+# webkit.org/b/61138, webkit.org/b/84893, webkit.org/b/133321
+http/tests/w3c/webperf
 
 # IndexedDB is not supported on iOS
 storage/indexeddb
@@ -165,6 +186,7 @@ canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
 crypto/subtle/rsa-oaep-generate-non-extractable-key.html [ Skip ]
 crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html [ Skip ]
 crypto/subtle/rsa-oaep-key-manipulation.html [ Skip ]
+http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
 
 # <rdar://problem/19068796> ASSERTION FAILED: crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html fails ASSERT(m_scriptExecutionContext->isContextThread())
 crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html [ Skip ]
@@ -1515,14 +1537,24 @@ webarchive/test-link-rel-icon.html [ Failure ]
 # Webarchive tests that differ from Mac (need to verify correctness):
 webarchive/loading/cache-expired-subresource.html [ Failure ]
 
+# XMLHttpRequest tests that fail:
+webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
+http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
+http/tests/xmlhttprequest/cache-override.html [ Failure ]
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
+http/tests/xmlhttprequest/default-content-type-dashboard.html [ Failure ]
+http/tests/xmlhttprequest/failed-auth.html [ Failure ]
+http/tests/xmlhttprequest/head-redirection.html [ Failure ]
+http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Failure ]
+
 ###
 # Temporarily skip all others tests
 # We'll un-skip each directory as we land updated/new expected results
 ##
 editing
 fast
-http
-media
 platform
 
 ###
