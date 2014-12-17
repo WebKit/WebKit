@@ -1,3 +1,12 @@
+2014-12-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test fix after r177444.
+
+        Unreviewed.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+
 2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing more post-review comments in r177035
