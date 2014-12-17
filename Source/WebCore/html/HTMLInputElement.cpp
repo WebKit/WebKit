@@ -1877,7 +1877,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
         parameters.stepBase = 0;
     }
 
-    if (RenderObject* renderer = this->renderer())
+    if (RenderElement* renderer = this->renderer())
         parameters.anchorRectInRootView = document().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
     else
         parameters.anchorRectInRootView = IntRect();

@@ -1,3 +1,12 @@
+2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing more post-review comments in r177035
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+
 2014-12-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Sprinkle range-based for-loops where still possible
