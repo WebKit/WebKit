@@ -157,6 +157,8 @@ private:
     BOOL hasInitializedLookupObserver;
 #endif // PLATFORM(MAC)
 
+    BOOL shouldMaintainInactiveSelection;
+
     BOOL allowsUndo;
         
     float zoomMultiplier;

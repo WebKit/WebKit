@@ -141,7 +141,7 @@ PassRefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame
         return nullptr;
 
     RefPtr<Image> indicatorBitmapWithHighlight;
-    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
+    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade || presentationTransition == TextIndicatorPresentationTransition::Crossfade)
         indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(frame);
 
     // Store the selection rect in window coordinates, to be used subsequently

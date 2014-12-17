@@ -101,6 +101,12 @@ using namespace WebKit;
 
 - (void)_clearImmediateActionState
 {
+#if WK_API_ENABLED
+    [self hidePreview];
+#endif
+
+    _page->clearTextIndicator();
+
     if (_currentActionContext && _hasActivatedActionContext) {
         [getDDActionsManagerClass() didUseActions];
         _hasActivatedActionContext = NO;
@@ -130,10 +136,12 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    _page->setMaintainsInactiveSelection(true);
+
     [_wkView _dismissContentRelativeChildWindows];
 
     _eventLocationInView = [immediateActionRecognizer locationInView:immediateActionRecognizer.view];
-    _page->performActionMenuHitTestAtLocation(_eventLocationInView);
+    _page->performActionMenuHitTestAtLocation(_eventLocationInView, true);
 
     _state = ImmediateActionState::Pending;
     [self _updateImmediateActionItem];
@@ -172,12 +180,22 @@ using namespace WebKit;
     }
 }
 
+- (void)immediateActionRecognizerDidUpdateAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
+{
+    if (immediateActionRecognizer != _immediateActionRecognizer)
+        return;
+
+    _page->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
+}
+
 - (void)immediateActionRecognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    _page->setTextIndicatorAnimationProgress(0);
     [self _clearImmediateActionState];
+    _page->setMaintainsInactiveSelection(false);
 }
 
 - (void)immediateActionRecognizerDidCompleteAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -185,7 +203,8 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    // FIXME: Add support for the types of functionality provided in Action menu's willOpenMenu.
+    _page->setTextIndicatorAnimationProgress(1);
+    _page->setMaintainsInactiveSelection(false);
 }
 
 - (PassRefPtr<WebHitTestResult>)_webHitTestResult
@@ -507,8 +526,6 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     if (menuItems.count != 1)
         return nil;
 
-    if (_hitTestResult.detectedDataTextIndicator)
-        _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
     return menuItems.lastObject;
 }
 
@@ -533,6 +550,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
     if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
+        [_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO];
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
         return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     }
