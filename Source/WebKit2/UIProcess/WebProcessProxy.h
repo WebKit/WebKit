@@ -68,7 +68,7 @@ public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
 
-    static PassRefPtr<WebProcessProxy> create(WebContext&);
+    static Ref<WebProcessProxy> create(WebContext&);
     ~WebProcessProxy();
 
     static WebProcessProxy* fromConnection(IPC::Connection* connection)
@@ -81,7 +81,7 @@ public:
     WebContext& context() { return m_context; }
 
     static WebPageProxy* webPage(uint64_t pageID);
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, const WebPageConfiguration&);
+    Ref<WebPageProxy> createWebPage(PageClient&, const WebPageConfiguration&);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
 

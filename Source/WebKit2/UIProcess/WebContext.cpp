@@ -605,7 +605,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
         ensureNetworkProcess();
 #endif
 
-    RefPtr<WebProcessProxy> process = WebProcessProxy::create(*this);
+    Ref<WebProcessProxy> process = WebProcessProxy::create(*this);
 
     WebProcessCreationParameters parameters;
 
@@ -706,7 +706,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient.getInjectedBundleInitializationUserData(this);
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
-    process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get(), *process)), 0);
+    process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get(), process)), 0);
 
 #if PLATFORM(COCOA)
     process->send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
@@ -718,7 +718,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
         process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
 
-    m_processes.append(process);
+    m_processes.append(process.ptr());
 
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         for (size_t i = 0; i != m_messagesToInjectedBundlePostedToEmptyContext.size(); ++i) {
@@ -727,7 +727,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
             IPC::ArgumentEncoder messageData;
 
             messageData.encode(message.first);
-            messageData.encode(WebContextUserMessageEncoder(message.second.get(), *process));
+            messageData.encode(WebContextUserMessageEncoder(message.second.get(), process));
             process->send(Messages::WebProcess::PostInjectedBundleMessage(IPC::DataReference(messageData.buffer(), messageData.bufferSize())), 0);
         }
         m_messagesToInjectedBundlePostedToEmptyContext.clear();
@@ -739,7 +739,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     Inspector::RemoteInspector::shared(); 
 #endif
 
-    return *process;
+    return process;
 }
 
 void WebContext::warmInitialProcess()  

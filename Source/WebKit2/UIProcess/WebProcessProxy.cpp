@@ -83,9 +83,9 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
-PassRefPtr<WebProcessProxy> WebProcessProxy::create(WebContext& context)
+Ref<WebProcessProxy> WebProcessProxy::create(WebContext& context)
 {
-    return adoptRef(new WebProcessProxy(context));
+    return adoptRef(*new WebProcessProxy(context));
 }
 
 WebProcessProxy::WebProcessProxy(WebContext& context)
@@ -180,13 +180,15 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
     return globalPageMap().get(pageID);
 }
 
-PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, const WebPageConfiguration& configuration)
+Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, const WebPageConfiguration& configuration)
 {
     uint64_t pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, configuration);
-    m_pageMap.set(pageID, webPage.get());
-    globalPageMap().set(pageID, webPage.get());
-    return webPage.release();
+    Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, configuration);
+
+    m_pageMap.set(pageID, webPage.ptr());
+    globalPageMap().set(pageID, webPage.ptr());
+
+    return webPage;
 }
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
