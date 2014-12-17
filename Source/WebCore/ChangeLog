@@ -1,3 +1,25 @@
+2014-12-17  Radu Stavila  <stavila@adobe.com>
+
+        The SVGDocument of an SVGImage should not perform any additional actions when the SVGImage is being destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=139644
+
+        Reviewed by Antti Koivisto.
+
+        When an SVGImage is destroyed, having its SVGDocument perform style recalc and dispatching events is not only
+        useless but can also cause problems, such as re-entrancy in StyleResolver::loadPendingResources.
+
+        No new tests required, existing tests cover this change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::isBeingDestroyed):
+        (WebCore::Document::setIsBeingDestroyed):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeURL):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::~SVGImage):
+
 2014-12-17  Chris Dumez  <cdumez@apple.com>
 
         Drop useless 'clipToContents' argument for windowClipRect()

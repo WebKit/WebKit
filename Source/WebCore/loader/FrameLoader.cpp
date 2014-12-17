@@ -539,10 +539,18 @@ void FrameLoader::willTransitionToCommitted()
 bool FrameLoader::closeURL()
 {
     history().saveDocumentState();
-    
-    // Should only send the pagehide event here if the current document exists and has not been placed in the page cache.    
+
     Document* currentDocument = m_frame.document();
-    stopLoading(currentDocument && !currentDocument->inPageCache() ? UnloadEventPolicyUnloadAndPageHide : UnloadEventPolicyUnloadOnly);
+    UnloadEventPolicy unloadEventPolicy;
+    if (m_frame.page() && m_frame.page()->chrome().client().isSVGImageChromeClient()) {
+        // If this is the SVGDocument of an SVGImage, no need to dispatch events or recalcStyle.
+        unloadEventPolicy = UnloadEventPolicyNone;
+    } else {
+        // Should only send the pagehide event here if the current document exists and has not been placed in the page cache.
+        unloadEventPolicy = currentDocument && !currentDocument->inPageCache() ? UnloadEventPolicyUnloadAndPageHide : UnloadEventPolicyUnloadOnly;
+    }
+
+    stopLoading(unloadEventPolicy);
     
     m_frame.editor().clearUndoRedoOperations();
     return true;
