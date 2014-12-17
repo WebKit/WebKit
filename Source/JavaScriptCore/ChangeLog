@@ -1,3 +1,20 @@
+2014-12-17  Michael Saboff  <msaboff@apple.com>
+
+        Tests with infinite recursion frequently crash
+        https://bugs.webkit.org/show_bug.cgi?id=139548
+
+        Reviewed by Geoffrey Garen.
+
+        While unwinding, if the call frame doesn't have a codeblock, then we
+        are in native code, handle appropriately.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::UnwindFunctor::operator()):
+        Added checks for null CodeBlock.
+
+        (JSC::Interpreter::unwind): Removed wrong ASSERT.
+
 2014-12-17  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Make it possible to toggle FeatureCounter support at runtime

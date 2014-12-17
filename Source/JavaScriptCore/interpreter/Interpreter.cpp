@@ -436,7 +436,6 @@ bool Interpreter::isOpcode(Opcode opcode)
 static bool unwindCallFrame(StackVisitor& visitor)
 {
     CallFrame* callFrame = visitor->callFrame();
-    CodeBlock* codeBlock = visitor->codeBlock();
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         ClearExceptionScope scope(&callFrame->vm());
         if (jsDynamicCast<JSFunction*>(callFrame->callee()))
@@ -446,20 +445,22 @@ static bool unwindCallFrame(StackVisitor& visitor)
         ASSERT(!callFrame->hadException());
     }
 
-    if (codeBlock->codeType() == FunctionCode && codeBlock->needsActivation()) {
+    if (CodeBlock* codeBlock = visitor->codeBlock()) {
+        if (codeBlock->codeType() == FunctionCode && codeBlock->needsActivation()) {
 #if ENABLE(DFG_JIT)
-        RELEASE_ASSERT(!visitor->isInlinedFrame());
+            RELEASE_ASSERT(!visitor->isInlinedFrame());
 #endif
-    }
+        }
 
-    if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {
-        if (Arguments* arguments = visitor->existingArguments()) {
+        if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {
+            if (Arguments* arguments = visitor->existingArguments()) {
 #if ENABLE(DFG_JIT)
-            if (visitor->isInlinedFrame())
-                arguments->tearOff(callFrame, visitor->inlineCallFrame());
-            else
+                if (visitor->isInlinedFrame())
+                    arguments->tearOff(callFrame, visitor->inlineCallFrame());
+                else
 #endif
-                arguments->tearOff(callFrame);
+                    arguments->tearOff(callFrame);
+            }
         }
     }
 
@@ -646,7 +647,7 @@ public:
         m_codeBlock = visitor->codeBlock();
         unsigned bytecodeOffset = visitor->bytecodeOffset();
 
-        if (m_isTermination || !(m_handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
+        if (m_isTermination || !(m_handler = m_codeBlock ? m_codeBlock->handlerForBytecodeOffset(bytecodeOffset) : nullptr)) {
             if (!unwindCallFrame(visitor)) {
                 if (LegacyProfiler* profiler = vm.enabledProfiler())
                     profiler->exceptionUnwind(m_callFrame);
@@ -669,7 +670,6 @@ private:
 NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, JSValue& exceptionValue)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
-    ASSERT(codeBlock);
     bool isTermination = false;
 
     ASSERT(!exceptionValue.isEmpty());

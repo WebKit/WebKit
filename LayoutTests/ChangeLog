@@ -1,3 +1,23 @@
+2014-12-17  Michael Saboff  <msaboff@apple.com>
+
+        Tests with infinite recursion frequently crash
+        https://bugs.webkit.org/show_bug.cgi?id=139548
+
+        Reviewed by Geoffrey Garen.
+
+        New test that exercises the various places that we do stack overflow checks.
+
+        * TestExpectations:
+        * js/regress-139548-expected.txt: Added.
+        * js/regress-139548.html: Added.
+        * js/script-tests/regress-139548.js: Added.
+        (ToStringObj):
+        (ToStringObj.prototype.toString):
+        (makeArgsArray):
+        (recurseNoDFG):
+        (recurse):
+        (probeAndRecurse):
+
 2014-12-16  Shivakumar JM  <shiva.jm@samsung.com>
 
         text node should not be created, On setting document.title to the empty string.

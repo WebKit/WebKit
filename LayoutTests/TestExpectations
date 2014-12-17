@@ -324,10 +324,6 @@ webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.htm
 [ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
 webkit.org/b/121628 [ Release ] fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure ]
 
-# Catching infinite recursion is broken.
-webkit.org/b/139548 fast/workers/worker-constructor.html [ Skip ]
-webkit.org/b/139548 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Skip ]
-
 # Network process disk cache is not enabled yet
 webkit.org/b/30322 http/tests/cache/disk-cache-validation.html [ Skip ]
 
