@@ -1,3 +1,10 @@
+2014-12-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] More test gardening
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        [...]
+
 2014-12-17  Michael Saboff  <msaboff@apple.com>
 
         Tests with infinite recursion frequently crash
