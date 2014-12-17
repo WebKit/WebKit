@@ -56,19 +56,6 @@ RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNa
     return adoptRef(new StorageNamespaceImpl(LocalStorage, identifier, &topLevelOrigin, quotaInBytes));
 }
 
-PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(WebPage* webPage)
-{
-    return createSessionStorageNamespace(webPage->pageID(), webPage->corePage()->settings().sessionStorageQuota());
-}
-
-PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(PageGroup* pageGroup)
-{
-    uint64_t pageGroupID = WebProcess::shared().webPageGroup(pageGroup)->pageGroupID();
-    unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
-
-    return createLocalStorageNamespace(pageGroupID, quota);
-}
-
 StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)
     : m_storageType(storageType)
     , m_storageNamespaceID(storageNamespaceID)
@@ -83,18 +70,18 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 
 PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    auto result = m_storageAreaMaps.add(securityOrigin.get(), nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = StorageAreaMap::create(this, securityOrigin);
+    auto& slot = m_storageAreaMaps.add(securityOrigin.get(), nullptr).iterator->value;
+    if (!slot)
+        slot = StorageAreaMap::create(this, securityOrigin);
 
-    return StorageAreaImpl::create(result.iterator->value);
+    return StorageAreaImpl::create(slot);
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
 {
     ASSERT(m_storageNamespaceID);
 
-    return createSessionStorageNamespace(WebPage::fromCorePage(newPage));
+    return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID(), m_quotaInBytes);
 }
 
 void StorageNamespaceImpl::close()

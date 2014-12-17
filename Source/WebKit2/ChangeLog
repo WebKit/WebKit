@@ -1,3 +1,17 @@
+2014-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove deprecated StorageNamespaceImpl overloads
+        https://bugs.webkit.org/show_bug.cgi?id=139713
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::storageArea):
+        (WebKit::StorageNamespaceImpl::copy):
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace): Deleted.
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace): Deleted.
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+
 2014-12-16  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.
