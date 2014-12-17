@@ -1,3 +1,26 @@
+2014-12-17  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from Frame.
+        <https://webkit.org/b/139731>
+
+        Reviewed by Anders Carlsson.
+
+        Remove all use of PassRefPtr from the Frame class, instead using
+        Ref or RefPtr as appropriate.
+
+        * WebCore.exp.in:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * page/Frame.cpp:
+        (WebCore::Frame::create):
+        (WebCore::Frame::setView):
+        (WebCore::Frame::setDocument):
+        (WebCore::Frame::rangeForPoint):
+        (WebCore::Frame::createView):
+        * page/Frame.h:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2014-12-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test fix after r177444.

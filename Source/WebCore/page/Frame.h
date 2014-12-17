@@ -115,14 +115,14 @@ namespace WebCore {
 
     class Frame : public RefCounted<Frame> {
     public:
-        WEBCORE_EXPORT static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
+        WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
         void init();
 #if PLATFORM(IOS)
         // Creates <html><body style="..."></body></html> doing minimal amount of work.
         WEBCORE_EXPORT void initWithSimpleHTMLDocument(const String& style, const URL&);
 #endif
-        WEBCORE_EXPORT void setView(PassRefPtr<FrameView>);
+        WEBCORE_EXPORT void setView(RefPtr<FrameView>&&);
         WEBCORE_EXPORT void createView(const IntSize&, const Color&, bool,
             const IntSize& fixedLayoutSize = IntSize(), const IntRect& fixedVisibleContentRect = IntRect(),
             bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
@@ -173,7 +173,7 @@ namespace WebCore {
         bool shouldUsePrintingLayout() const;
         WEBCORE_EXPORT FloatSize resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize);
 
-        void setDocument(PassRefPtr<Document>);
+        void setDocument(RefPtr<Document>&&);
 
         WEBCORE_EXPORT void setPageZoomFactor(float);
         float pageZoomFactor() const { return m_pageZoomFactor; }
@@ -225,7 +225,7 @@ namespace WebCore {
 
         WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
         Document* documentAtPoint(const IntPoint& windowPoint);
-        WEBCORE_EXPORT PassRefPtr<Range> rangeForPoint(const IntPoint& framePoint);
+        WEBCORE_EXPORT RefPtr<Range> rangeForPoint(const IntPoint& framePoint);
 
         WEBCORE_EXPORT String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);

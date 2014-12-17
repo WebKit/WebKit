@@ -1,3 +1,13 @@
+2014-12-17  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from Frame.
+        <https://webkit.org/b/139731>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSubframe):
+
 2014-12-17  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix

@@ -96,7 +96,7 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
             result->contentSecurityPolicy()->copyStateFrom(oldDocument->contentSecurityPolicy());
         }
 
-        frame->setDocument(result);
+        frame->setDocument(result.copyRef());
     }
 
     RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create(sourceMIMEType);

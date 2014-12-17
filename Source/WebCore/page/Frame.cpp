@@ -204,11 +204,11 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
 #endif
 }
 
-PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
+Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
 {
     ASSERT(page);
     ASSERT(client);
-    return adoptRef(new Frame(*page, ownerElement, *client));
+    return adoptRef(*new Frame(*page, ownerElement, *client));
 }
 
 Frame::~Frame()
@@ -241,7 +241,7 @@ void Frame::removeDestructionObserver(FrameDestructionObserver* observer)
     m_destructionObservers.remove(observer);
 }
 
-void Frame::setView(PassRefPtr<FrameView> view)
+void Frame::setView(RefPtr<FrameView>&& view)
 {
     // We the custom scroll bars as early as possible to prevent m_doc->detach()
     // from messing with the view such that its scroll bars won't be torn down.
@@ -260,7 +260,7 @@ void Frame::setView(PassRefPtr<FrameView> view)
     
     eventHandler().clear();
 
-    m_view = view;
+    m_view = WTF::move(view);
 
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
@@ -268,14 +268,14 @@ void Frame::setView(PassRefPtr<FrameView> view)
     loader().resetMultipleFormSubmissionProtection();
 }
 
-void Frame::setDocument(PassRefPtr<Document> newDocument)
+void Frame::setDocument(RefPtr<Document>&& newDocument)
 {
     ASSERT(!newDocument || newDocument->frame() == this);
 
     if (m_doc && !m_doc->inPageCache())
         m_doc->prepareForDestruction();
 
-    m_doc = newDocument.get();
+    m_doc = newDocument.copyRef();
     ASSERT(!m_doc || m_doc->domWindow());
     ASSERT(!m_doc || m_doc->domWindow()->frame() == this);
 
@@ -854,28 +854,28 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
-PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
+RefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
 {
     VisiblePosition position = visiblePositionForPoint(framePoint);
     if (position.isNull())
-        return 0;
+        return nullptr;
 
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
         RefPtr<Range> previousCharacterRange = makeRange(previous, position);
         LayoutRect rect = editor().firstRectForRange(previousCharacterRange.get());
         if (rect.contains(framePoint))
-            return previousCharacterRange.release();
+            return previousCharacterRange;
     }
 
     VisiblePosition next = position.next();
     if (RefPtr<Range> nextCharacterRange = makeRange(position, next)) {
         LayoutRect rect = editor().firstRectForRange(nextCharacterRange.get());
         if (rect.contains(framePoint))
-            return nextCharacterRange.release();
+            return nextCharacterRange;
     }
 
-    return 0;
+    return nullptr;
 }
 
 void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor, bool transparent,
@@ -908,7 +908,7 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
 
     frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode, horizontalLock, verticalLock);
 
-    setView(frameView);
+    setView(frameView.copyRef());
 
     if (backgroundColor.isValid())
         frameView->updateBackgroundRecursively(backgroundColor, transparent);

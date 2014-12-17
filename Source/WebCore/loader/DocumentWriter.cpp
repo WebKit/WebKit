@@ -144,7 +144,7 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         m_frame->script().updatePlatformScriptObjects();
 
     m_frame->loader().setOutgoingReferrer(url);
-    m_frame->setDocument(document);
+    m_frame->setDocument(document.copyRef());
 
     if (m_decoder)
         document->setDecoder(m_decoder.get());

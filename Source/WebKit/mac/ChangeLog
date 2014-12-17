@@ -1,3 +1,17 @@
+2014-12-17  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from Frame.
+        <https://webkit.org/b/139731>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebView/WebFrame.mm:
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]):
+        (+[WebFrame _createSubframeWithOwnerElement:frameName:frameView:]):
+        * WebView/WebFrameInternal.h:
+
 2014-12-16  Timothy Horton  <timothy_horton@apple.com>
 
         Implement and adopt two new TextIndicator presentation animations

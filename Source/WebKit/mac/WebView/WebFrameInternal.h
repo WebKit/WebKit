@@ -103,7 +103,7 @@ WebView *getWebView(WebFrame *webFrame);
 @interface WebFrame (WebInternal)
 
 + (void)_createMainFrameWithPage:(WebCore::Page*)page frameName:(const WTF::String&)name frameView:(WebFrameView *)frameView;
-+ (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WTF::String&)name frameView:(WebFrameView *)frameView;
++ (Ref<WebCore::Frame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement*)ownerElement frameName:(const WTF::String&)name frameView:(WebFrameView *)frameView;
 - (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
 
 - (void)_clearCoreFrame;
