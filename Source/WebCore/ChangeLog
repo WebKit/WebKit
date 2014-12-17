@@ -1,3 +1,20 @@
+2014-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Drop useless 'clipToContents' argument for windowClipRect()
+        https://bugs.webkit.org/show_bug.cgi?id=139722
+
+        Reviewed by Darin Adler.
+
+        Drop useless 'clipToContents' argument for windowClipRect(). This
+        argument is never used.
+
+        No new tests, no behavior change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+
 2014-12-16  Shivakumar JM  <shiva.jm@samsung.com>
 
         text node should not be created, On setting document.title to the empty string.

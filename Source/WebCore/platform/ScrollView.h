@@ -85,7 +85,7 @@ public:
     virtual HostWindow* hostWindow() const = 0;
 
     // Returns a clip rect in host window coordinates. Used to clip the blit on a scroll.
-    virtual IntRect windowClipRect(bool clipToContents = true) const = 0;
+    virtual IntRect windowClipRect() const = 0;
 
     // Functions for child manipulation and inspection.
     const HashSet<RefPtr<Widget>>& children() const { return m_children; }
