@@ -448,6 +448,10 @@ void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, b
 {
 }
 
+void PageClientImpl::setTextIndicatorAnimationProgress(float)
+{
+}
+
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
 }
