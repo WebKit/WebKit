@@ -1,3 +1,12 @@
+2014-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed iOS Build Fix after r177459.
+
+        * UIProcess/ios/WebInspectorProxyIOS.mm:
+        (WebKit::WebInspectorProxy::platformInvalidate):
+        (WebKit::WebInspectorProxy::platformHide):
+        Add missing WebInspectorProxy platform methods.
+
 2014-12-17  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Define button and action should respect profile settings.
