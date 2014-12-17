@@ -101,10 +101,12 @@ public:
 
     template<typename U> Ref<T> replace(Ref<U>&&) WARN_UNUSED_RETURN;
 
-    Ref copyRef() WARN_UNUSED_RETURN
-    {
-        return Ref(*m_ptr);
-    }
+#if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
+    Ref copyRef() && = delete;
+    Ref copyRef() const & WARN_UNUSED_RETURN { return Ref(*m_ptr); }
+#else
+    Ref copyRef() const WARN_UNUSED_RETURN { return Ref(*m_ptr); }
+#endif
 
     T& leakRef() WARN_UNUSED_RETURN
     {
