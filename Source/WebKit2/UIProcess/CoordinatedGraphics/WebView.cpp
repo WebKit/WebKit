@@ -455,6 +455,11 @@ void WebView::setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool)
     notImplemented();
 }
 
+void WebView::setTextIndicatorAnimationProgress(float)
+{
+    notImplemented();
+}
+
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     setActive(true);
