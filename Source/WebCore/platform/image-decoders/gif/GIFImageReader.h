@@ -42,8 +42,6 @@
 // so we will too.
 #include "GIFImageDecoder.h"
 #include "SharedBuffer.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 #define MAX_LZW_BITS          12
@@ -215,7 +213,7 @@ public:
     }
 
 private:
-    OwnPtr<GIFLZWContext> m_lzwContext;
+    std::unique_ptr<GIFLZWContext> m_lzwContext;
     Vector<GIFLZWBlock> m_lzwBlocks; // LZW blocks for this frame.
     size_t m_currentLzwBlock;
     bool m_isComplete;
@@ -319,7 +317,7 @@ private:
     int m_globalColormapSize; // Size of global colormap array.
     int m_loopCount; // Netscape specific extension block to control the number of animation loops a GIF renders.
     
-    Vector<OwnPtr<GIFFrameContext> > m_frames;
+    Vector<std::unique_ptr<GIFFrameContext> > m_frames;
     size_t m_currentDecodingFrame;
 
     RefPtr<WebCore::SharedBuffer> m_data;

@@ -27,7 +27,6 @@
 #define PNGImageDecoder_h
 
 #include "ImageDecoder.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -65,7 +64,7 @@ namespace WebCore {
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize);
 
-        OwnPtr<PNGImageReader> m_reader;
+        std::unique_ptr<PNGImageReader> m_reader;
         bool m_doNothingOnFailure;
     };
 

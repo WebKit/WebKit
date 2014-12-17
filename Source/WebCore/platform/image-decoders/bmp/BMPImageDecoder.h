@@ -32,7 +32,6 @@
 #define BMPImageDecoder_h
 
 #include "BMPImageReader.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -77,7 +76,7 @@ namespace WebCore {
         size_t m_decodedOffset;
 
         // The reader used to do most of the BMP decoding.
-        OwnPtr<BMPImageReader> m_reader;
+        std::unique_ptr<BMPImageReader> m_reader;
     };
 
 } // namespace WebCore

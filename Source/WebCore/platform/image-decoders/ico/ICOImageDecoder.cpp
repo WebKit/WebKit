@@ -35,7 +35,6 @@
 
 #include "BMPImageReader.h"
 #include "PNGImageDecoder.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -182,8 +181,8 @@ void ICOImageDecoder::decode(size_t index, bool onlySize)
     // PNGImageDecoder anymore.  (If we failed, these have already been
     // cleared.)
     else if ((m_frameBufferCache.size() > index) && (m_frameBufferCache[index].status() == ImageFrame::FrameComplete)) {
-        m_bmpReaders[index].clear();
-        m_pngDecoders[index].clear();
+        m_bmpReaders[index] = nullptr;
+        m_pngDecoders[index] = nullptr;
     }
 }
 
@@ -210,7 +209,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
             // We need to have already sized m_frameBufferCache before this, and
             // we must not resize it again later (see caution in frameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
-            m_bmpReaders[index] = adoptPtr(new BMPImageReader(this, dirEntry.m_imageOffset, 0, true));
+            m_bmpReaders[index] = std::make_unique<BMPImageReader>(this, dirEntry.m_imageOffset, 0, true);
             m_bmpReaders[index]->setData(m_data.get());
             m_bmpReaders[index]->setBuffer(&m_frameBufferCache[index]);
         }
@@ -221,9 +220,9 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     }
 
     if (!m_pngDecoders[index]) {
-        m_pngDecoders[index] = adoptPtr(
-            new PNGImageDecoder(m_premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied,
-                                m_ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied));
+        m_pngDecoders[index] = std::make_unique<
+            PNGImageDecoder>(m_premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied,
+                m_ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
         setDataForPNGDecoderAtIndex(index);
     }
     // Fail if the size the PNGImageDecoder calculated does not match the size

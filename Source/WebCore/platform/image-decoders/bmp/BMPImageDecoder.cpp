@@ -32,7 +32,6 @@
 #include "BMPImageDecoder.h"
 
 #include "BMPImageReader.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -84,7 +83,7 @@ ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
 
 bool BMPImageDecoder::setFailed()
 {
-    m_reader.clear();
+    m_reader = nullptr;
     return ImageDecoder::setFailed();
 }
 
@@ -100,7 +99,7 @@ void BMPImageDecoder::decode(bool onlySize)
     // If we're done decoding the image, we don't need the BMPImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)
     else if (!m_frameBufferCache.isEmpty() && (m_frameBufferCache.first().status() == ImageFrame::FrameComplete))
-        m_reader.clear();
+        m_reader = nullptr;
 }
 
 bool BMPImageDecoder::decodeHelper(bool onlySize)
@@ -110,7 +109,7 @@ bool BMPImageDecoder::decodeHelper(bool onlySize)
         return false;
 
     if (!m_reader) {
-        m_reader = adoptPtr(new BMPImageReader(this, m_decodedOffset, imgDataOffset, false));
+        m_reader = std::make_unique<BMPImageReader>(this, m_decodedOffset, imgDataOffset, false);
         m_reader->setData(m_data.get());
     }
 

@@ -29,7 +29,6 @@
 
 #include "ImageDecoder.h"
 #include <stdio.h> // Needed by jpeglib.h for FILE.
-#include <wtf/OwnPtr.h>
 
 extern "C" {
 #include "jpeglib.h"
@@ -79,7 +78,7 @@ namespace WebCore {
         template <J_COLOR_SPACE colorSpace, bool isScaled>
         bool outputScanlines(ImageFrame& buffer);
 
-        OwnPtr<JPEGImageReader> m_reader;
+        std::unique_ptr<JPEGImageReader> m_reader;
     };
 
 } // namespace WebCore

@@ -322,9 +322,9 @@ bool GIFFrameContext::decode(const unsigned char* data, size_t length, WebCore::
         if (!isDataSizeDefined() || !isHeaderDefined())
             return true;
 
-        m_lzwContext = adoptPtr(new GIFLZWContext(client, this));
+        m_lzwContext = std::make_unique<GIFLZWContext>(client, this);
         if (!m_lzwContext->prepareToDecode()) {
-            m_lzwContext.clear();
+            m_lzwContext = nullptr;
             return false;
         }
 
@@ -346,7 +346,7 @@ bool GIFFrameContext::decode(const unsigned char* data, size_t length, WebCore::
     // There will be no more decoding for this frame so it's time to cleanup.
     if (isComplete()) {
         *frameDecoded = true;
-        m_lzwContext.clear();
+        m_lzwContext = nullptr;
     }
     return true;
 }
@@ -781,7 +781,7 @@ void GIFImageReader::setRemainingBytes(size_t remainingBytes)
 void GIFImageReader::addFrameIfNecessary()
 {
     if (m_frames.isEmpty() || m_frames.last()->isComplete())
-        m_frames.append(adoptPtr(new GIFFrameContext(m_frames.size())));
+        m_frames.append(std::make_unique<GIFFrameContext>(m_frames.size()));
 }
 
 // FIXME: Move this method to close to doLZW().

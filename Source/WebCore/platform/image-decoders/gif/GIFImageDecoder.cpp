@@ -28,7 +28,6 @@
 
 #include "GIFImageReader.h"
 #include <limits>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -125,7 +124,7 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
 
 bool GIFImageDecoder::setFailed()
 {
-    m_reader.clear();
+    m_reader = nullptr;
     return ImageDecoder::setFailed();
 }
 
@@ -294,7 +293,7 @@ void GIFImageDecoder::gifComplete()
     // going to be.
     repetitionCount();
 
-    m_reader.clear();
+    m_reader = nullptr;
 }
 
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
@@ -303,7 +302,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
         return;
 
     if (!m_reader) {
-        m_reader = adoptPtr(new GIFImageReader(this));
+        m_reader = std::make_unique<GIFImageReader>(this);
         m_reader->setData(m_data);
     }
 

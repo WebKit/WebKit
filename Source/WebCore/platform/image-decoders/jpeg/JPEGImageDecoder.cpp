@@ -39,7 +39,6 @@
 
 #include "config.h"
 #include "JPEGImageDecoder.h"
-#include <wtf/PassOwnPtr.h>
 
 extern "C" {
 #if USE(ICCJPEG)
@@ -632,7 +631,7 @@ ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 
 bool JPEGImageDecoder::setFailed()
 {
-    m_reader.clear();
+    m_reader = nullptr;
     return ImageDecoder::setFailed();
 }
 
@@ -771,7 +770,7 @@ void JPEGImageDecoder::decode(bool onlySize)
         return;
 
     if (!m_reader)
-        m_reader = adoptPtr(new JPEGImageReader(this));
+        m_reader = std::make_unique<JPEGImageReader>(this);
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
@@ -780,7 +779,7 @@ void JPEGImageDecoder::decode(bool onlySize)
     // If we're done decoding the image, we don't need the JPEGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)
     else if (!m_frameBufferCache.isEmpty() && (m_frameBufferCache[0].status() == ImageFrame::FrameComplete))
-        m_reader.clear();
+        m_reader = nullptr;
 }
 
 }
