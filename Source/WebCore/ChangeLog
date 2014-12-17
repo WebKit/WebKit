@@ -1,3 +1,52 @@
+2014-12-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move WebCore/platform/graphics/surfaces to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=139641
+
+        Reviewed by Andreas Kling.
+
+        Replace OwnPtr|PassOwnPtr with std::make_unique<>|std::unique_ptr<>.
+
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::sharingContext):
+        (WebCore::GLContext::createContextForWindow):
+        (WebCore::GLContext::createOffscreenContext):
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createWindowContext):
+        (WebCore::GLContextEGL::createPbufferContext):
+        (WebCore::GLContextEGL::createPixmapContext):
+        (WebCore::GLContextEGL::createContext):
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::createWindowContext):
+        (WebCore::GLContextGLX::createPbufferContext):
+        (WebCore::GLContextGLX::createPixmapContext):
+        (WebCore::GLContextGLX::createContext):
+        * platform/graphics/glx/GLContextGLX.h:
+        * platform/graphics/surfaces/GLTransportSurface.cpp:
+        (WebCore::GLTransportSurface::createTransportSurface):
+        (WebCore::GLTransportSurfaceClient::createTransportSurfaceClient):
+        * platform/graphics/surfaces/GLTransportSurface.h:
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h:
+        * platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp:
+        * platform/graphics/surfaces/egl/EGLSurface.cpp:
+        (WebCore::EGLTransportSurface::createTransportSurface):
+        (WebCore::EGLTransportSurface::createTransportSurfaceClient):
+        (WebCore::EGLTransportSurface::EGLTransportSurface):
+        * platform/graphics/surfaces/egl/EGLSurface.h:
+        * platform/graphics/surfaces/egl/EGLXSurface.cpp:
+        (WebCore::EGLXTransportSurfaceClient::EGLXTransportSurfaceClient):
+        * platform/graphics/surfaces/egl/EGLXSurface.h:
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurface::GLXTransportSurface):
+        (WebCore::GLXOffScreenSurface::initialize):
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+
 2014-12-16  Timothy Horton  <timothy_horton@apple.com>
 
         Implement and adopt two new TextIndicator presentation animations

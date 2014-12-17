@@ -46,7 +46,7 @@ public:
     virtual void destroy() override;
 
 private:
-    OwnPtr<GLXConfigSelector> m_configSelector;
+    std::unique_ptr<GLXConfigSelector> m_configSelector;
 };
 
 class GLXOffScreenSurface : public GLPlatformSurface {
@@ -60,7 +60,7 @@ public:
 private:
     void initialize(SurfaceAttributes);
     void freeResources();
-    OwnPtr<GLXConfigSelector> m_configSelector;
+    std::unique_ptr<GLXConfigSelector> m_configSelector;
     Pixmap m_pixmap;
     GLXPixmap m_glxPixmap;
 };

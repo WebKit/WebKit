@@ -121,7 +121,7 @@ static bool getEGLConfig(EGLConfig* config, GLContextEGL::EGLSurfaceType surface
     return eglChooseConfig(sharedEGLDisplay(), attributeList, config, 1, &numberConfigsReturned) && numberConfigsReturned;
 }
 
-PassOwnPtr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType window, GLContext* sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType window, GLContext* sharingContext)
 {
     EGLContext eglSharingContext = sharingContext ? static_cast<GLContextEGL*>(sharingContext)->m_context : 0;
 
@@ -141,10 +141,10 @@ PassOwnPtr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType w
     if (surface == EGL_NO_SURFACE)
         return nullptr;
 
-    return adoptPtr(new GLContextEGL(context, surface, WindowSurface));
+    return std::make_unique<GLContextEGL>(context, surface, WindowSurface);
 }
 
-PassOwnPtr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext sharingContext)
 {
     EGLDisplay display = sharedEGLDisplay();
     if (display == EGL_NO_DISPLAY)
@@ -165,10 +165,10 @@ PassOwnPtr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext sharingCo
         return nullptr;
     }
 
-    return adoptPtr(new GLContextEGL(context, surface, PbufferSurface));
+    return std::make_unique<GLContextEGL>(context, surface, PbufferSurface);
 }
 
-PassOwnPtr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext sharingContext)
 {
 #if PLATFORM(X11)
     EGLDisplay display = sharedEGLDisplay();
@@ -196,13 +196,13 @@ PassOwnPtr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext sharingCon
     if (surface == EGL_NO_SURFACE)
         return nullptr;
 
-    return adoptPtr(new GLContextEGL(context, surface, PixmapSurface));
+    return std::make_unique<GLContextEGL>(context, surface, PixmapSurface);
 #else
     return nullptr;
 #endif
 }
 
-PassOwnPtr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window, GLContext* sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window, GLContext* sharingContext)
 {
     if (!sharedEGLDisplay())
         return nullptr;
@@ -219,14 +219,14 @@ PassOwnPtr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window,
         return nullptr;
 
     EGLContext eglSharingContext = sharingContext ? static_cast<GLContextEGL*>(sharingContext)->m_context : 0;
-    OwnPtr<GLContextEGL> context = window ? createWindowContext(window, sharingContext) : nullptr;
+    auto context = window ? createWindowContext(window, sharingContext) : nullptr;
     if (!context)
         context = createPixmapContext(eglSharingContext);
 
     if (!context)
         context = createPbufferContext(eglSharingContext);
     
-    return context.release();
+    return WTF::move(context);
 }
 
 GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceType type)

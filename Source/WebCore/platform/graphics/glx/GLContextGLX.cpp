@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLContext* sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLContext* sharingContext)
 {
     Display* display = sharedX11Display();
     XWindowAttributes attributes;
@@ -54,12 +54,12 @@ PassOwnPtr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLContext
 
     // GLXPbuffer and XID are both the same types underneath, so we have to share
     // a constructor here with the window path.
-    GLContextGLX* contextWrapper = new GLContextGLX(context);
+    auto contextWrapper = std::make_unique<GLContextGLX>(context);
     contextWrapper->m_window = window;
-    return adoptPtr(contextWrapper);
+    return WTF::move(contextWrapper);
 }
 
-PassOwnPtr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingContext)
 {
     int fbConfigAttributes[] = {
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -97,12 +97,12 @@ PassOwnPtr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingCo
 
     // GLXPbuffer and XID are both the same types underneath, so we have to share
     // a constructor here with the window path.
-    GLContextGLX* contextWrapper = new GLContextGLX(context);
+    auto contextWrapper = std::make_unique<GLContextGLX>(context);
     contextWrapper->m_pbuffer = pbuffer;
-    return adoptPtr(contextWrapper);
+    return WTF::move(contextWrapper);
 }
 
-PassOwnPtr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingContext)
 {
     static int visualAttributes[] = {
         GLX_RGBA,
@@ -138,10 +138,10 @@ PassOwnPtr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingCon
     }
 
     XFree(visualInfo);
-    return adoptPtr(new GLContextGLX(context, pixmap, glxPixmap));
+    return std::make_unique<GLContextGLX>(context, pixmap, glxPixmap);
 }
 
-PassOwnPtr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
 {
     if (!sharedX11Display())
         return nullptr;
@@ -156,7 +156,7 @@ PassOwnPtr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* shar
         return nullptr;
 
     GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context : 0;
-    OwnPtr<GLContextGLX> context = window ? createWindowContext(window, sharingContext) : nullptr;
+    auto context = window ? createWindowContext(window, sharingContext) : nullptr;
     if (!context)
         context = createPbufferContext(glxSharingContext);
     if (!context)
@@ -164,7 +164,7 @@ PassOwnPtr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* shar
     if (!context)
         return nullptr;
 
-    return context.release();
+    return WTF::move(context);
 }
 
 GLContextGLX::GLContextGLX(GLXContext context)

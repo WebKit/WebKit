@@ -31,7 +31,6 @@
 #include "GLTransportSurface.h"
 
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -39,8 +38,8 @@ class EGLConfigSelector;
 
 class EGLTransportSurface : public GLTransportSurface {
 public:
-    static PassOwnPtr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes);
-    static PassOwnPtr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
+    static std::unique_ptr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes);
+    static std::unique_ptr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
     virtual ~EGLTransportSurface();
     virtual PlatformSurfaceConfig configuration() override;
     virtual void destroy() override;
@@ -48,7 +47,7 @@ public:
 
 protected:
     EGLTransportSurface(const IntSize&, SurfaceAttributes);
-    OwnPtr<EGLConfigSelector> m_configSelector;
+    std::unique_ptr<EGLConfigSelector> m_configSelector;
 };
 
 class EGLOffScreenSurface : public GLPlatformSurface {
@@ -61,7 +60,7 @@ public:
 
 protected:
     EGLOffScreenSurface(SurfaceAttributes);
-    OwnPtr<EGLConfigSelector> m_configSelector;
+    std::unique_ptr<EGLConfigSelector> m_configSelector;
 };
 
 }

@@ -79,7 +79,7 @@ private:
     PlatformBufferHandle m_handle;
     GLuint m_format;
     unsigned m_totalBytes;
-    OwnPtr<EGLTextureFromPixmap> m_eglImage;
+    std::unique_ptr<EGLTextureFromPixmap> m_eglImage;
 };
 
 }

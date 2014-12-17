@@ -49,7 +49,7 @@ public:
 
 private:
     GraphicsContext3D* m_context;
-    OwnPtr<GLContext> m_glContext;
+    std::unique_ptr<GLContext> m_glContext;
     GraphicsContext3D::RenderStyle m_renderStyle;
 };
 

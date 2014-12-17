@@ -36,7 +36,6 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/gobject/GMainLoopSource.h>
 
 namespace WebKit {
@@ -99,7 +98,7 @@ private:
     typedef HashMap<WebCore::PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
     PageOverlayLayerMap m_pageOverlayLayers;
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
-    OwnPtr<WebCore::GLContext> m_context;
+    std::unique_ptr<WebCore::GLContext> m_context;
     double m_lastImmediateFlushTime;
     bool m_layerFlushSchedulingEnabled;
     GMainLoopSource m_layerFlushTimerCallback;

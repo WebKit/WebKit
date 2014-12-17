@@ -43,17 +43,17 @@ namespace WebCore {
 static const GLfloat vertices[] = { 0, 0, 1, 0, 1, 1, 0, 1 };
 static bool vertexArrayObjectSupported = false;
 
-PassOwnPtr<GLTransportSurface> GLTransportSurface::createTransportSurface(const IntSize& size, SurfaceAttributes attributes)
+std::unique_ptr<GLTransportSurface> GLTransportSurface::createTransportSurface(const IntSize& size, SurfaceAttributes attributes)
 {
-    OwnPtr<GLTransportSurface> surface;
+    std::unique_ptr<GLTransportSurface> surface;
 #if USE(GLX)
-    surface = adoptPtr(new GLXTransportSurface(size, attributes));
+    surface = std::make_unique<GLXTransportSurface>(size, attributes);
 #elif USE(EGL)
     surface = EGLTransportSurface::createTransportSurface(size, attributes);
 #endif
 
     if (surface && surface->handle() && surface->drawable())
-        return surface.release();
+        return WTF::move(surface);
 
     return nullptr;
 }
@@ -205,11 +205,11 @@ void GLTransportSurface::initializeShaderProgram()
     updateTransformationMatrix();
 }
 
-PassOwnPtr<GLTransportSurfaceClient> GLTransportSurfaceClient::createTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
+std::unique_ptr<GLTransportSurfaceClient> GLTransportSurfaceClient::createTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
 {
-    OwnPtr<GLTransportSurfaceClient> client;
+    std::unique_ptr<GLTransportSurfaceClient> client;
 #if USE(GLX)
-    client = adoptPtr(new GLXTransportSurfaceClient(handle, hasAlpha));
+    client = std::make_unique<GLXTransportSurfaceClient>(handle, hasAlpha);
     UNUSED_PARAM(size);
 #else
     client = EGLTransportSurface::createTransportSurfaceClient(handle, size, hasAlpha);
@@ -220,7 +220,7 @@ PassOwnPtr<GLTransportSurfaceClient> GLTransportSurfaceClient::createTransportSu
         return nullptr;
     }
 
-    return client.release();
+    return WTF::move(client);
 }
 
 

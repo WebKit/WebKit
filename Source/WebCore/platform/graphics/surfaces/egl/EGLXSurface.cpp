@@ -161,7 +161,7 @@ EGLXTransportSurfaceClient::EGLXTransportSurfaceClient(const PlatformBufferHandl
 
     EGLConfigSelector configSelector(sharedSurfaceAttributes);
     EGLConfig config = configSelector.surfaceClientConfig(XVisualIDFromVisual(attr.visual));
-    m_eglImage = adoptPtr(new EGLTextureFromPixmap(m_handle, hasAlpha, config));
+    m_eglImage = std::make_unique<EGLTextureFromPixmap>(m_handle, hasAlpha, config);
 
     if (!m_eglImage->isValid() || eglGetError() != EGL_SUCCESS)
         destroy();

@@ -27,7 +27,6 @@
 #define GLTransportSurface_h
 
 #include "GLPlatformSurface.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -37,7 +36,7 @@ class GLTransportSurface : public GLPlatformSurface {
 
 public:
     // Creates a GL surface whose results can be transported to the UI process for display.
-    static PassOwnPtr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes = GLPlatformSurface::Default);
+    static std::unique_ptr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes = GLPlatformSurface::Default);
     virtual ~GLTransportSurface();
     virtual void updateContents(const uint32_t) override;
     virtual void setGeometry(const IntRect&) override;
@@ -60,7 +59,7 @@ protected:
 class GLTransportSurfaceClient {
 
 public:
-    static PassOwnPtr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
+    static std::unique_ptr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
     virtual ~GLTransportSurfaceClient();
     virtual void prepareTexture();
     virtual void destroy();

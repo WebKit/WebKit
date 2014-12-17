@@ -23,7 +23,6 @@
 #include "GraphicsContext3D.h"
 #include "Widget.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 #if USE(EGL) && !PLATFORM(GTK)
 #include "eglplatform.h"
@@ -45,8 +44,8 @@ namespace WebCore {
 class GLContext {
     WTF_MAKE_NONCOPYABLE(GLContext);
 public:
-    static PassOwnPtr<GLContext> createContextForWindow(GLNativeWindowType windowHandle, GLContext* sharingContext);
-    static PassOwnPtr<GLContext> createOffscreenContext(GLContext* sharing = 0);
+    static std::unique_ptr<GLContext> createContextForWindow(GLNativeWindowType windowHandle, GLContext* sharingContext);
+    static std::unique_ptr<GLContext> createOffscreenContext(GLContext* sharing = 0);
     static GLContext* getCurrent();
     static GLContext* sharingContext();
 

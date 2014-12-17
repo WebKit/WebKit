@@ -147,9 +147,9 @@ private:
     FloatRect m_rect;
     IntSize m_size;
     PlatformBufferHandle m_sharedHandle;
-    OwnPtr<GLTransportSurfaceClient> m_client;
+    std::unique_ptr<GLTransportSurfaceClient> m_client;
     std::unique_ptr<GLPlatformContext> m_sharedContext;
-    OwnPtr<GLTransportSurface> m_sharedSurface;
+    std::unique_ptr<GLTransportSurface> m_sharedSurface;
 };
 
 GraphicsSurfaceToken GraphicsSurface::platformExport()

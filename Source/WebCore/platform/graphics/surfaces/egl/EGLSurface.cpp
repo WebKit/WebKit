@@ -38,28 +38,28 @@
 
 namespace WebCore {
 
-PassOwnPtr<GLTransportSurface> EGLTransportSurface::createTransportSurface(const IntSize& size, SurfaceAttributes attributes)
+std::unique_ptr<GLTransportSurface> EGLTransportSurface::createTransportSurface(const IntSize& size, SurfaceAttributes attributes)
 {
-    OwnPtr<GLTransportSurface> surface;
+    std::unique_ptr<GLTransportSurface> surface;
 #if PLATFORM(X11)
-    surface = adoptPtr(new EGLWindowTransportSurface(size, attributes));
+    surface = std::make_unique<EGLWindowTransportSurface>(size, attributes);
 #else
     UNUSED_PARAM(size);
     UNUSED_PARAM(attributes);
 #endif
 
     if (surface)
-        return surface.release();
+        return WTF::move(surface);
 
     return nullptr;
 }
 
-PassOwnPtr<GLTransportSurfaceClient> EGLTransportSurface::createTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
+std::unique_ptr<GLTransportSurfaceClient> EGLTransportSurface::createTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
 {
     EGLHelper::resolveEGLBindings();
-    OwnPtr<GLTransportSurfaceClient> client;
+    std::unique_ptr<GLTransportSurfaceClient> client;
 #if PLATFORM(X11)
-    client = adoptPtr(new EGLXTransportSurfaceClient(handle, size, hasAlpha));
+    client = std::make_unique<EGLXTransportSurfaceClient>(handle, size, hasAlpha);
 #else
     UNUSED_PARAM(handle);
     UNUSED_PARAM(size);
@@ -67,7 +67,7 @@ PassOwnPtr<GLTransportSurfaceClient> EGLTransportSurface::createTransportSurface
 #endif
 
     if (client)
-        return client.release();
+        return WTF::move(client);
 
     return nullptr;
 }
@@ -80,7 +80,7 @@ EGLTransportSurface::EGLTransportSurface(const IntSize& size, SurfaceAttributes 
     if (m_sharedDisplay == EGL_NO_DISPLAY)
         return;
 
-    m_configSelector = adoptPtr(new EGLConfigSelector(attributes));
+    m_configSelector = std::make_unique<EGLConfigSelector>(attributes);
 }
 
 GLPlatformSurface::SurfaceAttributes EGLTransportSurface::attributes() const

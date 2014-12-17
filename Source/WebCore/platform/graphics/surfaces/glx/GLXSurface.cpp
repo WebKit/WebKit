@@ -66,7 +66,7 @@ GLXTransportSurface::GLXTransportSurface(const IntSize& size, SurfaceAttributes 
 {
     m_sharedDisplay = X11Helper::nativeDisplay();
     attributes |= GLPlatformSurface::DoubleBuffered;
-    m_configSelector = adoptPtr(new GLXConfigSelector(attributes));
+    m_configSelector = std::make_unique<GLXConfigSelector>(attributes);
     OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo(m_configSelector->surfaceContextConfig()));
 
     if (!visInfo.get()) {
@@ -143,7 +143,7 @@ void GLXOffScreenSurface::initialize(SurfaceAttributes attributes)
 {
     m_sharedDisplay = X11Helper::nativeDisplay();
 
-    m_configSelector = adoptPtr(new GLXConfigSelector(attributes));
+    m_configSelector = std::make_unique<GLXConfigSelector>(attributes);
 
     OwnPtrX11<XVisualInfo> visualInfo(m_configSelector->visualInfo(m_configSelector->pixmapContextConfig()));
     X11Helper::createPixmap(&m_pixmap, *visualInfo.get());
