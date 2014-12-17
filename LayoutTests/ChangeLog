@@ -1,3 +1,16 @@
+2014-12-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Animating HTML elements leaves trails when embedded to a subpxiel positioned iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=139691
+        rdar://problem/19078958
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that repaint rect and actual paint coordinate calculations are in sync.
+
+        * fast/repaint/hidpi-content-inside-iframe-leaves-trails-expected.txt: Added.
+        * fast/repaint/hidpi-content-inside-iframe-leaves-trails.html: Added.
+
 2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rebaseline Mavericks test result after r177398

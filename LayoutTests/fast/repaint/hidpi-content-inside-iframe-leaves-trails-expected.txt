@@ -1,0 +1,5 @@
+PASS repaintRects.indexOf('rect 0 0 101 100') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

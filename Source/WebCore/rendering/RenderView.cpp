@@ -619,6 +619,8 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
     if (!shouldRepaint(repaintRect))
         return;
 
+    // FIXME: enclosingRect is needed as long as we integral snap ScrollView/FrameView/RenderWidget size/position.
+    IntRect enclosingRect = enclosingIntRect(repaintRect);
     if (auto ownerElement = document().ownerElement()) {
         RenderBox* ownerBox = ownerElement->renderBox();
         if (!ownerBox)
@@ -626,9 +628,9 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         LayoutRect viewRect = this->viewRect();
 #if PLATFORM(IOS)
         // Don't clip using the visible rect since clipping is handled at a higher level on iPhone.
-        LayoutRect adjustedRect = repaintRect;
+        LayoutRect adjustedRect = enclosingRect;
 #else
-        LayoutRect adjustedRect = intersection(repaintRect, viewRect);
+        LayoutRect adjustedRect = intersection(enclosingRect, viewRect);
 #endif
         adjustedRect.moveBy(-viewRect.location());
         adjustedRect.moveBy(ownerBox->contentBoxRect().location());
@@ -637,9 +639,6 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
     }
 
     frameView().addTrackedRepaintRect(snapRectToDevicePixels(repaintRect, document().deviceScaleFactor()));
-
-    // FIXME: convert all repaint rect dependencies to FloatRect.
-    IntRect enclosingRect = enclosingIntRect(repaintRect);
     if (!m_accumulatedRepaintRegion) {
         frameView().repaintContentRectangle(enclosingRect);
         return;

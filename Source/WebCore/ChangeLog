@@ -1,3 +1,27 @@
+2014-12-16  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Animating HTML elements leaves trails when embedded to a subpxiel positioned iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=139691
+        rdar://problem/19078958
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that repaint rect and actual paint coordinate calculations are in sync.
+
+        RenderWidget painting still snaps final coordinates to integral positions. We need to
+        mimic the same snapping behaviour when the repaint rects are being calculated so that
+        they are in sync with the final repaint rects. This is a workaround until after
+        widgets get pushed to device pixel positions.
+
+        Test: fast/repaint/hidpi-content-inside-iframe-leaves-trails.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents):
+
 2014-12-16  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: Preview popovers obscure the link, look wrong

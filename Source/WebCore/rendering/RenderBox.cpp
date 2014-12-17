@@ -2185,8 +2185,12 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     if (isWritingModeRoot() && !isOutOfFlowPositioned())
         flipForWritingMode(rect);
 
+    LayoutSize locationOffset = this->locationOffset();
+    // FIXME: This is needed as long as RenderWidget snaps to integral size/position.
+    if (isRenderReplaced() && isWidget())
+        locationOffset = toIntSize(flooredIntPoint(locationOffset));
     LayoutPoint topLeft = rect.location();
-    topLeft.move(locationOffset());
+    topLeft.move(locationOffset);
 
     // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
@@ -2194,7 +2198,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
         fixed = position == FixedPosition;
         rect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(rect), document().deviceScaleFactor()));
         topLeft = rect.location();
-        topLeft.move(locationOffset());
+        topLeft.move(locationOffset);
     } else if (position == FixedPosition)
         fixed = true;
 

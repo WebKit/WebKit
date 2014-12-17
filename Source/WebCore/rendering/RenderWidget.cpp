@@ -217,22 +217,20 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
 void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-
+    IntPoint contentPaintOffset = roundedIntPoint(paintOffset + location() + contentBoxRect().location());
     // Tell the widget to paint now. This is the only time the widget is allowed
     // to paint itself. That way it will composite properly with z-indexed layers.
-    IntPoint widgetLocation = m_widget->frameRect().location();
-    IntPoint paintLocation(roundToInt(adjustedPaintOffset.x() + borderLeft() + paddingLeft()),
-        roundToInt(adjustedPaintOffset.y() + borderTop() + paddingTop()));
     LayoutRect paintRect = paintInfo.rect;
 
-    LayoutSize widgetPaintOffset = paintLocation - widgetLocation;
+    IntPoint widgetLocation = m_widget->frameRect().location();
+    IntSize widgetPaintOffset = contentPaintOffset - widgetLocation;
     // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
     // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
     if (!widgetPaintOffset.isZero()) {
         paintInfo.context->translate(widgetPaintOffset);
         paintRect.move(-widgetPaintOffset);
     }
+    // FIXME: Remove repaintrect encolsing/integral snapping when RenderWidget becomes device pixel snapped.
     m_widget->paint(paintInfo.context, snappedIntRect(paintRect));
 
     if (!widgetPaintOffset.isZero())
