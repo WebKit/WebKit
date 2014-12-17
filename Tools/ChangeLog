@@ -1,3 +1,15 @@
+2014-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify timeout handling in TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=139725
+
+        Reviewed by Martin Robinson.
+
+        The timeout is already in milliseconds, so we don't need to do any conversion.
+
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+
 2014-12-17  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL]Fix build warning in MiniBrowser
