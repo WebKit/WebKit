@@ -1,3 +1,17 @@
+2014-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Split InteractiveChartComponent and CommitsViewerComponent into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=139716
+
+        Rubber-stamped by Benjamin Poulain.
+
+        Refactored InteractiveChartComponent and CommitsViewerComponent out of app.js into commits-viewer.js
+        and interactive-chart.js respectively since app.js has gotten really large.
+
+        * public/v2/app.js:
+        * public/v2/commits-viewer.js: Added.
+        * public/v2/interactive-chart.js: Added.
+
 2014-12-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         New perf dashboard's chart UI is buggy
