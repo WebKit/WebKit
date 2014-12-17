@@ -1,3 +1,14 @@
+2014-12-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION: Dragging undocked web inspector causes mouse to change from pointer to i-bar cursor over window title
+        https://bugs.webkit.org/show_bug.cgi?id=139720
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        Prevent default handling of the mouse event when clicking in the titlebar area. WebCore won't continue handling the event,
+        but docking buttons/context menu still function.
+
 2014-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Clicking on the expand object arrow should always expand an object
