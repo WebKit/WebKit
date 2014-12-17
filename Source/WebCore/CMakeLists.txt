@@ -2783,7 +2783,6 @@ endif ()
 
 if (NOT ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
-        plugins/PluginPackageNone.cpp
         plugins/PluginViewNone.cpp
     )
 endif ()

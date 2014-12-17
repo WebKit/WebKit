@@ -192,7 +192,6 @@ list(APPEND WebCore_SOURCES
 
     platform/network/gtk/CredentialBackingStore.cpp
 
-    plugins/PluginPackageNone.cpp
     plugins/PluginViewNone.cpp
 )
 

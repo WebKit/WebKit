@@ -247,7 +247,6 @@ list(APPEND WebCore_SOURCES
 
     platform/text/enchant/TextCheckerEnchant.cpp
 
-    plugins/PluginPackageNone.cpp
     plugins/PluginViewNone.cpp
 )
 
