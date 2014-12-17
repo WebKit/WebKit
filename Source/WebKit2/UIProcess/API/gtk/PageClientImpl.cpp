@@ -238,6 +238,11 @@ void PageClientImpl::setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool /
     notImplemented();
 }
 
+void PageClientImpl::setTextIndicatorAnimationProgress(float)
+{
+    notImplemented();
+}
+
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     notImplemented();

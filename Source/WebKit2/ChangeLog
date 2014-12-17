@@ -1,3 +1,11 @@
+2014-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r177427.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setTextIndicatorAnimationProgress):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
 2014-12-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix since r177427.
