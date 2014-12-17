@@ -346,6 +346,8 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
 
     NSDictionary *options = nil;
     RefPtr<Range> dictionaryRange = rangeForDictionaryLookupAtHitTestResult(_hitTestResult, &options);
+    if (!dictionaryRange)
+        return nil;
 
     DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, TextIndicatorPresentationTransition::Bounce);
     if (!dictionaryPopupInfo.attributedString)
