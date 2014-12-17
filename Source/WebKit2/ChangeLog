@@ -1,3 +1,20 @@
+2014-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Clean up SQL statement building in SQLiteIDBCursor
+        https://bugs.webkit.org/show_bug.cgi?id=139741
+
+        Reviewed by Andreas Kling.
+
+        This vastly simplifies the code and gets rid of the last
+        uses of DEPRECATED_DEFINE_STATIC_LOCAL in WebKit2.
+
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::buildIndexStatement):
+        (WebKit::buildObjectStoreStatement):
+        (WebKit::SQLiteIDBCursor::establishStatement):
+        (WebKit::getIndexStatement): Deleted.
+        (WebKit::getObjectStoreStatement): Deleted.
+
 2014-12-17  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from Frame.

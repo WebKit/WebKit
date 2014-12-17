@@ -67,88 +67,61 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction* transaction, const IDBIde
     ASSERT(m_objectStoreID);
 }
 
-static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool hasUpperKey, bool isUpperOpen, bool descending, bool unique)
+static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<String>, indexStatements, ());
+    StringBuilder builder;
 
-    if (indexStatements.isEmpty()) {
-        indexStatements.reserveInitialCapacity(12);
+    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ");
+    if (!keyRange.lowerKey.isNull && !keyRange.lowerOpen)
+        builder.appendLiteral(">=");
+    else
+        builder.append('>');
 
-        // Lower missing/open, upper missing/open.
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value;"));
+    builder.appendLiteral(" CAST(? AS TEXT) AND key ");
+    if (!keyRange.upperKey.isNull && !keyRange.upperOpen)
+        builder.appendLiteral("<=");
+    else
+        builder.append('<');
 
-        // Lower missing/open, upper closed.
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value;"));
+    builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
+    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate)
+        builder.appendLiteral(" DESC");
 
-        // Lower closed, upper missing/open.
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC, value;"));
+    builder.appendLiteral(", value");
+    if (cursorDirection == IndexedDB::CursorDirection::Prev)
+        builder.appendLiteral(" DESC");
 
-        // Lower closed, upper closed.
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key, value;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value DESC;"));
-        indexStatements.uncheckedAppend(ASCIILiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC, value;"));
-    }
+    builder.append(';');
 
-    size_t i = 0;
-
-    if (hasLowerKey && !isLowerOpen)
-        i += 6;
-
-    if (hasUpperKey && !isUpperOpen)
-        i += 3;
-
-    if (descending) {
-        if (!unique)
-            i += 1;
-        else
-            i += 2;
-    }
-
-    return indexStatements[i];
+    return builder.toString();
 }
 
-static const String& getObjectStoreStatement(bool hasLowerKey, bool isLowerOpen, bool hasUpperKey, bool isUpperOpen, bool descending)
+static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<String>, statements, ());
+    StringBuilder builder;
 
-    if (statements.isEmpty()) {
-        statements.reserveCapacity(8);
+    builder.appendLiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key ");
 
-        // Lower missing/open, upper missing/open.
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;"));
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC;"));
+    if (!keyRange.lowerKey.isNull && !keyRange.lowerOpen)
+        builder.appendLiteral(">=");
+    else
+        builder.append('>');
 
-        // Lower missing/open, upper closed.
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;"));
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC;"));
+    builder.appendLiteral(" CAST(? AS TEXT) AND key ");
 
-        // Lower closed, upper missing/open.
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;"));
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key DESC;"));
+    if (!keyRange.upperKey.isNull && !keyRange.upperOpen)
+        builder.appendLiteral("<=");
+    else
+        builder.append('<');
 
-        // Lower closed, upper closed.
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;"));
-        statements.append(ASCIILiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key DESC;"));
-    }
+    builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
 
-    size_t i = 0;
+    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate)
+        builder.append(" DESC");
 
-    if (hasLowerKey && !isLowerOpen)
-        i += 4;
+    builder.append(';');
 
-    if (hasUpperKey && !isUpperOpen)
-        i += 2;
-
-    if (descending)
-        i += 1;
-
-    return statements[i];
+    return builder.toString();
 }
 
 bool SQLiteIDBCursor::establishStatement()
@@ -157,10 +130,10 @@ bool SQLiteIDBCursor::establishStatement()
     String sql;
 
     if (m_indexID != IDBIndexMetadata::InvalidId) {
-        sql = getIndexStatement(!m_keyRange.lowerKey.isNull, m_keyRange.lowerOpen, !m_keyRange.upperKey.isNull, m_keyRange.upperOpen, m_cursorDirection == IndexedDB::CursorDirection::Prev || m_cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate, m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate || m_cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate);
+        sql = buildIndexStatement(m_keyRange, m_cursorDirection);
         m_boundID = m_indexID;
     } else {
-        sql = getObjectStoreStatement(!m_keyRange.lowerKey.isNull, m_keyRange.lowerOpen, !m_keyRange.upperKey.isNull, m_keyRange.upperOpen, m_cursorDirection == IndexedDB::CursorDirection::Prev || m_cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate);
+        sql = buildObjectStoreStatement(m_keyRange, m_cursorDirection);
         m_boundID = m_objectStoreID;
     }
 
