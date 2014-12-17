@@ -1,4 +1,4 @@
-// Copyright (C) 2010 Apple Inc. All rights reserved.
+// Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -24,7 +24,9 @@
 PRODUCT_NAME = TestWebKitAPI;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-OTHER_LDFLAGS = $(inherited) -lgtest -framework JavaScriptCore -framework WebKit -framework WebKit2 $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -framework WebKit2 $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+OTHER_LDFLAGS_macosx = -framework Cocoa -framework Carbon;
+
+// FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
 OTHER_LDFLAGS_iphoneos = -framework WebCore -framework CoreGraphics;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -framework Cocoa -framework Carbon;

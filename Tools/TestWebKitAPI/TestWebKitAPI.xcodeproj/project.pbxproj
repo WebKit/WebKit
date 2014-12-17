@@ -7,279 +7,286 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00BC16871680FE810065F1E5 /* PublicSuffix.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00BC16851680FE810065F1E5 /* PublicSuffix.mm */; };
-		00CD9F6315BE312C002DA2CE /* BackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00CD9F6215BE312C002DA2CE /* BackForwardList.mm */; };
-		0BCD833514857CE400EA2003 /* HashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD833414857CE400EA2003 /* HashMap.cpp */; };
-		0BCD856A1485C98B00EA2003 /* TemporaryChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD85691485C98B00EA2003 /* TemporaryChange.cpp */; };
-		0F17BBD615AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */; };
-		0FC6C4CC141027E0005B7F0C /* RedBlackTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */; };
-		0FC6C4CF141034AD005B7F0C /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */; };
-		14464013167A8305000BD218 /* LayoutUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14464012167A8305000BD218 /* LayoutUnit.cpp */; };
-		14F3B11315E45EAB00210069 /* SaturatedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */; };
-		1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A02C84E125D4A8400E3F4BD /* Find.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
-		1A50AA1E1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */; };
 		1A50AA201A2A51FC00F4C345 /* close-from-within-create-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */; };
-		1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */; };
 		1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */; };
-		1A7BFC0C171A0BDB00BC5F64 /* WillSendSubmitEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */; };
-		1A7E8B34181208DE00AEB74A /* FragmentNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */; };
 		1A7E8B3618120B2F00AEB74A /* FragmentNavigation.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A7E8B351812093600AEB74A /* FragmentNavigation.html */; };
 		1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C045F9461385C2F800C0F3CD /* 18-characters.html */; };
-		1AA9BAE418500450003B6BC6 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9BAE218500450003B6BC6 /* WeakObjCPtr.mm */; };
-		1AA9E55914980A9900001A8A /* Functional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9E55714980A9900001A8A /* Functional.cpp */; };
-		1ABC3DEF1899BE6D004F0626 /* Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC3DED1899BE6D004F0626 /* Navigation.mm */; };
-		1ADBEFAE130C689C00D61D19 /* ForceRepaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */; };
 		1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */; };
-		1AE72F48173EB214006362F0 /* TerminateTwice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE72F47173EB214006362F0 /* TerminateTwice.cpp */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
-		1AEF994917A09F5400998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AEF994817A09F5300998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp */; };
-		1AFDE6561953B2C000C48FFA /* Optional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDE6541953B2C000C48FFA /* Optional.cpp */; };
-		261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */; };
-		26300B1816755CD90066886D /* ListHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26300B1716755CD90066886D /* ListHashSet.cpp */; };
-		265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
-		266FAFD315E5775200F61D5B /* IntegerToStringConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */; };
-		26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A2C72E15E2E73C005B1A14 /* CString.cpp */; };
-		26B2DFF915BDE599004F691D /* HashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B2DFF815BDE599004F691D /* HashSet.cpp */; };
-		26DF5A5E15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */; };
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
-		26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomicString.cpp */; };
-		26F1B44515CA434F00D1E4BF /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
-		26F52EAB182872600023D412 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F52EAA182872600023D412 /* Geolocation.cpp */; };
 		26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */; };
 		26F52EAF18288C230023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */; };
 		26F52EB218288F240023D412 /* geolocationWatchPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */; };
 		26F52EB318288F240023D412 /* geolocationWatchPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EB118288F0F0023D412 /* geolocationWatchPositionWithHighAccuracy.html */; };
-		290A9BB71735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */; };
 		290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290A9BB81735F42300D71BBC /* OpenNewWindow.html */; };
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
-		290F4278172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */; };
-		290F427B172A23A500939FF0 /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4279172A23A500939FF0 /* TestProtocol.mm */; };
-		291861FF17BD4DC700D4E41E /* StopLoadingFromDidFinishLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 291861FD17BD4DC700D4E41E /* StopLoadingFromDidFinishLoading.mm */; };
-		2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2943BE84161DFEB800999E3D /* UserContentTest.mm */; };
-		297234B4173AD04800983601 /* CustomProtocolsInvalidScheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297234B2173AD04800983601 /* CustomProtocolsInvalidScheme.mm */; };
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
-		29AB8AA1164C735800D49BEC /* CustomProtocolsTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */; };
-		29AB8AA4164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */; };
-		2D640B5517875DFF00BFAF99 /* ScrollPinningBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */; };
-		2D950FBC1A2217D000012434 /* ActionMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBA1A2217D000012434 /* ActionMenus.mm */; };
 		2D950FBE1A2217D300012434 /* ActionMenusBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */; };
 		2D950FC01A230C3A00012434 /* action-menu-targets.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2D950FBF1A230C1E00012434 /* action-menu-targets.html */; };
-		2DD7D3AA178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
-		333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */; };
-		33BE5AF5137B5A6C00705813 /* MouseMoveAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
-		33DC8911141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8910141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
 		33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */; };
-		3722C8691461E03E00C45D00 /* RenderedImageFromDOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */; };
-		3751AF7C169518F800764319 /* DOMNodeFromJSObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3751AF7A169518F800764319 /* DOMNodeFromJSObject.mm */; };
-		3776BC63150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */; };
-		378E64731632646D00B6C676 /* InjectedBundleFrameHitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */; };
 		378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */; };
 		378E64791632707400B6C676 /* link-with-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 378E647816326FDF00B6C676 /* link-with-title.html */; };
-		379028B614FABD92007E6B43 /* AcceptsFirstMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */; };
 		379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 379028B814FABE49007E6B43 /* acceptsFirstMouse.html */; };
-		3799AD3A14120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */; };
-		37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */; };
-		37C784E0197C8F2E0010A496 /* RenderedImageFromDOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C784DE197C8F2E0010A496 /* RenderedImageFromDOMNode.mm */; };
-		37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */; };
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
-		37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */; };
-		37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */; };
-		440A1D3914A0103A008A66F2 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* URL.cpp */; };
-		4A410F4C19AF7BD6002EBAB5 /* UserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */; };
-		4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
-		4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
-		4BFDFFA9131477770061F24B /* HitTestResultNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */; };
-		51393E201523944A005F39C5 /* DOMWindowExtensionBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
-		5142B2711517C88B00C32B19 /* ContextMenuCanCopyURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
-		517E7DFC15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
 		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
 		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
-		51E5C7051919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */; };
-		51E93017156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */; };
-		51FBBB4D1513D4E900822738 /* WebViewCanPasteURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */; };
-		51FCF79A1534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCF7981534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp */; };
 		51FCF7A11534B2A000104491 /* ShouldGoToBackForwardListItem_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
-		520BCF4D141EB09E00937EA8 /* WebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4B141EB09E00937EA8 /* WebArchive.cpp */; };
-		524BBC9D19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524BBC9C19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp */; };
 		524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBC9B19DF3714002F1AF1 /* file-with-video.html */; };
 		524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBCA019E30C63002F1AF1 /* test.mp4 */; };
-		52B8CF9615868CF000281053 /* SetDocumentURI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52B8CF9515868CF000281053 /* SetDocumentURI.mm */; };
 		52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 52B8CF9415868CF000281053 /* SetDocumentURI.html */; };
-		52CB47411448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */; };
-		52E5CE4614D21E9D003B2BD8 /* ParentFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4514D21E9D003B2BD8 /* ParentFrame.cpp */; };
 		52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */; };
-		7560917819259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */; };
-		75F3134018C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */; };
-		76734999193016DC00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76734997193016DC00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad.cpp */; };
 		7673499D1930C5BB00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7673499A1930182E00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp */; };
-		76E182DA1547550100F1FADD /* WillSendSubmitEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */; };
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 76E182DE15475A8300F1FADD /* auto-submitting-form.html */; };
-		7C6BBD8C19CEA63000C1F5E0 /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */; };
-		7C74D42F188228F300E5ED57 /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
-		7C8DDAAB1735DEEE00EA5AC0 /* CloseThenTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
-		7CBBA07819BB8A9100BBF025 /* OSObjectPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */; };
-		7CC3E1FC197E234100BE6252 /* UserContentController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3E1FA197E234100BE6252 /* UserContentController.mm */; };
-		7CFBCADF1743234F00B2BFCF /* WillLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */; };
+		7CCE7EA41A4119F300447C4C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FF13FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm */; };
+		7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
+		7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
+		7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90955C125548AA00083756 /* PlatformWebViewMac.mm */; };
+		7CCE7EA81A411A1900447C4C /* SyntheticBackingScaleFactorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */; };
+		7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */; };
+		7CCE7EAA1A411A2400447C4C /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4279172A23A500939FF0 /* TestProtocol.mm */; };
+		7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */; };
+		7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */; };
+		7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
+		7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
+		7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
+		7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A7EB3C18FA63A4009E7670 /* URLExtras.mm */; };
+		7CCE7EB11A411A4B00447C4C /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE217ECC1640A54A0052988B /* VMInspector.cpp */; };
+		7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */; };
+		7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */; };
+		7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55F119F1516834F00915916 /* AttributedString.mm */; };
+		7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00CD9F6215BE312C002DA2CE /* BackForwardList.mm */; };
+		7CCE7EB61A411A7E00447C4C /* CancelLoadFromResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */; };
+		7CCE7EB71A411A7E00447C4C /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */; };
+		7CCE7EB81A411A7E00447C4C /* ContextMenuCanCopyURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */; };
+		7CCE7EB91A411A7E00447C4C /* DeviceScaleFactorInDashboardRegions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */; };
+		7CCE7EBA1A411A7E00447C4C /* DeviceScaleFactorOnBack.mm in Sources */ = {isa = PBXBuildFile; fileRef = 939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */; };
+		7CCE7EBB1A411A7E00447C4C /* DOMHTMLTableCellCellAbove.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */; };
+		7CCE7EBC1A411A7E00447C4C /* DOMNodeFromJSObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3751AF7A169518F800764319 /* DOMNodeFromJSObject.mm */; };
+		7CCE7EBD1A411A7E00447C4C /* DOMRangeOfString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */; };
+		7CCE7EBE1A411A7E00447C4C /* DynamicDeviceScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */; };
+		7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */; };
+		7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */; };
+		7CCE7EC11A411A7E00447C4C /* HTMLCollectionNamedItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */; };
+		7CCE7EC21A411A7E00447C4C /* HTMLFormCollectionNamedItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */; };
+		7CCE7EC31A411A7E00447C4C /* InspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = C507E8A614C6545B005D6B3B /* InspectorBar.mm */; };
+		7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
+		7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */; };
+		7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */; };
+		7CCE7EC71A411A7E00447C4C /* PageVisibilityStateWithWindowChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = A57A34EF16AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm */; };
+		7CCE7EC81A411A7E00447C4C /* PublicSuffix.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00BC16851680FE810065F1E5 /* PublicSuffix.mm */; };
+		7CCE7EC91A411A7E00447C4C /* RenderedImageFromDOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C784DE197C8F2E0010A496 /* RenderedImageFromDOMNode.mm */; };
+		7CCE7ECA1A411A7E00447C4C /* RenderedImageFromDOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */; };
+		7CCE7ECB1A411A7E00447C4C /* SetAndUpdateCacheModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */; };
+		7CCE7ECC1A411A7E00447C4C /* SetDocumentURI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52B8CF9515868CF000281053 /* SetDocumentURI.mm */; };
+		7CCE7ECD1A411A7E00447C4C /* SimplifyMarkup.mm in Sources */ = {isa = PBXBuildFile; fileRef = C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */; };
+		7CCE7ECE1A411A7E00447C4C /* StopLoadingFromDidFinishLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 291861FD17BD4DC700D4E41E /* StopLoadingFromDidFinishLoading.mm */; };
+		7CCE7ECF1A411A7E00447C4C /* StopLoadingFromDidReceiveResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */; };
+		7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */; };
+		7CCE7ED11A411A7E00447C4C /* StringTruncator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 939BFE3918E5548900883275 /* StringTruncator.mm */; };
+		7CCE7ED21A411A7E00447C4C /* SubresourceErrorCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */; };
+		7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */; };
+		7CCE7ED41A411A7E00447C4C /* WebViewCanPasteURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */; };
+		7CCE7ED51A411A7E00447C4C /* WebViewDidCreateJavaScriptContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */; };
+		7CCE7ED61A411A7E00447C4C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */; };
+		7CCE7ED71A411A7E00447C4C /* WillPerformClientRedirectToURLCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */; };
+		7CCE7ED81A411A7E00447C4C /* WillSendSubmitEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */; };
+		7CCE7ED91A411A7E00447C4C /* WindowlessWebViewWithMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */; };
+		7CCE7EDA1A411A8700447C4C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FB13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm */; };
+		7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5451E919E41F9D0016936F /* CSSParser.cpp */; };
+		7CCE7EDC1A411A9200447C4C /* CalculationValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A720E518F1A0E800A848E1 /* CalculationValue.cpp */; };
+		7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC2C7141797089D00E627FB /* TimeRanges.cpp */; };
+		7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* URL.cpp */; };
+		7CCE7EDF1A411A9200447C4C /* LayoutUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14464012167A8305000BD218 /* LayoutUnit.cpp */; };
+		7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA485714A044D40088FAC4 /* EditorCommands.mm */; };
+		7CCE7EE11A411A9A00447C4C /* GetBackingScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */; };
+		7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AEF994817A09F5300998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp */; };
+		7CCE7EE31A411A9A00447C4C /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9BAE218500450003B6BC6 /* WeakObjCPtr.mm */; };
+		7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */; };
+		7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */; };
+		7CCE7EE61A411AE600447C4C /* CloseFromWithinCreatePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */; };
+		7CCE7EE71A411AE600447C4C /* CanHandleRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */; };
+		7CCE7EE81A411AE600447C4C /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
+		7CCE7EE91A411AE600447C4C /* DidAssociateFormControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */; };
+		7CCE7EEA1A411AE600447C4C /* DidNotHandleKeyDown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */; };
+		7CCE7EEB1A411AE600447C4C /* DocumentStartUserScriptAlertCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */; };
+		7CCE7EEC1A411AE600447C4C /* DOMWindowExtensionBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */; };
+		7CCE7EED1A411AE600447C4C /* DOMWindowExtensionNoCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */; };
+		7CCE7EEE1A411AE600447C4C /* DownloadDecideDestinationCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C045F9441385C2E900C0F3CD /* DownloadDecideDestinationCrash.cpp */; };
+		7CCE7EEF1A411AE600447C4C /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75F3133F18C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp */; };
+		7CCE7EF01A411AE600447C4C /* EvaluateJavaScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */; };
+		7CCE7EF11A411AE600447C4C /* FailedLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */; };
+		7CCE7EF21A411AE600447C4C /* StopLoadingDuringDidFailProvisionalLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76734997193016DC00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad.cpp */; };
+		7CCE7EF31A411AE600447C4C /* Find.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A02C84E125D4A8400E3F4BD /* Find.cpp */; };
+		7CCE7EF41A411AE600447C4C /* FindMatches.mm in Sources */ = {isa = PBXBuildFile; fileRef = C51AFB98169F49FF009CCF66 /* FindMatches.mm */; };
+		7CCE7EF51A411AE600447C4C /* ForceRepaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */; };
+		7CCE7EF61A411AE600447C4C /* FrameMIMETypeHTML.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */; };
+		7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */; };
+		7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F52EAA182872600023D412 /* Geolocation.cpp */; };
+		7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */; };
+		7CCE7EFA1A411AE600447C4C /* HitTestResultNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */; };
+		7CCE7EFB1A411AE600447C4C /* InjectedBundleBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */; };
+		7CCE7EFC1A411AE600447C4C /* InjectedBundleFrameHitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */; };
+		7CCE7EFD1A411AE600447C4C /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */; };
+		7CCE7EFE1A411AE600447C4C /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */; };
+		7CCE7EFF1A411AE600447C4C /* LoadCanceledNoServerRedirectCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC8910141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp */; };
+		7CCE7F001A411AE600447C4C /* LoadPageOnCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA28C1916D2FA7B002FF4DB /* LoadPageOnCrash.cpp */; };
+		7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */; };
+		7CCE7F021A411AE600447C4C /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3014DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp */; };
+		7CCE7F031A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB5414DB1B730024C362 /* NewFirstVisuallyNonEmptyLayoutFails.cpp */; };
+		7CCE7F041A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */; };
+		7CCE7F051A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86B14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp */; };
+		7CCE7F061A411AE600447C4C /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D3D19D17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp */; };
+		7CCE7F071A411AE600447C4C /* PageLoadBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC909779125571AB00083756 /* PageLoadBasic.cpp */; };
+		7CCE7F081A411AE600447C4C /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2D004812A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp */; };
+		7CCE7F091A411AE600447C4C /* ParentFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4514D21E9D003B2BD8 /* ParentFrame.cpp */; };
+		7CCE7F0A1A411AE600447C4C /* PasteboardNotifications.mm in Sources */ = {isa = PBXBuildFile; fileRef = C54237EE16B8955800E638FC /* PasteboardNotifications.mm */; };
+		7CCE7F0B1A411AE600447C4C /* PreventEmptyUserAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */; };
+		7CCE7F0C1A411AE600447C4C /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */; };
+		7CCE7F0D1A411AE600447C4C /* ReloadPageAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3AF93A16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp */; };
+		7CCE7F0E1A411AE600447C4C /* ResizeReversePaginatedWebView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */; };
+		7CCE7F0F1A411AE600447C4C /* ResizeWindowAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A2C750D16CED9550024F352 /* ResizeWindowAfterCrash.cpp */; };
+		7CCE7F101A411AE600447C4C /* ResponsivenessTimerDoesntFireEarly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669C131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp */; };
+		7CCE7F111A411AE600447C4C /* RestoreSessionStateContainingFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */; };
+		7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */; };
+		7CCE7F131A411AE600447C4C /* ShouldGoToBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCF7981534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp */; };
+		7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */; };
+		7CCE7F151A411AE600447C4C /* SpacebarScrolling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */; };
+		7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE72F47173EB214006362F0 /* TerminateTwice.cpp */; };
+		7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */; };
+		7CCE7F181A411AE600447C4C /* UserMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31314DC689800FFB1DD /* UserMessage.cpp */; };
+		7CCE7F191A411AE600447C4C /* WebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4B141EB09E00937EA8 /* WebArchive.cpp */; };
+		7CCE7F1A1A411AE600447C4C /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */; };
+		7CCE7F1B1A411AE600447C4C /* WillLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */; };
+		7CCE7F1C1A411AE600447C4C /* WillSendSubmitEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */; };
+		7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */; };
+		7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9099931256ACF100083756 /* WKStringJSString.cpp */; };
+		7CCE7F1F1A411AE600447C4C /* WKPageGetScaleFactorNotZero.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */; };
+		7CCE7F201A411AE600447C4C /* WKPageIsPlayingAudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524BBC9C19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp */; };
+		7CCE7F211A411AE600447C4C /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */; };
+		7CCE7F221A411AE600447C4C /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90995D12567BC100083756 /* WKString.cpp */; };
+		7CCE7F231A411AF600447C4C /* Download.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1A4FE5D18DD3DB700B5EA8A /* Download.mm */; };
+		7CCE7F241A411AF600447C4C /* Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABC3DED1899BE6D004F0626 /* Navigation.mm */; };
+		7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */; };
+		7CCE7F261A411AF600447C4C /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = C95501BE19AD2FAF0049BE3E /* Preferences.mm */; };
+		7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3E1FA197E234100BE6252 /* UserContentController.mm */; };
+		7CCE7F281A411B1000447C4C /* ActionMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBA1A2217D000012434 /* ActionMenus.mm */; };
+		7CCE7F291A411B1000447C4C /* CustomProtocolsInvalidScheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297234B2173AD04800983601 /* CustomProtocolsInvalidScheme.mm */; };
+		7CCE7F2A1A411B1000447C4C /* CustomProtocolsSyncXHRTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */; };
+		7CCE7F2B1A411B1000447C4C /* CustomProtocolsTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */; };
+		7CCE7F2C1A411B1000447C4C /* PreventImageLoadWithAutoResizing.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D1179F336600AC1494 /* PreventImageLoadWithAutoResizing.mm */; };
+		7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2943BE84161DFEB800999E3D /* UserContentTest.mm */; };
+		7CCE7F2E1A411B1000447C4C /* WKBrowsingContextGroupTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C7D14587AA60025FB62 /* WKBrowsingContextGroupTest.mm */; };
+		7CCE7F2F1A411B1000447C4C /* WKBrowsingContextLoadDelegateTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C7014575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm */; };
+		7CCE7F301A411B8E00447C4C /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomicString.cpp */; };
+		7CCE7F311A411B8E00447C4C /* CheckedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */; };
+		7CCE7F321A411B8E00447C4C /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A2C72E15E2E73C005B1A14 /* CString.cpp */; };
+		7CCE7F331A411B8E00447C4C /* Deque.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */; };
+		7CCE7F341A411B8E00447C4C /* Functional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA9E55714980A9900001A8A /* Functional.cpp */; };
+		7CCE7F351A411B8E00447C4C /* HashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD833414857CE400EA2003 /* HashMap.cpp */; };
+		7CCE7F361A411B8E00447C4C /* HashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B2DFF815BDE599004F691D /* HashSet.cpp */; };
+		7CCE7F371A411B8E00447C4C /* IntegerToStringConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */; };
+		7CCE7F381A411B8E00447C4C /* ListHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26300B1716755CD90066886D /* ListHashSet.cpp */; };
+		7CCE7F391A411B8E00447C4C /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C71757BA9700C07123 /* MD5.cpp */; };
+		7CCE7F3A1A411B8E00447C4C /* MathExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */; };
+		7CCE7F3B1A411B8E00447C4C /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497B315857F0C00B5BC30 /* MediaTime.cpp */; };
+		7CCE7F3C1A411B8E00447C4C /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */; };
+		7CCE7F3D1A411B8E00447C4C /* Optional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDE6541953B2C000C48FFA /* Optional.cpp */; };
+		7CCE7F3E1A411B8E00447C4C /* RedBlackTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */; };
+		7CCE7F3F1A411B8E00447C4C /* Ref.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427AA180DA26400CD24D7 /* Ref.cpp */; };
+		7CCE7F401A411B8E00447C4C /* RefCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BD19971A2DB05B006DCF0A /* RefCounter.cpp */; };
+		7CCE7F411A411B8E00447C4C /* RefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427A8180D9B0700CD24D7 /* RefPtr.cpp */; };
+		7CCE7F421A411B8E00447C4C /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C91757BAC400C07123 /* SHA1.cpp */; };
+		7CCE7F431A411B8E00447C4C /* SaturatedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */; };
+		7CCE7F441A411B8E00447C4C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81B50192140F232300D9EB58 /* StringBuilder.cpp */; };
+		7CCE7F451A411B8E00447C4C /* StringHasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABA80816DDAB91002DB2FA /* StringHasher.cpp */; };
+		7CCE7F461A411B8E00447C4C /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
+		7CCE7F471A411B8E00447C4C /* StringOperators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C01363C713C3997300EF3964 /* StringOperators.cpp */; };
+		7CCE7F481A411B8E00447C4C /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
+		7CCE7F491A411B8E00447C4C /* TemporaryChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD85691485C98B00EA2003 /* TemporaryChange.cpp */; };
+		7CCE7F4A1A411B8E00447C4C /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC55F5F814AD78EE00484BE1 /* Vector.cpp */; };
+		7CCE7F4B1A411B8E00447C4C /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
+		7CCE7F4C1A411B9800447C4C /* OSObjectPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */; };
+		7CCE7F4D1A411B9F00447C4C /* RetainPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC029B1B1486B25900817DA9 /* RetainPtr.mm */; };
+		7CCE7F4E1A411BA400447C4C /* RetainPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC029B161486AD6400817DA9 /* RetainPtr.cpp */; };
+		7CCE7F4F1A411BA400447C4C /* RetainPtrHashing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0991C50143C7D68007998F2 /* RetainPtrHashing.cpp */; };
 		7CFBCAE51743238F00B2BFCF /* WillLoad_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */; };
-		81B50193140F232300D9EB58 /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81B50192140F232300D9EB58 /* StringBuilder.cpp */; };
-		86BD19981A2DB05B006DCF0A /* RefCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BD19971A2DB05B006DCF0A /* RefCounter.cpp */; };
-		8A2C750E16CED9550024F352 /* ResizeWindowAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A2C750D16CED9550024F352 /* ResizeWindowAfterCrash.cpp */; };
-		8A3AF93B16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3AF93A16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp */; };
-		8AA28C1A16D2FA7B002FF4DB /* LoadPageOnCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA28C1916D2FA7B002FF4DB /* LoadPageOnCrash.cpp */; };
 		930AD402150698D00067970F /* lots-of-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 930AD401150698B30067970F /* lots-of-text.html */; };
-		9318778915EEC57700A9CCE3 /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECA1506F035007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages.cpp */; };
-		9331407C17B4419000F083B1 /* DidNotHandleKeyDown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */; };
 		9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9361002814DC957B0061379D /* lots-of-iframes.html */; };
-		939BA91714103412001A01BD /* DeviceScaleFactorOnBack.mm in Sources */ = {isa = PBXBuildFile; fileRef = 939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */; };
-		939BFE3A18E5548900883275 /* StringTruncator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 939BFE3918E5548900883275 /* StringTruncator.mm */; };
-		93A427A9180D9B0700CD24D7 /* RefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427A8180D9B0700CD24D7 /* RefPtr.cpp */; };
-		93A427AB180DA26400CD24D7 /* Ref.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A427AA180DA26400CD24D7 /* Ref.cpp */; };
-		93A720E618F1A0E800A848E1 /* CalculationValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A720E518F1A0E800A848E1 /* CalculationValue.cpp */; };
-		93A7EB3D18FA63A4009E7670 /* URLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A7EB3C18FA63A4009E7670 /* URLExtras.mm */; };
-		93ABA80916DDAB91002DB2FA /* StringHasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABA80816DDAB91002DB2FA /* StringHasher.cpp */; };
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
-		93D3D19E17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93D3D19D17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp */; };
-		93F1DB3114DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3014DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp */; };
 		93F1DB3414DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3314DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp */; };
-		93F1DB5514DB1B730024C362 /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB5414DB1B730024C362 /* NewFirstVisuallyNonEmptyLayoutFails.cpp */; };
 		93F1DB5714DB1B840024C362 /* NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB5614DB1B840024C362 /* NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp */; };
-		93F7E86C14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86B14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp */; };
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
-		9B26FC6C159D061000CC3765 /* HTMLFormCollectionNamedItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */; };
 		9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */; };
-		9B4F8FA4159D52B1002D9F94 /* HTMLCollectionNamedItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */; };
 		9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA6159D52CA002D9F94 /* HTMLCollectionNamedItem.html */; };
-		A1A4FE5F18DD3DB700B5EA8A /* Download.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1A4FE5D18DD3DB700B5EA8A /* Download.mm */; };
-		A1FDFD3019C288BB005148A4 /* WKImageCreateCGImageCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */; };
-		A57A34F016AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = A57A34EF16AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm */; };
 		A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */; };
-		A5E2027315B2181900C13E14 /* WindowlessWebViewWithMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
-		A7A966DB140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */; };
-		B4039F9D15E6D8B3007255D6 /* MathExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */; };
-		B55AD1D2179F336C00AC1494 /* PreventImageLoadWithAutoResizing.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D1179F336600AC1494 /* PreventImageLoadWithAutoResizing.mm */; };
 		B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D3179F3ABF00AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp */; };
-		B55F11A01516834F00915916 /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55F119F1516834F00915916 /* AttributedString.mm */; };
 		B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = B55F11B01517A2C400915916 /* attributedStringCustomFont.html */; };
 		B55F11BE15191A0600915916 /* Ahem.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = B55F11B9151916E600915916 /* Ahem.ttf */; };
-		BC029B181486AD6400817DA9 /* RetainPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC029B161486AD6400817DA9 /* RetainPtr.cpp */; };
-		BC029B1C1486B25900817DA9 /* RetainPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC029B1B1486B25900817DA9 /* RetainPtr.mm */; };
-		BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
-		BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
-		BC22D31514DC689800FFB1DD /* UserMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31314DC689800FFB1DD /* UserMessage.cpp */; };
 		BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */; };
-		BC246D8E132F115A00B56D7C /* AboutBlankLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */; };
-		BC246D9A132F1FE100B56D7C /* CanHandleRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */; };
 		BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */; };
-		BC2D004912A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2D004812A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp */; };
 		BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */; };
-		BC3C4C7214575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C7014575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm */; };
-		BC3C4C7F14587AA60025FB62 /* WKBrowsingContextGroupTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C7D14587AA60025FB62 /* WKBrowsingContextGroupTest.mm */; };
-		BC55F5F914AD78EE00484BE1 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC55F5F814AD78EE00484BE1 /* Vector.cpp */; };
 		BC575A90126E74D3006F0F12 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; };
 		BC575A91126E74D3006F0F12 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCA61DB411700EFD00460D1E /* WebKit2.framework */; };
 		BC575A92126E74D3006F0F12 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
 		BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */; };
 		BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */; };
-		BC575AAD126E83B9006F0F12 /* InjectedBundleBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */; };
 		BC575AB0126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */; };
-		BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
-		BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */; };
-		BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90955C125548AA00083756 /* PlatformWebViewMac.mm */; };
-		BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC909779125571AB00083756 /* PageLoadBasic.cpp */; };
 		BC909784125571CF00083756 /* simple.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC909778125571AB00083756 /* simple.html */; };
-		BC90995E12567BC100083756 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90995D12567BC100083756 /* WKString.cpp */; };
-		BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9099931256ACF100083756 /* WKStringJSString.cpp */; };
 		BCAA485614A0444C0088FAC4 /* simple-tall.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCAA485514A021640088FAC4 /* simple-tall.html */; };
-		BCAA485814A044D40088FAC4 /* EditorCommands.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA485714A044D40088FAC4 /* EditorCommands.mm */; };
-		BCB68040126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */; };
 		BCB68042126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */; };
-		BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */; };
 		BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCBD372E125ABBE600D2C29F /* icon.png */; };
-		BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */; };
-		BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */; };
-		C01363C813C3997300EF3964 /* StringOperators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C01363C713C3997300EF3964 /* StringOperators.cpp */; };
 		C01A23F21266156700C9ED55 /* spacebar-scrolling.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C02B7882126615410026BF0F /* spacebar-scrolling.html */; };
-		C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */; };
-		C045F9451385C2EA00C0F3CD /* DownloadDecideDestinationCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C045F9441385C2E900C0F3CD /* DownloadDecideDestinationCrash.cpp */; };
-		C07E6CAF13FD67650038B22B /* DynamicDeviceScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */; };
 		C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C07E6CB113FD738A0038B22B /* devicePixelRatio.html */; };
-		C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
-		C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */; };
-		C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */; };
-		C08587FC13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FB13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm */; };
-		C085880013FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FF13FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm */; };
-		C0991C51143C7D68007998F2 /* RetainPtrHashing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0991C50143C7D68007998F2 /* RetainPtrHashing.cpp */; };
-		C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
-		C0ADBE8312FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */; };
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
-		C0BD669D131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669C131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
-		C0C5D3BE14598B6F00A802A6 /* GetBackingScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
 		C2CF975A16CEC7140054E99D /* JSContextBackForwardCache2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C2CF975916CEC69E0054E99D /* JSContextBackForwardCache2.html */; };
 		C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C2CF975816CEC69E0054E99D /* JSContextBackForwardCache1.html */; };
-		C2EB2DD316CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */; };
-		C507E8A714C6545B005D6B3B /* InspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = C507E8A614C6545B005D6B3B /* InspectorBar.mm */; };
 		C5101C4F176B8D9200EE9B15 /* findRanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5101C4E176B8BB900EE9B15 /* findRanges.html */; };
-		C51AFB99169F49FF009CCF66 /* FindMatches.mm in Sources */ = {isa = PBXBuildFile; fileRef = C51AFB98169F49FF009CCF66 /* FindMatches.mm */; };
-		C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */ = {isa = PBXBuildFile; fileRef = C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */; };
 		C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C540F783152E5A7800A40C8C /* verboseMarkup.html */; };
-		C54237F016B8955800E638FC /* PasteboardNotifications.mm in Sources */ = {isa = PBXBuildFile; fileRef = C54237EE16B8955800E638FC /* PasteboardNotifications.mm */; };
 		C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C54237ED16B8955800E638FC /* PasteboardNotifications_Bundle.cpp */; };
 		C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5E1AFFD16B22179006CC1F2 /* execCopy.html */; };
-		C95501BF19AD2FAF0049BE3E /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = C95501BE19AD2FAF0049BE3E /* Preferences.mm */; };
-		CD5393C81757BA9700C07123 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C71757BA9700C07123 /* MD5.cpp */; };
-		CD5393CA1757BAC400C07123 /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C91757BAC400C07123 /* SHA1.cpp */; };
-		CD5451EA19E41F9D0016936F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5451E919E41F9D0016936F /* CSSParser.cpp */; };
-		CD5497B415857F0C00B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497B315857F0C00B5BC30 /* MediaTime.cpp */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
-		CDC2C71517970DDB00E627FB /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC2C7141797089D00E627FB /* TimeRanges.cpp */; };
 		CE14F1A4181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */; };
-		CE32C7C818184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */; };
-		CEA6CF2319CCF5BD0064F5A7 /* OpenAndCloseWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */; };
 		CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */; };
-		E1220DA0155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */; };
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
-		E194E1BB177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */; };
 		E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */; };
-		E490296814E2E3A4002BEDD1 /* TypingStyleCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */; };
-		E4A757D4178AF1B100B5D7A4 /* Deque.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */; };
-		F660AA0D15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */; };
 		F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */; };
-		F660AA1315A619C9003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */; };
 		F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */; };
-		F6B7BE9417469209008A3445 /* DidAssociateFormControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6B7BE93174691EF008A3445 /* DidAssociateFormControls.cpp */; };
 		F6B7BE9517469212008A3445 /* DidAssociateFormControls_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6B7BE92174691EF008A3445 /* DidAssociateFormControls_Bundle.cpp */; };
 		F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6B7BE9617469B7E008A3445 /* associate-form-controls.html */; };
-		F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
-		F6F49C6915545C8E0007F39D /* DOMWindowExtensionNoCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */; };
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
-		F6FDDDD314241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */; };
 		F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6FDDDD514241C48004F1729 /* push-state.html */; };
-		FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE217ECC1640A54A0052988B /* VMInspector.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		7CCE7F501A4124DB00447C4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
+			remoteInfo = TestWebKitAPILibrary;
+		};
 		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -502,6 +509,8 @@
 		7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringStrikethrough.html; sourceTree = "<group>"; };
 		7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSObjectPtr.cpp; sourceTree = "<group>"; };
 		7CC3E1FA197E234100BE6252 /* UserContentController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentController.mm; sourceTree = "<group>"; };
+		7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTestWebKitAPI.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPILibrary.xcconfig; sourceTree = "<group>"; };
 		7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad.cpp; sourceTree = "<group>"; };
 		7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad_Bundle.cpp; sourceTree = "<group>"; };
 		81B50192140F232300D9EB58 /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
@@ -671,6 +680,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7CCE7E891A41144E00447C4C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -743,6 +759,7 @@
 			children = (
 				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
 				BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */,
+				7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -850,6 +867,7 @@
 				BC90957F12554CF900083756 /* DebugRelease.xcconfig */,
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,
+				7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -1199,6 +1217,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7CCE7EA11A41144E00447C4C /* Build configuration list for PBXNativeTarget "TestWebKitAPILibrary" */;
+			buildPhases = (
+				7CCE7E881A41144E00447C4C /* Sources */,
+				7CCE7E891A41144E00447C4C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestWebKitAPILibrary;
+			productName = TestWebKitAPILibrary;
+			productReference = 7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		8DD76F960486AA7600D96B5E /* TestWebKitAPI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "TestWebKitAPI" */;
@@ -1212,6 +1246,7 @@
 			);
 			dependencies = (
 				BC575A96126E74E7006F0F12 /* PBXTargetDependency */,
+				7CCE7F511A4124DB00447C4C /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPI;
 			productInstallPath = "$(HOME)/bin";
@@ -1242,6 +1277,11 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				TargetAttributes = {
+					7CCE7E8B1A41144E00447C4C = {
+						CreatedOnToolsVersion = 6.3;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -1259,6 +1299,7 @@
 			targets = (
 				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
 				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
+				7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */,
 			);
 		};
 /* End PBXProject section */
@@ -1274,182 +1315,189 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7CCE7E881A41144E00447C4C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7CCE7EEE1A411AE600447C4C /* DownloadDecideDestinationCrash.cpp in Sources */,
+				7CCE7ED81A411A7E00447C4C /* WillSendSubmitEvent.mm in Sources */,
+				7CCE7ECD1A411A7E00447C4C /* SimplifyMarkup.mm in Sources */,
+				7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
+				7CCE7EB81A411A7E00447C4C /* ContextMenuCanCopyURL.mm in Sources */,
+				7CCE7F3B1A411B8E00447C4C /* MediaTime.cpp in Sources */,
+				7CCE7F461A411B8E00447C4C /* StringImpl.cpp in Sources */,
+				7CCE7EE91A411AE600447C4C /* DidAssociateFormControls.cpp in Sources */,
+				7CCE7EEA1A411AE600447C4C /* DidNotHandleKeyDown.cpp in Sources */,
+				7CCE7ED11A411A7E00447C4C /* StringTruncator.mm in Sources */,
+				7CCE7F4E1A411BA400447C4C /* RetainPtr.cpp in Sources */,
+				7CCE7ED51A411A7E00447C4C /* WebViewDidCreateJavaScriptContext.mm in Sources */,
+				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
+				7CCE7EBA1A411A7E00447C4C /* DeviceScaleFactorOnBack.mm in Sources */,
+				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
+				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,
+				7CCE7F0D1A411AE600447C4C /* ReloadPageAfterCrash.cpp in Sources */,
+				7CCE7F331A411B8E00447C4C /* Deque.cpp in Sources */,
+				7CCE7EC31A411A7E00447C4C /* InspectorBar.mm in Sources */,
+				7CCE7F2A1A411B1000447C4C /* CustomProtocolsSyncXHRTest.mm in Sources */,
+				7CCE7EDF1A411A9200447C4C /* LayoutUnit.cpp in Sources */,
+				7CCE7F2F1A411B1000447C4C /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
+				7CCE7F0E1A411AE600447C4C /* ResizeReversePaginatedWebView.cpp in Sources */,
+				7CCE7ED41A411A7E00447C4C /* WebViewCanPasteURL.mm in Sources */,
+				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
+				7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */,
+				7CCE7EEB1A411AE600447C4C /* DocumentStartUserScriptAlertCrash.cpp in Sources */,
+				7CCE7F001A411AE600447C4C /* LoadPageOnCrash.cpp in Sources */,
+				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
+				7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */,
+				7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */,
+				7CCE7F3A1A411B8E00447C4C /* MathExtras.cpp in Sources */,
+				7CCE7F061A411AE600447C4C /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,
+				7CCE7F111A411AE600447C4C /* RestoreSessionStateContainingFormData.cpp in Sources */,
+				7CCE7F151A411AE600447C4C /* SpacebarScrolling.cpp in Sources */,
+				7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.cpp in Sources */,
+				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
+				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
+				7CCE7EBB1A411A7E00447C4C /* DOMHTMLTableCellCellAbove.mm in Sources */,
+				7CCE7EB91A411A7E00447C4C /* DeviceScaleFactorInDashboardRegions.mm in Sources */,
+				7CCE7EF01A411AE600447C4C /* EvaluateJavaScript.cpp in Sources */,
+				7CCE7F431A411B8E00447C4C /* SaturatedArithmeticOperations.cpp in Sources */,
+				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,
+				7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */,
+				7CCE7F2C1A411B1000447C4C /* PreventImageLoadWithAutoResizing.mm in Sources */,
+				7CCE7F0F1A411AE600447C4C /* ResizeWindowAfterCrash.cpp in Sources */,
+				7CCE7F181A411AE600447C4C /* UserMessage.cpp in Sources */,
+				7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
+				7CCE7EE11A411A9A00447C4C /* GetBackingScaleFactor.mm in Sources */,
+				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
+				7CCE7F3E1A411B8E00447C4C /* RedBlackTree.cpp in Sources */,
+				7CCE7F361A411B8E00447C4C /* HashSet.cpp in Sources */,
+				7CCE7F4C1A411B9800447C4C /* OSObjectPtr.cpp in Sources */,
+				7CCE7EC81A411A7E00447C4C /* PublicSuffix.mm in Sources */,
+				7CCE7EDC1A411A9200447C4C /* CalculationValue.cpp in Sources */,
+				7CCE7F291A411B1000447C4C /* CustomProtocolsInvalidScheme.mm in Sources */,
+				7CCE7EE61A411AE600447C4C /* CloseFromWithinCreatePage.cpp in Sources */,
+				7CCE7F341A411B8E00447C4C /* Functional.cpp in Sources */,
+				7CCE7F401A411B8E00447C4C /* RefCounter.cpp in Sources */,
+				7CCE7EE81A411AE600447C4C /* CookieManager.cpp in Sources */,
+				7CCE7F2E1A411B1000447C4C /* WKBrowsingContextGroupTest.mm in Sources */,
+				7CCE7EBC1A411A7E00447C4C /* DOMNodeFromJSObject.mm in Sources */,
+				7CCE7F091A411AE600447C4C /* ParentFrame.cpp in Sources */,
+				7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */,
+				7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */,
+				7CCE7F301A411B8E00447C4C /* AtomicString.cpp in Sources */,
+				7CCE7EFC1A411AE600447C4C /* InjectedBundleFrameHitTest.cpp in Sources */,
+				7CCE7EC71A411A7E00447C4C /* PageVisibilityStateWithWindowChanges.mm in Sources */,
+				7CCE7ED71A411A7E00447C4C /* WillPerformClientRedirectToURLCrash.mm in Sources */,
+				7CCE7EF41A411AE600447C4C /* FindMatches.mm in Sources */,
+				7CCE7F411A411B8E00447C4C /* RefPtr.cpp in Sources */,
+				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
+				7CCE7F1B1A411AE600447C4C /* WillLoad.cpp in Sources */,
+				7CCE7EA81A411A1900447C4C /* SyntheticBackingScaleFactorWindow.m in Sources */,
+				7CCE7ED21A411A7E00447C4C /* SubresourceErrorCrash.mm in Sources */,
+				7CCE7EFB1A411AE600447C4C /* InjectedBundleBasic.cpp in Sources */,
+				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
+				7CCE7F0C1A411AE600447C4C /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */,
+				7CCE7EEC1A411AE600447C4C /* DOMWindowExtensionBasic.cpp in Sources */,
+				7CCE7EB11A411A4B00447C4C /* VMInspector.cpp in Sources */,
+				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,
+				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,
+				7CCE7F3D1A411B8E00447C4C /* Optional.cpp in Sources */,
+				7CCE7F201A411AE600447C4C /* WKPageIsPlayingAudio.cpp in Sources */,
+				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,
+				7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */,
+				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
+				7CCE7F1C1A411AE600447C4C /* WillSendSubmitEvent.cpp in Sources */,
+				7CCE7F391A411B8E00447C4C /* MD5.cpp in Sources */,
+				7CCE7ECC1A411A7E00447C4C /* SetDocumentURI.mm in Sources */,
+				7CCE7F211A411AE600447C4C /* WKPreferences.cpp in Sources */,
+				7CCE7ECE1A411A7E00447C4C /* StopLoadingFromDidFinishLoading.mm in Sources */,
+				7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */,
+				7CCE7EA41A4119F300447C4C /* InstanceMethodSwizzler.mm in Sources */,
+				7CCE7F021A411AE600447C4C /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
+				7CCE7EB71A411A7E00447C4C /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
+				7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */,
+				7CCE7F231A411AF600447C4C /* Download.mm in Sources */,
+				7CCE7F191A411AE600447C4C /* WebArchive.cpp in Sources */,
+				7CCE7F441A411B8E00447C4C /* StringBuilder.cpp in Sources */,
+				7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
+				7CCE7ECA1A411A7E00447C4C /* RenderedImageFromDOMRange.mm in Sources */,
+				7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */,
+				7CCE7F381A411B8E00447C4C /* ListHashSet.cpp in Sources */,
+				7CCE7F471A411B8E00447C4C /* StringOperators.cpp in Sources */,
+				7CCE7F3C1A411B8E00447C4C /* MetaAllocator.cpp in Sources */,
+				7CCE7F041A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
+				7CCE7ED91A411A7E00447C4C /* WindowlessWebViewWithMedia.mm in Sources */,
+				7CCE7EC91A411A7E00447C4C /* RenderedImageFromDOMNode.mm in Sources */,
+				7CCE7F451A411B8E00447C4C /* StringHasher.cpp in Sources */,
+				7CCE7F281A411B1000447C4C /* ActionMenus.mm in Sources */,
+				7CCE7F0B1A411AE600447C4C /* PreventEmptyUserAgent.cpp in Sources */,
+				7CCE7F4B1A411B8E00447C4C /* WTFString.cpp in Sources */,
+				7CCE7F321A411B8E00447C4C /* CString.cpp in Sources */,
+				7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */,
+				7CCE7F3F1A411B8E00447C4C /* Ref.cpp in Sources */,
+				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
+				7CCE7EEF1A411AE600447C4C /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */,
+				7CCE7F1F1A411AE600447C4C /* WKPageGetScaleFactorNotZero.cpp in Sources */,
+				7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */,
+				7CCE7EF11A411AE600447C4C /* FailedLoad.cpp in Sources */,
+				7CCE7F081A411AE600447C4C /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
+				7CCE7EFD1A411AE600447C4C /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */,
+				7CCE7EAA1A411A2400447C4C /* TestProtocol.mm in Sources */,
+				7CCE7F051A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
+				7CCE7EF51A411AE600447C4C /* ForceRepaint.cpp in Sources */,
+				7CCE7F1A1A411AE600447C4C /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */,
+				7CCE7F261A411AF600447C4C /* Preferences.mm in Sources */,
+				7CCE7EFF1A411AE600447C4C /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
+				7CCE7F0A1A411AE600447C4C /* PasteboardNotifications.mm in Sources */,
+				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
+				7CCE7F311A411B8E00447C4C /* CheckedArithmeticOperations.cpp in Sources */,
+				7CCE7F241A411AF600447C4C /* Navigation.mm in Sources */,
+				7CCE7EF61A411AE600447C4C /* FrameMIMETypeHTML.cpp in Sources */,
+				7CCE7F421A411B8E00447C4C /* SHA1.cpp in Sources */,
+				7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */,
+				7CCE7F031A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
+				7CCE7EE31A411A9A00447C4C /* WeakObjCPtr.mm in Sources */,
+				7CCE7EFE1A411AE600447C4C /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
+				7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */,
+				7CCE7EBD1A411A7E00447C4C /* DOMRangeOfString.mm in Sources */,
+				7CCE7EED1A411AE600447C4C /* DOMWindowExtensionNoCache.cpp in Sources */,
+				7CCE7ECF1A411A7E00447C4C /* StopLoadingFromDidReceiveResponse.mm in Sources */,
+				7CCE7EDA1A411A8700447C4C /* InstanceMethodSwizzler.mm in Sources */,
+				7CCE7EF21A411AE600447C4C /* StopLoadingDuringDidFailProvisionalLoad.cpp in Sources */,
+				7CCE7ECB1A411A7E00447C4C /* SetAndUpdateCacheModel.mm in Sources */,
+				7CCE7EC21A411A7E00447C4C /* HTMLFormCollectionNamedItem.mm in Sources */,
+				7CCE7F131A411AE600447C4C /* ShouldGoToBackForwardListItem.cpp in Sources */,
+				7CCE7EB61A411A7E00447C4C /* CancelLoadFromResourceLoadDelegate.mm in Sources */,
+				7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
+				7CCE7F4D1A411B9F00447C4C /* RetainPtr.mm in Sources */,
+				7CCE7EBE1A411A7E00447C4C /* DynamicDeviceScaleFactor.mm in Sources */,
+				7CCE7F4A1A411B8E00447C4C /* Vector.cpp in Sources */,
+				7CCE7EC11A411A7E00447C4C /* HTMLCollectionNamedItem.mm in Sources */,
+				7CCE7EF31A411AE600447C4C /* Find.cpp in Sources */,
+				7CCE7EFA1A411AE600447C4C /* HitTestResultNodeHandle.cpp in Sources */,
+				7CCE7F071A411AE600447C4C /* PageLoadBasic.cpp in Sources */,
+				7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
+				7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */,
+				7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */,
+				7CCE7EE71A411AE600447C4C /* CanHandleRequest.cpp in Sources */,
+				7CCE7F371A411B8E00447C4C /* IntegerToStringConversion.cpp in Sources */,
+				7CCE7ED61A411A7E00447C4C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
+				7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */,
+				7CCE7F221A411AE600447C4C /* WKString.cpp in Sources */,
+				7CCE7F351A411B8E00447C4C /* HashMap.cpp in Sources */,
+				7CCE7F481A411B8E00447C4C /* StringView.cpp in Sources */,
+				7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */,
+				7CCE7F4F1A411BA400447C4C /* RetainPtrHashing.cpp in Sources */,
+				7CCE7F491A411B8E00447C4C /* TemporaryChange.cpp in Sources */,
+				7CCE7F2B1A411B1000447C4C /* CustomProtocolsTest.mm in Sources */,
+				7CCE7F101A411AE600447C4C /* ResponsivenessTimerDoesntFireEarly.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DD76F990486AA7600D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC246D8E132F115A00B56D7C /* AboutBlankLoad.cpp in Sources */,
-				297234B4173AD04800983601 /* CustomProtocolsInvalidScheme.mm in Sources */,
-				379028B614FABD92007E6B43 /* AcceptsFirstMouse.mm in Sources */,
-				291861FF17BD4DC700D4E41E /* StopLoadingFromDidFinishLoading.mm in Sources */,
-				75F3134018C171B70041CAEC /* EphemeralSessionPushStateNoHistoryCallback.cpp in Sources */,
-				26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */,
-				B55F11A01516834F00915916 /* AttributedString.mm in Sources */,
-				00CD9F6315BE312C002DA2CE /* BackForwardList.mm in Sources */,
-				1AE72F48173EB214006362F0 /* TerminateTwice.cpp in Sources */,
-				26DF5A5E15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm in Sources */,
-				BC246D9A132F1FE100B56D7C /* CanHandleRequest.cpp in Sources */,
-				A7A966DB140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp in Sources */,
-				5142B2711517C88B00C32B19 /* ContextMenuCanCopyURL.mm in Sources */,
-				37C784E0197C8F2E0010A496 /* RenderedImageFromDOMNode.mm in Sources */,
-				F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */,
-				1ABC3DEF1899BE6D004F0626 /* Navigation.mm in Sources */,
-				26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */,
-				29AB8AA1164C735800D49BEC /* CustomProtocolsTest.mm in Sources */,
-				3776BC63150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm in Sources */,
-				939BA91714103412001A01BD /* DeviceScaleFactorOnBack.mm in Sources */,
-				BCB68040126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp in Sources */,
-				37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */,
-				7560917819259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm in Sources */,
-				3751AF7C169518F800764319 /* DOMNodeFromJSObject.mm in Sources */,
-				37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */,
-				51393E201523944A005F39C5 /* DOMWindowExtensionBasic.cpp in Sources */,
-				F6F49C6915545C8E0007F39D /* DOMWindowExtensionNoCache.cpp in Sources */,
-				C045F9451385C2EA00C0F3CD /* DownloadDecideDestinationCrash.cpp in Sources */,
-				93A427AB180DA26400CD24D7 /* Ref.cpp in Sources */,
-				C07E6CAF13FD67650038B22B /* DynamicDeviceScaleFactor.mm in Sources */,
-				BCAA485814A044D40088FAC4 /* EditorCommands.mm in Sources */,
-				4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */,
-				1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */,
-				BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */,
-				1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */,
-				C51AFB99169F49FF009CCF66 /* FindMatches.mm in Sources */,
-				1ADBEFAE130C689C00D61D19 /* ForceRepaint.cpp in Sources */,
-				7C74D42F188228F300E5ED57 /* StringView.cpp in Sources */,
-				BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */,
-				BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */,
-				CE32C7C818184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm in Sources */,
-				524BBC9D19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp in Sources */,
-				290F427B172A23A500939FF0 /* TestProtocol.mm in Sources */,
-				1AA9E55914980A9900001A8A /* Functional.cpp in Sources */,
-				C0C5D3BE14598B6F00A802A6 /* GetBackingScaleFactor.mm in Sources */,
-				7CC3E1FC197E234100BE6252 /* UserContentController.mm in Sources */,
-				F660AA0D15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
-				0BCD833514857CE400EA2003 /* HashMap.cpp in Sources */,
-				2DD7D3AA178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp in Sources */,
-				26B2DFF915BDE599004F691D /* HashSet.cpp in Sources */,
-				4BFDFFA9131477770061F24B /* HitTestResultNodeHandle.cpp in Sources */,
-				9B4F8FA4159D52B1002D9F94 /* HTMLCollectionNamedItem.mm in Sources */,
-				9B26FC6C159D061000CC3765 /* HTMLFormCollectionNamedItem.mm in Sources */,
-				C2EB2DD316CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm in Sources */,
-				BC575AAD126E83B9006F0F12 /* InjectedBundleBasic.cpp in Sources */,
-				378E64731632646D00B6C676 /* InjectedBundleFrameHitTest.cpp in Sources */,
-				F660AA1315A619C9003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */,
-				C507E8A714C6545B005D6B3B /* InspectorBar.mm in Sources */,
-				C08587FC13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
-				C085880013FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
-				266FAFD315E5775200F61D5B /* IntegerToStringConversion.cpp in Sources */,
-				C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */,
-				C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */,
-				4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */,
-				440A1D3914A0103A008A66F2 /* URL.cpp in Sources */,
-				14464013167A8305000BD218 /* LayoutUnit.cpp in Sources */,
-				2D640B5517875DFF00BFAF99 /* ScrollPinningBehaviors.cpp in Sources */,
-				26300B1816755CD90066886D /* ListHashSet.cpp in Sources */,
-				2D950FBC1A2217D000012434 /* ActionMenus.mm in Sources */,
-				A1A4FE5F18DD3DB700B5EA8A /* Download.mm in Sources */,
-				C95501BF19AD2FAF0049BE3E /* Preferences.mm in Sources */,
-				52CB47411448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
-				33DC8911141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
-				8AA28C1A16D2FA7B002FF4DB /* LoadPageOnCrash.cpp in Sources */,
-				CD5393C81757BA9700C07123 /* MD5.cpp in Sources */,
-				B4039F9D15E6D8B3007255D6 /* MathExtras.cpp in Sources */,
-				CD5497B415857F0C00B5BC30 /* MediaTime.cpp in Sources */,
-				E1220DA0155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
-				1A7E8B34181208DE00AEB74A /* FragmentNavigation.mm in Sources */,
-				517E7DFC15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
-				0FC6C4CF141034AD005B7F0C /* MetaAllocator.cpp in Sources */,
-				A1FDFD3019C288BB005148A4 /* WKImageCreateCGImageCrash.cpp in Sources */,
-				33BE5AF5137B5A6C00705813 /* MouseMoveAfterCrash.cpp in Sources */,
-				93F1DB3114DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp in Sources */,
-				93F1DB5514DB1B730024C362 /* NewFirstVisuallyNonEmptyLayoutFails.cpp in Sources */,
-				9318778915EEC57700A9CCE3 /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
-				93A427A9180D9B0700CD24D7 /* RefPtr.cpp in Sources */,
-				7CFBCADF1743234F00B2BFCF /* WillLoad.cpp in Sources */,
-				93F7E86C14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
-				BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */,
-				BC2D004912A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
-				9331407C17B4419000F083B1 /* DidNotHandleKeyDown.cpp in Sources */,
-				26F52EAB182872600023D412 /* Geolocation.cpp in Sources */,
-				A57A34F016AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm in Sources */,
-				52E5CE4614D21E9D003B2BD8 /* ParentFrame.cpp in Sources */,
-				C54237F016B8955800E638FC /* PasteboardNotifications.mm in Sources */,
-				BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */,
-				51E5C7051919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
-				BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */,
-				BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */,
-				333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */,
-				B55AD1D2179F336C00AC1494 /* PreventImageLoadWithAutoResizing.mm in Sources */,
-				F6FDDDD314241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */,
-				00BC16871680FE810065F1E5 /* PublicSuffix.mm in Sources */,
-				0FC6C4CC141027E0005B7F0C /* RedBlackTree.cpp in Sources */,
-				8A3AF93B16C9ED2700D248C1 /* ReloadPageAfterCrash.cpp in Sources */,
-				8A2C750E16CED9550024F352 /* ResizeWindowAfterCrash.cpp in Sources */,
-				3722C8691461E03E00C45D00 /* RenderedImageFromDOMRange.mm in Sources */,
-				C0BD669D131D3CF700E18F2A /* ResponsivenessTimerDoesntFireEarly.cpp in Sources */,
-				C0ADBE8312FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp in Sources */,
-				93A720E618F1A0E800A848E1 /* CalculationValue.cpp in Sources */,
-				1AEF994917A09F5400998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
-				BC029B181486AD6400817DA9 /* RetainPtr.cpp in Sources */,
-				BC029B1C1486B25900817DA9 /* RetainPtr.mm in Sources */,
-				7CBBA07819BB8A9100BBF025 /* OSObjectPtr.cpp in Sources */,
-				C0991C51143C7D68007998F2 /* RetainPtrHashing.cpp in Sources */,
-				CD5393CA1757BAC400C07123 /* SHA1.cpp in Sources */,
-				14F3B11315E45EAB00210069 /* SaturatedArithmeticOperations.cpp in Sources */,
-				261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */,
-				52B8CF9615868CF000281053 /* SetDocumentURI.mm in Sources */,
-				939BFE3A18E5548900883275 /* StringTruncator.mm in Sources */,
-				7C8DDAAB1735DEEE00EA5AC0 /* CloseThenTerminate.cpp in Sources */,
-				CDC2C71517970DDB00E627FB /* TimeRanges.cpp in Sources */,
-				51FCF79A1534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp in Sources */,
-				1AFDE6561953B2C000C48FFA /* Optional.cpp in Sources */,
-				86BD19981A2DB05B006DCF0A /* RefCounter.cpp in Sources */,
-				C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */,
-				4A410F4C19AF7BD6002EBAB5 /* UserMedia.cpp in Sources */,
-				C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */,
-				93D3D19E17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,
-				E194E1BB177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm in Sources */,
-				81B50193140F232300D9EB58 /* StringBuilder.cpp in Sources */,
-				3799AD3A14120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
-				93ABA80916DDAB91002DB2FA /* StringHasher.cpp in Sources */,
-				26F1B44515CA434F00D1E4BF /* StringImpl.cpp in Sources */,
-				C01363C813C3997300EF3964 /* StringOperators.cpp in Sources */,
-				37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */,
-				C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */,
-				0BCD856A1485C98B00EA2003 /* TemporaryChange.cpp in Sources */,
-				E4A757D4178AF1B100B5D7A4 /* Deque.cpp in Sources */,
-				29AB8AA4164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm in Sources */,
-				BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */,
-				E490296814E2E3A4002BEDD1 /* TypingStyleCrash.mm in Sources */,
-				2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */,
-				1A7BFC0C171A0BDB00BC5F64 /* WillSendSubmitEvent.mm in Sources */,
-				BC22D31514DC689800FFB1DD /* UserMessage.cpp in Sources */,
-				BC55F5F914AD78EE00484BE1 /* Vector.cpp in Sources */,
-				CD5451EA19E41F9D0016936F /* CSSParser.cpp in Sources */,
-				290A9BB71735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
-				FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */,
-				520BCF4D141EB09E00937EA8 /* WebArchive.cpp in Sources */,
-				0F17BBD615AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */,
-				290F4278172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm in Sources */,
-				C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */,
-				1A50AA1E1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp in Sources */,
-				51FBBB4D1513D4E900822738 /* WebViewCanPasteURL.mm in Sources */,
-				37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
-				76E182DA1547550100F1FADD /* WillSendSubmitEvent.cpp in Sources */,
-				1AA9BAE418500450003B6BC6 /* WeakObjCPtr.mm in Sources */,
-				A5E2027315B2181900C13E14 /* WindowlessWebViewWithMedia.mm in Sources */,
-				F6B7BE9417469209008A3445 /* DidAssociateFormControls.cpp in Sources */,
-				CEA6CF2319CCF5BD0064F5A7 /* OpenAndCloseWindow.mm in Sources */,
-				BC3C4C7F14587AA60025FB62 /* WKBrowsingContextGroupTest.mm in Sources */,
-				BC3C4C7214575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
-				93A7EB3D18FA63A4009E7670 /* URLExtras.mm in Sources */,
-				51E93017156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp in Sources */,
-				76734999193016DC00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad.cpp in Sources */,
-				BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */,
-				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
-				BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */,
-				7C6BBD8C19CEA63000C1F5E0 /* Counters.cpp in Sources */,
-				265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 			);
@@ -1499,6 +1547,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		7CCE7F511A4124DB00447C4C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+			targetProxy = 7CCE7F501A4124DB00447C4C /* PBXContainerItemProxy */;
+		};
 		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
@@ -1537,6 +1590,20 @@
 			};
 			name = Release;
 		};
+		7CCE7E9D1A41144E00447C4C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7CCE7E9E1A41144E00447C4C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		BC575984126E74AF006F0F12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
@@ -1571,6 +1638,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		7CCE7EA11A41144E00447C4C /* Build configuration list for PBXNativeTarget "TestWebKitAPILibrary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7CCE7E9D1A41144E00447C4C /* Debug */,
+				7CCE7E9E1A41144E00447C4C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
 			isa = XCConfigurationList;
