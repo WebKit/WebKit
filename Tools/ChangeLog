@@ -1,5 +1,23 @@
 2014-12-18  Alexey Proskuryakov  <ap@apple.com>
 
+        Perf tests frequently fail saying "build not up to date"
+        https://bugs.webkit.org/show_bug.cgi?id=139786
+
+        Illegitimately yet authoritatively reviewed by Lucas Forschler.
+
+        Undo the rest of the first fix, and implement the behavior differently.
+
+        is_clean isn't automatically forwarded from config.json to properties.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CleanBuildUnconditionally):
+        (CleanBuildUnconditionally.start):
+        (DownloadAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestWebKit2Factory.__init__):
+
+2014-12-18  Alexey Proskuryakov  <ap@apple.com>
+
         Roll out part of the previous patch - BuildAndPerfTestWebKit2 is used by Efl.
         I thought that it was unused because grepping for BuildAndPerfTestWebKit2Factory
         found nothing.
