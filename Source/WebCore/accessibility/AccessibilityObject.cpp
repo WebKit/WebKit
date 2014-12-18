@@ -856,6 +856,8 @@ bool AccessibilityObject::press()
             Node* innerNode = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
             if (is<Element>(*innerNode))
                 hitTestElement = downcast<Element>(innerNode);
+            else if (innerNode)
+                hitTestElement = innerNode->parentElement();
         }
     }
     

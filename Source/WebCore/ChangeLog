@@ -1,3 +1,18 @@
+2014-12-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: event.target should sometimes be a descendant element on AXPress-triggered mouse clicks
+        https://bugs.webkit.org/show_bug.cgi?id=135689
+
+        Reviewed by Mario Sanchez Prada.
+
+        When trying to find the right sub-node to target, we need to go back up the parent chain to find 
+        an Element, in case we land on a Text node for example.
+
+        Test: accessibility/press-target-uses-text-descendant-node.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+
 2014-12-16  Sam Weinig  <sam@webkit.org>
 
         Unify the Mac and iOS implementations of FontPlatformData a bit

@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script type="text/javascript">
+    function handleClick(e) {
+        if (e.target.classList.contains("target")) {
+            debug("Clicked on element: " + e.target.nodeName);
+        }
+        return false;
+    }
+</script>
+<style type="text/css">
+    a:link, button {
+        padding: 10px;
+        margin: 10px;
+        background-color: red;
+        display: inline-block;
+    }
+    .target {
+        background-color: yellow;
+    }
+</style>
+</head>
+<body>
+
+<a href="#" onclick="return handleClick(event);" id="link">
+    <span class="target">click only works on span inside link, not red link edges</span>
+</a>
+
+<button onclick="return handleClick(event);" id="button">
+    <img src="resources/cake.png" alt="click only works on image inside button, not red button edges" class="target" onload="startTest();">
+</button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("Make sure that when performing a press, we target the deepest descendant, but also one that is an Element at the least.");
+
+    function startTest() {
+       accessibilityController.accessibleElementById("link").press();
+       debug("\nNow pressing on button\n");
+       accessibilityController.accessibleElementById("button").press();
+       finishJSTest();
+    }
+
+    if (window.accessibilityController) {
+       window.jsTestIsAsync = true;
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
