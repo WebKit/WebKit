@@ -2190,7 +2190,7 @@ PassRefPtr<ClientRectList> Range::getClientRects() const
     return ClientRectList::create(quads);
 }
 
-PassRefPtr<ClientRect> Range::getBoundingClientRect() const
+Ref<ClientRect> Range::getBoundingClientRect() const
 {
     return ClientRect::create(boundingRect());
 }

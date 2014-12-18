@@ -152,7 +152,7 @@ public:
     void expand(const String&, ExceptionCode&);
 
     PassRefPtr<ClientRectList> getClientRects() const;
-    PassRefPtr<ClientRect> getBoundingClientRect() const;
+    Ref<ClientRect> getBoundingClientRect() const;
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;

@@ -126,9 +126,9 @@ public:
     Vector<String> formControlStateOfPreviousHistoryItem(ExceptionCode&);
     void setFormControlStateOfPreviousHistoryItem(const Vector<String>&, ExceptionCode&);
 
-    PassRefPtr<ClientRect> absoluteCaretBounds(ExceptionCode&);
+    Ref<ClientRect> absoluteCaretBounds(ExceptionCode&);
 
-    PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
+    Ref<ClientRect> boundingBox(Element*, ExceptionCode&);
 
     PassRefPtr<ClientRectList> inspectorHighlightRects(ExceptionCode&);
     String inspectorHighlightObject(ExceptionCode&);
@@ -323,7 +323,7 @@ public:
     double closestTimeToTimeRanges(double time, TimeRanges*);
 #endif
 
-    PassRefPtr<ClientRect> selectionBounds(ExceptionCode&);
+    Ref<ClientRect> selectionBounds(ExceptionCode&);
 
 #if ENABLE(VIBRATION)
     bool isVibrating();

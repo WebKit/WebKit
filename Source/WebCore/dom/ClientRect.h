@@ -29,7 +29,7 @@
 
 #include "FloatRect.h"
 #include "ScriptWrappable.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,9 +38,9 @@ namespace WebCore {
 
     class ClientRect : public ScriptWrappable, public RefCounted<ClientRect> {
     public:
-        static PassRefPtr<ClientRect> create() { return adoptRef(new ClientRect); }
-        static PassRefPtr<ClientRect> create(const IntRect& rect) { return adoptRef(new ClientRect(rect)); }
-        static PassRefPtr<ClientRect> create(const FloatRect& rect) { return adoptRef(new ClientRect(rect)); }
+        static Ref<ClientRect> create() { return adoptRef(*new ClientRect); }
+        static Ref<ClientRect> create(const IntRect& rect) { return adoptRef(*new ClientRect(rect)); }
+        static Ref<ClientRect> create(const FloatRect& rect) { return adoptRef(*new ClientRect(rect)); }
 
         float top() const { return m_rect.y(); }
         float right() const { return m_rect.maxX(); }

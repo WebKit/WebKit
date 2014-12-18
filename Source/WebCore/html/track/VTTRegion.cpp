@@ -374,7 +374,7 @@ void VTTRegion::displayLastTextTrackCueBox()
 
     // Find first cue that is not entirely displayed and scroll it upwards.
     for (auto& child : childrenOfType<Element>(*m_cueContainer)) {
-        RefPtr<ClientRect> rect = child.getBoundingClientRect();
+        Ref<ClientRect> rect = child.getBoundingClientRect();
         float childTop = rect->top();
         float childBottom = rect->bottom();
 

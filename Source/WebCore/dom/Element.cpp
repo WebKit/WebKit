@@ -908,7 +908,7 @@ RefPtr<ClientRectList> Element::getClientRects()
     return ClientRectList::create(quads);
 }
 
-RefPtr<ClientRect> Element::getBoundingClientRect()
+Ref<ClientRect> Element::getBoundingClientRect()
 {
     document().updateLayoutIgnorePendingStylesheets();
 

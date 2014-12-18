@@ -749,7 +749,7 @@ void Internals::enableMockRTCPeerConnectionHandler()
 }
 #endif
 
-PassRefPtr<ClientRect> Internals::absoluteCaretBounds(ExceptionCode& ec)
+Ref<ClientRect> Internals::absoluteCaretBounds(ExceptionCode& ec)
 {
     Document* document = contextDocument();
     if (!document || !document->frame()) {
@@ -760,7 +760,7 @@ PassRefPtr<ClientRect> Internals::absoluteCaretBounds(ExceptionCode& ec)
     return ClientRect::create(document->frame()->selection().absoluteCaretBounds());
 }
 
-PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
+Ref<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
 {
     if (!element) {
         ec = INVALID_ACCESS_ERR;
@@ -2245,7 +2245,7 @@ double Internals::closestTimeToTimeRanges(double time, TimeRanges* ranges)
 }
 #endif
 
-PassRefPtr<ClientRect> Internals::selectionBounds(ExceptionCode& ec)
+Ref<ClientRect> Internals::selectionBounds(ExceptionCode& ec)
 {
     Document* document = contextDocument();
     if (!document || !document->frame()) {

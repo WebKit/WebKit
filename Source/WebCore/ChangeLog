@@ -1,3 +1,29 @@
+2014-12-18  Andreas Kling  <akling@apple.com>
+
+        Ref-ify ClientRect.
+        <https://webkit.org/b/139777>
+
+        Reviewed by Anders Carlsson.
+
+        Make the ClientRect::create() helpers return Ref, along with a bunch
+        of other functions that always return non-null ClientRects.
+
+        * dom/ClientRect.h:
+        (WebCore::ClientRect::create):
+        * dom/Element.cpp:
+        (WebCore::Element::getBoundingClientRect):
+        * dom/Element.h:
+        * dom/Range.cpp:
+        (WebCore::Range::getBoundingClientRect):
+        * dom/Range.h:
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::displayLastTextTrackCueBox):
+        * testing/Internals.cpp:
+        (WebCore::Internals::absoluteCaretBounds):
+        (WebCore::Internals::boundingBox):
+        (WebCore::Internals::selectionBounds):
+        * testing/Internals.h:
+
 2014-12-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log navigation types using FeatureCounter API
