@@ -1,3 +1,30 @@
+2014-12-17  Andreas Kling  <akling@apple.com>
+
+        Ref-ify Range::create().
+        <https://webkit.org/b/139755>
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Document.cpp:
+        (WebCore::acceptsEditingFocus):
+        * dom/Element.cpp:
+        (WebCore::Element::innerText):
+        * dom/Range.cpp:
+        (WebCore::Range::create):
+        (WebCore::Range::cloneRange):
+        (WebCore::rangeOfContents):
+        * dom/Range.h:
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        * editing/VisibleUnits.cpp:
+        (WebCore::charactersAroundPosition):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::renderedText):
+        * page/FocusController.cpp:
+        (WebCore::relinquishesEditingFocus):
+
 2014-12-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19282508> WebKitLegacy is unusable due to bad dylib identifier

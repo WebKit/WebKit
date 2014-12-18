@@ -72,9 +72,9 @@ inline Range::Range(Document& ownerDocument)
     m_ownerDocument->attachRange(this);
 }
 
-PassRefPtr<Range> Range::create(Document& ownerDocument)
+Ref<Range> Range::create(Document& ownerDocument)
 {
-    return adoptRef(new Range(ownerDocument));
+    return adoptRef(*new Range(ownerDocument));
 }
 
 inline Range::Range(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
@@ -94,26 +94,26 @@ inline Range::Range(Document& ownerDocument, PassRefPtr<Node> startContainer, in
     setEnd(endContainer, endOffset);
 }
 
-PassRefPtr<Range> Range::create(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
+Ref<Range> Range::create(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
 {
-    return adoptRef(new Range(ownerDocument, startContainer, startOffset, endContainer, endOffset));
+    return adoptRef(*new Range(ownerDocument, startContainer, startOffset, endContainer, endOffset));
 }
 
-PassRefPtr<Range> Range::create(Document& ownerDocument, const Position& start, const Position& end)
+Ref<Range> Range::create(Document& ownerDocument, const Position& start, const Position& end)
 {
-    return adoptRef(new Range(ownerDocument, start.containerNode(), start.computeOffsetInContainerNode(), end.containerNode(), end.computeOffsetInContainerNode()));
+    return adoptRef(*new Range(ownerDocument, start.containerNode(), start.computeOffsetInContainerNode(), end.containerNode(), end.computeOffsetInContainerNode()));
 }
 
-PassRefPtr<Range> Range::create(ScriptExecutionContext& context)
+Ref<Range> Range::create(ScriptExecutionContext& context)
 {
-    return adoptRef(new Range(downcast<Document>(context)));
+    return adoptRef(*new Range(downcast<Document>(context)));
 }
 
-PassRefPtr<Range> Range::create(Document& ownerDocument, const VisiblePosition& visibleStart, const VisiblePosition& visibleEnd)
+Ref<Range> Range::create(Document& ownerDocument, const VisiblePosition& visibleStart, const VisiblePosition& visibleEnd)
 {
     Position start = visibleStart.deepEquivalent().parentAnchoredEquivalent();
     Position end = visibleEnd.deepEquivalent().parentAnchoredEquivalent();
-    return adoptRef(new Range(ownerDocument, start.anchorNode(), start.deprecatedEditingOffset(), end.anchorNode(), end.deprecatedEditingOffset()));
+    return adoptRef(*new Range(ownerDocument, start.anchorNode(), start.deprecatedEditingOffset(), end.anchorNode(), end.deprecatedEditingOffset()));
 }
 
 Range::~Range()
@@ -1220,11 +1220,11 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
     }
 }
 
-PassRefPtr<Range> Range::cloneRange(ExceptionCode& ec) const
+RefPtr<Range> Range::cloneRange(ExceptionCode& ec) const
 {
     if (!m_start.container()) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     return Range::create(ownerDocument(), m_start.container(), m_start.offset(), m_end.container(), m_end.offset());
@@ -2002,12 +2002,12 @@ bool rangesOverlap(const Range* a, const Range* b)
     return false;
 }
 
-PassRefPtr<Range> rangeOfContents(Node& node)
+Ref<Range> rangeOfContents(Node& node)
 {
-    RefPtr<Range> range = Range::create(node.document());
+    Ref<Range> range = Range::create(node.document());
     int exception = 0;
     range->selectNodeContents(&node, exception);
-    return range.release();
+    return range;
 }
 
 static inline void boundaryNodeChildrenChanged(RangeBoundaryPoint& boundary, ContainerNode& container)

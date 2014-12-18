@@ -1,3 +1,15 @@
+2014-12-17  Andreas Kling  <akling@apple.com>
+
+        Ref-ify Range::create().
+        <https://webkit.org/b/139755>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attributedString]):
+
 2014-12-17  Anders Carlsson  <andersca@apple.com>
 
         Unify -[WebResource description]

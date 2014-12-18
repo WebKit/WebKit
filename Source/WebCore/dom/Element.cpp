@@ -2100,7 +2100,7 @@ String Element::innerText()
     if (!renderer())
         return textContent(true);
 
-    return plainText(rangeOfContents(*this).get());
+    return plainText(rangeOfContents(*this).ptr());
 }
 
 String Element::outerText()

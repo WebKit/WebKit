@@ -52,11 +52,11 @@ class SelectionRect;
 
 class Range : public RefCounted<Range> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&);
-    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
-    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&, const Position&, const Position&);
-    WEBCORE_EXPORT static PassRefPtr<Range> create(ScriptExecutionContext&);
-    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
+    WEBCORE_EXPORT static Ref<Range> create(Document&);
+    WEBCORE_EXPORT static Ref<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
+    WEBCORE_EXPORT static Ref<Range> create(Document&, const Position&, const Position&);
+    WEBCORE_EXPORT static Ref<Range> create(ScriptExecutionContext&);
+    WEBCORE_EXPORT static Ref<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
     WEBCORE_EXPORT ~Range();
 
     Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
@@ -99,7 +99,7 @@ public:
     PassRefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&);
 
     void detach(ExceptionCode&);
-    WEBCORE_EXPORT PassRefPtr<Range> cloneRange(ExceptionCode&) const;
+    WEBCORE_EXPORT RefPtr<Range> cloneRange(ExceptionCode&) const;
 
     WEBCORE_EXPORT void setStartAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
     WEBCORE_EXPORT void setEndBefore(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
@@ -183,7 +183,7 @@ private:
     RangeBoundaryPoint m_end;
 };
 
-PassRefPtr<Range> rangeOfContents(Node&);
+Ref<Range> rangeOfContents(Node&);
 
 WEBCORE_EXPORT bool areRangesEqual(const Range*, const Range*);
 bool rangesOverlap(const Range*, const Range*);

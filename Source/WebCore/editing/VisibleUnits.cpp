@@ -1830,7 +1830,7 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
     }
 
     if (startPosition != endPosition) {
-        String characterString = plainText(Range::create(position.deepEquivalent().anchorNode()->document(), startPosition, endPosition).get()).replace(noBreakSpace, ' ');
+        String characterString = plainText(Range::create(position.deepEquivalent().anchorNode()->document(), startPosition, endPosition).ptr()).replace(noBreakSpace, ' ');
         for (int i = characterString.length() - 1, index = 0; i >= 0 && index < maxCharacters; --i) {
             if (!index && nextPosition.isNull())
                 index++;

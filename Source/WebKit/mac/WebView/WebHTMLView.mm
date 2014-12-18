@@ -6717,7 +6717,7 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (!attributedString) {
         Document* coreDocument = core(document);
-        attributedString = editingAttributedStringFromRange(*Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->countChildNodes()));
+        attributedString = editingAttributedStringFromRange(Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->countChildNodes()));
     }
     return attributedString;
 }
