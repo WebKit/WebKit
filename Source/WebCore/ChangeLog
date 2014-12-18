@@ -1,3 +1,9 @@
+2014-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * platform/cocoa/MachSendRight.cpp:
+
 2014-12-18  Timothy Horton  <timothy_horton@apple.com>
 
         Change page preview loading order, and add a TextIndicator
