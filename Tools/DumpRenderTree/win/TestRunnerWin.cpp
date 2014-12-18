@@ -84,6 +84,102 @@ void TestRunner::addDisallowedURL(JSStringRef url)
     // FIXME: Implement!
 }
 
+bool TestRunner::callShouldCloseOnWebView()
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return false;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return false;
+
+    BOOL result;
+    viewPrivate->shouldClose(&result);
+    return result;
+}
+
+void TestRunner::clearAllApplicationCaches()
+{
+    COMPtr<IWebApplicationCache> applicationCache;
+    if (FAILED(WebKitCreateInstance(CLSID_WebApplicationCache, 0, IID_IWebApplicationCache, reinterpret_cast<void**>(&applicationCache))))
+        return;
+
+    applicationCache->deleteAllApplicationCaches();
+}
+
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef name)
+{
+    // FIXME: Implement to get disk usage by all application caches for an origin.
+    return 0;
+}
+
+void TestRunner::syncLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
+{
+    // FIXME: Implement to support getting local storage disk usage for an origin.
+    return 0;
+}
+
+void TestRunner::observeStorageTrackerNotifications(unsigned number)
+{
+    // FIXME: Implement.
+}
+
+void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
+{
+    // FIXME: Implement to support deleting all application cache for an origin.
+}
+
+JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
+{
+    // FIXME: Implement to get origins that have application caches.
+    return JSValueMakeUndefined(context);
+}
+
+
+void TestRunner::clearAllDatabases()
+{
+    COMPtr<IWebDatabaseManager> databaseManager;
+    COMPtr<IWebDatabaseManager> tmpDatabaseManager;
+    if (FAILED(WebKitCreateInstance(CLSID_WebDatabaseManager, 0, IID_IWebDatabaseManager, (void**)&tmpDatabaseManager)))
+        return;
+    if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager)))
+        return;
+
+    databaseManager->deleteAllDatabases();
+}
+
+void TestRunner::deleteAllLocalStorage()
+{
+    // FIXME: Implement.
+}
+
+void TestRunner::setStorageDatabaseIdleInterval(double)
+{
+    // FIXME: Implement this.
+}
+
+void TestRunner::closeIdleLocalStorageDatabases()
+{
+    // FIXME: Implement this.
+}
+
+JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
+{
+    // FIXME: Implement.
+    return JSValueMakeUndefined(context);
+}
+
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
+{
+    // FIXME: Implement.
+}
+
 void TestRunner::clearBackForwardList()
 {
     COMPtr<IWebView> webView;
@@ -110,21 +206,6 @@ void TestRunner::clearBackForwardList()
     backForwardList->goToItem(item.get());
 }
 
-bool TestRunner::callShouldCloseOnWebView()
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return false;
-
-    COMPtr<IWebViewPrivate> viewPrivate;
-    if (FAILED(webView->QueryInterface(&viewPrivate)))
-        return false;
-
-    BOOL result;
-    viewPrivate->shouldClose(&result);
-    return result;
-}
-
 JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
 {
     // FIXME: Implement!
@@ -135,11 +216,6 @@ JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
 {
     // FIXME: Implement!
     return 0;
-}
-
-void TestRunner::dispatchPendingLoadRequests()
-{
-    // FIXME: Implement for testing fix for 6727495
 }
 
 void TestRunner::display()
@@ -160,15 +236,10 @@ void TestRunner::keepWebHistory()
     history->setOptionalSharedHistory(sharedHistory.get());
 }
 
-void TestRunner::waitForPolicyDelegate()
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    setWaitToDump(true);
-    policyDelegate->setControllerToNotifyDone(this);
-    webView->setPolicyDelegate(policyDelegate);
+    // FIXME: Implement for Geolocation layout tests.
+    return -1;
 }
 
 size_t TestRunner::webHistoryItemCount()
@@ -200,6 +271,16 @@ void TestRunner::notifyDone()
     m_waitToDump = false;
 }
 
+static wstring jsStringRefToWString(JSStringRef jsStr)
+{
+    size_t length = JSStringGetLength(jsStr);
+    Vector<WCHAR> buffer(length + 1);
+    memcpy(buffer.data(), JSStringGetCharactersPtr(jsStr), length * sizeof(WCHAR));
+    buffer[length] = '\0';
+
+    return buffer.data();
+}
+
 JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
     wstring input(JSStringGetCharactersPtr(url), JSStringGetLength(url));
@@ -211,16 +292,6 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef ur
     }
 
     return JSStringCreateWithCharacters(localPath.c_str(), localPath.length());
-}
-
-static wstring jsStringRefToWString(JSStringRef jsStr)
-{
-    size_t length = JSStringGetLength(jsStr);
-    Vector<WCHAR> buffer(length + 1);
-    memcpy(buffer.data(), JSStringGetCharactersPtr(jsStr), length * sizeof(WCHAR));
-    buffer[length] = '\0';
-
-    return buffer.data();
 }
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
@@ -278,6 +349,11 @@ void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     m_alwaysAcceptCookies = alwaysAcceptCookies;
 }
 
+void TestRunner::setAppCacheMaximumSize(unsigned long long size)
+{
+    printf("ERROR: TestRunner::setAppCacheMaximumSize() not implemented\n");
+}
+
 void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 {
     COMPtr<IWebView> webView;
@@ -308,6 +384,40 @@ void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
         webView->setPolicyDelegate(0);
 }
 
+void TestRunner::setDatabaseQuota(unsigned long long quota)
+{
+    COMPtr<IWebDatabaseManager> databaseManager;
+    COMPtr<IWebDatabaseManager> tmpDatabaseManager;
+
+    if (FAILED(WebKitCreateInstance(CLSID_WebDatabaseManager, 0, IID_IWebDatabaseManager, (void**)&tmpDatabaseManager)))
+        return;
+    if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager)))
+        return;
+
+    databaseManager->setQuota(TEXT("file:///"), quota);
+}
+
+void TestRunner::goBack()
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
+void TestRunner::setDefersLoading(bool)
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    BSTR schemeBSTR = JSStringCopyBSTR(scheme);
+    webView->setDomainRelaxationForbiddenForURLScheme(forbidden, schemeBSTR);
+    SysFreeString(schemeBSTR);
+}
+
 void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // FIXME: Implement for DeviceOrientation layout tests.
@@ -330,12 +440,6 @@ void TestRunner::setGeolocationPermission(bool allow)
 {
     // FIXME: Implement for Geolocation layout tests.
     setGeolocationPermissionCommon(allow);
-}
-
-int TestRunner::numberOfPendingGeolocationPermissionRequests()
-{
-    // FIXME: Implement for Geolocation layout tests.
-    return -1;
 }
 
 void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
@@ -458,6 +562,11 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
         return;
 
     prefsPrivate->setJavaScriptCanAccessClipboard(enabled);
+}
+
+void TestRunner::setAutomaticLinkDetectionEnabled(bool)
+{
+    // FIXME: Implement this.
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(bool shouldCycle)
@@ -669,6 +778,47 @@ void TestRunner::setViewModeMediaFeature(JSStringRef mode)
     // FIXME: implement
 }
 
+void TestRunner::dispatchPendingLoadRequests()
+{
+    // FIXME: Implement for testing fix for 6727495
+}
+
+void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    _bstr_t keyBSTR(JSStringCopyBSTR(key), false);
+    _bstr_t valueBSTR(JSStringCopyBSTR(value), false);
+    prefsPrivate->setPreferenceForTest(keyBSTR, valueBSTR);
+}
+
+void TestRunner::removeAllVisitedLinks()
+{
+    COMPtr<IWebHistory> history;
+    if (FAILED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(history), reinterpret_cast<void**>(&history))))
+        return;
+
+    COMPtr<IWebHistory> sharedHistory;
+    if (FAILED(history->optionalSharedHistory(&sharedHistory)) || !sharedHistory)
+        return;
+
+    COMPtr<IWebHistoryPrivate> sharedHistoryPrivate;
+    if (FAILED(sharedHistory->QueryInterface(&sharedHistoryPrivate)))
+        return;
+
+    sharedHistoryPrivate->removeAllVisitedLinks();
+}
+
 void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     RetainPtr<CFStringRef> urlString = adoptCF(JSStringCopyCFString(0, jsURL));
@@ -748,100 +898,15 @@ bool TestRunner::isCommandEnabled(JSStringRef /*name*/)
     return false;
 }
 
-void TestRunner::clearAllApplicationCaches()
-{
-    COMPtr<IWebApplicationCache> applicationCache;
-    if (FAILED(WebKitCreateInstance(CLSID_WebApplicationCache, 0, IID_IWebApplicationCache, reinterpret_cast<void**>(&applicationCache))))
-        return;
-
-    applicationCache->deleteAllApplicationCaches();
-}
-
-void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
-{
-    // FIXME: Implement to support deleting all application cache for an origin.
-}
-
-JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
-{
-    // FIXME: Implement to get origins that have application caches.
-    return JSValueMakeUndefined(context);
-}
-
-long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef name)
-{
-    // FIXME: Implement to get disk usage by all application caches for an origin.
-    return 0;
-}
-
-void TestRunner::clearAllDatabases()
-{
-    COMPtr<IWebDatabaseManager> databaseManager;
-    COMPtr<IWebDatabaseManager> tmpDatabaseManager;
-    if (FAILED(WebKitCreateInstance(CLSID_WebDatabaseManager, 0, IID_IWebDatabaseManager, (void**)&tmpDatabaseManager)))
-        return;
-    if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager)))
-        return;
-
-    databaseManager->deleteAllDatabases();
-}
-
-void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
+void TestRunner::waitForPolicyDelegate()
 {
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
         return;
 
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-    if (!prefsPrivate)
-        return;
-
-    _bstr_t keyBSTR(JSStringCopyBSTR(key), false);
-    _bstr_t valueBSTR(JSStringCopyBSTR(value), false);
-    prefsPrivate->setPreferenceForTest(keyBSTR, valueBSTR);
-}
-
-void TestRunner::setDatabaseQuota(unsigned long long quota)
-{
-    COMPtr<IWebDatabaseManager> databaseManager;
-    COMPtr<IWebDatabaseManager> tmpDatabaseManager;
-
-    if (FAILED(WebKitCreateInstance(CLSID_WebDatabaseManager, 0, IID_IWebDatabaseManager, (void**)&tmpDatabaseManager)))
-        return;
-    if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager)))
-        return;
-
-    databaseManager->setQuota(TEXT("file:///"), quota);
-}
-
-void TestRunner::goBack()
-{
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
-}
-
-void TestRunner::setDefersLoading(bool)
-{
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
-}
-
-void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
-{
-    COMPtr<IWebViewPrivate> webView;
-    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
-        return;
-
-    BSTR schemeBSTR = JSStringCopyBSTR(scheme);
-    webView->setDomainRelaxationForbiddenForURLScheme(forbidden, schemeBSTR);
-    SysFreeString(schemeBSTR);
-}
-
-void TestRunner::setAppCacheMaximumSize(unsigned long long size)
-{
-    printf("ERROR: TestRunner::setAppCacheMaximumSize() not implemented\n");
+    setWaitToDump(true);
+    policyDelegate->setControllerToNotifyDone(this);
+    webView->setPolicyDelegate(policyDelegate);
 }
 
 static _bstr_t bstrT(JSStringRef jsString)
@@ -885,7 +950,6 @@ void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFram
 
     webView->addUserScriptToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), world.get(), bstrT(source).GetBSTR(), 0, 0, 0, 0, 0, runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd);
 }
-
 
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
@@ -1017,23 +1081,6 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
         return;
 }
 
-void TestRunner::removeAllVisitedLinks()
-{
-    COMPtr<IWebHistory> history;
-    if (FAILED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(history), reinterpret_cast<void**>(&history))))
-        return;
-
-    COMPtr<IWebHistory> sharedHistory;
-    if (FAILED(history->optionalSharedHistory(&sharedHistory)) || !sharedHistory)
-        return;
-
-    COMPtr<IWebHistoryPrivate> sharedHistoryPrivate;
-    if (FAILED(sharedHistory->QueryInterface(&sharedHistoryPrivate)))
-        return;
-
-    sharedHistoryPrivate->removeAllVisitedLinks();
-}
-
 void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
 
@@ -1074,38 +1121,6 @@ void TestRunner::setSerializeHTTPLoads(bool)
     // FIXME: Implement.
 }
 
-void TestRunner::syncLocalStorage()
-{
-    // FIXME: Implement.
-}
-
-void TestRunner::observeStorageTrackerNotifications(unsigned number)
-{
-    // FIXME: Implement.
-}
-
-void TestRunner::deleteAllLocalStorage()
-{
-    // FIXME: Implement.
-}
-
-JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
-{
-    // FIXME: Implement.
-    return JSValueMakeUndefined(context);
-}
-
-long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
-{
-    // FIXME: Implement to support getting local storage disk usage for an origin.
-    return 0;
-}
-
-void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
-{
-    // FIXME: Implement.
-}
-
 void TestRunner::setTextDirection(JSStringRef direction)
 {
     COMPtr<IWebFramePrivate> framePrivate(Query, frame);
@@ -1131,6 +1146,16 @@ void TestRunner::setBackingScaleFactor(double)
 {
 }
 
+void TestRunner::resetPageVisibility()
+{
+    // FIXME: Implement this.
+}
+
+void TestRunner::setPageVisibility(const char*)
+{
+    // FIXME: Implement this.
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
 }
@@ -1150,29 +1175,4 @@ void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
 void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
-}
-
-void TestRunner::resetPageVisibility()
-{
-    // FIXME: Implement this.
-}
-
-void TestRunner::setPageVisibility(const char*)
-{
-    // FIXME: Implement this.
-}
-
-void TestRunner::setAutomaticLinkDetectionEnabled(bool)
-{
-    // FIXME: Implement this.
-}
-
-void TestRunner::setStorageDatabaseIdleInterval(double)
-{
-    // FIXME: Implement this.
-}
-
-void TestRunner::closeIdleLocalStorageDatabases()
-{
-    // FIXME: Implement this.
 }

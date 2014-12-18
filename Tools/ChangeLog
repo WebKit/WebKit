@@ -1,5 +1,47 @@
 2014-12-18  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening. Reorder file contents to match Mac version.
+
+        Reorder the contents of the TestRunnerWin so that it matches TestRunnerMac. This makes
+        it easier to see what steps are missing when running under Windows.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::callShouldCloseOnWebView):
+        (TestRunner::clearAllApplicationCaches):
+        (TestRunner::applicationCacheDiskUsageForOrigin):
+        (TestRunner::syncLocalStorage):
+        (TestRunner::localStorageDiskUsageForOrigin):
+        (TestRunner::observeStorageTrackerNotifications):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::originsWithApplicationCache):
+        (TestRunner::clearAllDatabases):
+        (TestRunner::deleteAllLocalStorage):
+        (TestRunner::setStorageDatabaseIdleInterval):
+        (TestRunner::closeIdleLocalStorageDatabases):
+        (TestRunner::originsWithLocalStorage):
+        (TestRunner::deleteLocalStorageForOrigin):
+        (TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (jsStringRefToWString):
+        (TestRunner::setAppCacheMaximumSize):
+        (TestRunner::setDatabaseQuota):
+        (TestRunner::goBack):
+        (TestRunner::setDefersLoading):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::setAutomaticLinkDetectionEnabled):
+        (TestRunner::dispatchPendingLoadRequests):
+        (TestRunner::overridePreference):
+        (TestRunner::removeAllVisitedLinks):
+        (TestRunner::waitForPolicyDelegate):
+        (TestRunner::resetPageVisibility):
+        (TestRunner::setPageVisibility):
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::denyWebNotificationPermission):
+        (TestRunner::removeAllWebNotificationPermissions):
+        (TestRunner::simulateWebNotificationClick):
+        (TestRunner::simulateLegacyWebNotificationClick):
+
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Correct Windows tests after Bug 139149 (edit)
         https://bugs.webkit.org/show_bug.cgi?id=139781
 
