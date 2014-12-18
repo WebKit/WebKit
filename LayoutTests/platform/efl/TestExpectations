@@ -267,6 +267,7 @@ webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb-allowed.htm
 webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 webkit.org/b/87661 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 webkit.org/b/87661 crypto/subtle/rsa-indexeddb.html [ Skip ]
+inspector-protocol/indexeddb/basics.html
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -349,7 +350,7 @@ webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events.h
 webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Failure ]
 webkit.org/b/86623 fast/events/ondragenter.html
 webkit.org/b/86623 fast/events/ondrop-text-html.html
-webkit.org/b/86623 fast/events/only-valid-drop-targets-receive-file-drop.html [ Failure ]
+webkit.org/b/86623 fast/events/only-valid-drop-targets-receive-file-drop.html [ Timeout ]
 webkit.org/b/86623 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 webkit.org/b/86623 fast/events/standalone-image-drag-to-editable.html
 webkit.org/b/86623 fast/forms/drag-into-textarea.html
@@ -457,7 +458,7 @@ webkit.org/b/92726 fast/dom/NavigatorContentUtils/register-protocol-handler.html
 webkit.org/b/92726 fast/dom/NavigatorContentUtils/unregister-protocol-handler.html [ Crash ]
 
 # Crashes on plugin test, also blocked by 108077
-webkit.org/b/98747 plugins/document-open.html [ Crash Failure ]
+webkit.org/b/98747 plugins/document-open.html [ Crash Failure Timeout]
 
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Timeout ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Timeout ]
@@ -472,7 +473,7 @@ webkit.org/b/105870 webaudio/audionode-channel-rules.html [ Pass Crash ]
 
 # Media regressions after updating to gstreamer 1.0.
 webkit.org/b/104809 media/video-src.html [ Crash Pass ]
-webkit.org/b/104809 media/video-src-blob.html [ Crash Failure ]
+webkit.org/b/104809 media/video-src-blob.html [ Crash Failure Timeout]
 webkit.org/b/104809 media/video-src-change.html [ Crash Pass Failure ]
 webkit.org/b/104809 media/remove-from-document.html [ Crash Pass Failure ]
 webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass Failure ]
@@ -731,8 +732,8 @@ webkit.org/b/72698 media/audio-garbage-collect.html
 
 webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash Pass ]
 
-webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
-webkit.org/b/113106 media/track/track-prefer-captions.html [ Failure ]
+webkit.org/b/95428 media/video-controls-captions.html [ Timeout ]
+webkit.org/b/113106 media/track/track-prefer-captions.html [ Timeout ]
 
 # Failures after r130363.
 webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ Failure Pass ]
@@ -859,7 +860,7 @@ webkit.org/b/135561 mathml/opentype/opentype-stretchy-horizontal.html [ Failure 
 webkit.org/b/135562 svg/W3C-SVG-1.1/shapes-rect-02-t.svg [ Failure Pass ]
 
 # Fails on the bots.
-webkit.org/b/97968 media/unsupported-rtsp.html [ Failure Pass ]
+webkit.org/b/97968 media/unsupported-rtsp.html [ Failure Pass Timeout ]
 
 webkit.org/b/135610 fast/ruby/ruby-svg-crash.html [ Failure Pass ]
 
@@ -982,7 +983,7 @@ webkit.org/b/84333 fast/events/drop-with-file-paths.html [ Timeout ]
 webkit.org/b/84333 fast/events/dropzone-004.html [ Failure ]
 webkit.org/b/84333 fast/events/file-input-hidden-in-ondrop.html [ Timeout ]
 webkit.org/b/84333 fast/events/input-element-display-none-in-dragleave-crash.html [ Timeout ]
-webkit.org/b/84333 fast/events/prevent-drag-to-navigate.html [ Failure ]
+webkit.org/b/84333 fast/events/prevent-drag-to-navigate.html [ Timeout ]
 webkit.org/b/84333 fast/files/apply-blob-url-to-img.html [ Timeout ]
 webkit.org/b/84333 fast/files/apply-blob-url-to-xhr.html [ Timeout ]
 webkit.org/b/84333 fast/files/file-list-test.html [ Failure ]
@@ -1012,7 +1013,7 @@ webkit.org/b/84333 http/tests/local/formdata/send-form-data.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-empty-file-filename.html [ Timeout ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-filename.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/upload-events.html [ Failure ]
+webkit.org/b/84333 http/tests/local/formdata/upload-events.html [ Timeout ]
 webkit.org/b/84333 http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
 
 # EFL port needs Pasteboard implementation.
@@ -1226,7 +1227,7 @@ webkit.org/b/82140 fast/dom/Geolocation/page-reload-cancel-permission-requests.h
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
 # Fullscreen API is enabled but not fully implemented.
-webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Failure ]
+webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Timeout ]
 webkit.org/b/86187 media/media-fullscreen-inline.html [ Failure ]
 
 # This test is specific to QuickTime media engine.
@@ -1375,7 +1376,7 @@ Bug(EFL) transitions/negative-delay.html [ Failure Pass ]
 
 # Media paint regressions
 webkit.org/b/102068 webkit.org/b/102993 media/audio-repaint.html [ Failure ]
-webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
+webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html [ Timeout ]
 
 # It may even be the case that the tests themselves are wrong.
 webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ Missing ]
@@ -1548,7 +1549,7 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-r
 
 # Unidentified failing media tests
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
-webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
+webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Timeout ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
@@ -1665,7 +1666,7 @@ webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
 # WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
-webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
+webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Timeout ]
 
 # The following test makes the fast/parser/document-write-ignores-later-network-bytes.html test crash
 webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
@@ -1689,7 +1690,7 @@ webkit.org/b/103130 css3/device-adapt/opera/orientation-001.xhtml [ Failure ]
 webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Missing Failure ]
 
 # NPN_ReloadPlugins is not implemented.
-webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
+webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Timeout]
 
 # Plugin test timeout.
 webkit.org/b/98743 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
@@ -1721,7 +1722,7 @@ webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Fai
 
 # Http plugin test failures.
 webkit.org/b/99561 http/tests/plugins/plugin-document-has-focus.html [ Timeout ]
-webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
+webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Timeout ]
 
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
@@ -1802,7 +1803,7 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailu
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
 
-webkit.org/b/120682 inspector-protocol/page/archive.html [ Failure ]
+webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
 
 webkit.org/b/124414 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
@@ -1917,7 +1918,7 @@ webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
 webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
 
-webkit.org/b/128902 media/media-event-listeners.html [ Failure ]
+webkit.org/b/128902 media/media-event-listeners.html [ Timeout ]
 
 webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure ]
 
