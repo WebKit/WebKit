@@ -1168,7 +1168,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     static NSArray *sliderActions = [[defaultElementActions arrayByAddingObjectsFromArray:[NSArray arrayWithObjects:NSAccessibilityIncrementAction, NSAccessibilityDecrementAction, nil]] retain];
     
     NSArray *actions;
-    if (m_object->actionElement() || m_object->isButton())
+    if (m_object->supportsPressAction())
         actions = actionElementActions;
     else if (m_object->isMenuRelated())
         actions = menuElementActions;

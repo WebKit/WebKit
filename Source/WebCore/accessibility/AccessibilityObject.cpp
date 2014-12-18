@@ -1985,6 +1985,24 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
+static bool nodeHasPresentationRole(Node* node)
+{
+    return nodeHasRole(node, "presentation") || nodeHasRole(node, "none");
+}
+    
+bool AccessibilityObject::supportsPressAction() const
+{
+    if (isButton())
+        return true;
+    
+    Element* actionElement = this->actionElement();
+    if (!actionElement)
+        return false;
+    
+    // [Bug: 133613] Heuristic: If the action element is presentational, we shouldn't expose press as a supported action.
+    return !nodeHasPresentationRole(actionElement);
+}
+
 bool AccessibilityObject::supportsDatetimeAttribute() const
 {
     return hasTagName(insTag) || hasTagName(delTag) || hasTagName(timeTag);

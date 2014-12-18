@@ -691,6 +691,7 @@ public:
     static AccessibilityObject* anchorElementForNode(Node*);
     static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return nullptr; }
+    bool supportsPressAction() const;
     virtual Element* actionElement() const { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
     IntRect pixelSnappedBoundingBoxRect() const { return snappedIntRect(boundingBoxRect()); }

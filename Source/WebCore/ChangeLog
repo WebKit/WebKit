@@ -1,5 +1,26 @@
 2014-12-18  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Heuristic: Avoid exposing an element as clickable if mouse event delegation is handled on an element with any explicit ARIA role, including presentation.
+        https://bugs.webkit.org/show_bug.cgi?id=133613
+
+        Reviewed by Mario Sanchez Prada.
+
+        This adds a heuristic to avoid a problem we have where too many objects that say they respond to press actions for accessibility.
+        It results from people installing click handlers on container nodes and then lots of static text objects are "clickable" in the eyes of VoiceOver.
+
+        What we can do is avoid this determination if the element is presentational.
+
+        Test: platform/mac/accessibility/press-action-for-presentational-descendants.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::nodeHasPresentationRole):
+        (WebCore::AccessibilityObject::supportsPressAction):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityActionNames]):
+
+2014-12-18  Chris Fleizach  <cfleizach@apple.com>
+
         AX: event.target should sometimes be a descendant element on AXPress-triggered mouse clicks
         https://bugs.webkit.org/show_bug.cgi?id=135689
 
