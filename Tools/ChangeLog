@@ -1,3 +1,19 @@
+2014-12-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [EFL] Enable per_test_timeout
+        https://bugs.webkit.org/show_bug.cgi?id=139771
+
+        Reviewed by Csaba Osztrogonác.
+
+        This is needed to make WKTR use either the default port timeout, or the
+        user supplied timeout via the "--time-out-ms" parameter of run-webkit-tests.
+        Otherwise WTR will use the default (30 seconds after r177363 and r177471).
+
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.supports_per_test_timeout): Enabled.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.supports_per_test_timeout): Enabled.
+
 2014-12-17  Lucas Forschler  <lforschler@apple.com>
 
         Move Apple buildbot slaves to their new home.

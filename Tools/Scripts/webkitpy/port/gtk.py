@@ -80,6 +80,9 @@ class GtkPort(Port):
             return XorgDriver
         return XvfbDriver
 
+    def supports_per_test_timeout(self):
+        return True
+
     def default_timeout_ms(self):
         # Starting an application under Valgrind takes a lot longer than normal
         # so increase the timeout (empirically 10x is enough to avoid timeouts).
