@@ -61,6 +61,15 @@ static const char FeatureCounterPageCacheFailureSameLoadKey[] = "com.apple.WebKi
 static const char FeatureCounterPageCacheFailureKey[] = "com.apple.WebKit.pageCache.failure";
 static const char FeatureCounterPageCacheSuccessKey[] = "com.apple.WebKit.pageCache.success";
 
+// Cached resources revalidation.
+static const char FeatureCounterCachedResourceRevalidationSuccessKey[] = "com.apple.WebKit.cachedResourceRevalidation.success";
+static const char FeatureCounterCachedResourceRevalidationFailureKey[] = "com.apple.WebKit.cachedResourceRevalidation.failure";
+static const char FeatureCounterCachedResourceRevalidationReasonReloadKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.reload";
+static const char FeatureCounterCachedResourceRevalidationReasonNoCacheKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.noCache";
+static const char FeatureCounterCachedResourceRevalidationReasonNoStoreKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.noStore";
+static const char FeatureCounterCachedResourceRevalidationReasonMustRevalidateIsExpiredKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.mustRevalidateIsExpired";
+static const char FeatureCounterCachedResourceRevalidationReasonIsExpiredKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.isExpired";
+
 } // namespace WebCore
 
 #endif // FeatureCounterKeys_h
