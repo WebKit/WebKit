@@ -1,5 +1,17 @@
 2014-12-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge build fix for r177375.
+
+    2014-12-16  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix after r177375; explicitly cast to NSUInteger.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions):
+            (WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions):
+
+2014-12-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge patch for r177375.
 
     2014-12-16  Jer Noble  <jer.noble@apple.com>

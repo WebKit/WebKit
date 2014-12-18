@@ -684,7 +684,7 @@ void WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions(const Vecto
     dispatch_async(dispatch_get_main_queue(), [webOptions, strongThis, selectedIndex] {
         strongThis->playerController().audioMediaSelectionOptions = webOptions.get();
         if (selectedIndex < [webOptions count])
-            strongThis->playerController().currentAudioMediaSelectionOption = [webOptions objectAtIndex:selectedIndex];
+            strongThis->playerController().currentAudioMediaSelectionOption = [webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)];
     });
 }
 
@@ -696,7 +696,7 @@ void WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions(const Vec
     dispatch_async(dispatch_get_main_queue(), [webOptions, strongThis, selectedIndex] {
         strongThis->playerController().legibleMediaSelectionOptions = webOptions.get();
         if (selectedIndex < [webOptions count])
-            strongThis->playerController().currentLegibleMediaSelectionOption = [webOptions objectAtIndex:selectedIndex];
+            strongThis->playerController().currentLegibleMediaSelectionOption = [webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)];
     });
 }
 
