@@ -1,5 +1,22 @@
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177473. rdar://problem/19286550
+
+    2014-12-17  Beth Dakin  <bdakin@apple.com>
+
+            Page previews are sometimes sized much smaller than it seems they should be
+            https://bugs.webkit.org/show_bug.cgi?id=139754
+            -and corresponding-
+            rdar://problem/19286550        
+
+            Reviewed by Tim Horton.
+
+            Increase the minimum size and add in a missing else!!
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _preferredPopoverSizeWithPreviewPadding:]):
+
+2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177427. rdar://problem/19237945
 
     2014-12-16  Timothy Horton  <timothy_horton@apple.com>
