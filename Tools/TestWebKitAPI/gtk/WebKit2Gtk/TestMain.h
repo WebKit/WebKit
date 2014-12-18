@@ -107,10 +107,24 @@ public:
         g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(objectFinalized), this);
     }
 
-    static CString getResourcesDir()
+
+    enum ResourcesDir {
+        WebKit2GTKResources,
+        WebKit2Resources,
+    };
+
+    static CString getResourcesDir(ResourcesDir resourcesDir = WebKit2GTKResources)
     {
-        GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", nullptr));
-        return resourcesDir.get();
+        switch (resourcesDir) {
+        case WebKit2GTKResources: {
+            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", nullptr));
+            return resourcesDir.get();
+        }
+        case WebKit2Resources: {
+            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2", nullptr));
+            return resourcesDir.get();
+        }
+        }
     }
 
     void addLogFatalFlag(unsigned flag)

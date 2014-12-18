@@ -186,6 +186,11 @@ private:
         webkitWebViewRunAsModal(m_webView);
     }
 
+    virtual void isPlayingAudioDidChange(WebPageProxy& page) override
+    {
+        webkitWebViewIsPlayingAudioChanged(m_webView);
+    }
+
     WebKitWebView* m_webView;
 };
 

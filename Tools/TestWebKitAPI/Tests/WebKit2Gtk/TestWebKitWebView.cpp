@@ -26,6 +26,23 @@
 #include <glib/gstdio.h>
 #include <wtf/gobject/GRefPtr.h>
 
+class IsPlayingAudioWebViewTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(IsPlayingAudioWebViewTest);
+
+    static void isPlayingAudioChanged(GObject*, GParamSpec*, IsPlayingAudioWebViewTest* test)
+    {
+        g_signal_handlers_disconnect_by_func(test->m_webView, reinterpret_cast<void*>(isPlayingAudioChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilIsPlayingAudioChanged()
+    {
+        g_signal_connect(m_webView, "notify::is-playing-audio", G_CALLBACK(isPlayingAudioChanged), this);
+        g_main_loop_run(m_mainLoop);
+    }
+};
+
 static WebKitTestServer* gServer;
 
 static void testWebViewWebContext(WebViewTest* test, gconstpointer)
@@ -702,6 +719,31 @@ static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer
     g_assert(test->m_event == NotificationWebViewTest::Cancelled);
 }
 
+static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpointer)
+{
+    // The web view must be realized for the video to start playback and
+    // trigger changes in WebKitWebView::is-playing-audio.
+    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+
+    // Initially, web views should always report no audio being played.
+    g_assert(!webkit_web_view_is_playing_audio(test->m_webView));
+
+    GUniquePtr<char> resourcePath(g_build_filename(Test::getResourcesDir(Test::WebKit2Resources).data(), "file-with-video.html", nullptr));
+    GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.get(), nullptr, nullptr));
+    webkit_web_view_load_uri(test->m_webView, resourceURL.get());
+    test->waitUntilLoadFinished();
+    g_assert(!webkit_web_view_is_playing_audio(test->m_webView));
+
+    webkit_web_view_run_javascript(test->m_webView, "playVideo();", nullptr, nullptr, nullptr);
+    test->waitUntilIsPlayingAudioChanged();
+    g_assert(webkit_web_view_is_playing_audio(test->m_webView));
+
+    // Pause the video, and check again.
+    webkit_web_view_run_javascript(test->m_webView, "document.getElementById('test-video').pause();", nullptr, nullptr, nullptr);
+    test->waitUntilIsPlayingAudioChanged();
+    g_assert(!webkit_web_view_is_playing_audio(test->m_webView));
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -733,6 +775,7 @@ void beforeAll()
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
+    IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
 }
 
 void afterAll()

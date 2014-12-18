@@ -148,7 +148,8 @@ enum {
     PROP_FAVICON,
     PROP_URI,
     PROP_ZOOM_LEVEL,
-    PROP_IS_LOADING
+    PROP_IS_LOADING,
+    PROP_IS_PLAYING_AUDIO
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -228,6 +229,11 @@ static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
 
     webView->priv->isLoading = isLoading;
     g_object_notify(G_OBJECT(webView), "is-loading");
+}
+
+void webkitWebViewIsPlayingAudioChanged(WebKitWebView* webView)
+{
+    g_object_notify(G_OBJECT(webView), "is-playing-audio");
 }
 
 class PageLoadStateObserver final : public PageLoadState::Observer {
@@ -721,6 +727,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_IS_LOADING:
         g_value_set_boolean(value, webkit_web_view_is_loading(webView));
         break;
+    case PROP_IS_PLAYING_AUDIO:
+        g_value_set_boolean(value, webkit_web_view_is_playing_audio(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -928,6 +937,26 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             "is-loading",
             _("Is Loading"),
             _("Whether the view is loading a page"),
+            FALSE,
+            WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView::is-playing-audio:
+     *
+     * Whether the #WebKitWebView is currently playing audio from a page.
+     * This property becomes %TRUE as soon as web content starts playing any
+     * kind of audio. When a page is no longer playing any kind of sound,
+     * the property is set back to %FALSE.
+     *
+     * Since: 2.8
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_IS_PLAYING_AUDIO,
+        g_param_spec_boolean(
+            "is-playing-audio",
+            "Is Playing Audio",
+            _("Whether the view is playing audio"),
             FALSE,
             WEBKIT_PARAM_READABLE));
 
@@ -2451,6 +2480,27 @@ gboolean webkit_web_view_is_loading(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return webView->priv->isLoading;
+}
+
+/**
+ * webkit_web_view_is_playing_audio:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the value of the #WebKitWebView::is-playing-audio property.
+ * You can monitor when a page in a #WebKitWebView is playing audio by
+ * connecting to the notify::is-playing-audio signal of @web_view. This
+ * is useful when the application wants to provide visual feedback when a
+ * page is producing sound.
+ *
+ * Returns: %TRUE if a page in @web_view is playing audio or %FALSE otherwise.
+ *
+ * Since: 2.8
+ */
+gboolean webkit_web_view_is_playing_audio(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return getPage(webView)->isPlayingAudio();
 }
 
 /**

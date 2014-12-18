@@ -60,5 +60,6 @@ void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentE
 bool webkitWebViewEmitShowNotification(WebKitWebView*, WebKitNotification*);
 void webkitWebViewEmitCloseNotification(WebKitWebView*, WebKitNotification*);
 void webkitWebViewWebProcessCrashed(WebKitWebView*);
+void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

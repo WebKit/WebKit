@@ -1,3 +1,31 @@
+2014-12-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Implement webkit_web_view_is_playing_audio()
+        https://bugs.webkit.org/show_bug.cgi?id=138918
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implements webkit_web_view_is_playing_audio(), and overrides
+        UIClient::isPlayingAudioDidChange() to be able to emit change
+        notification signals for the new WebKitWebView::is-playing-audio
+        property.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (isPlayingAudioDidChange): Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewIsPlayingAudioChanged): Helper function to emit the
+        emit the notify::is-playing-audio signal when needed.
+        (webkitWebViewGetProperty): Handle the WebKitWebView::is-playing-audio
+        property.
+        (webkit_web_view_class_init): Install the
+        WebKitWebView::is-playing-audio property.
+        (webkit_web_view_is_playing_audio): Added.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add
+        webkit_web_view_is_playing_audio() to the list of public API
+        functions.
+
 2014-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow to build with ENABLE_NETWORK_CACHE

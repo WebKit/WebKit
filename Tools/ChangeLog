@@ -1,3 +1,28 @@
+2014-12-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Implement webkit_web_view_is_playing_audio()
+        https://bugs.webkit.org/show_bug.cgi?id=138918
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add test case case for webkit_web_view_is_playing_audio() and the
+        WebKitWebView::is-playing-audio property.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (urlForResource): Utility function to get URLs pointing to resources
+        under the Tools/TestWebKitAPI/Tests/WebKit2/ directory.
+        (testWebViewIsPlayingAudio): Added.
+        (beforeAll):
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        (getResourcesDir): Allow passing a flag to choose from the WebKit2 GTK
+        API tests resources directory, or the WebKit2 C API tests resources
+        directory. The default value of the flag is to use the WebKit2 GTK
+        one, to avoid having to change existing tests.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (isPlayingAudioChanged): Added.
+        (WebViewTest::waitUntilIsPlayingAudioChanged): Added.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2014-12-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [EFL] Enable per_test_timeout
