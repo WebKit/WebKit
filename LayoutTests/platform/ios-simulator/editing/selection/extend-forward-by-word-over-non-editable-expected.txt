@@ -1,8 +1,0 @@
-FAIL for LTR, selection is "baz " but should be "baz"
-FAIL for RTL, selection is "שוּרה " but should be "שוּרה"
-PASS for LTR-multi
-PASS for RTL-multi
-foo bar baz qux quux
-שוּרה שוּרה שוּרה שוּרה שוּרה
-foo bar baz baz baz qux quux
-שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה

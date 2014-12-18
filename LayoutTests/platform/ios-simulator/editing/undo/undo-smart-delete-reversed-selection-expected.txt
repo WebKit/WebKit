@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 10: TypeError: null is not an object (evaluating 'node.data')
-FAIL: Timed out waiting for notifyDone to be called
-Tests: 
-Double-click the green "a" and drag backwards to select "bar baz" with word granularity. Delete, then undo the delete. The space that got smart deleted should now be selected and the anchor of the selection should be at the end of the selection.
-
-foo bar bz biz
-

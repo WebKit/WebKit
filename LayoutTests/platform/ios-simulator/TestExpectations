@@ -154,6 +154,29 @@ fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/prevent-drag-to-navigate.html
 fast/events/standalone-image-drag-to-editable.html
 fast/files/local-file-drag-security.html
+editing/pasteboard/data-transfer-items-drag-drop-entry.html
+editing/pasteboard/data-transfer-items-drag-drop-file.html
+editing/pasteboard/data-transfer-items-drag-drop-string.html
+editing/pasteboard/data-transfer-items-image-png.html
+editing/pasteboard/data-transfer-items.html
+editing/pasteboard/drag-and-drop-image-contenteditable.html
+editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
+editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
+editing/pasteboard/file-drag-to-editable.html
+editing/pasteboard/can-read-in-dragstart-event.html
+editing/pasteboard/drag-drop-input-textarea.html
+editing/pasteboard/drag-drop-list.html
+editing/pasteboard/drag-drop-paragraph-crasher.html
+editing/pasteboard/drag-drop-url-text.html
+editing/pasteboard/drag-drop-url-with-style.html
+editing/pasteboard/drag-files-to-editable-element.html
+editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/drag-list-item.html
+editing/pasteboard/drop-file-svg.html
+editing/pasteboard/drop-inputtext-acquires-style.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-events.html
+editing/pasteboard/dataTransfer-setData-getData.html
 
 ###
 # Known failures
@@ -2506,7 +2529,6 @@ fast/events/message-port-inactive-document.html
 # Temporarily skip all others tests
 # We'll un-skip each directory as we land updated/new expected results
 ##
-editing
 platform
 
 ###

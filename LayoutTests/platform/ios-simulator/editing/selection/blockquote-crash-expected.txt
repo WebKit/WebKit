@@ -1,8 +1,0 @@
-
-        <div>This test should not crash</div>
-        <blockquote type="cite" id="qt">triple click me! then hit enter
-            <blockquote type="cite"><div style="min-height: 14px;"></div></blockquote>
-        </blockquote>
-    
-
-

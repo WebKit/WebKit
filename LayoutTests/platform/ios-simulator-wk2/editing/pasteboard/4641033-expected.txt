@@ -1,0 +1,36 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 781x39
+          text run at (0,0) width 673: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
+          text run at (672,0) width 109: "You should see a"
+          text run at (0,20) width 253: "picture of abe followed by a select box."
+      RenderBlock {DIV} at (0,56) size 784x111
+        RenderImage {IMG} at (0,0) size 76x103
+        RenderInline {SPAN} at (0,0) size 4x19
+          RenderText {#text} at (76,88) size 4x19
+            text run at (76,88) width 4: " "
+        RenderMenuList {SELECT} at (82,89) size 51x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 39x14
+            RenderText at (0,0) size 7x14
+              text run at (0,0) width 7: "1"
+      RenderBlock (anonymous) at (0,167) size 784x111
+        RenderImage {IMG} at (0,0) size 76x103
+        RenderText {#text} at (76,88) size 4x19
+          text run at (76,88) width 4: " "
+        RenderMenuList {SELECT} at (82,89) size 51x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderBlock (anonymous) at (6,3) size 39x14
+            RenderText at (0,0) size 7x14
+              text run at (0,0) width 7: "1"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+caret: position 1 of child 2 {SELECT} of child 2 {DIV} of body

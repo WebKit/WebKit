@@ -1,6 +1,0 @@
-
-        <div id="dv" contenteditable=""><span style="background-color: lightgrey">lightgrey background <font color="blue">blue font color over lightgrey background</font></span> 
-</div>
-    
-
-

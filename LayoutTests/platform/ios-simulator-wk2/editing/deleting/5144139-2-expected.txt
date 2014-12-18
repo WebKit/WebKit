@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 718x39
+          text run at (0,0) width 711: "This tests to see that deleting a selection that starts just before a table and ends inside the table does not insert a"
+          text run at (0,20) width 190: "placeholder br unnecessarily. "
+          text run at (189,20) width 255: "You should see two ToDos, one empty. "
+          text run at (443,20) width 275: "The caret should be just before the second."
+      RenderBlock {DIV} at (0,56) size 784x58
+        RenderTable {TABLE} at (0,0) size 135x29
+          RenderTableSection {TBODY} at (0,0) size 135x29
+            RenderTableRow {TR} at (0,2) size 135x25
+              RenderTableCell {TD} at (2,3) size 18x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 16x19
+                  text run at (1,1) width 16: "\x{21D2}"
+              RenderTableCell {TD} at (22,3) size 93x22 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 91x19
+                  text run at (1,1) width 91: "ToDo Content"
+              RenderTableCell {TD} at (117,2) size 16x25 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (1,4) size 14x19
+                  text run at (1,4) width 14: "\x{21E3}"
+        RenderTable {TABLE} at (0,29) size 44x29
+          RenderTableSection {TBODY} at (0,0) size 44x29
+            RenderTableRow {TR} at (0,2) size 44x25
+              RenderTableCell {TD} at (2,3) size 18x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 16x19
+                  text run at (1,1) width 16: "\x{21D2}"
+              RenderTableCell {TD} at (22,3) size 2x22 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (26,2) size 16x25 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (1,4) size 14x19
+                  text run at (1,4) width 14: "\x{21E3}"
+caret: position 0 of child 3 {TABLE} of child 2 {DIV} of body

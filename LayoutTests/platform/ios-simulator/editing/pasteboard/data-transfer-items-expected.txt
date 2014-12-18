@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 40: TypeError: undefined is not an object (evaluating 'items.add')
-CONSOLE MESSAGE: line 72: TypeError: undefined is not an object (evaluating 'items[0]')
-CONSOLE MESSAGE: line 105: TypeError: undefined is not an object (evaluating 'savedDataTransferItems.length')
-FAIL: Timed out waiting for notifyDone to be called
-This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.
-Populating DataTransferItems...
-Testing if DataTransferItems can be accessed outside an event handler...
-

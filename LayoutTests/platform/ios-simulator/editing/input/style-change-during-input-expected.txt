@@ -1,7 +1,0 @@
-
-The text field should accept typed characters.
-FAIL window.target.value should be hello. Was .
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,2 +1,0 @@
-
-FAIL: could not insert text.

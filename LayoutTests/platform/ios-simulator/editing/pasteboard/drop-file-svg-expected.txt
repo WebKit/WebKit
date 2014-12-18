@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 16: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(["fakefile"])')
-A crash reproducing test using DRT. The test passes if it doesn't crash.
-
-

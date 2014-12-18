@@ -1,7 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-Punctuation marks should be treated as whitespace: spelling should ignore them. To test manually, type 'wellcome!' and select 'wellcome!'. The test succeeds when 'wellcome' has spelling marker.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-welllcome!

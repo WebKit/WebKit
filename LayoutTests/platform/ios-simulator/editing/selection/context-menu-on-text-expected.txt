@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 24: TypeError: undefined is not an object (evaluating 'items.length')
-This test checks that the context menu is shown over a simple non-editable text.
-
-Lorem ipsum
-FAIL

@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
-Pressing enter on the last character of <li> element in Shadow DOM was triggering assertion, becasue modifying Shadow DOM removes the renderer in Shadow DOM and desendant of shadow host.
-
-This tests confirms it won't happen any more.
-
-LIST 1
-LIST 2
-LIST 3

@@ -1,7 +1,0 @@
-This test ensures copying and paste respects !important in style rules. To test manually, copy and paste the content in the first box to the second box. All text should remain in blue and should remain unboldened.
-
-hello world
-
-WebKit
-
-

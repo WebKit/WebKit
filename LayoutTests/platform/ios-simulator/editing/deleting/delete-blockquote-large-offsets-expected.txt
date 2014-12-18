@@ -1,4 +1,0 @@
-This tests setting caret inside a blockquote with a large offset and running execCommand('Delete'). WebKit should not crash and you should see PASS below:
-
-FAIL: expected empty line but got <blockquote type="cite" id="blockquote" style="font-size: 0px; -webkit-min-logical-height: 4px;">
-

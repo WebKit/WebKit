@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 3: HierarchyRequestError: DOM Exception 3: A Node was inserted somewhere it doesn't belong.
-When selecting from a child of shadow host to an element in Shadow DOM, a crash should not be caused. This is because the start position of Selection comes after the end position of Selection.
-
-before host drag from here after host
-FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-
-TEST COMPLETE
-

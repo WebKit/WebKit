@@ -1,9 +1,0 @@
-Tests: 
-Copying and pasting content inside of a PRE tag. This test was created after fixing 3918056.
-Expected Results: 
-The PRE tag and the formatting of the text inside of the PRE should be maintained. Should see this content in the red box below:
-foo
-bar
-foo bar
-execCutCommand: <div id="test" class="editing"> <pre><br></pre> </div>
-execPasteCommand: <div id="test" class="editing"> <pre><font face="Times" size="3"><span style="white-space: normal; -webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">foo bar</span></font></pre> </div>

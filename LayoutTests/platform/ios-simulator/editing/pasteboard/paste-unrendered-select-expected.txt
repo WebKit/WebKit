@@ -1,4 +1,0 @@
-This tests copy/paste of an unrendered select.  The options inside of it should not be pasted.
-| <span>
-|   style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
-|   "Hello World<#selection-caret>"

@@ -1,7 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-Spelling markers should remain for double-clicked misspellings. To test manually, type 'wellcome home.', double-click on 'wellcome'. The test succeeds when 'wellcome' remains spelling marker.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-wellcome home.

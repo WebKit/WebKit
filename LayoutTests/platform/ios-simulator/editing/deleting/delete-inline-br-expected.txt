@@ -1,7 +1,0 @@
-Testcase for bug 120006: <br> does not get deleted when inlined after some non-textual content. To manually verify this issue, place the caret at the start of the second line and then do a back-delete (backspace). The two lines should then be merged and the caret should get placed after the text control.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-FAIL caretRect.left should be 176. Was 0.
-FAIL caretRect.top should be 10. Was 0.
-

@@ -1,9 +1,0 @@
-The following test does a copy and a paste from one heading to another heading. The test is successful if there is no crash.
-
-Destination should say Copy This Text:
-| <span>
-|   id="source"
-|   style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);"
-|   <font>
-|     size="3"
-|     "Copy This Text<#selection-caret>"

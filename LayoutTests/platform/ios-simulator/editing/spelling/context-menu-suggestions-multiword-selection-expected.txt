@@ -1,7 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-Spell check sugestions should not be pupulated when user selects multiple words that are not a single misspelling. To test manually, type 'wellcome home.', select 'wellcome home', and context-click on the selection. The test suceeds when the context menu has no spell check suggestions.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-wellcome home.

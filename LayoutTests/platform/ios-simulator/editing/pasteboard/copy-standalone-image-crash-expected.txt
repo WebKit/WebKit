@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 14: TypeError: undefined is not an object (evaluating 'actionitems.length')
-FAIL: Timed out waiting for notifyDone to be called
-This is an automated test case for bug 31721
-If you wish to test manually, mouseover to image, activate context menu, wait for the image to disappear and then click copy image.
-There should be no crash.

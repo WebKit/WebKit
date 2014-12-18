@@ -1,3 +1,10 @@
+2014-12-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Updated expected results for LayoutTests/editing
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        [...]
+
 2014-12-18  Alexey Proskuryakov  <ap@apple.com>
 
         Update flaky media test expectations to what bots see now - mostly updating for

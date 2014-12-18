@@ -1,9 +1,0 @@
-  
-This test checks that we can set and paste X11-style selections.
-
-FAIL confirmedMarkup should be TestTest. Was Test.
-FAIL confirmedMarkup should be SayHello. Was Say.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

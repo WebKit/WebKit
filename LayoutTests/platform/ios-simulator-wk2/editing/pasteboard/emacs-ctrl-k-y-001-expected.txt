@@ -1,0 +1,45 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+CONSOLE MESSAGE: line 27: TypeError: undefined is not a function (evaluating 'eventSender.clearKillRing()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x60
+          RenderText {#text} at (0,1) size 66x28
+            text run at (0,1) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 343x28
+            text run at (0,31) width 343: "Multiple ctrl-k presses then a ctrl-y."
+        RenderBlock {DIV} at (14,90) size 756x120
+          RenderBlock (anonymous) at (0,0) size 756x30
+            RenderText {#text} at (0,1) size 190x28
+              text run at (0,1) width 190: "Expected Results: "
+            RenderBR {BR} at (189,23) size 1x0
+          RenderBlock {DIV} at (0,30) size 756x90
+            RenderBlock (anonymous) at (0,0) size 756x30
+              RenderText {#text} at (0,1) size 131x28
+                text run at (0,1) width 131: "one two three"
+            RenderBlock {DIV} at (0,30) size 756x30
+              RenderText {#text} at (0,1) size 118x28
+                text run at (0,1) width 118: "four five six"
+            RenderBlock {DIV} at (0,60) size 756x30
+              RenderText {#text} at (0,1) size 156x28
+                text run at (0,1) width 156: "seven eight nine"
+      RenderBlock {DIV} at (0,248) size 784x94
+        RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x30
+            RenderText {#text} at (0,1) size 131x28
+              text run at (0,1) width 131: "one two three"
+          RenderBlock {DIV} at (2,32) size 780x30
+            RenderText {#text} at (0,1) size 118x28
+              text run at (0,1) width 118: "four five six"
+          RenderBlock {DIV} at (2,62) size 780x30
+            RenderText {#text} at (0,1) size 156x28
+              text run at (0,1) width 156: "seven eight nine"
+caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

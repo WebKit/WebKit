@@ -1,3 +1,0 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:(null) affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-This tests for a bug where text copied with Select All + Copy would lose its color.
-| <br>

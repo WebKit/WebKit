@@ -1,4 +1,0 @@
-This test copies the content of an iframe and pastes it in an editable area and verifies that no script, handlers or javascript urls are copied.
-foo bar
-<span style="-webkit-text-size-adjust: auto; background-color: rgba(255, 255, 255, 0);">foo bar</span>
-

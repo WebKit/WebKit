@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 14: ReferenceError: Can't find variable: textInputController
-This tests for a bug where moving the caret left towards a non-editable pocket of an editable region would make the caret disappear. The caret should be just before the 'B' in "Bob".
-Bob ; Sally
