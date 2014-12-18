@@ -242,59 +242,46 @@ function shouldBe(_a, _b, quiet)
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
-// Execute condition every 5 milliseconds until it succeed or failureTime is reached.
-// completionHandler is executed on success, failureHandler is executed on timeout.
-function _waitForCondition(condition, failureTime, completionHandler, failureHandler)
+// Execute condition every 5 milliseconds until it succeeds.
+function _waitForCondition(condition, completionHandler)
 {
-  if (condition()) {
+  if (condition())
     completionHandler();
-  } else if (Date.now() > failureTime) {
-    failureHandler();
-  } else {
-    setTimeout(_waitForCondition, 5, condition, failureTime, completionHandler, failureHandler);
-  }
+  else
+    setTimeout(_waitForCondition, 5, condition, completionHandler);
 }
 
-function shouldBecomeEqual(_a, _b, _completionHandler, _timeout)
+function shouldBecomeEqual(_a, _b, completionHandler)
 {
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBecomeEqual() expects string arguments");
 
-  if (_timeout === undefined)
-    _timeout = 500;
-
-  var _bv;
-  var _condition = function() {
-    var _exception;
+  var condition = function() {
+    var exception;
     var _av;
     try {
       _av = eval(_a);
     } catch (e) {
-        _exception = e;
+      exception = e;
     }
-    _bv = eval(_b);
-    if (_exception)
-      testFailed(_a + " should become " + _bv + ". Threw exception " + _exception);
+    var _bv = eval(_b);
+    if (exception)
+      testFailed(_a + " should become " + _bv + ". Threw exception " + exception);
     if (isResultCorrect(_av, _bv)) {
       testPassed(_a + " became " + _b);
       return true;
     }
     return false;
   };
-  var _failureTime = Date.now() + _timeout;
-  var _failureHandler = function () {
-    testFailed(_a + " failed to change to " + _bv + " in " + (_timeout / 1000) + " seconds.");
-    _completionHandler();
-  };
-  _waitForCondition(_condition, _failureTime, _completionHandler, _failureHandler);
+  _waitForCondition(condition, completionHandler);
 }
 
-function shouldBecomeEqualToString(value, reference, completionHandler, timeout)
+function shouldBecomeEqualToString(value, reference, completionHandler)
 {
   if (typeof value !== "string" || typeof reference !== "string")
     debug("WARN: shouldBecomeEqualToString() expects string arguments");
   var unevaledString = JSON.stringify(reference);
-  shouldBecomeEqual(value, unevaledString, completionHandler, timeout);
+  shouldBecomeEqual(value, unevaledString, completionHandler);
 }
 
 function shouldBeType(_a, _type) {
@@ -376,37 +363,29 @@ function shouldNotBe(_a, _b, _quiet)
     testFailed(_a + " should not be " + _bv + ".");
 }
 
-function shouldBecomeDifferent(_a, _b, _completionHandler, _timeout)
+function shouldBecomeDifferent(_a, _b, completionHandler)
 {
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBecomeDifferent() expects string arguments");
-  if (_timeout === undefined)
-    _timeout = 500;
 
-  var _bv;
-  var _condition = function() {
-    var _exception;
+  var condition = function() {
+    var exception;
     var _av;
     try {
       _av = eval(_a);
     } catch (e) {
-      _exception = e;
+      exception = e;
     }
-    _bv = eval(_b);
-    if (_exception)
-      testFailed(_a + " should became not equal to " + _bv + ". Threw exception " + _exception);
+    var _bv = eval(_b);
+    if (exception)
+      testFailed(_a + " should became not equal to " + _bv + ". Threw exception " + exception);
     if (!isResultCorrect(_av, _bv)) {
       testPassed(_a + " became different from " + _b);
       return true;
     }
     return false;
   };
-  var _failureTime = Date.now() + _timeout;
-  var _failureHandler = function () {
-    testFailed(_a + " did not become different from " + _bv + " in " + (_timeout / 1000) + " seconds.");
-    _completionHandler();
-  };
-  _waitForCondition(_condition, _failureTime, _completionHandler, _failureHandler);
+  _waitForCondition(condition, completionHandler);
 }
 
 function shouldBeTrue(a, quiet) { shouldBe(a, "true", quiet); }

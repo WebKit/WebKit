@@ -1,3 +1,26 @@
+2014-12-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Remove timeout from shouldBecome* functions in js-test.js
+        https://bugs.webkit.org/show_bug.cgi?id=139767
+
+        Reviewed by Darin Adler.
+
+        r156678 has removed this timeout from shouldBecome* in js-test-pre.js.
+        Get rid of it from js-test.js as well to make shouldBecome* functions sync
+        between js-test.js and js-test-pre.js
+
+        Additionally, sync minor coding style changes between them.
+
+        * resources/js-test.js:
+        (_waitForCondition):
+        (.condition):
+        (shouldBecomeEqual):
+        (shouldBecomeEqualToString):
+        (shouldBecomeDifferent):
+        (._condition): Deleted.
+        (._failureHandler): Deleted.
+
+
 2014-12-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix test expectations after r177363
