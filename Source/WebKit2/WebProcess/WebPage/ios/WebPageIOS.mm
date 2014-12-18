@@ -889,7 +889,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         switch (wkGestureState) {
         case GestureRecognizerState::Began:
             range = wordRangeFromPosition(position);
-            m_currentWordRange = range ? Range::create(*frame.document(), range->startPosition(), range->endPosition()) : nullptr;
+            m_currentWordRange = range ? RefPtr<Range>(Range::create(*frame.document(), range->startPosition(), range->endPosition())) : nullptr;
             break;
         case GestureRecognizerState::Changed:
             if (!m_currentWordRange)
@@ -1533,7 +1533,7 @@ void WebPage::selectWordBackward()
     VisiblePosition position = frame.selection().selection().start();
     VisiblePosition startPosition = positionOfNextBoundaryOfGranularity(position, WordGranularity, DirectionBackward);
     if (startPosition.isNotNull() && startPosition != position)
-        frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).get(), position.affinity(), true);
+        frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).ptr(), position.affinity(), true);
 }
 
 void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
@@ -1551,7 +1551,7 @@ void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
             break;
     }
     if (position.isNotNull() && startPosition != position)
-        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).get(), position.affinity(), true);
+        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
@@ -1568,7 +1568,7 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, uint64_t cal
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
     
     if (position.isNotNull())
-        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).get(), position.affinity(), true);
+        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
@@ -1580,7 +1580,7 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
     if (position.isNotNull()) {
         position = positionOfNextBoundaryOfGranularity(position, static_cast<WebCore::TextGranularity>(granularity), static_cast<SelectionDirection>(direction));
         if (position.isNotNull())
-            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).get(), UPSTREAM, true);
+            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), UPSTREAM, true);
     }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
@@ -1691,7 +1691,7 @@ void WebPage::requestDictationContext(uint64_t callbackID)
             lastPosition = currentPosition;
         }
         if (lastPosition.isNotNull() && lastPosition != startPosition)
-            contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), lastPosition, startPosition).get());
+            contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), lastPosition, startPosition).ptr());
     }
 
     String contextAfter;
@@ -1705,7 +1705,7 @@ void WebPage::requestDictationContext(uint64_t callbackID)
             lastPosition = currentPosition;
         }
         if (lastPosition.isNotNull() && lastPosition != endPosition)
-            contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, lastPosition).get());
+            contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, lastPosition).ptr());
     }
 
     send(Messages::WebPageProxy::DictationContextCallback(selectedText, contextBefore, contextAfter, callbackID));
@@ -1905,14 +1905,14 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
                 previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(currentPosition, WordGranularity, DirectionBackward));
                 if (previousPosition.isNull())
                     break;
-                String currentWord = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), previousPosition, currentPosition).get());
+                String currentWord = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), previousPosition, currentPosition).ptr());
                 totalContextLength += currentWord.length();
                 if (totalContextLength >= maxContextLength)
                     break;
                 currentPosition = previousPosition;
             }
             if (currentPosition.isNotNull() && currentPosition != startPosition) {
-                contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), currentPosition, startPosition).get());
+                contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), currentPosition, startPosition).ptr());
                 if (atBoundaryOfGranularity(currentPosition, ParagraphGranularity, DirectionBackward))
                     contextBefore = ASCIILiteral("\n ") + contextBefore;
             }
@@ -1923,7 +1923,7 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
             if (!atBoundaryOfGranularity(endPosition, WordGranularity, DirectionForward) && withinTextUnitOfGranularity(endPosition, WordGranularity, DirectionForward))
                 nextPosition = positionOfNextBoundaryOfGranularity(endPosition, WordGranularity, DirectionForward);
             if (nextPosition.isNotNull())
-                contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, nextPosition).get());
+                contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, nextPosition).ptr());
         }
     }
 }

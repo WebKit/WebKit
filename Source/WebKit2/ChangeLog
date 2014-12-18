@@ -1,3 +1,19 @@
+2014-12-18  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the iOS build after <http://trac.webkit.org/changeset/177486>
+        (https://bugs.webkit.org/show_bug.cgi?id=139755)
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture): Wrap return value of Range::create() in RefPtr<Range>()
+        to make the the compiler happy since it wants clauses of the ternary operator to have the same data type
+        and Ref<Range> object does not support nullptr.
+        (WebKit::WebPage::selectWordBackward): Substitute Ref::ptr() for PassRefPtr::get().
+        (WebKit::WebPage::moveSelectionByOffset): Ditto.
+        (WebKit::WebPage::selectPositionAtPoint): Ditto.
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::requestDictationContext): Ditto.
+        (WebKit::computeAutocorrectionContext): Ditto.
+
 2014-12-18  Antti Koivisto  <antti@apple.com>
 
         Remove alwaysUseBaselineOfPrimaryFont setting
