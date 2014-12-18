@@ -336,7 +336,7 @@ webkit.org/b/86623 fast/events/drag-and-drop-fire-drag-dragover.html
 webkit.org/b/86623 fast/events/drag-and-drop.html
 webkit.org/b/86623 fast/events/drag-customData.html
 webkit.org/b/86623 fast/events/drag-dataTransferItemList.html
-webkit.org/b/86623 fast/events/drag-image-filename.html [ Failure ]
+webkit.org/b/86623 fast/events/drag-image-filename.html [ Timeout ]
 webkit.org/b/86623 fast/events/drag-in-frames.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-link.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-parent-node.html [ Failure ]
@@ -368,7 +368,7 @@ webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
 # Needs baselines
 editing/inserting/before-after-input-element.html [ Missing ]
 editing/selection/contains-boundaries.html [ Missing ]
-editing/selection/designmode-no-caret.html [ Missing ]
+editing/selection/designmode-no-caret.html [ Timeout ]
 editing/selection/replaced-boundaries-3.html [ Missing ]
 editing/selection/selection-background.html [ Missing ]
 editing/style/5065910.html [ Missing ]
@@ -459,8 +459,8 @@ webkit.org/b/92726 fast/dom/NavigatorContentUtils/unregister-protocol-handler.ht
 # Crashes on plugin test, also blocked by 108077
 webkit.org/b/98747 plugins/document-open.html [ Crash Failure ]
 
-webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
-webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
+webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Timeout ]
+webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Timeout ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
 webkit.org/b/129199 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
@@ -773,7 +773,7 @@ webkit.org/b/124925 fast/css/hover-display-block-none.html [ Failure Pass ]
 webkit.org/b/124926 fast/events/popup-allowed-from-gesture-initiated-event.html [ Failure Pass ]
 
 # Fail after r139145 on MAC, EFL, QT, GTK.
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout ]
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
@@ -973,43 +973,43 @@ Bug(EFL) fast/events/touch/gesture
 Bug(EFL) fast/events/touch/page-scaled-touch-gesture-click.html
 
 # EventSender.beginDragWithFiles is not implemented
-webkit.org/b/84333 fast/dom/Window/window-postmessage-clone-frames.html [ Failure ]
-webkit.org/b/84333 fast/dom/Window/window-postmessage-clone.html [ Failure ]
+webkit.org/b/84333 fast/dom/Window/window-postmessage-clone-frames.html [ Timeout ]
+webkit.org/b/84333 fast/dom/Window/window-postmessage-clone.html [ Timeout ]
 webkit.org/b/84333 fast/events/drag-file-crash.html [ Failure ]
-webkit.org/b/84333 fast/events/drag-to-navigate.html [ Failure ]
-webkit.org/b/84333 fast/events/drop-handler-should-not-stop-navigate.html [ Failure ]
-webkit.org/b/84333 fast/events/drop-with-file-paths.html [ Failure ]
+webkit.org/b/84333 fast/events/drag-to-navigate.html [ Timeout ]
+webkit.org/b/84333 fast/events/drop-handler-should-not-stop-navigate.html [ Timeout ]
+webkit.org/b/84333 fast/events/drop-with-file-paths.html [ Timeout ]
 webkit.org/b/84333 fast/events/dropzone-004.html [ Failure ]
-webkit.org/b/84333 fast/events/file-input-hidden-in-ondrop.html [ Failure ]
-webkit.org/b/84333 fast/events/input-element-display-none-in-dragleave-crash.html [ Failure ]
+webkit.org/b/84333 fast/events/file-input-hidden-in-ondrop.html [ Timeout ]
+webkit.org/b/84333 fast/events/input-element-display-none-in-dragleave-crash.html [ Timeout ]
 webkit.org/b/84333 fast/events/prevent-drag-to-navigate.html [ Failure ]
-webkit.org/b/84333 fast/files/apply-blob-url-to-img.html [ Failure ]
-webkit.org/b/84333 fast/files/apply-blob-url-to-xhr.html [ Failure ]
+webkit.org/b/84333 fast/files/apply-blob-url-to-img.html [ Timeout ]
+webkit.org/b/84333 fast/files/apply-blob-url-to-xhr.html [ Timeout ]
 webkit.org/b/84333 fast/files/file-list-test.html [ Failure ]
-webkit.org/b/84333 fast/files/file-reader-abort.html [ Failure ]
-webkit.org/b/84333 fast/files/file-reader-directory-crash.html [ Failure ]
-webkit.org/b/84333 fast/files/null-origin-string.html [ Failure ]
-webkit.org/b/84333 fast/files/read-blob-async.html [ Failure ]
-webkit.org/b/84333 fast/files/read-file-async.html [ Failure ]
-webkit.org/b/84333 fast/files/workers/worker-apply-blob-url-to-xhr.html [ Failure ]
-webkit.org/b/84333 fast/files/workers/worker-read-blob-async.html [ Failure ]
-webkit.org/b/84333 fast/files/workers/worker-read-blob-sync.html [ Failure ]
-webkit.org/b/84333 fast/files/workers/worker-read-file-async.html [ Failure ]
-webkit.org/b/84333 fast/files/workers/worker-read-file-sync.html [ Failure ]
+webkit.org/b/84333 fast/files/file-reader-abort.html [ Timeout ]
+webkit.org/b/84333 fast/files/file-reader-directory-crash.html [ Timeout ]
+webkit.org/b/84333 fast/files/null-origin-string.html [ Timeout ]
+webkit.org/b/84333 fast/files/read-blob-async.html [ Timeout ]
+webkit.org/b/84333 fast/files/read-file-async.html [ Timeout ]
+webkit.org/b/84333 fast/files/workers/worker-apply-blob-url-to-xhr.html [ Timeout ]
+webkit.org/b/84333 fast/files/workers/worker-read-blob-async.html [ Timeout ]
+webkit.org/b/84333 fast/files/workers/worker-read-blob-sync.html [ Timeout ]
+webkit.org/b/84333 fast/files/workers/worker-read-file-async.html [ Timeout ]
+webkit.org/b/84333 fast/files/workers/worker-read-file-sync.html [ Timeout ]
 webkit.org/b/84333 fast/forms/file/file-input-change-event.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/file-input-reset.html [ ImageOnlyFailure ]
-webkit.org/b/84333 fast/forms/file/get-file-upload.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/input-file-directory-upload.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/input-file-re-render.html [ Missing ]
+webkit.org/b/84333 fast/forms/file/get-file-upload.html [ Timeout ]
+webkit.org/b/84333 fast/forms/file/input-file-directory-upload.html [ Timeout ]
+webkit.org/b/84333 fast/forms/file/input-file-re-render.html [ Timeout ]
 webkit.org/b/84333 fast/forms/file/input-file-write-files.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/recover-file-input-in-unposted-form.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/selected-files-from-history-state.html [ Failure ]
-webkit.org/b/84333 http/tests/local/blob/send-hybrid-blob.html [ Failure ]
+webkit.org/b/84333 fast/forms/file/recover-file-input-in-unposted-form.html [ Timeout ]
+webkit.org/b/84333 fast/forms/file/selected-files-from-history-state.html [ Timeout ]
+webkit.org/b/84333 http/tests/local/blob/send-hybrid-blob.html [ Timeout ]
 webkit.org/b/84333 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/form-data-with-unknown-file-extension.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data-constructed-from-form.html [ Failure ]
+webkit.org/b/84333 http/tests/local/formdata/send-form-data-constructed-from-form.html [ Timeout ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data.html [ Failure ]
-webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-empty-file-filename.html [ Failure ]
+webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-empty-file-filename.html [ Timeout ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-filename.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/upload-events.html [ Failure ]
@@ -1030,7 +1030,7 @@ webkit.org/b/84338 editing/spelling/spellcheck-paste.html [ Skip ]
 webkit.org/b/84338 editing/style/apply-through-end-of-document.html [ Failure ]
 webkit.org/b/84338 editing/style/non-inheritable-styles.html [ Failure ]
 webkit.org/b/84338 editing/style/smoosh-styles-003.html [ Failure ]
-webkit.org/b/84338 fast/events/clipboard-dataTransferItemList.html [ Failure ]
+webkit.org/b/84338 fast/events/clipboard-dataTransferItemList.html [ Timeout ]
 webkit.org/b/84338 fast/forms/input-paste-undo.html [ Failure ]
 webkit.org/b/84338 fast/forms/textarea-paste-newline.html [ Failure ]
 
@@ -1076,7 +1076,7 @@ webkit.org/b/106507 fast/workers/worker-storagequota-query-usage.html
 Bug(EFL) storage/domstorage/localstorage/storagetracker
 
 # JSC does not support setIsolatedWorldSecurityOrigin.
-webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Failure ]
+webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Timeout ]
 
 #__worldID is undefined in isolated world
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
@@ -1313,7 +1313,7 @@ webkit.org/b/97109 tables/mozilla/bugs/bug99948.html [ Pass ]
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 
 # Started failing on JSC ports after r127202.
-webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Failure ]
+webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Timeout ]
 
 # Fails after r127140.
 webkit.org/b/95551 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ ImageOnlyFailure ]
@@ -1720,7 +1720,7 @@ webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-tru
 webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 
 # Http plugin test failures.
-webkit.org/b/99561 http/tests/plugins/plugin-document-has-focus.html [ Failure ]
+webkit.org/b/99561 http/tests/plugins/plugin-document-has-focus.html [ Timeout ]
 webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
 
 # Comparison of two javascript objects in C++ is failing.
@@ -1782,7 +1782,7 @@ webkit.org/b/119789 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Cra
 Bug(EFL) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 Bug(EFL) fast/media/media-query-list-02.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-04.html [ Timeout ]
 Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 
@@ -1871,7 +1871,7 @@ webkit.org/b/127107 media/volume-bar-empty-when-muted.html [ Failure ]
 webkit.org/b/127475 fast/dom/inline-event-attributes-release.html [ Failure ]
 
 # Failing after r155363
-webkit.org/b/127476 fast/history/go-back-to-iframe-with-plugin.html [ Failure ]
+webkit.org/b/127476 fast/history/go-back-to-iframe-with-plugin.html [ Timeout ]
 
 webkit.org/b/127477 css2.1/t1604-c542-letter-sp-00-b-a.html [ Missing ]
 
@@ -1998,7 +1998,7 @@ webkit.org/b/133302 fast/shapes/shape-outside-floats/shape-outside-rounded-inset
 webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ Failure ]
 
 # Failures EFL WK2 since the inception
-webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
+webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
 # Failing at least from 2014-05-01, but cause unknown
 webkit.org/b/133507 accessibility/media-element.html [ Failure ]
