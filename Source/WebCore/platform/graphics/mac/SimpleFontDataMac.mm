@@ -101,7 +101,7 @@ const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *
             bool isUsingPrinterFont = platformData().isPrinterFont();
             NSFont *substituteFont = isUsingPrinterFont ? [key printerFont] : [key screenFont];
 
-            CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(substituteFont));
+            CTFontSymbolicTraits traits = CTFontGetSymbolicTraits((CTFontRef)substituteFont);
             bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
             bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
 
@@ -130,7 +130,7 @@ void SimpleFontData::platformInit()
         // It overrides the normal "Times" family font.
         // It also appears to have a corrupt regular variant.
         NSString *fallbackFontFamily;
-        if ([[m_platformData.font() familyName] isEqual:@"Times"])
+        if ([[m_platformData.nsFont() familyName] isEqual:@"Times"])
             fallbackFontFamily = @"Times New Roman";
         else
             fallbackFontFamily = webFallbackFontFamily();
@@ -138,17 +138,17 @@ void SimpleFontData::platformInit()
         // Try setting up the alternate font.
         // This is a last ditch effort to use a substitute font when something has gone wrong.
 #if !ERROR_DISABLED
-        RetainPtr<NSFont> initialFont = m_platformData.font();
+        RetainPtr<NSFont> initialFont = m_platformData.nsFont();
 #endif
         if (m_platformData.font())
-            m_platformData.setFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toFamily:fallbackFontFamily]);
+            m_platformData.setNSFont([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toFamily:fallbackFontFamily]);
         else
-            m_platformData.setFont([NSFont fontWithName:fallbackFontFamily size:m_platformData.size()]);
+            m_platformData.setNSFont([NSFont fontWithName:fallbackFontFamily size:m_platformData.size()]);
         if (!initFontData(this)) {
             if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
                 // OK, couldn't setup Times New Roman as an alternate to Times, fallback
                 // on the system font.  If this fails we have no alternative left.
-                m_platformData.setFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toFamily:webFallbackFontFamily()]);
+                m_platformData.setNSFont([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toFamily:webFallbackFontFamily()]);
                 if (!initFontData(this)) {
                     // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
                     LOG_ERROR("unable to initialize with font %@", initialFont.get());
@@ -163,13 +163,13 @@ void SimpleFontData::platformInit()
 
         // Report the problem.
         LOG_ERROR("Corrupt font detected, using %@ in place of %@.",
-            [m_platformData.font() familyName], [initialFont.get() familyName]);
+            [m_platformData.nsFont() familyName], [initialFont.get() familyName]);
     }
 
     // If all else fails, try to set up using the system font.
     // This is probably because Times and Times New Roman are both unavailable.
     if (failedSetup) {
-        m_platformData.setFont([NSFont systemFontOfSize:[m_platformData.font() pointSize]]);
+        m_platformData.setNSFont([NSFont systemFontOfSize:[m_platformData.nsFont() pointSize]]);
         LOG_ERROR("failed to set up font, using system font %s", m_platformData.font());
         initFontData(this);
     }
@@ -199,7 +199,7 @@ void SimpleFontData::platformInit()
     // web standard. The AppKit adjustment of 20% is too big and is
     // incorrectly added to line spacing, so we use a 15% adjustment instead
     // and add it to the ascent.
-    NSString *familyName = [m_platformData.font() familyName];
+    NSString *familyName = [m_platformData.nsFont() familyName];
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
         ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
 
@@ -294,22 +294,22 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     float size = m_platformData.size() * scaleFactor;
-    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size], size, m_platformData.isPrinterFont(), false, false, m_platformData.orientation());
+    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size], size, m_platformData.isPrinterFont(), false, false, m_platformData.orientation());
 
     // AppKit resets the type information (screen/printer) when you convert a font to a different size.
     // We have to fix up the font that we're handed back.
-    scaledFontData.setFont(fontDescription.usePrinterFont() ? [scaledFontData.font() printerFont] : [scaledFontData.font() screenFont]);
+    scaledFontData.setNSFont(fontDescription.usePrinterFont() ? [scaledFontData.nsFont() printerFont] : [scaledFontData.nsFont() screenFont]);
 
     if (scaledFontData.font()) {
         NSFontManager *fontManager = [NSFontManager sharedFontManager];
-        NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_platformData.font()];
+        NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_platformData.nsFont()];
 
         if (m_platformData.m_syntheticBold)
             fontTraits |= NSBoldFontMask;
         if (m_platformData.m_syntheticOblique)
             fontTraits |= NSItalicFontMask;
 
-        NSFontTraitMask scaledFontTraits = [fontManager traitsOfFont:scaledFontData.font()];
+        NSFontTraitMask scaledFontTraits = [fontManager traitsOfFont:scaledFontData.nsFont()];
         scaledFontData.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(scaledFontTraits & NSBoldFontMask);
         scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
 
@@ -326,7 +326,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(characters) length:length freeWhenDone:NO];
-    NSCharacterSet *set = [[m_platformData.font() coveredCharacterSet] invertedSet];
+    NSCharacterSet *set = [[m_platformData.nsFont() coveredCharacterSet] invertedSet];
     bool result = set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
     [string release];
     return result;
@@ -334,7 +334,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
 
 void SimpleFontData::determinePitch()
 {
-    NSFont* f = m_platformData.font();
+    NSFont* f = m_platformData.nsFont();
     // Special case Osaka-Mono.
     // According to <rdar://problem/3999467>, we should treat Osaka-Mono as fixed pitch.
     // Note that the AppKit does not report Osaka-Mono as fixed pitch.
@@ -370,7 +370,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 inline CGFontRenderingStyle SimpleFontData::renderingStyle() const
 {
     CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization;
-    NSFont *font = platformData().font();
+    NSFont *font = platformData().nsFont();
     if (font) {
         switch ([font renderingMode]) {
         case NSFontIntegerAdvancementsRenderingMode:
@@ -388,7 +388,7 @@ inline CGFontRenderingStyle SimpleFontData::renderingStyle() const
 
 inline bool SimpleFontData::advanceForColorBitmapFont(Glyph glyph, CGSize& advance) const
 {
-    NSFont *font = platformData().font();
+    NSFont *font = platformData().nsFont();
     if (!font || !platformData().isColorBitmapFont())
         return false;
     advance = NSSizeToCGSize([font advancementForGlyph:glyph]);

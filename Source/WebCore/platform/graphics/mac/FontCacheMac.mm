@@ -342,7 +342,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     UChar32 character;
     U16_GET(characters, 0, 0, length, character);
     const FontPlatformData& platformData = originalFontData->platformData();
-    NSFont *nsFont = platformData.font();
+    NSFont *nsFont = platformData.nsFont();
 
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters) length:length freeWhenDone:NO];
     NSFont *substituteFont = [NSFont findFontLike:nsFont forString:string withRange:NSMakeRange(0, [string length]) inLanguage:nil];

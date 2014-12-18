@@ -189,7 +189,7 @@ public:
 
 #if USE(APPKIT)
     const SimpleFontData* getCompositeFontReferenceFontData(NSFont *key) const;
-    NSFont* getNSFont() const { return m_platformData.font(); }
+    NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
 #if PLATFORM(IOS)

@@ -4880,7 +4880,7 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
     fontDescription.setSpecifiedSize(pointSize);
     FontCachePurgePreventer purgePreventer;
     RefPtr<SimpleFontData> simpleFontData = fontCache().getCachedFontData(fontDescription, familyName, false, WebCore::FontCache::DoNotRetain);
-    return [simpleFontData->platformData().font() fontName];
+    return [simpleFontData->platformData().nsFont() fontName];
 }
 
 - (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b

@@ -35,60 +35,18 @@
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
-    : m_syntheticBold(false)
-    , m_syntheticOblique(false)
-    , m_orientation(Horizontal)
-#if PLATFORM(IOS)
-    , m_isEmoji(false)
-#endif
-    , m_size(0)
-    , m_widthVariant(RegularWidth)
 #if PLATFORM(WIN)
-    , m_font(WTF::HashTableDeletedValue)
-#elif OS(DARWIN)
-    , m_font(hashTableDeletedFontValue())
-#endif
-#if USE(CG) && PLATFORM(WIN)
-    , m_cgFont(0)
-#elif USE(CAIRO)
-    , m_scaledFont(hashTableDeletedFontValue())
-#endif
-    , m_isColorBitmapFont(false)
-    , m_isCompositeFontReference(false)
-#if OS(DARWIN)
-    , m_isPrinterFont(false)
-#endif
-#if PLATFORM(WIN)
-    , m_useGDI(false)
+    : m_font(WTF::HashTableDeletedValue)
+#elif PLATFORM(COCOA)
+    : m_font(hashTableDeletedFontValue())
 #endif
 {
+#if USE(CAIRO)
+    m_scaledFont = hashTableDeletedFontValue();
+#endif
 }
 
 FontPlatformData::FontPlatformData()
-    : m_syntheticBold(false)
-    , m_syntheticOblique(false)
-    , m_orientation(Horizontal)
-#if PLATFORM(IOS)
-    , m_isEmoji(false)
-#endif
-    , m_size(0)
-    , m_widthVariant(RegularWidth)
-#if OS(DARWIN)
-    , m_font(0)
-#endif
-#if USE(CG) && PLATFORM(WIN)
-    , m_cgFont(0)
-#elif USE(CAIRO)
-    , m_scaledFont(0)
-#endif
-    , m_isColorBitmapFont(false)
-    , m_isCompositeFontReference(false)
-#if OS(DARWIN)
-    , m_isPrinterFont(false)
-#endif
-#if PLATFORM(WIN)
-    , m_useGDI(false)
-#endif
 {
 }
 
@@ -96,45 +54,19 @@ FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheti
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
-#if PLATFORM(IOS)
-    , m_isEmoji(false)
-#endif
     , m_size(size)
     , m_widthVariant(widthVariant)
-#if OS(DARWIN)
-    , m_font(0)
-#endif
-#if USE(CG) && PLATFORM(WIN)
-    , m_cgFont(0)
-#elif USE(CAIRO)
-    , m_scaledFont(0)
-#endif
-    , m_isColorBitmapFont(false)
-    , m_isCompositeFontReference(false)
-#if OS(DARWIN)
-    , m_isPrinterFont(false)
-#endif
-#if PLATFORM(WIN)
-    , m_useGDI(false)
-#endif
 {
 }
 
-#if OS(DARWIN) && USE(CG)
+#if USE(CG)
 FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
-#if PLATFORM(IOS)
-    , m_isEmoji(false)
-#endif
     , m_size(size)
     , m_widthVariant(widthVariant)
-    , m_font(0)
     , m_cgFont(cgFont)
-    , m_isColorBitmapFont(false)
-    , m_isCompositeFontReference(false)
-    , m_isPrinterFont(false)
 {
 }
 #endif
@@ -147,9 +79,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
     , m_widthVariant(source.m_widthVariant)
     , m_isColorBitmapFont(source.m_isColorBitmapFont)
     , m_isCompositeFontReference(source.m_isCompositeFontReference)
-#if OS(DARWIN)
-    , m_isPrinterFont(source.m_isPrinterFont)
-#endif
 {
     platformDataInit(source);
 }
@@ -167,21 +96,8 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     m_widthVariant = other.m_widthVariant;
     m_isColorBitmapFont = other.m_isColorBitmapFont;
     m_isCompositeFontReference = other.m_isCompositeFontReference;
-#if OS(DARWIN)
-    m_isPrinterFont = other.m_isPrinterFont;
-#endif
 
     return platformDataAssign(other);
 }
-
-#if OS(DARWIN) && USE(CG)
-PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
-{
-    if (RetainPtr<CFDataRef> data = adoptCF(CGFontCopyTableForTag(cgFont(), table)))
-        return SharedBuffer::wrapCFData(data.get());
-    
-    return nullptr;
-}
-#endif
 
 }
