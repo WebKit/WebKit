@@ -1335,7 +1335,7 @@ bool Internals::hasSpellingMarker(int from, int length, ExceptionCode&)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
-        return 0;
+        return false;
 
     updateEditorUINowIfScheduled();
 
@@ -1346,7 +1346,7 @@ bool Internals::hasAutocorrectedMarker(int from, int length, ExceptionCode&)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
-        return 0;
+        return false;
 
     updateEditorUINowIfScheduled();
 
@@ -1431,7 +1431,7 @@ bool Internals::isOverwriteModeEnabled(ExceptionCode&)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
-        return 0;
+        return false;
 
     return document->frame()->editor().isOverwriteModeEnabled();
 }
@@ -1561,7 +1561,7 @@ bool Internals::hasGrammarMarker(int from, int length, ExceptionCode&)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
-        return 0;
+        return false;
 
     return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
 }

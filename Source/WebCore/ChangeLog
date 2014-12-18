@@ -1,3 +1,22 @@
+2014-12-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Internals methods return 0 instead of false when they fail
+        https://bugs.webkit.org/show_bug.cgi?id=139766
+
+        Reviewed by Darin Adler.
+
+        Some Internals method explicitly return 0 although
+        they expect boolean value.
+
+        No new tests, no behavior change.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSpellingMarker):
+        (WebCore::Internals::hasAutocorrectedMarker):
+        (WebCore::Internals::isOverwriteModeEnabled):
+        (WebCore::Internals::hasGrammarMarker):
+        Return false instead of 0.
+
 2014-12-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log why cached resources are being revalidated using FeatureCounter API
