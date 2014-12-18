@@ -1,5 +1,12 @@
 2014-12-18  Alexey Proskuryakov  <ap@apple.com>
 
+        Update flaky media test expectations to what bots see now - mostly updating for
+        better detection of timeouts.
+
+        * platform/mac/TestExpectations:
+
+2014-12-18  Alexey Proskuryakov  <ap@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=139779
         Fullscreen tests use unreasonably short timeouts
 
