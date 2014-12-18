@@ -424,7 +424,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     Class nsPopoverAnimationControllerClass = NSClassFromString(@"NSPopoverAnimationController");
     if (!nsPopoverAnimationControllerClass)
         return nil;
-    NSPopoverAnimationController *popoverController = [NSPopoverAnimationController popoverAnimationControllerWithPopover:_previewPopover.get()];
+    NSPopoverAnimationController *popoverController = [nsPopoverAnimationControllerClass popoverAnimationControllerWithPopover:_previewPopover.get()];
     popoverController.preferredEdge = NSMaxYEdge;
     popoverController.anchorView = _wkView;
     popoverController.positioningRect = _popoverOriginRect;
