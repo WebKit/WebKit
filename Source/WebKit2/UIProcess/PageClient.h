@@ -215,6 +215,7 @@ public:
 #endif
 
     virtual void setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool fadeOut) = 0;
+    virtual void setTextIndicatorAnimationProgress(float) = 0;
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;

@@ -35,6 +35,7 @@
 
 const CFTimeInterval bounceAnimationDuration = 0.12;
 const CFTimeInterval bounceWithCrossfadeAnimationDuration = 0.3;
+const CFTimeInterval fadeInAnimationDuration = 0.15;
 const CFTimeInterval timeBeforeFadeStarts = bounceAnimationDuration + 0.2;
 const CFTimeInterval fadeOutAnimationDuration = 0.3;
 
@@ -69,12 +70,15 @@ using namespace WebCore;
     RefPtr<TextIndicator> _textIndicator;
     RetainPtr<NSArray> _bounceLayers;
     NSSize _margin;
+    bool _hasCompletedAnimation;
 }
 
 - (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin;
 
-- (void)presentWithCompletionHandler:(void(^)(void))completionHandler;
+- (void)present;
 - (void)hideWithCompletionHandler:(void(^)(void))completionHandler;
+
+- (void)setAnimationProgress:(float)progress;
 
 @end
 
@@ -91,7 +95,7 @@ using namespace WebCore;
     self.wantsLayer = YES;
     self.layer.anchorPoint = CGPointZero;
 
-    bool wantsCrossfade = _textIndicator->presentationTransition() == TextIndicatorPresentationTransition::BounceAndCrossfade;
+    bool wantsCrossfade = [self _textIndicatorWantsContentCrossfade];
 
     FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
@@ -187,41 +191,153 @@ using namespace WebCore;
     return self;
 }
 
-- (void)presentWithCompletionHandler:(void(^)(void))completionHandler
+static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval duration)
 {
-    bool wantsCrossfade = _textIndicator->presentationTransition() == TextIndicatorPresentationTransition::BounceAndCrossfade;
-    double animationDuration = wantsCrossfade ? bounceWithCrossfadeAnimationDuration : bounceAnimationDuration;
     RetainPtr<CAKeyframeAnimation> bounceAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
     [bounceAnimation setValues:@[
         [NSValue valueWithCATransform3D:CATransform3DIdentity],
         [NSValue valueWithCATransform3D:CATransform3DMakeScale(midBounceScale, midBounceScale, 1)],
         [NSValue valueWithCATransform3D:CATransform3DIdentity]
         ]];
-    [bounceAnimation setDuration:animationDuration];
+    [bounceAnimation setDuration:duration];
+
+    return bounceAnimation;
+}
+
+static RetainPtr<CABasicAnimation> createContentCrossfadeAnimation(CFTimeInterval duration, TextIndicator& textIndicator)
+{
+    RetainPtr<CABasicAnimation> crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
+    RetainPtr<CGImageRef> contentsImage = textIndicator.contentImage()->getCGImageRef();
+    [crossfadeAnimation setToValue:(id)contentsImage.get()];
+    [crossfadeAnimation setFillMode:kCAFillModeForwards];
+    [crossfadeAnimation setRemovedOnCompletion:NO];
+    [crossfadeAnimation setDuration:duration];
+
+    return crossfadeAnimation;
+}
+
+static RetainPtr<CABasicAnimation> createShadowFadeAnimation(CFTimeInterval duration)
+{
+    RetainPtr<CABasicAnimation> fadeShadowInAnimation = [CABasicAnimation animationWithKeyPath:@"shadowOpacity"];
+    [fadeShadowInAnimation setFromValue:@0];
+    [fadeShadowInAnimation setToValue:@1];
+    [fadeShadowInAnimation setFillMode:kCAFillModeForwards];
+    [fadeShadowInAnimation setRemovedOnCompletion:NO];
+    [fadeShadowInAnimation setDuration:duration];
+
+    return fadeShadowInAnimation;
+}
+
+static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration)
+{
+    RetainPtr<CABasicAnimation> fadeInAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    [fadeInAnimation setFromValue:@0];
+    [fadeInAnimation setToValue:@1];
+    [fadeInAnimation setFillMode:kCAFillModeForwards];
+    [fadeInAnimation setRemovedOnCompletion:NO];
+    [fadeInAnimation setDuration:duration];
+
+    return fadeInAnimation;
+}
+
+- (bool)_textIndicatorWantsBounce
+{
+    switch (_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Bounce:
+        return true;
+
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::Crossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    return false;
+}
+
+- (bool)_textIndicatorWantsContentCrossfade
+{
+    if (!_textIndicator->contentImageWithHighlight())
+        return false;
+
+    switch (_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Crossfade:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    return false;
+}
+
+- (bool)_textIndicatorWantsFadeIn
+{
+    switch (_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::FadeIn:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Crossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    return false;
+}
+
+- (CFTimeInterval)_animationDuration
+{
+    bool wantsBounce = [self _textIndicatorWantsBounce];
+    bool wantsCrossfade = [self _textIndicatorWantsContentCrossfade];
+
+    if (wantsBounce) {
+        if (wantsCrossfade)
+            return bounceWithCrossfadeAnimationDuration;
+        return bounceAnimationDuration;
+    }
+
+    return fadeInAnimationDuration;
+}
+
+- (void)present
+{
+    bool wantsBounce = [self _textIndicatorWantsBounce];
+    bool wantsCrossfade = [self _textIndicatorWantsContentCrossfade];
+    bool wantsFadeIn = [self _textIndicatorWantsFadeIn];
+    CFTimeInterval animationDuration = [self _animationDuration];
+
+    _hasCompletedAnimation = false;
+
+    RetainPtr<CAAnimation> presentationAnimation;
+    if (wantsBounce)
+        presentationAnimation = createBounceAnimation(animationDuration);
+    else if (wantsFadeIn)
+        presentationAnimation = createFadeInAnimation(animationDuration);
 
     RetainPtr<CABasicAnimation> crossfadeAnimation;
     RetainPtr<CABasicAnimation> fadeShadowInAnimation;
     if (wantsCrossfade) {
-        crossfadeAnimation = [CABasicAnimation animationWithKeyPath:@"contents"];
-        RetainPtr<CGImageRef> contentsImage = _textIndicator->contentImage()->getCGImageRef();
-        [crossfadeAnimation setToValue:(id)contentsImage.get()];
-        [crossfadeAnimation setFillMode:kCAFillModeForwards];
-        [crossfadeAnimation setRemovedOnCompletion:NO];
-        [crossfadeAnimation setDuration:animationDuration];
-
-        fadeShadowInAnimation = [CABasicAnimation animationWithKeyPath:@"shadowOpacity"];
-        [fadeShadowInAnimation setFromValue:@0];
-        [fadeShadowInAnimation setToValue:@1];
-        [fadeShadowInAnimation setFillMode:kCAFillModeForwards];
-        [fadeShadowInAnimation setRemovedOnCompletion:NO];
-        [fadeShadowInAnimation setDuration:animationDuration];
+        crossfadeAnimation = createContentCrossfadeAnimation(animationDuration, *_textIndicator);
+        fadeShadowInAnimation = createShadowFadeAnimation(animationDuration);
     }
 
     [CATransaction begin];
-    [CATransaction setCompletionBlock:completionHandler];
-    for (CALayer* bounceLayer in _bounceLayers.get()) {
-        [bounceLayer setOpacity:1];
-        [bounceLayer addAnimation:bounceAnimation.get() forKey:@"bounce"];
+    for (CALayer *bounceLayer in _bounceLayers.get()) {
+        if (wantsFadeIn || wantsCrossfade)
+            bounceLayer.speed = 0;
+
+        if (!wantsFadeIn)
+            bounceLayer.opacity = 1;
+
+        if (presentationAnimation)
+            [bounceLayer addAnimation:presentationAnimation.get() forKey:@"presentation"];
+
         if (wantsCrossfade) {
             [[bounceLayer valueForKey:textLayerKey] addAnimation:crossfadeAnimation.get() forKey:@"contentTransition"];
             [[bounceLayer valueForKey:dropShadowLayerKey] addAnimation:fadeShadowInAnimation.get() forKey:@"fadeShadowIn"];
@@ -246,6 +362,28 @@ using namespace WebCore;
     [CATransaction commit];
 }
 
+- (void)setAnimationProgress:(float)progress
+{
+    if (_hasCompletedAnimation)
+        return;
+
+    if (progress == 1) {
+        _hasCompletedAnimation = true;
+
+        for (CALayer *bounceLayer in _bounceLayers.get()) {
+            // Continue the animation from wherever it had manually progressed to.
+            CFTimeInterval beginTime = bounceLayer.timeOffset;
+            bounceLayer.speed = 1;
+            beginTime = [bounceLayer convertTime:CACurrentMediaTime() fromLayer:nil] - beginTime;
+            bounceLayer.beginTime = beginTime;
+        }
+    } else {
+        CFTimeInterval animationDuration = [self _animationDuration];
+        for (CALayer *bounceLayer in _bounceLayers.get())
+            bounceLayer.timeOffset = progress * animationDuration;
+    }
+}
+
 - (BOOL)isFlipped
 {
     return YES;
@@ -257,16 +395,36 @@ namespace WebCore {
 
 TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
     : m_targetView(targetView)
-    , m_startFadeOutTimer(RunLoop::main(), this, &TextIndicatorWindow::startFadeOutTimerFired)
+    , m_startFadeOutTimer(RunLoop::main(), this, &TextIndicatorWindow::startFadeOut)
 {
 }
 
 TextIndicatorWindow::~TextIndicatorWindow()
 {
+    switch (m_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::Crossfade:
+    case TextIndicatorPresentationTransition::FadeIn:
+        startFadeOut();
+        return;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::None:
+        break;
+    }
+
     closeWindow();
 }
 
-void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, CGRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler)
+void TextIndicatorWindow::setAnimationProgress(float progress)
+{
+    if (!m_textIndicator)
+        return;
+
+    [m_textIndicatorView setAnimationProgress:progress];
+}
+
+void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, CGRect contentRect, bool fadeOut)
 {
     if (m_textIndicator == textIndicator)
         return;
@@ -296,11 +454,8 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     [[m_targetView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
     [m_textIndicatorWindow setReleasedWhenClosed:NO];
 
-    if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None) {
-        [m_textIndicatorView presentWithCompletionHandler:[animationCompletionHandler] {
-            animationCompletionHandler();
-        }];
-    }
+    if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
+        [m_textIndicatorView present];
 
     if (fadeOut)
         m_startFadeOutTimer.startOneShot(timeBeforeFadeStarts);
@@ -318,7 +473,7 @@ void TextIndicatorWindow::closeWindow()
     m_textIndicatorWindow = nullptr;
 }
 
-void TextIndicatorWindow::startFadeOutTimerFired()
+void TextIndicatorWindow::startFadeOut()
 {
     RetainPtr<NSWindow> indicatorWindow = m_textIndicatorWindow;
     [m_textIndicatorView hideWithCompletionHandler:[indicatorWindow] {

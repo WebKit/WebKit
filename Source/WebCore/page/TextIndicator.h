@@ -47,7 +47,9 @@ class Range;
 enum class TextIndicatorPresentationTransition {
     None,
     Bounce,
-    BounceAndCrossfade
+    BounceAndCrossfade,
+    FadeIn,
+    Crossfade
 };
 
 struct TextIndicatorData {
@@ -74,8 +76,8 @@ public:
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
     Image *contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
     Image *contentImage() const { return m_data.contentImage.get(); }
-    TextIndicatorPresentationTransition presentationTransition() const { return m_data.presentationTransition; }
 
+    TextIndicatorPresentationTransition presentationTransition() const { return m_data.presentationTransition; }
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }
 
     TextIndicatorData data() const { return m_data; }

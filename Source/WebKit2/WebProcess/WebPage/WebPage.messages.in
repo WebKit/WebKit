@@ -388,7 +388,7 @@ messages -> WebPage LegacyReceiver {
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
 
 #if PLATFORM(MAC)
-    PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location)
+    PerformActionMenuHitTestAtLocation(WebCore::FloatPoint location, bool forImmediateAction)
     SelectLastActionMenuRange()
     FocusAndSelectLastActionMenuHitTestResult()
     DataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID pageOverlay)

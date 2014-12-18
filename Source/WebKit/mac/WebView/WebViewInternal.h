@@ -257,9 +257,12 @@ OBJC_CLASS NSTextAlternatives;
 - (NSPoint)_convertPointFromRootView:(NSPoint)point;
 - (NSRect)_convertRectFromRootView:(NSRect)rect;
 
+- (void)_setMaintainsInactiveSelection:(BOOL)shouldMaintainInactiveSelection;
+
 #if PLATFORM(MAC) && defined(__cplusplus)
-- (void)_setTextIndicator:(WebCore::TextIndicator*)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler;
+- (void)_setTextIndicator:(WebCore::TextIndicator*)textIndicator fadeOut:(BOOL)fadeOut;
 - (void)_clearTextIndicator;
+- (void)_setTextIndicatorAnimationProgress:(float)progress;
 - (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (id)_animationControllerForDictionaryLookupPopupInfo:(const DictionaryPopupInfo&)dictionaryPopupInfo;

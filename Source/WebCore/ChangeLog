@@ -1,5 +1,69 @@
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177427. rdar://problem/19237945
+
+    2014-12-16  Timothy Horton  <timothy_horton@apple.com>
+
+            Implement and adopt two new TextIndicator presentation animations
+            https://bugs.webkit.org/show_bug.cgi?id=139715
+            <rdar://problem/19237945>
+
+            Reviewed by Anders Carlsson.
+
+            * WebCore.exp.in:
+            Adjust one symbol and export another.
+
+            * page/TextIndicator.cpp:
+            (WebCore::TextIndicator::createWithSelectionInFrame):
+            Take a blue-highlight snapshot if we're doing a crossfade without a bounce.
+
+            * page/TextIndicator.h:
+            (WebCore::TextIndicator::presentationTransition):
+            Add FadeIn and Crossfade transition types.
+
+            * page/mac/TextIndicatorWindow.h:
+            * page/mac/TextIndicatorWindow.mm:
+            (-[WebTextIndicatorView initWithFrame:textIndicator:margin:]):
+            (createBounceAnimation):
+            (createContentCrossfadeAnimation):
+            (createShadowFadeAnimation):
+            (createFadeInAnimation):
+            (-[WebTextIndicatorView _textIndicatorWantsBounce]):
+            (-[WebTextIndicatorView _textIndicatorWantsContentCrossfade]):
+            (-[WebTextIndicatorView _textIndicatorWantsFadeIn]):
+            Factor out the animation construction.
+
+            (-[WebTextIndicatorView _animationDuration]):
+            Factor out the duration computation.
+
+            (-[WebTextIndicatorView present]):
+            (-[WebTextIndicatorView setAnimationProgress:]):
+            Implement FadeIn and Crossfade transitions.
+            They can be driven externally and then continue from where they
+            left off when the progress reaches 100%.
+            FadeIn changes the opacity of the whole bubble, Crossfade
+            crossfades the content (from blue to yellow).
+
+            (WebCore::TextIndicatorWindow::TextIndicatorWindow):
+            (WebCore::TextIndicatorWindow::~TextIndicatorWindow):
+            Don't immediately destroy the window if it is crossfades or fades in.
+            Fade it out, instead.
+
+            (WebCore::TextIndicatorWindow::setAnimationProgress):
+            Drive the paused animation manually. If progress hits 100%,
+            start running it automatically from where it last left off.
+
+            (WebCore::TextIndicatorWindow::setTextIndicator):
+            (WebCore::TextIndicatorWindow::startFadeOut):
+            (-[WebTextIndicatorView presentWithCompletionHandler:]): Deleted.
+            (WebCore::TextIndicatorWindow::startFadeOutTimerFired): Deleted.
+            Remove the completion block from -present.
+
+            * platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+            Add some SPI.
+
+2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177409. rdar://problem/19271854
 
     2014-12-16  Beth Dakin  <bdakin@apple.com>

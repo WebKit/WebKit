@@ -1,5 +1,66 @@
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177427. rdar://problem/19237945
+
+    2014-12-16  Timothy Horton  <timothy_horton@apple.com>
+
+            Implement and adopt two new TextIndicator presentation animations
+            https://bugs.webkit.org/show_bug.cgi?id=139715
+            <rdar://problem/19237945>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setTextIndicator:fadeOut:]):
+            (-[WKView _setTextIndicatorAnimationProgress:]):
+            (-[WKView _setTextIndicator:fadeOut:animationCompletionHandler:]): Deleted.
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            (WebKit::WebPageProxy::setTextIndicatorAnimationProgress):
+            (WebKit::WebPageProxy::performActionMenuHitTestAtLocation):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::setTextIndicatorAnimationProgress):
+            (WebKit::PageClientImpl::didPerformDictionaryLookup):
+            Remove the completion handler block argument from TextIndicator
+            installation.
+            Plumb animation progress through PageClient to TextIndicatorWindow.
+
+            * UIProcess/mac/WKActionMenuController.mm:
+            (-[WKActionMenuController prepareForMenu:withEvent:]):
+            (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+            (-[WKImmediateActionController immediateActionRecognizerDidUpdateAnimation:]):
+            (-[WKImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+            (-[WKImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+            (-[WKImmediateActionController _menuItemForDataDetectedText]):
+            (-[WKImmediateActionController _animationControllerForText]):
+            Forward immediate action gesture recognizer animation progress
+            to TextIndicator. Force us to keep the selection when immediate
+            action popovers steal first responder status from the WebView.
+
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::textIndicatorTransitionForActionMenu):
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Factor out the presentation animation decision code.
+            For immediate actions, of the Lookup range is equal to the
+            selection range, use a Crossfade animation; otherwise, use a FadeIn
+            animation.
+            Push whether the actionMenuHitTest is for an immediate action
+            or a menu to the Web process, to make the presentation animation
+            decision code live entirely in the Web process.
+            Avoid extracting encoded image data if we know we're doing
+            an immediate action and will never need it.
+
+2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177411. rdar://problem/19271854
 
     2014-12-16  Beth Dakin  <bdakin@apple.com>
