@@ -1,3 +1,43 @@
+2014-12-17  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for r177375.
+
+    2014-12-16  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Crash in WebKit::WebPageProxy::dispatchViewStateChange() tapping a link from another app while playing a video
+            https://bugs.webkit.org/show_bug.cgi?id=139550
+
+            Reviewed by Anders Carlsson.
+
+            The existing "dispatch to WebThread, then release" model is insufficient and still
+            can result in RefPtr race conditions between the main thread and the web thread.
+            Make WebVideoFullscreenInterfaceAVKit a thread-safe ref-counted class, which
+            eliminates the necessity of disptaching back to the web thread before releasing.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::setDuration): Use a strongThis model.
+            (WebVideoFullscreenInterfaceAVKit::setCurrentTime): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::setRate): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::setVideoDimensions): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::setSeekableRanges): Ditto.
+            (mediaSelectionOptions): Return a RetainPtr object.
+            (WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions): Use a strongThis model.
+            (WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::setExternalPlayback): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreen): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::exitFullscreen): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal): Added utility
+                function. Lets us use the implied this pointer rather than an explicit
+                strongThis.
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal): Ditto.
+            (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): Use a strongThis model.
+
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176803.

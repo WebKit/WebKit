@@ -35,6 +35,7 @@
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 OBJC_CLASS WebAVPlayerController;
 OBJC_CLASS AVPlayerViewController;
@@ -58,8 +59,15 @@ public:
     
 class WebVideoFullscreenInterfaceAVKit
     : public WebVideoFullscreenInterface
-    , public RefCounted<WebVideoFullscreenInterfaceAVKit> {
-        
+    , public ThreadSafeRefCounted<WebVideoFullscreenInterfaceAVKit> {
+
+protected:
+    void setupFullscreenInternal(PlatformLayer&, IntRect initialRect, UIView *);
+    void enterFullscreenOptimized();
+    void enterFullscreenStandard();
+    void exitFullscreenInternal(IntRect finalRect);
+    void cleanupFullscreenInternal();
+
     RetainPtr<WebAVPlayerController> m_playerController;
     RetainPtr<AVPlayerViewController> m_playerViewController;
     RetainPtr<CALayer> m_videoLayer;
