@@ -256,11 +256,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)description
 {
-#if !PLATFORM(IOS)
-    return [NSString stringWithFormat:@"<%@ %@>", [self className], [self URL]];
-#else
-    return [NSString stringWithFormat:@"<%@ %@>", NSStringFromClass([self class]), [self URL]];
-#endif
+    return [NSString stringWithFormat:@"<%@ %@>", NSStringFromClass(self.class), self.URL];
 }
 
 @end
