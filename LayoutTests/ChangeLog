@@ -1,3 +1,10 @@
+2014-12-18  Alexey Proskuryakov  <ap@apple.com>
+
+        media/media-controls-timeline-updates.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139789
+
+        * platform/mac/TestExpectations: Mark it as such.
+
 2014-12-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Updated expected results for LayoutTests/editing
