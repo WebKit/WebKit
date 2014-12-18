@@ -90,6 +90,7 @@ private:
 #if PLATFORM(IOS)
     LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
     BOOL _allowsAlternateFullscreen;
+    BOOL _featureCounterEnabled;
 #endif
 }
 
@@ -102,6 +103,7 @@ private:
     _mediaPlaybackRequiresUserAction = YES;
     _mediaPlaybackAllowsAirPlay = YES;
     _allowsAlternateFullscreen = YES;
+    _featureCounterEnabled = NO;
 #endif
     
     return self;
@@ -133,6 +135,7 @@ private:
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsAlternateFullscreen = self->_allowsAlternateFullscreen;
+    configuration->_featureCounterEnabled = self->_featureCounterEnabled;
     configuration->_mediaPlaybackRequiresUserAction = self->_mediaPlaybackRequiresUserAction;
     configuration->_mediaPlaybackAllowsAirPlay = self->_mediaPlaybackAllowsAirPlay;
     configuration->_selectionGranularity = self->_selectionGranularity;
@@ -288,6 +291,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsAlternateFullscreen:(BOOL)allowed
 {
     _allowsAlternateFullscreen = allowed;
+}
+
+- (BOOL)_featureCounterEnabled
+{
+    return _featureCounterEnabled;
+}
+
+- (void)_setFeatureCounterEnabled:(BOOL)featureCounterEnabled
+{
+    _featureCounterEnabled = featureCounterEnabled;
 }
 #endif
 

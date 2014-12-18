@@ -44,6 +44,7 @@
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAllowsAlternateFullscreen:) BOOL _allowsAlternateFullscreen;
+@property (nonatomic, setter=_setFeatureCounterEnabled:) BOOL _featureCounterEnabled;
 #endif
 
 @end
