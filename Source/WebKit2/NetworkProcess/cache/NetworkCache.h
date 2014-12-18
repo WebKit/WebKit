@@ -30,7 +30,7 @@
 
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
-#include <Webcore/ResourceResponse.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -56,7 +56,9 @@ public:
     struct Entry {
         WebCore::ResourceResponse response;
         RefPtr<WebCore::SharedBuffer> buffer;
+#if ENABLE(SHAREABLE_RESOURCE)
         ShareableResource::Handle shareableResourceHandle;
+#endif
         bool needsRevalidation;
     };
     // Completion handler may get called back synchronously on failure.

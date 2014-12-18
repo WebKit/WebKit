@@ -157,6 +157,12 @@ set(WebKit2_SOURCES
 
     NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
+    NetworkProcess/cache/NetworkCache.cpp
+    NetworkProcess/cache/NetworkCacheCoders.cpp
+    NetworkProcess/cache/NetworkCacheEncoder.cpp
+    NetworkProcess/cache/NetworkCacheDecoder.cpp
+    NetworkProcess/cache/NetworkCacheKey.cpp
+
     Platform/Logging.cpp
     Platform/Module.cpp
     Platform/WorkQueue.cpp

@@ -176,12 +176,14 @@ static std::unique_ptr<NetworkCache::Entry> decodeStorageEntry(const NetworkCach
     cachedResponse.setSource(needsRevalidation ? WebCore::ResourceResponse::Source::DiskCacheAfterValidation : WebCore::ResourceResponse::Source::DiskCache);
     entry->response = cachedResponse;
 
+#if ENABLE(SHAREABLE_RESOURCE)
     RefPtr<SharedMemory> sharedMemory = storageEntry.body.size() ? SharedMemory::createFromVMBuffer(const_cast<uint8_t*>(storageEntry.body.data()), storageEntry.body.size()) : nullptr;
     RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, storageEntry.body.size()) : nullptr;
 
     if (shareableResource && shareableResource->createHandle(entry->shareableResourceHandle))
         entry->buffer = entry->shareableResourceHandle.tryWrapInSharedBuffer();
     else
+#endif
         entry->buffer = WebCore::SharedBuffer::create(storageEntry.body.data(), storageEntry.body.size());
 
     return entry;
@@ -205,7 +207,11 @@ static bool canRetrieve(const WebCore::ResourceRequest& request)
 
 static NetworkCacheKey makeCacheKey(const WebCore::ResourceRequest& request)
 {
+#if ENABLE(CACHE_PARTITIONING)
     String partition = request.cachePartition();
+#else
+    String partition;
+#endif
     if (partition.isEmpty())
         partition = ASCIILiteral("No partition");
     return NetworkCacheKey(request.httpMethod(), partition, request.url().string());

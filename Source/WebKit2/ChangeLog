@@ -1,3 +1,42 @@
+2014-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Allow to build with ENABLE_NETWORK_CACHE
+        https://bugs.webkit.org/show_bug.cgi?id=139728
+
+        Reviewed by Antti Koivisto.
+
+        Just make it build for now.
+
+        * CMakeLists.txt: Add new files to compilation.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry): Use
+        ENABLE(SHAREABLE_RESOURCE) when ShareableResource is used.
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::decodeStorageEntry): Ditto.
+        (WebKit::makeCacheKey): Use ENABLE(CACHE_PARTITIONING) for ResourceRequest::cachePartition().
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCacheStorage::Data::isNull): Move implementation
+        to platform specific files.
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::Data::isNull): Moved from the header.
+        * NetworkProcess/cache/NetworkCacheStorageSoup.cpp: Added.
+        (WebKit::NetworkCacheStorage::Data::Data):
+        (WebKit::NetworkCacheStorage::Data::data):
+        (WebKit::NetworkCacheStorage::Data::isNull):
+        (WebKit::NetworkCacheStorage::open):
+        (WebKit::NetworkCacheStorage::NetworkCacheStorage):
+        (WebKit::NetworkCacheStorage::initializeKeyFilter):
+        (WebKit::NetworkCacheStorage::removeEntry):
+        (WebKit::NetworkCacheStorage::dispatchRetrieveOperation):
+        (WebKit::NetworkCacheStorage::dispatchPendingRetrieveOperations):
+        (WebKit::NetworkCacheStorage::retrieve):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::setMaximumSize):
+        (WebKit::NetworkCacheStorage::clear):
+        * PlatformGTK.cmake: Add NetworkCacheStorageSoup.cpp.
+        * config.h:
+
 2014-12-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19282508> WebKitLegacy is unusable due to bad dylib identifier

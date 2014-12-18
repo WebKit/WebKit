@@ -105,6 +105,11 @@ const uint8_t* NetworkCacheStorage::Data::data() const
     return m_data;
 }
 
+bool NetworkCacheStorage::Data::isNull() const
+{
+    return !m_dispatchData;
+}
+
 std::unique_ptr<NetworkCacheStorage> NetworkCacheStorage::open(const String& cachePath)
 {
     ASSERT(RunLoop::isMain());

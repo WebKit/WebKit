@@ -15,6 +15,8 @@ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 set(WebKit2_USE_PREFIX_HEADER ON)
 
 list(APPEND WebKit2_SOURCES
+    NetworkProcess/cache/NetworkCacheStorageSoup.cpp
+
     NetworkProcess/gtk/NetworkProcessMainGtk.cpp
 
     NetworkProcess/soup/NetworkProcessSoup.cpp

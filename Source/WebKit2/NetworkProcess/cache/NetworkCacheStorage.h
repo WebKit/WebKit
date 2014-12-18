@@ -63,7 +63,7 @@ public:
 #if PLATFORM(COCOA)
         explicit Data(OSObjectPtr<dispatch_data_t>);
 #endif
-        bool isNull() const { return !m_dispatchData; }
+        bool isNull() const;
 
         const uint8_t* data() const;
         size_t size() const { return m_size; }

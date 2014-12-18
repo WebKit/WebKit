@@ -545,14 +545,18 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     } else {
         sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(entry->response, m_parameters.isMainResource));
 
+#if ENABLE(SHAREABLE_RESOURCE)
         if (!entry->shareableResourceHandle.isNull())
             send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle, currentTime()));
         else {
+#endif
             bool shouldContinue = sendBufferMaybeAborting(*entry->buffer, entry->buffer->size());
             if (!shouldContinue)
                 return;
             send(Messages::WebResourceLoader::DidFinishResourceLoad(currentTime()));
+#if ENABLE(SHAREABLE_RESOURCE)
         }
+#endif
     }
 
     cleanup();
