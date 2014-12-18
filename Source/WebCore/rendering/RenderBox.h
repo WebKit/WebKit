@@ -175,6 +175,9 @@ public:
     // Bounds of the outline box in absolute coords. Respects transforms
     virtual LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap*) const override final;
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
+    
+    virtual FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
+    virtual FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
     // Use this with caution! No type checking is done!
     RenderBox* previousSiblingBox() const;

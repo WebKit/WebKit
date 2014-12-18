@@ -1127,6 +1127,8 @@ private:
     void updateOrRemoveFilterClients();
     void updateOrRemoveFilterEffectRenderer();
 
+    void updateOrRemoveMaskImageClients(const RenderStyle* oldStyle);
+
 #if ENABLE(CSS_COMPOSITING)
     void updateAncestorChainHasBlendingDescendants();
     void dirtyAncestorChainHasBlendingDescendants();

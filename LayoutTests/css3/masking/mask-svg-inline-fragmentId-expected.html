@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            p {
+                margin: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=129682">Bug 129682</a> - On success, you should see a green L shape and no red.</p>
+        <p>This test references a &lt;mask&gt; element defined in the main HTML document</p>
+        <svg width="300px" height="400px">
+            <path fill="green" d="M20,20 L60,20 L60,340 L220,340 L220,380 L20,380 L20,20"/>
+        </svg>
+    </body>
+</html>

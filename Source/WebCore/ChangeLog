@@ -1,3 +1,96 @@
+2014-12-18  Radu Stavila  <stavila@adobe.com>
+
+        [SVG Masking] Enable the use of <mask> elements for -webkit-mask-image
+        https://bugs.webkit.org/show_bug.cgi?id=139294
+
+        Reviewed by Simon Fraser.
+
+        This patch links together all parts required for the functionality which improves 
+        the -webkit-mask-image property by allowing it to reference a <mask> element defined 
+        in an inline or external SVG document.
+        Support for this new functionality has been added in a previous patch, under issue
+        https://bugs.webkit.org/show_bug.cgi?id=139092. A more detailed description of how
+        the new functionality works can be found in the ChangeLog for that commit.
+        The containsSVGDocument in ScrollView has been removed because it was added in the
+        previous patch but is no longer required.
+
+        Tests: css3/masking/mask-base64.html
+               css3/masking/mask-multiple-values.html
+               css3/masking/mask-svg-clipped-fragmentId.html
+               css3/masking/mask-svg-fragmentId.html
+               css3/masking/mask-svg-inline-fragmentId.html
+               css3/masking/mask-svg-inline-invalid-fragmentId.html
+               css3/masking/mask-svg-invalid-fragmentId.html
+               css3/masking/mask-svg-no-fragmentId-tiled.html
+               css3/masking/mask-svg-no-fragmentId.html
+               css3/masking/mask-svg-script-entire-svg-to-mask.html
+               css3/masking/mask-svg-script-mask-to-entire-svg.html
+               css3/masking/mask-svg-script-mask-to-none.html
+               css3/masking/mask-svg-script-mask-to-png.html
+               css3/masking/mask-svg-script-none-to-mask.html
+               css3/masking/mask-svg-script-none-to-png.html
+               css3/masking/mask-svg-script-png-to-mask.html
+               css3/masking/mask-svg-script-png-to-none.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseMaskImage):
+        * css/CSSParser.h:
+        * css/CSSValue.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustStyleForMaskImages):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        (WebCore::StyleResolver::createMaskImageOperations):
+        (WebCore::StyleResolver::loadPendingImages):
+        * css/StyleResolver.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::containsSVGDocument): Deleted.
+        * page/FrameView.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::MaskImagePropertyWrapper::MaskImagePropertyWrapper):
+        (WebCore::MaskImagePropertyWrapper::equals):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::containsSVGDocument): Deleted.
+        * platform/graphics/MaskImageOperation.cpp:
+        (WebCore::MaskImageOperation::~MaskImageOperation):
+        (WebCore::MaskImageOperation::operator==):
+        * platform/graphics/MaskImageOperation.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::maskClipRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::RenderElement::updateFillImages):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerMaskImageInfo.cpp:
+        (WebCore::RenderLayer::MaskImageInfo::~MaskImageInfo):
+        (WebCore::RenderLayer::MaskImageInfo::updateMaskImageClients):
+        (WebCore::RenderLayer::MaskImageInfo::removeMaskImageClients):
+        * rendering/RenderLayerMaskImageInfo.h:
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::hasImage):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::image):
+        (WebCore::FillLayer::imageOrMaskImage): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setMaskImage):
+        * rendering/style/RenderStyle.h:
+
 2014-12-18  Antti Koivisto  <antti@apple.com>
 
         Stop returning GlyphPage from various Font functions
