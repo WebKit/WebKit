@@ -80,6 +80,7 @@ enum class ImmediateActionState {
 #if WK_API_ENABLED
 - (void)hidePreview;
 - (void)setPreviewTitle:(NSString *)previewTitle;
+- (void)setPreviewLoading:(BOOL)loading;
 #endif // WK_API_ENABLED
 
 @end

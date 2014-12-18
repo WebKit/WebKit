@@ -49,11 +49,14 @@
     RetainPtr<NSView> _previewView;
     RetainPtr<NSTextField> _titleTextField;
     RetainPtr<NSString> _previewTitle;
+    RetainPtr<NSProgressIndicator> _spinner;
+    BOOL _loading;
     id <WKPagePreviewViewControllerDelegate> _delegate;
     CGFloat _popoverToViewScale;
 }
 
 @property (nonatomic, copy) NSString *previewTitle;
+@property (nonatomic, getter=isLoading) BOOL loading;
 
 - (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
 

@@ -67,6 +67,24 @@ static const CGFloat previewViewTitleHeight = 34;
     return NSMakeSize(2 * previewViewInset, previewViewTitleHeight + 2 * previewViewInset);
 }
 
+- (void)setLoading:(BOOL)loading
+{
+    if (_loading == loading)
+        return;
+
+    _loading = loading;
+
+    if (_loading)
+        [_spinner startAnimation:nil];
+    else
+        [_spinner stopAnimation:nil];
+}
+
+- (BOOL)isLoading
+{
+    return _loading;
+}
+
 - (void)loadView
 {
     NSRect defaultFrame = NSMakeRect(0, 0, _mainViewSize.width, _mainViewSize.height);
@@ -125,6 +143,22 @@ static const CGFloat previewViewTitleHeight = 34;
     titleFrame.origin.y = NSMaxY(previewFrame) + textFieldCenteringOffset;
     [_titleTextField setFrame:titleFrame];
     [containerView addSubview:_titleTextField.get()];
+
+    NSSize spinnerSize = NSMakeSize(48, 48);
+    NSRect spinnerFrame = NSMakeRect(NSMidX(containerFrame), NSMidY(containerFrame), 0, 0);
+    spinnerFrame = NSInsetRect(spinnerFrame, -spinnerSize.width * 0.5, -spinnerSize.height * 0.5);
+    spinnerFrame.origin.x = floor(spinnerFrame.origin.x);
+    spinnerFrame.origin.y = floor(spinnerFrame.origin.y);
+
+    _spinner = adoptNS([[NSProgressIndicator alloc] initWithFrame:spinnerFrame]);
+    [_spinner setStyle:NSProgressIndicatorSpinningStyle];
+    [_spinner setDisplayedWhenStopped:NO];
+    [_spinner setAutoresizingMask:NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin];
+    [_spinner setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+    if (_loading)
+        [_spinner startAnimation:nil];
+
+    [containerView addSubview:_spinner.get()];
 
     // Setting the webView bounds will scale it to 75% of the _mainViewSize.
     [_previewView setBounds:NSMakeRect(0, 0, _mainViewSize.width / _popoverToViewScale, _mainViewSize.height / _popoverToViewScale)];
