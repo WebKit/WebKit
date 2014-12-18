@@ -1220,9 +1220,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
     _private->page->settings().setScreenFontSubstitutionEnabled(false);
     
-    // FIXME: <rdar://problem/7394370> Always use primary font baseline in text field base line calculation, ignore fallback fonts.
-    _private->page->settings().setAlwaysUseBaselineOfPrimaryFont([preferences _alwaysUseBaselineOfPrimaryFont]);
-
     _private->page->settings().setFontFallbackPrefersPictographs(true);
     _private->page->settings().setPictographFontFamily("AppleColorEmoji");
     
@@ -2348,7 +2345,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if PLATFORM(IOS)
     settings.setStandalone([preferences _standalone]);
     settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);
-    settings.setAlwaysUseBaselineOfPrimaryFont([preferences _alwaysUseBaselineOfPrimaryFont]);
     settings.setAllowMultiElementImplicitSubmission([preferences _allowMultiElementImplicitFormSubmission]);
     settings.setLayoutInterval(std::chrono::milliseconds([preferences _layoutInterval]));
     settings.setMaxParseDuration([preferences _maxParseDuration]);

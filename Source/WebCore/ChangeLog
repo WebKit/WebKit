@@ -1,3 +1,18 @@
+2014-12-18  Antti Koivisto  <antti@apple.com>
+
+        Remove alwaysUseBaselineOfPrimaryFont setting
+        https://bugs.webkit.org/show_bug.cgi?id=139770
+
+        Reviewed by Anders Carlsson.
+
+        "FIXME: This is unneeded and should be removed."
+
+        This iOS-only setting has no clients anymore.
+
+        * page/Settings.in:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+
 2014-12-18  Radu Stavila  <stavila@adobe.com>
 
         [SVG Masking] Enable the use of <mask> elements for -webkit-mask-image

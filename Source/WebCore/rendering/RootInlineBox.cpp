@@ -900,11 +900,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     bool setUsedFontWithLeading = false;
 
     const RenderStyle& boxLineStyle = box.lineStyle();
-#if PLATFORM(IOS)
-    if (usedFonts && !usedFonts->isEmpty() && (includeFont || (boxLineStyle.lineHeight().isNegative() && includeLeading)) && !box.renderer().document().settings()->alwaysUseBaselineOfPrimaryFont()) {
-#else
     if (usedFonts && !usedFonts->isEmpty() && (includeFont || (boxLineStyle.lineHeight().isNegative() && includeLeading))) {
-#endif
         usedFonts->append(boxLineStyle.font().primaryFont());
         for (size_t i = 0; i < usedFonts->size(); ++i) {
             const FontMetrics& fontMetrics = usedFonts->at(i)->fontMetrics();

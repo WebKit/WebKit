@@ -293,8 +293,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)_setStandalone:(BOOL)flag;
 - (void)_setTelephoneNumberParsingEnabled:(BOOL)flag;
 - (BOOL)_telephoneNumberParsingEnabled;
-- (void)_setAlwaysUseBaselineOfPrimaryFont:(BOOL)flag;
-- (BOOL)_alwaysUseBaselineOfPrimaryFont;
 - (void)_setAllowMultiElementImplicitFormSubmission:(BOOL)flag;
 - (BOOL)_allowMultiElementImplicitFormSubmission;
 - (void)_setAlwaysRequestGeolocationPermission:(BOOL)flag;

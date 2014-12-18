@@ -197,7 +197,6 @@
     macro(ShouldConvertPositionStyleOnCopy, shouldConvertPositionStyleOnCopy, Bool, bool, false) \
     macro(Standalone, standalone, Bool, bool, false) \
     macro(TelephoneNumberParsingEnabled, telephoneNumberParsingEnabled, Bool, bool, false) \
-    macro(AlwaysUseBaselineOfPrimaryFont, alwaysUseBaselineOfPrimaryFont, Bool, bool, false) \
     macro(AllowMultiElementImplicitSubmission, allowMultiElementImplicitSubmission, Bool, bool, false) \
     macro(AlwaysUseAcceleratedOverflowScroll, alwaysUseAcceleratedOverflowScroll, Bool, bool, false) \
     macro(PasswordEchoEnabled, passwordEchoEnabled, Bool, bool, DEFAULT_PASSWORD_ECHO_ENABLED) \

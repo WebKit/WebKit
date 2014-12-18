@@ -1,3 +1,14 @@
+2014-12-18  Antti Koivisto  <antti@apple.com>
+
+        Remove alwaysUseBaselineOfPrimaryFont setting
+        https://bugs.webkit.org/show_bug.cgi?id=139770
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-12-18  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Implement webkit_web_view_is_playing_audio()

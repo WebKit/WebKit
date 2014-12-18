@@ -1458,16 +1458,6 @@ public:
     return [self _floatValueForKey:WebKitMaxParseDurationPreferenceKey];
 }
 
-- (void)_setAlwaysUseBaselineOfPrimaryFont:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitAlwaysUseBaselineOfPrimaryFontPreferenceKey];
-}
-
-- (BOOL)_alwaysUseBaselineOfPrimaryFont
-{
-    return [self _boolValueForKey:WebKitAlwaysUseBaselineOfPrimaryFontPreferenceKey];
-}
-
 - (void)_setAllowMultiElementImplicitFormSubmission:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAllowMultiElementImplicitFormSubmissionPreferenceKey];

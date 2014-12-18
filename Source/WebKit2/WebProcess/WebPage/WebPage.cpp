@@ -2874,7 +2874,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setStandalone(store.getBoolValueForKey(WebPreferencesKey::standaloneKey()));
     settings.setTelephoneNumberParsingEnabled(store.getBoolValueForKey(WebPreferencesKey::telephoneNumberParsingEnabledKey()));
-    settings.setAlwaysUseBaselineOfPrimaryFont(store.getBoolValueForKey(WebPreferencesKey::alwaysUseBaselineOfPrimaryFontKey()));
     settings.setAllowMultiElementImplicitSubmission(store.getBoolValueForKey(WebPreferencesKey::allowMultiElementImplicitSubmissionKey()));
     settings.setAlwaysUseAcceleratedOverflowScroll(store.getBoolValueForKey(WebPreferencesKey::alwaysUseAcceleratedOverflowScrollKey()));
 
