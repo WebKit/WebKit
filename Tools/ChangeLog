@@ -1,5 +1,18 @@
 2014-12-18  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] Remove the various aliases for --ios-simulator (--sim, --simulator, --ios-sim) in arguments for build and test scripts
+        https://bugs.webkit.org/show_bug.cgi?id=139748
+
+        Reviewed by Daniel Bates.
+        
+        Staging change to support --ios-sim and --ios-simulator temporarily until the bots
+        have all been updated.
+
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+
+2014-12-18  Simon Fraser  <simon.fraser@apple.com>
+
         Build more of TestWebKitAPI for iOS
         https://bugs.webkit.org/show_bug.cgi?id=139747
 
