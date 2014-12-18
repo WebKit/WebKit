@@ -48,12 +48,12 @@
                     { "name": "bot193", "platform": "mac-yosemite" },
                     { "name": "bot194", "platform": "mac-yosemite" },
 
-                    { "name": "apple-windows-1", "platform": "win" },
-                    { "name": "apple-windows-2", "platform": "win" },
-                    { "name": "apple-windows-3", "platform": "win" },
-                    { "name": "apple-windows-4", "platform": "win" },
-                    { "name": "apple-windows-5", "platform": "win" },
-                    { "name": "apple-windows-6", "platform": "win" },
+                    { "name": "bot516", "platform": "win" },
+                    { "name": "bot514", "platform": "win" },
+                    { "name": "bot507", "platform": "win" },
+                    { "name": "bot504", "platform": "win" },
+                    { "name": "bot511", "platform": "win" },
+                    { "name": "bot501", "platform": "win" },
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk" },
                     { "name": "gtk-linux-slave-2", "platform": "gtk" },
@@ -194,23 +194,23 @@
                       "name": "Apple Win Release (Build)", "type": "Build", "builddir": "win-release",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["win-release-tests"],
-                      "slavenames": ["apple-windows-2"]
+                      "slavenames": ["bot514"]
                     },
                     {
                       "name": "Apple Win 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-5", "apple-windows-6"]
+                      "slavenames": ["bot511", "bot501"]
                     },
                     {
                       "name": "Apple Win Debug (Build)", "type": "Build", "builddir": "win-debug",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "triggers": ["win-debug-tests"],
-                      "slavenames": ["apple-windows-1"]
+                      "slavenames": ["bot516"]
                     },
                     {
                       "name": "Apple Win 7 Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-3", "apple-windows-4"]
+                      "slavenames": ["bot507", "bot504"]
                     },
                     {
                       "name": "GTK Linux 32-bit Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-32-release",

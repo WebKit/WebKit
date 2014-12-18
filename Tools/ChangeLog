@@ -1,3 +1,11 @@
+2014-12-17  Lucas Forschler  <lforschler@apple.com>
+
+        Move Apple buildbot slaves to their new home.
+        
+        Reviewed by Roger Fong.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-12-17  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r177363): Gtk and Efl testing is broken
