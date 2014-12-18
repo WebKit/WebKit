@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
@@ -76,3 +79,5 @@ TEST(WebKit2, EphemeralSessionPushStateNoHistoryCallback)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

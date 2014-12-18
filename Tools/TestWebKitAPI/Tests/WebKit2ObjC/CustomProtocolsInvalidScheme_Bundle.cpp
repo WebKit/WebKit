@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include <WebKit/WKBundlePage.h>
 
@@ -60,3 +62,5 @@ private:
 static InjectedBundleTest::Register<CustomProtocolInvalidSchemeTest> registrar("CustomProtocolInvalidSchemeTest");
 
 } // namespace TestWebKitAPI
+
+#endif

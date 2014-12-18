@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
@@ -64,3 +67,5 @@ TEST(WebKit2, LoadAlternateHTMLStringWithNonDirectoryURL)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

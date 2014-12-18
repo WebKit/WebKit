@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if WK_HAVE_C_SPI
+
 #import "Test.h"
 
 #import "PlatformUtilities.h"
@@ -59,3 +62,5 @@ TEST(WebKit2, PreventImageLoadWithAutoResizingTest)
 } // namespace TestWebKitAPI
 
 #endif // WK_API_ENABLED
+
+#endif

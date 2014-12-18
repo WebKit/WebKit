@@ -32,7 +32,6 @@
 
 #if WK_API_ENABLED
 
-
 static bool isDoneWithNavigation;
 
 @interface SimpleNavigationDelegate : NSObject <WKNavigationDelegate>
@@ -88,6 +87,7 @@ TEST(WKUserContentController, ScriptMessageHandlerSimple)
     EXPECT_WK_STREQ(@"Hello", (NSString *)[lastScriptMessage body]);
 }
 
+#if !PLATFORM(IOS) // FIXME: hangs in the iOS simulator
 TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
 {
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
@@ -125,5 +125,6 @@ TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
 
     EXPECT_WK_STREQ(@"Second Message", (NSString *)[lastScriptMessage body]);    
 }
+#endif
 
 #endif

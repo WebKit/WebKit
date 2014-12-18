@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleController.h"
 #include <WebKit/WKBundleInitialize.h>
 
@@ -36,3 +39,5 @@ void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     TestWebKitAPI::InjectedBundleController::shared().initialize(bundle, initializationUserData);
 }
+
+#endif

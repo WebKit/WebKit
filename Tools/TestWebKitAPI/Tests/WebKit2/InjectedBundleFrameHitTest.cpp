@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit/WKRetainPtr.h>
@@ -66,3 +69,5 @@ TEST(WebKit2, InjectedBundleFrameHitTest)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

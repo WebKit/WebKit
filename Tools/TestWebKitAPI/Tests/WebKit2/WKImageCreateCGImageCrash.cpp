@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if WK_HAVE_C_SPI
+
 #include <WebKit/WKImageCG.h>
 
 namespace TestWebKitAPI {
@@ -35,3 +37,5 @@ TEST(WebKit2, WKImageCreateCGImageCrash)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

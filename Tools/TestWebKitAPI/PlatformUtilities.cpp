@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 
 #include <wtf/StdLibExtras.h>
@@ -88,3 +91,5 @@ WKRetainPtr<WKStringRef> toWK(const char* utf8String)
 
 } // namespace Util
 } // namespace TestWebKitAPI
+
+#endif

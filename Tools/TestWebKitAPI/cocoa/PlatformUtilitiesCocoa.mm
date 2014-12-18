@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,36 @@
  */
 
 #include "config.h"
-
-#if WK_HAVE_C_SPI
-
-#include "InjectedBundleTest.h"
-
 #include "PlatformUtilities.h"
-#include <WebKit/WKBundlePage.h>
-#include <WebKit/WKBundleFrame.h>
+
+#include <wtf/RetainPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
+namespace Util {
 
-class WebArchiveTest : public InjectedBundleTest {
-public:
-    WebArchiveTest(const std::string& identifier);
-
-private:
-    virtual void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody);
-};
-
-static InjectedBundleTest::Register<WebArchiveTest> registrar("WebArchiveTest");
-
-WebArchiveTest::WebArchiveTest(const std::string& identifier)
-    : InjectedBundleTest(identifier)
+void run(bool* done)
 {
+    while (!*done)
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
 }
 
-void WebArchiveTest::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef body)
+void sleep(double seconds)
 {
-    if (!WKStringIsEqualToUTF8CString(messageName, "GetWebArchive"))
-        return;
-
-    if (WKGetTypeID(body) != WKBundlePageGetTypeID())
-        return;
-    
-    WKBundleFrameRef frame = WKBundlePageGetMainFrame(static_cast<WKBundlePageRef>(body));
-    if (!frame)
-        return;
-    WKBundlePostMessage(bundle, Util::toWK("DidGetWebArchive").get(), adoptWK(WKBundleFrameCopyWebArchive(frame)).get());
+    usleep(seconds * 1000000);
 }
 
+std::string toSTD(NSString *string)
+{
+    if (!string)
+        return std::string();
+
+    size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    auto buffer = std::make_unique<char[]>(bufferSize);
+    NSUInteger stringLength;
+    [string getBytes:buffer.get() maxLength:bufferSize usedLength:&stringLength encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [string length]) remainingRange:0];
+    return std::string(buffer.get(), stringLength);
+}
+
+} // namespace Util
 } // namespace TestWebKitAPI
-
-#endif

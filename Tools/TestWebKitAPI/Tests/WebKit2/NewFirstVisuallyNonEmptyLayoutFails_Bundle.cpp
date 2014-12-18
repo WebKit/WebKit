@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
@@ -49,3 +52,5 @@ public:
 static InjectedBundleTest::Register<NewFirstVisuallyNonEmptyLayoutFailsTest> registrar("NewFirstVisuallyNonEmptyLayoutFailsTest");
 
 } // namespace TestWebKitAPI
+
+#endif

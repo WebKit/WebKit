@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if WK_HAVE_C_SPI
+
 #import "JavaScriptTest.h"
 #import "Test.h"
 
@@ -71,3 +74,5 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
 } // namespace TestWebKitAPI
 
 #endif // WK_API_ENABLED
+
+#endif

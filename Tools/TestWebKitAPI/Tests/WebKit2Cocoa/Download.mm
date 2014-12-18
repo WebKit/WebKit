@@ -27,6 +27,7 @@
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
+#if PLATFORM(MAC) // No downloading on iOS
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -268,4 +269,5 @@ TEST(_WKDownload, OriginatingWebView)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+#endif
 #endif

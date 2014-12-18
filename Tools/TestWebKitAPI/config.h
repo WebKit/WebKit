@@ -85,3 +85,7 @@
 #if PLATFORM(COCOA) && defined(__OBJC__)
 #import <WebKit/WebKit.h>
 #endif
+
+#if !PLATFORM(IOS)
+#define WK_HAVE_C_SPI 1
+#endif

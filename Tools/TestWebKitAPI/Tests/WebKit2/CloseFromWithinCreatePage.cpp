@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 
@@ -80,3 +83,5 @@ TEST(WebKit2, CloseFromWithinCreatePage)
 }
 
 }
+
+#endif

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include "PlatformUtilities.h"
 #include <WebKit/WKBundle.h>
@@ -76,3 +79,5 @@ void InjectedBundleFrameHitTestTest::frameLoadFinished(WKBundleFrameRef frame)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

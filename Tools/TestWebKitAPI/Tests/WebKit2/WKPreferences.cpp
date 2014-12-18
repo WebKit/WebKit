@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
@@ -41,7 +44,7 @@ TEST(WebKit2, WKPreferencesBasic)
 
 TEST(WebKit2, WKPreferencesDefaults)
 {
-#if PLATFORM(MAC)
+#if WK_HAVE_C_SPI
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier";
     static const char* expectedSerifFontFamily = "Times";
@@ -118,3 +121,5 @@ TEST(WebKit2, WKPreferencesCopying)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
@@ -68,3 +71,5 @@ void ShouldGoToBackForwardListItemTest::didCreatePage(WKBundleRef bundle, WKBund
 }
 
 } // namespace TestWebKitAPI
+
+#endif

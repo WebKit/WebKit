@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleController.h"
 
 #include "InjectedBundleTest.h"
@@ -138,3 +141,5 @@ void InjectedBundleController::registerCreateInjectedBundleTestFunction(const st
 }
 
 } // namespace TestWebKitAPI
+
+#endif

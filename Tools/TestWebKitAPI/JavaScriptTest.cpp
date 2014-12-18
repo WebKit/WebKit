@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "JavaScriptTest.h"
 
 #include "PlatformUtilities.h"
@@ -90,3 +93,5 @@ static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScript
 }
 
 } // namespace TestWebKitAPI
+
+#endif

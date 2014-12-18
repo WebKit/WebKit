@@ -36,17 +36,6 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-void run(bool* done)
-{
-    while (!*done)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-}
-
-void sleep(double seconds)
-{
-    usleep(seconds * 1000000);
-}
-
 WKStringRef createInjectedBundlePath()
 {
     NSString *nsString = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundleTestWebKitAPI.bundle"];
@@ -74,18 +63,6 @@ WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
 bool isKeyDown(WKNativeEventPtr event)
 {
     return [event type] == NSKeyDown;
-}
-
-std::string toSTD(NSString *string)
-{
-    if (!string)
-        return std::string();
-
-    size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    auto buffer = std::make_unique<char[]>(bufferSize);
-    NSUInteger stringLength;
-    [string getBytes:buffer.get() maxLength:bufferSize usedLength:&stringLength encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [string length]) remainingRange:0];
-    return std::string(buffer.get(), stringLength);
 }
 
 } // namespace Util

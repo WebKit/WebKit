@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if PLATFORM(MAC)
+
 #include "JavaScriptTest.h"
 
 #include <WebKit/WebView.h>
@@ -43,3 +46,5 @@ namespace TestWebKitAPI {
 }
 
 } // namespace TestWebKitAPI
+
+#endif

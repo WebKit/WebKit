@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit/WKDownload.h>
@@ -83,3 +86,5 @@ TEST(WebKit2, DownloadDecideDestinationCrash)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

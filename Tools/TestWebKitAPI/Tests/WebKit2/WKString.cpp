@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if WK_HAVE_C_SPI
+
 namespace TestWebKitAPI {
 
 TEST(WebKit2, WKString)
@@ -69,3 +71,5 @@ TEST(WebKit2, WKString)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

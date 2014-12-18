@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include "PlatformUtilities.h"
 #include <WebKit2/WKBundle.h>
@@ -74,3 +77,5 @@ void StopLoadingDuringDidFailProvisionalLoadTest::didFailProvisionalLoad(WKBundl
 }
 
 } // namespace TestWebKitAPI
+
+#endif

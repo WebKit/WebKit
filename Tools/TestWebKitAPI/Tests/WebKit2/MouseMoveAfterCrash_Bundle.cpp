@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
@@ -54,3 +57,5 @@ void MouseMoveAfterCrashTest::didReceiveMessage(WKBundleRef bundle, WKStringRef 
 }
 
 } // namespace TestWebKitAPI
+
+#endif

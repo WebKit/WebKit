@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include <WebKit/WKBundlePageGroup.h>
 #include <WebKit/WKBundlePrivate.h>
@@ -53,3 +56,5 @@ public:
 static InjectedBundleTest::Register<DocumentStartUserScriptAlertCrashTest> registrar("DocumentStartUserScriptAlertCrashTest");
 
 } // namespace TestWebKitAPI
+
+#endif

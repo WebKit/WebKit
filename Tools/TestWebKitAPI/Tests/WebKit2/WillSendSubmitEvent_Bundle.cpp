@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
@@ -63,3 +66,5 @@ void WillSendSubmitEventTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef 
 }
 
 } // namespace TestWebKitAPI
+
+#endif

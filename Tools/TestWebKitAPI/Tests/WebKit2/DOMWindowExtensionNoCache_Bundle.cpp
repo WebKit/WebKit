@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include <WebKit/WKBundleDOMWindowExtension.h>
 #include <WebKit/WKBundleFrame.h>
@@ -276,3 +279,5 @@ static void willDestroyGlobalObjectForDOMWindowExtensionCallback(WKBundlePageRef
 }
 
 } // namespace TestWebKitAPI
+
+#endif

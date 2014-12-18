@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if PLATFORM(MAC)
+
 #import "Test.h"
 
 #import "PlatformUtilities.h"
@@ -738,3 +741,5 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

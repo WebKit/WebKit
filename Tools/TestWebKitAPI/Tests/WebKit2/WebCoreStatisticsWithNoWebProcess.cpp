@@ -24,8 +24,11 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
-#include "test.h"
+#include "Test.h"
 
 namespace TestWebKitAPI {
 
@@ -48,3 +51,5 @@ TEST(WebKit2, WebCoreStatisticsWithNoWebProcess)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

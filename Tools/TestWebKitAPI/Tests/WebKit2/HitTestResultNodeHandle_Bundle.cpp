@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include "InjectedBundleController.h"
 #include "PlatformUtilities.h"
@@ -64,3 +67,5 @@ public:
 static InjectedBundleTest::Register<HitTestResultNodeHandleTest> registrar("HitTestResultNodeHandleTest");
 
 } // namespace TestWebKitAPI
+
+#endif

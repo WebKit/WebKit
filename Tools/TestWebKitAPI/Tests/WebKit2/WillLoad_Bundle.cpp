@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
@@ -82,3 +85,5 @@ private:
 static InjectedBundleTest::Register<WillLoadTest> registrar("WillLoadTest");
 
 } // namespace TestWebKitAPI
+
+#endif

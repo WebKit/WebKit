@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 #include "PlatformUtilities.h"
 #include <WebKit/WKRetainPtr.h>
@@ -46,3 +49,5 @@ public:
 static InjectedBundleTest::Register<GetInjectedBundleInitializationUserDataCallbackTest> registrar("GetInjectedBundleInitializationUserDataCallbackTest");
 
 } // namespace TestWebKitAPI
+
+#endif

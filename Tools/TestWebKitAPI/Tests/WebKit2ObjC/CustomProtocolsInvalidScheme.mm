@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if WK_HAVE_C_SPI
+
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "TestBrowsingContextLoadDelegate.h"
@@ -60,3 +62,5 @@ TEST(WebKit2CustomProtocolsTest, LoadInvalidScheme)
 } // namespace TestWebKitAPI
 
 #endif // WK_API_ENABLED
+
+#endif

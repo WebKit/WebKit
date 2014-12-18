@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #import <WebKit/WebDocumentPrivate.h>
@@ -167,3 +170,5 @@ TEST(WebKit2, FindMatches)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

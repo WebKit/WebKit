@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if WK_HAVE_C_SPI
+
 #import "ActionMenusBundleSPI.h"
 #import "InjectedBundleTest.h"
 #import "PlatformUtilities.h"
@@ -138,3 +141,5 @@ public:
 static InjectedBundleTest::Register<ActionMenuTest> registrar("ActionMenusTest");
 
 } // namespace TestWebKitAPI
+
+#endif // PLATFORM(MAC)

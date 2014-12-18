@@ -1,3 +1,141 @@
+2014-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Build more of TestWebKitAPI for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=139747
+
+        Reviewed by Daniel Bates.
+        
+        Base.xcconfig removed many test files from the iOS build via EXCLUDED_SOURCE_FILE_NAMES,
+        which excluded some tests that should be run for iOS.
+        
+        Fix by removing some patterns from EXCLUDED_SOURCE_FILE_NAMES, and #ifdeffing
+        source files instead. config.h defines WK_HAVE_C_SPI when the WebKit C SPI is
+        available (i.e. Mac OS X), and most files use that. Some files with Mac-only
+        functionality (ActionMenus, Downloads) use #if PLATFORM(MAC).
+        
+        Added PlatformUtilitiesCocoa.mm and moved WeakObjCPtr.mm into a cocoa directory
+        to share code between Mac and iOS.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/InjectedBundle.xcconfig:
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        * TestWebKitAPI/InjectedBundleMain.cpp:
+        * TestWebKitAPI/JavaScriptTest.cpp:
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+        * TestWebKitAPI/Tests/WebKit2/AboutBlankLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CloseFromWithinCreatePage.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CloseThenTerminate.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CookieManager.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DidNotHandleKeyDown.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DownloadDecideDestinationCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        * TestWebKitAPI/Tests/WebKit2/EvaluateJavaScript.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/Find.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FindMatches.mm:
+        * TestWebKitAPI/Tests/WebKit2/ForceRepaint.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp:
+        * TestWebKitAPI/Tests/WebKit2/Geolocation.cpp:
+        * TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback.cpp:
+        * TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/LayoutMilestonesWithAllContentInFrame.cpp:
+        * TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp:
+        * TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback.cpp:
+        * TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/LoadPageOnCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ParentFrame.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ParentFrame_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PasteboardNotifications.mm:
+        * TestWebKitAPI/Tests/WebKit2/PasteboardNotifications_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PrivateBrowsingPushStateNoHistoryCallback.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ReloadPageAfterCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ResizeReversePaginatedWebView.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ResizeWindowAfterCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ScrollPinningBehaviors.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ShouldKeepCurrentBackForwardListItemInList.cpp:
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        * TestWebKitAPI/Tests/WebKit2/StopLoadingDuringDidFailProvisionalLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/StopLoadingDuringDidFailProvisionalLoad_bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/TerminateTwice.cpp:
+        * TestWebKitAPI/Tests/WebKit2/UserMessage.cpp:
+        * TestWebKitAPI/Tests/WebKit2/UserMessage_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKImageCreateCGImageCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKPageGetScaleFactorNotZero.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKPageIsPlayingAudio.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WKString.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WebArchive.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WebArchive_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WebCoreStatisticsWithNoWebProcess.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WillLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WillLoad_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/cocoa/WeakObjCPtr.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKit2/mac/WeakObjCPtr.mm.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenusBundle.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsInvalidScheme.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsInvalidScheme_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+        * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit2/WKImageCreateCGImageCrash.cpp.
+        (TestWebKitAPI::Util::run):
+        (TestWebKitAPI::Util::sleep):
+        (TestWebKitAPI::Util::toSTD):
+        * TestWebKitAPI/config.h:
+        * TestWebKitAPI/mac/JavaScriptTestMac.mm:
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::run): Deleted.
+        (TestWebKitAPI::Util::sleep): Deleted.
+        (TestWebKitAPI::Util::toSTD): Deleted.
+
 2014-12-18  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [GTK] Add support for FTL JIT on ARM64

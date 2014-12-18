@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "Test.h"
 
 #include "PlatformUtilities.h"
@@ -239,3 +242,5 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadPlainTextString)
 }
 
 } // namespace TestWebKitAPI
+
+#endif

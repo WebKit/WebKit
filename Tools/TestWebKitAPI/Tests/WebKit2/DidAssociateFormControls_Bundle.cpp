@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if WK_HAVE_C_SPI
+
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
@@ -76,3 +79,5 @@ void DidAssociateFormControlsTest::didCreatePage(WKBundleRef bundle, WKBundlePag
 }
 
 } // namespace TestWebKitAPI
+
+#endif
