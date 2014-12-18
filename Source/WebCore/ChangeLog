@@ -1,5 +1,25 @@
 2014-12-18  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Recursive crash at WebCore::accessibleNameForNode
+        https://bugs.webkit.org/show_bug.cgi?id=139616
+
+        Reviewed by Mario Sanchez Prada.
+
+        An image that uses aria-labelledby to reference its own parent can lead to a recursion crash.
+        There needs to be some information we can pass through these methods to ensure we don't hit this case.
+
+        Test: accessibility/accessibility-description-crash.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        (WebCore::AccessibilityNodeObject::textUnderElement):
+        (WebCore::accessibleNameForNode):
+        (WebCore::AccessibilityNodeObject::accessibilityDescriptionForElements):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityTextUnderElementMode::AccessibilityTextUnderElementMode):
+
+2014-12-18  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Heuristic: Avoid exposing an element as clickable if mouse event delegation is handled on an element with any explicit ARIA role, including presentation.
         https://bugs.webkit.org/show_bug.cgi?id=133613
 
