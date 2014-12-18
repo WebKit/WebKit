@@ -1,3 +1,14 @@
+2014-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Clean up MachSendRight and add a copySendRight member function
+        https://bugs.webkit.org/show_bug.cgi?id=139788
+
+        Reviewed by Tim Horton.
+
+        * wtf/StdLibExtras.h:
+        (std::exchange):
+        Add an implementation of std::exchange.
+
 2014-12-17  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Make it possible to toggle FeatureCounter support at runtime

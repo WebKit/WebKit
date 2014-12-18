@@ -367,6 +367,16 @@ template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helpe
 
 template<size_t length> struct make_index_sequence : public make_index_sequence_helper<length>::type { };
 
+// std::exchange
+template<class T, class U = T>
+T exchange(T& t, U&& newValue)
+{
+    T oldValue = std::move(t);
+    t = std::forward<U>(newValue);
+
+    return oldValue;
+}
+
 #if COMPILER_SUPPORTS(CXX_USER_LITERALS)
 // These literals are available in C++14, so once we require C++14 compilers we can get rid of them here.
 // (User-literals need to have a leading underscore so we add it here - the "real" literals don't have underscores).

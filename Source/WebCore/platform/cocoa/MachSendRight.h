@@ -40,6 +40,8 @@ public:
 
     MachSendRight& operator=(MachSendRight&&);
 
+    MachSendRight copySendRight() const;
+
     mach_port_t leakSendRight() WARN_UNUSED_RETURN;
 
 private:

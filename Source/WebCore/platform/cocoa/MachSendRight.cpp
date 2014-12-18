@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MachSendRight.h"
 
+#include <mach/mach_error.h>
 #include <utility>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ static void retainSendRight(mach_port_t port)
 
     auto kr = mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1);
     if (kr != KERN_SUCCESS)
-        LOG_ERROR("mach_port_mod_refs error: %x", kr);
+        LOG_ERROR("mach_port_mod_refs error: %s (%x)", mach_error_string(kr), kr);
 }
 
 static void releaseSendRight(mach_port_t port)
@@ -47,7 +48,7 @@ static void releaseSendRight(mach_port_t port)
 
     auto kr = mach_port_deallocate(mach_task_self(), port);
     if (kr != KERN_SUCCESS)
-        LOG_ERROR("mach_port_deallocate error: %x", kr);
+        LOG_ERROR("mach_port_deallocate error: %s (%x)", mach_error_string(kr), kr);
 }
 
 MachSendRight MachSendRight::adopt(mach_port_t port)
@@ -87,12 +88,14 @@ MachSendRight& MachSendRight::operator=(MachSendRight&& other)
     return *this;
 }
 
+MachSendRight MachSendRight::copySendRight() const
+{
+    return create(m_port);
+}
+
 mach_port_t MachSendRight::leakSendRight()
 {
-    mach_port_t port = m_port;
-    m_port = MACH_PORT_NULL;
-
-    return port;
+    return std::exchange(m_port, MACH_PORT_NULL);
 }
 
 }
