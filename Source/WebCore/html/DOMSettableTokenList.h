@@ -38,7 +38,10 @@ typedef int ExceptionCode;
 class DOMSettableTokenList final : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<DOMSettableTokenList> create();
+    static Ref<DOMSettableTokenList> create()
+    {
+        return adoptRef(*new DOMSettableTokenList);
+    }
 
     virtual void ref() override;
     virtual void deref() override;

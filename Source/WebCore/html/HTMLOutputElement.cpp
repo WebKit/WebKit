@@ -70,11 +70,6 @@ void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomicSt
         HTMLFormControlElement::parseAttribute(name, value);
 }
 
-DOMSettableTokenList* HTMLOutputElement::htmlFor() const
-{
-    return m_tokens.get();
-}
-
 void HTMLOutputElement::setFor(const String& value)
 {
     m_tokens->setValue(value);

@@ -1,5 +1,26 @@
 2014-12-18  Andreas Kling  <akling@apple.com>
 
+        Ref-ify DOMSettableTokenList.
+        <https://webkit.org/b/139785>
+
+        Reviewed by Chris Dumez.
+
+        Make DOMSettableTokenList::create() return a Ref, and have its two client
+        elements store it in a Ref instead of a RefPtr (and fix their getter API
+        to return references.)
+
+        * html/DOMSettableTokenList.cpp:
+        (WebCore::DOMSettableTokenList::create): Deleted.
+        * html/DOMSettableTokenList.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::sizes): Deleted.
+        * html/HTMLLinkElement.h:
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::htmlFor): Deleted.
+        * html/HTMLOutputElement.h:
+
+2014-12-18  Andreas Kling  <akling@apple.com>
+
         Ref-ify ClientRectList.
         <https://webkit.org/b/139780>
 

@@ -67,7 +67,7 @@ public:
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
     void setSizes(const String&);
-    DOMSettableTokenList* sizes() const;
+    DOMSettableTokenList& sizes() { return m_sizes.get(); }
 
     void dispatchPendingEvent(LinkEventSender*);
     static void dispatchPendingLoadEvents();
@@ -130,7 +130,7 @@ private:
 
     String m_type;
     String m_media;
-    RefPtr<DOMSettableTokenList> m_sizes;
+    Ref<DOMSettableTokenList> m_sizes;
     DisabledState m_disabledState;
     LinkRelAttribute m_relAttribute;
     bool m_loading;

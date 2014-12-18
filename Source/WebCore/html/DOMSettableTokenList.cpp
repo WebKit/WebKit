@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-PassRefPtr<DOMSettableTokenList> DOMSettableTokenList::create()
-{
-    return adoptRef(new DOMSettableTokenList());
-}
-
 void DOMSettableTokenList::ref()
 {
     RefCounted<DOMSettableTokenList>::ref();

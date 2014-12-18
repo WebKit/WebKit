@@ -45,7 +45,7 @@ public:
     String defaultValue() const;
     void setDefaultValue(const String&);
     void setFor(const String&);
-    DOMSettableTokenList* htmlFor() const;
+    DOMSettableTokenList& htmlFor() { return m_tokens.get(); }
     
     virtual bool canContainRangeEndPoint() const override { return false; }
 
@@ -66,7 +66,7 @@ private:
     bool m_isDefaultValueMode;
     bool m_isSetTextContentInProgress;
     String m_defaultValue;
-    RefPtr<DOMSettableTokenList> m_tokens;
+    Ref<DOMSettableTokenList> m_tokens;
 };
 
 } // namespace

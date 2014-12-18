@@ -514,11 +514,6 @@ void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType noti
         : DocumentStyleSheetCollection::RemovePendingSheetNotifyLater);
 }
 
-DOMSettableTokenList* HTMLLinkElement::sizes() const
-{
-    return m_sizes.get();
-}
-
 void HTMLLinkElement::setSizes(const String& value)
 {
     m_sizes->setValue(value);
