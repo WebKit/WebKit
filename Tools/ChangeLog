@@ -1,3 +1,18 @@
+2014-12-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Perf tests frequently fail saying "build not up to date"
+        https://bugs.webkit.org/show_bug.cgi?id=139786
+
+        Reviewed by Ryosuke Niwa.
+
+        Perf tests only build DumpRenderTree, not WebKit itself. Just clean the build
+        directory to get rid of stale precompiled headers, and let it rebuild
+        DumpRenderTree each time, that's fast.
+
+        Also, removed unused "build and perf test" code.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening. Reorder file contents to match Mac version.

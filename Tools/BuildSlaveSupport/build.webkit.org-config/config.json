@@ -107,6 +107,7 @@
                     },
                     {
                       "name": "Apple MountainLion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "mountainlion-release-perf-tests",
+                      "is_clean": true,
                       "platform": "mac-mountainlion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot141"]
                     },
@@ -147,6 +148,7 @@
                     },
                     {
                       "name": "Apple Mavericks Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "mavericks-release-perf-tests",
+                      "is_clean": true,
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot135"]
                     },
@@ -187,6 +189,7 @@
                     },
                     {
                       "name": "Apple Yosemite Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "yosemite-release-perf-tests",
+                      "is_clean": true,
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot194"]
                     },
@@ -246,6 +249,7 @@
                     },
                     {
                       "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "gtk-linux-64-release-perf-tests",
+                      "is_clean": true,
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-8"]
                     },
