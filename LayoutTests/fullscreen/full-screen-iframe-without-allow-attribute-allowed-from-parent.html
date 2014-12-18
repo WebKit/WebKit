@@ -17,10 +17,6 @@ window.onmessage = function (e) {
     });
 
     runWithKeyDown(function() {
-        setTimeout(function() {
-            consoleWrite("FAIL - did not enter full screen!");
-            endTest();
-        }, 50);
         frame.webkitRequestFullScreen();
     });
 }

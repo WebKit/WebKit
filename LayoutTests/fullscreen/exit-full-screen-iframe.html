@@ -17,12 +17,6 @@ function runTest() {
     });
 
     runWithKeyDown(function() {
-
-        setTimeout(function() {
-            consoleWrite("FAIL - did not enter and exit full screen in time!");
-            endTest();
-        }, 100);
-
         frame.contentDocument.documentElement.webkitRequestFullScreen();
     });
 }

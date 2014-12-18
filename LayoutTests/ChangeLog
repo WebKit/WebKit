@@ -1,3 +1,23 @@
+2014-12-18  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=139779
+        Fullscreen tests use unreasonably short timeouts
+
+        Reviewed by Eric Carlson.
+
+        * fullscreen/exit-full-screen-iframe.html:
+        * fullscreen/full-screen-iframe-allowed-prefixed.html:
+        * fullscreen/full-screen-iframe-allowed.html:
+        * fullscreen/full-screen-iframe-legacy.html:
+        * fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html:
+        * fullscreen/resources/full-screen-iframe-with-mixed-allow-webkitallow-iframe2.html:
+        Removed the timeouts.
+
+        * platform/mac-wk1/TestExpectations: fullscreen/exit-full-screen-iframe.html
+        legitimately fails in DumpRenderTree, which we didn't know about.
+
+        * platform/mac/TestExpectations: Removed tests that should no longer be flaky now.
+
 2014-12-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Remove timeout from shouldBecome* functions in js-test.js

@@ -5,9 +5,6 @@
     <script>
         document.body.onclick = function() {
             document.body.webkitRequestFullScreen();
-            setTimeout(function() {
-                parent.postMessage("FAIL - did not enter full screen!", "*");
-            }, 50);
         };
         waitForEvent(document, 'webkitfullscreenchange', function() {
             parent.postMessage("SUCCEED - entered full screen!", "*");

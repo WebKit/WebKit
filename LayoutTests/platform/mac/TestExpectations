@@ -365,8 +365,6 @@ http/tests/security/video-cross-origin-accessfailure.html
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
-webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure Timeout ]
-
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
@@ -762,8 +760,6 @@ webkit.org/b/103857 fast/events/mouse-cursor-change.html
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
-
-webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
 
 webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 

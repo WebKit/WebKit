@@ -9,11 +9,6 @@ function canplaythrough() {
     var frame = document.getElementById('frame');
 
     runWithKeyDown(function() {
-        setTimeout(function() { 
-            consoleWrite("FAIL - did not enter full screen!"); 
-            endTest(); 
-        }, 100);
-
         var video = frame.contentDocument.getElementsByTagName('video')[0];
         video.webkitEnterFullScreen();
     });
