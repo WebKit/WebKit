@@ -1,3 +1,46 @@
+2014-12-18  Antti Koivisto  <antti@apple.com>
+
+        Stop returning GlyphPage from various Font functions
+        https://bugs.webkit.org/show_bug.cgi?id=139627
+
+        Reviewed by Darin Adler.
+
+        Make all
+
+            std::pair<GlyphData, GlyphPage*> glyphDataAndPage*(...)
+
+        style functions to just return GlyphData only. The GlyphPage value was only used for an obscure SVG fallback case.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::glyphDataForCharacter):
+        (WebCore::Font::glyphDataAndPageForCharacter): Deleted.
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::glyphDataForCJKCharacterWithoutSyntheticItalic):
+        (WebCore::glyphDataForNonCJKCharacterWithGlyphOrientation):
+        (WebCore::FontGlyphs::glyphDataForSystemFallback):
+        (WebCore::FontGlyphs::glyphDataForVariant):
+        (WebCore::FontGlyphs::glyphDataForCharacter):
+        (WebCore::glyphDataAndPageForCJKCharacterWithoutSyntheticItalic): Deleted.
+        (WebCore::glyphDataAndPageForNonCJKCharacterWithGlyphOrientation): Deleted.
+        (WebCore::FontGlyphs::glyphDataAndPageForSystemFallback): Deleted.
+        (WebCore::FontGlyphs::glyphDataAndPageForVariant): Deleted.
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter): Deleted.
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::GlyphPagesStateSaver::GlyphPagesStateSaver): Deleted.
+        (WebCore::FontGlyphs::GlyphPagesStateSaver::~GlyphPagesStateSaver): Deleted.
+
+            No longer needed.
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+
+            Simplify by not trying to resolve fallbacks in case context sensitive (based on lang attribute etc)
+            glyph selection fails. Instead just fall back to a default font. This behavior is not specified
+            anywhere as far as I can see. (normal non-context sensitive fallbacks will still work fine).
+            This removes the need to hackishly mutate glyph pages.
+
+            Also fix a bug where we didn't use the specified missing glyph when context sensitive selection failed.
+
 2014-12-18  Chris Dumez  <cdumez@apple.com>
 
         Move 'list-style-image' CSS property to the new StyleBuilder

@@ -47,27 +47,6 @@ class FontGlyphs : public RefCounted<FontGlyphs> {
 public:
     typedef HashMap<int, GlyphPageTreeNode*, DefaultHash<int>::Hash> GlyphPages;
 
-    class GlyphPagesStateSaver {
-    public:
-        GlyphPagesStateSaver(FontGlyphs& glyphs)
-            : m_glyphs(glyphs)
-            , m_pages(glyphs.m_pages)
-            , m_pageZero(glyphs.m_pageZero)
-        {
-        }
-
-        ~GlyphPagesStateSaver()
-        {
-            m_glyphs.m_pages = m_pages;
-            m_glyphs.m_pageZero = m_pageZero;
-        }
-
-    private:
-        FontGlyphs& m_glyphs;
-        GlyphPages& m_pages;
-        GlyphPageTreeNode* m_pageZero;
-    };
-
     static Ref<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(*new FontGlyphs(fontSelector)); }
     static Ref<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontGlyphs(platformData)); }
 
@@ -75,7 +54,7 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const FontDescription&, UChar32, bool mirror, FontDataVariant);
+    GlyphData glyphDataForCharacter(const FontDescription&, UChar32, bool mirror, FontDataVariant);
 
     bool isFixedPitch(const FontDescription&);
     void determinePitch(const FontDescription&);
@@ -98,8 +77,8 @@ private:
     FontGlyphs(PassRefPtr<FontSelector>);
     FontGlyphs(const FontPlatformData&);
 
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForSystemFallback(UChar32, const FontDescription&, FontDataVariant, unsigned pageNumber, GlyphPageTreeNode&);
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned pageNumber, GlyphPageTreeNode*&);
+    GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontDataVariant, unsigned pageNumber, GlyphPageTreeNode&);
+    GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned pageNumber, GlyphPageTreeNode*&);
 
     WEBCORE_EXPORT void releaseFontData();
     

@@ -187,15 +187,11 @@ public:
     const FontData* fontDataAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant variant = AutoVariant) const
     {
-        return glyphDataAndPageForCharacter(c, mirror, variant).first;
+        return m_glyphs->glyphDataForCharacter(m_fontDescription, c, mirror, variant);
     }
 #if PLATFORM(COCOA)
     const SimpleFontData* fontDataForCombiningCharacterSequence(const UChar*, size_t length, FontDataVariant) const;
 #endif
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const
-    {
-        return m_glyphs->glyphDataAndPageForCharacter(m_fontDescription, c, mirror, variant);
-    }
     bool primaryFontHasGlyphForCharacter(UChar32) const;
 
     static bool isCJKIdeograph(UChar32);
