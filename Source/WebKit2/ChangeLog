@@ -1,5 +1,23 @@
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177409. rdar://problem/19271854
+
+    2014-12-16  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION: Preview popovers obscure the link, look wrong
+            https://bugs.webkit.org/show_bug.cgi?id=139711
+            -and corresponding-
+            rdar://problem/19271854
+
+            Reviewed by Tim Horton.
+
+            Switch to using NSPopoverAnimationController.
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _defaultAnimationController]):
+            (-[WKImmediateActionController _animationControllerForCustomPreview]):
+
+2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177402. rdar://problem/19266297
 
     2014-12-16  Conrad Shultz  <conrad_shultz@apple.com>
