@@ -1,3 +1,12 @@
+2014-12-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/19282508> WebKitLegacy is unusable due to bad dylib identifier
+        https://bugs.webkit.org/show_bug.cgi?id=139760
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebCore.xcconfig:
+
 2014-12-17  Anders Carlsson  <andersca@apple.com>
 
         Get rid of FrameLoader::defaultObjectContentType
