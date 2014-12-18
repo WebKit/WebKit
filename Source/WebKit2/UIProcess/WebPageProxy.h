@@ -1330,7 +1330,7 @@ private:
     void viewDidEnterWindow();
 
 #if PLATFORM(MAC)
-    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, IPC::MessageDecoder&);
+    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, IPC::MessageDecoder&);
 #endif
 
     PageClient& m_pageClient;

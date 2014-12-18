@@ -317,7 +317,7 @@ public:
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
 #if PLATFORM(MAC)
-    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, API::Object*) = 0;
+    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, API::Object*) = 0;
 #endif
 };
 

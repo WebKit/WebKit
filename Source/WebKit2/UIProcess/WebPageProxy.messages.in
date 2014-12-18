@@ -414,6 +414,6 @@ messages -> WebPageProxy {
     IsPlayingAudioDidChange(bool newIsPlayingAudio)
 
 #if PLATFORM(MAC)
-    DidPerformActionMenuHitTest(WebKit::ActionMenuHitTestResult result, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidPerformActionMenuHitTest(WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 #endif
 }
