@@ -4366,7 +4366,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_setPreviewOverrideImage:(NSImage *)image
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController setPreviewOverrideImage:image];
+#endif
 }
 
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView
