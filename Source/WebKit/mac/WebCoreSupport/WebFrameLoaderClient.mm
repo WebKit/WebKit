@@ -28,11 +28,6 @@
 
 #import "WebFrameLoaderClient.h"
 
-// Terrible hack; lets us get at the WebFrame private structure.
-#define private public
-#import "WebFrame.h"
-#undef private
-
 #import "DOMElementInternal.h"
 #import "DOMHTMLFormElementInternal.h"
 #import "WebBackForwardList.h"

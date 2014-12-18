@@ -55,7 +55,7 @@
 
 @interface WebDownload : NSURLDownload
 {
-@private
+@package
     WebDownloadInternal *_webInternal;
 }
 

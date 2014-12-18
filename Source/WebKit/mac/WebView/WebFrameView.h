@@ -46,7 +46,7 @@
 */
 @interface WebFrameView : NSView
 {
-@private
+@package
     WebFrameViewPrivate *_private;
 }
 

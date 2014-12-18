@@ -60,7 +60,7 @@ extern NSString *WebHistoryItemsKey;
     by WebKit.
 */
 @interface WebHistory : NSObject {
-@private
+@package
     WebHistoryPrivate *_historyPrivate;
 }
 

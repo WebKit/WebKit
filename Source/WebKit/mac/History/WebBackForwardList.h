@@ -41,7 +41,7 @@
     structure.
 */
 @interface WebBackForwardList : NSObject {
-@private
+@package
     WebBackForwardListPrivate *_private;
 }
 

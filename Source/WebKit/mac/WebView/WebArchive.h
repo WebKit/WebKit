@@ -46,7 +46,7 @@ extern NSString *WebArchivePboardType;
 */
 @interface WebArchive : NSObject <NSCoding, NSCopying>
 {
-    @private
+@package
     WebArchivePrivate *_private;
 }
 

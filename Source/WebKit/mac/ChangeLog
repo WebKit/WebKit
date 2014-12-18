@@ -1,3 +1,23 @@
+2014-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of an ugly #define hack in WebFrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=139761
+
+        Reviewed by Dan Bernstein.
+
+        Also replace @private with @package in all public headers, for consistency.
+
+        * History/WebBackForwardList.h:
+        * History/WebHistory.h:
+        * Misc/WebDownload.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchive.h:
+        * WebView/WebDataSource.h:
+        * WebView/WebFrame.h:
+        * WebView/WebFrameView.h:
+        * WebView/WebPreferences.h:
+        * WebView/WebResource.h:
+
 2014-12-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19282508> WebKitLegacy is unusable due to bad dylib identifier

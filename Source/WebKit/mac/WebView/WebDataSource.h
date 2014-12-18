@@ -46,7 +46,7 @@
 */
 @interface WebDataSource : NSObject
 {
-@private
+@package
     void *_private;
 }
 

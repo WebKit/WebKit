@@ -47,7 +47,7 @@
 */
 @interface WebFrame : NSObject
 {
-@private
+@package
     WebFramePrivate *_private;
 }
 

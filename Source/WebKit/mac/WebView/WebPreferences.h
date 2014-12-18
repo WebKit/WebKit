@@ -72,7 +72,7 @@ extern NSString *WebPreferencesChangedNotification;
 */
 @interface WebPreferences: NSObject <NSCoding>
 {
-@private
+@package
     WebPreferencesPrivate *_private;
 }
 

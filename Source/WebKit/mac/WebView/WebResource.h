@@ -38,7 +38,7 @@
 */
 @interface WebResource : NSObject <NSCoding, NSCopying>
 {
-@private
+@package
     WebResourcePrivate *_private;
 }
 
