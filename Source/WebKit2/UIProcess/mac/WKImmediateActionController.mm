@@ -376,7 +376,7 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 {
     static const CGFloat preferredPopoverToViewScale = 0.75;
     static const NSSize screenPadding = {40, 40};
-    static const NSSize smallestPopoverSize = NSMakeSize(500, 300);
+    static const NSSize smallestPopoverSize = NSMakeSize(500, 500);
 
     const NSSize effectivePadding = NSMakeSize(screenPadding.width + previewPadding.width, screenPadding.height + previewPadding.height);
 
@@ -419,7 +419,8 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
     NSSize computedTargetSize;
     if ((maxVerticalTargetSizePreservingAspectRatio.width * maxVerticalTargetSizePreservingAspectRatio.height) > (maxHortizontalTargetSizePreservingAspectRatio.width * maxHortizontalTargetSizePreservingAspectRatio.height))
         computedTargetSize = maxVerticalTargetSizePreservingAspectRatio;
-    computedTargetSize = maxHortizontalTargetSizePreservingAspectRatio;
+    else
+        computedTargetSize = maxHortizontalTargetSizePreservingAspectRatio;
 
     // Now make sure what we've computed isn't too small.
     if (computedTargetSize.width < smallestPopoverSize.width && computedTargetSize.height < smallestPopoverSize.height) {
