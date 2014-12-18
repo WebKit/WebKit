@@ -1,3 +1,25 @@
+2014-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Move 'list-style-image' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139763
+
+        Reviewed by Antti Koivisto.
+
+        Move 'list-style-image' CSS property to the new StyleBuilder
+        by reusing an existing Converter helper and renaming it for
+        clarity.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyStyleImage::applyValue): Deleted.
+        (WebCore::ApplyPropertyStyleImage::createHandler): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertStyleImage):
+        (WebCore::StyleBuilderConverter::convertBorderImageSource): Deleted.
+
 2014-12-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177452.

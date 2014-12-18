@@ -59,7 +59,7 @@ public:
     static short convertWebkitHyphenateLimitLines(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderImage(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
-    template <CSSPropertyID property> static PassRefPtr<StyleImage> convertBorderImageSource(StyleResolver&, CSSValue&);
+    template <CSSPropertyID property> static PassRefPtr<StyleImage> convertStyleImage(StyleResolver&, CSSValue&);
     static TransformOperations convertTransform(StyleResolver&, CSSValue&);
     static String convertString(StyleResolver&, CSSValue&);
     static String convertStringOrAuto(StyleResolver&, CSSValue&);
@@ -267,7 +267,7 @@ inline NinePieceImage StyleBuilderConverter::convertBorderMask(StyleResolver& st
 }
 
 template <CSSPropertyID property>
-inline PassRefPtr<StyleImage> StyleBuilderConverter::convertBorderImageSource(StyleResolver& styleResolver, CSSValue& value)
+inline PassRefPtr<StyleImage> StyleBuilderConverter::convertStyleImage(StyleResolver& styleResolver, CSSValue& value)
 {
     return styleResolver.styleImage(property, value);
 }
