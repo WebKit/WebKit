@@ -1,3 +1,13 @@
+2014-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Add a MachSendRight class to WebCore and use it in IOSurface
+        https://bugs.webkit.org/show_bug.cgi?id=139787
+
+        Reviewed by Tim Horton.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode):
+
 2014-12-18  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the iOS build after <http://trac.webkit.org/changeset/177486>

@@ -30,6 +30,7 @@
 
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
+#import "MachSendRight.h"
 #import <IOSurface/IOSurface.h>
 #import <wtf/Assertions.h>
 
@@ -129,9 +130,9 @@ IntSize IOSurface::maximumSize()
     return IntSize(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth), IOSurfaceGetPropertyMaximum(kIOSurfaceHeight));
 }
 
-mach_port_t IOSurface::createMachPort() const
+MachSendRight IOSurface::createSendRight() const
 {
-    return IOSurfaceCreateMachPort(m_surface.get());
+    return MachSendRight::adopt(IOSurfaceCreateMachPort(m_surface.get()));
 }
 
 RetainPtr<CGImageRef> IOSurface::createImage()

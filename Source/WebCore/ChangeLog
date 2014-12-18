@@ -1,3 +1,27 @@
+2014-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Add a MachSendRight class to WebCore and use it in IOSurface
+        https://bugs.webkit.org/show_bug.cgi?id=139787
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/MachSendRight.cpp: Added.
+        (WebCore::retainSendRight):
+        (WebCore::releaseSendRight):
+        (WebCore::MachSendRight::adopt):
+        (WebCore::MachSendRight::create):
+        (WebCore::MachSendRight::MachSendRight):
+        (WebCore::MachSendRight::~MachSendRight):
+        (WebCore::MachSendRight::operator=):
+        (WebCore::MachSendRight::leakSendRight):
+        * platform/cocoa/MachSendRight.h: Added.
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::createSendRight):
+        (IOSurface::createMachPort): Deleted.
+
 2014-12-18  Andreas Kling  <akling@apple.com>
 
         Ref-ify DOMSettableTokenList.

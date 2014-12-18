@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class MachSendRight;
+
 class IOSurface final : public RefCounted<IOSurface> {
 public:
     WEBCORE_EXPORT static PassRefPtr<IOSurface> create(IntSize, ColorSpace);
@@ -44,7 +46,7 @@ public:
 
     static IntSize maximumSize();
 
-    WEBCORE_EXPORT mach_port_t createMachPort() const;
+    MachSendRight createSendRight() const;
 
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.
