@@ -267,8 +267,6 @@ public:
 
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
 
-    static ObjectContentType defaultObjectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages);
-
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
     WEBCORE_EXPORT bool shouldClose();

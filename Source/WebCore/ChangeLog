@@ -1,3 +1,16 @@
+2014-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of FrameLoader::defaultObjectContentType
+        https://bugs.webkit.org/show_bug.cgi?id=139758
+
+        Reviewed by Geoffrey Garen.
+
+        Move the FrameLoader::defaultObjectContentType implementation to its only caller in WebKit/win.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType): Deleted.
+        * loader/FrameLoader.h:
+
 2014-12-17  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Compile error, setWasCached method has been removed.
