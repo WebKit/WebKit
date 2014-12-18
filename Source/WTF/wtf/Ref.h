@@ -111,9 +111,8 @@ public:
     T& leakRef() WARN_UNUSED_RETURN
     {
         ASSERT(m_ptr);
-        T* movedPtr = m_ptr;
-        m_ptr = nullptr;
-        return *movedPtr;
+
+        return *std::exchange(m_ptr, nullptr);
     }
 
 private:

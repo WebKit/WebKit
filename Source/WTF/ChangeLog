@@ -1,5 +1,30 @@
 2014-12-18  Anders Carlsson  <andersca@apple.com>
 
+        Simplify smart pointer classes by using std::exchange
+        https://bugs.webkit.org/show_bug.cgi?id=139790
+
+        Reviewed by Andreas Kling.
+
+        * wtf/MallocPtr.h:
+        * wtf/OSObjectPtr.h:
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr<T>::clear):
+        (WTF::OwnPtr<T>::release):
+        (WTF::OwnPtr<T>::leakPtr):
+        (WTF::=):
+        * wtf/PassOwnPtr.h:
+        (WTF::PassOwnPtr<T>::leakPtr):
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr<T>::leakRef):
+        * wtf/Ref.h:
+        * wtf/RefPtr.h:
+        (WTF::RefPtr<T>::clear):
+        (WTF::RefPtr<T>::leakRef):
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr<T>::leakRef):
+
+2014-12-18  Anders Carlsson  <andersca@apple.com>
+
         Clean up MachSendRight and add a copySendRight member function
         https://bugs.webkit.org/show_bug.cgi?id=139788
 

@@ -111,18 +111,13 @@ namespace WTF {
 
     template<typename T> inline void RefPtr<T>::clear()
     {
-        T* ptr = m_ptr;
-        m_ptr = nullptr;
-        derefIfNotNull(ptr);
+        derefIfNotNull(std::exchange(m_ptr, nullptr));
     }
 
     template<typename T>
     inline T* RefPtr<T>::leakRef()
     {
-        T* ptr = m_ptr;
-        m_ptr = nullptr;
-
-        return ptr;
+        return std::exchange(m_ptr, nullptr);
     }
 
     template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr& o)

@@ -113,29 +113,22 @@ namespace WTF {
 
     template<typename T> inline void OwnPtr<T>::clear()
     {
-        PtrType ptr = m_ptr;
-        m_ptr = 0;
-        deleteOwnedPtr(ptr);
+        deleteOwnedPtr(std::exchange(m_ptr, nullptr));
     }
 
     template<typename T> inline PassOwnPtr<T> OwnPtr<T>::release()
     {
-        PtrType ptr = m_ptr;
-        m_ptr = 0;
-        return adoptPtr(ptr);
+        return adoptPtr(std::exchange(m_ptr, nullptr));
     }
 
     template<typename T> inline typename OwnPtr<T>::PtrType OwnPtr<T>::leakPtr()
     {
-        PtrType ptr = m_ptr;
-        m_ptr = 0;
-        return ptr;
+        return std::exchange(m_ptr, nullptr);
     }
 
     template<typename T> inline OwnPtr<T>& OwnPtr<T>::operator=(const PassOwnPtr<T>& o)
     {
-        PtrType ptr = m_ptr;
-        m_ptr = o.leakPtr();
+        PtrType ptr = std::exchange(m_ptr, o.leakPtr());
         ASSERT(!ptr || m_ptr != ptr);
         deleteOwnedPtr(ptr);
         return *this;
@@ -143,8 +136,7 @@ namespace WTF {
 
     template<typename T> template<typename U> inline OwnPtr<T>& OwnPtr<T>::operator=(const PassOwnPtr<U>& o)
     {
-        PtrType ptr = m_ptr;
-        m_ptr = o.leakPtr();
+        PtrType ptr = std::exchange(m_ptr, o.leakPtr());
         ASSERT(!ptr || m_ptr != ptr);
         deleteOwnedPtr(ptr);
         return *this;

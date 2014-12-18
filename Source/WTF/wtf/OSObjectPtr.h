@@ -143,9 +143,7 @@ public:
 
     T leakRef() WARN_UNUSED_RETURN
     {
-        T ptr = m_ptr;
-        m_ptr = nullptr;
-        return ptr;
+        return std::exchange(m_ptr, nullptr);
     }
 
     friend OSObjectPtr adoptOSObject<T>(T);

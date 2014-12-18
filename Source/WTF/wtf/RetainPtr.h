@@ -155,9 +155,7 @@ namespace WTF {
 
     template<typename T> inline typename RetainPtr<T>::PtrType RetainPtr<T>::leakRef()
     {
-        PtrType ptr = fromStorageType(m_ptr);
-        m_ptr = nullptr;
-        return ptr;
+        return fromStorageType(std::exchange(m_ptr, nullptr));
     }
 
 #ifdef __OBJC__

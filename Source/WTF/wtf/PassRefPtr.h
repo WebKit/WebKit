@@ -93,9 +93,7 @@ namespace WTF {
 
     template<typename T> inline T* PassRefPtr<T>::leakRef() const
     {
-        T* ptr = m_ptr;
-        m_ptr = nullptr;
-        return ptr;
+        return std::exchange(m_ptr, nullptr);
     }
 
     template<typename T, typename U> inline bool operator==(const PassRefPtr<T>& a, const PassRefPtr<U>& b) 

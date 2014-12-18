@@ -61,9 +61,7 @@ public:
 
     T *leakPtr() WARN_UNUSED_RETURN
     {
-        T* ptr = m_ptr;
-        m_ptr = nullptr;
-        return ptr;
+        return std::exchange(m_ptr, nullptr);
     }
 
     bool operator!() const
