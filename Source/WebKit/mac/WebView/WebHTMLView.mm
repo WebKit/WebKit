@@ -5699,7 +5699,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 - (void)quickLookWithEvent:(NSEvent *)event
 {
-    [[self _webView] _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:[] { }];
+    [[self _webView] _setTextIndicator:nullptr fadeOut:NO];
     [super quickLookWithEvent:event];
 }
 #endif // !PLATFORM(IOS)

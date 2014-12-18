@@ -7200,9 +7200,14 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     return [[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
 }
 
+- (void)_setMaintainsInactiveSelection:(BOOL)shouldMaintainInactiveSelection
+{
+    _private->shouldMaintainInactiveSelection = shouldMaintainInactiveSelection;
+}
+
 - (BOOL)maintainsInactiveSelection
 {
-    return NO;
+    return _private->shouldMaintainInactiveSelection;
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
@@ -8629,6 +8634,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
         if (!mutableOptions)
             mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+        [self _setTextIndicator:dictionaryPopupInfo.textIndicator.get() fadeOut:NO];
         return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     }
 
@@ -8636,7 +8642,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-- (void)_setTextIndicator:(TextIndicator *)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler
+- (void)_setTextIndicator:(TextIndicator *)textIndicator fadeOut:(BOOL)fadeOut
 {
     if (!textIndicator) {
         _private->textIndicatorWindow = nullptr;
@@ -8647,12 +8653,18 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
         _private->textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
     NSRect contentRect = [self.window convertRectToScreen:textIndicator->textBoundingRectInWindowCoordinates()];
-    _private->textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(contentRect), fadeOut, WTF::move(completionHandler));
+    _private->textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(contentRect), fadeOut);
 }
 
 - (void)_clearTextIndicator
 {
-    [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:^ { }];
+    [self _setTextIndicator:nullptr fadeOut:NO];
+}
+
+- (void)_setTextIndicatorAnimationProgress:(float)progress
+{
+    if (_private->textIndicatorWindow)
+        _private->textIndicatorWindow->setAnimationProgress(progress);
 }
 
 - (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo
@@ -8675,16 +8687,15 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
         if (!mutableOptions)
             mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
-        [self _setTextIndicator:dictionaryPopupInfo.textIndicator.get() fadeOut:NO animationCompletionHandler:[dictionaryPopupInfo, textBaselineOrigin, mutableOptions] {
-            [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
-        }];
+        [self _setTextIndicator:dictionaryPopupInfo.textIndicator.get() fadeOut:NO];
+        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     } else
         [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:dictionaryPopupInfo.options.get()];
 }
 
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
-    [self _setTextIndicator:nullptr fadeOut:NO animationCompletionHandler:[] { }];
+    [self _setTextIndicator:nullptr fadeOut:NO];
 }
 #endif // PLATFORM(MAC)
 

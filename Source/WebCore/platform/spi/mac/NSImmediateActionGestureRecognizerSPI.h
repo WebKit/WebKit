@@ -55,6 +55,7 @@
 @interface NSImmediateActionGestureRecognizer : NSGestureRecognizer
 
 @property (strong) id<NSImmediateActionAnimationController> animationController;
+@property (readonly) CGFloat animationProgress;
 
 @end
 

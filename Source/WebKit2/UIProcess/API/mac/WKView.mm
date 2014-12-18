@@ -3093,7 +3093,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
-- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut animationCompletionHandler:(std::function<void ()>)completionHandler
+- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut
 {
     if (!textIndicator) {
         _data->_textIndicatorWindow = nullptr;
@@ -3104,12 +3104,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         _data->_textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
     NSRect contentRect = [self.window convertRectToScreen:[self convertRect:textIndicator->textBoundingRectInWindowCoordinates() toView:nil]];
-    _data->_textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(contentRect), fadeOut, WTF::move(completionHandler));
+    _data->_textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(contentRect), fadeOut);
 }
 
-- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut
+- (void)_setTextIndicatorAnimationProgress:(float)progress
 {
-    [self _setTextIndicator:textIndicator fadeOut:fadeOut animationCompletionHandler:[] { }];
+    if (_data->_textIndicatorWindow)
+        _data->_textIndicatorWindow->setAnimationProgress(progress);
 }
 
 - (CALayer *)_rootLayer

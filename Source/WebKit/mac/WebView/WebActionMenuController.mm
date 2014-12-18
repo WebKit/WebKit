@@ -810,7 +810,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return;
 
     if (_type == WebActionMenuDataDetectedItem && _currentDetectedDataTextIndicator) {
-        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO animationCompletionHandler:^ { }];
+        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO];
         _isShowingTextIndicator = YES;
     }
 }

@@ -973,7 +973,14 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates)
+static TextIndicatorPresentationTransition textIndicatorTransitionForActionMenu(Range* selectionRange, Range& indicatorRange, bool forImmediateAction, bool forDataDetectors)
+{
+    if (areRangesEqual(&indicatorRange, selectionRange) || (forDataDetectors && !forImmediateAction))
+        return forImmediateAction ? TextIndicatorPresentationTransition::Crossfade : TextIndicatorPresentationTransition::BounceAndCrossfade;
+    return forImmediateAction ? TextIndicatorPresentationTransition::FadeIn : TextIndicatorPresentationTransition::Bounce;
+}
+
+void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCooordinates, bool forImmediateAction)
 {
     layoutIfNeeded();
 
@@ -990,26 +997,31 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     actionMenuResult.hitTestLocationInViewCooordinates = locationInViewCooordinates;
     actionMenuResult.hitTestResult = WebHitTestResult::Data(hitTestResult);
 
+    RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
+
     NSDictionary *options = nil;
-    RefPtr<WebCore::Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates, &options);
+    RefPtr<Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates, &options);
     actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
+
     if (lookupRange) {
         if (Node* node = hitTestResult.innerNode()) {
             if (Frame* hitTestResultFrame = node->document().frame())
-                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, TextIndicatorPresentationTransition::Bounce);
+                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, textIndicatorTransitionForActionMenu(selectionRange.get(), *lookupRange, forImmediateAction, false));
         }
     }
 
     m_lastActionMenuRangeForSelection = lookupRange;
     m_lastActionMenuHitTestResult = hitTestResult;
 
-    if (Image* image = hitTestResult.image()) {
-        RefPtr<SharedBuffer> buffer = image->data();
-        String imageExtension = image->filenameExtension();
-        if (!imageExtension.isEmpty() && buffer) {
-            actionMenuResult.imageSharedMemory = SharedMemory::create(buffer->size());
-            memcpy(actionMenuResult.imageSharedMemory->data(), buffer->data(), buffer->size());
-            actionMenuResult.imageExtension = imageExtension;
+    if (!forImmediateAction) {
+        if (Image* image = hitTestResult.image()) {
+            RefPtr<SharedBuffer> buffer = image->data();
+            String imageExtension = image->filenameExtension();
+            if (!imageExtension.isEmpty() && buffer) {
+                actionMenuResult.imageSharedMemory = SharedMemory::create(buffer->size());
+                memcpy(actionMenuResult.imageSharedMemory->data(), buffer->data(), buffer->size());
+                actionMenuResult.imageExtension = imageExtension;
+            }
         }
     }
 
@@ -1035,7 +1047,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
 
         actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-        actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, TextIndicatorPresentationTransition::BounceAndCrossfade);
+        actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *mainResultRange, forImmediateAction, true));
         actionMenuResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         m_lastActionMenuRangeForSelection = mainResultRange;
 
@@ -1049,7 +1061,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         actionMenuResult.actionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
         if (actionMenuResult.actionContext && detectedDataRange) {
             actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-            actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::BounceAndCrossfade);
+            actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *detectedDataRange, forImmediateAction, true));
             m_lastActionMenuRangeForSelection = detectedDataRange;
         }
     }

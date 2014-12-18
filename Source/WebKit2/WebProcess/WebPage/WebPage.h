@@ -1045,7 +1045,7 @@ private:
     void reportUsedFeatures();
 
 #if PLATFORM(MAC)
-    void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+    void performActionMenuHitTestAtLocation(WebCore::FloatPoint, bool forImmediateAction);
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();

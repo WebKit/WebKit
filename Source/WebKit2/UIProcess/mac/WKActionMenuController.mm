@@ -101,7 +101,7 @@ using namespace WebKit;
 
     [_wkView _dismissContentRelativeChildWindows];
 
-    _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil]);
+    _page->performActionMenuHitTestAtLocation([_wkView convertPoint:event.locationInWindow fromView:nil], false);
 
     _state = ActionMenuState::Pending;
     [self _updateActionMenuItems];
@@ -399,8 +399,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResult.detectedDataBoundingBox toView:nil]]];
 
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
-    if (menuItems.count == 1 && _hitTestResult.detectedDataTextIndicator)
-        _hitTestResult.detectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
     return menuItems;
 }
 

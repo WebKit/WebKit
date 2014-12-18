@@ -41,6 +41,7 @@
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
@@ -121,6 +122,8 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    [_webView _setMaintainsInactiveSelection:YES];
+
     WebHTMLView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
     NSPoint locationInDocumentView = [immediateActionRecognizer locationInView:documentView];
     [self performHitTestAtPoint:locationInDocumentView];
@@ -146,12 +149,22 @@ using namespace WebCore;
     // FIXME: Add support for the types of functionality provided in Action menu's menuNeedsUpdate.
 }
 
+- (void)immediateActionRecognizerDidUpdateAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
+{
+    if (immediateActionRecognizer != _immediateActionRecognizer)
+        return;
+
+    [_webView _setTextIndicatorAnimationProgress:[immediateActionRecognizer animationProgress]];
+}
+
 - (void)immediateActionRecognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    [_webView _setTextIndicatorAnimationProgress:0];
     [self _clearImmediateActionState];
+    [_webView _setMaintainsInactiveSelection:NO];
 }
 
 - (void)immediateActionRecognizerDidCompleteAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -159,7 +172,8 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    // FIXME: Add support for the types of functionality provided in Action menu's willOpenMenu.
+    [_webView _setTextIndicatorAnimationProgress:1];
+    [_webView _setMaintainsInactiveSelection:NO];
 }
 
 #pragma mark Immediate actions
@@ -268,7 +282,7 @@ using namespace WebCore;
             return nil;
     }
 
-    _currentDetectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::BounceAndCrossfade);
+    _currentDetectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
@@ -284,8 +298,6 @@ using namespace WebCore;
     if (menuItems.count != 1)
         return nil;
 
-    if (_currentDetectedDataTextIndicator)
-        _currentDetectedDataTextIndicator->setPresentationTransition(TextIndicatorPresentationTransition::Bounce);
     return menuItems.lastObject;
 }
 
@@ -349,7 +361,9 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
     if (!dictionaryRange)
         return nil;
 
-    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, TextIndicatorPresentationTransition::Bounce);
+    RefPtr<Range> selectionRange = frame->page()->focusController().focusedOrMainFrame().selection().selection().firstRange();
+    bool rangeMatchesSelection = areRangesEqual(dictionaryRange.get(), selectionRange.get());
+    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, rangeMatchesSelection ? TextIndicatorPresentationTransition::Crossfade : TextIndicatorPresentationTransition::FadeIn);
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 
@@ -364,7 +378,7 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
         return;
 
     if (_type == WebImmediateActionDataDetectedItem && _currentDetectedDataTextIndicator) {
-        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO animationCompletionHandler:^ { }];
+        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO];
         _isShowingTextIndicator = YES;
     }
 }

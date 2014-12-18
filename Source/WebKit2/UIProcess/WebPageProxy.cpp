@@ -283,6 +283,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_viewState(ViewState::NoFlags)
     , m_viewWasEverInWindow(false)
     , m_backForwardList(WebBackForwardList::create(*this))
+    , m_maintainsInactiveSelection(false)
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
     , m_temporarilyClosedComposition(false)
@@ -3575,6 +3576,11 @@ void WebPageProxy::clearTextIndicator()
     m_pageClient.setTextIndicator(nullptr, false);
 }
 
+void WebPageProxy::setTextIndicatorAnimationProgress(float progress)
+{
+    m_pageClient.setTextIndicatorAnimationProgress(progress);
+}
+
 void WebPageProxy::didFindString(const String& string, uint32_t matchCount, int32_t matchIndex)
 {
     m_findClient->didFindString(this, string, matchCount, matchIndex);
@@ -5215,9 +5221,9 @@ void WebPageProxy::removeNavigationGestureSnapshot()
     m_pageClient.removeNavigationGestureSnapshot();
 }
 
-void WebPageProxy::performActionMenuHitTestAtLocation(FloatPoint point)
+void WebPageProxy::performActionMenuHitTestAtLocation(FloatPoint point, bool forImmediateAction)
 {
-    m_process->send(Messages::WebPage::PerformActionMenuHitTestAtLocation(point), m_pageID);
+    m_process->send(Messages::WebPage::PerformActionMenuHitTestAtLocation(point, forImmediateAction), m_pageID);
 }
 
 void WebPageProxy::selectLastActionMenuRange()

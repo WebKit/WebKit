@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import <functional>
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -48,12 +47,14 @@ public:
     explicit TextIndicatorWindow(NSView *);
     ~TextIndicatorWindow();
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, CGRect contentRect, bool fadeOut, std::function<void ()> animationCompletionHandler);
+    void setTextIndicator(PassRefPtr<TextIndicator>, CGRect contentRect, bool fadeOut);
+
+    void setAnimationProgress(float);
 
 private:
     void closeWindow();
 
-    void startFadeOutTimerFired();
+    void startFadeOut();
 
     NSView *m_targetView;
     RefPtr<TextIndicator> m_textIndicator;
@@ -61,8 +62,6 @@ private:
     RetainPtr<WebTextIndicatorView> m_textIndicatorView;
 
     RunLoop::Timer<TextIndicatorWindow> m_startFadeOutTimer;
-
-    std::function<void ()> m_bounceAnimationCompletionHandler;
 };
 
 } // namespace WebKit

@@ -659,6 +659,7 @@ public:
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
     void didCountStringMatches(const String&, uint32_t matchCount);
     void setTextIndicator(const WebCore::TextIndicatorData&, bool fadeOut);
+    void setTextIndicatorAnimationProgress(float);
     void clearTextIndicator();
     void didFindString(const String&, uint32_t matchCount, int32_t matchIndex);
     void didFailToFindString(const String&);
@@ -918,7 +919,7 @@ public:
 
 #if PLATFORM(MAC)
     WebHitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
-    void performActionMenuHitTestAtLocation(WebCore::FloatPoint);
+    void performActionMenuHitTestAtLocation(WebCore::FloatPoint, bool forImmediateAction);
     void selectLastActionMenuRange();
     void focusAndSelectLastActionMenuHitTestResult();
 #endif
