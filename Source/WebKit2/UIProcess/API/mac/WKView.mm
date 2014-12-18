@@ -4349,6 +4349,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #endif
 }
 
+- (void)_setPreviewLoading:(BOOL)loading
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+    [_data->_immediateActionController setPreviewLoading:loading];
+#endif
+}
+
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView
 {
 }

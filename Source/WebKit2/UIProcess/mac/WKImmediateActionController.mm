@@ -287,6 +287,7 @@ using namespace WebKit;
 
     _previewViewController = adoptNS([[WKPagePreviewViewController alloc] initWithPageURL:url mainViewSize:_wkView.bounds.size popoverToViewScale:actualPopoverToViewScale]);
     _previewViewController->_delegate = self;
+    [_previewViewController setLoading:YES];
     [_previewViewController loadView];
 
     _previewPopover = adoptNS([[NSPopover alloc] init]);
@@ -313,6 +314,11 @@ using namespace WebKit;
 - (void)setPreviewTitle:(NSString *)previewTitle
 {
     [_previewViewController setPreviewTitle:previewTitle];
+}
+
+- (void)setPreviewLoading:(BOOL)loading
+{
+    [_previewViewController setLoading:loading];
 }
 
 - (void)popoverWillClose:(NSNotification *)notification
