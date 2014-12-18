@@ -139,6 +139,10 @@ public:
     static void applyInheritCursor(StyleResolver&);
     static void applyValueCursor(StyleResolver&, CSSValue&);
 
+    static void applyInitialFontWeight(StyleResolver&);
+    static void applyInheritFontWeight(StyleResolver&);
+    static void applyValueFontWeight(StyleResolver&, CSSValue&);
+
 private:
     static void resetEffectiveZoom(StyleResolver&);
     static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
@@ -1179,6 +1183,42 @@ inline void StyleBuilderCustom::applyValueCursor(StyleResolver& styleResolver, C
         ASSERT_WITH_MESSAGE(item.ptr() == list.item(list.length() - 1), "Cursor ID fallback should always be last in the list");
         return;
     }
+}
+
+inline void StyleBuilderCustom::applyInitialFontWeight(StyleResolver& styleResolver)
+{
+    FontDescription fontDescription = styleResolver.fontDescription();
+    fontDescription.setWeight(FontWeightNormal);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritFontWeight(StyleResolver& styleResolver)
+{
+    FontDescription fontDescription = styleResolver.fontDescription();
+    fontDescription.setWeight(styleResolver.parentFontDescription().weight());
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyValueFontWeight(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    FontDescription fontDescription = styleResolver.fontDescription();
+    switch (primitiveValue.getValueID()) {
+    case CSSValueInvalid:
+        ASSERT_NOT_REACHED();
+        break;
+    case CSSValueBolder:
+        fontDescription.setWeight(styleResolver.parentStyle()->fontDescription().weight());
+        fontDescription.setWeight(fontDescription.bolderWeight());
+        break;
+    case CSSValueLighter:
+        fontDescription.setWeight(styleResolver.parentStyle()->fontDescription().weight());
+        fontDescription.setWeight(fontDescription.lighterWeight());
+        break;
+    default:
+        fontDescription.setWeight(primitiveValue);
+    }
+    styleResolver.setFontDescription(fontDescription);
 }
 
 } // namespace WebCore

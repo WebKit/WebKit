@@ -503,38 +503,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-class ApplyPropertyFontWeight {
-public:
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-        FontDescription fontDescription = styleResolver->fontDescription();
-        switch (primitiveValue.getValueID()) {
-        case CSSValueInvalid:
-            ASSERT_NOT_REACHED();
-            break;
-        case CSSValueBolder:
-            fontDescription.setWeight(styleResolver->parentStyle()->fontDescription().weight());
-            fontDescription.setWeight(fontDescription.bolderWeight());
-            break;
-        case CSSValueLighter:
-            fontDescription.setWeight(styleResolver->parentStyle()->fontDescription().weight());
-            fontDescription.setWeight(fontDescription.lighterWeight());
-            break;
-        default:
-            fontDescription.setWeight(primitiveValue);
-        }
-        styleResolver->setFontDescription(fontDescription);
-    }
-    static PropertyHandler createHandler()
-    {
-        PropertyHandler handler = ApplyPropertyFont<FontWeight, &FontDescription::weight, &FontDescription::setWeight, FontWeightNormal>::createHandler();
-        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
-    }
-};
-
 class ApplyPropertyFontVariantLigatures {
 public:
     static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
@@ -722,7 +690,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());
-    setPropertyHandler(CSSPropertyFontWeight, ApplyPropertyFontWeight::createHandler());
     setPropertyHandler(CSSPropertyOrphans, ApplyPropertyAuto<short, &RenderStyle::orphans, &RenderStyle::setOrphans, &RenderStyle::hasAutoOrphans, &RenderStyle::setHasAutoOrphans>::createHandler());
     setPropertyHandler(CSSPropertyOutlineColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::setVisitedLinkOutlineColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor, &RenderStyle::color>::createHandler());

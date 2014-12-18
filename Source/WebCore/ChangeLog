@@ -1,3 +1,25 @@
+2014-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Move 'font-weight' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139765
+
+        Reviewed by Antti Koivisto.
+
+        Move 'font-weight' CSS property to the new StyleBuilder by using
+        custom code.
+
+        No new tests, no behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyFontWeight::applyValue): Deleted.
+        (WebCore::ApplyPropertyFontWeight::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialFontWeight):
+        (WebCore::StyleBuilderCustom::applyInheritFontWeight):
+        (WebCore::StyleBuilderCustom::applyValueFontWeight):
+
 2014-12-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Internals methods return 0 instead of false when they fail
