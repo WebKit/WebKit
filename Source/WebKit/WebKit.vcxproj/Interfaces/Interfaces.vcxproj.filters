@@ -277,6 +277,9 @@
     <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleEditableText.idl">
       <Filter>IDL\Accessibility2</Filter>
     </Midl>
+    <Midl Include="..\..\win\Interfaces\IWebApplicationCache.idl">
+      <Filter>IDL</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfacesPostBuild.cmd" />

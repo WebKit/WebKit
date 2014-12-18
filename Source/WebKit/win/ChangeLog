@@ -1,3 +1,32 @@
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct Windows tests after Bug 139149.
+        https://bugs.webkit.org/show_bug.cgi?id=139781
+
+        Reviewed by Anders Carlsson.
+
+        * Interfaces/IWebApplicationCache.idl: Added.
+        * Interfaces/WebKit.idl: Add new IDL file.
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read): Remove old debugging message.
+        * WebApplicationCache.cpp: Added.
+        (WebApplicationCache::WebApplicationCache):
+        (WebApplicationCache::~WebApplicationCache):
+        (WebApplicationCache::createInstance):
+        (WebApplicationCache::QueryInterface):
+        (WebApplicationCache::AddRef):
+        (WebApplicationCache::Release):
+        (WebApplicationCache::maximumSize):
+        (WebApplicationCache::setMaximumSize):
+        (WebApplicationCache::defaultOriginQuota):
+        (WebApplicationCache::setDefaultOriginQuota):
+        (WebApplicationCache::diskUsageForOrigin):
+        (WebApplicationCache::deleteAllApplicationCaches):
+        (WebApplicationCache::deleteCacheForOrigin):
+        (WebApplicationCache::originsWithCache):
+        * WebApplicationCache.h: Added.
+        * WebKitClassFactory.cpp: Add new interface header.
+
 2014-12-17  Anders Carlsson  <andersca@apple.com>
 
         Get rid of FrameLoader::defaultObjectContentType

@@ -70,6 +70,7 @@ import "AccessibleApplication.idl";
 #include "DOMPrivate.idl"
 #include "DOMRange.idl"
 #include "DOMWindow.idl"
+#include "IWebApplicationCache.idl"
 #include "IWebArchive.idl"
 #include "IWebBackForwardList.idl"
 #include "IWebBackForwardListPrivate.idl"
@@ -193,6 +194,11 @@ library WebKit
     [uuid(6be190e9-1725-4e4a-88db-6a9fe242c9e5)]
     coclass WebHistoryItem {
         [default] interface IWebHistoryItem;
+    }
+
+    [uuid(1119E970-4b13-4b9a-a049-41096104b689)]
+    coclass WebApplicationCache {
+        [default] interface IWebApplicationCache;
     }
 
     [uuid(f71071fd-a51b-4b69-9eb6-44374405e80c)]

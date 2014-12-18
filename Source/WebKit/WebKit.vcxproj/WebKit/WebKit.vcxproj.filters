@@ -272,6 +272,10 @@
     <ClCompile Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.cpp">
       <Filter>WebCoreSupport</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.cpp" />
+    <ClCompile Include="..\..\win\WebApplicationCache.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h">
@@ -499,9 +503,6 @@
     <ClInclude Include="..\..\win\WebSerializedJSValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.h">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClInclude Include="..\..\win\WebTextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -535,6 +536,15 @@
     </ClInclude>
     <ClInclude Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.h">
       <Filter>WebCoreSupport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\WebStorageNamespaceProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\WebApplicationCache.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

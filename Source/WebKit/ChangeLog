@@ -1,3 +1,15 @@
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct Windows tests after Bug 139149.
+        https://bugs.webkit.org/show_bug.cgi?id=139781
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj: Add new interface.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj.filters: Ditto.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Add new application cache object.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters: Ditto.
+
 2014-12-18  Andreas Kling  <akling@apple.com>
 
         Attempt to fix Windows build after Range::create() changes.

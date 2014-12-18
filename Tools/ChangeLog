@@ -1,3 +1,14 @@
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct Windows tests after Bug 139149 (edit)
+        https://bugs.webkit.org/show_bug.cgi?id=139781
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::clearAllApplicationCaches): Use new WebApplicationCache
+        interface.
+
 2014-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Remove the various aliases for --ios-simulator (--sim, --simulator, --ios-sim) in arguments for build and test scripts

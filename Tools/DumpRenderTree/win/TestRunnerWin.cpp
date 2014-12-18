@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -750,7 +750,11 @@ bool TestRunner::isCommandEnabled(JSStringRef /*name*/)
 
 void TestRunner::clearAllApplicationCaches()
 {
-    // FIXME: Implement to support application cache quotas, and to make testing more reliable (see <https://bugs.webkit.org/show_bug.cgi?id=139149>).
+    COMPtr<IWebApplicationCache> applicationCache;
+    if (FAILED(WebKitCreateInstance(CLSID_WebApplicationCache, 0, IID_IWebApplicationCache, reinterpret_cast<void**>(&applicationCache))))
+        return;
+
+    applicationCache->deleteAllApplicationCaches();
 }
 
 void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)

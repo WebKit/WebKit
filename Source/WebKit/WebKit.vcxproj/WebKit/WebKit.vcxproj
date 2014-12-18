@@ -303,6 +303,7 @@
     <ClCompile Include="..\..\win\MarshallingHelpers.cpp" />
     <ClCompile Include="..\..\win\MemoryStream.cpp" />
     <ClCompile Include="..\..\win\WebActionPropertyBag.cpp" />
+    <ClCompile Include="..\..\win\WebApplicationCache.cpp" />
     <ClCompile Include="..\..\win\WebArchive.cpp" />
     <ClCompile Include="..\..\win\WebBackForwardList.cpp" />
     <ClCompile Include="..\..\win\WebCache.cpp" />
@@ -441,6 +442,7 @@
     <ClInclude Include="..\..\win\MemoryStream.h" />
     <ClInclude Include="..\..\win\ProgIDMacros.h" />
     <ClInclude Include="..\..\win\WebActionPropertyBag.h" />
+    <ClInclude Include="..\..\win\WebApplicationCache.h" />
     <ClInclude Include="..\..\win\WebArchive.h" />
     <ClInclude Include="..\..\win\WebBackForwardList.h" />
     <ClInclude Include="..\..\win\WebCache.h" />
