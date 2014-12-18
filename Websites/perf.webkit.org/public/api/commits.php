@@ -40,7 +40,12 @@ function main($paths) {
         $commits = fetch_commits_between($db, $repository_id, $matches[1], $matches[2]);
     }
 
-    exit_with_success(array('commits' => $single_commit ? format_commit($single_commit) : $commits));
+    if ($single_commit) {
+        $committer = $db->select_first_row('committers', 'committer', array('id' => $single_commit['commit_committer']));
+        exit_with_success(array('commits' => array(format_commit($single_commit, $committer))));
+    }
+
+    exit_with_success(array('commits' => $commits));
 }
 
 function commit_from_revision($db, $repository_id, $revision) {
@@ -59,10 +64,11 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
         commit_revision as "revision",
         commit_parent as "parent",
         commit_time as "time",
-        commit_author_name as "authorName",
-        commit_author_email as "authorEmail",
+        committer_name as "authorName",
+        committer_account as "authorEmail",
         commit_message as "message"
-        FROM commits WHERE commit_repository = $1 AND commit_reported = true';
+        FROM commits JOIN committers ON commit_committer = committer_id
+        WHERE commit_repository = $1 AND commit_reported = true';
     $values = array($repository_id);
 
     if ($first && $second) {
@@ -78,11 +84,12 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
     }
 
     if ($keyword) {
-        array_push($values, '%' . str_replace(array('\\', '_', '@'), array('\\\\', '\\_', '\\%'), $keyword) . '%');
-        $index = '$' . count($values);
-        $statements .= " AND (commit_author_name LIKE $index OR commit_author_email LIKE $index";
+        array_push($values, '%' . str_replace(array('\\', '_', '%'), array('\\\\', '\\_', '\\%'), $keyword) . '%');
+        $keyword_index = '$' . count($values);
         array_push($values, ltrim($keyword, 'r'));
-        $statements .= ' OR commit_revision = $' . count($values) . ')';
+        $revision_index = '$' . count($values);
+        $statements .= "
+            AND ((committer_name LIKE $keyword_index OR committer_account LIKE $keyword_index) OR commit_revision = $revision_index)";
     }
 
     $commits = $db->query_and_fetch_all($statements . ' ORDER BY commit_time', $values);
@@ -91,16 +98,16 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
     return $commits;
 }
 
-function format_commit($commit_row) {
-    return array(array(
+function format_commit($commit_row, $committer_row) {
+    return array(
         'id' => $commit_row['commit_id'],
         'revision' => $commit_row['commit_revision'],
         'parent' => $commit_row['commit_parent'],
         'time' => $commit_row['commit_time'],
-        'authorName' => $commit_row['commit_author_name'],
-        'authorEmail' => $commit_row['commit_author_email'],
+        'authorName' => $committer_row ? $committer_row['committer_name'] : null,
+        'authorEmail' => $committer_row ? $committer_row['committer_account'] : null,
         'message' => $commit_row['commit_message']
-    ));
+    );
 }
 
 main(array_key_exists('PATH_INFO', $_SERVER) ? explode('/', trim($_SERVER['PATH_INFO'], '/')) : array());

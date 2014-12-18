@@ -6,6 +6,7 @@ describe("/admin/regenerate-manifest", function () {
             httpGet('/data/manifest', function (response) {
                 assert.equal(response.statusCode, 200);
                 var manifest = JSON.parse(response.responseText);
+                delete manifest.defaultDashboard;
                 assert.deepEqual(manifest, {
                     all: [],
                     bugTrackers: [],
@@ -27,7 +28,8 @@ describe("/admin/regenerate-manifest", function () {
                 httpGet('/data/manifest', function (response) {
                     assert.equal(response.statusCode, 200);
                     var manifest = JSON.parse(response.responseText);
-                    assert.deepEqual(manifest['bugTrackers'], { 'Bugzilla': { newBugUrl: 'bugs.webkit.org', repositories: null } });
+                    assert.deepEqual(manifest['bugTrackers'],
+                        {1: {name: 'Bugzilla', bugUrl: null, newBugUrl: 'bugs.webkit.org', repositories: null}});
                     notifyDone();
                 });
             });
@@ -48,8 +50,8 @@ describe("/admin/regenerate-manifest", function () {
                                 'WebKit': { url: 'trac.webkit.org', blameUrl: null, hasReportedCommits: false },
                                 'Chromium': { url: null, blameUrl: 'SomeBlameURL', hasReportedCommits: false }
                             });
-                            assert.deepEqual(manifest['bugTrackers']['Bugzilla'], { newBugUrl: null, repositories: ['WebKit'] });
-                            assert.deepEqual(manifest['bugTrackers']['Issue Tracker'], { newBugUrl: null, repositories: ['WebKit', 'Chromium'] });
+                            assert.deepEqual(manifest['bugTrackers'][3], {name: 'Bugzilla', bugUrl: null, newBugUrl: null, repositories: ['WebKit']});
+                            assert.deepEqual(manifest['bugTrackers'][4], {name: 'Issue Tracker', bugUrl: null, newBugUrl: null, repositories: ['WebKit', 'Chromium']});
                             notifyDone();
                         });
                     });

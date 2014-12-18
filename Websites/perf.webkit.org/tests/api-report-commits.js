@@ -11,7 +11,7 @@ describe("/api/report-commits/", function () {
                 "repository": "WebKit",
                 "revision": "141977",
                 "time": "2013-02-06T08:55:20.9Z",
-                "author": {"name": "Commit Queue", "email": "commit-queue@webkit.org"},
+                "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
                 "message": "some message",
             }
         ],
@@ -24,7 +24,7 @@ describe("/api/report-commits/", function () {
                 "repository": "WebKit",
                 "revision": "_141977",
                 "time": "2013-02-06T08:55:20.9Z",
-                "author": {"name": "Commit Queue", "email": "commit-queue@webkit.org"},
+                "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
                 "message": "some message",
             }
         ],
@@ -37,7 +37,7 @@ describe("/api/report-commits/", function () {
                 "repository": "WebKit",
                 "revision": "141977",
                 "time": "2013-02-06T08:55:20.9Z",
-                "author": {"name": "Commit Queue", "email": "commit-queue@webkit.org"},
+                "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
                 "message": "some message",
             },
             {
@@ -45,7 +45,7 @@ describe("/api/report-commits/", function () {
                 "parent": "141977",
                 "revision": "141978",
                 "time": "2013-02-06T09:54:56.0Z",
-                "author": {"name": "Mikhail Pozdnyakov", "email": "mikhail.pozdnyakov@intel.com"},
+                "author": {"name": "Mikhail Pozdnyakov", "account": "mikhail.pozdnyakov@intel.com"},
                 "message": "another message",
             }
         ]
@@ -105,13 +105,13 @@ describe("/api/report-commits/", function () {
             postJSON('/api/report-commits/', subversionCommit, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
-                queryAndFetchAll('SELECT * FROM commits', [], function (rows) {
+                queryAndFetchAll('SELECT * FROM commits JOIN committers ON commit_committer = committer_id', [], function (rows) {
                     assert.equal(rows.length, 1);
                     var reportedData = subversionCommit.commits[0];
                     assert.equal(rows[0]['commit_revision'], reportedData['revision']);
                     assert.equal(rows[0]['commit_time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
-                    assert.equal(rows[0]['commit_author_name'], reportedData['author']['name']);
-                    assert.equal(rows[0]['commit_author_email'], reportedData['author']['email']);
+                    assert.equal(rows[0]['committer_name'], reportedData['author']['name']);
+                    assert.equal(rows[0]['committer_account'], reportedData['author']['account']);
                     assert.equal(rows[0]['commit_message'], reportedData['message']);
                     notifyDone();
                 });
@@ -138,19 +138,19 @@ describe("/api/report-commits/", function () {
             postJSON('/api/report-commits/', subversionTwoCommits, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
-                queryAndFetchAll('SELECT * FROM commits ORDER BY commit_time', [], function (rows) {
+                queryAndFetchAll('SELECT * FROM commits JOIN committers ON commit_committer = committer_id ORDER BY commit_time', [], function (rows) {
                     assert.equal(rows.length, 2);
                     var reportedData = subversionTwoCommits.commits[0];
                     assert.equal(rows[0]['commit_revision'], reportedData['revision']);
                     assert.equal(rows[0]['commit_time'].toString(), new Date('2013-02-06 08:55:20.9').toString());
-                    assert.equal(rows[0]['commit_author_name'], reportedData['author']['name']);
-                    assert.equal(rows[0]['commit_author_email'], reportedData['author']['email']);
+                    assert.equal(rows[0]['committer_name'], reportedData['author']['name']);
+                    assert.equal(rows[0]['committer_account'], reportedData['author']['account']);
                     assert.equal(rows[0]['commit_message'], reportedData['message']);
                     var reportedData = subversionTwoCommits.commits[1];
                     assert.equal(rows[1]['commit_revision'], reportedData['revision']);
                     assert.equal(rows[1]['commit_time'].toString(), new Date('2013-02-06 09:54:56.0').toString());
-                    assert.equal(rows[1]['commit_author_name'], reportedData['author']['name']);
-                    assert.equal(rows[1]['commit_author_email'], reportedData['author']['email']);
+                    assert.equal(rows[1]['committer_name'], reportedData['author']['name']);
+                    assert.equal(rows[1]['committer_account'], reportedData['author']['account']);
                     assert.equal(rows[1]['commit_message'], reportedData['message']);
                     notifyDone();
                 });
@@ -165,18 +165,16 @@ describe("/api/report-commits/", function () {
             queryAndFetchAll('INSERT INTO commits (commit_repository, commit_revision, commit_time) VALUES ($1, $2, $3) RETURNING *',
                 [repositoryId, reportedData['revision'], reportedData['time']], function (existingCommits) {
                 var commitId = existingCommits[0]['commit_id'];
-                assert.equal(existingCommits[0]['commit_author_name'], null);
-                assert.equal(existingCommits[0]['commit_author_email'], null);
                 assert.equal(existingCommits[0]['commit_message'], null);
                 addBuilder(subversionCommit, function () {
                     postJSON('/api/report-commits/', subversionCommit, function (response) {
                         assert.equal(response.statusCode, 200);
                         assert.equal(JSON.parse(response.responseText)['status'], 'OK');
-                        queryAndFetchAll('SELECT * FROM commits', [], function (rows) {
+                        queryAndFetchAll('SELECT * FROM commits JOIN committers ON commit_committer = committer_id', [], function (rows) {
                             assert.equal(rows.length, 1);
                             var reportedData = subversionCommit.commits[0];
-                            assert.equal(rows[0]['commit_author_name'], reportedData['author']['name']);
-                            assert.equal(rows[0]['commit_author_email'], reportedData['author']['email']);
+                            assert.equal(rows[0]['committer_name'], reportedData['author']['name']);
+                            assert.equal(rows[0]['committer_account'], reportedData['author']['account']);
                             assert.equal(rows[0]['commit_message'], reportedData['message']);
                             notifyDone();
                         });
@@ -199,18 +197,38 @@ describe("/api/report-commits/", function () {
                             postJSON('/api/report-commits/', subversionCommit, function (response) {
                                 assert.equal(response.statusCode, 200);
                                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
-                                queryAndFetchAll('SELECT * FROM commits ORDER BY commit_time', [], function (rows) {
+                                queryAndFetchAll('SELECT * FROM commits LEFT OUTER JOIN committers ON commit_committer = committer_id ORDER BY commit_time', [], function (rows) {
                                     assert.equal(rows.length, 2);
-                                    assert.equal(rows[0]['commit_author_name'], reportedData['author']['name']);
-                                    assert.equal(rows[0]['commit_author_email'], reportedData['author']['email']);
+                                    assert.equal(rows[0]['committer_name'], reportedData['author']['name']);
+                                    assert.equal(rows[0]['committer_account'], reportedData['author']['account']);
                                     assert.equal(rows[0]['commit_message'], reportedData['message']);
-                                    assert.equal(rows[1]['commit_author_name'], null);
-                                    assert.equal(rows[1]['commit_author_email'], null);
+                                    assert.equal(rows[1]['committer_name'], null);
+                                    assert.equal(rows[1]['committer_account'], null);
                                     assert.equal(rows[1]['commit_message'], null);
                                     notifyDone();
                                 });
                             });
                         });
+                });
+            });
+        });
+    });
+
+    it("should update an existing committer if there is one", function () {
+        queryAndFetchAll('INSERT INTO repositories (repository_id, repository_name) VALUES (1, \'WebKit\')', [], function () {
+            var author = subversionCommit.commits[0]['author'];
+            queryAndFetchAll('INSERT INTO committers (committer_repository, committer_account) VALUES (1, $1)', [author['account']], function () {
+                addBuilder(subversionCommit, function () {
+                    postJSON('/api/report-commits/', subversionCommit, function (response) {
+                        assert.equal(response.statusCode, 200);
+                        assert.equal(JSON.parse(response.responseText)['status'], 'OK');
+                        queryAndFetchAll('SELECT * FROM committers', [], function (rows) {
+                            assert.equal(rows.length, 1);
+                            assert.equal(rows[0]['committer_name'], author['name']);
+                            assert.equal(rows[0]['committer_account'], author['account']);
+                            notifyDone();
+                        });
+                    });
                 });
             });
         });

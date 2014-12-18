@@ -12,7 +12,7 @@ from xml.dom.minidom import parseString as parseXmlString
 
 def main(argv):
     if len(argv) < 7:
-        sys.exit('Usage: pull-svn <repository-name> <repository-URL> <dashboard-URL> <builder-name> <builder-password> <seconds-to-sleep> [<email-to-name-helper>]')
+        sys.exit('Usage: pull-svn <repository-name> <repository-URL> <dashboard-URL> <builder-name> <builder-password> <seconds-to-sleep> [<account-to-name-helper>]')
 
     repository_name = argv[1]
     repository_url = argv[2]
@@ -20,7 +20,7 @@ def main(argv):
     builder_name = argv[4]
     builder_password = argv[5]
     seconds_to_sleep = float(argv[6])
-    email_to_name_helper = argv[7] if len(argv) > 7 else None
+    account_to_name_helper = argv[7] if len(argv) > 7 else None
 
     print "Submitting revision logs for %s at %s to %s" % (repository_name, repository_url, dashboard_url)
 
@@ -30,7 +30,7 @@ def main(argv):
     pending_commits_to_send = []
 
     while True:
-        commit = fetch_commit_and_resolve_author(repository_name, repository_url, email_to_name_helper, revision_to_fetch)
+        commit = fetch_commit_and_resolve_author(repository_name, repository_url, account_to_name_helper, revision_to_fetch)
 
         if commit:
             print "Fetched r%d." % revision_to_fetch
@@ -74,7 +74,7 @@ def fetch_revision_from_dasbhoard(dashboard_url, repository_name, filter):
     return int(commits[0]['revision']) if commits else None
 
 
-def fetch_commit_and_resolve_author(repository_name, repository_url, email_to_name_helper, revision_to_fetch):
+def fetch_commit_and_resolve_author(repository_name, repository_url, account_to_name_helper, revision_to_fetch):
     try:
         commit = fetch_commit(repository_name, repository_url, revision_to_fetch)
     except Exception as error:
@@ -83,13 +83,13 @@ def fetch_commit_and_resolve_author(repository_name, repository_url, email_to_na
     if not commit:
         return None
 
-    email = commit['author']['email']
+    account = commit['author']['account']
     try:
-        name = resolve_author_name_from_email(email_to_name_helper, email) if email_to_name_helper else None
+        name = resolve_author_name_from_account(account_to_name_helper, account) if account_to_name_helper else None
         if name:
             commit['author']['name'] = name
     except Exception as error:
-        sys.exit('Failed to resolve the author name from an email %s: %s' % (email, str(error)))
+        sys.exit('Failed to resolve the author name from an account %s: %s' % (account, str(error)))
 
     return commit
 
@@ -104,13 +104,13 @@ def fetch_commit(repository_name, repository_url, revision):
         raise error
     xml = parseXmlString(output)
     time = textContent(xml.getElementsByTagName("date")[0])
-    author_email = textContent(xml.getElementsByTagName("author")[0])
+    author_account = textContent(xml.getElementsByTagName("author")[0])
     message = textContent(xml.getElementsByTagName("msg")[0])
     return {
         'repository': repository_name,
         'revision': revision,
         'time': time,
-        'author': {'email': author_email},
+        'author': {'account': author_account},
         'message': message,
     }
 
@@ -125,12 +125,12 @@ def textContent(element):
     return text
 
 
-name_email_compound_regex = re.compile(r'^\s*(?P<name>(\".+\"|[^<]+?))\s*\<(?P<email>.+)\>\s*$')
+name_account_compound_regex = re.compile(r'^\s*(?P<name>(\".+\"|[^<]+?))\s*\<(?P<account>.+)\>\s*$')
 
 
-def resolve_author_name_from_email(helper, email):
-    output = subprocess.check_output(helper + ' ' + email, shell=True)
-    match = name_email_compound_regex.match(output)
+def resolve_author_name_from_account(helper, account):
+    output = subprocess.check_output(helper + ' ' + account, shell=True)
+    match = name_account_compound_regex.match(output)
     if match:
         return match.group('name').strip('"')
     return output.strip()

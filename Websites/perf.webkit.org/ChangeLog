@@ -1,3 +1,59 @@
+2014-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New perf dashboard should not duplicate author information in each commit
+        https://bugs.webkit.org/show_bug.cgi?id=139756
+
+        Reviewed by Darin Adler.
+
+        Instead of each commit having author name and email, make it reference a newly added committers table.
+        Also replace "email" by "account" since some repositories don't use emails as account names.
+
+        This improves the keyword search performance in commits.php since LIKE now runs on committers table,
+        which only contains as many rows as there are accounts in each repository, instead of commits table
+        which contains every commit ever happened in each repository.
+
+        To migrate an existing database into match the new schema, run:
+
+        BEGIN;
+
+        INSERT INTO committers (committer_repository, committer_name, committer_email)
+            (SELECT DISTINCT commit_repository, commit_author_name, commit_author_email
+                FROM commits WHERE commit_author_email IS NOT NULL);
+
+        ALTER TABLE commits ADD COLUMN commit_committer integer REFERENCES committers ON DELETE CASCADE;
+
+        UPDATE commits SET commit_committer = committer_id FROM committers
+            WHERE commit_repository = committer_repository AND commit_author_email = committer_email;
+
+        ALTER TABLE commits DROP COLUMN commit_author_name CASCADE;
+        ALTER TABLE commits DROP COLUMN commit_author_email CASCADE;
+
+        COMMIT;
+
+        * init-database.sql: Added committers table, and replaced author columns in commits table by a foreign
+        reference to committers. Also added the missing drop table statements.
+
+        * public/api/commits.php:
+        (main): Fetch the corresponding committers row for a single commit. Also wrap a single commit by
+        an array here instead of doing it in format_commit.
+        (fetch_commits_between): Updated queries to JOIN commits with committers.
+        (format_commit): Takes both commit and committers rows. Also don't wrap the result in an array as that
+        is now done in main.
+
+        * public/api/report-commits.php:
+        (main): Store the reported committer information or update the existing entry if there is one.
+
+        * tests/admin-regenerate-manifest.js: Fixed tests.
+
+        * tests/api-report-commits.js: Ditto. Also added a test for updating an existing committer entry.
+
+        * tools/pull-svn.py: Renamed email to account.
+        (main):
+        (fetch_commit_and_resolve_author):
+        (fetch_commit):
+        (resolve_author_name_from_account):
+        (resolve_author_name_from_email): Deleted.
+
 2014-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix.
