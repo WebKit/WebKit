@@ -891,7 +891,7 @@ IntRect Element::boundsInRootViewSpace()
     return result;
 }
 
-RefPtr<ClientRectList> Element::getClientRects()
+Ref<ClientRectList> Element::getClientRects()
 {
     document().updateLayoutIgnorePendingStylesheets();
 

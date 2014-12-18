@@ -774,7 +774,7 @@ Ref<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
     return ClientRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
-PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(ExceptionCode& ec)
+Ref<ClientRectList> Internals::inspectorHighlightRects(ExceptionCode& ec)
 {
 #if ENABLE(INSPECTOR)
     Document* document = contextDocument();
@@ -1668,17 +1668,17 @@ String Internals::mainThreadScrollingReasons(ExceptionCode& ec) const
     return page->synchronousScrollingReasonsAsText();
 }
 
-PassRefPtr<ClientRectList> Internals::nonFastScrollableRects(ExceptionCode& ec) const
+RefPtr<ClientRectList> Internals::nonFastScrollableRects(ExceptionCode& ec) const
 {
     Document* document = contextDocument();
     if (!document || !document->frame()) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     Page* page = document->page();
     if (!page)
-        return 0;
+        return nullptr;
 
     return page->nonFastScrollableRects(document->frame());
 }

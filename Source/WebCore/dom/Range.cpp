@@ -2177,7 +2177,7 @@ void Range::expand(const String& unit, ExceptionCode& ec)
     setEnd(end.deepEquivalent().containerNode(), end.deepEquivalent().computeOffsetInContainerNode(), ec);
 }
 
-PassRefPtr<ClientRectList> Range::getClientRects() const
+Ref<ClientRectList> Range::getClientRects() const
 {
     if (!m_start.container())
         return ClientRectList::create();

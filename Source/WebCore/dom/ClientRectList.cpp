@@ -57,10 +57,10 @@ ClientRect* ClientRectList::item(unsigned index)
     if (index >= m_list.size()) {
         // FIXME: this should throw an exception.
         // ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
 
-    return m_list[index].get();
+    return m_list[index].ptr();
 }
 
 } // namespace WebCore

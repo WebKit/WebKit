@@ -151,7 +151,7 @@ public:
     // for details.
     void expand(const String&, ExceptionCode&);
 
-    PassRefPtr<ClientRectList> getClientRects() const;
+    Ref<ClientRectList> getClientRects() const;
     Ref<ClientRect> getBoundingClientRect() const;
 
 #ifndef NDEBUG

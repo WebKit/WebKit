@@ -28,7 +28,7 @@
 #define ClientRectList_h
 
 #include "FloatQuad.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -38,8 +38,8 @@ namespace WebCore {
 
     class ClientRectList : public RefCounted<ClientRectList> {
     public:
-        static PassRefPtr<ClientRectList> create() { return adoptRef(new ClientRectList); }
-        static PassRefPtr<ClientRectList> create(const Vector<FloatQuad>& quads) { return adoptRef(new ClientRectList(quads)); }
+        static Ref<ClientRectList> create() { return adoptRef(*new ClientRectList); }
+        static Ref<ClientRectList> create(const Vector<FloatQuad>& quads) { return adoptRef(*new ClientRectList(quads)); }
         WEBCORE_EXPORT ~ClientRectList();
 
         unsigned length() const;
@@ -49,7 +49,7 @@ namespace WebCore {
         WEBCORE_EXPORT ClientRectList();
         WEBCORE_EXPORT explicit ClientRectList(const Vector<FloatQuad>&);
 
-        Vector<RefPtr<ClientRect>> m_list;
+        Vector<Ref<ClientRect>> m_list;
     }; 
 
 } // namespace WebCore

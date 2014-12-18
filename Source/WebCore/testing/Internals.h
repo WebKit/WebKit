@@ -130,7 +130,7 @@ public:
 
     Ref<ClientRect> boundingBox(Element*, ExceptionCode&);
 
-    PassRefPtr<ClientRectList> inspectorHighlightRects(ExceptionCode&);
+    Ref<ClientRectList> inspectorHighlightRects(ExceptionCode&);
     String inspectorHighlightObject(ExceptionCode&);
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
@@ -218,7 +218,7 @@ public:
     String repaintRectsAsText(ExceptionCode&) const;
     String scrollingStateTreeAsText(ExceptionCode&) const;
     String mainThreadScrollingReasons(ExceptionCode&) const;
-    PassRefPtr<ClientRectList> nonFastScrollableRects(ExceptionCode&) const;
+    RefPtr<ClientRectList> nonFastScrollableRects(ExceptionCode&) const;
 
     void garbageCollectDocumentResources(ExceptionCode&) const;
 

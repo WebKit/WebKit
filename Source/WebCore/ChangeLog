@@ -1,5 +1,36 @@
 2014-12-18  Andreas Kling  <akling@apple.com>
 
+        Ref-ify ClientRectList.
+        <https://webkit.org/b/139780>
+
+        Reviewed by Anders Carlsson.
+
+        Make the ClientRectList::create() helpers return Ref, along with a bunch
+        of other functions that always return non-null ClientRectLists.
+
+        Also make ClientRectList store a Vector<Ref<ClientRect>> internally since
+        entries in the Vector are never null.
+
+        * dom/ClientRectList.cpp:
+        (WebCore::ClientRectList::item):
+        * dom/ClientRectList.h:
+        (WebCore::ClientRectList::create):
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        * dom/Element.h:
+        * dom/Range.cpp:
+        (WebCore::Range::getClientRects):
+        * dom/Range.h:
+        * page/Page.cpp:
+        (WebCore::Page::nonFastScrollableRects):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::inspectorHighlightRects):
+        (WebCore::Internals::nonFastScrollableRects):
+        * testing/Internals.h:
+
+2014-12-18  Andreas Kling  <akling@apple.com>
+
         Ref-ify ClientRect.
         <https://webkit.org/b/139777>
 
