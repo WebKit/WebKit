@@ -34,6 +34,10 @@
 
 @class WKWebViewConfiguration;
 
+namespace API {
+class Object;
+}
+
 namespace IPC {
 class DataReference;
 }
