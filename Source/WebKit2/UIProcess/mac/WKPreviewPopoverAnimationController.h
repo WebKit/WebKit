@@ -23,48 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPagePreviewViewController_h
-#define WKPagePreviewViewController_h
+#ifndef WKPreviewPopoverAnimationController_h
+#define WKPreviewPopoverAnimationController_h
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
+#import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 
+namespace WebKit {
+class WebPageProxy;
+};
+
+@class NSImmediateActionGestureRecognizer;
+@class NSPopoverAnimationController;
 @class NSString;
-@class NSTextField;
 @class NSURL;
-@class NSView;
 @class WKPagePreviewViewController;
+@class WKView;
 
-@protocol WKPagePreviewViewControllerDelegate <NSObject>
-- (NSView *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize;
-- (NSString *)pagePreviewViewController:(WKPagePreviewViewController *)pagePreviewViewController titleForPreviewOfURL:(NSURL *)url;
-- (void)pagePreviewViewControllerWasClicked:(WKPagePreviewViewController *)pagePreviewViewController;
-@end
+@interface WKPreviewPopoverAnimationController : NSObject <NSImmediateActionAnimationController> {
+    bool _shouldShowPreviewWhenLoaded;
+    bool _hasFinishedLoading;
 
-@interface WKPagePreviewViewController : NSViewController {
-@public
-    NSSize _mainViewSize;
+    WKView *_wkView;
     RetainPtr<NSURL> _url;
-    RetainPtr<NSView> _previewView;
-    RetainPtr<NSTextField> _titleTextField;
-    RetainPtr<NSString> _previewTitle;
-    RetainPtr<NSProgressIndicator> _spinner;
-    BOOL _loading;
-    id <WKPagePreviewViewControllerDelegate> _delegate;
-    CGFloat _popoverToViewScale;
+    WebKit::WebPageProxy* _page;
+
+    RetainPtr<NSPopover> _previewPopover;
+    NSRect _popoverOriginRect;
+    RetainPtr<WKPagePreviewViewController> _previewViewController;
+    NSPoint _eventLocationInView;
+
+    RetainPtr<NSPopoverAnimationController> _popoverAnimationController;
+
+    NSImmediateActionGestureRecognizer *_recognizer;
+    bool _didCompleteAnimation;
+    RetainPtr<NSTimer> _previewWatchdogTimer;
 }
 
-@property (nonatomic, copy) NSString *previewTitle;
-@property (nonatomic, getter=isLoading) BOOL loading;
+- (instancetype)initWithURL:(NSURL *)url view:(WKView *)wkView page:(WebKit::WebPageProxy&)page originRect:(NSRect)originRect eventLocationInView:(NSPoint)eventLocationInView;
+- (void)close;
 
-- (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
-- (void)replacePreviewWithImage:(NSImage *)image atSize:(NSSize)size;
-
-+ (NSSize)previewPadding;
+- (void)setPreviewTitle:(NSString *)previewTitle;
+- (void)setPreviewLoading:(BOOL)loading;
+- (void)setPreviewOverrideImage:(NSImage *)image;
 
 @end
+
 
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#endif // WKPagePreviewViewController_h
+#endif // WKPreviewPopoverAnimationController_h

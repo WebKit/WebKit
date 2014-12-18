@@ -62,6 +62,8 @@ struct ActionMenuHitTestResult {
     WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
 
     DictionaryPopupInfo dictionaryPopupInfo;
+
+    RefPtr<WebCore::TextIndicator> linkTextIndicator;
 };
 
 } // namespace WebKit

@@ -26,9 +26,7 @@
 #import "config.h"
 #import "WKPagePreviewViewController.h"
 
-#import "WKWebViewInternal.h"
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 static const CGFloat previewViewInset = 3;
 static const CGFloat previewViewTitleHeight = 34;
@@ -74,6 +72,8 @@ static const CGFloat previewViewTitleHeight = 34;
 
     _loading = loading;
 
+    [_previewView setHidden:loading];
+
     if (_loading)
         [_spinner startAnimation:nil];
     else
@@ -89,15 +89,7 @@ static const CGFloat previewViewTitleHeight = 34;
 {
     NSRect defaultFrame = NSMakeRect(0, 0, _mainViewSize.width, _mainViewSize.height);
     _previewView = [_delegate pagePreviewViewController:self viewForPreviewingURL:_url.get() initialFrameSize:defaultFrame.size];
-    if (!_previewView) {
-        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:defaultFrame]);
-        [webView _setIgnoresNonWheelEvents:YES];
-        if (_url) {
-            NSURLRequest *request = [NSURLRequest requestWithURL:_url.get()];
-            [webView loadRequest:request];
-        }
-        _previewView = webView;
-    }
+    ASSERT(_previewView);
 
     RetainPtr<NSClickGestureRecognizer> clickRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(_clickRecognized:)]);
     [_previewView addGestureRecognizer:clickRecognizer.get()];
@@ -114,6 +106,7 @@ static const CGFloat previewViewTitleHeight = 34;
     [containerView addSubview:_previewView.get()];
     [_previewView setFrame:previewFrame];
     [_previewView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [_previewView setHidden:YES];
 
     _titleTextField = adoptNS([[NSTextField alloc] init]);
     [_titleTextField setWantsLayer:YES];
@@ -166,6 +159,15 @@ static const CGFloat previewViewTitleHeight = 34;
     self.view = containerView.get();
 }
 
+- (void)replacePreviewWithImage:(NSImage *)image atSize:(NSSize)size
+{
+    RetainPtr<NSClickGestureRecognizer> clickRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(_clickRecognized:)]);
+    RetainPtr<NSImageView> imageView = adoptNS([[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, size.width, size.height)]);
+    [imageView setImage:image];
+    [imageView addGestureRecognizer:clickRecognizer.get()];
+    self.view = imageView.get();
+}
+
 - (void)_clickRecognized:(NSGestureRecognizer *)gestureRecognizer
 {
     if (gestureRecognizer.state == NSGestureRecognizerStateBegan)
@@ -174,4 +176,4 @@ static const CGFloat previewViewTitleHeight = 34;
 
 @end
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
