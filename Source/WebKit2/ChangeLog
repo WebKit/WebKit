@@ -1,3 +1,16 @@
+2014-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Add missing availability annotation on @property _featureCounterEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=139794
+        <rdar://problem/19266254>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Follow-up to r177526 adding availability annotation on @property
+        _featureCounterEnabled.
+
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2014-12-18  Beth Dakin  <bdakin@apple.com>
 
         Need to re-enable action menus

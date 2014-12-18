@@ -44,7 +44,7 @@
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAllowsAlternateFullscreen:) BOOL _allowsAlternateFullscreen;
-@property (nonatomic, setter=_setFeatureCounterEnabled:) BOOL _featureCounterEnabled;
+@property (nonatomic, setter=_setFeatureCounterEnabled:) BOOL _featureCounterEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 #endif
 
 @end
