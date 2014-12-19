@@ -772,7 +772,6 @@ private:
     bool m_volumeInitialized;
     MediaTime m_lastSeekTime;
     
-    unsigned m_previousProgress;
     double m_previousProgressTime;
 
     // The last time a timeupdate event was sent (based on monotonic clock).
