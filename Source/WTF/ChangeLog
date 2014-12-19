@@ -1,3 +1,11 @@
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build correction after r177541.
+
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::Token<T>::Token): Revise constructor inlines to correct
+        syntax error.
+
 2014-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Add strong typing to RefCounter interface, return value as a bool.

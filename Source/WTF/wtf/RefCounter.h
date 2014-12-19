@@ -102,13 +102,13 @@ inline RefCounter::Token<T>::Token(Count* count)
 }
 
 template<class T>
-inline RefCounter::Token<T>::Token(const RefCounter::Token<T>::Token<T>& token)
+inline RefCounter::Token<T>::Token(const RefCounter::Token<T>& token)
     : m_ptr(token.m_ptr)
 {
 }
 
 template<class T>
-inline RefCounter::Token<T>::Token(RefCounter::Token<T>::Token<T>&& token)
+inline RefCounter::Token<T>::Token(RefCounter::Token<T>&& token)
     : m_ptr(token.m_ptr)
 {
 }
