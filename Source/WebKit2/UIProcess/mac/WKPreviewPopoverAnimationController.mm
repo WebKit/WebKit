@@ -32,6 +32,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/NSPopoverSPI.h>
+#import <algorithm>
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
