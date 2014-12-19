@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/GetPtr.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 

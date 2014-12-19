@@ -1,3 +1,12 @@
+2014-12-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build break on EFL and GTK since r177523
+        https://bugs.webkit.org/show_bug.cgi?id=139805
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Ref.h: Include <wtf/StdLibExtras.h> to use std::exchange().
+
 2014-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Add strong typing to RefCounter interface, return value as a bool.
