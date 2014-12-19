@@ -1,3 +1,12 @@
+2014-12-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Updte WebKit2 test expectations based on what bots see now.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-12-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Only when the SVG is inline and only when a shape is referenced before it is defined, this shape will not be drawn.

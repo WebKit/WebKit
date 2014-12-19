@@ -165,18 +165,7 @@ fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-selects-image.html
 fast/events/remove-target-with-shadow-in-drag.html
 
-webkit.org/b/81291 fast/events/pagehide-timeout.html [ Pass Failure ]
-webkit.org/b/81291 fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Pass Failure ]
-webkit.org/b/81291 fast/events/pageshow-pagehide-on-back-cached.html [ Pass Failure ]
-webkit.org/b/81291 fast/events/pageshow-pagehide.html [ Pass Failure ]
-
 webkit.org/b/81833 fast/events/drag-link.html [ Failure ]
-
-# flaky storage tests
-# https://bugs.webkit.org/show_bug.cgi?id=82679
-storage/websql/statement-success-callback-isolated-world.html
-storage/websql/transaction-callback-isolated-world.html
-storage/websql/transaction-error-callback-isolated-world.html
 
 # Missing functionality of textInputController
 # https://bugs.webkit.org/show_bug.cgi?id=89401
@@ -191,8 +180,6 @@ webkit.org/b/89199 editing/spelling/grammar-edit-word.html [ Skip ]
 webkit.org/b/90156 platform/mac/editing/spelling/autocorrection-blockquote-crash.html [ Failure ]
 
 webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
-
-webkit.org/b/58337 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html [ Pass Failure ]
 
 # All spatial navigation tests fail on Mac WK2
 webkit.org/b/96438 fast/spatial-navigation
@@ -215,23 +202,12 @@ webkit.org/b/108507 printing/quirks-percentage-height-body.html [ Skip ]
 webkit.org/b/108507 printing/quirks-percentage-height.html [ Skip ]
 webkit.org/b/108507 printing/standards-percentage-heights.html [ Skip ]
 
-webkit.org/b/97124 [ Debug ] fast/loader/stateobjects/document-destroyed-navigate-back.html [ Pass Crash ]
-webkit.org/b/97124 [ Debug ] fast/loader/document-with-fragment-url-3.html [ Pass Crash ]
-webkit.org/b/97124 [ Debug ] fast/loader/document-with-fragment-url-4.html [ Pass Crash ]
-webkit.org/b/97124 [ Debug ] fast/loader/dynamic-iframe-extra-back-forward-item.html [ Pass Crash ]
-webkit.org/b/97124 [ Debug ] fast/events/pageshow-pagehide-on-back-uncached.html [ Pass Crash ]
-webkit.org/b/97124 [ Debug ] svg/animations/mozilla/animateMotion-by-1.svg [ Pass Crash ]
-
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 # Flaky everywhere.
 webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure ]
 
 webkit.org/b/114572 platform/mac-wk2/plugins/mouse-events-scaled.html [ Pass Failure ]
-
-webkit.org/b/116478 storage/websql/open-database-creation-callback-isolated-world.html [ Pass Failure ]
-webkit.org/b/116478 storage/websql/statement-error-callback-isolated-world.html [ Pass Failure ]
-webkit.org/b/116478 storage/websql/transaction-success-callback-isolated-world.html [ Pass Failure ]
 
 # [WK2] Media elements never fail to load
 webkit.org/b/117767 media/W3C/audio/error/error_onerror_called_on_bogus_source.html [ Timeout ]
@@ -259,13 +235,9 @@ webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg 
 
 # Color space issues from switching to tiled drawing.
 webkit.org/b/122234 css3/filters/null-effect-check.html [ ImageOnlyFailure ]
-webkit.org/b/122234 fast/images/pdf-as-image-with-annotations.html [ Pass ImageOnlyFailure ]
-webkit.org/b/122234 fast/images/pdf-as-image-crop-box.html [ Pass ImageOnlyFailure ]
 
 # Tiled background images that intersect the tiles are getting weird fringing.
 webkit.org/b/122235 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
-
-webkit.org/b/122237 [ Debug ] fast/table/crash-section-logical-height-changed-needsCellRecalc.html [ Pass Crash ]
 
 webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html [ Pass Failure ]
 
@@ -289,18 +261,18 @@ webkit.org/b/136554 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-nes
 ### START OF (2) Classified failures without bug reports (yet)
 
 # Missing TextChecker::requestCheckingOfString() implementation for Mac.
-editing/spelling/grammar-markers.html
-editing/spelling/grammar-paste.html
-editing/spelling/grammar-markers-hidpi.html
-editing/spelling/inline-spelling-markers.html
-editing/spelling/inline-spelling-markers-hidpi.html
-editing/spelling/spellcheck-async-mutation.html
-editing/spelling/spellcheck-async-remove-frame.html
-editing/spelling/spellcheck-async.html
-editing/spelling/spellcheck-queue.html
-editing/spelling/spellcheck-sequencenum.html
-editing/spelling/spelling-insert-html.html
-editing/spelling/spelling-marker-description.html
+editing/spelling/grammar-markers.html [ Skip ]
+editing/spelling/grammar-paste.html [ Skip ]
+editing/spelling/grammar-markers-hidpi.html [ Skip ]
+editing/spelling/inline-spelling-markers.html [ Skip ]
+editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
+editing/spelling/spellcheck-async-mutation.html [ Skip ]
+editing/spelling/spellcheck-async-remove-frame.html [ Skip ]
+editing/spelling/spellcheck-async.html [ Skip ]
+editing/spelling/spellcheck-queue.html [ Skip ]
+editing/spelling/spellcheck-sequencenum.html [ Skip ]
+editing/spelling/spelling-insert-html.html [ Skip ]
+editing/spelling/spelling-marker-description.html [ Skip ]
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
@@ -309,17 +281,8 @@ editing/spelling/spelling-marker-description.html
 ########################################
 ### START OF (3) Unclassified failures
 
-# All tests that failed on the Lion WebKit2 Release bot in r111739
 fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
-
-# A test that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
-fast/workers/worker-cloneport.html [ Pass Failure ]
-
-# Intermittent crashes
-# https://bugs.webkit.org/show_bug.cgi?id=82939
-sputnik/Unicode/Unicode_218/S7.6_A2.4.html
-sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 
 # Unclear yet why this test fails.
 editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
@@ -330,26 +293,20 @@ platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html [ Fa
 # test results in DRT don't match in browser behavior, test seems broken
 fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
 
-webkit.org/b/126962 plugins/plugin-document-load-prevented-userscript.html [ Crash Pass Timeout ]
-
-webkit.org/b/127316 svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html [ Pass Timeout ]
-
-webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
-webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
-
 webkit.org/b/132766 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
 webkit.org/b/132766 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 
-webkit.org/b/133227 plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html [ Pass Failure ]
 webkit.org/b/133227 plugins/snapshotting/set-plugin-size-to-tiny.html [ Failure ]
 webkit.org/b/133227 plugins/snapshotting/quicktime-plugin-snapshotted.html [ Pass Failure ]
 
 webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 
 fast/dom/frame-loading-via-document-write.html [ Timeout ]
+
+[ MountainLion ] fast/events/page-visibility-iframe-move-test.html [ Pass Failure ]
 
 ### END OF (3) Unclassified failures
 ########################################
@@ -582,10 +539,10 @@ webkit.org/b/138736 [ Mavericks+ ] http/tests/appcache/auth.html [ Skip ]
 # New WebKit2-only failures in Yosemite
 # ======================================================================
 
-# FIXME: Needs bugzilla (<rdar://problem/16678392>)
-[ Yosemite+ ] fast/events/page-visibility-iframe-delete-test.html [ Failure Timeout ]
-[ Yosemite+ ] fast/events/page-visibility-iframe-move-test.html [ Failure Timeout ]
-[ Yosemite+ ] fast/events/page-visibility-iframe-propagation-test.html [ Failure Timeout ]
-[ Yosemite+ ] fast/events/page-visibility-transition-test.html [ Failure Timeout ]
+# FIXME: Needs bugzilla (<rdar://problem/16678392>). Perhaps skip these tests?
+[ Yosemite+ ] fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
+[ Yosemite+ ] fast/events/page-visibility-iframe-move-test.html [ Timeout ]
+[ Yosemite+ ] fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
+[ Yosemite+ ] fast/events/page-visibility-transition-test.html [ Timeout ]
 
 webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Pass Failure Timeout ]
