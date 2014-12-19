@@ -1,3 +1,16 @@
+2014-12-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r177535): It broke the GTK performance bot
+        https://bugs.webkit.org/show_bug.cgi?id=139811
+
+        Reviewed by Carlos Garcia Campos.
+
+        Trigger clean build only on mac platform.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (DownloadAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestWebKit2Factory.__init__):
+
 2014-12-18  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         Unreviewed, moved myself to the list of committers.
