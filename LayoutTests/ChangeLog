@@ -1,3 +1,9 @@
+2014-12-18  Alexey Proskuryakov  <ap@apple.com>
+
+        More gardening for flaky tests that are now properly reported as timing oout.
+
+        * platform/mac/TestExpectations:
+
 2014-12-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Recursive crash at WebCore::accessibleNameForNode

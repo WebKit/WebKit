@@ -1011,11 +1011,10 @@ Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.ht
 webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
 
 webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-stream.html [ WontFix ]
-webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure ]
-webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
+webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure Timeout ]
 webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Timeout ]
 webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Timeout ]
-webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
+webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Timeout ]
 [ MountainLion ] media/video-playbackrate.html [ Pass Failure Timeout ]
 
 # Mountain Lion and earlier do not support Encrypted Media Extensions.
@@ -1064,6 +1063,7 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failu
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
+webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
 webkit.org/b/135160 [ Mavericks ] media/track/track-in-band-subtitles-too-large.html [ Failure ]
 webkit.org/b/135160 [ Yosemite+ ] media/track/track-in-band-subtitles-too-large.html [ Pass Failure Timeout Crash ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
