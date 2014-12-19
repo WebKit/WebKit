@@ -27,50 +27,27 @@
 #include "config.h"
 #include "DeprecatedStyleBuilder.h"
 
-#include "BasicShapeFunctions.h"
-#include "BasicShapes.h"
-#include "CSSAspectRatioValue.h"
-#include "CSSCalculationValue.h"
-#include "CSSCursorImageValue.h"
-#include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
-#include "ClipPathOperation.h"
-#include "CursorList.h"
-#include "Document.h"
-#include "Frame.h"
 #include "HTMLElement.h"
-#include "Pair.h"
-#include "Rect.h"
 #include "RenderStyle.h"
-#include "RenderView.h"
-#include "Settings.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
-#include <wtf/StdLibExtras.h>
-
-#if ENABLE(CSS_SHAPES)
-#include "ShapeValue.h"
-#endif
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-enum ExpandValueBehavior {SuppressValue = 0, ExpandValue};
-template <ExpandValueBehavior expandValue, CSSPropertyID one = CSSPropertyInvalid, CSSPropertyID two = CSSPropertyInvalid, CSSPropertyID three = CSSPropertyInvalid, CSSPropertyID four = CSSPropertyInvalid, CSSPropertyID five = CSSPropertyInvalid>
-class ApplyPropertyExpanding {
+class ApplyPropertyPerspectiveOrigin {
 public:
-
     template <CSSPropertyID id>
     static inline void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
     {
-        if (id == CSSPropertyInvalid)
-            return;
-
+        // FIXME: This doesn't seem to do anything as CSSPropertyWebkitPerspectiveOriginX
+        // and CSSPropertyWebkitPerspectiveOriginY don't have a property handler.
         const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
@@ -79,19 +56,15 @@ public:
 
     static void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
     {
-        applyInheritValue<one>(propertyID, styleResolver);
-        applyInheritValue<two>(propertyID, styleResolver);
-        applyInheritValue<three>(propertyID, styleResolver);
-        applyInheritValue<four>(propertyID, styleResolver);
-        applyInheritValue<five>(propertyID, styleResolver);
+        applyInheritValue<CSSPropertyWebkitPerspectiveOriginX>(propertyID, styleResolver);
+        applyInheritValue<CSSPropertyWebkitPerspectiveOriginY>(propertyID, styleResolver);
     }
 
     template <CSSPropertyID id>
     static inline void applyInitialValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
     {
-        if (id == CSSPropertyInvalid)
-            return;
-
+        // FIXME: This doesn't seem to do anything as CSSPropertyWebkitPerspectiveOriginX
+        // and CSSPropertyWebkitPerspectiveOriginY don't have a property handler.
         const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
@@ -100,48 +73,13 @@ public:
 
     static void applyInitialValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
     {
-        applyInitialValue<one>(propertyID, styleResolver);
-        applyInitialValue<two>(propertyID, styleResolver);
-        applyInitialValue<three>(propertyID, styleResolver);
-        applyInitialValue<four>(propertyID, styleResolver);
-        applyInitialValue<five>(propertyID, styleResolver);
+        applyInitialValue<CSSPropertyWebkitPerspectiveOriginX>(propertyID, styleResolver);
+        applyInitialValue<CSSPropertyWebkitPerspectiveOriginY>(propertyID, styleResolver);
     }
 
-    template <CSSPropertyID id>
-    static inline void applyValue(CSSPropertyID propertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (id == CSSPropertyInvalid)
-            return;
+    static void applyValue(CSSPropertyID, StyleResolver*, CSSValue*)
+    { }
 
-        const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
-        const PropertyHandler& handler = table.propertyHandler(id);
-        if (handler.isValid())
-            handler.applyValue(propertyID, styleResolver, value);
-    }
-
-    static void applyValue(CSSPropertyID propertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!expandValue)
-            return;
-
-        applyValue<one>(propertyID, styleResolver, value);
-        applyValue<two>(propertyID, styleResolver, value);
-        applyValue<three>(propertyID, styleResolver, value);
-        applyValue<four>(propertyID, styleResolver, value);
-        applyValue<five>(propertyID, styleResolver, value);
-    }
-    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
-};
-
-template <typename GetterType, GetterType (RenderStyle::*getterFunction)() const, typename SetterType, void (RenderStyle::*setterFunction)(SetterType), typename InitialType, InitialType (*initialFunction)()>
-class ApplyPropertyDefaultBase {
-public:
-    static void setValue(RenderStyle* style, SetterType value) { (style->*setterFunction)(value); }
-    static GetterType value(RenderStyle* style) { return (style->*getterFunction)(); }
-    static InitialType initial() { return (*initialFunction)(); }
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver) { setValue(styleResolver->style(), value(styleResolver->parentStyle())); }
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver) { setValue(styleResolver->style(), initial()); }
-    static void applyValue(CSSPropertyID, StyleResolver*, CSSValue*) { }
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
@@ -732,7 +670,7 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitMaskRepeatY, ApplyPropertyFillLayer<EFillRepeat, CSSPropertyWebkitMaskRepeatY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSToStyleMap::mapFillRepeatY>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskSize, ApplyPropertyFillLayer<FillSize, CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSToStyleMap::mapFillSize>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskSourceType, ApplyPropertyFillLayer<EMaskSourceType, CSSPropertyWebkitMaskSourceType, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isMaskSourceTypeSet, &FillLayer::maskSourceType, &FillLayer::setMaskSourceType, &FillLayer::clearMaskSourceType, &FillLayer::initialMaskSourceType, &CSSToStyleMap::mapFillMaskSourceType>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitPerspectiveOrigin, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitPerspectiveOriginX, CSSPropertyWebkitPerspectiveOriginY>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitPerspectiveOrigin, ApplyPropertyPerspectiveOrigin::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::setVisitedLinkTextEmphasisColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextFillColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::setVisitedLinkTextFillColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextStrokeColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor, &RenderStyle::color>::createHandler());

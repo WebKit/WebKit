@@ -1,3 +1,45 @@
+2014-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Clean up StyleBuilderCustom and DeprecatedStyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139807
+
+        Reviewed by Antti Koivisto.
+
+        Clean up StyleBuilderCustom and DeprecatedStyleBuilder.
+
+        * css/DeprecatedStyleBuilder.cpp:
+
+        - Remove unnecessary header includes.
+
+        (WebCore::ApplyPropertyPerspectiveOrigin::applyInheritValue):
+        (WebCore::ApplyPropertyPerspectiveOrigin::applyInitialValue):
+        (WebCore::ApplyPropertyPerspectiveOrigin::applyValue):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyExpanding::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyExpanding::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyExpanding::applyValue): Deleted.
+        (WebCore::ApplyPropertyExpanding::createHandler): Deleted.
+
+        - Rename ApplyPropertyExpanding to ApplyPropertyPerspectiveOrigin as
+          PerspectiveOrigin is the only remaining user of this class. This also
+          allows us to simplify the implementation a lot.
+
+        (WebCore::ApplyPropertyDefaultBase::setValue): Deleted.
+        (WebCore::ApplyPropertyDefaultBase::value): Deleted.
+        (WebCore::ApplyPropertyDefaultBase::initial): Deleted.
+        (WebCore::ApplyPropertyDefaultBase::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyDefaultBase::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyDefaultBase::applyValue): Deleted.
+
+        - There is no longer any user of this templated class.
+
+        * css/StyleBuilderCustom.h:
+
+        - Introduce a macro that declares all 3 handlers (inherit, initial and
+          value) in the StyleBuilderCustom class. This greatly reduces the
+          number of lines in this class.
+        - Also alphabetize the handlers.
+
 2014-12-18  Jeremy Jones  <jeremyj@apple.com>
 
         dispatch to main thread before accessing playerController() in WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse

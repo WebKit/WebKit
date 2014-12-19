@@ -40,108 +40,62 @@
 
 namespace WebCore {
 
+#define DECLARE_PROPERTY_CUSTOM_HANDLERS(property) \
+    static void applyInherit##property(StyleResolver&); \
+    static void applyInitial##property(StyleResolver&); \
+    static void applyValue##property(StyleResolver&, CSSValue&)
+
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class StyleBuilderCustom {
 public:
-    static void applyValueWebkitMarqueeIncrement(StyleResolver&, CSSValue&);
-
-    static void applyValueDirection(StyleResolver&, CSSValue&);
-
-    static void applyInitialZoom(StyleResolver&);
-    static void applyInheritZoom(StyleResolver&);
-    static void applyValueZoom(StyleResolver&, CSSValue&);
-
-    static void applyValueVerticalAlign(StyleResolver&, CSSValue&);
-
+    // Custom handling of inherit, initial and value setting.
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageOutset);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageRepeat);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSlice);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Cursor);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontWeight);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    static void applyInheritImageResolution(StyleResolver&);
-    static void applyInitialImageResolution(StyleResolver&);
-    static void applyValueImageResolution(StyleResolver&, CSSValue&);
-#endif // ENABLE(CSS_IMAGE_RESOLUTION)
-
-    static void applyInheritSize(StyleResolver&);
-    static void applyInitialSize(StyleResolver&);
-    static void applyValueSize(StyleResolver&, CSSValue&);
-
-    static void applyInheritTextIndent(StyleResolver&);
-    static void applyInitialTextIndent(StyleResolver&);
-    static void applyValueTextIndent(StyleResolver&, CSSValue&);
-
-#define DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(type, modifier) \
-    static void applyInherit##type##modifier(StyleResolver&); \
-    static void applyInitial##type##modifier(StyleResolver&); \
-    static void applyValue##type##modifier(StyleResolver&, CSSValue&)
-
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Outset);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Repeat);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Slice);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Width);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Outset);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice);
-    DECLARE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width);
-
-    static void applyValueWordSpacing(StyleResolver&, CSSValue&);
-
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
+#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-    static void applyInheritLineHeight(StyleResolver&);
-    static void applyInitialLineHeight(StyleResolver&);
-#endif // ENABLE(IOS_TEXT_AUTOSIZING)
-    static void applyValueLineHeight(StyleResolver&, CSSValue&);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
+#endif
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(TextIndent);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitAspectRatio);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageWidth);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitTextEmphasisStyle);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
-    static void applyInheritOutlineStyle(StyleResolver&);
-    static void applyInitialOutlineStyle(StyleResolver&);
-    static void applyValueOutlineStyle(StyleResolver&, CSSValue&);
-
-    static void applyInitialClip(StyleResolver&);
-    static void applyInheritClip(StyleResolver&);
-    static void applyValueClip(StyleResolver&, CSSValue&);
-
-    static void applyValueWebkitLocale(StyleResolver&, CSSValue&);
-    static void applyValueWebkitWritingMode(StyleResolver&, CSSValue&);
-    static void applyValueWebkitTextOrientation(StyleResolver&, CSSValue&);
-    static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
-    static void applyValueWebkitPerspective(StyleResolver&, CSSValue&);
-
-    static void applyInitialTextShadow(StyleResolver&);
-    static void applyInheritTextShadow(StyleResolver&);
-    static void applyValueTextShadow(StyleResolver&, CSSValue&);
-    static void applyInitialBoxShadow(StyleResolver&);
-    static void applyInheritBoxShadow(StyleResolver&);
-    static void applyValueBoxShadow(StyleResolver&, CSSValue&);
-    static void applyInitialWebkitBoxShadow(StyleResolver&);
-    static void applyInheritWebkitBoxShadow(StyleResolver&);
-    static void applyValueWebkitBoxShadow(StyleResolver&, CSSValue&);
-
-    static void applyInitialFontFamily(StyleResolver&);
-    static void applyInheritFontFamily(StyleResolver&);
-    static void applyValueFontFamily(StyleResolver&, CSSValue&);
-
+    // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(StyleResolver&);
     static void applyValueDisplay(StyleResolver&, CSSValue&);
 
-    static void applyInitialWebkitAspectRatio(StyleResolver&);
-    static void applyInheritWebkitAspectRatio(StyleResolver&);
-    static void applyValueWebkitAspectRatio(StyleResolver&, CSSValue&);
-
-    static void applyInitialWebkitTextEmphasisStyle(StyleResolver&);
-    static void applyInheritWebkitTextEmphasisStyle(StyleResolver&);
-    static void applyValueWebkitTextEmphasisStyle(StyleResolver&, CSSValue&);
-
-    static void applyInitialCounterIncrement(StyleResolver&) { }
-    static void applyInheritCounterIncrement(StyleResolver&);
-    static void applyValueCounterIncrement(StyleResolver&, CSSValue&);
-    static void applyInitialCounterReset(StyleResolver&) { }
-    static void applyInheritCounterReset(StyleResolver&);
-    static void applyValueCounterReset(StyleResolver&, CSSValue&);
-
-    static void applyInitialCursor(StyleResolver&);
-    static void applyInheritCursor(StyleResolver&);
-    static void applyValueCursor(StyleResolver&, CSSValue&);
-
-    static void applyInitialFontWeight(StyleResolver&);
-    static void applyInheritFontWeight(StyleResolver&);
-    static void applyValueFontWeight(StyleResolver&, CSSValue&);
+    // Custom handling of value setting only.
+    static void applyValueDirection(StyleResolver&, CSSValue&);
+#if !ENABLE(IOS_TEXT_AUTOSIZING)
+    static void applyValueLineHeight(StyleResolver&, CSSValue&);
+#endif
+    static void applyValueVerticalAlign(StyleResolver&, CSSValue&);
+    static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
+    static void applyValueWebkitLocale(StyleResolver&, CSSValue&);
+    static void applyValueWebkitMarqueeIncrement(StyleResolver&, CSSValue&);
+    static void applyValueWebkitPerspective(StyleResolver&, CSSValue&);
+    static void applyValueWebkitTextOrientation(StyleResolver&, CSSValue&);
+    static void applyValueWebkitWritingMode(StyleResolver&, CSSValue&);
+    static void applyValueWordSpacing(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1126,6 +1080,8 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
     }
 }
 
+inline void StyleBuilderCustom::applyInitialCounterIncrement(StyleResolver&) { }
+
 inline void StyleBuilderCustom::applyInheritCounterIncrement(StyleResolver& styleResolver)
 {
     applyInheritCounter<Increment>(styleResolver);
@@ -1135,6 +1091,8 @@ inline void StyleBuilderCustom::applyValueCounterIncrement(StyleResolver& styleR
 {
     applyValueCounter<Increment>(styleResolver, value);
 }
+
+inline void StyleBuilderCustom::applyInitialCounterReset(StyleResolver&) { }
 
 inline void StyleBuilderCustom::applyInheritCounterReset(StyleResolver& styleResolver)
 {
