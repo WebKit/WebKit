@@ -1,3 +1,19 @@
+2014-12-19  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r177566.
+
+    2014-12-18  Jeremy Jones  <jeremyj@apple.com>
+
+            dispatch to main thread before accessing playerController() in WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse
+            https://bugs.webkit.org/show_bug.cgi?id=139809
+
+            Reviewed by Dan Bernstein.
+
+            This prevents a race in playerController().
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse):
+
 2014-12-17  Babak Shafiei  <bshafiei@apple.com>
 
         Merge build fix for r177375.

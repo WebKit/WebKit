@@ -662,7 +662,11 @@ void WebVideoFullscreenInterfaceAVKit::setSeekableRanges(const TimeRanges& timeR
 
 void WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse(bool canPlayFastReverse)
 {
-    playerController().canScanBackward = canPlayFastReverse;
+    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
+    
+    dispatch_async(dispatch_get_main_queue(), [strongThis, canPlayFastReverse] {
+        strongThis->playerController().canScanBackward = canPlayFastReverse;
+    });
 }
 
 static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& options)
