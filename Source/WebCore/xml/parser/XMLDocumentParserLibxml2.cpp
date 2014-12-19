@@ -508,7 +508,7 @@ static void errorFunc(void*, const char*, ...)
 
 static bool didInit = false;
 
-PassRefPtr<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr handlers, void* userData)
+Ref<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr handlers, void* userData)
 {
     if (!didInit) {
         xmlInitParser();
@@ -526,12 +526,12 @@ PassRefPtr<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerP
 
     switchToUTF16(parser);
 
-    return adoptRef(new XMLParserContext(parser));
+    return adoptRef(*new XMLParserContext(parser));
 }
 
 
 // Chunk should be encoded in UTF-8
-PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const CString& chunk)
+RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const CString& chunk)
 {
     if (!didInit) {
         xmlInitParser();
@@ -562,7 +562,7 @@ PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerP
     parser->str_xml_ns = xmlDictLookup(parser->dict, XML_XML_NAMESPACE, 36);
     parser->_private = userData;
 
-    return adoptRef(new XMLParserContext(parser));
+    return adoptRef(*new XMLParserContext(parser));
 }
 
 // --------------------------------

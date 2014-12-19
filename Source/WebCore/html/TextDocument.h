@@ -31,15 +31,15 @@ namespace WebCore {
 
 class TextDocument final : public HTMLDocument {
 public:
-    static RefPtr<TextDocument> create(Frame* frame, const URL& url)
+    static Ref<TextDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(new TextDocument(frame, url));
+        return adoptRef(*new TextDocument(frame, url));
     }
 
 private:
     TextDocument(Frame*, const URL&);
     
-    virtual RefPtr<DocumentParser> createParser() override;
+    virtual Ref<DocumentParser> createParser() override;
 };
 
 }

@@ -36,14 +36,14 @@ DocumentFragment::DocumentFragment(Document& document, ConstructionType construc
 {
 }
 
-RefPtr<DocumentFragment> DocumentFragment::create(Document& document)
+Ref<DocumentFragment> DocumentFragment::create(Document& document)
 {
-    return adoptRef(new DocumentFragment(document, Node::CreateDocumentFragment));
+    return adoptRef(*new DocumentFragment(document, Node::CreateDocumentFragment));
 }
 
-RefPtr<DocumentFragment> DocumentFragment::create(ScriptExecutionContext& context)
+Ref<DocumentFragment> DocumentFragment::create(ScriptExecutionContext& context)
 {
-    return adoptRef(new DocumentFragment(downcast<Document>(context), Node::CreateDocumentFragment));
+    return adoptRef(*new DocumentFragment(downcast<Document>(context), Node::CreateDocumentFragment));
 }
 
 String DocumentFragment::nodeName() const

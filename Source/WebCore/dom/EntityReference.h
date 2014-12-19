@@ -28,7 +28,7 @@ namespace WebCore {
 
 class EntityReference final : public ContainerNode {
 public:
-    static RefPtr<EntityReference> create(Document&, const String& entityName);
+    static Ref<EntityReference> create(Document&, const String& entityName);
 
 private:
     EntityReference(Document&, const String& entityName);

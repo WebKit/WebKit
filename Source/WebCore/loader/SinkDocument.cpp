@@ -32,9 +32,9 @@ namespace WebCore {
 
 class SinkDocumentParser final : public RawDataDocumentParser {
 public:
-    static RefPtr<SinkDocumentParser> create(SinkDocument& document)
+    static Ref<SinkDocumentParser> create(SinkDocument& document)
     {
-        return adoptRef(new SinkDocumentParser(document));
+        return adoptRef(*new SinkDocumentParser(document));
     }
     
 private:
@@ -56,7 +56,7 @@ SinkDocument::SinkDocument(Frame* frame, const URL& url)
     lockCompatibilityMode();
 }
 
-RefPtr<DocumentParser> SinkDocument::createParser()
+Ref<DocumentParser> SinkDocument::createParser()
 {
     return SinkDocumentParser::create(*this);
 }

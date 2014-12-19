@@ -36,7 +36,7 @@ TextDocument::TextDocument(Frame* frame, const URL& url)
     lockCompatibilityMode();
 }
 
-RefPtr<DocumentParser> TextDocument::createParser()
+Ref<DocumentParser> TextDocument::createParser()
 {
     return TextDocumentParser::create(*this);
 }

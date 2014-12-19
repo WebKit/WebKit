@@ -32,9 +32,9 @@ class NamedNodeMap;
 
 class DocumentType final : public Node {
 public:
-    static RefPtr<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
+    static Ref<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
     {
-        return adoptRef(new DocumentType(document, name, publicId, systemId));
+        return adoptRef(*new DocumentType(document, name, publicId, systemId));
     }
 
     // FIXME: We return null entities and notations. Current implementation of NamedNodeMap doesn't work without an associated Element yet.

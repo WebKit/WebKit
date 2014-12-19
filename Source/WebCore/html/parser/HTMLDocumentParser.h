@@ -62,9 +62,9 @@ class PumpSession;
 class HTMLDocumentParser :  public ScriptableDocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<HTMLDocumentParser> create(HTMLDocument& document)
+    static Ref<HTMLDocumentParser> create(HTMLDocument& document)
     {
-        return adoptRef(new HTMLDocumentParser(document));
+        return adoptRef(*new HTMLDocumentParser(document));
     }
     virtual ~HTMLDocumentParser();
 
@@ -93,9 +93,9 @@ protected:
     void forcePlaintextForTextDocument();
 
 private:
-    static RefPtr<HTMLDocumentParser> create(DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
+    static Ref<HTMLDocumentParser> create(DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
     {
-        return adoptRef(new HTMLDocumentParser(fragment, contextElement, parserContentPolicy));
+        return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy));
     }
 
     // DocumentParser

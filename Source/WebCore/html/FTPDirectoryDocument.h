@@ -40,7 +40,7 @@ public:
 
 private:
     FTPDirectoryDocument(Frame*, const URL&);
-    virtual RefPtr<DocumentParser> createParser() override;
+    virtual Ref<DocumentParser> createParser() override;
 };
     
 } // namespace WebCore

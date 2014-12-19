@@ -48,9 +48,9 @@ using namespace HTMLNames;
     
 class FTPDirectoryDocumentParser final : public HTMLDocumentParser {
 public:
-    static RefPtr<FTPDirectoryDocumentParser> create(HTMLDocument& document)
+    static Ref<FTPDirectoryDocumentParser> create(HTMLDocument& document)
     {
-        return adoptRef(new FTPDirectoryDocumentParser(document));
+        return adoptRef(*new FTPDirectoryDocumentParser(document));
     }
 
     virtual void append(PassRefPtr<StringImpl>) override;
@@ -432,7 +432,7 @@ FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const URL& url)
 #endif
 }
 
-RefPtr<DocumentParser> FTPDirectoryDocument::createParser()
+Ref<DocumentParser> FTPDirectoryDocument::createParser()
 {
     return FTPDirectoryDocumentParser::create(*this);
 }

@@ -31,14 +31,14 @@ namespace WebCore {
 
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
-    static RefPtr<HTMLDocument> create(Frame* frame, const URL& url)
+    static Ref<HTMLDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(new HTMLDocument(frame, url, HTMLDocumentClass));
+        return adoptRef(*new HTMLDocument(frame, url, HTMLDocumentClass));
     }
 
-    static RefPtr<HTMLDocument> createSynthesizedDocument(Frame* frame, const URL& url)
+    static Ref<HTMLDocument> createSynthesizedDocument(Frame* frame, const URL& url)
     {
-        return adoptRef(new HTMLDocument(frame, url, HTMLDocumentClass, Synthesized));
+        return adoptRef(*new HTMLDocument(frame, url, HTMLDocumentClass, Synthesized));
     }
 
     virtual ~HTMLDocument();
@@ -89,8 +89,8 @@ private:
     virtual RefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&) override;
 
     virtual bool isFrameSet() const override;
-    virtual RefPtr<DocumentParser> createParser() override;
-    virtual RefPtr<Document> cloneDocumentWithoutChildren() const override final;
+    virtual Ref<DocumentParser> createParser() override;
+    virtual Ref<Document> cloneDocumentWithoutChildren() const override final;
 
     DocumentOrderedMap m_documentNamedItem;
     DocumentOrderedMap m_windowNamedItem;

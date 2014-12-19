@@ -34,9 +34,9 @@ class HTMLImageElement;
 
 class ImageDocument final : public HTMLDocument {
 public:
-    static RefPtr<ImageDocument> create(Frame& frame, const URL& url)
+    static Ref<ImageDocument> create(Frame& frame, const URL& url)
     {
-        return adoptRef(new ImageDocument(frame, url));
+        return adoptRef(*new ImageDocument(frame, url));
     }
 
     WEBCORE_EXPORT HTMLImageElement* imageElement() const;
@@ -54,7 +54,7 @@ public:
 private:
     ImageDocument(Frame&, const URL&);
 
-    virtual RefPtr<DocumentParser> createParser() override;
+    virtual Ref<DocumentParser> createParser() override;
 
     LayoutSize imageSize();
 

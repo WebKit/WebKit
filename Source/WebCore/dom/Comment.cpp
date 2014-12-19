@@ -31,14 +31,14 @@ inline Comment::Comment(Document& document, const String& text)
 {
 }
 
-RefPtr<Comment> Comment::create(Document& document, const String& text)
+Ref<Comment> Comment::create(Document& document, const String& text)
 {
-    return adoptRef(new Comment(document, text));
+    return adoptRef(*new Comment(document, text));
 }
 
-RefPtr<Comment> Comment::create(ScriptExecutionContext& context, const String& text)
+Ref<Comment> Comment::create(ScriptExecutionContext& context, const String& text)
 {
-    return adoptRef(new Comment(downcast<Document>(context), text));
+    return adoptRef(*new Comment(downcast<Document>(context), text));
 }
 
 String Comment::nodeName() const

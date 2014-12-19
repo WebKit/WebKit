@@ -224,7 +224,7 @@ void HTMLDocument::releaseEvents()
 {
 }
 
-RefPtr<DocumentParser> HTMLDocument::createParser()
+Ref<DocumentParser> HTMLDocument::createParser()
 {
     return HTMLDocumentParser::create(*this);
 }
@@ -342,7 +342,7 @@ bool HTMLDocument::isFrameSet() const
     return is<HTMLFrameSetElement>(body());
 }
 
-RefPtr<Document> HTMLDocument::cloneDocumentWithoutChildren() const
+Ref<Document> HTMLDocument::cloneDocumentWithoutChildren() const
 {
     return create(nullptr, url());
 }

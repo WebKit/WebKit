@@ -1,3 +1,88 @@
+2014-12-18  Andreas Kling  <akling@apple.com>
+
+        Ref-ify various Document-related things.
+        <https://webkit.org/b/139796>
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]):
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::create):
+        (WebCore::CDATASection::virtualCreate):
+        * dom/CDATASection.h:
+        * dom/Comment.cpp:
+        (WebCore::Comment::create):
+        * dom/Comment.h:
+        * dom/Document.cpp:
+        (WebCore::Document::create):
+        (WebCore::Document::createDocumentFragment):
+        (WebCore::Document::createTextNode):
+        (WebCore::Document::createComment):
+        (WebCore::Document::createEditingTextNode):
+        (WebCore::Document::createCSSStyleDeclaration):
+        (WebCore::Document::createElement):
+        (WebCore::Document::createRange):
+        (WebCore::Document::createParser):
+        (WebCore::Document::cloneNodeInternal):
+        (WebCore::Document::cloneDocumentWithoutChildren):
+        * dom/Document.h:
+        (WebCore::Document::create):
+        (WebCore::Document::createXHTML):
+        (WebCore::Document::createNonRenderedPlaceholder):
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::create):
+        * dom/DocumentFragment.h:
+        * dom/DocumentType.h:
+        * dom/EntityReference.cpp:
+        (WebCore::EntityReference::create):
+        * dom/EntityReference.h:
+        * dom/Text.cpp:
+        (WebCore::Text::create):
+        (WebCore::Text::createEditingText):
+        (WebCore::Text::splitText):
+        (WebCore::Text::virtualCreate):
+        (WebCore::Text::createWithLengthLimit):
+        * dom/Text.h:
+        * editing/markup.cpp:
+        (WebCore::replaceChildrenWithText):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::createParser):
+        * html/FTPDirectoryDocument.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        (WebCore::HTMLDocument::cloneDocumentWithoutChildren):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+        (WebCore::HTMLDocument::createSynthesizedDocument):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createParser):
+        * html/ImageDocument.h:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::createParser):
+        * html/MediaDocument.h:
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::createParser):
+        * html/PluginDocument.h:
+        * html/TextDocument.cpp:
+        (WebCore::TextDocument::createParser):
+        * html/TextDocument.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        * html/parser/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::create):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocument::createParser):
+        * loader/SinkDocument.h:
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::cloneDocumentWithoutChildren):
+        * svg/SVGDocument.h:
+        * xml/parser/XMLDocumentParser.h:
+        (WebCore::XMLDocumentParser::create):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLParserContext::createStringParser):
+        (WebCore::XMLParserContext::createMemoryParser):
+
 2014-12-18  Anders Carlsson  <andersca@apple.com>
 
         Use MachSendRight in WebKit2

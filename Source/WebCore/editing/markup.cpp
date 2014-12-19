@@ -994,15 +994,15 @@ void replaceChildrenWithText(ContainerNode& container, const String& text, Excep
         return;
     }
 
-    RefPtr<Text> textNode = Text::create(containerNode->document(), text);
+    Ref<Text> textNode = Text::create(containerNode->document(), text);
 
     if (hasOneChild(containerNode)) {
-        containerNode->replaceChild(textNode.release(), containerNode->firstChild(), ec);
+        containerNode->replaceChild(WTF::move(textNode), containerNode->firstChild(), ec);
         return;
     }
 
     containerNode->removeChildren();
-    containerNode->appendChild(textNode.release(), ec);
+    containerNode->appendChild(WTF::move(textNode), ec);
 }
 
 }

@@ -46,9 +46,9 @@ using namespace HTMLNames;
 // FIXME: Share more code with MediaDocumentParser.
 class PluginDocumentParser final : public RawDataDocumentParser {
 public:
-    static RefPtr<PluginDocumentParser> create(PluginDocument& document)
+    static Ref<PluginDocumentParser> create(PluginDocument& document)
     {
-        return adoptRef(new PluginDocumentParser(document));
+        return adoptRef(*new PluginDocumentParser(document));
     }
 
 private:
@@ -148,7 +148,7 @@ PluginDocument::PluginDocument(Frame* frame, const URL& url)
     lockCompatibilityMode();
 }
 
-RefPtr<DocumentParser> PluginDocument::createParser()
+Ref<DocumentParser> PluginDocument::createParser()
 {
     return PluginDocumentParser::create(*this);
 }

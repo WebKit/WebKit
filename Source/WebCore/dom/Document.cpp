@@ -564,11 +564,11 @@ static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, cons
 }
 #endif
 
-RefPtr<Document> Document::create(ScriptExecutionContext& context)
+Ref<Document> Document::create(ScriptExecutionContext& context)
 {
-    RefPtr<Document> document = adoptRef(new Document(nullptr, URL()));
+    Ref<Document> document = adoptRef(*new Document(nullptr, URL()));
     document->setSecurityOrigin(context.securityOrigin());
-    return document.release();
+    return document;
 }
 
 Document::~Document()
@@ -860,17 +860,17 @@ RefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode&
     return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
 
-RefPtr<DocumentFragment> Document::createDocumentFragment()
+Ref<DocumentFragment> Document::createDocumentFragment()
 {
     return DocumentFragment::create(document());
 }
 
-RefPtr<Text> Document::createTextNode(const String& data)
+Ref<Text> Document::createTextNode(const String& data)
 {
     return Text::create(*this, data);
 }
 
-RefPtr<Comment> Document::createComment(const String& data)
+Ref<Comment> Document::createComment(const String& data)
 {
     return Comment::create(*this, data);
 }
@@ -910,15 +910,15 @@ RefPtr<EntityReference> Document::createEntityReference(const String& name, Exce
     return EntityReference::create(*this, name);
 }
 
-RefPtr<Text> Document::createEditingTextNode(const String& text)
+Ref<Text> Document::createEditingTextNode(const String& text)
 {
     return Text::createEditingText(*this, text);
 }
 
-RefPtr<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
+Ref<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
 {
     Ref<MutableStyleProperties> propertySet(MutableStyleProperties::create());
-    return propertySet->ensureCSSStyleDeclaration();
+    return *propertySet->ensureCSSStyleDeclaration();
 }
 
 RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& ec)
@@ -1031,7 +1031,7 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
 }
 
 // FIXME: This should really be in a possible ElementFactory class.
-RefPtr<Element> Document::createElement(const QualifiedName& name, bool createdByParser)
+Ref<Element> Document::createElement(const QualifiedName& name, bool createdByParser)
 {
     RefPtr<Element> element;
 
@@ -1053,7 +1053,7 @@ RefPtr<Element> Document::createElement(const QualifiedName& name, bool createdB
     // <image> uses imgTag so we need a special rule.
     ASSERT((name.matches(imageTag) && element->tagQName().matches(imgTag) && element->tagQName().prefix() == name.prefix()) || name == element->tagQName());
 
-    return element.release();
+    return element.releaseNonNull();
 }
 
 bool Document::cssRegionsEnabled() const
@@ -1652,7 +1652,7 @@ Settings* Document::settings() const
     return m_frame ? &m_frame->settings() : nullptr;
 }
 
-RefPtr<Range> Document::createRange()
+Ref<Range> Document::createRange()
 {
     return Range::create(*this);
 }
@@ -2218,7 +2218,7 @@ void Document::setVisuallyOrdered()
         renderView()->style().setRTLOrdering(VisualOrder);
 }
 
-RefPtr<DocumentParser> Document::createParser()
+Ref<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
     return XMLDocumentParser::create(*this, view());
@@ -3163,20 +3163,20 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
 
 RefPtr<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
 {
-    RefPtr<Document> clone = cloneDocumentWithoutChildren();
+    Ref<Document> clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
-        cloneChildNodes(clone.get());
+        cloneChildNodes(clone.ptr());
         break;
     }
-    return clone;
+    return WTF::move(clone);
 }
 
-RefPtr<Document> Document::cloneDocumentWithoutChildren() const
+Ref<Document> Document::cloneDocumentWithoutChildren() const
 {
     return isXHTMLDocument() ? createXHTML(nullptr, url()) : create(nullptr, url());
 }

@@ -34,9 +34,9 @@ namespace WebCore {
 
 class MediaDocument final : public HTMLDocument {
 public:
-    static RefPtr<MediaDocument> create(Frame* frame, const URL& url)
+    static Ref<MediaDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(new MediaDocument(frame, url));
+        return adoptRef(*new MediaDocument(frame, url));
     }
     virtual ~MediaDocument();
 
@@ -46,7 +46,7 @@ public:
 private:
     MediaDocument(Frame*, const URL&);
 
-    virtual RefPtr<DocumentParser> createParser() override;
+    virtual Ref<DocumentParser> createParser() override;
 
     virtual void defaultEventHandler(Event*) override;
 

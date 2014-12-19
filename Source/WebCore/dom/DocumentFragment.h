@@ -33,8 +33,8 @@ class ScriptExecutionContext;
 
 class DocumentFragment : public ContainerNode {
 public:
-    static RefPtr<DocumentFragment> create(Document&);
-    static RefPtr<DocumentFragment> create(ScriptExecutionContext&);
+    static Ref<DocumentFragment> create(Document&);
+    static Ref<DocumentFragment> create(ScriptExecutionContext&);
 
     void parseHTML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     bool parseXML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);

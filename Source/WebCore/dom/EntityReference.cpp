@@ -31,9 +31,9 @@ inline EntityReference::EntityReference(Document& document, const String& entity
 {
 }
 
-RefPtr<EntityReference> EntityReference::create(Document& document, const String& entityName)
+Ref<EntityReference> EntityReference::create(Document& document, const String& entityName)
 {
-    return adoptRef(new EntityReference(document, entityName));
+    return adoptRef(*new EntityReference(document, entityName));
 }
 
 String EntityReference::nodeName() const

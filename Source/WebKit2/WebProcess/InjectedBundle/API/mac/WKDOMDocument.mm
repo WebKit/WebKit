@@ -44,7 +44,7 @@
 
 - (WKDOMText *)createTextNode:(NSString *)data
 {
-    return WebKit::toWKDOMText(downcast<WebCore::Document>(*_impl).createTextNode(data).get());
+    return WebKit::toWKDOMText(downcast<WebCore::Document>(*_impl).createTextNode(data).ptr());
 }
 
 - (WKDOMElement *)body

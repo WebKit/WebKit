@@ -52,8 +52,8 @@ class Text;
 
     class XMLParserContext : public RefCounted<XMLParserContext> {
     public:
-        static PassRefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const CString& chunk);
-        static PassRefPtr<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);
+        static RefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const CString& chunk);
+        static Ref<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);
         ~XMLParserContext();
         xmlParserCtxtPtr context() const { return m_context; }
 
@@ -68,13 +68,13 @@ class Text;
     class XMLDocumentParser : public ScriptableDocumentParser, public CachedResourceClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassRefPtr<XMLDocumentParser> create(Document& document, FrameView* view)
+        static Ref<XMLDocumentParser> create(Document& document, FrameView* view)
         {
-            return adoptRef(new XMLDocumentParser(document, view));
+            return adoptRef(*new XMLDocumentParser(document, view));
         }
-        static PassRefPtr<XMLDocumentParser> create(DocumentFragment& fragment, Element* element, ParserContentPolicy parserContentPolicy)
+        static Ref<XMLDocumentParser> create(DocumentFragment& fragment, Element* element, ParserContentPolicy parserContentPolicy)
         {
-            return adoptRef(new XMLDocumentParser(fragment, element, parserContentPolicy));
+            return adoptRef(*new XMLDocumentParser(fragment, element, parserContentPolicy));
         }
 
         ~XMLDocumentParser();
