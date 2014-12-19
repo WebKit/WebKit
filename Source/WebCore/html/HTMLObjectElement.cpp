@@ -69,7 +69,7 @@ inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Docume
     , m_useFallbackContent(false)
 {
     ASSERT(hasTagName(objectTag));
-    setForm(form ? form : HTMLFormElement::findClosestFormAncestor(*this));
+    setForm(form);
 }
 
 inline HTMLObjectElement::~HTMLObjectElement()

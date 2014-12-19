@@ -61,7 +61,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_wasChangedSinceLastFormControlChangeEvent(false)
     , m_hasAutofocused(false)
 {
-    setForm(form ? form : HTMLFormElement::findClosestFormAncestor(*this));
+    setForm(form);
     setHasCustomStyleResolveCallbacks();
 }
 

@@ -1,3 +1,19 @@
+2014-12-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        HTMLFormControlElement and HTMLObjectElement need not to look for an ancestor on construction
+        https://bugs.webkit.org/show_bug.cgi?id=139791
+
+        Reviewed by Alexey Proskuryakov.
+
+        The objects are being constructed, they have not been inserted into the tree yet.
+        There is not chance of finding the owner form at this point,
+        that is done when inserting the node into the tree.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+
 2014-12-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Recursive crash at WebCore::accessibleNameForNode
