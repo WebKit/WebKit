@@ -99,6 +99,9 @@ void AcceleratedCompositingContext::initialize()
     if (!m_context)
         m_context = GLContext::createContextForWindow(m_window, GLContext::sharingContext());
 
+    if (!m_context)
+        return;
+
     m_context->makeContextCurrent();
 
     m_textureMapper = TextureMapperGL::create(TextureMapper::OpenGLMode);

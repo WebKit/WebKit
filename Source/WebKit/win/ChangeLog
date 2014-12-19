@@ -1,3 +1,15 @@
+2014-12-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash after failing to create GL context in accelerated compositing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=139830
+
+        Reviewed by Alex Christensen.
+
+        There is missing a null pointer check.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+
 2014-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Add accessor for serializing HTTP loads.
