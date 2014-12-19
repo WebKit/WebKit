@@ -63,13 +63,18 @@ void ActionMenuHitTestResult::encode(IPC::ArgumentEncoder& encoder) const
         encoder << detectedDataBoundingBox;
         encoder << detectedDataOriginatingPageOverlay;
 
-        bool hasTextIndicator = detectedDataTextIndicator;
-        encoder << hasTextIndicator;
-        if (hasTextIndicator)
+        bool hasDetectedDataTextIndicator = detectedDataTextIndicator;
+        encoder << hasDetectedDataTextIndicator;
+        if (hasDetectedDataTextIndicator)
             encoder << detectedDataTextIndicator->data();
     }
 
     encoder << dictionaryPopupInfo;
+
+    bool hasLinkTextIndicator = linkTextIndicator;
+    encoder << hasLinkTextIndicator;
+    if (hasLinkTextIndicator)
+        encoder << linkTextIndicator->data();
 }
 
 bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHitTestResult& actionMenuHitTestResult)
@@ -119,11 +124,11 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
         if (!decoder.decode(actionMenuHitTestResult.detectedDataOriginatingPageOverlay))
             return false;
 
-        bool hasTextIndicator;
-        if (!decoder.decode(hasTextIndicator))
+        bool hasDetectedDataTextIndicator;
+        if (!decoder.decode(hasDetectedDataTextIndicator))
             return false;
 
-        if (hasTextIndicator) {
+        if (hasDetectedDataTextIndicator) {
             WebCore::TextIndicatorData indicatorData;
             if (!decoder.decode(indicatorData))
                 return false;
@@ -134,6 +139,18 @@ bool ActionMenuHitTestResult::decode(IPC::ArgumentDecoder& decoder, ActionMenuHi
 
     if (!decoder.decode(actionMenuHitTestResult.dictionaryPopupInfo))
         return false;
+
+    bool hasLinkTextIndicator;
+    if (!decoder.decode(hasLinkTextIndicator))
+        return false;
+
+    if (hasLinkTextIndicator) {
+        WebCore::TextIndicatorData indicatorData;
+        if (!decoder.decode(indicatorData))
+            return false;
+
+        actionMenuHitTestResult.linkTextIndicator = WebCore::TextIndicator::create(indicatorData);
+    }
 
     return true;
 }

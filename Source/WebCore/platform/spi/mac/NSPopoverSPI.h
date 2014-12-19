@@ -38,4 +38,13 @@
 @property NSRect positioningRect;
 @end
 
+typedef NS_OPTIONS(NSUInteger, NSPopoverPositioningOptions) {
+    NSPopoverPositioningOptionNone              = 0,
+    NSPopoverPositioningOptionKeepTopStable     = (1 << 0)
+};
+
+@interface NSPopover (WKDetails)
+@property NSPopoverPositioningOptions positioningOptions;
+@end
+
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

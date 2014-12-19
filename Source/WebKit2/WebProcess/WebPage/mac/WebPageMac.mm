@@ -999,6 +999,13 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
 
     RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
+    URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
+    Node *innerNode = hitTestResult.innerNode();
+    if (!absoluteLinkURL.isEmpty() && innerNode) {
+        RefPtr<Range> linkRange = rangeOfContents(*innerNode);
+        actionMenuResult.linkTextIndicator = TextIndicator::createWithRange(*linkRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *linkRange, forImmediateAction, false));
+    }
+
     NSDictionary *options = nil;
     RefPtr<Range> lookupRange = lookupTextAtLocation(locationInViewCooordinates, &options);
     actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();

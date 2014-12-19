@@ -132,6 +132,7 @@
 - (NSString *)_titleForPreviewOfURL:(NSURL *)url;
 - (void)_setPreviewTitle:(NSString *)previewTitle;
 - (void)_setPreviewLoading:(BOOL)loading;
+- (void)_setPreviewOverrideImage:(NSImage *)image;
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView;
 - (void)_handleClickInPreviewView:(NSView *)previewView URL:(NSURL *)url;
 - (BOOL)_shouldUseStandardQuickLookPreview;
