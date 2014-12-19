@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKPreviewPopoverAnimationController.h"
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 #import "WKPagePreviewViewController.h"
 #import "WKViewInternal.h"
 #import "WebPageProxy.h"
@@ -33,8 +35,6 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/NSPopoverSPI.h>
 #import <algorithm>
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 using namespace WebCore;
 using namespace WebKit;
