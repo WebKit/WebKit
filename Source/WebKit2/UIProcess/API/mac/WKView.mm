@@ -3611,14 +3611,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    // FIXME: Temporarily disable action menu installation.
-    /*if ([self respondsToSelector:@selector(setActionMenu:)]) {
+    if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
         self.actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
         self.actionMenu.delegate = _data->_actionMenuController.get();
         self.actionMenu.autoenablesItems = NO;
-    }*/
+    }
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
@@ -3757,10 +3756,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [_data->_actionMenuController didCloseMenu:menu withEvent:event];
 }
 
-- (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
+- (void)_didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult forImmediateAction:(BOOL)forImmediateAction userData:(API::Object*)userData
 {
-    [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
-    [_data->_immediateActionController didPerformActionMenuHitTest:hitTestResult userData:userData];
+    if (forImmediateAction)
+        [_data->_immediateActionController didPerformActionMenuHitTest:hitTestResult userData:userData];
+    else
+        [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
 }
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

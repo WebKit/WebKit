@@ -130,7 +130,7 @@ struct WebPageConfiguration;
 - (void)_closeFullScreenWindowController;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-- (void)_didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
+- (void)_didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult forImmediateAction:(BOOL)forImmediateAction userData:(API::Object*)userData;
 #endif
 
 @property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;
