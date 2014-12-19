@@ -1,3 +1,19 @@
+2014-12-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r177574.
+        https://bugs.webkit.org/show_bug.cgi?id=139821
+
+        "Broke Production builds by installing
+        libWebCoreTestSupport.dylib in the wrong directory" (Requested
+        by ddkilzer on #webkit).
+
+        Reverted changeset:
+
+        "Switch from using PLATFORM_NAME to SDK selectors in WebCore,
+        WebInspectorUI, WebKit, WebKit2"
+        https://bugs.webkit.org/show_bug.cgi?id=139463
+        http://trac.webkit.org/changeset/177574
+
 2014-12-19  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2

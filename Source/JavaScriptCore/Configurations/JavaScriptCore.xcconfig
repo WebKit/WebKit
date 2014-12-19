@@ -40,8 +40,10 @@ OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
 OTHER_LDFLAGS[sdk=iphone*] = $(inherited) $(OTHER_LDFLAGS_BASE);
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -sub_library libobjc -framework CoreServices;
 
-SECTORDER_FLAGS[sdk=iphoneos*][config=Production] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
-SECTORDER_FLAGS[sdk=macosx*][config=Production] = -Wl,-order_file,JavaScriptCore.order;
+SECTORDER_FLAGS[sdk=iphoneos*] = $(SECTORDER_FLAGS_ios_$(CONFIGURATION));
+SECTORDER_FLAGS_ios_Production = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
+SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(PLATFORM_NAME)_$(CONFIGURATION));
+SECTORDER_FLAGS_macosx_Production = -Wl,-order_file,JavaScriptCore.order;
 
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
