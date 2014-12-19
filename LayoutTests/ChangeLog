@@ -1,5 +1,12 @@
 2014-12-19  Alexey Proskuryakov  <ap@apple.com>
 
+        media/video-seek-past-end-paused.html frequently times out on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=139825
+
+        * platform/mac/TestExpectations: Added an expectation.
+
+2014-12-19  Alexey Proskuryakov  <ap@apple.com>
+
         fast/speechsynthesis/speech-synthesis-cancel.html times out very frequently
         https://bugs.webkit.org/show_bug.cgi?id=139824
 
