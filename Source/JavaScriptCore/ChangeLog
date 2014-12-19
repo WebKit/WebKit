@@ -1,3 +1,16 @@
+2014-12-19  Andreas Kling  <akling@apple.com>
+
+        Plug leak below LLVMCopyStringRepOfTargetData().
+        <https://webkit.org/b/139832>
+
+        Reviewed by Michael Saboff.
+
+        LLVMCopyStringRepOfTargetData() returns a strdup()'ed string, so make sure
+        to free() it after we're done using it.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+
 2014-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH inspector-protocol/debugger/breakpoint-action-detach.html

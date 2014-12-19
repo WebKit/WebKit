@@ -644,7 +644,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
         // it to the module.
         LLVMTargetMachineRef targetMachine = llvm->GetExecutionEngineTargetMachine(engine);
         LLVMTargetDataRef targetData = llvm->GetExecutionEngineTargetData(engine);
-        llvm->SetDataLayout(state.module, llvm->CopyStringRepOfTargetData(targetData));
+        char* stringRepOfTargetData = llvm->CopyStringRepOfTargetData(targetData);
+        llvm->SetDataLayout(state.module, stringRepOfTargetData);
+        free(stringRepOfTargetData);
 
         LLVMPassManagerRef functionPasses = 0;
         LLVMPassManagerRef modulePasses;
