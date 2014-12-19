@@ -207,7 +207,7 @@ private:
 #else
     static uintptr_t makeWord(UseKind useKind, ProofStatus proofStatus, KillStatus killStatus)
     {
-        return (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | DFG::isProved(proofStatus);
+        return (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | static_cast<uintptr_t>(DFG::isProved(proofStatus));
     }
     
     Node* m_node;

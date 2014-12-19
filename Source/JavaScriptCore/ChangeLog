@@ -1,3 +1,15 @@
+2014-12-19  Mark Lam  <mark.lam@apple.com>
+
+        [Win] Endless compiler warnings created by DFGEdge.h.
+        <https://webkit.org/b/139801>
+
+        Reviewed by Brent Fulgham.
+
+        Add a cast to fix the type just the way the 64-bit version does.
+
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::makeWord):
+
 2014-12-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177574.
