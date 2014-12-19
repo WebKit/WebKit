@@ -313,7 +313,7 @@ public:
     virtual void didFinishLoadForMainFrame() = 0;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
-    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, API::Object*) = 0;
+    virtual void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, API::Object*) = 0;
 };
 
 } // namespace WebKit

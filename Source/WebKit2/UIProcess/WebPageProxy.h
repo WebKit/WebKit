@@ -1303,7 +1303,7 @@ private:
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
 
-    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, IPC::MessageDecoder&);
+    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, IPC::MessageDecoder&);
 
     PageClient& m_pageClient;
     std::unique_ptr<API::LoaderClient> m_loaderClient;
