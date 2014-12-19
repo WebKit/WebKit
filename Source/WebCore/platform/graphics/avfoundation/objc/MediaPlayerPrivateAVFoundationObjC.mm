@@ -1851,10 +1851,10 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
     
 bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const 
 {
-    if (!m_avAsset)
+    if (!m_avAsset || [m_avAsset statusOfValueForKey:@"resolvedURL" error:nullptr] != AVKeyValueStatusLoaded)
         return false;
     
-    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL([m_avAsset resolvedURL]));
+    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(resolvedURL());
     RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(assetURL());
     return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
@@ -2645,7 +2645,7 @@ void MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange(bool newVal
 
 URL MediaPlayerPrivateAVFoundationObjC::resolvedURL() const
 {
-    if (!m_avAsset)
+    if (!m_avAsset || [m_avAsset statusOfValueForKey:@"resolvedURL" error:nullptr] != AVKeyValueStatusLoaded)
         return MediaPlayerPrivateAVFoundation::resolvedURL();
 
     return URL([m_avAsset resolvedURL]);
@@ -2661,6 +2661,7 @@ NSArray* assetMetadataKeyNames()
                     @"preferredVolume",
                     @"preferredRate",
                     @"playable",
+                    @"resolvedURL",
                     @"tracks",
                     @"availableMediaCharacteristicsWithMediaSelectionOptions",
                    nil];
