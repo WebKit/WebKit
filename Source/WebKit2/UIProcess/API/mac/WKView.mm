@@ -4324,7 +4324,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
         [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController hidePreview];
 #endif
 
@@ -4345,16 +4345,21 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_setPreviewTitle:(NSString *)previewTitle
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController setPreviewTitle:previewTitle];
 #endif
 }
 
 - (void)_setPreviewLoading:(BOOL)loading
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && WK_API_ENABLED
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController setPreviewLoading:loading];
 #endif
+}
+
+- (void)_setPreviewOverrideImage:(NSImage *)image
+{
+    [_data->_immediateActionController setPreviewOverrideImage:image];
 }
 
 - (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView

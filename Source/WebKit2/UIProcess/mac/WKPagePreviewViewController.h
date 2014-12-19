@@ -59,6 +59,7 @@
 @property (nonatomic, getter=isLoading) BOOL loading;
 
 - (instancetype)initWithPageURL:(NSURL *)URL mainViewSize:(NSSize)size popoverToViewScale:(CGFloat)scale;
+- (void)replacePreviewWithImage:(NSImage *)image atSize:(NSSize)size;
 
 + (NSSize)previewPadding;
 

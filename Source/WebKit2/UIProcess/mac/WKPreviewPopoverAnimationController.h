@@ -23,63 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKImmediateActionController_h
-#define WKImmediateActionController_h
+#ifndef WKPreviewPopoverAnimationController_h
+#define WKPreviewPopoverAnimationController_h
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#import "ActionMenuHitTestResult.h"
-#import "WKImmediateActionTypes.h"
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
+#import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {
 class WebPageProxy;
-
-enum class ImmediateActionState {
-    None = 0,
-    Pending,
-    TimedOut,
-    Ready
 };
-}
 
-@class DDActionContext;
+@class NSImmediateActionGestureRecognizer;
+@class NSPopoverAnimationController;
+@class NSString;
+@class NSURL;
 @class WKPagePreviewViewController;
-@class WKPreviewPopoverAnimationController;
 @class WKView;
 
-@interface WKImmediateActionController : NSObject <NSImmediateActionGestureRecognizerDelegate> {
-@private
-    WebKit::WebPageProxy *_page;
+@interface WKPreviewPopoverAnimationController : NSObject <NSImmediateActionAnimationController> {
+    bool _shouldShowPreviewWhenLoaded;
+    bool _hasFinishedLoading;
+
     WKView *_wkView;
+    RetainPtr<NSURL> _url;
+    WebKit::WebPageProxy* _page;
 
-    WebKit::ImmediateActionState _state;
-    WebKit::ActionMenuHitTestResult _hitTestResult;
-    RefPtr<API::Object> _userData;
-    _WKImmediateActionType _type;
-    NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
-
+    RetainPtr<NSPopover> _previewPopover;
+    NSRect _popoverOriginRect;
+    RetainPtr<WKPagePreviewViewController> _previewViewController;
     NSPoint _eventLocationInView;
 
-    BOOL _hasActivatedActionContext;
-    RetainPtr<DDActionContext> _currentActionContext;
+    RetainPtr<NSPopoverAnimationController> _popoverAnimationController;
 
-    RetainPtr<WKPreviewPopoverAnimationController> _previewAnimationController;
+    NSImmediateActionGestureRecognizer *_recognizer;
+    bool _didCompleteAnimation;
+    RetainPtr<NSTimer> _previewWatchdogTimer;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
-- (void)willDestroyView:(WKView *)view;
-- (void)didPerformActionMenuHitTest:(const WebKit::ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData;
-- (void)wkView:(WKView *)wkView willHandleMouseDown:(NSEvent *)event;
+- (instancetype)initWithURL:(NSURL *)url view:(WKView *)wkView page:(WebKit::WebPageProxy&)page originRect:(NSRect)originRect eventLocationInView:(NSPoint)eventLocationInView;
+- (void)close;
 
-- (void)hidePreview;
 - (void)setPreviewTitle:(NSString *)previewTitle;
 - (void)setPreviewLoading:(BOOL)loading;
 - (void)setPreviewOverrideImage:(NSImage *)image;
 
 @end
 
+
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#endif // WKImmediateActionController_h
+#endif // WKPreviewPopoverAnimationController_h

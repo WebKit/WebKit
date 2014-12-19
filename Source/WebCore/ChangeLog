@@ -1,3 +1,19 @@
+2014-12-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r177522. rdar://problem/19288547
+
+    2014-12-18  Timothy Horton  <timothy_horton@apple.com>
+
+            Change page preview loading order, and add a TextIndicator
+            https://bugs.webkit.org/show_bug.cgi?id=139793
+            <rdar://problem/19288547>
+
+            Reviewed by Beth Dakin.
+
+            * WebCore.exp.in:
+            * platform/spi/mac/NSPopoverSPI.h:
+            Add an export and some SPI.
+
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177427. rdar://problem/19237945

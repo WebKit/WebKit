@@ -1,3 +1,104 @@
+2014-12-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r177522. rdar://problem/19288547
+
+    2014-12-18  Timothy Horton  <timothy_horton@apple.com>
+
+            Change page preview loading order, and add a TextIndicator
+            https://bugs.webkit.org/show_bug.cgi?id=139793
+            <rdar://problem/19288547>
+
+            Reviewed by Beth Dakin.
+
+            * Shared/mac/ActionMenuHitTestResult.h:
+            * Shared/mac/ActionMenuHitTestResult.mm:
+            (WebKit::ActionMenuHitTestResult::encode):
+            (WebKit::ActionMenuHitTestResult::decode):
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::performActionMenuHitTestAtLocation):
+            Build a TextIndicator for links.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _dismissContentRelativeChildWindows]):
+            (-[WKView _setPreviewTitle:]):
+            (-[WKView _setPreviewLoading:]):
+            Remove unneeded WK_API_ENABLED #ifs.
+
+            (-[WKView _setPreviewOverrideImage:]):
+            Add; forward to WKImmediateActionController.
+
+            * UIProcess/mac/WKImmediateActionController.h:
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController willDestroyView:]):
+            Shut down the WKPreviewPopoverAnimationController.
+
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+            Don't build an immediate action item here; we'll always build it in
+            willBeginAnimation, and the one we build here is likely to be wrong.
+
+            (-[WKImmediateActionController _defaultAnimationController]):
+            (-[WKImmediateActionController hidePreview]):
+            (-[WKImmediateActionController setPreviewTitle:]):
+            (-[WKImmediateActionController setPreviewLoading:]):
+            (-[WKImmediateActionController setPreviewOverrideImage:]):
+            (-[WKImmediateActionController _animationControllerForCustomPreview]):
+            (-[WKImmediateActionController _createPreviewPopoverIfNeededForURL:]): Deleted.
+            (-[WKImmediateActionController popoverWillClose:]): Deleted.
+            (targetSizeFitsInAvailableSpace): Deleted.
+            (-[WKImmediateActionController largestPopoverSize]): Deleted.
+            (-[WKImmediateActionController _preferredPopoverSizeWithPreviewPadding:]): Deleted.
+            (-[WKImmediateActionController pagePreviewViewController:viewForPreviewingURL:initialFrameSize:]): Deleted.
+            (-[WKImmediateActionController pagePreviewViewController:titleForPreviewOfURL:]): Deleted.
+            (-[WKImmediateActionController pagePreviewViewControllerWasClicked:]): Deleted.
+            Move preview popover code to WKPreviewPopoverAnimationController.
+            Install and uninstall the link text indicator when necessary.
+
+            * UIProcess/mac/WKPagePreviewViewController.h:
+            * UIProcess/mac/WKPagePreviewViewController.mm:
+            (-[WKPagePreviewViewController setLoading:]):
+            (-[WKPagePreviewViewController loadView]):
+            (-[WKPagePreviewViewController replacePreviewWithImage:atSize:]):
+            Allow overriding the preview with a full-view NSImage.
+            Hide the preview view until the loading spinner goes away.
+
+            * UIProcess/mac/WKPreviewPopoverAnimationController.h: Copied from Source/WebKit2/UIProcess/mac/WKImmediateActionController.h.
+            * UIProcess/mac/WKPreviewPopoverAnimationController.mm: Added.
+            (+[WKPreviewPopoverAnimationController _shouldImmediatelyShowPreview]):
+            (-[WKPreviewPopoverAnimationController initWithURL:view:page:originRect:eventLocationInView:]):
+            (-[WKPreviewPopoverAnimationController close]):
+            (-[WKPreviewPopoverAnimationController setPreviewLoading:]):
+            (-[WKPreviewPopoverAnimationController setPreviewOverrideImage:]):
+            If we have shown the popover, choose a size strictly smaller than
+            its current size.
+
+            (-[WKPreviewPopoverAnimationController _hidePreview]):
+            (-[WKPreviewPopoverAnimationController setPreviewTitle:]):
+            (-[WKPreviewPopoverAnimationController _createPreviewPopover]):
+            (-[WKPreviewPopoverAnimationController _showPreview]):
+            (targetSizeFitsInAvailableSpace):
+            (-[WKPreviewPopoverAnimationController largestPopoverSize]):
+            (-[WKPreviewPopoverAnimationController _targetSizeForPagePreview]):
+            (-[WKPreviewPopoverAnimationController _preferredPopoverSizeWithPreviewPadding:forTargetSize:]):
+            (-[WKPreviewPopoverAnimationController _previewWatchdogTimerFired:]):
+            (-[WKPreviewPopoverAnimationController recognizerWillBeginAnimation:]):
+            (-[WKPreviewPopoverAnimationController recognizerDidUpdateAnimation:]):
+            (-[WKPreviewPopoverAnimationController recognizerDidCancelAnimation:]):
+            (-[WKPreviewPopoverAnimationController recognizerDidCompleteAnimation:]):
+            (-[WKPreviewPopoverAnimationController recognizerDidDismissAnimation:]):
+            (-[WKPreviewPopoverAnimationController pagePreviewViewController:viewForPreviewingURL:initialFrameSize:]):
+            (-[WKPreviewPopoverAnimationController pagePreviewViewController:titleForPreviewOfURL:]):
+            (-[WKPreviewPopoverAnimationController pagePreviewViewControllerWasClicked:]):
+            (-[WKPreviewPopoverAnimationController popoverWillClose:]):
+            Move code in from WKImmediateActionController.
+            Forward NSImmediateActionAnimationControllerDelegate methods
+            to the popover's animation controller if we've popped it.
+            Pop the popover if we've loaded or 1 second has passed, whichever
+            comes first.
+
+            * WebKit2.xcodeproj/project.pbxproj:
+
 2014-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177473. rdar://problem/19286550
