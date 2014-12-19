@@ -1,3 +1,13 @@
+2014-12-19  Andreas Kling  <akling@apple.com>
+
+        Ref-ify TextIterator API.
+        <https://webkit.org/b/139823>
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator currentRange]):
+
 2014-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH inspector-protocol/debugger/breakpoint-action-detach.html

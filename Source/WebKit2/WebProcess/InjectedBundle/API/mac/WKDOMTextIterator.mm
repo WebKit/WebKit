@@ -64,7 +64,7 @@
 
 - (WKDOMRange *)currentRange
 {
-    return WebKit::toWKDOMRange(_textIterator->range().get());
+    return WebKit::toWKDOMRange(_textIterator->range().ptr());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.

@@ -91,7 +91,7 @@
     WebCore::TextIterator& textIterator = *_private->_textIterator;
     if (textIterator.atEnd())
         return nullptr;
-    return kit(textIterator.range().get());
+    return kit(textIterator.range().ptr());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.

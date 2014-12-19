@@ -1,3 +1,30 @@
+2014-12-19  Andreas Kling  <akling@apple.com>
+
+        Ref-ify TextIterator API.
+        <https://webkit.org/b/139823>
+
+        Reviewed by Antti Koivisto.
+
+        Change TextIterator functions that always return Range objects to return
+        Ref<Range> instead of PassRefPtr<Range>.
+
+        One API (rangeFromLocationAndLength) may return nullptr, so its return type
+        is now RefPtr<Range>.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::range):
+        (WebCore::TextIterator::node):
+        (WebCore::SimplifiedBackwardsTextIterator::range):
+        (WebCore::CharacterIterator::range):
+        (WebCore::characterSubrange):
+        (WebCore::BackwardsCharacterIterator::range):
+        (WebCore::TextIterator::subrange):
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        (WebCore::TextIterator::getLocationAndLengthFromRange):
+        (WebCore::collapsedToBoundary):
+        (WebCore::findPlainText):
+        * editing/TextIterator.h:
+
 2014-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH in inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html

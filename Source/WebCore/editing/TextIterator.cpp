@@ -1092,7 +1092,7 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_hasEmitted = true;
 }
 
-PassRefPtr<Range> TextIterator::range() const
+Ref<Range> TextIterator::range() const
 {
     ASSERT(!atEnd());
 
@@ -1108,7 +1108,7 @@ PassRefPtr<Range> TextIterator::range() const
     
 Node* TextIterator::node() const
 {
-    RefPtr<Range> textRange = range();
+    Ref<Range> textRange = range();
 
     Node* node = textRange->startContainer();
     if (node->offsetInCharacters())
@@ -1382,7 +1382,7 @@ bool SimplifiedBackwardsTextIterator::advanceRespectingRange(Node* next)
     return true;
 }
 
-PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
+Ref<Range> SimplifiedBackwardsTextIterator::range() const
 {
     ASSERT(!atEnd());
 
@@ -1401,21 +1401,21 @@ CharacterIterator::CharacterIterator(const Range& range, TextIteratorBehavior be
         m_underlyingIterator.advance();
 }
 
-PassRefPtr<Range> CharacterIterator::range() const
+Ref<Range> CharacterIterator::range() const
 {
-    RefPtr<Range> r = m_underlyingIterator.range();
+    Ref<Range> range = m_underlyingIterator.range();
     if (!m_underlyingIterator.atEnd()) {
         if (m_underlyingIterator.text().length() <= 1) {
             ASSERT(m_runOffset == 0);
         } else {
-            Node* n = r->startContainer();
-            ASSERT(n == r->endContainer());
-            int offset = r->startOffset() + m_runOffset;
-            r->setStart(n, offset);
-            r->setEnd(n, offset + 1);
+            Node* n = range->startContainer();
+            ASSERT(n == range->endContainer());
+            int offset = range->startOffset() + m_runOffset;
+            range->setStart(n, offset);
+            range->setEnd(n, offset + 1);
         }
     }
-    return r.release();
+    return range;
 }
 
 void CharacterIterator::advance(int count)
@@ -1463,14 +1463,14 @@ void CharacterIterator::advance(int count)
     m_runOffset = 0;
 }
 
-static PassRefPtr<Range> characterSubrange(CharacterIterator& it, int offset, int length)
+static Ref<Range> characterSubrange(CharacterIterator& it, int offset, int length)
 {
     it.advance(offset);
-    RefPtr<Range> start = it.range();
+    Ref<Range> start = it.range();
 
     if (length > 1)
         it.advance(length - 1);
-    RefPtr<Range> end = it.range();
+    Ref<Range> end = it.range();
 
     return Range::create(start->startContainer()->document(),
         start->startContainer(), start->startOffset(), 
@@ -1487,9 +1487,9 @@ BackwardsCharacterIterator::BackwardsCharacterIterator(const Range& range)
         m_underlyingIterator.advance();
 }
 
-PassRefPtr<Range> BackwardsCharacterIterator::range() const
+Ref<Range> BackwardsCharacterIterator::range() const
 {
-    RefPtr<Range> r = m_underlyingIterator.range();
+    Ref<Range> r = m_underlyingIterator.range();
     if (!m_underlyingIterator.atEnd()) {
         if (m_underlyingIterator.text().length() <= 1)
             ASSERT(m_runOffset == 0);
@@ -1501,7 +1501,7 @@ PassRefPtr<Range> BackwardsCharacterIterator::range() const
             r->setEnd(n, offset);
         }
     }
-    return r.release();
+    return r;
 }
 
 void BackwardsCharacterIterator::advance(int count)
@@ -2379,7 +2379,7 @@ int TextIterator::rangeLength(const Range* range, bool forSelectionPreservation)
     return length;
 }
 
-PassRefPtr<Range> TextIterator::subrange(Range* entireRange, int characterOffset, int characterCount)
+Ref<Range> TextIterator::subrange(Range* entireRange, int characterOffset, int characterCount)
 {
     CharacterIterator entireRangeIterator(*entireRange);
     return characterSubrange(entireRangeIterator, characterOffset, characterCount);
@@ -2393,23 +2393,23 @@ static inline bool isInsideReplacedElement(TextIterator& iterator)
     return node && isRendererReplacedElement(node->renderer());
 }
 
-PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
+RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
 {
-    RefPtr<Range> resultRange = scope->document().createRange();
+    Ref<Range> resultRange = scope->document().createRange();
 
     int docTextPosition = 0;
     int rangeEnd = rangeLocation + rangeLength;
     bool startRangeFound = false;
 
-    RefPtr<Range> textRunRange = rangeOfContents(*scope);
+    Ref<Range> textRunRange = rangeOfContents(*scope);
 
-    TextIterator it(textRunRange.get(), forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
+    TextIterator it(textRunRange.ptr(), forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
     
     // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
     if (!rangeLocation && !rangeLength && it.atEnd()) {
         resultRange->setStart(textRunRange->startContainer(), 0);
         resultRange->setEnd(textRunRange->startContainer(), 0);
-        return resultRange.release();
+        return WTF::move(resultRange);
     }
 
     for (; !it.atEnd(); it.advance()) {
@@ -2425,7 +2425,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
             if (length == 1 && (it.text()[0] == '\n' || isInsideReplacedElement(it))) {
                 it.advance();
                 if (!it.atEnd()) {
-                    RefPtr<Range> range = it.range();
+                    Ref<Range> range = it.range();
                     textRunRange->setEnd(range->startContainer(), range->startOffset());
                 } else {
                     Position runStart = textRunRange->startPosition();
@@ -2472,7 +2472,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
     if (rangeLength && rangeEnd > docTextPosition) // rangeEnd is out of bounds
         resultRange->setEnd(textRunRange->endContainer(), textRunRange->endOffset());
     
-    return resultRange.release();
+    return WTF::move(resultRange);
 }
 
 bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range, size_t& location, size_t& length)
@@ -2493,13 +2493,13 @@ bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range
     if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
         return false;
 
-    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    Ref<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
     ASSERT(testRange->startContainer() == scope);
-    location = TextIterator::rangeLength(testRange.get());
+    location = TextIterator::rangeLength(testRange.ptr());
 
     testRange->setEnd(range->endContainer(), range->endOffset(), IGNORE_EXCEPTION);
     ASSERT(testRange->startContainer() == scope);
-    length = TextIterator::rangeLength(testRange.get()) - location;
+    length = TextIterator::rangeLength(testRange.ptr()) - location;
     return true;
 }
 
@@ -2538,11 +2538,11 @@ String plainTextReplacingNoBreakSpace(const Range* range, TextIteratorBehavior d
     return plainText(range, defaultBehavior, isDisplayString).replace(noBreakSpace, ' ');
 }
 
-static PassRefPtr<Range> collapsedToBoundary(const Range& range, bool forward)
+static Ref<Range> collapsedToBoundary(const Range& range, bool forward)
 {
-    RefPtr<Range> result = range.cloneRange(ASSERT_NO_EXCEPTION);
+    Ref<Range> result = range.cloneRange(ASSERT_NO_EXCEPTION).releaseNonNull();
     result->collapse(!forward, ASSERT_NO_EXCEPTION);
-    return result.release();
+    return result;
 }
 
 static size_t findPlainText(const Range& range, const String& target, FindOptions options, size_t& matchStart)
@@ -2553,9 +2553,9 @@ static size_t findPlainText(const Range& range, const String& target, FindOption
     SearchBuffer buffer(target, options);
 
     if (buffer.needsMoreContext()) {
-        RefPtr<Range> beforeStartRange = range.ownerDocument().createRange();
+        Ref<Range> beforeStartRange = range.ownerDocument().createRange();
         beforeStartRange->setEnd(range.startContainer(), range.startOffset());
-        for (SimplifiedBackwardsTextIterator backwardsIterator(*beforeStartRange); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
+        for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
             buffer.prependContext(backwardsIterator.text());
             if (!buffer.needsMoreContext())
                 break;
@@ -2589,7 +2589,7 @@ tryAgain:
     return matchLength;
 }
 
-PassRefPtr<Range> findPlainText(const Range& range, const String& target, FindOptions options)
+Ref<Range> findPlainText(const Range& range, const String& target, FindOptions options)
 {
     // First, find the text.
     size_t matchStart;
