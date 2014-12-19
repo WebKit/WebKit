@@ -67,7 +67,7 @@ public:
 
 private:
     WebView& m_webView;
-    OwnPtr<WebCore::GLContext> m_context;
+    std::unique_ptr<WebCore::GLContext> m_context;
     HWND m_window;
     std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
     std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
