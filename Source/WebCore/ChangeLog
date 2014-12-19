@@ -1,3 +1,16 @@
+2014-12-19  Timothy Horton  <timothy_horton@apple.com>
+
+        TextIndicator's window can be pushed down if it intersects the menu bar
+        https://bugs.webkit.org/show_bug.cgi?id=139841
+        <rdar://problem/19311017>
+
+        Reviewed by Anders Carlsson.
+
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+        Ensure that the textIndicatorWindow sits above the menubar, and re-set
+        its frame so that it moves under the menubar if required.
+
 2014-12-19  Anders Carlsson  <andersca@apple.com>
 
         Use WebCore::MachSendRights for the compositing render server port

@@ -454,6 +454,9 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     [[m_targetView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
     [m_textIndicatorWindow setReleasedWhenClosed:NO];
 
+    [m_textIndicatorWindow setLevel:NSMainMenuWindowLevel + 1];
+    [m_textIndicatorWindow setFrame:windowContentRect display:NO];
+
     if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
         [m_textIndicatorView present];
 
