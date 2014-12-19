@@ -313,6 +313,8 @@ fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
 [ MountainLion ] fast/events/page-visibility-iframe-move-test.html [ Pass Failure ]
 
+[ Yosemite+ ] fast/speechsynthesis/speech-synthesis-cancel.html [ Pass Timeout ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
