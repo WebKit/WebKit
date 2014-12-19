@@ -76,9 +76,6 @@ webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Skip
 webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Skip ]
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Skip ]
 
-# This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
-webkit.org/b/96741 fast/loader/recursive-before-unload-crash.html [ Pass Failure ]
-
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html

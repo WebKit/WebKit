@@ -1,3 +1,13 @@
+2014-12-19  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (177368): Some tests started to immediately time out
+        https://bugs.webkit.org/show_bug.cgi?id=139826
+
+        Reviewed by Daniel Bates.
+
+        * platform/wk2/TestExpectations: The culprit was this test that I unskipped to see
+        whether it passes. It in fact does pass, so let's remove the expectation entirely.
+
 2014-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

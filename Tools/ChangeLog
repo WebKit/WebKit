@@ -1,3 +1,18 @@
+2014-12-19  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (177368): Some tests started to immediately time out
+        https://bugs.webkit.org/show_bug.cgi?id=139826
+
+        Reviewed by Daniel Bates.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp: (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: (WTR::InjectedBundlePage::dump):
+        Move invalidateWaitToDumpWatchdogTimer() call from dump() to done(). When a test
+        ends in a load failure, we don't dump, so we used to leak the timer.
+        
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: (WTR::TestRunner::notifyDone):
+        Added a comment.
+
 2014-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Add accessor for serializing HTTP loads

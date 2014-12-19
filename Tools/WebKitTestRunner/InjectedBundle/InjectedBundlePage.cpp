@@ -836,8 +836,6 @@ void InjectedBundlePage::dump()
 {
     ASSERT(InjectedBundle::shared().isTestRunning());
 
-    InjectedBundle::shared().testRunner()->invalidateWaitToDumpWatchdogTimer();
-
     // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
     // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
     WKBundlePageForceRepaint(m_page);

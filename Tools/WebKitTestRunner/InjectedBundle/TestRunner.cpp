@@ -160,6 +160,10 @@ void TestRunner::notifyDone()
     if (m_waitToDump && !InjectedBundle::shared().topLoadingFrame())
         InjectedBundle::shared().page()->dump();
 
+    // We don't call invalidateWaitToDumpWatchdogTimer() here, even if we continue to wait for a load to finish.
+    // The test is still subject to timeout checking - it is better to detect an async timeout inside WebKitTestRunner
+    // than to let webkitpy do that, because WebKitTestRunner will dump partial results.
+
     m_waitToDump = false;
 }
 

@@ -289,6 +289,8 @@ void InjectedBundle::done()
     page()->stopLoading();
     setTopLoadingFrame(0);
 
+    m_testRunner->invalidateWaitToDumpWatchdogTimer();
+
     m_accessibilityController->resetToConsistentState();
 
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
