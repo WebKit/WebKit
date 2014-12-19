@@ -31,10 +31,13 @@
 #include "ChildProcess.h"
 #include <WebCore/CountedUserActivity.h>
 #include <WebCore/AudioHardwareListener.h>
-#include <WebCore/MachSendRight.h>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <WebCore/MachSendRight.h>
+#endif
 
 namespace WebKit {
 

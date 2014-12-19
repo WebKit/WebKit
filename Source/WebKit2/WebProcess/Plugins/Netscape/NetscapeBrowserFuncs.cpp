@@ -34,13 +34,16 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/IdentifierRep.h>
-#include <WebCore/MachSendRight.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
 #include <memory>
 #include <utility>
 #include <wtf/text/StringBuilder.h>
+
+#if PLATFORM(COCOA)
+#include <WebCore/MachSendRight.h>
+#endif
 
 using namespace WebCore;
 

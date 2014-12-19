@@ -29,7 +29,6 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
-#include <WebCore/MachSendRight.h>
 #include <WebCore/SessionIDHash.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -38,7 +37,7 @@
 
 #if PLATFORM(COCOA)
 #include "MachPort.h"
-
+#include <WebCore/MachSendRight.h>
 #endif
 
 #if USE(SOUP)

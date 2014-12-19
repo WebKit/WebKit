@@ -37,7 +37,7 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
 {
 }
 
-void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters&)
+void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParameters&&)
 {
     notImplemented();
 }

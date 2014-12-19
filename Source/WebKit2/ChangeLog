@@ -1,3 +1,16 @@
+2014-12-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r177593.
+
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/unix/PluginProcessUnix.cpp:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * Shared/WebProcessCreationParameters.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-12-19  Anders Carlsson  <andersca@apple.com>
 
         Use WebCore::MachSendRights for the compositing render server port

@@ -38,7 +38,6 @@
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
 #include "WebOriginDataManagerSupplement.h"
-#include <WebCore/MachSendRight.h>
 #include <WebCore/SessionIDHash.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
@@ -50,6 +49,7 @@
 
 #if PLATFORM(COCOA)
 #include <dispatch/dispatch.h>
+#include <WebCore/MachSendRight.h>
 #endif
 
 namespace API {
