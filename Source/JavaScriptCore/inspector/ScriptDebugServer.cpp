@@ -286,14 +286,19 @@ void ScriptDebugServer::notifyDoneProcessingDebuggerEvents()
     m_doneProcessingDebuggerEvents = true;
 }
 
-void ScriptDebugServer::handleBreakpointHit(const JSC::Breakpoint& breakpoint)
+void ScriptDebugServer::handleBreakpointHit(JSC::JSGlobalObject* globalObject, const JSC::Breakpoint& breakpoint)
 {
+    ASSERT(isAttached(globalObject));
+
     m_currentProbeBatchId++;
+
     BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(breakpoint.id);
     if (it != m_breakpointIDToActions.end()) {
-        BreakpointActions& actions = it->value;
+        BreakpointActions actions = it->value;
         for (size_t i = 0; i < actions.size(); ++i) {
             if (!evaluateBreakpointAction(actions[i]))
+                return;
+            if (!isAttached(globalObject))
                 return;
         }
     }
@@ -304,7 +309,7 @@ void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::ExecState* exe
     reportException(exec, exception);
 }
 
-void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vmEntryGlobalObject)
+void ScriptDebugServer::handlePause(JSGlobalObject* vmEntryGlobalObject, Debugger::ReasonForPause)
 {
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidPause);
     didPause(vmEntryGlobalObject);

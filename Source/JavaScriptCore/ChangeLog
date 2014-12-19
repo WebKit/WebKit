@@ -1,3 +1,25 @@
+2014-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH inspector-protocol/debugger/breakpoint-action-detach.html
+        https://bugs.webkit.org/show_bug.cgi?id=139797
+
+        Reviewed by Mark Lam.
+
+        * debugger/Debugger.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::isAttached):
+        Check if we are the debugger for a particular global object.
+        (JSC::Debugger::pauseIfNeeded):
+        Pass the global object on when hitting a brekapoint.
+
+        * inspector/ScriptDebugServer.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::handleBreakpointHit):
+        Stop evaluting breakpoint actions if a previous action caused the
+        debugger to detach from this global object.
+        (Inspector::ScriptDebugServer::handlePause):
+        Standardize on passing JSGlobalObject parameter first.
+
 2014-12-19  Mark Lam  <mark.lam@apple.com>
 
         [Win] Endless compiler warnings created by DFGEdge.h.

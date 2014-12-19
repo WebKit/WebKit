@@ -56,7 +56,7 @@ public:
 
 private:
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg) override;
-    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override;
+    virtual void handlePause(JSC::JSGlobalObject*, JSC::Debugger::ReasonForPause) override;
     virtual bool needPauseHandling(JSC::JSGlobalObject*) override { return true; }
 
     bool m_callingDelegate;

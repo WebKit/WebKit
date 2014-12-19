@@ -118,7 +118,7 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::handlePause(Debugger::ReasonForPause reason, JSGlobalObject* globalObject)
+void WebScriptDebugger::handlePause(JSGlobalObject* globalObject, Debugger::ReasonForPause reason)
 {
     if (m_callingDelegate)
         return;

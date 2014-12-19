@@ -100,9 +100,9 @@ private:
 
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) override final;
     virtual bool needPauseHandling(JSC::JSGlobalObject*) override final { return true; }
-    virtual void handleBreakpointHit(const JSC::Breakpoint&) override final;
+    virtual void handleBreakpointHit(JSC::JSGlobalObject*, const JSC::Breakpoint&) override final;
     virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const override final;
-    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override final;
+    virtual void handlePause(JSC::JSGlobalObject*, JSC::Debugger::ReasonForPause) override final;
     virtual void notifyDoneProcessingDebuggerEvents() override final;
 
     Deprecated::ScriptValue exceptionOrCaughtValue(JSC::ExecState*);

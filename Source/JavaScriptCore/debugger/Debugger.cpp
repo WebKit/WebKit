@@ -206,6 +206,11 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
         m_vm = nullptr;
 }
 
+bool Debugger::isAttached(JSGlobalObject* globalObject)
+{
+    return globalObject->debugger() == this;
+}
+
 class Debugger::SetSteppingModeFunctor {
 public:
     SetSteppingModeFunctor(Debugger* debugger, SteppingMode mode)
@@ -660,14 +665,14 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     m_pauseOnNextStatement = false;
 
     if (didHitBreakpoint) {
-        handleBreakpointHit(breakpoint);
+        handleBreakpointHit(vmEntryGlobalObject, breakpoint);
         // Note that the actions can potentially stop the debugger, so we need to check that
         // we still have a current call frame when we get back.
         if (breakpoint.autoContinue || !m_currentCallFrame)
             return;
     }
 
-    handlePause(m_reasonForPause, vmEntryGlobalObject);
+    handlePause(vmEntryGlobalObject, m_reasonForPause);
 
     if (!m_pauseOnNextStatement && !m_pauseOnCallFrame) {
         setSteppingMode(SteppingModeDisabled);

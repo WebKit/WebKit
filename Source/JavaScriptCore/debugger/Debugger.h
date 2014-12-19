@@ -60,12 +60,13 @@ public:
 
     bool needsExceptionCallbacks() const { return m_pauseOnExceptionsState != DontPauseOnExceptions; }
 
-    void attach(JSGlobalObject*);
     enum ReasonForDetach {
         TerminatingDebuggingSession,
         GlobalObjectIsDestructing
     };
-    virtual void detach(JSGlobalObject*, ReasonForDetach);
+    void attach(JSGlobalObject*);
+    void detach(JSGlobalObject*, ReasonForDetach);
+    bool isAttached(JSGlobalObject*);
 
     BreakpointID setBreakpoint(Breakpoint, unsigned& actualLine, unsigned& actualColumn);
     void removeBreakpoint(BreakpointID);
@@ -89,7 +90,7 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool isPaused() { return m_isPaused; }
+    bool isPaused() const { return m_isPaused; }
     bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
 
     virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
@@ -108,7 +109,7 @@ public:
 
 protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }
-    virtual void handleBreakpointHit(const Breakpoint&) { }
+    virtual void handleBreakpointHit(JSGlobalObject*, const Breakpoint&) { }
     virtual void handleExceptionInBreakpointCondition(ExecState*, JSValue exception) const { UNUSED_PARAM(exception); }
 
     enum ReasonForPause {
@@ -124,7 +125,7 @@ protected:
 
     ReasonForPause reasonForPause() const { return m_reasonForPause; }
 
-    virtual void handlePause(ReasonForPause, JSGlobalObject*) { }
+    virtual void handlePause(JSGlobalObject*, ReasonForPause) { }
     virtual void notifyDoneProcessingDebuggerEvents() { }
 
 private:
