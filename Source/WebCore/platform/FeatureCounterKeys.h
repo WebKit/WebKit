@@ -70,6 +70,12 @@ static const char FeatureCounterCachedResourceRevalidationReasonNoStoreKey[] = "
 static const char FeatureCounterCachedResourceRevalidationReasonMustRevalidateIsExpiredKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.mustRevalidateIsExpired";
 static const char FeatureCounterCachedResourceRevalidationReasonIsExpiredKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.isExpired";
 
+// Media playback.
+static const char FeatureCounterMediaVideoElementLoadingKey[] = "com.apple.WebKit.media.video.loading";
+static const char FeatureCounterMediaAudioElementLoadingKey[] = "com.apple.WebKit.media.audio.loading";
+static const char FeatureCounterMediaVideoElementPlayedKey[] = "com.apple.WebKit.media.video.played";
+static const char FeatureCounterMediaAudioElementPlayedKey[] = "com.apple.WebKit.media.audio.played";
+
 // Navigation types.
 static const char FeatureCounterNavigationStandard[] = "com.apple.WebKit.navigation.standard";
 static const char FeatureCounterNavigationBack[] = "com.apple.WebKit.navigation.back";
