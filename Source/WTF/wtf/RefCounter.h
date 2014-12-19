@@ -60,12 +60,12 @@ public:
     public:
         Token() { }
         Token(std::nullptr_t) { }
-        inline Token(const Token<T>& token);
-        inline Token(Token<T>&& token);
+        inline Token(const Token<T>&);
+        inline Token(Token<T>&&);
 
         inline Token<T>& operator=(std::nullptr_t);
-        inline Token<T>& operator=(const Token<T>& o);
-        inline Token<T>& operator=(Token<T>&& o);
+        inline Token<T>& operator=(const Token<T>&);
+        inline Token<T>& operator=(Token<T>&&);
 
         bool operator!() const { return !m_ptr; }
 
@@ -121,16 +121,16 @@ inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(std::nullptr_t)
 }
 
 template<class T>
-inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(const RefCounter::Token<T>& o)
+inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(const RefCounter::Token<T>& token)
 {
-    m_ptr = o.m_ptr;
+    m_ptr = token.m_ptr;
     return *this;
 }
 
 template<class T>
-inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(RefCounter::Token<T>&& o)
+inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(RefCounter::Token<T>&& token)
 {
-    m_ptr = o.m_ptr;
+    m_ptr = token.m_ptr;
     return *this;
 }
 

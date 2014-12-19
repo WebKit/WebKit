@@ -1,3 +1,13 @@
+2014-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Add strong typing to RefCounter interface, return value as a bool.
+        https://bugs.webkit.org/show_bug.cgi?id=139776
+
+        Unreviewed style fixes.
+
+        * wtf/RefCounter.h:
+        (WTF::=):
+
 2014-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build correction after r177541.
