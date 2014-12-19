@@ -1,3 +1,21 @@
+2014-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Use MachSendRight in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=139800
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/ArgumentEncoder.h:
+        (IPC::ArgumentEncoder::encode):
+        (IPC::ArgumentEncoder::operator<<):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode):
+        (WebKit::RemoteLayerBackingStore::decode):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<MachSendRight>::encode):
+        (IPC::ArgumentCoder<MachSendRight>::decode):
+
 2014-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Add strong typing to RefCounter interface, return value as a bool.

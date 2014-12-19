@@ -40,7 +40,7 @@ class MachSendRight;
 class IOSurface final : public RefCounted<IOSurface> {
 public:
     WEBCORE_EXPORT static PassRefPtr<IOSurface> create(IntSize, ColorSpace);
-    WEBCORE_EXPORT static PassRefPtr<IOSurface> createFromMachPort(mach_port_t, ColorSpace);
+    WEBCORE_EXPORT static PassRefPtr<IOSurface> createFromSendRight(const MachSendRight&, ColorSpace);
     static PassRefPtr<IOSurface> createFromSurface(IOSurfaceRef, ColorSpace);
     WEBCORE_EXPORT static PassRefPtr<IOSurface> createFromImage(CGImageRef);
 

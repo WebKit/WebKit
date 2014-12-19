@@ -60,9 +60,9 @@ PassRefPtr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace)
     return adoptRef(new IOSurface(size, colorSpace));
 }
 
-PassRefPtr<IOSurface> IOSurface::createFromMachPort(mach_port_t machPort, ColorSpace colorSpace)
+PassRefPtr<IOSurface> IOSurface::createFromSendRight(const MachSendRight& sendRight, ColorSpace colorSpace)
 {
-    RetainPtr<IOSurfaceRef> surface = adoptCF(IOSurfaceLookupFromMachPort(machPort));
+    RetainPtr<IOSurfaceRef> surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), colorSpace);
 }
 

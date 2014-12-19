@@ -35,13 +35,19 @@ public:
     static MachSendRight adopt(mach_port_t);
     static MachSendRight create(mach_port_t);
 
+    MachSendRight()
+        : m_port(MACH_PORT_NULL)
+    {
+    }
+
     MachSendRight(MachSendRight&&);
     ~MachSendRight();
 
     MachSendRight& operator=(MachSendRight&&);
 
-    MachSendRight copySendRight() const;
+    mach_port_t sendRight() const { return m_port; }
 
+    MachSendRight copySendRight() const;
     mach_port_t leakSendRight() WARN_UNUSED_RETURN;
 
 private:

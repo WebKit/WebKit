@@ -34,6 +34,7 @@
 #import <WebCore/ContentFilter.h>
 #import <WebCore/Credential.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/MachSendRight.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
@@ -364,6 +365,24 @@ bool ArgumentCoder<Credential>::decodePlatformData(ArgumentDecoder& decoder, Cre
     }
 
     [unarchiver finishDecoding];
+    return true;
+}
+
+void ArgumentCoder<MachSendRight>::encode(ArgumentEncoder& encoder, MachSendRight&& sendRight)
+{
+    encoder << Attachment(sendRight.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
+}
+
+bool ArgumentCoder<MachSendRight>::decode(ArgumentDecoder& decoder, MachSendRight& sendRight)
+{
+    Attachment attachment;
+    if (!decoder.decode(attachment))
+        return false;
+
+    if (attachment.disposition() != MACH_MSG_TYPE_MOVE_SEND)
+        return false;
+
+    sendRight = MachSendRight::adopt(attachment.port());
     return true;
 }
 

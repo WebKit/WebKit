@@ -51,14 +51,14 @@ public:
         encode(static_cast<uint64_t>(t));
     }
 
-    template<typename T> void encode(const T& t)
+    template<typename T> void encode(T&& t)
     {
-        ArgumentCoder<T>::encode(*this, t);
+        ArgumentCoder<typename std::remove_const<typename std::remove_reference<T>::type>::type>::encode(*this, std::forward<T>(t));
     }
 
-    template<typename T> ArgumentEncoder& operator<<(const T& t)
+    template<typename T> ArgumentEncoder& operator<<(T&& t)
     {
-        encode(t);
+        encode(std::forward<T>(t));
         return *this;
     }
 

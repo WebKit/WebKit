@@ -92,6 +92,7 @@ struct WindowFeatures;
 
 #if PLATFORM(COCOA)
 namespace WebCore {
+class MachSendRight;
 struct KeypressCommand;
 }
 #endif
@@ -271,6 +272,11 @@ template<> struct ArgumentCoder<WebCore::Color> {
 };
 
 #if PLATFORM(COCOA)
+template<> struct ArgumentCoder<WebCore::MachSendRight> {
+    static void encode(ArgumentEncoder&, WebCore::MachSendRight&&);
+    static bool decode(ArgumentDecoder&, WebCore::MachSendRight&);
+};
+
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static void encode(ArgumentEncoder&, const WebCore::KeypressCommand&);
     static bool decode(ArgumentDecoder&, WebCore::KeypressCommand&);
