@@ -257,7 +257,7 @@ EXPORTS
         symbolWithPointer(?page@Document@WebCore@@QBEPAVPage@2@XZ, ?page@Document@WebCore@@QEBAPEAVPage@2@XZ)
         symbolWithPointer(?pageNumberForElement@PrintContext@WebCore@@SAHPAVElement@2@ABVFloatSize@2@@Z, ?pageNumberForElement@PrintContext@WebCore@@SAHPEAVElement@2@AEBVFloatSize@2@@Z)
         symbolWithPointer(?paintControlTints@FrameView@WebCore@@AAEXXZ, ?paintControlTints@FrameView@WebCore@@AEAAXXZ)
-        symbolWithPointer(?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z, ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PEAVContainerNode@2@HH_N@Z)
+        symbolWithPointer(?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$RefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z, ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$RefPtr@VRange@WebCore@@@WTF@@PEAVContainerNode@2@HH_N@Z)
         symbolWithPointer(?rectBasedTestResult@HitTestResult@WebCore@@QBEABV?$ListHashSet@V?$RefPtr@VNode@WebCore@@@WTF@@U?$PtrHash@V?$RefPtr@VNode@WebCore@@@WTF@@@2@@WTF@@XZ, ?rectBasedTestResult@HitTestResult@WebCore@@QEBAAEBV?$ListHashSet@V?$RefPtr@VNode@WebCore@@@WTF@@U?$PtrHash@V?$RefPtr@VNode@WebCore@@@WTF@@@2@@WTF@@XZ)
         symbolWithPointer(?rectForPoint@HitTestLocation@WebCore@@SA?AVIntRect@2@ABVLayoutPoint@2@IIII@Z, ?rectForPoint@HitTestLocation@WebCore@@SA?AVIntRect@2@AEBVLayoutPoint@2@IIII@Z)
         symbolWithPointer(?reload@FrameLoader@WebCore@@QAEX_N@Z, ?reload@FrameLoader@WebCore@@QEAAX_N@Z)
