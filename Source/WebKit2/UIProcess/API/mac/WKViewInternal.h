@@ -24,7 +24,6 @@
  */
 
 #import "WKViewPrivate.h"
-
 #import "PluginComplexTextInputState.h"
 #import "SameDocumentNavigationType.h"
 #import "WebFindOptions.h"
@@ -36,6 +35,10 @@
 
 namespace IPC {
 class DataReference;
+}
+
+namespace API {
+class Object;
 }
 
 namespace WebCore {

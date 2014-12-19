@@ -1,5 +1,16 @@
 2014-12-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177525. rdar://problem/19288547
+
+    2014-12-18  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setPreviewOverrideImage:]):
+
+2014-12-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177522. rdar://problem/19288547
 
     2014-12-18  Timothy Horton  <timothy_horton@apple.com>
