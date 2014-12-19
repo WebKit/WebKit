@@ -253,6 +253,11 @@ webkit.org/b/133692 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [
 
 webkit.org/b/136554 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 
+webkit.org/b/139820 [ Mavericks+ ] fast/frames/lots-of-objects.html [ Timeout ]
+webkit.org/b/139820 [ Mavericks+ ] fast/frames/lots-of-iframes.html [ Timeout ]
+webkit.org/b/121452 [ MountainLion Debug ] fast/frames/lots-of-objects.html [ Slow ]
+webkit.org/b/121452 [ MountainLion Debug ] fast/frames/lots-of-iframes.html [ Slow ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
