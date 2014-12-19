@@ -756,7 +756,7 @@ void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
         return;
     }
     if (!m_tokenForHoldingLockedFiles)
-        m_tokenForHoldingLockedFiles = std::make_unique<ProcessThrottler::BackgroundActivityToken>(*m_throttler);
+        m_tokenForHoldingLockedFiles = m_throttler->backgroundActivityToken();
 }
 
 } // namespace WebKit

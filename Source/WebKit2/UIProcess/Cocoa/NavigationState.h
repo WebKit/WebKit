@@ -185,7 +185,7 @@ private:
     } m_historyDelegateMethods;
 
 #if PLATFORM(IOS)
-    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_activityToken;
+    ProcessThrottler::BackgroundActivityToken m_activityToken;
 #endif
 };
 

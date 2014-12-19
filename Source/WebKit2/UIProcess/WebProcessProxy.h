@@ -219,7 +219,7 @@ private:
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
     std::unique_ptr<ProcessThrottler> m_throttler;
-    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_tokenForHoldingLockedFiles;
+    ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 };
 
 } // namespace WebKit

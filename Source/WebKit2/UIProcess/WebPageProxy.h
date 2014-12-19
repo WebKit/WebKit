@@ -1417,7 +1417,7 @@ private:
     bool m_viewWasEverInWindow;
 
 #if PLATFORM(IOS)
-    std::unique_ptr<ProcessThrottler::ForegroundActivityToken> m_activityToken;
+    ProcessThrottler::ForegroundActivityToken m_activityToken;
 #endif
         
     Ref<WebBackForwardList> m_backForwardList;

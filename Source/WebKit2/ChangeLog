@@ -18,6 +18,92 @@
 
 2014-12-18  Gavin Barraclough  <barraclough@apple.com>
 
+        Remove custom token mechanism from ProcessThrottler
+        https://bugs.webkit.org/show_bug.cgi?id=139744
+
+        Reviewed by Geoff Garen.
+
+        ProcessThrottler implements its own token-based counter mechanism, but should
+        just use RefCounter.
+
+        * UIProcess/Cocoa/NavigationState.h:
+            - remove std::unique_ptr.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::didChangeIsLoading):
+            - remove std::make_unique.
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::CallbackBase):
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::GenericCallback):
+        (WebKit::CallbackMap::put):
+            - remove std::unique_ptr.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::ProcessThrottler):
+        (WebKit::m_backgroundCounter):
+        (WebKit::ProcessThrottler::assertionState):
+        (WebKit::ProcessThrottler::updateAssertion):
+        (WebKit::ProcessThrottler::ForegroundActivityToken::ForegroundActivityToken): Deleted.
+        (WebKit::ProcessThrottler::ForegroundActivityToken::~ForegroundActivityToken): Deleted.
+        (WebKit::ProcessThrottler::BackgroundActivityToken::BackgroundActivityToken): Deleted.
+        (WebKit::ProcessThrottler::BackgroundActivityToken::~BackgroundActivityToken): Deleted.
+            - removed old implementation of ForegroundActivityToken/BackgroundActivityToken.
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::foregroundActivityToken):
+        (WebKit::ProcessThrottler::backgroundActivityToken):
+            - added accessors to create activity tokens.
+        (WebKit::ProcessThrottler::weakPtr): Deleted.
+            - removed members replaced by RefCounter types.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityToken):
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::takeSnapshot):
+        (WebKit::WebPageProxy::installViewStateChangeCompletionHandler):
+            - remove std::make_unique.
+        * UIProcess/WebPageProxy.h:
+            - remove std::unique_ptr.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles):
+            - remove std::make_unique.
+        * UIProcess/WebProcessProxy.h:
+            - remove std::unique_ptr.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::requestAutocorrectionData):
+        (WebKit::WebPageProxy::applyAutocorrection):
+        (WebKit::WebPageProxy::executeEditCommand):
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::beginSelectionInDirection):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::requestDictationContext):
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+        (WebKit::WebPageProxy::moveSelectionByOffset):
+        (WebKit::WebPageProxy::focusNextAssistedNode):
+            - remove std::make_unique.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync):
+            - remove std::make_unique.
+
+2014-12-18  Gavin Barraclough  <barraclough@apple.com>
+
         Add strong typing to RefCounter interface, return value as a bool.
         https://bugs.webkit.org/show_bug.cgi?id=139776
 

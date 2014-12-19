@@ -32,42 +32,11 @@ namespace WebKit {
     
 static const unsigned processSuspensionTimeout = 30;
     
-ProcessThrottler::ForegroundActivityToken::ForegroundActivityToken(ProcessThrottler& throttler)
-    : m_throttler(throttler.weakPtr())
-{
-    throttler.m_foregroundCount++;
-    throttler.updateAssertion();
-}
-
-ProcessThrottler::ForegroundActivityToken::~ForegroundActivityToken()
-{
-    if (ProcessThrottler* throttler = m_throttler.get()) {
-        throttler->m_foregroundCount--;
-        throttler->updateAssertion();
-    }
-}
-
-ProcessThrottler::BackgroundActivityToken::BackgroundActivityToken(ProcessThrottler& throttler)
-    : m_throttler(throttler.weakPtr())
-{
-    throttler.m_backgroundCount++;
-    throttler.updateAssertion();
-}
-
-ProcessThrottler::BackgroundActivityToken::~BackgroundActivityToken()
-{
-    if (ProcessThrottler* throttler = m_throttler.get()) {
-        throttler->m_backgroundCount--;
-        throttler->updateAssertion();
-    }
-}
-
 ProcessThrottler::ProcessThrottler(WebProcessProxy* process)
     : m_process(process)
-    , m_weakPtrFactory(this)
     , m_suspendTimer(RunLoop::main(), this, &ProcessThrottler::suspendTimerFired)
-    , m_foregroundCount(0)
-    , m_backgroundCount(0)
+    , m_foregroundCounter([this](bool) { updateAssertion(); })
+    , m_backgroundCounter([this](bool) { updateAssertion(); })
     , m_suspendMessageCount(0)
 {
 }
@@ -76,9 +45,9 @@ AssertionState ProcessThrottler::assertionState()
 {
     ASSERT(!m_suspendTimer.isActive());
     
-    if (m_foregroundCount)
+    if (m_foregroundCounter.value())
         return AssertionState::Foreground;
-    if (m_backgroundCount)
+    if (m_backgroundCounter.value())
         return AssertionState::Background;
     return AssertionState::Suspended;
 }
@@ -95,7 +64,7 @@ void ProcessThrottler::updateAssertion()
     // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
     // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
     // in the background for too long.
-    if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCount && !m_backgroundCount) {
+    if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCounter.value() && !m_backgroundCounter.value()) {
         ++m_suspendMessageCount;
         m_process->sendProcessWillSuspend();
         m_suspendTimer.startOneShot(processSuspensionTimeout);
@@ -104,7 +73,7 @@ void ProcessThrottler::updateAssertion()
     }
 
     // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
-    if (m_suspendTimer.isActive() && (m_foregroundCount || m_backgroundCount))
+    if (m_suspendTimer.isActive() && (m_foregroundCounter.value() || m_backgroundCounter.value()))
         m_process->sendCancelProcessWillSuspend();
 
     updateAssertionNow();

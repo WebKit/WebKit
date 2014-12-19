@@ -815,7 +815,7 @@ void NavigationState::didChangeIsLoading()
 {
 #if PLATFORM(IOS)
     if (m_webView->_page->pageLoadState().isLoading())
-        m_activityToken = std::make_unique<ProcessThrottler::BackgroundActivityToken>(m_webView->_page->process().throttler());
+        m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
     else
         m_activityToken = nullptr;
 #endif
