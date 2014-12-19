@@ -28,7 +28,7 @@
 
 #include "ProcessAssertion.h"
 
-#include <WTF/RefCounter.h>
+#include <wtf/RefCounter.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 

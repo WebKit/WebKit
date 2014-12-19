@@ -1,3 +1,9 @@
+2014-12-18  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * UIProcess/ProcessThrottler.h:
+
 2014-12-18  Anders Carlsson  <andersca@apple.com>
 
         Use MachSendRight in WebKit2
