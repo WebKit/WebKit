@@ -49,6 +49,7 @@
 namespace WebCore {
 class Frame;
 class HTMLPlugInElement;
+class MachSendRight;
 class MouseEvent;
 class RenderBoxModelObject;
 }
@@ -205,7 +206,7 @@ private:
 #if PLATFORM(COCOA)
     virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
     virtual void setComplexTextInputState(PluginComplexTextInputState) override;
-    virtual mach_port_t compositingRenderServerPort() override;
+    virtual const WebCore::MachSendRight& compositingRenderServerPort() override;
     virtual void openPluginPreferencePane() override;
 #endif
     virtual float contentsScaleFactor() override;

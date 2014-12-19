@@ -13,7 +13,7 @@ namespace IPC {
 template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
 void callMemberFunctionImpl(C* object, MF function, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(std::get<ArgsIndex>(args)...);
+    (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))...);
 }
 
 template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
@@ -83,7 +83,7 @@ void callMemberFunction(Connection* connection, ArgsTuple&& args, ReplyArgsTuple
 template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
 void callMemberFunctionImpl(C* object, MF function, MessageDecoder& decoder, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(std::get<ArgsIndex>(args)..., decoder);
+    (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., decoder);
 }
 
 template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>

@@ -31,12 +31,12 @@
 #include "PluginProcessAttributes.h"
 
 #if PLATFORM(COCOA)
-#include "MachPort.h"
+#include <WebCore/MachSendRight.h>
 #endif
 
 namespace IPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
 namespace WebKit {
@@ -54,7 +54,7 @@ struct PluginProcessCreationParameters {
     double terminationTimeout;
 
 #if PLATFORM(COCOA)
-    IPC::MachPort acceleratedCompositingPort;
+    WebCore::MachSendRight acceleratedCompositingPort;
 #endif
 };
 

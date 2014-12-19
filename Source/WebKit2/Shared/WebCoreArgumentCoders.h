@@ -273,6 +273,7 @@ template<> struct ArgumentCoder<WebCore::Color> {
 
 #if PLATFORM(COCOA)
 template<> struct ArgumentCoder<WebCore::MachSendRight> {
+    static void encode(ArgumentEncoder&, const WebCore::MachSendRight&);
     static void encode(ArgumentEncoder&, WebCore::MachSendRight&&);
     static bool decode(ArgumentDecoder&, WebCore::MachSendRight&);
 };

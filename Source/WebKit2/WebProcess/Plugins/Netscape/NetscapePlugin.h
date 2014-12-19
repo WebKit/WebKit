@@ -39,9 +39,10 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-    class HTTPHeaderMap;
-    class ProtectionSpace;
-    class SharedBuffer;
+class MachSendRight;
+class HTTPHeaderMap;
+class ProtectionSpace;
+class SharedBuffer;
 }
 
 OBJC_CLASS WKNPAPIPlugInContainer;
@@ -71,7 +72,7 @@ public:
 
     bool hasHandledAKeyDownEvent() const { return m_hasHandledAKeyDownEvent; }
 
-    mach_port_t compositingRenderServerPort();
+    const WebCore::MachSendRight& compositingRenderServerPort();
     void openPluginPreferencePane();
 
     // Computes an affine transform from the given coordinate space to the screen coordinate space.

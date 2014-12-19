@@ -34,6 +34,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/IdentifierRep.h>
+#include <WebCore/MachSendRight.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
@@ -489,7 +490,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
         case WKNVCALayerRenderServerPort: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
 
-            *(mach_port_t*)value = plugin->compositingRenderServerPort();
+            *(mach_port_t*)value = plugin->compositingRenderServerPort().sendRight();
             break;
         }
 

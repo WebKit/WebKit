@@ -404,9 +404,9 @@ static void muteAudio(void)
     ASSERT_UNUSED(result, result == noErr);
 }
 
-void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters& parameters)
+void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
-    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
+    m_compositingRenderServerPort = WTF::move(parameters.acceleratedCompositingPort);
     if (parameters.processType == PluginProcessTypeSnapshot)
         muteAudio();
 

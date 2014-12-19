@@ -34,12 +34,16 @@
 OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
 
+namespace WebCore {
+class MachSendRight;
+}
+
 namespace WebKit {
 
 class LayerHostingContext {
     WTF_MAKE_NONCOPYABLE(LayerHostingContext);
 public:
-    static std::unique_ptr<LayerHostingContext> createForPort(mach_port_t serverPort);
+    static std::unique_ptr<LayerHostingContext> createForPort(const WebCore::MachSendRight& serverPort);
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess();
 #endif

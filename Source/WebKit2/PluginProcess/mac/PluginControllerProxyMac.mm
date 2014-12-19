@@ -50,7 +50,7 @@ void PluginControllerProxy::setComplexTextInputState(PluginComplexTextInputState
     m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputState(pluginComplexTextInputState), m_pluginInstanceID, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-mach_port_t PluginControllerProxy::compositingRenderServerPort()
+const MachSendRight& PluginControllerProxy::compositingRenderServerPort()
 {
     return PluginProcess::shared().compositingRenderServerPort();
 }

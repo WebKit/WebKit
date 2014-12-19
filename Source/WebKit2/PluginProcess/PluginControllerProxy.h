@@ -103,7 +103,7 @@ private:
 #if PLATFORM(COCOA)
     virtual void pluginFocusOrWindowFocusChanged(bool) override;
     virtual void setComplexTextInputState(PluginComplexTextInputState) override;
-    virtual mach_port_t compositingRenderServerPort() override;
+    virtual const WebCore::MachSendRight& compositingRenderServerPort() override;
     virtual void openPluginPreferencePane() override;
 #endif
 

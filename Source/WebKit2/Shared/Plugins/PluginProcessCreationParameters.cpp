@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "ArgumentCoders.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

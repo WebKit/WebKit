@@ -38,6 +38,7 @@
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
 #include "WebOriginDataManagerSupplement.h"
+#include <WebCore/MachSendRight.h>
 #include <WebCore/SessionIDHash.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
@@ -115,7 +116,7 @@ public:
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
 
 #if PLATFORM(COCOA)
-    mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
+    const WebCore::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
 
     bool shouldPlugInAutoStartFromOrigin(WebPage&, const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
@@ -203,8 +204,8 @@ private:
     virtual IPC::Connection* downloadProxyConnection() override;
     virtual AuthenticationManager& downloadsAuthenticationManager() override;
 
-    void initializeWebProcess(const WebProcessCreationParameters&, IPC::MessageDecoder&);
-    void platformInitializeWebProcess(const WebProcessCreationParameters&, IPC::MessageDecoder&);
+    void initializeWebProcess(WebProcessCreationParameters&&, IPC::MessageDecoder&);
+    void platformInitializeWebProcess(WebProcessCreationParameters&&, IPC::MessageDecoder&);
 
     void platformTerminate();
     void registerURLSchemeAsEmptyDocument(const String&);
@@ -314,7 +315,7 @@ private:
     bool m_diskCacheIsDisabledForTesting;
 
 #if PLATFORM(COCOA)
-    mach_port_t m_compositingRenderServerPort;
+    WebCore::MachSendRight m_compositingRenderServerPort;
     pid_t m_presenterApplicationPid;
     dispatch_group_t m_clearResourceCachesDispatchGroup;
     bool m_shouldForceScreenFontSubstitution;

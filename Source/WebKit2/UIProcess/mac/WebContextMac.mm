@@ -188,9 +188,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     
 #if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)
-    mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
-    if (renderServerPort != MACH_PORT_NULL)
-        parameters.acceleratedCompositingPort = IPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
+    parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
 #endif
 #endif
 

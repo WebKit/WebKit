@@ -57,9 +57,6 @@ PluginProcess& PluginProcess::shared()
 PluginProcess::PluginProcess()
     : m_supportsAsynchronousPluginInitialization(false)
     , m_minimumLifetimeTimer(RunLoop::main(), this, &PluginProcess::minimumLifetimeTimerFired)
-#if PLATFORM(COCOA)
-    , m_compositingRenderServerPort(MACH_PORT_NULL)
-#endif
     , m_connectionActivity("PluginProcess connection activity.")
 {
     NetscapePlugin::setSetExceptionFunction(WebProcessConnection::setGlobalException);
@@ -139,7 +136,7 @@ void PluginProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringRefere
 {
 }
 
-void PluginProcess::initializePluginProcess(const PluginProcessCreationParameters& parameters)
+void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
     ASSERT(!m_pluginModule);
 
@@ -147,7 +144,7 @@ void PluginProcess::initializePluginProcess(const PluginProcessCreationParameter
     setMinimumLifetime(parameters.minimumLifetime);
     setTerminationTimeout(parameters.terminationTimeout);
 
-    platformInitializePluginProcess(parameters);
+    platformInitializePluginProcess(WTF::move(parameters));
 }
 
 void PluginProcess::createWebProcessConnection()

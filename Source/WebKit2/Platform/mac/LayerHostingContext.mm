@@ -26,17 +26,20 @@
 #import "config.h"
 #import "LayerHostingContext.h"
 
+#import <WebCore/MachSendRight.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebKitSystemInterface.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
-std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(mach_port_t serverPort)
+std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(const MachSendRight& serverPort)
 {
     auto layerHostingContext = std::make_unique<LayerHostingContext>();
 
     layerHostingContext->m_layerHostingMode = LayerHostingMode::InProcess;
-    layerHostingContext->m_context = (CAContext *)WKCAContextMakeRemoteWithServerPort(serverPort);
+    layerHostingContext->m_context = (CAContext *)WKCAContextMakeRemoteWithServerPort(serverPort.sendRight());
 
     return layerHostingContext;
 }

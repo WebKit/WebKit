@@ -368,6 +368,11 @@ bool ArgumentCoder<Credential>::decodePlatformData(ArgumentDecoder& decoder, Cre
     return true;
 }
 
+void ArgumentCoder<MachSendRight>::encode(ArgumentEncoder& encoder, const MachSendRight& sendRight)
+{
+    encoder << Attachment(sendRight.copySendRight().leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
+}
+
 void ArgumentCoder<MachSendRight>::encode(ArgumentEncoder& encoder, MachSendRight&& sendRight)
 {
     encoder << Attachment(sendRight.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);

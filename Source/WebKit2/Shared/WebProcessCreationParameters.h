@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
+#include <WebCore/MachSendRight.h>
 #include <WebCore/SessionIDHash.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -130,7 +131,7 @@ struct WebProcessCreationParameters {
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
 
-    IPC::MachPort acceleratedCompositingPort;
+    WebCore::MachSendRight acceleratedCompositingPort;
 
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;

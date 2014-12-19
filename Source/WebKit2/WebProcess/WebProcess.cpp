@@ -158,7 +158,6 @@ WebProcess::WebProcess()
     , m_cacheModel(CacheModelDocumentViewer)
     , m_diskCacheIsDisabledForTesting(false)
 #if PLATFORM(COCOA)
-    , m_compositingRenderServerPort(MACH_PORT_NULL)
     , m_clearResourceCachesDispatchGroup(0)
 #endif
     , m_fullKeyboardAccessEnabled(false)
@@ -270,7 +269,7 @@ AuthenticationManager& WebProcess::downloadsAuthenticationManager()
     return *supplement<AuthenticationManager>();
 }
 
-void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, IPC::MessageDecoder& decoder)
+void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters, IPC::MessageDecoder& decoder)
 {
     ASSERT(m_pageMap.isEmpty());
 
@@ -278,7 +277,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     m_usesNetworkProcess = parameters.usesNetworkProcess;
 #endif
 
-    platformInitializeWebProcess(parameters, decoder);
+    platformInitializeWebProcess(WTF::move(parameters), decoder);
 
     WTF::setCurrentThreadIsUserInitiated();
 

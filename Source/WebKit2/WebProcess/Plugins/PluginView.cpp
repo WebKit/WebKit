@@ -1530,7 +1530,7 @@ void PluginView::setComplexTextInputState(PluginComplexTextInputState pluginComp
         m_webPage->send(Messages::WebPageProxy::SetPluginComplexTextInputState(m_plugin->pluginComplexTextInputIdentifier(), pluginComplexTextInputState));
 }
 
-mach_port_t PluginView::compositingRenderServerPort()
+const MachSendRight& PluginView::compositingRenderServerPort()
 {
     return WebProcess::shared().compositingRenderServerPort();
 }

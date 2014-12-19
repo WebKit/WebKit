@@ -1,3 +1,53 @@
+2014-12-19  Anders Carlsson  <andersca@apple.com>
+
+        Use WebCore::MachSendRights for the compositing render server port
+        https://bugs.webkit.org/show_bug.cgi?id=139834
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::callMemberFunctionImpl):
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess):
+        (WebKit::PluginProcess::initializePluginProcess):
+        * PluginProcess/PluginProcess.h:
+        (WebKit::PluginProcess::compositingRenderServerPort):
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::compositingRenderServerPort):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<MachSendRight>::encode):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::compositingRenderServerPort):
+        (WebKit::NetscapePlugin::setLayerHostingMode):
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::compositingRenderServerPort):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::compositingRenderServerPort):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-12-19  Andreas Kling  <akling@apple.com>
 
         Ref-ify TextIterator API.

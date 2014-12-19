@@ -37,10 +37,11 @@ typedef struct _NPVariant NPVariant;
 typedef void* NPIdentifier;
 
 namespace WebCore {
-    class HTTPHeaderMap;
-    class IntRect;
-    class URL;
-    class ProtectionSpace;
+class HTTPHeaderMap;
+class IntRect;
+class MachSendRight;
+class ProtectionSpace;
+class URL;
 }
 
 namespace WebKit {
@@ -109,7 +110,7 @@ public:
     virtual void setComplexTextInputState(PluginComplexTextInputState) = 0;
 
     // Returns the mach port of the compositing render server.
-    virtual mach_port_t compositingRenderServerPort() = 0;
+    virtual const WebCore::MachSendRight& compositingRenderServerPort() = 0;
 
     // Open the preference pane for this plug-in (as stated in the plug-in's Info.plist).
     virtual void openPluginPreferencePane() = 0;

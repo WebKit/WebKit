@@ -168,9 +168,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
     parameters.supportsAsynchronousPluginInitialization = m_pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
 
 #if HAVE(HOSTED_CORE_ANIMATION)
-    mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
-    if (renderServerPort != MACH_PORT_NULL)
-        parameters.acceleratedCompositingPort = IPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
+    parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
 #endif
 }
 
