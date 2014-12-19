@@ -1,5 +1,14 @@
 2014-12-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Build fix.
+
+        Unreviewed.
+
+        * WebCore.exp.in:
+        Added missing symbol.
+
+2014-12-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177522. rdar://problem/19288547
 
     2014-12-18  Timothy Horton  <timothy_horton@apple.com>
