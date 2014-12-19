@@ -993,7 +993,6 @@ fast/text/international/plane2.html
 fast/media/print-restores-previous-mediatype.html
 
 webkit.org/b/35973 fast/multicol/hit-test-above-or-below.html [ Failure ]
-webkit.org/b/35973 fast/multicol/newmulticol/compare-with-old-impl/hit-test-above-or-below.html [ Failure ]
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ Pass ImageOnlyFailure ]
 
 # Needs progress element support
@@ -1325,9 +1324,6 @@ webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html
 
 # HTTP 204 (No Content) should be ignored
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
-
-# Unskip after implementing testRunner::setDefersLoading and ::goBack.
-loader/navigation-while-deferring-loads.html
 
 # Skip all webgl tests on Windows for now since they don't seem to work consistently
 webgl [ Skip ]
@@ -2290,7 +2286,6 @@ webkit.org/b/128789 [ Debug ] js/regress/simple-getter-access.html [ Pass Timeou
 webkit.org/b/128855 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ] 
-webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ] 
 
@@ -2535,7 +2530,6 @@ fast/clip/006.html [ Pass Timeout ]
 fast/css/replaced-element-implicit-size.html [ Pass Failure ]
 fast/dom/document-head.html [ Pass Timeout ]
 fast/dom/Element/id-in-frame.html [ Pass Failure Timeout ]
-fast/dom/HTMLProgressElement/progress-element.html [ Pass Timeout ]
 fast/dom/HTMLSelectElement/remove-element-from-within-focus-handler-crash.html [ Pass Timeout ]
 fast/dom/HTMLScriptElement/defer-inline-script.html [ Pass Timeout ]
 fast/dynamic/positioned-movement-with-positioned-children.html [ Pass Timeout ]
@@ -2806,7 +2800,6 @@ fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
 http/tests/media/video-cancel-load.html [ Crash Failure ]
 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 js/slow-stress/emscripten-memops.html [ Timeout ]
-fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
@@ -2895,7 +2888,7 @@ tables/mozilla/bugs/bug51037.html [ Failure ]
 tables/mozilla/bugs/bug55545.html [ Failure ]
 tables/mozilla/bugs/bug92647-2.html [ Failure ]
 tables/mozilla/bugs/bug99948.html [ Failure ]
-tables/mozilla/marvin/backgr_simple-table-column.html [ ImageOnlyFailure Timeout]
+tables/mozilla/marvin/backgr_simple-table-column.html [ ImageOnlyFailure Timeout ]
 tables/mozilla/other/move_row.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug1725.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
@@ -2915,7 +2908,6 @@ fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html [ Failure ]
 fast/forms/search/search-size-with-decorations.html [ Failure ]
 fast/forms/HTMLOptionElement_label07.html [ Failure ]
-fast/forms/select/optgroup-rendering.html [ Failure Timeout ]
 fast/overflow/scroll-nested-positioned-layer-in-overflow.html [ Failure ]
 fast/overflow/scrollRevealButton.html [ Failure ]
 fast/repaint/control-clip.html [ Failure ]

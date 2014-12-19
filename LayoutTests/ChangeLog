@@ -1,3 +1,12 @@
+2014-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Unskip a test that started working after r177542. Also clear up some
+        lint warnings about the TestExpectations file.
+
+        * platform/win/TestExpectations:
+
 2014-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         media/video-seek-past-end-paused.html frequently times out on Mavericks
