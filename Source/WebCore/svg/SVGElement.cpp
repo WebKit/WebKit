@@ -708,6 +708,10 @@ void SVGElement::finishParsingChildren()
     // finishParsingChildren() is called when the close tag is reached for an element (e.g. </svg>)
     // we send SVGLoad events here if we can, otherwise they'll be sent when any required loads finish
     sendSVGLoadEventIfPossible();
+
+    // Notify all the elements which have references to this element to rebuild their shadow and render
+    // trees, e.g. a <use> element references a target element before this target element is defined.
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const

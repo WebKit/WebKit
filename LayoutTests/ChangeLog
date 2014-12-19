@@ -1,3 +1,19 @@
+2014-12-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Only when the SVG is inline and only when a shape is referenced before it is defined, this shape will not be drawn.
+        https://bugs.webkit.org/show_bug.cgi?id=139451.
+
+        Reviewed by Antti Koivisto.
+
+        Ensure that when a <use> element inside an inline SVG references another
+        target SVG element, which has not been defined yet, gets its shadow DOM
+        tree updated once the target element is created. Updating the shadow DOM
+        tree of the <use> element should update the corresponding shadow render
+        tree as well.
+
+        * svg/in-html/defs-after-use-expected.html: Added.
+        * svg/in-html/defs-after-use.html: Added.
+
 2014-12-18  Alexey Proskuryakov  <ap@apple.com>
 
         More gardening for flaky tests that are now properly reported as timing oout.

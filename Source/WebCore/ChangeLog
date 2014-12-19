@@ -1,3 +1,26 @@
+2014-12-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Only when the SVG is inline and only when a shape is referenced before it is defined, this shape will not be drawn.
+        https://bugs.webkit.org/show_bug.cgi?id=139451.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: svg/in-html/defs-after-use.html.
+
+        When parsing the children of an SVG element is finished, we need to notify the
+        other SVG elements which have incomplete shadow trees because of early referencing
+        to this element. The referencing elements need to rebuild their shadow trees and
+        make new copies of the this element and its sub-tree.
+        
+        This is the case where a <use> tag references target elements before these target
+        elements are defined. Updating the shadow DOM tree of a <use> element should update
+        the corresponding shadow render tree as well.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::finishParsingChildren):
+        Invalidate all the referencing elements of a target element whose sub-tree has
+        just finished parsing.
+
 2014-12-19  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2
