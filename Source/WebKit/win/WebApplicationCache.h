@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class WebApplicationCache : public IWebApplicationCache {
+class DECLSPEC_UUID("1119E970-4B13-4B9A-A049-41096104B689") WebApplicationCache : public IWebApplicationCache {
 public:
     static WebApplicationCache* createInstance();
 protected:

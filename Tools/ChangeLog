@@ -1,3 +1,75 @@
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update DumpRenderTree to more closely match Mac version
+        https://bugs.webkit.org/show_bug.cgi?id=139799
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::accessibleElementById): Correct
+        use of BSTR to avoid leak.
+        * DumpRenderTree/win/DumpRenderTree.cpp: Reorder methods and
+        update to match Mac version more closely.
+        (dumpFramesAsText):
+        (dump):
+        (resetDefaultsToConsistentValues):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (sizeWebViewForCurrentTest):
+        (runTest):
+        (openWindows):
+        (windowToWebViewMap):
+        (createWebViewAndOffscreenWindow):
+        (sharedCFURLCache):
+        (initializeGlobalsFromCommandLineOptions):
+        (main):
+        * DumpRenderTree/win/TestRunnerWin.cpp: Ditto.
+        (TestRunner::addDisallowedURL):
+        (TestRunner::applicationCacheDiskUsageForOrigin):
+        (TestRunner::syncLocalStorage):
+        (TestRunner::localStorageDiskUsageForOrigin):
+        (TestRunner::observeStorageTrackerNotifications):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::originsWithApplicationCache):
+        (TestRunner::deleteAllLocalStorage):
+        (TestRunner::setStorageDatabaseIdleInterval):
+        (TestRunner::closeIdleLocalStorageDatabases):
+        (TestRunner::originsWithLocalStorage):
+        (TestRunner::deleteLocalStorageForOrigin):
+        (TestRunner::copyDecodedHostName):
+        (TestRunner::copyEncodedHostName):
+        (TestRunner::keepWebHistory):
+        (TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (TestRunner::setAppCacheMaximumSize):
+        (TestRunner::setCustomPolicyDelegate):
+        (TestRunner::goBack):
+        (TestRunner::setDefersLoading):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::setMockDeviceOrientation):
+        (TestRunner::setMockGeolocationPosition):
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        (TestRunner::setIconDatabaseEnabled):
+        (TestRunner::setMainFrameIsFirstResponder):
+        (TestRunner::setSpatialNavigationEnabled):
+        (TestRunner::setPluginsEnabled):
+        (TestRunner::setAutomaticLinkDetectionEnabled):
+        (TestRunner::setUseDashboardCompatibilityMode):
+        (TestRunner::dispatchPendingLoadRequests):
+        (TestRunner::findString):
+        (TestRunner::setCacheModel):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        (TestRunner::setWebViewEditable):
+        (TestRunner::authenticateSession):
+        (TestRunner::abortModal):
+        (TestRunner::setSerializeHTTPLoads):
+        (TestRunner::addChromeInputField):
+        (TestRunner::removeChromeInputField):
+        (TestRunner::focusWebView):
+        (TestRunner::setBackingScaleFactor):
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::denyWebNotificationPermission):
+        (TestRunner::removeAllWebNotificationPermissions):
+        (TestRunner::simulateWebNotificationClick):
+
 2014-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Add strong typing to RefCounter interface, return value as a bool.

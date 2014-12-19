@@ -82,6 +82,7 @@ TestRunner::~TestRunner()
 void TestRunner::addDisallowedURL(JSStringRef url)
 {
     // FIXME: Implement!
+    printf("ERROR: TestRunner::addDisallowedURL(JSStringRef) not implemented\n");
 }
 
 bool TestRunner::callShouldCloseOnWebView()
@@ -108,36 +109,66 @@ void TestRunner::clearAllApplicationCaches()
     applicationCache->deleteAllApplicationCaches();
 }
 
-long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef name)
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef url)
 {
-    // FIXME: Implement to get disk usage by all application caches for an origin.
-    return 0;
+    COMPtr<IWebSecurityOrigin> origin;
+    if (FAILED(WebKitCreateInstance(CLSID_WebSecurityOrigin, 0, IID_IWebSecurityOrigin, reinterpret_cast<void**>(&origin))))
+        return 0;
+
+    COMPtr<IWebApplicationCache> applicationCache;
+    if (FAILED(WebKitCreateInstance(CLSID_WebApplicationCache, 0, IID_IWebApplicationCache, reinterpret_cast<void**>(&applicationCache))))
+        return 0;
+
+    _bstr_t urlBstr(JSStringCopyBSTR(url), false);
+    origin->initWithURL(urlBstr.GetBSTR());
+
+    long long usage = 0;
+    if (FAILED(applicationCache->diskUsageForOrigin(origin.get(), &usage)))
+        return 0;
+
+    return usage;
 }
 
 void TestRunner::syncLocalStorage()
 {
-    // FIXME: Implement.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::syncLocalStorage() not implemented\n");
 }
 
 long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
 {
-    // FIXME: Implement to support getting local storage disk usage for an origin.
+    // FIXME: Implement to support getting local storage disk usage for an origin. (Ditto WebStorageManager)
+    printf("ERROR: TestRunner::localStorageDiskUsageForOrigin(JSStringRef) not implemented\n");
     return 0;
 }
 
 void TestRunner::observeStorageTrackerNotifications(unsigned number)
 {
-    // FIXME: Implement.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::observeStorageTrackerNotifications(unsigned) not implemented\n");
 }
 
 void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
 {
-    // FIXME: Implement to support deleting all application cache for an origin.
+    COMPtr<IWebSecurityOrigin> securityOrigin;
+    if (FAILED(WebKitCreateInstance(CLSID_WebSecurityOrigin, 0, IID_IWebSecurityOrigin, reinterpret_cast<void**>(&securityOrigin))))
+        return;
+
+    _bstr_t originBstr(JSStringCopyBSTR(origin), false);
+    if (FAILED(securityOrigin->initWithURL(originBstr.GetBSTR())))
+        return;
+
+    COMPtr<IWebApplicationCache> applicationCache;
+    if (FAILED(WebKitCreateInstance(CLSID_WebApplicationCache, 0, IID_IWebApplicationCache, reinterpret_cast<void**>(&applicationCache))))
+        return;
+
+    applicationCache->deleteCacheForOrigin(securityOrigin.get());
 }
 
 JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 {
     // FIXME: Implement to get origins that have application caches.
+    printf("ERROR: TestRunner::originsWithApplicationCache(JSContextRef) not implemented\n");
     return JSValueMakeUndefined(context);
 }
 
@@ -156,28 +187,33 @@ void TestRunner::clearAllDatabases()
 
 void TestRunner::deleteAllLocalStorage()
 {
-    // FIXME: Implement.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::deleteAllLocalStorage() not implemented\n");
 }
 
 void TestRunner::setStorageDatabaseIdleInterval(double)
 {
-    // FIXME: Implement this.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::setStorageDatabaseIdleInterval(double) not implemented\n");
 }
 
 void TestRunner::closeIdleLocalStorageDatabases()
 {
-    // FIXME: Implement this.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::closeIdleLocalStorageDatabases(double) not implemented\n");
 }
 
 JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
 {
-    // FIXME: Implement.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::originsWithLocalStorage(JSContextRef) not implemented\n");
     return JSValueMakeUndefined(context);
 }
 
 void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
 {
-    // FIXME: Implement.
+    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
+    printf("ERROR: TestRunner::deleteLocalStorageForOrigin(JSStringRef) not implemented\n");
 }
 
 void TestRunner::clearBackForwardList()
@@ -209,12 +245,14 @@ void TestRunner::clearBackForwardList()
 JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
 {
     // FIXME: Implement!
+    printf("ERROR: TestRunner::copyDecodedHostName(JSStringRef) not implemented\n");
     return 0;
 }
 
 JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
 {
     // FIXME: Implement!
+    printf("ERROR: TestRunner::copyEncodedHostName(JSStringRef) not implemented\n");
     return 0;
 }
 
@@ -230,6 +268,9 @@ void TestRunner::keepWebHistory()
         return;
 
     COMPtr<IWebHistory> sharedHistory;
+    if (SUCCEEDED(history->optionalSharedHistory(&sharedHistory)) && sharedHistory)
+        return;
+
     if (FAILED(WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(sharedHistory), reinterpret_cast<void**>(&sharedHistory))))
         return;
 
@@ -239,6 +280,7 @@ void TestRunner::keepWebHistory()
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     // FIXME: Implement for Geolocation layout tests.
+    printf("ERROR: TestRunner::numberOfPendingGeolocationPermissionRequests() not implemented\n");
     return -1;
 }
 
@@ -351,7 +393,11 @@ void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 
 void TestRunner::setAppCacheMaximumSize(unsigned long long size)
 {
-    printf("ERROR: TestRunner::setAppCacheMaximumSize() not implemented\n");
+    COMPtr<IWebApplicationCache> applicationCache;
+    if (FAILED(WebKitCreateInstance(CLSID_WebApplicationCache, 0, IID_IWebApplicationCache, reinterpret_cast<void**>(&applicationCache))))
+        return;
+
+    applicationCache->setMaximumSize(size);
 }
 
 void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
@@ -377,11 +423,13 @@ void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
     if (FAILED(frame->webView(&webView)))
         return;
 
-    if (setDelegate) {
-        policyDelegate->setPermissive(permissive);
-        webView->setPolicyDelegate(policyDelegate);
-    } else
-        webView->setPolicyDelegate(0);
+    if (!setDelegate) {
+        webView->setPolicyDelegate(nullptr);
+        return;
+    }
+
+    policyDelegate->setPermissive(permissive);
+    webView->setPolicyDelegate(policyDelegate);
 }
 
 void TestRunner::setDatabaseQuota(unsigned long long quota)
@@ -399,12 +447,25 @@ void TestRunner::setDatabaseQuota(unsigned long long quota)
 
 void TestRunner::goBack()
 {
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    BOOL ignore = TRUE;
+    webView->goBack(&ignore);
 }
 
-void TestRunner::setDefersLoading(bool)
+void TestRunner::setDefersLoading(bool defers)
 {
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    viewPrivate->setDefersCallbacks(defers);
 }
 
 void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
@@ -413,27 +474,29 @@ void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStri
     if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
         return;
 
-    BSTR schemeBSTR = JSStringCopyBSTR(scheme);
-    webView->setDomainRelaxationForbiddenForURLScheme(forbidden, schemeBSTR);
-    SysFreeString(schemeBSTR);
+    _bstr_t schemeBSTR(JSStringCopyBSTR(scheme), false);
+    webView->setDomainRelaxationForbiddenForURLScheme(forbidden, schemeBSTR.GetBSTR());
 }
 
 void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // FIXME: Implement for DeviceOrientation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=30335.
+    printf("ERROR: TestRunner::setMockDeviceOrientation() not implemented\n");
 }
 
 void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.
+    printf("ERROR: TestRunner::setMockGeolocationPosition() not implemented\n");
 }
 
 void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.
+    printf("ERROR: TestRunner::setMockGeolocationPositionUnavailableError() not implemented\n");
 }
 
 void TestRunner::setGeolocationPermission(bool allow)
@@ -444,6 +507,7 @@ void TestRunner::setGeolocationPermission(bool allow)
 
 void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
+#if ENABLE(ICONDATABASE)
     // See also <rdar://problem/6480108>
     COMPtr<IWebIconDatabase> iconDatabase;
     COMPtr<IWebIconDatabase> tmpIconDatabase;
@@ -453,11 +517,12 @@ void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
         return;
 
     iconDatabase->setEnabled(iconDatabaseEnabled);
+#endif
 }
 
-void TestRunner::setMainFrameIsFirstResponder(bool flag)
+void TestRunner::setMainFrameIsFirstResponder(bool)
 {
-    // FIXME: Implement!
+    // Nothing to do here on Windows
 }
 
 void TestRunner::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
@@ -493,6 +558,7 @@ void TestRunner::setXSSAuditorEnabled(bool enabled)
 void TestRunner::setSpatialNavigationEnabled(bool enabled)
 {
     // FIXME: Implement for SpatialNavigation layout tests.
+    printf("ERROR: TestRunner::setSpatialNavigationEnabled(bool) not implemented\n");
 }
 
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
@@ -544,7 +610,15 @@ void TestRunner::setPopupBlockingEnabled(bool enabled)
 
 void TestRunner::setPluginsEnabled(bool flag)
 {
-    // FIXME: Implement
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    preferences->setPlugInsEnabled(flag);
 }
 
 void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
@@ -567,6 +641,7 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
 void TestRunner::setAutomaticLinkDetectionEnabled(bool)
 {
     // FIXME: Implement this.
+    printf("ERROR: TestRunner::setAutomaticLinkDetectionEnabled(bool) not implemented\n");
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(bool shouldCycle)
@@ -584,7 +659,7 @@ void TestRunner::setTabKeyCyclesThroughElements(bool shouldCycle)
 
 void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
-    // FIXME: Implement!
+    // Not implemented on Windows.
 }
 
 void TestRunner::setUserStyleSheetEnabled(bool flag)
@@ -781,6 +856,7 @@ void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495
+    printf("ERROR: TestRunner::dispatchPendingLoadRequests() not implemented\n");
 }
 
 void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
@@ -884,12 +960,21 @@ void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 bool TestRunner::findString(JSContextRef /* context */, JSStringRef /* target */, JSObjectRef /* optionsArray */)
 {
     // FIXME: Implement
+    printf("ERROR: TestRunner::findString(...) not implemented\n");
     return false;
 }
 
-void TestRunner::setCacheModel(int)
+void TestRunner::setCacheModel(int cacheModel)
 {
-    // FIXME: Implement
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    preferences->setCacheModel(static_cast<WebCacheModel>(cacheModel));
 }
 
 bool TestRunner::isCommandEnabled(JSStringRef /*name*/)
@@ -1083,7 +1168,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
-
+    // Nothing implemented here (compare to Mac)
 }
 
 void TestRunner::apiTestGoToCurrentBackForwardItem()
@@ -1104,21 +1189,33 @@ void TestRunner::apiTestGoToCurrentBackForwardItem()
     webView->goToBackForwardItem(item.get(), &success);
 }
 
-void TestRunner::setWebViewEditable(bool)
+void TestRunner::setWebViewEditable(bool editable)
 {
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return;
+
+    viewEditing->setEditable(editable);
 }
 
 void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
+    printf("ERROR: TestRunner::authenticateSession() not implemented\n");
 }
 
 void TestRunner::abortModal()
 {
+    // Nothing to do
 }
 
 void TestRunner::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement.
+    printf("ERROR: TestRunner::setSerializeHTTPLoads() not implemented\n");
 }
 
 void TestRunner::setTextDirection(JSStringRef direction)
@@ -1132,18 +1229,22 @@ void TestRunner::setTextDirection(JSStringRef direction)
 
 void TestRunner::addChromeInputField()
 {
+    printf("ERROR: TestRunner::addChromeInputField() not implemented\n");
 }
 
 void TestRunner::removeChromeInputField()
 {
+    printf("ERROR: TestRunner::removeChromeInputField() not implemented\n");
 }
 
 void TestRunner::focusWebView()
 {
+    printf("ERROR: TestRunner::focusWebView() not implemented\n");
 }
 
 void TestRunner::setBackingScaleFactor(double)
 {
+    // Not applicable
 }
 
 void TestRunner::resetPageVisibility()
@@ -1158,18 +1259,22 @@ void TestRunner::setPageVisibility(const char*)
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
+    printf("ERROR: TestRunner::grantWebNotificationPermission(JSStringRef) not implemented\n");
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef jsOrigin)
 {
+    printf("ERROR: TestRunner::denyWebNotificationPermission(JSStringRef) not implemented\n");
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
 {
+    printf("ERROR: TestRunner::removeAllWebNotificationPermissions() not implemented\n");
 }
 
 void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
 {
+    printf("ERROR: TestRunner::simulateWebNotificationClick() not implemented\n");
 }
 
 void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)

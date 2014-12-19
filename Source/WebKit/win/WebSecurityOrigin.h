@@ -67,6 +67,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setQuota( 
         /* [in] */ unsigned long long quota);
 
+    virtual HRESULT STDMETHODCALLTYPE initWithURL(/*[in]*/ BSTR);
+
 private:
     WebSecurityOrigin(WebCore::SecurityOrigin*);
     ~WebSecurityOrigin();

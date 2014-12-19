@@ -29,8 +29,10 @@
 #include "WebSecurityOrigin.h"
 #include "WebKitDLL.h"
 
+#include "MarshallingHelpers.h"
 #include <WebCore/BString.h>
 #include <WebCore/DatabaseManager.h>
+#include <WebCore/URL.h>
 
 using namespace WebCore;
 
@@ -57,7 +59,7 @@ WebSecurityOrigin::~WebSecurityOrigin()
 }
 
 // IUnknown ------------------------------------------------------------------------
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT WebSecurityOrigin::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
@@ -73,12 +75,12 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::QueryInterface(REFIID riid, void** 
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebSecurityOrigin::AddRef()
+ULONG WebSecurityOrigin::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebSecurityOrigin::Release()
+ULONG WebSecurityOrigin::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -89,8 +91,7 @@ ULONG STDMETHODCALLTYPE WebSecurityOrigin::Release()
 
 // IWebSecurityOrigin --------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::protocol( 
-    /* [retval][out] */ BSTR* result)
+HRESULT WebSecurityOrigin::protocol(/* [retval][out] */ BSTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -100,8 +101,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::protocol(
     return S_OK;
 }
         
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::host( 
-    /* [retval][out] */ BSTR* result)
+HRESULT WebSecurityOrigin::host(/* [retval][out] */ BSTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -111,8 +111,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::host(
     return S_OK;
 }
       
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::port( 
-    /* [retval][out] */ unsigned short* result)
+HRESULT WebSecurityOrigin::port(/* [retval][out] */ unsigned short* result)
 {
     if (!result)
         return E_POINTER;
@@ -122,8 +121,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::port(
     return S_OK;
 }
         
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::usage( 
-    /* [retval][out] */ unsigned long long* result)
+HRESULT WebSecurityOrigin::usage(/* [retval][out] */ unsigned long long* result)
 {
 #if ENABLE(SQL_DATABASE)
     if (!result)
@@ -138,8 +136,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::usage(
 #endif
 }
         
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::quota( 
-    /* [retval][out] */ unsigned long long* result)
+HRESULT WebSecurityOrigin::quota(/* [retval][out] */ unsigned long long* result)
 {
 #if ENABLE(SQL_DATABASE)
     if (!result)
@@ -153,8 +150,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::quota(
 #endif
 }
         
-HRESULT STDMETHODCALLTYPE WebSecurityOrigin::setQuota( 
-    /* [in] */ unsigned long long quota) 
+HRESULT WebSecurityOrigin::setQuota(/* [in] */ unsigned long long quota) 
 {
 #if ENABLE(SQL_DATABASE)
     DatabaseManager::manager().setQuota(m_securityOrigin.get(), quota);
@@ -164,4 +160,11 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::setQuota(
     UNUSED_PARAM(quota);
     return E_NOTIMPL;
 #endif
+}
+
+HRESULT WebSecurityOrigin::initWithURL(/* [in] */ BSTR urlBstr)
+{
+    m_securityOrigin = WebCore::SecurityOrigin::create(MarshallingHelpers::BSTRToKURL(urlBstr));
+
+    return S_OK;
 }

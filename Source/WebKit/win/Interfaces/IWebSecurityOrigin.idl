@@ -47,4 +47,6 @@ interface IWebSecurityOrigin : IUnknown
 
     HRESULT quota([out, retval] unsigned long long* result);
     HRESULT setQuota([in] unsigned long long quota);
+
+    HRESULT initWithURL([in] BSTR);
 }

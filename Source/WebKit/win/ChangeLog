@@ -1,5 +1,31 @@
 2014-12-18  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Update DumpRenderTree to more closely match Mac version
+        https://bugs.webkit.org/show_bug.cgi?id=139799
+
+        Reviewed by Tim Horton.
+
+        * Interfaces/IWebSecurityOrigin.idl: Add initializer from URL.
+        * Interfaces/WebKit.idl: Add CLSID so we can instantiate a
+        WebSecurityOrigin from COM.
+        * WebApplicationCache.h: Decorate class declaration with CLSID
+        to support COM introspection.
+        * WebSecurityOrigin.cpp: Get rid of meaningless STDMETHODCALLTYPE
+        declarations inside implementation.
+        (WebSecurityOrigin::QueryInterface):
+        (WebSecurityOrigin::AddRef):
+        (WebSecurityOrigin::Release):
+        (WebSecurityOrigin::protocol):
+        (WebSecurityOrigin::host):
+        (WebSecurityOrigin::port):
+        (WebSecurityOrigin::usage):
+        (WebSecurityOrigin::quota):
+        (WebSecurityOrigin::setQuota):
+        (WebSecurityOrigin::initWithURL): Added.
+        * WebSecurityOrigin.h:
+
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Correct Windows tests after Bug 139149.
         https://bugs.webkit.org/show_bug.cgi?id=139781
 

@@ -123,12 +123,9 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
 {
     AccessibilityUIElement rootAccessibilityUIElement = rootElement();
 
-    BSTR idAttribute = JSStringCopyBSTR(id);
+    _bstr_t idAttribute(JSStringCopyBSTR(id), false);
 
     COMPtr<IAccessible> result = findAccessibleObjectById(rootAccessibilityUIElement, idAttribute);
-
-    ::SysFreeString(idAttribute);
-
     if (result)
         return AccessibilityUIElement(result);
 
