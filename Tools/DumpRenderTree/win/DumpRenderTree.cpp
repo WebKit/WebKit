@@ -884,6 +884,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (SUCCEEDED(webView->preferences(&preferences)))
         resetDefaultsToConsistentValues(preferences.get());
 
+    TestRunner::setSerializeHTTPLoads(false);
+
     if (gTestRunner) {
         JSGlobalContextRef context = frame->globalContext();
         WebCoreTestSupport::resetInternalsObject(context);

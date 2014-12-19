@@ -1,3 +1,14 @@
+2014-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Add accessor for serializing HTTP loads
+        https://bugs.webkit.org/show_bug.cgi?id=139817
+
+        Reviewed by Mark Lam.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: Reset serialized HTTP loads in our reset method.
+        * DumpRenderTree/win/TestRunnerWin.cpp: Provide implementation for serializing HTTP. Also
+        remove some redundant code from the destructor.
+
 2014-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up a fix for performance test bot failing to build

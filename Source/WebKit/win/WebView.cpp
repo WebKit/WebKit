@@ -32,6 +32,7 @@
 #include "DOMCoreClasses.h"
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
+#include "ResourceLoadScheduler.h"
 #include "SoftLinking.h"
 #include "SubframeLoader.h"
 #include "TextIterator.h"
@@ -7048,3 +7049,9 @@ HRESULT STDMETHODCALLTYPE WebView::selectedRangeForTesting(/* [out] */ UINT* loc
     return S_OK;
 }
 
+HRESULT WebView::setLoadResourcesSerially(BOOL serialize)
+{
+    WebPlatformStrategies::initialize();
+    resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
+    return S_OK;
+}

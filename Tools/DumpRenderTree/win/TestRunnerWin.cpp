@@ -63,11 +63,6 @@ TestRunner::~TestRunner()
         return;
 
     // reset webview-related states back to default values in preparation for next test
-
-    COMPtr<IWebViewPrivate> viewPrivate;
-    if (SUCCEEDED(webView->QueryInterface(&viewPrivate)))
-        viewPrivate->setTabKeyCyclesThroughElements(TRUE);
-
     COMPtr<IWebViewEditing> viewEditing;
     if (FAILED(webView->QueryInterface(&viewEditing)))
         return;
@@ -1212,10 +1207,17 @@ void TestRunner::abortModal()
     // Nothing to do
 }
 
-void TestRunner::setSerializeHTTPLoads(bool)
+void TestRunner::setSerializeHTTPLoads(bool serializeLoads)
 {
-    // FIXME: Implement.
-    printf("ERROR: TestRunner::setSerializeHTTPLoads() not implemented\n");
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    viewPrivate->setLoadResourcesSerially(serializeLoads);
 }
 
 void TestRunner::setTextDirection(JSStringRef direction)

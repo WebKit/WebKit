@@ -1019,6 +1019,8 @@ private:
     bool m_shouldInvertColors;
     void setShouldInvertColors(bool);
 
+    HRESULT STDMETHODCALLTYPE setLoadResourcesSerially(BOOL);
+
 protected:
     static bool registerWebViewWindowClass();
     static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

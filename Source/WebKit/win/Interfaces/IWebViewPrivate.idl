@@ -290,4 +290,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT firstRectForCharacterRangeForTesting([in] UINT location, [in] UINT length, [out, retval] RECT* resultRect);
 
     HRESULT selectedRangeForTesting([out] UINT* location, [out] UINT* length);
+
+    // SPI for DumpRenderTree
+    HRESULT setLoadResourcesSerially([in] BOOL serialize);
 }

@@ -1,0 +1,1 @@
+ERROR: nil result from IDOMElement::innerText
