@@ -1,3 +1,17 @@
+2014-12-19  Timothy Horton  <timothy_horton@apple.com>
+
+        WKView's ignoresNonWheelEvents should ignore immediate actions
+        https://bugs.webkit.org/show_bug.cgi?id=139839
+        <rdar://problem/19312111>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:context:configuration:webView:]):
+        (-[WKView _setIgnoresNonWheelEvents:]):
+        Install/uninstall the immediate action gesture recognizer when
+        toggling ignoresNonWheelEvents.
+
 2014-12-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177593.
