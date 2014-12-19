@@ -1,3 +1,10 @@
+2014-12-18  Jessie Berlin  <jberlin@webkit.org>
+
+        Speculative build-fix after r177522.
+
+        * UIProcess/mac/WKPreviewPopoverAnimationController.mm:
+        (-[WKPreviewPopoverAnimationController setPreviewOverrideImage:]):
+
 2014-12-18  Andreas Kling  <akling@apple.com>
 
         Ref-ify various Document-related things.
