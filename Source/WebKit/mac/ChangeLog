@@ -1,3 +1,38 @@
+2014-12-19  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2
+        <http://webkit.org/b/139463>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig:
+        - Only set GCC_ENABLE_OBJC_GC, GCC_MODEL_TUNING and TOOLCHAINS
+          on OS X.
+        - Set GCC_OPTIMIZATION_LEVEL_normal based on SDK.
+        * Configurations/DebugRelease.xcconfig:
+        - Only set MACOSX_DEPLOYMENT_TARGET and SDKROOT on OS X.
+        - Set WEBKIT_SYSTEM_INTERFACE_LIBRARY based on SDK.
+        * Configurations/Version.xcconfig:
+        - Set SYSTEM_VERSION_PREFIX separately for iOS and OS X.
+        * Configurations/WebKitLegacy.xcconfig:
+        - Set EXCLUDED_SOURCE_FILE_NAMES, EXPORTED_SYMBOLS_FILE_x86_64,
+          FRAMEWORK_SEARCH_PATHS, OTHER_CFLAGS, INSTALL_PATH,
+          DYLIB_INSTALL_NAME_BASE, OTHER_LDFLAGS, SECTORDER_FLAGS,
+          NORMAL_WEBKIT_LEGACY_FRAMEWORKS_DIR,
+          WEBKIT_LEGACY_FRAMEWORKS_DIR, NORMAL_PRODUCTION_FRAMEWORKS_DIR,
+          PRODUCTION_FRAMEWORKS_DIR, PRODUCTION_ROOT,
+          WEBCORE_PRIVATE_HEADERS_DIR_Production and
+          WEBKITSYSTEMINTERFACE_STATIC_LIBRARY_HEADERS_FOLDER_PATH_engineering
+          based on SDK.
+        - Fix PRODUCTION_ROOT to actually be set properly.
+        - Simplify EXPORTED_SYMBOLS_FILE_i386.
+
+        * migrate-headers.sh:
+        - Get rid of unused WEBKIT2_FRAMEWORKS_DIR variable.
+        - Change WEBCORE_PRIVATE_HEADERS_DIR_macosx_Production to
+          WEBCORE_PRIVATE_HEADERS_DIR_Production based on changes to
+          WebKitLegacy.xcconfig.
+
 2014-12-18  Andreas Kling  <akling@apple.com>
 
         Ref-ify various Document-related things.

@@ -1,3 +1,38 @@
+2014-12-19  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2
+        <http://webkit.org/b/139463>
+
+        Reviewed by Mark Rowe.
+
+        Also remove all uses of SQLITE3_HEADER_SEARCH_PATHS and
+        WEBCORE_SQLITE3_HEADER_SEARCH_PATHS which were phased out in
+        r132859 and needed for Leopard.
+
+        * Configurations/Base.xcconfig:
+        - Only set GCC_ENABLE_OBJC_GC, GCC_MODEL_TUNING and TOOLCHAINS
+          on OS X.
+        - Set GCC_OPTIMIZATION_LEVEL_normal based on SDK.
+        - Simplify SQLITE3_HEADER_SEARCH_PATHS.
+        * Configurations/DebugRelease.xcconfig:
+        - Only set MACOSX_DEPLOYMENT_TARGET and SDKROOT on OS X.
+        * Configurations/Version.xcconfig:
+        - Set SYSTEM_VERSION_PREFIX separately for iOS and OS X.
+        * Configurations/WebCore.xcconfig:
+        - Set EXPORTED_SYMBOLS_FILE_i386, EXPORTED_SYMBOLS_FILE_x86_64,
+          FRAMEWORK_SEARCH_PATHS, INSTALL_PATH, DYLIB_INSTALL_NAME_BASE,
+          OTHER_LDFLAGS, SECTORDER_FLAGS, NORMAL_WEBCORE_FRAMEWORKS_DIR,
+          WEBCORE_FRAMEWORKS_DIR, NORMAL_PRODUCTION_FRAMEWORKS_DIR,
+          PRODUCTION_FRAMEWORKS_DIR,
+          JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production and
+          EXCLUDED_SOURCE_FILE_NAMES based on SDK.
+        - Make sure DYLIB_INSTALL_NAME_BASE and OTHER_LDFLAGS are
+          overrideable by WebCoreTestSupport.xcconfig.
+        * Configurations/WebCoreTestSupport.xcconfig:
+        - Set PRIVATE_HEADERS_FOLDER_PATH_Production and
+          INSTALL_PATH_Production based on SDK.
+        - Override SECT_ORDER_FLAGS from WebCore.xcconfig.
+
 2014-12-19  Chris Dumez  <cdumez@apple.com>
 
         Clean up StyleBuilderCustom and DeprecatedStyleBuilder

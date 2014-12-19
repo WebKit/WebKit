@@ -1,3 +1,13 @@
+2014-12-19  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2
+        <http://webkit.org/b/139463>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        - Simplify SECTORDER_FLAGS.
+
 2014-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
