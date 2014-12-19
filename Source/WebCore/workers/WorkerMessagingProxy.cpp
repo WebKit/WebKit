@@ -64,7 +64,7 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     , m_workerThreadHadPendingActivity(false)
     , m_askedToTerminate(false)
 #if ENABLE(INSPECTOR)
-    , m_pageInspector(0)
+    , m_pageInspector(nullptr)
 #endif
 {
     ASSERT(m_workerObject);
@@ -296,7 +296,8 @@ void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
     StringCapture capturedMessage(message);
     m_scriptExecutionContext->postTask([this, capturedMessage] (ScriptExecutionContext&) {
-        m_pageInspector->dispatchMessageFromWorker(capturedMessage.string());
+        if (m_pageInspector)
+            m_pageInspector->dispatchMessageFromWorker(capturedMessage.string());
     });
 }
 #endif

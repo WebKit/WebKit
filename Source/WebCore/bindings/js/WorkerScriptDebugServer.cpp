@@ -75,7 +75,8 @@ void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, bool
     m_listeners.remove(listener);
 
     if (m_listeners.isEmpty()) {
-        m_workerGlobalScope->script()->detachDebugger(this);
+        if (m_workerGlobalScope->script())
+            m_workerGlobalScope->script()->detachDebugger(this);
         if (!skipRecompile)
             recompileAllJSFunctions();
     }
