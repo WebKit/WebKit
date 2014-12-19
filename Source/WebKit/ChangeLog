@@ -1,5 +1,12 @@
 2014-12-18  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build correction after r177513.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Correct for new
+        method signature.
+
+2014-12-18  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Correct Windows tests after Bug 139149.
         https://bugs.webkit.org/show_bug.cgi?id=139781
 
