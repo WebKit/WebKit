@@ -2339,6 +2339,19 @@ macro putClosureVar()
     storei t3, PayloadOffset[t0, t1, 8]
 end
 
+macro putLocalClosureVar()
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2, t3)
+    loadpFromInstruction(5, t4)
+    btpz t4, .noVariableWatchpointSet
+    notifyWrite(t4, t2, t3, t1, .pDynamic)
+.noVariableWatchpointSet:
+    loadp JSEnvironmentRecord::m_registers[t0], t0
+    loadisFromInstruction(6, t1)
+    storei t2, TagOffset[t0, t1, 8]
+    storei t3, PayloadOffset[t0, t1, 8]
+end
+
 
 _llint_op_put_to_scope:
     traceExecution()
@@ -2349,7 +2362,7 @@ _llint_op_put_to_scope:
     bineq t0, LocalClosureVar, .pGlobalProperty
     writeBarrierOnOperands(1, 3)
     loadVariable(1, t2, t1, t0)
-    putClosureVar()
+    putLocalClosureVar()
     dispatch(7)
 
 .pGlobalProperty:

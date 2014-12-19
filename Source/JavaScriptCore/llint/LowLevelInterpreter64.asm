@@ -2165,7 +2165,10 @@ end
 macro putLocalClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
-    notifyWrite(t0, t2, t1, .pDynamic)
+    loadpFromInstruction(5, t3)
+    btpz t3, .noVariableWatchpointSet
+    notifyWrite(t3, t2, t1, .pDynamic)
+.noVariableWatchpointSet:
     loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
     storeq t2, [t0, t1, 8]

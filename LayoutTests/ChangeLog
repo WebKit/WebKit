@@ -1,3 +1,18 @@
+2014-12-19  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(174226): Captured arguments in a using function compiled by the DFG have the initial value when the closure was invoked
+        https://bugs.webkit.org/show_bug.cgi?id=139808
+
+        Reviewed by Oliver Hunt.
+
+        New regression test.
+
+        * js/regress-139808-expected.txt: Added.
+        * js/regress-139808.html: Added.
+        * js/script-tests/regress-139808.js: Added.
+        (theClosureFunction.rot13):
+        (theClosureFunction):
+
 2014-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         Updte WebKit2 test expectations based on what bots see now.

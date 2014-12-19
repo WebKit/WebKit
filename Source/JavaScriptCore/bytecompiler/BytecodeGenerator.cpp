@@ -316,7 +316,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             if (!functionNode->captures(ident) && !shouldCaptureAllTheThings)
                 continue;
             capturesAnyArgumentByName = true;
-            capturedArguments[i] = addVar();
+            capturedArguments[i] = addVar(ident, IsVariable, IsWatchable);
         }
     }
 
