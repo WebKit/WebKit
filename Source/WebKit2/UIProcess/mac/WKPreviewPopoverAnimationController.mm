@@ -93,7 +93,7 @@ using namespace WebKit;
     NSSize scaledImageSize;
     if ([_previewPopover isShown]) {
         NSSize currentPopoverContentSize = [_previewPopover contentSize];
-        float scale = std::min(std::min(currentPopoverContentSize.width / imageSize.width, 1.0), std::min(currentPopoverContentSize.height / imageSize.height, 1.0));
+        float scale = std::min<float>(std::min<float>(currentPopoverContentSize.width / imageSize.width, 1.0), std::min<float>(currentPopoverContentSize.height / imageSize.height, 1.0));
         scaledImageSize = NSMakeSize(imageSize.width * scale, imageSize.height * scale);
     } else
         scaledImageSize = [self _preferredPopoverSizeWithPreviewPadding:[WKPagePreviewViewController previewPadding] forTargetSize:imageSize];
