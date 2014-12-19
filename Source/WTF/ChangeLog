@@ -1,3 +1,49 @@
+2014-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Add strong typing to RefCounter interface, return value as a bool.
+        https://bugs.webkit.org/show_bug.cgi?id=139776
+
+        Reviewed by Geoff Garen.
+
+        Currently all token vended by a RefCounter have the same type - Ref<RefCounter::Count>.
+        This means there is no compile time type checking to prevent mistakes. Update the count()
+        method to token<>(), templated on type used to identify the token being returned.
+        Calls to token<T>() will return a result of type RefCounter::Token<T>.
+
+        There are a few problems with the fact the counter will return you an exact count of the
+        number of outstanding tokens:
+          - It is desirable to only fire the callback on zero-edge changes; it is more consistent
+            to do so if the value is only readable as a boolean.
+          - It is desirable to provide the value as an argument to the callback, however to make
+            this useful for integer values it is also necessary to indicate the direction of change
+            (0->1 is often interesting where 2->1 is not).
+          - There is a mismatch between the precision of returning a count, and the inherent
+            imprecision of a token based mechanism, where it may be difficult to guarantee
+            absolutely no unnecessary refcount churn, and thus unintentional counter values.
+
+        * wtf/RefCounter.cpp:
+        (WTF::RefCounter::Count::ref):
+        (WTF::RefCounter::Count::deref):
+            - only call the callback on zero-edge changes; provide the value.
+        (WTF::RefCounter::RefCounter):
+            - callback now takes a bool argument.
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::Token::Token):
+            - New opaque type to reference the RefCounter::Count.
+        (WTF::RefCounter::Token::operator!):
+            - ! operator checks for null / anasigned Tokens.
+        (WTF::RefCounter::RefCounter):
+            - callback now takes a bool argument.
+        (WTF::RefCounter::token):
+            - renamed from count(), templated on type of token returned.
+        (WTF::RefCounter::value):
+            - now returns a bool.
+        (WTF::RefCounter::Token<T>::Token):
+        (WTF::=):
+            - Tokens can be copied & assigned.
+        (WTF::RefCounter::count): Deleted.
+            - renamed to token<>().
+
 2014-12-18  Anders Carlsson  <andersca@apple.com>
 
         Simplify smart pointer classes by using std::exchange

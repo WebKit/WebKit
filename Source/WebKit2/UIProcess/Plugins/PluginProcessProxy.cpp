@@ -229,7 +229,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(COCOA)
-    if (PluginProcessManager::shared().processSuppressionEnabled())
+    if (!PluginProcessManager::shared().processSuppressionDisabled())
         setProcessSuppressionEnabled(true);
 #endif
 }

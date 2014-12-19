@@ -112,9 +112,9 @@ void WebContext::updateProcessSuppressionState()
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (!m_processSuppressionDisabledForPageCounter.value())
-        m_pluginProcessManagerProcessSuppressionDisabledCount = nullptr;
-    else if (!m_pluginProcessManagerProcessSuppressionDisabledCount)
-        m_pluginProcessManagerProcessSuppressionDisabledCount = PluginProcessManager::shared().processSuppressionDisabledForPageCount();
+        m_pluginProcessManagerProcessSuppressionDisabledToken = nullptr;
+    else if (!m_pluginProcessManagerProcessSuppressionDisabledToken)
+        m_pluginProcessManagerProcessSuppressionDisabledToken = PluginProcessManager::shared().processSuppressionDisabledToken();
 #endif
 }
 

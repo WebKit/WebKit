@@ -25,6 +25,7 @@
 
 #import "WKViewPrivate.h"
 
+#import "APIObject.h"
 #import "PluginComplexTextInputState.h"
 #import "SameDocumentNavigationType.h"
 #import "WebFindOptions.h"

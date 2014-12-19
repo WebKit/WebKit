@@ -35,6 +35,7 @@
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
+#include "ProcessThrottler.h"
 #include "StatisticsRequest.h"
 #include "StorageManager.h"
 #include "VisitedLinkProvider.h"
@@ -354,14 +355,14 @@ public:
 
     void setMemoryCacheDisabled(bool);
 
-    PassRefPtr<RefCounter::Count> userObservablePageCount()
+    UserObservablePageToken userObservablePageCount()
     {
-        return m_userObservablePageCounter.count();
+        return m_userObservablePageCounter.token<UserObservablePageTokenType>();
     }
 
-    PassRefPtr<RefCounter::Count> processSuppressionDisabledForPageCount()
+    ProcessSuppressionDisabledToken processSuppressionDisabledForPageCount()
     {
-        return m_processSuppressionDisabledForPageCounter.count();
+        return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
     }
 
 private:
@@ -573,7 +574,7 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
-    RefPtr<RefCounter::Count> m_pluginProcessManagerProcessSuppressionDisabledCount;
+    ProcessSuppressionDisabledToken m_pluginProcessManagerProcessSuppressionDisabledToken;
 #endif
 };
 

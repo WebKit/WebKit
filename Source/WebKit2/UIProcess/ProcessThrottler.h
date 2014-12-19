@@ -28,11 +28,17 @@
 
 #include "ProcessAssertion.h"
 
+#include <WTF/RefCounter.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
     
+enum UserObservablePageTokenType { };
+typedef RefCounter::Token<UserObservablePageTokenType> UserObservablePageToken;
+enum ProcessSuppressionDisabledTokenType { };
+typedef RefCounter::Token<ProcessSuppressionDisabledTokenType> ProcessSuppressionDisabledToken;
+
 class WebProcessProxy;
     
 class ProcessThrottler {

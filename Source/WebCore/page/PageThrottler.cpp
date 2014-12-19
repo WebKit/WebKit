@@ -34,19 +34,19 @@ PageThrottler::PageThrottler(Page& page)
     : m_page(page)
     , m_userInputHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::UserInputActivity, state == HysteresisState::Started); })
     , m_audiblePluginHysteresis([this](HysteresisState state) { setActivityFlag(PageActivityState::AudiblePlugin, state == HysteresisState::Started); })
-    , m_mediaActivityCounter([this]() { setActivityFlag(PageActivityState::MediaActivity, m_mediaActivityCounter.value()); })
-    , m_pageLoadActivityCounter([this]() { setActivityFlag(PageActivityState::PageLoadActivity, m_pageLoadActivityCounter.value()); })
+    , m_mediaActivityCounter([this](bool value) { setActivityFlag(PageActivityState::MediaActivity, value); })
+    , m_pageLoadActivityCounter([this](bool value) { setActivityFlag(PageActivityState::PageLoadActivity, value); })
 {
 }
 
 PageActivityAssertionToken PageThrottler::mediaActivityToken()
 {
-    return m_mediaActivityCounter.count();
+    return m_mediaActivityCounter.token<PageActivityAssertionTokenType>();
 }
 
 PageActivityAssertionToken PageThrottler::pageLoadActivityToken()
 {
-    return m_pageLoadActivityCounter.count();
+    return m_pageLoadActivityCounter.token<PageActivityAssertionTokenType>();
 }
 
 void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)

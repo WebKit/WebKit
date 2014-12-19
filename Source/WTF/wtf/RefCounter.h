@@ -34,7 +34,7 @@ namespace WTF {
 
 class RefCounter {
     WTF_MAKE_NONCOPYABLE(RefCounter);
-public:
+
     class Count {
         WTF_MAKE_NONCOPYABLE(Count);
     public:
@@ -54,23 +54,85 @@ public:
         unsigned m_value;
     };
 
-    WTF_EXPORT_PRIVATE RefCounter(std::function<void()> = []() { });
+public:
+    template<typename T>
+    class Token  {
+    public:
+        Token() { }
+        Token(std::nullptr_t) { }
+        inline Token(const Token<T>& token);
+        inline Token(Token<T>&& token);
+
+        inline Token<T>& operator=(std::nullptr_t);
+        inline Token<T>& operator=(const Token<T>& o);
+        inline Token<T>& operator=(Token<T>&& o);
+
+        bool operator!() const { return !m_ptr; }
+
+    private:
+        friend class RefCounter;
+        inline Token(Count* count);
+
+        RefPtr<Count> m_ptr;
+    };
+
+    WTF_EXPORT_PRIVATE RefCounter(std::function<void(bool)> = [](bool) { });
     WTF_EXPORT_PRIVATE ~RefCounter();
 
-    Ref<Count> count() const
+    template<typename T>
+    Token<T> token() const
     {
-        return *m_count;
+        return Token<T>(m_count);
     }
 
-    unsigned value() const
+    bool value() const
     {
         return m_count->m_value;
     }
 
 private:
-    std::function<void()> m_valueDidChange;
+    std::function<void(bool)> m_valueDidChange;
     Count* m_count;
 };
+
+template<class T>
+inline RefCounter::Token<T>::Token(Count* count)
+    : m_ptr(count)
+{
+}
+
+template<class T>
+inline RefCounter::Token<T>::Token(const RefCounter::Token<T>::Token<T>& token)
+    : m_ptr(token.m_ptr)
+{
+}
+
+template<class T>
+inline RefCounter::Token<T>::Token(RefCounter::Token<T>::Token<T>&& token)
+    : m_ptr(token.m_ptr)
+{
+}
+
+template<class T>
+inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(std::nullptr_t)
+{
+    m_ptr = nullptr;
+    return *this;
+}
+
+template<class T>
+inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(const RefCounter::Token<T>& o)
+{
+    m_ptr = o.m_ptr;
+    return *this;
+}
+
+template<class T>
+inline RefCounter::Token<T>& RefCounter::Token<T>::operator=(RefCounter::Token<T>&& o)
+{
+    m_ptr = o.m_ptr;
+    return *this;
+}
 
 } // namespace WTF
 

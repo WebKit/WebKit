@@ -43,6 +43,7 @@
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PageLoadState.h"
 #include "PlatformProcessIdentifier.h"
+#include "ProcessThrottler.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
@@ -1583,8 +1584,8 @@ private:
     HashMap<String, String> m_temporaryPDFFiles;
     std::unique_ptr<WebCore::RunLoopObserver> m_viewStateChangeDispatcher;
 #endif
-    RefPtr<RefCounter::Count> m_pageIsUserObservableCount;
-    RefPtr<RefCounter::Count> m_preventProcessSuppressionCount;
+    UserObservablePageToken m_pageIsUserObservableCount;
+    ProcessSuppressionDisabledToken m_preventProcessSuppressionCount;
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 

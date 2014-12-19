@@ -36,7 +36,8 @@ namespace WebCore {
 
 class Page;
 
-typedef RefPtr<RefCounter::Count> PageActivityAssertionToken;
+enum PageActivityAssertionTokenType { };
+typedef RefCounter::Token<PageActivityAssertionTokenType> PageActivityAssertionToken;
 
 struct PageActivityState {
     enum {

@@ -31,6 +31,7 @@
 #include "PluginModuleInfo.h"
 #include "PluginProcess.h"
 #include "PluginProcessAttributes.h"
+#include "ProcessThrottler.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -65,9 +66,9 @@ public:
     void clearSiteData(const PluginModuleInfo&, WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
 #if PLATFORM(COCOA)
-    inline PassRefPtr<RefCounter::Count> processSuppressionDisabledForPageCount();
-    inline bool processSuppressionEnabled() const;
-    void updateProcessSuppressionState();
+    inline ProcessSuppressionDisabledToken processSuppressionDisabledToken();
+    inline bool processSuppressionDisabled() const;
+    void updateProcessSuppressionDisabled(bool);
 #endif
 
 private:
@@ -82,19 +83,18 @@ private:
 
 #if PLATFORM(COCOA)
     RefCounter m_processSuppressionDisabledForPageCounter;
-    bool m_processSuppressionEnabled { true };
 #endif
 };
 
 #if PLATFORM(COCOA)
-inline PassRefPtr<RefCounter::Count> PluginProcessManager::processSuppressionDisabledForPageCount()
+inline ProcessSuppressionDisabledToken PluginProcessManager::processSuppressionDisabledToken()
 {
-    return m_processSuppressionDisabledForPageCounter.count();
+    return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
 }
 
-inline bool PluginProcessManager::processSuppressionEnabled() const
+inline bool PluginProcessManager::processSuppressionDisabled() const
 {
-    return m_processSuppressionEnabled;
+    return m_processSuppressionDisabledForPageCounter.value();
 }
 #endif
 

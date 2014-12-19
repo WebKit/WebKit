@@ -34,13 +34,16 @@ namespace TestWebKitAPI {
 static const int CallbackExpected = 0xC0FFEE;
 static const int CallbackNotExpected = 0xDECAF;
 
+enum CounterType { };
+typedef RefCounter::Token<CounterType> TokenType;
+
 TEST(WTF, RefCounter)
 {
     // RefCounter API is pretty simple, containing the following 4 methods to test:
     //
     // 1) RefCounter(std::function<void()>);
     // 2) ~RefCounter();
-    // 3) Ref<Count> count() const;
+    // 3) Ref<Count> token() const;
     // 4) unsigned value() const;
     //
     // We'll test:
@@ -70,90 +73,84 @@ TEST(WTF, RefCounter)
 
     // These values will outlive the following block.
     int callbackValue = CallbackNotExpected;
-    RefPtr<RefCounter::Count> incTo1Again;
+    TokenType incTo1Again;
 
     {
         // Testing (1a) - Construction with a callback.
         RefCounter* counterPtr = nullptr;
-        RefCounter counter([&]() {
+        RefCounter counter([&](bool value) {
             // Check that the callback is called at the expected times, and the correct number of times.
             EXPECT_EQ(callbackValue, CallbackExpected);
+            // Value provided should be equal to the counter value.
+            EXPECT_EQ(value, counterPtr->value());
             // return the value of the counter in the callback.
-            callbackValue = counterPtr->value();
+            callbackValue = value;
         });
         counterPtr = &counter;
         // Testing (4a) - after construction value() is 0.
-        EXPECT_EQ(0, static_cast<int>(counter.value()));
+        EXPECT_EQ(false, static_cast<int>(counter.value()));
 
         // Testing (3a) - ref with callback from 0 -> 1.
         callbackValue = CallbackExpected;
-        RefPtr<RefCounter::Count> incTo1(counter.count());
+        TokenType incTo1(counter.token<CounterType>());
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(1, callbackValue);
-        EXPECT_EQ(1, static_cast<int>(counter.value()));
+        EXPECT_EQ(true, callbackValue);
+        EXPECT_EQ(true, static_cast<int>(counter.value()));
 
         // Testing (3b) - ref with callback from 1 -> 2.
-        callbackValue = CallbackExpected;
-        RefPtr<RefCounter::Count> incTo2(incTo1);
+        TokenType incTo2(incTo1);
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(2, callbackValue);
-        EXPECT_EQ(2, static_cast<int>(counter.value()));
+        EXPECT_EQ(true, static_cast<int>(counter.value()));
 
         // Testing (3c) - deref with callback from >1 -> 1.
-        callbackValue = CallbackExpected;
-        incTo1.clear();
+        incTo1 = nullptr;
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(1, callbackValue);
-        EXPECT_EQ(1, static_cast<int>(counter.value()));
+        EXPECT_EQ(true, static_cast<int>(counter.value()));
 
         {
             // Testing (3j) - ref using a Ref rather than a RefPtr.
-            callbackValue = CallbackExpected;
-            Ref<RefCounter::Count> incTo2Again(counter.count());
+            TokenType incTo2Again(counter.token<CounterType>());
             // Testing (4b) & (4c) - values within & after callback.
-            EXPECT_EQ(2, callbackValue);
-            EXPECT_EQ(2, static_cast<int>(counter.value()));
+            EXPECT_EQ(true, static_cast<int>(counter.value()));
             // Testing (3k) - deref using a Ref rather than a RefPtr.
-            callbackValue = CallbackExpected;
         }
-        EXPECT_EQ(1, callbackValue);
-        EXPECT_EQ(1, static_cast<int>(counter.value()));
+        EXPECT_EQ(true, static_cast<int>(counter.value()));
         // Testing (4b) & (4c) - values within & after callback.
 
         // Testing (3d) - deref with callback from 1 -> 0.
         callbackValue = CallbackExpected;
-        incTo2.clear();
+        incTo2 = nullptr;
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(0, callbackValue);
-        EXPECT_EQ(0, static_cast<int>(counter.value()));
+        EXPECT_EQ(false, callbackValue);
+        EXPECT_EQ(false, static_cast<int>(counter.value()));
 
         // Testing (2a) - Destruction where the RefCounter::Count has a non-zero reference count.
         callbackValue = CallbackExpected;
-        incTo1Again = counter.count();
-        EXPECT_EQ(1, callbackValue);
-        EXPECT_EQ(1, static_cast<int>(counter.value()));
+        incTo1Again = counter.token<CounterType>();
+        EXPECT_EQ(true, callbackValue);
+        EXPECT_EQ(true, static_cast<int>(counter.value()));
         callbackValue = CallbackNotExpected;
     }
 
     // Testing (3e) - ref with callback from 1 -> >1 AFTER RefCounter has been destroyed.
-    RefPtr<RefCounter::Count> incTo2Again = incTo1Again;
+    TokenType incTo2Again = incTo1Again;
     // Testing (3f) - deref with callback from >1 -> 1 AFTER RefCounter has been destroyed.
-    incTo1Again.clear();
+    incTo1Again = nullptr;
     // Testing (3g) - deref with callback from 1 -> 0 AFTER RefCounter has been destroyed.
-    incTo2Again.clear();
+    incTo2Again = nullptr;
 
     // Testing (1b) - Construction without a callback.
     RefCounter counter;
     // Testing (4a) - after construction value() is 0.
-    EXPECT_EQ(0, static_cast<int>(counter.value()));
+    EXPECT_EQ(false, static_cast<int>(counter.value()));
     // Testing (3h) - ref without callback
-    RefPtr<RefCounter::Count> incTo1(counter.count());
+    TokenType incTo1(counter.token<CounterType>());
     // Testing (4c) - value as read after the ref.
-    EXPECT_EQ(1, static_cast<int>(counter.value()));
+    EXPECT_EQ(true, static_cast<int>(counter.value()));
     // Testing (3i) - deref without callback
-    incTo1.clear();
+    incTo1 = nullptr;
     // Testing (4c) - value as read after the deref.
-    EXPECT_EQ(0, static_cast<int>(counter.value()));
+    EXPECT_EQ(false, static_cast<int>(counter.value()));
     // Testing (2b) - Destruction where the RefCounter::Count has a zero reference count.
     // ... not a lot to test here! - we can at least ensure this code path is run & we don't crash!
 }

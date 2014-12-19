@@ -1,3 +1,62 @@
+2014-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Add strong typing to RefCounter interface, return value as a bool.
+        https://bugs.webkit.org/show_bug.cgi?id=139776
+
+        Reviewed by Geoff Garen.
+
+        Currently all token vended by a RefCounter have the same type - Ref<RefCounter::Count>.
+        This means there is no compile time type checking to prevent mistakes. Update the count()
+        method to token<>(), templated on type used to identify the token being returned.
+        Calls to token<T>() will return a result of type RefCounter::Token<T>.
+
+        There are a few problems with the fact the counter will return you an exact count of the
+        number of outstanding tokens:
+          - It is desirable to only fire the callback on zero-edge changes; it is more consistent
+            to do so if the value is only readable as a boolean.
+          - It is desirable to provide the value as an argument to the callback, however to make
+            this useful for integer values it is also necessary to indicate the direction of change
+            (0->1 is often interesting where 2->1 is not).
+          - There is a mismatch between the precision of returning a count, and the inherent
+            imprecision of a token based mechanism, where it may be difficult to guarantee
+            absolutely no unnecessary refcount churn, and thus unintentional counter values.
+
+        Removed PluginProcessManager::m_processSuppressionEnabled. Now the callback only fires on
+        zero-edge transitions we no longer need this to filter changes.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::PluginProcessManager):
+            - updateProcessSuppressionState -> updateProcessSuppressionDisabled.
+        * UIProcess/Plugins/PluginProcessManager.h:
+        (WebKit::PluginProcessManager::processSuppressionDisabledForPageCount): Deleted.
+        (WebKit::PluginProcessManager::processSuppressionDisabledToken):
+            - processSuppressionDisabledForPageCount -> processSuppressionDisabledToken.
+        (WebKit::PluginProcessManager::processSuppressionEnabled): Deleted.
+        (WebKit::PluginProcessManager::processSuppressionDisabled):
+            - processSuppressionEnabled -> processSuppressionDisabled.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+            - processSuppressionEnabled -> processSuppressionDisabled.
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::updateProcessSuppressionState): Deleted.
+        (WebKit::PluginProcessManager::updateProcessSuppressionDisabled):
+            - updateProcessSuppressionState -> updateProcessSuppressionDisabled
+        * UIProcess/ProcessThrottler.h:
+            - added UserObservablePageToken, ProcessSuppressionDisabledToken types.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::m_processSuppressionDisabledForPageCounter):
+            - lambda now has bool argument.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::userObservablePageCount):
+        (WebKit::WebContext::processSuppressionDisabledForPageCount):
+            - count() -> token<>(), changed return type.
+        * UIProcess/WebPageProxy.h:
+            - changed types of token members.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::updateProcessSuppressionState):
+            renamed m_pluginProcessManagerProcessSuppressionDisabledCount -> m_pluginProcessManagerProcessSuppressionDisabledToken.
+
 2014-12-18  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix some builds.
@@ -1103,7 +1162,7 @@
         with callbacks is limiting a number of ways. The callback names are very ambiguous, the callbacks
         must either be on a separate object (more boilerplate), or the callback must be public for
         HysteresisActivity to call them, or friends get involved. Without the boilerplate of extra
-        delegate objects it's hard to scale use of these objects – a single object can't serve as a
+        delegate objects it's hard to scale use of these objects - a single object can't serve as a
         delegate for multiple HysteresisActivity members.
 
         Instead, make HysteresisActivity take a lambda to callback on state change. To simplify, changed

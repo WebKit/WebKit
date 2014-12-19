@@ -30,10 +30,11 @@ namespace WTF {
 
 void RefCounter::Count::ref()
 {
+    bool valueWasZero = !m_value;
     ++m_value;
-
-    if (m_refCounter)
-        m_refCounter->m_valueDidChange();
+    
+    if (valueWasZero && m_refCounter)
+        m_refCounter->m_valueDidChange(true);
 }
 
 void RefCounter::Count::deref()
@@ -41,17 +42,20 @@ void RefCounter::Count::deref()
     ASSERT(m_value);
     --m_value;
 
+    if (m_value)
+        return;
+
     // The Count object is kept alive so long as either the RefCounter that created it remains
     // allocated, or so long as its reference count is non-zero.
     // If the RefCounter has already been deallocted then delete the Count when its reference
     // count reaches zero.
     if (m_refCounter)
-        m_refCounter->m_valueDidChange();
-    else if (!m_value)
+        m_refCounter->m_valueDidChange(false);
+    else
         delete this;
 }
 
-RefCounter::RefCounter(std::function<void()> valueDidChange)
+RefCounter::RefCounter(std::function<void(bool)> valueDidChange)
     : m_valueDidChange(valueDidChange)
     , m_count(new Count(*this))
 {
