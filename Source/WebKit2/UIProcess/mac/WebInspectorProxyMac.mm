@@ -35,7 +35,7 @@
 #import "WKOpenPanelResultListener.h"
 #import "WKRetainPtr.h"
 #import "WKURLCF.h"
-#import "WKViewPrivate.h"
+#import "WKViewInternal.h"
 #import "WebContext.h"
 #import "WebInspectorMessages.h"
 #import "WebInspectorUIMessages.h"
@@ -86,6 +86,7 @@ static const unsigned webViewCloseTimeout = 60;
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
 - (void)close;
+- (void)didRelaunchProcess;
 
 @end
 
@@ -121,6 +122,11 @@ static const unsigned webViewCloseTimeout = 60;
 - (void)close
 {
     _inspectorProxy = nullptr;
+}
+
+- (void)didRelaunchProcess
+{
+    static_cast<WebInspectorProxy*>(_inspectorProxy)->didRelaunchInspectorPageProcess();
 }
 
 - (void)windowDidMove:(NSNotification *)notification
@@ -165,6 +171,7 @@ static const unsigned webViewCloseTimeout = 60;
 @end
 
 @interface WKWebInspectorWKView : WKView
+@property (nonatomic, assign) WKWebInspectorProxyObjCAdapter *inspectorProxyObjCAdapter;
 @end
 
 @implementation WKWebInspectorWKView
@@ -172,6 +179,13 @@ static const unsigned webViewCloseTimeout = 60;
 - (NSInteger)tag
 {
     return WKInspectorViewTag;
+}
+
+- (void)_didRelaunchProcess
+{
+    [super _didRelaunchProcess];
+
+    [self.inspectorProxyObjCAdapter didRelaunchProcess];
 }
 
 @end
@@ -294,6 +308,7 @@ void WebInspectorProxy::closeTimerFired()
     if (m_inspectorView) {
         WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
         inspectorPage->close();
+        [m_inspectorView setInspectorProxyObjCAdapter:nil];
         m_inspectorView = nil;
     }
 
@@ -468,6 +483,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
     ASSERT(m_inspectorProxyObjCAdapter);
+
+    [m_inspectorView setInspectorProxyObjCAdapter:m_inspectorProxyObjCAdapter.get()];
 
     WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
     ASSERT(inspectorPage);

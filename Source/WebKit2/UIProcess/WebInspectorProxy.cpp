@@ -236,6 +236,17 @@ void WebInspectorProxy::close()
     didClose();
 }
 
+void WebInspectorProxy::didRelaunchInspectorPageProcess()
+{
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), *this);
+    m_inspectorPage->process().assumeReadAccessToBaseURL(inspectorBaseURL());
+
+    // When didRelaunchInspectorPageProcess is called we can assume it is during a load request.
+    // Any messages we would have sent to a terminated process need to be re-sent.
+
+    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_page->pageID(), m_underTest), m_inspectorPage->pageID());
+}
+
 void WebInspectorProxy::showConsole()
 {
     if (!m_page)
@@ -526,8 +537,9 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
         return;
 
     m_underTest = underTest;
+    m_connectionIdentifier = connectionIdentifier;
 
-    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(connectionIdentifier, m_page->pageID(), m_underTest), m_inspectorPage->pageID());
+    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_page->pageID(), m_underTest), m_inspectorPage->pageID());
 
     if (!m_underTest) {
         m_canAttach = canAttach;
@@ -581,6 +593,7 @@ void WebInspectorProxy::didClose()
     m_isAttached = false;
     m_canAttach = false;
     m_underTest = false;
+    m_connectionIdentifier = IPC::Attachment();
 
     platformDidClose();
 }

@@ -94,6 +94,8 @@ public:
     void show();
     void hide();
     void close();
+
+    void didRelaunchInspectorPageProcess();
     
 #if PLATFORM(MAC)
     void createInspectorWindow();
@@ -224,6 +226,8 @@ private:
     // all the inspectors in the same group will make it impossible to debug
     // the inspector code, so we use the level to make different page groups.
     unsigned m_level;
+    
+    IPC::Attachment m_connectionIdentifier;
 
     AttachmentSide m_attachmentSide;
 

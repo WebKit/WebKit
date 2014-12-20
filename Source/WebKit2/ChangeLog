@@ -1,3 +1,40 @@
+2014-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector does not reopen correctly after Inspector Process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=139838
+
+        Reviewed by Timothy Hatcher.
+
+        When the WebContentProcess holding the Inspector Frontend crashes, we
+        would properly tear down the inspector objects. However, the next time
+        the inspector is opened, when creating the new page in the Inspector
+        Page Group, a WebPageProxy is created with a Terminated WebProcessProxy.
+
+        That Terminated WebProcessProxy is automatically replaced with the next
+        load request is given. The newly created process was missing the
+        message listeners and assumed URL access settings that the
+        WebInspectorProxy had set on the old process.
+
+        So, WebInspectorProxy now listens for and resets the process properties
+        when the inspector process is recreated.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::didRelaunchInspectorPageProcess):
+        Reset process properties when the process is relaunched.
+
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::didClose):
+        Save connection identifier if we need to establish connections later.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter didRelaunchProcess]):
+        (-[WKWebInspectorWKView _didRelaunchProcess]):
+        (WebKit::WebInspectorProxy::closeTimerFired):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Send WebInspectorProxy a message when the process underlying the
+        WKView is relaunched.
+
 2014-12-19  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the hardcoded set of structs in the message generation script
