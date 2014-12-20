@@ -176,6 +176,8 @@ static const unsigned webViewCloseTimeout = 60;
 
 @implementation WKWebInspectorWKView
 
+@synthesize inspectorProxyObjCAdapter = _inspectorProxyObjCAdapter;
+
 - (NSInteger)tag
 {
     return WKInspectorViewTag;
