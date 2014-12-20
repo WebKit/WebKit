@@ -1,3 +1,74 @@
+2014-12-20  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2
+        <http://webkit.org/b/139463>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/All.xcconfig:
+        - Only set EXCLUDED_SOURCE_FILE_NAMES on iOS.
+        * Configurations/Base.xcconfig:
+        - Only set FRAMEWORK_CONTENT_DIRECTORY, GCC_ENABLE_OBJC_GC and
+          TOOLCHAINS on OS X.
+        * Configurations/BaseLegacyProcess.xcconfig:
+        - Only set SKIP_INSTALL on iOS.
+        * Configurations/BaseTarget.xcconfig:
+        - Set WEBKIT_FRAMEWORKS_DIR and UMBRELLA_FRAMEWORKS_DIR based on
+          SDK, and simply them.
+        * Configurations/BaseXPCService.xcconfig:
+        - Set INSTALL_PATH_ACTUAL_Normal based on SDK.
+        * Configurations/DebugRelease.xcconfig:
+        - Only set MACOSX_DEPLOYMENT_TARGET and SDKROOT on OS X.
+        - Set WEBKIT_SYSTEM_INTERFACE_LIBRARY based on SDK.
+        * Configurations/NetworkProcess.xcconfig:
+        - Only set EXCLUDED_SHIM_FILE_NAME and CODE_SIGN_ENTITLEMENTS on
+          iOS.
+        * Configurations/NetworkService.Development.xcconfig:
+        - Set INFOPLIST_FILE based on SDK.
+        - Simplify CODE_SIGN_ENTITLEMENTS for iOS.
+        * Configurations/NetworkService.xcconfig:
+        - Set INFOPLIST_FILE based on SDK.
+        - Simplify CODE_SIGN_ENTITLEMENTS for iOS.
+        * Configurations/PluginProcess.xcconfig:
+        - Only set EXCLUDED_SHIM_FILE_NAME and SKIP_INSTALL on iOS.
+        * Configurations/PluginProcessShim.xcconfig:
+        - Set OTHER_LDFLAGS based on SDK.
+        * Configurations/PluginService.32.xcconfig:
+        - Only set VALID_ARCHS on OS X.
+        - Set OTHER_LDFLAGS based on platform-specific values.
+        - Only set SKIP_INSTALL on iOS.
+        * Configurations/PluginService.64.xcconfig:
+        - Set ARCHS based on SDK.
+        - Set OTHER_LDFLAGS based on platform-specific values.
+        - Only set SKIP_INSTALL on iOS.
+        * Configurations/PluginService.Development.xcconfig:
+        - Only set SKIP_INSTALL on iOS.
+        - Set OTHER_LDFLAGS based on platform-specific values.
+        * Configurations/SecItemShim.xcconfig:
+        - Set OTHER_LDFLAGS based on platform-specific values.
+        * Configurations/Version.xcconfig:
+        - Set SYSTEM_VERSION_PREFIX separately for iOS and OS X.
+        * Configurations/WebContentProcess.xcconfig:
+        - Only set EXCLUDED_SHIM_FILE_NAME on iOS.
+        - Only set CODE_SIGN_ENTITLEMENTS on iOS Simulator.
+        * Configurations/WebContentService.Development.xcconfig:
+        - Set INFOPLIST_FILE and BUNDLE_LOCALIZATION_KEY based on SDK.
+        - Only set CODE_SIGN_ENTITLEMENTS on iOS hardware.
+        - Set OTHER_LDFLAGS based on platform-specific values.
+        * Configurations/WebContentService.xcconfig: Ditto.
+        * Configurations/WebKit.xcconfig:
+        - Set FRAMEWORK_AND_LIBRARY_LDFLAGS, SECTORDER_FLAGS, and
+          WK_API_AVAILABILITY_ENABLED based on SDK.
+        - Set OTHER_LDFLAGS based on platform-specific values.
+        - Only set EXCLUDED_SOURCE_FILE_NAMES on iOS.
+        * Configurations/WebKit2.xcconfig:
+        - Set INSTALL_PATH, INSTALL_PATH_ACTUAL, DYLIB_INSTALL_NAME_BASE,
+          NORMAL_WEBKIT2_FRAMEWORKS_DIR, WEBKIT2_FRAMEWORKS_DIR and
+          NORMAL_PRODUCTION_FRAMEWORKS_DIR based on SDK.
+        - Set SKIP_INSTALL on iOS.
+        * Configurations/WebProcessShim.xcconfig:
+        - Set OTHER_LDFLAGS based on platform-specific values.
+
 2014-12-19  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix.

@@ -25,13 +25,10 @@
 
 WK_XPC_SERVICE_VARIANT = Normal;
 
-VALID_ARCHS = $(VALID_ARCHS_$(PLATFORM_NAME));
-VALID_ARCHS_macosx = $(VALID_ARCHS_macosx_$(CONFIGURATION));
+VALID_ARCHS[sdk=macosx*] = $(VALID_ARCHS_macosx_$(CONFIGURATION));
 VALID_ARCHS_macosx_Debug = $(ARCHS_STANDARD_32_64_BIT);
 VALID_ARCHS_macosx_Release = $(VALID_ARCHS_macosx_Debug);
 VALID_ARCHS_macosx_Production = i386;
-VALID_ARCHS_iphoneos = $(VALID_ARCHS);
-VALID_ARCHS_iphonesimulator = $(VALID_ARCHS_iphoneos);
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.32;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
@@ -45,12 +42,9 @@ FRAMEWORK_LDFLAGS_ = -framework WebKit2;
 FRAMEWORK_LDFLAGS_NO = -framework WebKit2;
 FRAMEWORK_LDFLAGS_YES = ;
 
-OTHER_LDFLAGS = $(FRAMEWORK_LDFLAGS) $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_$(PLATFORM_NAME)) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
-OTHER_LDFLAGS_macosx = -framework AppKit;
+OTHER_LDFLAGS = $(FRAMEWORK_LDFLAGS) $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
+OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit;
 
 CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;
 
-SKIP_INSTALL = $(SKIP_INSTALL_$(PLATFORM_NAME));
-SKIP_INSTALL_macosx = $(inherited);
-SKIP_INSTALL_iphoneos = YES;
-SKIP_INSTALL_iphonesimulator = $(SKIP_INSTALL_iphoneos);
+SKIP_INSTALL[sdk=iphone*] = YES;

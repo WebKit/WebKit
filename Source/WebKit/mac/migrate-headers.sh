@@ -29,12 +29,7 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy"
 
 # If we didn't build WebCore, use the production copy of the headers
 if [ ! -d "${WEBCORE_PRIVATE_HEADERS_DIR}" ]; then
-    export WEBCORE_PRIVATE_HEADERS_DIR="`eval 'echo ${WEBCORE_PRIVATE_HEADERS_DIR_'${PLATFORM_NAME}'_Production}'`"
-fi
-
-# If we didn't build WebKit2, use the production copy of the headers
-if [ ! -d "${WEBKIT2_FRAMEWORKS_DIR}/WebKit2.framework" ]; then
-    export WEBKIT2_FRAMEWORKS_DIR="`eval 'echo ${WEBKIT2_FRAMEWORKS_DIR_Production}'/WebKit2.framework`"
+    export WEBCORE_PRIVATE_HEADERS_DIR="`eval 'echo ${WEBCORE_PRIVATE_HEADERS_DIR_Production}'`"
 fi
 
 if [ "${ACTION}" = "build" -o "${ACTION}" = "install" -o "${ACTION}" = "installhdrs" ]; then
