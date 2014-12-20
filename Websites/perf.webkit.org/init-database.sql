@@ -7,6 +7,7 @@ DROP TABLE builds CASCADE;
 DROP TABLE committers CASCADE;
 DROP TABLE commits CASCADE;
 DROP TABLE build_commits CASCADE;
+DROP TABLE build_slaves CASCADE;
 DROP TABLE builders CASCADE;
 DROP TABLE repositories CASCADE;
 DROP TABLE platforms CASCADE;
@@ -46,12 +47,18 @@ CREATE TABLE tracker_repositories (
 CREATE TABLE builders (
     builder_id serial PRIMARY KEY,
     builder_name varchar(64) NOT NULL UNIQUE,
-    builder_password_hash character(64) NOT NULL,
+    builder_password_hash character(64),
     builder_build_url varchar(1024));
+
+CREATE TABLE build_slaves (
+    slave_id serial PRIMARY KEY,
+    slave_name varchar(64) NOT NULL UNIQUE,
+    slave_password_hash character(64));
 
 CREATE TABLE builds (
     build_id serial PRIMARY KEY,
     build_builder integer REFERENCES builders ON DELETE CASCADE,
+    build_slave integer REFERENCES build_slaves ON DELETE CASCADE,
     build_number integer NOT NULL,
     build_time timestamp NOT NULL,
     build_latest_revision timestamp,
@@ -135,6 +142,7 @@ CREATE TABLE run_iterations (
 CREATE TABLE reports (
     report_id serial PRIMARY KEY,
     report_builder integer NOT NULL REFERENCES builders ON DELETE RESTRICT,
+    report_slave integer REFERENCES build_slaves ON DELETE RESTRICT,
     report_build_number integer,
     report_build integer REFERENCES builds,
     report_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),

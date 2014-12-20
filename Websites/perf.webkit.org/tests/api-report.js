@@ -3,7 +3,27 @@ describe("/api/report", function () {
         "buildNumber": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
+        "slaveName": "someSlave",
         "builderPassword": "somePassword",
+        "platform": "Mountain Lion",
+        "tests": {},
+        "revisions": {
+            "OS X": {
+                "revision": "10.8.2 12C60"
+            },
+            "WebKit": {
+                "revision": "141977",
+                "timestamp": "2013-02-06T08:55:20.9Z"
+            }
+        }}];
+
+    var emptySlaveReport = [{
+        "buildNumber": "123",
+        "buildTime": "2013-02-28T10:12:03.388304",
+        "builderName": "someBuilder",
+        "builderPassword": "somePassword",
+        "slaveName": "someSlave",
+        "slavePassword": "otherPassword",
         "platform": "Mountain Lion",
         "tests": {},
         "revisions": {
@@ -19,6 +39,11 @@ describe("/api/report", function () {
     function addBuilder(report, callback) {
         queryAndFetchAll('INSERT INTO builders (builder_name, builder_password_hash) values ($1, $2)',
             [report[0].builderName, sha256(report[0].builderPassword)], callback);
+    }
+
+    function addSlave(report, callback) {
+        queryAndFetchAll('INSERT INTO build_slaves (slave_name, slave_password_hash) values ($1, $2)',
+            [report[0].slaveName, sha256(report[0].slavePassword)], callback);
     }
 
     it("should reject error when builder name is missing", function () {
@@ -53,9 +78,66 @@ describe("/api/report", function () {
         });
     });
 
+    it("should reject a report without a builder password", function () {
+        addBuilder(emptyReport, function () {
+            var report = [{
+                "buildNumber": "123",
+                "buildTime": "2013-02-28T10:12:03.388304",
+                "builderName": "someBuilder",
+                "tests": {},
+                "revisions": {}}];
+            postJSON('/api/report/', report, function (response) {
+                assert.equal(response.statusCode, 200);
+                assert.notEqual(JSON.parse(response.responseText)['status'], 'OK');
+                assert.equal(JSON.parse(response.responseText)['failureStored'], false);
+                assert.equal(JSON.parse(response.responseText)['processedRuns'], 0);
+
+                queryAndFetchAll('SELECT COUNT(*) from reports', [], function (rows) {
+                    assert.equal(rows[0].count, 0);
+                    notifyDone();
+                });
+            });
+        });
+    });
+
     it("should store a report from a valid builder", function () {
         addBuilder(emptyReport, function () {
             postJSON('/api/report/', emptyReport, function (response) {
+                assert.equal(response.statusCode, 200);
+                assert.equal(JSON.parse(response.responseText)['status'], 'OK');
+                assert.equal(JSON.parse(response.responseText)['failureStored'], false);
+                assert.equal(JSON.parse(response.responseText)['processedRuns'], 1);
+                queryAndFetchAll('SELECT COUNT(*) from reports', [], function (rows) {
+                    assert.equal(rows[0].count, 1);
+                    notifyDone();
+                });
+            });
+        });
+    });
+
+    it("should treat the slave password as the builder password if there is no matching slave", function () {
+        addBuilder(emptyReport, function () {
+            emptyReport[0]['slavePassword'] = emptyReport[0]['builderPassword'];
+            delete emptyReport[0]['builderPassword'];
+            postJSON('/api/report/', emptyReport, function (response) {
+                emptyReport[0]['builderPassword'] = emptyReport[0]['slavePassword'];
+                delete emptyReport[0]['slavePassword'];
+
+                assert.equal(response.statusCode, 200);
+                assert.equal(JSON.parse(response.responseText)['status'], 'OK');
+                assert.equal(JSON.parse(response.responseText)['failureStored'], false);
+                assert.equal(JSON.parse(response.responseText)['processedRuns'], 1);
+                queryAndFetchAll('SELECT COUNT(*) from reports', [], function (rows) {
+                    assert.equal(rows[0].count, 1);
+                    notifyDone();
+                });
+            });
+        });
+    });
+
+    it("should store a report from a valid slave", function () {
+        addSlave(emptySlaveReport, function () {
+            postJSON('/api/report/', emptySlaveReport, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
                 assert.equal(JSON.parse(response.responseText)['failureStored'], false);
@@ -75,6 +157,28 @@ describe("/api/report", function () {
                     var storedContent = JSON.parse(rows[0].report_content);
                     assert.equal(storedContent['builderName'], emptyReport[0]['builderName']);
                     assert(!('builderPassword' in storedContent));
+                    notifyDone();
+                });
+            });
+        });
+    });
+
+    it("should add a slave if there isn't one and the report was authenticated by a builder", function () {
+        addBuilder(emptyReport, function () {
+            postJSON('/api/report/', emptyReport, function (response) {
+                queryAndFetchAll('SELECT * from build_slaves', [], function (rows) {
+                    assert.strictEqual(rows[0].slave_name, emptyReport[0].slaveName);
+                    notifyDone();
+                });
+            });
+        });
+    });
+
+    it("should add a builder if there isn't one and the report was authenticated by a slave", function () {
+        addSlave(emptySlaveReport, function () {
+            postJSON('/api/report/', emptySlaveReport, function (response) {
+                queryAndFetchAll('SELECT * from builders', [], function (rows) {
+                    assert.strictEqual(rows[0].builder_name, emptyReport[0].builderName);
                     notifyDone();
                 });
             });

@@ -18,6 +18,7 @@ require_once('manifest.php');
     <li><a href="/admin/tests">Tests</a></li>
     <li><a href="/admin/aggregators">Aggregators</a></li>
     <li><a href="/admin/builders">Builders</a></li>
+    <li><a href="/admin/build-slaves">Slaves</a></li>
     <li><a href="/admin/repositories">Repositories</a></li>
     <li><a href="/admin/bug-trackers">Bug Trackers</a></li>
 </ul>
@@ -56,18 +57,24 @@ function execute_query_and_expect_one_row_to_be_affected($query, $params, $succe
     return false;
 }
 
-function update_field($table, $prefix, $field_name) {
+function update_field($table, $prefix, $field_name, $new_value = NULL) {
     global $db;
 
-    if (!array_key_exists('id', $_POST) || (array_get($_POST, 'updated-column') != $field_name && !array_key_exists($field_name, $_POST)))
+    if (!array_key_exists('id', $_POST))
         return FALSE;
 
     $id = intval($_POST['id']);
     $prefixed_field_name = $prefix . '_' . $field_name;
     $id_field_name = $prefix . '_id';
 
+    if ($new_value == NULL) {
+        if (array_get($_POST, 'updated-column') != $field_name && !array_key_exists($field_name, $_POST))
+            return FALSE;
+        $new_value = array_get($_POST, $field_name);
+    }
+
     execute_query_and_expect_one_row_to_be_affected("UPDATE $table SET $prefixed_field_name = \$2 WHERE $id_field_name = \$1",
-        array($id, array_get($_POST, $field_name)),
+        array($id, $new_value),
         "Updated the $prefix $id",
         "Could not update $prefix $id");
 
@@ -226,7 +233,7 @@ END;
                         continue;
                     }
 
-                    $value = htmlspecialchars($row[$this->prefix . '_' . $name], ENT_QUOTES);
+                    $value = htmlspecialchars(array_get($row, $this->prefix . '_' . $name), ENT_QUOTES);
                     $editing_mode = array_get($this->column_info[$name], 'editing_mode');
                     if (!$editing_mode) {
                         echo "<td$rowspan_if_needed>$value</td>\n";
@@ -294,6 +301,8 @@ END;
         foreach (array_keys($this->column_info) as $name) {
             $editing_mode = array_get($this->column_info[$name], 'editing_mode');
             if (array_get($this->column_info[$name], 'custom') || !$editing_mode)
+                continue;
+            if (array_get($this->column_info[$name], 'post_insertion'))
                 continue;
 
             $label = htmlspecialchars($this->column_label($name));
