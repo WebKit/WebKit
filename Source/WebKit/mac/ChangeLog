@@ -1,3 +1,17 @@
+2014-12-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix pink background on CoreAnimation plug-ins in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=139845
+        rdar://problem/19313075
+
+        Reviewed by Tim Horton.
+        
+        r154078 left in some debugging code that set a pink background on plug-in hosting
+        layers. Remove it.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPluginLayer]):
+
 2014-12-19  Andreas Kling  <akling@apple.com>
 
         Ref-ify TextIterator API.

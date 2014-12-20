@@ -163,8 +163,6 @@ extern "C" {
         _pluginLayer.get().bounds = realPluginLayer.get().bounds;
         _pluginLayer.get().geometryFlipped = YES;
 
-        _pluginLayer.get().backgroundColor = adoptCF(CGColorCreateGenericRGB(1, 0, 1, 1)).get();
-
         realPluginLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
         [_pluginLayer.get() addSublayer:realPluginLayer.get()];
 
