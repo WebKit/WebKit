@@ -1,5 +1,11 @@
 2014-12-19  Jessie Berlin  <jberlin@webkit.org>
 
+        Build fix.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+
+2014-12-19  Jessie Berlin  <jberlin@webkit.org>
+
         Simplify the build fixes from r177615 and r177617.
 
         Rubber-stamped by Dan Bernstein.
