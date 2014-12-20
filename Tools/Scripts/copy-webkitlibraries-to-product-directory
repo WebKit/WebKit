@@ -142,12 +142,20 @@ if ($wksi) {
     my $libraryDir = $useFullLibPaths ? "$productDir/usr/local/lib" : $productDir;
     (system("mkdir", "-p", $libraryDir) == 0) or die;
 
-    my @librariesToCopy = (
-        "libWebKitSystemInterfaceMountainLion.a",
-        "libWebKitSystemInterfaceMavericks.a",
-        "libWebKitSystemInterfaceYosemite.a",
-    );
-    
+    my @librariesToCopy;
+    if (isIOSWebKit()) {
+        push(@librariesToCopy, (
+            "libWebKitSystemInterfaceIOSDevice8.1.a",
+            "libWebKitSystemInterfaceIOSSimulator8.1.a",
+        ));
+    } else {
+        push(@librariesToCopy, (
+            "libWebKitSystemInterfaceMountainLion.a",
+            "libWebKitSystemInterfaceMavericks.a",
+            "libWebKitSystemInterfaceYosemite.a"
+        ));
+    }
+
     foreach my $libraryName (@librariesToCopy) {
         my $sourceLibrary = "WebKitLibraries/" . $libraryName;
         my $targetLibrary = "$libraryDir/" . $libraryName;
@@ -159,6 +167,7 @@ if ($wksi) {
     }
     
     dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
+    dittoHeaders("WebKitLibraries/WebKitSystemInterfaceIOS.h", "$productDir/usr/local/include/WebKitSystemInterfaceIOS.h") if isIOSWebKit();
 }
 
 if ($llvm) {
@@ -318,6 +327,9 @@ if ($llvm) {
 if ($clean) {
     print "Cleaning.\n";    
     (system("rm", "-rf", "$productDir/usr/local/include/WebKitSystemInterface.h") == 0) or die;
+    if (isIOSWebKit()) {
+        (system("rm", "-rf", "$productDir/usr/local/include/WebKitSystemInterfaceIOS.h") == 0) or die;
+    }
     (system("rm", "-rf", "$productDir$llvmPrefix") == 0) or die;
     unlink glob "$productDir/libWebKitSystemInterface*" or die if glob "$productDir/libWebKitSystemInterface*";
     unlink glob "$productDir/usr/local/lib/libWebKitSystemInterface*" or die if glob "$productDir/usr/local/lib/libWebKitSystemInterface*";

@@ -1,5 +1,19 @@
 2014-12-19  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Add WebKitSystemInterface for iOS 8.1
+        https://bugs.webkit.org/show_bug.cgi?id=139831
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement support in copy-webkitlibraries-to-product-directory to copy
+        WebKitSystemInterface for iOS to the product directory and have build-webkit
+        pass --wksi to copy-webkitlibraries-to-product-directory when building for iOS.
+
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
+2014-12-19  Daniel Bates  <dabates@apple.com>
+
         copy-webkitlibraries-to-product-directory uses wrong SDK when called from build-webkit
         https://bugs.webkit.org/show_bug.cgi?id=139829
 

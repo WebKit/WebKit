@@ -1,3 +1,17 @@
+2014-12-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add WebKitSystemInterface for iOS 8.1
+        https://bugs.webkit.org/show_bug.cgi?id=139831
+
+        Reviewed by Alexey Proskuryakov.
+
+        Towards building the iOS WebKit port using the public SDK, add the
+        WebKitSystemInterface for iOS version 8.1.
+
+        * WebKitSystemInterfaceIOS.h: Added.
+        * libWebKitSystemInterfaceIOSDevice8.1.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator8.1.a: Added.
+
 2014-12-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix (for full build)

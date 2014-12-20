@@ -195,7 +195,7 @@ if (isAppleMacWebKit()) {
     } else {
         my @copyLibrariesArgs = (
             "perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory",
-            "--sdk", xcodeSDK(), "--llvm", "--prefer-system-llvm",
+            "--sdk", xcodeSDK(), "--wksi", "--llvm", "--prefer-system-llvm",
             "--llvm-subdirectory", "internal-llvm", productDir(),
             "--llvm-prefix", "/usr/local"
         );
