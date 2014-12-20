@@ -40,7 +40,6 @@ my $useFullLibPaths = 0;
 my $preferSystemLLVMOverDrops = 0;
 my $llvmSubdirectoryName = "llvm";
 my $llvmPrefix = "/usr/local/LLVMForJavaScriptCore";
-my $sdkName = ""; # Ideally we only use this for build commands, rather than deciding policies about what needs to get copied or built and where it needs to be placed.
 my $osxVersion;
 my $force = 0;
 
@@ -57,7 +56,9 @@ Usage: $programName [options]
   --[no-]prefer-system-llvm     Toggle preferring the system LLVM over the binary drops (default: $preferSystemLLVMOverDrops)
   --llvm-subdirectory=<name>    Set the name of the LLVM subdirectory to search for (default: $llvmSubdirectoryName)
   --llvm-prefix=<path>          Set the prefix into which LLVM is installed (default: $llvmPrefix)
-  --sdk-name=<name>             Set the name of the Xcode SDK to use.
+  --sdk=<sdk>                   Use a specific Xcode SDK
+  --device                      Use the current iphoneos.internal SDK (iOS only)
+  --simulator                   Use the current iphonesimulator SDK (iOS only)
   --osx-version=<version>       Set the OS X version to use when deciding what to copy.
   --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
 EOF
@@ -73,7 +74,6 @@ GetOptions(
     'prefer-system-llvm!' => \$preferSystemLLVMOverDrops,
     'llvm-subdirectory=s' => \$llvmSubdirectoryName,
     'llvm-prefix=s' => \$llvmPrefix,
-    'sdk-name=s' => \$sdkName,
     'osx-version=s' => \$osxVersion,
     'force!' => \$force
 );
@@ -82,6 +82,8 @@ if ($showHelp) {
    print STDERR $usage;
    exit 1;
 }
+
+determineXcodeSDK();
 
 my $productDir = shift @ARGV;
 if ($productDir) {
@@ -97,12 +99,15 @@ if (!$osxVersion) {
 
 chdirWebKit();
 
-my $xcrunOptions = "";
-if ($sdkName ne "") {
-    $xcrunOptions .= " -sdk $sdkName";
+sub executeRanlib($)
+{
+    my ($library) = @_;
+    my @args;
+    push @args, ("-sdk", xcodeSDK()) if xcodeSDK();
+    push @args, "ranlib";
+    push @args, "-no_warning_for_no_symbols" if isIOSWebKit();
+    system("xcrun", @args, $library) == 0 or die;
 }
-my $ranlib = `xcrun $xcrunOptions -find ranlib`;
-chomp $ranlib;
 
 sub unpackIfNecessary
 {
@@ -114,7 +119,7 @@ sub unpackIfNecessary
             foreach my $library (`tar -tf $package`) {
                 chomp $library;
                 print "   Ranlib $library\n";
-                (system($ranlib, $targetDir . "/" . $library) == 0) or die;
+                executeRanlib($targetDir . "/" . $library);
             }
         }
         return 1;
@@ -143,13 +148,13 @@ if ($wksi) {
         "libWebKitSystemInterfaceYosemite.a",
     );
     
-    foreach my $libName (@librariesToCopy) {
-        my $srcLib = "WebKitLibraries/" . $libName;
-        my $lib = "$libraryDir/" . $libName;
-        if ($force || !-e $lib || -M $lib > -M $srcLib) {
-            print "Updating $lib\n";
-            (system("ditto", $srcLib, $lib) == 0) or die;
-            (system($ranlib, $lib) == 0) or die;
+    foreach my $libraryName (@librariesToCopy) {
+        my $sourceLibrary = "WebKitLibraries/" . $libraryName;
+        my $targetLibrary = "$libraryDir/" . $libraryName;
+        if ($force || !-e $targetLibrary || -M $targetLibrary > -M $sourceLibrary) {
+            print "Updating $targetLibrary\n";
+            (system("ditto", $sourceLibrary, $targetLibrary) == 0) or die;
+            executeRanlib($targetLibrary);
         }
     }
     
@@ -281,7 +286,7 @@ if ($llvm) {
                 || !fileContentsEquals($ranlibToken, $sourceLibrary)
                 || -M $ranlibToken > -M $sourceLibrary) {
                 print "   Ranlib $filename\n";
-                (system($ranlib, $targetLibrary) == 0) or die;
+                executeRanlib($targetLibrary);
                 (open my $fileHandle, ">", $ranlibToken) or die;
                 print {$fileHandle} "$sourceLibrary";
                 close $fileHandle;

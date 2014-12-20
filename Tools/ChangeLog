@@ -1,3 +1,32 @@
+2014-12-19  Daniel Bates  <dabates@apple.com>
+
+        copy-webkitlibraries-to-product-directory uses wrong SDK when called from build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=139829
+
+        Reviewed by Alexey Proskuryakov.
+
+        The script build-webkit calls script copy-webkitlibraries-to-product-directory with
+        argument --sdk to specify the Xcode SDK to use, but copy-webkitlibraries-to-product-directory
+        expects the Xcode SDK to be specified using the --sdk-name command line argument.
+
+        Currently copy-webkitlibraries-to-product-directory has its own logic to handle
+        parsing for a specified Xcode SDK. Instead we should make use of the webkitdirs.pm
+        logic to both avoid duplicating effort and make the command line options for
+        copy-webkitlibraries-to-product-directory for specify the Xcode SDK consistent
+        with the approach used in other WebKit tools.
+
+        As a side effect of making use of the webkitdirs.pm logic for determining the Xcode SDK
+        copy-webkitlibraries-to-product-directory now recognizes --device and --simulator
+        shorthands for --sdk=iphoneos.internal and --sdk=iphonesimulator, respectively.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Also, renamed some variables to
+        improve the readability of the code.
+        (executeRanlib): Added; convenience function that calls the RANLIB(1) with the appropriate
+        Xcode SDK. We pass -no_warning_for_no_symbols to RANLIB(1) when using an Xcode SDK
+        for iOS since it's acceptable that an empty object file (say, for a Mac-specific feature)
+        be included in a library.
+        (unpackIfNecessary): Modified to call executeRanlib().
+
 2014-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (177368): Some tests started to immediately time out
