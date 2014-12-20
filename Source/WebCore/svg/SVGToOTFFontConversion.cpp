@@ -77,6 +77,41 @@ private:
         float verticalAdvance;
     };
 
+    class Placeholder {
+    public:
+        Placeholder(SVGToOTFFontConverter& converter, size_t baseOfOffset)
+            : m_converter(converter)
+            , m_baseOfOffset(baseOfOffset)
+            , m_location(m_converter.m_result.size())
+#if !ASSERT_DISABLED
+            , m_written(false)
+#endif
+        {
+            m_converter.append16(0);
+        }
+        void populate()
+        {
+            ASSERT(!m_written);
+            size_t delta = m_converter.m_result.size() - m_baseOfOffset;
+            ASSERT(delta < std::numeric_limits<uint16_t>::max());
+            m_converter.overwrite16(m_location, delta);
+#if !ASSERT_DISABLED
+            m_written = true;
+#endif
+        }
+        ~Placeholder()
+        {
+            ASSERT(m_written);
+        }
+    private:
+        SVGToOTFFontConverter& m_converter;
+        const size_t m_baseOfOffset;
+        const size_t m_location;
+#if !ASSERT_DISABLED
+        bool m_written;
+#endif
+    };
+
     struct KerningData {
         KerningData(uint16_t glyph1, uint16_t glyph2, int16_t adjustment)
             : glyph1(glyph1)
@@ -88,6 +123,11 @@ private:
         uint16_t glyph2;
         int16_t adjustment;
     };
+
+    Placeholder placeholder(size_t baseOfOffset)
+    {
+        return Placeholder(*this, baseOfOffset);
+    }
 
     void append32(uint32_t value)
     {
@@ -577,12 +617,12 @@ void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecor
     overwrite16(subtableRecordLocation + 6, m_result.size() - subtableRecordLocation);
     auto subtableLocation = m_result.size();
     append16(2); // Format 2
-    append16(0); // Placeholder for offset to coverage table, relative to beginning of substitution table
+    Placeholder toCoverageTable = placeholder(subtableLocation);
     append16(arabicFinalReplacements.size()); // GlyphCount
     for (auto& pair : arabicFinalReplacements)
         append16(pair.second);
 
-    overwrite16(subtableLocation + 2, m_result.size() - subtableLocation);
+    toCoverageTable.populate();
     append16(1); // CoverageFormat
     append16(arabicFinalReplacements.size()); // GlyphCount
     for (auto& pair : arabicFinalReplacements)
@@ -596,10 +636,8 @@ void SVGToOTFFontConverter::appendGSUBTable()
 
     append32(0x00010000); // Version
     append16(headerSize); // Offset to ScriptList
-    auto featureListOffsetLocation = m_result.size();
-    append16(0); // Placeholder for FeatureList offset
-    auto lookupListOffsetLocation = m_result.size();
-    append16(0); // Placeholder for LookupList offset
+    Placeholder toFeatureList = placeholder(tableLocation);
+    Placeholder toLookupList = placeholder(tableLocation);
     ASSERT(tableLocation + headerSize == m_result.size());
 
     // ScriptList
@@ -622,7 +660,7 @@ void SVGToOTFFontConverter::appendGSUBTable()
         append16(i); // Index of our feature into the FeatureList
 
     // FeatureList
-    overwrite16(featureListOffsetLocation, m_result.size() - tableLocation);
+    toFeatureList.populate();
     auto featureListLocation = m_result.size();
     size_t featureListSize = 2 + 6 * featureCount;
     size_t featureTableSize = 6;
@@ -646,7 +684,7 @@ void SVGToOTFFontConverter::appendGSUBTable()
     }
 
     // LookupList
-    overwrite16(lookupListOffsetLocation, m_result.size() - tableLocation);
+    toLookupList.populate();
     auto lookupListLocation = m_result.size();
     append16(featureCount); // LookupCount
     for (unsigned i = 0; i < featureCount; ++i)
