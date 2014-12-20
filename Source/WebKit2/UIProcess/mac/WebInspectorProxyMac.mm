@@ -170,17 +170,13 @@ static const unsigned webViewCloseTimeout = 60;
 
 @end
 
-@interface WKWebInspectorWKView : WKView {
-@private
-    WKWebInspectorProxyObjCAdapter *_inspectorProxyObjCAdapter;
-}
-
+@interface WKWebInspectorWKView : WKView
 @property (nonatomic, assign) WKWebInspectorProxyObjCAdapter *inspectorProxyObjCAdapter;
 @end
 
 @implementation WKWebInspectorWKView
 
-@synthesize inspectorProxyObjCAdapter = _inspectorProxyObjCAdapter;
+@synthesize inspectorProxyObjCAdapter;
 
 - (NSInteger)tag
 {
