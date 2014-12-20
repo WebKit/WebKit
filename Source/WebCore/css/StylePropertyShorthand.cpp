@@ -509,6 +509,15 @@ StylePropertyShorthand webkitTransitionShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitTransition, transitionProperties, WTF_ARRAY_LENGTH(transitionProperties));
 }
 
+StylePropertyShorthand webkitPerspectiveOriginShorthand()
+{
+    static const CSSPropertyID perspectiveOriginProperties[] = {
+        CSSPropertyWebkitPerspectiveOriginX,
+        CSSPropertyWebkitPerspectiveOriginY
+    };
+    return StylePropertyShorthand(CSSPropertyWebkitPerspectiveOrigin, perspectiveOriginProperties, WTF_ARRAY_LENGTH(perspectiveOriginProperties));
+}
+
 StylePropertyShorthand webkitTransformOriginShorthand()
 {
     static const CSSPropertyID transformOriginProperties[] = {
@@ -627,6 +636,8 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitMaskPositionShorthand();
     case CSSPropertyWebkitMaskRepeat:
         return webkitMaskRepeatShorthand();
+    case CSSPropertyWebkitPerspectiveOrigin:
+        return webkitPerspectiveOriginShorthand();
     case CSSPropertyWebkitTextEmphasis:
         return webkitTextEmphasisShorthand();
     case CSSPropertyWebkitTextStroke:
@@ -850,6 +861,9 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyWebkitMaskRepeatX:
     case CSSPropertyWebkitMaskRepeatY:
         return makeVector(webkitMaskRepeatShorthand());
+    case CSSPropertyWebkitPerspectiveOriginX:
+    case CSSPropertyWebkitPerspectiveOriginY:
+        return makeVector(webkitPerspectiveOriginShorthand());
     case CSSPropertyWebkitTextEmphasisStyle:
     case CSSPropertyWebkitTextEmphasisColor:
         return makeVector(webkitTextEmphasisShorthand());

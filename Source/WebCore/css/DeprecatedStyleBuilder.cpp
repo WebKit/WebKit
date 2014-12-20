@@ -41,48 +41,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class ApplyPropertyPerspectiveOrigin {
-public:
-    template <CSSPropertyID id>
-    static inline void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
-    {
-        // FIXME: This doesn't seem to do anything as CSSPropertyWebkitPerspectiveOriginX
-        // and CSSPropertyWebkitPerspectiveOriginY don't have a property handler.
-        const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
-        const PropertyHandler& handler = table.propertyHandler(id);
-        if (handler.isValid())
-            handler.applyInheritValue(propertyID, styleResolver);
-    }
-
-    static void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
-    {
-        applyInheritValue<CSSPropertyWebkitPerspectiveOriginX>(propertyID, styleResolver);
-        applyInheritValue<CSSPropertyWebkitPerspectiveOriginY>(propertyID, styleResolver);
-    }
-
-    template <CSSPropertyID id>
-    static inline void applyInitialValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
-    {
-        // FIXME: This doesn't seem to do anything as CSSPropertyWebkitPerspectiveOriginX
-        // and CSSPropertyWebkitPerspectiveOriginY don't have a property handler.
-        const DeprecatedStyleBuilder& table = DeprecatedStyleBuilder::sharedStyleBuilder();
-        const PropertyHandler& handler = table.propertyHandler(id);
-        if (handler.isValid())
-            handler.applyInitialValue(propertyID, styleResolver);
-    }
-
-    static void applyInitialValue(CSSPropertyID propertyID, StyleResolver* styleResolver)
-    {
-        applyInitialValue<CSSPropertyWebkitPerspectiveOriginX>(propertyID, styleResolver);
-        applyInitialValue<CSSPropertyWebkitPerspectiveOriginY>(propertyID, styleResolver);
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver*, CSSValue*)
-    { }
-
-    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
-};
-
 enum AutoValueType {Number = 0, ComputeLength};
 template <typename T, T (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(T), bool (RenderStyle::*hasAutoFunction)() const, void (RenderStyle::*setAutoFunction)(), AutoValueType valueType = Number, int autoIdentity = CSSValueAuto>
 class ApplyPropertyAuto {
@@ -670,7 +628,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitMaskRepeatY, ApplyPropertyFillLayer<EFillRepeat, CSSPropertyWebkitMaskRepeatY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSToStyleMap::mapFillRepeatY>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskSize, ApplyPropertyFillLayer<FillSize, CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSToStyleMap::mapFillSize>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskSourceType, ApplyPropertyFillLayer<EMaskSourceType, CSSPropertyWebkitMaskSourceType, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isMaskSourceTypeSet, &FillLayer::maskSourceType, &FillLayer::setMaskSourceType, &FillLayer::clearMaskSourceType, &FillLayer::initialMaskSourceType, &CSSToStyleMap::mapFillMaskSourceType>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitPerspectiveOrigin, ApplyPropertyPerspectiveOrigin::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextEmphasisColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textEmphasisColor, &RenderStyle::setTextEmphasisColor, &RenderStyle::setVisitedLinkTextEmphasisColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextFillColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::setVisitedLinkTextFillColor, &RenderStyle::color>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextStrokeColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor, &RenderStyle::color>::createHandler());

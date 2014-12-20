@@ -199,6 +199,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(webkitTextEmphasisShorthand());
     case CSSPropertyWebkitTextStroke:
         return getShorthandValue(webkitTextStrokeShorthand());
+    case CSSPropertyWebkitPerspectiveOrigin:
+        return getShorthandValue(webkitPerspectiveOriginShorthand());
     case CSSPropertyWebkitTransformOrigin:
         return getShorthandValue(webkitTransformOriginShorthand());
     case CSSPropertyWebkitTransition:
@@ -925,6 +927,10 @@ String StyleProperties::asText() const
         case CSSPropertyWebkitMaskClip:
         case CSSPropertyWebkitMaskOrigin:
             shorthandPropertyID = CSSPropertyWebkitMask;
+            break;
+        case CSSPropertyWebkitPerspectiveOriginX:
+        case CSSPropertyWebkitPerspectiveOriginY:
+            shorthandPropertyID = CSSPropertyWebkitPerspectiveOrigin;
             break;
         case CSSPropertyWebkitTransformOriginX:
         case CSSPropertyWebkitTransformOriginY:

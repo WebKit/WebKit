@@ -110,6 +110,7 @@ StylePropertyShorthand webkitMarqueeShorthand();
 StylePropertyShorthand webkitMaskShorthand();
 StylePropertyShorthand webkitMaskPositionShorthand();
 StylePropertyShorthand webkitMaskRepeatShorthand();
+StylePropertyShorthand webkitPerspectiveOriginShorthand();
 StylePropertyShorthand webkitTextEmphasisShorthand();
 StylePropertyShorthand webkitTextStrokeShorthand();
 StylePropertyShorthand webkitTransitionShorthand();

@@ -2426,6 +2426,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitMask:
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyWebkitMaskRepeat:
+    case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitTextEmphasis:
     case CSSPropertyWebkitTextStroke:
     case CSSPropertyWebkitTransition:
@@ -3040,7 +3041,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitMaskSourceType:
     case CSSPropertyWebkitNbspMode:
     case CSSPropertyWebkitPerspective:
-    case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitPrintColorAdjust:
