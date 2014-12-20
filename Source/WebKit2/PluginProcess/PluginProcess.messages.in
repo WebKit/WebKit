@@ -24,7 +24,7 @@
 
 messages -> PluginProcess LegacyReceiver {
     # Initializes the plug-in process.
-    InitializePluginProcess(WebKit::PluginProcessCreationParameters processCreationParameters)
+    InitializePluginProcess(struct WebKit::PluginProcessCreationParameters processCreationParameters)
     
     # Creates a web process connection. When the connection has been created,
     # The plug-in process sends back a DidCreateWebProcessConnection message with

@@ -22,11 +22,11 @@
 
 messages -> WebContext LegacyReceiver {
 
-    DidGetStatistics(WebKit::StatisticsData statisticsData, uint64_t callbackID)
+    DidGetStatistics(struct WebKit::StatisticsData statisticsData, uint64_t callbackID)
 
 #if PLATFORM(IOS)
-    WriteWebContentToPasteboard(WebCore::PasteboardWebContent content)
-    WriteImageToPasteboard(WebCore::PasteboardImage pasteboardImage)
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
+    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage)
     WriteStringToPasteboard(String pasteboardType, String text) 
     ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
     ReadURLFromPasteboard(uint64_t index, String pasteboardType) -> (String string)

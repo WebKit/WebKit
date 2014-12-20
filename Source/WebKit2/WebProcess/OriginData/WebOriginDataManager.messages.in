@@ -22,7 +22,7 @@
 
 messages -> WebOriginDataManager {
     void GetOrigins(uint32_t types, uint64_t callbackID)
-    void DeleteEntriesForOrigin(uint32_t types, WebKit::SecurityOriginData originIdentifier, uint64_t callbackID)
+    void DeleteEntriesForOrigin(uint32_t types, struct WebKit::SecurityOriginData originIdentifier, uint64_t callbackID)
     void DeleteEntriesModifiedBetweenDates(uint32_t types, double startDate, double endDate, uint64_t callbackID)
     void DeleteAllEntries(uint32_t types, uint64_t callbackID)
 }

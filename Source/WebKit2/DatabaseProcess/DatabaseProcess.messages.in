@@ -24,7 +24,7 @@
 
 messages -> DatabaseProcess LegacyReceiver {
     # Initializes the DatabaseProcess with the correct parameters
-    InitializeDatabaseProcess(WebKit::DatabaseProcessCreationParameters processCreationParameters)
+    InitializeDatabaseProcess(struct WebKit::DatabaseProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
     CreateDatabaseToWebProcessConnection()

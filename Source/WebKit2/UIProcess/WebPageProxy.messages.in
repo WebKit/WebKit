@@ -22,7 +22,7 @@
 
 messages -> WebPageProxy {
     # UI messages
-    CreateNewPage(uint64_t frameID, WebCore::ResourceRequest request, WebCore::WindowFeatures windowFeatures, WebKit::NavigationActionData navigationActionData) -> (uint64_t newPageID, WebKit::WebPageCreationParameters newPageParameters)
+    CreateNewPage(uint64_t frameID, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (uint64_t newPageID, struct WebKit::WebPageCreationParameters newPageParameters)
     ShowPage()
     ClosePage(bool stopResponsivenessTimer)
     RunJavaScriptAlert(uint64_t frameID, String message) -> () Delayed
@@ -42,7 +42,7 @@ messages -> WebPageProxy {
     WebGLPolicyForURL(String url) -> (uint32_t loadPolicy)
     ResolveWebGLPolicyForURL(String url) -> (uint32_t loadPolicy)
 #endif // ENABLE(WEBGL)
-    DidChangeViewportProperties(WebCore::ViewportAttributes attributes)
+    DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
     StopResponsivenessTimer()
 #if !PLATFORM(IOS)
@@ -76,7 +76,7 @@ messages -> WebPageProxy {
 
     RunBeforeUnloadConfirmPanel(String message, uint64_t frameID) -> (bool shouldClose)
     PageDidScroll()
-    RunOpenPanel(uint64_t frameID, WebCore::FileChooserSettings parameters)
+    RunOpenPanel(uint64_t frameID, struct WebCore::FileChooserSettings parameters)
     PrintFrame(uint64_t frameID) -> ()
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
@@ -115,8 +115,8 @@ messages -> WebPageProxy {
 
     # Policy messages
     DecidePolicyForResponseSync(uint64_t frameID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID) Variadic
-    DecidePolicyForNavigationAction(uint64_t frameID, uint64_t navigationID, WebKit::NavigationActionData navigationActionData, uint64_t originatingFrameID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t newNavigationID, uint64_t policyAction, uint64_t downloadID) Variadic
-    DecidePolicyForNewWindowAction(uint64_t frameID, WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DecidePolicyForNavigationAction(uint64_t frameID, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, uint64_t originatingFrameID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t newNavigationID, uint64_t policyAction, uint64_t downloadID) Variadic
+    DecidePolicyForNewWindowAction(uint64_t frameID, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)  Variadic
 
     # Progress messages
@@ -165,11 +165,11 @@ messages -> WebPageProxy {
     ScriptValueCallback(IPC::DataReference resultData, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
     ValidateCommandCallback(String command, bool isEnabled, int32_t state, uint64_t callbackID)
-    EditingRangeCallback(WebKit::EditingRange range, uint64_t callbackID)
+    EditingRangeCallback(struct WebKit::EditingRange range, uint64_t callbackID)
     UnsignedCallback(uint64_t result, uint64_t callbackID)
-    RectForCharacterRangeCallback(WebCore::IntRect rect, WebKit::EditingRange actualRange, uint64_t callbackID)
+    RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, uint64_t callbackID)
 #if PLATFORM(MAC)
-    AttributedStringForCharacterRangeCallback(WebKit::AttributedString string, WebKit::EditingRange actualRange, uint64_t callbackID)
+    AttributedStringForCharacterRangeCallback(struct WebKit::AttributedString string, struct WebKit::EditingRange actualRange, uint64_t callbackID)
 #endif
 #if PLATFORM(IOS)
     GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)
@@ -177,8 +177,8 @@ messages -> WebPageProxy {
     AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, uint64_t callbackID)
     AutocorrectionContextCallback(String beforeText, String markedText, String selectedText, String afterText, uint64_t location, uint64_t length, uint64_t callbackID)
     DictationContextCallback(String selectedText, String beforeText, String afterText, uint64_t callbackID)
-    InterpretKeyEvent(WebKit::EditorState state, bool isCharEvent) -> (bool handled)
-    DidReceivePositionInformation(WebKit::InteractionInformationAtPosition information)
+    InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled)
+    DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)
     DidUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect)
@@ -222,12 +222,12 @@ messages -> WebPageProxy {
     ExecuteUndoRedo(uint32_t action) -> (bool result)
 
     # Editor notifications
-    EditorStateChanged(WebKit::EditorState editorState)
-    CompositionWasCanceled(WebKit::EditorState editorState)
+    EditorStateChanged(struct WebKit::EditorState editorState)
+    CompositionWasCanceled(struct WebKit::EditorState editorState)
 
     # Find messages
     DidCountStringMatches(String string, uint32_t matchCount)
-    SetTextIndicator(WebCore::TextIndicatorData indicator, bool fadeOut)
+    SetTextIndicator(struct WebCore::TextIndicatorData indicator, bool fadeOut)
     ClearTextIndicator()
     DidFindString(String string, uint32_t matchCount, int32_t matchIndex)
     DidFailToFindString(String string)
@@ -235,7 +235,7 @@ messages -> WebPageProxy {
     DidGetImageForFindMatch(WebKit::ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
 
     # PopupMenu messages
-    ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)
+    ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
 
 #if ENABLE(CONTEXT_MENUS)
@@ -276,7 +276,7 @@ messages -> WebPageProxy {
     CheckGrammarOfString(String text) -> (Vector<WebCore::GrammarDetail> results, int32_t badGrammarLocation, int32_t badGrammarLength)
     SpellingUIIsShowing() -> (bool isShowing)
     UpdateSpellingUIWithMisspelledWord(String misspelledWord)
-    UpdateSpellingUIWithGrammarString(String badGrammarPhrase, WebCore::GrammarDetail grammarDetail)
+    UpdateSpellingUIWithGrammarString(String badGrammarPhrase, struct WebCore::GrammarDetail grammarDetail)
     GetGuessesForWord(String word, String context) -> (Vector<String> guesses)
     LearnWord(String word);
     IgnoreWord(String word);
@@ -296,7 +296,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(COCOA)
     # Dictionary support.
-    DidPerformDictionaryLookup(WebKit::DictionaryPopupInfo dictionaryPopupInfo)
+    DidPerformDictionaryLookup(struct WebKit::DictionaryPopupInfo dictionaryPopupInfo)
 
     # Keyboard input support messages
     ExecuteSavedCommandBySelector(String selector) -> (bool handled)
@@ -351,12 +351,12 @@ messages -> WebPageProxy {
     RestorePageCenterAndScale(WebCore::FloatPoint unobscuredCenter, double scale)
     DidGetTapHighlightGeometries(uint64_t requestID, WebCore::Color color, Vector<WebCore::FloatQuad> geometries, WebCore::IntSize topLeftRadius, WebCore::IntSize topRightRadius, WebCore::IntSize bottomLeftRadius, WebCore::IntSize bottomRightRadius)
 
-    StartAssistingNode(WebKit::AssistedNodeInformation information, bool userIsInteracting, bool blurPreviousNode, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    StartAssistingNode(struct WebKit::AssistedNodeInformation information, bool userIsInteracting, bool blurPreviousNode, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     StopAssistingNode()
     NotifyRevealedSelection()
 
 #if ENABLE(INSPECTOR)
-    ShowInspectorHighlight(WebCore::Highlight highlight)
+    ShowInspectorHighlight(struct WebCore::Highlight highlight)
     HideInspectorHighlight()
 
     ShowInspectorIndication()
@@ -414,6 +414,6 @@ messages -> WebPageProxy {
     IsPlayingAudioDidChange(bool newIsPlayingAudio)
 
 #if PLATFORM(MAC)
-    DidPerformActionMenuHitTest(WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidPerformActionMenuHitTest(struct WebKit::ActionMenuHitTestResult result, bool forImmediateAction, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 #endif
 }

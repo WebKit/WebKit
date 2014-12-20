@@ -24,7 +24,7 @@
 
 messages -> NetworkProcess LegacyReceiver {
     # Initializes the network process.
-    InitializeNetworkProcess(WebKit::NetworkProcessCreationParameters processCreationParameters)
+    InitializeNetworkProcess(struct WebKit::NetworkProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
     CreateNetworkConnectionToWebProcess()

@@ -22,6 +22,6 @@
 
 messages -> WebApplicationCacheManager {
     void GetApplicationCacheOrigins(uint64_t callbackID)
-    void DeleteEntriesForOrigin(WebKit::SecurityOriginData originIdentifier)
+    void DeleteEntriesForOrigin(struct WebKit::SecurityOriginData originIdentifier)
     void DeleteAllEntries()
 }

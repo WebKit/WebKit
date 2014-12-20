@@ -22,10 +22,10 @@
 
 messages -> WebProcess LegacyReceiver {
     # Initialize the WebProcess. 
-    InitializeWebProcess(WebKit::WebProcessCreationParameters processCreationParameters, WebKit::WebContextUserMessageEncoder initializationUserData) Variadic
+    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters, WebKit::WebContextUserMessageEncoder initializationUserData) Variadic
 
     # Create a new page.
-    CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
+    CreateWebPage(uint64_t newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
 
     # Global preferences.
     SetCacheModel(uint32_t cacheModel)
@@ -66,7 +66,7 @@ messages -> WebProcess LegacyReceiver {
     ResumeDownload(uint64_t downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     CancelDownload(uint64_t downloadID)
 
-    SetTextCheckerState(WebKit::TextCheckerState textCheckerState)
+    SetTextCheckerState(struct WebKit::TextCheckerState textCheckerState)
 
     SetEnhancedAccessibility(bool flag)
 

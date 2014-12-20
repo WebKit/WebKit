@@ -153,86 +153,20 @@ def message_to_struct_declaration(message):
     return surround_in_condition(''.join(result), message.condition)
 
 
-def struct_or_class(namespace, type):
-    structs = frozenset([
-        'WebCore::Animation',
-        'WebCore::EditorCommandsForKeyEvent',
-        'WebCore::CompositionUnderline',
-        'WebCore::Cookie',
-        'WebCore::FloatPoint3D',
-        'WebCore::FileChooserSettings',
-        'WebCore::GrammarDetail',
-        'WebCore::Highlight',
-        'WebCore::IDBDatabaseMetadata',
-        'WebCore::IDBGetResult',
-        'WebCore::IDBIndexMetadata',
-        'WebCore::IDBKeyData',
-        'WebCore::IDBKeyRangeData',
-        'WebCore::IDBObjectStoreMetadata',
-        'WebCore::IdentityTransformOperation',
-        'WebCore::KeypressCommand',
-        'WebCore::Length',
-        'WebCore::MatrixTransformOperation',
-        'WebCore::Matrix3DTransformOperation',
-        'WebCore::NotificationContents',
-        'WebCore::PasteboardImage',
-        'WebCore::PasteboardWebContent',
-        'WebCore::PerspectiveTransformOperation',
-        'WebCore::PluginInfo',
-        'WebCore::PrintInfo',
-        'WebCore::RotateTransformOperation',
-        'WebCore::ScaleTransformOperation',
-        'WebCore::SkewTransformOperation',
-        'WebCore::TextIndicatorData',
-        'WebCore::TimingFunction',
-        'WebCore::TransformationMatrix',
-        'WebCore::TransformOperation',
-        'WebCore::TransformOperations',
-        'WebCore::TranslateTransformOperation',
-        'WebCore::ViewportArguments',
-        'WebCore::ViewportAttributes',
-        'WebCore::WindowFeatures',
-        'WebKit::ActionMenuHitTestResult',
-        'WebKit::AssistedNodeInformation',
-        'WebKit::AttributedString',
-        'WebKit::BackForwardListItemState',
-        'WebKit::ColorSpaceData',
-        'WebKit::ContextMenuState',
-        'WebKit::DatabaseProcessCreationParameters',
-        'WebKit::DictionaryPopupInfo',
-        'WebKit::DrawingAreaInfo',
-        'WebKit::EditingRange',
-        'WebKit::EditorState',
-        'WebKit::InteractionInformationAtPosition',
-        'WebKit::NavigationActionData',
-        'WebKit::NetworkProcessCreationParameters',
-        'WebKit::PageState',
-        'WebKit::PlatformPopupMenuData',
-        'WebKit::PluginCreationParameters',
-        'WebKit::PluginProcessCreationParameters',
-        'WebKit::PrintInfo',
-        'WebKit::SecurityOriginData',
-        'WebKit::StatisticsData',
-        'WebKit::TextCheckerState',
-        'WebKit::WKOptionItem',
-        'WebKit::WebNavigationDataStore',
-        'WebKit::WebPageCreationParameters',
-        'WebKit::WebPreferencesStore',
-        'WebKit::WebProcessCreationParameters',
-        'WebKit::WebScriptMessageHandlerHandle',
-        'WebKit::WindowGeometry',
-    ])
+def struct_or_class(namespace, kind_and_type):
+    kind, type = kind_and_type
 
     qualified_name = '%s::%s' % (namespace, type)
-    if qualified_name in structs:
+    if kind == 'struct':
         return 'struct %s' % type
+    else:
+        return 'class %s' % type
 
-    return 'class %s' % type
 
-def forward_declarations_for_namespace(namespace, types):
+def forward_declarations_for_namespace(namespace, kind_and_types):
     result = []
     result.append('namespace %s {\n' % namespace)
-    result += ['    %s;\n' % struct_or_class(namespace, x) for x in types]
+    result += ['    %s;\n' % struct_or_class(namespace, x) for x in kind_and_types]
     result.append('}\n')
     return ''.join(result)
 
@@ -253,9 +187,10 @@ def forward_declarations_and_headers(receiver):
     for message in receiver.messages:
         if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
             headers.add('<wtf/ThreadSafeRefCounted.h>')
-            types_by_namespace['IPC'].update(['Connection'])
+            types_by_namespace['IPC'].update([('class', 'Connection')])
 
     for parameter in receiver.iterparameters():
+        kind = parameter.kind
         type = parameter.type
 
         if type.find('<') != -1:
@@ -272,7 +207,7 @@ def forward_declarations_and_headers(receiver):
         if len(split) == 2:
             namespace = split[0]
             inner_type = split[1]
-            types_by_namespace[namespace].add(inner_type)
+            types_by_namespace[namespace].add((kind, inner_type))
         elif len(split) > 2:
             # We probably have a nested struct, which means we can't forward declare it.
             # Include its header instead.

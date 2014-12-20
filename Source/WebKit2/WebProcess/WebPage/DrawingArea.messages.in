@@ -28,7 +28,7 @@ messages -> DrawingArea {
     // Used by TiledCoreAnimationDrawingArea.
     UpdateGeometry(WebCore::IntSize viewSize, WebCore::IntSize layerPosition)
     SetDeviceScaleFactor(float deviceScaleFactor)
-    SetColorSpace(WebKit::ColorSpaceData colorSpace)
+    SetColorSpace(struct WebKit::ColorSpaceData colorSpace)
     SetExposedRect(WebCore::FloatRect exposedRect)
 
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)

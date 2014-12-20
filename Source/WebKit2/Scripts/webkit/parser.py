@@ -127,6 +127,15 @@ def parse_parameters_string(parameters_string):
     for parameter_string in split_parameters_string(parameters_string):
         match = re.search(r'\s*(?:\[(?P<attributes>.*?)\]\s+)?(?P<type_and_name>.*)', parameter_string)
         attributes_string, type_and_name_string = match.group('attributes', 'type_and_name')
-        parameter_type, parameter_name = type_and_name_string.rsplit(' ', 1)
-        parameters.append(model.Parameter(type=parameter_type, name=parameter_name, attributes=parse_attributes_string(attributes_string)))
+
+        split = type_and_name_string.rsplit(' ', 1)
+        parameter_kind = 'class'
+        if split[0].startswith('struct '):
+            parameter_kind = 'struct'
+            split[0] = split[0][7:]
+
+        parameter_type = split[0]
+        parameter_name = split[1]
+
+        parameters.append(model.Parameter(kind=parameter_kind, type=parameter_type, name=parameter_name, attributes=parse_attributes_string(attributes_string)))
     return parameters

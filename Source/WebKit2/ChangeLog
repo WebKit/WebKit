@@ -1,3 +1,37 @@
+2014-12-19  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the hardcoded set of structs in the message generation script
+        https://bugs.webkit.org/show_bug.cgi?id=139844
+
+        Reviewed by Tim Horton.
+
+        Instead, make it possible to use 'struct' in front of the type name to declare that the type is a struct.
+
+        * DatabaseProcess/DatabaseProcess.messages.in:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * PluginProcess/PluginProcess.messages.in:
+        * PluginProcess/WebProcessConnection.messages.in:
+        * Scripts/webkit/messages.py:
+        (struct_or_class):
+        (forward_declarations_for_namespace):
+        (forward_declarations_and_headers):
+        * Scripts/webkit/model.py:
+        (Parameter.__init__):
+        * Scripts/webkit/parser.py:
+        (parse_parameters_string):
+        * UIProcess/Storage/StorageManager.messages.in:
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+        * WebProcess/OriginData/WebOriginDataManager.messages.in:
+        * WebProcess/ResourceCache/WebResourceCacheManager.messages.in:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.messages.in:
+
 2014-12-19  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

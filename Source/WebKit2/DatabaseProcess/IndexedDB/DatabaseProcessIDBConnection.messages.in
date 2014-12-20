@@ -23,7 +23,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 messages -> DatabaseProcessIDBConnection LegacyReceiver {
-    EstablishConnection(String databaseName, WebKit::SecurityOriginData openingOrigin, WebKit::SecurityOriginData mainFrameOrigin)
+    EstablishConnection(String databaseName, struct WebKit::SecurityOriginData openingOrigin, struct WebKit::SecurityOriginData mainFrameOrigin)
     GetOrEstablishIDBDatabaseMetadata(uint64_t requestID)
     DeleteDatabase(uint64_t requestID, String databaseName)
 
@@ -37,21 +37,21 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     RollbackTransactionSync(int64_t transactionID) -> (bool success) Delayed
     
     ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
-    CreateObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata objectStoreMetadata)
+    CreateObjectStore(uint64_t requestID, int64_t transactionID, struct WebCore::IDBObjectStoreMetadata objectStoreMetadata)
     DeleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID)
     ClearObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID);
-    CreateIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBIndexMetadata indexMetadata)
+    CreateIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, struct WebCore::IDBIndexMetadata indexMetadata)
     DeleteIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID)
 
-    PutRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyData key, IPC::DataReference value, int64_t putMode, Vector<int64_t> indexIDs, Vector<Vector<WebCore::IDBKeyData>> indexKeys)
-    GetRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange, int64_t cursorType)
+    PutRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, struct WebCore::IDBKeyData key, IPC::DataReference value, int64_t putMode, Vector<int64_t> indexIDs, Vector<Vector<WebCore::IDBKeyData>> indexKeys)
+    GetRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, struct WebCore::IDBKeyRangeData keyRange, int64_t cursorType)
     
-    OpenCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, WebCore::IDBKeyRangeData keyRange)
+    OpenCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, struct WebCore::IDBKeyRangeData keyRange)
     CursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count)
-    CursorIterate(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData key)
+    CursorIterate(uint64_t requestID, int64_t cursorID, struct WebCore::IDBKeyData key)
     
-    Count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange)
-    DeleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyRangeData keyRange)
+    Count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, struct WebCore::IDBKeyRangeData keyRange)
+    DeleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, struct WebCore::IDBKeyRangeData keyRange)
     
     Close()
 }
