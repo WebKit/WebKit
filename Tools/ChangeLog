@@ -1,3 +1,26 @@
+2014-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Revise DRT logic to match Mac.
+
+        Rubberstamped by Anders Carlsson.
+
+        Update the Windows logic to perform initialization of preferences and WebKit
+        settings to match Mac. Also make sure that we only ever emit #EOF tokens under
+        the same circumstances as the Mac version.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (resetWebPreferencesToConsistentValues):
+        (setDefaultsToConsistentValuesForTesting):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (sizeWebViewForCurrentTest):
+        (runTest):
+        (createWebViewAndOffscreenWindow):
+        (allocateGlobalControllers):
+        (prepareConsistentTestingEnvironment):
+        (main):
+        (resetDefaultsToConsistentValues): Deleted.
+
 2014-12-19  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Rollout r177605.
