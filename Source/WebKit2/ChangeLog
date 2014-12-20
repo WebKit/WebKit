@@ -1,5 +1,11 @@
 2014-12-19  Jessie Berlin  <jberlin@webkit.org>
 
+        Another attempt at a speculative build fix.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+
+2014-12-19  Jessie Berlin  <jberlin@webkit.org>
+
         Speculative build fix after r177610.
 
         * UIProcess/mac/WebInspectorProxyMac.mm:
