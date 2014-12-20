@@ -72,7 +72,6 @@ public:
     void exitedFullscreen();
     void enterFullscreenOptimized();
     bool optimizedFullscreenSupported();
-    String fullscreenMode() const;
     String mediaUIImageData(const String&) const;
 
     String externalDeviceDisplayName() const;

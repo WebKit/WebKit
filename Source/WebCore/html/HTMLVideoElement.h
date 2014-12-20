@@ -78,6 +78,15 @@ public:
     URL posterImageURL() const;
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&) override;
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    bool webkitSupportsPresentationMode(const String&) const;
+    void webkitSetPresentationMode(const String&);
+    String webkitPresentationMode() const;
+    virtual void fullscreenModeChanged(VideoFullscreenMode) override;
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitpresentationmodechanged);
+#endif
+
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool);
 

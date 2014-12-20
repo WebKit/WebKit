@@ -294,6 +294,10 @@ namespace WebCore {
     macro(autocomplete) \
     macro(autocompleteerror) \
     /* End of ENABLE(REQUEST_AUTOCOMPLETE) */ \
+    \
+    /* PLATFORM(IOS) */ \
+    macro(webkitpresentationmodechanged) \
+    /* End of ENABLE(IOS_AIRPLAY) */ \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

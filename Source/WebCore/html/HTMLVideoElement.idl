@@ -23,6 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if defined(ENABLE_VIDEO_PRESENTATION_MODE) && ENABLE_VIDEO_PRESENTATION_MODE
+enum VideoPresentationMode {
+    "fullscreen",
+    "optimized",
+    "inline"
+};
+#endif
+
 [
     Conditional=VIDEO,
     JSGenerateToNativeObject,
@@ -52,4 +60,13 @@
     // The number of decoded frames that have been dropped by the player
     // for performance reasons during playback.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDroppedFrameCount;
+
+#if defined(ENABLE_VIDEO_PRESENTATION_MODE) && ENABLE_VIDEO_PRESENTATION_MODE
+    boolean webkitSupportsPresentationMode(VideoPresentationMode mode);
+
+    readonly attribute VideoPresentationMode webkitPresentationMode;
+    void webkitSetPresentationMode(VideoPresentationMode mode);
+
+    attribute EventListener onwebkitpresentationmodechanged;
+#endif
 };

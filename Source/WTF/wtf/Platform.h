@@ -1097,4 +1097,8 @@
 #define WTF_USE_MEDIATOOLBOX 1
 #endif
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#define ENABLE_VIDEO_PRESENTATION_MODE 1
+#endif
+
 #endif /* WTF_Platform_h */

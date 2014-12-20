@@ -1086,18 +1086,19 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
 void WebVideoFullscreenInterfaceAVKit::setIsOptimized(bool active)
 {
     if (m_mode & HTMLMediaElement::VideoFullscreenModeStandard) {
-        if (!active && m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
+        if (!active)
             m_mode &= ~HTMLMediaElement::VideoFullscreenModeOptimized;
-        else if (active && ~m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)
+        else
             m_mode |= HTMLMediaElement::VideoFullscreenModeOptimized;
     }
-    
+
     if (m_videoFullscreenModel)
-        m_videoFullscreenModel->fullscreenModeChanged(m_mode);
+        m_videoFullscreenModel->fullscreenModeChanged(m_exitRequested ? HTMLMediaElement::VideoFullscreenModeNone : m_mode);
+
 
     if (m_mode == HTMLMediaElement::VideoFullscreenModeOptimized)
         return;
-    
+
     [m_window setHidden:m_mode & HTMLMediaElement::VideoFullscreenModeOptimized];
     
     if (m_fullscreenChangeObserver && ~m_mode & HTMLMediaElement::VideoFullscreenModeOptimized)

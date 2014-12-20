@@ -1,3 +1,59 @@
+2014-12-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] add optimized fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=139833
+        <rdar://problem/18844486>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig: Add ENABLE_VIDEO_PRESENTATION_MODE.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::optimizedFullscreenSupported): Deleted.
+        (WebCore::MediaControlsHost::fullscreenMode): Deleted.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.addVideoListeners): Listen for 'webkitpresentationmodechanged'.
+        (ControllerIOS.prototype.removeVideoListeners): Stop listening for 'webkitpresentationmodechanged'.
+        (ControllerIOS.prototype.configureInlineControls): Call video element instead of using the now 
+            removed host property.
+        (ControllerIOS.prototype.updateControls): Ditto.
+        (ControllerIOS.prototype.presentationMode): New, return webkitPresentationMode when possible.
+        (ControllerIOS.prototype.handleFullscreenButtonClicked): Use webkitSetPresentationMode when possible.
+        (ControllerIOS.prototype.handleOptimizedFullscreenButtonClicked): Use video element instead of 
+            using the now removed host method.
+        (ControllerIOS.prototype.handlePresentationModeChange): New, react to presentation mode changes.
+        (ControllerIOS.prototype.handleFullscreenChange): Call handlePresentationModeChange.
+
+        * dom/EventNames.h: Add webkitpresentationmodechanged.
+
+        * html/HTMLAttributeNames.in: Add onwebkitpresentationmodechanged.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen): Early return when asked to change to the current 
+            mode. Call fullscreenModeChanged() instead of whacking the instance variable directly.
+        (WebCore::HTMLMediaElement::exitFullscreen): Ditto.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::fullscreenModeChanged): Make virtual.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute): Deal with onwebkitpresentationmodechange.
+        (WebCore::presentationModeFullscreen): New.
+        (WebCore::presentationModeOptimized): Ditto.
+        (WebCore::presentationModeInline): Ditto.
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode): Ditto.
+        (WebCore::HTMLVideoElement::webkitSetPresentationMode): Ditto.
+        (WebCore::HTMLVideoElement::webkitPresentationMode): Ditto.
+        (WebCore::HTMLVideoElement::fullscreenModeChanged): Ditto.
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setIsOptimized): Simplify the logic a bit. Don't report
+            a mode change when 
+
 2014-12-20  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2

@@ -36,11 +36,13 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "Logging.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -122,6 +124,10 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
 #if ENABLE(IOS_AIRPLAY)
     else if (name == webkitwirelessvideoplaybackdisabledAttr)
         mediaSession().setWirelessVideoPlaybackDisabled(*this, webkitWirelessVideoPlaybackDisabled());
+#endif
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    else if (name == onwebkitpresentationmodechangedAttr)
+        setAttributeEventListener(eventNames().webkitpresentationmodechangedEvent, name, value);
 #endif
     else {
         HTMLMediaElement::parseAttribute(name, value);    
@@ -337,6 +343,87 @@ URL HTMLVideoElement::posterImageURL() const
         return URL();
     return document().completeURL(url);
 }
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+static const AtomicString& presentationModeFullscreen()
+{
+    static NeverDestroyed<AtomicString> fullscreen("fullscreen", AtomicString::ConstructFromLiteral);
+    return fullscreen;
+}
+
+static const AtomicString& presentationModeOptimized()
+{
+    static NeverDestroyed<AtomicString> optimized("optimized", AtomicString::ConstructFromLiteral);
+    return optimized;
+}
+
+static const AtomicString& presentationModeInline()
+{
+    static NeverDestroyed<AtomicString> inlineMode("inline", AtomicString::ConstructFromLiteral);
+    return inlineMode;
+}
+
+bool HTMLVideoElement::webkitSupportsPresentationMode(const String& mode) const
+{
+    if (mode == presentationModeFullscreen())
+        return mediaSession().fullscreenPermitted(*this) && supportsFullscreen();
+
+    if (mode == presentationModeOptimized())
+        return wkIsOptimizedFullscreenSupported() && mediaSession().allowsAlternateFullscreen(*this) && supportsFullscreen();
+
+    if (mode == presentationModeInline())
+        return !mediaSession().requiresFullscreenForVideoPlayback(*this);
+
+    return false;
+}
+
+void HTMLVideoElement::webkitSetPresentationMode(const String& mode)
+{
+    if (mode == presentationModeInline() && isFullscreen()) {
+        exitFullscreen();
+        return;
+    }
+
+    if (!mediaSession().fullscreenPermitted(*this) || !supportsFullscreen())
+        return;
+
+    LOG(Media, "HTMLVideoElement::webkitSetPresentationMode(%p) - setting to \"%s\"", this, mode.utf8().data());
+
+    if (mode == presentationModeFullscreen())
+        enterFullscreen(VideoFullscreenModeStandard);
+    else if (mode == presentationModeOptimized())
+        enterFullscreen(VideoFullscreenModeOptimized);
+}
+
+String HTMLVideoElement::webkitPresentationMode() const
+{
+    HTMLMediaElement::VideoFullscreenMode mode = fullscreenMode();
+
+    if (mode == VideoFullscreenModeStandard)
+        return presentationModeFullscreen();
+
+    if (mode & VideoFullscreenModeOptimized)
+        return presentationModeOptimized();
+
+    if (mode == VideoFullscreenModeNone)
+        return presentationModeInline();
+
+    ASSERT_NOT_REACHED();
+    return presentationModeInline();
+}
+
+void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
+{
+    if (mode != fullscreenMode()) {
+        LOG(Media, "HTMLVideoElement::fullscreenModeChanged(%p) - mode changed from %i to %i", this, fullscreenMode(), mode);
+        scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
+    }
+
+    HTMLMediaElement::fullscreenModeChanged(mode);
+}
+
+#endif
 
 }
 

@@ -401,7 +401,7 @@ public:
     typedef uint32_t VideoFullscreenMode;
 
     VideoFullscreenMode fullscreenMode() const { return m_videoFullscreenMode; }
-    void fullscreenModeChanged(VideoFullscreenMode mode) { m_videoFullscreenMode = mode; }
+    virtual void fullscreenModeChanged(VideoFullscreenMode mode) { m_videoFullscreenMode = mode; }
 
     void enterFullscreen(VideoFullscreenMode);
     virtual void enterFullscreen() override;
@@ -495,6 +495,8 @@ protected:
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
     void setMediaControlsDependOnPageScaleFactor(bool);
 #endif
+
+    void scheduleEvent(const AtomicString& eventName);
 
 private:
     void createMediaPlayer();
@@ -620,8 +622,7 @@ private:
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
-    void scheduleEvent(const AtomicString& eventName);
-    
+
     // loading
     void selectMediaResource();
     void loadResource(const URL&, ContentType&, const String& keySystem);

@@ -1,3 +1,13 @@
+2014-12-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] add optimized fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=139833
+        <rdar://problem/18844486>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig: Add ENABLE_VIDEO_PRESENTATION_MODE.
+
 2014-12-20  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in WebCore, WebInspectorUI, WebKit, WebKit2

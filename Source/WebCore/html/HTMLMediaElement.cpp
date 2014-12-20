@@ -4919,7 +4919,8 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 {
     LOG(Media, "HTMLMediaElement::enterFullscreen(%p)", this);
     ASSERT(mode != VideoFullscreenModeNone);
-    if (m_videoFullscreenMode != VideoFullscreenModeNone)
+
+    if (m_videoFullscreenMode == mode)
         return;
 
 #if ENABLE(FULLSCREEN_API)
@@ -4929,7 +4930,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     }
 #endif
 
-    m_videoFullscreenMode = mode;
+    fullscreenModeChanged(mode);
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
     if (document().page() && is<HTMLVideoElement>(*this)) {
@@ -4958,7 +4959,7 @@ void HTMLMediaElement::exitFullscreen()
     }
 #endif
     ASSERT(m_videoFullscreenMode != VideoFullscreenModeNone);
-    m_videoFullscreenMode = VideoFullscreenModeNone;
+    fullscreenModeChanged(VideoFullscreenModeNone);
     if (hasMediaControls())
         mediaControls()->exitedFullscreen();
     if (document().page() && is<HTMLVideoElement>(*this)) {

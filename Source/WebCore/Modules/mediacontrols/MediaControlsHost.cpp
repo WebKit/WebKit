@@ -195,16 +195,6 @@ void MediaControlsHost::enterFullscreenOptimized()
 #endif
 }
     
-bool MediaControlsHost::optimizedFullscreenSupported()
-{
-#if PLATFORM(IOS)
-    if (!wkIsOptimizedFullscreenSupported())
-        return false;
-#endif
-
-    return m_mediaElement->mediaSession().allowsAlternateFullscreen(*m_mediaElement);
-}
-
 void MediaControlsHost::updateCaptionDisplaySizes()
 {
     if (m_textTrackContainer)
@@ -285,25 +275,6 @@ bool MediaControlsHost::controlsDependOnPageScaleFactor() const
 void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
 {
     m_mediaElement->setMediaControlsDependOnPageScaleFactor(value);
-}
-
-String MediaControlsHost::fullscreenMode() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, standard, (ASCIILiteral("standard")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, optimized, (ASCIILiteral("optimized")));
-    String mode = none;
-
-    if (m_mediaElement->fullscreenMode() == HTMLMediaElement::VideoFullscreenModeNone)
-        mode = none;
-    else if (m_mediaElement->fullscreenMode() == HTMLMediaElement::VideoFullscreenModeStandard)
-        mode = standard;
-    else if (m_mediaElement->fullscreenMode() & HTMLMediaElement::VideoFullscreenModeOptimized)
-        mode = optimized;
-    
-    LOG(Media, "MediaControlsHost::fullscreenMode - returning \"%s\"", mode.utf8().data());
-
-    return mode;
 }
 
 String MediaControlsHost::mediaUIImageData(const String& partID) const
