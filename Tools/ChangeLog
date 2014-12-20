@@ -1,3 +1,9 @@
+2014-12-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Try running EWS scripts without —no-confirm, since it defaults to true.
+
+        * EWSTools/start-queue-win.sh:
+
 2014-12-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add WebKitSystemInterface for iOS 8.1
