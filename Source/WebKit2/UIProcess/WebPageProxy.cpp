@@ -3099,6 +3099,16 @@ void WebPageProxy::fullscreenMayReturnToInline()
     m_uiClient->fullscreenMayReturnToInline(this);
 }
 
+void WebPageProxy::didEnterFullscreen()
+{
+    m_uiClient->didEnterFullscreen(this);
+}
+
+void WebPageProxy::didExitFullscreen()
+{
+    m_uiClient->didExitFullscreen(this);
+}
+
 void WebPageProxy::closePage(bool stopResponsivenessTimer)
 {
     if (stopResponsivenessTimer)

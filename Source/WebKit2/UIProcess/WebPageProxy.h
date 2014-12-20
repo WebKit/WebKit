@@ -270,6 +270,8 @@ public:
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
 
     void fullscreenMayReturnToInline();
+    void didEnterFullscreen();
+    void didExitFullscreen();
 
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();

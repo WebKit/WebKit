@@ -61,6 +61,8 @@ private:
         virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
         virtual void close(WebKit::WebPageProxy*) override;
         virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
+        virtual void didEnterFullscreen(WebKit::WebPageProxy*) override;
+        virtual void didExitFullscreen(WebKit::WebPageProxy*) override;
         virtual void runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void ()> completionHandler) override;
         virtual void runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (bool)> completionHandler) override;
         virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (const WTF::String&)> completionHandler) override;
@@ -88,6 +90,8 @@ private:
         bool webViewPrintFrame : 1;
         bool webViewClose : 1;
         bool webViewFullscreenMayReturnToInline : 1;
+        bool webViewDidEnterFullscreen : 1;
+        bool webViewDidExitFullscreen : 1;
 #if PLATFORM(IOS)
         bool webViewActionsForElementDefaultActions : 1;
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
