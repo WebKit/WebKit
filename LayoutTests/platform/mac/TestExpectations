@@ -477,8 +477,8 @@ webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure 
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=124935
-webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
+webkit.org/b/124935 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
+webkit.org/b/124935 [ Yosemite ] webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
 
 # Some WebGL tests don't work properly on MountainLion
 [ MountainLion ] webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Pass Failure ]

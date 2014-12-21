@@ -1,3 +1,9 @@
+2014-12-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Update expectations for two WebGL tests to match what bots see.
+
+        * platform/mac/TestExpectations:
+
 2014-12-19  Chris Dumez  <cdumez@apple.com>
 
         Fix initial / inherit support for '-webkit-perspective-origin' CSS property
