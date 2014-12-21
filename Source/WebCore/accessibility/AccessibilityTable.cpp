@@ -364,9 +364,9 @@ void AccessibilityTable::addChildren()
     
     if (HTMLTableElement* tableElement = this->tableElement()) {
         if (HTMLTableCaptionElement* caption = tableElement->caption()) {
-            AccessibilityObject& axCaption = *axObjectCache()->getOrCreate(caption);
-            if (!axCaption.accessibilityIsIgnored())
-                m_children.append(&axCaption);
+            AccessibilityObject* axCaption = axObjectCache()->getOrCreate(caption);
+            if (axCaption && !axCaption->accessibilityIsIgnored())
+                m_children.append(axCaption);
         }
     }
 
