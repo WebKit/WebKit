@@ -105,7 +105,7 @@ void WebVideoFullscreenManagerProxy::fullscreenModeChanged(HTMLMediaElement::Vid
     m_page->send(Messages::WebVideoFullscreenManager::fullscreenModeChanged(mode), m_page->pageID());
 }
     
-void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<double, double>>& ranges)
+void WebVideoFullscreenManagerProxy::setSeekableRangesVector(const Vector<std::pair<double, double>>& ranges)
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges)

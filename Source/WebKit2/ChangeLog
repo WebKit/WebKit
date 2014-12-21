@@ -1,3 +1,29 @@
+2014-12-21  David Kilzer  <ddkilzer@apple.com>
+
+        Fix WebKit2 build with newer clang compiler
+
+        Fixes the following build error:
+
+            In file included from DerivedSources/WebKit2/WebVideoFullscreenManagerProxyMessageReceiver.cpp:32:
+            Source/WebKit2/Platform/IPC/HandleMessage.h:16:25: error: non-const lvalue reference to type 'Vector<[3 * ...]>' cannot bind to a temporary of type 'Vector<[3 * ...]>'
+                (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))...);
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            Source/WebKit2/Platform/IPC/HandleMessage.h:22:5: note: in instantiation of function template specialization 'IPC::callMemberFunctionImpl<WebKit::WebVideoFullscreenManagerProxy, void (WebKit::WebVideoFullscreenManagerProxy::*)(WTF::Vector<std::__1::pair<double, double>, 0, WTF::CrashOnOverflow> &), std::__1::tuple<WTF::Vector<std::__1::pair<double, double>, 0, WTF::CrashOnOverflow> >, 0>' requested here
+                callMemberFunctionImpl(object, function, std::forward<ArgsTuple>(args), ArgsIndicies());
+                ^
+            Source/WebKit2/Platform/IPC/HandleMessage.h:120:5: note: in instantiation of function template specialization 'IPC::callMemberFunction<WebKit::WebVideoFullscreenManagerProxy, void (WebKit::WebVideoFullscreenManagerProxy::*)(WTF::Vector<std::__1::pair<double, double>, 0, WTF::CrashOnOverflow> &), std::__1::tuple<WTF::Vector<std::__1::pair<double, double>, 0, WTF::CrashOnOverflow> >, std::make_index_sequence<1> >' requested here
+                callMemberFunction(WTF::move(arguments), object, function);
+                ^
+            DerivedSources/WebKit2/WebVideoFullscreenManagerProxyMessageReceiver.cpp:55:14: note: in instantiation of function template specialization 'IPC::handleMessage<Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector, WebKit::WebVideoFullscreenManagerProxy, void (WebKit::WebVideoFullscreenManagerProxy::*)(WTF::Vector<std::__1::pair<double, double>, 0, WTF::CrashOnOverflow> &)>' requested here
+                    IPC::handleMessage<Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector>(decoder, this, &WebVideoFullscreenManagerProxy::setSeekableRangesVector);
+                         ^
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setSeekableRangesVector):
+        Make Vector<std::pair<double, double>>& argument const because a
+        temporary is not allowed to bind to a non-const reference.
+
 2014-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] add optimized fullscreen API
