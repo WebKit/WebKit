@@ -1,3 +1,24 @@
+2014-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of error-prone ReleaseParsedCalcValueCondition argument in CSSParser
+        https://bugs.webkit.org/show_bug.cgi?id=139334
+
+        Reviewed by Darin Adler.
+
+        Get rid of error-prone ReleaseParsedCalcValueCondition argument in
+        CSSParser that determines the the m_parsedCalculation member should
+        be released.
+
+        Instead, introduce a new ValueWithCalculation type which wraps a
+        CSSParserValue and an optional parsed calculation value. This way,
+        the parsed calculation value is now associated with its CSSParserValue.
+        This makes it very difficult to use a parsed calculation value for the
+        wrong CSSParserValue. The API is also easier to use as developers no
+        longer need to explicitly indicate if the calculation value should be
+        released or not.
+
+        No new tests, no web-behavior change.
+
 2014-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] add optimized fullscreen API
