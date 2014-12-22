@@ -81,6 +81,10 @@ public:
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }
 
     TextIndicatorData data() const { return m_data; }
+    
+    bool wantsBounce() const;
+    bool wantsContentCrossfade() const;
+    bool wantsFadeIn() const;
 
 private:
     TextIndicator(const TextIndicatorData&);
