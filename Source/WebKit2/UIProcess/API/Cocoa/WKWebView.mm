@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APIFormClient.h"
+#import "APISerializedScriptValue.h"
 #import "CompletionHandlerCallChecker.h"
 #import "FindClient.h"
 #import "LegacySessionStateCoding.h"
@@ -65,7 +66,6 @@
 #import "WebPageProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
-#import "WebSerializedScriptValue.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
@@ -583,7 +583,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _page->runJavaScriptInMainFrame(javaScriptString, [handler](WebKit::WebSerializedScriptValue* serializedScriptValue, WebKit::ScriptValueCallback::Error errorCode) {
+    _page->runJavaScriptInMainFrame(javaScriptString, [handler](API::SerializedScriptValue* serializedScriptValue, WebKit::ScriptValueCallback::Error errorCode) {
         if (!handler)
             return;
 

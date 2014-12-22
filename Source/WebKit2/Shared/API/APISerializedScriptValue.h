@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSerializedScriptValue_h
-#define WebSerializedScriptValue_h
+#ifndef APISerializedScriptValue_h
+#define APISerializedScriptValue_h
 
 #include "APIObject.h"
 
@@ -32,26 +32,26 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/RefPtr.h>
 
-namespace WebKit {
+namespace API {
 
-class WebSerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
+class SerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
 public:
-    static PassRefPtr<WebSerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
+    static PassRefPtr<SerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
     {
-        return adoptRef(new WebSerializedScriptValue(serializedValue));
+        return adoptRef(new SerializedScriptValue(serializedValue));
     }
     
-    static PassRefPtr<WebSerializedScriptValue> create(JSContextRef context, JSValueRef value, JSValueRef* exception)
+    static PassRefPtr<SerializedScriptValue> create(JSContextRef context, JSValueRef value, JSValueRef* exception)
     {
         RefPtr<WebCore::SerializedScriptValue> serializedValue = WebCore::SerializedScriptValue::create(context, value, exception);
         if (!serializedValue)
             return 0;
-        return adoptRef(new WebSerializedScriptValue(serializedValue.get()));
+        return adoptRef(new SerializedScriptValue(serializedValue.get()));
     }
     
-    static PassRefPtr<WebSerializedScriptValue> adopt(Vector<uint8_t>& buffer)
+    static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
     {
-        return adoptRef(new WebSerializedScriptValue(WebCore::SerializedScriptValue::adopt(buffer)));
+        return adoptRef(new SerializedScriptValue(WebCore::SerializedScriptValue::adopt(buffer)));
     }
     
     JSValueRef deserialize(JSContextRef context, JSValueRef* exception)
@@ -64,7 +64,7 @@ public:
     void* internalRepresentation() { return m_serializedScriptValue.get(); }
 
 private:
-    explicit WebSerializedScriptValue(PassRefPtr<WebCore::SerializedScriptValue> serializedScriptValue)
+    explicit SerializedScriptValue(PassRefPtr<WebCore::SerializedScriptValue> serializedScriptValue)
         : m_serializedScriptValue(serializedScriptValue)
     {
     }
@@ -74,4 +74,4 @@ private:
     
 }
 
-#endif // WebSerializedScriptValue_h
+#endif

@@ -26,12 +26,12 @@
 #include "config.h"
 #include "WebResourceCacheManagerProxy.h"
 
+#include "APISecurityOrigin.h"
 #include "ImmutableDictionary.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebResourceCacheManagerMessages.h"
 #include "WebResourceCacheManagerProxyMessages.h"
-#include "WebSecurityOrigin.h"
 
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcessMessages.h"
@@ -104,7 +104,7 @@ void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOrigi
     performAPICallbackWithSecurityOriginDataVector(origins, callback.get());
 }
 
-void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin, ResourceCachesToClear cachesToClear)
+void WebResourceCacheManagerProxy::clearCacheForOrigin(API::SecurityOrigin* origin, ResourceCachesToClear cachesToClear)
 {
     SecurityOriginData securityOrigin;
     securityOrigin.protocol = origin->securityOrigin().protocol();

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebChromeClient.h"
 
+#include "APISecurityOrigin.h"
 #include "DrawingArea.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
@@ -48,7 +49,6 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
-#include "WebSecurityOrigin.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
@@ -681,8 +681,8 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     uint64_t currentQuota = dbManager.quotaForOrigin(origin);
     uint64_t currentOriginUsage = dbManager.usageForOrigin(origin);
     uint64_t newQuota = 0;
-    RefPtr<WebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(origin->databaseIdentifier()));
-    newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, webSecurityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
+    RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(origin->databaseIdentifier()));
+    newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, securityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
 
     if (!newQuota) {
         unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
@@ -706,8 +706,8 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t)
 
 void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, int64_t totalBytesNeeded)
 {
-    RefPtr<WebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::createFromString(origin->toString());
-    if (m_page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(m_page, webSecurityOrigin.get(), totalBytesNeeded))
+    RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::createFromString(origin->toString());
+    if (m_page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(m_page, securityOrigin.get(), totalBytesNeeded))
         return;
 
     unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;

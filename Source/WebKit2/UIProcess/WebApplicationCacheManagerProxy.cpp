@@ -26,11 +26,11 @@
 #include "config.h"
 #include "WebApplicationCacheManagerProxy.h"
 
+#include "APISecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "WebApplicationCacheManagerMessages.h"
 #include "WebApplicationCacheManagerProxyMessages.h"
 #include "WebContext.h"
-#include "WebSecurityOrigin.h"
 
 namespace WebKit {
 
@@ -102,7 +102,7 @@ void WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins(const Vector
     performAPICallbackWithSecurityOriginDataVector(originDatas, callback.get());
 }
 
-void WebApplicationCacheManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
+void WebApplicationCacheManagerProxy::deleteEntriesForOrigin(API::SecurityOrigin* origin)
 {
     if (!context())
         return;

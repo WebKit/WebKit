@@ -40,7 +40,7 @@ WebNotification::WebNotification(const String& title, const String& body, const 
     , m_tag(tag)
     , m_lang(lang)
     , m_dir(dir)
-    , m_origin(WebSecurityOrigin::createFromString(originString))
+    , m_origin(API::SecurityOrigin::createFromString(originString))
     , m_notificationID(notificationID)
 {
 }

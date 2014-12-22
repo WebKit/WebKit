@@ -27,25 +27,25 @@
 #include "WKSerializedScriptValue.h"
 #include "WKSerializedScriptValuePrivate.h"
 
+#include "APISerializedScriptValue.h"
 #include "WKAPICast.h"
-#include "WebSerializedScriptValue.h"
 
 using namespace WebKit;
 
 WKTypeID WKSerializedScriptValueGetTypeID()
 {
-    return toAPI(WebSerializedScriptValue::APIType);
+    return toAPI(API::SerializedScriptValue::APIType);
 }
 
 WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception)
 {
-    RefPtr<WebSerializedScriptValue> serializedValue = WebSerializedScriptValue::create(context, value, exception);
+    RefPtr<API::SerializedScriptValue> serializedValue = API::SerializedScriptValue::create(context, value, exception);
     return toAPI(serializedValue.release().leakRef());
 }
 
 WKSerializedScriptValueRef WKSerializedScriptValueCreateWithInternalRepresentation(void* internalRepresentation)
 {
-    RefPtr<WebSerializedScriptValue> serializedValue = WebSerializedScriptValue::create(static_cast<WebCore::SerializedScriptValue*>(internalRepresentation));
+    RefPtr<API::SerializedScriptValue> serializedValue = API::SerializedScriptValue::create(static_cast<WebCore::SerializedScriptValue*>(internalRepresentation));
     return toAPI(serializedValue.release().leakRef());
 }
 

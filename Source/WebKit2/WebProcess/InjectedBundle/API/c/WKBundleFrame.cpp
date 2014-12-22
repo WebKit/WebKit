@@ -28,6 +28,7 @@
 #include "WKBundleFramePrivate.h"
 
 #include "APIArray.h"
+#include "APISecurityOrigin.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
@@ -36,7 +37,6 @@
 #include "WKBundleAPICast.h"
 #include "WKData.h"
 #include "WebFrame.h"
-#include "WebSecurityOrigin.h"
 #include <WebCore/Document.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>

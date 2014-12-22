@@ -31,10 +31,12 @@
 #include "APIError.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
+#include "APISerializedScriptValue.h"
 #include "APIString.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
 #include "APIURLResponse.h"
+#include "APIUserContentURLPattern.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
@@ -45,8 +47,6 @@
 #include "WebImage.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
-#include "WebSerializedScriptValue.h"
-#include "WebUserContentURLPattern.h"
 
 namespace WebKit {
 
@@ -108,7 +108,7 @@ public:
             return true;
         }
         case API::Object::Type::SerializedScriptValue: {
-            WebSerializedScriptValue* scriptValue = static_cast<WebSerializedScriptValue*>(m_root);
+            API::SerializedScriptValue* scriptValue = static_cast<API::SerializedScriptValue*>(m_root);
             encoder << scriptValue->dataReference();
             return true;
         }
@@ -191,7 +191,7 @@ public:
             return true;
         }
         case API::Object::Type::UserContentURLPattern: {
-            WebUserContentURLPattern* urlPattern = static_cast<WebUserContentURLPattern*>(m_root);
+            API::UserContentURLPattern* urlPattern = static_cast<API::UserContentURLPattern*>(m_root);
             encoder << urlPattern->patternString();
             return true;
         }
@@ -327,7 +327,7 @@ public:
                 return false;
             
             Vector<uint8_t> vector = dataReference.vector();
-            coder.m_root = WebSerializedScriptValue::adopt(vector);
+            coder.m_root = API::SerializedScriptValue::adopt(vector);
             break;
         }
         case API::Object::Type::Double: {
@@ -497,7 +497,7 @@ public:
             String string;
             if (!decoder.decode(string))
                 return false;
-            coder.m_root = WebUserContentURLPattern::create(string);
+            coder.m_root = API::UserContentURLPattern::create(string);
             break;
         }
         case API::Object::Type::Image: {

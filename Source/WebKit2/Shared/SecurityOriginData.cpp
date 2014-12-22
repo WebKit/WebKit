@@ -28,7 +28,7 @@
 
 #include "APIArray.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebSecurityOrigin.h"
+#include "APISecurityOrigin.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -92,7 +92,7 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
     securityOrigins.reserveInitialCapacity(originDatas.size());
 
     for (const auto& originData : originDatas) {
-        RefPtr<API::Object> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
+        RefPtr<API::Object> origin = API::SecurityOrigin::create(originData.protocol, originData.host, originData.port);
         if (!origin)
             continue;
         securityOrigins.uncheckedAppend(WTF::move(origin));

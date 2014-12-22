@@ -27,16 +27,14 @@
 #include "WebNotificationManagerProxy.h"
 
 #include "APIArray.h"
+#include "APISecurityOrigin.h"
 #include "ImmutableDictionary.h"
 #include "WebContext.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include "WebSecurityOrigin.h"
 
-using namespace std;
-using namespace WTF;
 using namespace WebCore;
 
 namespace WebKit {
@@ -232,7 +230,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         it->key->process().send(Messages::WebNotificationManager::DidCloseNotifications(it->value), 0);
 }
 
-void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const WebSecurityOrigin* origin, bool allowed)
+void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API::SecurityOrigin* origin, bool allowed)
 {
     if (!context())
         return;
@@ -253,7 +251,7 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
     originStrings.reserveInitialCapacity(size);
     
     for (size_t i = 0; i < size; ++i)
-        originStrings.append(origins->at<WebSecurityOrigin>(i)->securityOrigin().toString());
+        originStrings.append(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
     
     context()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
 }

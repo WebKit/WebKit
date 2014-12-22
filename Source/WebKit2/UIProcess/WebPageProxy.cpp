@@ -33,6 +33,7 @@
 #include "APILegacyContextHistoryClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
+#include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
@@ -87,7 +88,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
-#include "WebSecurityOrigin.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/DragController.h>
@@ -2346,7 +2346,7 @@ void WebPageProxy::countStringMatches(const String& string, FindOptions options,
     m_process->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
 }
 
-void WebPageProxy::runJavaScriptInMainFrame(const String& script, std::function<void (WebSerializedScriptValue*, CallbackBase::Error)> callbackFunction)
+void WebPageProxy::runJavaScriptInMainFrame(const String& script, std::function<void (API::SerializedScriptValue*, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {
         callbackFunction(nullptr, CallbackBase::Error::Unknown);
@@ -4387,7 +4387,7 @@ void WebPageProxy::scriptValueCallback(const IPC::DataReference& dataReference, 
     data.reserveInitialCapacity(dataReference.size());
     data.append(dataReference.data(), dataReference.size());
 
-    callback->performCallbackWithReturnValue(data.size() ? WebSerializedScriptValue::adopt(data).get() : 0);
+    callback->performCallbackWithReturnValue(data.size() ? API::SerializedScriptValue::adopt(data).get() : 0);
 }
 
 void WebPageProxy::computedPagesCallback(const Vector<IntRect>& pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
@@ -4791,7 +4791,7 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
         WebFrameProxy* frame = m_process->webFrame(record->frameID);
         MESSAGE_CHECK(frame);
 
-        RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(record->originIdentifier));
+        RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(record->originIdentifier));
         auto currentReply = record->reply;
         m_uiClient->exceededDatabaseQuota(this, frame, origin.get(),
             record->databaseName, record->displayName, record->currentQuota,
@@ -4816,7 +4816,7 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     MESSAGE_CHECK(frame);
 
     // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
 
     if (m_uiClient->decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
@@ -4833,7 +4833,7 @@ void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     RefPtr<UserMediaPermissionRequestProxy> request = m_userMediaPermissionRequestManager.createRequest(userMediaID, audio, video);
 
     if (!m_uiClient->decidePolicyForUserMediaPermissionRequest(*this, *frame, *origin.get(), *request.get()))
@@ -4845,7 +4845,7 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
     if (!isRequestIDValid(requestID))
         return;
 
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromString(originString);
+    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::createFromString(originString);
     RefPtr<NotificationPermissionRequest> request = m_notificationPermissionRequestManager.createRequest(requestID);
     
     if (!m_uiClient->decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))

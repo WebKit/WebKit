@@ -23,38 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSecurityOrigin_h
-#define WebSecurityOrigin_h
+#ifndef APISecurityOrigin_h
+#define APISecurityOrigin_h
 
 #include "APIObject.h"
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/PassRefPtr.h>
 
-namespace WebKit {
+namespace API {
 
-class WebSecurityOrigin : public API::ObjectImpl<API::Object::Type::SecurityOrigin> {
+class SecurityOrigin : public API::ObjectImpl<API::Object::Type::SecurityOrigin> {
 public:
-    static PassRefPtr<WebSecurityOrigin> createFromString(const String& string)
+    static PassRefPtr<SecurityOrigin> createFromString(const WTF::String& string)
     {
         return create(WebCore::SecurityOrigin::createFromString(string));
     }
 
-    static PassRefPtr<WebSecurityOrigin> create(const String& protocol, const String& host, int port)
+    static PassRefPtr<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, int port)
     {
         return create(WebCore::SecurityOrigin::create(protocol, host, port));
     }
 
-    static PassRefPtr<WebSecurityOrigin> create(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
+    static PassRefPtr<SecurityOrigin> create(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
     {
         if (!securityOrigin)
             return 0;
-        return adoptRef(new WebSecurityOrigin(securityOrigin));
+        return adoptRef(new SecurityOrigin(securityOrigin));
     }
 
     WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
 
 private:
-    WebSecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
+    SecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
         : m_securityOrigin(securityOrigin)
     {
     }
@@ -62,6 +62,6 @@ private:
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 };
 
-} // namespace WebKit
+}
 
 #endif

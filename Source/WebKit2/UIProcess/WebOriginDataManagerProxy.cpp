@@ -26,12 +26,11 @@
 #include "config.h"
 #include "WebOriginDataManagerProxy.h"
 
+#include "APISecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebOriginDataManagerMessages.h"
 #include "WebOriginDataManagerProxyMessages.h"
-#include "WebSecurityOrigin.h"
-#include <WebCore/SecurityOrigin.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -201,12 +200,12 @@ void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection* connection, const
     securityOrigins.reserveInitialCapacity(originIdentifiers.size());
 
     for (const auto& originIdentifier : originIdentifiers)
-        securityOrigins.uncheckedAppend(WebSecurityOrigin::create(originIdentifier.securityOrigin()));
+        securityOrigins.uncheckedAppend(API::SecurityOrigin::create(originIdentifier.securityOrigin()));
 
     callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
 }
 
-void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, WebSecurityOrigin* origin, std::function<void (CallbackBase::Error)> callbackFunction)
+void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, API::SecurityOrigin* origin, std::function<void (CallbackBase::Error)> callbackFunction)
 {
     SecurityOriginData securityOriginData;
     securityOriginData.protocol = origin->securityOrigin().protocol();

@@ -27,7 +27,7 @@
 #define WebNotification_h
 
 #include "APIObject.h"
-#include "WebSecurityOrigin.h"
+#include "APISecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -54,7 +54,7 @@ public:
     const String& tag() const { return m_tag; }
     const String& lang() const { return m_lang; }
     const String& dir() const { return m_dir; }
-    WebSecurityOrigin* origin() const { return m_origin.get(); }
+    API::SecurityOrigin* origin() const { return m_origin.get(); }
     
     uint64_t notificationID() const { return m_notificationID; }
 
@@ -67,7 +67,7 @@ private:
     String m_tag;
     String m_lang;
     String m_dir;
-    RefPtr<WebSecurityOrigin> m_origin;
+    RefPtr<API::SecurityOrigin> m_origin;
     uint64_t m_notificationID;
 };
 

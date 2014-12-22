@@ -34,17 +34,18 @@ namespace API {
 template<> struct ClientTraits<WKDatabaseManagerClientBase> {
     typedef std::tuple<WKDatabaseManagerClientV0> Versions;
 };
+
+class SecurityOrigin;
 }
 
 namespace WebKit {
 
 class WebDatabaseManagerProxy;
-class WebSecurityOrigin;
 
 class WebDatabaseManagerProxyClient : public API::Client<WKDatabaseManagerClientBase> {
 public:
-    void didModifyOrigin(WebDatabaseManagerProxy*, WebSecurityOrigin*);
-    void didModifyDatabase(WebDatabaseManagerProxy*, WebSecurityOrigin*, const String& databaseIdentifier);
+    void didModifyOrigin(WebDatabaseManagerProxy*, API::SecurityOrigin*);
+    void didModifyDatabase(WebDatabaseManagerProxy*, API::SecurityOrigin*, const String& databaseIdentifier);
 };
 
 } // namespace WebKit

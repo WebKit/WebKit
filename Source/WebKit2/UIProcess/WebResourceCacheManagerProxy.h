@@ -40,7 +40,6 @@ namespace WebKit {
 struct SecurityOriginData;
 class WebContext;
 class WebProcessProxy;
-class WebSecurityOrigin;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
 
@@ -52,7 +51,7 @@ public:
     virtual ~WebResourceCacheManagerProxy();
 
     void getCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
-    void clearCacheForOrigin(WebSecurityOrigin*, ResourceCachesToClear);
+    void clearCacheForOrigin(API::SecurityOrigin*, ResourceCachesToClear);
     void clearCacheForAllOrigins(ResourceCachesToClear);
 
     using API::Object::ref;

@@ -42,7 +42,6 @@ namespace WebKit {
 
 class WebContext;
 class WebProcessProxy;
-class WebSecurityOrigin;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
 
@@ -57,10 +56,10 @@ public:
 
     void getDatabasesByOrigin(std::function<void (API::Array*, CallbackBase::Error)>);
     void getDatabaseOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
-    void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin*);
-    void deleteDatabasesForOrigin(WebSecurityOrigin*);
+    void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, API::SecurityOrigin*);
+    void deleteDatabasesForOrigin(API::SecurityOrigin*);
     void deleteAllDatabases();
-    void setQuotaForOrigin(WebSecurityOrigin*, uint64_t quota);
+    void setQuotaForOrigin(API::SecurityOrigin*, uint64_t quota);
     
     static String originKey();
     static String originQuotaKey();

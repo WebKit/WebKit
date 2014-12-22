@@ -194,7 +194,7 @@ class QuickLookDocumentData;
 typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<EditingRange> EditingRangeCallback;
 typedef GenericCallback<const String&> StringCallback;
-typedef GenericCallback<WebSerializedScriptValue*> ScriptValueCallback;
+typedef GenericCallback<API::SerializedScriptValue*> ScriptValueCallback;
 
 #if PLATFORM(GTK)
 typedef GenericCallback<API::Error*> PrintFinishedCallback;
@@ -696,7 +696,7 @@ public:
     void getSelectionAsWebArchiveData(std::function<void (API::Data*, CallbackBase::Error)>);
     void getSourceForFrame(WebFrameProxy*, std::function<void (const String&, CallbackBase::Error)>);
     void getWebArchiveOfFrame(WebFrameProxy*, std::function<void (API::Data*, CallbackBase::Error)>);
-    void runJavaScriptInMainFrame(const String&, std::function<void (WebSerializedScriptValue*, CallbackBase::Error)> callbackFunction);
+    void runJavaScriptInMainFrame(const String&, std::function<void (API::SerializedScriptValue*, CallbackBase::Error)> callbackFunction);
     void forceRepaint(PassRefPtr<VoidCallback>);
 
     float headerHeight(WebFrameProxy*);

@@ -32,6 +32,7 @@
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
+#include "APISerializedScriptValue.h"
 #include "APIString.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
@@ -39,7 +40,6 @@
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
 #include "MutableDictionary.h"
-#include "WebSerializedScriptValue.h"
 
 namespace WebKit {
 
@@ -161,7 +161,7 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
         break;
 
     case API::Object::Type::SerializedScriptValue: {
-        auto& serializedScriptValue = static_cast<const WebSerializedScriptValue&>(object);
+        auto& serializedScriptValue = static_cast<const API::SerializedScriptValue&>(object);
         encoder << serializedScriptValue.dataReference();
         break;
     }
@@ -295,7 +295,7 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
             return false;
 
         auto vector = dataReference.vector();
-        result = WebSerializedScriptValue::adopt(vector);
+        result = API::SerializedScriptValue::adopt(vector);
         break;
     }
 

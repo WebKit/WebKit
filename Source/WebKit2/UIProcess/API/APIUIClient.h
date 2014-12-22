@@ -56,7 +56,6 @@ class WebFrameProxy;
 class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
-class WebSecurityOrigin;
 struct NavigationActionData;
 }
 
@@ -64,6 +63,7 @@ namespace API {
 
 class Data;
 class Object;
+class SecurityOrigin;
 
 class UIClient {
 public:
@@ -114,7 +114,7 @@ public:
     virtual void didDraw(WebKit::WebPageProxy*) { }
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
-    virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, std::function<void (unsigned long long)> completionHandler)
+    virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, std::function<void (unsigned long long)> completionHandler)
     {
         completionHandler(currentQuota);
     }
@@ -125,9 +125,9 @@ public:
     }
 
     virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
-    virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
-    virtual bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebSecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) { return false; }
-    virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebSecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
+    virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
+    virtual bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) { return false; }
+    virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, SecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
 
     // Printing.
     virtual float headerHeight(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { return 0; }

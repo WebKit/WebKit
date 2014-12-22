@@ -26,20 +26,20 @@
 #include "config.h"
 #include "WKUserContentURLPattern.h"
 
+#include "APIUserContentURLPattern.h"
 #include "WKAPICast.h"
 #include "WKString.h"
-#include "WebUserContentURLPattern.h"
 
 using namespace WebKit;
 
 WKTypeID WKUserContentURLPatternGetTypeID()
 {
-    return toAPI(WebUserContentURLPattern::APIType);
+    return toAPI(API::UserContentURLPattern::APIType);
 }
 
 WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef)
 {
-    RefPtr<WebUserContentURLPattern> userContentURLPattern = WebUserContentURLPattern::create(toImpl(patternRef)->string());
+    RefPtr<API::UserContentURLPattern> userContentURLPattern = API::UserContentURLPattern::create(toImpl(patternRef)->string());
     return toAPI(userContentURLPattern.release().leakRef());
 }
 

@@ -27,10 +27,10 @@
 #define GenericCallback_h
 
 #include "APIError.h"
+#include "APISerializedScriptValue.h"
 #include "ProcessThrottler.h"
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
-#include "WebSerializedScriptValue.h"
 #include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>

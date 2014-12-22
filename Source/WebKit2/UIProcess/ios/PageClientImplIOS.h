@@ -67,7 +67,7 @@ private:
     virtual void pageClosed() override;
     virtual void preferencesDidChange() override;
     virtual void toolTipChanged(const String&, const String&) override;
-    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&) override;
+    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, GeolocationPermissionRequestProxy&) override;
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     virtual void handleDownloadRequest(DownloadProxy*) override;
     virtual void setCursor(const WebCore::Cursor&) override;

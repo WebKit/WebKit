@@ -28,6 +28,7 @@
 
 #include "APIError.h"
 #include "APINumber.h"
+#include "APISecurityOrigin.h"
 #include "APISession.h"
 #include "APIString.h"
 #include "APIURL.h"
@@ -48,7 +49,6 @@
 #include "WKUserScriptInjectionTime.h"
 #include "WebEvent.h"
 #include "WebFindOptions.h"
-#include "WebSecurityOrigin.h"
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -64,7 +64,10 @@ class Array;
 class Data;
 class Point;
 class Rect;
+class SecurityOrigin;
+class SerializedScriptValue;
 class Size;
+class UserContentURLPattern;
 class WebArchive;
 class WebArchiveResource;
 }
@@ -79,9 +82,6 @@ class WebConnection;
 class WebContextMenuItem;
 class WebGraphicsContext;
 class WebImage;
-class WebSecurityOrigin;
-class WebSerializedScriptValue;
-class WebUserContentURLPattern;
 
 template<typename APIType> struct APITypeInfo { };
 template<typename ImplType> struct ImplTypeInfo { };
@@ -104,8 +104,8 @@ WK_ADD_API_MAPPING(WKImageRef, WebImage)
 WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
 WK_ADD_API_MAPPING(WKPointRef, API::Point)
 WK_ADD_API_MAPPING(WKRectRef, API::Rect)
-WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
-WK_ADD_API_MAPPING(WKSerializedScriptValueRef, WebSerializedScriptValue)
+WK_ADD_API_MAPPING(WKSecurityOriginRef, API::SecurityOrigin)
+WK_ADD_API_MAPPING(WKSerializedScriptValueRef, API::SerializedScriptValue)
 WK_ADD_API_MAPPING(WKSizeRef, API::Size)
 WK_ADD_API_MAPPING(WKStringRef, API::String)
 WK_ADD_API_MAPPING(WKTypeRef, API::Object)
@@ -113,7 +113,7 @@ WK_ADD_API_MAPPING(WKUInt64Ref, API::UInt64)
 WK_ADD_API_MAPPING(WKURLRef, API::URL)
 WK_ADD_API_MAPPING(WKURLRequestRef, API::URLRequest)
 WK_ADD_API_MAPPING(WKURLResponseRef, API::URLResponse)
-WK_ADD_API_MAPPING(WKUserContentURLPatternRef, WebUserContentURLPattern)
+WK_ADD_API_MAPPING(WKUserContentURLPatternRef, API::UserContentURLPattern)
 WK_ADD_API_MAPPING(WKSessionRef, API::Session)
 
 template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
@@ -219,7 +219,7 @@ inline WKSecurityOriginRef toCopiedAPI(WebCore::SecurityOrigin* origin)
 {
     if (!origin)
         return 0;
-    return toAPI(WebSecurityOrigin::create(origin).leakRef());
+    return toAPI(API::SecurityOrigin::create(origin).leakRef());
 }
 
 /* Geometry conversions */

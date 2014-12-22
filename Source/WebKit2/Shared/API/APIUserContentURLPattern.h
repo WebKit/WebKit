@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentURLPattern_h
-#define WebUserContentURLPattern_h
+#ifndef APIUserContentURLPattern_h
+#define APIUserContentURLPattern_h
 
 #include "APIObject.h"
 
@@ -32,34 +32,34 @@
 #include <WebCore/UserContentURLPattern.h>
 #include <wtf/RefPtr.h>
 
-namespace WebKit {
+namespace API {
 
-class WebUserContentURLPattern : public API::ObjectImpl<API::Object::Type::UserContentURLPattern> {
+class UserContentURLPattern : public API::ObjectImpl<API::Object::Type::UserContentURLPattern> {
 public:
-    static PassRefPtr<WebUserContentURLPattern> create(const String& pattern)
+    static PassRefPtr<UserContentURLPattern> create(const WTF::String& pattern)
     {
-        return adoptRef(new WebUserContentURLPattern(pattern));
+        return adoptRef(new UserContentURLPattern(pattern));
     }
 
-    const String& host() const { return m_pattern.host(); }
-    const String& scheme() const { return m_pattern.scheme(); }
+    const WTF::String& host() const { return m_pattern.host(); }
+    const WTF::String& scheme() const { return m_pattern.scheme(); }
     bool isValid() const { return m_pattern.isValid(); };
-    bool matchesURL(const String& url) const { return m_pattern.matches(WebCore::URL(WebCore::ParsedURLString, url)); }
+    bool matchesURL(const WTF::String& url) const { return m_pattern.matches(WebCore::URL(WebCore::ParsedURLString, url)); }
     bool matchesSubdomains() const { return m_pattern.matchSubdomains(); }
 
-    const String& patternString() const { return m_patternString; }
+    const WTF::String& patternString() const { return m_patternString; }
 
 private:
-    explicit WebUserContentURLPattern(const String& pattern)
+    explicit UserContentURLPattern(const WTF::String& pattern)
         : m_pattern(WebCore::UserContentURLPattern(pattern))
         , m_patternString(pattern)
     {
     }
 
     WebCore::UserContentURLPattern m_pattern;
-    String m_patternString;
+    WTF::String m_patternString;
 };
 
 }
 
-#endif // WebUserContentURLPattern_h
+#endif

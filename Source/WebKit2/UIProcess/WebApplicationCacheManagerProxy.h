@@ -35,12 +35,11 @@
 #include <wtf/Vector.h>
 
 namespace IPC {
-    class Connection;
+class Connection;
 }
 
 namespace WebKit {
 
-class WebSecurityOrigin;
 struct SecurityOriginData;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
@@ -53,7 +52,7 @@ public:
     virtual ~WebApplicationCacheManagerProxy();
 
     void getApplicationCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
-    void deleteEntriesForOrigin(WebSecurityOrigin*);
+    void deleteEntriesForOrigin(API::SecurityOrigin*);
     void deleteAllEntries();
 
     using API::Object::ref;

@@ -27,10 +27,10 @@
 #include "WebKeyValueStorageManager.h"
 
 #include "APIArray.h"
+#include "APISecurityOrigin.h"
 #include "LocalStorageDetails.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
-#include "WebSecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -92,7 +92,7 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
         Vector<RefPtr<API::Object>> webSecurityOrigins;
         webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
         for (auto& origin : securityOrigins)
-            webSecurityOrigins.uncheckedAppend(WebSecurityOrigin::create(WTF::move(origin)));
+            webSecurityOrigins.uncheckedAppend(API::SecurityOrigin::create(WTF::move(origin)));
 
         callbackFunction(API::Array::create(WTF::move(webSecurityOrigins)).get(), CallbackBase::Error::None);
     });
@@ -108,7 +108,7 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
         for (const LocalStorageDetails& originDetails : storageDetails) {
             HashMap<String, RefPtr<API::Object>> detailsMap;
 
-            RefPtr<API::Object> origin = WebSecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier));
+            RefPtr<API::Object> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier));
 
             detailsMap.set(WebKeyValueStorageManager::originKey(), origin);
             if (originDetails.creationTime)
@@ -123,7 +123,7 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
     });
 }
 
-void WebKeyValueStorageManager::deleteEntriesForOrigin(WebSecurityOrigin* origin)
+void WebKeyValueStorageManager::deleteEntriesForOrigin(API::SecurityOrigin* origin)
 {
     context()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());
 }

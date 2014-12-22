@@ -1477,7 +1477,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.pageDidScroll(toAPI(page), m_client.base.clientInfo);
         }
 
-        virtual void exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)> completionHandler) override
+        virtual void exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, API::SecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, std::function<void (unsigned long long)> completionHandler) override
         {
             if (!m_client.exceededDatabaseQuota) {
                 completionHandler(currentQuota);
@@ -1496,7 +1496,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return true;
         }
 
-        virtual bool decidePolicyForGeolocationPermissionRequest(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, GeolocationPermissionRequestProxy* permissionRequest) override
+        virtual bool decidePolicyForGeolocationPermissionRequest(WebPageProxy* page, WebFrameProxy* frame, API::SecurityOrigin* origin, GeolocationPermissionRequestProxy* permissionRequest) override
         {
             if (!m_client.decidePolicyForGeolocationPermissionRequest)
                 return false;
@@ -1505,7 +1505,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return true;
         }
 
-        virtual bool decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, WebSecurityOrigin& origin, UserMediaPermissionRequestProxy& permissionRequest) override
+        virtual bool decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& origin, UserMediaPermissionRequestProxy& permissionRequest) override
         {
             if (!m_client.decidePolicyForUserMediaPermissionRequest)
                 return false;
@@ -1514,7 +1514,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return true;
         }
 
-        virtual bool decidePolicyForNotificationPermissionRequest(WebPageProxy* page, WebSecurityOrigin* origin, NotificationPermissionRequest* permissionRequest) override
+        virtual bool decidePolicyForNotificationPermissionRequest(WebPageProxy* page, API::SecurityOrigin* origin, NotificationPermissionRequest* permissionRequest) override
         {
             if (!m_client.decidePolicyForNotificationPermissionRequest)
                 return false;

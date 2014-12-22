@@ -27,10 +27,10 @@
 #include "WebMediaCacheManagerProxy.h"
 
 #include "APIArray.h"
+#include "APISecurityOrigin.h"
 #include "WebContext.h"
 #include "WebMediaCacheManagerMessages.h"
 #include "WebMediaCacheManagerProxyMessages.h"
-#include "WebSecurityOrigin.h"
 
 namespace WebKit {
 

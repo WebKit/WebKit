@@ -1,3 +1,134 @@
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Rename a bunch of API classes and move them to Shared/API
+        https://bugs.webkit.org/show_bug.cgi?id=139866
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/APISecurityOrigin.h: Renamed from Source/WebKit2/Shared/WebSecurityOrigin.h.
+        (API::SecurityOrigin::createFromString):
+        (API::SecurityOrigin::create):
+        (API::SecurityOrigin::securityOrigin):
+        (API::SecurityOrigin::SecurityOrigin):
+        * Shared/API/APISerializedScriptValue.h: Renamed from Source/WebKit2/Shared/WebSerializedScriptValue.h.
+        (API::SerializedScriptValue::create):
+        (API::SerializedScriptValue::adopt):
+        (API::SerializedScriptValue::deserialize):
+        (API::SerializedScriptValue::dataReference):
+        (API::SerializedScriptValue::internalRepresentation):
+        (API::SerializedScriptValue::SerializedScriptValue):
+        * Shared/API/APIUserContentURLPattern.h: Renamed from Source/WebKit2/Shared/WebUserContentURLPattern.h.
+        (API::UserContentURLPattern::create):
+        (API::UserContentURLPattern::host):
+        (API::UserContentURLPattern::scheme):
+        (API::UserContentURLPattern::isValid):
+        (API::UserContentURLPattern::matchesURL):
+        (API::UserContentURLPattern::matchesSubdomains):
+        (API::UserContentURLPattern::patternString):
+        (API::UserContentURLPattern::UserContentURLPattern):
+        * Shared/API/c/WKSecurityOrigin.cpp:
+        (WKSecurityOriginGetTypeID):
+        (WKSecurityOriginCreateFromString):
+        (WKSecurityOriginCreateFromDatabaseIdentifier):
+        (WKSecurityOriginCreate):
+        * Shared/API/c/WKSerializedScriptValue.cpp:
+        (WKSerializedScriptValueGetTypeID):
+        (WKSerializedScriptValueCreate):
+        (WKSerializedScriptValueCreateWithInternalRepresentation):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedAPI):
+        * Shared/API/c/WKUserContentURLPattern.cpp:
+        (WKUserContentURLPatternGetTypeID):
+        (WKUserContentURLPatternCreate):
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::performAPICallbackWithSecurityOriginDataVector):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::exceededDatabaseQuota):
+        (API::UIClient::decidePolicyForGeolocationPermissionRequest):
+        (API::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (API::UIClient::decidePolicyForNotificationPermissionRequest):
+        * UIProcess/API/C/WKNotification.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota):
+        * UIProcess/GenericCallback.h:
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::origin):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::providerDidUpdateNotificationPolicy):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::deleteEntriesForOrigin):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin):
+        (WebKit::WebDatabaseManagerProxy::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxy::didModifyDatabase):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxyClient.cpp:
+        (WebKit::WebDatabaseManagerProxyClient::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxyClient::didModifyDatabase):
+        * UIProcess/WebDatabaseManagerProxyClient.h:
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        * UIProcess/WebKeyValueStorageManager.h:
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        * UIProcess/WebOriginDataManagerProxy.cpp:
+        (WebKit::WebOriginDataManagerProxy::didGetOrigins):
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin):
+        * UIProcess/WebOriginDataManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::scriptValueCallback):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::requestNotificationPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForOrigin):
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/ios/WKContentView.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didReachApplicationCacheOriginQuota):
+        (API::InjectedBundle::PageUIClient::didExceedDatabaseQuota):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didReachApplicationCacheOriginQuota):
+        (WebKit::InjectedBundlePageUIClient::didExceedDatabaseQuota):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+
 2014-12-21  Sam Weinig  <sam@webkit.org>
 
         Allow the WebContext's history client to coexist with WKWebView's history delegate

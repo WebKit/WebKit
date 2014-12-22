@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WKNotification.h"
 
+#include "APISecurityOrigin.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
-#include "WebSecurityOrigin.h"
 
 using namespace WebKit;
 

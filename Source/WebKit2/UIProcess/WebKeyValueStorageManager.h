@@ -47,7 +47,7 @@ public:
 
     void getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
     void getStorageDetailsByOrigin(std::function<void (API::Array*, CallbackBase::Error)>);
-    void deleteEntriesForOrigin(WebSecurityOrigin*);
+    void deleteEntriesForOrigin(API::SecurityOrigin*);
     void deleteAllEntries();
 
     using API::Object::ref;

@@ -37,13 +37,13 @@
 
 namespace API {
 class Array;
+class SecurityOrigin;
 }
 
 namespace WebKit {
 
 class WebContext;
 class WebPageProxy;
-class WebSecurityOrigin;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
@@ -64,7 +64,7 @@ public:
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
     void providerDidCloseNotifications(API::Array* notificationIDs);
-    void providerDidUpdateNotificationPolicy(const WebSecurityOrigin*, bool allowed);
+    void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(API::Array* origins);
 
     using API::Object::ref;

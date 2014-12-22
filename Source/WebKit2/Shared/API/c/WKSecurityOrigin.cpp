@@ -26,29 +26,29 @@
 #include "config.h"
 #include "WKSecurityOrigin.h"
 
+#include "APISecurityOrigin.h"
 #include "WKAPICast.h"
-#include "WebSecurityOrigin.h"
 
 using namespace WebKit;
 
 WKTypeID WKSecurityOriginGetTypeID()
 {
-    return toAPI(WebSecurityOrigin::APIType);
+    return toAPI(API::SecurityOrigin::APIType);
 }
 
 WKSecurityOriginRef WKSecurityOriginCreateFromString(WKStringRef string)
 {
-    return toAPI(WebSecurityOrigin::create(WebCore::SecurityOrigin::createFromString(toImpl(string)->string())).leakRef());
+    return toAPI(API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromString(toImpl(string)->string())).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef identifier)
 {
-    return toAPI(WebSecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier((toImpl(identifier)->string()))).leakRef());
+    return toAPI(API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier((toImpl(identifier)->string()))).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
 {
-    RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
+    RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
     return toAPI(securityOrigin.release().leakRef());
 }
 

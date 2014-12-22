@@ -27,11 +27,11 @@
 #include "WebCookieManagerProxy.h"
 
 #include "APIArray.h"
+#include "APISecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebCookieManagerMessages.h"
 #include "WebCookieManagerProxyMessages.h"
-#include "WebSecurityOrigin.h"
 
 namespace WebKit {
 

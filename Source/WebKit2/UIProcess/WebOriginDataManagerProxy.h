@@ -41,7 +41,6 @@ class Connection;
 
 namespace WebKit {
 
-class WebSecurityOrigin;
 struct SecurityOriginData;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
@@ -54,7 +53,7 @@ public:
     virtual ~WebOriginDataManagerProxy();
 
     void getOrigins(WKOriginDataTypes, std::function<void (API::Array*, CallbackBase::Error)>);
-    void deleteEntriesForOrigin(WKOriginDataTypes, WebSecurityOrigin*, std::function<void (CallbackBase::Error)>);
+    void deleteEntriesForOrigin(WKOriginDataTypes, API::SecurityOrigin*, std::function<void (CallbackBase::Error)>);
     void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void (CallbackBase::Error)>);
     void deleteAllEntries(WKOriginDataTypes, std::function<void (CallbackBase::Error)>);
 

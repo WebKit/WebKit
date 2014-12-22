@@ -28,12 +28,12 @@
 
 #include "APIArray.h"
 #include "APINumber.h"
+#include "APISecurityOrigin.h"
 #include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
-#include "WebSecurityOrigin.h"
 
 namespace WebKit {
 

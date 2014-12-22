@@ -131,7 +131,7 @@ public:
 
     virtual void toolTipChanged(const String&, const String&) = 0;
 
-    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&)
+    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, GeolocationPermissionRequestProxy&)
     {
         return false;
     }

@@ -43,7 +43,6 @@ class ImmutableDictionary;
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
-class WebSecurityOrigin;
     
 class WebNotificationProvider : public API::Client<WKNotificationProviderBase> {
 public:

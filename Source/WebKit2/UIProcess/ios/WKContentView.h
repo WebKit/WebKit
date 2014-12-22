@@ -44,7 +44,6 @@ class RemoteLayerTreeTransaction;
 class WebContext;
 class WebFrameProxy;
 class WebPageProxy;
-class WebSecurityOrigin;
 struct WebPageConfiguration;
 }
 

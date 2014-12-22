@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void WebDatabaseManagerProxyClient::didModifyOrigin(WebDatabaseManagerProxy* databaseManager, WebSecurityOrigin* origin)
+void WebDatabaseManagerProxyClient::didModifyOrigin(WebDatabaseManagerProxy* databaseManager, API::SecurityOrigin* origin)
 {
     if (!m_client.didModifyOrigin)
         return;
@@ -39,7 +39,7 @@ void WebDatabaseManagerProxyClient::didModifyOrigin(WebDatabaseManagerProxy* dat
     m_client.didModifyOrigin(toAPI(databaseManager), toAPI(origin), m_client.base.clientInfo);
 }
 
-void WebDatabaseManagerProxyClient::didModifyDatabase(WebDatabaseManagerProxy* databaseManager, WebSecurityOrigin* origin, const String& databaseIdentifier)
+void WebDatabaseManagerProxyClient::didModifyDatabase(WebDatabaseManagerProxy* databaseManager, API::SecurityOrigin* origin, const String& databaseIdentifier)
 {
     if (!m_client.didModifyDatabase)
         return;
