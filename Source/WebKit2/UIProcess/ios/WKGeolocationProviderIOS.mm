@@ -28,12 +28,12 @@
 
 #if PLATFORM(IOS)
 
+#import "APISecurityOrigin.h"
 #import "GeolocationPermissionRequestProxy.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebView.h"
 #import "WebContext.h"
 #import "WebGeolocationManagerProxy.h"
-#import "WebSecurityOrigin.h"
 #import <WebGeolocationPosition.h>
 #import <WebCore/GeolocationPosition.h>
 #import <WebCore/URL.h>

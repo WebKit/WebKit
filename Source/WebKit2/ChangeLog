@@ -1,3 +1,12 @@
+2014-12-22  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS build after <https://trac.webkit.org/changeset/177639>
+        (https://bugs.webkit.org/show_bug.cgi?id=139866)
+
+        Substitute APISecurityOrigin.h for WebSecurityOrigin.h as the latter was renamed to the former.
+
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+
 2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177649.
