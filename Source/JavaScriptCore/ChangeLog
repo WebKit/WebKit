@@ -1,3 +1,15 @@
+2014-12-22  Mark Lam  <mark.lam@apple.com>
+
+        Assert that Array elements not copied when changing shape to ArrayStorage type are indeed holes.
+        <https://webkit.org/b/138118>
+
+        Reviewed by Michael Saboff.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+
 2014-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] add optimized fullscreen API
