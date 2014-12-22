@@ -35,6 +35,7 @@
 #include "LocaleToScriptMapping.h"
 #include "Rect.h"
 #include "SVGElement.h"
+#include "StyleBuilderConverter.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 
@@ -55,6 +56,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ColumnGap);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Cursor);
@@ -1177,6 +1179,27 @@ inline void StyleBuilderCustom::applyValueFontWeight(StyleResolver& styleResolve
         fontDescription.setWeight(primitiveValue);
     }
     styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInitialColumnGap(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setHasNormalColumnGap();
+}
+
+inline void StyleBuilderCustom::applyInheritColumnGap(StyleResolver& styleResolver)
+{
+    if (styleResolver.parentStyle()->hasNormalColumnGap())
+        styleResolver.style()->setHasNormalColumnGap();
+    else
+        styleResolver.style()->setColumnGap(styleResolver.parentStyle()->columnGap());
+}
+
+inline void StyleBuilderCustom::applyValueColumnGap(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal)
+        styleResolver.style()->setHasNormalColumnGap();
+    else
+        styleResolver.style()->setColumnGap(StyleBuilderConverter::convertComputedLength<float>(styleResolver, value));
 }
 
 } // namespace WebCore

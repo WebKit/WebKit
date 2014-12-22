@@ -56,6 +56,10 @@
 // If special handling is also needed to apply inherit or initial value, use
 // Custom=All. Alternatively, several '|'-separated options can be passed:
 // e.g. 'Custom=Inherit|Value".
+//
+// * AutoFunctions:
+// Indicates that this CSS property requires handling of "auto" and has
+// corresponding hasAutoXXX() / setHasAutoXXX() methods on RenderStyle.
 
 
 // high-priority property names have to be listed first, to simplify the check
@@ -203,7 +207,7 @@ opacity [TypeName=float]
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
 // and may be in use on some websites and widgets.
 -webkit-opacity = opacity
-orphans [Inherited, LegacyStyleBuilder]
+orphans [Inherited, TypeName=short, AutoFunctions]
 outline [LegacyStyleBuilder]
 outline-color [LegacyStyleBuilder]
 outline-offset [Converter=ComputedLength<int>]
@@ -267,13 +271,13 @@ unicode-range [LegacyStyleBuilder]
 vertical-align [Custom=Value]
 visibility [Inherited]
 white-space [Inherited]
-widows [Inherited, LegacyStyleBuilder]
+widows [Inherited, TypeName=short, AutoFunctions]
 width [Initial=initialSize, Converter=LengthSizing]
 word-break [Inherited]
 -epub-word-break = word-break
 word-spacing [Inherited, Custom=Value]
 word-wrap [Inherited=EOverflowWrap, NameForMethods=OverflowWrap]
-z-index [LegacyStyleBuilder]
+z-index [TypeName=int, AutoFunctions]
 alt [LegacyStyleBuilder]
 -webkit-alt = alt
 -webkit-animation [LegacyStyleBuilder]
@@ -337,11 +341,11 @@ alt [LegacyStyleBuilder]
 -webkit-column-break-after [TypeName=EPageBreak, Initial=initialPageBreak]
 -webkit-column-break-before [TypeName=EPageBreak, Initial=initialPageBreak]
 -webkit-column-break-inside [TypeName=EPageBreak, Initial=initialPageBreak]
-column-count [LegacyStyleBuilder]
+column-count [TypeName=unsigned short, AutoFunctions]
 -webkit-column-count = column-count
 column-fill [TypeName=ColumnFill]
 -webkit-column-fill = column-fill
-column-gap [LegacyStyleBuilder]
+column-gap [Custom=All]
 -webkit-column-gap = column-gap
 column-progression [TypeName=ColumnProgression]
 -webkit-column-progression = column-progression
@@ -355,7 +359,7 @@ column-rule-width [Converter=LineWidth<unsigned short>]
 -webkit-column-rule-width = column-rule-width
 column-span [TypeName=ColumnSpan]
 -webkit-column-span = column-span
-column-width [LegacyStyleBuilder]
+column-width [TypeName=float, AutoFunctions, Converter=ComputedLength<float>]
 -webkit-column-width = column-width
 columns [LegacyStyleBuilder]
 -webkit-columns = columns

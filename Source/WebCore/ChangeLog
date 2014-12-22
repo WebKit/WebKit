@@ -1,3 +1,39 @@
+2014-12-22  Chris Dumez  <cdumez@apple.com>
+
+        Move "Auto" CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139858
+
+        Reviewed by Antti Koivisto.
+
+        Move "Auto" CSS properties from DeprecatedStyleBuilder to the new
+        StyleBuilder, by adding support in the generator for using hasAutoXXX()
+        / setHasAutoXXX() methods on RenderStyle.
+
+        No new tests, no web-exposed behavior change.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyAuto::setValue): Deleted.
+        (WebCore::ApplyPropertyAuto::value): Deleted.
+        (WebCore::ApplyPropertyAuto::hasAuto): Deleted.
+        (WebCore::ApplyPropertyAuto::setAuto): Deleted.
+        (WebCore::ApplyPropertyAuto::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyAuto::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyAuto::applyValue): Deleted.
+        (WebCore::ApplyPropertyAuto::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialColumnGap):
+        (WebCore::StyleBuilderCustom::applyInheritColumnGap):
+        (WebCore::StyleBuilderCustom::applyValueColumnGap):
+        * css/makeprop.pl:
+        (getNameForMethods):
+        (getAutoGetter):
+        (getAutoSetter):
+        (generateInitialValueSetter):
+        (generateInheritValueSetter):
+        (generateValueSetter):
+
 2014-12-21  Shivakumar JM  <shiva.jm@samsung.com>
 
         HTMLSelectElement add() should support adding group of options element (HTMLOptGroupElement).
