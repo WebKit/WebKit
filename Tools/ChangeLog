@@ -1,3 +1,9 @@
+2014-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Sort the Xcode project file.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2014-12-22  Lucas Forschler  <lforschler@apple.com>
 
         Update apple-mac-114 to bot629.
