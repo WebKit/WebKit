@@ -31,7 +31,6 @@
 #include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
-#include "GlyphPageTreeNode.h"
 #include "OpenTypeMathData.h"
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
@@ -60,8 +59,10 @@
 
 namespace WebCore {
 
+class GlyphPage;
 class FontDescription;
 class SharedBuffer;
+struct GlyphData;
 struct WidthIterator;
 
 enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
@@ -180,9 +181,6 @@ public:
     virtual bool isLoading() const override { return m_isLoading; }
     virtual bool isSegmented() const override;
 
-    const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
-    void setMissingGlyphData(const GlyphData& glyphData) { m_missingGlyphData = glyphData; }
-
 #ifndef NDEBUG
     virtual String description() const override;
 #endif
@@ -271,8 +269,6 @@ private:
     float m_adjustedSpaceWidth;
 
     Glyph m_zeroWidthSpaceGlyph;
-
-    GlyphData m_missingGlyphData;
 
     struct DerivedFontData {
         explicit DerivedFontData(bool custom)

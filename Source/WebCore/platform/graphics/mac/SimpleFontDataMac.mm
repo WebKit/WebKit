@@ -35,6 +35,7 @@
 #import "Font.h"
 #import "FontCache.h"
 #import "FontDescription.h"
+#import "GlyphPageTreeNode.h"
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #if USE(APPKIT)

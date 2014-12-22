@@ -35,6 +35,7 @@
 #endif
 #include "Font.h"
 #include "FontCache.h"
+#include "GlyphPageTreeNode.h"
 #include "OpenTypeMathData.h"
 #include <wtf/MathExtras.h>
 
@@ -124,8 +125,6 @@ void SimpleFontData::platformGlyphInit()
         m_adjustedSpaceWidth = 0;
         determinePitch();
         m_zeroWidthSpaceGlyph = 0;
-        m_missingGlyphData.fontData = this;
-        m_missingGlyphData.glyph = 0;
         return;
     }
 
@@ -149,9 +148,6 @@ void SimpleFontData::platformGlyphInit()
     // See <http://bugs.webkit.org/show_bug.cgi?id=13178> and SimpleFontData::isZeroWidthSpaceGlyph()
     if (m_zeroWidthSpaceGlyph == m_spaceGlyph)
         m_zeroWidthSpaceGlyph = 0;
-
-    m_missingGlyphData.fontData = this;
-    m_missingGlyphData.glyph = 0;
 }
 
 SimpleFontData::~SimpleFontData()

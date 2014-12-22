@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SegmentedFontData.h"
 
+#include "GlyphPageTreeNode.h"
 #include "SimpleFontData.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>

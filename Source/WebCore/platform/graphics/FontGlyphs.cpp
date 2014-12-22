@@ -31,6 +31,7 @@
 
 #include "Font.h"
 #include "FontCache.h"
+#include "GlyphPageTreeNode.h"
 #include "SegmentedFontData.h"
 
 namespace WebCore {
@@ -277,32 +278,26 @@ GlyphData FontGlyphs::glyphDataForSystemFallback(UChar32 c, const FontDescriptio
     }
     const SimpleFontData* originalFontData = primaryFontData(description)->fontDataForCharacter(c);
     RefPtr<SimpleFontData> characterFontData = fontCache().systemFallbackForCharacters(description, originalFontData, m_isForPlatformFont, codeUnits, codeUnitsLength);
-    if (characterFontData) {
-        if (characterFontData->platformData().orientation() == Vertical && !characterFontData->hasVerticalGlyphs() && Font::isCJKIdeographOrSymbol(c))
-            variant = BrokenIdeographVariant;
-        if (variant != NormalVariant)
-            characterFontData = characterFontData->variantFontData(description, variant);
-    }
-    if (characterFontData) {
-        // Got the fallback glyph and font.
-        GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData.get(), pageNumber)->page();
-        GlyphData data = fallbackPage && fallbackPage->fontDataForCharacter(c) ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
-        // Cache it so we don't have to do system fallback again next time.
-        if (variant == NormalVariant) {
-            node.page()->setGlyphDataForCharacter(c, data.glyph, data.fontData);
-            data.fontData->setMaxGlyphPageTreeLevel(std::max(data.fontData->maxGlyphPageTreeLevel(), node.level()));
-            if (!Font::isCJKIdeographOrSymbol(c) && data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
-                return glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data, pageNumber);
-        }
-        return data;
+    if (!characterFontData)
+        return GlyphData();
+
+    if (characterFontData->platformData().orientation() == Vertical && !characterFontData->hasVerticalGlyphs() && Font::isCJKIdeographOrSymbol(c))
+        variant = BrokenIdeographVariant;
+    if (variant != NormalVariant) {
+        characterFontData = characterFontData->variantFontData(description, variant);
+        ASSERT(characterFontData);
     }
 
-    // Even system fallback can fail; use the missing glyph in that case.
-    // FIXME: It would be nicer to use the missing glyph from the last resort font instead.
-    GlyphData data = primarySimpleFontData(description)->missingGlyphData();
-    if (variant == NormalVariant) {
+    GlyphData data;
+    if (GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData.get(), pageNumber)->page())
+        data = fallbackPage->glyphDataForCharacter(c);
+
+    // Cache it so we don't have to do system fallback again next time.
+    if (variant == NormalVariant && data.glyph) {
         node.page()->setGlyphDataForCharacter(c, data.glyph, data.fontData);
         data.fontData->setMaxGlyphPageTreeLevel(std::max(data.fontData->maxGlyphPageTreeLevel(), node.level()));
+        if (!Font::isCJKIdeographOrSymbol(c) && data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
+            return glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data, pageNumber);
     }
     return data;
 }
@@ -321,15 +316,12 @@ GlyphData FontGlyphs::glyphDataForVariant(UChar32 c, const FontDescription& desc
 
                 GlyphPageTreeNode* variantNode = GlyphPageTreeNode::getRootChild(variantFontData.get(), pageNumber);
                 GlyphPage* variantPage = variantNode->page();
-                if (variantPage) {
-                    GlyphData data = variantPage->glyphDataForCharacter(c);
-                    if (data.fontData)
-                        return data;
-                }
+                if (variantPage)
+                    return variantPage->glyphDataForCharacter(c);
 
                 // Do not attempt system fallback off the variantFontData. This is the very unlikely case that
                 // a font has the lowercase character but the small caps font does not have its uppercase version.
-                return variantFontData->missingGlyphData();
+                return GlyphData();
             }
 
             if (node->isSystemFallback())

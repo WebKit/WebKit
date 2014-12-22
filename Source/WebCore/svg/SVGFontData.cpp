@@ -22,6 +22,7 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"
 
+#include "GlyphPageTreeNode.h"
 #include "RenderElement.h"
 #include "SVGAltGlyphElement.h"
 #include "SVGFontElement.h"
@@ -62,13 +63,6 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
 
     SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
     ASSERT(svgFontFaceElement);
-
-    SVGFontElement* svgFontElement = svgFontFaceElement->associatedFontElement();
-    ASSERT(svgFontElement);
-    GlyphData missingGlyphData;
-    missingGlyphData.fontData = fontData;
-    missingGlyphData.glyph = svgFontElement->missingGlyph();
-    fontData->setMissingGlyphData(missingGlyphData);
 
     fontData->setZeroWidthSpaceGlyph(0);
     fontData->determinePitch();

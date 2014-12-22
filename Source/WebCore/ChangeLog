@@ -1,3 +1,45 @@
+2014-12-22  Antti Koivisto  <antti@apple.com>
+
+        Generic font code should not know about SVG font missing glyph
+        https://bugs.webkit.org/show_bug.cgi?id=139864
+
+        Reviewed by Andreas Kling and Myles Maxfield.
+
+        The defined missing glyph is an SVG font concept and should be handled in SVG code.
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::glyphDataForSystemFallback):
+        (WebCore::FontGlyphs::glyphDataForVariant):
+
+            Return null glyph instead of the missing glyph (the missing glyph was already a null glyph in all non-svg-font cases).
+            Use early return style.
+
+        * platform/graphics/FontGlyphs.h:
+        * platform/graphics/SegmentedFontData.cpp:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::platformGlyphInit):
+        * platform/graphics/SimpleFontData.h:
+
+            Remove the missingGlyph member.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+
+            Explicitly skip over null glyphs. Before they had non-null fontData and would get skipped implicitly.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::missingGlyphForFont):
+
+            Get the missing glyph from the SVG font element.
+
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+
+            Return the missing glyph if the normal lookup didn't produce results.
+
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::initializeFontData):
+
 2014-12-22  Chris Dumez  <cdumez@apple.com>
 
         Move "Auto" CSS properties to the new StyleBuilder

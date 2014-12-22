@@ -179,8 +179,11 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         int currentCharacter = textIterator.currentCharacter();
         const GlyphData& glyphData = glyphDataForCharacter(character, rtl, currentCharacter, advanceLength, normalizedSpacesStringCache);
         Glyph glyph = glyphData.glyph;
+        if (!glyph) {
+            textIterator.advance(advanceLength);
+            continue;
+        }
         const SimpleFontData* fontData = glyphData.fontData;
-
         ASSERT(fontData);
 
         // Now that we have a glyph and font data, get its width.

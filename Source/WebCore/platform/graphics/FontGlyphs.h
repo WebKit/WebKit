@@ -22,6 +22,7 @@
 #define FontGlyphs_h
 
 #include "FontSelector.h"
+#include "GlyphPage.h"
 #include "SimpleFontData.h"
 #include "WidthCache.h"
 #include <wtf/Forward.h>
