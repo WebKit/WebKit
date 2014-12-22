@@ -52,9 +52,6 @@ public:
         bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
-        // Despite using system CAs to validate certificates we're
-        // accepting invalid certificates by default. New API will be
-        // added later to let client accept/discard invalid certificates.
         SoupNetworkSession::defaultSession().setSSLPolicy(SoupNetworkSession::SSLUseSystemCAFile);
         return true;
     }
