@@ -1,3 +1,11 @@
+2014-12-22  Lucas Forschler  <lforschler@apple.com>
+
+        Replace Apple bot104 with bot124.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177639.

@@ -22,7 +22,7 @@
                     { "name": "bot199",  "platform": "mac-mavericks" },
                     { "name": "bot200",  "platform": "mac-mavericks" },
                     { "name": "bot101", "platform": "mac-mavericks" },
-                    { "name": "bot104", "platform": "mac-mavericks" },
+                    { "name": "bot124", "platform": "mac-mavericks" },
                     { "name": "bot105", "platform": "mac-mavericks" },
                     { "name": "bot108", "platform": "mac-mavericks" },
                     { "name": "bot135", "platform": "mac-mavericks" },
@@ -118,7 +118,7 @@
                     },
                     { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "Test", "builddir": "mavericks-debug-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot104", "bot108"]
+                      "slavenames": ["bot124", "bot108"]
                     },
                     { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-debug-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
