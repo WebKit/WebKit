@@ -1,3 +1,10 @@
+2014-12-22  Alexey Proskuryakov  <ap@apple.com>
+
+        compositing/rtl/rtl-fixed-overflow-scrolled.html had a 1600x1200 expected PNG
+        accidentally checked in, let's land 800x600 again.
+
+        * platform/mac/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png:
+
 2014-12-22  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect dashed and dotted border painting.
