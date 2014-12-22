@@ -1,3 +1,16 @@
+2014-12-22  Chris Dumez  <cdumez@apple.com>
+
+        Consistently use "FeatureCounter*Key" naming for FeatureCounter keys
+        https://bugs.webkit.org/show_bug.cgi?id=139867
+
+        Reviewed by Darin Adler.
+
+        Consistently use "FeatureCounter*Key" naming for FeatureCounter keys.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigationWithFeatureCounter):
+        * platform/FeatureCounterKeys.h:
+
 2014-12-22  Antti Koivisto  <antti@apple.com>
 
         Generic font code should not know about SVG font missing glyph

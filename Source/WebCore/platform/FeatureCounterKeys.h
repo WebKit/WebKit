@@ -77,13 +77,13 @@ static const char FeatureCounterMediaVideoElementPlayedKey[] = "com.apple.WebKit
 static const char FeatureCounterMediaAudioElementPlayedKey[] = "com.apple.WebKit.media.audio.played";
 
 // Navigation types.
-static const char FeatureCounterNavigationStandard[] = "com.apple.WebKit.navigation.standard";
-static const char FeatureCounterNavigationBack[] = "com.apple.WebKit.navigation.back";
-static const char FeatureCounterNavigationForward[] = "com.apple.WebKit.navigation.forward";
-static const char FeatureCounterNavigationIndexedBackForward[] = "com.apple.WebKit.navigation.indexedBackForward";
-static const char FeatureCounterNavigationReload[] = "com.apple.WebKit.navigation.reload";
-static const char FeatureCounterNavigationSame[] = "com.apple.WebKit.navigation.same";
-static const char FeatureCounterNavigationReloadFromOrigin[] = "com.apple.WebKit.navigation.reloadFromOrigin";
+static const char FeatureCounterNavigationStandardKey[] = "com.apple.WebKit.navigation.standard";
+static const char FeatureCounterNavigationBackKey[] = "com.apple.WebKit.navigation.back";
+static const char FeatureCounterNavigationForwardKey[] = "com.apple.WebKit.navigation.forward";
+static const char FeatureCounterNavigationIndexedBackForwardKey[] = "com.apple.WebKit.navigation.indexedBackForward";
+static const char FeatureCounterNavigationReloadKey[] = "com.apple.WebKit.navigation.reload";
+static const char FeatureCounterNavigationSameKey[] = "com.apple.WebKit.navigation.same";
+static const char FeatureCounterNavigationReloadFromOriginKey[] = "com.apple.WebKit.navigation.reloadFromOrigin";
 
 // Memory cache.
 static const char FeatureCounterResourceRequestInMemoryCacheKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache";

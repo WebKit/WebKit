@@ -1383,25 +1383,25 @@ static void logNavigationWithFeatureCounter(Page* page, FrameLoadType type)
     const char* key;
     switch (type) {
     case FrameLoadType::Standard:
-        key = FeatureCounterNavigationStandard;
+        key = FeatureCounterNavigationStandardKey;
         break;
     case FrameLoadType::Back:
-        key = FeatureCounterNavigationBack;
+        key = FeatureCounterNavigationBackKey;
         break;
     case FrameLoadType::Forward:
-        key = FeatureCounterNavigationForward;
+        key = FeatureCounterNavigationForwardKey;
         break;
     case FrameLoadType::IndexedBackForward:
-        key = FeatureCounterNavigationIndexedBackForward;
+        key = FeatureCounterNavigationIndexedBackForwardKey;
         break;
     case FrameLoadType::Reload:
-        key = FeatureCounterNavigationReload;
+        key = FeatureCounterNavigationReloadKey;
         break;
     case FrameLoadType::Same:
-        key = FeatureCounterNavigationSame;
+        key = FeatureCounterNavigationSameKey;
         break;
     case FrameLoadType::ReloadFromOrigin:
-        key = FeatureCounterNavigationReloadFromOrigin;
+        key = FeatureCounterNavigationReloadFromOriginKey;
         break;
     case FrameLoadType::Replace:
     case FrameLoadType::RedirectWithLockedBackForwardList:
