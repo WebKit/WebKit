@@ -1,3 +1,13 @@
+2014-12-21  Shivakumar JM  <shiva.jm@samsung.com>
+
+        HTMLSelectElement add() should support adding group of options element (HTMLOptGroupElement).
+        https://bugs.webkit.org/show_bug.cgi?id=139806
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLSelectElement/select-add-optgroup-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/select-add-optgroup.html: Added.
+
 2014-12-21  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         AX: Hidden aria table crash

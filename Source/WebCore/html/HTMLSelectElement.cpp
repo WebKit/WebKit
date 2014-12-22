@@ -220,7 +220,7 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
 
 void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, ExceptionCode& ec)
 {
-    if (!element || !(is<HTMLOptionElement>(*element) || element->hasTagName(hrTag)))
+    if (!element || !(is<HTMLOptionElement>(*element) || element->hasTagName(hrTag) || is<HTMLOptGroupElement>(*element)))
         return;
 
     // Make sure the element is ref'd and deref'd so we don't leak it.
