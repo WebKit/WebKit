@@ -1,3 +1,18 @@
+2014-12-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] MiniBrowser steals web view's focus
+        https://bugs.webkit.org/show_bug.cgi?id=139482
+
+        Reviewed by Gyuyoung Kim.
+
+        Although we set focus on ewk_view while MiniBrowser initialization
+        Ecore steals it in a favor of main window. As a result
+        focused element on web page is unable to receive events.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        Prevent window from stealing web view's focus on start up.
+
 2014-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Revise DRT logic to match Mac.

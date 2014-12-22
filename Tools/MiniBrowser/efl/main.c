@@ -2288,6 +2288,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     search_box_hide(window);
 
     view_focus_set(window, EINA_TRUE);
+    // Prevent window from stealing web view's focus on start up.
+    elm_object_focus_allow_set(window->elm_window, EINA_FALSE);
 
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_IN, on_mouse_in, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_OUT, on_mouse_out, window);
