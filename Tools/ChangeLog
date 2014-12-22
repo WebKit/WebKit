@@ -1,3 +1,9 @@
+2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r177639.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2014-12-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] MiniBrowser steals web view's focus
