@@ -26,7 +26,7 @@
 #include "WebKitUserContentPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebScriptMessageHandler.h"
-#include "WebSerializedScriptValue.h"
+#include "APISerializedScriptValue.h"
 #include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;

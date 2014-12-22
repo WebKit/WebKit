@@ -1,5 +1,11 @@
 2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more URTBF after r177639 to try to make GTK happy.
+
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+
+2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r177639 to try to make GTK happy.
 
         * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
