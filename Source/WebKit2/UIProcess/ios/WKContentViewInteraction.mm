@@ -47,6 +47,8 @@
 #import "_WKFormInputSession.h"
 #import <CoreText/CTFontDescriptor.h>
 #import <DataDetectorsUI/DDDetectionController.h>
+#import <ManagedConfiguration/MCFeatures.h>
+#import <ManagedConfiguration/MCProfileConnection.h>
 #import <TextInput/TI_NSStringExtras.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIFont_Private.h>
@@ -68,6 +70,11 @@
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
+SOFT_LINK_PRIVATE_FRAMEWORK(ManagedConfiguration);
+SOFT_LINK_CLASS(ManagedConfiguration, MCProfileConnection);
+SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
+
+#define MCFeatureDefinitionLookupAllowed getMCFeatureDefinitionLookupAllowed()
 
 using namespace WebCore;
 using namespace WebKit;
@@ -1296,6 +1303,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         if (!textLength || textLength > 200)
             return NO;
 
+        if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:MCFeatureDefinitionLookupAllowed] == MCRestrictedBoolExplicitNo)
+            return NO;
+            
         return YES;
     }
 
@@ -1441,6 +1451,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_define:(id)sender
 {
+    if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:MCFeatureDefinitionLookupAllowed] == MCRestrictedBoolExplicitNo)
+        return;
+
     _page->getSelectionOrContentsAsString([self](const String& string, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None)
             return;
