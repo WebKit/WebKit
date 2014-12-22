@@ -1,5 +1,13 @@
 2014-12-22  Lucas Forschler  <lforschler@apple.com>
 
+        Update apple-mac-114 to bot629.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2014-12-22  Lucas Forschler  <lforschler@apple.com>
+
         Replace Apple bot104 with bot124.
         
         Unreviewed.

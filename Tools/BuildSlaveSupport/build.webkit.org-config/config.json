@@ -17,7 +17,7 @@
                     { "name": "bot158", "platform": "mac-mountainlion" },
                     { "name": "bot159", "platform": "mac-mountainlion" },
                     
-                    { "name": "apple-mac-114",  "platform": "mac-mavericks" },
+                    { "name": "bot629",  "platform": "mac-mavericks" },
                     { "name": "bot198",  "platform": "mac-mavericks" },
                     { "name": "bot199",  "platform": "mac-mavericks" },
                     { "name": "bot200",  "platform": "mac-mavericks" },
@@ -130,7 +130,7 @@
                     },
                     { "name": "Apple Mavericks 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "mavericks-32bitJSC-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-mac-114"]
+                      "slavenames": ["bot629"]
                     },
                     { "name": "Apple Mavericks Release (Build)", "type": "Build", "builddir": "mavericks-release",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
