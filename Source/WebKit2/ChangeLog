@@ -1,3 +1,32 @@
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Move more API classes from Shared to Shared/API.
+
+        Rubber-stamped by Sam Weinig.
+
+        * Shared/API/APIArray.cpp: Renamed from Source/WebKit2/Shared/APIArray.cpp.
+        * Shared/API/APIArray.h: Renamed from Source/WebKit2/Shared/APIArray.h.
+        * Shared/API/APIClient.h: Renamed from Source/WebKit2/Shared/APIClient.h.
+        * Shared/API/APIData.cpp: Renamed from Source/WebKit2/Shared/APIData.cpp.
+        * Shared/API/APIData.h: Renamed from Source/WebKit2/Shared/APIData.h.
+        * Shared/API/APIError.cpp: Renamed from Source/WebKit2/Shared/APIError.cpp.
+        * Shared/API/APIError.h: Renamed from Source/WebKit2/Shared/APIError.h.
+        * Shared/API/APIFrameHandle.cpp: Renamed from Source/WebKit2/Shared/APIFrameHandle.cpp.
+        * Shared/API/APIFrameHandle.h: Renamed from Source/WebKit2/Shared/APIFrameHandle.h.
+        * Shared/API/APIGeometry.cpp: Renamed from Source/WebKit2/Shared/APIGeometry.cpp.
+        * Shared/API/APIGeometry.h: Renamed from Source/WebKit2/Shared/APIGeometry.h.
+        * Shared/API/APINumber.h: Renamed from Source/WebKit2/Shared/APINumber.h.
+        * Shared/API/APIObject.cpp: Renamed from Source/WebKit2/Shared/APIObject.cpp.
+        * Shared/API/APIObject.h: Renamed from Source/WebKit2/Shared/APIObject.h.
+        * Shared/API/APIPageHandle.cpp: Renamed from Source/WebKit2/Shared/APIPageHandle.cpp.
+        * Shared/API/APIPageHandle.h: Renamed from Source/WebKit2/Shared/APIPageHandle.h.
+        * Shared/API/APIString.h: Renamed from Source/WebKit2/Shared/APIString.h.
+        * Shared/API/APIURL.h: Renamed from Source/WebKit2/Shared/APIURL.h.
+        * Shared/API/APIURLRequest.cpp: Renamed from Source/WebKit2/Shared/APIURLRequest.cpp.
+        * Shared/API/APIURLRequest.h: Renamed from Source/WebKit2/Shared/APIURLRequest.h.
+        * Shared/API/APIURLResponse.cpp: Renamed from Source/WebKit2/Shared/APIURLResponse.cpp.
+        * Shared/API/APIURLResponse.h: Renamed from Source/WebKit2/Shared/APIURLResponse.h.
+
 2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF after r177639 to try to make GTK happy.
