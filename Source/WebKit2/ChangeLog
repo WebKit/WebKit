@@ -1,3 +1,18 @@
+2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Last URTBF after r177639, GTK builds now.
+
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp:
+        (webkitUserMediaPermissionRequestCreate):
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptCallback):
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+
 2014-12-22  Anders Carlsson  <andersca@apple.com>
 
         Move more API classes from Shared to Shared/API.

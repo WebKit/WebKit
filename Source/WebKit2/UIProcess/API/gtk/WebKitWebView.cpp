@@ -23,6 +23,7 @@
 #include "WebKitWebView.h"
 
 #include "APIData.h"
+#include "APISerializedScriptValue.h"
 #include "ImageOptions.h"
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
@@ -59,7 +60,6 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
-#include "WebSerializedScriptValue.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DragIcon.h>
@@ -2949,7 +2949,7 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     return webView->priv->javascriptGlobalContext;
 }
 
-static void webkitWebViewRunJavaScriptCallback(WebSerializedScriptValue* wkSerializedScriptValue, GTask* task)
+static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSerializedScriptValue, GTask* task)
 {
     if (g_task_return_error_if_cancelled(task))
         return;
@@ -2986,7 +2986,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](WebSerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
         webkitWebViewRunJavaScriptCallback(serializedScriptValue, adoptGRef(task).get());
     });
 }
@@ -3077,7 +3077,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
-        [task](WebSerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
+        [task](API::SerializedScriptValue* serializedScriptValue, CallbackBase::Error) {
             webkitWebViewRunJavaScriptCallback(serializedScriptValue, task.get());
         });
 }

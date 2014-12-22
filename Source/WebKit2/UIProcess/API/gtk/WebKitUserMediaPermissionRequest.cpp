@@ -174,7 +174,7 @@ static void webkit_user_media_permission_request_class_init(WebKitUserMediaPermi
             WEBKIT_PARAM_READABLE));
 }
 
-WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(UserMediaPermissionRequestProxy& request, WebSecurityOrigin& securityOrigin)
+WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(UserMediaPermissionRequestProxy& request, API::SecurityOrigin& securityOrigin)
 {
     WebKitUserMediaPermissionRequest* usermediaPermissionRequest = WEBKIT_USER_MEDIA_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_USER_MEDIA_PERMISSION_REQUEST, nullptr));
 

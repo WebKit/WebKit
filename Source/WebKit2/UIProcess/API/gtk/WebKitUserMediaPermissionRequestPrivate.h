@@ -22,6 +22,8 @@
 #include "WebKitPrivate.h"
 #include "WebKitUserMediaPermissionRequest.h"
 
-WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(WebKit::UserMediaPermissionRequestProxy&, WebKit::WebSecurityOrigin&);
+class SecurityOrigin;
+
+WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(WebKit::UserMediaPermissionRequestProxy&, API::SecurityOrigin&);
 
 #endif // WebKitUserMediaPermissionRequestPrivate_h
