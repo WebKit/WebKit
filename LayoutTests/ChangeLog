@@ -1,5 +1,12 @@
 2014-12-22  Alexey Proskuryakov  <ap@apple.com>
 
+        Update some inspector test expectations for the new timeout detection.
+        Also, unmarked some tests that appear stable on bots now.
+
+        * platform/mac/TestExpectations:
+
+2014-12-22  Alexey Proskuryakov  <ap@apple.com>
+
         Remove a Slow expectation for js/promises-tests/promises-tests-2-3-3.html,
         as we now skip the test.
 
