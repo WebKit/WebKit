@@ -1,5 +1,12 @@
 2014-12-22  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove a Slow expectation for js/promises-tests/promises-tests-2-3-3.html,
+        as we now skip the test.
+
+        * TestExpectations:
+
+2014-12-22  Alexey Proskuryakov  <ap@apple.com>
+
         js/promises-tests/promises-tests-2-3-3.html sometimes crashes under DFG::SpeculativeJIT::compile
         https://bugs.webkit.org/show_bug.cgi?id=139865
         rdar://problem/19326058
