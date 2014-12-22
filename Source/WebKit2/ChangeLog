@@ -1,3 +1,9 @@
+2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r177639 to try to make GTK happy.
+
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
+
 2014-12-22  Anders Carlsson  <andersca@apple.com>
 
         Rename a bunch of API classes and move them to Shared/API

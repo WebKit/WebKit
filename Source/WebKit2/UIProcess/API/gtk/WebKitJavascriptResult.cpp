@@ -21,7 +21,7 @@
 #include "WebKitJavascriptResult.h"
 
 #include "WebKitJavascriptResultPrivate.h"
-#include "WebSerializedScriptValue.h"
+#include "APISerializedScriptValue.h"
 #include <wtf/gobject/GRefPtr.h>
 
 using namespace WebKit;
