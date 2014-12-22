@@ -3363,6 +3363,9 @@
     <ClCompile Include="..\dom\SecurityContext.cpp">
       <Filter>dom</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\SecurityOriginPolicy.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
     <ClCompile Include="..\dom\SelectorQuery.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -10489,6 +10492,9 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\SecurityContext.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\SecurityOriginPolicy.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\SelectorQuery.h">

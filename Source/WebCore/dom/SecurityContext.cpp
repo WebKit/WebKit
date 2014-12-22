@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -44,10 +45,18 @@ SecurityContext::~SecurityContext()
 {
 }
 
-void SecurityContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)
+void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
 {
-    m_securityOrigin = securityOrigin;
+    m_securityOriginPolicy = WTF::move(securityOriginPolicy);
     m_haveInitializedSecurityOrigin = true;
+}
+
+SecurityOrigin* SecurityContext::securityOrigin() const
+{
+    if (!m_securityOriginPolicy)
+        return nullptr;
+
+    return &m_securityOriginPolicy->origin();
 }
 
 void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy> contentSecurityPolicy)
@@ -63,8 +72,7 @@ bool SecurityContext::isSecureTransitionTo(const URL& url) const
     if (!haveInitializedSecurityOrigin())
         return true;
 
-    RefPtr<SecurityOrigin> other = SecurityOrigin::create(url);
-    return securityOrigin()->canAccess(other.get());
+    return securityOriginPolicy()->origin().canAccess(SecurityOrigin::create(url).ptr());
 }
 
 void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
@@ -72,8 +80,8 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
     m_sandboxFlags |= mask;
 
     // The SandboxOrigin is stored redundantly in the security origin.
-    if (isSandboxed(SandboxOrigin) && securityOrigin() && !securityOrigin()->isUnique())
-        setSecurityOrigin(SecurityOrigin::createUnique());
+    if (isSandboxed(SandboxOrigin) && securityOriginPolicy() && !securityOriginPolicy()->origin().isUnique())
+        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
 }
 
 SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage)

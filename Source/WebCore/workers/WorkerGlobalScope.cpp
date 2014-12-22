@@ -42,6 +42,7 @@
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "URL.h"
 #include "WorkerInspectorController.h"
 #include "WorkerLocation.h"
@@ -76,7 +77,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, st
     , m_eventQueue(*this)
     , m_topOrigin(topOrigin)
 {
-    setSecurityOrigin(SecurityOrigin::create(url));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::create(url)));
 }
 
 WorkerGlobalScope::~WorkerGlobalScope()

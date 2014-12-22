@@ -39,6 +39,7 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "Text.h"
 #include "XMLViewerCSS.h"
 #include "XMLViewerJS.h"
@@ -53,7 +54,7 @@ XMLTreeViewer::XMLTreeViewer(Document& document)
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    m_document.setSecurityOrigin(SecurityOrigin::createUnique());
+    m_document.setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
 
     String scriptString = StringImpl::createWithoutCopying(XMLViewer_js, sizeof(XMLViewer_js));
     m_document.frame()->script().evaluate(ScriptSourceCode(scriptString));

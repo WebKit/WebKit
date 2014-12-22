@@ -54,6 +54,7 @@ class EventQueue;
 class EventTarget;
 class MessagePort;
 class PublicURLManager;
+class SecurityOrigin;
 class URL;
 
 class ScriptExecutionContext : public SecurityContext, public Supplementable<ScriptExecutionContext> {

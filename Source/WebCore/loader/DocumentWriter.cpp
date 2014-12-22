@@ -43,6 +43,7 @@
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "SegmentedString.h"
 #include "Settings.h"
 #include "SinkDocument.h"
@@ -150,7 +151,7 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->setDecoder(m_decoder.get());
     if (ownerDocument) {
         document->setCookieURL(ownerDocument->cookieURL());
-        document->setSecurityOrigin(ownerDocument->securityOrigin());
+        document->setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
     }
 
     m_frame->loader().didBeginDocument(dispatch);

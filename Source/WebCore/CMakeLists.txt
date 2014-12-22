@@ -1410,6 +1410,7 @@ set(WebCore_SOURCES
     dom/ScriptableDocumentParser.cpp
     dom/ScriptedAnimationController.cpp
     dom/SecurityContext.cpp
+    dom/SecurityOriginPolicy.cpp
     dom/SelectorQuery.cpp
     dom/ShadowRoot.cpp
     dom/SpaceSplitString.cpp

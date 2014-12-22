@@ -920,6 +920,8 @@
 		1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */; };
 		1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62F2014DAFE790041556C /* ScrollingThread.cpp */; };
 		1AF62F2614DAFEA10041556C /* ScrollingThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF62F2114DAFE790041556C /* ScrollingThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AF7AFC71A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF7AFC51A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp */; };
+		1AF7AFC81A48A8BC00C8E4E7 /* SecurityOriginPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF7AFC61A48A8BC00C8E4E7 /* SecurityOriginPolicy.h */; };
 		1AF89A421518FDEA00E547B5 /* TiledBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF89A411518FDEA00E547B5 /* TiledBacking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF8E1191256592600230FF7 /* ProxyServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF8E13212565A4400230FF7 /* ProxyServer.cpp */; };
@@ -7951,6 +7953,8 @@
 		1AF62F2014DAFE790041556C /* ScrollingThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingThread.cpp; sourceTree = "<group>"; };
 		1AF62F2114DAFE790041556C /* ScrollingThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingThread.h; sourceTree = "<group>"; };
 		1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingThreadMac.mm; sourceTree = "<group>"; };
+		1AF7AFC51A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginPolicy.cpp; sourceTree = "<group>"; };
+		1AF7AFC61A48A8BC00C8E4E7 /* SecurityOriginPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginPolicy.h; sourceTree = "<group>"; };
 		1AF89A411518FDEA00E547B5 /* TiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledBacking.h; sourceTree = "<group>"; };
 		1AF8E1191256592600230FF7 /* ProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyServer.h; sourceTree = "<group>"; };
 		1AF8E13212565A4400230FF7 /* ProxyServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServer.cpp; sourceTree = "<group>"; };
@@ -22642,10 +22646,10 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				CE2616A4187E65C1007955F3 /* ios */,
 				319847FE1A1D816700A13318 /* AnimationEvent.cpp */,
 				319847FF1A1D816700A13318 /* AnimationEvent.h */,
 				319848001A1D816700A13318 /* AnimationEvent.idl */,
-				CE2616A4187E65C1007955F3 /* ios */,
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
@@ -22957,6 +22961,8 @@
 				8A413ADE1207BBA50082016E /* ScriptRunner.h */,
 				976F36E814686225005E93B4 /* SecurityContext.cpp */,
 				976F36E914686225005E93B4 /* SecurityContext.h */,
+				1AF7AFC51A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp */,
+				1AF7AFC61A48A8BC00C8E4E7 /* SecurityOriginPolicy.h */,
 				2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */,
 				2D5BC42616F882BE007048D0 /* SecurityPolicyViolationEvent.idl */,
 				E45322A9140CE267005A0F92 /* SelectorQuery.cpp */,
@@ -26478,6 +26484,7 @@
 				436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */,
 				436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */,
 				436708F612D9CA4B00044234 /* SVGResources.h in Headers */,
+				1AF7AFC81A48A8BC00C8E4E7 /* SecurityOriginPolicy.h in Headers */,
 				436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */,
 				436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */,
 				0854B0231255E4E600B9CDD0 /* SVGRootInlineBox.h in Headers */,
@@ -29884,6 +29891,7 @@
 				B2C3DA410D006C1D00EF6F26 /* TextCodecUTF16.cpp in Sources */,
 				9343CB8112F25E510033C5EE /* TextCodecUTF8.cpp in Sources */,
 				142B97C913138943008BEF4B /* TextControlInnerElements.cpp in Sources */,
+				1AF7AFC71A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp in Sources */,
 				97BC84B312371180000C6161 /* TextDocument.cpp in Sources */,
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,

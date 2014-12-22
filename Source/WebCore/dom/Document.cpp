@@ -134,6 +134,7 @@
 #include "ScriptSourceCode.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "SecurityPolicy.h"
 #include "SegmentedString.h"
 #include "SelectorQuery.h"
@@ -567,7 +568,8 @@ static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, cons
 Ref<Document> Document::create(ScriptExecutionContext& context)
 {
     Ref<Document> document = adoptRef(*new Document(nullptr, URL()));
-    document->setSecurityOrigin(context.securityOrigin());
+    document->setSecurityOriginPolicy(context.securityOriginPolicy());
+
     return document;
 }
 
@@ -2234,7 +2236,7 @@ void Document::open(Document* ownerDocument)
     if (ownerDocument) {
         setURL(ownerDocument->url());
         setCookieURL(ownerDocument->cookieURL());
-        setSecurityOrigin(ownerDocument->securityOrigin());
+        setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
     }
 
     if (m_frame) {
@@ -3189,7 +3191,7 @@ void Document::cloneDataFromDocument(const Document& other)
     m_documentURI = other.documentURI();
 
     setCompatibilityMode(other.m_compatibilityMode);
-    setSecurityOrigin(other.securityOrigin());
+    setSecurityOriginPolicy(other.securityOriginPolicy());
     overrideMIMEType(other.contentType());
     setDecoder(other.decoder());
 }
@@ -4717,7 +4719,7 @@ void Document::initSecurityContext()
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
         setCookieURL(URL(ParsedURLString, emptyString()));
-        setSecurityOrigin(SecurityOrigin::createUnique());
+        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
         setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
         return;
     }
@@ -4737,7 +4739,7 @@ void Document::initSecurityContext()
         enforceSandboxFlags(SandboxOrigin);
 #endif
 
-    setSecurityOrigin(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
 
     if (Settings* settings = this->settings()) {
@@ -4793,7 +4795,7 @@ void Document::initSecurityContext()
     setCookieURL(ownerFrame->document()->cookieURL());
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
-    setSecurityOrigin(ownerFrame->document()->securityOrigin());
+    setSecurityOriginPolicy(ownerFrame->document()->securityOriginPolicy());
 }
 
 void Document::initContentSecurityPolicy()

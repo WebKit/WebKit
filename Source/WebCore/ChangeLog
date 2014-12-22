@@ -1,3 +1,53 @@
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Add a SecurityOriginPolicy class
+        https://bugs.webkit.org/show_bug.cgi?id=139875
+
+        Reviewed by Sam Weinig.
+
+        This is the first step towards making SecurityOrigin immutable. SecurityOriginPolicy will hold a
+        SecurityOrigin and will handle things that would otherwise mutate SecurityOrigin.
+
+        * CMakeLists.txt:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::create):
+        (WebCore::Document::open):
+        (WebCore::Document::cloneDataFromDocument):
+        (WebCore::Document::initSecurityContext):
+        * dom/ScriptExecutionContext.h:
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::setSecurityOriginPolicy):
+        (WebCore::SecurityContext::securityOrigin):
+        (WebCore::SecurityContext::isSecureTransitionTo):
+        (WebCore::SecurityContext::enforceSandboxFlags):
+        (WebCore::SecurityContext::setSecurityOrigin): Deleted.
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::securityOriginPolicy):
+        (WebCore::SecurityContext::securityOrigin): Deleted.
+        * dom/SecurityOriginPolicy.cpp: Added.
+        (WebCore::SecurityOriginPolicy::create):
+        (WebCore::SecurityOriginPolicy::SecurityOriginPolicy):
+        (WebCore::SecurityOriginPolicy::~SecurityOriginPolicy):
+        * dom/SecurityOriginPolicy.h: Added.
+        (WebCore::SecurityOriginPolicy::origin):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2014-12-22  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect dashed and dotted border painting.

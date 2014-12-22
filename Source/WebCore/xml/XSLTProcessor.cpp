@@ -37,6 +37,7 @@
 #include "HTMLDocument.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
 #include "markup.h"
@@ -90,7 +91,7 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
         if (Document* oldDocument = frame->document()) {
             result->setTransformSourceDocument(oldDocument);
             result->takeDOMWindowFrom(oldDocument);
-            result->setSecurityOrigin(oldDocument->securityOrigin());
+            result->setSecurityOriginPolicy(oldDocument->securityOriginPolicy());
             result->setCookieURL(oldDocument->cookieURL());
             result->setFirstPartyForCookies(oldDocument->firstPartyForCookies());
             result->contentSecurityPolicy()->copyStateFrom(oldDocument->contentSecurityPolicy());

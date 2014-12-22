@@ -47,6 +47,7 @@
 #include "SVGDocument.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
 #include "SubframeLoader.h"
@@ -220,7 +221,7 @@ RefPtr<Document> DOMImplementation::createDocument(const String& namespaceURI,
     else
         doc = Document::create(0, URL());
 
-    doc->setSecurityOrigin(m_document.securityOrigin());
+    doc->setSecurityOriginPolicy(m_document.securityOriginPolicy());
 
     RefPtr<Node> documentElement;
     if (!qualifiedName.isEmpty()) {
@@ -295,7 +296,7 @@ RefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
     d->write("<!doctype html><html><body></body></html>");
     if (!title.isNull())
         d->setTitle(title);
-    d->setSecurityOrigin(m_document.securityOrigin());
+    d->setSecurityOriginPolicy(m_document.securityOriginPolicy());
     return d;
 }
 

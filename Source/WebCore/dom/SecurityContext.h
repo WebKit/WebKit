@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class SecurityOrigin;
+class SecurityOriginPolicy;
 class ContentSecurityPolicy;
 class URL;
 
@@ -57,7 +58,6 @@ typedef int SandboxFlags;
 
 class SecurityContext {
 public:
-    SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
@@ -66,10 +66,14 @@ public:
     void enforceSandboxFlags(SandboxFlags mask);
     bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
 
+    SecurityOriginPolicy* securityOriginPolicy() const { return m_securityOriginPolicy.get(); }
+
     // Explicitly override the security origin for this security context.
     // Note: It is dangerous to change the security origin of a script context
     //       that already contains content.
-    void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
+    void setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&&);
+
+    SecurityOrigin* securityOrigin() const;
 
     static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
 
@@ -85,7 +89,7 @@ protected:
 private:
     bool m_haveInitializedSecurityOrigin;
     SandboxFlags m_sandboxFlags;
-    RefPtr<SecurityOrigin> m_securityOrigin;
+    RefPtr<SecurityOriginPolicy> m_securityOriginPolicy;
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
