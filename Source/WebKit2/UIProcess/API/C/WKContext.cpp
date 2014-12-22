@@ -29,7 +29,7 @@
 #include "APIClient.h"
 #include "APIContextConfiguration.h"
 #include "APIDownloadClient.h"
-#include "APIHistoryClient.h"
+#include "APILegacyContextHistoryClient.h"
 #include "APINavigationData.h"
 #include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
@@ -108,7 +108,7 @@ void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextIn
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)
 {
-    class HistoryClient final : public API::Client<WKContextHistoryClientBase>, public API::HistoryClient {
+    class HistoryClient final : public API::Client<WKContextHistoryClientBase>, public API::LegacyContextHistoryClient {
     public:
         explicit HistoryClient(const WKContextHistoryClientBase* client)
         {
@@ -116,45 +116,45 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
         }
 
     private:
-        virtual void didNavigateWithNavigationData(WebContext* context, WebPageProxy* page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy* frame) override
+        virtual void didNavigateWithNavigationData(WebContext& context, WebPageProxy& page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy& frame) override
         {
             if (!m_client.didNavigateWithNavigationData)
                 return;
 
             RefPtr<API::NavigationData> navigationData = API::NavigationData::create(navigationDataStore);
-            m_client.didNavigateWithNavigationData(toAPI(context), toAPI(page), toAPI(navigationData.get()), toAPI(frame), m_client.base.clientInfo);
+            m_client.didNavigateWithNavigationData(toAPI(&context), toAPI(&page), toAPI(navigationData.get()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didPerformClientRedirect(WebContext* context, WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame) override
+        virtual void didPerformClientRedirect(WebContext& context, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
         {
             if (!m_client.didPerformClientRedirect)
                 return;
 
-            m_client.didPerformClientRedirect(toAPI(context), toAPI(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(frame), m_client.base.clientInfo);
+            m_client.didPerformClientRedirect(toAPI(&context), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didPerformServerRedirect(WebContext* context, WebPageProxy* page, const String& sourceURL, const String& destinationURL, WebFrameProxy* frame) override
+        virtual void didPerformServerRedirect(WebContext& context, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
         {
             if (!m_client.didPerformServerRedirect)
                 return;
 
-            m_client.didPerformServerRedirect(toAPI(context), toAPI(page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(frame), m_client.base.clientInfo);
+            m_client.didPerformServerRedirect(toAPI(&context), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didUpdateHistoryTitle(WebContext* context, WebPageProxy* page, const String& title, const String& url, WebFrameProxy* frame) override
+        virtual void didUpdateHistoryTitle(WebContext& context, WebPageProxy& page, const String& title, const String& url, WebFrameProxy& frame) override
         {
             if (!m_client.didUpdateHistoryTitle)
                 return;
 
-            m_client.didUpdateHistoryTitle(toAPI(context), toAPI(page), toAPI(title.impl()), toURLRef(url.impl()), toAPI(frame), m_client.base.clientInfo);
+            m_client.didUpdateHistoryTitle(toAPI(&context), toAPI(&page), toAPI(title.impl()), toURLRef(url.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void populateVisitedLinks(WebContext* context) override
+        virtual void populateVisitedLinks(WebContext& context) override
         {
             if (!m_client.populateVisitedLinks)
                 return;
 
-            m_client.populateVisitedLinks(toAPI(context), m_client.base.clientInfo);
+            m_client.populateVisitedLinks(toAPI(&context), m_client.base.clientInfo);
         }
 
         virtual bool addsVisitedLinks() const override

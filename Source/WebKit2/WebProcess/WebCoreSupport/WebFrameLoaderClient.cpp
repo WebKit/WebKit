@@ -51,7 +51,6 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/CertificateInfo.h>
@@ -954,7 +953,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     data.originalRequest = loader->originalRequestCopy();
     data.response = loader->response();
 
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::DidNavigateWithNavigationData(webPage->pageID(), data, m_frame->frameID()), 0);
+    webPage->send(Messages::WebPageProxy::DidNavigateWithNavigationData(data, m_frame->frameID()));
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
@@ -968,14 +967,14 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 
     // Client redirect
     if (!loader->clientRedirectSourceForHistory().isNull()) {
-        WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::DidPerformClientRedirect(webPage->pageID(),
-            loader->clientRedirectSourceForHistory(), loader->clientRedirectDestinationForHistory(), m_frame->frameID()), 0);
+        webPage->send(Messages::WebPageProxy::DidPerformClientRedirect(
+            loader->clientRedirectSourceForHistory(), loader->clientRedirectDestinationForHistory(), m_frame->frameID()));
     }
 
     // Server redirect
     if (!loader->serverRedirectSourceForHistory().isNull()) {
-        WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::DidPerformServerRedirect(webPage->pageID(),
-            loader->serverRedirectSourceForHistory(), loader->serverRedirectDestinationForHistory(), m_frame->frameID()), 0);
+        webPage->send(Messages::WebPageProxy::DidPerformServerRedirect(
+            loader->serverRedirectSourceForHistory(), loader->serverRedirectDestinationForHistory(), m_frame->frameID()));
     }
 }
 
@@ -1206,8 +1205,7 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
         return;
 
     // FIXME: use direction of title.
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::DidUpdateHistoryTitle(webPage->pageID(),
-        title.string(), url.string(), m_frame->frameID()), 0);
+    webPage->send(Messages::WebPageProxy::DidUpdateHistoryTitle(title.string(), url.string(), m_frame->frameID()));
 }
 
 String WebFrameLoaderClient::userAgent(const URL& url)

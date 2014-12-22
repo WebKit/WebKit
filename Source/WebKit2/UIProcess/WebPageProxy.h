@@ -1028,6 +1028,12 @@ private:
 
     void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, IPC::MessageDecoder&);
 
+    // History client
+    void didNavigateWithNavigationData(const WebNavigationDataStore&, uint64_t frameID);
+    void didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
+    void didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
+    void didUpdateHistoryTitle(const String& title, const String& url, uint64_t frameID);
+
     // UI client
     void createNewPage(uint64_t frameID, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const NavigationActionData&, uint64_t& newPageID, WebPageCreationParameters&);
     void showPage();

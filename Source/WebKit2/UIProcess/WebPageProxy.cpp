@@ -30,6 +30,7 @@
 #include "APIArray.h"
 #include "APIFindClient.h"
 #include "APIFormClient.h"
+#include "APILegacyContextHistoryClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
 #include "APIUIClient.h"
@@ -3069,6 +3070,60 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
     RefPtr<WebFormSubmissionListenerProxy> listener = frame->setUpFormSubmissionListenerProxy(listenerID);
     if (!m_formClient->willSubmitForm(this, frame, sourceFrame, textFieldValues, userData.get(), listener.get()))
         listener->continueSubmission();
+}
+
+void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, uint64_t frameID) 
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == this);
+
+    m_loaderClient->didNavigateWithNavigationData(*this, store, *frame);
+    process().context().historyClient().didNavigateWithNavigationData(process().context(), *this, store, *frame);
+}
+
+void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
+{
+    if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
+        return;
+    
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == this);
+
+    MESSAGE_CHECK_URL(sourceURLString);
+    MESSAGE_CHECK_URL(destinationURLString);
+
+    m_loaderClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString, *frame);
+    process().context().historyClient().didPerformClientRedirect(process().context(), *this, sourceURLString, destinationURLString, *frame);
+}
+
+void WebPageProxy::didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
+{
+    if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
+        return;
+    
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == this);
+
+    MESSAGE_CHECK_URL(sourceURLString);
+    MESSAGE_CHECK_URL(destinationURLString);
+
+    m_loaderClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString, *frame);
+    process().context().historyClient().didPerformServerRedirect(process().context(), *this, sourceURLString, destinationURLString, *frame);
+}
+
+void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url, uint64_t frameID)
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == this);
+
+    MESSAGE_CHECK_URL(url);
+
+    m_loaderClient->didUpdateHistoryTitle(*this, title, url, *frame);
+    process().context().historyClient().didUpdateHistoryTitle(process().context(), *this, title, url, *frame);
 }
 
 // UIClient

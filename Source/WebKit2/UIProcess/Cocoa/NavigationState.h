@@ -68,12 +68,6 @@ public:
     RetainPtr<WKNavigation> createReloadNavigation(uint64_t navigationID);
     RetainPtr<WKNavigation> createLoadDataNavigation(uint64_t navigationID);
 
-    // Called by the history client.
-    void didNavigateWithNavigationData(const WebKit::WebNavigationDataStore&);
-    void didPerformClientRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL);
-    void didPerformServerRedirect(const WTF::String& sourceURL, const WTF::String& destinationURL);
-    void didUpdateHistoryTitle(const WTF::String& title, const WTF::String& url);
-
     // Called by the page client.
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
@@ -115,10 +109,16 @@ private:
         virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy*) override;
         virtual void processDidCrash(WebKit::WebPageProxy*) override;
         virtual PassRefPtr<API::Data> webCryptoMasterKey(WebKit::WebPageProxy&) override;
+
 #if USE(QUICK_LOOK)
         virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
         virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) override;
 #endif
+
+        virtual void didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) override;
+        virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) override;
+        virtual void didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) override;
+        virtual void didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) override;
 
         NavigationState& m_navigationState;
     };

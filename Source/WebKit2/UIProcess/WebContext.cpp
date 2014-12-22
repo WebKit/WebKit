@@ -28,7 +28,7 @@
 
 #include "APIArray.h"
 #include "APIDownloadClient.h"
-#include "APIHistoryClient.h"
+#include "APILegacyContextHistoryClient.h"
 #include "CustomProtocolManagerMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
@@ -167,7 +167,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
     , m_injectedBundlePath(configuration.injectedBundlePath)
     , m_downloadClient(std::make_unique<API::DownloadClient>())
-    , m_historyClient(std::make_unique<API::HistoryClient>())
+    , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
     , m_visitedLinkProvider(VisitedLinkProvider::create())
     , m_visitedLinksPopulated(false)
     , m_plugInAutoStartProvider(this)
@@ -306,10 +306,10 @@ void WebContext::initializeConnectionClient(const WKContextConnectionClientBase*
     m_connectionClient.initialize(client);
 }
 
-void WebContext::setHistoryClient(std::unique_ptr<API::HistoryClient> historyClient)
+void WebContext::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient> historyClient)
 {
     if (!historyClient)
-        m_historyClient = std::make_unique<API::HistoryClient>();
+        m_historyClient = std::make_unique<API::LegacyContextHistoryClient>();
     else
         m_historyClient = WTF::move(historyClient);
 }
@@ -965,7 +965,7 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
 
 void WebContext::populateVisitedLinks()
 {
-    m_historyClient->populateVisitedLinks(this);
+    m_historyClient->populateVisitedLinks(*this);
 }
 
 WebContext::Statistics& WebContext::statistics()

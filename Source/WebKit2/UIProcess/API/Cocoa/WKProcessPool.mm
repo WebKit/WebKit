@@ -30,7 +30,6 @@
 
 #import "CacheModel.h"
 #import "DownloadClient.h"
-#import "HistoryClient.h"
 #import "ProcessModel.h"
 #import "SandboxUtilities.h"
 #import "WKObject.h"
@@ -170,7 +169,6 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     webContextConfiguration.mediaKeysStorageDirectory = websiteDataDirectoryURL(@"MediaKeys").absoluteURL.path.fileSystemRepresentation;
 
     API::Object::constructInWrapper<WebKit::WebContext>(self, WTF::move(webContextConfiguration));
-    _context->setHistoryClient(std::make_unique<WebKit::HistoryClient>());
     _context->setUsesNetworkProcess(true);
     _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
     _context->setMaximumNumberOfProcesses([_configuration maximumProcessCount]);

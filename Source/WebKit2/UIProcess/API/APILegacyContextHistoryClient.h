@@ -23,33 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HistoryClient_h
-#define HistoryClient_h
+#ifndef APILegacyContextHistoryClient_h
+#define APILegacyContextHistoryClient_h
 
-#import "WKFoundation.h"
-
-#if WK_API_ENABLED
-
-#import "APIHistoryClient.h"
+#include <wtf/Forward.h>
 
 namespace WebKit {
+class WebContext;
+class WebFrameProxy;
+class WebPageProxy;
+struct WebNavigationDataStore;
+}
 
-class HistoryClient : public API::HistoryClient {
+namespace API {
+
+class LegacyContextHistoryClient {
 public:
-    HistoryClient();
-    ~HistoryClient();
+    virtual ~LegacyContextHistoryClient() { }
 
-private:
-    // API::HistoryClient
-    virtual void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*) override;
-    virtual void didPerformClientRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*) override;
-    virtual void didPerformServerRedirect(WebContext*, WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy*) override;
-    virtual void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const WTF::String& title, const WTF::String& url, WebFrameProxy*) override;
-    virtual void populateVisitedLinks(WebContext*) override;
+    virtual void didNavigateWithNavigationData(WebKit::WebContext&, WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) { }
+    virtual void didPerformClientRedirect(WebKit::WebContext&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void didPerformServerRedirect(WebKit::WebContext&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void didUpdateHistoryTitle(WebKit::WebContext&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void populateVisitedLinks(WebKit::WebContext&) { }
+    virtual bool addsVisitedLinks() const { return false; }
 };
 
-} // namespace WebKit
+} // namespace API
 
-#endif // WK_API_ENABLED
-
-#endif // HistoryClient_h
+#endif // APILegacyContextHistoryClient_h

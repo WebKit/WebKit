@@ -1,3 +1,78 @@
+2014-12-21  Sam Weinig  <sam@webkit.org>
+
+        Allow the WebContext's history client to coexist with WKWebView's history delegate
+        https://bugs.webkit.org/show_bug.cgi?id=139857
+
+        Reviewed by Anders Carlsson.
+
+        - Renames API::HistoryClient to API::LegacyContextHistoryClient to make it clear what it is for.
+        - Re-routes the history client functions from the WebProcessProxy to the WebPageProxy.
+        - Add history client functions to API::LoaderClient and implement them for NavigationState's 
+          LoaderClient subclass. Removes the need for WKProcessPool to have to setup a history client and
+          forward to the NavigationState.
+
+        * UIProcess/API/APIHistoryClient.h: Removed.
+        * UIProcess/API/APILegacyContextHistoryClient.h: Copied from Source/WebKit2/UIProcess/API/APIHistoryClient.h.
+        (API::LegacyContextHistoryClient::~LegacyContextHistoryClient):
+        (API::LegacyContextHistoryClient::didNavigateWithNavigationData):
+        (API::LegacyContextHistoryClient::didPerformClientRedirect):
+        (API::LegacyContextHistoryClient::didPerformServerRedirect):
+        (API::LegacyContextHistoryClient::didUpdateHistoryTitle):
+        (API::LegacyContextHistoryClient::populateVisitedLinks):
+        (API::HistoryClient::~HistoryClient): Deleted.
+        (API::HistoryClient::didNavigateWithNavigationData): Deleted.
+        (API::HistoryClient::didPerformClientRedirect): Deleted.
+        (API::HistoryClient::didPerformServerRedirect): Deleted.
+        (API::HistoryClient::didUpdateHistoryTitle): Deleted.
+        (API::HistoryClient::populateVisitedLinks): Deleted.
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didNavigateWithNavigationData):
+        (API::LoaderClient::didPerformClientRedirect):
+        (API::LoaderClient::didPerformServerRedirect):
+        (API::LoaderClient::didUpdateHistoryTitle):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetHistoryClient):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _initWithConfiguration:]):
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Cocoa/HistoryClient.h: Removed.
+        * UIProcess/Cocoa/HistoryClient.mm: Removed.
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::didNavigateWithNavigationData):
+        (WebKit::NavigationState::LoaderClient::didPerformClientRedirect):
+        (WebKit::NavigationState::LoaderClient::didPerformServerRedirect):
+        (WebKit::NavigationState::LoaderClient::didUpdateHistoryTitle):
+        (WebKit::NavigationState::didNavigateWithNavigationData): Deleted.
+        (WebKit::NavigationState::didPerformClientRedirect): Deleted.
+        (WebKit::NavigationState::didPerformServerRedirect): Deleted.
+        (WebKit::NavigationState::didUpdateHistoryTitle): Deleted.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::setHistoryClient):
+        (WebKit::WebContext::populateVisitedLinks):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::historyClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didNavigateWithNavigationData): Deleted.
+        (WebKit::WebProcessProxy::didPerformClientRedirect): Deleted.
+        (WebKit::WebProcessProxy::didPerformServerRedirect): Deleted.
+        (WebKit::WebProcessProxy::didUpdateHistoryTitle): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebKit::WebFrameLoaderClient::setTitle):
+
 2014-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] another outdated comment

@@ -151,6 +151,12 @@ messages -> WebPageProxy {
 
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)
 
+    # History client messages.
+    DidNavigateWithNavigationData(struct WebKit::WebNavigationDataStore store, uint64_t frameID)
+    DidPerformClientRedirect(String sourceURLString, String destinationURLString, uint64_t frameID)
+    DidPerformServerRedirect(String sourceURLString, String destinationURLString, uint64_t frameID)
+    DidUpdateHistoryTitle(String title, String url, uint64_t frameID)
+
     # Custom representations
     DidFinishLoadingDataForCustomContentProvider(String suggestedFilename, IPC::DataReference data)
 

@@ -70,7 +70,7 @@ OBJC_CLASS NSString;
 
 namespace API {
 class DownloadClient;
-class HistoryClient;
+class LegacyContextHistoryClient;
 }
 
 namespace WebKit {
@@ -142,7 +142,7 @@ public:
     void initializeClient(const WKContextClientBase*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
-    void setHistoryClient(std::unique_ptr<API::HistoryClient>);
+    void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>);
     void setDownloadClient(std::unique_ptr<API::DownloadClient>);
 
     void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
@@ -238,7 +238,7 @@ public:
     DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
     API::DownloadClient& downloadClient() { return *m_downloadClient; }
 
-    API::HistoryClient& historyClient() { return *m_historyClient; }
+    API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }
 
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
@@ -479,7 +479,7 @@ private:
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
     std::unique_ptr<API::DownloadClient> m_downloadClient;
-    std::unique_ptr<API::HistoryClient> m_historyClient;
+    std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginInfoStore m_pluginInfoStore;

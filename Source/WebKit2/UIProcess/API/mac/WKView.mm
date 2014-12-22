@@ -33,7 +33,7 @@
 #import <AppKit/NSAttributedString.h>
 #endif
 
-#import "APIHistoryClient.h"
+#import "APILegacyContextHistoryClient.h"
 #import "ActionMenuHitTestResult.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"

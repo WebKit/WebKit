@@ -21,13 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebProcessProxy LegacyReceiver {
-
-    # History client messages.
-    DidNavigateWithNavigationData(uint64_t pageID, struct WebKit::WebNavigationDataStore store, uint64_t frameID)
-    DidPerformClientRedirect(uint64_t pageID, String sourceURLString, String destinationURLString, uint64_t frameID)
-    DidPerformServerRedirect(uint64_t pageID, String sourceURLString, String destinationURLString, uint64_t frameID)
-    DidUpdateHistoryTitle(uint64_t pageID, String title, String url, uint64_t frameID)
-
     AddBackForwardItem(uint64_t itemID, uint64_t pageID, struct WebKit::PageState pageState)
     DidDestroyFrame(uint64_t frameID) 
 
