@@ -32,6 +32,7 @@
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
+#include "APIPageGroupHandle.h"
 #include "APISerializedScriptValue.h"
 #include "APIString.h"
 #include "APIURL.h"
@@ -43,8 +44,12 @@
 
 namespace WebKit {
 
-UserData::UserData(API::Object* object)
-    : m_object(object)
+UserData::UserData()
+{
+}
+
+UserData::UserData(RefPtr<API::Object>&& object)
+    : m_object(WTF::move(object))
 {
 }
 
@@ -149,6 +154,12 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
     case API::Object::Type::FrameHandle: {
         auto& frameHandle = static_cast<const API::FrameHandle&>(object);
         encoder << frameHandle.frameID();
+        break;
+    }
+
+    case API::Object::Type::PageGroupHandle: {
+        auto& pageGroupHandle = static_cast<const API::PageGroupHandle&>(object);
+        encoder << pageGroupHandle.webPageGroupData();
         break;
     }
 
@@ -278,7 +289,17 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
     case API::Object::Type::Null:
         result = nullptr;
         break;
-        
+
+    case API::Object::Type::PageGroupHandle: {
+        WebKit::WebPageGroupData webPageGroupData;
+        if (!decoder.decode(webPageGroupData))
+            return false;
+        break;
+
+        result = API::PageGroupHandle::create(WTF::move(webPageGroupData));
+        break;
+    }
+
     case API::Object::Type::Point:
         if (!API::Point::decode(decoder, result))
             return false;

@@ -69,6 +69,7 @@ public:
         Image,
         PageGroupData,
         PageHandle,
+        PageGroupHandle,
         ProtectionSpace,
         RenderLayer,
         RenderObject,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserData_h
-#define UserData_h
+#ifndef APIPageGroupHandle_h
+#define APIPageGroupHandle_h
 
-#include <functional>
+#include "APIObject.h"
+#include "WebPageGroupData.h"
 #include <wtf/RefPtr.h>
 
 namespace API {
-class Object;
-}
 
-namespace IPC {
-class ArgumentEncoder;
-class ArgumentDecoder;
-}
-
-namespace WebKit {
-
-class UserData {
+class PageGroupHandle : public ObjectImpl<Object::Type::PageGroupHandle> {
 public:
-    UserData();
-    explicit UserData(RefPtr<API::Object>&&);
-    ~UserData();
+    static Ref<PageGroupHandle> create(WebKit::WebPageGroupData&&);
+    virtual ~PageGroupHandle();
 
-    static RefPtr<API::Object> transform(API::Object*, const std::function<RefPtr<API::Object> (const API::Object&)> transformer);
-
-    API::Object* object() const { return m_object.get(); }
-
-    void encode(IPC::ArgumentEncoder&) const;
-    static bool decode(IPC::ArgumentDecoder&, UserData&);
+    const WebKit::WebPageGroupData& webPageGroupData() const { return m_webPageGroupData; }
 
 private:
-    void encode(IPC::ArgumentEncoder&, const API::Object*) const;
-    void encode(IPC::ArgumentEncoder&, const API::Object&) const;
+    explicit PageGroupHandle(WebKit::WebPageGroupData&&);
 
-    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
-
-    RefPtr<API::Object> m_object;
+    const WebKit::WebPageGroupData m_webPageGroupData;
 };
 
-} // namespace WebKit
+} // namespace API
 
-#endif // UserData_h
+
+#endif // APIPageGroupHandle_h

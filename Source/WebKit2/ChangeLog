@@ -1,3 +1,31 @@
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Add an API::PageGroupHandle object
+        https://bugs.webkit.org/show_bug.cgi?id=139881
+
+        Reviewed by Sam Weinig.
+
+        API::PageGroupHandle won't be exposed to any API, it will only be used to facilitate passing page groups
+        between the UI and web process inside UserData objects.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/APIPageGroupHandle.cpp: Added.
+        (API::PageGroupHandle::create):
+        (API::PageGroupHandle::~PageGroupHandle):
+        (API::PageGroupHandle::PageGroupHandle):
+        * Shared/API/APIPageGroupHandle.h: Added.
+        (API::PageGroupHandle::webPageGroupData):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::UserData):
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserData.h:
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::data):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::apiObjectByConvertingToHandles):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-12-22  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS build after <https://trac.webkit.org/changeset/177639>

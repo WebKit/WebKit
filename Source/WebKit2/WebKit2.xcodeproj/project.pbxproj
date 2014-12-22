@@ -215,6 +215,8 @@
 		1A3635A91A3144A300ED6197 /* APIWebsiteDataStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3635A71A3144A300ED6197 /* APIWebsiteDataStore.cpp */; };
 		1A3635AA1A3144A300ED6197 /* APIWebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */; };
 		1A3635AD1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */; };
+		1A3A73CE1A48C6D4007231B3 /* APIPageGroupHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A73CC1A48C6D4007231B3 /* APIPageGroupHandle.h */; };
+		1A3A73CF1A48C7F1007231B3 /* APIPageGroupHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A73CB1A48C6D4007231B3 /* APIPageGroupHandle.cpp */; };
 		1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */; };
 		1A3CC16618906ACF001E6ED8 /* WKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3CC16418906ACF001E6ED8 /* WKWebView.mm */; };
 		1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3CC16518906ACF001E6ED8 /* WKWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2208,6 +2210,8 @@
 		1A3635A71A3144A300ED6197 /* APIWebsiteDataStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebsiteDataStore.cpp; sourceTree = "<group>"; };
 		1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebsiteDataStore.h; sourceTree = "<group>"; };
 		1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIWebsiteDataStoreCocoa.mm; sourceTree = "<group>"; };
+		1A3A73CB1A48C6D4007231B3 /* APIPageGroupHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIPageGroupHandle.cpp; sourceTree = "<group>"; };
+		1A3A73CC1A48C6D4007231B3 /* APIPageGroupHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageGroupHandle.h; sourceTree = "<group>"; };
 		1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesInternal.h; sourceTree = "<group>"; };
 		1A3CC16418906ACF001E6ED8 /* WKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebView.mm; sourceTree = "<group>"; };
 		1A3CC16518906ACF001E6ED8 /* WKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebView.h; sourceTree = "<group>"; };
@@ -6776,6 +6780,8 @@
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
 				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
+				1A3A73CB1A48C6D4007231B3 /* APIPageGroupHandle.cpp */,
+				1A3A73CC1A48C6D4007231B3 /* APIPageGroupHandle.h */,
 				F634445512A885C8000612D8 /* APISecurityOrigin.h */,
 				A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */,
 				BCF04C8E11FF9F6E00F86A58 /* APIString.h */,
@@ -7177,6 +7183,7 @@
 				1A7284471959ED100007BCE5 /* SessionStateConversion.h in Headers */,
 				CDE6E2D319F731C400BA9688 /* WebOriginDataManagerSupplement.h in Headers */,
 				1AF459321946559500F9D4A2 /* WKError.h in Headers */,
+				1A3A73CE1A48C6D4007231B3 /* APIPageGroupHandle.h in Headers */,
 				1ADAE12E1919A5B400F48E21 /* WKPreferences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9539,6 +9546,7 @@
 				C54256B918BEC18C00DE4179 /* WKFormPopover.mm in Sources */,
 				C57193BE18C14A44002D0F12 /* WKFormSelectControl.mm in Sources */,
 				C55CB5B818C2A5D600CA81E1 /* WKFormSelectPicker.mm in Sources */,
+				1A3A73CF1A48C7F1007231B3 /* APIPageGroupHandle.cpp in Sources */,
 				C55CB5B718C269CF00CA81E1 /* WKFormSelectPopover.mm in Sources */,
 				BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */,
 				BCD0139C110FA420003B8A67 /* WKFrame.cpp in Sources */,

@@ -53,7 +53,7 @@ public:
     const String& identifier() const { return m_data.identifer; }
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
 
-    const WebPageGroupData& data() { return m_data; }
+    const WebPageGroupData& data() const { return m_data; }
 
     void setPreferences(WebPreferences*);
     WebPreferences& preferences() const;
