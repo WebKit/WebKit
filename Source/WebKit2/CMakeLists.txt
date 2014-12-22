@@ -184,15 +184,16 @@ set(WebKit2_SOURCES
     PluginProcess/PluginProcess.cpp
     PluginProcess/WebProcessConnection.cpp
 
-    Shared/APIArray.cpp
-    Shared/APIData.cpp
-    Shared/APIError.cpp
-    Shared/APIFrameHandle.cpp
-    Shared/APIGeometry.cpp
-    Shared/APIPageHandle.cpp
-    Shared/APIObject.cpp
-    Shared/APIURLRequest.cpp
-    Shared/APIURLResponse.cpp
+    Shared/API/APIArray.cpp
+    Shared/API/APIData.cpp
+    Shared/API/APIError.cpp
+    Shared/API/APIFrameHandle.cpp
+    Shared/API/APIGeometry.cpp
+    Shared/API/APIPageHandle.cpp
+    Shared/API/APIObject.cpp
+    Shared/API/APIURLRequest.cpp
+    Shared/API/APIURLResponse.cpp
+
     Shared/ActivityAssertion.cpp
     Shared/BlobDataFileReferenceWithSandboxExtension.cpp
     Shared/CacheModel.cpp

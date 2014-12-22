@@ -1,5 +1,11 @@
 2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        URTBF after r177649.
+
+        * CMakeLists.txt:
+
+2014-12-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         Last URTBF after r177639, GTK builds now.
 
         * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
