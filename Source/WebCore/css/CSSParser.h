@@ -92,7 +92,7 @@ public:
         CSSCalcValue* calculation() const { return m_calculation.get(); }
         void setCalculation(RefPtr<CSSCalcValue>&& calculation)
         {
-            isCalculation(m_value);
+            ASSERT(isCalculation(m_value));
             m_calculation = calculation;
         }
 
