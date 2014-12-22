@@ -1,5 +1,12 @@
 2014-12-22  Alexey Proskuryakov  <ap@apple.com>
 
+        REGRESSION: fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139840
+
+        * TestExpectations: Marking as such.
+
+2014-12-22  Alexey Proskuryakov  <ap@apple.com>
+
         Update some inspector test expectations for the new timeout detection.
         Also, unmarked some tests that appear stable on bots now.
 
