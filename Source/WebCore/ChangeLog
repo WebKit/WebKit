@@ -1,3 +1,9 @@
+2014-12-22  Antti Koivisto  <antti@apple.com>
+
+        Try to fix the windows build.
+
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+
 2014-12-22  Timothy Horton  <timothy_horton@apple.com>
 
         Adjust TextIndicator shadow parameters

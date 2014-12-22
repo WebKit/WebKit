@@ -33,6 +33,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
+#include "GlyphPageTreeNode.h"
 #include "HWndDC.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
