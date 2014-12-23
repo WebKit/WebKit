@@ -57,18 +57,54 @@ UserData::~UserData()
 {
 }
 
-RefPtr<API::Object> UserData::transform(API::Object* object, const std::function<RefPtr<API::Object> (const API::Object&)> transformer)
+static bool shouldTransform(const API::Object& object, const UserData::Transformer& transformer)
+{
+    if (object.type() == API::Object::Type::Array) {
+        const auto& array = static_cast<const API::Array&>(object);
+
+        for (const auto& element : array.elements()) {
+            if (!element)
+                continue;
+
+            if (shouldTransform(*element, transformer))
+                return true;
+        }
+    }
+
+    if (object.type() == API::Object::Type::Dictionary) {
+        const auto& dictionary = static_cast<const ImmutableDictionary&>(object);
+
+        for (const auto& keyValuePair : dictionary.map()) {
+            if (!keyValuePair.value)
+                continue;
+
+            if (shouldTransform(*keyValuePair.value, transformer))
+                return true;
+        }
+    }
+
+    return transformer.shouldTransformObjectOfType(object.type());
+}
+
+RefPtr<API::Object> UserData::transform(API::Object* object, const Transformer& transformer)
 {
     if (!object)
         return nullptr;
+
+    if (!shouldTransform(*object, transformer))
+        return object;
 
     if (object->type() == API::Object::Type::Array) {
         auto& array = static_cast<API::Array&>(*object);
 
         Vector<RefPtr<API::Object>> elements;
         elements.reserveInitialCapacity(array.elements().size());
-        for (const auto& element : array.elements())
-            elements.uncheckedAppend(transform(element.get(), transformer));
+        for (const auto& element : array.elements()) {
+            if (!element)
+                elements.uncheckedAppend(nullptr);
+            else
+                elements.uncheckedAppend(transformer.transformObject(*element));
+        }
 
         return API::Array::create(WTF::move(elements));
     }
@@ -83,7 +119,7 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const std::function
         return ImmutableDictionary::create(WTF::move(map));
     }
 
-    if (auto transformedObject = transformer(*object))
+    if (auto transformedObject = transformer.transformObject(*object))
         return transformedObject;
 
     return object;

@@ -652,27 +652,45 @@ void WebProcessProxy::disableSuddenTermination()
 
 RefPtr<API::Object> WebProcessProxy::apiObjectByConvertingToHandles(API::Object* object)
 {
-    return UserData::transform(object, [](const API::Object& object) -> RefPtr<API::Object> {
-        switch (object.type()) {
-        case API::Object::Type::Frame: {
-            auto& frame = static_cast<const WebFrameProxy&>(object);
-            return API::FrameHandle::create(frame.frameID());
+    struct Transformer : UserData::Transformer {
+        virtual bool shouldTransformObjectOfType(API::Object::Type type) const
+        {
+            switch (type) {
+            case API::Object::Type::Frame:
+            case API::Object::Type::Page:
+            case API::Object::Type::PageGroup:
+                return true;
+
+            default:
+                return false;
+            }
         }
 
-        case API::Object::Type::Page: {
-            auto& page = static_cast<const WebPageProxy&>(object);
-            return API::PageHandle::create(page.pageID());
-        }
+        virtual RefPtr<API::Object> transformObject(API::Object& object) const override
+        {
+            switch (object.type()) {
+            case API::Object::Type::Frame: {
+                auto& frame = static_cast<const WebFrameProxy&>(object);
+                return API::FrameHandle::create(frame.frameID());
+            }
 
-        case API::Object::Type::PageGroup: {
-            auto& pageGroup = static_cast<const WebPageGroup&>(object);
-            return API::PageGroupHandle::create(WebPageGroupData(pageGroup.data()));
-        }
+            case API::Object::Type::Page: {
+                auto& page = static_cast<const WebPageProxy&>(object);
+                return API::PageHandle::create(page.pageID());
+            }
 
-        default:
-            return nullptr;
+            case API::Object::Type::PageGroup: {
+                auto& pageGroup = static_cast<const WebPageGroup&>(object);
+                return API::PageGroupHandle::create(WebPageGroupData(pageGroup.data()));
+            }
+
+            default:
+                return nullptr;
+            }
         }
-    });
+    } transformer;
+
+    return UserData::transform(object, transformer);
 }
 
 void WebProcessProxy::sendProcessWillSuspend()

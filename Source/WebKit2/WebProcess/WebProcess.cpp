@@ -1229,30 +1229,49 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 
 RefPtr<API::Object> WebProcess::apiObjectByConvertingFromHandles(API::Object* object)
 {
-    return UserData::transform(object, [this](const API::Object& object) -> RefPtr<API::Object> {
-        switch (object.type()) {
-        case API::Object::Type::FrameHandle: {
-            auto& frameHandle = static_cast<const API::FrameHandle&>(object);
+    struct Transformer : UserData::Transformer {
+        virtual bool shouldTransformObjectOfType(API::Object::Type type) const
+        {
+            switch (type) {
+            case API::Object::Type::FrameHandle:
+            case API::Object::Type::PageHandle:
+            case API::Object::Type::PageGroupHandle:
+                return true;
 
-            return webFrame(frameHandle.frameID());
+            default:
+                return false;
+            }
         }
 
-        case API::Object::Type::PageGroupHandle: {
-            auto& pageGroupHandle = static_cast<const API::PageGroupHandle&>(object);
+        virtual RefPtr<API::Object> transformObject(API::Object& object) const override
+        {
+            switch (object.type()) {
+            case API::Object::Type::FrameHandle: {
+                auto& frameHandle = static_cast<const API::FrameHandle&>(object);
 
-            return webPageGroup(pageGroupHandle.webPageGroupData());
+                return WebProcess::shared().webFrame(frameHandle.frameID());
+            }
+
+            case API::Object::Type::PageGroupHandle: {
+                auto& pageGroupHandle = static_cast<const API::PageGroupHandle&>(object);
+
+                return WebProcess::shared().webPageGroup(pageGroupHandle.webPageGroupData());
+            }
+
+            case API::Object::Type::PageHandle: {
+                auto& pageHandle = static_cast<const API::PageHandle&>(object);
+
+                return WebProcess::shared().webPage(pageHandle.pageID());
+            }
+
+            default:
+                return nullptr;
+            }
         }
+    } transformer;
 
-        case API::Object::Type::PageHandle: {
-            auto& pageHandle = static_cast<const API::PageHandle&>(object);
+    return UserData::transform(object, transformer);
 
-            return webPage(pageHandle.pageID());
-        }
-
-        default:
-            return nullptr;
-        }
-    });
 }
 
 void WebProcess::setMemoryCacheDisabled(bool disabled)

@@ -26,12 +26,8 @@
 #ifndef UserData_h
 #define UserData_h
 
-#include <functional>
+#include "APIObject.h"
 #include <wtf/RefPtr.h>
-
-namespace API {
-class Object;
-}
 
 namespace IPC {
 class ArgumentEncoder;
@@ -46,7 +42,12 @@ public:
     explicit UserData(RefPtr<API::Object>&&);
     ~UserData();
 
-    static RefPtr<API::Object> transform(API::Object*, const std::function<RefPtr<API::Object> (const API::Object&)> transformer);
+    struct Transformer {
+        virtual ~Transformer() { }
+        virtual bool shouldTransformObjectOfType(API::Object::Type) const = 0;
+        virtual RefPtr<API::Object> transformObject(API::Object&) const = 0;
+    };
+    static RefPtr<API::Object> transform(API::Object*, const Transformer&);
 
     API::Object* object() const { return m_object.get(); }
 
