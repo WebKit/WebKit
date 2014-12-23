@@ -269,6 +269,7 @@ EXPORTS
         symbolWithPointer(?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z, ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@AEBVString@WTF@@@Z)
         symbolWithPointer(?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z, ?scrollElementToRect@FrameView@WebCore@@QEAAXPEAVElement@2@AEBVIntRect@2@@Z)
         symbolWithPointer(?scrollingStateTreeAsText@Page@WebCore@@QAE?AVString@WTF@@XZ, ?scrollingStateTreeAsText@Page@WebCore@@QEAA?AVString@WTF@@XZ)
+        symbolWithPointer(?securityOrigin@SecurityContext@WebCore@@QBEPAVSecurityOrigin@2@XZ,?securityOrigin@SecurityContext@WebCore@@QEBAPEAVSecurityOrigin@2@XZ)
         symbolWithPointer(?setCanStartMedia@Page@WebCore@@QAEX_N@Z, ?setCanStartMedia@Page@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z, ?setCursiveFontFamily@Settings@WebCore@@QEAAXAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z, ?setDeviceScaleFactor@Page@WebCore@@QEAAXM@Z)

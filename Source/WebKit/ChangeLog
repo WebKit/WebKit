@@ -1,3 +1,10 @@
+2014-12-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r177668.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add missing export definition
+        for new symbols.
+
 2014-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r177588.
