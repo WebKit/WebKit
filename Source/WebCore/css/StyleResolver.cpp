@@ -520,12 +520,6 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (element->isDefaultButtonForForm() != state.element()->isDefaultButtonForForm())
         return false;
 
-    if (element->matchesValidPseudoClass() != state.element()->matchesValidPseudoClass())
-        return false;
-
-    if (element->matchesInvalidPseudoClass() != state.element()->matchesValidPseudoClass())
-        return false;
-
     if (element->isInRange() != state.element()->isInRange())
         return false;
 
@@ -651,6 +645,12 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
                 return false;
         }
     }
+
+    if (element->matchesValidPseudoClass() != state.element()->matchesValidPseudoClass())
+        return false;
+
+    if (element->matchesInvalidPseudoClass() != state.element()->matchesValidPseudoClass())
+        return false;
 
 #if ENABLE(VIDEO_TRACK)
     // Deny sharing styles between WebVTT and non-WebVTT nodes.

@@ -78,6 +78,9 @@ public:
     void registerFormElement(FormAssociatedElement*);
     void removeFormElement(FormAssociatedElement*);
 
+    void registerInvalidAssociatedFormControl(const HTMLFormControlElement&);
+    void removeInvalidAssociatedFormControlIfNeeded(const HTMLFormControlElement&);
+
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
@@ -173,6 +176,9 @@ private:
     void assertItemCanBeInPastNamesMap(FormNamedItem*) const;
     void removeFromPastNamesMap(FormNamedItem*);
 
+    virtual bool matchesValidPseudoClass() const override;
+    virtual bool matchesInvalidPseudoClass() const override;
+
     typedef HashMap<RefPtr<AtomicStringImpl>, FormNamedItem*> PastNamesMap;
 
     FormSubmission::Attributes m_attributes;
@@ -184,6 +190,7 @@ private:
     unsigned m_associatedElementsAfterIndex;
     Vector<FormAssociatedElement*> m_associatedElements;
     Vector<HTMLImageElement*> m_imageElements;
+    HashSet<const HTMLFormControlElement*> m_invalidAssociatedFormControls;
 
     bool m_wasUserSubmitted;
     bool m_isSubmittingOrPreparingForSubmission;

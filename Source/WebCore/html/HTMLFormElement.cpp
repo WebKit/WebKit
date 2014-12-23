@@ -622,6 +622,24 @@ void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
     removeFromVector(m_associatedElements, e);
 }
 
+void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControlElement& formControlElement)
+{
+    ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
+    ASSERT(static_cast<const Element&>(formControlElement).matchesInvalidPseudoClass());
+
+    if (m_invalidAssociatedFormControls.isEmpty())
+        setNeedsStyleRecalc();
+    m_invalidAssociatedFormControls.add(&formControlElement);
+}
+
+void HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded(const HTMLFormControlElement& formControlElement)
+{
+    if (m_invalidAssociatedFormControls.remove(&formControlElement)) {
+        if (m_invalidAssociatedFormControls.isEmpty())
+            setNeedsStyleRecalc();
+    }
+}
+
 bool HTMLFormElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == actionAttr || HTMLElement::isURLAttribute(attribute);
@@ -785,6 +803,16 @@ void HTMLFormElement::removeFromPastNamesMap(FormNamedItem* item)
         if (it->value == item)
             it->value = 0; // Keep looping. Single element can have multiple names.
     }
+}
+
+bool HTMLFormElement::matchesValidPseudoClass() const
+{
+    return m_invalidAssociatedFormControls.isEmpty();
+}
+
+bool HTMLFormElement::matchesInvalidPseudoClass() const
+{
+    return !m_invalidAssociatedFormControls.isEmpty();
 }
 
 bool HTMLFormElement::hasNamedElement(const AtomicString& name)

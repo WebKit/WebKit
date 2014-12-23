@@ -1,3 +1,74 @@
+2014-12-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Form elements should match :valid and :invalid based on their associated elements
+        https://bugs.webkit.org/show_bug.cgi?id=139850
+
+        Reviewed by Darin Adler.
+
+        In the latest HTML spec, form elements can match :valid or :invalid based
+        on their associated element.
+
+        The tricky part is that object lifetime is a mess. When elements are associated
+        with forms by the parser, the form is set by the constructor of HTMLFormControlElement.
+        At that point, the real object has not been initialized yet which
+        makes it impossible to find its validity.
+
+        To work around the lifetime problem, the code of HTMLFormControlElement::didChangeForm()
+        uses m_willValidateInitialized and m_willValidate direclty instead
+        of invoking willValidate(). That way we don't try to validate an incomplete object.
+
+        When the object really validates, HTMLFormControlElement::setNeedsWillValidateCheck()
+        takes care of updating the form.
+
+        Tests: fast/css/pseudo-invalid-form-and-fieldset-basics.html
+               fast/css/pseudo-invalid-form-basics.html
+               fast/css/pseudo-invalid-form-dynamically-created-basics.html
+               fast/css/pseudo-invalid-form-invalidation-optimization.html
+               fast/css/pseudo-valid-form-and-fieldset-basics.html
+               fast/css/pseudo-valid-form-basics.html
+               fast/css/pseudo-valid-form-dynamically-created-basics.html
+               fast/css/pseudo-valid-form-invalidation-optimization.html
+               fast/selectors/invalid-form-style-update-1.html
+               fast/selectors/invalid-form-style-update-2.html
+               fast/selectors/invalid-form-style-update-3.html
+               fast/selectors/valid-form-style-update-1.html
+               fast/selectors/valid-form-style-update-2.html
+               fast/selectors/valid-form-style-update-3.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithControl):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        HTMLFormElement is not a FormControl, we have to generalize the test
+        for :valid/:invalid with style sharing.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::~HTMLFormControlElement):
+        Since we now have willChangeForm(), didChangeForm(), we have to null
+        the form ourself, as documented by FormAssociatedElement.
+
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+        (WebCore::HTMLFormControlElement::willChangeForm):
+        (WebCore::HTMLFormControlElement::didChangeForm):
+        (WebCore::HTMLFormControlElement::updateValidity):
+        Update the owner form when any of the associated form element changes
+        to invalid.
+
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerInvalidAssociatedFormControl):
+        (WebCore::HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded):
+        (WebCore::HTMLFormElement::matchesValidPseudoClass):
+        (WebCore::HTMLFormElement::matchesInvalidPseudoClass):
+        This is very similar to the code of fieldset, but we have much weaker
+        invariants due to the insane way FormAssociatedElement initializes.
+
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::initializeInputType):
+        For completeness, we should always validate when changing the type.
+        The code was only doing that when the element was inserted into the tree,
+        that was too fragile.
+
 2014-12-22  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

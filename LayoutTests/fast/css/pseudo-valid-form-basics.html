@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        form {
+            padding: 5px;
+            margin: 2px;
+            border: 1px solid black;
+        }
+        form:valid {
+            background-color: green;
+        }
+        form:not(:valid) {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <p>Test the basics of the pseudo class :valid with the &lt;form&gt; element.</p>
+
+    <!-- Empty form -->
+    <form></form>
+
+    <!-- Basic input as a descendant. -->
+    <form>
+        <input>
+    </form>
+
+    <!-- Basic input associated. -->
+    <div>
+        <form id="basic_input"></form>
+        <input form="basic_input">
+    </div>
+
+    <!-- Required input as a descendant. -->
+    <form>
+        <input required>
+    </form>
+
+    <!-- Required input associated. -->
+    <div>
+        <form id="required_input"></form>
+        <input form="required_input" required>
+    </div>
+
+    <!-- Valid required input as a descendant. -->
+    <form>
+        <input value="WebKit!" required>
+    </form>
+
+    <!-- Valid required input associated. -->
+    <div>
+        <form id="valid_required_input"></form>
+        <input value="WebKit!" form="valid_required_input" required>
+    </div>
+
+</body>
+</html>

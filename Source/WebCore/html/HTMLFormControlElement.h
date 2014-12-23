@@ -146,6 +146,9 @@ protected:
 
     bool validationMessageShadowTreeContains(const Node&) const;
 
+    virtual void willChangeForm() override;
+    virtual void didChangeForm() override;
+
 private:
     virtual void refFormAssociatedElement() override { ref(); }
     virtual void derefFormAssociatedElement() override { deref(); }

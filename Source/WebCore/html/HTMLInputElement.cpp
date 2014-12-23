@@ -616,12 +616,14 @@ inline void HTMLInputElement::initializeInputType()
     if (type.isNull()) {
         m_inputType = InputType::createText(*this);
         ensureUserAgentShadowRoot();
+        setNeedsWillValidateCheck();
         return;
     }
 
     m_hasType = true;
     m_inputType = InputType::create(*this, type);
     ensureUserAgentShadowRoot();
+    setNeedsWillValidateCheck();
     registerForSuspensionCallbackIfNeeded();
     runPostTypeUpdateTasks();
 }
