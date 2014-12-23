@@ -102,8 +102,8 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
     // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
     // number was signed since m_vectorLength is always less than intmax (since the total allocation
-    // size is always less than 4Gb).  As such zero extending wil have been correct (and extending the value
-    // to 64-bits is necessary since it's used in the address calculation.  We zero extend rather than sign
+    // size is always less than 4Gb).  As such zero extending will have been correct (and extending the value
+    // to 64-bits is necessary since it's used in the address calculation).  We zero extend rather than sign
     // extending since it makes it easier to re-tag the value in the slow case.
     zeroExtend32ToPtr(regT1, regT1);
 

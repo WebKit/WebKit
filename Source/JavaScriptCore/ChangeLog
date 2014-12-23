@@ -1,5 +1,15 @@
 2014-12-22  Mark Lam  <mark.lam@apple.com>
 
+        Fix some typos in a comment.
+        <https://webkit.org/b/139882>
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+
+2014-12-22  Mark Lam  <mark.lam@apple.com>
+
         Assert that Array elements not copied when changing shape to ArrayStorage type are indeed holes.
         <https://webkit.org/b/138118>
 
