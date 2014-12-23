@@ -1,3 +1,14 @@
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Remove two functions from SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=139885
+
+        Reviewed by Andreas Kling.
+
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessPasswordManager): Deleted.
+        (WebCore::SecurityOrigin::canAccessFileSystem): Deleted.
+
 2014-12-22  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log using FeatureCounter user-triggered zooming
